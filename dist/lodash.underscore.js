@@ -566,7 +566,7 @@
         iterable = collection,
         length = collection ? collection.length : 0;
 
-    if (typeof length == 'number') {
+    if (typeof length == 'number' && length > -1) {
       length |= 0;
       while (++index < length) {
         if (callback(iterable[index], index, collection) === breakIndicator) {
@@ -592,7 +592,7 @@
     var iterable = collection,
         length = collection ? collection.length : 0;
 
-    if (typeof length == 'number') {
+    if (typeof length == 'number' && length > -1) {
       length = (length |= 0) < 0 ? 0 : length;
       while (length--) {
         if (callback(iterable[length], length, collection) === breakIndicator) {
@@ -978,7 +978,7 @@
       callback = createCallback(callback, thisArg, 3);
 
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       if (length > 0) {
         while (++index < length) {
@@ -1184,6 +1184,60 @@
    * // => [1, 2, 3]
    */
   var drop = rest;
+
+  /**
+   * This method is like `_.find` except that it returns the index of the first
+   * element the predicate returns truthy for, instead of the element itself.
+   *
+   * If a property name is provided for `predicate` the created "_.pluck" style
+   * callback will return the property value of the given element.
+   *
+   * If an object is provided for `predicate` the created "_.where" style callback
+   * will return `true` for elements that have the properties of the given object,
+   * else `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to search.
+   * @param {Function|Object|string} [predicate=identity] The function called
+   *  per iteration. If a property name or object is provided it will be used
+   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {*} [thisArg] The `this` binding of `predicate`.
+   * @returns {number} Returns the index of the found element, else `-1`.
+   * @example
+   *
+   * var characters = [
+   *   { 'name': 'barney',  'age': 36 },
+   *   { 'name': 'fred',    'age': 40, 'blocked': true },
+   *   { 'name': 'pebbles', 'age': 1 }
+   * ];
+   *
+   * _.findIndex(characters, function(chr) {
+   *   return chr.age < 20;
+   * });
+   * // => 2
+   *
+   * // using "_.where" callback shorthand
+   * _.findIndex(characters, { 'age': 36 });
+   * // => 0
+   *
+   * // using "_.pluck" callback shorthand
+   * _.findIndex(characters, 'blocked');
+   * // => 1
+   */
+  function findIndex(array, predicate, thisArg) {
+    var index = -1,
+        length = array ? array.length : 0;
+
+    predicate = createCallback(predicate, thisArg, 3);
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return index;
+      }
+    }
+    return -1;
+  }
 
   /**
    * Gets the first element of `array`.
@@ -1425,59 +1479,6 @@
   }
 
   /**
-   * Creates an array of numbers (positive and/or negative) progressing from
-   * `start` up to but not including `end`. If `start` is less than `stop` a
-   * zero-length range is created unless a negative `step` is specified.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {number} [start=0] The start of the range.
-   * @param {number} end The end of the range.
-   * @param {number} [step=1] The value to increment or decrement by.
-   * @returns {Array} Returns the new array of numbers.
-   * @example
-   *
-   * _.range(4);
-   * // => [0, 1, 2, 3]
-   *
-   * _.range(1, 5);
-   * // => [1, 2, 3, 4]
-   *
-   * _.range(0, 20, 5);
-   * // => [0, 5, 10, 15]
-   *
-   * _.range(0, -4, -1);
-   * // => [0, -1, -2, -3]
-   *
-   * _.range(1, 4, 0);
-   * // => [1, 1, 1]
-   *
-   * _.range(0);
-   * // => []
-   */
-  function range(start, end, step) {
-    start = +start || 0;
-    step =  (+step || 1);
-
-    if (end == null) {
-      end = start;
-      start = 0;
-    }
-    // use `Array(length)` so engines like Chakra and V8 avoid slower modes
-    // http://youtu.be/XAqIpGU8ZZk#t=17m25s
-    var index = -1,
-        length = nativeMax(0, ceil((end - start) / step)),
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = start;
-      start += step;
-    }
-    return result;
-  }
-
-  /**
    * Gets all but the first element of `array`.
    *
    * @static
@@ -1518,21 +1519,19 @@
     var index = -1,
         length = array ? array.length : 0;
 
-    if (typeof start == 'undefined') {
-      start = 0;
-    } else if (start < 0) {
+    start |= 0;
+    if (start < 0) {
       start = nativeMax(length + start, 0);
     } else if (start > length) {
       start = length;
     }
-    if (typeof end == 'undefined') {
-      end = length;
-    } else if (end < 0) {
+    end = typeof end == 'undefined' ? length : (end | 0);
+    if (end < 0) {
       end = nativeMax(length + end, 0);
     } else if (end > length) {
       end = length;
     }
-    length = (length = (end - start) | 0) < 0 ? 0 : length;
+    length = start > end ? 0 : (end - start);
 
     var result = Array(length);
     while (++index < length) {
@@ -1944,7 +1943,7 @@
    */
   function contains(collection, target) {
     var indexOf = getIndexOf(),
-        length = collection ? collection.length | 0 : 0,
+        length = (collection && collection.length) | 0,
         result = false;
 
     if (length > 0) {
@@ -2040,7 +2039,7 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     if (length > 0) {
       while (++index < length) {
@@ -2101,7 +2100,7 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     if (length > 0) {
       while (++index < length) {
@@ -2164,27 +2163,13 @@
    * // => { 'name': 'fred', 'age': 40, 'blocked': true }
    */
   function find(collection, predicate, thisArg) {
-    predicate = createCallback(predicate, thisArg, 3);
-    var index = -1,
-        length = collection ? collection.length | 0 : 0;
-
+    var length = (collection && collection.length) | 0;
     if (length > 0) {
-      while (++index < length) {
-        var value = collection[index];
-        if (predicate(value, index, collection)) {
-          return value;
-        }
-      }
-    } else {
-      var result;
-      baseEach(collection, function(value, index, collection) {
-        if (predicate(value, index, collection)) {
-          result = value;
-          return breakIndicator;
-        }
-      });
-      return result;
+      var index = findIndex(collection, predicate, thisArg);
+      return index > -1 ? collection[index] : undefined;
     }
+    var key = findKey(collection, predicate, thisArg);
+    return typeof key == 'string' ? collection[key] : undefined;
   }
 
   /**
@@ -2215,7 +2200,7 @@
    */
   function forEach(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
     if (length > 0) {
@@ -2342,7 +2327,7 @@
     var args = slice(arguments, 2),
         index = -1,
         isFunc = typeof methodName == 'function',
-        length = collection ? collection.length | 0 : 0,
+        length = (collection && collection.length) | 0,
         result = Array(length < 0 ? 0 : length);
 
     baseEach(collection, function(value) {
@@ -2392,7 +2377,7 @@
    */
   function map(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     callback = createCallback(callback, thisArg, 3);
     if (length > 0) {
@@ -2459,7 +2444,7 @@
       callback = null;
     }
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     if (callback == null && length > 0) {
       while (++index < length) {
@@ -2532,7 +2517,7 @@
       callback = null;
     }
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     if (callback == null && length > 0) {
       while (++index < length) {
@@ -2660,7 +2645,7 @@
     callback = createCallback(callback, thisArg, 4);
 
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     if (length > 0) {
       if (noaccum && length) {
@@ -2776,7 +2761,7 @@
       collection = values(collection);
     }
     if (n == null || guard) {
-      var length = collection ? collection.length | 0 : 0;
+      var length = (collection && collection.length) | 0;
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
     var result = shuffle(collection);
@@ -2801,7 +2786,7 @@
    */
   function shuffle(collection) {
     var index = -1,
-        length = collection ? collection.length | 0 : 0,
+        length = (collection && collection.length) | 0,
         result = Array(length < 0 ? 0 : length);
 
     baseEach(collection, function(value) {
@@ -2885,7 +2870,7 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = collection ? collection.length | 0 : 0;
+        length = (collection && collection.length) | 0;
 
     if (length > 0) {
       while (++index < length) {
@@ -2952,7 +2937,7 @@
    */
   function sortBy(collection, callback, thisArg) {
     var index = -1,
-        length = collection ? collection.length | 0 : 0,
+        length = (collection && collection.length) | 0,
         result = Array(length < 0 ? 0 : length);
 
     callback = createCallback(callback, thisArg, 3);
@@ -3722,6 +3707,60 @@
   }
 
   /**
+   * This method is like `_.findIndex` except that it returns the key of the
+   * first element the predicate returns truthy for, instead of the element itself.
+   *
+   * If a property name is provided for `predicate` the created "_.pluck" style
+   * callback will return the property value of the given element.
+   *
+   * If an object is provided for `predicate` the created "_.where" style callback
+   * will return `true` for elements that have the properties of the given object,
+   * else `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Object} object The object to search.
+   * @param {Function|Object|string} [predicate=identity] The function called
+   *  per iteration. If a property name or object is provided it will be used
+   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {*} [thisArg] The `this` binding of `predicate`.
+   * @returns {string|undefined} Returns the key of the found element, else `undefined`.
+   * @example
+   *
+   * var characters = {
+   *   'barney': { 'age': 36 },
+   *   'fred': { 'age': 40, 'blocked': true },
+   *   'pebbles': { 'age': 1 }
+   * };
+   *
+   * _.findKey(characters, function(chr) {
+   *   return chr.age < 40;
+   * });
+   * // => 'barney' (property order is not guaranteed across environments)
+   *
+   * // using "_.where" callback shorthand
+   * _.findKey(characters, { 'age': 1 });
+   * // => 'pebbles'
+   *
+   * // using "_.pluck" callback shorthand
+   * _.findKey(characters, 'blocked');
+   * // => 'fred'
+   */
+  function findKey(object, predicate, thisArg) {
+    var result;
+
+    predicate = createCallback(predicate, thisArg, 3);
+    baseForOwn(object, function(value, key, object) {
+      if (predicate(value, key, object)) {
+        result = key;
+        return breakIndicator;
+      }
+    });
+    return result;
+  }
+
+  /**
    * Creates a sorted array of property names of all enumerable properties,
    * own and inherited, of `object` that have function values.
    *
@@ -3814,7 +3853,7 @@
    * @returns {boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
    * @example
    *
-   * (function() { return _.isArguments(arguments); })(1, 2, 3);
+   * (function() { return _.isArguments(arguments); })();
    * // => true
    *
    * _.isArguments([1, 2, 3]);
@@ -3843,11 +3882,11 @@
    * @returns {boolean} Returns `true` if the `value` is an array, else `false`.
    * @example
    *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
    * _.isArray([1, 2, 3]);
    * // => true
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
    */
   var isArray = nativeIsArray || function(value) {
     return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -3863,6 +3902,9 @@
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if the `value` is a boolean value, else `false`.
    * @example
+   *
+   * _.isBoolean(false);
+   * // => true
    *
    * _.isBoolean(null);
    * // => false
@@ -3884,6 +3926,9 @@
    *
    * _.isDate(new Date);
    * // => true
+   *
+   * _.isDate('Wed May 23 2012');
+   * // => false
    */
   function isDate(value) {
     return value && typeof value == 'object' && toString.call(value) == dateClass || false;
@@ -3901,6 +3946,9 @@
    *
    * _.isElement(document.body);
    * // => true
+   *
+   * _.isElement('<body>');
+   * // => false
    */
   function isElement(value) {
     return value && value.nodeType === 1 || false;
@@ -3918,14 +3966,20 @@
    * @returns {boolean} Returns `true` if the `value` is empty, else `false`.
    * @example
    *
+   * _.isEmpty(null);
+   * // => true
+   *
+   * _.isEmpty(true);
+   * // => true
+   *
+   * _.isEmpty(1);
+   * // => true
+   *
    * _.isEmpty([1, 2, 3]);
    * // => false
    *
-   * _.isEmpty({});
-   * // => true
-   *
-   * _.isEmpty('');
-   * // => true
+   * _.isEmpty({ 'a': 1 });
+   * // => false
    */
   function isEmpty(value) {
     if (!value) {
@@ -4029,6 +4083,9 @@
    *
    * _.isFunction(_);
    * // => true
+   *
+   * _.isFunction(/abc/);
+   * // => false
    */
   function isFunction(value) {
     return typeof value == 'function';
@@ -4114,7 +4171,7 @@
    * _.isNull(null);
    * // => true
    *
-   * _.isNull(undefined);
+   * _.isNull(void 0);
    * // => false
    */
   function isNull(value) {
@@ -4134,8 +4191,14 @@
    * @returns {boolean} Returns `true` if the `value` is a number, else `false`.
    * @example
    *
-   * _.isNumber(8.4 * 5);
+   * _.isNumber(8.4);
    * // => true
+   *
+   * _.isNumber(NaN);
+   * // => true
+   *
+   * _.isNumber('8.4');
+   * // => false
    */
   function isNumber(value) {
     var type = typeof value;
@@ -4153,8 +4216,11 @@
    * @returns {boolean} Returns `true` if the `value` is a regular expression, else `false`.
    * @example
    *
-   * _.isRegExp(/fred/);
+   * _.isRegExp(/abc/);
    * // => true
+   *
+   * _.isRegExp('/abc/');
+   * // => false
    */
   function isRegExp(value) {
     var type = typeof value;
@@ -4172,8 +4238,11 @@
    * @returns {boolean} Returns `true` if the `value` is a string, else `false`.
    * @example
    *
-   * _.isString('fred');
+   * _.isString('abc');
    * // => true
+   *
+   * _.isString(1);
+   * // => false
    */
   function isString(value) {
     return typeof value == 'string' ||
@@ -4192,6 +4261,9 @@
    *
    * _.isUndefined(void 0);
    * // => true
+   *
+   * _.isUndefined(null);
+   * // => false
    */
   function isUndefined(value) {
     return typeof value == 'undefined';
@@ -4889,14 +4961,69 @@
     if (min == null && max == null) {
       max = 1;
     }
-    min = +min || 0;
+    min |= 0;
     if (max == null) {
       max = min;
       min = 0;
     } else {
-      max = +max || 0;
+      max |= 0;
     }
     return min + floor(nativeRandom() * (max - min + 1));
+  }
+
+  /**
+   * Creates an array of numbers (positive and/or negative) progressing from
+   * `start` up to but not including `end`. If `start` is less than `stop` a
+   * zero-length range is created unless a negative `step` is specified.
+   *
+   * @static
+   * @memberOf _
+   * @category Utilities
+   * @param {number} [start=0] The start of the range.
+   * @param {number} end The end of the range.
+   * @param {number} [step=1] The value to increment or decrement by.
+   * @returns {Array} Returns the new array of numbers.
+   * @example
+   *
+   * _.range(4);
+   * // => [0, 1, 2, 3]
+   *
+   * _.range(1, 5);
+   * // => [1, 2, 3, 4]
+   *
+   * _.range(0, 20, 5);
+   * // => [0, 5, 10, 15]
+   *
+   * _.range(0, -4, -1);
+   * // => [0, -1, -2, -3]
+   *
+   * _.range(1, 4, 0);
+   * // => [1, 1, 1]
+   *
+   * _.range(0);
+   * // => []
+   */
+  function range(start, end, step) {
+    start = +start || 0;
+    step = step == null ? 1 : (+step || 0);
+
+    if (end == null) {
+      end = start;
+      start = 0;
+    } else {
+      end = +end || 0;
+    }
+    // use `Array(length)` so engines like Chakra and V8 avoid slower modes
+    // http://youtu.be/XAqIpGU8ZZk#t=17m25s
+    var index = -1,
+        length = nativeMax(0, ceil((end - start) / step)),
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = start;
+      start += step;
+    }
+    return result;
   }
 
   /**

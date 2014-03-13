@@ -225,6 +225,18 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Used by `_.defaults` to customize its `_.assign` use.
+   *
+   * @private
+   * @param {*} objectValue The destination object property value.
+   * @param {*} sourceValue The source object property value.
+   * @returns {*} Returns the value to assign to the destination object.
+   */
+  function assignDefaults(objectValue, sourceValue) {
+    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+  }
+
+  /**
    * The base implementation of `compareAscending` used to compare values and
    * sort them in ascending order without guaranteeing a stable sort.
    *
@@ -1171,7 +1183,7 @@
           iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number') {
+      if (typeof length == 'number' && length > -1) {
         length |= 0;
         while (++index < length) {
           if (callback(iterable[index], index, collection) === false) {
@@ -1197,7 +1209,7 @@
       var iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number') {
+      if (typeof length == 'number' && length > -1) {
         length = (length |= 0) < 0 ? 0 : length;
         while (length--) {
           if (callback(iterable[length], length, collection) === false) {
@@ -1745,7 +1757,7 @@
         callback = lodash.createCallback(callback, thisArg, 3);
 
         var index = -1,
-            length = collection ? collection.length | 0 : 0;
+            length = (collection && collection.length) | 0;
 
         if (length > 0) {
           while (++index < length) {
@@ -2628,59 +2640,6 @@
     }
 
     /**
-     * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to but not including `end`. If `start` is less than `stop` a
-     * zero-length range is created unless a negative `step` is specified.
-     *
-     * @static
-     * @memberOf _
-     * @category Arrays
-     * @param {number} [start=0] The start of the range.
-     * @param {number} end The end of the range.
-     * @param {number} [step=1] The value to increment or decrement by.
-     * @returns {Array} Returns the new array of numbers.
-     * @example
-     *
-     * _.range(4);
-     * // => [0, 1, 2, 3]
-     *
-     * _.range(1, 5);
-     * // => [1, 2, 3, 4]
-     *
-     * _.range(0, 20, 5);
-     * // => [0, 5, 10, 15]
-     *
-     * _.range(0, -4, -1);
-     * // => [0, -1, -2, -3]
-     *
-     * _.range(1, 4, 0);
-     * // => [1, 1, 1]
-     *
-     * _.range(0);
-     * // => []
-     */
-    function range(start, end, step) {
-      start = +start || 0;
-      step = typeof step == 'number' ? step : (+step || 1);
-
-      if (end == null) {
-        end = start;
-        start = 0;
-      }
-      // use `Array(length)` so engines like Chakra and V8 avoid slower modes
-      // http://youtu.be/XAqIpGU8ZZk#t=17m25s
-      var index = -1,
-          length = nativeMax(0, ceil((end - start) / (step || 1))),
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = start;
-        start += step;
-      }
-      return result;
-    }
-
-    /**
      * Removes all elements from an array that the predicate returns truthy for
      * and returns an array of removed elements. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
@@ -2779,21 +2738,19 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      if (typeof start == 'undefined') {
-        start = 0;
-      } else if (start < 0) {
+      start |= 0;
+      if (start < 0) {
         start = nativeMax(length + start, 0);
       } else if (start > length) {
         start = length;
       }
-      if (typeof end == 'undefined') {
-        end = length;
-      } else if (end < 0) {
+      end = typeof end == 'undefined' ? length : (end | 0);
+      if (end < 0) {
         end = nativeMax(length + end, 0);
       } else if (end > length) {
         end = length;
       }
-      length = (length = (end - start) | 0) < 0 ? 0 : length;
+      length = start > end ? 0 : (end - start);
 
       var result = Array(length);
       while (++index < length) {
@@ -3405,20 +3362,19 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-      fromIndex = typeof fromIndex == 'number' ? fromIndex | 0 : 0;
+      fromIndex = (typeof fromIndex == 'number' && fromIndex) | 0;
 
-      if (typeof length == 'number') {
-        length = (length |= 0) < 0 ? 0 : length;
-        if (fromIndex >= length) {
-          return false;
-        }
+      if (typeof length == 'number' && length > -1) {
         if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
+          if (fromIndex >= length) {
+            return false;
+          }
           return nativeContains
             ? nativeContains.call(collection, target, fromIndex)
             : collection.indexOf(target, fromIndex) > -1;
         }
         var indexOf = getIndexOf();
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex;
+        fromIndex = fromIndex < 0 ? nativeMax(0, (length | 0) + fromIndex) : fromIndex;
         return indexOf(collection, target, fromIndex) > -1;
       }
       var index = -1,
@@ -3517,7 +3473,7 @@
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       if (length > 0) {
         while (++index < length) {
@@ -3578,7 +3534,7 @@
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       if (length > 0) {
         while (++index < length) {
@@ -3641,27 +3597,13 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
-      var index = -1,
-          length = collection ? collection.length | 0 : 0;
-
+      var length = (collection && collection.length) | 0;
       if (length > 0) {
-        while (++index < length) {
-          var value = collection[index];
-          if (predicate(value, index, collection)) {
-            return value;
-          }
-        }
-      } else {
-        var result;
-        baseEach(collection, function(value, index, collection) {
-          if (predicate(value, index, collection)) {
-            result = value;
-            return false;
-          }
-        });
-        return result;
+        var index = findIndex(collection, predicate, thisArg);
+        return index > -1 ? collection[index] : undefined;
       }
+      var key = findKey(collection, predicate, thisArg);
+      return typeof key == 'string' ? collection[key] : undefined;
     }
 
     /**
@@ -3685,16 +3627,13 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      var result;
-
-      predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseEachRight(collection, function(value, index, collection) {
-        if (predicate(value, index, collection)) {
-          result = value;
-          return false;
-        }
-      });
-      return result;
+      var length = (collection && collection.length) | 0;
+      if (length > 0) {
+        var index = findLastIndex(collection, predicate, thisArg);
+        return index > -1 ? collection[index] : undefined;
+      }
+      var key = findLastKey(collection, predicate, thisArg);
+      return typeof key == 'string' ? collection[key] : undefined;
     }
 
     /**
@@ -3725,7 +3664,7 @@
      */
     function forEach(collection, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
       if (length > 0) {
@@ -3758,7 +3697,7 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      var length = collection ? collection.length | 0 : 0;
+      var length = (collection && collection.length) | 0;
 
       callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
       if (length > 0) {
@@ -3885,7 +3824,7 @@
       var args = slice(arguments, 2),
           index = -1,
           isFunc = typeof methodName == 'function',
-          length = collection ? collection.length | 0 : 0,
+          length = (collection && collection.length) | 0,
           result = Array(length < 0 ? 0 : length);
 
       baseEach(collection, function(value) {
@@ -3935,7 +3874,7 @@
      */
     function map(collection, callback, thisArg) {
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       callback = lodash.createCallback(callback, thisArg, 3);
       if (length > 0) {
@@ -4207,7 +4146,7 @@
       callback = lodash.createCallback(callback, thisArg, 4);
 
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       if (length > 0) {
         if (noaccum && length) {
@@ -4323,7 +4262,7 @@
         collection = values(collection);
       }
       if (n == null || guard) {
-        var length = collection ? collection.length | 0 : 0;
+        var length = (collection && collection.length) | 0;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -4348,7 +4287,7 @@
      */
     function shuffle(collection) {
       var index = -1,
-          length = collection ? collection.length | 0 : 0,
+          length = (collection && collection.length) | 0,
           result = Array(length < 0 ? 0 : length);
 
       baseEach(collection, function(value) {
@@ -4432,7 +4371,7 @@
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       var index = -1,
-          length = collection ? collection.length | 0 : 0;
+          length = (collection && collection.length) | 0;
 
       if (length > 0) {
         while (++index < length) {
@@ -4499,8 +4438,8 @@
      */
     function sortBy(collection, callback, thisArg) {
       var index = -1,
+          length = (collection && collection.length) | 0,
           multi = callback && isArray(callback),
-          length = collection ? collection.length | 0 : 0,
           result = Array(length < 0 ? 0 : length);
 
       if (!multi) {
@@ -5496,33 +5435,10 @@
      * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function defaults(object, source, guard) {
-      if (!object) {
-        return object;
-      }
-      var args = arguments,
-          argsIndex = 0,
-          argsLength = args.length,
-          type = typeof guard;
-
-      // enables use as a callback for functions like `_.reduce`
-      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
-        argsLength = 2;
-      }
-      while (++argsIndex < argsLength) {
-        source = args[argsIndex];
-        var index = -1,
-            props = keys(source),
-            length = props.length;
-
-        while (++index < length) {
-          var key = props[index];
-          if (typeof object[key] == 'undefined') {
-            object[key] = source[key];
-          }
-        }
-      }
-      return object;
+    function defaults() {
+      var args = slice(arguments);
+      args.push(assignDefaults);
+      return assign.apply(null, args);
     }
 
     /**
@@ -5848,7 +5764,7 @@
      * @returns {boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
      * @example
      *
-     * (function() { return _.isArguments(arguments); })(1, 2, 3);
+     * (function() { return _.isArguments(arguments); })();
      * // => true
      *
      * _.isArguments([1, 2, 3]);
@@ -5870,11 +5786,11 @@
      * @returns {boolean} Returns `true` if the `value` is an array, else `false`.
      * @example
      *
-     * (function() { return _.isArray(arguments); })();
-     * // => false
-     *
      * _.isArray([1, 2, 3]);
      * // => true
+     *
+     * (function() { return _.isArray(arguments); })();
+     * // => false
      */
     var isArray = nativeIsArray || function(value) {
       return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -5890,6 +5806,9 @@
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if the `value` is a boolean value, else `false`.
      * @example
+     *
+     * _.isBoolean(false);
+     * // => true
      *
      * _.isBoolean(null);
      * // => false
@@ -5911,6 +5830,9 @@
      *
      * _.isDate(new Date);
      * // => true
+     *
+     * _.isDate('Wed May 23 2012');
+     * // => false
      */
     function isDate(value) {
       return value && typeof value == 'object' && toString.call(value) == dateClass || false;
@@ -5928,6 +5850,9 @@
      *
      * _.isElement(document.body);
      * // => true
+     *
+     * _.isElement('<body>');
+     * // => false
      */
     function isElement(value) {
       return value && typeof value == 'object' && value.nodeType === 1 &&
@@ -5953,14 +5878,20 @@
      * @returns {boolean} Returns `true` if the `value` is empty, else `false`.
      * @example
      *
+     * _.isEmpty(null);
+     * // => true
+     *
+     * _.isEmpty(true);
+     * // => true
+     *
+     * _.isEmpty(1);
+     * // => true
+     *
      * _.isEmpty([1, 2, 3]);
      * // => false
      *
-     * _.isEmpty({});
-     * // => true
-     *
-     * _.isEmpty('');
-     * // => true
+     * _.isEmpty({ 'a': 1 });
+     * // => false
      */
     function isEmpty(value) {
       var result = true;
@@ -6084,6 +6015,9 @@
      *
      * _.isFunction(_);
      * // => true
+     *
+     * _.isFunction(/abc/);
+     * // => false
      */
     function isFunction(value) {
       return typeof value == 'function';
@@ -6163,7 +6097,7 @@
      * _.isNull(null);
      * // => true
      *
-     * _.isNull(undefined);
+     * _.isNull(void 0);
      * // => false
      */
     function isNull(value) {
@@ -6183,8 +6117,14 @@
      * @returns {boolean} Returns `true` if the `value` is a number, else `false`.
      * @example
      *
-     * _.isNumber(8.4 * 5);
+     * _.isNumber(8.4);
      * // => true
+     *
+     * _.isNumber(NaN);
+     * // => true
+     *
+     * _.isNumber('8.4');
+     * // => false
      */
     function isNumber(value) {
       var type = typeof value;
@@ -6238,8 +6178,11 @@
      * @returns {boolean} Returns `true` if the `value` is a regular expression, else `false`.
      * @example
      *
-     * _.isRegExp(/fred/);
+     * _.isRegExp(/abc/);
      * // => true
+     *
+     * _.isRegExp('/abc/');
+     * // => false
      */
     function isRegExp(value) {
       return value && typeof value == 'object' && toString.call(value) == regexpClass || false;
@@ -6255,8 +6198,11 @@
      * @returns {boolean} Returns `true` if the `value` is a string, else `false`.
      * @example
      *
-     * _.isString('fred');
+     * _.isString('abc');
      * // => true
+     *
+     * _.isString(1);
+     * // => false
      */
     function isString(value) {
       return typeof value == 'string' ||
@@ -6275,6 +6221,9 @@
      *
      * _.isUndefined(void 0);
      * // => true
+     *
+     * _.isUndefined(null);
+     * // => false
      */
     function isUndefined(value) {
       return typeof value == 'undefined';
@@ -7769,6 +7718,61 @@
         return nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max);
       }
       return baseRandom(min, max);
+    }
+
+    /**
+     * Creates an array of numbers (positive and/or negative) progressing from
+     * `start` up to but not including `end`. If `start` is less than `stop` a
+     * zero-length range is created unless a negative `step` is specified.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {number} [start=0] The start of the range.
+     * @param {number} end The end of the range.
+     * @param {number} [step=1] The value to increment or decrement by.
+     * @returns {Array} Returns the new array of numbers.
+     * @example
+     *
+     * _.range(4);
+     * // => [0, 1, 2, 3]
+     *
+     * _.range(1, 5);
+     * // => [1, 2, 3, 4]
+     *
+     * _.range(0, 20, 5);
+     * // => [0, 5, 10, 15]
+     *
+     * _.range(0, -4, -1);
+     * // => [0, -1, -2, -3]
+     *
+     * _.range(1, 4, 0);
+     * // => [1, 1, 1]
+     *
+     * _.range(0);
+     * // => []
+     */
+    function range(start, end, step) {
+      start = +start || 0;
+      step = step == null ? 1 : (+step || 0);
+
+      if (end == null) {
+        end = start;
+        start = 0;
+      } else {
+        end = +end || 0;
+      }
+      // use `Array(length)` so engines like Chakra and V8 avoid slower modes
+      // http://youtu.be/XAqIpGU8ZZk#t=17m25s
+      var index = -1,
+          length = nativeMax(0, ceil((end - start) / (step || 1))),
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = start;
+        start += step;
+      }
+      return result;
     }
 
     /**

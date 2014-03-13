@@ -15,7 +15,7 @@
     "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
   ],
   "bugs": "https://github.com/lodash/lodash/issues",
-  "repository": { "type": "git", "url": "https://github.com/lodash/lodash.git" },
+  "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\"" },
   "engines": ["node", "rhino"],
   "files": [

@@ -226,6 +226,9 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = root._;
 
+  /** Used as the maximum value returned by `toLength` */
+  var maxSafeInteger = Math.pow(2, 53) - 1;
+
   /** Used to resolve the internal [[Class]] of values */
   var toString = objectProto.toString;
 
@@ -566,8 +569,8 @@
         iterable = collection,
         length = collection ? collection.length : 0;
 
-    if (typeof length == 'number' && length > -1) {
-      length |= 0;
+    if (typeof length == 'number') {
+      length = toLength(length);
       while (++index < length) {
         if (callback(iterable[index], index, collection) === breakIndicator) {
           break;
@@ -592,8 +595,8 @@
     var iterable = collection,
         length = collection ? collection.length : 0;
 
-    if (typeof length == 'number' && length > -1) {
-      length = (length |= 0) < 0 ? 0 : length;
+    if (typeof length == 'number') {
+      length = toLength(length);
       while (length--) {
         if (callback(iterable[length], length, collection) === breakIndicator) {
           break;
@@ -978,7 +981,7 @@
       callback = createCallback(callback, thisArg, 3);
 
       var index = -1,
-          length = (length = collection && collection.length, length > -1 && length >>> 0);
+          length = toLength(collection && collection.length);
 
       if (length) {
         while (++index < length) {
@@ -1077,20 +1080,17 @@
    *
    * @private
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a native function, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
    */
   function isNative(value) {
     return typeof value == 'function' && reNative.test(fnToString.call(value));
   }
-
-  /*--------------------------------------------------------------------------*/
 
   /**
    * A fallback implementation of `Object.keys` which creates an array of the
    * own enumerable property names of `object`.
    *
    * @private
-   * @type Function
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns the array of property names.
    */
@@ -1107,6 +1107,20 @@
       }
     }
     return result;
+  }
+
+  /**
+   * Converts `value` to an integer suitable for use as the length of an array-like
+   * object. See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+   * for more details.
+   *
+   * @private
+   * @param {*} value The value to convert.
+   * @returns {number} Returns the converted integer.
+   */
+  function toLength(value) {
+    var result = +value || 0;
+    return result < 0 ? 0 : (result < maxSafeInteger ? result : maxSafeInteger);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -1943,7 +1957,7 @@
    */
   function contains(collection, target) {
     var indexOf = getIndexOf(),
-        length = (length = collection && collection.length, length > -1 && length >>> 0),
+        length = toLength(collection && collection.length),
         result = false;
 
     if (length) {
@@ -2039,7 +2053,7 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     if (length) {
       while (++index < length) {
@@ -2100,7 +2114,7 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     if (length) {
       while (++index < length) {
@@ -2163,7 +2177,7 @@
    * // => { 'name': 'fred', 'age': 40, 'blocked': true }
    */
   function find(collection, predicate, thisArg) {
-    var length = (length = collection && collection.length, length > -1 && length >>> 0);
+    var length = toLength(collection && collection.length);
     if (length) {
       var index = findIndex(collection, predicate, thisArg);
       return index > -1 ? collection[index] : undefined;
@@ -2200,7 +2214,7 @@
    */
   function forEach(collection, callback, thisArg) {
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
     if (length) {
@@ -2302,10 +2316,10 @@
   });
 
   /**
-   * Invokes the method named by `methodName` on each element in the `collection`
+   * Invokes the method named by `methodName` on each element in the collection
    * returning an array of the results of each invoked method. Additional arguments
    * will be provided to each invoked method. If `methodName` is a function it
-   * will be invoked for, and `this` bound to, each element in the `collection`.
+   * will be invoked for, and `this` bound to, each element in the collection.
    *
    * @static
    * @memberOf _
@@ -2377,7 +2391,7 @@
    */
   function map(collection, callback, thisArg) {
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     callback = createCallback(callback, thisArg, 3);
     if (length) {
@@ -2444,7 +2458,7 @@
       callback = null;
     }
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     if (callback == null && length) {
       while (++index < length) {
@@ -2517,7 +2531,7 @@
       callback = null;
     }
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     if (callback == null && length) {
       while (++index < length) {
@@ -2645,7 +2659,7 @@
     callback = createCallback(callback, thisArg, 4);
 
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     if (length) {
       if (noaccum && length) {
@@ -2761,7 +2775,7 @@
       collection = values(collection);
     }
     if (n == null || guard) {
-      var length = (length = collection && collection.length, length > -1 && length >>> 0);
+      var length = toLength(collection && collection.length);
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
     var result = shuffle(collection);
@@ -2799,7 +2813,7 @@
   }
 
   /**
-   * Gets the size of the `collection` by returning `collection.length` for arrays
+   * Gets the size of the collection by returning `collection.length` for arrays
    * and array-like objects or the number of own enumerable properties for objects.
    *
    * @static
@@ -2870,7 +2884,7 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = (length = collection && collection.length, length > -1 && length >>> 0);
+        length = toLength(collection && collection.length);
 
     if (length) {
       while (++index < length) {
@@ -2958,7 +2972,7 @@
   }
 
   /**
-   * Converts the `collection` to an array.
+   * Converts `collection` to an array.
    *
    * @static
    * @memberOf _
@@ -2982,7 +2996,7 @@
 
   /**
    * Performs a deep comparison between each element in `collection` and the
-   * `source` object, returning an array of all elements that have equivalent
+   * source object, returning an array of all elements that have equivalent
    * property values.
    *
    * @static
@@ -3010,7 +3024,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a function that executes `func`, with  the `this` binding and
+   * Creates a function that executes `func`, with the `this` binding and
    * arguments of the created function, only after being called `n` times.
    *
    * @static
@@ -3850,7 +3864,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is an `arguments` object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
    * @example
    *
    * (function() { return _.isArguments(arguments); })();
@@ -3876,10 +3890,9 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is an array, else `false`.
+   * @returns {boolean} Returns `true` if `value` is an array, else `false`.
    * @example
    *
    * _.isArray([1, 2, 3]);
@@ -3900,7 +3913,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a boolean value, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a boolean value, else `false`.
    * @example
    *
    * _.isBoolean(false);
@@ -3921,7 +3934,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a date, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a date, else `false`.
    * @example
    *
    * _.isDate(new Date);
@@ -3941,7 +3954,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a DOM element, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a DOM element, else `false`.
    * @example
    *
    * _.isElement(document.body);
@@ -3963,7 +3976,7 @@
    * @memberOf _
    * @category Objects
    * @param {Array|Object|string} value The value to inspect.
-   * @returns {boolean} Returns `true` if the `value` is empty, else `false`.
+   * @returns {boolean} Returns `true` if `value` is empty, else `false`.
    * @example
    *
    * _.isEmpty(null);
@@ -4049,7 +4062,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is finite, else `false`.
+   * @returns {boolean} Returns `true` if `value` is finite, else `false`.
    * @example
    *
    * _.isFinite(-101);
@@ -4078,7 +4091,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a function, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a function, else `false`.
    * @example
    *
    * _.isFunction(_);
@@ -4105,7 +4118,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is an object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is an object, else `false`.
    * @example
    *
    * _.isObject({});
@@ -4137,7 +4150,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is `NaN`, else `false`.
+   * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
    * @example
    *
    * _.isNaN(NaN);
@@ -4165,7 +4178,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is `null`, else `false`.
+   * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
    * @example
    *
    * _.isNull(null);
@@ -4188,7 +4201,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a number, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a number, else `false`.
    * @example
    *
    * _.isNumber(8.4);
@@ -4213,7 +4226,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a regular expression, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a regular expression, else `false`.
    * @example
    *
    * _.isRegExp(/abc/);
@@ -4235,7 +4248,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is a string, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a string, else `false`.
    * @example
    *
    * _.isString('abc');
@@ -4256,7 +4269,7 @@
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if the `value` is `undefined`, else `false`.
+   * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
    * @example
    *
    * _.isUndefined(void 0);

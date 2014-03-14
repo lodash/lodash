@@ -43,8 +43,9 @@
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /**
-   * Used to match ES6 template delimiters
-   * http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components
+   * Used to match ES6 template delimiters.
+   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
+   * for more details.
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
@@ -614,6 +615,9 @@
 
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
+
+    /** Used as the maximum value returned by `toLength` */
+    var maxSafeInteger = Math.pow(2, 53) - 1;
 
     /** Used to resolve the internal [[Class]] of values */
     var toString = objectProto.toString;
@@ -1339,8 +1343,8 @@
           iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number' && length > -1) {
-        length |= 0;
+      if (typeof length == 'number') {
+        length = toLength(length);
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
         }
@@ -1368,8 +1372,8 @@
       var iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number' && length > -1) {
-        length = (length |= 0) < 0 ? 0 : length;
+      if (typeof length == 'number') {
+        length = toLength(length);
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
         }
@@ -2199,6 +2203,20 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Converts `value` to an integer suitable for use as the length of an array-like
+     * object. See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+     * for more details.
+     *
+     * @private
+     * @param {*} value The value to convert.
+     * @returns {number} Returns the converted integer.
+     */
+    function toLength(value) {
+      var result = +value || 0;
+      return result < 0 ? 0 : (result < maxSafeInteger ? result : maxSafeInteger);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -3555,7 +3573,7 @@
      * // => true
      */
     function contains(collection, target, fromIndex) {
-      var length = (length = collection && collection.length, length > -1 && length >>> 0);
+      var length = toLength(collection && collection.length);
       fromIndex = (typeof fromIndex == 'number' && +fromIndex) || 0;
 
       if (length) {
@@ -4452,7 +4470,7 @@
         collection = collection.split('');
       }
       if (n == null || guard) {
-        var length = (length = collection && collection.length, length > -1 && length >>> 0);
+        var length = toLength(collection && collection.length);
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -7856,7 +7874,7 @@
      * @category Utilities
      * @param {string} value The value to parse.
      * @param {number} [radix] The radix used to interpret the value to parse.
-     * @returns {number} Returns the converted integer value.
+     * @returns {number} Returns the converted integer.
      * @example
      *
      * _.parseInt('08');

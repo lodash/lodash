@@ -1856,7 +1856,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.times` with `thisArg`')
+    Benchmark.Suite('`_.times` with `thisArg` (slow path)')
       .add(buildName, '\
         var result = [];\
         lodash.times(limit, function(n) { result.push(this.sin(n)); }, Math)'

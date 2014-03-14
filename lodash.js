@@ -870,7 +870,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.nonEnumArgs = key != 0;
+      support.nonEnumArgs = key != '0';
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.

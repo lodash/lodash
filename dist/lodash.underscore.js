@@ -226,7 +226,11 @@
   /** Used to restore the original `_` reference in `noConflict` */
   var oldDash = root._;
 
-  /** Used as the maximum value returned by `toLength` */
+  /**
+   * Used as the maximum length an array-like object.
+   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+   * for more details.
+   */
   var maxSafeInteger = Math.pow(2, 53) - 1;
 
   /** Used to resolve the internal [[Class]] of values */
@@ -569,8 +573,7 @@
         iterable = collection,
         length = collection ? collection.length : 0;
 
-    if (typeof length == 'number') {
-      length = toLength(length);
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         if (callback(iterable[index], index, collection) === breakIndicator) {
           break;
@@ -595,8 +598,7 @@
     var iterable = collection,
         length = collection ? collection.length : 0;
 
-    if (typeof length == 'number') {
-      length = toLength(length);
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (length--) {
         if (callback(iterable[length], length, collection) === breakIndicator) {
           break;
@@ -981,9 +983,9 @@
       callback = createCallback(callback, thisArg, 3);
 
       var index = -1,
-          length = toLength(collection && collection.length);
+          length = collection ? collection.length : 0;
 
-      if (length) {
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         while (++index < length) {
           var value = collection[index];
           setter(result, value, callback(value, index, collection), collection);
@@ -1109,20 +1111,6 @@
     return result;
   }
 
-  /**
-   * Converts `value` to an integer suitable for use as the length of an array-like
-   * object. See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
-   * for more details.
-   *
-   * @private
-   * @param {*} value The value to convert.
-   * @returns {number} Returns the converted integer.
-   */
-  function toLength(value) {
-    var result = +value || 0;
-    return result < 0 ? 0 : (result < maxSafeInteger ? result : maxSafeInteger);
-  }
-
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -1198,60 +1186,6 @@
    * // => [1, 2, 3]
    */
   var drop = rest;
-
-  /**
-   * This method is like `_.find` except that it returns the index of the first
-   * element the predicate returns truthy for, instead of the element itself.
-   *
-   * If a property name is provided for `predicate` the created "_.pluck" style
-   * callback will return the property value of the given element.
-   *
-   * If an object is provided for `predicate` the created "_.where" style callback
-   * will return `true` for elements that have the properties of the given object,
-   * else `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to search.
-   * @param {Function|Object|string} [predicate=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
-   * @param {*} [thisArg] The `this` binding of `predicate`.
-   * @returns {number} Returns the index of the found element, else `-1`.
-   * @example
-   *
-   * var characters = [
-   *   { 'name': 'barney',  'age': 36 },
-   *   { 'name': 'fred',    'age': 40, 'blocked': true },
-   *   { 'name': 'pebbles', 'age': 1 }
-   * ];
-   *
-   * _.findIndex(characters, function(chr) {
-   *   return chr.age < 20;
-   * });
-   * // => 2
-   *
-   * // using "_.where" callback shorthand
-   * _.findIndex(characters, { 'age': 36 });
-   * // => 0
-   *
-   * // using "_.pluck" callback shorthand
-   * _.findIndex(characters, 'blocked');
-   * // => 1
-   */
-  function findIndex(array, predicate, thisArg) {
-    var index = -1,
-        length = array ? array.length : 0;
-
-    predicate = createCallback(predicate, thisArg, 3);
-    while (++index < length) {
-      if (predicate(array[index], index, array)) {
-        return index;
-      }
-    }
-    return -1;
-  }
 
   /**
    * Gets the first element of `array`.
@@ -1957,10 +1891,10 @@
    */
   function contains(collection, target) {
     var indexOf = getIndexOf(),
-        length = toLength(collection && collection.length),
+        length = collection ? collection.length : 0,
         result = false;
 
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       return indexOf(collection, target) > -1;
     }
     baseEach(collection, function(value) {
@@ -2053,9 +1987,9 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         if (!predicate(collection[index], index, collection)) {
           return false;
@@ -2114,9 +2048,9 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         var value = collection[index];
         if (predicate(value, index, collection)) {
@@ -2177,13 +2111,27 @@
    * // => { 'name': 'fred', 'age': 40, 'blocked': true }
    */
   function find(collection, predicate, thisArg) {
-    var length = toLength(collection && collection.length);
-    if (length) {
-      var index = findIndex(collection, predicate, thisArg);
-      return index > -1 ? collection[index] : undefined;
+    predicate = createCallback(predicate, thisArg, 3);
+    var index = -1,
+        length = collection ? collection.length : 0;
+
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+      while (++index < length) {
+        var value = collection[index];
+        if (predicate(value, index, collection)) {
+          return value;
+        }
+      }
+    } else {
+      var result;
+      baseEach(collection, function(value, index, collection) {
+        if (predicate(value, index, collection)) {
+          result = value;
+          return breakIndicator;
+        }
+      });
+      return result;
     }
-    var key = findKey(collection, predicate, thisArg);
-    return typeof key == 'string' ? collection[key] : undefined;
   }
 
   /**
@@ -2214,10 +2162,10 @@
    */
   function forEach(collection, callback, thisArg) {
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
     callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         if (callback(collection[index], index, collection) === breakIndicator) {
           break;
@@ -2345,7 +2293,8 @@
         result = Array(length < 0 ? 0 : length >>> 0);
 
     baseEach(collection, function(value) {
-      result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
+      var func = isFunc ? methodName : (value != null && value[methodName]);
+      result[++index] = func ? func.apply(value, args) : undefined;
     });
     return result;
   }
@@ -2391,10 +2340,10 @@
    */
   function map(collection, callback, thisArg) {
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
     callback = createCallback(callback, thisArg, 3);
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       var result = Array(length);
       while (++index < length) {
         result[index] = callback(collection[index], index, collection);
@@ -2458,9 +2407,9 @@
       callback = null;
     }
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
-    if (callback == null && length) {
+    if (callback == null && typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         var value = collection[index];
         if (value > result) {
@@ -2531,9 +2480,9 @@
       callback = null;
     }
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
-    if (callback == null && length) {
+    if (callback == null && typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         var value = collection[index];
         if (value < result) {
@@ -2659,9 +2608,9 @@
     callback = createCallback(callback, thisArg, 4);
 
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       if (noaccum && length) {
         accumulator = collection[++index];
       }
@@ -2775,7 +2724,7 @@
       collection = values(collection);
     }
     if (n == null || guard) {
-      var length = toLength(collection && collection.length);
+      var length = collection ? collection.length : 0;
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
     var result = shuffle(collection);
@@ -2834,7 +2783,9 @@
    */
   function size(collection) {
     var length = collection ? collection.length : 0;
-    return typeof length == 'number' && length > -1 ? length : keys(collection).length;
+    return (typeof length == 'number' && length > -1 && length <= maxSafeInteger)
+      ? length
+      : keys(collection).length;
   }
 
   /**
@@ -2884,9 +2835,9 @@
 
     predicate = createCallback(predicate, thisArg, 3);
     var index = -1,
-        length = toLength(collection && collection.length);
+        length = collection ? collection.length : 0;
 
-    if (length) {
+    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
       while (++index < length) {
         if (predicate(collection[index], index, collection)) {
           return true;
@@ -3718,60 +3669,6 @@
       }
     }
     return object;
-  }
-
-  /**
-   * This method is like `_.findIndex` except that it returns the key of the
-   * first element the predicate returns truthy for, instead of the element itself.
-   *
-   * If a property name is provided for `predicate` the created "_.pluck" style
-   * callback will return the property value of the given element.
-   *
-   * If an object is provided for `predicate` the created "_.where" style callback
-   * will return `true` for elements that have the properties of the given object,
-   * else `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to search.
-   * @param {Function|Object|string} [predicate=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
-   * @param {*} [thisArg] The `this` binding of `predicate`.
-   * @returns {string|undefined} Returns the key of the found element, else `undefined`.
-   * @example
-   *
-   * var characters = {
-   *   'barney': { 'age': 36 },
-   *   'fred': { 'age': 40, 'blocked': true },
-   *   'pebbles': { 'age': 1 }
-   * };
-   *
-   * _.findKey(characters, function(chr) {
-   *   return chr.age < 40;
-   * });
-   * // => 'barney' (property order is not guaranteed across environments)
-   *
-   * // using "_.where" callback shorthand
-   * _.findKey(characters, { 'age': 1 });
-   * // => 'pebbles'
-   *
-   * // using "_.pluck" callback shorthand
-   * _.findKey(characters, 'blocked');
-   * // => 'fred'
-   */
-  function findKey(object, predicate, thisArg) {
-    var result;
-
-    predicate = createCallback(predicate, thisArg, 3);
-    baseForOwn(object, function(value, key, object) {
-      if (predicate(value, key, object)) {
-        result = key;
-        return breakIndicator;
-      }
-    });
-    return result;
   }
 
   /**
@@ -4939,7 +4836,7 @@
    */
   function property(key) {
     return function(object) {
-      return object[key];
+      return object == null ? undefined : object[key];
     };
   }
 
@@ -5018,7 +4915,7 @@
    */
   function range(start, end, step) {
     start = +start || 0;
-    step = step == null ? 1 : (+step || 0);
+    step = +step || 1;
 
     if (end == null) {
       end = start;
@@ -5029,7 +4926,7 @@
     // use `Array(length)` so engines like Chakra and V8 avoid slower modes
     // http://youtu.be/XAqIpGU8ZZk#t=17m25s
     var index = -1,
-        length = nativeMax(0, ceil((end - start) / step)),
+        length = nativeMax(0, ceil((end - start) / (step || 1))),
         result = Array(length);
 
     while (++index < length) {

@@ -617,7 +617,11 @@
     /** Used to restore the original `_` reference in `noConflict` */
     var oldDash = context._;
 
-    /** Used as the maximum value returned by `toLength` */
+    /**
+     * Used as the maximum length an array-like object.
+     * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+     * for more details.
+     */
     var maxSafeInteger = Math.pow(2, 53) - 1;
 
     /** Used to resolve the internal [[Class]] of values */
@@ -1344,8 +1348,7 @@
           iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number') {
-        length = toLength(length);
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
         }
@@ -1373,8 +1376,7 @@
       var iterable = collection,
           length = collection ? collection.length : 0;
 
-      if (typeof length == 'number') {
-        length = toLength(length);
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         if (support.unindexedChars && isString(iterable)) {
           iterable = iterable.split('');
         }
@@ -2184,20 +2186,6 @@
         }
       }
       return result;
-    }
-
-    /**
-     * Converts `value` to an integer suitable for use as the length of an array-like
-     * object. See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
-     * for more details.
-     *
-     * @private
-     * @param {*} value The value to convert.
-     * @returns {number} Returns the converted integer.
-     */
-    function toLength(value) {
-      var result = +value || 0;
-      return result < 0 ? 0 : (result < maxSafeInteger ? result : maxSafeInteger);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -3554,10 +3542,10 @@
      * // => true
      */
     function contains(collection, target, fromIndex) {
-      var length = toLength(collection && collection.length);
+      var length = collection ? collection.length : 0;
       fromIndex = (typeof fromIndex == 'number' && +fromIndex) || 0;
 
-      if (length) {
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
           if (fromIndex >= length) {
             return false;
@@ -3790,12 +3778,27 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
+      predicate = lodash.createCallback(predicate, thisArg, 3);
       if (isArray(collection)) {
-        var index = findIndex(collection, predicate, thisArg);
-        return index > -1 ? collection[index] : undefined;
+        var index = -1,
+            length = collection.length;
+
+        while (++index < length) {
+          var value = collection[index];
+          if (predicate(value, index, collection)) {
+            return value;
+          }
+        }
+      } else {
+        var result;
+        baseEach(collection, function(value, index, collection) {
+          if (predicate(value, index, collection)) {
+            result = value;
+            return false;
+          }
+        });
+        return result;
       }
-      var key = findKey(collection, predicate, thisArg);
-      return typeof key == 'string' ? collection[key] : undefined;
     }
 
     /**
@@ -3819,12 +3822,16 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      if (isArray(collection)) {
-        var index = findLastIndex(collection, predicate, thisArg);
-        return index > -1 ? collection[index] : undefined;
-      }
-      var key = findLastKey(collection, predicate, thisArg);
-      return typeof key == 'string' ? collection[key] : undefined;
+      var result;
+
+      predicate = lodash.createCallback(predicate, thisArg, 3);
+      baseEachRight(collection, function(value, index, collection) {
+        if (predicate(value, index, collection)) {
+          result = value;
+          return false;
+        }
+      });
+      return result;
     }
 
     /**
@@ -4016,7 +4023,8 @@
           result = Array(length < 0 ? 0 : length >>> 0);
 
       baseEach(collection, function(value) {
-        result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
+        var func = isFunc ? methodName : (value != null && value[methodName]);
+        result[++index] = func ? func.apply(value, args) : undefined;
       });
       return result;
     }
@@ -4451,7 +4459,7 @@
         collection = collection.split('');
       }
       if (n == null || guard) {
-        var length = toLength(collection && collection.length);
+        var length = collection ? collection.length : 0;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -4510,7 +4518,9 @@
      */
     function size(collection) {
       var length = collection ? collection.length : 0;
-      return typeof length == 'number' && length > -1 ? length : keys(collection).length;
+      return (typeof length == 'number' && length > -1 && length <= maxSafeInteger)
+        ? length
+        : keys(collection).length;
     }
 
     /**
@@ -4671,7 +4681,7 @@
      */
     function toArray(collection) {
       var length = collection && collection.length;
-      if (typeof length == 'number' && length > -1) {
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         return (support.unindexedChars && isString(collection))
           ? collection.split('')
           : slice(collection);
@@ -5430,11 +5440,11 @@
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function assign(object, source, guard) {
-      if (!object) {
+      var args = arguments;
+      if (!object || args.length < 2) {
         return object;
       }
-      var args = arguments,
-          argsIndex = 0,
+      var argsIndex = 0,
           argsLength = args.length,
           type = typeof guard;
 
@@ -5626,7 +5636,10 @@
      * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function defaults() {
+    function defaults(object) {
+      if (!object || arguments.length < 2) {
+        return object;
+      }
       var args = slice(arguments);
       args.push(assignDefaults);
       return assign.apply(null, args);
@@ -7895,7 +7908,7 @@
      */
     function property(key) {
       return function(object) {
-        return object[key];
+        return object == null ? undefined : object[key];
       };
     }
 

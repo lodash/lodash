@@ -3797,7 +3797,9 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      if (isArray(collection)) {
+      var length = collection ? collection.length : 0;
+
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         var index = findIndex(collection, predicate, thisArg);
         return index > -1 ? collection[index] : undefined;
       }
@@ -3826,7 +3828,9 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      if (isArray(collection)) {
+      var length = collection ? collection.length : 0;
+
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         var index = findLastIndex(collection, predicate, thisArg);
         return index > -1 ? collection[index] : undefined;
       }

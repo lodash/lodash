@@ -3636,8 +3636,8 @@
 
   (function() {
     test('should invoke a methods on each element of a collection', 1, function() {
-      var actual = _.invoke(['a', 'b', 'c'], 'toUpperCase');
-      deepEqual(actual, ['A', 'B', 'C']);
+      var array = ['a', 'b', 'c'];
+      deepEqual( _.invoke(array, 'toUpperCase'), ['A', 'B', 'C']);
     });
 
     test('should work with a function `methodName` argument', 1, function() {
@@ -3651,6 +3651,11 @@
     test('should work with an object for `collection`', 1, function() {
       var object = { 'a': 1, 'b': 2, 'c': 3 };
       deepEqual(_.invoke(object, 'toFixed', 1), ['1.0', '2.0', '3.0']);
+    });
+
+    test('should work with `null` or `undefined` elements', 1, function() {
+      var array = ['a', null, undefined, 'd'];
+      deepEqual(_.invoke(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
     });
   }());
 
@@ -6479,6 +6484,11 @@
     test('should work with an object for `collection`', 1, function() {
       var object = { 'a': [1], 'b': [1, 2], 'c': [1, 2, 3] };
       deepEqual(_.pluck(object, 'length'), [1, 2, 3]);
+    });
+
+    test('should work with `null` or `undefined` elements', 1, function() {
+      var objects = [{ 'a': 1 }, null, undefined, { 'a': 4 }];
+      deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);
     });
   }());
 

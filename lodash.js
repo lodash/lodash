@@ -4023,7 +4023,8 @@
           result = Array(length < 0 ? 0 : length >>> 0);
 
       baseEach(collection, function(value) {
-        result[++index] = (isFunc ? methodName : value[methodName]).apply(value, args);
+        var func = isFunc ? methodName : (value != null && value[methodName]);
+        result[++index] = func ? func.apply(value, args) : undefined;
       });
       return result;
     }
@@ -7904,7 +7905,7 @@
      */
     function property(key) {
       return function(object) {
-        return object[key];
+        return object == null ? undefined : object[key];
       };
     }
 

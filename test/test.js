@@ -2393,25 +2393,26 @@
 
   /*--------------------------------------------------------------------------*/
 
-  (function() {
-    var objects = [
-      { 'a': 0, 'b': 0 },
-      { 'a': 1, 'b': 1 },
-      { 'a': 2, 'b': 2 }
-    ];
+  _.forEach(['find', 'findLast', 'findIndex', 'findLastIndex', 'findKey', 'findLastKey'], function(methodName) {
+    QUnit.module('lodash.' + methodName);
 
-    _.forEach({
-      'find': [objects[1], undefined, objects[2], objects[1]],
-      'findLast': [objects[2], undefined, objects[2], objects[2]],
-      'findIndex': [1, -1, 2, 1],
-      'findLastIndex': [2, -1, 2, 2],
-      'findKey': ['1', undefined, '2', '1'],
-      'findLastKey': ['2', undefined, '2', '2']
-    },
-    function(expected, methodName) {
-      QUnit.module('lodash.' + methodName);
+    var func = _[methodName];
 
-      var func = _[methodName];
+    (function() {
+      var objects = [
+        { 'a': 0, 'b': 0 },
+        { 'a': 1, 'b': 1 },
+        { 'a': 2, 'b': 2 }
+      ];
+
+      var expected = ({
+        'find': [objects[1], undefined, objects[2], objects[1]],
+        'findLast': [objects[2], undefined, objects[2], objects[2]],
+        'findIndex': [1, -1, 2, 1],
+        'findLastIndex': [2, -1, 2, 2],
+        'findKey': ['1', undefined, '2', '1'],
+        'findLastKey': ['2', undefined, '2', '2']
+      })[methodName];
 
       test('should return the correct value', 1, function() {
         strictEqual(func(objects, function(object) { return object.a; }), expected[0]);
@@ -2423,14 +2424,6 @@
 
       test('should return `' + expected[1] + '` if value is not found', 1, function() {
         strictEqual(func(objects, function(object) { return object.a == 3; }), expected[1]);
-      });
-
-      test('should work with an object for `collection`', 1, function() {
-        var actual = _.find({ 'a': 1, 'b': 2, 'c': 3 }, function(num) {
-          return num > 2;
-        });
-
-        equal(actual, 3);
       });
 
       test('should work with an object for `callback`', 1, function() {
@@ -2454,15 +2447,52 @@
 
         deepEqual(actual, expecting);
       });
+    }());
 
+    (function() {
+      var expected = ({
+        'find': 1,
+        'findLast': 2,
+        'findKey': 'a',
+        'findLastKey': 'b'
+      })[methodName];
+
+      if (expected != null) {
+        test('should work with an object for `collection`', 1, function() {
+          var actual = func({ 'a': 1, 'b': 2, 'c': 3 }, function(num) {
+            return num < 3;
+          });
+
+          equal(actual, expected);
+        });
+      }
+    }());
+
+    (function() {
+      var expected = ({
+        'find': 'a',
+        'findLast': 'b',
+        'findIndex': 0,
+        'findLastIndex': 1
+      })[methodName];
+
+      if (expected != null) {
+        test('should work with a string for `collection`', 1, function() {
+          var actual = func('abc', function(chr, index) {
+            return index < 2;
+          });
+
+          equal(actual, expected);
+        });
+      }
       if (methodName == 'find') {
         test('should be aliased', 2, function() {
           strictEqual(_.detect, func);
           strictEqual(_.findWhere, func);
         });
       }
-    });
-  }());
+    }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

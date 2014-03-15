@@ -3797,14 +3797,27 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      var length = collection ? collection.length : 0;
+      predicate = lodash.createCallback(predicate, thisArg, 3);
+      if (isArray(collection)) {
+        var index = -1,
+            length = collection.length;
 
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-        var index = findIndex(collection, predicate, thisArg);
-        return index > -1 ? collection[index] : undefined;
+        while (++index < length) {
+          var value = collection[index];
+          if (predicate(value, index, collection)) {
+            return value;
+          }
+        }
+      } else {
+        var result;
+        baseEach(collection, function(value, index, collection) {
+          if (predicate(value, index, collection)) {
+            result = value;
+            return false;
+          }
+        });
+        return result;
       }
-      var key = findKey(collection, predicate, thisArg);
-      return typeof key == 'string' ? collection[key] : undefined;
     }
 
     /**
@@ -3828,14 +3841,16 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      var length = collection ? collection.length : 0;
+      var result;
 
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-        var index = findLastIndex(collection, predicate, thisArg);
-        return index > -1 ? collection[index] : undefined;
-      }
-      var key = findLastKey(collection, predicate, thisArg);
-      return typeof key == 'string' ? collection[key] : undefined;
+      predicate = lodash.createCallback(predicate, thisArg, 3);
+      baseEachRight(collection, function(value, index, collection) {
+        if (predicate(value, index, collection)) {
+          result = value;
+          return false;
+        }
+      });
+      return result;
     }
 
     /**

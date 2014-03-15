@@ -5440,11 +5440,11 @@
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function assign(object, source, guard) {
-      if (!object) {
+      var args = arguments;
+      if (!object || args.length < 2) {
         return object;
       }
-      var args = arguments,
-          argsIndex = 0,
+      var argsIndex = 0,
           argsLength = args.length,
           type = typeof guard;
 
@@ -5636,7 +5636,10 @@
      * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function defaults() {
+    function defaults(object) {
+      if (!object || arguments.length < 2) {
+        return object;
+      }
       var args = slice(arguments);
       args.push(assignDefaults);
       return assign.apply(null, args);

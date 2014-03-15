@@ -2983,6 +2983,10 @@
   _.forEach(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
+    test('`_.' + methodName + '` should return `undefined` when no destination object is provided', 1, function() {
+      strictEqual(func(), undefined);
+    });
+
     test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
       if (!isNpm) {
         var wrapper = _({ 'a': 1 });

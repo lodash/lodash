@@ -2785,21 +2785,46 @@
 
   (function() {
     var methods = [
+      'countBy',
       'every',
       'filter',
-      'forEach',
       'forEachRight',
       'forIn',
       'forInRight',
       'forOwn',
       'forOwnRight',
+      'groupBy',
+      'indexBy',
       'map',
+      'max',
+      'min',
+      'partition',
       'reject',
       'some'
     ];
 
     var boolMethods = [
       'every',
+      'some'
+    ];
+
+    var collectionMethods = [
+      'countBy',
+      'every',
+      'filter',
+      'find',
+      'findLast',
+      'forEach',
+      'forEachRight',
+      'groupBy',
+      'indexBy',
+      'map',
+      'max',
+      'min',
+      'partition',
+      'reduce',
+      'reduceRight',
+      'reject',
       'some'
     ];
 
@@ -2912,6 +2937,28 @@
         else {
           skipTest();
         }
+      });
+    });
+
+    _.forEach(collectionMethods, function(methodName) {
+      var func = _[methodName];
+
+      test('`_.' + methodName + '` should treat objects with lengths of `0` as array-like', 1, function() {
+        var pass = true;
+        func({ 'length': 0 }, function() { pass = false; }, 0);
+        ok(pass);
+      });
+
+      test('`_.' + methodName + '` should not treat objects with negative lengths as array-like', 1, function() {
+        var pass = false;
+        func({ 'length': -1 }, function() { pass = true; }, 0);
+        ok(pass);
+      });
+
+      test('`_.' + methodName + '` should not treat objects with non-number lengths as array-like', 1, function() {
+        var pass = false;
+        func({ 'length': '0' }, function() { pass = true; }, 0);
+        ok(pass);
       });
     });
   }());

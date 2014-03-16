@@ -3971,6 +3971,43 @@
       strictEqual(_.isEmpty('a'), false);
     });
 
+    test('should work with an object that has a `length` property', 1, function() {
+      strictEqual(_.isEmpty({ 'length': 0 }), false);
+    });
+
+    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
+      if (!isPhantomPage) {
+        strictEqual(_.isEmpty(args), false);
+      } else {
+        skipTest();
+      }
+    });
+
+    test('should work with jQuery/MooTools DOM query collections', 1, function() {
+      function Foo(elements) { push.apply(this, elements); }
+      Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
+
+      strictEqual(_.isEmpty(new Foo([])), true);
+    });
+
+    test('should not treat objects with negative lengths as array-like', 1, function() {
+      function Foo() {}
+      Foo.prototype.length = -1;
+
+      strictEqual(_.isEmpty(new Foo), true);
+    });
+
+    test('should not treat objects with lengths larger than `maxSafeInteger` as array-like', 1, function() {
+      function Foo() {}
+      Foo.prototype.length = maxSafeInteger + 1;
+
+      strictEqual(_.isEmpty(new Foo), true);
+    });
+
+    test('should not treat objects with non-number lengths as array-like', 1, function() {
+      strictEqual(_.isEmpty({ 'length': '0' }), false);
+    });
+
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
       equal(_.isEmpty(shadowedObject), false);
     });
@@ -3982,25 +4019,6 @@
 
       Foo.prototype = { 'a': 1 };
       strictEqual(_.isEmpty(Foo), true);
-    });
-
-    test('should work with an object that has a `length` property', 1, function() {
-      strictEqual(_.isEmpty({ 'length': 0 }), false);
-    });
-
-    test('should work with jQuery/MooTools DOM query collections', 1, function() {
-      function Foo(elements) { push.apply(this, elements); }
-      Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
-
-      strictEqual(_.isEmpty(new Foo([])), true);
-    });
-
-    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!isPhantomPage) {
-        strictEqual(_.isEmpty(args), false);
-      } else {
-        skipTest();
-      }
     });
 
     test('should return an unwrapped value when intuitively chaining', 1, function() {
@@ -6055,7 +6073,6 @@
     });
   }());
 
-
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.pad');
@@ -7422,6 +7439,14 @@
       deepEqual(actual, expected);
     });
 
+    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
+      if (!isPhantomPage) {
+        equal(_.size(args), 3);
+      } else {
+        skipTest();
+      }
+    });
+
     test('should work with jQuery/MooTools DOM query collections', 1, function() {
       function Foo(elements) { push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
@@ -7429,12 +7454,16 @@
       equal(_.size(new Foo(array)), 3);
     });
 
-    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!isPhantomPage) {
-        equal(_.size(args), 3);
-      } else {
-        skipTest();
-      }
+    test('should not treat objects with negative lengths as array-like', 1, function() {
+      strictEqual(_.size({ 'length': -1 }), 1);
+    });
+
+    test('should not treat objects with lengths larger than `maxSafeInteger` as array-like', 1, function() {
+      strictEqual(_.size({ 'length': maxSafeInteger + 1 }), 1);
+    });
+
+    test('should not treat objects with non-number lengths as array-like', 1, function() {
+      strictEqual(_.size({ 'length': '0' }), 1);
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {

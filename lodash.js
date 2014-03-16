@@ -6081,9 +6081,9 @@
     }
 
     /**
-     * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
-     * length of `0` and objects with no own enumerable properties are considered
-     * "empty".
+     * Checks if a collection is empty. A value is considered empty unless it is
+     * an array, array-like object, or string with a length greater than `0` or
+     * an object with own properties.
      *
      * @static
      * @memberOf _
@@ -6115,9 +6115,11 @@
       var className = toString.call(value),
           length = value.length;
 
-      if ((className == arrayClass || className == stringClass ||
-          (support.argsClass ? className == argsClass : isArguments(value))) ||
-          (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
+      if (length > -1 && length <= maxSafeInteger && (
+            (className == arrayClass || className == stringClass ||
+              (support.argsClass ? className == argsClass : isArguments(value))) ||
+            (className == objectClass && isFunction(value.splice))
+          )) {
         return !length;
       }
       baseForOwn(value, function() {

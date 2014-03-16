@@ -3650,6 +3650,17 @@
       deepEqual(_.intersection(expected, largeArray), expected);
     });
 
+    test('should work with large arrays of objects', 2, function() {
+      var object = {},
+          expected = [object],
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
+
+      deepEqual(_.intersection(expected, largeArray), expected);
+
+      expected = [1];
+      deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), null, expected), expected);
+    });
+
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _([1, 3, 2]).intersection([5, 2, 1, 4]);

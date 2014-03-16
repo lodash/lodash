@@ -4,7 +4,10 @@
   var undefined;
 
   /** Used as the size to cover large array optimizations */
-  var LARGE_ARRAY_SIZE = 200;
+  var largeArraySize = 200;
+
+  /** Used as the maximum length an array-like object */
+  var maxSafeInteger = Math.pow(2, 53) - 1;
 
   /** Used as a reference to the global object */
   var root = typeof global == 'object' && global || this;
@@ -491,7 +494,7 @@
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
       var object = { 'a': true },
-          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
+          largeArray = _.times(largeArraySize, _.constant(object));
 
       if (lodashBizarro) {
         try {
@@ -2184,8 +2187,8 @@
     });
 
     test('should work with large arrays', 1, function() {
-      var array1 = _.range(LARGE_ARRAY_SIZE + 1),
-          array2 = _.range(LARGE_ARRAY_SIZE),
+      var array1 = _.range(largeArraySize + 1),
+          array2 = _.range(largeArraySize),
           a = {},
           b = {},
           c = {};
@@ -2193,13 +2196,13 @@
       array1.push(a, b, c);
       array2.push(b, c, a);
 
-      deepEqual(_.difference(array1, array2), [LARGE_ARRAY_SIZE]);
+      deepEqual(_.difference(array1, array2), [largeArraySize]);
     });
 
     test('should work with large arrays of objects', 1, function() {
       var object1 = {},
           object2 = {},
-          largeArray = [object1].concat(_.times(LARGE_ARRAY_SIZE, _.constant(object2)));
+          largeArray = [object1].concat(_.times(largeArraySize, _.constant(object2)));
 
       deepEqual(_.difference(largeArray, [object2]), [object1]);
     });
@@ -3207,7 +3210,7 @@
           stringObject = Object(stringLiteral),
           expected = [stringLiteral, stringObject];
 
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function(count) {
+      var largeArray = _.times(largeArraySize, function(count) {
         return count % 2 ? stringObject : stringLiteral;
       });
 
@@ -3484,7 +3487,7 @@
     var array = [1, new Foo, 3, new Foo],
         indexOf = _.indexOf;
 
-    var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
+    var largeArray = _.times(largeArraySize, function() {
       return new Foo;
     });
 
@@ -3645,7 +3648,7 @@
     test('should work with large arrays of objects', 1, function() {
       var object = {},
           expected = [object],
-          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
+          largeArray = _.times(largeArraySize, _.constant(object));
 
       deepEqual(_.intersection(expected, largeArray), expected);
     });
@@ -3653,12 +3656,12 @@
     test('should work with large arrays of objects', 2, function() {
       var object = {},
           expected = [object],
-          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
+          largeArray = _.times(largeArraySize, _.constant(object));
 
       deepEqual(_.intersection(expected, largeArray), expected);
 
       expected = [1];
-      deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), null, expected), expected);
+      deepEqual(_.intersection(_.range(largeArraySize), null, expected), expected);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -8867,7 +8870,7 @@
     test('should work with large arrays', 1, function() {
       var object = {};
 
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function(index) {
+      var largeArray = _.times(largeArraySize, function(index) {
         switch (index % 3) {
           case 0: return 0;
           case 1: return 'a';
@@ -8881,7 +8884,7 @@
     test('should work with large arrays of boolean, `null`, and `undefined` values', 1, function() {
       var array = [],
           expected = [true, false, null, undefined],
-          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+          count = Math.ceil(largeArraySize / expected.length);
 
       _.times(count, function() {
         push.apply(array, expected);
@@ -8893,7 +8896,7 @@
     test('should distinguish between numbers and numeric strings', 1, function() {
       var array = [],
           expected = ['2', 2, Object('2'), Object(2)],
-          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+          count = Math.ceil(largeArraySize / expected.length);
 
       _.times(count, function() {
         push.apply(array, expected);

@@ -1391,6 +1391,30 @@
     }
 
     /**
+     * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
+     * without support for callback shorthands or `thisArg` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to search.
+     * @param {Function} predicate The function called per iteration.
+     * @param {Function} eachFunc The function to iterate over the collection.
+     * @param {boolean} [retKey=false] A flag to indicate returning the key of
+     *  the found element instead of the element itself.
+     * @returns {*} Returns the found element or its key, else `undefined`.
+     */
+    function baseFind(collection, predicate, eachFunc, retKey) {
+      var result;
+
+      eachFunc(collection, function(value, key, collection) {
+        if (predicate(value, key, collection)) {
+          result = retKey ? key : value;
+          return false;
+        }
+      });
+      return result;
+    }
+
+    /**
      * The base implementation of `_.flatten` without support for callback
      * shorthands or `thisArg` binding.
      *
@@ -3809,14 +3833,7 @@
           }
         }
       } else {
-        var result;
-        baseEach(collection, function(value, index, collection) {
-          if (predicate(value, index, collection)) {
-            result = value;
-            return false;
-          }
-        });
-        return result;
+        return baseFind(collection, predicate, baseEach);
       }
     }
 
@@ -3841,16 +3858,8 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseEachRight(collection, function(value, index, collection) {
-        if (predicate(value, index, collection)) {
-          result = value;
-          return false;
-        }
-      });
-      return result;
+      return baseFind(collection, predicate, baseEachRight);
     }
 
     /**
@@ -5706,16 +5715,8 @@
      * // => 'fred'
      */
     function findKey(object, predicate, thisArg) {
-      var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseForOwn(object, function(value, key, object) {
-        if (predicate(value, key, object)) {
-          result = key;
-          return false;
-        }
-      });
-      return result;
+      return baseFind(object, predicate, baseForOwn, true);
     }
 
     /**
@@ -5760,16 +5761,8 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
-      var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseForOwnRight(object, function(value, key, object) {
-        if (predicate(value, key, object)) {
-          result = key;
-          return false;
-        }
-      });
-      return result;
+      return baseFind(object, predicate, baseForOwnRight, true);
     }
 
     /**

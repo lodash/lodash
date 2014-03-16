@@ -561,7 +561,7 @@
 
   /**
    * The base implementation of `_.forEach` without support for callback
-   * shorthands or `thisArg` binding.
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.
@@ -587,7 +587,7 @@
 
   /**
    * The base implementation of `_.forEachRight` without support for callback
-   * shorthands or `thisArg` binding.
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.
@@ -611,8 +611,33 @@
   }
 
   /**
+   * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
+   * without support for callback shorthands or `this` binding which iterates
+   * over `collection` using the provided `eachFunc`.
+   *
+   * @private
+   * @param {Array|Object|string} collection The collection to search.
+   * @param {Function} predicate The function called per iteration.
+   * @param {Function} eachFunc The function to iterate over the collection.
+   * @param {boolean} [retKey=false] A flag to indicate returning the key of
+   *  the found element instead of the element itself.
+   * @returns {*} Returns the found element or its key, else `undefined`.
+   */
+  function baseFind(collection, predicate, eachFunc, retKey) {
+    var result;
+
+    eachFunc(collection, function(value, key, collection) {
+      if (predicate(value, key, collection)) {
+        result = retKey ? key : value;
+        return breakIndicator;
+      }
+    });
+    return result;
+  }
+
+  /**
    * The base implementation of `_.flatten` without support for callback
-   * shorthands or `thisArg` binding.
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Array} array The array to flatten.
@@ -702,7 +727,7 @@
 
   /**
    * The base implementation of `_.forIn` without support for callback
-   * shorthands or `thisArg` binding.
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Object} object The object to iterate over.
@@ -715,7 +740,7 @@
 
   /**
    * The base implementation of `_.forOwn` without support for callback
-   * shorthands or `thisArg` binding.
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Object} object The object to iterate over.
@@ -728,7 +753,7 @@
 
   /**
    * The base implementation of `_.forOwnRight` without support for callback
-   * shorthands or `thisArg` binding.
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Object} object The object to iterate over.
@@ -875,7 +900,7 @@
 
   /**
    * The base implementation of `_.uniq` without support for callback shorthands
-   * or `thisArg` binding.
+   * or `this` binding.
    *
    * @private
    * @param {Array} array The array to process.
@@ -1186,6 +1211,60 @@
    * // => [1, 2, 3]
    */
   var drop = rest;
+
+  /**
+   * This method is like `_.find` except that it returns the index of the first
+   * element the predicate returns truthy for, instead of the element itself.
+   *
+   * If a property name is provided for `predicate` the created "_.pluck" style
+   * callback will return the property value of the given element.
+   *
+   * If an object is provided for `predicate` the created "_.where" style callback
+   * will return `true` for elements that have the properties of the given object,
+   * else `false`.
+   *
+   * @static
+   * @memberOf _
+   * @category Arrays
+   * @param {Array} array The array to search.
+   * @param {Function|Object|string} [predicate=identity] The function called
+   *  per iteration. If a property name or object is provided it will be used
+   *  to create a "_.pluck" or "_.where" style callback, respectively.
+   * @param {*} [thisArg] The `this` binding of `predicate`.
+   * @returns {number} Returns the index of the found element, else `-1`.
+   * @example
+   *
+   * var characters = [
+   *   { 'name': 'barney',  'age': 36 },
+   *   { 'name': 'fred',    'age': 40, 'blocked': true },
+   *   { 'name': 'pebbles', 'age': 1 }
+   * ];
+   *
+   * _.findIndex(characters, function(chr) {
+   *   return chr.age < 20;
+   * });
+   * // => 2
+   *
+   * // using "_.where" callback shorthand
+   * _.findIndex(characters, { 'age': 36 });
+   * // => 0
+   *
+   * // using "_.pluck" callback shorthand
+   * _.findIndex(characters, 'blocked');
+   * // => 1
+   */
+  function findIndex(array, predicate, thisArg) {
+    var index = -1,
+        length = array ? array.length : 0;
+
+    predicate = createCallback(predicate, thisArg, 3);
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return index;
+      }
+    }
+    return -1;
+  }
 
   /**
    * Gets the first element of `array`.
@@ -2111,27 +2190,14 @@
    * // => { 'name': 'fred', 'age': 40, 'blocked': true }
    */
   function find(collection, predicate, thisArg) {
-    predicate = createCallback(predicate, thisArg, 3);
-    var index = -1,
-        length = collection ? collection.length : 0;
+    var length = collection ? collection.length : 0;
 
     if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-      while (++index < length) {
-        var value = collection[index];
-        if (predicate(value, index, collection)) {
-          return value;
-        }
-      }
-    } else {
-      var result;
-      baseEach(collection, function(value, index, collection) {
-        if (predicate(value, index, collection)) {
-          result = value;
-          return breakIndicator;
-        }
-      });
-      return result;
+      var index = findIndex(collection, predicate, thisArg);
+      return index > -1 ? collection[index] : undefined;
     }
+    predicate = createCallback(predicate, thisArg, 3);
+    return baseFind(collection, predicate, baseEach);
   }
 
   /**
@@ -3865,9 +3931,9 @@
   }
 
   /**
-   * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
-   * length of `0` and objects with no own enumerable properties are considered
-   * "empty".
+   * Checks if a collection is empty. A value is considered empty unless it is
+   * an array, array-like object, or string with a length greater than `0` or
+   * an object with own properties.
    *
    * @static
    * @memberOf _

@@ -1056,7 +1056,7 @@
 
     /**
      * The base implementation of `_.clone` without argument juggling or support
-     * for `thisArg` binding.
+     * for `this` binding.
      *
      * @private
      * @param {*} value The value to clone.
@@ -1335,7 +1335,7 @@
 
     /**
      * The base implementation of `_.forEach` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1364,7 +1364,7 @@
 
     /**
      * The base implementation of `_.forEachRight` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1392,7 +1392,7 @@
 
     /**
      * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
-     * without support for callback shorthands or `thisArg` binding.
+     * without support for callback shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to search.
@@ -1416,7 +1416,7 @@
 
     /**
      * The base implementation of `_.flatten` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array} array The array to flatten.
@@ -1506,7 +1506,7 @@
 
     /**
      * The base implementation of `_.forIn` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1519,7 +1519,7 @@
 
     /**
      * The base implementation of `_.forOwn` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1532,7 +1532,7 @@
 
     /**
      * The base implementation of `_.forOwnRight` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1710,7 +1710,7 @@
 
     /**
      * The base implementation of `_.merge` without argument juggling or support
-     * for `thisArg` binding.
+     * for `this` binding.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1788,7 +1788,7 @@
 
     /**
      * The base implementation of `_.uniq` without support for callback shorthands
-     * or `thisArg` binding.
+     * or `this` binding.
      *
      * @private
      * @param {Array} array The array to process.

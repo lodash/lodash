@@ -1057,7 +1057,7 @@
 
     /**
      * The base implementation of `_.clone` without argument juggling or support
-     * for `thisArg` binding.
+     * for `this` binding.
      *
      * @private
      * @param {*} value The value to clone.
@@ -1336,7 +1336,7 @@
 
     /**
      * The base implementation of `_.forEach` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1365,7 +1365,7 @@
 
     /**
      * The base implementation of `_.forEachRight` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1392,8 +1392,33 @@
     }
 
     /**
+     * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
+     * without support for callback shorthands or `this` binding which iterates
+     * over `collection` using the provided `eachFunc`.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to search.
+     * @param {Function} predicate The function called per iteration.
+     * @param {Function} eachFunc The function to iterate over the collection.
+     * @param {boolean} [retKey=false] A flag to indicate returning the key of
+     *  the found element instead of the element itself.
+     * @returns {*} Returns the found element or its key, else `undefined`.
+     */
+    function baseFind(collection, predicate, eachFunc, retKey) {
+      var result;
+
+      eachFunc(collection, function(value, key, collection) {
+        if (predicate(value, key, collection)) {
+          result = retKey ? key : value;
+          return false;
+        }
+      });
+      return result;
+    }
+
+    /**
      * The base implementation of `_.flatten` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array} array The array to flatten.
@@ -1483,7 +1508,7 @@
 
     /**
      * The base implementation of `_.forIn` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1496,7 +1521,7 @@
 
     /**
      * The base implementation of `_.forOwn` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1509,7 +1534,7 @@
 
     /**
      * The base implementation of `_.forOwnRight` without support for callback
-     * shorthands or `thisArg` binding.
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1687,7 +1712,7 @@
 
     /**
      * The base implementation of `_.merge` without argument juggling or support
-     * for `thisArg` binding.
+     * for `this` binding.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1765,7 +1790,7 @@
 
     /**
      * The base implementation of `_.uniq` without support for callback shorthands
-     * or `thisArg` binding.
+     * or `this` binding.
      *
      * @private
      * @param {Array} array The array to process.
@@ -3778,27 +3803,12 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
       if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          var value = collection[index];
-          if (predicate(value, index, collection)) {
-            return value;
-          }
-        }
-      } else {
-        var result;
-        baseEach(collection, function(value, index, collection) {
-          if (predicate(value, index, collection)) {
-            result = value;
-            return false;
-          }
-        });
-        return result;
+        var index = findIndex(collection, predicate, thisArg);
+        return index > -1 ? collection[index] : undefined;
       }
+      predicate = lodash.createCallback(predicate, thisArg, 3);
+      return baseFind(collection, predicate, baseEach);
     }
 
     /**
@@ -3822,16 +3832,8 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseEachRight(collection, function(value, index, collection) {
-        if (predicate(value, index, collection)) {
-          result = value;
-          return false;
-        }
-      });
-      return result;
+      return baseFind(collection, predicate, baseEachRight);
     }
 
     /**
@@ -5687,16 +5689,8 @@
      * // => 'fred'
      */
     function findKey(object, predicate, thisArg) {
-      var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseForOwn(object, function(value, key, object) {
-        if (predicate(value, key, object)) {
-          result = key;
-          return false;
-        }
-      });
-      return result;
+      return baseFind(object, predicate, baseForOwn, true);
     }
 
     /**
@@ -5741,16 +5735,8 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
-      var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
-      baseForOwnRight(object, function(value, key, object) {
-        if (predicate(value, key, object)) {
-          result = key;
-          return false;
-        }
-      });
-      return result;
+      return baseFind(object, predicate, baseForOwnRight, true);
     }
 
     /**
@@ -6076,9 +6062,9 @@
     }
 
     /**
-     * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
-     * length of `0` and objects with no own enumerable properties are considered
-     * "empty".
+     * Checks if a collection is empty. A value is considered empty unless it is
+     * an array, array-like object, or string with a length greater than `0` or
+     * an object with own properties.
      *
      * @static
      * @memberOf _
@@ -6110,9 +6096,11 @@
       var className = toString.call(value),
           length = value.length;
 
-      if ((className == arrayClass || className == stringClass ||
-          (support.argsClass ? className == argsClass : isArguments(value))) ||
-          (className == objectClass && typeof length == 'number' && isFunction(value.splice))) {
+      if (length > -1 && length <= maxSafeInteger && (
+            (className == arrayClass || className == stringClass ||
+              (support.argsClass ? className == argsClass : isArguments(value))) ||
+            (className == objectClass && isFunction(value.splice))
+          )) {
         return !length;
       }
       baseForOwn(value, function() {

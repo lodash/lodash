@@ -1392,7 +1392,8 @@
 
     /**
      * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
-     * without support for callback shorthands or `this` binding.
+     * without support for callback shorthands or `this` binding which iterates
+     * over `collection` using the provided `eachFunc`.
      *
      * @private
      * @param {Array|Object|string} collection The collection to search.
@@ -3821,20 +3822,12 @@
      * // => { 'name': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
       if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          var value = collection[index];
-          if (predicate(value, index, collection)) {
-            return value;
-          }
-        }
-      } else {
-        return baseFind(collection, predicate, baseEach);
+        var index = findIndex(collection, predicate, thisArg);
+        return index > -1 ? collection[index] : undefined;
       }
+      predicate = lodash.createCallback(predicate, thisArg, 3);
+      return baseFind(collection, predicate, baseEach);
     }
 
     /**

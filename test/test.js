@@ -490,11 +490,8 @@
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
-      var object = { 'a': true };
-
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
-        return object;
-      });
+      var object = { 'a': true },
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
       if (lodashBizarro) {
         try {
@@ -626,7 +623,6 @@
         this.a = 1;
         this.c = 3;
       }
-
       Foo.prototype.b = 2;
       deepEqual(_.assign({}, new Foo), { 'a': 1, 'c': 3 });
     });
@@ -893,7 +889,6 @@
         this._b = 2;
         this.a = function() { return this._a; };
       }
-
       Foo.prototype.b = function() { return this._b; };
 
       var object = new Foo;
@@ -2026,7 +2021,6 @@
         this.a = 1;
         this.c = 3;
       }
-
       Foo.prototype.b = 2;
       deepEqual(_.defaults({ 'c': 2 }, new Foo), { 'a': 1, 'c': 2 });
     });
@@ -2204,11 +2198,8 @@
 
     test('should work with large arrays of objects', 1, function() {
       var object1 = {},
-          object2 = {};
-
-      var largeArray = [object1].concat(_.times(LARGE_ARRAY_SIZE, function() {
-        return object2;
-      }));
+          object2 = {},
+          largeArray = [object1].concat(_.times(LARGE_ARRAY_SIZE, _.constant(object2)));
 
       deepEqual(_.difference(largeArray, [object2]), [object1]);
     });
@@ -3251,7 +3242,6 @@
         this.a = _.identity;
         this.b = 'b'
       }
-
       Foo.prototype.c = noop;
       deepEqual(_.functions(new Foo), ['a', 'c']);
     });
@@ -3477,6 +3467,8 @@
   QUnit.module('custom `_.indexOf` methods');
 
   (function() {
+    function Foo() {}
+
     function custom(array, value, fromIndex) {
       var index = (fromIndex || 0) - 1,
           length = array.length;
@@ -3489,9 +3481,6 @@
       }
       return -1;
     }
-
-    function Foo() {}
-
     var array = [1, new Foo, 3, new Foo],
         indexOf = _.indexOf;
 
@@ -3655,11 +3644,8 @@
 
     test('should work with large arrays of objects', 1, function() {
       var object = {},
-          expected = [object];
-
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
-        return object;
-      });
+          expected = [object],
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
       deepEqual(_.intersection(expected, largeArray), expected);
     });
@@ -4198,9 +4184,7 @@
     });
 
     test('should perform comparisons between object instances', 4, function() {
-      function Foo() {
-        this.value = 1;
-      }
+      function Foo() { this.value = 1; }
       Foo.prototype.value = 1;
 
       function Bar() {
@@ -8652,7 +8636,6 @@
         this.b = 2;
         this.c = 3;
       }
-
       var actual = _.transform(new Foo, function(result, value, key) {
         result[key] = value * value;
       });
@@ -8892,6 +8875,7 @@
       _.times(count, function() {
         push.apply(array, expected);
       });
+
       deepEqual(_.uniq(array), expected);
     });
 

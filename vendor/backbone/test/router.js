@@ -788,7 +788,22 @@
         }
       }
     });
-    var router = new Router;
+    new Router;
+    Backbone.history.start({pushState: true});
+  });
+
+  test('newline in route', 1, function() {
+    location.replace('http://example.com/stuff%0Anonsense?param=foo%0Abar');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {
+        'stuff\nnonsense': function() {
+          ok(true);
+        }
+      }
+    });
+    new Router;
     Backbone.history.start({pushState: true});
   });
 

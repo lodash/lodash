@@ -2437,7 +2437,7 @@
      * @param {Array} array The array to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
@@ -2491,7 +2491,7 @@
      * @param {Array} array The array to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
@@ -2529,6 +2529,9 @@
 
     /**
      * Gets the first element of `array`.
+     *
+     * Note: The `n` and `predicate` arguments are deprecated; replace with
+     * `_.take` and `_.takeWhile` respectively.
      *
      * @static
      * @memberOf _
@@ -2584,7 +2587,7 @@
      * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it will be used to create a "_.pluck"
-     *  or "_.where" style callback, respectively.
+     *  or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns the new flattened array.
      * @example
@@ -2667,6 +2670,9 @@
 
     /**
      * Gets all but the last element of `array`.
+     *
+     * Note: The `n` and `predicate` arguments are deprecated; replace with
+     * `_.dropRight` and `_.dropRightWhile` respectively.
      *
      * @static
      * @memberOf _
@@ -2758,6 +2764,9 @@
 
     /**
      * Gets the last element of `array`.
+     *
+     * Note: The `n` and `predicate` arguments are deprecated; replace with
+     * `_.takeRight` and `_.takeRightWhile` respectively.
      *
      * @static
      * @memberOf _
@@ -2879,7 +2888,7 @@
      * @param {Array} array The array to modify.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the array of removed elements.
      * @example
@@ -2912,6 +2921,9 @@
 
     /**
      * Gets all but the first element of `array`.
+     *
+     * Note: The `n` and `predicate` arguments are deprecated; replace with
+     * `_.drop` and `_.dropWhile` respectively.
      *
      * @static
      * @memberOf _
@@ -3002,7 +3014,7 @@
      * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
@@ -3227,7 +3239,7 @@
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it will be used to create a "_.pluck"
-     *  or "_.where" style callback, respectively.
+     *  or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns the new duplicate-value-free array.
      * @example
@@ -3634,7 +3646,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -3671,7 +3683,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {boolean} Returns `true` if all elements passed the predicate check,
      *  else `false`.
@@ -3733,7 +3745,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -3797,7 +3809,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {*} Returns the found element, else `undefined`.
      * @example
@@ -3840,7 +3852,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {*} Returns the found element, else `undefined`.
      * @example
@@ -3948,7 +3960,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -3991,7 +4003,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -4069,7 +4081,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns the new mapped array.
      * @example
@@ -4127,7 +4139,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it will be used to create a "_.pluck"
-     *  or "_.where" style callback, respectively.
+     *  or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {*} Returns the maximum value.
      * @example
@@ -4202,7 +4214,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it will be used to create a "_.pluck"
-     *  or "_.where" style callback, respectively.
+     *  or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {*} Returns the minimum value.
      * @example
@@ -4276,7 +4288,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the array of grouped elements.
      * @example
@@ -4429,7 +4441,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -4564,7 +4576,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {boolean} Returns `true` if any element passed the predicate check,
      *  else `false`.
@@ -4630,7 +4642,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Array|Function|Object|string} [callback=identity] The function
      *  called per iteration. If a property name or object is provided it will
-     *  be used to create a "_.pluck" or "_.where" style callback, respectively.
+     *  be used to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Array} Returns the new sorted array.
      * @example
@@ -5684,7 +5696,7 @@
      * @param {Object} object The object to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
@@ -5730,7 +5742,7 @@
      * @param {Object} object The object to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {string|undefined} Returns the key of the found element, else `undefined`.
      * @example
@@ -6562,7 +6574,7 @@
      * @param {Object} object The object to iterate over.
      * @param {Function|Object|string} [callback=identity] The function called
      *  per iteration. If a property name or object is provided it will be used
-     *  to create a "_.pluck" or "_.where" style callback, respectively.
+     *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the new mapped object.
      * @example

@@ -5220,13 +5220,14 @@
     }
 
     /**
-     * Creates a function that negates the result of `func`. The `func` function
-     * is executed with the `this` binding and arguments of the created function.
+     * Creates a function that negates the result of the predicate `func`. The
+     * `func` function is executed with the `this` binding and arguments of the
+     * created function.
      *
      * @static
      * @memberOf _
      * @category Functions
-     * @param {Function} func The function to negate.
+     * @param {Function} predicate The predicate to negate.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -5237,12 +5238,12 @@
      * _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
      * // => [1, 3, 5]
      */
-    function negate(func) {
-      if (!isFunction(func)) {
+    function negate(predicate) {
+      if (!isFunction(predicate)) {
         throw new TypeError;
       }
       return function() {
-        return !func.apply(this, arguments);
+        return !predicate.apply(this, arguments);
       };
     }
 

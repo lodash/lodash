@@ -41,9 +41,11 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.forIn](http://lodash.com/docs#forIn) for iterating own & inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) for checking if values are created by `Object`
+ * [_.keysIn](http://lodash.com/docs#keysIn) & [_.valuesIn](http://lodash.com/docs#valuesIn) for keys and values of own & inherited properties
  * [_.mapValues](http://lodash.com/docs#mapValues) for [mapping](http://lodash.com/docs#map) values to an object
  * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
+ * [_.negate](http://lodash.com/docs#negate) to create negated predicate functions
  * [_.noop](http://lodash.com/docs#noop) for function placeholders
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
@@ -55,18 +57,20 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-string-literals)
  * [_.transform](http://lodash.com/docs#transform) as a powerful alternative to [_.reduce](http://lodash.com/docs#reduce) for transforming objects
  * [_.where](http://lodash.com/docs#where) supports deep object comparisons
- * [_.xor](http://lodash.com/docs#xor) as a companion to [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
+ * [_.xor](http://lodash.com/docs#xor) to complement [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
  * [_.zip](http://lodash.com/docs#zip) is capable of unzipping values
  * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
    [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.truncate") string methods
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &
    [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.forEachRight, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.where") accept strings
+ * [_.dropWhile](http://lodash.com/docs#dropWhile), [_.takeWhile](http://lodash.com/docs#takeWhile), &
+   [more](http://lodash.com/docs "_.drop, _.dropRightWhile, _.take, _.takeRightWhile") to complement [_.first](http://lodash.com/docs#first), [_.initial](http://lodash.com/docs#initial), [_.last](http://lodash.com/docs#last), & [_.rest](http://lodash.com/docs#rest)
  * [_.filter](http://lodash.com/docs#filter), [_.map](http://lodash.com/docs#map), &
    [more](http://lodash.com/docs "_.countBy, _.every, _.find, _.findKey, _.findLast, _.findLastIndex, _.findLastKey, _.first, _.groupBy, _.initial, _.last, _.max, _.min, _.reject, _.rest, _.some, _.sortBy, _.sortedIndex, _.uniq") support *“_.pluck”* & *“_.where”* shorthands
  * [_.findLast](http://lodash.com/docs#findLast), [_.findLastIndex](http://lodash.com/docs#findLastIndex), &
    [more](http://lodash.com/docs "_.findLastKey, _.forEachRight, _.forInRight, _.forOwnRight, _.partialRight") right-associative methods
  * [_.omit](http://lodash.com/docs#omit), [_.pick](http://lodash.com/docs#pick), &
-   [more](http://lodash.com/docs "_.assign, _.clone, _.cloneDeep, _.first, _.initial, _.isEqual, _.last, _.merge, _.rest") accept callbacks
+   [more](http://lodash.com/docs "_.assign, _.clone, _.cloneDeep, _.isEqual, _.merge") accept callbacks
 
 ## Resources
 

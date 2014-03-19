@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 ;(function() {
   'use strict';
 
@@ -10,7 +11,8 @@
   }
 
   /** Load Node.js modules */
-  var http = require('http'),
+  var EventEmitter = require('events').EventEmitter,
+      http = require('http'),
       path = require('path'),
       url = require('url');
 
@@ -20,54 +22,54 @@
       request = require('request'),
       SauceTunnel = require('sauce-tunnel');
 
+  /** Used for Sauce Labs credentials */
+  var accessKey = env.SAUCE_ACCESS_KEY,
+      username = env.SAUCE_USERNAME;
+
+  /** Used as the maximum number of times to retry a job */
+  var maxRetries = 3;
+
   /** Used by `logInline` to clear previously logged messages */
   var prevLine = '';
+
+  /** Used to detect error messages */
+  var reError = /\berror\b/i;
 
   /** Used to display the wait throbber */
   var throbberId,
       throbberDelay = 500,
       waitCount = -1;
 
-  /** Used as request `auth` and `options` values */
-  var accessKey = env.SAUCE_ACCESS_KEY,
-      build = env.TRAVIS_COMMIT.slice(0, 10),
-      port = 9001,
-      tunnelId = 'lodash_' + env.TRAVIS_JOB_NUMBER,
-      username = env.SAUCE_USERNAME;
-
-  var compatMode = process.argv.reduce(function(result, value) {
-    return optionToValue('compatMode', value) || result;
-  }, null);
-
-  var runner = process.argv.reduce(function(result, value) {
-    value = optionToValue('runner', value);
-    return value == null
-      ? result
-      : '/' + value.replace(/^\W+/, '');
-  }, '/test/index.html');
-
-  var sessionName = process.argv.reduce(function(result, value) {
-    return optionToValue('name', value) || result;
-  }, 'lodash tests');
-
-  var tags = process.argv.reduce(function(result, value) {
-    value = optionToArray('tags', value);
-    return value.length
-      ? _.union(result, value)
-      : result;
-  }, []);
+  /** Used as Sauce Labs config values */
+  var advisor = getOption('advisor', true),
+      build = getOption('build', env.TRAVIS_COMMIT.slice(0, 10)),
+      compatMode = getOption('compatMode', null),
+      customData = Function('return {' + getOption('customData', '').replace(/^\{|}$/g, '') + '}')(),
+      framework = getOption('framework', 'qunit'),
+      idleTimeout = getOption('idleTimeout', 180),
+      jobName = getOption('name', 'unit tests'),
+      maxDuration = getOption('maxDuration', 360),
+      port = getOption('port', 9001),
+      publicAccess = getOption('public', true),
+      recordVideo = getOption('recordVideo', false),
+      recordScreenshots = getOption('recordScreenshots', false),
+      runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
+      runnerUrl = getOption('runnerUrl', 'http://localhost:' + port + '/' + runner),
+      statusInterval = getOption('statusInterval', 5000),
+      tags = getOption('tag', []),
+      tunneled = getOption('tunneled', true),
+      tunnelId = getOption('tunnelId', 'tunnel_' + env.TRAVIS_JOB_NUMBER),
+      tunnelTimeout = getOption('tunnelTimeout', 10000),
+      videoUploadOnPass = getOption('videoUploadOnPass', false);
 
   /** List of platforms to load the runner on */
   var platforms = [
-    ['Windows 8.1', 'googlechrome', '31'],
-    ['Windows 8.1', 'googlechrome', '28'],
-    ['Windows 8.1', 'googlechrome', '26'],
+    ['Windows 8.1', 'googlechrome', '33'],
+    ['Windows 8.1', 'googlechrome', '32'],
+    ['Windows 8.1', 'firefox', '27'],
     ['Windows 8.1', 'firefox', '26'],
-    ['OS X 10.6', 'firefox', '20'],
-    ['OS X 10.6', 'firefox', '10'],
-    ['OS X 10.6', 'firefox', '6'],
-    ['OS X 10.6', 'firefox', '4'],
-    ['Windows 7', 'firefox', '3.6'],
+    ['Windows 8.1', 'firefox', '20'],
+    ['Windows 8.1', 'firefox', '3.0'],
     ['Windows 8.1', 'internet explorer', '11'],
     ['Windows 8', 'internet explorer', '10'],
     ['Windows 7', 'internet explorer', '9'],
@@ -76,9 +78,9 @@
     ['Windows XP', 'internet explorer', '6'],
     ['Windows 7', 'opera', '12'],
     ['Windows 7', 'opera', '11'],
+    ['OS X 10.9', 'safari', '7'],
     ['OS X 10.8', 'safari', '6'],
-    ['Windows 7', 'safari', '5'],
-    ['Windows XP', 'safari', '4']
+    ['OS X 10.6', 'safari', '5']
   ];
 
   /** Used to tailor the `platforms` array */
@@ -137,7 +139,54 @@
     });
   }
 
+  /** Used as the default `Job` options object */
+  var defaultOptions = {
+    'build': build,
+    'custom-data': customData,
+    'framework': framework,
+    'idle-timeout': idleTimeout,
+    'max-duration': maxDuration,
+    'name': jobName,
+    'public': publicAccess,
+    'platforms': [],
+    'record-screenshots': recordScreenshots,
+    'record-video': recordVideo,
+    'sauce-advisor': advisor,
+    'tags': tags,
+    'url': runnerUrl,
+    'video-upload-on-pass': videoUploadOnPass
+  };
+
+  if (publicAccess === true) {
+    defaultOptions['public'] = 'public';
+  }
+  if (tunneled) {
+    defaultOptions.tunnel = 'tunnel-identifier:' + tunnelId;
+  }
+
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Gets the value for the given option name. If no value is available the
+   * `defaultValue` is returned.
+   *
+   * @private
+   * @param {string} name The name of the option.
+   * @param {*} defaultValue The default option value.
+   * @returns {*} Returns the option value.
+   */
+  function getOption(name, defaultValue) {
+    var isArr = _.isArray(defaultValue);
+    return _.reduce(process.argv, function(result, value) {
+      if (isArr) {
+        value = optionToArray(name, value);
+        return _.isEmpty(value) ? result : value;
+      }
+      value = optionToValue(name, value);
+
+      return value == null ? result : value;
+    }, defaultValue);
+  }
 
   /**
    * Writes an inline message to standard output.
@@ -146,7 +195,7 @@
    * @param {string} text The text to log.
    */
   function logInline(text) {
-    var blankLine = repeat(' ', prevLine.length);
+    var blankLine = _.repeat(' ', _.size(prevLine));
     if (text.length > 40) {
       text = text.slice(0, 37) + '...';
     }
@@ -160,7 +209,7 @@
    * @private
    */
   function logThrobber() {
-    logInline('Please wait' + repeat('.', (++waitCount % 3) + 1));
+    logInline('Please wait' + _.repeat('.', (++waitCount % 3) + 1));
   }
 
   /**
@@ -172,10 +221,7 @@
    * @returns {Array} Returns the new converted array.
    */
   function optionToArray(name, string) {
-    return _.compact(_.isArray(string)
-      ? string
-      : _.invoke((optionToValue(name, string) || '').split(/, */), 'trim')
-    );
+    return _.compact(_.invoke((optionToValue(name, string) || '').split(/, */), 'trim'));
   }
 
   /**
@@ -187,151 +233,139 @@
    * @returns {string|undefined} Returns the option value, else `undefined`.
    */
   function optionToValue(name, string) {
-    var result = (result = string.match(RegExp('^' + name + '=([\\s\\S]+)$'))) && result[1].trim();
+    var result = (result = string.match(RegExp('^' + name + '(?:=([\\s\\S]+))?$'))) && (result[1] ? result[1].trim() : true);
+    if (result === 'false') {
+      return false;
+    }
     return result || undefined;
   }
 
-  /**
-   * Creates a string with `text` repeated `n` number of times.
-   *
-   * @private
-   * @param {string} text The text to repeat.
-   * @param {number} n The number of times to repeat `text`.
-   * @returns {string} The created string.
-   */
-  function repeat(text, n) {
-    return Array(n + 1).join(text);
+  /*--------------------------------------------------------------------------*/
+
+  function check() {
+    request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests/status', {
+      'auth': { 'user': this.user, 'pass': this.pass },
+      'json': { 'js tests': [this.id] }
+    }, onCheck.bind(this));
+  }
+
+  function onCheck(error, response, body) {
+    var data = _.result(body, 'js tests', [{ 'status': 'test error' }])[0],
+        result = data.result,
+        failures = _.result(result, 'failed'),
+        statusCode = _.result(response, 'statusCode');
+
+    if (error || statusCode != 200 || data.status == 'test error') {
+      logInline('');
+      console.error('Failed to check test status on Sauce Labs; status: %d, body:\n%s', statusCode, JSON.stringify(body));
+      if (error) {
+        console.error(error);
+      }
+      process.exit(4);
+    }
+    if (!_.result(body, 'completed')) {
+      setTimeout(check.bind(this), statusInterval);
+      return;
+    }
+    if (!result || failures || reError.test(result.message)) {
+      if (this.attempts < maxRetries) {
+        this.attempts++;
+        this.run();
+        return;
+      }
+      _.assign(this, data, { 'failed': true });
+
+      var details = 'See ' + this.url + ' for details.',
+          message = _.result(result, 'message', 'no results available. ' + details),
+          platform = JSON.stringify(this.options.platforms[0]);
+
+      logInline('');
+      if (failures) {
+        console.error('There was %d failures on %s. %s', failures, platform, details);
+      } else {
+        console.error('Testing on %s failed; %s', platform, message);
+      }
+    }
+    this.emit('complete');
+  }
+
+  function onRun(error, response, body) {
+    var id = _.result(body, 'js tests', [])[0],
+        statusCode = _.result(response, 'statusCode');
+
+    if (error || !id || statusCode != 200) {
+      console.error('Failed to submit test to Sauce Labs; status: %d, body:\n%s', statusCode, JSON.stringify(body));
+      if (error) {
+        console.error(error);
+      }
+      process.exit(3);
+    }
+    this.id = id;
+    check.call(this);
   }
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * Processes the result object of the test session.
-   *
-   * @private
-   * @param {Object} results The result object to process.
-   */
-  function handleTestResults(results) {
-    var failingTests = results.filter(function(test) {
-      var result = test.result;
-      return !result || result.failed || /\berror\b/i.test(result.message);
-    });
-
-    var failingPlatforms = failingTests.map(function(test) {
-      return test.platform;
-    });
-
-    if (!failingTests.length) {
-      console.log('Tests passed');
-    }
-    else {
-      console.error('Tests failed on platforms: ' + JSON.stringify(failingPlatforms));
-
-      failingTests.forEach(function(test) {
-        var result = test.result || {},
-            details = 'See ' + test.url + ' for details.',
-            failed = result.failed,
-            platform = JSON.stringify(test.platform);
-
-        if (failed) {
-          console.error(failed + ' failures on ' + platform + '. ' + details);
-        } else {
-          var message = result.message || 'no results available. ' + details;
-          console.error('Testing on ' + platform + ' failed; ' + message);
-        }
-      });
-    }
-
-    clearInterval(throbberId);
-    console.log('Shutting down Sauce Connect tunnel...');
-
-    tunnel.stop(function() {
-      process.exit(failingTests.length ? 1 : 0);
-    });
+  function Job(options) {
+    EventEmitter.call(this);
+    _.merge(this, { 'attempts': 0, 'options': {} }, options);
+    _.defaults(this.options, _.cloneDeep(defaultOptions));
   }
 
+  Job.prototype = _.create(EventEmitter.prototype);
+
+  Job.prototype.run = function() {
+    console.log('Starting saucelabs test: %s', JSON.stringify(this.options));
+    request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests', {
+      'auth': { 'user': this.user, 'pass': this.pass },
+      'json': this.options
+    }, onRun.bind(this));
+  };
+
+  /*--------------------------------------------------------------------------*/
+
   /**
-   * Makes a request for Sauce Labs to start the test session.
+   * Makes a request for Sauce Labs to start the jobs.
    *
    * @private
    */
-  function runTests() {
-    var options = {
-      'build': build,
-      'framework': 'qunit',
-      'idle-timeout': 180,
-      'max-duration': 360,
-      'name': sessionName,
-      'public': 'public',
-      'platforms': platforms,
-      'record-screenshots': false,
-      'tags': tags,
-      'tunnel': 'tunnel-identifier:' + tunnelId,
-      'url': 'http://localhost:' + port + runner,
-      'video-upload-on-pass': false
-    };
+  function run(platforms) {
+    var jobs = _.map(platforms, function(platform) {
+      return new Job({
+        'user': username,
+        'pass': accessKey,
+        'options': { 'platforms': [platform] }
+      })
+    });
 
-    console.log('Starting saucelabs tests: ' + JSON.stringify(options));
+    var failed = 0,
+        finishedJobs = 0,
+        totalJobs = jobs.length;
 
-    request.post('https://saucelabs.com/rest/v1/' + username + '/js-tests', {
-      'auth': { 'user': username, 'pass': accessKey },
-      'json': options
-    }, function(error, response, body) {
-      var statusCode = response && response.statusCode;
-      if (statusCode == 200) {
-        waitForTestCompletion(body);
+    _.invoke(jobs, 'on', 'complete', function() {
+      console.log('Test passed on platform: %s', JSON.stringify(this.options.platforms[0]));
+
+      if (++finishedJobs == totalJobs) {
+        console.log('Shutting down Sauce Connect tunnel...');
+        clearInterval(throbberId);
+        tunnel.stop(function() {
+          process.exit(failed);
+        });
       } else {
-        console.error('Failed to submit test to Sauce Labs; status: ' +  statusCode + ', body:\n' + JSON.stringify(body));
-        if (error) {
-          console.error(error);
-        }
-        process.exit(3);
+        failed |= this.failed;
       }
     });
 
-    // initialize the wait throbber
-    if (!throbberId) {
-      throbberId = setInterval(logThrobber, throbberDelay);
-      logThrobber();
-    }
+    throbberId = setInterval(logThrobber, throbberDelay);
+    logThrobber();
+    _.invoke(jobs, 'run');
   }
 
-  /**
-   * Checks the status of the test session. If the session has completed it
-   * passes the result object to `handleTestResults`, else it checks the status
-   * again in five seconds.
-   *
-   * @private
-   * @param {Object} testIdentifier The object used to identify the session.
-   */
-  function waitForTestCompletion(testIdentifier) {
-    request.post('https://saucelabs.com/rest/v1/' + username + '/js-tests/status', {
-      'auth': { 'user': username, 'pass': accessKey },
-      'json': testIdentifier
-    }, function(error, response, body) {
-        var statusCode = response && response.statusCode;
-        if (statusCode == 200) {
-          if (body && body.completed) {
-            logInline('');
-            handleTestResults(body['js tests']);
-          }
-          else {
-            setTimeout(function() {
-              waitForTestCompletion(testIdentifier);
-            }, 5000);
-          }
-        } else {
-          logInline('');
-          console.error('Failed to check test status on Sauce Labs; status: ' + statusCode + ', body:\n' + JSON.stringify(body));
-          if (error) {
-            console.error(error);
-          }
-          process.exit(4);
-        }
-    });
-  }
-
-  /*--------------------------------------------------------------------------*/
+  // cleanup any inline logs when exited via `ctrl+c`
+  process.on('SIGINT', function() {
+    logInline('');
+    process.exit();
+  });
 
   // create a web server for the local dir
   var mount = ecstatic({
@@ -348,15 +382,14 @@
   }).listen(port);
 
   // set up Sauce Connect so we can use this server from Sauce Labs
-  var tunnelTimeout = 10000,
-      tunnel = new SauceTunnel(username, accessKey, tunnelId, true, tunnelTimeout);
+  var tunnel = new SauceTunnel(username, accessKey, tunnelId, tunneled, tunnelTimeout);
 
   console.log('Opening Sauce Connect tunnel...');
 
   tunnel.start(function(success) {
     if (success) {
       console.log('Sauce Connect tunnel opened');
-      runTests();
+      run(platforms);
     } else {
       console.error('Failed to open Sauce Connect tunnel');
       process.exit(2);

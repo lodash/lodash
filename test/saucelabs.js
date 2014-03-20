@@ -6,7 +6,7 @@
   var env = process.env;
 
   if (isFinite(env.TRAVIS_PULL_REQUEST)) {
-    console.error('Testing skipped for pull requests');
+    console.error('Skipping Sauce Labs jobs for pull requests');
     process.exit(0);
   }
 
@@ -29,6 +29,21 @@
   /** Used as the maximum number of times to retry a job */
   var maxRetries = 3;
 
+  /** Used as the static file server middleware */
+  var mount = ecstatic({
+    'cache': false,
+    'root': process.cwd()
+  });
+
+  /** Used as the list of ports supported by Sauce Connect */
+  var ports = [
+    80, 443, 888, 2000, 2001, 2020, 2109, 2222, 2310, 3000, 3001, 3030, 3210,
+    3333, 4000, 4001, 4040, 4321, 4502, 4503, 4567, 5000, 5001, 5050, 5555, 5432,
+    6000, 6001, 6060, 6666, 6543, 7000, 7070, 7774, 7777, 8000, 8001, 8003, 8031,
+    8080, 8081, 8765, 8777, 8888, 9000, 9001, 9080, 9090, 9876, 9877, 9999, 49221,
+    55001
+  ];
+
   /** Used by `logInline` to clear previously logged messages */
   var prevLine = '';
 
@@ -49,14 +64,14 @@
       idleTimeout = getOption('idleTimeout', 180),
       jobName = getOption('name', 'unit tests'),
       maxDuration = getOption('maxDuration', 360),
-      port = getOption('port', 9001),
+      port = ports[Math.min(_.sortedIndex(ports, getOption('port', 9001)), ports.length - 1)],
       publicAccess = getOption('public', true),
       recordVideo = getOption('recordVideo', false),
       recordScreenshots = getOption('recordScreenshots', false),
       runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
       runnerUrl = getOption('runnerUrl', 'http://localhost:' + port + '/' + runner),
       statusInterval = getOption('statusInterval', 5000),
-      tags = getOption('tag', []),
+      tags = getOption('tags', []),
       tunneled = getOption('tunneled', true),
       tunnelId = getOption('tunnelId', 'tunnel_' + env.TRAVIS_JOB_NUMBER),
       tunnelTimeout = getOption('tunnelTimeout', 10000),
@@ -148,7 +163,7 @@
     'max-duration': maxDuration,
     'name': jobName,
     'public': publicAccess,
-    'platforms': [],
+    'platforms': platforms,
     'record-screenshots': recordScreenshots,
     'record-video': recordVideo,
     'sauce-advisor': advisor,
@@ -196,10 +211,7 @@
    */
   function logInline(text) {
     var blankLine = _.repeat(' ', _.size(prevLine));
-    if (text.length > 40) {
-      text = text.slice(0, 37) + '...';
-    }
-    prevLine = text;
+    prevLine = text = _.truncate(text, 40);
     process.stdout.write(text + blankLine.slice(text.length) + '\r');
   }
 
@@ -250,20 +262,13 @@
   }
 
   function onCheck(error, response, body) {
-    var data = _.result(body, 'js tests', [{ 'status': 'test error' }])[0],
+    var completed = _.result(body, 'completed'),
+        data = _.result(body, 'js tests', [{ 'status': 'test error' }])[0],
+        platform = JSON.stringify(this.options.platforms[0]),
         result = data.result,
-        failures = _.result(result, 'failed'),
-        statusCode = _.result(response, 'statusCode');
+        failures = _.result(result, 'failed');
 
-    if (error || statusCode != 200 || data.status == 'test error') {
-      logInline('');
-      console.error('Failed to check test status on Sauce Labs; status: %d, body:\n%s', statusCode, JSON.stringify(body));
-      if (error) {
-        console.error(error);
-      }
-      process.exit(4);
-    }
-    if (!_.result(body, 'completed')) {
+    if (!completed) {
       setTimeout(check.bind(this), statusInterval);
       return;
     }
@@ -276,8 +281,7 @@
       _.assign(this, data, { 'failed': true });
 
       var details = 'See ' + this.url + ' for details.',
-          message = _.result(result, 'message', 'no results available. ' + details),
-          platform = JSON.stringify(this.options.platforms[0]);
+          message = _.result(result, 'message', 'no results available. ' + details);
 
       logInline('');
       if (failures) {
@@ -285,6 +289,8 @@
       } else {
         console.error('Testing on %s failed; %s', platform, message);
       }
+    } else {
+      console.log('Testing on %s passed', platform);
     }
     this.emit('complete');
   }
@@ -294,7 +300,7 @@
         statusCode = _.result(response, 'statusCode');
 
     if (error || !id || statusCode != 200) {
-      console.error('Failed to submit test to Sauce Labs; status: %d, body:\n%s', statusCode, JSON.stringify(body));
+      console.error('Failed to start job; status: %d, body:\n%s', statusCode, JSON.stringify(body));
       if (error) {
         console.error(error);
       }
@@ -315,7 +321,6 @@
   Job.prototype = _.create(EventEmitter.prototype);
 
   Job.prototype.run = function() {
-    console.log('Starting saucelabs test: %s', JSON.stringify(this.options));
     request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests', {
       'auth': { 'user': this.user, 'pass': this.pass },
       'json': this.options
@@ -324,12 +329,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * Makes a request for Sauce Labs to start the jobs.
-   *
-   * @private
-   */
-  function run(platforms) {
+  function run(platforms, onComplete) {
     var jobs = _.map(platforms, function(platform) {
       return new Job({
         'user': username,
@@ -338,26 +338,19 @@
       })
     });
 
-    var failed = 0,
-        finishedJobs = 0,
+    var finishedJobs = 0,
+        success = true,
         totalJobs = jobs.length;
 
     _.invoke(jobs, 'on', 'complete', function() {
-      console.log('Test passed on platform: %s', JSON.stringify(this.options.platforms[0]));
-
       if (++finishedJobs == totalJobs) {
-        console.log('Shutting down Sauce Connect tunnel...');
-        clearInterval(throbberId);
-        tunnel.stop(function() {
-          process.exit(failed);
-        });
-      } else {
-        failed |= this.failed;
+        onComplete(success);
+      } else if (success) {
+        success = !this.failed;
       }
     });
 
-    throbberId = setInterval(logThrobber, throbberDelay);
-    logThrobber();
+    console.log('Starting jobs %s', JSON.stringify(_.omit(defaultOptions, 'platforms'), null, 2));
     _.invoke(jobs, 'run');
   }
 
@@ -368,11 +361,6 @@
   });
 
   // create a web server for the local dir
-  var mount = ecstatic({
-    'cache': false,
-    'root': process.cwd()
-  });
-
   http.createServer(function(req, res) {
     // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
     if (compatMode && path.extname(url.parse(req.url).pathname) == '.html') {
@@ -387,12 +375,19 @@
   console.log('Opening Sauce Connect tunnel...');
 
   tunnel.start(function(success) {
-    if (success) {
-      console.log('Sauce Connect tunnel opened');
-      run(platforms);
-    } else {
+    if (!success) {
       console.error('Failed to open Sauce Connect tunnel');
       process.exit(2);
     }
+    console.log('Sauce Connect tunnel opened');
+
+    run(platforms, function(success) {
+      console.log('Shutting down Sauce Connect tunnel...');
+      clearInterval(throbberId);
+      tunnel.stop(function() { process.exit(success ? 0 : 1); });
+    });
+
+    throbberId = setInterval(logThrobber, throbberDelay);
+    logThrobber();
   });
 }());

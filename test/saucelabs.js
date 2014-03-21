@@ -6,7 +6,7 @@
   var env = process.env;
 
   if (isFinite(env.TRAVIS_PULL_REQUEST)) {
-    console.error('Skipping Sauce Labs jobs for pull requests');
+    console.log('Skipping Sauce Labs jobs for pull requests');
     process.exit(0);
   }
 
@@ -18,6 +18,7 @@
 
   /** Load other modules */
   var _ = require('../lodash.js'),
+      chalk = require('chalk'),
       ecstatic = require('ecstatic'),
       request = require('request'),
       SauceTunnel = require('sauce-tunnel');
@@ -181,6 +182,10 @@
 
   /*--------------------------------------------------------------------------*/
 
+  function capitalizeWords(string) {
+    return _.map(string.split(' '), _.capitalize).join(' ');
+  }
+
   /**
    * Gets the value for the given option name. If no value is available the
    * `defaultValue` is returned.
@@ -262,35 +267,39 @@
   }
 
   function onCheck(error, response, body) {
-    var completed = _.result(body, 'completed'),
-        data = _.result(body, 'js tests', [{ 'status': 'test error' }])[0],
-        platform = JSON.stringify(this.options.platforms[0]),
+    var data = _.result(body, 'js tests', [{}])[0],
+        options = this.options,
+        platform = options.platforms[0],
         result = data.result,
-        failures = _.result(result, 'failed');
+        completed = _.result(body, 'completed'),
+        description = capitalizeWords(platform[1].replace('google', '')) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+        failures = _.result(result, 'failed'),
+        label = options.name + ':';
 
     if (!completed) {
       setTimeout(check.bind(this), statusInterval);
       return;
     }
     if (!result || failures || reError.test(result.message)) {
-      if (this.attempts < maxRetries) {
+      if (this.attempts <= maxRetries) {
         this.attempts++;
+        console.log(label + ' attempt %d', this.attempts);
         this.run();
         return;
       }
       _.assign(this, data, { 'failed': true });
-
-      var details = 'See ' + this.url + ' for details.',
-          message = _.result(result, 'message', 'no results available. ' + details);
+      var details = 'See ' + this.url + ' for details.';
 
       logInline('');
       if (failures) {
-        console.error('There was %d failures on %s. %s', failures, platform, details);
+        console.error(label + ' %s ' + chalk.red('failed') + ' %d test' + (failures > 1 ? 's' : '') + '. %s', description, failures, details);
       } else {
-        console.error('Testing on %s failed; %s', platform, message);
+        var message = _.result(result, 'message', 'no results available. ' + details);
+
+        console.error(label, description, chalk.red('failed') + ';', message);
       }
     } else {
-      console.log('Testing on %s passed', platform);
+      console.log(label, description, chalk.green('passed'));
     }
     this.emit('complete');
   }
@@ -350,7 +359,7 @@
       }
     });
 
-    console.log('Starting jobs %s', JSON.stringify(_.omit(defaultOptions, 'platforms'), null, 2));
+    console.log('Starting jobs...');
     _.invoke(jobs, 'run');
   }
 

@@ -4683,7 +4683,7 @@
               criteria = Array(length);
 
           while (length--) {
-            criteria[length] = value[callback[length]];
+            criteria[length] = lodash.result(value, callback[length]);
           }
         } else {
           criteria = callback(value, key, collection);

@@ -6168,7 +6168,7 @@
      * var object = { 'name': 'fred' };
      * var other = { 'name': 'fred' };
      *
-     * object ==  other;
+     * object == other;
      * // => false
      *
      * _.isEqual(object, other);
@@ -6921,10 +6921,10 @@
      * _.camelCase('Hello world');
      * // => 'helloWorld'
      *
-     * _.camelCase('hello-world');
+     * _.camelCase('--hello-world');
      * // => 'helloWorld'
      *
-     * _.camelCase('hello_world');
+     * _.camelCase('__hello_world__');
      * // => 'helloWorld'
      */
     var camelCase = createCompounder(function(result, word, index) {
@@ -7044,7 +7044,7 @@
      * _.kebabCase('helloWorld');
      * // => 'hello-world'
      *
-     * _.kebabCase('hello_world');
+     * _.kebabCase('__hello_world__');
      * // => 'hello-world'
      */
     var kebabCase = createCompounder(function(result, word, index) {
@@ -7198,7 +7198,7 @@
      * _.snakeCase('Hello world');
      * // => 'hello_world'
      *
-     * _.snakeCase('hello-world');
+     * _.snakeCase('--hello-world');
      * // => 'hello_world'
      *
      * _.snakeCase('helloWorld');

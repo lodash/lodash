@@ -1019,11 +1019,9 @@
       'd', 'n', 'o', 'o', 'o', 'o', 'o', '', 'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
     ];
 
-    test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 3, function() {
-      _.forEach(['Hello world', 'helloWorld', 'hello-world', 'hello_world'], function(string) {
-        if (string != expected) {
-          equal(func(string), expected);
-        }
+    test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 4, function() {
+      _.forEach(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
+        equal(func(string), expected);
       });
     });
 

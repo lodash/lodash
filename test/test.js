@@ -81,8 +81,8 @@
   /** Detect if testing `npm` modules */
   var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
-  /** Detects if running in a PhantomJS web page */
-  var isPhantomPage = typeof callPhantom == 'function';
+  /** Detects if running in PhantomJS */
+  var isPhantom = phantom || typeof callPhantom == 'function';
 
   /** Detect if running in Rhino */
   var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
@@ -1932,7 +1932,7 @@
 
     test('should support a `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var limit = (argv || isPhantomPage) ? 1000 : 256,
+        var limit = (argv || isPhantom) ? 1000 : 256,
             withCount = 0,
             withoutCount = 0;
 
@@ -3974,11 +3974,7 @@
     });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!isPhantomPage) {
-        strictEqual(_.isEmpty(args), false);
-      } else {
-        skipTest();
-      }
+      strictEqual(_.isEmpty(args), false);
     });
 
     test('should work with jQuery/MooTools DOM query collections', 1, function() {
@@ -4260,8 +4256,25 @@
 
       strictEqual(_.isEqual(args1, args2), true);
 
-      if (!isPhantomPage) {
+      if (!isPhantom) {
         strictEqual(_.isEqual(args1, args3), false);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should treat `arguments` objects like `Object` objects', 2, function() {
+      var args = (function() { return arguments; }(1, 2, 3)),
+          object = { '0': 1, '1': 2, '2': 3, 'length': 3 };
+
+      function Foo() {}
+      Foo.prototype = object;
+
+      strictEqual(_.isEqual(args, object), true);
+
+      if (!isPhantom) {
+        strictEqual(_.isEqual(args, new Foo), false);
       }
       else {
         skipTest();
@@ -5081,7 +5094,7 @@
     });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!isPhantomPage) {
+      if (!isPhantom) {
         deepEqual(_.keys(args), ['0', '1', '2']);
       } else {
         skipTest();
@@ -7438,11 +7451,7 @@
     });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!isPhantomPage) {
-        equal(_.size(args), 3);
-      } else {
-        skipTest();
-      }
+      equal(_.size(args), 3);
     });
 
     test('should work with jQuery/MooTools DOM query collections', 1, function() {

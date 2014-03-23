@@ -822,7 +822,7 @@
       var hasValCtor = hasOwnProperty.call(value, 'constructor'),
           hasOthCtor = hasOwnProperty.call(other, 'constructor');
 
-      if (hasValCtor !== hasOthCtor) {
+      if (hasValCtor != hasOthCtor) {
         return false;
       }
       if (!hasValCtor) {
@@ -4005,7 +4005,7 @@
    * var object = { 'name': 'fred' };
    * var other = { 'name': 'fred' };
    *
-   * object ==  other;
+   * object == other;
    * // => false
    *
    * _.isEqual(object, other);

@@ -979,8 +979,8 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? baseEach : baseForOwn)(value, function(objValue, key) {
-        result[key] = baseClone(objValue, isDeep, callback, stackA, stackB);
+      (isArr ? baseEach : baseForOwn)(value, function(valValue, key) {
+        result[key] = baseClone(valValue, isDeep, callback, stackA, stackB);
       });
 
       return result;
@@ -1395,83 +1395,92 @@
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
-    function baseIsEqual(a, b, callback, isWhere, stackA, stackB) {
+    function baseIsEqual(value, other, callback, isWhere, stackA, stackB) {
       if (callback) {
-        var result = callback(a, b);
+        var result = callback(value, other);
         if (typeof result != 'undefined') {
           return !!result;
         }
       }
       // exit early for identical values
-      if (a === b) {
+      if (value === other) {
         // treat `+0` vs. `-0` as not equal
-        return a !== 0 || (1 / a == 1 / b);
+        return value !== 0 || (1 / value == 1 / other);
       }
-      var type = typeof a,
-          otherType = typeof b;
+      var valType = typeof value,
+          othType = typeof other;
 
       // exit early for unlike primitive values
-      if (a === a && (a == null || b == null ||
-          (type != 'function' && type != 'object' && otherType != 'function' && otherType != 'object'))) {
+      if (value === value && (value == null || other == null ||
+          (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
         return false;
       }
       // compare [[Class]] names
-      var className = toString.call(a),
-          otherClass = toString.call(b);
+      var valClass = toString.call(value),
+          othClass = toString.call(other),
+          valIsArg = valClass == argsClass,
+          othIsArg = othClass == argsClass;
 
-      if (className == argsClass) {
-        className = objectClass;
+      if (valIsArg) {
+        valClass = objectClass;
       }
-      if (otherClass == argsClass) {
-        otherClass = objectClass;
+      if (othIsArg) {
+        othClass = objectClass;
       }
-      if (className != otherClass) {
+      if (valClass != othClass) {
         return false;
       }
-      switch (className) {
+      switch (valClass) {
         case boolClass:
         case dateClass:
           // coerce dates and booleans to numbers, dates to milliseconds and booleans
           // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
-          return +a == +b;
+          return +value == +other;
 
         case numberClass:
           // treat `NaN` vs. `NaN` as equal
-          return (a != +a)
-            ? b != +b
+          return (value != +value)
+            ? other != +other
             // but treat `-0` vs. `+0` as not equal
-            : (a == 0 ? (1 / a == 1 / b) : a == +b);
+            : (value == 0 ? (1 / value == 1 / other) : value == +other);
 
         case regexpClass:
         case stringClass:
           // coerce regexes to strings (http://es5.github.io/#x15.10.6.4)
           // treat string primitives and their corresponding object instances as equal
-          return a == String(b);
+          return value == String(other);
       }
-      var isArr = className == arrayClass;
+      var isArr = valClass == arrayClass;
       if (!isArr) {
         // unwrap any `lodash` wrapped values
-        var aWrapped = hasOwnProperty.call(a, '__wrapped__'),
-            bWrapped = hasOwnProperty.call(b, '__wrapped__');
+        var valWrapped = hasOwnProperty.call(value, '__wrapped__'),
+            othWrapped = hasOwnProperty.call(other, '__wrapped__');
 
-        if (aWrapped || bWrapped) {
-          return baseIsEqual(aWrapped ? a.__wrapped__ : a, bWrapped ? b.__wrapped__ : b, callback, isWhere, stackA, stackB);
+        if (valWrapped || othWrapped) {
+          return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, callback, isWhere, stackA, stackB);
         }
         // exit for functions and DOM nodes
-        if (className != objectClass) {
+        if (valClass != objectClass) {
           return false;
         }
-        // in older versions of Opera, `arguments` objects have `Array` constructors
-        var ctorA = a.constructor,
-            ctorB = b.constructor;
+        var hasValCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
+            hasOthCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
 
-        // non `Object` object instances with different constructors are not equal
-        if (ctorA != ctorB &&
-              !(hasOwnProperty.call(a, 'constructor') && hasOwnProperty.call(b, 'constructor')) &&
-              !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
-              ('constructor' in a && 'constructor' in b)
-            ) {
+        if (hasValCtor != hasOthCtor) {
           return false;
+        }
+        if (!hasValCtor) {
+          // in older versions of Opera, `arguments` objects have `Array` constructors
+          var valCtor = valIsArg ? Object : value.constructor,
+              othCtor = othIsArg ? Object : other.constructor;
+
+          // non `Object` object instances with different constructors are not equal
+          if (valCtor != othCtor &&
+                !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
+                ('constructor' in value && 'constructor' in other)
+              ) {
+            return false;
+          }
         }
       }
       // assume cyclic structures are equal
@@ -1483,37 +1492,37 @@
 
       var length = stackA.length;
       while (length--) {
-        if (stackA[length] == a) {
-          return stackB[length] == b;
+        if (stackA[length] == value) {
+          return stackB[length] == other;
         }
       }
       var size = 0;
       result = true;
 
-      // add `a` and `b` to the stack of traversed objects
-      stackA.push(a);
-      stackB.push(b);
+      // add `value` and `other` to the stack of traversed objects
+      stackA.push(value);
+      stackB.push(other);
 
       // recursively compare objects and arrays (susceptible to call stack limits)
       if (isArr) {
         // compare lengths to determine if a deep comparison is necessary
-        length = a.length;
-        size = b.length;
+        length = value.length;
+        size = other.length;
         result = size == length;
 
         if (result || isWhere) {
           // deep compare the contents, ignoring non-numeric properties
           while (size--) {
             var index = length,
-                value = b[size];
+                othValue = other[size];
 
             if (isWhere) {
               while (index--) {
-                if ((result = baseIsEqual(a[index], value, callback, isWhere, stackA, stackB))) {
+                if ((result = baseIsEqual(value[index], othValue, callback, isWhere, stackA, stackB))) {
                   break;
                 }
               }
-            } else if (!(result = baseIsEqual(a[size], value, callback, isWhere, stackA, stackB))) {
+            } else if (!(result = baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB))) {
               break;
             }
           }
@@ -1522,20 +1531,20 @@
       else {
         // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
         // which, in this case, is more costly
-        baseForIn(b, function(value, key, b) {
-          if (hasOwnProperty.call(b, key)) {
+        baseForIn(other, function(othValue, key, other) {
+          if (hasOwnProperty.call(other, key)) {
             // count the number of properties.
             size++;
             // deep compare each property value.
-            return (result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, callback, isWhere, stackA, stackB));
+            return (result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB));
           }
         });
 
         if (result && !isWhere) {
           // ensure both objects have the same number of properties
-          baseForIn(a, function(value, key, a) {
-            if (hasOwnProperty.call(a, key)) {
-              // `size` will be `-1` if `a` has more properties than `b`
+          baseForIn(value, function(valValue, key, value) {
+            if (hasOwnProperty.call(value, key)) {
+              // `size` will be `-1` if `value` has more properties than `other`
               return (result = --size > -1);
             }
           });
@@ -5958,7 +5967,7 @@
      * var object = { 'name': 'fred' };
      * var other = { 'name': 'fred' };
      *
-     * object ==  other;
+     * object == other;
      * // => false
      *
      * _.isEqual(object, other);
@@ -5981,12 +5990,12 @@
           // treat `-0` vs. `+0` as not equal
           return value !== 0 || (1 / value == 1 / other);
         }
-        var vType = typeof value,
-            oType = typeof other;
+        var valType = typeof value,
+            othType = typeof other;
 
         // exit early for unlike primitive values
         if (value === value && (value == null || other == null ||
-            (vType != 'function' && vType != 'object' && oType != 'function' && oType != 'object'))) {
+            (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
           return false;
         }
       }
@@ -6670,10 +6679,10 @@
      * _.camelCase('Hello world');
      * // => 'helloWorld'
      *
-     * _.camelCase('hello-world');
+     * _.camelCase('--hello-world');
      * // => 'helloWorld'
      *
-     * _.camelCase('hello_world');
+     * _.camelCase('__hello_world__');
      * // => 'helloWorld'
      */
     var camelCase = createCompounder(function(result, word, index) {
@@ -6793,7 +6802,7 @@
      * _.kebabCase('helloWorld');
      * // => 'hello-world'
      *
-     * _.kebabCase('hello_world');
+     * _.kebabCase('__hello_world__');
      * // => 'hello-world'
      */
     var kebabCase = createCompounder(function(result, word, index) {
@@ -6947,7 +6956,7 @@
      * _.snakeCase('Hello world');
      * // => 'hello_world'
      *
-     * _.snakeCase('hello-world');
+     * _.snakeCase('--hello-world');
      * // => 'hello_world'
      *
      * _.snakeCase('helloWorld');

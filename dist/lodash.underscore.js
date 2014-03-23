@@ -777,61 +777,61 @@
    * @param {Array} [stackB=[]] Tracks traversed `other` objects.
    * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
    */
-  function baseIsEqual(a, b, stackA, stackB) {
-    if (a === b) {
-      return a !== 0 || (1 / a == 1 / b);
+  function baseIsEqual(value, other, stackA, stackB) {
+    if (value === other) {
+      return value !== 0 || (1 / value == 1 / other);
     }
-    var type = typeof a,
-        otherType = typeof b;
+    var valType = typeof value,
+        othType = typeof other;
 
-    if (a === a && (a == null || b == null ||
-        (type != 'function' && type != 'object' && otherType != 'function' && otherType != 'object'))) {
+    if (value === value && (value == null || other == null ||
+        (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
       return false;
     }
-    var className = toString.call(a),
-        otherClass = toString.call(b);
+    var valClass = toString.call(value),
+        othClass = toString.call(other);
 
-    if (className != otherClass) {
+    if (valClass != othClass) {
       return false;
     }
-    switch (className) {
+    switch (valClass) {
       case boolClass:
       case dateClass:
-        return +a == +b;
+        return +value == +other;
 
       case numberClass:
-        return a != +a
-          ? b != +b
-          : (a == 0 ? (1 / a == 1 / b) : a == +b);
+        return value != +value
+          ? other != +other
+          : (value == 0 ? (1 / value == 1 / other) : value == +other);
 
       case regexpClass:
       case stringClass:
-        return a == String(b);
+        return value == String(other);
     }
-    var isArr = className == arrayClass;
+    var isArr = valClass == arrayClass;
     if (!isArr) {
-      var aWrapped = a instanceof lodash,
-          bWrapped = b instanceof lodash;
+      var valWrapped = value instanceof lodash,
+          othWrapped = other instanceof lodash;
 
-      if (aWrapped || bWrapped) {
-        return baseIsEqual(aWrapped ? a.__wrapped__ : a, bWrapped ? b.__wrapped__ : b, stackA, stackB);
+      if (valWrapped || othWrapped) {
+        return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, stackA, stackB);
       }
-      if (className != objectClass) {
+      if (valClass != objectClass) {
         return false;
       }
-      var ownCtorA = hasOwnProperty.call(a, 'constructor'),
-          ownCtorB = hasOwnProperty.call(b, 'constructor');
+      var hasValCtor = hasOwnProperty.call(value, 'constructor'),
+          hasOthCtor = hasOwnProperty.call(other, 'constructor');
 
-      if (ownCtorA !== ownCtorB) {
+      if (hasValCtor !== hasOthCtor) {
         return false;
       }
-      if (!ownCtorA) {
-        var ctorA = a.constructor,
-            ctorB = b.constructor;
+      if (!hasValCtor) {
+        var valCtor = value.constructor,
+            othCtor = other.constructor;
 
-        if (ctorA != ctorB &&
-              !(isFunction(ctorA) && ctorA instanceof ctorA && isFunction(ctorB) && ctorB instanceof ctorB) &&
-              ('constructor' in a && 'constructor' in b)
+        if (valCtor != othCtor &&
+              !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
+              ('constructor' in value && 'constructor' in other)
             ) {
           return false;
         }
@@ -842,39 +842,39 @@
 
     var length = stackA.length;
     while (length--) {
-      if (stackA[length] == a) {
-        return stackB[length] == b;
+      if (stackA[length] == value) {
+        return stackB[length] == other;
       }
     }
     var result = true,
         size = 0;
 
-    stackA.push(a);
-    stackB.push(b);
+    stackA.push(value);
+    stackB.push(other);
 
     if (isArr) {
-      size = b.length;
-      result = size == a.length;
+      size = other.length;
+      result = size == value.length;
 
       if (result) {
         while (size--) {
-          if (!(result = baseIsEqual(a[size], b[size], stackA, stackB))) {
+          if (!(result = baseIsEqual(value[size], other[size], stackA, stackB))) {
             break;
           }
         }
       }
     }
     else {
-      baseForIn(b, function(value, key, b) {
-        if (hasOwnProperty.call(b, key)) {
+      baseForIn(other, function(othValue, key, other) {
+        if (hasOwnProperty.call(other, key)) {
           size++;
-          return !(result = hasOwnProperty.call(a, key) && baseIsEqual(a[key], value, stackA, stackB)) && breakIndicator;
+          return !(result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, stackA, stackB)) && breakIndicator;
         }
       });
 
       if (result) {
-        baseForIn(a, function(value, key, a) {
-          if (hasOwnProperty.call(a, key)) {
+        baseForIn(value, function(valValue, key, value) {
+          if (hasOwnProperty.call(value, key)) {
             return !(result = --size > -1) && breakIndicator;
           }
         });

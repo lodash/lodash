@@ -1579,12 +1579,14 @@
       }
       // compare [[Class]] names
       var valClass = toString.call(value),
-          othClass = toString.call(other);
+          othClass = toString.call(other),
+          valIsArg = valClass == argsClass,
+          othIsArg = othClass == argsClass;
 
-      if (valClass == argsClass) {
+      if (valIsArg) {
         valClass = objectClass;
       }
-      if (othClass == argsClass) {
+      if (othIsArg) {
         othClass = objectClass;
       }
       if (valClass != othClass) {
@@ -1623,16 +1625,20 @@
         if (valClass != objectClass || (!support.nodeClass && (isNode(value) || isNode(other)))) {
           return false;
         }
-        var hasValCtor = hasOwnProperty.call(value, 'constructor'),
-            hasOthCtor = hasOwnProperty.call(other, 'constructor');
+        if (!support.argsObject) {
+          valIsArg = isArguments(value);
+          othIsArg = isArguments(other);
+        }
+        var hasValCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
+            hasOthCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
 
-        if (hasValCtor !== hasOthCtor) {
+        if (hasValCtor != hasOthCtor) {
           return false;
         }
         if (!hasValCtor) {
           // in older versions of Opera, `arguments` objects have `Array` constructors
-          var valCtor = !support.argsObject && isArguments(value) ? Object : value.constructor,
-              othCtor = !support.argsObject && isArguments(other) ? Object : other.constructor;
+          var valCtor = valIsArg ? Object : value.constructor,
+              othCtor = othIsArg ? Object : other.constructor;
 
           // non `Object` object instances with different constructors are not equal
           if (valCtor != othCtor &&

@@ -249,16 +249,16 @@
    * sort them in ascending order without guaranteeing a stable sort.
    *
    * @private
-   * @param {*} a The value to compare to `b`.
-   * @param {*} b The value to compare to `a`.
+   * @param {*} value The value to compare to `other`.
+   * @param {*} other The value to compare to `value`.
    * @returns {number} Returns the sort order indicator for `a`.
    */
-  function baseCompareAscending(a, b) {
-    if (a !== b) {
-      if (a > b || typeof a == 'undefined') {
+  function baseCompareAscending(value, other) {
+    if (value !== other) {
+      if (value > other || typeof value == 'undefined') {
         return 1;
       }
-      if (a < b || typeof b == 'undefined') {
+      if (value < other || typeof other == 'undefined') {
         return -1;
       }
     }
@@ -352,12 +352,12 @@
    * sort them in ascending order.
    *
    * @private
-   * @param {Object} a The object to compare to `b`.
-   * @param {Object} b The object to compare to `a`.
-   * @returns {number} Returns the sort order indicator for `a`.
+   * @param {Object} value The object to compare to `other`.
+   * @param {Object} other The object to compare to `object`.
+   * @returns {number} Returns the sort order indicator for `object`.
    */
-  function compareAscending(a, b) {
-    return baseCompareAscending(a.criteria, b.criteria) || a.index - b.index;
+  function compareAscending(object, other) {
+    return baseCompareAscending(object.criteria, other.criteria) || object.index - other.index;
   }
 
   /**
@@ -365,29 +365,29 @@
    * collection and stable sort them in ascending order.
    *
    * @private
-   * @param {Object} a The object to compare to `b`.
-   * @param {Object} b The object to compare to `a`.
-   * @returns {number} Returns the sort order indicator for `a`.
+   * @param {Object} value The object to compare to `other`.
+   * @param {Object} other The object to compare to `object`.
+   * @returns {number} Returns the sort order indicator for `object`.
    */
-  function compareMultipleAscending(a, b) {
-    var ac = a.criteria,
-        bc = b.criteria,
-        index = -1,
-        length = ac.length;
+  function compareMultipleAscending(object, other) {
+    var index = -1,
+        objCriteria = object.criteria,
+        othCriteria = other.criteria,
+        length = objCriteria.length;
 
     while (++index < length) {
-      var result = baseCompareAscending(ac[index], bc[index]);
+      var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
       if (result) {
         return result;
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
     // that causes it, under certain circumstances, to provided the same value
-    // for `a` and `b`. See https://github.com/jashkenas/underscore/pull/1247
+    // for `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247
     //
     // This also ensures a stable sort in V8 and other engines.
     // See https://code.google.com/p/v8/issues/detail?id=90
-    return a.index - b.index;
+    return object.index - other.index;
   }
 
   /**
@@ -1213,8 +1213,8 @@
         case 1: return function(value) {
           return func.call(thisArg, value);
         };
-        case 2: return function(a, b) {
-          return func.call(thisArg, a, b);
+        case 2: return function(value, other) {
+          return func.call(thisArg, value, other);
         };
         case 3: return function(value, index, collection) {
           return func.call(thisArg, value, index, collection);
@@ -1550,12 +1550,12 @@
      * binding, that allows partial "_.where" style comparisons.
      *
      * @private
-     * @param {*} a The value to compare.
-     * @param {*} b The other value to compare.
+     * @param {*} value The value to compare to `other`.
+     * @param {*} other The value to compare to `value`.
      * @param {Function} [callback] The function to customize comparing values.
      * @param {Function} [isWhere=false] A flag to indicate performing partial comparisons.
-     * @param {Array} [stackA=[]] Tracks traversed `a` objects.
-     * @param {Array} [stackB=[]] Tracks traversed `b` objects.
+     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(a, b, callback, isWhere, stackA, stackB) {
@@ -2163,7 +2163,7 @@
       var ctor,
           result;
 
-      // avoid non Object objects, `arguments` objects, and DOM elements
+      // avoid non `Object` objects, `arguments` objects, and DOM elements
       if (!(value && toString.call(value) == objectClass) ||
           (!hasOwnProperty.call(value, 'constructor') &&
             (ctor = value.constructor, isFunction(ctor) && !(ctor instanceof ctor))) ||
@@ -4389,8 +4389,8 @@
      * @returns {*} Returns the accumulated value.
      * @example
      *
-     * var list = [[0, 1], [2, 3], [4, 5]];
-     * var flat = _.reduceRight(list, function(a, b) { return a.concat(b); }, []);
+     * var array = [[0, 1], [2, 3], [4, 5]];
+     * _.reduceRight(array, function(flattened, other) { return flattened.concat(other); }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
@@ -5447,8 +5447,8 @@
      * _.assign({ 'name': 'fred' }, { 'employer': 'slate' });
      * // => { 'name': 'fred', 'employer': 'slate' }
      *
-     * var defaults = _.partialRight(_.assign, function(a, b) {
-     *   return typeof a == 'undefined' ? b : a;
+     * var defaults = _.partialRight(_.assign, function(value, other) {
+     *   return typeof value == 'undefined' ? other : value;
      * });
      *
      * defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
@@ -6124,61 +6124,57 @@
 
     /**
      * Performs a deep comparison between two values to determine if they are
-     * equivalent to each other. If a callback is provided it will be executed
-     * to compare values. If the callback returns `undefined` comparisons will
-     * be handled by the method instead. The callback is bound to `thisArg` and
-     * invoked with two arguments; (a, b).
+     * equivalent. If a callback is provided it will be executed to compare
+     * values. If the callback returns `undefined` comparisons will be handled
+     * by the method instead. The callback is bound to `thisArg` and invoked
+     * with two arguments; (value, other).
      *
      * @static
      * @memberOf _
      * @category Objects
-     * @param {*} a The value to compare.
-     * @param {*} b The other value to compare.
+     * @param {*} value The value to compare to `other`.
+     * @param {*} other The value to compare to `value`.
      * @param {Function} [callback] The function to customize comparing values.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
      * var object = { 'name': 'fred' };
-     * var copy = { 'name': 'fred' };
+     * var other = { 'name': 'fred' };
      *
-     * object == copy;
+     * object ==  other;
      * // => false
      *
-     * _.isEqual(object, copy);
+     * _.isEqual(object, other);
      * // => true
      *
      * var words = ['hello', 'goodbye'];
      * var otherWords = ['hi', 'goodbye'];
      *
-     * _.isEqual(words, otherWords, function(a, b) {
-     *   var reGreet = /^(?:hello|hi)$/i,
-     *       aGreet = _.isString(a) && reGreet.test(a),
-     *       bGreet = _.isString(b) && reGreet.test(b);
-     *
-     *   return (aGreet || bGreet) ? (aGreet == bGreet) : undefined;
+     * _.isEqual(words, otherWords, function() {
+     *   return _.every(arguments, _.bind(RegExp.prototype.test, /^h(?:i|ello)$/)) || undefined;
      * });
      * // => true
      */
-    function isEqual(a, b, callback, thisArg) {
+    function isEqual(value, other, callback, thisArg) {
       callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 2);
 
       if (!callback) {
         // exit early for identical values
-        if (a === b) {
+        if (value === other) {
           // treat `-0` vs. `+0` as not equal
-          return a !== 0 || (1 / a == 1 / b);
+          return value !== 0 || (1 / value == 1 / other);
         }
-        var type = typeof a,
-            otherType = typeof b;
+        var vType = typeof value,
+            oType = typeof other;
 
         // exit early for unlike primitive values
-        if (a === a && (a == null || b == null ||
-            (type != 'function' && type != 'object' && otherType != 'function' && otherType != 'object'))) {
+        if (value === value && (value == null || other == null ||
+            (vType != 'function' && vType != 'object' && oType != 'function' && oType != 'object'))) {
           return false;
         }
       }
-      return baseIsEqual(a, b, callback);
+      return baseIsEqual(value, other, callback);
     }
 
     /**
@@ -7697,18 +7693,18 @@
       var props = keys(source),
           propsLength = props.length,
           key = props[0],
-          a = source[key];
+          value = source[key];
 
       // fast path the common case of providing an object with a single
       // property containing a primitive value
-      if (propsLength == 1 && a === a && !isObject(a)) {
+      if (propsLength == 1 && value === value && !isObject(value)) {
         return function(object) {
           if (!hasOwnProperty.call(object, key)) {
             return false;
           }
           // treat `-0` vs. `+0` as not equal
-          var b = object[key];
-          return a === b && (a !== 0 || (1 / a == 1 / b));
+          var other = object[key];
+          return value === other && (value !== 0 || (1 / value == 1 / other));
         };
       }
       return function(object) {

@@ -3732,6 +3732,10 @@
       deepEqual(_.invoke(object, 'toFixed', 1), ['1.0', '2.0', '3.0']);
     });
 
+    test('should treat number values for `collection` as empty', 1, function() {
+      deepEqual(_.invoke(1), []);
+    });
+
     test('should work with `null` or `undefined` elements', 1, function() {
       var array = ['a', null, undefined, 'd'];
       deepEqual(_.invoke(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
@@ -5374,7 +5378,7 @@
       }
     });
 
-    test('should accept a falsey `array` argument', 1, function() {
+    test('should accept a falsey `collection` argument', 1, function() {
       var expected = _.map(falsey, _.constant([]));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5384,6 +5388,10 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should treat number values for `collection` as empty', 1, function() {
+      deepEqual(_.map(1), []);
     });
 
     test('should be aliased', 1, function() {
@@ -7410,6 +7418,10 @@
       deepEqual(actual.sort(), array);
     });
 
+    test('should treat number values for `collection` as empty', 1, function() {
+      deepEqual(_.shuffle(1), []);
+    });
+
     _.forEach({
       'literal': 'abc',
       'object': Object('abc')
@@ -7668,6 +7680,10 @@
       });
 
       deepEqual(actual, [3, 1, 2]);
+    });
+
+    test('should treat number values for `collection` as empty', 1, function() {
+      deepEqual(_.sortBy(1), []);
     });
 
     test('should support sorting by an array of properties', 1, function() {

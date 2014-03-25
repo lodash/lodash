@@ -105,7 +105,7 @@
     'toLocaleString', 'toString', 'valueOf'
   ];
 
-  /** Used to make template sourceURLs easier to identify */
+  /** Used to make template `sourceURL`s easier to identify */
   var templateCounter = 0;
 
   /** `Object#toString` result shortcuts */
@@ -648,7 +648,7 @@
         splice = arrayRef.splice,
         unshift = arrayRef.unshift;
 
-    /** Used to set meta data on functions */
+    /** Used to set metadata on functions */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
       try {
@@ -1014,7 +1014,7 @@
 
     /**
      * The base implementation of `_.bind` that creates the bound function and
-     * sets its meta data.
+     * sets its metadata.
      *
      * @private
      * @param {Array} data The metadata array.
@@ -1229,7 +1229,7 @@
 
     /**
      * The base implementation of `createWrapper` that creates the wrapper and
-     * sets its meta data.
+     * sets its metadata.
      *
      * @private
      * @param {Array} data The metadata array.
@@ -7251,7 +7251,7 @@
      * settings object is provided it will override `_.templateSettings` for the
      * template.
      *
-     * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
+     * Note: In the development build, `_.template` utilizes `sourceURL`s for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
@@ -7271,7 +7271,7 @@
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
      * @param {Object} [options.imports] An object to import into the template as local variables.
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-     * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
+     * @param {string} [options.sourceURL] The `sourceURL` of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
      * @returns {Function|string} Returns the interpolated string if a data object
      *  is provided, else the compiled template function.
@@ -7309,7 +7309,7 @@
      * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
      * // => '<li>fred</li><li>barney</li>'
      *
-     * // using the `sourceURL` option to specify a custom sourceURL for the template
+     * // using the `sourceURL` option to specify a custom `sourceURL` for the template
      * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
@@ -7415,7 +7415,7 @@
         source +
         'return __p\n}';
 
-      // Use a sourceURL for easier debugging.
+      // Use a `sourceURL` for easier debugging.
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
       var sourceURL = '\n/*\n//# sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
 
@@ -7515,7 +7515,7 @@
      * @static
      * @memberOf _
      * @category Strings
-     * @param {string} [string=''] The string to trim.
+     * @param {string} [string=''] The string to truncate.
      * @param {Object|number} [options] The options object or maximum string length.
      * @param {number} [options.length=30] The maximum string length.
      * @param {string} [options.omission='...'] The string used to indicate text is omitted.
@@ -7885,7 +7885,7 @@
 
     /**
      * Converts `value` to an integer of the specified radix. If `radix` is
-     * `undefined` or `0` a `radix` of `10` is used unless `value` is a hexadecimal,
+     * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
      *
      * Note: This method avoids differences in native ES3 and ES5 `parseInt`

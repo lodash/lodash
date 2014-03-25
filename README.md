@@ -34,7 +34,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
  * [_.callback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
- * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/2013/07/06/why-curry-helps/) functions
+ * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
  * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) accept additional `options` for more control
  * [_.findIndex](http://lodash.com/docs#findIndex) & [_.findKey](http://lodash.com/docs#findKey) for finding indexes & keys
  * [_.forEach](http://lodash.com/docs#forEach) supports exiting early

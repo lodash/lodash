@@ -648,7 +648,7 @@
         splice = arrayRef.splice,
         unshift = arrayRef.unshift;
 
-    /** Used to set meta data on functions */
+    /** Used to set metadata on functions */
     var defineProperty = (function() {
       // IE 8 only accepts DOM elements
       try {
@@ -1014,7 +1014,7 @@
 
     /**
      * The base implementation of `_.bind` that creates the bound function and
-     * sets its meta data.
+     * sets its metadata.
      *
      * @private
      * @param {Array} data The metadata array.
@@ -1229,7 +1229,7 @@
 
     /**
      * The base implementation of `createWrapper` that creates the wrapper and
-     * sets its meta data.
+     * sets its metadata.
      *
      * @private
      * @param {Array} data The metadata array.

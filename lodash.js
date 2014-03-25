@@ -786,7 +786,7 @@
      *
      * @private
      * @param {*} value The value to wrap in a `lodash` instance.
-     * @param {boolean} [chainAll=false] A flag to enable chaining for all methods
+     * @param {boolean} [chainAll=false] A flag to enable chaining for all methods.
      * @returns {Object} Returns a `lodash` instance.
      */
     function lodashWrapper(value, chainAll) {
@@ -3448,9 +3448,7 @@
      * // => 'pebbles is 1'
      */
     function chain(value) {
-      value = new lodashWrapper(value);
-      value.__chain__ = true;
-      return value;
+      return new lodashWrapper(value, true);
     }
 
     /**

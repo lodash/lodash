@@ -3,7 +3,7 @@
  * Lo-Dash 2.4.1 <http://lodash.com/>
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.6.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
 ;(function() {
@@ -49,7 +49,7 @@
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
-  /** Used to match regexp flags from their coerced string values */
+  /** Used to match `RegExp` flags from their coerced string values */
   var reFlags = /\w*$/;
 
   /** Used to detected named functions */
@@ -65,8 +65,8 @@
   var reNoMatch = /($^)/;
 
   /**
-   * Used to match RegExp special characters.
-   * See this [article on RegExp characters](http://www.regular-expressions.info/characters.html#special)
+   * Used to match `RegExp` special characters.
+   * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
    * for more details.
    */
   var reRegExpChars = /[.*+?^${}()|[\]\\]/g;
@@ -99,7 +99,7 @@
     'parseInt', 'setTimeout', 'TypeError', 'window', 'WinRTError'
   ];
 
-  /** Used to fix the JScript [[DontEnum]] bug */
+  /** Used to fix the JScript `[[DontEnum]]` bug */
   var shadowedProps = [
     'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
     'toLocaleString', 'toString', 'valueOf'
@@ -194,7 +194,7 @@
     '\xDF': 'ss', '\xD7': ' ', '\xF7': ' '
   };
 
-  /** Used to determine if values are of the language type Object */
+  /** Used to determine if values are of the language type `Object` */
   var objectTypes = {
     'function': true,
     'object': true
@@ -315,6 +315,7 @@
    *
    * @private
    * @param {string} string The string to inspect.
+   * @param {string} chars The chars to find.
    * @returns {number} Returns the index of the first character not found in `chars`.
    */
   function charsLeftIndex(string, chars) {
@@ -334,6 +335,7 @@
    *
    * @private
    * @param {string} string The string to inspect.
+   * @param {string} chars The chars to find.
    * @returns {number} Returns the index of the last character not found in `chars`.
    */
   function charsRightIndex(string, chars) {
@@ -347,7 +349,7 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed elements of a collection and stable
+   * Used by `_.sortBy` to compare transformed elements of a collection and stable
    * sort them in ascending order.
    *
    * @private
@@ -360,7 +362,7 @@
   }
 
   /**
-   * Used by `sortBy` to compare multiple properties of each element in a
+   * Used by `_.sortBy` to compare multiple properties of each element in a
    * collection and stable sort them in ascending order.
    *
    * @private
@@ -424,7 +426,7 @@
   }
 
   /**
-   * Used by `escape` to convert characters to HTML entities.
+   * Used by `_.escape` to convert characters to HTML entities.
    *
    * @private
    * @param {string} chr The matched character to escape.
@@ -435,7 +437,7 @@
   }
 
   /**
-   * Used by `template` to escape characters for inclusion in compiled
+   * Used by `_.template` to escape characters for inclusion in compiled
    * string literals.
    *
    * @private
@@ -460,7 +462,7 @@
   }
 
   /**
-   * A fallback implementation of `trim` to remove leading and trailing
+   * A fallback implementation of `String#trim` to remove leading and trailing
    * whitespace or specified characters from `string`.
    *
    * @private
@@ -481,7 +483,7 @@
   }
 
   /**
-   * A fallback implementation of `trimLeft` to remove leading whitespace or
+   * A fallback implementation of `String#trimLeft` to remove leading whitespace or
    * specified characters from `string`.
    *
    * @private
@@ -502,7 +504,7 @@
   }
 
   /**
-   * A fallback implementation of `trimRight` to remove trailing whitespace or
+   * A fallback implementation of `String#trimRight` to remove trailing whitespace or
    * specified characters from `string`.
    *
    * @private
@@ -563,7 +565,7 @@
   }
 
   /**
-   * Used by `unescape` to convert HTML entities to characters.
+   * Used by `_.unescape` to convert HTML entities to characters.
    *
    * @private
    * @param {string} chr The matched character to unescape.
@@ -576,7 +578,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Create a new `lodash` function using the given context object.
+   * Create a new `lodash` function using the given `context` object.
    *
    * @static
    * @memberOf _
@@ -613,17 +615,17 @@
     /** Used to detect DOM support */
     var document = (document = context.window) && document.document;
 
-    /** Used to restore the original `_` reference in `noConflict` */
+    /** Used to restore the original `_` reference in `_.noConflict` */
     var oldDash = context._;
 
     /**
-     * Used as the maximum length an array-like object.
+     * Used as the maximum length of an array-like object.
      * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
      * for more details.
      */
     var maxSafeInteger = Math.pow(2, 53) - 1;
 
-    /** Used to resolve the internal [[Class]] of values */
+    /** Used to resolve the internal `[[Class]]` of values */
     var toString = objectProto.toString;
 
     /** Used to detect if a method is native */
@@ -673,7 +675,7 @@
         nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && !nativeTrimLeft.call(whitespace) && nativeTrimLeft,
         nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && !nativeTrimRight.call(whitespace) && nativeTrimRight;
 
-    /** Used to lookup a built-in constructor by [[Class]] */
+    /** Used to lookup a built-in constructor by `[[Class]]` */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
@@ -784,7 +786,7 @@
      *
      * @private
      * @param {*} value The value to wrap in a `lodash` instance.
-     * @param {boolean} [chainAll=false] A flag to enable chaining for all methods
+     * @param {boolean} [chainAll=false] A flag to enable chaining for all methods.
      * @returns {Object} Returns a `lodash` instance.
      */
     function lodashWrapper(value, chainAll) {
@@ -813,7 +815,7 @@
       for (key in arguments) { }
 
       /**
-       * Detect if an `arguments` object's [[Class]] is resolvable (all but Firefox < 4, IE < 9).
+       * Detect if an `arguments` object's `[[Class]]` is resolvable (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
        * @type boolean
@@ -842,8 +844,8 @@
        *
        * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
        * (if the prototype or a property on the prototype has been set)
-       * incorrectly sets a function's `prototype` property [[Enumerable]]
-       * value to `true`.
+       * incorrectly sets the `[[Enumerable]]` value of a function's `prototype`
+       * property to `true`.
        *
        * @memberOf _.support
        * @type boolean
@@ -880,7 +882,7 @@
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
        *
        * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
-       * made non-enumerable as well (a.k.a the JScript [[DontEnum]] bug).
+       * made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
        *
        * @memberOf _.support
        * @type boolean
@@ -933,7 +935,7 @@
       }
 
       /**
-       * Detect if a DOM node's [[Class]] is resolvable (all but IE < 9)
+       * Detect if a DOM node's `[[Class]]` is resolvable (all but IE < 9)
        * and that the JS engine errors when attempting to coerce an object to
        * a string without a `toString` function.
        *
@@ -1073,7 +1075,7 @@
           return result;
         }
       }
-      // inspect [[Class]]
+      // inspect `[[Class]]`
       var isObj = isObject(value);
       if (isObj) {
         var className = toString.call(value);
@@ -1391,7 +1393,7 @@
     }
 
     /**
-     * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
+     * The base implementation of `_.find`, '_.findLast`, `_.findKey`, and `_.findLastKey`
      * without support for callback shorthands or `this` binding which iterates
      * over `collection` using the provided `eachFunc`.
      *
@@ -1577,7 +1579,7 @@
           (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
         return false;
       }
-      // compare [[Class]] names
+      // compare `[[Class]]` names
       var valClass = toString.call(value),
           othClass = toString.call(other),
           valIsArg = valClass == argsClass,
@@ -2182,7 +2184,7 @@
     };
 
     /**
-     * A fallback implementation of `isPlainObject` which checks if `value` is
+     * A fallback implementation of `_.isPlainObject` which checks if `value` is
      * an object created by the `Object` constructor, assuming objects created
      * by the `Object` constructor have no inherited enumerable properties and
      * that there are no `Object.prototype` extensions.
@@ -3446,9 +3448,7 @@
      * // => 'pebbles is 1'
      */
     function chain(value) {
-      value = new lodashWrapper(value);
-      value.__chain__ = true;
-      return value;
+      return new lodashWrapper(value, true);
     }
 
     /**
@@ -4925,7 +4925,7 @@
      * @static
      * @memberOf _
      * @category Functions
-     * @param {...Function} [func] Functions to compose.
+     * @param {...Function} [funcs] Functions to compose.
      * @returns {Function} Returns the new composed function.
      * @example
      *
@@ -5011,7 +5011,7 @@
      * the leading and/or trailing edge of the `wait` timeout. Subsequent calls
      * to the debounced function will return the result of the last `func` call.
      *
-     * Note: If `leading` and `trailing` options are `true` `func` will be called
+     * Note: If `leading` and `trailing` options are `true`, `func` will be called
      * on the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
@@ -5387,7 +5387,7 @@
      * of the `wait` timeout. Subsequent calls to the throttled function will
      * return the result of the last `func` call.
      *
-     * Note: If `leading` and `trailing` options are `true` `func` will be called
+     * Note: If `leading` and `trailing` options are `true`, `func` will be called
      * on the trailing edge of the timeout only if the the throttled function is
      * invoked more than once during the `wait` timeout.
      *
@@ -6008,7 +6008,7 @@
       return value && typeof value == 'object' && typeof value.length == 'number' &&
         toString.call(value) == argsClass || false;
     }
-    // fallback for environments that can't detect `arguments` objects by [[Class]]
+    // fallback for environments that can't detect `arguments` objects by `[[Class]]`
     if (!support.argsClass) {
       isArguments = function(value) {
         return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -6269,7 +6269,7 @@
     }
 
     /**
-     * Checks if `value` is the language type of Object.
+     * Checks if `value` is the language type of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
      * @static
@@ -6289,7 +6289,7 @@
      * // => false
      */
     function isObject(value) {
-      // check if the value is the ECMAScript language type of Object
+      // check if the value is the ECMAScript language type of `Object`
       // http://es5.github.io/#x8
       // and avoid a V8 bug
       // https://code.google.com/p/v8/issues/detail?id=2291
@@ -6325,7 +6325,7 @@
      */
     function isNaN(value) {
       // `NaN` as a primitive is the only value that is not equal to itself
-      // (perform the [[Class]] check first to avoid errors with some host objects in IE)
+      // (perform the `[[Class]]` check first to avoid errors with some host objects in IE)
       return isNumber(value) && value != +value;
     }
 
@@ -7015,7 +7015,7 @@
     }
 
     /**
-     * Escapes the RegExp special characters "\", "^", "$", ".", "|", "?", "*",
+     * Escapes the `RegExp` special characters "\", "^", "$", ".", "|", "?", "*",
      * "+", "(", ")", "[", "]", "{" and "}" in `string`.
      *
      * @static

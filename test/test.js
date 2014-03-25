@@ -5091,10 +5091,10 @@
       deepEqual(_.keys(object), ['a', 'b']);
     });
 
-    test('should work with sparse arrays', 1, function() {
+    test('should treat sparse arrays as dense', 1, function() {
       var array = [1];
       array[2] = 3;
-      deepEqual(_.keys(array), ['0', '2']);
+      deepEqual(_.keys(array), ['0', '1', '2']);
     });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {

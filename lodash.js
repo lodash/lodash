@@ -2236,11 +2236,17 @@
       var index = -1,
           props = keysIn(object),
           length = props.length,
+          objLength = length && object.length,
           result = [];
 
+      if (typeof objLength == 'number' && objLength > 0) {
+        var allowIndexes = isArray(object) || (support.unindexedChars && isString(object)),
+            maxIndex = objLength - 1;
+      }
       while (++index < length) {
         var key = props[index];
-        if (hasOwnProperty.call(object, key)) {
+        if ((allowIndexes && key > -1 && key <= maxIndex && key % 1 == 0) ||
+            hasOwnProperty.call(object, key)) {
           result.push(key);
         }
       }
@@ -6497,8 +6503,8 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      if ((support.enumPrototypes && typeof object == 'function') ||
-          (support.nonEnumArgs && object && object.length && isArguments(object))) {
+      var length = object ? object.length : 0;
+      if (typeof length == 'number' && length > 0) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -6525,19 +6531,30 @@
      * // => ['x', 'y', 'z'] (property order is not guaranteed across environments)
      */
     function keysIn(object) {
-      var result = [];
       if (!isObject(object)) {
-        return result;
+        return [];
       }
-      if (support.nonEnumArgs && object.length && isArguments(object)) {
-        object = slice(object);
-      }
-      var skipProto = support.enumPrototypes && typeof object == 'function',
-          skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error);
+      var length = object.length;
+      length = (typeof length == 'number' && length > 0 &&
+        (isArray(object) || (support.unindexedChars && isString(object)) ||
+          (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
+      var maxIndex = length - 1,
+          result = Array(length),
+          skipIndexes = length > 0,
+          skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
+          skipProto = support.enumPrototypes && typeof object == 'function';
+
+      if (skipIndexes) {
+        var index = -1;
+        while (++index < length) {
+          result[index] = String(index);
+        }
+      }
       for (var key in object) {
         if (!(skipProto && key == 'prototype') &&
-            !(skipErrorProps && (key == 'message' || key == 'name'))) {
+            !(skipErrorProps && (key == 'message' || key == 'name')) &&
+            !(skipIndexes && key > -1 && key <= maxIndex && key % 1 == 0)) {
           result.push(key);
         }
       }
@@ -6546,9 +6563,9 @@
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
       if (support.nonEnumShadows && object !== objectProto) {
-        var ctor = object.constructor,
-            index = -1,
-            length = shadowedProps.length;
+        var ctor = object.constructor;
+        index = -1;
+        length = shadowedProps.length;
 
         if (object === (ctor && ctor.prototype)) {
           var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),

@@ -8849,23 +8849,21 @@
 
   (function() {
     test('should return the union of the given arrays', 1, function() {
-      var actual = _.union([1, 2, 3], [5, 2, 1, 4], [2, 1]);
-      deepEqual(actual, [1, 2, 3, 5, 4]);
+      var actual = _.union([1, 3, 2], [5, 2, 1, 4], [2, 1]);
+      deepEqual(actual, [1, 3, 2, 5, 4]);
     });
 
     test('should not flatten nested arrays', 1, function() {
-      var actual = _.union([1, 2, 3], [1, [5]], [2, [4]]);
-      deepEqual(actual, [1, 2, 3, [5], [4]]);
+      var actual = _.union([1, 3, 2], [1, [5]], [2, [4]]);
+      deepEqual(actual, [1, 3, 2, [5], [4]]);
     });
 
-    test('should produce correct results when provided a falsey `array` argument', 1, function() {
-      var expected = [1, 2, 3],
-          actual = _.union(null, expected);
-
-      deepEqual(actual, expected);
+    test('should with only secondary arguments', 1, function() {
+      var actual = _.union(null, [1, 3, 2], [5, 4]);
+      deepEqual(actual, [1, 3, 2, 5, 4]);
     });
 
-    test('should ignore individual secondary values', 1, function() {
+    test('should ignore individual secondary arguments', 1, function() {
       var array = [0];
       deepEqual(_.union(array, 3, null, { '0': 1 }), array);
     });

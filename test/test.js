@@ -2205,7 +2205,7 @@
       deepEqual(_.difference(largeArray, [object2]), [object1]);
     });
 
-    test('should ignore individual secondary values', 1, function() {
+    test('should ignore individual secondary arguments', 1, function() {
       var array = [0, 1, null, 3];
       deepEqual(_.difference(array, 3, null, { '0': 1 }), array);
     });
@@ -9187,7 +9187,7 @@
       }
     });
 
-    test('should ignore individual secondary values', 1, function() {
+    test('should ignore individual secondary arguments', 1, function() {
       var array = [0];
       deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
     });

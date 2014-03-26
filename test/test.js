@@ -3638,9 +3638,10 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should return an array of unique values', 1, function() {
-      var actual = _.intersection([1, 1, 3, 2, 2], [5, 2, 2, 1, 4], [2, 1, 1]);
-      deepEqual(actual, [1, 2]);
+    test('should return an array of unique values', 2, function() {
+      var array = [1, 1, 3, 2, 2];
+      deepEqual(_.intersection(array, [5, 2, 2, 1, 4], [2, 1, 1]), [1, 2]);
+      deepEqual(_.intersection(array), [1, 3, 2]);
     });
 
     test('should work with large arrays of objects', 1, function() {
@@ -3673,7 +3674,11 @@
       }
     });
 
-    test('should ignore individual secondary values', 1, function() {
+    test('should with only secondary arguments', 1, function() {
+      deepEqual(_.intersection(null, [1, 3, 2], [2, 1]), [1, 2]);
+    });
+
+    test('should ignore individual secondary arguments', 1, function() {
       var array = [0, 1, null, 3];
       deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
     });
@@ -9606,7 +9611,7 @@
       }
 
       deepEqual(_.difference(null, array), [], message('difference'));
-      deepEqual(_.intersection(null, array), [], message('intersection'));
+      deepEqual(_.intersection(null, array), array, message('intersection'));
       deepEqual(_.union(null, array), array, message('union'));
     });
 

@@ -75,7 +75,7 @@
   var reThis = /\bthis\b/;
 
   /** Used to match unescaped characters in compiled string literals */
-  var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
+  var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
   var reWords = /[A-Z]{2,}|[a-zA-Z0-9][a-z0-9]*/g;
@@ -206,7 +206,6 @@
     "'": "'",
     '\n': 'n',
     '\r': 'r',
-    '\t': 't',
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };

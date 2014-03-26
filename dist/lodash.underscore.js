@@ -4,7 +4,7 @@
  * Build: `lodash underscore -o ./dist/lodash.underscore.js`
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.6.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
 ;(function() {
@@ -45,8 +45,8 @@
   var reNoMatch = /($^)/;
 
   /**
-   * Used to match RegExp special characters.
-   * See this [article on RegExp characters](http://www.regular-expressions.info/characters.html#special)
+   * Used to match `RegExp` special characters.
+   * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
    * for more details.
    */
   var reRegExpChars = /[.*+?^${}()|[\]\\]/g;
@@ -91,7 +91,7 @@
     '&#x27;': "'"
   };
 
-  /** Used to determine if values are of the language type Object */
+  /** Used to determine if values are of the language type `Object` */
   var objectTypes = {
     'function': true,
     'object': true
@@ -171,7 +171,7 @@
   }
 
   /**
-   * Used by `sortBy` to compare transformed elements of a collection and stable
+   * Used by `_.sortBy` to compare transformed elements of a collection and stable
    * sort them in ascending order.
    *
    * @private
@@ -184,7 +184,7 @@
   }
 
   /**
-   * Used by `escape` to convert characters to HTML entities.
+   * Used by `_.escape` to convert characters to HTML entities.
    *
    * @private
    * @param {string} chr The matched character to escape.
@@ -195,7 +195,7 @@
   }
 
   /**
-   * Used by `template` to escape characters for inclusion in compiled
+   * Used by `_.template` to escape characters for inclusion in compiled
    * string literals.
    *
    * @private
@@ -207,7 +207,7 @@
   }
 
   /**
-   * Used by `unescape` to convert HTML entities to characters.
+   * Used by `_.unescape` to convert HTML entities to characters.
    *
    * @private
    * @param {string} chr The matched character to unescape.
@@ -223,17 +223,17 @@
   var arrayRef = Array.prototype,
       objectProto = Object.prototype;
 
-  /** Used to restore the original `_` reference in `noConflict` */
+  /** Used to restore the original `_` reference in `_.noConflict` */
   var oldDash = root._;
 
   /**
-   * Used as the maximum length an array-like object.
+   * Used as the maximum length of an array-like object.
    * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
    * for more details.
    */
   var maxSafeInteger = Math.pow(2, 53) - 1;
 
-  /** Used to resolve the internal [[Class]] of values */
+  /** Used to resolve the internal `[[Class]]` of values */
   var toString = objectProto.toString;
 
   /** Used to detect if a method is native */
@@ -342,7 +342,7 @@
    *
    * @private
    * @param {*} value The value to wrap in a `lodash` instance.
-   * @param {boolean} [chainAll=false] A flag to enable chaining for all methods
+   * @param {boolean} [chainAll=false] A flag to enable chaining for all methods.
    * @returns {Object} Returns a `lodash` instance.
    */
   function lodashWrapper(value, chainAll) {
@@ -488,7 +488,7 @@
 
   /**
    * The base implementation of `createWrapper` that creates the wrapper and
-   * sets its meta data.
+   * sets its metadata.
    *
    * @private
    * @param {Array} data The metadata array.
@@ -611,7 +611,7 @@
   }
 
   /**
-   * The base implementation of `find`, 'findLast`, `findKey`, and `findLastKey`
+   * The base implementation of `_.find`, '_.findLast`, `_.findKey`, and `_.findLastKey`
    * without support for callback shorthands or `this` binding which iterates
    * over `collection` using the provided `eachFunc`.
    *
@@ -1182,8 +1182,8 @@
    * _.difference([1, 2, 3], [5, 2, 10]);
    * // => [1, 3]
    */
-  function difference(array) {
-    return baseDifference(array, baseFlatten(arguments, true, true, 1));
+  function difference() {
+    return baseDifference(arguments[0], baseFlatten(arguments, true, true, 1));
   }
 
   /**
@@ -1431,7 +1431,7 @@
          args.push(value);
        }
     }
-    argsLength = args.length
+    argsLength = args.length;
     var array = args[0],
         index = -1,
         indexOf = getIndexOf(),
@@ -1873,9 +1873,7 @@
    * // => 'pebbles is 1'
    */
   function chain(value) {
-    value = new lodashWrapper(value);
-    value.__chain__ = true;
-    return value;
+    return new lodashWrapper(value, true);
   }
 
   /**
@@ -3165,7 +3163,7 @@
    * @static
    * @memberOf _
    * @category Functions
-   * @param {...Function} [func] Functions to compose.
+   * @param {...Function} [funcs] Functions to compose.
    * @returns {Function} Returns the new composed function.
    * @example
    *
@@ -3214,7 +3212,7 @@
    * the leading and/or trailing edge of the `wait` timeout. Subsequent calls
    * to the debounced function will return the result of the last `func` call.
    *
-   * Note: If `leading` and `trailing` options are `true` `func` will be called
+   * Note: If `leading` and `trailing` options are `true`, `func` will be called
    * on the trailing edge of the timeout only if the the debounced function is
    * invoked more than once during the `wait` timeout.
    *
@@ -3538,7 +3536,7 @@
    * of the `wait` timeout. Subsequent calls to the throttled function will
    * return the result of the last `func` call.
    *
-   * Note: If `leading` and `trailing` options are `true` `func` will be called
+   * Note: If `leading` and `trailing` options are `true`, `func` will be called
    * on the trailing edge of the timeout only if the the throttled function is
    * invoked more than once during the `wait` timeout.
    *
@@ -3853,7 +3851,7 @@
     return value && typeof value == 'object' && typeof value.length == 'number' &&
       toString.call(value) == argsClass || false;
   }
-  // fallback for environments that can't detect `arguments` objects by [[Class]]
+  // fallback for environments that can't detect `arguments` objects by `[[Class]]`
   if (!isArguments(arguments)) {
     isArguments = function(value) {
       return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -4083,7 +4081,7 @@
   }
 
   /**
-   * Checks if `value` is the language type of Object.
+   * Checks if `value` is the language type of `Object`.
    * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
    *
    * @static
@@ -4103,7 +4101,7 @@
    * // => false
    */
   function isObject(value) {
-    // check if the value is the ECMAScript language type of Object
+    // check if the value is the ECMAScript language type of `Object`
     // http://es5.github.io/#x8
     // and avoid a V8 bug
     // https://code.google.com/p/v8/issues/detail?id=2291
@@ -4139,7 +4137,7 @@
    */
   function isNaN(value) {
     // `NaN` as a primitive is the only value that is not equal to itself
-    // (perform the [[Class]] check first to avoid errors with some host objects in IE)
+    // (perform the `[[Class]]` check first to avoid errors with some host objects in IE)
     return isNumber(value) && value != +value;
   }
 
@@ -4467,7 +4465,7 @@
   }
 
   /**
-   * Escapes the RegExp special characters "\", "^", "$", ".", "|", "?", "*",
+   * Escapes the `RegExp` special characters "\", "^", "$", ".", "|", "?", "*",
    * "+", "(", ")", "[", "]", "{" and "}" in `string`.
    *
    * @static
@@ -4493,7 +4491,7 @@
    * settings object is provided it will override `_.templateSettings` for the
    * template.
    *
-   * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
+   * Note: In the development build, `_.template` utilizes `sourceURL`s for easier debugging.
    * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
    * for more details.
    *
@@ -4513,7 +4511,7 @@
    * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
    * @param {Object} [options.imports] An object to import into the template as local variables.
    * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-   * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
+   * @param {string} [options.sourceURL] The `sourceURL` of the template's compiled source.
    * @param {string} [options.variable] The data object variable name.
    * @returns {Function|string} Returns the interpolated string if a data object
    *  is provided, else the compiled template function.
@@ -4551,7 +4549,7 @@
    * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
    * // => '<li>fred</li><li>barney</li>'
    *
-   * // using the `sourceURL` option to specify a custom sourceURL for the template
+   * // using the `sourceURL` option to specify a custom `sourceURL` for the template
    * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
    * compiled(data);
    * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector

@@ -3674,7 +3674,7 @@
       }
     });
 
-    test('should with only secondary arguments', 1, function() {
+    test('should work with only secondary arguments', 1, function() {
       deepEqual(_.intersection(null, [1, 3, 2], [2, 1]), [1, 2]);
     });
 
@@ -8858,7 +8858,7 @@
       deepEqual(actual, [1, 3, 2, [5], [4]]);
     });
 
-    test('should with only secondary arguments', 1, function() {
+    test('should work with only secondary arguments', 1, function() {
       var actual = _.union(null, [1, 3, 2], [5, 4]);
       deepEqual(actual, [1, 3, 2, 5, 4]);
     });

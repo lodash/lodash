@@ -2737,45 +2737,42 @@
      * _.intersection([1, 2, 3], [5, 2, 1, 4], [2, 1]);
      * // => [1, 2]
      */
-    function intersection(array) {
-      if (!array) {
-        return [];
-      }
+    function intersection() {
       var args = [],
           argsIndex = -1,
           argsLength = arguments.length,
           caches = [],
           indexOf = getIndexOf(),
-          prereq = createCache && indexOf === baseIndexOf,
-          seen = [];
+          prereq = createCache && indexOf === baseIndexOf;
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
           caches.push(prereq && value.length >= 120 &&
-            createCache(argsIndex ? value : seen));
+            createCache(argsIndex && value));
         }
       }
       argsLength = args.length;
       var array = args[0],
           index = -1,
           length = array ? array.length : 0,
-          result = [];
+          result = [],
+          seen = caches[0];
 
       outer:
       while (++index < length) {
-        var cache = caches[0];
         value = array[index];
-
-        if ((cache ? cacheIndexOf(cache, value) : indexOf(seen, value)) < 0) {
+        if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value)) < 0) {
           argsIndex = argsLength;
-          (cache || seen).push(value);
           while (--argsIndex) {
-            cache = caches[argsIndex];
+            var cache = caches[argsIndex];
             if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value)) < 0) {
               continue outer;
             }
+          }
+          if (seen) {
+            seen.push(value);
           }
           result.push(value);
         }

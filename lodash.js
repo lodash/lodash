@@ -1105,7 +1105,6 @@
       var isArr = isArray(value);
       if (isDeep) {
         // check for circular references and return corresponding clone
-        var initedStack = !stackA;
         stackA || (stackA = []);
         stackB || (stackB = []);
 
@@ -1656,7 +1655,6 @@
       // assume cyclic structures are equal
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
       // section 15.12.3, abstract operation `JO` (http://es5.github.io/#x15.12.3)
-      var initedStack = !stackA;
       stackA || (stackA = []);
       stackB || (stackB = []);
 
@@ -8367,10 +8365,10 @@
     lodash.first = first;
     lodash.last = last;
     lodash.sample = sample;
-    lodash.take = first;
-    lodash.takeRight = last;
-    lodash.takeRightWhile = last;
-    lodash.takeWhile = first;
+    lodash.take = take;
+    lodash.takeRight = takeRight;
+    lodash.takeRightWhile = takeRightWhile;
+    lodash.takeWhile = takeWhile;
 
     // add aliases
     lodash.head = first;

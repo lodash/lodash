@@ -28,6 +28,9 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
+  /** Used to detect words composed of all capital letters */
+  var reAllCaps = /^[A-Z]+$/;
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -78,7 +81,7 @@
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[A-Z]{2,}|[a-zA-Z0-9][a-z0-9]*/g;
+  var reWords = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[a-z]+|[0-9]+/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -6946,8 +6949,14 @@
      * _.camelCase('__hello_world__');
      * // => 'helloWorld'
      */
-    var camelCase = createCompounder(function(result, word, index) {
-      return result + word.charAt(0)[index ? 'toUpperCase' : 'toLowerCase']() + word.slice(1);
+    var camelCase = createCompounder(function(result, word, index, words) {
+      if (!index && reAllCaps.test(word)) {
+        return result + word.toLowerCase();
+      }
+      var lastWord = index && words[index - 1],
+          isCapped = index && !(index > 1 && words.length == 3 && (lastWord == 2 || lastWord == 4));
+
+      return result + (word.charAt(0)[isCapped ? 'toUpperCase' : 'toLowerCase']() + word.slice(1));
     });
 
     /**

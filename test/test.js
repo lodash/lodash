@@ -1025,6 +1025,12 @@
       });
     });
 
+    test('`_.' + methodName + '` should handle double-converting strings', 4, function() {
+      _.forEach(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
+        equal(func(func(string)), expected);
+      });
+    });
+
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
         var isCamel = caseName == 'camel',
@@ -1056,6 +1062,25 @@
       strictEqual(func(''), '');
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.camelCase');
+
+  (function() {
+    test('should work with numbers', 6, function() {
+      equal(_.camelCase('P2P'), 'p2p');
+      equal(_.camelCase('ascii 2 unicode'), 'ascii2unicode');
+      equal(_.camelCase('two 4 one'), 'two4one');
+      equal(_.camelCase('walk 500 miles'), 'walk500Miles');
+      equal(_.camelCase('xhr2 request'), 'xhr2Request');
+      equal(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
+    });
+
+    test('should handle acronyms', 1, function() {
+      equal(_.camelCase('XMLHttpRequest'), 'xmlHttpRequest');
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

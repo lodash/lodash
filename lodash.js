@@ -814,7 +814,8 @@
 
       ctor.prototype = { 'valueOf': 1, 'y': 1 };
       for (var key in new ctor) { props.push(key); }
-      for (key in arguments) { }
+      for (var argsKey in arguments) { }
+      for (var strKey in 'x') { }
 
       /**
        * Detect if an `arguments` object's `[[Class]]` is resolvable (all but Firefox < 4, IE < 9).
@@ -834,7 +835,7 @@
 
       /**
        * Detect if `name` or `message` properties of `Error.prototype` are
-       * enumerable by default. (IE < 9, Safari < 5.1)
+       * enumerable by default (IE < 9, Safari < 5.1).
        *
        * @memberOf _.support
        * @type boolean
@@ -878,7 +879,15 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.nonEnumArgs = key != '0';
+      support.nonEnumArgs = argsKey != '0';
+
+      /**
+       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino, Narwhal).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.nonEnumStrings = strKey != '0';
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
@@ -2240,12 +2249,13 @@
           result = [];
 
       if (typeof objLength == 'number' && objLength > 0) {
-        var allowIndexes = isArray(object) || (support.unindexedChars && isString(object)),
+        var keyIndex,
+            allowIndexes = isArray(object) || (support.nonEnumStrings && isString(object)),
             maxIndex = objLength - 1;
       }
       while (++index < length) {
         var key = props[index];
-        if ((allowIndexes && key > -1 && key <= maxIndex && key % 1 == 0) ||
+        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
             hasOwnProperty.call(object, key)) {
           result.push(key);
         }
@@ -6533,10 +6543,11 @@
       }
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
-        (isArray(object) || (support.unindexedChars && isString(object)) ||
+        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
-      var maxIndex = length - 1,
+      var keyIndex,
+          maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
@@ -6551,7 +6562,7 @@
       for (var key in object) {
         if (!(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && key > -1 && key <= maxIndex && key % 1 == 0)) {
+            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0))) {
           result.push(key);
         }
       }

@@ -7815,6 +7815,7 @@
         'nodeClass',
         'nonEnumArgs',
         'nonEnumShadows',
+        'nonEnumStrings',
         'ownLast',
         'spliceObjects',
         'unindexedChars'

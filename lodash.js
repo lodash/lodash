@@ -276,7 +276,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    var index = (+fromIndex || 0) - 1,
+    var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0;
 
     while (++index < length) {
@@ -1430,7 +1430,7 @@
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isShallow, isStrict, fromIndex) {
-      var index = (+fromIndex || 0) - 1,
+      var index = (fromIndex || 0) - 1,
           length = array ? array.length : 0,
           result = [];
 
@@ -3615,7 +3615,7 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-      fromIndex = (typeof fromIndex == 'number' && +fromIndex) || 0;
+      fromIndex = (typeof fromIndex == 'number' && fromIndex) || 0;
 
       if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {

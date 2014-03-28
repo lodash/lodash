@@ -1068,16 +1068,15 @@
   QUnit.module('lodash.camelCase');
 
   (function() {
-    test('should work with numbers', 6, function() {
-      equal(_.camelCase('P2P'), 'p2p');
-      equal(_.camelCase('ascii 2 unicode'), 'ascii2unicode');
-      equal(_.camelCase('two 4 one'), 'two4one');
+    test('should work with numbers', 3, function() {
+      equal(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
       equal(_.camelCase('walk 500 miles'), 'walk500Miles');
       equal(_.camelCase('xhr2 request'), 'xhr2Request');
-      equal(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
     });
 
-    test('should handle acronyms', 1, function() {
+    test('should handle acronyms', 3, function() {
+      equal(_.camelCase('safe HTML'), 'safeHTML');
+      equal(_.camelCase('escape HTML entities'), 'escapeHTMLEntities');
       equal(_.camelCase('XMLHttpRequest'), 'xmlHttpRequest');
     });
   }());

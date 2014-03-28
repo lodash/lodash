@@ -5134,6 +5134,10 @@
       }
     });
 
+    test('should work with string objects (test in IE < 9)', 1, function() {
+      deepEqual(_.keys(Object('abc')), ['0', '1', '2']);
+    });
+
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;

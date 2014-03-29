@@ -6141,7 +6141,7 @@
 
       var once = _.once(function() {
         count++;
-        func();
+        once();
       });
 
       once();

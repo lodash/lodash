@@ -6101,16 +6101,16 @@
   (function() {
     test('should execute `func` once', 1, function() {
       var count = 0,
-          func = _.once(function() { count++; });
+          once = _.once(function() { count++; });
 
-      func();
-      func();
+      once();
+      once();
       strictEqual(count, 1);
     });
 
     test('should not set a `this` binding', 1, function() {
-      var func = _.once(function() { this.count++; }),
-          object = { 'count': 0, 'once': func };
+      var once = _.once(function() { this.count++; }),
+          object = { 'count': 0, 'once': once };
 
       object.once();
       object.once();
@@ -6120,26 +6120,26 @@
     test('should ignore recursive calls', 1, function() {
       var count = 0;
 
-      var func = _.once(function() {
+      var once = _.once(function() {
         count++;
         func();
       });
 
-      func();
+      once();
       strictEqual(count, 1);
     });
 
     test('should not throw more than once', 2, function() {
       var pass = true;
 
-      var func = _.once(function() {
+      var once = _.once(function() {
         throw new Error;
       });
 
-      raises(function() { func(); }, Error);
+      raises(function() { once(); }, Error);
 
       try {
-        func();
+        once();
       } catch(e) {
         pass = false;
       }

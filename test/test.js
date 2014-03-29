@@ -183,6 +183,9 @@
     return result;
   }());
 
+  /** Detects if running the pre-build version of Lo-Dash */
+  var isPreBuild = /getHolders/.test(_.partial(_.noop));
+
   /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
   var shadowedProps = [
     'constructor',
@@ -748,7 +751,7 @@
       var values = _.reject(falsey.slice(1), function(value) { return value == null; }),
           expected = _.map(values, function(value) { return [value]; });
 
-      var actual = _.map(values, function(value, index) {
+      var actual = _.map(values, function(value) {
         try {
           var bound = _.bind(fn, value);
           return bound();
@@ -791,7 +794,7 @@
     });
 
     test('should support placeholders', 4, function() {
-      if (_._iteratorTemplate) {
+      if (isPreBuild) {
         var object = {},
             bound = _.bind(fn, object, _, 'b', _);
 
@@ -806,7 +809,7 @@
     });
 
     test('should create a function with a `length` of `0`', 2, function() {
-      var func = function(a, b, c) {},
+      var fn = function(a, b, c) {},
           bound = _.bind(fn, {});
 
       strictEqual(bound.length, 0);
@@ -979,13 +982,13 @@
         }
       };
 
-      var func = _.bindKey(object, 'greet', 'hi');
-      equal(func(), 'hi fred');
+      var bound = _.bindKey(object, 'greet', 'hi');
+      equal(bound(), 'hi fred');
 
       object.greet = function(greeting) {
         return greeting + ' ' + this.name + '!';
       };
-      equal(func(), 'hi fred!');
+      equal(bound(), 'hi fred!');
     });
   }());
 
@@ -6300,9 +6303,7 @@
         isPartial = methodName == 'partial';
 
     test('`_.' + methodName + '` partially applies arguments', 1, function() {
-      var fn = function(a) { return a; },
-          par = func(fn, 'a');
-
+      var par = func(_.identity, 'a');
       equal(par(), 'a');
     });
 
@@ -6322,10 +6323,29 @@
     });
 
     test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked with additional arguments', 1, function() {
-      var fn = function(a) { return a; },
-          par = func(fn);
-
+      var par = func(_.identity);
       equal(par('a'), 'a');
+    });
+
+    test('`_.' + methodName + '` should support placeholders', 4, function() {
+      if (isPreBuild) {
+        var fn = function() { return slice.call(arguments); },
+            par = func(fn, _, 'b', _);
+
+        deepEqual(par('a', 'c'), ['a', 'b', 'c']);
+        deepEqual(par('a'), ['a', 'b', undefined]);
+        deepEqual(par(), [undefined, 'b', undefined]);
+
+        if (isPartial) {
+          deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+        } else {
+          par = func(fn, _, 'c', _);
+          deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
+        }
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('`_.' + methodName + '` should not alter the `this` binding', 3, function() {
@@ -6353,34 +6373,11 @@
       function Foo(value) {
         return value && object;
       }
-      var par = func(Foo),
-          object = {};
+      var object = {},
+          par = func(Foo);
 
       ok(new par instanceof Foo);
       strictEqual(new par(true), object);
-    });
-
-    test('`_.' + methodName + '` should support placeholders', 4, function() {
-      if (_._iteratorTemplate) {
-        var fn = function() {
-          return slice.call(arguments);
-        };
-
-        var par = func(fn, _, 'b', _);
-        deepEqual(par('a', 'c'), ['a', 'b', 'c']);
-        deepEqual(par('a'), ['a', 'b', undefined]);
-        deepEqual(par(), [undefined, 'b', undefined]);
-
-        if (isPartial) {
-          deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-        } else {
-          par = func(fn, _, 'c', _);
-          deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
-        }
-      }
-      else {
-        skipTest(4);
-      }
     });
 
     test('`_.' + methodName + '` should clone metadata for created functions', 3, function() {

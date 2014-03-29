@@ -978,17 +978,36 @@
       var object = {
         'name': 'fred',
         'greet': function(greeting) {
-          return greeting + ' ' + this.name;
+          return this.name + ' says: ' + greeting;
         }
       };
 
       var bound = _.bindKey(object, 'greet', 'hi');
-      equal(bound(), 'hi fred');
+      equal(bound(), 'fred says: hi');
 
       object.greet = function(greeting) {
-        return greeting + ' ' + this.name + '!';
+        return this.name + ' says: ' + greeting + '!';
       };
-      equal(bound(), 'hi fred!');
+      equal(bound(), 'fred says: hi!');
+    });
+
+    test('should support placeholders', 4, function() {
+      var object = {
+        'fn': function fn(a, b, c, d) {
+          return slice.call(arguments);
+        }
+      };
+
+      if (isPreBuild) {
+        var bound = _.bindKey(object, 'fn', _, 'b', _);
+        deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
+        deepEqual(bound('a'), ['a', 'b', undefined]);
+        deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+        deepEqual(bound(), [undefined, 'b', undefined]);
+      }
+      else {
+        skipTest(4);
+      }
     });
   }());
 

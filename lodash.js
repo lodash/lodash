@@ -2691,7 +2691,7 @@
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
         return (length && array[index] === value) ? index : -1;
@@ -2852,7 +2852,7 @@
       var index = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
         fromIndex |= 0;
-        index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
+        index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex, index - 1)) + 1;
       }
       while (index--) {
         if (array[index] === value) {
@@ -3637,7 +3637,7 @@
             : collection.indexOf(target, fromIndex) > -1;
         }
         var indexOf = getIndexOf();
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex;
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
         return indexOf(collection, target, fromIndex) > -1;
       }
       var index = -1,
@@ -4522,7 +4522,7 @@
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
-      result.length = nativeMin(nativeMax(0, n), result.length);
+      result.length = nativeMin(nativeMax(n, 0), result.length);
       return result;
     }
 
@@ -8073,7 +8073,7 @@
       // use `Array(length)` so engines like Chakra and V8 avoid slower modes
       // http://youtu.be/XAqIpGU8ZZk#t=17m25s
       var index = -1,
-          length = nativeMax(0, ceil((end - start) / (step || 1))),
+          length = nativeMax(ceil((end - start) / (step || 1)), 0),
           result = Array(length);
 
       while (++index < length) {

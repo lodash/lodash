@@ -1730,25 +1730,42 @@
 
   (function() {
     function fn(a, b, c, d) {
-      return a + b + c + d;
+      return slice.call(arguments);
     }
 
     test('should curry based on the number of arguments provided', 3, function() {
-      var curried = _.curry(fn);
-      equal(curried(1)(2)(3)(4), 10);
-      equal(curried(1, 2)(3, 4), 10);
-      equal(curried(1, 2, 3, 4), 10);
+      var curried = _.curry(fn),
+          expected = [1, 2, 3, 4];
+
+      deepEqual(curried(1)(2)(3)(4), expected);
+      deepEqual(curried(1, 2)(3, 4), expected);
+      deepEqual(curried(1, 2, 3, 4), expected);
     });
 
     test('should work with partialed methods', 2, function() {
       var curried = _.curry(fn),
-          a = _.partial(curried, 1),
+          expected = [1, 2, 3, 4];
+
+      var a = _.partial(curried, 1),
           b = _.bind(a, null, 2),
           c = _.partialRight(b, 4),
           d = _.partialRight(b(3), 4);
 
-      equal(c(3), 10);
-      equal(d(), 10);
+      deepEqual(c(3), expected);
+      deepEqual(d(), expected);
+    });
+
+    test('should support placeholders', 4, function() {
+      if (isPreBuild) {
+        var curried = _.curry(fn);
+        deepEqual(curried(1)(_, 3)(_, 4)(2), [1, 2, 3, 4]);
+        deepEqual(curried(_, 2)(1)(_, 4)(3), [1, 2, 3, 4]);
+        deepEqual(curried(_, _, 3)(_, 2)(_, 4)(1), [1, 2, 3, 4]);
+        deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should return a function with a `length` of `0`', 6, function() {
@@ -1774,22 +1791,24 @@
     test('should not alter the `this` binding', 9, function() {
       var fn = function(a, b, c) {
         var value = this || {};
-        return value[a] + value[b] + value[c];
+        return [value[a], value[b], value[c]];
       };
 
-      var object = { 'a': 1, 'b': 2, 'c': 3 };
-      equal(_.curry(_.bind(fn, object), 3)('a')('b')('c'), 6);
-      equal(_.curry(_.bind(fn, object), 3)('a', 'b')('c'), 6);
-      equal(_.curry(_.bind(fn, object), 3)('a', 'b', 'c'), 6);
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          expected = [1, 2, 3];
 
-      ok(_.isEqual(_.bind(_.curry(fn), object)('a')('b')('c'), NaN));
-      ok(_.isEqual(_.bind(_.curry(fn), object)('a', 'b')('c'), NaN));
-      equal(_.bind(_.curry(fn), object)('a', 'b', 'c'), 6);
+      deepEqual(_.curry(_.bind(fn, object), 3)('a')('b')('c'), expected);
+      deepEqual(_.curry(_.bind(fn, object), 3)('a', 'b')('c'), expected);
+      deepEqual(_.curry(_.bind(fn, object), 3)('a', 'b', 'c'), expected);
+
+      deepEqual(_.bind(_.curry(fn), object)('a')('b')('c'), Array(3));
+      deepEqual(_.bind(_.curry(fn), object)('a', 'b')('c'), Array(3));
+      deepEqual(_.bind(_.curry(fn), object)('a', 'b', 'c'), expected);
 
       object.curried = _.curry(fn);
-      ok(_.isEqual(object.curried('a')('b')('c'), NaN));
-      ok(_.isEqual(object.curried('a', 'b')('c'), NaN));
-      equal(object.curried('a', 'b', 'c'), 6);
+      deepEqual(object.curried('a')('b')('c'), Array(3));
+      deepEqual(object.curried('a', 'b')('c'), Array(3));
+      deepEqual(object.curried('a', 'b', 'c'), expected);
     });
   }());
 

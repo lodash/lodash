@@ -1275,14 +1275,19 @@
         if (partialRightArgs) {
           args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
-        if (isCurry && length < arity) {
-          bitmask |= PARTIAL_FLAG;
-          bitmask &= ~PARTIAL_RIGHT_FLAG
-          if (!isCurryBound) {
-            bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+        if (isCurry) {
+          var newPartialHolders = getHolders(args);
+          length -= newPartialHolders.length;
+
+          if (length < arity) {
+            bitmask |= PARTIAL_FLAG;
+            bitmask &= ~PARTIAL_RIGHT_FLAG
+            if (!isCurryBound) {
+              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+            }
+            var newArity = nativeMax(arity - length, 0);
+            return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, newPartialHolders]);
           }
-          var newArity = nativeMax(0, arity - length);
-          return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
         }
         var thisBinding = isBind ? thisArg : this;
         if (isBindKey) {
@@ -2051,11 +2056,9 @@
      *  provided to the new function.
      * @param {Array} [partialRightArgs] An array of arguments to append to those
      *  provided to the new function.
-     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
-    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {
+    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs) {
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isPartial = bitmask & PARTIAL_FLAG,
@@ -2118,17 +2121,17 @@
         data[1] |= bitmask;
         return createWrapper.apply(null, data);
       }
-      if (arity == null) {
-        arity = isBindKey ? 0 : func.length;
-      } else if (arity < 0) {
-        arity = 0;
-      }
       if (isPartial) {
-        partialHolders = getHolders(partialArgs);
+        var partialHolders = getHolders(partialArgs);
       }
       if (isPartialRight) {
-        partialRightHolders = getHolders(partialRightArgs);
+        var partialRightHolders = getHolders(partialRightArgs);
       }
+      if (arity == null) {
+        arity = isBindKey ? 0 : func.length;
+      }
+      arity = nativeMax(arity, 0);
+
       // fast path for `_.bind`
       data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
       return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))

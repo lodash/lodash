@@ -29,6 +29,9 @@
   /** Used to generate unique IDs */
   var idCounter = 0;
 
+  /** Used to detect words composed of all capital letters */
+  var reAllCaps = /^[A-Z]+$/;
+
   /** Used to match empty string literals in compiled template source */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -76,10 +79,10 @@
   var reThis = /\bthis\b/;
 
   /** Used to match unescaped characters in compiled string literals */
-  var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
+  var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[A-Z]{2,}|[a-zA-Z0-9][a-z0-9]*/g;
+  var reWords = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[a-z]+|[0-9]+/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -207,7 +210,6 @@
     "'": "'",
     '\n': 'n',
     '\r': 'r',
-    '\t': 't',
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
@@ -275,7 +277,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    var index = (+fromIndex || 0) - 1,
+    var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0;
 
     while (++index < length) {
@@ -813,7 +815,8 @@
 
       ctor.prototype = { 'valueOf': 1, 'y': 1 };
       for (var key in new ctor) { props.push(key); }
-      for (key in arguments) { }
+      for (var argsKey in arguments) { }
+      for (var strKey in 'x') { }
 
       /**
        * Detect if an `arguments` object's `[[Class]]` is resolvable (all but Firefox < 4, IE < 9).
@@ -833,7 +836,7 @@
 
       /**
        * Detect if `name` or `message` properties of `Error.prototype` are
-       * enumerable by default. (IE < 9, Safari < 5.1)
+       * enumerable by default (IE < 9, Safari < 5.1).
        *
        * @memberOf _.support
        * @type boolean
@@ -877,7 +880,15 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.nonEnumArgs = key != '0';
+      support.nonEnumArgs = argsKey != '0';
+
+      /**
+       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino, Narwhal).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.nonEnumStrings = strKey != '0';
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
@@ -1104,7 +1115,6 @@
       var isArr = isArray(value);
       if (isDeep) {
         // check for circular references and return corresponding clone
-        var initedStack = !stackA;
         stackA || (stackA = []);
         stackB || (stackB = []);
 
@@ -1266,14 +1276,19 @@
         if (partialRightArgs) {
           args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
-        if (isCurry && length < arity) {
-          bitmask |= PARTIAL_FLAG;
-          bitmask &= ~PARTIAL_RIGHT_FLAG
-          if (!isCurryBound) {
-            bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+        if (isCurry) {
+          var newPartialHolders = [];
+          length -= newPartialHolders.length;
+
+          if (length < arity) {
+            bitmask |= PARTIAL_FLAG;
+            bitmask &= ~PARTIAL_RIGHT_FLAG
+            if (!isCurryBound) {
+              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+            }
+            var newArity = nativeMax(arity - length, 0);
+            return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, newPartialHolders]);
           }
-          var newArity = nativeMax(0, arity - length);
-          return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, []]);
         }
         var thisBinding = isBind ? thisArg : this;
         if (isBindKey) {
@@ -1430,7 +1445,7 @@
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isShallow, isStrict, fromIndex) {
-      var index = (+fromIndex || 0) - 1,
+      var index = (fromIndex || 0) - 1,
           length = array ? array.length : 0,
           result = [];
 
@@ -1655,7 +1670,6 @@
       // assume cyclic structures are equal
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
       // section 15.12.3, abstract operation `JO` (http://es5.github.io/#x15.12.3)
-      var initedStack = !stackA;
       stackA || (stackA = []);
       stackB || (stackB = []);
 
@@ -2013,9 +2027,9 @@
      */
     function createPad(string, length, chars) {
       var strLength = string.length;
-      length |= 0;
+      length = +length;
 
-      if (strLength >= length) {
+      if (strLength >= length || !nativeIsFinite(length)) {
         return '';
       }
       var padLength = length - strLength;
@@ -2043,11 +2057,9 @@
      *  provided to the new function.
      * @param {Array} [partialRightArgs] An array of arguments to append to those
      *  provided to the new function.
-     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
-    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {
+    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs) {
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isPartial = bitmask & PARTIAL_FLAG,
@@ -2110,17 +2122,17 @@
         data[1] |= bitmask;
         return createWrapper.apply(null, data);
       }
-      if (arity == null) {
-        arity = isBindKey ? 0 : func.length;
-      } else if (arity < 0) {
-        arity = 0;
-      }
       if (isPartial) {
-        partialHolders = [];
+        var partialHolders = [];
       }
       if (isPartialRight) {
-        partialRightHolders = [];
+        var partialRightHolders = [];
       }
+      if (arity == null) {
+        arity = isBindKey ? 0 : func.length;
+      }
+      arity = nativeMax(arity, 0);
+
       // fast path for `_.bind`
       data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
       return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
@@ -2221,12 +2233,13 @@
           result = [];
 
       if (typeof objLength == 'number' && objLength > 0) {
-        var allowIndexes = isArray(object) || (support.unindexedChars && isString(object)),
+        var keyIndex,
+            allowIndexes = isArray(object) || (support.nonEnumStrings && isString(object)),
             maxIndex = objLength - 1;
       }
       while (++index < length) {
         var key = props[index];
-        if ((allowIndexes && key > -1 && key <= maxIndex && key % 1 == 0) ||
+        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
             hasOwnProperty.call(object, key)) {
           result.push(key);
         }
@@ -2662,7 +2675,7 @@
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
         return (length && array[index] === value) ? index : -1;
@@ -2822,8 +2835,7 @@
     function lastIndexOf(array, value, fromIndex) {
       var index = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        fromIndex |= 0;
-        index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
+        index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
       }
       while (index--) {
         if (array[index] === value) {
@@ -2971,7 +2983,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      start = +start || 0;
+      start = typeof start == 'undefined' ? 0 : (+start || 0);
       if (start < 0) {
         start = nativeMax(length + start, 0);
       } else if (start > length) {
@@ -3596,7 +3608,7 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-      fromIndex = (typeof fromIndex == 'number' && +fromIndex) || 0;
+      fromIndex = (typeof fromIndex == 'number' && fromIndex) || 0;
 
       if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
@@ -3608,7 +3620,7 @@
             : collection.indexOf(target, fromIndex) > -1;
         }
         var indexOf = getIndexOf();
-        fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : fromIndex;
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
         return indexOf(collection, target, fromIndex) > -1;
       }
       var index = -1,
@@ -4493,7 +4505,7 @@
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
-      result.length = nativeMin(nativeMax(0, n), result.length);
+      result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
       return result;
     }
 
@@ -4776,6 +4788,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
+      n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);
@@ -5048,7 +5061,7 @@
         trailing = false;
       } else if (isObject(options)) {
         leading = options.leading;
-        maxWait = 'maxWait' in options && (nativeMax(wait, options.maxWait) || 0);
+        maxWait = 'maxWait' in options && nativeMax(wait, +options.maxWait || 0);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
       var delayed = function() {
@@ -6514,10 +6527,11 @@
       }
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
-        (isArray(object) || (support.unindexedChars && isString(object)) ||
+        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
-      var maxIndex = length - 1,
+      var keyIndex,
+          maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
@@ -6532,7 +6546,7 @@
       for (var key in object) {
         if (!(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && key > -1 && key <= maxIndex && key % 1 == 0)) {
+            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0))) {
           result.push(key);
         }
       }
@@ -6929,7 +6943,10 @@
      * // => 'helloWorld'
      */
     var camelCase = createCompounder(function(result, word, index) {
-      return result + word.charAt(0)[index ? 'toUpperCase' : 'toLowerCase']() + word.slice(1);
+      if (!index && reAllCaps.test(word)) {
+        return result + word.toLowerCase();
+      }
+      return result + (word.charAt(0)[index ? 'toUpperCase' : 'toLowerCase']() + word.slice(1));
     });
 
     /**
@@ -6980,7 +6997,7 @@
       target = String(target);
 
       var length = string.length;
-      position = (typeof position == 'number' ? nativeMin(nativeMax(+position || 0, 0), length) : length) - target.length;
+      position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
       return position >= 0 && string.indexOf(target, position) == position;
     }
 
@@ -7077,10 +7094,10 @@
      */
     function pad(string, length, chars) {
       string = string == null ? '' : String(string);
-      length |= 0;
+      length = +length;
 
       var strLength = string.length;
-      if (strLength >= length) {
+      if (strLength >= length || !nativeIsFinite(length)) {
         return string;
       }
       var mid = (length - strLength) / 2,
@@ -7169,9 +7186,9 @@
      */
     function repeat(string, n) {
       var result = '';
-      n |= 0;
+      n = +n;
 
-      if (n < 1 || string == null) {
+      if (n < 1 || string == null || !nativeIsFinite(n)) {
         return result;
       }
       string = String(string);
@@ -7233,7 +7250,7 @@
      */
     function startsWith(string, target, position) {
       string = string == null ? '' : String(string);
-      position = typeof position == 'number' ? nativeMin(nativeMax(+position || 0, 0), string.length) : 0;
+      position = typeof position == 'undefined' ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -8040,7 +8057,7 @@
       // use `Array(length)` so engines like Chakra and V8 avoid slower modes
       // http://youtu.be/XAqIpGU8ZZk#t=17m25s
       var index = -1,
-          length = nativeMax(0, ceil((end - start) / (step || 1))),
+          length = nativeMax(ceil((end - start) / (step || 1)), 0),
           result = Array(length);
 
       while (++index < length) {
@@ -8115,7 +8132,7 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, callback, thisArg) {
-      n = (n = +n) > -1 ? n : 0;
+      n = n < 0 ? 0 : n >>> 0;
       var index = -1,
           result = Array(n);
 
@@ -8340,10 +8357,10 @@
     lodash.first = first;
     lodash.last = last;
     lodash.sample = sample;
-    lodash.take = first;
-    lodash.takeRight = last;
-    lodash.takeRightWhile = last;
-    lodash.takeWhile = first;
+    lodash.take = take;
+    lodash.takeRight = takeRight;
+    lodash.takeRightWhile = takeRightWhile;
+    lodash.takeWhile = takeWhile;
 
     // add aliases
     lodash.head = first;

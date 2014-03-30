@@ -52,7 +52,7 @@
   var reRegExpChars = /[.*+?^${}()|[\]\\]/g;
 
   /** Used to match unescaped characters in compiled string literals */
-  var reUnescapedString = /['\n\r\t\u2028\u2029\\]/g;
+  var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** `Object#toString` result shortcuts */
   var argsClass = '[object Arguments]',
@@ -103,7 +103,6 @@
     "'": "'",
     '\n': 'n',
     '\r': 'r',
-    '\t': 't',
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
@@ -159,7 +158,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    var index = (+fromIndex || 0) - 1,
+    var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0;
 
     while (++index < length) {
@@ -501,8 +500,7 @@
         thisArg = data[3],
         partialArgs = data[4],
         partialRightArgs = data[5],
-        partialHolders = data[6],
-        partialRightHolders = data[7];
+        partialHolders = data[6];
 
     var isBind = bitmask & BIND_FLAG,
         isBindKey = bitmask & BIND_KEY_FLAG,
@@ -647,7 +645,7 @@
    * @returns {Array} Returns the new flattened array.
    */
   function baseFlatten(array, isShallow, isStrict, fromIndex) {
-    var index = (+fromIndex || 0) - 1,
+    var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0,
         result = [];
 
@@ -1044,11 +1042,9 @@
    *  provided to the new function.
    * @param {Array} [partialRightArgs] An array of arguments to append to those
    *  provided to the new function.
-   * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-   * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
    * @returns {Function} Returns the new function.
    */
-  function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders) {
+  function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs) {
     var isBind = bitmask & BIND_FLAG,
         isBindKey = bitmask & BIND_KEY_FLAG,
         isPartial = bitmask & PARTIAL_FLAG,
@@ -1062,10 +1058,15 @@
       isPartial = partialArgs = false;
     }
     if (isPartial) {
-      partialHolders = getHolders(partialArgs);
+      var partialHolders = getHolders(partialArgs);
     }
+    if (arity == null) {
+      arity = isBindKey ? 0 : func.length;
+    }
+    arity = nativeMax(arity, 0);
+
     // fast path for `_.bind`
-    var data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
+    var data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders];
     return baseCreateWrapper(data);
   }
 
@@ -1376,7 +1377,7 @@
   function indexOf(array, value, fromIndex) {
     var length = array ? array.length : 0;
     if (typeof fromIndex == 'number') {
-      fromIndex = fromIndex < 0 ? nativeMax(0, length + fromIndex) : (fromIndex || 0);
+      fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
     } else if (fromIndex) {
       var index = sortedIndex(array, value);
       return (length && array[index] === value) ? index : -1;
@@ -1503,8 +1504,7 @@
   function lastIndexOf(array, value, fromIndex) {
     var index = array ? array.length : 0;
     if (typeof fromIndex == 'number') {
-      fromIndex |= 0;
-      index = (fromIndex < 0 ? nativeMax(0, index + fromIndex) : nativeMin(fromIndex, index - 1)) + 1;
+      index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
     }
     while (index--) {
       if (array[index] === value) {
@@ -1558,7 +1558,7 @@
     var index = -1,
         length = array ? array.length : 0;
 
-    start = +start || 0;
+    start = typeof start == 'undefined' ? 0 : (+start || 0);
     if (start < 0) {
       start = nativeMax(length + start, 0);
     } else if (start > length) {
@@ -2804,7 +2804,7 @@
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
     var result = shuffle(collection);
-    result.length = nativeMin(nativeMax(0, n), result.length);
+    result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
     return result;
   }
 
@@ -3078,6 +3078,7 @@
     if (!isFunction(func)) {
       throw new TypeError;
     }
+    n = nativeIsFinite(n = +n) ? n : 0;
     return function() {
       if (--n < 1) {
         return func.apply(this, arguments);
@@ -3265,7 +3266,7 @@
       trailing = false;
     } else if (isObject(options)) {
       leading = options.leading;
-      maxWait = 'maxWait' in options && (nativeMax(wait, options.maxWait) || 0);
+      maxWait = 'maxWait' in options && nativeMax(wait, +options.maxWait || 0);
       trailing = 'trailing' in options ? options.trailing : trailing;
     }
     var delayed = function() {
@@ -4999,7 +5000,7 @@
     // use `Array(length)` so engines like Chakra and V8 avoid slower modes
     // http://youtu.be/XAqIpGU8ZZk#t=17m25s
     var index = -1,
-        length = nativeMax(0, ceil((end - start) / (step || 1))),
+        length = nativeMax(ceil((end - start) / (step || 1)), 0),
         result = Array(length);
 
     while (++index < length) {
@@ -5073,7 +5074,7 @@
    * // => also calls `mage.castSpell(n)` three times
    */
   function times(n, callback, thisArg) {
-    n = (n = +n) > -1 ? n : 0;
+    n = n < 0 ? 0 : n >>> 0;
     var index = -1,
         result = Array(n);
 
@@ -5231,7 +5232,7 @@
   lodash.first = first;
   lodash.last = last;
   lodash.sample = sample;
-  lodash.take = first;
+  lodash.take = take;
 
   // add aliases
   lodash.head = first;

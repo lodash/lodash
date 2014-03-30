@@ -2026,9 +2026,9 @@
      */
     function createPad(string, length, chars) {
       var strLength = string.length;
-      length |= 0;
+      length = +length;
 
-      if (strLength >= length) {
+      if (strLength >= length || !nativeIsFinite(length)) {
         return '';
       }
       var padLength = length - strLength;
@@ -2854,8 +2854,7 @@
     function lastIndexOf(array, value, fromIndex) {
       var index = array ? array.length : 0;
       if (typeof fromIndex == 'number') {
-        fromIndex |= 0;
-        index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex, index - 1)) + 1;
+        index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
       }
       while (index--) {
         if (array[index] === value) {
@@ -4525,7 +4524,7 @@
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
-      result.length = nativeMin(nativeMax(n, 0), result.length);
+      result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
       return result;
     }
 
@@ -4808,6 +4807,7 @@
       if (!isFunction(func)) {
         throw new TypeError;
       }
+      n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);
@@ -5080,7 +5080,7 @@
         trailing = false;
       } else if (isObject(options)) {
         leading = options.leading;
-        maxWait = 'maxWait' in options && (nativeMax(wait, options.maxWait) || 0);
+        maxWait = 'maxWait' in options && nativeMax(wait, +options.maxWait || 0);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
       var delayed = function() {
@@ -7016,7 +7016,7 @@
       target = String(target);
 
       var length = string.length;
-      position = (typeof position == 'number' ? nativeMin(nativeMax(+position || 0, 0), length) : length) - target.length;
+      position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
       return position >= 0 && string.indexOf(target, position) == position;
     }
 
@@ -7113,10 +7113,10 @@
      */
     function pad(string, length, chars) {
       string = string == null ? '' : String(string);
-      length |= 0;
+      length = +length;
 
       var strLength = string.length;
-      if (strLength >= length) {
+      if (strLength >= length || !nativeIsFinite(length)) {
         return string;
       }
       var mid = (length - strLength) / 2,
@@ -7205,9 +7205,9 @@
      */
     function repeat(string, n) {
       var result = '';
-      n |= 0;
+      n = +n;
 
-      if (n < 1 || string == null) {
+      if (n < 1 || string == null || !nativeIsFinite(n)) {
         return result;
       }
       string = String(string);
@@ -7269,7 +7269,7 @@
      */
     function startsWith(string, target, position) {
       string = string == null ? '' : String(string);
-      position = typeof position == 'number' ? nativeMin(nativeMax(+position || 0, 0), string.length) : 0;
+      position = typeof position == 'undefined' ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -8151,7 +8151,7 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, callback, thisArg) {
-      n = (n = +n) > -1 ? n : 0;
+      n = n < 0 ? 0 : n >>> 0;
       var index = -1,
           result = Array(n);
 

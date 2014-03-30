@@ -601,17 +601,22 @@
   QUnit.module('lodash.after');
 
   (function() {
+    function after(n, times) {
+      var count = 0;
+      _.times(times, _.after(n, function() { count++; }));
+      return count;
+    }
     test('should create a function that executes `func` after `n` calls', 4, function() {
-      function after(n, times) {
-        var count = 0;
-        _.times(times, _.after(n, function() { count++; }));
-        return count;
-      }
-
       strictEqual(after(5, 5), 1, 'after(n) should execute `func` after being called `n` times');
       strictEqual(after(5, 4), 0, 'after(n) should not execute `func` unless called `n` times');
       strictEqual(after(0, 0), 0, 'after(0) should not execute `func` immediately');
       strictEqual(after(0, 1), 1, 'after(0) should execute `func` when called once');
+    });
+
+    test('should coerce non-finite `n` values to `0`', 3, function() {
+      _.forEach([-Infinity, NaN, Infinity], function(n) {
+        strictEqual(after(n, 1), 1);
+      });
     });
   }());
 
@@ -7378,14 +7383,14 @@
       deepEqual(actual.sort(), array);
     });
 
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.forEach([0, -1, -2], function(n) {
+    test('should return an empty array when `n` < `1` or `NaN`', 4, function() {
+      _.forEach([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.sample(array, n), []);
       });
     });
 
-    test('should return all elements when `n` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(n) {
+    test('should return all elements when `n` >= `array.length`', 4, function() {
+      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.sample(array, n).sort(), array);
       });
     });
@@ -8708,6 +8713,17 @@
   QUnit.module('lodash.times');
 
   (function() {
+    test('should rollover large `n` values', 1, function() {
+      var actual = _.times(Math.pow(2, 32) + 1);
+      deepEqual(actual, [0]);
+    });
+
+    test('should coerce non-finite `n` values to `0`', 3, function() {
+      _.forEach([-Infinity, NaN, Infinity], function(n) {
+        deepEqual(_.times(n), []);
+      });
+    });
+
     test('should pass the correct `callback` arguments', 1, function() {
       var args;
 

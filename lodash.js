@@ -1509,8 +1509,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseForRight(object, callback, keysFunc) {
-      var index = -1,
-          props = keysFunc(object),
+      var props = keysFunc(object),
           length = props.length;
 
       while (length--) {
@@ -2245,7 +2244,8 @@
      * @returns {Array} Returns the array of property names.
      */
     function shimKeys(object) {
-      var index = -1,
+      var keyIndex,
+          index = -1,
           props = keysIn(object),
           length = props.length,
           objLength = length && object.length,
@@ -6544,14 +6544,13 @@
       if (!isObject(object)) {
         return [];
       }
-      var keyIndex,
-          length = object.length;
-
+      var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
-      var index = -1,
+      var keyIndex,
+          index = -1,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,

@@ -5156,56 +5156,143 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.keys');
+  QUnit.module('keys methods');
 
-  (function() {
-    var args = arguments;
+  _.forEach(['keys', 'keysIn'], function(methodName) {
+    var args = arguments,
+        func = _[methodName],
+        isKeys = methodName == 'keys';
 
-    test('should return the keys of an object', 1, function() {
-      var object = { 'a': 1, 'b': 1 };
-      deepEqual(_.keys(object), ['a', 'b']);
+    test('`_.' + methodName + '` should return the keys of an object', 1, function() {
+      var object = { 'a': 1, 'b': 1 },
+          actual = func(object);
+
+      deepEqual(actual.sort(), ['a', 'b']);
     });
 
-    test('should treat sparse arrays as dense', 1, function() {
+    test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
       var array = [1];
       array[2] = 3;
-      deepEqual(_.keys(array), ['0', '1', '2']);
+
+      var actual = func(array);
+      deepEqual(actual.sort(), ['0', '1', '2']);
     });
 
-    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` should custom properties on arrays', 1, function() {
+      var array = [1];
+      array.a = 1;
+
+      var actual = func(array);
+      deepEqual(actual.sort(), ['0', 'a']);
+    });
+
+    test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of arrays', 1, function() {
+      Array.prototype.a = 1;
+      var expected = isKeys ? ['0'] : ['0', 'a'],
+          actual = func([1]);
+
+      deepEqual(actual.sort(), expected);
+      delete Array.prototype.a;
+    });
+
+    test('`_.' + methodName + '` should work with `arguments` objects (test in IE < 9)', 1, function() {
       if (!isPhantom) {
-        deepEqual(_.keys(args), ['0', '1', '2']);
+        var actual = func(args);
+        deepEqual(actual.sort(), ['0', '1', '2']);
       } else {
         skipTest();
       }
     });
 
-    test('should work with string objects (test in IE < 9)', 1, function() {
-      deepEqual(_.keys(Object('abc')), ['0', '1', '2']);
+    test('`_.' + methodName + '` should custom properties on `arguments` objects', 1, function() {
+      if (!isPhantom) {
+        args.a = 1;
+        var actual = func(args);
+
+        deepEqual(actual.sort(), ['0', '1', '2', 'a']);
+        delete args.a;
+      } else {
+        skipTest();
+      }
     });
 
-    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 2, function() {
+    test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', 1, function() {
+      if (!isPhantom) {
+        Object.prototype.a = 1;
+        var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'],
+            actual = func(args);
+
+        deepEqual(actual.sort(), expected);
+        delete Object.prototype.a;
+      } else {
+        skipTest();
+      }
+    });
+
+    test('`_.' + methodName + '` should work with string objects (test in IE < 9)', 1, function() {
+      var actual = func(Object('abc'));
+      deepEqual(actual.sort(), ['0', '1', '2']);
+    });
+
+    test('`_.' + methodName + '` should custom properties on string objects', 1, function() {
+      var object = Object('a');
+      object.a = 1;
+
+      var actual = func(object);
+      deepEqual(actual.sort(), ['0', 'a']);
+    });
+
+    test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of string objects', 1, function() {
+      String.prototype.a = 1;
+      var expected = isKeys ? ['0'] : ['0', 'a'],
+          actual = func(Object('a'));
+
+      deepEqual(actual.sort(), expected);
+      delete String.prototype.a;
+    });
+
+    test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
-      deepEqual(_.keys(Foo.prototype), ['a']);
-      deepEqual(_.keys(shadowedObject).sort(), shadowedProps);
+      var actual = func(Foo.prototype);
+      deepEqual(actual, ['a']);
+
+      actual = func(shadowedObject);
+      deepEqual(actual.sort(), shadowedProps);
     });
 
-    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
+    test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
       Foo.prototype.c = 3;
 
       Foo.a = 1;
       Foo.b = 2;
 
-      var expected = ['a', 'b'];
-      deepEqual(_.keys(Foo), expected);
+      var expected = ['a', 'b'],
+          actual = func(Foo);
+
+      deepEqual(actual.sort(), expected);
 
       Foo.prototype = { 'c': 3 };
-      deepEqual(_.keys(Foo), expected);
+      actual = func(Foo);
+
+      deepEqual(actual.sort(), expected);
     });
-  }(1, 2, 3));
+
+    test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties', 1, function() {
+      function Foo() {
+        this.a = 1;
+        this.b = 2;
+      }
+      Foo.prototype.c = 3;
+
+      var expected = isKeys ? ['a', 'b'] : ['a', 'b', 'c'],
+          actual = func(new Foo);
+
+      deepEqual(actual.sort(), expected);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

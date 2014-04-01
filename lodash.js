@@ -6544,23 +6544,23 @@
       if (!isObject(object)) {
         return [];
       }
-      var length = object.length;
+      var isArr,
+          keyIndex,
+          length = object.length;
+
       length = (typeof length == 'number' && length > 0 &&
-        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
+        ((isArr = isArray(object)) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
-      var keyIndex,
+      var index = -1,
           maxIndex = length - 1,
           result = Array(length),
-          skipIndexes = length > 0,
+          skipIndexes = isArr && length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
           skipProto = support.enumPrototypes && typeof object == 'function';
 
-      if (skipIndexes) {
-        var index = -1;
-        while (++index < length) {
-          result[index] = String(index);
-        }
+      while (++index < length) {
+        result[index] = String(index);
       }
       for (var key in object) {
         if (!(skipProto && key == 'prototype') &&

@@ -807,7 +807,7 @@
      */
     var support = lodash.support = {};
 
-    (function() {
+    (function(x) {
       var ctor = function() { this.x = 1; },
           object = { '0': 1, 'length': 1 },
           props = [];
@@ -879,7 +879,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.nonEnumArgs = argsKey != '0';
+      support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1'));
 
       /**
        * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino, Narwhal).
@@ -958,7 +958,7 @@
       } catch(e) {
         support.nodeClass = true;
       }
-    }(1));
+    }(0, 0));
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -2249,13 +2249,13 @@
           props = keysIn(object),
           length = props.length,
           objLength = length && object.length,
+          maxIndex = objLength - 1,
           result = [];
 
-      if (typeof objLength == 'number' && objLength > 0) {
-        var keyIndex,
-            allowIndexes = isArray(object) || (support.nonEnumStrings && isString(object)),
-            maxIndex = objLength - 1;
-      }
+      var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
+        (isArray(object) || (support.nonEnumArgs && isArguments(object)) ||
+          (support.nonEnumStrings && isString(object)));
+
       while (++index < length) {
         var key = props[index];
         if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
@@ -6544,18 +6544,17 @@
       if (!isObject(object)) {
         return [];
       }
-      var isArr,
-          keyIndex,
+      var keyIndex,
           length = object.length;
 
       length = (typeof length == 'number' && length > 0 &&
-        ((isArr = isArray(object)) || (support.nonEnumStrings && isString(object)) ||
+        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
       var index = -1,
           maxIndex = length - 1,
           result = Array(length),
-          skipIndexes = isArr && length > 0,
+          skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
           skipProto = support.enumPrototypes && typeof object == 'function';
 

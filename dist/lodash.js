@@ -766,34 +766,48 @@
      */
     var support = lodash.support = {};
 
-    /**
-     * Detect if functions can be decompiled by `Function#toString`
-     * (all but PS3 and older Opera mobile browsers & avoided in Windows 8 apps).
-     *
-     * @memberOf _.support
-     * @type boolean
-     */
-    support.funcDecomp = !isNative(context.WinRTError) && reThis.test(runInContext);
+    (function(x) {
 
-    /**
-     * Detect if `Function#name` is supported (all but IE).
-     *
-     * @memberOf _.support
-     * @type boolean
-     */
-    support.funcNames = typeof Function.name == 'string';
+      for (var argsKey in arguments) { }
 
-    /**
-     * Detect if the DOM is supported.
-     *
-     * @memberOf _.support
-     * @type boolean
-     */
-    try {
-      support.dom = document.createDocumentFragment().nodeType === 11;
-    } catch(e) {
-      support.dom = false;
-    }
+      /**
+       * Detect if functions can be decompiled by `Function#toString`
+       * (all but PS3 and older Opera mobile browsers & avoided in Windows 8 apps).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.funcDecomp = !isNative(context.WinRTError) && reThis.test(runInContext);
+
+      /**
+       * Detect if `Function#name` is supported (all but IE).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.funcNames = typeof Function.name == 'string';
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1'));
+
+      /**
+       * Detect if the DOM is supported.
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      try {
+        support.dom = document.createDocumentFragment().nodeType === 11;
+      } catch(e) {
+        support.dom = false;
+      }
+    }(0, 0));
 
     /**
      * By default, the template delimiters used by Lo-Dash are similar to those in
@@ -2042,13 +2056,12 @@
           props = keysIn(object),
           length = props.length,
           objLength = length && object.length,
+          maxIndex = objLength - 1,
           result = [];
 
-      if (typeof objLength == 'number' && objLength > 0) {
-        var keyIndex,
-            allowIndexes = isArray(object),
-            maxIndex = objLength - 1;
-      }
+      var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
+        (isArray(object) || (support.nonEnumArgs && isArguments(object)));
+
       while (++index < length) {
         var key = props[index];
         if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
@@ -6320,8 +6333,13 @@
       if (!isObject(object)) {
         return [];
       }
+      var keyIndex,
+          length = object.length;
+
+      length = (typeof length == 'number' && length > 0 &&
+        (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
+
       var index = -1,
-          length = isArray(object) ? object.length : 0,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0;
@@ -6330,7 +6348,7 @@
         result[index] = String(index);
       }
       for (var key in object) {
-        if (!(skipIndexes && key > -1 && key <= maxIndex && key % 1 == 0)) {
+        if (!(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0))) {
           result.push(key);
         }
       }

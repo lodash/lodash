@@ -2577,14 +2577,14 @@
       deepEqual(_.first(array, 2), [1, 2]);
     });
 
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.forEach([0, -1, -2], function(n) {
+    test('should return an empty array when `n` < `1`', 4, function() {
+      _.forEach([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.first(array, n), []);
       });
     });
 
-    test('should return all elements when `n` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(n) {
+    test('should return all elements when `n` >= `array.length`', 4, function() {
+      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.first(array, n), array);
       });
     });
@@ -3644,14 +3644,14 @@
       deepEqual(_.initial([]), []);
     });
 
-    test('should return all elements when `n` < `1`', 3, function() {
-      _.forEach([0, -1, -2], function(n) {
+    test('should return all elements when `n` < `1`', 4, function() {
+      _.forEach([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.initial(array, n), array);
       });
     });
 
-    test('should return an empty array when `n` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(n) {
+    test('should return an empty array when `n` >= `array.length`', 4, function() {
+      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.initial(array, n), []);
       });
     });
@@ -5315,14 +5315,14 @@
       deepEqual(_.last(array, 2), [2, 3]);
     });
 
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.forEach([0, -1, -2], function(n) {
+    test('should return an empty array when `n` < `1`', 4, function() {
+      _.forEach([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.last(array, n), []);
       });
     });
 
-    test('should return all elements when `n` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(n) {
+    test('should return all elements when `n` >= `array.length`', 4, function() {
+      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.last(array, n), array);
       });
     });
@@ -7362,14 +7362,14 @@
       deepEqual(_.rest(array, 2), [3]);
     });
 
-    test('should return all elements when `n` < `1`', 3, function() {
-      _.forEach([0, -1, -2], function(n) {
+    test('should return all elements when `n` < `1`', 4, function() {
+      _.forEach([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.rest(array, n), [1, 2, 3]);
       });
     });
 
-    test('should return an empty array when `n` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(n) {
+    test('should return an empty array when `n` >= `array.length`', 4, function() {
+      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.rest(array, n), []);
       });
     });

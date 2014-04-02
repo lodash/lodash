@@ -876,21 +876,6 @@
       support.funcNames = typeof Function.name == 'string';
 
       /**
-       * Detect if `arguments` object indexes are non-enumerable
-       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
-       *
-       * Chrome < 25 and Node.js < 0.11.0 will treat `arguments` object indexes
-       * that exceed their function's formal parameters and whose associated
-       * values are `0` as non-enumerable and incorrectly return `false` from
-       * `Object#hasOwnProperty`.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1') &&
-        propertyIsEnumerable.call(arguments, '1'));
-
-      /**
        * Detect if string indexes are non-enumerable
        * (IE < 9, RingoJS, Rhino, Narwhal).
        *
@@ -971,6 +956,25 @@
         support.nodeClass = !(toString.call(document) == objectClass && !({ 'toString': 0 } + ''));
       } catch(e) {
         support.nodeClass = true;
+      }
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * Chrome < 25 and Node.js < 0.11.0 will treat `arguments` object indexes
+       * that exceed their function's formal parameters and whose associated
+       * values are `0` as non-enumerable and incorrectly return `false` from
+       * `Object#hasOwnProperty`.
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      try {
+        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1') &&
+          propertyIsEnumerable.call(arguments, '1'));
+      } catch(e) {
+        support.nonEnumArgs = true;
       }
     }(0, 0));
 

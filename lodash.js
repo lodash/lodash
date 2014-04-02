@@ -2746,7 +2746,7 @@
       } else {
         n = (predicate == null || thisArg) ? 1 : predicate;
       }
-      n = length - n;
+      n = length - (n || 0);
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -2840,8 +2840,8 @@
           return array ? array[length - 1] : undefined;
         }
       }
-      n = length - n;
-      return slice(array,  n < 0 ? 0 : n);
+      n = length - (n || 0);
+      return slice(array, n < 0 ? 0 : n);
     }
 
     /**

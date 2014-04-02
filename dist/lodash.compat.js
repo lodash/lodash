@@ -808,7 +808,7 @@
      */
     var support = lodash.support = {};
 
-    (function() {
+    (function(x) {
       var ctor = function() { this.x = 1; },
           object = { '0': 1, 'length': 1 },
           props = [];
@@ -819,7 +819,8 @@
       for (var strKey in 'x') { }
 
       /**
-       * Detect if an `arguments` object's `[[Class]]` is resolvable (all but Firefox < 4, IE < 9).
+       * Detect if an `arguments` object's `[[Class]]` is resolvable
+       * (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
        * @type boolean
@@ -827,7 +828,8 @@
       support.argsClass = toString.call(arguments) == argsClass;
 
       /**
-       * Detect if `arguments` objects are `Object` objects (all but Narwhal and Opera < 10.5).
+       * Detect if `arguments` objects are `Object` objects
+       * (all but Narwhal and Opera < 10.5).
        *
        * @memberOf _.support
        * @type boolean
@@ -841,7 +843,8 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') || propertyIsEnumerable.call(errorProto, 'name');
+      support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') ||
+        propertyIsEnumerable.call(errorProto, 'name');
 
       /**
        * Detect if `prototype` properties are enumerable by default.
@@ -874,16 +877,8 @@
       support.funcNames = typeof Function.name == 'string';
 
       /**
-       * Detect if `arguments` object indexes are non-enumerable
-       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumArgs = argsKey != '0';
-
-      /**
-       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino, Narwhal).
+       * Detect if string indexes are non-enumerable
+       * (IE < 9, RingoJS, Rhino, Narwhal).
        *
        * @memberOf _.support
        * @type boolean
@@ -891,10 +886,11 @@
       support.nonEnumStrings = strKey != '0';
 
       /**
-       * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
+       * Detect if properties shadowing those on `Object.prototype` are
+       * non-enumerable.
        *
-       * In IE < 9 an objects own properties, shadowing non-enumerable ones, are
-       * made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
+       * In IE < 9 an object's own properties, shadowing non-enumerable ones,
+       * are made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
        *
        * @memberOf _.support
        * @type boolean
@@ -902,7 +898,8 @@
       support.nonEnumShadows = !/valueOf/.test(props);
 
       /**
-       * Detect if own properties are iterated after inherited properties (all but IE < 9).
+       * Detect if own properties are iterated after inherited properties
+       * (all but IE < 9).
        *
        * @memberOf _.support
        * @type boolean
@@ -910,13 +907,15 @@
       support.ownLast = props[0] != 'x';
 
       /**
-       * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
+       * Detect if `Array#shift` and `Array#splice` augment array-like objects
+       * correctly.
        *
        * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
        * and `splice()` functions that fail to remove the last element, `value[0]`,
        * of array-like objects even though the `length` property is set to `0`.
        * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-       * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+       * is buggy regardless of mode in IE < 9 and buggy in compatibility mode
+       * in IE 9.
        *
        * @memberOf _.support
        * @type boolean
@@ -959,12 +958,31 @@
       } catch(e) {
         support.nodeClass = true;
       }
-    }(1));
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * Chrome < 25 and Node.js < 0.11.0 will treat `arguments` object indexes
+       * that exceed their function's formal parameters and whose associated
+       * values are `0` as non-enumerable and incorrectly return `false` from
+       * `Object#hasOwnProperty`.
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      try {
+        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1') &&
+          propertyIsEnumerable.call(arguments, '1'));
+      } catch(e) {
+        support.nonEnumArgs = true;
+      }
+    }(0, 0));
 
     /**
-     * By default, the template delimiters used by Lo-Dash are similar to those in
-     * embedded Ruby (ERB). Change the following template settings to use alternative
-     * delimiters.
+     * By default, the template delimiters used by Lo-Dash are similar to those
+     * in embedded Ruby (ERB). Change the following template settings to use
+     * alternative delimiters.
      *
      * @static
      * @memberOf _
@@ -1510,8 +1528,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseForRight(object, callback, keysFunc) {
-      var index = -1,
-          props = keysFunc(object),
+      var props = keysFunc(object),
           length = props.length;
 
       while (length--) {
@@ -2226,17 +2243,18 @@
      * @returns {Array} Returns the array of property names.
      */
     function shimKeys(object) {
-      var index = -1,
+      var keyIndex,
+          index = -1,
           props = keysIn(object),
           length = props.length,
           objLength = length && object.length,
+          maxIndex = objLength - 1,
           result = [];
 
-      if (typeof objLength == 'number' && objLength > 0) {
-        var keyIndex,
-            allowIndexes = isArray(object) || (support.nonEnumStrings && isString(object)),
-            maxIndex = objLength - 1;
-      }
+      var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
+        (isArray(object) || (support.nonEnumArgs && isArguments(object)) ||
+          (support.nonEnumStrings && isString(object)));
+
       while (++index < length) {
         var key = props[index];
         if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
@@ -2713,7 +2731,7 @@
       } else {
         n = (predicate == null || thisArg) ? 1 : predicate;
       }
-      n = length - n;
+      n = length - (n || 0);
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -2807,8 +2825,8 @@
           return array ? array[length - 1] : undefined;
         }
       }
-      n = length - n;
-      return slice(array,  n < 0 ? 0 : n);
+      n = length - (n || 0);
+      return slice(array, n < 0 ? 0 : n);
     }
 
     /**
@@ -6525,18 +6543,16 @@
       if (!isObject(object)) {
         return [];
       }
-      var isArr,
-          keyIndex,
-          length = object.length;
-
+      var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
-        ((isArr = isArray(object)) || (support.nonEnumStrings && isString(object)) ||
+        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
-      var index = -1,
+      var keyIndex,
+          index = -1,
           maxIndex = length - 1,
           result = Array(length),
-          skipIndexes = isArr && length > 0,
+          skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
           skipProto = support.enumPrototypes && typeof object == 'function';
 

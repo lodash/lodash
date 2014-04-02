@@ -360,28 +360,30 @@
    */
   var support = {};
 
-  (function() {
+  (function(x) {
     var object = { '0': 1, 'length': 1 };
 
     /**
-     * Detect if `Array#shift` and `Array#splice` augment array-like objects correctly.
+     * Detect if `Array#shift` and `Array#splice` augment array-like objects
+     * correctly.
      *
      * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
      * and `splice()` functions that fail to remove the last element, `value[0]`,
      * of array-like objects even though the `length` property is set to `0`.
      * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-     * is buggy regardless of mode in IE < 9 and buggy in compatibility mode in IE 9.
+     * is buggy regardless of mode in IE < 9 and buggy in compatibility mode
+     * in IE 9.
      *
      * @memberOf _.support
      * @type boolean
      */
     support.spliceObjects = (splice.call(object, 0, 1), !object[0]);
-  }(1));
+  }(0, 0));
 
   /**
-   * By default, the template delimiters used by Lo-Dash are similar to those in
-   * embedded Ruby (ERB). Change the following template settings to use alternative
-   * delimiters.
+   * By default, the template delimiters used by Lo-Dash are similar to those
+   * in embedded Ruby (ERB). Change the following template settings to use
+   * alternative delimiters.
    *
    * @static
    * @memberOf _
@@ -710,8 +712,7 @@
    * @returns {Object} Returns `object`.
    */
   function baseForRight(object, callback, keysFunc) {
-    var index = -1,
-        props = keysFunc(object),
+    var props = keysFunc(object),
         length = props.length;
 
     while (length--) {
@@ -1403,7 +1404,10 @@
    */
   function initial(array, n, guard) {
     var length = array ? array.length : 0;
-    n = length - ((n == null || guard) ? 1 : n);
+    if (n == null || guard) {
+      n = 1;
+    }
+    n = length - (n || 0);
     return slice(array, 0, n < 0 ? 0 : n);
   }
 
@@ -1476,7 +1480,7 @@
     if (n == null || guard) {
       return array ? array[length - 1] : undefined;
     }
-    n = length - n;
+    n = length - (n || 0);
     return slice(array, n < 0 ? 0 : n);
   }
 

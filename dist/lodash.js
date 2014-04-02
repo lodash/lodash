@@ -623,6 +623,7 @@
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayRef.push,
+        propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
         splice = arrayRef.splice,
@@ -788,15 +789,6 @@
       support.funcNames = typeof Function.name == 'string';
 
       /**
-       * Detect if `arguments` object indexes are non-enumerable
-       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1'));
-
-      /**
        * Detect if the DOM is supported.
        *
        * @memberOf _.support
@@ -807,12 +799,31 @@
       } catch(e) {
         support.dom = false;
       }
+
+      /**
+       * Detect if `arguments` object indexes are non-enumerable
+       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       *
+       * Chrome < 25 and Node.js < 0.11.0 will treat `arguments` object indexes
+       * that exceed their function's formal parameters and whose associated
+       * values are `0` as non-enumerable and incorrectly return `false` from
+       * `Object#hasOwnProperty`.
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      try {
+        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1') &&
+          propertyIsEnumerable.call(arguments, '1'));
+      } catch(e) {
+        support.nonEnumArgs = true;
+      }
     }(0, 0));
 
     /**
-     * By default, the template delimiters used by Lo-Dash are similar to those in
-     * embedded Ruby (ERB). Change the following template settings to use alternative
-     * delimiters.
+     * By default, the template delimiters used by Lo-Dash are similar to those
+     * in embedded Ruby (ERB). Change the following template settings to use
+     * alternative delimiters.
      *
      * @static
      * @memberOf _
@@ -1352,8 +1363,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseForRight(object, callback, keysFunc) {
-      var index = -1,
-          props = keysFunc(object),
+      var props = keysFunc(object),
           length = props.length;
 
       while (length--) {
@@ -2052,7 +2062,8 @@
      * @returns {Array} Returns the array of property names.
      */
     function shimKeys(object) {
-      var index = -1,
+      var keyIndex,
+          index = -1,
           props = keysIn(object),
           length = props.length,
           objLength = length && object.length,
@@ -2538,7 +2549,7 @@
       } else {
         n = (predicate == null || thisArg) ? 1 : predicate;
       }
-      n = length - n;
+      n = length - (n || 0);
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -2632,8 +2643,8 @@
           return array ? array[length - 1] : undefined;
         }
       }
-      n = length - n;
-      return slice(array,  n < 0 ? 0 : n);
+      n = length - (n || 0);
+      return slice(array, n < 0 ? 0 : n);
     }
 
     /**
@@ -6333,13 +6344,12 @@
       if (!isObject(object)) {
         return [];
       }
-      var keyIndex,
-          length = object.length;
-
+      var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
-      var index = -1,
+      var keyIndex,
+          index = -1,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0;

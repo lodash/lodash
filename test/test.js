@@ -434,7 +434,7 @@
   (function() {
     test('supports loading ' + basename + ' as the "lodash" module', 1, function() {
       if (amd) {
-        equal((lodashModule || {}).moduleName, 'lodash');
+        strictEqual((lodashModule || {}).moduleName, 'lodash');
       }
       else {
         skipTest();
@@ -443,7 +443,7 @@
 
     test('supports loading ' + basename + ' with the Require.js "shim" configuration option', 1, function() {
       if (amd && /requirejs/.test(ui.loaderPath)) {
-        equal((shimmedModule || {}).moduleName, 'shimmed');
+        strictEqual((shimmedModule || {}).moduleName, 'shimmed');
       } else {
         skipTest();
       }
@@ -451,7 +451,7 @@
 
     test('supports loading ' + basename + ' as the "underscore" module', 1, function() {
       if (amd && !/dojo/.test(ui.loaderPath)) {
-        equal((underscoreModule || {}).moduleName, 'underscore');
+        strictEqual((underscoreModule || {}).moduleName, 'underscore');
       }
       else {
         skipTest();
@@ -469,7 +469,7 @@
             setTimeout(attempt, 16);
             return;
           }
-          equal(actual, _.VERSION);
+          strictEqual(actual, _.VERSION);
           QUnit.start();
         };
 
@@ -483,7 +483,7 @@
 
     test('should not add `Function.prototype` extensions to lodash', 1, function() {
       if (lodashBizarro) {
-        equal('_method' in lodashBizarro, false);
+        strictEqual('_method' in lodashBizarro, false);
       }
       else {
         skipTest();
@@ -527,7 +527,7 @@
         } catch(e) {
           actual = null;
         }
-        equal(expando in actual, false, message('Object.defineProperty'));
+        strictEqual(expando in actual, false, message('Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -592,7 +592,7 @@
 
     test('should return provided `lodash` instances', 1,function() {
       var wrapped = _(false);
-      equal(_(wrapped), wrapped);
+      strictEqual(_(wrapped), wrapped);
     });
   }());
 
@@ -773,14 +773,14 @@
           actual = bound('a');
 
       ok(actual[0] === null || actual[0] && actual[0].Array);
-      equal(actual[1], 'a');
+      strictEqual(actual[1], 'a');
 
       _.times(2, function(index) {
         bound = index ? _.bind(fn, undefined) : _.bind(fn);
         actual = bound('b');
 
         ok(actual[0] === undefined || actual[0] && actual[0].Array);
-        equal(actual[1], 'b');
+        strictEqual(actual[1], 'b');
       });
     });
 
@@ -988,12 +988,12 @@
       };
 
       var bound = _.bindKey(object, 'greet', 'hi');
-      equal(bound(), 'fred says: hi');
+      strictEqual(bound(), 'fred says: hi');
 
       object.greet = function(greeting) {
         return this.name + ' says: ' + greeting + '!';
       };
-      equal(bound(), 'fred says: hi!');
+      strictEqual(bound(), 'fred says: hi!');
     });
 
     test('should support placeholders', 4, function() {
@@ -1048,13 +1048,13 @@
 
     test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 4, function() {
       _.forEach(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
-        equal(func(string), expected);
+        strictEqual(func(string), expected);
       });
     });
 
     test('`_.' + methodName + '` should handle double-converting strings', 4, function() {
       _.forEach(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
-        equal(func(func(string)), expected);
+        strictEqual(func(func(string)), expected);
       });
     });
 
@@ -1079,8 +1079,8 @@
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
       var string = 'Hello world';
-      equal(func(Object(string)), expected);
-      equal(func({ 'toString': _.constant(string) }), expected);
+      strictEqual(func(Object(string)), expected);
+      strictEqual(func({ 'toString': _.constant(string) }), expected);
     });
 
     test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
@@ -1096,15 +1096,15 @@
 
   (function() {
     test('should work with numbers', 3, function() {
-      equal(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
-      equal(_.camelCase('walk 500 miles'), 'walk500Miles');
-      equal(_.camelCase('xhr2 request'), 'xhr2Request');
+      strictEqual(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
+      strictEqual(_.camelCase('walk 500 miles'), 'walk500Miles');
+      strictEqual(_.camelCase('xhr2 request'), 'xhr2Request');
     });
 
     test('should handle acronyms', 3, function() {
-      equal(_.camelCase('safe HTML'), 'safeHTML');
-      equal(_.camelCase('escape HTML entities'), 'escapeHTMLEntities');
-      equal(_.camelCase('XMLHttpRequest'), 'xmlHttpRequest');
+      strictEqual(_.camelCase('safe HTML'), 'safeHTML');
+      strictEqual(_.camelCase('escape HTML entities'), 'escapeHTMLEntities');
+      strictEqual(_.camelCase('XMLHttpRequest'), 'xmlHttpRequest');
     });
   }());
 
@@ -1114,9 +1114,9 @@
 
   (function() {
     test('should capitalize the first character of a string', 3, function() {
-      equal(_.capitalize('fred'), 'Fred');
-      equal(_.capitalize('Fred'), 'Fred');
-      equal(_.capitalize(' fred'), ' fred');
+      strictEqual(_.capitalize('fred'), 'Fred');
+      strictEqual(_.capitalize('Fred'), 'Fred');
+      strictEqual(_.capitalize(' fred'), ' fred');
     });
 
     test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
@@ -1144,7 +1144,7 @@
     test('should return the existing wrapper when chaining', 1, function() {
       if (!isNpm) {
         var wrapper = _({ 'a': 0 });
-        equal(wrapper.chain(), wrapper);
+        strictEqual(wrapper.chain(), wrapper);
       }
       else {
         skipTest();
@@ -1258,14 +1258,14 @@
           actual = _.clone(expected);
 
       deepEqual(actual, expected);
-      ok(actual != expected && actual[0] === expected[0]);
+      ok(actual !== expected && actual[0] === expected[0]);
     });
 
     test('`_.clone` should perform a shallow clone when used as a callback for `_.map`', 1, function() {
       var expected = [{ 'a': [0] }, { 'b': [1] }],
           actual = _.map(expected, _.clone);
 
-      ok(actual[0] != expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
+      ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
     });
 
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
@@ -1328,7 +1328,7 @@
           return this[value];
         }, { 'a': 'A' });
 
-        equal(actual, 'A');
+        strictEqual(actual, 'A');
       });
 
       test('`_.' + methodName + '` should handle cloning if `callback` returns `undefined`', 1, function() {
@@ -1341,7 +1341,7 @@
             actual = func(array);
 
         strictEqual(actual.index, 2);
-        equal(actual.input, 'vwxyz');
+        strictEqual(actual.input, 'vwxyz');
       });
 
       test('`_.' + methodName + '` should deep clone `lastIndex` regexp property', 1, function() {
@@ -1350,7 +1350,7 @@
         regexp.exec('vwxyz');
 
         var actual = func(regexp);
-        equal(actual.lastIndex, 3);
+        strictEqual(actual.lastIndex, 3);
       });
     });
   }(1, 2, 3));
@@ -1386,7 +1386,7 @@
       };
 
       var welcome = _.compose(greet, format);
-      equal(welcome('pebbles'), 'Hiya Penelope!');
+      strictEqual(welcome('pebbles'), 'Hiya Penelope!');
     });
 
     test('should return a new function', 1, function() {
@@ -1717,7 +1717,7 @@
         ok(expando in a);
 
         _.createCallback(b, object);
-        equal(expando in b, false);
+        strictEqual(expando in b, false);
 
         if (_.support.funcNames) {
           _.support.funcNames = false;
@@ -1740,7 +1740,7 @@
 
       if (defineProperty && lodashBizarro) {
         lodashBizarro.createCallback(a, {});
-        equal(expando in a, false);
+        strictEqual(expando in a, false);
       }
       else {
         skipTest();
@@ -1850,10 +1850,10 @@
         debounced();
         debounced();
 
-        equal(count, 0);
+        strictEqual(count, 0);
 
         setTimeout(function() {
-          equal(count, 1);
+          strictEqual(count, 1);
           QUnit.start();
         }, 96);
       }
@@ -1938,7 +1938,7 @@
           if (index == 1) {
             withLeading = debounced;
           }
-          equal(debounced('x'), 'x');
+          strictEqual(debounced('x'), 'x');
         });
 
         _.forEach([false, { 'leading': false }], function(options) {
@@ -1959,7 +1959,7 @@
           deepEqual(counts, [1, 1, 2]);
 
           withLeading('x');
-          equal(counts[1], 2);
+          strictEqual(counts[1], 2);
 
           QUnit.start();
         }, 64);
@@ -2066,7 +2066,7 @@
           }
         }
         setTimeout(function() {
-          equal(count, 2);
+          strictEqual(count, 2);
           deepEqual(args, [object, 'a']);
           QUnit.start();
         }, 64);
@@ -2290,15 +2290,15 @@
         unescaped = '&<>"\'\/';
 
     test('should escape values', 1, function() {
-      equal(_.escape(unescaped), escaped);
+      strictEqual(_.escape(unescaped), escaped);
     });
 
     test('should not escape the "/" character', 1, function() {
-      equal(_.escape('/'), '/');
+      strictEqual(_.escape('/'), '/');
     });
 
     test('should handle strings with nothing to escape', 1, function() {
-      equal(_.escape('abc'), 'abc');
+      strictEqual(_.escape('abc'), 'abc');
     });
 
     test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
@@ -2378,7 +2378,7 @@
 
         expected[1] = undefined;
 
-        ok(1 in actual);
+        ok('1' in actual);
         deepEqual(actual, expected);
       });
     }
@@ -2525,7 +2525,7 @@
             return num < 3;
           });
 
-          equal(actual, expected);
+          strictEqual(actual, expected);
         });
       }
     }());
@@ -2544,7 +2544,7 @@
             return index < 2;
           });
 
-          equal(actual, expected);
+          strictEqual(actual, expected);
         });
       }
       if (methodName == 'find') {
@@ -2740,10 +2740,10 @@
       expected.push(undefined, undefined, undefined);
 
       deepEqual(actual1, expected);
-      ok(4 in actual1);
+      ok('4' in actual1);
 
       deepEqual(actual2, expected);
-      ok(4 in actual2);
+      ok('4' in actual2);
     });
 
     test('should work with extremely large arrays', 1, function() {
@@ -2977,10 +2977,10 @@
         }
 
         func([1], callback, [2]);
-        equal(actual, 2);
+        strictEqual(actual, 2);
 
         func({ 'a': 1 }, callback, { 'a': 2 });
-        equal(actual, 2);
+        strictEqual(actual, 2);
       });
     });
 
@@ -3018,13 +3018,13 @@
           func = _[methodName];
 
       test('`_.' + methodName + '` should return the collection', 1, function() {
-        equal(func(array, Boolean), array);
+        strictEqual(func(array, Boolean), array);
       });
 
       test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
         if (!isNpm) {
           var wrapper = _(array);
-          equal(wrapper[methodName](noop), wrapper);
+          strictEqual(wrapper[methodName](noop), wrapper);
         }
         else {
           skipTest();
@@ -3129,7 +3129,7 @@
     test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
       if (!isNpm) {
         var wrapper = _({ 'a': 1 });
-        equal(wrapper[methodName]({ 'b': 2 }), wrapper);
+        strictEqual(wrapper[methodName]({ 'b': 2 }), wrapper);
       }
       else {
         skipTest();
@@ -3264,7 +3264,7 @@
           values = [];
 
       func(object, function(value) { values.push(value); return false; });
-      equal(values.length, 1);
+      strictEqual(values.length, 1);
     });
   });
 
@@ -3491,32 +3491,32 @@
     var array = [1, 2, 3, 1, 2, 3];
 
     test('should return the index of the first matched value', 1, function() {
-      equal(_.indexOf(array, 3), 2);
+      strictEqual(_.indexOf(array, 3), 2);
     });
 
     test('should return `-1` for an unmatched value', 4, function() {
-      equal(_.indexOf(array, 4), -1);
-      equal(_.indexOf(array, 4, true), -1);
+      strictEqual(_.indexOf(array, 4), -1);
+      strictEqual(_.indexOf(array, 4, true), -1);
 
       var empty = [];
-      equal(_.indexOf(empty, undefined), -1);
-      equal(_.indexOf(empty, undefined, true), -1);
+      strictEqual(_.indexOf(empty, undefined), -1);
+      strictEqual(_.indexOf(empty, undefined, true), -1);
     });
 
     test('should work with a positive `fromIndex`', 1, function() {
-      equal(_.indexOf(array, 1, 2), 3);
+      strictEqual(_.indexOf(array, 1, 2), 3);
     });
 
     test('should work with `fromIndex` >= `array.length`', 6, function() {
       _.forEach([6, 8], function(fromIndex) {
-        equal(_.indexOf(array, 1, fromIndex), -1);
-        equal(_.indexOf(array, undefined, fromIndex), -1);
-        equal(_.indexOf(array, '', fromIndex), -1);
+        strictEqual(_.indexOf(array, 1, fromIndex), -1);
+        strictEqual(_.indexOf(array, undefined, fromIndex), -1);
+        strictEqual(_.indexOf(array, '', fromIndex), -1);
       });
     });
 
     test('should work with a negative `fromIndex`', 1, function() {
-      equal(_.indexOf(array, 2, -3), 4);
+      strictEqual(_.indexOf(array, 2, -3), 4);
     });
 
     test('should work with a negative `fromIndex` <= `-array.length`', 2, function() {
@@ -4082,7 +4082,7 @@
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
-      equal(_.isEmpty(shadowedObject), false);
+      strictEqual(_.isEmpty(shadowedObject), false);
     });
 
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
@@ -4152,7 +4152,7 @@
         return _.isEqual(object, value);
       });
 
-      ok(actual, expected);
+      deepEqual(actual, expected);
     });
 
     test('should perform comparisons between arrays', 6, function() {
@@ -4898,7 +4898,7 @@
       // 2: Initial check with object, this is the other half of the trigger
       _.isObject(obj);
 
-      equal(_.isObject(str), false);
+      strictEqual(_.isObject(str), false);
     });
   }(1, 2, 3));
 
@@ -5308,7 +5308,7 @@
     ];
 
     test('should return the last element', 1, function() {
-      equal(_.last(array), 3);
+      strictEqual(_.last(array), 3);
     });
 
     test('should return the last two elements', 1, function() {
@@ -5390,7 +5390,7 @@
     test('should not chain when arguments are not provided', 1, function() {
       if (!isNpm) {
         var actual = _(array).last();
-        equal(actual, 3);
+        strictEqual(actual, 3);
       }
       else {
         skipTest();
@@ -5414,11 +5414,11 @@
     var array = [1, 2, 3, 1, 2, 3];
 
     test('should return the index of the last matched value', 1, function() {
-      equal(_.lastIndexOf(array, 3), 5);
+      strictEqual(_.lastIndexOf(array, 3), 5);
     });
 
     test('should return `-1` for an unmatched value', 1, function() {
-      equal(_.lastIndexOf(array, 4), -1);
+      strictEqual(_.lastIndexOf(array, 4), -1);
     });
 
     test('should work with a positive `fromIndex`', 1, function() {
@@ -5427,9 +5427,9 @@
 
     test('should work with `fromIndex` >= `array.length`', 6, function() {
       _.forEach([6, 8], function(fromIndex) {
-        equal(_.lastIndexOf(array, undefined, fromIndex), -1);
-        equal(_.lastIndexOf(array, 1, fromIndex), 3);
-        equal(_.lastIndexOf(array, '', fromIndex), -1);
+        strictEqual(_.lastIndexOf(array, undefined, fromIndex), -1);
+        strictEqual(_.lastIndexOf(array, 1, fromIndex), 3);
+        strictEqual(_.lastIndexOf(array, '', fromIndex), -1);
       });
     });
 
@@ -5439,12 +5439,12 @@
 
     test('should work with a negative `fromIndex` <= `-array.length`', 2, function() {
       strictEqual(_.lastIndexOf(array, 1, -6), 0);
-      equal(_.lastIndexOf(array, 2, -8), -1);
+      strictEqual(_.lastIndexOf(array, 2, -8), -1);
     });
 
     test('should ignore non-number `fromIndex` values', 2, function() {
-      equal(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
-      equal(_.lastIndexOf([1, 2, 3], 3, true), 2);
+      strictEqual(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
+      strictEqual(_.lastIndexOf([1, 2, 3], 3, true), 2);
     });
   }());
 
@@ -5639,7 +5639,7 @@
     test('should create a function that performs a deep comparison between a given object and the `source` object', 3, function() {
       var matches = _.matches({ 'a': 1 });
 
-      equal(matches.length, 1);
+      strictEqual(matches.length, 1);
       strictEqual(matches(object), true);
 
       matches =  _.matches({ 'b': 1 });
@@ -5658,7 +5658,7 @@
 
   (function() {
     test('should return the largest value from a collection', 1, function() {
-      equal(3, _.max([1, 2, 3]));
+      strictEqual(3, _.max([1, 2, 3]));
     });
 
     test('should return `-Infinity` for empty collections', 1, function() {
@@ -5697,16 +5697,16 @@
         return a + b + c;
       });
 
-      equal(memoized(1, 2, 3), 6);
-      equal(memoized(1, 3, 5), 6);
+      strictEqual(memoized(1, 2, 3), 6);
+      strictEqual(memoized(1, 3, 5), 6);
     });
 
     test('should support a `resolver` argument', 2, function() {
       var fn = function(a, b, c) { return a + b + c; },
           memoized = _.memoize(fn, fn);
 
-      equal(memoized(1, 2, 3), 6);
-      equal(memoized(1, 3, 5), 9);
+      strictEqual(memoized(1, 2, 3), 6);
+      strictEqual(memoized(1, 3, 5), 9);
     });
 
     test('should not set a `this` binding', 2, function() {
@@ -5715,8 +5715,8 @@
       });
 
       var object = { 'b': 2, 'c': 3, 'memoized': memoized };
-      equal(object.memoized(1), 6);
-      equal(object.memoized(2), 7);
+      strictEqual(object.memoized(1), 6);
+      strictEqual(object.memoized(2), 7);
     });
 
     test('should check cache for own properties', 1, function() {
@@ -5735,10 +5735,10 @@
         var memoized = _.memoize(_.identity, index && _.identity);
 
         memoized('a');
-        equal(memoized.cache[key], 'a');
+        strictEqual(memoized.cache[key], 'a');
 
         memoized.cache[key] = 'b';
-        equal(memoized('a'), 'b');
+        strictEqual(memoized('a'), 'b');
       });
     });
   }());
@@ -5810,7 +5810,7 @@
       };
 
       var actual = _.merge(object, source);
-      equal(_.isArguments(actual.args), false);
+      strictEqual(_.isArguments(actual.args), false);
     });
 
     test('should work with four arguments', 1, function() {
@@ -5859,7 +5859,7 @@
 
   (function() {
     test('should return the smallest value from a collection', 1, function() {
-      equal(1, _.min([1, 2, 3]));
+      strictEqual(1, _.min([1, 2, 3]));
     });
 
     test('should return `Infinity` for empty collections', 1, function() {
@@ -5900,7 +5900,7 @@
       var now = new Date,
           past = new Date(0);
 
-      equal(func([now, past]), methodName == 'max' ? now : past);
+      strictEqual(func([now, past]), methodName == 'max' ? now : past);
     });
 
     test('`_.' + methodName + '` should work with a callback argument', 1, function() {
@@ -5908,7 +5908,7 @@
         return -num;
       });
 
-      equal(actual, methodName == 'max' ? 1 : 3);
+      strictEqual(actual, methodName == 'max' ? 1 : 3);
     });
 
     test('`_.' + methodName + '` should pass the correct `callback` arguments when iterating an array', 1, function() {
@@ -5942,7 +5942,7 @@
         return -this[index];
       }, array);
 
-      equal(actual, methodName == 'max' ? 1 : 3);
+      strictEqual(actual, methodName == 'max' ? 1 : 3);
     });
 
     test('`_.' + methodName + '` should work when used as a callback for `_.map`', 1, function() {
@@ -5954,13 +5954,13 @@
 
     test('`_.' + methodName + '` should iterate an object', 1, function() {
       var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
-      equal(actual, methodName == 'max' ? 3 : 1);
+      strictEqual(actual, methodName == 'max' ? 3 : 1);
     });
 
     test('`_.' + methodName + '` should iterate a string', 2, function() {
       _.forEach(['abc', Object('abc')], function(value) {
         var actual = func(value);
-        equal(actual, methodName == 'max' ? 'c' : 'a');
+        strictEqual(actual, methodName == 'max' ? 'c' : 'a');
       });
     });
 
@@ -5976,7 +5976,7 @@
 
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
       var array = _.range(0, 5e5);
-      equal(func(array), methodName == 'max' ? 499999 : 0);
+      strictEqual(func(array), methodName == 'max' ? 499999 : 0);
     });
   });
 
@@ -6021,14 +6021,14 @@
           'A': function(string) { return string.toUpperCase(); }
         });
 
-        equal('a' in _, false);
-        equal('a' in _.prototype, false);
+        strictEqual('a' in _, false);
+        strictEqual('a' in _.prototype, false);
 
         delete _.a;
         delete _.prototype.a;
 
-        equal(_.A('a'), 'A');
-        equal(_('a').A().value(), 'A');
+        strictEqual(_.A('a'), 'A');
+        strictEqual(_('a').A().value(), 'A');
 
         delete _.A;
         delete _.prototype.A;
@@ -6058,7 +6058,7 @@
             ok(actual instanceof func, message(func, true));
           } else {
             strictEqual(actual, 'a', message(func, false));
-            equal(actual instanceof func, false, message(func, false));
+            strictEqual(actual instanceof func, false, message(func, false));
           }
           delete func.a;
           delete func.prototype.a;
@@ -6264,17 +6264,17 @@
 
   (function() {
     test('should pad a string to a given length', 1, function() {
-      equal(_.pad('abc', 9), '   abc   ');
+      strictEqual(_.pad('abc', 9), '   abc   ');
     });
 
     test('should truncate pad characters to fit the pad length', 2, function() {
-      equal(_.pad('abc', 8), '  abc   ');
-      equal(_.pad('abc', 8, '_-'), '_-abc_-_');
+      strictEqual(_.pad('abc', 8), '  abc   ');
+      strictEqual(_.pad('abc', 8, '_-'), '_-abc_-_');
     });
 
     test('should coerce `string` to a string', 2, function() {
-      equal(_.pad(Object('abc'), 4), 'abc ');
-      equal(_.pad({ 'toString': _.constant('abc') }, 5), ' abc ');
+      strictEqual(_.pad(Object('abc'), 4), 'abc ');
+      strictEqual(_.pad({ 'toString': _.constant('abc') }, 5), ' abc ');
     });
   }());
 
@@ -6284,16 +6284,16 @@
 
   (function() {
     test('should pad a string to a given length', 1, function() {
-      equal(_.padLeft('abc', 6), '   abc');
+      strictEqual(_.padLeft('abc', 6), '   abc');
     });
 
     test('should truncate pad characters to fit the pad length', 1, function() {
-      equal(_.padLeft('abc', 6, '_-'), '_-_abc');
+      strictEqual(_.padLeft('abc', 6, '_-'), '_-_abc');
     });
 
     test('should coerce `string` to a string', 2, function() {
-      equal(_.padLeft(Object('abc'), 4), ' abc');
-      equal(_.padLeft({ 'toString': _.constant('abc') }, 5), '  abc');
+      strictEqual(_.padLeft(Object('abc'), 4), ' abc');
+      strictEqual(_.padLeft({ 'toString': _.constant('abc') }, 5), '  abc');
     });
   }());
 
@@ -6303,16 +6303,16 @@
 
   (function() {
     test('should pad a string to a given length', 1, function() {
-      equal(_.padRight('abc', 6), 'abc   ');
+      strictEqual(_.padRight('abc', 6), 'abc   ');
     });
 
     test('should truncate pad characters to fit the pad length', 1, function() {
-      equal(_.padRight('abc', 6, '_-'), 'abc_-_');
+      strictEqual(_.padRight('abc', 6, '_-'), 'abc_-_');
     });
 
     test('should coerce `string` to a string', 2, function() {
-      equal(_.padRight(Object('abc'), 4), 'abc ');
-      equal(_.padRight({ 'toString': _.constant('abc') }, 5), 'abc  ');
+      strictEqual(_.padRight(Object('abc'), 4), 'abc ');
+      strictEqual(_.padRight({ 'toString': _.constant('abc') }, 5), 'abc  ');
     });
   }());
 
@@ -6324,20 +6324,20 @@
     var func = _[methodName];
 
     test('`_.' + methodName + '` should not pad is string is >= `length`', 2, function() {
-      equal(func('abc', 2), 'abc');
-      equal(func('abc', 3), 'abc');
+      strictEqual(func('abc', 2), 'abc');
+      strictEqual(func('abc', 3), 'abc');
     });
 
     test('`_.' + methodName + '` should treat negative `length` as `0`', 2, function() {
       _.forEach([0, -2], function(length) {
-        equal(func('abc', length), 'abc');
+        strictEqual(func('abc', length), 'abc');
       });
     });
 
     test('`_.' + methodName + '` should coerce `length` to a number', 2, function() {
       _.forEach(['', '4'], function(length) {
         var actual = length ? (index == 1 ? ' abc' : 'abc ') : 'abc';
-        equal(func('abc', length), actual);
+        strictEqual(func('abc', length), actual);
       });
     });
 
@@ -6348,7 +6348,7 @@
     });
 
     test('`_.' + methodName + '` should work with an empty string for `chars`', 1, function() {
-      equal(func('abc', 6, ''), 'abc');
+      strictEqual(func('abc', 6, ''), 'abc');
     });
   });
 
@@ -6434,7 +6434,7 @@
 
     test('`_.' + methodName + '` partially applies arguments', 1, function() {
       var par = func(_.identity, 'a');
-      equal(par(), 'a');
+      strictEqual(par(), 'a');
     });
 
     test('`_.' + methodName + '` creates a function that can be invoked with additional arguments', 1, function() {
@@ -6454,7 +6454,7 @@
 
     test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked with additional arguments', 1, function() {
       var par = func(_.identity);
-      equal(par('a'), 'a');
+      strictEqual(par('a'), 'a');
     });
 
     test('`_.' + methodName + '` should support placeholders', 4, function() {
@@ -6519,17 +6519,17 @@
           par2 = func(par1, 'barney'),
           par3 = func(par1, 'pebbles');
 
-      equal(par1('fred'), isPartial ? 'hi fred' : 'fred hi')
-      equal(par2(), isPartial ? 'hi barney'  : 'barney hi');
-      equal(par3(), isPartial ? 'hi pebbles' : 'pebbles hi');
+      strictEqual(par1('fred'), isPartial ? 'hi fred' : 'fred hi')
+      strictEqual(par2(), isPartial ? 'hi barney'  : 'barney hi');
+      strictEqual(par3(), isPartial ? 'hi pebbles' : 'pebbles hi');
     });
 
     test('`_.' + methodName + '` should work with curried methods', 2, function() {
       var fn = function(a, b, c) { return a + b + c; },
           curried = _.curry(func(fn, 1), 2);
 
-      equal(curried(2, 3), 6);
-      equal(curried(2)(3), 6);
+      strictEqual(curried(2, 3), 6);
+      strictEqual(curried(2)(3), 6);
     });
   });
 
@@ -6776,7 +6776,7 @@
       var object = { 'a': 1, 'b': 2 },
           property = _.property('a');
 
-      equal(property.length, 1);
+      strictEqual(property.length, 1);
       strictEqual(property(object), 1);
 
       property =  _.property('b');
@@ -6787,7 +6787,7 @@
       var array = [1, 2, 3],
           property = _.property(1);
 
-      equal(property(array), 2);
+      strictEqual(property(array), 2);
     });
   }());
 
@@ -6810,8 +6810,8 @@
       delete array[3];
 
       _.pull(array, 1);
-      equal(0 in array, false);
-      equal(2 in array, false);
+      strictEqual(0 in array, false);
+      strictEqual(2 in array, false);
     });
 
     test('should treat holes as `undefined`', 1, function() {
@@ -6840,7 +6840,7 @@
 
     test('supports not passing a `max` argument', 1, function() {
       ok(_.some(array, function() {
-        return _.random(5) != 5;
+        return _.random(5) !== 5;
       }));
     });
 
@@ -6998,7 +6998,7 @@
         });
 
         deepEqual(args, ['a', 'b', 1, collection]);
-        equal(actual, 'abc');
+        strictEqual(actual, 'abc');
       });
     });
 
@@ -7016,7 +7016,7 @@
     var array = [1, 2, 3];
 
     test('should use the last element of a collection as the default `accumulator`', 1, function() {
-      equal(_.reduceRight(array), 3);
+      strictEqual(_.reduceRight(array), 3);
     });
 
     test('should pass the correct `callback` arguments when iterating an array', 2, function() {
@@ -7077,7 +7077,7 @@
         });
 
         deepEqual(args, ['c', 'b', 1, collection]);
-        equal(actual, 'cba');
+        strictEqual(actual, 'cba');
       });
     });
 
@@ -7099,7 +7099,7 @@
         return accumulator + value;
       }, '');
 
-      equal(actual, methodName == 'reduce' ? 'abc' : 'cba');
+      strictEqual(actual, methodName == 'reduce' ? 'abc' : 'cba');
     });
 
     test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
@@ -7116,7 +7116,7 @@
           return sum + num;
         });
 
-        equal(actual, 6);
+        strictEqual(actual, 6);
       }
       else {
         skipTest();
@@ -7242,8 +7242,8 @@
       delete array[3];
 
       _.remove(array, function(num) { return num === 1; });
-      equal(0 in array, false);
-      equal(2 in array, false);
+      strictEqual(0 in array, false);
+      strictEqual(2 in array, false);
     });
 
     test('should treat holes as `undefined`', 1, function() {
@@ -7261,8 +7261,8 @@
 
   (function() {
     test('should repeat a string `n` times', 2, function() {
-      equal(_.repeat('*', 3), '***');
-      equal(_.repeat('abc', 2), 'abcabc');
+      strictEqual(_.repeat('*', 3), '***');
+      strictEqual(_.repeat('abc', 2), 'abcabc');
     });
 
     test('should return an empty string for negative `n` or `n` of `0`', 2, function() {
@@ -7272,13 +7272,13 @@
 
     test('should coerce `n` to a number', 3, function() {
       strictEqual(_.repeat('abc'), '');
-      equal(_.repeat('abc', '2'), 'abcabc');
-      equal(_.repeat('*', { 'valueOf': _.constant(3) }), '***');
+      strictEqual(_.repeat('abc', '2'), 'abcabc');
+      strictEqual(_.repeat('*', { 'valueOf': _.constant(3) }), '***');
     });
 
     test('should coerce `string` to a string', 2, function() {
-      equal(_.repeat(Object('abc'), 2), 'abcabc');
-      equal(_.repeat({ 'toString': _.constant('*') }, 3), '***');
+      strictEqual(_.repeat(Object('abc'), 2), 'abcabc');
+      strictEqual(_.repeat({ 'toString': _.constant('*') }, 3), '***');
     });
 
     test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
@@ -7603,11 +7603,11 @@
         array = [1, 2, 3];
 
     test('should return the number of own enumerable properties of an object', 1, function() {
-      equal(_.size({ 'one': 1, 'two': 2, 'three': 3 }), 3);
+      strictEqual(_.size({ 'one': 1, 'two': 2, 'three': 3 }), 3);
     });
 
     test('should return the length of an array', 1, function() {
-      equal(_.size(array), 3);
+      strictEqual(_.size(array), 3);
     });
 
     test('should accept a falsey `object` argument', 1, function() {
@@ -7623,14 +7623,14 @@
     });
 
     test('should work with `arguments` objects (test in IE < 9)', 1, function() {
-      equal(_.size(args), 3);
+      strictEqual(_.size(args), 3);
     });
 
     test('should work with jQuery/MooTools DOM query collections', 1, function() {
       function Foo(elements) { push.apply(this, elements); }
       Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
 
-      equal(_.size(new Foo(array)), 3);
+      strictEqual(_.size(new Foo(array)), 3);
     });
 
     test('should not treat objects with negative lengths as array-like', 1, function() {
@@ -7646,7 +7646,7 @@
     });
 
     test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
-      equal(_.size(shadowedObject), 7);
+      strictEqual(_.size(shadowedObject), 7);
     });
 
     _.forEach({
@@ -7876,8 +7876,8 @@
         objects = [{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }];
 
     test('should return the insert index of a given value', 2, function() {
-      equal(_.sortedIndex(array, 40), 2);
-      equal(_.sortedIndex(array, 30), 1);
+      strictEqual(_.sortedIndex(array, 40), 2);
+      strictEqual(_.sortedIndex(array, 30), 1);
     });
 
     test('should pass the correct `callback` arguments', 1, function() {
@@ -7900,7 +7900,7 @@
 
     test('should work with a string for `callback`', 1, function() {
       var actual = _.sortedIndex(objects, { 'x': 40 }, 'x');
-      equal(actual, 2);
+      strictEqual(actual, 2);
     });
 
     test('supports arrays with lengths larger than `Math.pow(2, 31) - 1`', 1, function() {
@@ -7912,7 +7912,7 @@
       if (array.length == length) {
         array[index] = index;
         _.sortedIndex(array, index, function() { steps++; });
-        equal(steps, 33);
+        strictEqual(steps, 33);
       }
       else {
         skipTest();
@@ -7926,7 +7926,9 @@
 
   (function() {
     test('should contain properties with boolean values', 1, function() {
-      ok(_.every(_.values(_.support), _.isBoolean));
+      ok(_.every(_.values(_.support), function(value) {
+        return value === true || value === false;
+      }));
     });
 
     test('should not contain minified properties (test production builds)', 1, function() {
@@ -7948,7 +7950,7 @@
         'unindexedChars'
       ];
 
-      ok(!_.size(_.difference(_.keys(_.support), props)));
+      ok(_.isEmpty(_.difference(_.keys(_.support), props)));
     });
   }());
 
@@ -8018,7 +8020,7 @@
           unescaped = '&<>"\'\/';
 
       var compiled = _.template('<p><%- value %></p>');
-      equal(compiled({ 'value': unescaped }), escaped);
+      strictEqual(compiled({ 'value': unescaped }), escaped);
     });
 
     test('should evaluate JavaScript in "evaluate" delimiters', 1, function() {
@@ -8030,24 +8032,24 @@
       );
 
       var actual = compiled({ 'collection': { 'a': 'A', 'b': 'B' } });
-      equal(actual, '<ul><li>A</li><li>B</li></ul>');
+      strictEqual(actual, '<ul><li>A</li><li>B</li></ul>');
     });
 
     test('should interpolate data object properties', 1, function() {
       var compiled = _.template('<%= a %>BC');
-      equal(compiled({ 'a': 'A' }), 'ABC');
+      strictEqual(compiled({ 'a': 'A' }), 'ABC');
     });
 
     test('should support escaped values in "interpolation" delimiters', 1, function() {
       var compiled = _.template('<%= a ? "a=\\"A\\"" : "" %>');
-      equal(compiled({ 'a': true }), 'a="A"');
+      strictEqual(compiled({ 'a': true }), 'a="A"');
     });
 
     test('should work with "interpolate" delimiters containing ternary operators', 1, function() {
       var compiled = _.template('<%= value ? value : "b" %>'),
           data = { 'value': 'a' };
 
-      equal(compiled(data), 'a');
+      strictEqual(compiled(data), 'a');
     });
 
     test('should work with "interpolate" delimiters containing global values', 1, function() {
@@ -8057,7 +8059,7 @@
         var actual = compiled();
       } catch(e) { }
 
-      equal(actual, 'function');
+      strictEqual(actual, 'function');
     });
 
     test('should work with complex "interpolate" delimiters', 22, function() {
@@ -8089,19 +8091,19 @@
         var compiled = _.template(key),
             data = { 'a': 1, 'b': 2 };
 
-        equal(compiled(data), value, key);
+        strictEqual(compiled(data), value, key);
       });
     });
 
     test('should parse ES6 template delimiters', 2, function() {
       var data = { 'value': 2 };
       strictEqual(_.template('1${value}3', data), '123');
-      equal(_.template('${"{" + value + "\\}"}', data), '{2}');
+      strictEqual(_.template('${"{" + value + "\\}"}', data), '{2}');
     });
 
     test('should not reference `_.escape` when "escape" delimiters are not used', 1, function() {
       var compiled = _.template('<%= typeof __e %>');
-      equal(compiled({}), 'undefined');
+      strictEqual(compiled({}), 'undefined');
     });
 
     test('should allow referencing variables declared in "evaluate" delimiters from other delimiters', 1, function() {
@@ -8113,7 +8115,7 @@
 
     test('should support single line comments in "evaluate" delimiters (test production builds)', 1, function() {
       var compiled = _.template('<% // comment %><% if (value) { %>yap<% } else { %>nope<% } %>');
-      equal(compiled({ 'value': true }), 'yap');
+      strictEqual(compiled({ 'value': true }), 'yap');
     });
 
     test('should work with custom `_.templateSettings` delimiters', 1, function() {
@@ -8128,7 +8130,7 @@
       var compiled = _.template('<ul>{{ _.forEach(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
-      equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
+      strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
       _.assign(_.templateSettings, settings);
     });
 
@@ -8144,13 +8146,13 @@
       var compiled = _.template('<ul><? _.forEach(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
-      equal(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
+      strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
       _.assign(_.templateSettings, settings);
     });
 
     test('should work with no delimiters', 1, function() {
       var expected = 'abc';
-      equal(_.template(expected, {}), expected);
+      strictEqual(_.template(expected, {}), expected);
     });
 
     test('should support the "imports" option', 1, function() {
@@ -8179,29 +8181,29 @@
       var compiled = _.template('<%= index %><%= collection[index] %><% _.forEach(collection, function(value, index) { %><%= index %><% }); %>'),
           actual = compiled({ 'index': 1, 'collection': ['a', 'b', 'c'] });
 
-      equal(actual, '1b012');
+      strictEqual(actual, '1b012');
     });
 
     test('should work correctly with `this` references', 2, function() {
       var compiled = _.template('a<%= this.String("b") %>c');
-      equal(compiled(), 'abc');
+      strictEqual(compiled(), 'abc');
 
       var object = { 'b': 'B' };
       object.compiled = _.template('A<%= this.b %>C', null, { 'variable': 'obj' });
-      equal(object.compiled(), 'ABC');
+      strictEqual(object.compiled(), 'ABC');
     });
 
     test('should work with backslashes', 1, function() {
       var compiled = _.template('<%= a %> \\b');
-      equal(compiled({ 'a': 'A' }), 'A \\b');
+      strictEqual(compiled({ 'a': 'A' }), 'A \\b');
     });
 
     test('should work with escaped characters in string literals', 2, function() {
       var compiled = _.template('<% print("\'\\n\\r\\t\\u2028\\u2029\\\\") %>');
-      equal(compiled(), "'\n\r\t\u2028\u2029\\");
+      strictEqual(compiled(), "'\n\r\t\u2028\u2029\\");
 
       compiled = _.template('\'\n\r\t<%= a %>\u2028\u2029\\"');
-      equal(compiled({ 'a': 'A' }), '\'\n\r\tA\u2028\u2029\\"');
+      strictEqual(compiled({ 'a': 'A' }), '\'\n\r\tA\u2028\u2029\\"');
     });
 
     test('should handle \\u2028 & \\u2029 characters', 1, function() {
@@ -8216,7 +8218,7 @@
         } %>"
       );
 
-      equal(compiled({ 'a': 'A' }), "'a',\"A\"");
+      strictEqual(compiled({ 'a': 'A' }), "'a',\"A\"");
     });
 
     test('should work with templates containing newlines and comments', 1, function() {
@@ -8226,7 +8228,7 @@
         %><p><%= value %></p>'
       );
 
-      equal(compiled({ 'value': 3 }), '<p>6</p>');
+      strictEqual(compiled({ 'value': 3 }), '<p>6</p>');
     });
 
     test('should not error with IE conditional comments enabled (test with development build)', 1, function() {
@@ -8246,7 +8248,7 @@
       var compiled = _.template('<span class="icon-<%= type %>2"></span>'),
           data = { 'type': 1 };
 
-      equal(compiled(data), '<span class="icon-12"></span>');
+      strictEqual(compiled(data), '<span class="icon-12"></span>');
     });
 
     test('should evaluate delimiters once', 1, function() {
@@ -8259,7 +8261,7 @@
 
     test('should match delimiters before escaping text', 1, function() {
       var compiled = _.template('<<\n a \n>>', null, { 'evaluate': /<<(.*?)>>/g });
-      equal(compiled(), '<<\n a \n>>');
+      strictEqual(compiled(), '<<\n a \n>>');
     });
 
     test('should resolve `null` and `undefined` values to empty strings', 4, function() {
@@ -8277,14 +8279,14 @@
           compiled = _.template(expected, null, { 'evaluate': /<<(.+?)>>/g }),
           data = { 'value': true };
 
-      equal(compiled(data), expected);
+      strictEqual(compiled(data), expected);
     });
 
     test('should support recursive calls', 1, function() {
       var compiled = _.template('<%= a %><% a = _.template(c, obj) %><%= a %>'),
           data = { 'a': 'A', 'b': 'B', 'c': '<%= b %>' };
 
-      equal(compiled(data), 'AB');
+      strictEqual(compiled(data), 'AB');
     });
 
     test('should coerce `text` argument to a string', 1, function() {
@@ -8301,10 +8303,10 @@
     });
 
     test('should not modify `_.templateSettings` when `options` are provided', 2, function() {
-      equal('a' in _.templateSettings, false);
+      strictEqual('a' in _.templateSettings, false);
 
       _.template('', {}, { 'a': 1 });
-      equal('a' in _.templateSettings, false);
+      strictEqual('a' in _.templateSettings, false);
 
       delete _.templateSettings.a;
     });
@@ -8347,49 +8349,49 @@
     var string = 'hi-diddly-ho there, neighborino';
 
     test('should truncate to a length of `30` by default', 1, function() {
-      equal(_.truncate(string), 'hi-diddly-ho there, neighbo...');
+      strictEqual(_.truncate(string), 'hi-diddly-ho there, neighbo...');
     });
 
     test('should not truncate if `string` is <= `length`', 2, function() {
-      equal(_.truncate(string, string.length), string);
-      equal(_.truncate(string, string.length + 2), string);
+      strictEqual(_.truncate(string, string.length), string);
+      strictEqual(_.truncate(string, string.length + 2), string);
     });
 
     test('should truncate string the given length', 1, function() {
-      equal(_.truncate(string, 24), 'hi-diddly-ho there, n...');
+      strictEqual(_.truncate(string, 24), 'hi-diddly-ho there, n...');
     });
 
     test('should support a `omission` option', 1, function() {
-      equal(_.truncate(string, { 'omission': ' [...]' }), 'hi-diddly-ho there, neig [...]');
+      strictEqual(_.truncate(string, { 'omission': ' [...]' }), 'hi-diddly-ho there, neig [...]');
     });
 
     test('should support a `length` option', 1, function() {
-      equal(_.truncate(string, { 'length': 4 }), 'h...');
+      strictEqual(_.truncate(string, { 'length': 4 }), 'h...');
     });
 
     test('should support a `separator` option', 2, function() {
-      equal(_.truncate(string, { 'length': 24, 'separator': ' ' }), 'hi-diddly-ho there,...');
-      equal(_.truncate(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
+      strictEqual(_.truncate(string, { 'length': 24, 'separator': ' ' }), 'hi-diddly-ho there,...');
+      strictEqual(_.truncate(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
     });
 
     test('should treat negative `length` as `0`', 4, function() {
       _.forEach([0, -2], function(length) {
-        equal(_.truncate(string, length), '...');
-        equal(_.truncate(string, { 'length': length }), '...');
+        strictEqual(_.truncate(string, length), '...');
+        strictEqual(_.truncate(string, { 'length': length }), '...');
       });
     });
 
     test('should coerce `length` to a number', 4, function() {
       _.forEach(['', '4'], function(length, index) {
         var actual = index ? 'h...' : '...';
-        equal(_.truncate(string, length), actual);
-        equal(_.truncate(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
+        strictEqual(_.truncate(string, length), actual);
+        strictEqual(_.truncate(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
       });
     });
 
     test('should coerce `string` to a string', 2, function() {
-      equal(_.truncate(Object(string), 4), 'h...');
-      equal(_.truncate({ 'toString': _.constant(string) }, 5), 'hi...');
+      strictEqual(_.truncate(Object(string), 4), 'h...');
+      strictEqual(_.truncate({ 'toString': _.constant(string) }, 5), 'hi...');
     });
 
     test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
@@ -8474,7 +8476,7 @@
         throttled();
 
         setTimeout(function() {
-          equal(callCount, 2);
+          strictEqual(callCount, 2);
           QUnit.start();
         }, 64);
       }
@@ -8500,7 +8502,7 @@
         }, 32);
 
         throttled.call(object, 'a');
-        equal(count, 1);
+        strictEqual(count, 1);
 
         setTimeout(function() {
           ok(count < 3);
@@ -8520,10 +8522,10 @@
             throttled = _.throttle(function() { count++; }, 32);
 
         throttled();
-        equal(count, 1);
+        strictEqual(count, 1);
 
         setTimeout(function() {
-          equal(count, 1);
+          strictEqual(count, 1);
           QUnit.start();
         }, 64);
       }
@@ -8565,8 +8567,8 @@
           return value;
         }, 32, {});
 
-        equal(throttled('a'), 'a');
-        equal(throttled('b'), 'a');
+        strictEqual(throttled('a'), 'a');
+        strictEqual(throttled('b'), 'a');
 
         setTimeout(function() {
           strictEqual(count, 2);
@@ -8583,7 +8585,7 @@
       if (!(isRhino && isModularize)) {
         _.forEach([true, { 'leading': true }], function(options) {
           var withLeading = _.throttle(_.identity, 32, options);
-          equal(withLeading('a'), 'a');
+          strictEqual(withLeading('a'), 'a');
         });
 
         _.forEach([false, { 'leading': false }], function(options) {
@@ -8611,14 +8613,14 @@
           return value;
         }, 64, { 'trailing': false });
 
-        equal(withTrailing('a'), 'a');
-        equal(withTrailing('b'), 'a');
+        strictEqual(withTrailing('a'), 'a');
+        strictEqual(withTrailing('b'), 'a');
 
-        equal(withoutTrailing('a'), 'a');
-        equal(withoutTrailing('b'), 'a');
+        strictEqual(withoutTrailing('a'), 'a');
+        strictEqual(withoutTrailing('b'), 'a');
 
         setTimeout(function() {
-          equal(withCount, 2);
+          strictEqual(withCount, 2);
           strictEqual(withoutCount, 1);
           QUnit.start();
         }, 256);
@@ -8721,7 +8723,7 @@
 
         setTimeout(function() {
           funced();
-          equal(callCount, methodName == 'throttle' ? 2 : 1);
+          strictEqual(callCount, methodName == 'throttle' ? 2 : 1);
           QUnit.start();
         }, 64);
       }
@@ -8765,8 +8767,8 @@
 
       var actual = func(sparse);
 
-      ok(0 in actual);
-      ok(2 in actual);
+      ok('0' in actual);
+      ok('2' in actual);
       deepEqual(actual, sparse);
     });
 
@@ -8909,10 +8911,10 @@
 
         var first = args[0];
         if (key == 'array') {
-          ok(first != object && _.isArray(first));
+          ok(first !== object && _.isArray(first));
           deepEqual(args, [first, 1, 0, object]);
         } else {
-          ok(first != object && _.isPlainObject(first));
+          ok(first !== object && _.isPlainObject(first));
           deepEqual(args, [first, 1, 'a', object]);
         }
       });
@@ -8984,23 +8986,23 @@
         unescaped = '&<>"\'\/';
 
     test('should unescape entities in the correct order', 1, function() {
-      equal(_.unescape('&amp;lt;'), '&lt;');
+      strictEqual(_.unescape('&amp;lt;'), '&lt;');
     });
 
     test('should unescape the proper entities', 1, function() {
-      equal(_.unescape(escaped), unescaped);
+      strictEqual(_.unescape(escaped), unescaped);
     });
 
     test('should not unescape the "&#x2F;" entity', 1, function() {
-      equal(_.unescape('&#x2F;'), '&#x2F;');
+      strictEqual(_.unescape('&#x2F;'), '&#x2F;');
     });
 
     test('should handle strings with nothing to unescape', 1, function() {
-      equal(_.unescape('abc'), 'abc');
+      strictEqual(_.unescape('abc'), 'abc');
     });
 
     test('should unescape the same characters escaped by `_.escape`', 1, function() {
-      equal(_.unescape(_.escape(unescaped)), unescaped);
+      strictEqual(_.unescape(_.escape(unescaped)), unescaped);
     });
 
     test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
@@ -9155,11 +9157,11 @@
         actual.push(_.uniqueId());
       });
 
-      equal(_.uniq(actual).length, actual.length);
+      strictEqual(_.uniq(actual).length, actual.length);
     });
 
     test('should return a string value when not passing a prefix argument', 1, function() {
-      equal(typeof _.uniqueId(), 'string');
+      strictEqual(typeof _.uniqueId(), 'string');
     });
 
     test('should coerce the prefix argument to a string', 1, function() {
@@ -9294,7 +9296,7 @@
         return '<p>' + func(text) + '</p>';
       });
 
-      equal(p('fred, barney, & pebbles'), '<p>fred, barney, &amp; pebbles</p>');
+      strictEqual(p('fred, barney, & pebbles'), '<p>fred, barney, &amp; pebbles</p>');
     });
 
     test('should pass the correct `wrapper` arguments', 1, function() {
@@ -9314,7 +9316,7 @@
       });
 
       var object = { 'p': p, 'text': 'fred, barney, & pebbles' };
-      equal(object.p(), '<p>fred, barney, &amp; pebbles</p>');
+      strictEqual(object.p(), '<p>fred, barney, &amp; pebbles</p>');
     });
   }());
 
@@ -9397,11 +9399,11 @@
       ];
 
       var actual = _.zip(pair[0]);
-      ok(0 in actual[2]);
+      ok('0' in actual[2]);
       deepEqual(actual, pair[1]);
 
       actual = _.zip.apply(_, actual);
-      ok(2 in actual[0]);
+      ok('2' in actual[0]);
       deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
     });
 
@@ -9479,7 +9481,7 @@
         wrapped.shift();
 
         deepEqual(wrapped.keys().value(), ['length']);
-        equal(wrapped.first(), undefined);
+        strictEqual(wrapped.first(), undefined);
       }
       else {
         skipTest(2);
@@ -9498,7 +9500,7 @@
         wrapped.splice(0, 1);
 
         deepEqual(wrapped.keys().value(), ['length']);
-        equal(wrapped.first(), undefined);
+        strictEqual(wrapped.first(), undefined);
       }
       else {
         skipTest(2);
@@ -9514,7 +9516,7 @@
     test('should return the `toString` result of the wrapped value', 1, function() {
       if (!isNpm) {
         var wrapped = _([1, 2, 3]);
-        equal(String(wrapped), '1,2,3');
+        strictEqual(String(wrapped), '1,2,3');
       }
       else {
         skipTest();
@@ -9530,7 +9532,7 @@
     test('should return the `valueOf` result of the wrapped value', 1, function() {
       if (!isNpm) {
         var wrapped = _(123);
-        equal(Number(wrapped), 123);
+        strictEqual(Number(wrapped), 123);
       }
       else {
         skipTest();
@@ -9639,7 +9641,7 @@
             ? wrapped[methodName](_.identity)
             : wrapped[methodName]();
 
-          equal(actual instanceof _, false);
+          strictEqual(actual instanceof _, false);
         }
         else {
           skipTest();
@@ -9665,7 +9667,7 @@
     _.forEach(funcs, function(methodName) {
       test('`_(...).' + methodName + '` called without an `n` argument should return an unwrapped value', 1, function() {
         if (!isNpm) {
-          equal(typeof wrapped[methodName](), 'number');
+          strictEqual(typeof wrapped[methodName](), 'number');
         }
         else {
           skipTest();
@@ -9763,7 +9765,7 @@
         deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
 
         _.remove(args, function(value) { return typeof value == 'number'; });
-        ok(args.length == 1 && _.isEqual(args[0], [3]), message('remove'));
+        ok(args.length === 1 && _.isEqual(args[0], [3]), message('remove'));
       }
       else {
         skipTest(2)
@@ -9920,7 +9922,7 @@
         ok(_.isArray(actual), '_.' + methodName + ' returns an array');
 
         var isPull = methodName == 'pull';
-        equal(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
+        strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
       });
     });
 
@@ -10001,14 +10003,14 @@
         if (expected === null) {
           strictEqual(thisArg, null, message);
         } else {
-          equal(thisArg, expected, message);
+          strictEqual(thisArg, expected, message);
         }
       });
     });
 
     test('should not contain minified method names (test production builds)', 1, function() {
       ok(_.every(_.functions(_), function(methodName) {
-        return methodName.length > 2 || methodName == 'at';
+        return methodName.length > 2 || methodName === 'at';
       }));
     });
   }());

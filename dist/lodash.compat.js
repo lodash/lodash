@@ -861,7 +861,7 @@
 
       /**
        * Detect if functions can be decompiled by `Function#toString`
-       * (all but PS3 and older Opera mobile browsers & avoided in Windows 8 apps).
+       * (all but PS3 and older Opera mobile browsers; forced `false` for Windows 8 apps).
        *
        * @memberOf _.support
        * @type boolean
@@ -925,8 +925,8 @@
       /**
        * Detect lack of support for accessing string characters by index.
        *
-       * IE < 8 can't access characters by index and IE 8 can only access
-       * characters by index on string literals.
+       * IE < 8 can't access characters by index. IE 8 can only access characters
+       * by index on string literals, not string objects.
        *
        * @memberOf _.support
        * @type boolean
@@ -960,20 +960,20 @@
       }
 
       /**
-       * Detect if `arguments` object indexes are non-enumerable
-       * (Firefox < 4, IE < 9, PhantomJS, Safari < 5.1).
+       * Detect if `arguments` object indexes are non-enumerable.
        *
-       * Chrome < 25 and Node.js < 0.11.0 will treat `arguments` object indexes
-       * that exceed their function's formal parameters and whose associated
-       * values are `0` as non-enumerable and incorrectly return `false` from
-       * `Object#hasOwnProperty`.
+       * In Firefox < 4, IE < 9, PhantomJS, and Safari < 5.1 `arguments` object
+       * indexes are non-enumerable. Chrome < 25 and Node.js < 0.11.0 treat
+       * `arguments` object indexes as non-enumerable and fail `hasOwnProperty`
+       * checks for indexes that exceed their function's formal parameters with
+       * associated values of `0`.
        *
        * @memberOf _.support
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, '1') &&
-          propertyIsEnumerable.call(arguments, '1'));
+        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, argsKey) &&
+          propertyIsEnumerable.call(arguments, argsKey));
       } catch(e) {
         support.nonEnumArgs = true;
       }

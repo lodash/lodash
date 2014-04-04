@@ -7545,7 +7545,7 @@
       }
       return function(object) {
         var length = propsLength,
-            result = false;
+            result = true;
 
         while (length--) {
           var key = props[length];

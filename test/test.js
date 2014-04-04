@@ -1455,8 +1455,8 @@
         strictEqual(_.contains(collection, 1, 2), true);
       });
 
-      test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 6, function() {
-        _.forEach([6, 8], function(fromIndex) {
+      test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 12, function() {
+        _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
           strictEqual(_.contains(collection, 1, fromIndex), false);
           strictEqual(_.contains(collection, undefined, fromIndex), false);
           strictEqual(_.contains(collection, '', fromIndex), false);
@@ -1467,9 +1467,10 @@
         strictEqual(_.contains(collection, 2, -3), true);
       });
 
-      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 2, function() {
-        strictEqual(_.contains(collection, 1, -6), true);
-        strictEqual(_.contains(collection, 2, -8), true);
+      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 4, function() {
+        _.each([-6, -8, NaN, -Infinity], function(fromIndex) {
+          strictEqual(_.contains(collection, 1, -6), true);
+        });
       });
 
       test('should work with ' + key + ' and return an unwrapped value when chaining', 1, function() {
@@ -3507,8 +3508,8 @@
       strictEqual(_.indexOf(array, 1, 2), 3);
     });
 
-    test('should work with `fromIndex` >= `array.length`', 6, function() {
-      _.forEach([6, 8], function(fromIndex) {
+    test('should work with `fromIndex` >= `array.length`', 12, function() {
+      _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
         strictEqual(_.indexOf(array, 1, fromIndex), -1);
         strictEqual(_.indexOf(array, undefined, fromIndex), -1);
         strictEqual(_.indexOf(array, '', fromIndex), -1);
@@ -3519,9 +3520,10 @@
       strictEqual(_.indexOf(array, 2, -3), 4);
     });
 
-    test('should work with a negative `fromIndex` <= `-array.length`', 2, function() {
-      strictEqual(_.indexOf(array, 1, -6), 0);
-      strictEqual(_.indexOf(array, 2, -8), 1);
+    test('should work with a negative `fromIndex` <= `-array.length`', 4, function() {
+      _.each([-6, -8, NaN, -Infinity], function(fromIndex) {
+        strictEqual(_.indexOf(array, 1, fromIndex), 0);
+      });
     });
 
     test('should ignore non-number `fromIndex` values', 1, function() {
@@ -5425,8 +5427,8 @@
       strictEqual(_.lastIndexOf(array, 1, 2), 0);
     });
 
-    test('should work with `fromIndex` >= `array.length`', 6, function() {
-      _.forEach([6, 8], function(fromIndex) {
+    test('should work with `fromIndex` >= `array.length`', 12, function() {
+      _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
         strictEqual(_.lastIndexOf(array, undefined, fromIndex), -1);
         strictEqual(_.lastIndexOf(array, 1, fromIndex), 3);
         strictEqual(_.lastIndexOf(array, '', fromIndex), -1);
@@ -5438,7 +5440,7 @@
     });
 
     test('should work with a negative `fromIndex` <= `-array.length`', 4, function() {
-      _.each([-6, -1, NaN, -Infinity], function(fromIndex) {
+      _.each([-6, -8, NaN, -Infinity], function(fromIndex) {
         strictEqual(_.lastIndexOf(array, 1, fromIndex), 0);
       });
     });
@@ -7672,8 +7674,8 @@
       deepEqual(_.slice(array, 1), [2, 3]);
     });
 
-    test('should work with a `start` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(start) {
+    test('should work with a `start` >= `array.length`', 4, function() {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(start) {
         deepEqual(_.slice(array, start), []);
       });
     });
@@ -7682,8 +7684,8 @@
       deepEqual(_.slice(array, -1), [3]);
     });
 
-    test('should work with a negative `start` <= negative `array.length`', 2, function() {
-      _.forEach([-3, -4], function(start) {
+    test('should work with a negative `start` <= negative `array.length`', 4, function() {
+      _.each([-3, -4, NaN, -Infinity], function(start) {
         deepEqual(_.slice(array, start), [1, 2, 3]);
       });
     });
@@ -7692,8 +7694,8 @@
       deepEqual(_.slice(array, 0, 1), [1]);
     });
 
-    test('should work with a `end` >= `array.length`', 2, function() {
-      _.forEach([3, 4], function(end) {
+    test('should work with a `end` >= `array.length`', 4, function() {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(end) {
         deepEqual(_.slice(array, 0, end), [1, 2, 3]);
       });
     });
@@ -7702,8 +7704,8 @@
       deepEqual(_.slice(array, 0, -1), [1, 2]);
     });
 
-    test('should work with a negative `end` <= negative `array.length`', 2, function() {
-      _.forEach([-3, -4], function(end) {
+    test('should work with a negative `end` <= negative `array.length`', 4, function() {
+      _.each([-3, -4, NaN, -Infinity], function(end) {
         deepEqual(_.slice(array, 0, end), []);
       });
     });

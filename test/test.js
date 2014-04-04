@@ -7961,6 +7961,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.startsWith and lodash.endsWith');
+
+  _.each(['startsWith', 'endsWith'], function(methodName) {
+    var func = _[methodName],
+        isEndsWith = methodName == 'endsWith';
+
+    test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
+      var string = 'abc',
+          chr = isEndsWith ? 'c' : 'a';
+
+      strictEqual(func(Object(string), chr), true);
+      strictEqual(func({ 'toString': _.constant(string) }, chr), true);
+    });
+
+    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
+      strictEqual(func(null), false);
+      strictEqual(func(undefined), false);
+      strictEqual(func(''), false);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.tap');
 
   (function() {

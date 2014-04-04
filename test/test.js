@@ -5650,9 +5650,9 @@
       strictEqual(matches(object), false);
     });
 
-    test('should return `false` when comparing an empty `source`', 1, function() {
+    test('should return `true` when comparing an empty `source`', 1, function() {
       var matches = _.matches({});
-      strictEqual(matches(object), false);
+      strictEqual(matches(object), true);
     });
   }());
 
@@ -9261,8 +9261,10 @@
       deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
     });
 
-    test('should return an empty array when provided an empty `properties` object', 1, function() {
-      deepEqual(_.where(array, {}), []);
+    test('should match all elements when provided an empty `properties` object', 2, function() {
+      var actual = _.where(array, {});
+      ok(actual !== array);
+      deepEqual(actual, array);
     });
 
     test('should deep compare `properties` values', 1, function() {

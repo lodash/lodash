@@ -561,7 +561,7 @@
         }
         strictEqual(actual, true, message('String#contains'));
 
-        _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName) {
+        _.each(['trim', 'trimLeft', 'trimRight'], function(methodName) {
           try {
             var actual = [
               lodashBizarro[methodName](whitespace + 'a b c' + whitespace),
@@ -614,7 +614,7 @@
     });
 
     test('should coerce non-finite `n` values to `0`', 3, function() {
-      _.forEach([-Infinity, NaN, Infinity], function(n) {
+      _.each([-Infinity, NaN, Infinity], function(n) {
         strictEqual(after(n, 1), 1);
       });
     });
@@ -723,7 +723,7 @@
       deepEqual(actual, [[1], [5], [9]]);
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -1020,7 +1020,7 @@
 
   QUnit.module('case methods');
 
-  _.forEach(['camel', 'kebab', 'snake'], function(caseName) {
+  _.each(['camel', 'kebab', 'snake'], function(caseName) {
     var methodName = caseName + 'Case',
         func = _[methodName];
 
@@ -1047,13 +1047,13 @@
     ];
 
     test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 4, function() {
-      _.forEach(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
+      _.each(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
         strictEqual(func(string), expected);
       });
     });
 
     test('`_.' + methodName + '` should handle double-converting strings', 4, function() {
-      _.forEach(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
+      _.each(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
         strictEqual(func(func(string)), expected);
       });
     });
@@ -1281,7 +1281,7 @@
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
     });
 
-    _.forEach([
+    _.each([
       'clone',
       'cloneDeep'
     ],
@@ -1436,7 +1436,7 @@
   QUnit.module('lodash.contains');
 
   (function() {
-    _.forEach({
+    _.each({
       'an `arguments` object': arguments,
       'an array': [1, 2, 3, 1, 2, 3],
       'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 1, 'e': 2, 'f': 3 },
@@ -1482,7 +1482,7 @@
       });
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -1929,7 +1929,7 @@
         var withLeading,
             counts = [0, 0, 0];
 
-        _.forEach([true, { 'leading': true }], function(options, index) {
+        _.each([true, { 'leading': true }], function(options, index) {
           var debounced = _.debounce(function(value) {
             counts[index]++;
             return value;
@@ -1941,7 +1941,7 @@
           strictEqual(debounced('x'), 'x');
         });
 
-        _.forEach([false, { 'leading': false }], function(options) {
+        _.each([false, { 'leading': false }], function(options) {
           var withoutLeading = _.debounce(_.identity, 32, options);
           strictEqual(withoutLeading('x'), undefined);
         });
@@ -2351,7 +2351,7 @@
 
   QUnit.module('source property checks');
 
-  _.forEach(['assign', 'defaults', 'merge'], function(methodName) {
+  _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
@@ -2388,7 +2388,7 @@
 
   QUnit.module('strict mode checks');
 
-  _.forEach(['assign', 'bindAll', 'defaults'], function(methodName) {
+  _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should not throw strict mode errors', 1, function() {
@@ -2455,7 +2455,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  _.forEach(['find', 'findLast', 'findIndex', 'findLastIndex', 'findKey', 'findLastKey'], function(methodName) {
+  _.each(['find', 'findLast', 'findIndex', 'findLastIndex', 'findKey', 'findLastKey'], function(methodName) {
     QUnit.module('lodash.' + methodName);
 
     var func = _[methodName];
@@ -2501,7 +2501,7 @@
             emptyValues = /Index/.test(methodName) ? _.reject(empties, _.isPlainObject) : empties,
             expecting = _.map(emptyValues, function() { return expected[1]; });
 
-        _.forEach(emptyValues, function(value) {
+        _.each(emptyValues, function(value) {
           try {
             actual.push(func(value, { 'a': 3 }));
           } catch(e) { }
@@ -2578,13 +2578,13 @@
     });
 
     test('should return an empty array when `n` < `1`', 4, function() {
-      _.forEach([0, -1, NaN, -Infinity], function(n) {
+      _.each([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.first(array, n), []);
       });
     });
 
     test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.first(array, n), array);
       });
     });
@@ -2802,10 +2802,10 @@
 
   QUnit.module('forEach methods');
 
-  _.forEach(['forEach', 'forEachRight'], function(methodName) {
+  _.each(['forEach', 'forEachRight'], function(methodName) {
     var func = _[methodName];
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -2842,7 +2842,7 @@
 
   QUnit.module('forIn methods');
 
-  _.forEach(['forIn', 'forInRight'], function(methodName) {
+  _.each(['forIn', 'forInRight'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` iterates over inherited properties', 1, function() {
@@ -2859,7 +2859,7 @@
 
   QUnit.module('forOwn methods');
 
-  _.forEach(['forOwn', 'forOwnRight'], function(methodName) {
+  _.each(['forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
     test('iterates over the `length` property', 1, function() {
@@ -2947,7 +2947,7 @@
       'forOwnRight'
     ];
 
-    _.forEach(methods, function(methodName) {
+    _.each(methods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
 
@@ -2984,7 +2984,7 @@
       });
     });
 
-    _.forEach(_.difference(methods, boolMethods), function(methodName) {
+    _.each(_.difference(methods, boolMethods), function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
 
@@ -2999,7 +2999,7 @@
       });
     });
 
-    _.forEach(_.difference(methods, forInMethods), function(methodName) {
+    _.each(_.difference(methods, forInMethods), function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
 
@@ -3013,7 +3013,7 @@
       });
     });
 
-    _.forEach(iterationMethods, function(methodName) {
+    _.each(iterationMethods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
 
@@ -3032,7 +3032,7 @@
       });
     });
 
-    _.forEach(collectionMethods, function(methodName) {
+    _.each(collectionMethods, function(methodName) {
       var func = _[methodName];
 
       test('`_.' + methodName + '` should treat objects with lengths of `0` as array-like', 1, function() {
@@ -3059,7 +3059,7 @@
 
   QUnit.module('collection iteration bugs');
 
-  _.forEach(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
+  _.each(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
@@ -3119,7 +3119,7 @@
 
   QUnit.module('object assignments');
 
-  _.forEach(['assign', 'defaults', 'merge'], function(methodName) {
+  _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should return `undefined` when no destination object is provided', 1, function() {
@@ -3199,7 +3199,7 @@
     });
   });
 
-  _.forEach(['assign', 'merge'], function(methodName) {
+  _.each(['assign', 'merge'], function(methodName) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should pass the correct `callback` arguments', 2, function() {
@@ -3246,7 +3246,7 @@
 
   QUnit.module('exit early');
 
-  _.forEach(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
+  _.each(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
     if (!func) {
       return;
@@ -3304,7 +3304,7 @@
 
   (function() {
     test('should return the function names of an object', 1, function() {
-      var object = { 'a': 'a', 'b': _.identity, 'c': /x/, 'd': _.forEach };
+      var object = { 'a': 'a', 'b': _.identity, 'c': /x/, 'd': _.each };
       deepEqual(_.functions(object), ['b', 'd']);
     });
 
@@ -3645,13 +3645,13 @@
     });
 
     test('should return all elements when `n` < `1`', 4, function() {
-      _.forEach([0, -1, NaN, -Infinity], function(n) {
+      _.each([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.initial(array, n), array);
       });
     });
 
     test('should return an empty array when `n` >= `array.length`', 4, function() {
-      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.initial(array, n), []);
       });
     });
@@ -4509,7 +4509,7 @@
       var expected = _.map(falsey, _.constant(false));
       actual = [];
 
-      _.forEach(falsey, function(value) {
+      _.each(falsey, function(value) {
         actual.push(_.isEqual('a', 'b', function() { return value; }));
       });
 
@@ -5114,7 +5114,7 @@
         'isNumber', 'isRegExp', 'isString'
       ];
 
-      _.forEach(funcs, function(methodName) {
+      _.each(funcs, function(methodName) {
         function Foo() {}
         Foo.prototype = root[methodName.slice(2)].prototype;
 
@@ -5138,7 +5138,7 @@
           'isObject', 'isNull', 'isNumber', 'isRegExp', 'isString', 'isUndefined'
         ];
 
-        _.forEach(funcs, function(methodName) {
+        _.each(funcs, function(methodName) {
           var pass = true;
           try {
             _[methodName](xml);
@@ -5158,7 +5158,7 @@
 
   QUnit.module('keys methods');
 
-  _.forEach(['keys', 'keysIn'], function(methodName) {
+  _.each(['keys', 'keysIn'], function(methodName) {
     var args = arguments,
         func = _[methodName],
         isKeys = methodName == 'keys';
@@ -5316,13 +5316,13 @@
     });
 
     test('should return an empty array when `n` < `1`', 4, function() {
-      _.forEach([0, -1, NaN, -Infinity], function(n) {
+      _.each([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.last(array, n), []);
       });
     });
 
     test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.last(array, n), array);
       });
     });
@@ -5437,9 +5437,10 @@
       strictEqual(_.lastIndexOf(array, 2, -3), 1);
     });
 
-    test('should work with a negative `fromIndex` <= `-array.length`', 2, function() {
-      strictEqual(_.lastIndexOf(array, 1, -6), 0);
-      strictEqual(_.lastIndexOf(array, 2, -8), -1);
+    test('should work with a negative `fromIndex` <= `-array.length`', 4, function() {
+      _.each([-6, -1, NaN, -Infinity], function(fromIndex) {
+        strictEqual(_.lastIndexOf(array, 1, fromIndex), 0);
+      });
     });
 
     test('should ignore non-number `fromIndex` values', 2, function() {
@@ -5453,7 +5454,7 @@
   QUnit.module('indexOf methods');
 
   (function() {
-    _.forEach(['indexOf', 'lastIndexOf'], function(methodName) {
+    _.each(['indexOf', 'lastIndexOf'], function(methodName) {
       var func = _[methodName];
 
       test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
@@ -5723,7 +5724,7 @@
       var actual = [],
           memoized = _.memoize(_.identity);
 
-      _.forEach(shadowedProps, function(value) {
+      _.each(shadowedProps, function(value) {
         actual.push(memoized(value));
       });
 
@@ -5731,7 +5732,7 @@
     });
 
     test('should expose a `cache` object on the `memoized` function', 4, function() {
-      _.forEach(['_a', 'a'], function(key, index) {
+      _.each(['_a', 'a'], function(key, index) {
         var memoized = _.memoize(_.identity, index && _.identity);
 
         memoized('a');
@@ -5892,7 +5893,7 @@
 
   QUnit.module('lodash.max and lodash.min');
 
-  _.forEach(['max', 'min'], function(methodName) {
+  _.each(['max', 'min'], function(methodName) {
     var array = [1, 2, 3],
         func = _[methodName];
 
@@ -5958,7 +5959,7 @@
     });
 
     test('`_.' + methodName + '` should iterate a string', 2, function() {
-      _.forEach(['abc', Object('abc')], function(value) {
+      _.each(['abc', Object('abc')], function(value) {
         var actual = func(value);
         strictEqual(actual, methodName == 'max' ? 'c' : 'a');
       });
@@ -6043,8 +6044,8 @@
         return (func === _ ? 'lodash' : 'provided') + ' function should ' + (chain ? '' : 'not ') + 'chain';
       }
 
-      _.forEach([_, wrapper], function(func) {
-        _.forEach([false, true, { 'chain': false }, { 'chain': true }], function(options) {
+      _.each([_, wrapper], function(func) {
+        _.each([false, true, { 'chain': false }, { 'chain': true }], function(options) {
           if (func === _) {
             _.mixin(source, options);
           } else {
@@ -6320,7 +6321,7 @@
 
   QUnit.module('pad methods');
 
-  _.forEach(['pad', 'padLeft', 'padRight'], function(methodName, index) {
+  _.each(['pad', 'padLeft', 'padRight'], function(methodName, index) {
     var func = _[methodName];
 
     test('`_.' + methodName + '` should not pad is string is >= `length`', 2, function() {
@@ -6329,13 +6330,13 @@
     });
 
     test('`_.' + methodName + '` should treat negative `length` as `0`', 2, function() {
-      _.forEach([0, -2], function(length) {
+      _.each([0, -2], function(length) {
         strictEqual(func('abc', length), 'abc');
       });
     });
 
     test('`_.' + methodName + '` should coerce `length` to a number', 2, function() {
-      _.forEach(['', '4'], function(length) {
+      _.each(['', '4'], function(length) {
         var actual = length ? (index == 1 ? ' abc' : 'abc ') : 'abc';
         strictEqual(func('abc', length), actual);
       });
@@ -6391,7 +6392,7 @@
     });
 
     test('should use a radix of `16`, for hexadecimals, if `radix` is `undefined` or `0`', 8, function() {
-      _.forEach(['0x20', '0X20'], function(string) {
+      _.each(['0x20', '0X20'], function(string) {
         strictEqual(_.parseInt(string), 32);
         strictEqual(_.parseInt(string, 0), 32);
         strictEqual(_.parseInt(string, 16), 32);
@@ -6411,7 +6412,7 @@
       strictEqual(_.parseInt(whitespace + '08'), 8);
       strictEqual(_.parseInt(whitespace + '08', 10), 8);
 
-      _.forEach(['0x20', '0X20'], function(string) {
+      _.each(['0x20', '0X20'], function(string) {
         strictEqual(_.parseInt(whitespace + string), 32);
         strictEqual(_.parseInt(whitespace + string, 16), 32);
       });
@@ -6428,7 +6429,7 @@
 
   QUnit.module('partial methods');
 
-  _.forEach(['partial', 'partialRight'], function(methodName) {
+  _.each(['partial', 'partialRight'], function(methodName) {
     var func = _[methodName],
         isPartial = methodName == 'partial';
 
@@ -6913,7 +6914,7 @@
     });
 
     test('should treat falsey `start` arguments as `0`', 13, function() {
-      _.forEach(falsey, function(value, index) {
+      _.each(falsey, function(value, index) {
         if (index) {
           deepEqual(_.range(value), []);
           deepEqual(_.range(value, 1), [0]);
@@ -6984,7 +6985,7 @@
       deepEqual(args, expected);
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -7063,7 +7064,7 @@
       deepEqual(args, expected);
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -7090,7 +7091,7 @@
 
   QUnit.module('reduce methods');
 
-  _.forEach(['reduce', 'reduceRight'], function(methodName) {
+  _.each(['reduce', 'reduceRight'], function(methodName) {
     var array = [1, 2, 3],
         func = _[methodName];
 
@@ -7127,7 +7128,7 @@
       var actual = [],
           expected = _.map(empties, _.constant());
 
-      _.forEach(empties, function(value) {
+      _.each(empties, function(value) {
         try {
           actual.push(func(value, noop));
         } catch(e) { }
@@ -7186,7 +7187,7 @@
 
   QUnit.module('filter methods');
 
-  _.forEach(['filter', 'reject'], function(methodNames) {
+  _.each(['filter', 'reject'], function(methodNames) {
     var func = _[methodNames];
 
     test('`_.' + methodNames + '` should not modify the resulting value from within `callback`', 1, function() {
@@ -7363,13 +7364,13 @@
     });
 
     test('should return all elements when `n` < `1`', 4, function() {
-      _.forEach([0, -1, NaN, -Infinity], function(n) {
+      _.each([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.rest(array, n), [1, 2, 3]);
       });
     });
 
     test('should return an empty array when `n` >= `array.length`', 4, function() {
-      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.rest(array, n), []);
       });
     });
@@ -7471,13 +7472,13 @@
     });
 
     test('should return an empty array when `n` < `1` or `NaN`', 4, function() {
-      _.forEach([0, -1, NaN, -Infinity], function(n) {
+      _.each([0, -1, NaN, -Infinity], function(n) {
         deepEqual(_.sample(array, n), []);
       });
     });
 
     test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.forEach([3, 4, Math.pow(2, 32), Infinity], function(n) {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.sample(array, n).sort(), array);
       });
     });
@@ -7493,7 +7494,7 @@
         result.push([], []);
       });
 
-      _.forEach(empties, function(value) {
+      _.each(empties, function(value) {
         try {
           actual.push(_.shuffle(value), _.shuffle(value, 1));
         } catch(e) { }
@@ -7541,7 +7542,7 @@
       }
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -7582,7 +7583,7 @@
       deepEqual(_.shuffle(1), []);
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -7649,7 +7650,7 @@
       strictEqual(_.size(shadowedObject), 7);
     });
 
-    _.forEach({
+    _.each({
       'literal': 'abc',
       'object': Object('abc')
     },
@@ -8063,7 +8064,7 @@
     });
 
     test('should work with complex "interpolate" delimiters', 22, function() {
-      _.forEach({
+      _.each({
         '<%= a + b %>': '3',
         '<%= b - a %>': '1',
         '<%= a = b %>': '2',
@@ -8127,7 +8128,7 @@
         'interpolate': /\{\{=([\s\S]+?)\}\}/g
       });
 
-      var compiled = _.template('<ul>{{ _.forEach(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
+      var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
       strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
@@ -8143,7 +8144,7 @@
         'interpolate': /<\?=([\s\S]+?)\?>/g
       });
 
-      var compiled = _.template('<ul><? _.forEach(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
+      var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
           expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
       strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
@@ -8164,7 +8165,7 @@
 
     test('should support the "variable" options', 1, function() {
       var compiled = _.template(
-        '<% _.forEach( data.a, function( value ) { %>' +
+        '<% _.each( data.a, function( value ) { %>' +
             '<%= value.valueOf() %>' +
         '<% }) %>', null, { 'variable': 'data' }
       );
@@ -8178,7 +8179,7 @@
     });
 
     test('should use a `with` statement by default', 1, function() {
-      var compiled = _.template('<%= index %><%= collection[index] %><% _.forEach(collection, function(value, index) { %><%= index %><% }); %>'),
+      var compiled = _.template('<%= index %><%= collection[index] %><% _.each(collection, function(value, index) { %><%= index %><% }); %>'),
           actual = compiled({ 'index': 1, 'collection': ['a', 'b', 'c'] });
 
       strictEqual(actual, '1b012');
@@ -8375,14 +8376,14 @@
     });
 
     test('should treat negative `length` as `0`', 4, function() {
-      _.forEach([0, -2], function(length) {
+      _.each([0, -2], function(length) {
         strictEqual(_.truncate(string, length), '...');
         strictEqual(_.truncate(string, { 'length': length }), '...');
       });
     });
 
     test('should coerce `length` to a number', 4, function() {
-      _.forEach(['', '4'], function(length, index) {
+      _.each(['', '4'], function(length, index) {
         var actual = index ? 'h...' : '...';
         strictEqual(_.truncate(string, length), actual);
         strictEqual(_.truncate(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
@@ -8583,12 +8584,12 @@
 
     test('should support a `leading` option', 4, function() {
       if (!(isRhino && isModularize)) {
-        _.forEach([true, { 'leading': true }], function(options) {
+        _.each([true, { 'leading': true }], function(options) {
           var withLeading = _.throttle(_.identity, 32, options);
           strictEqual(withLeading('a'), 'a');
         });
 
-        _.forEach([false, { 'leading': false }], function(options) {
+        _.each([false, { 'leading': false }], function(options) {
           var withoutLeading = _.throttle(_.identity, 32, options);
           strictEqual(withoutLeading('a'), undefined);
         });
@@ -8663,7 +8664,7 @@
 
   QUnit.module('lodash.debounce and lodash.throttle');
 
-  _.forEach(['debounce', 'throttle'], function(methodName) {
+  _.each(['debounce', 'throttle'], function(methodName) {
     var func = _[methodName];
 
     test('_.' + methodName + ' should not error for non-object `options` values', 1, function() {
@@ -8756,7 +8757,7 @@
 
   QUnit.module('lodash.slice and lodash.toArray');
 
-  _.forEach(['slice', 'toArray'], function(methodName) {
+  _.each(['slice', 'toArray'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         array = [1, 2, 3],
         func = _[methodName];
@@ -8808,7 +8809,7 @@
     });
 
     test('should coerce non-finite `n` values to `0`', 3, function() {
-      _.forEach([-Infinity, NaN, Infinity], function(n) {
+      _.each([-Infinity, NaN, Infinity], function(n) {
         deepEqual(_.times(n), []);
       });
     });
@@ -8897,7 +8898,7 @@
       ok(_.transform(new Foo) instanceof Foo);
     });
 
-    _.forEach({
+    _.each({
       'array': [1, 2, 3],
       'object': { 'a': 1, 'b': 2, 'c': 3 }
     },
@@ -8934,7 +8935,7 @@
 
   QUnit.module('trim methods');
 
-  _.forEach(['trim', 'trimLeft', 'trimRight'], function(methodName, index) {
+  _.each(['trim', 'trimLeft', 'trimRight'], function(methodName, index) {
     var func = _[methodName];
 
     var parts = [];
@@ -8969,7 +8970,7 @@
     });
 
     test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 6, function() {
-      _.forEach([null, '_-'], function(chars) {
+      _.each([null, '_-'], function(chars) {
         strictEqual(func(null, chars), '');
         strictEqual(func(undefined, chars), '');
         strictEqual(func('', chars), '');
@@ -9129,7 +9130,7 @@
       deepEqual(_.uniq(array), expected);
     });
 
-    _.forEach({
+    _.each({
       'an object': ['a'],
       'a number': 0,
       'a string': '0'
@@ -9555,7 +9556,7 @@
       'unshift'
     ];
 
-    _.forEach(funcs, function(methodName) {
+    _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return the existing wrapped value', 1, function() {
         if (!isNpm) {
           strictEqual(wrapped[methodName](), wrapped);
@@ -9581,7 +9582,7 @@
       'splice'
     ];
 
-    _.forEach(funcs, function(methodName) {
+    _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return a new wrapped value', 1, function() {
         if (!isNpm) {
           ok(wrapped[methodName]() instanceof _);
@@ -9634,7 +9635,7 @@
       'some'
     ];
 
-    _.forEach(funcs, function(methodName) {
+    _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return an unwrapped value', 1, function() {
         if (!isNpm) {
           var actual = methodName == 'reduceRight'
@@ -9664,7 +9665,7 @@
       'sample'
     ];
 
-    _.forEach(funcs, function(methodName) {
+    _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` called without an `n` argument should return an unwrapped value', 1, function() {
         if (!isNpm) {
           strictEqual(typeof wrapped[methodName](), 'number');
@@ -9689,7 +9690,7 @@
               expected = _.map(falsey, _.constant()),
               func = _[methodName];
 
-          _.forEach(falsey, function(value, index) {
+          _.each(falsey, function(value, index) {
             try {
               actual.push(index ? func(value) : func());
             } catch(e) { }
@@ -9862,7 +9863,7 @@
           isExposed = '_' in root,
           oldDash = root._;
 
-      _.forEach(acceptFalsey, function(methodName) {
+      _.each(acceptFalsey, function(methodName) {
         var expected = emptyArrays,
             func = _[methodName],
             pass = true;
@@ -9893,7 +9894,7 @@
       });
 
       // skip tests for missing methods of modularized builds
-      _.forEach(['noConflict', 'runInContext', 'tap'], function(methodName) {
+      _.each(['noConflict', 'runInContext', 'tap'], function(methodName) {
         if (!_[methodName]) {
           skipTest();
         }
@@ -9903,7 +9904,7 @@
     test('should return an array', 64, function() {
       var array = [1, 2, 3];
 
-      _.forEach(returnArrays, function(methodName) {
+      _.each(returnArrays, function(methodName) {
         var actual,
             func = _[methodName];
 
@@ -9927,7 +9928,7 @@
     });
 
     test('should reject falsey arguments', 15, function() {
-      _.forEach(rejectFalsey, function(methodName) {
+      _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
 
@@ -9983,7 +9984,7 @@
         'uniq'
       ];
 
-      _.forEach(funcs, function(methodName) {
+      _.each(funcs, function(methodName) {
         var array = ['a'],
             func = _[methodName],
             message = '`_.' + methodName + '` handles `null` `thisArg` arguments';

@@ -2804,7 +2804,8 @@
   QUnit.module('forEach methods');
 
   _.each(['forEach', 'forEachRight'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isForEach = methodName == 'forEach';
 
     _.each({
       'literal': 'abc',
@@ -2820,7 +2821,7 @@
           values.push(value);
         });
 
-        if (methodName == 'forEach') {
+        if (isForEach) {
           deepEqual(args, ['a', 0, collection]);
           deepEqual(values, ['a', 'b', 'c']);
         } else {
@@ -2831,7 +2832,7 @@
     });
 
     test('`_.' + methodName + '` should be aliased', 1, function() {
-      if (methodName == 'forEach') {
+      if (isForEach) {
         strictEqual(_.each, _.forEach);
       } else {
         strictEqual(_.eachRight, _.forEachRight);
@@ -5897,13 +5898,14 @@
 
   _.each(['max', 'min'], function(methodName) {
     var array = [1, 2, 3],
-        func = _[methodName];
+        func = _[methodName],
+        isMax = methodName == 'max';
 
     test('`_.' + methodName + '` should work with Date objects', 1, function() {
       var now = new Date,
           past = new Date(0);
 
-      strictEqual(func([now, past]), methodName == 'max' ? now : past);
+      strictEqual(func([now, past]), isMax ? now : past);
     });
 
     test('`_.' + methodName + '` should work with a callback argument', 1, function() {
@@ -5911,7 +5913,7 @@
         return -num;
       });
 
-      strictEqual(actual, methodName == 'max' ? 1 : 3);
+      strictEqual(actual, isMax ? 1 : 3);
     });
 
     test('`_.' + methodName + '` should pass the correct `callback` arguments when iterating an array', 1, function() {
@@ -5945,25 +5947,25 @@
         return -this[index];
       }, array);
 
-      strictEqual(actual, methodName == 'max' ? 1 : 3);
+      strictEqual(actual, isMax ? 1 : 3);
     });
 
     test('`_.' + methodName + '` should work when used as a callback for `_.map`', 1, function() {
       var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
           actual = _.map(array, func);
 
-      deepEqual(actual, methodName == 'max' ? [3, 6, 9] : [1, 4, 7]);
+      deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
     });
 
     test('`_.' + methodName + '` should iterate an object', 1, function() {
       var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
-      strictEqual(actual, methodName == 'max' ? 3 : 1);
+      strictEqual(actual, isMax ? 3 : 1);
     });
 
     test('`_.' + methodName + '` should iterate a string', 2, function() {
       _.each(['abc', Object('abc')], function(value) {
         var actual = func(value);
-        strictEqual(actual, methodName == 'max' ? 'c' : 'a');
+        strictEqual(actual, isMax ? 'c' : 'a');
       });
     });
 
@@ -5979,7 +5981,7 @@
 
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
       var array = _.range(0, 5e5);
-      strictEqual(func(array), methodName == 'max' ? 499999 : 0);
+      strictEqual(func(array), isMax ? 499999 : 0);
     });
   });
 
@@ -8667,7 +8669,8 @@
   QUnit.module('lodash.debounce and lodash.throttle');
 
   _.each(['debounce', 'throttle'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isThrottle = methodName == 'throttle';
 
     test('_.' + methodName + ' should not error for non-object `options` values', 1, function() {
       var pass = true;
@@ -8689,11 +8692,11 @@
         };
 
         object.funced();
-        if (methodName == 'throttle') {
+        if (isThrottle) {
           object.funced();
         }
         setTimeout(function() {
-          deepEqual(actual, methodName == 'throttle' ? [object, object] : [object]);
+          deepEqual(actual, isThrottle ? [object, object] : [object]);
           QUnit.start();
         }, 64);
       }
@@ -8726,7 +8729,7 @@
 
         setTimeout(function() {
           funced();
-          strictEqual(callCount, methodName == 'throttle' ? 2 : 1);
+          strictEqual(callCount, isThrottle ? 2 : 1);
           QUnit.start();
         }, 64);
       }

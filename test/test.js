@@ -2284,6 +2284,47 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.endsWith');
+
+  (function() {
+    var string = 'abc';
+
+    test('should return `true` if a string ends with `target`', 1, function() {
+      strictEqual(_.endsWith(string, 'c'), true);
+    });
+
+    test('should return `false` if a string does not end with `target`', 1, function() {
+      strictEqual(_.endsWith(string, 'b'), false);
+    });
+
+    test('should work with a `position` argument', 1, function() {
+      strictEqual(_.endsWith(string, 'b', 2), true);
+    });
+
+    test('should work with `position` >= `string.length`', 4, function() {
+      _.each([3, 5, maxSafeInteger, Infinity], function(position) {
+        strictEqual(_.endsWith(string, 'c', position), true);
+      });
+    });
+
+    test('should treat a negative `position` as `0`', 8, function() {
+      _.each([-1, -3, NaN, -Infinity], function(position) {
+        ok(_.every(string, function(chr) {
+          return _.endsWith(string, chr, position) === false;
+        }));
+        strictEqual(_.endsWith(string, '', position), true);
+      });
+    });
+
+    test('should always return `true` when `target` is an empty string regardless of `position`', 1, function() {
+      ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, maxSafeInteger, Infinity], function(position) {
+        return _.endsWith(string, '', position, true);
+      }));
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.escape');
 
   (function() {
@@ -7961,18 +8002,67 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.startsWith');
+
+  (function() {
+    var string = 'abc';
+
+    test('should return `true` if a string starts with `target`', 1, function() {
+      strictEqual(_.startsWith(string, 'a'), true);
+    });
+
+    test('should return `false` if a string does not start with `target`', 1, function() {
+      strictEqual(_.startsWith(string, 'b'), false);
+    });
+
+    test('should work with a `position` argument', 1, function() {
+      strictEqual(_.startsWith(string, 'b', 1), true);
+    });
+
+    test('should work with `position` >= `string.length`', 4, function() {
+      _.each([3, 5, maxSafeInteger, Infinity], function(position) {
+        strictEqual(_.startsWith(string, 'a', position), false);
+      });
+    });
+
+    test('should treat a negative `position` as `0`', 8, function() {
+      _.each([-1, -3, NaN, -Infinity], function(position) {
+        strictEqual(_.startsWith(string, 'a', position), true);
+        strictEqual(_.startsWith(string, 'b', position), false);
+      });
+    });
+
+    test('should always return `true` when `target` is an empty string regardless of `position`', 1, function() {
+      ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, maxSafeInteger, Infinity], function(position) {
+        return _.startsWith(string, '', position, true);
+      }));
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.startsWith and lodash.endsWith');
 
   _.each(['startsWith', 'endsWith'], function(methodName) {
     var func = _[methodName],
-        isEndsWith = methodName == 'endsWith';
+        isEndsWith = methodName == 'endsWith',
+        chr = isEndsWith ? 'c' : 'a',
+        string = 'abc';
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
-      var string = 'abc',
-          chr = isEndsWith ? 'c' : 'a';
-
       strictEqual(func(Object(string), chr), true);
       strictEqual(func({ 'toString': _.constant(string) }, chr), true);
+    });
+
+    test('`_.' + methodName + '` should coerce `target` to a string', 2, function() {
+      strictEqual(func(string, Object(chr)), true);
+      strictEqual(func(string, { 'toString': _.constant(chr) }), true);
+    });
+
+    test('`_.' + methodName + '` should coerce `position` to a number', 2, function() {
+      var position = isEndsWith ? 2 : 1;
+      strictEqual(func(string, 'b', Object(position)), true);
+      strictEqual(func(string, 'b', { 'toString': _.constant(String(position)) }), true);
     });
 
     test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {

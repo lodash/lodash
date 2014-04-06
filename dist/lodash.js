@@ -8217,6 +8217,7 @@
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
       };
     });
+
     return lodash;
   }
 

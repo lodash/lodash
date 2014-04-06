@@ -134,7 +134,7 @@
    * @private
    * @param {*} value The value to compare to `other`.
    * @param {*} other The value to compare to `value`.
-   * @returns {number} Returns the sort order indicator for `a`.
+   * @returns {number} Returns the sort order indicator for `value`.
    */
   function baseCompareAscending(value, other) {
     if (value !== other) {
@@ -174,7 +174,7 @@
    * sort them in ascending order.
    *
    * @private
-   * @param {Object} value The object to compare to `other`.
+   * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
    * @returns {number} Returns the sort order indicator for `object`.
    */
@@ -611,7 +611,7 @@
   }
 
   /**
-   * The base implementation of `_.find`, '_.findLast`, `_.findKey`, and `_.findLastKey`
+   * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`
    * without support for callback shorthands or `this` binding which iterates
    * over `collection` using the provided `eachFunc`.
    *
@@ -964,7 +964,7 @@
    * placeholders, and provided arguments into a single array of arguments.
    *
    * @private
-   * @param {Array} partialArg An array of arguments to prepend to those provided.
+   * @param {Array} partialArgs An array of arguments to prepend to those provided.
    * @param {Array} partialHolders An array of `partialArgs` placeholder indexes.
    * @param {Array|Object} args The provided arguments.
    * @returns {Array} Returns the new array of composed arguments.
@@ -1418,7 +1418,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {...Array} [array] The arrays to inspect.
+   * @param {...Array} [arrays] The arrays to inspect.
    * @returns {Array} Returns the new array of shared values.
    * @example
    *
@@ -1683,7 +1683,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {...Array} [array] The arrays to inspect.
+   * @param {...Array} [arrays] The arrays to inspect.
    * @returns {Array} Returns the new array of combined values.
    * @example
    *
@@ -1772,7 +1772,7 @@
    * @memberOf _
    * @category Arrays
    * @param {Array} array The array to filter.
-   * @param {...*} [value] The values to exclude.
+   * @param {...*} [values] The values to exclude.
    * @returns {Array} Returns the new array of filtered values.
    * @example
    *
@@ -1793,7 +1793,7 @@
    * @memberOf _
    * @alias unzip
    * @category Arrays
-   * @param {...Array} [array] The arrays to process.
+   * @param {...Array} [arrays] The arrays to process.
    * @returns {Array} Returns the array of grouped elements.
    * @example
    *
@@ -4262,6 +4262,7 @@
    *
    * @static
    * @memberOf _
+   * @type Function
    * @category Objects
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns the array of property names.
@@ -4839,7 +4840,7 @@
   }
 
   /**
-   * Reverts the '_' variable to its previous value and returns a reference to
+   * Reverts the `_` variable to its previous value and returns a reference to
    * the `lodash` function.
    *
    * @static

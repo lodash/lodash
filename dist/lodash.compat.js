@@ -253,7 +253,7 @@
    * @private
    * @param {*} value The value to compare to `other`.
    * @param {*} other The value to compare to `value`.
-   * @returns {number} Returns the sort order indicator for `a`.
+   * @returns {number} Returns the sort order indicator for `value`.
    */
   function baseCompareAscending(value, other) {
     if (value !== other) {
@@ -306,11 +306,11 @@
    * collection is a string value.
    *
    * @private
-   * @param {string} value The character to inspect.
-   * @returns {number} Returns the code unit of the given character.
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the code unit of the first character of the string.
    */
-  function charAtCallback(value) {
-    return value.charCodeAt(0);
+  function charAtCallback(string) {
+    return string.charCodeAt(0);
   }
 
   /**
@@ -318,7 +318,7 @@
    *
    * @private
    * @param {string} string The string to inspect.
-   * @param {string} chars The chars to find.
+   * @param {string} chars The characters to find.
    * @returns {number} Returns the index of the first character not found in `chars`.
    */
   function charsLeftIndex(string, chars) {
@@ -338,7 +338,7 @@
    *
    * @private
    * @param {string} string The string to inspect.
-   * @param {string} chars The chars to find.
+   * @param {string} chars The characters to find.
    * @returns {number} Returns the index of the last character not found in `chars`.
    */
   function charsRightIndex(string, chars) {
@@ -356,7 +356,7 @@
    * sort them in ascending order.
    *
    * @private
-   * @param {Object} value The object to compare to `other`.
+   * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
    * @returns {number} Returns the sort order indicator for `object`.
    */
@@ -369,7 +369,7 @@
    * collection and stable sort them in ascending order.
    *
    * @private
-   * @param {Object} value The object to compare to `other`.
+   * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
    * @returns {number} Returns the sort order indicator for `object`.
    */
@@ -386,7 +386,7 @@
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
-    // that causes it, under certain circumstances, to provided the same value
+    // that causes it, under certain circumstances, to provide the same value
     // for `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247
     //
     // This also ensures a stable sort in V8 and other engines.
@@ -689,7 +689,7 @@
     ctorByClass[regexpClass] = RegExp;
     ctorByClass[stringClass] = String;
 
-    /** Used to avoid iterating non-enumerable properties in IE < 9 */
+    /** Used to avoid iterating over non-enumerable properties in IE < 9 */
     var nonEnumProps = {};
     nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
     nonEnumProps[boolClass] = nonEnumProps[stringClass] = { 'constructor': true, 'toString': true, 'valueOf': true };
@@ -1427,7 +1427,7 @@
     }
 
     /**
-     * The base implementation of `_.find`, '_.findLast`, `_.findKey`, and `_.findLastKey`
+     * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`
      * without support for callback shorthands or `this` binding which iterates
      * over `collection` using the provided `eachFunc`.
      *
@@ -1922,7 +1922,7 @@
      * placeholders, and provided arguments into a single array of arguments.
      *
      * @private
-     * @param {Array} partialArg An array of arguments to prepend to those provided.
+     * @param {Array} partialArgs An array of arguments to prepend to those provided.
      * @param {Array} partialHolders An array of `partialArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
      * @returns {Array} Returns the new array of composed arguments.
@@ -1952,7 +1952,7 @@
      * is tailored for `_.partialRight`.
      *
      * @private
-     * @param {Array} partialRightArg An array of arguments to append to those provided.
+     * @param {Array} partialRightArgs An array of arguments to append to those provided.
      * @param {Array} partialHolders An array of `partialRightArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
      * @returns {Array} Returns the new array of composed arguments.
@@ -2742,7 +2742,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {...Array} [array] The arrays to inspect.
+     * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of shared values.
      * @example
      *
@@ -2871,7 +2871,7 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to modify.
-     * @param {...*} [value] The values to remove.
+     * @param {...*} [values] The values to remove.
      * @returns {Array} Returns `array`.
      * @example
      *
@@ -3234,7 +3234,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {...Array} [array] The arrays to inspect.
+     * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of combined values.
      * @example
      *
@@ -3323,7 +3323,7 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to filter.
-     * @param {...*} [value] The values to exclude.
+     * @param {...*} [values] The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
@@ -3342,7 +3342,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {...Array} [array] The arrays to inspect.
+     * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of values.
      * @example
      *
@@ -3377,7 +3377,7 @@
      * @memberOf _
      * @alias unzip
      * @category Arrays
-     * @param {...Array} [array] The arrays to process.
+     * @param {...Array} [arrays] The arrays to process.
      * @returns {Array} Returns the array of grouped elements.
      * @example
      *
@@ -7862,7 +7862,7 @@
     }
 
     /**
-     * Reverts the '_' variable to its previous value and returns a reference to
+     * Reverts the `_` variable to its previous value and returns a reference to
      * the `lodash` function.
      *
      * @static

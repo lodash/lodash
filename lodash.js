@@ -305,11 +305,11 @@
    * collection is a string value.
    *
    * @private
-   * @param {string} value The string to inspect.
+   * @param {string} string The string to inspect.
    * @returns {number} Returns the code unit of the first character of the string.
    */
-  function charAtCallback(value) {
-    return value.charCodeAt(0);
+  function charAtCallback(string) {
+    return string.charCodeAt(0);
   }
 
   /**
@@ -4521,7 +4521,7 @@
      * @category Collections
      * @param {Array|Object|string} collection The collection to sample.
      * @param {number} [n] The number of elements to sample.
-     * @param {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {*} Returns the random sample(s).
      * @example
      *

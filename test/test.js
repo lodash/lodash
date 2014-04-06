@@ -483,7 +483,7 @@
 
     test('should not add `Function.prototype` extensions to lodash', 1, function() {
       if (lodashBizarro) {
-        strictEqual('_method' in lodashBizarro, false);
+        ok(!('_method' in lodashBizarro));
       }
       else {
         skipTest();
@@ -527,7 +527,7 @@
         } catch(e) {
           actual = null;
         }
-        strictEqual(expando in actual, false, message('Object.defineProperty'));
+        ok(!(expando in actual), message('Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -1718,7 +1718,7 @@
         ok(expando in a);
 
         _.createCallback(b, object);
-        strictEqual(expando in b, false);
+        ok(!(expando in b));
 
         if (_.support.funcNames) {
           _.support.funcNames = false;
@@ -1741,7 +1741,7 @@
 
       if (defineProperty && lodashBizarro) {
         lodashBizarro.createCallback(a, {});
-        strictEqual(expando in a, false);
+        ok(!(expando in a));
       }
       else {
         skipTest();
@@ -6067,8 +6067,8 @@
           'A': function(string) { return string.toUpperCase(); }
         });
 
-        strictEqual('a' in _, false);
-        strictEqual('a' in _.prototype, false);
+        ok(!('a' in _));
+        ok(!('a' in _.prototype));
 
         delete _.a;
         delete _.prototype.a;
@@ -6104,7 +6104,7 @@
             ok(actual instanceof func, message(func, true));
           } else {
             strictEqual(actual, 'a', message(func, false));
-            strictEqual(actual instanceof func, false, message(func, false));
+            ok(!(actual instanceof func), message(func, false));
           }
           delete func.a;
           delete func.prototype.a;
@@ -6856,8 +6856,8 @@
       delete array[3];
 
       _.pull(array, 1);
-      strictEqual(0 in array, false);
-      strictEqual(2 in array, false);
+      ok(!('0' in array));
+      ok(!('2' in array));
     });
 
     test('should treat holes as `undefined`', 1, function() {
@@ -7288,8 +7288,8 @@
       delete array[3];
 
       _.remove(array, function(num) { return num === 1; });
-      strictEqual(0 in array, false);
-      strictEqual(2 in array, false);
+      ok(!('0' in array));
+      ok(!('2' in array));
     });
 
     test('should treat holes as `undefined`', 1, function() {
@@ -8421,10 +8421,10 @@
     });
 
     test('should not modify `_.templateSettings` when `options` are provided', 2, function() {
-      strictEqual('a' in _.templateSettings, false);
+      ok(!('a' in _.templateSettings));
 
       _.template('', {}, { 'a': 1 });
-      strictEqual('a' in _.templateSettings, false);
+      ok(!('a' in _.templateSettings));
 
       delete _.templateSettings.a;
     });
@@ -9762,7 +9762,7 @@
             ? wrapped[methodName](_.identity)
             : wrapped[methodName]();
 
-          strictEqual(actual instanceof _, false);
+          ok(!(actual instanceof _));
         }
         else {
           skipTest();

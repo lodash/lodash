@@ -9659,6 +9659,17 @@
         skipTest();
       }
     });
+
+    test('should be aliased', 2, function() {
+      if (!isNpm) {
+        var expected = _.prototype.valueOf;
+        strictEqual(_.prototype.toJSON, expected);
+        strictEqual(_.prototype.value, expected);
+      }
+      else {
+        skipTest(2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

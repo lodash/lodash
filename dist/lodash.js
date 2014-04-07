@@ -3360,7 +3360,7 @@
      *
      * @name valueOf
      * @memberOf _
-     * @alias value
+     * @alias value, toJSON
      * @category Chaining
      * @returns {*} Returns the wrapped value.
      * @example
@@ -8184,6 +8184,7 @@
 
     // add "Chaining" functions to the wrapper
     lodash.prototype.chain = wrapperChain;
+    lodash.prototype.toJSON = wrapperValueOf;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.value = wrapperValueOf;
     lodash.prototype.valueOf = wrapperValueOf;

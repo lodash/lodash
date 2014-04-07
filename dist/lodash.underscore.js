@@ -1941,7 +1941,7 @@
    *
    * @name valueOf
    * @memberOf _
-   * @alias value
+   * @alias value, toJSON
    * @category Chaining
    * @returns {*} Returns the wrapped value.
    * @example

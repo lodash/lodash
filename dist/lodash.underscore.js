@@ -4262,7 +4262,6 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @category Objects
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns the array of property names.

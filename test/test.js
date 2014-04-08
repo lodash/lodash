@@ -28,7 +28,9 @@
       push = Array.prototype.push,
       slice = Array.prototype.slice,
       system = root.system,
-      toString = Object.prototype.toString,
+      toString = Object.prototype.toString;
+
+  var JSON = root.JSON,
       Worker = document && root.Worker;
 
   /** The file path of the Lo-Dash file to test */
@@ -9650,6 +9652,16 @@
       if (!isNpm) {
         var wrapped = _(123);
         strictEqual(Number(wrapped), 123);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should stringify the wrapped value when passed to `JSON.stringify`', 1, function() {
+      if (!isNpm && JSON) {
+        var wrapped = _([1, 2, 3]);
+        strictEqual(JSON.stringify(wrapped), '[1,2,3]');
       }
       else {
         skipTest();

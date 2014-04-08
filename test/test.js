@@ -1814,11 +1814,10 @@
     });
 
     test('should not alter the `this` binding', 9, function() {
-      var fn = function(a, b, c) {
+      function fn(a, b, c) {
         var value = this || {};
         return [value[a], value[b], value[c]];
-      };
-
+      }
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           expected = [1, 2, 3];
 
@@ -6600,10 +6599,9 @@
 
   (function() {
     test('combinations of partial functions should work', 1, function() {
-      var fn = function() {
+      function fn() {
         return slice.call(arguments);
-      };
-
+      }
       var a = _.partial(fn),
           b = _.partialRight(a, 3),
           c = _.partial(b, 1);
@@ -6612,12 +6610,11 @@
     });
 
     test('combinations of bound and partial functions should work', 3, function() {
-      var fn = function() {
+      function fn() {
         var result = [this.a];
         push.apply(result, arguments);
         return result;
-      };
-
+      }
       var expected = [1, 2, 3, 4],
           object = { 'a': 1, 'fn': fn };
 
@@ -6641,10 +6638,9 @@
     });
 
     test('recursively bound functions should work', 1, function() {
-      var fn = function() {
+      function fn() {
         return this.a;
-      };
-
+      }
       var a = _.bind(fn, { 'a': 1 }),
           b = _.bind(a,  { 'a': 2 }),
           c = _.bind(b,  { 'a': 3 });

@@ -1649,33 +1649,67 @@
   QUnit.module('lodash.callback');
 
   (function() {
-    test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
-      var fn = function() {
-        var result = [this.a];
-        push.apply(result, arguments);
-        return result;
-      };
+    test('should create a callback with a falsey `thisArg`', 1, function() {
+      var values = _.reject(falsey, function(value) {
+        return value == null;
+      });
 
-      var expected = [1, 2, 3],
-          object = { 'a': 1 },
-          callback = _.createCallback(_.partial(fn, 2), object);
+      var actual = _.map(values, function(value) {
+        var callback = _.callback(function() { return this; }, value);
+        return callback();
+      });
 
-      deepEqual(callback(3), expected);
+      ok(_.isEqual(actual, values));
+    });
 
-      callback = _.createCallback(_.partialRight(fn, 3), object);
-      deepEqual(callback(2), expected);
+    test('should return `identity` when `func` is `null` or `undefined`', 2, function() {
+      _.each([null, undefined], function(value) {
+        strictEqual(_.callback(value), _.identity);
+      });
+    });
+
+    test('should return a callback created by `_.matches` when `func` is an object', 2, function() {
+      var callback = _.callback({ 'a': 1 });
+      strictEqual(callback({ 'a': 1, 'b': 2 }), true);
+      strictEqual(callback({}), false);
+    });
+
+    test('should return a callback created by `_.property` when `func` is a number or string', 2, function() {
+      var array = ['a'],
+          callback = _.callback(0);
+
+      strictEqual(callback(array), 'a');
+
+      callback = _.callback('0');
+      strictEqual(callback(array), 'a');
     });
 
     test('should work without an `argCount`', 1, function() {
       var args,
           expected = ['a', 'b', 'c', 'd', 'e'];
 
-      var callback = _.createCallback(function() {
+      var callback = _.callback(function() {
         args = slice.call(arguments);
       });
 
       callback.apply(null, expected);
       deepEqual(args, expected);
+    });
+
+    test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
+      function fn() {
+        var result = [this.a];
+        push.apply(result, arguments);
+        return result;
+      }
+      var expected = [1, 2, 3],
+          object = { 'a': 1 },
+          callback = _.callback(_.partial(fn, 2), object);
+
+      deepEqual(callback(3), expected);
+
+      callback = _.callback(_.partialRight(fn, 3), object);
+      deepEqual(callback(2), expected);
     });
 
     test('should return the function provided if already bound with `Function#bind`', 1, function() {
@@ -1686,7 +1720,7 @@
 
       if (bound && !('prototype' in bound)) {
         var bound = a.bind(object);
-        strictEqual(_.createCallback(bound, object), bound);
+        strictEqual(_.callback(bound, object), bound);
       }
       else {
         skipTest();
@@ -1700,8 +1734,8 @@
       var object = {};
 
       if (_.support.funcDecomp) {
-        strictEqual(_.createCallback(a, object), a);
-        notStrictEqual(_.createCallback(b, object), b);
+        strictEqual(_.callback(a, object), a);
+        notStrictEqual(_.callback(b, object), b);
       }
       else {
         skipTest(2);
@@ -1710,21 +1744,21 @@
 
     test('should only write metadata to named functions', 3, function() {
       function a() {};
+      var b = function() {};
       function c() {};
 
-      var b = function() {},
-          object = {};
+      var object = {};
 
       if (defineProperty && _.support.funcDecomp) {
-        _.createCallback(a, object);
+        _.callback(a, object);
         ok(expando in a);
 
-        _.createCallback(b, object);
+        _.callback(b, object);
         ok(!(expando in b));
 
         if (_.support.funcNames) {
           _.support.funcNames = false;
-          _.createCallback(c, object);
+          _.callback(c, object);
 
           ok(expando in c);
           _.support.funcNames = true;
@@ -1742,7 +1776,7 @@
       function a() {};
 
       if (defineProperty && lodashBizarro) {
-        lodashBizarro.createCallback(a, {});
+        lodashBizarro.callback(a, {});
         ok(!(expando in a));
       }
       else {

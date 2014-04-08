@@ -1650,8 +1650,8 @@
 
   (function() {
     test('should create a callback with a falsey `thisArg`', 1, function() {
-      var values = _.reject(falsey, function(value) {
-        return value == null;
+      var values = _.map(falsey, function(value) {
+        return Object(value == null ? root : value);
       });
 
       var actual = _.map(values, function(value) {
@@ -1659,7 +1659,7 @@
         return callback();
       });
 
-      ok(_.isEqual(actual, values));
+      deepEqual(actual, values);
     });
 
     test('should return `identity` when `func` is `null` or `undefined`', 2, function() {

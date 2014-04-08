@@ -3561,7 +3561,7 @@
      *
      * @name valueOf
      * @memberOf _
-     * @alias value, toJSON
+     * @alias toJSON, value
      * @category Chaining
      * @returns {*} Returns the wrapped value.
      * @example

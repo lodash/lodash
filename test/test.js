@@ -1440,21 +1440,24 @@
   (function() {
     _.each({
       'an `arguments` object': arguments,
-      'an array': [1, 2, 3, 1, 2, 3],
-      'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 1, 'e': 2, 'f': 3 },
-      'a string': '123123'
+      'an array': [1, 2, 3, 4],
+      'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
+      'a string': '1234'
     },
     function(collection, key) {
+      var values = _.toArray(collection);
+
       test('should work with ' + key + ' and  return `true` for  matched values', 1, function() {
         strictEqual(_.contains(collection, 3), true);
       });
 
       test('should work with ' + key + ' and  return `false` for unmatched values', 1, function() {
-        strictEqual(_.contains(collection, 4), false);
+        strictEqual(_.contains(collection, 5), false);
       });
 
-      test('should work with ' + key + ' and a positive `fromIndex`', 1, function() {
-        strictEqual(_.contains(collection, 1, 2), true);
+      test('should work with ' + key + ' and a positive `fromIndex`', 2, function() {
+        strictEqual(_.contains(collection, values[2], 2), true);
+        strictEqual(_.contains(collection, values[1], 2), false);
       });
 
       test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 12, function() {
@@ -1465,13 +1468,28 @@
         });
       });
 
-      test('should work with ' + key + ' and a negative `fromIndex`', 1, function() {
-        strictEqual(_.contains(collection, 2, -3), true);
+      test('should work with ' + key + ' and treat falsey `fromIndex` values as `0`', 1, function() {
+        var expected = _.map(falsey, _.constant(true));
+
+        var actual = _.map(falsey, function(fromIndex) {
+          return _.contains(collection, values[0], fromIndex);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 4, function() {
-        _.each([-6, -8, NaN, -Infinity], function(fromIndex) {
-          strictEqual(_.contains(collection, 1, -6), true);
+      test('should work with ' + key + ' and treat non-number `fromIndex` values as `0`', 1, function() {
+        strictEqual(_.contains(collection, values[0], '1'), true);
+      });
+
+      test('should work with ' + key + ' and a negative `fromIndex`', 2, function() {
+        strictEqual(_.contains(collection, values[2], -2), true);
+        strictEqual(_.contains(collection, values[1], -2), false);
+      });
+
+      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 3, function() {
+        _.each([-4, -6, -Infinity], function(fromIndex) {
+          strictEqual(_.contains(collection, values[0], fromIndex), true);
         });
       });
 
@@ -1503,7 +1521,7 @@
     test('should be aliased', 1, function() {
       strictEqual(_.include, _.contains);
     });
-  }(1, 2, 3, 1, 2, 3));
+  }(1, 2, 3, 4));
 
   /*--------------------------------------------------------------------------*/
 
@@ -2342,8 +2360,18 @@
       });
     });
 
-    test('should treat a negative `position` as `0`', 8, function() {
-      _.each([-1, -3, NaN, -Infinity], function(position) {
+    test('should treat falsey `position` values, except `undefined`, as `0`', 1, function() {
+      var expected = _.map(falsey, _.constant(true));
+
+      var actual = _.map(falsey, function(position) {
+        return _.endsWith(string, position === undefined ? 'c' : '', position);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should treat a negative `position` as `0`', 6, function() {
+      _.each([-1, -3, -Infinity], function(position) {
         ok(_.every(string, function(chr) {
           return _.endsWith(string, chr, position) === false;
         }));
@@ -2654,8 +2682,20 @@
       deepEqual(_.first(array, 2), [1, 2]);
     });
 
-    test('should return an empty array when `n` < `1`', 4, function() {
-      _.each([0, -1, NaN, -Infinity], function(n) {
+    test('should treat falsey `n` values, except `null` or `undefined`, as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value == null ? 1 : [];
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.first(array, n);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return an empty array when `n` < `1`', 3, function() {
+      _.each([0, -1, -Infinity], function(n) {
         deepEqual(_.first(array, n), []);
       });
     });
@@ -3593,18 +3633,28 @@
       });
     });
 
+    test('should treat falsey `fromIndex` values as `0`', 1, function() {
+      var expected = _.map(falsey, _.constant(0));
+
+      var actual = _.map(falsey, function(fromIndex) {
+        return _.indexOf(array, 1, fromIndex);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should treat non-number `fromIndex` values as `0`', 1, function() {
+      strictEqual(_.indexOf([1, 2, 3], 1, '1'), 0);
+    });
+
     test('should work with a negative `fromIndex`', 1, function() {
       strictEqual(_.indexOf(array, 2, -3), 4);
     });
 
-    test('should work with a negative `fromIndex` <= `-array.length`', 4, function() {
-      _.each([-6, -8, NaN, -Infinity], function(fromIndex) {
+    test('should work with a negative `fromIndex` <= `-array.length`', 3, function() {
+      _.each([-6, -8, -Infinity], function(fromIndex) {
         strictEqual(_.indexOf(array, 1, fromIndex), 0);
       });
-    });
-
-    test('should ignore non-number `fromIndex` values', 1, function() {
-      strictEqual(_.indexOf([1, 2, 3], 1, '1'), 0);
     });
 
     test('should work with `isSorted`', 1, function() {
@@ -3723,8 +3773,20 @@
       deepEqual(_.initial([]), []);
     });
 
-    test('should return all elements when `n` < `1`', 4, function() {
-      _.each([0, -1, NaN, -Infinity], function(n) {
+    test('should treat falsey `n` values, except `null` or `undefined`,  as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value == null ? [1, 2] : array;
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.initial(array, n);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return all elements when `n` < `1`', 3, function() {
+      _.each([0, -1, -Infinity], function(n) {
         deepEqual(_.initial(array, n), array);
       });
     });
@@ -5394,8 +5456,20 @@
       deepEqual(_.last(array, 2), [2, 3]);
     });
 
-    test('should return an empty array when `n` < `1`', 4, function() {
-      _.each([0, -1, NaN, -Infinity], function(n) {
+    test('should treat falsey `n` values, except `null` or `undefined`, as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value == null ? 3 : [];
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.last(array, n);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return an empty array when `n` < `1`', 3, function() {
+      _.each([0, -1, -Infinity], function(n) {
         deepEqual(_.last(array, n), []);
       });
     });
@@ -5512,19 +5586,31 @@
       });
     });
 
+    test('should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return typeof value == 'number' ? -1 : 5;
+      });
+
+      var actual = _.map(falsey, function(fromIndex) {
+        return _.lastIndexOf(array, 3, fromIndex);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should treat non-number `fromIndex` values as `array.length`', 2, function() {
+      strictEqual(_.lastIndexOf(array, 3, '1'), 5);
+      strictEqual(_.lastIndexOf(array, 3, true), 5);
+    });
+
     test('should work with a negative `fromIndex`', 1, function() {
       strictEqual(_.lastIndexOf(array, 2, -3), 1);
     });
 
-    test('should work with a negative `fromIndex` <= `-array.length`', 4, function() {
-      _.each([-6, -8, NaN, -Infinity], function(fromIndex) {
+    test('should work with a negative `fromIndex` <= `-array.length`', 3, function() {
+      _.each([-6, -8, -Infinity], function(fromIndex) {
         strictEqual(_.lastIndexOf(array, 1, fromIndex), 0);
       });
-    });
-
-    test('should ignore non-number `fromIndex` values', 2, function() {
-      strictEqual(_.lastIndexOf([1, 2, 3], 3, '1'), 2);
-      strictEqual(_.lastIndexOf([1, 2, 3], 3, true), 2);
     });
   }());
 
@@ -7440,9 +7526,21 @@
       deepEqual(_.rest(array, 2), [3]);
     });
 
-    test('should return all elements when `n` < `1`', 4, function() {
-      _.each([0, -1, NaN, -Infinity], function(n) {
-        deepEqual(_.rest(array, n), [1, 2, 3]);
+    test('should treat falsey `n` values, except `null` or `undefined`,  as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value == null ? [2, 3] : array;
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.rest(array, n);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return all elements when `n` < `1`', 3, function() {
+      _.each([0, -1, -Infinity], function(n) {
+        deepEqual(_.rest(array, n), array);
       });
     });
 
@@ -7548,8 +7646,20 @@
       deepEqual(actual.sort(), array);
     });
 
-    test('should return an empty array when `n` < `1` or `NaN`', 4, function() {
-      _.each([0, -1, NaN, -Infinity], function(n) {
+    test('should treat falsey `n` values, except `null` or `undefined`,  as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value == null ? 1 : [];
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.sample([1], n);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return an empty array when `n` < `1` or `NaN`', 3, function() {
+      _.each([0, -1, -Infinity], function(n) {
         deepEqual(_.sample(array, n), []);
       });
     });
@@ -7755,12 +7865,22 @@
       });
     });
 
+    test('should treat falsey `start` values as `0`', 1, function() {
+      var expected = _.map(falsey, _.constant(array));
+
+      var actual = _.map(falsey, function(start) {
+        return _.slice(array, start);
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should work with a negative `start`', 1, function() {
       deepEqual(_.slice(array, -1), [3]);
     });
 
-    test('should work with a negative `start` <= negative `array.length`', 4, function() {
-      _.each([-3, -4, NaN, -Infinity], function(start) {
+    test('should work with a negative `start` <= negative `array.length`', 3, function() {
+      _.each([-3, -4, -Infinity], function(start) {
         deepEqual(_.slice(array, start), [1, 2, 3]);
       });
     });
@@ -7775,12 +7895,24 @@
       });
     });
 
+    test('should treat falsey `end` values, except `undefined`, as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value === undefined ? array : [];
+      });
+
+      var actual = _.map(falsey, function(end) {
+        return _.slice(array, 0, end);
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should work with a negative `end`', 1, function() {
       deepEqual(_.slice(array, 0, -1), [1, 2]);
     });
 
-    test('should work with a negative `end` <= negative `array.length`', 4, function() {
-      _.each([-3, -4, NaN, -Infinity], function(end) {
+    test('should work with a negative `end` <= negative `array.length`', 3, function() {
+      _.each([-3, -4, -Infinity], function(end) {
         deepEqual(_.slice(array, 0, end), []);
       });
     });
@@ -8057,8 +8189,18 @@
       });
     });
 
-    test('should treat a negative `position` as `0`', 8, function() {
-      _.each([-1, -3, NaN, -Infinity], function(position) {
+    test('should treat falsey `position` values as `0`', 1, function() {
+      var expected = _.map(falsey, _.constant(true));
+
+      var actual = _.map(falsey, function(position) {
+        return _.startsWith(string, 'a', position);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should treat a negative `position` as `0`', 6, function() {
+      _.each([-1, -3, -Infinity], function(position) {
         strictEqual(_.startsWith(string, 'a', position), true);
         strictEqual(_.startsWith(string, 'b', position), false);
       });

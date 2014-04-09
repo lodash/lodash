@@ -5647,6 +5647,70 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.mapKeys');
+
+  (function() {
+    var object = { 'a': 1, 'b': 2, 'c': 3 };
+
+    test('should pass the correct `callback` arguments', 1, function() {
+      var args;
+
+      _.mapKeys(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 'a', object]);
+    });
+
+    test('should support the `thisArg` argument', 2, function() {
+      function callback(num, key) {
+        return this[key] + key;
+      }
+
+      var actual = _.mapKeys({ 'a': 1 }, callback, { 'a': 'b' });
+      deepEqual(actual, { 'ba': 1 });
+
+      actual = _.mapKeys([1], callback, [2]);
+      deepEqual(actual, { '20': 1 });
+    });
+
+    test('should iterate over own properties of objects', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var actual = _.mapKeys(new Foo, function(value, key) { return key; });
+      deepEqual(actual, { 'a': 1 });
+    });
+
+    test('should work on an object with no `callback`', 1, function() {
+      var actual = _.mapKeys({ 'a': 1, 'b': 2, 'c': 3 });
+      deepEqual(actual, object);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(object).mapKeys(noop) instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should accept a falsey `object` argument', 1, function() {
+      var expected = _.map(falsey, _.constant({}));
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return index ? _.mapKeys(value) : _.mapValues();
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.mapValues');
 
   (function() {
@@ -10031,7 +10095,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 184, function() {
+    test('should accept falsey arguments', 185, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

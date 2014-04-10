@@ -5808,13 +5808,47 @@
       strictEqual(matches.length, 1);
       strictEqual(matches(object), true);
 
-      matches =  _.matches({ 'b': 1 });
+      matches = _.matches({ 'b': 1 });
       strictEqual(matches(object), false);
     });
 
     test('should return `true` when comparing an empty `source`', 1, function() {
-      var matches = _.matches({});
-      strictEqual(matches(object), true);
+      var expected = _.map(empties, _.constant(true));
+
+      var actual = _.map(empties, function(value) {
+        var matches = _.matches(value);
+        return matches(object) === true;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not error error for falsey `object` values', 1, function() {
+      var expected = _.map(falsey, _.constant(true)),
+          matches = _.matches({ 'a': 1 });
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          var result = index ? matches(value) : matches();
+          return result === false;
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `true` when comparing an empty `source` to a falsey `object`', 1, function() {
+      var expected = _.map(falsey, _.constant(true)),
+          matches = _.matches({});
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          var result = index ? matches(value) : matches();
+          return result === true;
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 
@@ -6943,7 +6977,7 @@
       strictEqual(property.length, 1);
       strictEqual(property(object), 1);
 
-      property =  _.property('b');
+      property = _.property('b');
       strictEqual(property(object), 2);
     });
 

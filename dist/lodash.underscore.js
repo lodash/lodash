@@ -206,6 +206,16 @@
   }
 
   /**
+   * Used by `_.partition` to create partitioned arrays.
+   *
+   * @private
+   * @returns {Array} Returns the new array.
+   */
+  function partitionInitializer() {
+    return [[], []];
+  }
+
+  /**
    * Used by `_.unescape` to convert HTML entities to characters.
    *
    * @private
@@ -425,6 +435,47 @@
   };
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * A specialized version of `_.forEach` for arrays without support for
+   * callback shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEach(array, callback) {
+    var index = -1,
+        length = array ? array.length : 0;
+
+    while (++index < length) {
+      if (callback(array[index], index, array) === breakIndicator) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.map` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} callback The function called per iteration.
+   * @returns {Array} Returns the new mapped array.
+   */
+  function arrayMap(array, callback) {
+    var index = -1,
+        length = array ? array.length >>> 0 : 0,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = callback(array[index], index, array);
+    }
+    return result;
+  }
 
   /**
    * The base implementation of `_.create` without support for assigning
@@ -990,20 +1041,20 @@
   }
 
   /**
-   * Creates a function that aggregates a collection, creating an object or
-   * array composed from the results of running each element in the collection
+   * Creates a function that aggregates a collection, creating an accumulator
+   * object composed from the results of running each element in the collection
    * through a callback. The given setter function sets the keys and values of
-   * the composed object or array.
+   * the accumulator object. If `initializer` is provided will be used to
+   * initialize the accumulator object.
    *
    * @private
-   * @param {Function} setter The setter function.
-   * @param {boolean} [retArray=false] A flag to indicate that the aggregator
-   *  function should return an array.
+   * @param {Function} setter The function to set keys and values of the accumulator object.
+   * @param {Function} [initializer] The function to initialize the accumulator object.
    * @returns {Function} Returns the new aggregator function.
    */
-  function createAggregator(setter, retArray) {
+  function createAggregator(setter, initializer) {
     return function(collection, callback, thisArg) {
-      var result = retArray ? [[], []] : {};
+      var result = initializer ? initializer() : {};
       callback = createCallback(callback, thisArg, 3);
 
       var index = -1,
@@ -1941,7 +1992,7 @@
    *
    * @name valueOf
    * @memberOf _
-   * @alias value, toJSON
+   * @alias toJSON, value
    * @category Chaining
    * @returns {*} Returns the wrapped value.
    * @example
@@ -1983,17 +2034,21 @@
    * // => true
    */
   function contains(collection, target) {
-    var indexOf = getIndexOf(),
-        length = collection ? collection.length : 0,
-        result = false;
-
+    var length = collection ? collection.length : 0;
     if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+      var indexOf = getIndexOf();
       return indexOf(collection, target) > -1;
     }
-    baseEach(collection, function(value) {
-      return (result = value === target) && breakIndicator;
-    });
-    return result;
+    var props = keys(collection);
+    length = props.length;
+
+    while (length--) {
+      var value = collection[props[length]];
+      if (value === target) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -2077,8 +2132,8 @@
    */
   function every(collection, predicate, thisArg) {
     var result = true;
-
     predicate = createCallback(predicate, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2138,8 +2193,8 @@
    */
   function filter(collection, predicate, thisArg) {
     var result = [];
-
     predicate = createCallback(predicate, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2241,20 +2296,12 @@
    * // => logs each number and returns the object (property order is not guaranteed across environments)
    */
   function forEach(collection, callback, thisArg) {
-    var index = -1,
-        length = collection ? collection.length : 0;
-
+    var length = collection ? collection.length : 0;
     callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
-    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-      while (++index < length) {
-        if (callback(collection[index], index, collection) === breakIndicator) {
-          break;
-        }
-      }
-    } else {
-      baseEach(collection, callback);
-    }
-    return collection;
+
+    return (typeof length == 'number' && length > -1 && length <= maxSafeInteger)
+      ? arrayEach(collection, callback)
+      : baseEach(collection, callback);
   }
 
   /**
@@ -2419,21 +2466,18 @@
    * // => ['barney', 'fred']
    */
   function map(collection, callback, thisArg) {
-    var index = -1,
-        length = collection ? collection.length : 0;
-
+    var length = collection ? collection.length : 0;
     callback = createCallback(callback, thisArg, 3);
+
     if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-      var result = Array(length);
-      while (++index < length) {
-        result[index] = callback(collection[index], index, collection);
-      }
-    } else {
-      result = [];
-      baseEach(collection, function(value, key, collection) {
-        result[++index] = callback(value, key, collection);
-      });
+      return arrayMap(collection, callback);
     }
+    var index = -1,
+        result = [];
+
+    baseEach(collection, function(value, key, collection) {
+      result[++index] = callback(value, key, collection);
+    });
     return result;
   }
 
@@ -2629,7 +2673,7 @@
    */
   var partition = createAggregator(function(result, value, key) {
     result[key ? 0 : 1].push(value);
-  }, true);
+  }, partitionInitializer);
 
   /**
    * Retrieves the value of a specified property from all elements in the collection.
@@ -2728,8 +2772,8 @@
    */
   function reduceRight(collection, callback, accumulator, thisArg) {
     var noaccum = arguments.length < 3;
-
     callback = createCallback(callback, thisArg, 4);
+
     baseEachRight(collection, function(value, index, collection) {
       accumulator = noaccum
         ? (noaccum = false, value)
@@ -2837,7 +2881,6 @@
       result[index] = result[rand];
       result[rand] = value;
     });
-
     return result;
   }
 
@@ -2912,8 +2955,8 @@
    */
   function some(collection, predicate, thisArg) {
     var result;
-
     predicate = createCallback(predicate, thisArg, 3);
+
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -3435,6 +3478,9 @@
    * // => { 'name': 'penelope', 'age': 1 }
    */
   function memoize(func, resolver) {
+    if (!isFunction(func)) {
+      throw new TypeError;
+    }
     var cache = {};
     return function() {
       var key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
@@ -3995,6 +4041,11 @@
    * by the method instead. The callback is bound to `thisArg` and invoked
    * with two arguments; (value, other).
    *
+   * Note: This method supports comparing arrays, booleans, `Date` objects,
+   * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
+   * are **not** supported. A callback may be used to extend support for
+   * comparing other values.
+   *
    * @static
    * @memberOf _
    * @category Objects
@@ -4357,7 +4408,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The object to inspect.
-   * @returns {Array} Returns new array of key-value pairs.
+   * @returns {Array} Returns the new array of key-value pairs.
    * @example
    *
    * _.pairs({ 'barney': 36, 'fred': 40 });
@@ -4766,14 +4817,15 @@
    * // => { 'name': 'barney', 'age': 36 }
    */
   function matches(source) {
-    source || (source = {});
     var props = keys(source),
         propsLength = props.length;
 
     return function(object) {
-      var length = propsLength,
-          result = true;
-
+      var length = propsLength;
+      if (length && !object) {
+        return false;
+      }
+      var result = true;
       while (length--) {
         var key = props[length];
         if (!(result = hasOwnProperty.call(object, key) &&
@@ -5079,10 +5131,11 @@
    */
   function times(n, callback, thisArg) {
     n = n < 0 ? 0 : n >>> 0;
+    callback = baseCreateCallback(callback, thisArg, 1);
+
     var index = -1,
         result = Array(n);
 
-    callback = baseCreateCallback(callback, thisArg, 1);
     while (++index < n) {
       result[index] = callback(index);
     }

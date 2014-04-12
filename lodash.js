@@ -7828,11 +7828,10 @@
      * // => { 'name': 'barney', 'age': 36 }
      */
     function matches(source) {
-      source || (source = {});
       var props = keys(source),
           propsLength = props.length,
           key = props[0],
-          value = source[key];
+          value = propsLength && source[key];
 
       // fast path the common case of providing an object with a single
       // property containing a primitive value

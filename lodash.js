@@ -2956,6 +2956,8 @@
      * Removes all provided values from `array` using strict equality for
      * comparisons, i.e. `===`.
      *
+     * Note: Unlike `_.without`, this method mutates `array`.
+     *
      * @static
      * @memberOf _
      * @category Arrays
@@ -2989,7 +2991,7 @@
     }
 
     /**
-     * Removes all elements from an array that the predicate returns truthy for
+     * Removes all elements from `array` that the predicate returns truthy for
      * and returns an array of removed elements. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
      *
@@ -2999,6 +3001,8 @@
      * If an object is provided for `predicate` the created "_.where" style callback
      * will return `true` for elements that have the properties of the given object,
      * else `false`.
+     *
+     * Note: Unlike `_.filter`, this method mutates `array`.
      *
      * @static
      * @memberOf _

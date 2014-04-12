@@ -465,6 +465,16 @@
   }
 
   /**
+   * Used by `_.partition` to create partitioned arrays.
+   *
+   * @private
+   * @returns {Array} Returns the new array.
+   */
+  function partitionInitializer() {
+    return [[], []];
+  }
+
+  /**
    * A fallback implementation of `String#trim` to remove leading and trailing
    * whitespace or specified characters from `string`.
    *
@@ -1041,6 +1051,66 @@
     };
 
     /*--------------------------------------------------------------------------*/
+
+    /**
+     * A specialized version of `_.forEach` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayEach(array, callback) {
+      var index = -1,
+          length = array ? array.length : 0;
+
+      while (++index < length) {
+        if (callback(array[index], index, array) === false) {
+          break;
+        }
+      }
+      return array;
+    }
+
+    /**
+     * A specialized version of `_.forEachRight` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayEachRight(array, callback) {
+      var length = array ? array.length : 0;
+      while (length--) {
+        if (callback(array[length], length, array) === false) {
+          break;
+        }
+      }
+      return array;
+    }
+
+    /**
+     * A specialized version of `_.map` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array} Returns the new mapped array.
+     */
+    function arrayMap(array, callback) {
+      var index = -1,
+          length = array ? array.length >>> 0 : 0,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = callback(array[index], index, array);
+      }
+      return result;
+    }
 
     /**
      * The base implementation of `_.bind` that creates the bound function and
@@ -1980,22 +2050,22 @@
     }
 
     /**
-     * Creates a function that aggregates a collection, creating an object or
-     * array composed from the results of running each element in the collection
+     * Creates a function that aggregates a collection, creating an accumulator
+     * object composed from the results of running each element in the collection
      * through a callback. The given setter function sets the keys and values of
-     * the composed object or array.
+     * the accumulator object. If `initializer` is provided will be used to
+     * initialize the accumulator object.
      *
      * @private
-     * @param {Function} setter The setter function.
-     * @param {boolean} [retArray=false] A flag to indicate that the aggregator
-     *  function should return an array.
+     * @param {Function} setter The function to set keys and values of the accumulator object.
+     * @param {Function} [initializer] The function to initialize the accumulator object.
      * @returns {Function} Returns the new aggregator function.
      */
-    function createAggregator(setter, retArray) {
+    function createAggregator(setter, initializer) {
       return function(collection, callback, thisArg) {
-        var result = retArray ? [[], []] : {};
-
+        var result = initializer ? initializer() : {};
         callback = lodash.createCallback(callback, thisArg, 3);
+
         if (isArray(collection)) {
           var index = -1,
               length = collection.length;
@@ -2867,6 +2937,8 @@
      * Removes all provided values from `array` using strict equality for
      * comparisons, i.e. `===`.
      *
+     * Note: Unlike `_.without`, this method mutates `array`.
+     *
      * @static
      * @memberOf _
      * @category Arrays
@@ -2900,7 +2972,7 @@
     }
 
     /**
-     * Removes all elements from an array that the predicate returns truthy for
+     * Removes all elements from `array` that the predicate returns truthy for
      * and returns an array of removed elements. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
      *
@@ -2910,6 +2982,8 @@
      * If an object is provided for `predicate` the created "_.where" style callback
      * will return `true` for elements that have the properties of the given object,
      * else `false`.
+     *
+     * Note: Unlike `_.filter`, this method mutates `array`.
      *
      * @static
      * @memberOf _
@@ -3542,7 +3616,7 @@
      *
      * @name valueOf
      * @memberOf _
-     * @alias value, toJSON
+     * @alias toJSON, value
      * @category Chaining
      * @returns {*} Returns the wrapped value.
      * @example
@@ -3626,31 +3700,34 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-      fromIndex = (typeof fromIndex == 'number' && fromIndex) || 0;
-
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-        if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
-          if (fromIndex >= length) {
-            return false;
-          }
-          return nativeContains
-            ? nativeContains.call(collection, target, fromIndex)
-            : collection.indexOf(target, fromIndex) > -1;
-        }
-        var indexOf = getIndexOf();
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
-        return indexOf(collection, target, fromIndex) > -1;
+      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+        var props = keys(collection);
+        length = props.length;
       }
-      var index = -1,
-          result = false;
-
-      baseEach(collection, function(value) {
-        if (++index >= fromIndex) {
-          return !(result = value === target);
+      if (typeof fromIndex == 'number') {
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
+      } else {
+        fromIndex = 0;
+      }
+      if (props) {
+        while (fromIndex < length) {
+          var value = collection[props[fromIndex++]];
+          if (value === target) {
+            return true;
+          }
         }
-      });
-
-      return result;
+        return false;
+      }
+      if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
+        if (fromIndex >= length) {
+          return false;
+        }
+        return nativeContains
+          ? nativeContains.call(collection, target, fromIndex)
+          : collection.indexOf(target, fromIndex) > -1;
+      }
+      var indexOf = getIndexOf();
+      return indexOf(collection, target, fromIndex) > -1;
     }
 
     /**
@@ -3734,8 +3811,8 @@
      */
     function every(collection, predicate, thisArg) {
       var result = true;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -3795,8 +3872,8 @@
      */
     function filter(collection, predicate, thisArg) {
       var result = [];
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -3921,19 +3998,9 @@
      * // => logs each number and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, callback, thisArg) {
-      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          if (callback(collection[index], index, collection) === false) {
-            break;
-          }
-        }
-      } else {
-        baseEach(collection, baseCreateCallback(callback, thisArg, 3));
-      }
-      return collection;
+      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayEach(collection, callback)
+        : baseEach(collection, baseCreateCallback(callback, thisArg, 3));
     }
 
     /**
@@ -3954,17 +4021,9 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
-        var length = collection.length;
-        while (length--) {
-          if (callback(collection[length], length, collection) === false) {
-            break;
-          }
-        }
-      } else {
-        baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
-      }
-      return collection;
+      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayEachRight(collection, callback)
+        : baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
     }
 
     /**
@@ -4129,20 +4188,17 @@
      * // => ['barney', 'fred']
      */
     function map(collection, callback, thisArg) {
-      var index = -1,
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       if (isArray(collection)) {
-        while (++index < length) {
-          result[index] = callback(collection[index], index, collection);
-        }
-      } else {
-        baseEach(collection, function(value, key, collection) {
-          result[++index] = callback(value, key, collection);
-        });
+        return arrayMap(collection, callback, thisArg);
       }
+      var index = -1,
+          result = [];
+
+      baseEach(collection, function(value, key, collection) {
+        result[++index] = callback(value, key, collection);
+      });
       return result;
     }
 
@@ -4342,7 +4398,7 @@
      */
     var partition = createAggregator(function(result, value, key) {
       result[key ? 0 : 1].push(value);
-    }, true);
+    }, partitionInitializer);
 
     /**
      * Retrieves the value of a specified property from all elements in the collection.
@@ -4398,8 +4454,8 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-
       callback = lodash.createCallback(callback, thisArg, 4);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4441,8 +4497,8 @@
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-
       callback = lodash.createCallback(callback, thisArg, 4);
+
       baseEachRight(collection, function(value, index, collection) {
         accumulator = noaccum
           ? (noaccum = false, value)
@@ -4552,7 +4608,6 @@
         result[index] = result[rand];
         result[rand] = value;
       });
-
       return result;
     }
 
@@ -4627,8 +4682,8 @@
      */
     function some(collection, predicate, thisArg) {
       var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -6176,6 +6231,11 @@
      * by the method instead. The callback is bound to `thisArg` and invoked
      * with two arguments; (value, other).
      *
+     * Note: This method supports comparing arrays, booleans, `Date` objects,
+     * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
+     * are **not** supported. A callback may be used to extend support for
+     * comparing other values.
+     *
      * @static
      * @memberOf _
      * @category Objects
@@ -6627,8 +6687,8 @@
      */
     function mapValues(object, callback, thisArg) {
       var result = {};
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       baseForOwn(object, function(value, key, object) {
         result[key] = callback(value, key, object);
       });
@@ -6764,7 +6824,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns new array of key-value pairs.
+     * @returns {Array} Returns the new array of key-value pairs.
      * @example
      *
      * _.pairs({ 'barney': 36, 'fred': 40 });
@@ -7749,17 +7809,16 @@
      * // => { 'name': 'barney', 'age': 36 }
      */
     function matches(source) {
-      source || (source = {});
       var props = keys(source),
           propsLength = props.length,
           key = props[0],
-          value = source[key];
+          value = propsLength && source[key];
 
       // fast path the common case of providing an object with a single
       // property containing a primitive value
       if (propsLength == 1 && value === value && !isObject(value)) {
         return function(object) {
-          if (!hasOwnProperty.call(object, key)) {
+          if (!(object && hasOwnProperty.call(object, key))) {
             return false;
           }
           // treat `-0` vs. `+0` as not equal
@@ -7768,9 +7827,11 @@
         };
       }
       return function(object) {
-        var length = propsLength,
-            result = true;
-
+        var length = propsLength;
+        if (length && !object) {
+          return false;
+        }
+        var result = true;
         while (length--) {
           var key = props[length];
           if (!(result = hasOwnProperty.call(object, key) &&
@@ -8149,10 +8210,11 @@
      */
     function times(n, callback, thisArg) {
       n = n < 0 ? 0 : n >>> 0;
+      callback = baseCreateCallback(callback, thisArg, 1);
+
       var index = -1,
           result = Array(n);
 
-      callback = baseCreateCallback(callback, thisArg, 1);
       while (++index < n) {
         result[index] = callback(index);
       }

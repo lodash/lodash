@@ -1102,7 +1102,7 @@
      */
     function arrayMap(array, callback) {
       var index = -1,
-          length = array ? array.length : 0;
+          length = array ? array.length >>> 0 : 0,
           result = Array(length);
 
       while (++index < length) {

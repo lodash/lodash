@@ -78,6 +78,12 @@
       tunnelTimeout = getOption('tunnelTimeout', 10000),
       videoUploadOnPass = getOption('videoUploadOnPass', false);
 
+  /** Used to convert Sauce Labs browser identifiers to their formal names */
+  var browserNameMap = {
+    'googlechrome': 'Chrome',
+    'iehta': 'Internet Explorer'
+  };
+
   /** List of platforms to load the runner on */
   var platforms = [
     ['Windows 8.1', 'googlechrome', '33'],
@@ -182,6 +188,24 @@
 
   /*--------------------------------------------------------------------------*/
 
+  /**
+   * Resolves the formal browser name for a given Sauce Labs browser identifier.
+   *
+   * @private
+   * @param {string} identifier The browser identifier.
+   * @returns {string} Returns the formal browser name.
+   */
+  function browserName(identifier) {
+    return capitalizeWords(browserNameMap[identifier] || identifier);
+  }
+
+  /**
+   * Capitalizes the first character of each word in `string`.
+   *
+   * @private
+   * @param {string} string The string to augment.
+   * @returns {string} Returns the augmented string.
+   */
   function capitalizeWords(string) {
     return _.map(string.split(' '), _.capitalize).join(' ');
   }
@@ -259,6 +283,11 @@
 
   /*--------------------------------------------------------------------------*/
 
+  /**
+   * Used by the `onRun` callback to check the status of a job.
+   *
+   * @private
+   */
   function check() {
     request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests/status', {
       'auth': { 'user': this.user, 'pass': this.pass },
@@ -266,13 +295,21 @@
     }, onCheck.bind(this));
   }
 
+  /**
+   * The `request.post` callback used by `check`.
+   *
+   * @private
+   * @param {Object} [error] The error object.
+   * @param {Object} response The response data object.
+   * @param {Object} body The response body JSON object.
+   */
   function onCheck(error, response, body) {
     var data = _.result(body, 'js tests', [{}])[0],
         options = this.options,
         platform = options.platforms[0],
         result = data.result,
         completed = _.result(body, 'completed'),
-        description = capitalizeWords(platform[1].replace('google', '')) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+        description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
         failures = _.result(result, 'failed'),
         label = options.name + ':';
 
@@ -304,6 +341,14 @@
     this.emit('complete');
   }
 
+  /**
+   * The `request.post` callback used by `Jobs#run`.
+   *
+   * @private
+   * @param {Object} [error] The error object.
+   * @param {Object} response The response data object.
+   * @param {Object} body The response body JSON object.
+   */
   function onRun(error, response, body) {
     var id = _.result(body, 'js tests', [])[0],
         statusCode = _.result(response, 'statusCode');
@@ -321,14 +366,25 @@
 
   /*--------------------------------------------------------------------------*/
 
-  function Job(options) {
+  /**
+   * The Job constructor.
+   *
+   * @private
+   * @param {Object} [properties] The properties to initial a job with.
+   */
+  function Job(properties) {
     EventEmitter.call(this);
-    _.merge(this, { 'attempts': 0, 'options': {} }, options);
+    _.merge(this, { 'attempts': 0, 'options': {} }, properties);
     _.defaults(this.options, _.cloneDeep(defaultOptions));
   }
 
   Job.prototype = _.create(EventEmitter.prototype);
 
+  /**
+   * Runs the job on Sauce Labs.
+   *
+   * @private
+   */
   Job.prototype.run = function() {
     request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests', {
       'auth': { 'user': this.user, 'pass': this.pass },
@@ -338,6 +394,13 @@
 
   /*--------------------------------------------------------------------------*/
 
+  /**
+   * Runs jobs for the given platforms.
+   *
+   * @private
+   * @param {Array} platforms The platforms to run jobs for.
+   * @param {Function} onComplete The function called once all jobs have completed.
+   */
   function run(platforms, onComplete) {
     var jobs = _.map(platforms, function(platform) {
       return new Job({

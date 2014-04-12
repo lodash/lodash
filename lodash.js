@@ -3826,8 +3826,8 @@
      */
     function every(collection, predicate, thisArg) {
       var result = true;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -3887,8 +3887,8 @@
      */
     function filter(collection, predicate, thisArg) {
       var result = [];
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4469,8 +4469,8 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-
       callback = lodash.createCallback(callback, thisArg, 4);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4512,8 +4512,8 @@
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-
       callback = lodash.createCallback(callback, thisArg, 4);
+
       baseEachRight(collection, function(value, index, collection) {
         accumulator = noaccum
           ? (noaccum = false, value)
@@ -4623,7 +4623,6 @@
         result[index] = result[rand];
         result[rand] = value;
       });
-
       return result;
     }
 
@@ -4698,8 +4697,8 @@
      */
     function some(collection, predicate, thisArg) {
       var result;
-
       predicate = lodash.createCallback(predicate, thisArg, 3);
+
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -6703,8 +6702,8 @@
      */
     function mapValues(object, callback, thisArg) {
       var result = {};
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       baseForOwn(object, function(value, key, object) {
         result[key] = callback(value, key, object);
       });
@@ -8227,10 +8226,11 @@
      */
     function times(n, callback, thisArg) {
       n = n < 0 ? 0 : n >>> 0;
+      callback = baseCreateCallback(callback, thisArg, 1);
+
       var index = -1,
           result = Array(n);
 
-      callback = baseCreateCallback(callback, thisArg, 1);
       while (++index < n) {
         result[index] = callback(index);
       }

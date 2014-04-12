@@ -21,7 +21,7 @@
       chalk = require('chalk'),
       ecstatic = require('ecstatic'),
       request = require('request'),
-      SauceTunnel = require('sauce-tunnel');
+      SauceTunnel = require('sauce-tunnel-sc3-1');
 
   /** Used for Sauce Labs credentials */
   var accessKey = env.SAUCE_ACCESS_KEY,

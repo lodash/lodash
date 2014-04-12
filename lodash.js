@@ -1052,6 +1052,66 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * A specialized version of `_.forEach` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayEach(array, callback) {
+      var index = -1,
+          length = array ? array.length : 0;
+
+      while (++index < length) {
+        if (callback(array[index], index, array) === false) {
+          break;
+        }
+      }
+      return array;
+    }
+
+    /**
+     * A specialized version of `_.forEachRight` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayEachRight(array, callback) {
+      var length = array ? array.length : 0;
+      while (length--) {
+        if (callback(array[length], length, array) === false) {
+          break;
+        }
+      }
+      return array;
+    }
+
+    /**
+     * A specialized version of `_.map` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {Array} Returns the new mapped array.
+     */
+    function arrayMap(array, callback) {
+      var index = -1,
+          length = array ? array.length : 0;
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = callback(array[index], index, array);
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `_.bind` that creates the bound function and
      * sets its metadata.
      *
@@ -3953,19 +4013,9 @@
      * // => logs each number and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, callback, thisArg) {
-      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          if (callback(collection[index], index, collection) === false) {
-            break;
-          }
-        }
-      } else {
-        baseEach(collection, baseCreateCallback(callback, thisArg, 3));
-      }
-      return collection;
+      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayEach(collection, callback)
+        : baseEach(collection, baseCreateCallback(callback, thisArg, 3));
     }
 
     /**
@@ -3986,17 +4036,9 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      if (callback && typeof thisArg == 'undefined' && isArray(collection)) {
-        var length = collection.length;
-        while (length--) {
-          if (callback(collection[length], length, collection) === false) {
-            break;
-          }
-        }
-      } else {
-        baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
-      }
-      return collection;
+      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayEachRight(collection, callback)
+        : baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
     }
 
     /**
@@ -4161,20 +4203,17 @@
      * // => ['barney', 'fred']
      */
     function map(collection, callback, thisArg) {
-      var index = -1,
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
-
       callback = lodash.createCallback(callback, thisArg, 3);
+
       if (isArray(collection)) {
-        while (++index < length) {
-          result[index] = callback(collection[index], index, collection);
-        }
-      } else {
-        baseEach(collection, function(value, key, collection) {
-          result[++index] = callback(value, key, collection);
-        });
+        return arrayMap(collection, callback, thisArg);
       }
+      var index = -1,
+          result = [];
+
+      baseEach(collection, function(value, key, collection) {
+        result[++index] = callback(value, key, collection);
+      });
       return result;
     }
 

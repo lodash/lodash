@@ -464,16 +464,6 @@
   }
 
   /**
-   * Used by `_.partition` to create partitioned arrays.
-   *
-   * @private
-   * @returns {Array} Returns the new array.
-   */
-  function partitionInitializer() {
-    return [[], []];
-  }
-
-  /**
    * A fallback implementation of `String#trim` to remove leading and trailing
    * whitespace or specified characters from `string`.
    *
@@ -4417,7 +4407,7 @@
      */
     var partition = createAggregator(function(result, value, key) {
       result[key ? 0 : 1].push(value);
-    }, partitionInitializer);
+    }, function() { return [[], []]; });
 
     /**
      * Retrieves the value of a specified property from all elements in the collection.

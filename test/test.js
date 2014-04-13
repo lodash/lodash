@@ -5803,16 +5803,18 @@
   QUnit.module('lodash.matches');
 
   (function() {
-    var object = { 'a': 1, 'b': 2 };
+    var object = { 'a': 1, 'b': 2, 'c': 3 },
+        sources = [{ 'a': 1 }, { 'a': 1, 'c': 3 }];
 
-    test('should create a function that performs a deep comparison between a given object and the `source` object', 3, function() {
-      var matches = _.matches({ 'a': 1 });
+    test('should create a function that performs a deep comparison between a given object and the `source` object', 6, function() {
+      _.each(sources, function(source, index) {
+        var matches = _.matches(source);
+        strictEqual(matches.length, 1);
+        strictEqual(matches(object), true);
 
-      strictEqual(matches.length, 1);
-      strictEqual(matches(object), true);
-
-      matches = _.matches({ 'b': 1 });
-      strictEqual(matches(object), false);
+        matches = _.matches(index ? { 'c': 3, 'd': 4 } : { 'b': 1 });
+        strictEqual(matches(object), false);
+      });
     });
 
     test('should return `true` when comparing an empty `source`', 1, function() {
@@ -5826,18 +5828,21 @@
       deepEqual(actual, expected);
     });
 
-    test('should not error error for falsey `object` values', 1, function() {
-      var expected = _.map(falsey, _.constant(true)),
-          matches = _.matches({ 'a': 1 });
+    test('should not error error for falsey `object` values', 2, function() {
+      var expected = _.map(falsey, _.constant(true));
 
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          var result = index ? matches(value) : matches();
-          return result === false;
-        } catch(e) { }
+      _.each(sources, function(source) {
+        var matches = _.matches(source);
+
+        var actual = _.map(falsey, function(value, index) {
+          try {
+            var result = index ? matches(value) : matches();
+            return result === false;
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expected);
       });
-
-      deepEqual(actual, expected);
     });
 
     test('should return `true` when comparing an empty `source` to a falsey `object`', 1, function() {

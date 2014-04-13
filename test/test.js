@@ -498,12 +498,13 @@
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
-      var object = { 'a': true },
+      var object = { 'a': 1 },
+          otherObject = { 'b': 2 },
           largeArray = _.times(largeArraySize, _.constant(object));
 
       if (lodashBizarro) {
         try {
-          actual = [lodashBizarro.isArray([]), lodashBizarro.isArray({ 'length': 0 })];
+          var actual = [lodashBizarro.isArray([]), lodashBizarro.isArray({ 'length': 0 })];
         } catch(e) {
           actual = null;
         }
@@ -525,7 +526,7 @@
         deepEqual(actual[1], {}, message('Object.create'));
 
         try {
-          var actual = lodashBizarro.bind(function() { return this.a; }, object);
+          actual = lodashBizarro.bind(function() { return this.a; }, object);
         } catch(e) {
           actual = null;
         }
@@ -547,14 +548,14 @@
 
         try {
           actual = [
-            lodashBizarro.difference([object], largeArray),
+            lodashBizarro.difference([object, otherObject], largeArray),
             lodashBizarro.intersection(largeArray, [object]),
             lodashBizarro.uniq(largeArray)
           ];
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [[], [object], [object]], message('Set'));
+        deepEqual(actual, [[otherObject], [object], [object]], message('Set'));
 
         try {
           actual = lodashBizarro.contains('abc', 'c');
@@ -2326,9 +2327,9 @@
     test('should work with large arrays of objects', 1, function() {
       var object1 = {},
           object2 = {},
-          largeArray = [object1].concat(_.times(largeArraySize, _.constant(object2)));
+          largeArray = _.times(largeArraySize, _.constant(object1));
 
-      deepEqual(_.difference(largeArray, [object2]), [object1]);
+      deepEqual(_.difference([object1, object2], largeArray), [object2]);
     });
 
     test('should ignore individual secondary arguments', 1, function() {
@@ -3860,21 +3861,17 @@
 
     test('should work with large arrays of objects', 1, function() {
       var object = {},
-          expected = [object],
           largeArray = _.times(largeArraySize, _.constant(object));
 
-      deepEqual(_.intersection(expected, largeArray), expected);
+      deepEqual(_.intersection([object], largeArray), [object]);
     });
 
     test('should work with large arrays of objects', 2, function() {
       var object = {},
-          expected = [object],
           largeArray = _.times(largeArraySize, _.constant(object));
 
-      deepEqual(_.intersection(expected, largeArray), expected);
-
-      expected = [1];
-      deepEqual(_.intersection(_.range(largeArraySize), null, expected), expected);
+      deepEqual(_.intersection([object], largeArray), [object]);
+      deepEqual(_.intersection(_.range(largeArraySize), null, [1]), [1]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -4677,13 +4674,13 @@
       function Foo() { this.a = 1; }
       Foo.prototype.constructor = null;
 
-      var other = { 'a': 1 };
-      strictEqual(_.isEqual(new Foo, other), false);
+      var otherObject = { 'a': 1 };
+      strictEqual(_.isEqual(new Foo, otherObject), false);
 
       if (create)  {
         var object = Object.create(null);
         object.a = 1;
-        strictEqual(_.isEqual(object, other), true);
+        strictEqual(_.isEqual(object, otherObject), true);
       }
       else {
         skipTest();

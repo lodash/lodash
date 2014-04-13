@@ -6318,6 +6318,39 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.iife');
+
+  (function() {
+    test('should take a function given to it and immediately invoke it', 1, function() {
+      var pass = false;
+      var fnToInvoke = function() {
+        pass = true;
+      };
+
+      _.iife(fnToInvoke);
+      ok(pass);
+    });
+
+    test('should pass along additional positional args to the function', 1, function() {
+      var pass = false;
+      var fnToInvoke = function(a, b, c) {
+        if (a === 1 && b === 2 && c === 3) {
+          pass = true;
+        }
+      };
+
+      _.iife(fnToInvoke, 1, 2, 3);
+      ok(pass);
+    });
+
+    test('should return whatever the return value of the invoked function was', 1, function() {
+      var result = _.iife(function(a, b) { return a + b; }, 1, 2);
+      ok(result === 3);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.now');
 
   (function() {
@@ -10215,7 +10248,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 184, function() {
+    test('should accept falsey arguments', 185, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

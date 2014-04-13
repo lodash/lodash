@@ -206,16 +206,6 @@
   }
 
   /**
-   * Used by `_.partition` to create partitioned arrays.
-   *
-   * @private
-   * @returns {Array} Returns the new array.
-   */
-  function partitionInitializer() {
-    return [[], []];
-  }
-
-  /**
    * Used by `_.unescape` to convert HTML entities to characters.
    *
    * @private
@@ -2034,21 +2024,13 @@
    * // => true
    */
   function contains(collection, target) {
-    var length = collection ? collection.length : 0;
-    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-      var indexOf = getIndexOf();
-      return indexOf(collection, target) > -1;
-    }
-    var props = keys(collection);
-    length = props.length;
+    var indexOf = getIndexOf(),
+        length = collection ? collection.length : 0;
 
-    while (length--) {
-      var value = collection[props[length]];
-      if (value === target) {
-        return true;
-      }
+    if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+      collection = values(collection);
     }
-    return false;
+    return indexOf(collection, target) > -1;
   }
 
   /**
@@ -2673,7 +2655,7 @@
    */
   var partition = createAggregator(function(result, value, key) {
     result[key ? 0 : 1].push(value);
-  }, partitionInitializer);
+  }, function() { return [[], []]; });
 
   /**
    * Retrieves the value of a specified property from all elements in the collection.

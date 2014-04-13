@@ -7956,6 +7956,40 @@
     }
 
     /**
+     * Takes a function and immediately invokes it. If any additional arguments
+     * are given, they will be passed along to the function being invoked.
+     * While this method can be used to conveniently wrap a function, it's also
+     * useful in tests when stubbing asynchronous functions.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {Function} fn The function to invoke.
+     * @param {...*} args Any additional arguments to pass to `fn`.
+     * @returns {*} Whatever the return value from the invoked function was.
+     * @example
+     *
+     * function queueTask(taskFn) {
+     *   // setup task
+     *   var done = function() { queueNextTask(); };
+     *   taskFn(done);
+     * }
+     *
+     * asyncTest('queueTask should enqueue next task when one finishes', function() {
+     *   queueTask(_.iife);
+     *   queueTask(someOtherTask);
+     *   // assert someOtherTask was enqueued/executed.
+     * })
+     */
+    function iife(fn) {
+      var args;
+      if (typeof fn == 'function') {
+        args = slice(arguments, 1);
+        return fn.apply(null, args);
+      }
+    }
+
+    /**
      * Gets the number of milliseconds that have elapsed since the Unix epoch
      * (1 January 1970 00:00:00 UTC).
      *
@@ -8385,6 +8419,7 @@
     lodash.mixin = mixin;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
+    lodash.iife = iife;
     lodash.now = now;
     lodash.pad = pad;
     lodash.padLeft = padLeft;

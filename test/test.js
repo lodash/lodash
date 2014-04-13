@@ -3688,14 +3688,15 @@
       return new Foo;
     });
 
-    test('`_.contains` should work with a custom `_.indexOf` method', 1, function() {
+    test('`_.contains` should work with a custom `_.indexOf` method', 2, function() {
       if (!isModularize) {
         _.indexOf = custom;
         ok(_.contains(array, new Foo));
+        ok(_.contains({ 'a': 1, 'b': new Foo, 'c': 3 }, new Foo));
         _.indexOf = indexOf;
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 

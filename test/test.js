@@ -1680,9 +1680,11 @@
       deepEqual(actual, values);
     });
 
-    test('should return `identity` when `func` is `null` or `undefined`', 2, function() {
+    test('should return `_.identity` when `func` is `null` or `undefined`', 2, function() {
+      var object = {};
       _.each([null, undefined], function(value) {
-        strictEqual(_.callback(value), _.identity);
+        var callback = _.callback(value);
+        strictEqual(callback(object), object);
       });
     });
 

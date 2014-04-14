@@ -188,7 +188,7 @@
   /** Detects if running the pre-build version of Lo-Dash */
   var isPreBuild = /getHolders/.test(_.partial(_.noop));
 
-  /** Used to check problem JScript properties (a.k.a. the [[DontEnum]] bug) */
+  /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug) */
   var shadowedProps = [
     'constructor',
     'hasOwnProperty',
@@ -326,7 +326,7 @@
     var _now = Date.now;
     setProperty(Date, 'now', function() {});
 
-    var _create = Object.create;
+    var _create = create;
     setProperty(Object, 'create', function() {});
 
     var _defineProperty = Object.defineProperty;
@@ -2867,19 +2867,15 @@
     });
 
     test('should work with extremely large arrays', 1, function() {
-      var expected = Array(5e5),
-          pass = true;
-
+      // test in modern browsers
       if (freeze) {
         try {
-          var actual = _.flatten([expected]);
+          var expected = Array(5e5),
+              actual = _.flatten([expected]);
+
+          deepEqual(actual, expected)
         } catch(e) {
-          pass = false;
-        }
-        if (pass) {
-          deepEqual(actual, expected);
-        } else {
-          ok(pass);
+          ok(false);
         }
       } else {
         skipTest();
@@ -3183,7 +3179,7 @@
   _.each(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
-    test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       var props = [];
       func(shadowedObject, function(value, prop) { props.push(prop); });
       deepEqual(props.sort(), shadowedProps);
@@ -4222,7 +4218,7 @@
       strictEqual(_.isEmpty({ 'length': '0' }), false);
     });
 
-    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
+    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEmpty(shadowedObject), false);
     });
 
@@ -4501,7 +4497,7 @@
       }
     });
 
-    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
+    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEqual(shadowedObject, {}), false);
     });
 
@@ -4678,7 +4674,7 @@
       strictEqual(_.isEqual(new Foo, otherObject), false);
 
       if (create)  {
-        var object = Object.create(null);
+        var object = create(null);
         object.a = 1;
         strictEqual(_.isEqual(object, otherObject), true);
       }
@@ -5062,7 +5058,7 @@
       strictEqual(_.isPlainObject(new Foo(1)), false);
     });
 
-    test('should return `true` for objects a [[Prototype]] of `null`', 1, function() {
+    test('should return `true` for objects with a `[[Prototype]]` of `null`', 1, function() {
       if (create) {
         strictEqual(_.isPlainObject(create(null)), true);
       } else {
@@ -5092,7 +5088,7 @@
       }
     });
 
-    test('should return `false` for Object objects without a [[Class]] of "Object"', 3, function() {
+    test('should return `false` for Object objects without a `[[Class]]` of "Object"', 3, function() {
       strictEqual(_.isPlainObject(arguments), false);
       strictEqual(_.isPlainObject(Error), false);
       strictEqual(_.isPlainObject(Math), false);
@@ -5392,7 +5388,7 @@
       delete String.prototype.a;
     });
 
-    test('`_.' + methodName + '` fixes the JScript [[DontEnum]] bug (test in IE < 9)', 2, function() {
+    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -7872,7 +7868,7 @@
       strictEqual(_.size({ 'length': '0' }), 1);
     });
 
-    test('fixes the JScript [[DontEnum]] bug (test in IE < 9)', 1, function() {
+    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.size(shadowedObject), 7);
     });
 

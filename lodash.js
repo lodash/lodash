@@ -485,8 +485,8 @@
   }
 
   /**
-   * A fallback implementation of `String#trimLeft` to remove leading whitespace or
-   * specified characters from `string`.
+   * A fallback implementation of `String#trimLeft` to remove leading whitespace
+   * or specified characters from `string`.
    *
    * @private
    * @param {string} string The string to trim.
@@ -506,8 +506,8 @@
   }
 
   /**
-   * A fallback implementation of `String#trimRight` to remove trailing whitespace or
-   * specified characters from `string`.
+   * A fallback implementation of `String#trimRight` to remove trailing whitespace
+   * or specified characters from `string`.
    *
    * @private
    * @param {string} string The string to trim.
@@ -677,7 +677,7 @@
         nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && !nativeTrimLeft.call(whitespace) && nativeTrimLeft,
         nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && !nativeTrimRight.call(whitespace) && nativeTrimRight;
 
-    /** Used to lookup a built-in constructor by `[[Class]]` */
+    /** Used to lookup built-in constructors by `[[Class]]` */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
@@ -818,7 +818,7 @@
       for (var strKey in 'x') { }
 
       /**
-       * Detect if an `arguments` object's `[[Class]]` is resolvable
+       * Detect if the `[[Class]]` of `arguments` objects is resolvable
        * (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
@@ -945,9 +945,9 @@
       }
 
       /**
-       * Detect if a DOM node's `[[Class]]` is resolvable (all but IE < 9)
-       * and that the JS engine errors when attempting to coerce an object to
-       * a string without a `toString` function.
+       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9)
+       * and that the JS engine errors when attempting to coerce an object to a
+       * string without a `toString` function.
        *
        * @memberOf _.support
        * @type boolean
@@ -1164,7 +1164,6 @@
           return result;
         }
       }
-      // inspect `[[Class]]`
       var isObj = isObject(value);
       if (isObj) {
         var className = toString.call(value);
@@ -1671,7 +1670,6 @@
           (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
         return false;
       }
-      // compare `[[Class]]` names
       var valClass = toString.call(value),
           othClass = toString.call(other),
           valIsArg = valClass == argsClass,
@@ -2273,10 +2271,12 @@
     };
 
     /**
-     * A fallback implementation of `_.isPlainObject` which checks if `value` is
-     * an object created by the `Object` constructor, assuming objects created
-     * by the `Object` constructor have no inherited enumerable properties and
-     * that there are no `Object.prototype` extensions.
+     * A fallback implementation of `_.isPlainObject` which checks if `value`
+     * is an object created by the `Object` constructor or has a `[[Prototype]]`
+     * of `null`.
+     *
+     * Note: This method assumes objects created by the `Object` constructor
+     * have no inherited enumerable properties.
      *
      * @private
      * @param {*} value The value to check.
@@ -6078,7 +6078,7 @@
       return value && typeof value == 'object' && typeof value.length == 'number' &&
         toString.call(value) == argsClass || false;
     }
-    // fallback for environments that can't detect `arguments` objects by `[[Class]]`
+    // fallback for environments without a `[[Class]]` for `arguments` objects
     if (!support.argsClass) {
       isArguments = function(value) {
         return value && typeof value == 'object' && typeof value.length == 'number' &&

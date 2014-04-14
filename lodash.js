@@ -6453,7 +6453,8 @@
     }
 
     /**
-     * Checks if `value` is an object created by the `Object` constructor.
+     * Checks if `value` is an object created by the `Object` constructor or has
+     * a `[[Prototype]]` of `null`.
      *
      * @static
      * @memberOf _
@@ -6474,6 +6475,9 @@
      * // => false
      *
      * _.isPlainObject({ 'x': 0, 'y': 0 });
+     * // => true
+     *
+     * _.isPlainObject(Object.create(null));
      * // => true
      */
     var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {

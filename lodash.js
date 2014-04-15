@@ -3994,7 +3994,7 @@
      * // =>  { 'name': 'fred', 'age': 40, 'employer': 'slate' }
      */
     function findWhere(collection, source) {
-      return find(collection, isObject(source) ? source : {});
+      return find(collection, Object(source));
     }
 
     /**
@@ -4858,7 +4858,7 @@
      * // => ['barney', 'fred']
      */
     function where(collection, source) {
-      return filter(collection, isObject(source) ? source : {});
+      return filter(collection, Object(source));
     }
 
     /*--------------------------------------------------------------------------*/

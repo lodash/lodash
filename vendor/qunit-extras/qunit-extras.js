@@ -154,7 +154,7 @@
         phantom = context.phantom,
         process = phantom || context.process,
         document = !phantom && context.document,
-        java = context.java;
+        java = !document && context.java;
 
     /** Detect the OS of the platform */
     var os = (function() {

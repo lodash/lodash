@@ -856,10 +856,6 @@
       deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
 
-    test('should throw a TypeError if `func` is not a function', 1, function() {
-      raises(function() { _.bind(); }, TypeError);
-    });
-
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var object = {},
@@ -3092,7 +3088,6 @@
         function callback(num, index) {
           actual = this[index];
         }
-
         func([1], callback, [2]);
         strictEqual(actual, 2);
 
@@ -3405,7 +3400,7 @@
       deepEqual(_.without.apply(_, [largeArray].concat(largeArray)), []);
     });
 
-    test('lodash.memoize should memoize values resolved to the `__proto__` key', 1, function() {
+    test('lodash.memoize should support values that resolve to the `__proto__` key', 1, function() {
       var count = 0,
           memoized = _.memoize(function() { return ++count; });
 
@@ -5653,7 +5648,6 @@
       function callback(num, index) {
         return this[index] + num;
       }
-
       var actual = _.map([1], callback, [2]);
       deepEqual(actual, [3]);
 
@@ -5748,7 +5742,6 @@
       function callback(num, key) {
         return this[key] + num;
       }
-
       var actual = _.mapValues({ 'a': 1 }, callback, { 'a': 2 });
       deepEqual(actual, { 'a': 3 });
 
@@ -5918,6 +5911,22 @@
       var object = { 'b': 2, 'c': 3, 'memoized': memoized };
       strictEqual(object.memoized(1), 6);
       strictEqual(object.memoized(2), 7);
+    });
+
+    test('should throw a TypeError if `resolve` is truthy and not a function', function() {
+      raises(function() { _.memoize(_.noop, {}); }, TypeError);
+    });
+
+    test('should not throw a TypeError if `resolve` is falsey', function() {
+      var expected = _.map(falsey, _.constant(true));
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return _.isFunction(index ? _.memoize(_.noop, value) : _.memoize(_.noop));
+        } catch(e) { }
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should check cache for own properties', 1, function() {
@@ -6443,13 +6452,13 @@
     });
 
     test('should not throw more than once', 2, function() {
-      var pass = true;
-
       var once = _.once(function() {
         throw new Error;
       });
 
       raises(function() { once(); }, Error);
+
+      var pass = true;
 
       try {
         once();
@@ -10149,9 +10158,7 @@
   QUnit.module('lodash methods');
 
   (function() {
-    var allMethods = _.reject(_.functions(_), function(methodName) {
-      return /^_/.test(methodName);
-    });
+    var allMethods = _.reject(_.functions(_), _.bind(RegExp.prototype.test, /^_/));
 
     var returnArrays = [
       'at',
@@ -10277,7 +10284,7 @@
       });
     });
 
-    test('should reject falsey arguments', 15, function() {
+    test('should throw a TypeError for falsey arguments', 15, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

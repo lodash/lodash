@@ -486,8 +486,8 @@
   }
 
   /**
-   * A fallback implementation of `String#trimLeft` to remove leading whitespace or
-   * specified characters from `string`.
+   * A fallback implementation of `String#trimLeft` to remove leading whitespace
+   * or specified characters from `string`.
    *
    * @private
    * @param {string} string The string to trim.
@@ -507,8 +507,8 @@
   }
 
   /**
-   * A fallback implementation of `String#trimRight` to remove trailing whitespace or
-   * specified characters from `string`.
+   * A fallback implementation of `String#trimRight` to remove trailing whitespace
+   * or specified characters from `string`.
    *
    * @private
    * @param {string} string The string to trim.
@@ -678,7 +678,7 @@
         nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && !nativeTrimLeft.call(whitespace) && nativeTrimLeft,
         nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && !nativeTrimRight.call(whitespace) && nativeTrimRight;
 
-    /** Used to lookup a built-in constructor by `[[Class]]` */
+    /** Used to lookup built-in constructors by `[[Class]]` */
     var ctorByClass = {};
     ctorByClass[arrayClass] = Array;
     ctorByClass[boolClass] = Boolean;
@@ -819,7 +819,7 @@
       for (var strKey in 'x') { }
 
       /**
-       * Detect if an `arguments` object's `[[Class]]` is resolvable
+       * Detect if the `[[Class]]` of `arguments` objects is resolvable
        * (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
@@ -946,9 +946,9 @@
       }
 
       /**
-       * Detect if a DOM node's `[[Class]]` is resolvable (all but IE < 9)
-       * and that the JS engine errors when attempting to coerce an object to
-       * a string without a `toString` function.
+       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9)
+       * and that the JS engine errors when attempting to coerce an object to a
+       * string without a `toString` function.
        *
        * @memberOf _.support
        * @type boolean
@@ -1165,7 +1165,6 @@
           return result;
         }
       }
-      // inspect `[[Class]]`
       var isObj = isObject(value);
       if (isObj) {
         var className = toString.call(value);
@@ -1226,7 +1225,7 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? baseEach : baseForOwn)(value, function(valValue, key) {
+      (isArr ? arrayEach : baseForOwn)(value, function(valValue, key) {
         result[key] = baseClone(valValue, isDeep, callback, stackA, stackB);
       });
 
@@ -1672,7 +1671,6 @@
           (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
         return false;
       }
-      // compare `[[Class]]` names
       var valClass = toString.call(value),
           othClass = toString.call(other),
           valIsArg = valClass == argsClass,
@@ -1828,7 +1826,7 @@
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
-      (isArray(source) ? baseEach : baseForOwn)(source, function(source, key) {
+      (isArray(source) ? arrayEach : baseForOwn)(source, function(source, key) {
         var found,
             isArr,
             result = source,
@@ -2254,10 +2252,9 @@
     };
 
     /**
-     * A fallback implementation of `_.isPlainObject` which checks if `value` is
-     * an object created by the `Object` constructor, assuming objects created
-     * by the `Object` constructor have no inherited enumerable properties and
-     * that there are no `Object.prototype` extensions.
+     * A fallback implementation of `_.isPlainObject` which checks if `value`
+     * is an object created by the `Object` constructor or has a `[[Prototype]]`
+     * of `null`.
      *
      * @private
      * @param {*} value The value to check.
@@ -5280,7 +5277,7 @@
      * // => { 'name': 'penelope', 'age': 1 }
      */
     function memoize(func, resolver) {
-      if (!isFunction(func)) {
+      if (!isFunction(func) || (resolver && !isFunction(resolver))) {
         throw new TypeError;
       }
       var memoized = function() {
@@ -6059,7 +6056,7 @@
       return value && typeof value == 'object' && typeof value.length == 'number' &&
         toString.call(value) == argsClass || false;
     }
-    // fallback for environments that can't detect `arguments` objects by `[[Class]]`
+    // fallback for environments without a `[[Class]]` for `arguments` objects
     if (!support.argsClass) {
       isArguments = function(value) {
         return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -6434,7 +6431,11 @@
     }
 
     /**
-     * Checks if `value` is an object created by the `Object` constructor.
+     * Checks if `value` is an object created by the `Object` constructor or has
+     * a `[[Prototype]]` of `null`.
+     *
+     * Note: This method assumes objects created by the `Object` constructor
+     * have no inherited enumerable properties.
      *
      * @static
      * @memberOf _
@@ -6455,6 +6456,9 @@
      * // => false
      *
      * _.isPlainObject({ 'x': 0, 'y': 0 });
+     * // => true
+     *
+     * _.isPlainObject(Object.create(null));
      * // => true
      */
     var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
@@ -6921,7 +6925,7 @@
       }
       if (callback) {
         callback = lodash.createCallback(callback, thisArg, 4);
-        (isArr ? baseEach : baseForOwn)(object, function(value, index, object) {
+        (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
           return callback(accumulator, value, index, object);
         });
       }
@@ -8457,7 +8461,7 @@
     lodash.prototype.valueOf = wrapperValueOf;
 
     // add `Array` functions that return unwrapped values
-    baseEach(['join', 'pop', 'shift'], function(methodName) {
+    arrayEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
@@ -8470,7 +8474,7 @@
     });
 
     // add `Array` functions that return the existing wrapped value
-    baseEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
@@ -8479,7 +8483,7 @@
     });
 
     // add `Array` functions that return new wrapped values
-    baseEach(['concat', 'splice'], function(methodName) {
+    arrayEach(['concat', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
@@ -8489,7 +8493,7 @@
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS
     if (!support.spliceObjects) {
-      baseEach(['pop', 'shift', 'splice'], function(methodName) {
+      arrayEach(['pop', 'shift', 'splice'], function(methodName) {
         var func = arrayRef[methodName],
             isSplice = methodName == 'splice';
 

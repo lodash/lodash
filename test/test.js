@@ -9569,13 +9569,18 @@
       deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
     });
 
-    test('should match all elements when provided an empty `properties` object', 2, function() {
-      var actual = _.where(array, {});
-      ok(actual !== array);
-      deepEqual(actual, array);
+    test('should match all elements when provided an empty `source`', 1, function() {
+      var expected = _.map(empties, _.constant(array));
+
+      var actual = _.map(empties, function(value) {
+        var result = _.where(array, value);
+        return result !== array && result;
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should deep compare `properties` values', 1, function() {
+    test('should deep compare `source` values', 1, function() {
       var collection = [{ 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 }],
           expected = _.cloneDeep(collection);
 

@@ -3884,7 +3884,7 @@
     return value && typeof value == 'object' && typeof value.length == 'number' &&
       toString.call(value) == argsClass || false;
   }
-  // fallback for environments that can't detect `arguments` objects by `[[Class]]`
+  // fallback for environments without a `[[Class]]` for `arguments` objects
   if (!isArguments(arguments)) {
     isArguments = function(value) {
       return value && typeof value == 'object' && typeof value.length == 'number' &&
@@ -5295,7 +5295,7 @@
   lodash.prototype.value = wrapperValueOf;
 
     // add `Array` mutator functions to the wrapper
-    baseEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    arrayEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__;
@@ -5311,7 +5311,7 @@
     });
 
     // add `Array` accessor functions to the wrapper
-    baseEach(['concat', 'join', 'slice'], function(methodName) {
+    arrayEach(['concat', 'join', 'slice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,

@@ -1224,7 +1224,7 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? baseEach : baseForOwn)(value, function(valValue, key) {
+      (isArr ? arrayEach : baseForOwn)(value, function(valValue, key) {
         result[key] = baseClone(valValue, isDeep, callback, stackA, stackB);
       });
 
@@ -1825,7 +1825,7 @@
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
-      (isArray(source) ? baseEach : baseForOwn)(source, function(source, key) {
+      (isArray(source) ? arrayEach : baseForOwn)(source, function(source, key) {
         var found,
             isArr,
             result = source,
@@ -6944,7 +6944,7 @@
       }
       if (callback) {
         callback = lodash.createCallback(callback, thisArg, 4);
-        (isArr ? baseEach : baseForOwn)(object, function(value, index, object) {
+        (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
           return callback(accumulator, value, index, object);
         });
       }
@@ -8480,7 +8480,7 @@
     lodash.prototype.valueOf = wrapperValueOf;
 
     // add `Array` functions that return unwrapped values
-    baseEach(['join', 'pop', 'shift'], function(methodName) {
+    arrayEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
@@ -8493,7 +8493,7 @@
     });
 
     // add `Array` functions that return the existing wrapped value
-    baseEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
@@ -8502,7 +8502,7 @@
     });
 
     // add `Array` functions that return new wrapped values
-    baseEach(['concat', 'splice'], function(methodName) {
+    arrayEach(['concat', 'splice'], function(methodName) {
       var func = arrayRef[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
@@ -8512,7 +8512,7 @@
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS
     if (!support.spliceObjects) {
-      baseEach(['pop', 'shift', 'splice'], function(methodName) {
+      arrayEach(['pop', 'shift', 'splice'], function(methodName) {
         var func = arrayRef[methodName],
             isSplice = methodName == 'splice';
 

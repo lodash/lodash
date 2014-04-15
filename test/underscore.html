@@ -31,8 +31,15 @@
 			// excuse tests we intentionally fail or those with problems
 			QUnit.config.excused = {
 				'Arrays': {
-					'union': [
-						'[null,1,2,3]'
+					'initial': [
+						'initial works on arguments object'
+					],
+					'intersection': [
+						'can perform an OO-style intersection'
+					],
+					'rest': [
+						'aliased as drop and works on arguments object',
+						'aliased as tail and works on arguments object',
 					]
 				},
 				'Chaining': {
@@ -43,10 +50,13 @@
 						'Died on test #1'
 					],
 					'reverse/concat/unshift/pop/map': [
-						'"34, 10, 8, 6, 4, 2, 10, 10"'
+						'can chain together array functions.'
 					]
 				},
 				'Collections': {
+					'map': [
+						'OO-style doubled numbers'
+					],
 					'reduce': [
 						'handles a null (without initial value) properly',
 						'throws an error for empty arrays with no initial value'
@@ -54,9 +64,6 @@
 					'reduceRight': [
 						'handles a null (without initial value) properly',
 						'throws an error for empty arrays with no initial value'
-					],
-					'where': [
-						'4'
 					]
 				},
 				'Functions': {
@@ -67,6 +74,7 @@
 					'bindAll': [
 						'throws an error for bindAll with no functions named'
 					],
+					'negate': true,
 					'partial': [
 						'can partially apply with placeholders',
 						'accepts more arguments than the number of placeholders',
@@ -85,6 +93,12 @@
 					],
 					'keys': [
 						'is not fooled by sparse arrays; see issue #95'
+					],
+					'omit': [
+						'can accept a predicate'
+					],
+					'pick': [
+						'can accept a predicate and context'
 					]
 				},
 				'Utility': {
@@ -94,6 +108,7 @@
 					'_.unescape': [
 						'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
 					],
+					'noop': true,
 					'now': [
 						'Produces the correct time in milliseconds'
 					],
@@ -123,11 +138,20 @@
 				if (!ui.isModularize) {
 					delete QUnit.config.excused.Functions.partial;
 				}
+				delete QUnit.config.excused.Arrays.initial;
+				delete QUnit.config.excused.Arrays.intersection;
+				delete QUnit.config.excused.Arrays.rest;
 				delete QUnit.config.excused.Chaining;
-				delete QUnit.config.excused.Collections.where;
+				delete QUnit.config.excused.Collections.map;
 				delete QUnit.config.excused.Objects.keys;
 				delete QUnit.config.excused.Utility['_.escape'];
 				delete QUnit.config.excused.Utility['_.unescape'];
+			}
+			else {
+				delete QUnit.config.excused.Functions.negate;
+				delete QUnit.config.excused.Objects.omit;
+				delete QUnit.config.excused.Objects.pick;
+				delete QUnit.config.excused.Utility.noop;
 			}
 			// load test scripts
 			document.write(ui.urlParams.loader != 'none'

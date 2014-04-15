@@ -29,7 +29,7 @@
     }).sortBy(function(n) {
       return -n;
     }).value();
-    equal(numbers.join(', '), '10, 6, 2', 'filtered and reversed the numbers');
+    deepEqual(numbers, [10, 6, 2], 'filtered and reversed the numbers');
   });
 
   test('select/reject/sortBy in functional style', function() {
@@ -41,7 +41,7 @@
     }).sortBy(function(n) {
       return -n;
     }).value();
-    equal(numbers.join(', '), '10, 6, 2', 'filtered and reversed the numbers');
+    deepEqual(numbers, [10, 6, 2], 'filtered and reversed the numbers');
   });
 
   test('reverse/concat/unshift/pop/map', function() {
@@ -53,7 +53,7 @@
       .pop()
       .map(function(n){ return n * 2; })
       .value();
-    equal(numbers.join(', '), '34, 10, 8, 6, 4, 2, 10, 10', 'can chain together array functions.');
+    deepEqual(numbers, [34, 10, 8, 6, 4, 2, 10, 10], 'can chain together array functions.');
   });
 
   test('chaining works in small stages', function() {

@@ -3905,7 +3905,7 @@
      *
      * @static
      * @memberOf _
-     * @alias detect, findWhere
+     * @alias detect
      * @category Collections
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3966,6 +3966,35 @@
     function findLast(collection, predicate, thisArg) {
       predicate = lodash.createCallback(predicate, thisArg, 3);
       return baseFind(collection, predicate, baseEachRight);
+    }
+
+
+    /**
+     * Performs a deep comparison between each element in `collection` and the
+     * source object, returning the first element that has equivalent property
+     * values.
+     *
+     * @static
+     * @memberOf _
+     * @category Collections
+     * @param {Array|Object|string} collection The collection to search.
+     * @param {Object} source The object of property values to match.
+     * @returns {*} Returns the matched element, else `undefined`.
+     * @example
+     *
+     * var characters = [
+     *   { 'name': 'barney', 'age': 36, 'employer': 'slate' },
+     *   { 'name': 'fred',   'age': 40, 'employer': 'slate' }
+     * ];
+     *
+     * _.findWhere(characters, { 'employer': 'slate' });
+     * // => { 'name': 'barney', 'age': 36, 'employer': 'slate' }
+     *
+     * _.findWhere(characters, { 'age': 40 });
+     * // =>  { 'name': 'fred', 'age': 40, 'employer': 'slate' }
+     */
+    function findWhere(collection, source) {
+      return find(collection, isObject(source) ? source : {});
     }
 
     /**
@@ -4809,21 +4838,24 @@
      * @static
      * @memberOf _
      * @category Collections
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Object} source The object of property values to filter by.
+     * @param {Array|Object|string} collection The collection to search.
+     * @param {Object} source The object of property values to match.
      * @returns {Array} Returns the new filtered array.
      * @example
      *
      * var characters = [
-     *   { 'name': 'barney', 'age': 36, 'pets': ['hoppy'] },
-     *   { 'name': 'fred',   'age': 40, 'pets': ['baby puss', 'dino'] }
+     *   { 'name': 'barney', 'age': 36, 'employer': 'slate', 'pets': ['hoppy'] },
+     *   { 'name': 'fred',   'age': 40, 'employer': 'slate', 'pets': ['baby puss', 'dino'] }
      * ];
      *
-     * _.where(characters, { 'age': 36 });
-     * // => [{ 'name': 'barney', 'age': 36, 'pets': ['hoppy'] }]
+     * _.pluck(_.where(characters, { 'age': 36 }), 'name');
+     * // => ['barney']
      *
-     * _.where(characters, { 'pets': ['dino'] });
-     * // => [{ 'name': 'fred', 'age': 40, 'pets': ['baby puss', 'dino'] }]
+     * _.pluck(_.where(characters, { 'pets': ['dino'] }), 'name');
+     * // => ['fred']
+     *
+     * _.pluck(_.where(characters, { 'employer': 'slate' }), 'name');
+     * // => ['barney', 'fred']
      */
     function where(collection, source) {
       return filter(collection, isObject(source) ? source : {});
@@ -8365,6 +8397,7 @@
     lodash.findLast = findLast;
     lodash.findLastIndex = findLastIndex;
     lodash.findLastKey = findLastKey;
+    lodash.findWhere = findWhere;
     lodash.has = has;
     lodash.identity = identity;
     lodash.indexOf = indexOf;
@@ -8418,7 +8451,6 @@
     lodash.all = every;
     lodash.any = some;
     lodash.detect = find;
-    lodash.findWhere = find;
     lodash.foldl = reduce;
     lodash.foldr = reduceRight;
     lodash.include = contains;

@@ -5296,7 +5296,7 @@
      * // => { 'name': 'penelope', 'age': 1 }
      */
     function memoize(func, resolver) {
-      if (!isFunction(func)) {
+      if (!isFunction(func) || (resolver && !isFunction(resolver))) {
         throw new TypeError;
       }
       var memoized = function() {

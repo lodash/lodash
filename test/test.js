@@ -2652,13 +2652,45 @@
         });
       }
       if (methodName == 'find') {
-        test('should be aliased', 2, function() {
+        test('should be aliased', 1, function() {
           strictEqual(_.detect, func);
-          strictEqual(_.findWhere, func);
         });
       }
     }());
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.findWhere');
+
+  (function() {
+    var objects = [
+      { 'a': 1 },
+      { 'a': 1 },
+      { 'a': 1, 'b': 2 },
+      { 'a': 2, 'b': 2 },
+      { 'a': 3 }
+    ];
+
+    test('should filter by `source` properties', 6, function() {
+      strictEqual(_.findWhere(objects, { 'a': 1 }), objects[0]);
+      strictEqual(_.findWhere(objects, { 'a': 2 }), objects[3]);
+      strictEqual(_.findWhere(objects, { 'a': 3 }), objects[4]);
+      strictEqual(_.findWhere(objects, { 'b': 1 }), undefined);
+      strictEqual(_.findWhere(objects, { 'b': 2 }), objects[2]);
+      strictEqual(_.findWhere(objects, { 'a': 1, 'b': 2 }), objects[2]);
+    });
+
+    test('should match all elements when provided an empty `source`', 1, function() {
+      var expected = _.map(empties, _.constant(true));
+
+      var actual = _.map(empties, function(value) {
+        return _.findWhere(objects, value) === objects[0];
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -9528,7 +9560,7 @@
   QUnit.module('lodash.where');
 
   (function() {
-    var array = [
+    var objects = [
       { 'a': 1 },
       { 'a': 1 },
       { 'a': 1, 'b': 2 },
@@ -9536,22 +9568,22 @@
       { 'a': 3 }
     ];
 
-    test('should filter by properties', 6, function() {
-      deepEqual(_.where(array, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]);
-      deepEqual(_.where(array, { 'a': 2 }), [{ 'a': 2, 'b': 2 }]);
-      deepEqual(_.where(array, { 'a': 3 }), [{ 'a': 3 }]);
-      deepEqual(_.where(array, { 'b': 1 }), []);
-      deepEqual(_.where(array, { 'b': 2 }), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
-      deepEqual(_.where(array, { 'a': 1, 'b': 2 }), [{ 'a': 1, 'b': 2 }]);
+    test('should filter by `source` properties', 6, function() {
+      deepEqual(_.where(objects, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]);
+      deepEqual(_.where(objects, { 'a': 2 }), [{ 'a': 2, 'b': 2 }]);
+      deepEqual(_.where(objects, { 'a': 3 }), [{ 'a': 3 }]);
+      deepEqual(_.where(objects, { 'b': 1 }), []);
+      deepEqual(_.where(objects, { 'b': 2 }), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
+      deepEqual(_.where(objects, { 'a': 1, 'b': 2 }), [{ 'a': 1, 'b': 2 }]);
     });
 
-    test('should not filter by inherited properties', 1, function() {
+    test('should not filter by inherited `source` properties', 1, function() {
       function Foo() {}
       Foo.prototype = { 'a': 2 };
 
-      var properties = new Foo;
-      properties.b = 2;
-      deepEqual(_.where(array, properties), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
+      var source = new Foo;
+      source.b = 2;
+      deepEqual(_.where(objects, source), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
     });
 
     test('should filter by problem JScript properties (test in IE < 9)', 1, function() {
@@ -9570,11 +9602,11 @@
     });
 
     test('should match all elements when provided an empty `source`', 1, function() {
-      var expected = _.map(empties, _.constant(array));
+      var expected = _.map(empties, _.constant(objects));
 
       var actual = _.map(empties, function(value) {
-        var result = _.where(array, value);
-        return result !== array && result;
+        var result = _.where(objects, value);
+        return result !== objects && result;
       });
 
       deepEqual(actual, expected);
@@ -9595,18 +9627,18 @@
       deepEqual(_.where(collection, { 'a': [2] }), expected);
     });
 
-    test('should handle `properties` with `undefined` values', 4, function() {
-      var properties = { 'b': undefined };
-      deepEqual(_.where([{ 'a': 1 }, { 'a': 1, 'b': 1 }], properties), []);
+    test('should handle a `source` with `undefined` values', 4, function() {
+      var source = { 'b': undefined };
+      deepEqual(_.where([{ 'a': 1 }, { 'a': 1, 'b': 1 }], source), []);
 
       var object = { 'a': 1, 'b': undefined };
-      deepEqual(_.where([object], properties), [object]);
+      deepEqual(_.where([object], source), [object]);
 
-      properties = { 'a': { 'c': undefined } };
-      deepEqual(_.where([{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }], properties), []);
+      source = { 'a': { 'c': undefined } };
+      deepEqual(_.where([{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }], source), []);
 
       object = { 'a': { 'b': 1, 'c': undefined } };
-      deepEqual(_.where([object], properties), [object]);
+      deepEqual(_.where([object], source), [object]);
     });
   }());
 

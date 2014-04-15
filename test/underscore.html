@@ -97,6 +97,7 @@
 						'is not fooled by sparse arrays; see issue #95'
 					],
 					'omit': [
+						'can omit numeric properties',
 						'can accept a predicate'
 					],
 					'pick': [
@@ -150,8 +151,8 @@
 				delete QUnit.config.excused.Utility['_.unescape'];
 			}
 			else {
+				QUnit.config.excused.Objects.omit.pop();
 				delete QUnit.config.excused.Functions.negate;
-				delete QUnit.config.excused.Objects.omit;
 				delete QUnit.config.excused.Objects.pick;
 				delete QUnit.config.excused.Utility.noop;
 			}

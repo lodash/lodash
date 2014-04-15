@@ -4808,7 +4808,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Object} source The object of property values to filter by.
@@ -4826,7 +4825,9 @@
      * _.where(characters, { 'pets': ['dino'] });
      * // => [{ 'name': 'fred', 'age': 40, 'pets': ['baby puss', 'dino'] }]
      */
-    var where = filter;
+    function where(collection, source) {
+      return filter(collection, isObject(source) ? source : {});
+    }
 
     /*--------------------------------------------------------------------------*/
 

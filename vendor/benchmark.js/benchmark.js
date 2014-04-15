@@ -123,7 +123,7 @@
    * @returns {Function} Returns a new `Benchmark` function.
    */
   function runInContext(context) {
-    // exit early if unable to acquire lodash
+    // exit early if unable to acquire Lo-Dash
     var _ = context && context._ || req('lodash') || root._;
     if (!_) {
       Benchmark.runInContext = runInContext;
@@ -167,10 +167,10 @@
     /** Detect DOM document object */
     var doc = isHostType(context, 'document') && context.document;
 
-    /** Used to access Wade Simmons' Node microtime module */
+    /** Used to access Wade Simmons' Node.js `microtime` module */
     var microtimeObject = req('microtime');
 
-    /** Used to access Node's high resolution timer */
+    /** Used to access Node.js's high resolution timer */
     var processObject = isHostType(context, 'process') && context.process;
 
     /** Used to prevent a `removeChild` memory leak in IE < 9 */
@@ -234,10 +234,10 @@
        */
       try {
         // Safari 2.x removes commas in object literals
-        // from Function#toString results
+        // from `Function#toString` results
         // http://webk.it/11609
         // Firefox 3.6 and Opera 9.25 strip grouping
-        // parentheses from Function#toString results
+        // parentheses from `Function#toString` results
         // http://bugzil.la/559438
         support.decompilation = Function(
           ('return (' + (function(x) { return { 'x': '' + (1 + x) + '', 'y': 0 }; }) + ')')
@@ -313,7 +313,7 @@
      * // or with options
      * var bench = new Benchmark('foo', fn, {
      *
-     *   // displayed by Benchmark#toString if `name` is not available
+     *   // displayed by `Benchmark#toString` if `name` is not available
      *   'id': 'xyz',
      *
      *   // called when the benchmark starts running
@@ -349,7 +349,7 @@
      *
      *   // benchmark test function
      *   'fn': function(deferred) {
-     *     // call resolve() when the deferred test is finished
+     *     // call `Deferred#resolve` when the deferred test is finished
      *     deferred.resolve();
      *   }
      * });
@@ -366,7 +366,7 @@
      *
      * // a test's `this` binding is set to the benchmark instance
      * var bench = new Benchmark('foo', function() {
-     *   'My name is '.concat(this.name); // My name is foo
+     *   'My name is '.concat(this.name); // "My name is foo"
      * });
      */
     function Benchmark(name, fn, options) {
@@ -509,7 +509,7 @@
      * @returns {*} The cloned value.
      */
     var cloneDeep = _.partialRight(_.cloneDeep, function(value) {
-      // do not clone non-Object objects
+      // only clone primitives, arrays, and plain objects
       return (typeof value == 'object' && !_.isArray(value) && !_.isPlainObject(value))
         ? value
         : undefined;
@@ -654,7 +654,7 @@
     }
 
     /**
-     * A wrapper around require() to suppress `module missing` errors.
+     * A wrapper around `require()` to suppress `module missing` errors.
      *
      * @private
      * @param {string} id The module id.
@@ -875,7 +875,7 @@
         }
         // execute method
         result[index] = _.isFunction(bench && bench[name]) ? bench[name].apply(bench, args) : undefined;
-        // if synchronous return true until finished
+        // if synchronous return `true` until finished
         return !async && getNext();
       }
 
@@ -1627,7 +1627,7 @@
 
         try {
           if (isEmpty) {
-            // Firefox may remove dead code from Function#toString results
+            // Firefox may remove dead code from `Function#toString` results
             // http://bugzil.la/536085
             throw new Error('The test "' + name + '" is empty. This may be the result of dead code removal.');
           }
@@ -1795,7 +1795,7 @@
             begin = new ns().getTime();
             while (!(measured = new ns().getTime() - begin)) { }
           }
-          // check for broken timers (nanoTime may have issues)
+          // check for broken timers (`nanoTime` may have issues)
           // http://alivebutsleepy.srnet.cz/unreliable-system-nanotime/
           if (measured > 0) {
             sample.push(measured);
@@ -1839,11 +1839,11 @@
         }
       } catch(e) { }
 
-      // detect Node's nanosecond resolution timer available in Node >= 0.8
+      // detect Node.js's nanosecond resolution timer available in Node.js >= 0.8
       if (processObject && typeof (timer.ns = processObject.hrtime) == 'function') {
         timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
       }
-      // detect Wade Simmons' Node microtime module
+      // detect Wade Simmons' Node.js `microtime` module
       if (microtimeObject && typeof (timer.ns = microtimeObject.now) == 'function') {
         timers.push({ 'ns': timer.ns,  'res': getRes('us'), 'unit': 'us' });
       }
@@ -2003,7 +2003,7 @@
         if (queue.length < 2 && !maxedOut) {
           enqueue();
         }
-        // abort the invoke cycle when done
+        // abort the `invoke` cycle when done
         event.aborted = done;
       }
 
@@ -2214,7 +2214,7 @@
         'delay': 0.005,
 
         /**
-         * Displayed by Benchmark#toString when a `name` is not available
+         * Displayed by `Benchmark#toString` when a `name` is not available
          * (auto-generated if absent).
          *
          * @memberOf Benchmark.options
@@ -2315,7 +2315,7 @@
 
       /**
        * Platform object with properties describing things like browser name,
-       * version, and operating system.
+       * version, and operating system. See [`platform.js`](http://mths.be/platform).
        *
        * @static
        * @memberOf Benchmark

@@ -3,10 +3,10 @@
   module('Objects');
 
   test('keys', function() {
-    equal(_.keys({one : 1, two : 2}).join(', '), 'one, two', 'can extract the keys from an object');
+    deepEqual(_.keys({one : 1, two : 2}), ['one', 'two'], 'can extract the keys from an object');
     // the test above is not safe because it relies on for-in enumeration order
     var a = []; a[1] = 0;
-    equal(_.keys(a).join(', '), '1', 'is not fooled by sparse arrays; see issue #95');
+    deepEqual(_.keys(a), ['1'], 'is not fooled by sparse arrays; see issue #95');
     deepEqual(_.keys(null), []);
     deepEqual(_.keys(void 0), []);
     deepEqual(_.keys(1), []);
@@ -15,8 +15,8 @@
   });
 
   test('values', function() {
-    equal(_.values({one: 1, two: 2}).join(', '), '1, 2', 'can extract the values from an object');
-    equal(_.values({one: 1, two: 2, length: 3}).join(', '), '1, 2, 3', '... even when one of them is "length"');
+    deepEqual(_.values({one: 1, two: 2}), [1, 2], 'can extract the values from an object');
+    deepEqual(_.values({one: 1, two: 2, length: 3}), [1, 2, 3], '... even when one of them is "length"');
   });
 
   test('pairs', function() {
@@ -26,7 +26,7 @@
 
   test('invert', function() {
     var obj = {first: 'Moe', second: 'Larry', third: 'Curly'};
-    equal(_.keys(_.invert(obj)).join(' '), 'Moe Larry Curly', 'can invert an object');
+    deepEqual(_.keys(_.invert(obj)), ['Moe', 'Larry', 'Curly'], 'can invert an object');
     ok(_.isEqual(_.invert(_.invert(obj)), obj), 'two inverts gets you back where you started');
 
     var obj = {length: 3};
@@ -39,7 +39,7 @@
 
     var Animal = function(){};
     Animal.prototype.run = function(){};
-    equal(_.functions(new Animal).join(''), 'run', 'also looks up functions on the prototype');
+    deepEqual(_.functions(new Animal), ['run'], 'also looks up functions on the prototype');
   });
 
   test('extend', function() {
@@ -52,7 +52,7 @@
     result = _.extend({x:'x'}, {a:'a', x:2}, {a:'b'});
     ok(_.isEqual(result, {x:2, a:'b'}), 'extending from multiple source objects last property trumps');
     result = _.extend({}, {a: void 0, b: null});
-    equal(_.keys(result).join(''), 'ab', 'extend copies undefined values');
+    deepEqual(_.keys(result), ['a', 'b'], 'extend copies undefined values');
 
     try {
       result = {};
@@ -64,30 +64,52 @@
 
   test('pick', function() {
     var result;
-    result = _.pick({a:1, b:2, c:3}, 'a', 'c');
-    ok(_.isEqual(result, {a:1, c:3}), 'can restrict properties to those named');
-    result = _.pick({a:1, b:2, c:3}, ['b', 'c']);
-    ok(_.isEqual(result, {b:2, c:3}), 'can restrict properties to those named in an array');
-    result = _.pick({a:1, b:2, c:3}, ['a'], 'b');
-    ok(_.isEqual(result, {a:1, b:2}), 'can restrict properties to those named in mixed args');
+    result = _.pick({a: 1, b: 2, c: 3}, 'a', 'c');
+    deepEqual(result, {a: 1, c: 3}, 'can restrict properties to those named');
+    result = _.pick({a: 1, b: 2, c: 3}, ['b', 'c']);
+    deepEqual(result, {b: 2, c: 3}, 'can restrict properties to those named in an array');
+    result = _.pick({a: 1, b: 2, c: 3}, ['a'], 'b');
+    deepEqual(result, {a: 1, b: 2}, 'can restrict properties to those named in mixed args');
+    result = _.pick(['a', 'b'], 1);
+    deepEqual(result, {1: 'b'}, 'can pick numeric properties');
+
+    var data = {a: 1, b: 2, c: 3};
+    var callback = function(value, key, object) {
+      strictEqual(key, {1: 'a', 2: 'b', 3: 'c'}[value]);
+      strictEqual(object, data);
+      return value !== this.value;
+    };
+    result = _.pick(data, callback, {value: 2});
+    deepEqual(result, {a: 1, c: 3}, 'can accept a predicate and context');
 
     var Obj = function(){};
     Obj.prototype = {a: 1, b: 2, c: 3};
-    ok(_.isEqual(_.pick(new Obj, 'a', 'c'), {a:1, c: 3}), 'include prototype props');
+    deepEqual(_.pick(new Obj, 'a', 'c'), {a: 1, c: 3}, 'include prototype props');
   });
 
   test('omit', function() {
     var result;
-    result = _.omit({a:1, b:2, c:3}, 'b');
-    ok(_.isEqual(result, {a:1, c:3}), 'can omit a single named property');
-    result = _.omit({a:1, b:2, c:3}, 'a', 'c');
-    ok(_.isEqual(result, {b:2}), 'can omit several named properties');
-    result = _.omit({a:1, b:2, c:3}, ['b', 'c']);
-    ok(_.isEqual(result, {a:1}), 'can omit properties named in an array');
+    result = _.omit({a: 1, b: 2, c: 3}, 'b');
+    deepEqual(result, {a: 1, c: 3}, 'can omit a single named property');
+    result = _.omit({a: 1, b: 2, c: 3}, 'a', 'c');
+    deepEqual(result, {b: 2}, 'can omit several named properties');
+    result = _.omit({a: 1, b: 2, c: 3}, ['b', 'c']);
+    deepEqual(result, {a: 1}, 'can omit properties named in an array');
+    result = _.omit(['a', 'b'], 0);
+    deepEqual(result, {1: 'b'}, 'can omit numeric properties');
+
+    var data = {a: 1, b: 2, c: 3};
+    var callback = function(value, key, object) {
+      strictEqual(key, {1: 'a', 2: 'b', 3: 'c'}[value]);
+      strictEqual(object, data);
+      return value !== this.value;
+    };
+    result = _.omit(data, callback, {value: 2});
+    deepEqual(result, {b: 2}, 'can accept a predicate');
 
     var Obj = function(){};
     Obj.prototype = {a: 1, b: 2, c: 3};
-    ok(_.isEqual(_.omit(new Obj, 'b'), {a:1, c: 3}), 'include prototype props');
+    deepEqual(_.omit(new Obj, 'b'), {a: 1, c: 3}, 'include prototype props');
   });
 
   test('defaults', function() {
@@ -389,6 +411,10 @@
     var obj = {one : 1};
     delete obj.one;
     ok(_.isEmpty(obj), 'deleting all the keys from an object empties it');
+
+    var args = function(){ return arguments; };
+    ok(_.isEmpty(args()), 'empty arguments object is empty');
+    ok(!_.isEmpty(args('')), 'non-empty arguments object is not empty');
   });
 
   // Setup remote variables for iFrame tests.
@@ -587,14 +613,18 @@
     ok(_.has(obj, "foo"), "has() works even when the hasOwnProperty method is deleted.");
     var child = {};
     child.prototype = obj;
-    ok(_.has(child, "foo") == false, "has() does not check the prototype chain for a property.")
+    ok(_.has(child, "foo") == false, "has() does not check the prototype chain for a property.");
   });
 
   test("matches", function() {
-    var moe     = {name: 'Moe Howard',   hair: true},
-        curly   = {name: 'Curly Howard', hair: false},
-        stooges = [moe, curly];
-    ok(_.find(stooges, _.matches({hair: false})) === curly, "returns a predicate that can be used by finding functions.")
-    ok(_.find(stooges, _.matches(moe)) === moe, "can be used to locate an object exists in a collection.")
-  })
+    var moe = {name: 'Moe Howard', hair: true};
+    var curly = {name: 'Curly Howard', hair: false};
+    var stooges = [moe, curly];
+    ok(_.find(stooges, _.matches({hair: false})) === curly, "returns a predicate that can be used by finding functions.");
+    ok(_.find(stooges, _.matches(moe)) === moe, "can be used to locate an object exists in a collection.");
+    deepEqual(_.where([null, undefined], {a: 1}), [], 'Do not throw on null values.');
+    deepEqual(_.where([null, undefined], null), [null, undefined], 'null matches null');
+    deepEqual(_.where([null, undefined], {}), [null, undefined], 'null matches {}');
+  });
+
 })();

@@ -278,6 +278,26 @@
     }, 96);
   });
 
+  asyncTest('throttle continues to function after system time is set backwards', 2, function() {
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 100);
+    var origNowFunc = _.now;
+
+    throttledIncr();
+    ok(counter == 1);
+    _.now = function () {
+      return new Date(2013, 0, 1, 1, 1, 1);
+    };
+
+    _.delay(function() {
+      throttledIncr();
+      ok(counter == 2);
+      start();
+      _.now = origNowFunc;
+    }, 200);
+  });
+
   asyncTest('debounce', 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
@@ -314,6 +334,28 @@
     _.delay(function(){ equal(counter, 1, 'incr was debounced'); start(); }, 96);
   });
 
+  asyncTest('debounce after system time is set backwards', 2, function() {
+    var counter = 0;
+    var origNowFunc = _.now;
+    var debouncedIncr = _.debounce(function(){
+      counter++;
+    }, 100, true);
+
+    debouncedIncr();
+    equal(counter, 1, 'incr was called immediately');
+
+    _.now = function () {
+      return new Date(2013, 0, 1, 1, 1, 1);
+    };
+
+    _.delay(function() {
+      debouncedIncr();
+      equal(counter, 2, 'incr was debounced successfully');
+      start();
+      _.now = origNowFunc;
+    },200);
+  });
+
   test('once', function() {
     var num = 0;
     var increment = _.once(function(){ num++; });
@@ -344,6 +386,12 @@
     var wrapped = _.wrap(noop, function(fn){ return Array.prototype.slice.call(arguments, 0); });
     var ret     = wrapped(['whats', 'your'], 'vector', 'victor');
     deepEqual(ret, [noop, ['whats', 'your'], 'vector', 'victor']);
+  });
+
+  test('negate', function() {
+    var isOdd = function(n){ return (n & 1) == 1; };
+    equal(_.negate(isOdd)(2), true, 'should return the complement of the given function');
+    equal(_.negate(isOdd)(3), false, 'should return the complement of the given function');
   });
 
   test('compose', function() {

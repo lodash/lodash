@@ -9,17 +9,17 @@
 
     var answers = [];
     _.each([1, 2, 3], function(num){ answers.push(num * this.multiplier);}, {multiplier : 5});
-    equal(answers.join(', '), '5, 10, 15', 'context object property accessed');
+    deepEqual(answers, [5, 10, 15], 'context object property accessed');
 
     answers = [];
     _.forEach([1, 2, 3], function(num){ answers.push(num); });
-    equal(answers.join(', '), '1, 2, 3', 'aliased as "forEach"');
+    deepEqual(answers, [1, 2, 3], 'aliased as "forEach"');
 
     answers = [];
     var obj = {one : 1, two : 2, three : 3};
     obj.constructor.prototype.four = 4;
     _.each(obj, function(value, key){ answers.push(key); });
-    equal(answers.join(', '), 'one, two, three', 'iterating over objects works, and ignores the object prototype.');
+    deepEqual(answers, ['one', 'two', 'three'], 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
 
     var answer = null;
@@ -35,20 +35,26 @@
     var a = [1, 2, 3];
     strictEqual(_.each(a, function(){}), a);
     strictEqual(_.each(null, function(){}), null);
+
+    var b = [1, 2, 3];
+    b.length = 100;
+    answers = 0;
+    _.each(b, function(){ ++answers; });
+    equal(answers, 100, 'enumerates [0, length)');
   });
 
   test('map', function() {
     var doubled = _.map([1, 2, 3], function(num){ return num * 2; });
-    equal(doubled.join(', '), '2, 4, 6', 'doubled numbers');
+    deepEqual(doubled, [2, 4, 6], 'doubled numbers');
 
     doubled = _.collect([1, 2, 3], function(num){ return num * 2; });
-    equal(doubled.join(', '), '2, 4, 6', 'aliased as "collect"');
+    deepEqual(doubled, [2, 4, 6], 'aliased as "collect"');
 
     var tripled = _.map([1, 2, 3], function(num){ return num * this.multiplier; }, {multiplier : 3});
-    equal(tripled.join(', '), '3, 6, 9', 'tripled numbers with context');
+    deepEqual(tripled, [3, 6, 9], 'tripled numbers with context');
 
     var doubled = _([1, 2, 3]).map(function(num){ return num * 2; });
-    equal(doubled.join(', '), '2, 4, 6', 'OO-style doubled numbers');
+    deepEqual(doubled, [2, 4, 6], 'OO-style doubled numbers');
 
     if (document.querySelectorAll) {
       var ids = _.map(document.querySelectorAll('#map-test *'), function(n){ return n.id; });
@@ -170,15 +176,15 @@
 
   test('select', function() {
     var evens = _.select([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equal(evens.join(', '), '2, 4, 6', 'selected each even number');
+    deepEqual(evens, [2, 4, 6], 'selected each even number');
 
     evens = _.filter([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equal(evens.join(', '), '2, 4, 6', 'aliased as "filter"');
+    deepEqual(evens, [2, 4, 6], 'aliased as "filter"');
   });
 
   test('reject', function() {
     var odds = _.reject([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
-    equal(odds.join(', '), '1, 3, 5', 'rejected each even number');
+    deepEqual(odds, [1, 3, 5], 'rejected each even number');
 
     var context = 'obj';
 
@@ -186,7 +192,7 @@
       equal(context, 'obj');
       return num % 2 != 0;
     }, context);
-    equal(evens.join(', '), '2, 4, 6', 'rejected each odd number');
+    deepEqual(evens, [2, 4, 6], 'rejected each odd number');
   });
 
   test('all', function() {
@@ -227,15 +233,15 @@
   test('invoke', function() {
     var list = [[5, 1, 7], [3, 2, 1]];
     var result = _.invoke(list, 'sort');
-    equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
-    equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    deepEqual(result[0], [1, 5, 7], 'first array sorted');
+    deepEqual(result[1], [1, 2, 3], 'second array sorted');
   });
 
   test('invoke w/ function reference', function() {
     var list = [[5, 1, 7], [3, 2, 1]];
     var result = _.invoke(list, Array.prototype.sort);
-    equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
-    equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    deepEqual(result[0], [1, 5, 7], 'first array sorted');
+    deepEqual(result[1], [1, 2, 3], 'second array sorted');
   });
 
   // Relevant when using ClojureScript
@@ -247,15 +253,15 @@
     var s = 'foo';
     equal(s.call(), 42, 'call function exists');
     var result = _.invoke(list, 'sort');
-    equal(result[0].join(', '), '1, 5, 7', 'first array sorted');
-    equal(result[1].join(', '), '1, 2, 3', 'second array sorted');
+    deepEqual(result[0], [1, 5, 7], 'first array sorted');
+    deepEqual(result[1], [1, 2, 3], 'second array sorted');
     delete String.prototype.call;
     equal(s.call, undefined, 'call function removed');
   });
 
   test('pluck', function() {
     var people = [{name : 'moe', age : 30}, {name : 'curly', age : 50}];
-    equal(_.pluck(people, 'name').join(', '), 'moe, curly', 'pulls names out of objects');
+    deepEqual(_.pluck(people, 'name'), ['moe', 'curly'], 'pulls names out of objects');
   });
 
   test('where', function() {
@@ -295,6 +301,9 @@
     equal(_.max({'a': 'a'}), -Infinity, 'Maximum value of a non-numeric collection');
 
     equal(299999, _.max(_.range(1,300000)), 'Maximum value of a too-big array');
+
+    equal(3, _.max([1, 2, 3, 'test']), 'Finds correct max in array starting with num and containing a NaN');
+    equal(3, _.max(['test', 1, 2, 3]), 'Finds correct max in array starting with NaN');
   });
 
   test('min', function() {
@@ -312,19 +321,22 @@
     equal(_.min([now, then]), then);
 
     equal(1, _.min(_.range(1,300000)), 'Minimum value of a too-big array');
+
+    equal(1, _.min([1, 2, 3, 'test']), 'Finds correct min in array starting with num and containing a NaN');
+    equal(1, _.min(['test', 1, 2, 3]), 'Finds correct min in array starting with NaN');
   });
 
   test('sortBy', function() {
     var people = [{name : 'curly', age : 50}, {name : 'moe', age : 30}];
     people = _.sortBy(people, function(person){ return person.age; });
-    equal(_.pluck(people, 'name').join(', '), 'moe, curly', 'stooges sorted by age');
+    deepEqual(_.pluck(people, 'name'), ['moe', 'curly'], 'stooges sorted by age');
 
     var list = [undefined, 4, 1, undefined, 3, 2];
-    equal(_.sortBy(list, _.identity).join(','), '1,2,3,4,,', 'sortBy with undefined values');
+    deepEqual(_.sortBy(list, _.identity), [1, 2, 3, 4, undefined, undefined], 'sortBy with undefined values');
 
     var list = ['one', 'two', 'three', 'four', 'five'];
     var sorted = _.sortBy(list, 'length');
-    equal(sorted.join(' '), 'one two four five three', 'sorted by length');
+    deepEqual(sorted, ['one', 'two', 'four', 'five', 'three'], 'sorted by length');
 
     function Pair(x, y) {
       this.x = x;
@@ -350,19 +362,19 @@
     deepEqual(actual, collection, 'sortBy should be stable');
 
     var list = ['q', 'w', 'e', 'r', 't', 'y'];
-    strictEqual(_.sortBy(list).join(''), 'eqrtwy', 'uses _.identity if iterator is not specified');
+    deepEqual(_.sortBy(list), ['e', 'q', 'r', 't', 'w', 'y'], 'uses _.identity if iterator is not specified');
   });
 
   test('groupBy', function() {
     var parity = _.groupBy([1, 2, 3, 4, 5, 6], function(num){ return num % 2; });
     ok('0' in parity && '1' in parity, 'created a group for each value');
-    equal(parity[0].join(', '), '2, 4, 6', 'put each even number in the right group');
+    deepEqual(parity[0], [2, 4, 6], 'put each even number in the right group');
 
     var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     var grouped = _.groupBy(list, 'length');
-    equal(grouped['3'].join(' '), 'one two six ten');
-    equal(grouped['4'].join(' '), 'four five nine');
-    equal(grouped['5'].join(' '), 'three seven eight');
+    deepEqual(grouped['3'], ['one', 'two', 'six', 'ten']);
+    deepEqual(grouped['4'], ['four', 'five', 'nine']);
+    deepEqual(grouped['5'], ['three', 'seven', 'eight']);
 
     var context = {};
     _.groupBy([{}], function(){ ok(this === context); }, context);
@@ -459,15 +471,15 @@
     var numbers = _.range(10);
     var shuffled = _.shuffle(numbers).sort();
     notStrictEqual(numbers, shuffled, 'original object is unmodified');
-    equal(shuffled.join(','), numbers.join(','), 'contains the same members before and after shuffle');
+    deepEqual(shuffled, numbers, 'contains the same members before and after shuffle');
   });
 
   test('sample', function() {
     var numbers = _.range(10);
     var all_sampled = _.sample(numbers, 10).sort();
-    equal(all_sampled.join(','), numbers.join(','), 'contains the same members before and after sample');
+    deepEqual(all_sampled, numbers, 'contains the same members before and after sample');
     all_sampled = _.sample(numbers, 20).sort();
-    equal(all_sampled.join(','), numbers.join(','), 'also works when sampling more objects than are present');
+    deepEqual(all_sampled, numbers, 'also works when sampling more objects than are present');
     ok(_.contains(numbers, _.sample(numbers)), 'sampling a single element returns something from the array');
     strictEqual(_.sample([]), undefined, 'sampling empty array with no number returns undefined');
     notStrictEqual(_.sample([], 5), [], 'sampling empty array with a number returns an empty array');
@@ -481,10 +493,10 @@
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
     var a = [1,2,3];
     ok(_.toArray(a) !== a, 'array is cloned');
-    equal(_.toArray(a).join(', '), '1, 2, 3', 'cloned array contains same elements');
+    deepEqual(_.toArray(a), [1, 2, 3], 'cloned array contains same elements');
 
     var numbers = _.toArray({one : 1, two : 2, three : 3});
-    equal(numbers.join(', '), '1, 2, 3', 'object flattened into array');
+    deepEqual(numbers, [1, 2, 3], 'object flattened into array');
 
     // test in IE < 9
     try {
@@ -509,6 +521,24 @@
     equal(_.size(new String('hello')), 5, 'can compute the size of string object');
 
     equal(_.size(null), 0, 'handles nulls');
+  });
+
+  test('partition', function() {
+    var list = [0, 1, 2, 3, 4, 5];
+    deepEqual(_.partition(list, function(x) { return x < 4; }), [[0,1,2,3],[4,5]], 'handles bool return values');
+    deepEqual(_.partition(list, function(x) { return x & 1; }), [[1,3,5],[0,2,4]], 'handles 0 and 1 return values');
+    deepEqual(_.partition(list, function(x) { return x - 3; }), [[0,1,2,4,5],[3]], 'handles other numeric return values');
+    deepEqual(_.partition(list, function(x) { return x > 1 ? null : true; }), [[0,1],[2,3,4,5]], 'handles null return values');
+    deepEqual(_.partition(list, function(x) { if(x < 2) return true; }), [[0,1],[2,3,4,5]], 'handles undefined return values');
+    deepEqual(_.partition({a: 1, b: 2, c: 3}, function(x) { return x > 1; }), [[2, 3], [1]], 'handles objects');
+
+    // Default iterator
+    deepEqual(_.partition([1, false, true, '']), [[1, true], [false, '']], 'Default iterator');
+    deepEqual(_.partition([{x: 1}, {x: 0}, {x: 1}], 'x'), [[{x: 1}, {x: 1}], [{x: 0}]], 'Takes a string');
+
+    // Context
+    var predicate = function(x){ return x === this.x };
+    deepEqual(_.partition([1, 2, 3], predicate, {x: 2}), [[2], [1, 3]], 'partition takes a context argument');
   });
 
 })();

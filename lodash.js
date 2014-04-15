@@ -3689,7 +3689,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to check for.
      * @param {number} [fromIndex=0] The index to search from.
-     * @returns {boolean} Returns `true` if the target element is found, else `false`.
+     * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
      *
      * _.contains([1, 2, 3], 1);
@@ -3912,7 +3912,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {*} Returns the found element, else `undefined`.
+     * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
      * var characters = [
@@ -3955,7 +3955,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {*} Returns the found element, else `undefined`.
+     * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
      * _.findLast([1, 2, 3, 4], function(num) {
@@ -5779,7 +5779,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
      * @example
      *
      * var characters = {
@@ -5825,7 +5825,7 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {string|undefined} Returns the key of the found element, else `undefined`.
+     * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
      * @example
      *
      * var characters = {

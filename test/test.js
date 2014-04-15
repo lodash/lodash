@@ -10303,14 +10303,18 @@
       });
     });
 
-    test('should handle `null` `thisArg` arguments', 30, function() {
-      var thisArg,
-          callback = function() { thisArg = this; },
-          expected = (function() { return this; }).call(null);
+    test('should handle `null` `thisArg` arguments', 44, function() {
+      var expected = (function() { return this; }).call(null);
 
       var funcs = [
+        'assign',
+        'clone',
+        'cloneDeep',
         'countBy',
+        'dropWhile',
+        'dropRightWhile',
         'every',
+        'flatten',
         'filter',
         'find',
         'findIndex',
@@ -10325,10 +10329,14 @@
         'forOwn',
         'forOwnRight',
         'groupBy',
+        'isEqual',
         'map',
+        'mapValues',
         'max',
+        'merge',
         'min',
         'omit',
+        'partition',
         'pick',
         'reduce',
         'reduceRight',
@@ -10337,32 +10345,35 @@
         'some',
         'sortBy',
         'sortedIndex',
+        'takeWhile',
+        'takeRightWhile',
+        'tap',
         'times',
+        'transform',
         'uniq'
       ];
 
       _.each(funcs, function(methodName) {
-        var array = ['a'],
+        var actual,
+            array = ['a'],
             func = _[methodName],
             message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
 
-        thisArg = undefined;
-
-        if (/^reduce/.test(methodName)) {
+        function callback() {
+          actual = this;
+        }
+        if (/^reduce/.test(methodName) || methodName == 'transform') {
           func(array, callback, 0, null);
-        } else if (methodName == 'sortedIndex') {
+        } else if (_.contains(['assign', 'merge'], methodName)) {
+          func(array, array, callback, null);
+        } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
           func(array, 'a', callback, null);
         } else if (methodName == 'times') {
           func(1, callback, null);
         } else {
           func(array, callback, null);
         }
-
-        if (expected === null) {
-          strictEqual(thisArg, null, message);
-        } else {
-          strictEqual(thisArg, expected, message);
-        }
+        strictEqual(actual, expected, message);
       });
     });
 

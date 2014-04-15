@@ -10399,18 +10399,23 @@
         function callback() {
           actual = this;
         }
-        if (/^reduce/.test(methodName) || methodName == 'transform') {
-          func(array, callback, 0, null);
-        } else if (_.contains(['assign', 'merge'], methodName)) {
-          func(array, array, callback, null);
-        } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
-          func(array, 'a', callback, null);
-        } else if (methodName == 'times') {
-          func(1, callback, null);
-        } else {
-          func(array, callback, null);
+        if (func) {
+          if (/^reduce/.test(methodName) || methodName == 'transform') {
+            func(array, callback, 0, null);
+          } else if (_.contains(['assign', 'merge'], methodName)) {
+            func(array, array, callback, null);
+          } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
+            func(array, 'a', callback, null);
+          } else if (methodName == 'times') {
+            func(1, callback, null);
+          } else {
+            func(array, callback, null);
+          }
+          strictEqual(actual, expected, message);
         }
-        strictEqual(actual, expected, message);
+        else {
+          skipTest();
+        }
       });
     });
 

@@ -498,6 +498,7 @@
       function message(methodName) {
         return '`_.' + methodName + '` should avoid overwritten native methods';
       }
+
       var object = { 'a': 1 },
           otherObject = { 'b': 2 },
           largeArray = _.times(largeArraySize, _.constant(object));
@@ -830,6 +831,7 @@
       function Foo() {
         return this;
       }
+
       var bound = _.bind(Foo, { 'a': 1 }),
           newBound = new bound;
 
@@ -842,6 +844,7 @@
       function Foo(value) {
         return value && object;
       }
+
       var bound = _.bind(Foo),
           object = {};
 
@@ -1719,6 +1722,7 @@
         push.apply(result, arguments);
         return result;
       }
+
       var expected = [1, 2, 3],
           object = { 'a': 1 },
           callback = _.callback(_.partial(fn, 2), object);
@@ -1859,6 +1863,7 @@
       function Foo(value) {
         return value && object;
       }
+
       var curried = _.curry(Foo),
           object = {};
 
@@ -1871,6 +1876,7 @@
         var value = this || {};
         return [value[a], value[b], value[c]];
       }
+
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           expected = [1, 2, 3];
 
@@ -2299,6 +2305,8 @@
   QUnit.module('lodash.difference');
 
   (function() {
+    var args = arguments;
+
     test('should return the difference of the given arrays', 2, function() {
       var actual = _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
       deepEqual(actual, [1, 3, 4]);
@@ -3714,6 +3722,7 @@
       }
       return -1;
     }
+
     var array = [1, new Foo, 3, new Foo],
         indexOf = _.indexOf;
 
@@ -5687,6 +5696,7 @@
       function callback(num, index) {
         return this[index] + num;
       }
+
       var actual = _.map([1], callback, [2]);
       deepEqual(actual, [3]);
 
@@ -5781,6 +5791,7 @@
       function callback(num, key) {
         return this[key] + num;
       }
+
       var actual = _.mapValues({ 'a': 1 }, callback, { 'a': 2 });
       deepEqual(actual, { 'a': 3 });
 
@@ -6753,6 +6764,7 @@
       function Foo(value) {
         return value && object;
       }
+
       var object = {},
           par = func(Foo);
 
@@ -6807,6 +6819,7 @@
       function fn() {
         return slice.call(arguments);
       }
+
       var a = _.partial(fn),
           b = _.partialRight(a, 3),
           c = _.partial(b, 1);
@@ -6820,6 +6833,7 @@
         push.apply(result, arguments);
         return result;
       }
+
       var expected = [1, 2, 3, 4],
           object = { 'a': 1, 'fn': fn };
 
@@ -6846,6 +6860,7 @@
       function fn() {
         return this.a;
       }
+
       var a = _.bind(fn, { 'a': 1 }),
           b = _.bind(a,  { 'a': 2 }),
           c = _.bind(b,  { 'a': 3 });
@@ -9266,6 +9281,7 @@
         this.b = 2;
         this.c = 3;
       }
+
       var actual = _.transform(new Foo, function(result, value, key) {
         result[key] = value * value;
       });
@@ -9729,6 +9745,8 @@
   QUnit.module('lodash.xor');
 
   (function() {
+    var args = arguments;
+
     test('should return the symmetric difference of the given arrays', 1, function() {
       var actual = _.xor([1, 2, 5], [2, 3, 5], [3, 4, 5]);
       deepEqual(actual, [1, 4, 5]);

@@ -7796,7 +7796,7 @@
           func || baseCreateCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands
-      return type != 'object' ? property(func) : matches(func);
+      return type == 'object' ? matches(func) : property(func);
     }
 
     /**

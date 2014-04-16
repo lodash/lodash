@@ -2681,6 +2681,13 @@
       strictEqual(_.findWhere(objects, { 'a': 1, 'b': 2 }), objects[2]);
     });
 
+    test('should work with a function for `source`', 1, function() {
+      function source() {}
+      source.a = 2;
+
+      strictEqual(_.findWhere(objects, source), objects[3]);
+    });
+
     test('should match all elements when provided an empty `source`', 1, function() {
       var expected = _.map(empties, _.constant(true));
 
@@ -7005,6 +7012,20 @@
       var objects = [{ 'a': 1 }, null, undefined, { 'a': 4 }];
       deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);
     });
+
+    test('should coerce `key` to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
+
+      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+          values = [null, undefined, fn, {}]
+
+      var actual = _.map(objects, function(object, index) {
+        return _.pluck([object], values[index]);
+      });
+
+      deepEqual(actual, [[1], [2], [3], [4]]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -9583,6 +9604,7 @@
 
       var source = new Foo;
       source.b = 2;
+
       deepEqual(_.where(objects, source), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
     });
 
@@ -9599,6 +9621,13 @@
       };
 
       deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
+    });
+
+    test('should work with a function for `source`', 1, function() {
+      function source() {}
+      source.a = 2;
+
+      deepEqual(_.where(objects, source), [{ 'a': 2, 'b': 2 }]);
     });
 
     test('should match all elements when provided an empty `source`', 1, function() {

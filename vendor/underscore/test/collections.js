@@ -208,8 +208,6 @@
   });
 
   test('any', function() {
-    var nativeSome = Array.prototype.some;
-    Array.prototype.some = null;
     ok(!_.any([]), 'the empty set');
     ok(!_.any([false, false, false]), 'all false values');
     ok(_.any([false, false, true]), 'one true value');
@@ -220,7 +218,6 @@
     ok(_.any([1], _.identity) === true, 'cast to boolean - true');
     ok(_.any([0], _.identity) === false, 'cast to boolean - false');
     ok(_.some([false, false, true]), 'aliased as "some"');
-    Array.prototype.some = nativeSome;
   });
 
   test('include', function() {

@@ -3134,7 +3134,7 @@
 
       test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
         if (!isNpm) {
-          var actual = _(array)[methodName](noop);
+          var actual = _(array)[methodName](_.noop);
           ok(actual instanceof _);
         }
         else {
@@ -3168,7 +3168,7 @@
       test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
         if (!isNpm) {
           var wrapper = _(array);
-          strictEqual(wrapper[methodName](noop), wrapper);
+          strictEqual(wrapper[methodName](_.noop), wrapper);
         }
         else {
           skipTest();
@@ -3457,7 +3457,7 @@
         this.a = _.identity;
         this.b = 'b'
       }
-      Foo.prototype.c = noop;
+      Foo.prototype.c = _.noop;
       deepEqual(_.functions(new Foo), ['a', 'c']);
     });
 
@@ -4003,7 +4003,7 @@
       strictEqual(_.isArguments(true), false);
       strictEqual(_.isArguments(new Date), false);
       strictEqual(_.isArguments(_), false);
-      strictEqual(_.isArguments({ '0': 1, 'callee': noop, 'length': 1 }), false);
+      strictEqual(_.isArguments({ '0': 1, 'callee': _.noop, 'length': 1 }), false);
       strictEqual(_.isArguments(0), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);
@@ -4430,7 +4430,7 @@
           'f': ['a', new String('b'), 'c'],
           'g': new Boolean(false),
           'h': new Date(2012, 4, 23),
-          'i': noop,
+          'i': _.noop,
           'j': 'a'
         }
       };
@@ -4444,7 +4444,7 @@
           'f': ['a', 'b', 'c'],
           'g': false,
           'h': new Date(2012, 4, 23),
-          'i': noop,
+          'i': _.noop,
           'j': 'a'
         }
       };
@@ -5712,7 +5712,7 @@
 
     test('should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        ok(_(array).map(noop) instanceof _);
+        ok(_(array).map(_.noop) instanceof _);
       }
       else {
         skipTest();
@@ -5796,7 +5796,7 @@
 
     test('should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        ok(_(object).mapValues(noop) instanceof _);
+        ok(_(object).mapValues(_.noop) instanceof _);
       }
       else {
         skipTest();
@@ -7369,7 +7369,7 @@
 
       _.each(empties, function(value) {
         try {
-          actual.push(func(value, noop));
+          actual.push(func(value, _.noop));
         } catch(e) { }
       });
 
@@ -7381,7 +7381,7 @@
 
       var actual = _.map(empties, function(value) {
         try {
-          return func(value, noop, 'x');
+          return func(value, _.noop, 'x');
         } catch(e) { }
       });
 
@@ -7389,7 +7389,7 @@
     });
 
     test('`_.' + methodName + '` should handle an initial `accumulator` value of `undefined`', 1, function() {
-      var actual = func([], noop, undefined);
+      var actual = func([], _.noop, undefined);
       strictEqual(actual, undefined);
     });
 
@@ -7399,12 +7399,12 @@
 
       if ('__proto__' in array) {
         array.__proto__ = object;
-        strictEqual(_.reduce(array, noop), undefined);
+        strictEqual(_.reduce(array, _.noop), undefined);
       }
       else {
         skipTest();
       }
-      strictEqual(_.reduce(object, noop), undefined);
+      strictEqual(_.reduce(object, _.noop), undefined);
     });
   });
 
@@ -9039,7 +9039,7 @@
       var pass = true;
 
       try {
-        func(noop, 32, 1);
+        func(_.noop, 32, 1);
       } catch(e) {
         pass = false;
       }
@@ -9678,12 +9678,12 @@
     test('should pass the correct `wrapper` arguments', 1, function() {
       var args;
 
-      var wrapped = _.wrap(noop, function() {
+      var wrapped = _.wrap(_.noop, function() {
         args || (args = slice.call(arguments));
       });
 
       wrapped(1, 2, 3);
-      deepEqual(args, [noop, 1, 2, 3]);
+      deepEqual(args, [_.noop, 1, 2, 3]);
     });
 
     test('should not set a `this` binding', 1, function() {

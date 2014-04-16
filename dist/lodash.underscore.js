@@ -2008,7 +2008,7 @@
    * @param {Array|Object|string} collection The collection to search.
    * @param {*} target The value to check for.
    * @param {number} [fromIndex=0] The index to search from.
-   * @returns {boolean} Returns `true` if the target element is found, else `false`.
+   * @returns {boolean} Returns `true` if a matching element is found, else `false`.
    * @example
    *
    * _.contains([1, 2, 3], 1);
@@ -2211,14 +2211,14 @@
    *
    * @static
    * @memberOf _
-   * @alias detect, findWhere
+   * @alias detect
    * @category Collections
    * @param {Array|Object|string} collection The collection to search.
    * @param {Function|Object|string} [predicate=identity] The function called
    *  per iteration. If a property name or object is provided it will be used
    *  to create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
-   * @returns {*} Returns the found element, else `undefined`.
+   * @returns {*} Returns the matched element, else `undefined`.
    * @example
    *
    * var characters = [
@@ -2249,6 +2249,34 @@
     }
     predicate = createCallback(predicate, thisArg, 3);
     return baseFind(collection, predicate, baseEach);
+  }
+
+  /**
+   * Performs a deep comparison between each element in `collection` and the
+   * source object, returning the first element that has equivalent property
+   * values.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object|string} collection The collection to search.
+   * @param {Object} source The object of property values to match.
+   * @returns {*} Returns the matched element, else `undefined`.
+   * @example
+   *
+   * var characters = [
+   *   { 'name': 'barney', 'age': 36, 'employer': 'slate' },
+   *   { 'name': 'fred',   'age': 40, 'employer': 'slate' }
+   * ];
+   *
+   * _.findWhere(characters, { 'employer': 'slate' });
+   * // => { 'name': 'barney', 'age': 36, 'employer': 'slate' }
+   *
+   * _.findWhere(characters, { 'age': 40 });
+   * // =>  { 'name': 'fred', 'age': 40, 'employer': 'slate' }
+   */
+  function findWhere(collection, source) {
+    return find(collection, matches(source));
   }
 
   /**
@@ -2662,7 +2690,6 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {string} key The name of the property to pluck.
@@ -2677,7 +2704,9 @@
    * _.pluck(characters, 'name');
    * // => ['barney', 'fred']
    */
-  var pluck = map;
+  function pluck(collection, key) {
+    return map(collection, property(key));
+  }
 
   /**
    * Reduces a collection to a value which is the accumulated result of running
@@ -3057,25 +3086,29 @@
    *
    * @static
    * @memberOf _
-   * @type Function
    * @category Collections
-   * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Object} source The object of property values to filter by.
+   * @param {Array|Object|string} collection The collection to search.
+   * @param {Object} source The object of property values to match.
    * @returns {Array} Returns the new filtered array.
    * @example
    *
    * var characters = [
-   *   { 'name': 'barney', 'age': 36, 'pets': ['hoppy'] },
-   *   { 'name': 'fred',   'age': 40, 'pets': ['baby puss', 'dino'] }
+   *   { 'name': 'barney', 'age': 36, 'employer': 'slate', 'pets': ['hoppy'] },
+   *   { 'name': 'fred',   'age': 40, 'employer': 'slate', 'pets': ['baby puss', 'dino'] }
    * ];
    *
-   * _.where(characters, { 'age': 36 });
-   * // => [{ 'name': 'barney', 'age': 36, 'pets': ['hoppy'] }]
+   * _.pluck(_.where(characters, { 'age': 36 }), 'name');
+   * // => ['barney']
    *
-   * _.where(characters, { 'pets': ['dino'] });
-   * // => [{ 'name': 'fred', 'age': 40, 'pets': ['baby puss', 'dino'] }]
+   * _.pluck(_.where(characters, { 'pets': ['dino'] }), 'name');
+   * // => ['fred']
+   *
+   * _.pluck(_.where(characters, { 'employer': 'slate' }), 'name');
+   * // => ['barney', 'fred']
    */
-  var where = filter;
+  function where(collection, source) {
+    return filter(collection, matches(source));
+  }
 
   /*--------------------------------------------------------------------------*/
 
@@ -4005,8 +4038,10 @@
     if (!value) {
       return true;
     }
-    if (isArray(value) || isString(value)) {
-      return !value.length;
+    var length = value.length;
+    if (length > -1 && length <= maxSafeInteger &&
+        (isArray(value) || isString(value) || isArguments(value))) {
+      return !length;
     }
     for (var key in value) {
       if (hasOwnProperty.call(value, key)) {
@@ -4752,7 +4787,7 @@
         func || baseCreateCallback(func, thisArg, argCount);
     }
     // handle "_.pluck" and "_.where" style callback shorthands
-    return type != 'object' ? property(func) : matches(func);
+    return type == 'object' ? matches(func) : property(func);
   }
 
   /**
@@ -5221,6 +5256,7 @@
   lodash.escape = escape;
   lodash.every = every;
   lodash.find = find;
+  lodash.findWhere = findWhere;
   lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;
@@ -5259,7 +5295,6 @@
   lodash.all = every;
   lodash.any = some;
   lodash.detect = find;
-  lodash.findWhere = find;
   lodash.foldl = reduce;
   lodash.foldr = reduceRight;
   lodash.include = contains;

@@ -2336,11 +2336,13 @@
       deepEqual(_.difference([object1, object2], largeArray), [object2]);
     });
 
-    test('should ignore individual secondary arguments', 1, function() {
+    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
       var array = [0, 1, null, 3];
       deepEqual(_.difference(array, 3, null, { '0': 1 }), array);
+      deepEqual(_.difference(null, array, null, [2, 1]), [0, null, 3]);
+      deepEqual(_.difference(null, array, null, args), [0, null]);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -3929,7 +3931,7 @@
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
       var array = [0, 1, null, 3];
       deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
-      deepEqual(_.intersection(null, array, null, [1, 2]), [1]);
+      deepEqual(_.intersection(null, array, null, [2, 1]), [1]);
       deepEqual(_.intersection(null, array, null, args), [1, 3]);
     });
   }(1, 2, 3));
@@ -9780,7 +9782,14 @@
       var array = [0];
       deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
     });
-  }());
+
+    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
+      var array = [1, 2];
+      deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
+      deepEqual(_.xor(null, array, null, [2, 3]), [1, 3]);
+      deepEqual(_.xor(null, array, null, args), [3]);
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -10220,9 +10229,10 @@
         return '`_.' + methodName + '` should accept falsey primary arguments';
       }
 
-      deepEqual(_.difference(null, array), [], message('difference'));
+      deepEqual(_.difference(null, array), array, message('difference'));
       deepEqual(_.intersection(null, array), array, message('intersection'));
       deepEqual(_.union(null, array), array, message('union'));
+      deepEqual(_.xor(null, array), array, message('xor'));
     });
 
     test('should accept falsey secondary arguments', 3, function() {

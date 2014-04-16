@@ -6238,14 +6238,10 @@
       if (!value) {
         return result;
       }
-      var className = toString.call(value),
-          length = value.length;
-
-      if (length > -1 && length <= maxSafeInteger && (
-            (className == arrayClass || className == stringClass ||
-              (support.argsClass ? className == argsClass : isArguments(value))) ||
-            (className == objectClass && isFunction(value.splice))
-          )) {
+      var length = value.length;
+      if (length > -1 && length <= maxSafeInteger &&
+          (isArray(value) || isString(value) || isArguments(value) ||
+            (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;
       }
       baseForOwn(value, function() {

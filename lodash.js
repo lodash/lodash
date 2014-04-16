@@ -3994,7 +3994,7 @@
      * // =>  { 'name': 'fred', 'age': 40, 'employer': 'slate' }
      */
     function findWhere(collection, source) {
-      return find(collection, Object(source));
+      return find(collection, matches(source));
     }
 
     /**
@@ -4431,7 +4431,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {string} key The name of the property to pluck.
@@ -4446,7 +4445,9 @@
      * _.pluck(characters, 'name');
      * // => ['barney', 'fred']
      */
-    var pluck = map;
+    function pluck(collection, key) {
+      return map(collection, property(key));
+    }
 
     /**
      * Reduces a collection to a value which is the accumulated result of running
@@ -4858,7 +4859,7 @@
      * // => ['barney', 'fred']
      */
     function where(collection, source) {
-      return filter(collection, Object(source));
+      return filter(collection, matches(source));
     }
 
     /*--------------------------------------------------------------------------*/

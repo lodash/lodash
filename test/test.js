@@ -3878,6 +3878,8 @@
   QUnit.module('lodash.intersection');
 
   (function() {
+    var args = arguments;
+
     test('should return the intersection of the given arrays', 1, function() {
       var actual = _.intersection([1, 3, 2], [5, 2, 1, 4], [2, 1]);
       deepEqual(actual, [1, 2]);
@@ -3915,15 +3917,13 @@
       }
     });
 
-    test('should work with only secondary arguments', 1, function() {
-      deepEqual(_.intersection(null, [1, 3, 2], [2, 1]), [1, 2]);
-    });
-
-    test('should ignore individual secondary arguments', 1, function() {
+    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
       var array = [0, 1, null, 3];
       deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
+      deepEqual(_.intersection(null, array, null, [1, 2]), [1]);
+      deepEqual(_.intersection(null, array, null, args), [1, 3]);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -9407,6 +9407,8 @@
   QUnit.module('lodash.union');
 
   (function() {
+    var args = arguments;
+
     test('should return the union of the given arrays', 1, function() {
       var actual = _.union([1, 3, 2], [5, 2, 1, 4], [2, 1]);
       deepEqual(actual, [1, 3, 2, 5, 4]);
@@ -9417,16 +9419,13 @@
       deepEqual(actual, [1, 3, 2, [5], [4]]);
     });
 
-    test('should work with only secondary arguments', 1, function() {
-      var actual = _.union(null, [1, 3, 2], [5, 4]);
-      deepEqual(actual, [1, 3, 2, 5, 4]);
-    });
-
-    test('should ignore individual secondary arguments', 1, function() {
+    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
       var array = [0];
       deepEqual(_.union(array, 3, null, { '0': 1 }), array);
+      deepEqual(_.union(null, array, null, [2, 1]), [0, 2, 1]);
+      deepEqual(_.union(null, array, null, args), [0, 1, 2, 3]);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 

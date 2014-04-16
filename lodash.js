@@ -2388,7 +2388,16 @@
      * // => [1, 3]
      */
     function difference() {
-      return baseDifference(arguments[0], baseFlatten(arguments, true, true, 1));
+      var index = -1,
+          length = arguments.length;
+
+      while (++index < length) {
+        var value = arguments[index];
+        if (isArray(value) || isArguments(value)) {
+          break;
+        }
+      }
+      return baseDifference(arguments[index], baseFlatten(arguments, true, true, ++index));
     }
 
     /**

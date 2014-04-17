@@ -341,15 +341,6 @@
     var _contains = String.prototype.contains;
     setProperty(String.prototype, 'contains',  _contains ? function() {} : Boolean);
 
-    var _trim = String.prototype.trim;
-    setProperty(String.prototype, 'trim', _trim ? function() {} : String);
-
-    var _trimLeft = String.prototype.trimLeft;
-    setProperty(String.prototype, 'trimLeft', _trimLeft ? function() {} : String);
-
-    var _trimRight = String.prototype.trimRight;
-    setProperty(String.prototype, 'trimRight',  _trimRight ? function() {} : String);
-
     // clear cache so Lo-Dash can be reloaded
     emptyObject(require.cache);
 
@@ -365,20 +356,11 @@
     setProperty(Object, 'keys', _keys);
     setProperty(Function.prototype, 'toString', _fnToString);
 
-    _.forOwn({
-      'contains': _contains,
-      'trim': _trim,
-      'trimLeft': _trimLeft,
-      'trimRight': _trimRight
-    },
-    function(func, key) {
-      if (func) {
-        setProperty(String.prototype, key, func);
-      } else {
-        delete String.prototype[key];
-      }
-    });
-
+    if (_contains) {
+      setProperty(String.prototype, 'contains', _contains);
+    } else {
+      delete String.prototype.contains;
+    }
     delete global.window;
     delete global.WinRTError;
     delete Function.prototype._method;

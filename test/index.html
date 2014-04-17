@@ -74,15 +74,6 @@
 				setProperty(String.prototype, '_contains', String.prototype.contains);
 				setProperty(String.prototype, 'contains', String.prototype._contains ? function() {} : Boolean);
 
-				setProperty(String.prototype, '_trim', String.prototype.trim);
-				setProperty(String.prototype, 'trim', String.prototype._trim ? function() {} : String);
-
-				setProperty(String.prototype, '_trimLeft', String.prototype.trimLeft);
-				setProperty(String.prototype, 'trimLeft', String.prototype._trimLeft ? function() {} : String);
-
-				setProperty(String.prototype, '_trimRight', String.prototype.trimRight);
-				setProperty(String.prototype, 'trimRight', String.prototype._trimRight ? function() {} : String);
-
 				setProperty(window, 'WinRTError', Error);
 
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
@@ -120,19 +111,10 @@
 				} else {
 					delete Object.keys;
 				}
-				for (var key in {
-					'contains': true,
-					'trim': true,
-					'trimLeft': true,
-					'trimRight': true
-				}) {
-					var func = String.prototype['_' + key];
-					if (func) {
-						setProperty(String.prototype, key, func);
-					} else {
-						delete String.prototype[key];
-					}
-					delete String.prototype['_' + key];
+				if (String.prototype._contains) {
+					setProperty(String.prototype, 'contains', String.prototype._contains);
+				} else {
+					delete String.prototype.contains;
 				}
 				setProperty(window, 'WinRTError', undefined);
 				setProperty(Function.prototype, 'toString', Function.prototype._toString);
@@ -148,6 +130,7 @@
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
+				delete String.prototype._contains;
 			}
 
 			// load Lo-Dash and expose it to the bad extensions/shims

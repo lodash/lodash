@@ -93,7 +93,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 
 ## Support
 
-Tested in Chrome 19,32-33, Firefox 3,20,27-28, IE 6-11, Opera 10,12,19-20, Safari 5-7, Node.js 0.6.21~0.10.26, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.<br>
+Tested in Chrome 19,33-34, Firefox 3,20,27-28, IE 6-11, Opera 10,12,19-20, Safari 5-7, Node.js 0.6.21~0.10.26, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.<br>
 Automated browser test results [are available](https://saucelabs.com/u/lodash) as well as [Travis CI](https://travis-ci.org/) builds for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash).
 
 Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.<br>

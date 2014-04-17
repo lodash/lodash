@@ -492,7 +492,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 12, function() {
+    test('should avoid overwritten native methods', 9, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -564,20 +564,6 @@
           actual = null;
         }
         strictEqual(actual, true, message('String#contains'));
-
-        _.each(['trim', 'trimLeft', 'trimRight'], function(methodName) {
-          try {
-            var actual = [
-              lodashBizarro[methodName](whitespace + 'a b c' + whitespace),
-              lodashBizarro[methodName](''),
-              lodashBizarro[methodName]('-_-a-b-c-_-', '_-'),
-              lodashBizarro[methodName]('', '_-')
-            ];
-          } catch(e) {
-            actual = null;
-          }
-          ok(_.every(actual, _.isString), message('String#' + methodName));
-        });
       }
       else {
         skipTest(12);

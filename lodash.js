@@ -86,7 +86,7 @@
   /** Used to detect and test whitespace */
   var whitespace = (
     // whitespace
-    ' \t\x0B\f\xA0\ufeff' +
+    ' \t\x0B\f\x85\xA0\ufeff' +
 
     // line terminators
     '\n\r\u2028\u2029' +
@@ -476,7 +476,7 @@
 
     while (++index < length) {
       var c = string.charCodeAt(index);
-      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
+      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 133 || c == 160) || c == 5760 || c == 6158 ||
           (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
         break;
       }
@@ -495,7 +495,7 @@
     var index = string.length;
     while (index--) {
       var c = string.charCodeAt(index);
-      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
+      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 133 || c == 160) || c == 5760 || c == 6158 ||
           (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
         break;
       }

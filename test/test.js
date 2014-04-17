@@ -10224,7 +10224,7 @@
       }
     });
 
-    test('should accept falsey primary arguments', 3, function() {
+    test('should accept falsey primary arguments', 4, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should accept falsey primary arguments';
       }

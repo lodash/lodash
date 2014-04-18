@@ -25,6 +25,9 @@
   /** Used as the property name for wrapper metadata */
   var expando = '__lodash@' + version + '__';
 
+  /** Used as the TypeError message for "Functions" methods */
+  var funcErrorText = 'Expected a function';
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -2074,7 +2077,7 @@
           isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
       if (!isBindKey && !isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       if (isPartial && !partialArgs.length) {
         bitmask &= ~PARTIAL_FLAG;
@@ -4833,7 +4836,7 @@
      */
     function after(n, func) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
@@ -4997,7 +5000,7 @@
 
       while (length--) {
         if (!isFunction(funcs[length])) {
-          throw new TypeError;
+          throw new TypeError(funcErrorText);
         }
       }
       return function() {
@@ -5100,7 +5103,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       wait = wait < 0 ? 0 : wait;
       if (options === true) {
@@ -5205,7 +5208,7 @@
      */
     function defer(func) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -5229,7 +5232,7 @@
      */
     function delay(func, wait) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -5274,7 +5277,7 @@
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var memoized = function() {
         var cache = memoized.cache,
@@ -5309,7 +5312,7 @@
      */
     function negate(predicate) {
       if (!isFunction(predicate)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       return function() {
         return !predicate.apply(this, arguments);
@@ -5338,7 +5341,7 @@
           result;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       return function() {
         if (ran) {
@@ -5460,7 +5463,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       if (options === false) {
         leading = false;

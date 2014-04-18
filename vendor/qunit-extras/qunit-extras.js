@@ -173,6 +173,9 @@
     /** Detects if running in a PhantomJS web page */
     var isPhantomPage = typeof context.callPhantom == 'function';
 
+    /** Detects if QUnit Extras should log to the console */
+    var isSilent = document && !isPhantomPage;
+
     /** Used to indicate if running in Windows */
     var isWindows = /win/i.test(os);
 
@@ -344,12 +347,12 @@
     QUnit.config.extrasData = {
 
       /**
-       * An array of assertion logs.
+       * An array of details for each log entry.
        *
        * @memberOf QUnit.config.extrasData
        * @type Array
        */
-      'logs': []
+      'logEntries': []
     };
 
     // add a callback to be triggered when all testing has completed
@@ -375,18 +378,21 @@
               config = QUnit.config,
               index = -1,
               length = asserts.length,
-              logs = config.extrasData.logs,
+              entries = config.extrasData.logEntries,
               queue = config.queue;
 
           while (++index < length) {
             var assert = asserts[index];
             if (!assert.result && this.retries < config.asyncRetries) {
+              if (!isSilent) {
+                entries.length -= asserts.length;
+              }
               this.retries++;
-              logs.length = Math.max(0, logs.length - asserts.length);
               asserts.length = 0;
 
               var oldLength = queue.length;
               this.queue();
+
               unshift.apply(queue, queue.splice(oldLength, queue.length - oldLength));
               return;
             }
@@ -436,7 +442,7 @@
     /*------------------------------------------------------------------------*/
 
     // add logging extras
-    if (isPhantomPage || !document) {
+    if (!isSilent) {
       // add a callback to be triggered when all testing has completed
       QUnit.done(function() {
         var ran;
@@ -478,20 +484,7 @@
 
       // add a callback to be triggered after every assertion
       QUnit.log(function(details) {
-        var expected = details.expected,
-            result = details.result,
-            type = typeof expected != 'undefined' ? 'EQ' : 'OK';
-
-        var message = [
-          result ? color('green', 'PASS') : color('red', 'FAIL'),
-          color('blue', type),
-          color('blue', details.message || 'ok')
-        ];
-
-        if (!result && type == 'EQ') {
-          message.push(color('blue', 'Expected: ' + expected + ', Actual: ' + details.actual));
-        }
-        QUnit.config.extrasData.logs.push(message.join(' | '));
+        QUnit.config.extrasData.logEntries.push(details);
       });
 
       // add a callback to be triggered at the start of every test module
@@ -514,32 +507,49 @@
         var config = QUnit.config,
             failures = details.failed,
             hidepassed = config.hidepassed,
-            logs = config.extrasData.logs,
+            entries = config.extrasData.logEntries.slice(),
             testName = details.name;
 
-        if (!hidepassed || failures) {
-          logInline('');
-          if (!modulePrinted) {
-            modulePrinted = true;
-            console.log(hr);
-            console.log(color('blue', moduleName));
-            console.log(hr);
-          }
-          console.log(' ' + (failures ? color('red', 'FAIL') : color('green', 'PASS')) + ' - ' + color('blue', testName));
+        config.extrasData.logEntries.length = 0;
 
-          if (failures) {
-            var index = -1,
-                length = logs.length;
-
-            while(++index < length) {
-              var message = logs[index];
-              if (!hidepassed || /^\W*FAIL/.test(message)) {
-                console.log('    ' + message);
-              }
-            }
-          }
+        if (hidepassed && !failures) {
+          return;
         }
-        logs.length = 0;
+        logInline('');
+        if (!modulePrinted) {
+          modulePrinted = true;
+          console.log(hr);
+          console.log(color('blue', moduleName));
+          console.log(hr);
+        }
+        console.log(' ' + (failures ? color('red', 'FAIL') : color('green', 'PASS')) + ' - ' + color('blue', testName));
+
+        if (!failures) {
+          return;
+        }
+        var index = -1,
+            length = entries.length;
+
+        while(++index < length) {
+          var entry = entries[index];
+          if (hidepassed && entry.result) {
+            continue;
+          }
+          var expected = entry.expected,
+              result = entry.result,
+              type = typeof expected != 'undefined' ? 'EQ' : 'OK';
+
+          var message = [
+            result ? color('green', 'PASS') : color('red', 'FAIL'),
+            color('blue', type),
+            color('blue', entry.message || 'ok')
+          ];
+
+          if (!result && type == 'EQ') {
+            message.push(color('blue', 'Expected: ' + expected + ', Actual: ' + entry.actual));
+          }
+          console.log('    ' + message.join(' | '));
+        }
       });
 
       /**
@@ -553,14 +563,13 @@
       QUnit.jsDump.parsers.object = (function() {
         var func = QUnit.jsDump.parsers.object;
         return function(object) {
-          // fork to support Rhino's error objects
-          if (typeof object.rhinoException == 'object') {
-            return object.name +
-              ' { message: "' + object.message +
-              '", fileName: "' + object.fileName +
-              '", lineNumber: ' + object.lineNumber + ' }';
+          if (typeof object.rhinoException != 'object') {
+            return func(object);
           }
-          return func(object);
+          return object.name +
+            ' { message: "' + object.message +
+            '", fileName: "' + object.fileName +
+            '", lineNumber: ' + object.lineNumber + ' }';
         };
       }());
     }

@@ -29,6 +29,9 @@
   /** Used by methods to exit iteration */
   var breakIndicator = expando + 'breaker__';
 
+  /** Used as the TypeError message for "Functions" methods */
+  var funcErrorText = 'Expected a function';
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -1093,7 +1096,7 @@
         isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     if (isPartial && !partialArgs.length) {
       bitmask &= ~PARTIAL_FLAG;
@@ -1226,7 +1229,16 @@
    * // => [1, 3]
    */
   function difference() {
-    return baseDifference(arguments[0], baseFlatten(arguments, true, true, 1));
+    var index = -1,
+        length = arguments.length;
+
+    while (++index < length) {
+      var value = arguments[index];
+      if (isArray(value) || isArguments(value)) {
+        break;
+      }
+    }
+    return baseDifference(arguments[index], baseFlatten(arguments, true, true, ++index));
   }
 
   /**
@@ -3138,7 +3150,7 @@
    */
   function after(n, func) {
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     n = nativeIsFinite(n = +n) ? n : 0;
     return function() {
@@ -3254,7 +3266,7 @@
 
     while (length--) {
       if (!isFunction(funcs[length])) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
     }
     return function() {
@@ -3320,7 +3332,7 @@
         trailing = true;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     wait = wait < 0 ? 0 : wait;
     if (options === true) {
@@ -3425,7 +3437,7 @@
    */
   function defer(func) {
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -3449,7 +3461,7 @@
    */
   function delay(func, wait) {
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     var args = slice(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -3494,7 +3506,7 @@
    */
   function memoize(func, resolver) {
     if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     var cache = {};
     return function() {
@@ -3526,7 +3538,7 @@
    */
   function negate(predicate) {
     if (!isFunction(predicate)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     return function() {
       return !predicate.apply(this, arguments);
@@ -3555,7 +3567,7 @@
         result;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     return function() {
       if (ran) {
@@ -3631,7 +3643,7 @@
         trailing = true;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     if (options === false) {
       leading = false;

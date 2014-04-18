@@ -26,6 +26,9 @@
   /** Used as the property name for wrapper metadata */
   var expando = '__lodash@' + version + '__';
 
+  /** Used as the TypeError message for "Functions" methods */
+  var funcErrorText = 'Expected a function';
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -445,69 +448,6 @@
   }
 
   /**
-   * A fallback implementation of `String#trim` to remove leading and trailing
-   * whitespace or specified characters from `string`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @param {string} [chars=whitespace] The characters to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function shimTrim(string, chars) {
-    string = string == null ? '' : String(string);
-    if (!string) {
-      return string;
-    }
-    if (chars == null) {
-      return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
-    }
-    chars = String(chars);
-    return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
-  }
-
-  /**
-   * A fallback implementation of `String#trimLeft` to remove leading whitespace
-   * or specified characters from `string`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @param {string} [chars=whitespace] The characters to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function shimTrimLeft(string, chars) {
-    string = string == null ? '' : String(string);
-    if (!string) {
-      return string;
-    }
-    if (chars == null) {
-      return string.slice(trimmedLeftIndex(string))
-    }
-    chars = String(chars);
-    return string.slice(charsLeftIndex(string, chars));
-  }
-
-  /**
-   * A fallback implementation of `String#trimRight` to remove trailing whitespace
-   * or specified characters from `string`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @param {string} [chars=whitespace] The characters to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function shimTrimRight(string, chars) {
-    string = string == null ? '' : String(string);
-    if (!string) {
-      return string;
-    }
-    if (chars == null) {
-      return string.slice(0, trimmedRightIndex(string) + 1)
-    }
-    chars = String(chars);
-    return string.slice(0, charsRightIndex(string, chars) + 1);
-  }
-
-  /**
    * Gets the index of the first non-whitespace character of `string`.
    *
    * @private
@@ -651,10 +591,7 @@
         nativeMin = Math.min,
         nativeNow = isNative(nativeNow = Date.now) && nativeNow,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random,
-        nativeTrim = isNative(nativeTrim = stringProto.trim) && !nativeTrim.call(whitespace) && nativeTrim,
-        nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && !nativeTrimLeft.call(whitespace) && nativeTrimLeft,
-        nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && !nativeTrimRight.call(whitespace) && nativeTrimRight;
+        nativeRandom = Math.random;
 
     /** Used to lookup built-in constructors by `[[Class]]` */
     var ctorByClass = {};
@@ -1972,7 +1909,7 @@
           isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
       if (!isBindKey && !isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       if (isPartial && !partialArgs.length) {
         bitmask &= ~PARTIAL_FLAG;
@@ -2187,7 +2124,16 @@
      * // => [1, 3]
      */
     function difference() {
-      return baseDifference(arguments[0], baseFlatten(arguments, true, true, 1));
+      var index = -1,
+          length = arguments.length;
+
+      while (++index < length) {
+        var value = arguments[index];
+        if (isArray(value) || isArguments(value)) {
+          break;
+        }
+      }
+      return baseDifference(arguments[index], baseFlatten(arguments, true, true, ++index));
     }
 
     /**
@@ -4690,7 +4636,7 @@
      */
     function after(n, func) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
@@ -4854,7 +4800,7 @@
 
       while (length--) {
         if (!isFunction(funcs[length])) {
-          throw new TypeError;
+          throw new TypeError(funcErrorText);
         }
       }
       return function() {
@@ -4957,7 +4903,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       wait = wait < 0 ? 0 : wait;
       if (options === true) {
@@ -5062,7 +5008,7 @@
      */
     function defer(func) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -5086,7 +5032,7 @@
      */
     function delay(func, wait) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -5131,7 +5077,7 @@
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var memoized = function() {
         var cache = memoized.cache,
@@ -5166,7 +5112,7 @@
      */
     function negate(predicate) {
       if (!isFunction(predicate)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       return function() {
         return !predicate.apply(this, arguments);
@@ -5195,7 +5141,7 @@
           result;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       return function() {
         if (ran) {
@@ -5317,7 +5263,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       if (options === false) {
         leading = false;
@@ -7334,12 +7280,17 @@
      * _.trim('-_-fred-_-', '_-');
      * // => 'fred'
      */
-    var trim = !nativeTrim ? shimTrim : function(string, chars) {
-      if (string == null) {
-        return '';
+    function trim(string, chars) {
+      string = string == null ? '' : String(string);
+      if (!string) {
+        return string;
       }
-      return chars == null ? nativeTrim.call(string) : shimTrim(string, chars);
-    };
+      if (chars == null) {
+        return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
+      }
+      chars = String(chars);
+      return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
+    }
 
     /**
      * Removes leading whitespace or specified characters from `string`.
@@ -7358,12 +7309,17 @@
      * _.trimLeft('-_-fred-_-', '_-');
      * // => 'fred-_-'
      */
-    var trimLeft = !nativeTrimLeft ? shimTrimLeft : function(string, chars) {
-      if (string == null) {
-        return '';
+    function trimLeft(string, chars) {
+      string = string == null ? '' : String(string);
+      if (!string) {
+        return string;
       }
-      return chars == null ? nativeTrimLeft.call(string) : shimTrimLeft(string, chars);
-    };
+      if (chars == null) {
+        return string.slice(trimmedLeftIndex(string))
+      }
+      chars = String(chars);
+      return string.slice(charsLeftIndex(string, chars));
+    }
 
     /**
      * Removes trailing whitespace or specified characters from `string`.
@@ -7382,12 +7338,17 @@
      * _.trimRight('-_-fred-_-', '_-');
      * // => '-_-fred'
      */
-    var trimRight = !nativeTrimRight ? shimTrimRight : function(string, chars) {
-      if (string == null) {
-        return '';
+    function trimRight(string, chars) {
+      string = string == null ? '' : String(string);
+      if (!string) {
+        return string;
       }
-      return chars == null ? nativeTrimRight.call(string) : shimTrimRight(string, chars);
-    };
+      if (chars == null) {
+        return string.slice(0, trimmedRightIndex(string) + 1)
+      }
+      chars = String(chars);
+      return string.slice(0, charsRightIndex(string, chars) + 1);
+    }
 
     /**
      * Truncates `string` if it is longer than the given maximum string length.

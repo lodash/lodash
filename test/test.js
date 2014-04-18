@@ -203,7 +203,7 @@
   var shadowedObject = _.invert(shadowedProps);
 
   /** Used to check for problems removing whitespace */
-  var whitespace = ' \t\x0B\f\x85\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+  var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
   /**
    * Removes all own enumerable properties from a given object.
@@ -548,7 +548,7 @@
         strictEqual(actual, true, message('String#contains'));
       }
       else {
-        skipTest(12);
+        skipTest(9);
       }
     });
   }());
@@ -9328,7 +9328,7 @@
     });
 
     test('`_.' + methodName + '` should not remove non-whitespace characters', 1, function() {
-      var problemChars = '\u200b\ufffe',
+      var problemChars = '\x85\u200b\ufffe',
           string = problemChars + 'a b c' + problemChars;
 
       strictEqual(func(string), string);

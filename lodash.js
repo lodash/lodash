@@ -6106,19 +6106,19 @@
     }
 
     /**
-     * Checks if `value` is a date.
+     * Checks if `value` is a `Date` object.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a date, else `false`.
+     * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
      * @example
      *
      * _.isDate(new Date);
      * // => true
      *
-     * _.isDate('Wed May 23 2012');
+     * _.isDate('Mon April 23 2012');
      * // => false
      */
     function isDate(value) {
@@ -6255,6 +6255,27 @@
         }
       }
       return baseIsEqual(value, other, callback);
+    }
+
+    /**
+     * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
+     * `SyntaxError`, `TypeError`, or `URIError` object.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
+     * @example
+     *
+     * _.isError(new Error);
+     * // => true
+     *
+     * _.isError(Error);
+     * // => false
+     */
+    function isError(value) {
+      return value && typeof value == 'object' && toString.call(value) == errorClass || false;
     }
 
     /**
@@ -6398,7 +6419,7 @@
     }
 
     /**
-     * Checks if `value` is a number.
+     * Checks if `value` is a `Number` primitive or object.
      *
      * Note: `NaN` is considered a number. See the [ES5 spec](http://es5.github.io/#x8.5)
      * for more details.
@@ -6469,13 +6490,13 @@
     };
 
     /**
-     * Checks if `value` is a regular expression.
+     * Checks if `value` is a `RegExp` object.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a regular expression, else `false`.
+     * @returns {boolean} Returns `true` if `value` is a regexp object, else `false`.
      * @example
      *
      * _.isRegExp(/abc/);
@@ -6491,7 +6512,7 @@
     }
 
     /**
-     * Checks if `value` is a string.
+     * Checks if `value` is a `String` primitive or object.
      *
      * @static
      * @memberOf _
@@ -6529,28 +6550,6 @@
      */
     function isUndefined(value) {
       return typeof value == 'undefined';
-    }
-
-    /**
-     * Checks if `value` is an instance of a native `Error` class.
-     *
-     * @static
-     * @memberOf _
-     * @category Objects
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an instance of a native `Error`, else `false`.
-     * @example
-     *
-     * _.isError(new Error);
-     * // => true
-     *
-     * _.isError('string');
-     * // => false
-     */
-    function isError(value) {
-      var type = typeof value;
-      return value && type == 'object' && toString.call(value) == errorClass ||
-        false;
     }
 
     /**
@@ -8388,6 +8387,7 @@
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;
+    lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isNaN = isNaN;
@@ -8398,7 +8398,6 @@
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;
-    lodash.isError = isError;
     lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
     lodash.mixin = mixin;

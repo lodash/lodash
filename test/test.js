@@ -278,6 +278,7 @@
         "'_regexp': /x/,",
         "'_string': new String('a'),",
         "'_undefined': undefined,",
+        "'_error': new Error(),",
         '})'
       ].join('\n')));
     }
@@ -5255,13 +5256,60 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isError');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for `Error` instances', 7, function() {
+      strictEqual(_.isError(new Error()), true);
+      strictEqual(_.isError(new EvalError()), true);
+      strictEqual(_.isError(new RangeError()), true);
+      strictEqual(_.isError(new ReferenceError()), true);
+      strictEqual(_.isError(new SyntaxError()), true);
+      strictEqual(_.isError(new TypeError()), true);
+      strictEqual(_.isError(new URIError()), true);
+    });
+
+    test('should return `false` for non `Error` instances', 10, function() {
+      var expected = _.map(falsey, function(value) { return false; });
+
+      var actual = _.map(falsey, function(value, index) {
+        return _.isError(value);
+      });
+
+      strictEqual(_.isError(args), false);
+      strictEqual(_.isError([1, 2, 3]), false);
+      strictEqual(_.isError(true), false);
+      strictEqual(_.isError(new Date), false);
+      strictEqual(_.isError(_), false);
+      strictEqual(_.isError({ 'a': 1 }), false);
+      strictEqual(_.isError(0), false);
+      strictEqual(_.isError(/x/), false);
+      strictEqual(_.isError('a'), false);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with an `Error` from another realm', 1, function() {
+      if (_._error) {
+        strictEqual(_.isError(_._error), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('isType checks');
 
   (function() {
-    test('should return `false` for subclassed values', 7, function() {
+    test('should return `false` for subclassed values', 8, function() {
       var funcs = [
         'isArray', 'isBoolean', 'isDate', 'isFunction',
-        'isNumber', 'isRegExp', 'isString'
+        'isNumber', 'isRegExp', 'isString', 'isError'
       ];
 
       _.each(funcs, function(methodName) {
@@ -10283,7 +10331,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 184, function() {
+    test('should accept falsey arguments', 185, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

@@ -6051,14 +6051,14 @@
      * // => false
      */
     function isArguments(value) {
-      return value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == argsClass || false;
+      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        toString.call(value) == argsClass) || false;
     }
     // fallback for environments without a `[[Class]]` for `arguments` objects
     if (!support.argsClass) {
       isArguments = function(value) {
-        return value && typeof value == 'object' && typeof value.length == 'number' &&
-          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee') || false;
+        return (value && typeof value == 'object' && typeof value.length == 'number' &&
+          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee')) || false;
       };
     }
 
@@ -6079,8 +6079,8 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == arrayClass || false;
+      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        toString.call(value) == arrayClass) || false;
     };
 
     /**
@@ -6100,8 +6100,8 @@
      * // => false
      */
     function isBoolean(value) {
-      return value === true || value === false ||
-        value && typeof value == 'object' && toString.call(value) == boolClass || false;
+      return (value === true || value === false ||
+        value && typeof value == 'object' && toString.call(value) == boolClass) || false;
     }
 
     /**
@@ -6121,7 +6121,7 @@
      * // => false
      */
     function isDate(value) {
-      return value && typeof value == 'object' && toString.call(value) == dateClass || false;
+      return (value && typeof value == 'object' && toString.call(value) == dateClass) || false;
     }
 
     /**
@@ -6141,14 +6141,14 @@
      * // => false
      */
     function isElement(value) {
-      return value && typeof value == 'object' && value.nodeType === 1 &&
-        (support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isNode(value)) || false;
+      return (value && typeof value == 'object' && value.nodeType === 1 &&
+        (support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isNode(value))) || false;
     }
     // fallback for environments without DOM support
     if (!support.dom) {
       isElement = function(value) {
-        return value && typeof value == 'object' && value.nodeType === 1 &&
-          !isPlainObject(value) || false;
+        return (value && typeof value == 'object' && value.nodeType === 1 &&
+          !isPlainObject(value)) || false;
       };
     }
 
@@ -6185,7 +6185,7 @@
         return result;
       }
       var length = value.length;
-      if (length > -1 && length <= maxSafeInteger &&
+      if ((length > -1 && length <= maxSafeInteger) &&
           (isArray(value) || isString(value) || isArguments(value) ||
             (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;
@@ -6274,7 +6274,7 @@
      * // => false
      */
     function isError(value) {
-      return value && typeof value == 'object' && toString.call(value) == errorClass || false;
+      return (value && typeof value == 'object' && toString.call(value) == errorClass) || false;
     }
 
     /**
@@ -6362,7 +6362,7 @@
       // and avoid a V8 bug
       // https://code.google.com/p/v8/issues/detail?id=2291
       var type = typeof value;
-      return value && (type == 'function' || type == 'object') || false;
+      return (value && (type == 'function' || type == 'object')) || false;
     }
 
     /**
@@ -6442,7 +6442,7 @@
     function isNumber(value) {
       var type = typeof value;
       return type == 'number' ||
-        value && type == 'object' && toString.call(value) == numberClass || false;
+        (value && type == 'object' && toString.call(value) == numberClass) || false;
     }
 
     /**
@@ -6506,8 +6506,8 @@
      */
     function isRegExp(value) {
       var type = typeof value;
-      return value && (type == 'function' || type == 'object') &&
-        toString.call(value) == regexpClass || false;
+      return (value && (type == 'function' || type == 'object') &&
+        toString.call(value) == regexpClass) || false;
     }
 
     /**
@@ -6528,7 +6528,7 @@
      */
     function isString(value) {
       return typeof value == 'string' ||
-        value && typeof value == 'object' && toString.call(value) == stringClass || false;
+        (value && typeof value == 'object' && toString.call(value) == stringClass) || false;
     }
 
     /**
@@ -6575,7 +6575,7 @@
       var ctor = object && object.constructor,
           length = object ? object.length : 0;
 
-      if (typeof length == 'number' && length > 0 ||
+      if ((typeof length == 'number' && length > 0) ||
           (ctor && object === ctor.prototype)) {
         return shimKeys(object);
       }

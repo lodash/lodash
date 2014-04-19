@@ -3914,7 +3914,6 @@
       return baseFind(collection, predicate, baseEachRight);
     }
 
-
     /**
      * Performs a deep comparison between each element in `collection` and the
      * source object, returning the first element that has equivalent property

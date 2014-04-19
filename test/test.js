@@ -5493,23 +5493,16 @@
       delete String.prototype.a;
     });
 
-    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 2, function() {
-      function Foo() {}
-      Foo.prototype.a = 1;
-
-      var actual = func(Foo.prototype);
-      deepEqual(actual, ['a']);
-
-      actual = func(shadowedObject);
+    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+      var actual = func(shadowedObject);
       deepEqual(actual.sort(), shadowedProps);
     });
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
-      Foo.prototype.c = 3;
-
       Foo.a = 1;
       Foo.b = 2;
+      Foo.prototype.c = 3;
 
       var expected = ['a', 'b'],
           actual = func(Foo);
@@ -5518,8 +5511,18 @@
 
       Foo.prototype = { 'c': 3 };
       actual = func(Foo);
-
       deepEqual(actual.sort(), expected);
+    });
+
+    test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 2, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      var expected = ['a'];
+      deepEqual(func(Foo.prototype), ['a']);
+
+      Foo.prototype = { 'constructor': Foo, 'a': 1 };
+      deepEqual(func(Foo.prototype), ['a']);
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties', 1, function() {

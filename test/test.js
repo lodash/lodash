@@ -2440,6 +2440,7 @@
     test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
       function Foo() {}
       Foo.prototype = { 'a': 1 };
+
       deepEqual(func({}, new Foo), {});
     });
 
@@ -3289,10 +3290,9 @@
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
-      Foo.prototype.c = 3;
-
       Foo.a = 1;
       Foo.b = 2;
+      Foo.prototype.c = 3;
 
       var expected = { 'a': 1, 'b': 2 };
       deepEqual(func({}, Foo), expected);
@@ -4266,6 +4266,7 @@
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;
+
       strictEqual(_.isEmpty(Foo), true);
 
       Foo.prototype = { 'a': 1 };

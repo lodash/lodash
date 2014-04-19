@@ -6532,6 +6532,28 @@
     }
 
     /**
+     * Checks if `value` is an instance of a native `Error` class.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an instance of a native `Error`, else `false`.
+     * @example
+     *
+     * _.isError(new Error);
+     * // => true
+     *
+     * _.isError('string');
+     * // => false
+     */
+    function isError(value) {
+      var type = typeof value;
+      return value && type == 'object' && toString.call(value) == errorClass ||
+        false;
+    }
+
+    /**
      * Creates an array of the own enumerable property names of `object`.
      *
      * @static
@@ -8376,6 +8398,7 @@
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;
+    lodash.isError = isError;
     lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
     lodash.mixin = mixin;

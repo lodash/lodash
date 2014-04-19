@@ -40,7 +40,8 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.forEach](http://lodash.com/docs#forEach) supports exiting early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating own & inherited properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties
- * [_.isPlainObject](http://lodash.com/docs#isPlainObject) for checking if values are created by `Object`
+ * [_.isError](http://lodash.com/docs#isError) to check for error objects
+ * [_.isPlainObject](http://lodash.com/docs#isPlainObject) to check for objects created by `Object`
  * [_.keysIn](http://lodash.com/docs#keysIn) & [_.valuesIn](http://lodash.com/docs#valuesIn) for keys and values of own & inherited properties
  * [_.mapValues](http://lodash.com/docs#mapValues) for [mapping](http://lodash.com/docs#map) values to an object
  * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions

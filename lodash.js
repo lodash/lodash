@@ -2180,8 +2180,8 @@
      * @returns {Function} Returns the "indexOf" function.
      */
     function getIndexOf() {
-      var result = (result = lodash.indexOf) === indexOf ? baseIndexOf : result;
-      return result;
+      var result = lodash.indexOf || indexOf;
+      return result === indexOf ? baseIndexOf : result;
     }
 
     /**

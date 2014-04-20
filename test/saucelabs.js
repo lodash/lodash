@@ -67,7 +67,7 @@
       maxDuration = getOption('maxDuration', 360),
       port = ports[Math.min(_.sortedIndex(ports, getOption('port', 9001)), ports.length - 1)],
       publicAccess = getOption('public', true),
-      recordVideo = getOption('recordVideo', false),
+      recordVideo = getOption('recordVideo', true),
       recordScreenshots = getOption('recordScreenshots', false),
       runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
       runnerUrl = getOption('runnerUrl', 'http://localhost:' + port + '/' + runner),
@@ -86,10 +86,10 @@
 
   /** List of platforms to load the runner on */
   var platforms = [
+    ['Windows 8.1', 'googlechrome', '34'],
     ['Windows 8.1', 'googlechrome', '33'],
-    ['Windows 8.1', 'googlechrome', '32'],
+    ['Windows 8.1', 'firefox', '28'],
     ['Windows 8.1', 'firefox', '27'],
-    ['Windows 8.1', 'firefox', '26'],
     ['Windows 8.1', 'firefox', '20'],
     ['Windows 8.1', 'firefox', '3.0'],
     ['Windows 8.1', 'internet explorer', '11'],

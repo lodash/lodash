@@ -29,6 +29,9 @@
   /** Used by methods to exit iteration */
   var breakIndicator = expando + 'breaker__';
 
+  /** Used as the TypeError message for "Functions" methods */
+  var funcErrorText = 'Expected a function';
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -1093,7 +1096,7 @@
         isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     if (isPartial && !partialArgs.length) {
       bitmask &= ~PARTIAL_FLAG;
@@ -1141,8 +1144,8 @@
    * @returns {Function} Returns the "indexOf" function.
    */
   function getIndexOf() {
-    var result = (result = lodash.indexOf) === indexOf ? baseIndexOf : result;
-    return result;
+    var result = lodash.indexOf || indexOf;
+    return result === indexOf ? baseIndexOf : result;
   }
 
   /**
@@ -1226,7 +1229,16 @@
    * // => [1, 3]
    */
   function difference() {
-    return baseDifference(arguments[0], baseFlatten(arguments, true, true, 1));
+    var index = -1,
+        length = arguments.length;
+
+    while (++index < length) {
+      var value = arguments[index];
+      if (isArray(value) || isArguments(value)) {
+        break;
+      }
+    }
+    return baseDifference(arguments[index], baseFlatten(arguments, true, true, ++index));
   }
 
   /**
@@ -3138,7 +3150,7 @@
    */
   function after(n, func) {
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     n = nativeIsFinite(n = +n) ? n : 0;
     return function() {
@@ -3254,7 +3266,7 @@
 
     while (length--) {
       if (!isFunction(funcs[length])) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
     }
     return function() {
@@ -3320,7 +3332,7 @@
         trailing = true;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     wait = wait < 0 ? 0 : wait;
     if (options === true) {
@@ -3425,7 +3437,7 @@
    */
   function defer(func) {
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -3449,7 +3461,7 @@
    */
   function delay(func, wait) {
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     var args = slice(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -3494,7 +3506,7 @@
    */
   function memoize(func, resolver) {
     if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     var cache = {};
     return function() {
@@ -3526,7 +3538,7 @@
    */
   function negate(predicate) {
     if (!isFunction(predicate)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     return function() {
       return !predicate.apply(this, arguments);
@@ -3555,7 +3567,7 @@
         result;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     return function() {
       if (ran) {
@@ -3631,7 +3643,7 @@
         trailing = true;
 
     if (!isFunction(func)) {
-      throw new TypeError;
+      throw new TypeError(funcErrorText);
     }
     if (options === false) {
       leading = false;
@@ -3914,14 +3926,14 @@
    * // => false
    */
   function isArguments(value) {
-    return value && typeof value == 'object' && typeof value.length == 'number' &&
-      toString.call(value) == argsClass || false;
+    return (value && typeof value == 'object' && typeof value.length == 'number' &&
+      toString.call(value) == argsClass) || false;
   }
   // fallback for environments without a `[[Class]]` for `arguments` objects
   if (!isArguments(arguments)) {
     isArguments = function(value) {
-      return value && typeof value == 'object' && typeof value.length == 'number' &&
-        hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee') || false;
+      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee')) || false;
     };
   }
 
@@ -3942,8 +3954,8 @@
    * // => false
    */
   var isArray = nativeIsArray || function(value) {
-    return value && typeof value == 'object' && typeof value.length == 'number' &&
-      toString.call(value) == arrayClass || false;
+    return (value && typeof value == 'object' && typeof value.length == 'number' &&
+      toString.call(value) == arrayClass) || false;
   };
 
   /**
@@ -3963,28 +3975,28 @@
    * // => false
    */
   function isBoolean(value) {
-    return value === true || value === false ||
-      value && typeof value == 'object' && toString.call(value) == boolClass || false;
+    return (value === true || value === false ||
+      value && typeof value == 'object' && toString.call(value) == boolClass) || false;
   }
 
   /**
-   * Checks if `value` is a date.
+   * Checks if `value` is a `Date` object.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a date, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
    * @example
    *
    * _.isDate(new Date);
    * // => true
    *
-   * _.isDate('Wed May 23 2012');
+   * _.isDate('Mon April 23 2012');
    * // => false
    */
   function isDate(value) {
-    return value && typeof value == 'object' && toString.call(value) == dateClass || false;
+    return (value && typeof value == 'object' && toString.call(value) == dateClass) || false;
   }
 
   /**
@@ -4004,7 +4016,7 @@
    * // => false
    */
   function isElement(value) {
-    return value && value.nodeType === 1 || false;
+    return (value && value.nodeType === 1) || false;
   }
 
   /**
@@ -4039,7 +4051,7 @@
       return true;
     }
     var length = value.length;
-    if (length > -1 && length <= maxSafeInteger &&
+    if ((length > -1 && length <= maxSafeInteger) &&
         (isArray(value) || isString(value) || isArguments(value))) {
       return !length;
     }
@@ -4179,7 +4191,7 @@
     // and avoid a V8 bug
     // https://code.google.com/p/v8/issues/detail?id=2291
     var type = typeof value;
-    return value && (type == 'function' || type == 'object') || false;
+    return (value && (type == 'function' || type == 'object')) || false;
   }
 
   /**
@@ -4235,7 +4247,7 @@
   }
 
   /**
-   * Checks if `value` is a number.
+   * Checks if `value` is a `Number` primitive or object.
    *
    * Note: `NaN` is considered a number. See the [ES5 spec](http://es5.github.io/#x8.5)
    * for more details.
@@ -4259,17 +4271,17 @@
   function isNumber(value) {
     var type = typeof value;
     return type == 'number' ||
-      value && type == 'object' && toString.call(value) == numberClass || false;
+      (value && type == 'object' && toString.call(value) == numberClass) || false;
   }
 
   /**
-   * Checks if `value` is a regular expression.
+   * Checks if `value` is a `RegExp` object.
    *
    * @static
    * @memberOf _
    * @category Objects
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a regular expression, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a regexp object, else `false`.
    * @example
    *
    * _.isRegExp(/abc/);
@@ -4280,12 +4292,12 @@
    */
   function isRegExp(value) {
     var type = typeof value;
-    return value && (type == 'function' || type == 'object') &&
-      toString.call(value) == regexpClass || false;
+    return (value && (type == 'function' || type == 'object') &&
+      toString.call(value) == regexpClass) || false;
   }
 
   /**
-   * Checks if `value` is a string.
+   * Checks if `value` is a `String` primitive or object.
    *
    * @static
    * @memberOf _
@@ -4302,7 +4314,7 @@
    */
   function isString(value) {
     return typeof value == 'string' ||
-      value && typeof value == 'object' && toString.call(value) == stringClass || false;
+      (value && typeof value == 'object' && toString.call(value) == stringClass) || false;
   }
 
   /**
@@ -4922,22 +4934,6 @@
   function noConflict() {
     root._ = oldDash;
     return this;
-  }
-
-  /**
-   * A no-operation function.
-   *
-   * @static
-   * @memberOf _
-   * @category Utilities
-   * @example
-   *
-   * var object = { 'name': 'fred' };
-   * _.noop(object) === undefined;
-   * // => true
-   */
-  function noop() {
-    // no operation performed
   }
 
   /**

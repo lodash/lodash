@@ -26,6 +26,9 @@
   /** Used as the property name for wrapper metadata */
   var expando = '__lodash@' + version + '__';
 
+  /** Used as the TypeError message for "Functions" methods */
+  var funcErrorText = 'Expected a function';
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -111,6 +114,7 @@
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
       dateClass = '[object Date]',
+      errorClass = '[object Error]',
       funcClass = '[object Function]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
@@ -445,69 +449,6 @@
   }
 
   /**
-   * A fallback implementation of `String#trim` to remove leading and trailing
-   * whitespace or specified characters from `string`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @param {string} [chars=whitespace] The characters to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function shimTrim(string, chars) {
-    string = string == null ? '' : String(string);
-    if (!string) {
-      return string;
-    }
-    if (chars == null) {
-      return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
-    }
-    chars = String(chars);
-    return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
-  }
-
-  /**
-   * A fallback implementation of `String#trimLeft` to remove leading whitespace
-   * or specified characters from `string`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @param {string} [chars=whitespace] The characters to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function shimTrimLeft(string, chars) {
-    string = string == null ? '' : String(string);
-    if (!string) {
-      return string;
-    }
-    if (chars == null) {
-      return string.slice(trimmedLeftIndex(string))
-    }
-    chars = String(chars);
-    return string.slice(charsLeftIndex(string, chars));
-  }
-
-  /**
-   * A fallback implementation of `String#trimRight` to remove trailing whitespace
-   * or specified characters from `string`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @param {string} [chars=whitespace] The characters to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function shimTrimRight(string, chars) {
-    string = string == null ? '' : String(string);
-    if (!string) {
-      return string;
-    }
-    if (chars == null) {
-      return string.slice(0, trimmedRightIndex(string) + 1)
-    }
-    chars = String(chars);
-    return string.slice(0, charsRightIndex(string, chars) + 1);
-  }
-
-  /**
    * Gets the index of the first non-whitespace character of `string`.
    *
    * @private
@@ -651,10 +592,7 @@
         nativeMin = Math.min,
         nativeNow = isNative(nativeNow = Date.now) && nativeNow,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random,
-        nativeTrim = isNative(nativeTrim = stringProto.trim) && !nativeTrim.call(whitespace) && nativeTrim,
-        nativeTrimLeft = isNative(nativeTrimLeft = stringProto.trimLeft) && !nativeTrimLeft.call(whitespace) && nativeTrimLeft,
-        nativeTrimRight = isNative(nativeTrimRight = stringProto.trimRight) && !nativeTrimRight.call(whitespace) && nativeTrimRight;
+        nativeRandom = Math.random;
 
     /** Used to lookup built-in constructors by `[[Class]]` */
     var ctorByClass = {};
@@ -1972,7 +1910,7 @@
           isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
       if (!isBindKey && !isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       if (isPartial && !partialArgs.length) {
         bitmask &= ~PARTIAL_FLAG;
@@ -2055,8 +1993,8 @@
      * @returns {Function} Returns the "indexOf" function.
      */
     function getIndexOf() {
-      var result = (result = lodash.indexOf) === indexOf ? baseIndexOf : result;
-      return result;
+      var result = lodash.indexOf || indexOf;
+      return result === indexOf ? baseIndexOf : result;
     }
 
     /**
@@ -2187,7 +2125,16 @@
      * // => [1, 3]
      */
     function difference() {
-      return baseDifference(arguments[0], baseFlatten(arguments, true, true, 1));
+      var index = -1,
+          length = arguments.length;
+
+      while (++index < length) {
+        var value = arguments[index];
+        if (isArray(value) || isArguments(value)) {
+          break;
+        }
+      }
+      return baseDifference(arguments[index], baseFlatten(arguments, true, true, ++index));
     }
 
     /**
@@ -4690,7 +4637,7 @@
      */
     function after(n, func) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
@@ -4854,7 +4801,7 @@
 
       while (length--) {
         if (!isFunction(funcs[length])) {
-          throw new TypeError;
+          throw new TypeError(funcErrorText);
         }
       }
       return function() {
@@ -4957,7 +4904,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       wait = wait < 0 ? 0 : wait;
       if (options === true) {
@@ -5062,7 +5009,7 @@
      */
     function defer(func) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -5086,7 +5033,7 @@
      */
     function delay(func, wait) {
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -5131,7 +5078,7 @@
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       var memoized = function() {
         var cache = memoized.cache,
@@ -5166,7 +5113,7 @@
      */
     function negate(predicate) {
       if (!isFunction(predicate)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       return function() {
         return !predicate.apply(this, arguments);
@@ -5195,7 +5142,7 @@
           result;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       return function() {
         if (ran) {
@@ -5317,7 +5264,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError;
+        throw new TypeError(funcErrorText);
       }
       if (options === false) {
         leading = false;
@@ -5906,8 +5853,8 @@
      * // => false
      */
     function isArguments(value) {
-      return value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == argsClass || false;
+      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        toString.call(value) == argsClass) || false;
     }
 
     /**
@@ -5927,8 +5874,8 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == arrayClass || false;
+      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        toString.call(value) == arrayClass) || false;
     };
 
     /**
@@ -5948,28 +5895,28 @@
      * // => false
      */
     function isBoolean(value) {
-      return value === true || value === false ||
-        value && typeof value == 'object' && toString.call(value) == boolClass || false;
+      return (value === true || value === false ||
+        value && typeof value == 'object' && toString.call(value) == boolClass) || false;
     }
 
     /**
-     * Checks if `value` is a date.
+     * Checks if `value` is a `Date` object.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a date, else `false`.
+     * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
      * @example
      *
      * _.isDate(new Date);
      * // => true
      *
-     * _.isDate('Wed May 23 2012');
+     * _.isDate('Mon April 23 2012');
      * // => false
      */
     function isDate(value) {
-      return value && typeof value == 'object' && toString.call(value) == dateClass || false;
+      return (value && typeof value == 'object' && toString.call(value) == dateClass) || false;
     }
 
     /**
@@ -5989,14 +5936,14 @@
      * // => false
      */
     function isElement(value) {
-      return value && typeof value == 'object' && value.nodeType === 1 &&
-        toString.call(value).indexOf('Element') > -1 || false;
+      return (value && typeof value == 'object' && value.nodeType === 1 &&
+        toString.call(value).indexOf('Element') > -1) || false;
     }
     // fallback for environments without DOM support
     if (!support.dom) {
       isElement = function(value) {
-        return value && typeof value == 'object' && value.nodeType === 1 &&
-          !isPlainObject(value) || false;
+        return (value && typeof value == 'object' && value.nodeType === 1 &&
+          !isPlainObject(value)) || false;
       };
     }
 
@@ -6033,7 +5980,7 @@
         return result;
       }
       var length = value.length;
-      if (length > -1 && length <= maxSafeInteger &&
+      if ((length > -1 && length <= maxSafeInteger) &&
           (isArray(value) || isString(value) || isArguments(value) ||
             (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;
@@ -6102,6 +6049,27 @@
         }
       }
       return baseIsEqual(value, other, callback);
+    }
+
+    /**
+     * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
+     * `SyntaxError`, `TypeError`, or `URIError` object.
+     *
+     * @static
+     * @memberOf _
+     * @category Objects
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
+     * @example
+     *
+     * _.isError(new Error);
+     * // => true
+     *
+     * _.isError(Error);
+     * // => false
+     */
+    function isError(value) {
+      return (value && typeof value == 'object' && toString.call(value) == errorClass) || false;
     }
 
     /**
@@ -6183,7 +6151,7 @@
       // and avoid a V8 bug
       // https://code.google.com/p/v8/issues/detail?id=2291
       var type = typeof value;
-      return value && (type == 'function' || type == 'object') || false;
+      return (value && (type == 'function' || type == 'object')) || false;
     }
 
     /**
@@ -6239,7 +6207,7 @@
     }
 
     /**
-     * Checks if `value` is a number.
+     * Checks if `value` is a `Number` primitive or object.
      *
      * Note: `NaN` is considered a number. See the [ES5 spec](http://es5.github.io/#x8.5)
      * for more details.
@@ -6263,7 +6231,7 @@
     function isNumber(value) {
       var type = typeof value;
       return type == 'number' ||
-        value && type == 'object' && toString.call(value) == numberClass || false;
+        (value && type == 'object' && toString.call(value) == numberClass) || false;
     }
 
     /**
@@ -6310,13 +6278,13 @@
     };
 
     /**
-     * Checks if `value` is a regular expression.
+     * Checks if `value` is a `RegExp` object.
      *
      * @static
      * @memberOf _
      * @category Objects
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a regular expression, else `false`.
+     * @returns {boolean} Returns `true` if `value` is a regexp object, else `false`.
      * @example
      *
      * _.isRegExp(/abc/);
@@ -6326,11 +6294,11 @@
      * // => false
      */
     function isRegExp(value) {
-      return value && typeof value == 'object' && toString.call(value) == regexpClass || false;
+      return (value && typeof value == 'object' && toString.call(value) == regexpClass) || false;
     }
 
     /**
-     * Checks if `value` is a string.
+     * Checks if `value` is a `String` primitive or object.
      *
      * @static
      * @memberOf _
@@ -6347,7 +6315,7 @@
      */
     function isString(value) {
       return typeof value == 'string' ||
-        value && typeof value == 'object' && toString.call(value) == stringClass || false;
+        (value && typeof value == 'object' && toString.call(value) == stringClass) || false;
     }
 
     /**
@@ -6391,8 +6359,11 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      var length = object ? object.length : 0;
-      if (typeof length == 'number' && length > 0) {
+      var ctor = object && object.constructor,
+          length = object ? object.length : 0;
+
+      if ((typeof length == 'number' && length > 0) ||
+          (ctor && object === ctor.prototype)) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -6427,7 +6398,9 @@
         (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
       var keyIndex,
+          ctor = object.constructor,
           index = -1,
+          isProto = ctor && object === ctor.prototype,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0;
@@ -6436,7 +6409,8 @@
         result[index] = String(index);
       }
       for (var key in object) {
-        if (!(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0))) {
+        if (!(isProto && key == 'constructor') &&
+            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0))) {
           result.push(key);
         }
       }
@@ -7334,12 +7308,17 @@
      * _.trim('-_-fred-_-', '_-');
      * // => 'fred'
      */
-    var trim = !nativeTrim ? shimTrim : function(string, chars) {
-      if (string == null) {
-        return '';
+    function trim(string, chars) {
+      string = string == null ? '' : String(string);
+      if (!string) {
+        return string;
       }
-      return chars == null ? nativeTrim.call(string) : shimTrim(string, chars);
-    };
+      if (chars == null) {
+        return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
+      }
+      chars = String(chars);
+      return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
+    }
 
     /**
      * Removes leading whitespace or specified characters from `string`.
@@ -7358,12 +7337,17 @@
      * _.trimLeft('-_-fred-_-', '_-');
      * // => 'fred-_-'
      */
-    var trimLeft = !nativeTrimLeft ? shimTrimLeft : function(string, chars) {
-      if (string == null) {
-        return '';
+    function trimLeft(string, chars) {
+      string = string == null ? '' : String(string);
+      if (!string) {
+        return string;
       }
-      return chars == null ? nativeTrimLeft.call(string) : shimTrimLeft(string, chars);
-    };
+      if (chars == null) {
+        return string.slice(trimmedLeftIndex(string))
+      }
+      chars = String(chars);
+      return string.slice(charsLeftIndex(string, chars));
+    }
 
     /**
      * Removes trailing whitespace or specified characters from `string`.
@@ -7382,12 +7366,17 @@
      * _.trimRight('-_-fred-_-', '_-');
      * // => '-_-fred'
      */
-    var trimRight = !nativeTrimRight ? shimTrimRight : function(string, chars) {
-      if (string == null) {
-        return '';
+    function trimRight(string, chars) {
+      string = string == null ? '' : String(string);
+      if (!string) {
+        return string;
       }
-      return chars == null ? nativeTrimRight.call(string) : shimTrimRight(string, chars);
-    };
+      if (chars == null) {
+        return string.slice(0, trimmedRightIndex(string) + 1)
+      }
+      chars = String(chars);
+      return string.slice(0, charsRightIndex(string, chars) + 1);
+    }
 
     /**
      * Truncates `string` if it is longer than the given maximum string length.
@@ -8165,6 +8154,7 @@
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;
+    lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isNaN = isNaN;

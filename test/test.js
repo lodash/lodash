@@ -297,15 +297,12 @@
     }
     // allow bypassing native checks
     var _fnToString = Function.prototype.toString;
-    setProperty(Function.prototype, 'toString', (function() {
-      function fnToString() {
-        setProperty(Function.prototype, 'toString', _fnToString);
-        var result = this === Set ? this.toString() : _fnToString.call(this);
-        setProperty(Function.prototype, 'toString', fnToString);
-        return result;
-      }
-      return fnToString;
-    }()));
+    setProperty(Function.prototype, 'toString', function wrapper() {
+      setProperty(Function.prototype, 'toString', _fnToString);
+      var result = this === Set ? this.toString() : _fnToString.call(this);
+      setProperty(Function.prototype, 'toString', wrapper);
+      return result;
+    });
 
     // fake DOM
     setProperty(global, 'window', {});
@@ -339,6 +336,14 @@
     var _keys = Object.keys;
     setProperty(Object, 'keys', function() {});
 
+    var _hasOwnProperty = Object.prototype.hasOwnProperty;
+    setProperty(Object.prototype, 'hasOwnProperty', function(key) {
+      if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [0, 0])) {
+        throw new Error;
+      }
+      return _hasOwnProperty.call(this, key);
+    });
+
     var _contains = String.prototype.contains;
     setProperty(String.prototype, 'contains',  _contains ? function() {} : Boolean);
 
@@ -355,6 +360,7 @@
     setProperty(Object, 'defineProperty', _defineProperty);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
+    setProperty(Object.prototype,   'hasOwnProperty', _hasOwnProperty);
     setProperty(Function.prototype, 'toString', _fnToString);
 
     if (_contains) {

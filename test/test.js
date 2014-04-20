@@ -270,7 +270,7 @@
         "'_array': [1, 2, 3],",
         "'_boolean': new Boolean(false),",
         "'_date': new Date,",
-        "'_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError]",
+        "'_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
         "'_function': function() {},",
         "'_nan': NaN,",
         "'_null': null,",

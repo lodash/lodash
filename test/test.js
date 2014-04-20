@@ -390,6 +390,7 @@
       'parent._._boolean = new Boolean(false);',
       'parent._._date = new Date;',
       "parent._._element = document.createElement('div');",
+      'parent._._errors = [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError];',
       'parent._._function = function() {};',
       'parent._._nan = NaN;',
       'parent._._null = null;',

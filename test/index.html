@@ -38,15 +38,15 @@
 			function addBizarroMethods() {
 				// allow bypassing native checks
 				setProperty(Function.prototype, 'toString', (function() {
-					function fnToString() {
-						setProperty(Function.prototype, 'toString', _fnToString);
-						var result = this === Set ? this.toString() : _fnToString.call(this);
+					function wrapper() {
 						setProperty(Function.prototype, 'toString', fnToString);
+						var result = this === Set ? this.toString() : fnToString.call(this);
+						setProperty(Function.prototype, 'toString', wrapper);
 						return result;
 					}
-					var _fnToString = Function.prototype.toString;
-					setProperty(Function.prototype, '_toString', _fnToString);
-					return fnToString;
+					var fnToString = Function.prototype.toString;
+					setProperty(Function.prototype, '_toString', fnToString);
+					return wrapper;
 				}()));
 
 				// add extensions
@@ -70,6 +70,23 @@
 
 				setProperty(Object, '_keys', Object.keys);
 				setProperty(Object, 'keys', function() {});
+
+				setProperty(Object.prototype, 'hasOwnProperty', (function() {
+					function wrapper(key) {
+						if (key == '1' && this && typeof this == 'object' && this.length === 2 &&
+								hasOwnProperty.call(this, 'callee') &&
+								!propertyIsEnumerable.call(this, 'callee') &&
+								this[0] === 0 && this[1] === 0) {
+							throw new Error;
+						}
+						return hasOwnProperty.call(this, key);
+					}
+					var hasOwnProperty = Object.prototype.hasOwnProperty,
+					    propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+					setProperty(Object.prototype, '_hasOwnProperty', hasOwnProperty);
+					return wrapper;
+				}()));
 
 				setProperty(String.prototype, '_contains', String.prototype.contains);
 				setProperty(String.prototype, 'contains', String.prototype._contains ? function() {} : Boolean);
@@ -118,6 +135,7 @@
 				}
 				setProperty(window, 'WinRTError', undefined);
 				setProperty(Function.prototype, 'toString', Function.prototype._toString);
+				setProperty(Object.prototype, 'hasOwnProperty', Object.prototype._hasOwnProperty);
 
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);
@@ -130,6 +148,7 @@
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
+				delete Object.prototype._hasOwnProperty;
 				delete String.prototype._contains;
 			}
 

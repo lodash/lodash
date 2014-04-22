@@ -318,9 +318,9 @@
       return;
     }
     if (!result || failures || reError.test(result.message)) {
-      if (this.attempts <= maxRetries) {
+      if (this.attempts < maxRetries) {
         this.attempts++;
-        console.log(label + ' Attempt %d', this.attempts);
+        console.log(label + ' ' + description + ' attempt %d', this.attempts);
         this.run();
         return;
       }
@@ -332,7 +332,6 @@
         console.error(label + ' %s ' + chalk.red('failed') + ' %d test' + (failures > 1 ? 's' : '') + '. %s', description, failures, details);
       } else {
         var message = _.result(result, 'message', 'no results available. ' + details);
-
         console.error(label, description, chalk.red('failed') + ';', message);
       }
     } else {

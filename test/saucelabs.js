@@ -183,7 +183,7 @@
     defaultOptions['public'] = 'public';
   }
   if (tunneled) {
-    defaultOptions.tunnel = 'tunnel-identifier:' + tunnelId;
+    defaultOptions['tunnel-identifier'] = tunnelId;
   }
 
   /*--------------------------------------------------------------------------*/

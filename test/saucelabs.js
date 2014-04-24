@@ -320,7 +320,7 @@
     if (!result || failures || reError.test(result.message)) {
       if (this.attempts < maxRetries) {
         this.attempts++;
-        console.log(label + ' ' + description + ' attempt %d', this.attempts);
+        console.log(label + ' ' + description + ' retry #%d', this.attempts);
         this.run();
         return;
       }

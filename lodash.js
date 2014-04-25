@@ -3273,11 +3273,11 @@
 
     /**
      * Creates a duplicate-value-free version of an array using strict equality
-     * for comparisons, i.e. `===`. If the array is sorted, providing
-     * `true` for `isSorted` will use a faster algorithm. If a callback is provided
-     * each element of `array` is passed through the callback before uniqueness
-     * is computed. The callback is bound to `thisArg` and invoked with three
-     * arguments; (value, index, array).
+     * for comparisons, i.e. `===`. If the array is sorted, providing `true` for
+     * `isSorted` will use a faster algorithm. If a callback is provided it will
+     * be executed for each value in the array to generate the criterion by which
+     * uniqueness is computed. The callback is bound to `thisArg` and invoked with
+     * three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.

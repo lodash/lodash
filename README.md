@@ -5,7 +5,7 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 Check out our [wiki](https://github.com/lodash/lodash/wiki/build-differences) for details over the differences between builds.
 
-* [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js)) perfect for new environments
+* [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js)) perfect for new environments<br>(Chrome ≥ 14, Firefox ≥ 10, IE ≥ 9, Node.js, Opera ≥ 12, Safari ≥ 5.1)
 * [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js)) for old environments too
 * [Underscore build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js)) as a drop-in replacement for [Underscore v1.6.0](http://underscorejs.org/#1.6.0)
 
@@ -94,7 +94,8 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
 
 ## Support
 
-Tested in Chrome 19,33-34, Firefox 3,20,27-28, IE 6-11, Opera 10,12,19-20, Safari 5-7, Node.js 0.6.21~0.10.26, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.<br>
+Tested in Chrome 19,33-34, Firefox 3,20,27-28, IE 6-11, Opera 10,12,19-20, Safari 5-7, Node.js 0.6.21~0.10.26, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
+
 Automated browser test results [are available](https://saucelabs.com/u/lodash) as well as [Travis CI](https://travis-ci.org/) builds for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash).
 
 Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.<br>

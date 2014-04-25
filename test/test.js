@@ -2576,7 +2576,7 @@
       });
 
       test('should return `' + expected[1] + '` if value is not found', 1, function() {
-        strictEqual(func(objects, function(object) { return object.a == 3; }), expected[1]);
+        strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
       });
 
       test('should work with an object for `callback`', 1, function() {
@@ -6297,7 +6297,17 @@
       });
     });
 
-    test('`_.' + methodName + '` should resolve the correct value when provided an array containing only one value', 1, function() {
+    test('`_.' + methodName + '` should work when `callback` returns +/-Infinity', 1, function() {
+      var object = { 'a': (isMax ? -Infinity : Infinity) };
+
+      var actual = func([object, { 'a': object.a }], function(object) {
+        return object.a;
+      });
+
+      strictEqual(actual, object);
+    });
+
+    test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
       if (!isNpm) {
         var actual = _([40])[methodName]().value();
         strictEqual(actual, 40);

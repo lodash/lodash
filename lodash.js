@@ -1643,16 +1643,16 @@
       }
       var isArr = valClass == arrayClass;
       if (!isArr) {
+        // exit for functions and DOM nodes
+        if (valClass != objectClass || (!support.nodeClass && (isNode(value) || isNode(other)))) {
+          return false;
+        }
         // unwrap any `lodash` wrapped values
         var valWrapped = hasOwnProperty.call(value, '__wrapped__'),
             othWrapped = hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
           return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, callback, isWhere, stackA, stackB);
-        }
-        // exit for functions and DOM nodes
-        if (valClass != objectClass || (!support.nodeClass && (isNode(value) || isNode(other)))) {
-          return false;
         }
         if (!support.argsObject) {
           valIsArg = isArguments(value);

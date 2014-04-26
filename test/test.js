@@ -1206,7 +1206,7 @@
     Klass.prototype = { 'b': 1 };
 
     var nonCloneable = {
-      'an element': body,
+      'a DOM element': body,
       'a function': Klass
     };
 
@@ -1329,6 +1329,20 @@
 
         var actual = func(regexp);
         strictEqual(actual.lastIndex, 3);
+      });
+
+      test('`_.' + methodName + '` should not error on DOM elements', 1, function() {
+        if (document) {
+          var element = document.createElement('div');
+          try {
+            strictEqual(func(element), element);
+          } catch(e) {
+            ok(false);
+          }
+        }
+        else {
+          skipTest();
+        }
       });
     });
   }(1, 2, 3));
@@ -4177,7 +4191,7 @@
       }
     });
 
-    test('should return `false` for non elements', 11, function() {
+    test('should return `false` for non DOM elements', 11, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -4198,7 +4212,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with elements from another realm', 1, function() {
+    test('should work with DOM elements from another realm', 1, function() {
       if (_._element) {
         strictEqual(_.isElement(_._element), true);
       }
@@ -4795,6 +4809,22 @@
       if (_._object) {
         var object = { 'a': 1, 'b': 2, 'c': 3 };
         strictEqual(_.isEqual(object, _._object), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should not error on DOM elements', 1, function() {
+      if (document) {
+        var element1 = document.createElement('div'),
+            element2 = element1.cloneNode(true);
+
+        try {
+          strictEqual(_.isEqual(element1, element2), false);
+        } catch(e) {
+          ok(false);
+        }
       }
       else {
         skipTest();

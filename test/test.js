@@ -10368,7 +10368,9 @@
   QUnit.module('lodash methods');
 
   (function() {
-    var allMethods = _.reject(_.functions(_), _.bind(RegExp.prototype.test, /^_/));
+    var allMethods = _.reject(_.functions(_), function(methodName) {
+      return /^_/.test(methodName);
+    });
 
     var returnArrays = [
       'at',

@@ -1480,16 +1480,16 @@
       }
       var isArr = valClass == arrayClass;
       if (!isArr) {
+        // exit for functions and DOM nodes
+        if (valClass != objectClass) {
+          return false;
+        }
         // unwrap any `lodash` wrapped values
         var valWrapped = hasOwnProperty.call(value, '__wrapped__'),
             othWrapped = hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
           return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, callback, isWhere, stackA, stackB);
-        }
-        // exit for functions and DOM nodes
-        if (valClass != objectClass) {
-          return false;
         }
         var hasValCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
             hasOthCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
@@ -3073,11 +3073,11 @@
 
     /**
      * Creates a duplicate-value-free version of an array using strict equality
-     * for comparisons, i.e. `===`. If the array is sorted, providing
-     * `true` for `isSorted` will use a faster algorithm. If a callback is provided
-     * each element of `array` is passed through the callback before uniqueness
-     * is computed. The callback is bound to `thisArg` and invoked with three
-     * arguments; (value, index, array).
+     * for comparisons, i.e. `===`. If the array is sorted, providing `true` for
+     * `isSorted` will use a faster algorithm. If a callback is provided it will
+     * be executed for each value in the array to generate the criterion by which
+     * uniqueness is computed. The callback is bound to `thisArg` and invoked with
+     * three arguments; (value, index, array).
      *
      * If a property name is provided for `callback` the created "_.pluck" style
      * callback will return the property value of the given element.
@@ -4007,6 +4007,9 @@
      * _.max([4, 2, 8, 6]);
      * // => 8
      *
+     * _.max([]);
+     * // => -Infinity
+     *
      * var characters = [
      *   { 'name': 'barney', 'age': 36 },
      *   { 'name': 'fred',   'age': 40 }
@@ -4045,7 +4048,7 @@
 
         baseEach(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
-          if (current > computed) {
+          if (current > computed || (current === -Infinity && current === result)) {
             computed = current;
             result = value;
           }
@@ -4081,6 +4084,9 @@
      *
      * _.min([4, 2, 8, 6]);
      * // => 2
+     *
+     * _.min([]);
+     * // => Infinity
      *
      * var characters = [
      *   { 'name': 'barney', 'age': 36 },
@@ -4120,7 +4126,7 @@
 
         baseEach(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
-          if (current < computed) {
+          if (current < computed || (current === Infinity && current === result)) {
             computed = current;
             result = value;
           }

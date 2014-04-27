@@ -86,6 +86,9 @@
 
   /** List of platforms to load the runner on */
   var platforms = [
+    ['Linux', 'android', '4.3'],
+    ['OS X 10.9', 'iphone', '7.1'],
+    ['OS X 10.9', 'ipad', '7.1'],
     ['Windows 8.1', 'googlechrome', '34'],
     ['Windows 8.1', 'googlechrome', '33'],
     ['Windows 8.1', 'firefox', '28'],

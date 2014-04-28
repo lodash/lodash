@@ -75,7 +75,7 @@
    * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
    * for more details.
    */
-  var reRegExpChars = /[.*+?^${}()|[\]\\]/g;
+  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g;
 
   /** Used to detect functions containing a `this` reference */
   var reThis = /\bthis\b/;

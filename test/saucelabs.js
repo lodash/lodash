@@ -79,20 +79,21 @@ var advisor = getOption('advisor', true),
 /** Used to convert Sauce Labs browser identifiers to their formal names */
 var browserNameMap = {
   'googlechrome': 'Chrome',
-  'iehta': 'Internet Explorer'
+  'iehta': 'Internet Explorer',
+  'ipad': 'iPad',
+  'iphone': 'iPhone'
 };
 
 /** List of platforms to load the runner on */
 var platforms = [
   ['Linux', 'android', '4.3'],
-  ['OS X 10.9', 'iphone', '7.1'],
-  ['OS X 10.9', 'ipad', '7.1'],
-  ['Windows 8.1', 'googlechrome', '34'],
-  ['Windows 8.1', 'googlechrome', '33'],
+  ['Linux', 'android', '4.0']
   ['Windows 8.1', 'firefox', '28'],
   ['Windows 8.1', 'firefox', '27'],
   ['Windows 8.1', 'firefox', '20'],
   ['Windows 8.1', 'firefox', '3.0'],
+  ['Windows 8.1', 'googlechrome', '34'],
+  ['Windows 8.1', 'googlechrome', '33'],
   ['Windows 8.1', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],
@@ -101,6 +102,7 @@ var platforms = [
   ['Windows XP', 'internet explorer', '6'],
   ['Windows 7', 'opera', '12'],
   ['Windows 7', 'opera', '11'],
+  ['OS X 10.9', 'ipad', '7.1'],
   ['OS X 10.9', 'safari', '7'],
   ['OS X 10.8', 'safari', '6'],
   ['OS X 10.6', 'safari', '5']

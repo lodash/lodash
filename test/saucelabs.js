@@ -87,7 +87,7 @@ var browserNameMap = {
 /** List of platforms to load the runner on */
 var platforms = [
   ['Linux', 'android', '4.3'],
-  ['Linux', 'android', '4.0']
+  ['Linux', 'android', '4.0'],
   ['Windows 8.1', 'firefox', '28'],
   ['Windows 8.1', 'firefox', '27'],
   ['Windows 8.1', 'firefox', '20'],

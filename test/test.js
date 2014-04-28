@@ -9404,6 +9404,10 @@
       ok(_.transform(new Foo) instanceof Foo);
     });
 
+    test('should check that `object` is an object before using it as the `accumulator` `[[Prototype]]', 1, function() {
+      ok(!(_.transform(1) instanceof Number));
+    });
+
     _.each({
       'array': [1, 2, 3],
       'object': { 'a': 1, 'b': 2, 'c': 3 }

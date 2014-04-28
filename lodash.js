@@ -304,8 +304,8 @@
   }
 
   /**
-   * Used by `_.max` and `_.min` as the default callback when a given
-   * collection is a string value.
+   * Used by `_.max` and `_.min` as the default callback when a given collection
+   * is a string value.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -316,7 +316,8 @@
   }
 
   /**
-   * Gets the index of the first character of `string` that is not found in `chars`.
+   * Used by `_.trim` and `_.trimLeft` to get the index of the first character
+   * of `string` that is not found in `chars`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -336,7 +337,8 @@
   }
 
   /**
-   * Gets the index of the last character of `string` that is not found in `chars`.
+   * Used by `_.trim` and `_.trimRight` to get the index of the last character
+   * of `string` that is not found in `chars`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -467,7 +469,8 @@
   }
 
   /**
-   * Gets the index of the first non-whitespace character of `string`.
+   * Used by `_.trim` and `_.trimLeft` to get the index of the first non-whitespace
+   * character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -488,7 +491,8 @@
   }
 
   /**
-   * Gets the index of the last non-whitespace character of `string`.
+   * Used by `_.trim` and `_.trimRight` to get the index of the last non-whitespace
+   * character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.

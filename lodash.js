@@ -6945,9 +6945,10 @@
         if (isArr) {
           accumulator = [];
         } else {
-          var ctor = object && object.constructor,
-              proto = ctor && ctor.prototype;
-
+          if (isObject(object)) {
+            var ctor = object.constructor,
+                proto = ctor && ctor.prototype;
+          }
           accumulator = baseCreate(proto);
         }
       }

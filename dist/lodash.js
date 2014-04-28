@@ -76,7 +76,7 @@
    * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
    * for more details.
    */
-  var reRegExpChars = /[.*+?^${}()|[\]\\]/g;
+  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g;
 
   /** Used to detect functions containing a `this` reference */
   var reThis = /\bthis\b/;
@@ -299,8 +299,8 @@
   }
 
   /**
-   * Used by `_.max` and `_.min` as the default callback when a given
-   * collection is a string value.
+   * Used by `_.max` and `_.min` as the default callback when a given collection
+   * is a string value.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -311,7 +311,8 @@
   }
 
   /**
-   * Gets the index of the first character of `string` that is not found in `chars`.
+   * Used by `_.trim` and `_.trimLeft` to get the index of the first character
+   * of `string` that is not found in `chars`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -331,7 +332,8 @@
   }
 
   /**
-   * Gets the index of the last character of `string` that is not found in `chars`.
+   * Used by `_.trim` and `_.trimRight` to get the index of the last character
+   * of `string` that is not found in `chars`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -449,7 +451,8 @@
   }
 
   /**
-   * Gets the index of the first non-whitespace character of `string`.
+   * Used by `_.trim` and `_.trimLeft` to get the index of the first non-whitespace
+   * character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -470,7 +473,8 @@
   }
 
   /**
-   * Gets the index of the last non-whitespace character of `string`.
+   * Used by `_.trim` and `_.trimRight` to get the index of the last non-whitespace
+   * character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -5538,7 +5542,7 @@
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
     function defaults(object) {
-      if (!object || arguments.length < 2) {
+      if (!object) {
         return object;
       }
       var args = slice(arguments);
@@ -6157,7 +6161,7 @@
       // and avoid a V8 bug
       // https://code.google.com/p/v8/issues/detail?id=2291
       var type = typeof value;
-      return (value && (type == 'function' || type == 'object')) || false;
+      return type == 'function' || (value && type == 'object') || false;
     }
 
     /**
@@ -6521,13 +6525,13 @@
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
      */
     function merge(object, source, guard) {
-      if (!object) {
-        return object;
-      }
       var args = arguments,
           length = args.length,
           type = typeof guard;
 
+      if (!object || length < 2) {
+        return object;
+      }
       // enables use as a callback for functions like `_.reduce`
       if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
         length = 2;
@@ -6706,9 +6710,10 @@
         if (isArr) {
           accumulator = [];
         } else {
-          var ctor = object && object.constructor,
-              proto = ctor && ctor.prototype;
-
+          if (isObject(object)) {
+            var ctor = object.constructor,
+                proto = ctor && ctor.prototype;
+          }
           accumulator = baseCreate(proto);
         }
       }

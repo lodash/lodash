@@ -52,7 +52,7 @@
    * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
    * for more details.
    */
-  var reRegExpChars = /[.*+?^${}()|[\]\\]/g;
+  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g;
 
   /** Used to match unescaped characters in compiled string literals */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
@@ -4197,7 +4197,7 @@
     // and avoid a V8 bug
     // https://code.google.com/p/v8/issues/detail?id=2291
     var type = typeof value;
-    return (value && (type == 'function' || type == 'object')) || false;
+    return type == 'function' || (value && type == 'object') || false;
   }
 
   /**
@@ -4297,9 +4297,7 @@
    * // => false
    */
   function isRegExp(value) {
-    var type = typeof value;
-    return (value && (type == 'function' || type == 'object') &&
-      toString.call(value) == regexpClass) || false;
+    return (isObject(value) && toString.call(value) == regexpClass) || false;
   }
 
   /**

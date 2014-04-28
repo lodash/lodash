@@ -1060,12 +1060,6 @@
       strictEqual(func(Object(string)), expected);
       strictEqual(func({ 'toString': _.constant(string) }), expected);
     });
-
-    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(func(null), '');
-      strictEqual(func(undefined), '');
-      strictEqual(func(''), '');
-    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -1095,12 +1089,6 @@
       strictEqual(_.capitalize('fred'), 'Fred');
       strictEqual(_.capitalize('Fred'), 'Fred');
       strictEqual(_.capitalize(' fred'), ' fred');
-    });
-
-    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(_.capitalize(null), '');
-      strictEqual(_.capitalize(undefined), '');
-      strictEqual(_.capitalize(''), '');
     });
   }());
 
@@ -2405,10 +2393,25 @@
       strictEqual(_.escape('abc'), 'abc');
     });
 
-    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(_.escape(null), '');
-      strictEqual(_.escape(undefined), '');
-      strictEqual(_.escape(''), '');
+    test('should escape the same characters unescaped by `_.unescape`', 1, function() {
+      strictEqual(_.escape(_.unescape(escaped)), escaped);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.escapeRegExp');
+
+  (function() {
+    test('should escape values', 1, function() {
+      var escaped = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\/\\\\',
+          unescaped = '.*+?^${}()|[\]\/\\';
+
+      strictEqual(_.escapeRegExp(unescaped), escaped);
+    });
+
+    test('should handle strings with nothing to escape', 1, function() {
+      strictEqual(_.escapeRegExp('abc'), 'abc');
     });
   }());
 
@@ -6714,13 +6717,17 @@
       });
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(func(null), '');
-      strictEqual(func(undefined, 3), '   ');
-      strictEqual(func('', 1), ' ');
+    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string and `chars`', 6, function() {
+      _.each([null, '_-'], function(chars) {
+        strictEqual(func(null, 0, chars), '');
+        strictEqual(func(undefined, 0, chars), '');
+        strictEqual(func('', 0, chars), '');
+      });
     });
 
-    test('`_.' + methodName + '` should work with an empty string for `chars`', 1, function() {
+    test('`_.' + methodName + '` should work with `null`, `undefined`, or empty string for `chars`', 3, function() {
+      notStrictEqual(func('abc', 6, null), 'abc');
+      notStrictEqual(func('abc', 6, undefined), 'abc');
       strictEqual(func('abc', 6, ''), 'abc');
     });
   });
@@ -7668,12 +7675,6 @@
       strictEqual(_.repeat(Object('abc'), 2), 'abcabc');
       strictEqual(_.repeat({ 'toString': _.constant('*') }, 3), '***');
     });
-
-    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(_.repeat(null, 1), '');
-      strictEqual(_.repeat(undefined, 2), '');
-      strictEqual(_.repeat('', 3), '');
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -8462,12 +8463,6 @@
       strictEqual(func(string, 'b', Object(position)), true);
       strictEqual(func(string, 'b', { 'toString': _.constant(String(position)) }), true);
     });
-
-    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(func(null), false);
-      strictEqual(func(undefined), false);
-      strictEqual(func(''), false);
-    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -8780,7 +8775,7 @@
       strictEqual(compiled(), '<<\n a \n>>');
     });
 
-    test('should resolve `null` and `undefined` values to empty strings', 4, function() {
+    test('should resolve `null` and `undefined` values to an empty string', 4, function() {
       var compiled = _.template('<%= a %><%- a %>');
       strictEqual(compiled({ 'a': null }), '');
       strictEqual(compiled({ 'a': undefined }), '');
@@ -8908,12 +8903,6 @@
     test('should coerce `string` to a string', 2, function() {
       strictEqual(_.truncate(Object(string), 4), 'h...');
       strictEqual(_.truncate({ 'toString': _.constant(string) }, 5), 'hi...');
-    });
-
-    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(_.truncate(null), '');
-      strictEqual(_.truncate(undefined, 3), '');
-      strictEqual(_.truncate('', 1), '');
     });
   }());
 
@@ -9493,12 +9482,21 @@
       strictEqual(func(string, object), (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : ''));
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty strings', 6, function() {
+    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string and `chars`', 6, function() {
       _.each([null, '_-'], function(chars) {
         strictEqual(func(null, chars), '');
         strictEqual(func(undefined, chars), '');
         strictEqual(func('', chars), '');
       });
+    });
+
+    test('`_.' + methodName + '` should work with `null`, `undefined`, or empty string for `chars`', 3, function() {
+      var string = whitespace + 'a b c' + whitespace,
+          expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
+
+      strictEqual(func(string, null), expected);
+      strictEqual(func(string, undefined), expected);
+      strictEqual(func(string, ''), string);
     });
   });
 
@@ -9528,12 +9526,6 @@
 
     test('should unescape the same characters escaped by `_.escape`', 1, function() {
       strictEqual(_.unescape(_.escape(unescaped)), unescaped);
-    });
-
-    test('should return an empty string when provided `null`, `undefined`, or empty strings', 3, function() {
-      strictEqual(_.unescape(null), '');
-      strictEqual(_.unescape(undefined), '');
-      strictEqual(_.unescape(''), '');
     });
   }());
 
@@ -10362,6 +10354,42 @@
       deepEqual(_.union(array, null), array, message('union'));
     });
   }(1, null, [3], null, 5));
+
+  /*--------------------------------------------------------------------------*/
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('"Strings" category methods');
+
+ (function() {
+    var stringMethods = [
+      'camelCase',
+      'capitalize',
+      'escape',
+      'escapeRegExp',
+      'kebabCase',
+      'pad',
+      'padLeft',
+      'padRight',
+      'repeat',
+      'snakeCase',
+      'trim',
+      'trimLeft',
+      'trimRight',
+      'truncate',
+      'unescape'
+    ];
+
+    _.each(stringMethods, function(methodName) {
+      var func = _[methodName];
+
+      test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string', 3, function() {
+        strictEqual(func(null), '');
+        strictEqual(func(undefined), '');
+        strictEqual(func(''), '');
+      });
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

@@ -199,7 +199,7 @@ if (tunneled) {
  * @returns {string} Returns the formal browser name.
  */
 function browserName(identifier) {
-  return capitalizeWords(browserNameMap[identifier] || identifier);
+  return browserNameMap[identifier] || capitalizeWords(identifier);
 }
 
 /**

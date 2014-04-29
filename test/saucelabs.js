@@ -126,7 +126,7 @@ if (compatMode) {
 }
 // platforms for AMD tests
 if (_.contains(tags, 'amd')) {
-  platforms = platforms.filter(function(platform) {
+  platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
         version = +platform[2];
 
@@ -138,7 +138,7 @@ if (_.contains(tags, 'amd')) {
 }
 // platforms for Backbone tests
 if (isBackbone) {
-  platforms = platforms.filter(function(platform) {
+  platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
         version = +platform[2];
 
@@ -151,7 +151,7 @@ if (isBackbone) {
 }
 // platforms for modern builds
 if (isModern) {
-  platforms = platforms.filter(function(platform) {
+  platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
         version = +platform[2];
 
@@ -191,7 +191,7 @@ if (tunneled) {
   defaultOptions.tunnel = 'tunnel-identifier:' + tunnelId;
 }
 
-/*--------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
  * Resolves the formal browser name for a given Sauce Labs browser identifier.
@@ -286,7 +286,7 @@ function optionToValue(name, string) {
   return result || undefined;
 }
 
-/*--------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
  * Used by the `onRun` callback to check the status of a job.
@@ -319,6 +319,7 @@ function onCheck(error, response, body) {
       label = options.name + ':';
 
   if (!completed) {
+    console.dir(body);
     setTimeout(check.bind(this), statusInterval);
     return;
   }
@@ -368,7 +369,7 @@ function onRun(error, response, body) {
   check.call(this);
 }
 
-/*--------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
  * The Job constructor.
@@ -396,7 +397,7 @@ Job.prototype.run = function() {
   }, onRun.bind(this));
 };
 
-/*--------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
  * Runs jobs for the given platforms.

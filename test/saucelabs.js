@@ -186,7 +186,7 @@ if (publicAccess === true) {
   defaultOptions['public'] = 'public';
 }
 if (tunneled) {
-  defaultOptions['tunnel-identifier'] = tunnelId;
+  defaultOptions.tunnel = 'tunnel-identifier:' + tunnelId;
 }
 
 /*--------------------------------------------------------------------------*/

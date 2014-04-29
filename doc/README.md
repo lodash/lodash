@@ -902,17 +902,17 @@ _.sortedIndex([20, 30, 50], 40);
 // => 2
 
 var dict = {
-  'wordToNumber': { 'twenty': 20, 'thirty': 30, 'fourty': 40, 'fifty': 50 }
+  'wordToNumber': { 'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50 }
 };
 
 // using `callback`
-_.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
+_.sortedIndex(['twenty', 'thirty', 'fifty'], 'forty', function(word) {
   return dict.wordToNumber[word];
 });
 // => 2
 
 // using `callback` with `thisArg`
-_.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
+_.sortedIndex(['twenty', 'thirty', 'fifty'], 'forty', function(word) {
   return this.wordToNumber[word];
 }, dict);
 // => 2

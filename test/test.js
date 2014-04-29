@@ -9771,19 +9771,29 @@
       deepEqual(actual, expected);
     });
 
-    test('should deep compare `source` values', 1, function() {
+    test('should perform a deep partial comparison of `source`', 1, function() {
       var collection = [{ 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 }],
-          expected = _.cloneDeep(collection);
+          expected = collection.slice();
 
       deepEqual(_.where(collection, { 'a': { 'b': { 'c': 1 } } }), expected);
     });
 
     test('should search of arrays for values', 2, function() {
       var collection = [{ 'a': [1, 2] }],
-          expected = _.cloneDeep(collection);
+          expected = collection.slice();
 
       deepEqual(_.where(collection, { 'a': [] }), []);
       deepEqual(_.where(collection, { 'a': [2] }), expected);
+    });
+
+    test('should perform a partial comparison of *all* objects within arrays of `source`', 1, function() {
+      var collection = [
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 3, 'c': 4 }] },
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 3, 'c': 5 }] }
+      ];
+
+      var actual = _.where(collection, { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 3, 'c': 4 }] });
+      deepEqual(actual, [collection[0]]);
     });
 
     test('should handle a `source` with `undefined` values', 4, function() {

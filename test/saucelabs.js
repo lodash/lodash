@@ -87,6 +87,8 @@ var browserNameMap = {
 /** List of platforms to load the runner on */
 var platforms = [
   ['Linux', 'android', '4.3'],
+  ['Linux', 'android', '4.2'],
+  ['Linux', 'android', '4.1'],
   ['Linux', 'android', '4.0'],
   ['Windows 8.1', 'firefox', '28'],
   ['Windows 8.1', 'firefox', '27'],
@@ -111,7 +113,6 @@ var platforms = [
 /** Used to tailor the `platforms` array */
 var runnerQuery = url.parse(runner, true).query,
     isBackbone = /\bbackbone\b/i.test(runner),
-    isMobile = /\bmobile\b/i.test(runnerQuery.build),
     isModern = /\bmodern\b/i.test(runnerQuery.build);
 
 // platforms to test IE compat mode
@@ -126,10 +127,10 @@ if (compatMode) {
 // platforms for AMD tests
 if (_.contains(tags, 'amd')) {
   platforms = platforms.filter(function(platform) {
-    var browser = platform[1],
+    var browser = browserName(platform[1]),
         version = +platform[2];
 
-    if (browser == 'opera') {
+    if (browser == 'Opera') {
       return version >= 10;
     }
     return true;
@@ -138,27 +139,28 @@ if (_.contains(tags, 'amd')) {
 // platforms for Backbone tests
 if (isBackbone) {
   platforms = platforms.filter(function(platform) {
-    var browser = platform[1],
+    var browser = browserName(platform[1]),
         version = +platform[2];
 
     switch (browser) {
-      case 'firefox': return version >= 4;
-      case 'opera': return version >= 12;
+      case 'Firefox': return version >= 4;
+      case 'Opera': return version >= 12;
     }
     return true;
   });
 }
-// platforms for mobile and modern builds
-if (isMobile || isModern) {
+// platforms for modern builds
+if (isModern) {
   platforms = platforms.filter(function(platform) {
-    var browser = platform[1],
+    var browser = browserName(platform[1]),
         version = +platform[2];
 
     switch (browser) {
-      case 'firefox': return version >= 10;
-      case 'internet explorer': return version >= 9;
-      case 'opera': return version >= 12;
-      case 'safari': return version >= (isMobile ? 3 : 6);
+      case 'Android': return version >= 4.1;
+      case 'Firefox': return version >= 10;
+      case 'Internet Explorer': return version >= 9;
+      case 'Opera': return version >= 12;
+      case 'Safari': return version >= 6;
     }
     return true;
   });

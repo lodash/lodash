@@ -310,6 +310,7 @@ function check() {
  */
 function onCheck(error, response, body) {
   var data = _.result(body, 'js tests', [{}])[0],
+      elapsed = (_.now() - this.timestamp) / 1000,
       options = this.options,
       platform = options.platforms[0],
       result = data.result,
@@ -318,8 +319,7 @@ function onCheck(error, response, body) {
       failures = _.result(result, 'failed'),
       label = options.name + ':';
 
-  if (!completed) {
-    console.dir(body);
+  if (!completed && elapsed < idleTimeout) {
     setTimeout(check.bind(this), statusInterval);
     return;
   }
@@ -366,6 +366,7 @@ function onRun(error, response, body) {
     process.exit(3);
   }
   this.id = id;
+  this.timestamp = _.now();
   check.call(this);
 }
 

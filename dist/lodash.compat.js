@@ -669,12 +669,12 @@
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
      * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
      * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
-     * `merge`, `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
-     * `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`, `range`,
-     * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`, `union`,
-     * `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`, `xor`,
-     * and `zip`
+     * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`,
+     * `partial`, `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`,
+     * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
+     * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
+     * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
+     * `xor`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `capitalize`, `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`,
@@ -682,10 +682,10 @@
      * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
      * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
-     * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `now`,
-     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`,
-     * `size`, `some`, `sortedIndex`, `runInContext`, `template`, `trim`,
-     * `trimLeft`, `trimRight`, `unescape`, `uniqueId`, and `value`
+     * `isUndefined`, `join`, `lastIndexOf`, `noConflict`, `now`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`,
+     * `sortedIndex`, `runInContext`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `unescape`, `uniqueId`, and `value`
      *
      * The wrapper functions `first`, `last`, and `sample` return wrapped values
      * when `n` is provided, otherwise they return unwrapped values.
@@ -1295,7 +1295,7 @@
           args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
         if (isCurry) {
-          var newPartialHolders = [];
+          var newPartialHolders = getHolders(args);
           length -= newPartialHolders.length;
 
           if (length < arity) {
@@ -1721,6 +1721,9 @@
                   break;
                 }
               }
+              if (!result) {
+                break;
+              }
             } else if (!(result = baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB))) {
               break;
             }
@@ -2139,10 +2142,10 @@
         return createWrapper.apply(null, data);
       }
       if (isPartial) {
-        var partialHolders = [];
+        var partialHolders = getHolders(partialArgs);
       }
       if (isPartialRight) {
-        var partialRightHolders = [];
+        var partialRightHolders = getHolders(partialRightArgs);
       }
       if (arity == null) {
         arity = isBindKey ? 0 : func.length;
@@ -2154,6 +2157,26 @@
       return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
         ? baseBind(data)
         : baseCreateWrapper(data);
+    }
+
+    /**
+     * Finds the indexes of all placeholder elements in `array`.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @returns {Array} Returns the new array of placeholder indexes.
+     */
+    function getHolders(array) {
+      var index = -1,
+          length = array.length,
+          result = [];
+
+      while (++index < length) {
+        if (array[index] === lodash) {
+          result.push(index);
+        }
+      }
+      return result;
     }
 
     /**
@@ -3064,17 +3087,17 @@
      * // => 2
      *
      * var dict = {
-     *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'fourty': 40, 'fifty': 50 }
+     *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50 }
      * };
      *
      * // using `callback`
-     * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
+     * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'forty', function(word) {
      *   return dict.wordToNumber[word];
      * });
      * // => 2
      *
      * // using `callback` with `thisArg`
-     * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'fourty', function(word) {
+     * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'forty', function(word) {
      *   return this.wordToNumber[word];
      * }, dict);
      * // => 2
@@ -7860,11 +7883,12 @@
      * @static
      * @memberOf _
      * @category Utilities
-     * @param {Function|Object} [object=lodash] object The destination object.
+     * @param {Function|Object} [object=this] object The destination object.
      * @param {Object} source The object of functions to add.
      * @param {Object} [options] The options object.
      * @param {boolean} [options.chain=true] Specify whether the functions added
      *  are chainable.
+     * @returns {Function|Object} Returns `object`.
      * @example
      *
      * function vowels(string) {
@@ -7893,7 +7917,7 @@
           options = source;
         }
         source = object;
-        object = lodash;
+        object = this;
         methodNames = functions(source);
       }
       if (options === false) {
@@ -7930,6 +7954,7 @@
           }(func));
         }
       }
+      return object;
     }
 
     /**
@@ -8302,6 +8327,7 @@
     lodash.memoize = memoize;
     lodash.merge = merge;
     lodash.min = min;
+    lodash.mixin = mixin;
     lodash.negate = negate;
     lodash.omit = omit;
     lodash.once = once;
@@ -8350,7 +8376,7 @@
     lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
-    mixin(assign({}, lodash));
+    mixin(lodash, assign({}, lodash));
 
     /*--------------------------------------------------------------------------*/
 
@@ -8394,7 +8420,6 @@
     lodash.isUndefined = isUndefined;
     lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
-    lodash.mixin = mixin;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;
@@ -8430,7 +8455,7 @@
     lodash.include = contains;
     lodash.inject = reduce;
 
-    mixin(function() {
+    mixin(lodash, function() {
       var source = {}
       baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {

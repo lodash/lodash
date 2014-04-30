@@ -6369,15 +6369,36 @@
     }
 
     var value = ['a'],
-        source = { 'a': function(array) { return array[0]; } };
+        source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
 
-    test('should accept an `object` argument', 1, function() {
-      var lodash = {};
-      _.mixin(lodash, source);
-      strictEqual(lodash.a(value), 'a');
+    test('should use `this` as the default `object` value', 3, function() {
+      var object = _.create(_);
+      object.mixin(source);
+
+      strictEqual(object.a(value), 'a');
+
+      ok(!('a' in _));
+      ok(!('a' in _.prototype));
+
+      delete wrapper.a;
+      delete wrapper.prototype.a;
+      delete wrapper.b;
+      delete wrapper.prototype.b;
     });
 
-    test('should accept a function `object` argument', 2, function() {
+    test('should accept an `object` argument', 1, function() {
+      var object = {};
+      _.mixin(object, source);
+      strictEqual(object.a(value), 'a');
+    });
+
+    test('should return `object`', 2, function() {
+      var object = {};
+      strictEqual(_.mixin(object, source), object);
+      strictEqual(_.mixin(), _);
+    });
+
+    test('should work with a function for `object`', 2, function() {
       _.mixin(wrapper, source);
 
       var wrapped = wrapper(value),
@@ -6388,30 +6409,24 @@
 
       delete wrapper.a;
       delete wrapper.prototype.a;
+      delete wrapper.b;
+      delete wrapper.prototype.b;
     });
 
     test('should mixin `source` methods into lodash', 4, function() {
-      if (!isNpm) {
-        _.mixin({
-          'a': 'a',
-          'A': function(string) { return string.toUpperCase(); }
-        });
+      _.mixin(source);
 
-        ok(!('a' in _));
-        ok(!('a' in _.prototype));
+      strictEqual(_.a(value), 'a');
+      strictEqual(_(value).a().__wrapped__, 'a');
 
-        delete _.a;
-        delete _.prototype.a;
+      delete _.a;
+      delete _.prototype.a;
 
-        strictEqual(_.A('a'), 'A');
-        strictEqual(_('a').A().value(), 'A');
+      ok(!('b' in _));
+      ok(!('b' in _.prototype));
 
-        delete _.A;
-        delete _.prototype.A;
-      }
-      else {
-        skipTest(4);
-      }
+      delete _.b;
+      delete _.prototype.b;
     });
 
     test('should accept an `options` argument', 16, function() {
@@ -6429,7 +6444,7 @@
           var wrapped = func(value),
               actual = wrapped.a();
 
-          if (options && (options === true || options.chain)) {
+          if (options === true || (options && options.chain)) {
             strictEqual(actual.__wrapped__, 'a', message(func, true));
             ok(actual instanceof func, message(func, true));
           } else {
@@ -6438,6 +6453,8 @@
           }
           delete func.a;
           delete func.prototype.a;
+          delete func.b;
+          delete func.prototype.b;
         });
       });
     });
@@ -6461,8 +6478,35 @@
       }
       delete _.a;
       delete _.prototype.a;
+      delete _.b;
+      delete _.prototype.b;
 
       ok(pass);
+    });
+
+    test('should return the existing wrapper when chaining', 2, function() {
+      if (!isNpm) {
+        _.each([_, wrapper], function(func) {
+          if (func === _) {
+            var wrapper = _(source),
+                actual = wrapper.mixin();
+
+            strictEqual(actual.value(), _);
+          }
+          else {
+            wrapper = _(func);
+            actual = wrapper.mixin(source);
+            strictEqual(actual, wrapper);
+          }
+          delete func.a;
+          delete func.prototype.a;
+          delete func.b;
+          delete func.prototype.b;
+        });
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -7804,7 +7848,7 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('supports the `thisArg` argument', 1, function() {
+    test('should support the `thisArg` argument', 1, function() {
       var actual = _.rest(array, function(num, index) {
         return this[index] < 3;
       }, array);

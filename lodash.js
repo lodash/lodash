@@ -7887,7 +7887,7 @@
      * @param {Object} [options] The options object.
      * @param {boolean} [options.chain=true] Specify whether the functions added
      *  are chainable.
-     * @returns {Array|Object|string} Returns `object`.
+     * @returns {Function|Object} Returns `object`.
      * @example
      *
      * function vowels(string) {

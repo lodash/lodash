@@ -319,7 +319,7 @@ function onCheck(error, response, body) {
       failures = _.result(result, 'failed'),
       label = options.name + ':';
 
-  if (!completed && elapsed < idleTimeout) {
+  if (!completed && !(data.status != 'test session in progress' && elapsed >= idleTimeout)) {
     setTimeout(check.bind(this), statusInterval);
     return;
   }

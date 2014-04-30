@@ -776,13 +776,18 @@
     });
 
     test('should support placeholders', 4, function() {
-      var object = {},
-          bound = _.bind(fn, object, _, 'b', _);
+      if (!isModularize) {
+        var object = {},
+            bound = _.bind(fn, object, _, 'b', _);
 
-      deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
-      deepEqual(bound('a'), [object, 'a', 'b', undefined]);
-      deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
-      deepEqual(bound(), [object, undefined, 'b', undefined]);
+        deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
+        deepEqual(bound('a'), [object, 'a', 'b', undefined]);
+        deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
+        deepEqual(bound(), [object, undefined, 'b', undefined]);
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should create a function with a `length` of `0`', 2, function() {
@@ -973,11 +978,16 @@
         }
       };
 
-      var bound = _.bindKey(object, 'fn', _, 'b', _);
-      deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
-      deepEqual(bound('a'), ['a', 'b', undefined]);
-      deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-      deepEqual(bound(), [undefined, 'b', undefined]);
+      if (!isModularize) {
+        var bound = _.bindKey(object, 'fn', _, 'b', _);
+        deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
+        deepEqual(bound('a'), ['a', 'b', undefined]);
+        deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+        deepEqual(bound(), [undefined, 'b', undefined]);
+      }
+      else {
+        skipTest(4);
+      }
     });
   }());
 
@@ -1803,11 +1813,16 @@
     });
 
     test('should support placeholders', 4, function() {
-      var curried = _.curry(fn);
-      deepEqual(curried(1)(_, 3)(_, 4)(2), [1, 2, 3, 4]);
-      deepEqual(curried(_, 2)(1)(_, 4)(3), [1, 2, 3, 4]);
-      deepEqual(curried(_, _, 3)(_, 2)(_, 4)(1), [1, 2, 3, 4]);
-      deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
+      if (!isModularize) {
+        var curried = _.curry(fn);
+        deepEqual(curried(1)(_, 3)(_, 4)(2), [1, 2, 3, 4]);
+        deepEqual(curried(_, 2)(1)(_, 4)(3), [1, 2, 3, 4]);
+        deepEqual(curried(_, _, 3)(_, 2)(_, 4)(1), [1, 2, 3, 4]);
+        deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should return a function with a `length` of `0`', 6, function() {
@@ -6864,18 +6879,23 @@
     });
 
     test('`_.' + methodName + '` should support placeholders', 4, function() {
-      var fn = function() { return slice.call(arguments); },
-          par = func(fn, _, 'b', _);
+      if (!isModularize) {
+        var fn = function() { return slice.call(arguments); },
+            par = func(fn, _, 'b', _);
 
-      deepEqual(par('a', 'c'), ['a', 'b', 'c']);
-      deepEqual(par('a'), ['a', 'b', undefined]);
-      deepEqual(par(), [undefined, 'b', undefined]);
+        deepEqual(par('a', 'c'), ['a', 'b', 'c']);
+        deepEqual(par('a'), ['a', 'b', undefined]);
+        deepEqual(par(), [undefined, 'b', undefined]);
 
-      if (isPartial) {
-        deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-      } else {
-        par = func(fn, _, 'c', _);
-        deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
+        if (isPartial) {
+          deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+        } else {
+          par = func(fn, _, 'c', _);
+          deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
+        }
+      }
+      else {
+        skipTest(4);
       }
     });
 

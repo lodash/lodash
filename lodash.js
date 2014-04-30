@@ -668,12 +668,12 @@
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
      * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
      * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
-     * `merge`, `min`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
-     * `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`, `range`,
-     * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`, `union`,
-     * `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`, `xor`,
-     * and `zip`
+     * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`,
+     * `partial`, `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`,
+     * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
+     * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
+     * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
+     * `xor`, and `zip`
      *
      * The non-chainable wrapper functions are:
      * `capitalize`, `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`,
@@ -681,10 +681,10 @@
      * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
      * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
-     * `isUndefined`, `join`, `lastIndexOf`, `mixin`, `noConflict`, `now`,
-     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`,
-     * `size`, `some`, `sortedIndex`, `runInContext`, `template`, `trim`,
-     * `trimLeft`, `trimRight`, `unescape`, `uniqueId`, and `value`
+     * `isUndefined`, `join`, `lastIndexOf`, `noConflict`, `now`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`,
+     * `sortedIndex`, `runInContext`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `unescape`, `uniqueId`, and `value`
      *
      * The wrapper functions `first`, `last`, and `sample` return wrapped values
      * when `n` is provided, otherwise they return unwrapped values.
@@ -7882,11 +7882,12 @@
      * @static
      * @memberOf _
      * @category Utilities
-     * @param {Function|Object} [object=lodash] object The destination object.
+     * @param {Function|Object} [object=this] object The destination object.
      * @param {Object} source The object of functions to add.
      * @param {Object} [options] The options object.
      * @param {boolean} [options.chain=true] Specify whether the functions added
      *  are chainable.
+     * @returns {Array|Object|string} Returns `object`.
      * @example
      *
      * function vowels(string) {
@@ -7915,7 +7916,7 @@
           options = source;
         }
         source = object;
-        object = lodash;
+        object = this;
         methodNames = functions(source);
       }
       if (options === false) {
@@ -7952,6 +7953,7 @@
           }(func));
         }
       }
+      return object;
     }
 
     /**
@@ -8324,6 +8326,7 @@
     lodash.memoize = memoize;
     lodash.merge = merge;
     lodash.min = min;
+    lodash.mixin = mixin;
     lodash.negate = negate;
     lodash.omit = omit;
     lodash.once = once;
@@ -8372,7 +8375,7 @@
     lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
-    mixin(assign({}, lodash));
+    mixin(lodash, assign({}, lodash));
 
     /*--------------------------------------------------------------------------*/
 
@@ -8416,7 +8419,6 @@
     lodash.isUndefined = isUndefined;
     lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
-    lodash.mixin = mixin;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;
@@ -8452,7 +8454,7 @@
     lodash.include = contains;
     lodash.inject = reduce;
 
-    mixin(function() {
+    mixin(lodash, function() {
       var source = {}
       baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {

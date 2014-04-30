@@ -9728,14 +9728,18 @@
       deepEqual(_.where(objects, { 'a': 1, 'b': 2 }), [{ 'a': 1, 'b': 2 }]);
     });
 
-    test('should not filter by inherited `source` properties', 1, function() {
+    test('should not filter by inherited `source` properties', 2, function() {
       function Foo() {}
       Foo.prototype = { 'a': 2 };
 
       var source = new Foo;
       source.b = 2;
 
-      deepEqual(_.where(objects, source), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
+      var expected = [objects[2], objects[3]],
+          actual = _.where(objects, source);
+
+      deepEqual(actual, expected);
+      ok(_.isEmpty(_.difference(actual, objects)));
     });
 
     test('should filter by problem JScript properties (test in IE < 9)', 1, function() {
@@ -9743,14 +9747,18 @@
       deepEqual(_.where(collection, shadowedObject), [shadowedObject]);
     });
 
-    test('should work with an object for `collection`', 1, function() {
+    test('should work with an object for `collection`', 2, function() {
       var collection = {
         'x': { 'a': 1 },
         'y': { 'a': 3 },
         'z': { 'a': 1, 'b': 2 }
       };
 
-      deepEqual(_.where(collection, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1, 'b': 2 }]);
+      var expected = [collection.x, collection.z],
+          actual = _.where(collection, { 'a': 1 });
+
+      deepEqual(actual, expected);
+      ok(_.isEmpty(_.difference(actual, _.values(collection))));
     });
 
     test('should work with a function for `source`', 1, function() {
@@ -9771,11 +9779,13 @@
       deepEqual(actual, expected);
     });
 
-    test('should perform a deep partial comparison of `source`', 1, function() {
+    test('should perform a deep partial comparison of `source`', 2, function() {
       var collection = [{ 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 }],
-          expected = collection.slice();
+          expected = collection.slice(),
+          actual = _.where(collection, { 'a': { 'b': { 'c': 1 } } });
 
-      deepEqual(_.where(collection, { 'a': { 'b': { 'c': 1 } } }), expected);
+      deepEqual(actual, expected);
+      ok(_.isEmpty(_.difference(actual, collection)));
     });
 
     test('should search of arrays for values', 2, function() {
@@ -9786,28 +9796,34 @@
       deepEqual(_.where(collection, { 'a': [2] }), expected);
     });
 
-    test('should perform a partial comparison of *all* objects within arrays of `source`', 1, function() {
+    test('should perform a partial comparison of *all* objects within arrays of `source`', 2, function() {
       var collection = [
-        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 3, 'c': 4 }] },
-        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 3, 'c': 5 }] }
+        { 'a': [{ 'b': 1, 'c': 2, 'd': 3 }, { 'b': 4, 'c': 5, 'd': 6 }] },
+        { 'a': [{ 'b': 1, 'c': 2, 'd': 3 }, { 'b': 4, 'c': 6, 'd': 7 }] }
       ];
 
-      var actual = _.where(collection, { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 3, 'c': 4 }] });
+      var actual = _.where(collection, { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5 }] });
       deepEqual(actual, [collection[0]]);
+      ok(_.isEmpty(_.difference(actual, collection)));
     });
 
     test('should handle a `source` with `undefined` values', 4, function() {
-      var source = { 'b': undefined };
-      deepEqual(_.where([{ 'a': 1 }, { 'a': 1, 'b': 1 }], source), []);
+      var source = { 'b': undefined },
+          actual = _.where([{ 'a': 1 }, { 'a': 1, 'b': 1 }], source);
+
+      deepEqual(actual, []);
 
       var object = { 'a': 1, 'b': undefined };
-      deepEqual(_.where([object], source), [object]);
+      actual = _.where([object], source);
+      deepEqual(actual, [object]);
 
       source = { 'a': { 'c': undefined } };
-      deepEqual(_.where([{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }], source), []);
+      actual = _.where([{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }], source);
+      deepEqual(actual, []);
 
       object = { 'a': { 'b': 1, 'c': undefined } };
-      deepEqual(_.where([object], source), [object]);
+      actual = _.where([object], source);
+      deepEqual(actual, [object]);
     });
   }());
 

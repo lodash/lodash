@@ -185,9 +185,6 @@
     return result;
   }());
 
-  /** Detects if running the pre-build version of Lo-Dash */
-  var isPreBuild = /getHolders/.test(_.partial(_.noop));
-
   /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug) */
   var shadowedProps = [
     'constructor',
@@ -779,18 +776,13 @@
     });
 
     test('should support placeholders', 4, function() {
-      if (isPreBuild) {
-        var object = {},
-            bound = _.bind(fn, object, _, 'b', _);
+      var object = {},
+          bound = _.bind(fn, object, _, 'b', _);
 
-        deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
-        deepEqual(bound('a'), [object, 'a', 'b', undefined]);
-        deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
-        deepEqual(bound(), [object, undefined, 'b', undefined]);
-      }
-      else {
-        skipTest(4);
-      }
+      deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
+      deepEqual(bound('a'), [object, 'a', 'b', undefined]);
+      deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
+      deepEqual(bound(), [object, undefined, 'b', undefined]);
     });
 
     test('should create a function with a `length` of `0`', 2, function() {
@@ -981,16 +973,11 @@
         }
       };
 
-      if (isPreBuild) {
-        var bound = _.bindKey(object, 'fn', _, 'b', _);
-        deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
-        deepEqual(bound('a'), ['a', 'b', undefined]);
-        deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-        deepEqual(bound(), [undefined, 'b', undefined]);
-      }
-      else {
-        skipTest(4);
-      }
+      var bound = _.bindKey(object, 'fn', _, 'b', _);
+      deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
+      deepEqual(bound('a'), ['a', 'b', undefined]);
+      deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+      deepEqual(bound(), [undefined, 'b', undefined]);
     });
   }());
 
@@ -1816,16 +1803,11 @@
     });
 
     test('should support placeholders', 4, function() {
-      if (isPreBuild) {
-        var curried = _.curry(fn);
-        deepEqual(curried(1)(_, 3)(_, 4)(2), [1, 2, 3, 4]);
-        deepEqual(curried(_, 2)(1)(_, 4)(3), [1, 2, 3, 4]);
-        deepEqual(curried(_, _, 3)(_, 2)(_, 4)(1), [1, 2, 3, 4]);
-        deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
-      }
-      else {
-        skipTest(4);
-      }
+      var curried = _.curry(fn);
+      deepEqual(curried(1)(_, 3)(_, 4)(2), [1, 2, 3, 4]);
+      deepEqual(curried(_, 2)(1)(_, 4)(3), [1, 2, 3, 4]);
+      deepEqual(curried(_, _, 3)(_, 2)(_, 4)(1), [1, 2, 3, 4]);
+      deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
     });
 
     test('should return a function with a `length` of `0`', 6, function() {
@@ -6882,23 +6864,18 @@
     });
 
     test('`_.' + methodName + '` should support placeholders', 4, function() {
-      if (isPreBuild) {
-        var fn = function() { return slice.call(arguments); },
-            par = func(fn, _, 'b', _);
+      var fn = function() { return slice.call(arguments); },
+          par = func(fn, _, 'b', _);
 
-        deepEqual(par('a', 'c'), ['a', 'b', 'c']);
-        deepEqual(par('a'), ['a', 'b', undefined]);
-        deepEqual(par(), [undefined, 'b', undefined]);
+      deepEqual(par('a', 'c'), ['a', 'b', 'c']);
+      deepEqual(par('a'), ['a', 'b', undefined]);
+      deepEqual(par(), [undefined, 'b', undefined]);
 
-        if (isPartial) {
-          deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-        } else {
-          par = func(fn, _, 'c', _);
-          deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
-        }
-      }
-      else {
-        skipTest(4);
+      if (isPartial) {
+        deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+      } else {
+        par = func(fn, _, 'c', _);
+        deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
       }
     });
 

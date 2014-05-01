@@ -28,8 +28,7 @@
     'bold': 1,
     'green': 32,
     'magenta': 35,
-    'red': 31,
-    'white': 37
+    'red': 31
   };
 
   /** Used to convert HTML entities to characters */

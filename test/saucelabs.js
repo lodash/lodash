@@ -65,12 +65,14 @@ var advisor = getOption('advisor', true),
     maxDuration = getOption('maxDuration', 360),
     port = ports[Math.min(_.sortedIndex(ports, getOption('port', 9001)), ports.length - 1)],
     publicAccess = getOption('public', true),
+    queueTimeout = getOption('queueTimeout', 360),
     recordVideo = getOption('recordVideo', true),
     recordScreenshots = getOption('recordScreenshots', false),
     runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
     runnerUrl = getOption('runnerUrl', 'http://localhost:' + port + '/' + runner),
     statusInterval = getOption('statusInterval', 5000),
     tags = getOption('tags', []),
+    throttled = getOption('throttled', 10),
     tunneled = getOption('tunneled', true),
     tunnelId = getOption('tunnelId', 'tunnel_' + env.TRAVIS_JOB_NUMBER),
     tunnelTimeout = getOption('tunnelTimeout', 10000),
@@ -87,8 +89,6 @@ var browserNameMap = {
 /** List of platforms to load the runner on */
 var platforms = [
   ['Linux', 'android', '4.3'],
-  ['Linux', 'android', '4.2'],
-  ['Linux', 'android', '4.1'],
   ['Linux', 'android', '4.0'],
   ['Windows 8.1', 'firefox', '28'],
   ['Windows 8.1', 'firefox', '27'],
@@ -319,7 +319,7 @@ function onCheck(error, response, body) {
       failures = _.result(result, 'failed'),
       label = options.name + ':';
 
-  if (!completed && !(data.status != 'test session in progress' && elapsed >= idleTimeout)) {
+  if (!completed && !(data.status != 'test session in progress' && elapsed >= queueTimeout)) {
     setTimeout(check.bind(this), statusInterval);
     return;
   }
@@ -408,7 +408,7 @@ Job.prototype.run = function() {
  * @param {Function} onComplete The function called once all jobs have completed.
  */
 function run(platforms, onComplete) {
-  var jobs = _.map(platforms, function(platform) {
+  var queue = _.map(platforms, function(platform) {
     return new Job({
       'user': username,
       'pass': accessKey,
@@ -416,20 +416,32 @@ function run(platforms, onComplete) {
     })
   });
 
-  var finishedJobs = 0,
-      success = true,
-      totalJobs = jobs.length;
+  var dequeue = function() {
+    while (queue.length && running < throttled) {
+      running++;
+      queue.shift().run();
+    }
+  };
 
-  _.invoke(jobs, 'on', 'complete', function() {
-    if (++finishedJobs == totalJobs) {
-      onComplete(success);
-    } else if (success) {
+  var completed = 0,
+      running = 0,
+      success = true,
+      total = queue.length;
+
+  _.invoke(queue, 'on', 'complete', function() {
+    running--;
+    if (success) {
       success = !this.failed;
     }
+    if (++completed == total) {
+      onComplete(success);
+      return;
+    }
+    dequeue();
   });
 
   console.log('Starting jobs...');
-  _.invoke(jobs, 'run');
+  dequeue();
 }
 
 // cleanup any inline logs when exited via `ctrl+c`

@@ -423,7 +423,7 @@ Job.prototype.restart = function(callback) {
       label = options.name + ':';
 
   logInline();
-  console.log(label + ' ' + description + ' restart #%d', ++this.attempts);
+  console.log(label + ' ' + description + ' restart #%d of %d', ++this.attempts, this.retries);
   this.stop(_.bind(this.start, this, callback));
 };
 

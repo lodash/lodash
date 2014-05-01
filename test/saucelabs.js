@@ -322,7 +322,7 @@ function onStart(error, res, body) {
 }
 
 /**
- * The `request.post` callback used by `check`.
+ * The `request.post` callback used by `Job#status`.
  *
  * @private
  * @param {Object} [error] The error object.
@@ -503,7 +503,8 @@ function run(platforms, onComplete) {
   });
 
   var dequeue = function() {
-    while (queue.length && running++ < throttled) {
+    while (queue.length && (running < throttled)) {
+      running++;
       queue.shift().start();
     }
   };

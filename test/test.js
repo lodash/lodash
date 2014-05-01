@@ -1655,7 +1655,7 @@
       deepEqual(actual, values);
     });
 
-    test('should return `_.identity` when `func` is `null` or `undefined`', 2, function() {
+    test('should return `_.identity` when `func` is nullish', 2, function() {
       var object = {};
       _.each([null, undefined], function(value) {
         var callback = _.callback(value);
@@ -2733,7 +2733,7 @@
       deepEqual(_.first(array, 2), [1, 2]);
     });
 
-    test('should treat falsey `n` values, except `null` or `undefined`, as `0`', 1, function() {
+    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
       var expected = _.map(falsey, function(value) {
         return value == null ? 1 : [];
       });
@@ -3339,7 +3339,7 @@
       deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
     });
 
-    test('`_.' + methodName + '` should not error on `null` or `undefined` sources (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` should not error on nullish sources (test in IE < 9)', 1, function() {
       try {
         deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
       } catch(e) {
@@ -3347,7 +3347,7 @@
       }
     });
 
-    test('`_.' + methodName + '` should not error when `object` is `null` or `undefined` and source objects are provided', 1, function() {
+    test('`_.' + methodName + '` should not error when `object` is nullish and source objects are provided', 1, function() {
       var expected = _.times(2, _.constant(true));
 
       var actual = _.map([null, undefined], function(value) {
@@ -3820,7 +3820,7 @@
       deepEqual(_.initial([]), []);
     });
 
-    test('should treat falsey `n` values, except `null` or `undefined`,  as `0`', 1, function() {
+    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
       var expected = _.map(falsey, function(value) {
         return value == null ? [1, 2] : array;
       });
@@ -3995,7 +3995,7 @@
       deepEqual(_.invoke(1), []);
     });
 
-    test('should work with `null` or `undefined` elements', 1, function() {
+    test('should work with nullish elements', 1, function() {
       var array = ['a', null, undefined, 'd'];
       deepEqual(_.invoke(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
     });
@@ -5609,7 +5609,7 @@
       deepEqual(_.last(array, 2), [2, 3]);
     });
 
-    test('should treat falsey `n` values, except `null` or `undefined`, as `0`', 1, function() {
+    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
       var expected = _.map(falsey, function(value) {
         return value == null ? 3 : [];
       });
@@ -7195,7 +7195,7 @@
       deepEqual(_.pluck(object, 'length'), [1, 2, 3]);
     });
 
-    test('should work with `null` or `undefined` elements', 1, function() {
+    test('should work with nullish elements', 1, function() {
       var objects = [{ 'a': 1 }, null, undefined, { 'a': 4 }];
       deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);
     });
@@ -7748,7 +7748,7 @@
       strictEqual(_.result(object, 'd'), undefined);
     });
 
-    test('should return `undefined` when `object` is `null` or `undefined`', 2, function() {
+    test('should return `undefined` when `object` is nullish', 2, function() {
       strictEqual(_.result(null, 'a'), undefined);
       strictEqual(_.result(undefined, 'a'), undefined);
     });
@@ -7804,7 +7804,7 @@
       deepEqual(_.rest(array, 2), [3]);
     });
 
-    test('should treat falsey `n` values, except `null` or `undefined`,  as `0`', 1, function() {
+    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
       var expected = _.map(falsey, function(value) {
         return value == null ? [2, 3] : array;
       });
@@ -7924,7 +7924,7 @@
       deepEqual(actual.sort(), array);
     });
 
-    test('should treat falsey `n` values, except `null` or `undefined`,  as `0`', 1, function() {
+    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
       var expected = _.map(falsey, function(value) {
         return value == null ? 1 : [];
       });

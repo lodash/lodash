@@ -56,7 +56,7 @@ var throbberDelay = 500,
 
 /** Used as Sauce Labs config values */
 var advisor = getOption('advisor', true),
-    build = getOption('build', env.TRAVIS_COMMIT.slice(0, 10)),
+    build = getOption('build', (env.TRAVIS_COMMIT || '').slice(0, 10)),
     compatMode = getOption('compatMode', null),
     customData = Function('return {' + getOption('customData', '').replace(/^\{|}$/g, '') + '}')(),
     framework = getOption('framework', 'qunit'),
@@ -241,7 +241,7 @@ function getOption(name, defaultValue) {
  * Writes an inline message to standard output.
  *
  * @private
- * @param {string} text The text to log.
+ * @param {string} [text=''] The text to log.
  */
 function logInline(text) {
   var blankLine = _.repeat(' ', _.size(prevLine));
@@ -289,15 +289,36 @@ function optionToValue(name, string) {
 /*----------------------------------------------------------------------------*/
 
 /**
- * Used by the `onRun` callback to check the status of a job.
+ * The `request.post` callback used by `Jobs#start`.
  *
  * @private
+ * @param {Object} [error] The error object.
+ * @param {Object} res The response data object.
+ * @param {Object} body The response body JSON object.
  */
-function check() {
-  request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests/status', {
-    'auth': { 'user': this.user, 'pass': this.pass },
-    'json': { 'js tests': [this.id] }
-  }, onCheck.bind(this));
+function onStart(error, res, body) {
+  var id = _.result(body, 'js tests', [])[0],
+      statusCode = _.result(res, 'statusCode');
+
+  this.starting = false;
+  if (error || !id || statusCode != 200) {
+    if (this.attempts < this.retries) {
+      this.restart();
+      return;
+    }
+    logInline();
+    console.error('Failed to start job; status: %d, body:\n%s', statusCode, JSON.stringify(body));
+    if (error) {
+      console.error(error);
+    }
+    this.failed = true;
+    this.emit('complete');
+    return;
+  }
+  this.id = id;
+  this.timestamp = _.now();
+  this.emit('start');
+  this.status();
 }
 
 /**
@@ -305,35 +326,42 @@ function check() {
  *
  * @private
  * @param {Object} [error] The error object.
- * @param {Object} response The response data object.
+ * @param {Object} res The response data object.
  * @param {Object} body The response body JSON object.
  */
-function onCheck(error, response, body) {
+function onStatus(error, res, body) {
   var data = _.result(body, 'js tests', [{}])[0],
-      elapsed = (_.now() - this.timestamp) / 1000,
+      jobStatus = data.status,
       options = this.options,
       platform = options.platforms[0],
       result = data.result,
       completed = _.result(body, 'completed'),
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+      elapsed = (_.now() - this.timestamp) / 1000,
+      expired = (jobStatus != 'test session in progress' && elapsed >= queueTimeout),
       failures = _.result(result, 'failed'),
-      label = options.name + ':';
+      label = options.name + ':',
+      url = data.url;
 
-  if (!completed && !(data.status != 'test session in progress' && elapsed >= queueTimeout)) {
-    setTimeout(check.bind(this), statusInterval);
+  this.checking = false;
+  this.emit('status', jobStatus);
+
+  if (!completed && !expired) {
+    setTimeout(_.bind(this.status, this), statusInterval);
     return;
   }
+  this.result = result;
+  this.url = url;
+
   if (!result || failures || reError.test(result.message)) {
-    if (this.attempts < maxRetries) {
-      this.attempts++;
-      console.log(label + ' ' + description + ' retry #%d', this.attempts);
-      this.run();
+    if (this.attempts < this.retries) {
+      this.restart();
       return;
     }
-    _.assign(this, data, { 'failed': true });
-    var details = 'See ' + this.url + ' for details.';
+    var details = 'See ' + url + ' for details.';
+    this.failed = true;
 
-    logInline('');
+    logInline();
     if (failures) {
       console.error(label + ' %s ' + chalk.red('failed') + ' %d test' + (failures > 1 ? 's' : '') + '. %s', description, failures, details);
     } else {
@@ -347,27 +375,13 @@ function onCheck(error, response, body) {
 }
 
 /**
- * The `request.post` callback used by `Jobs#run`.
+ * The `request.put` callback used by `Jobs#stop`.
  *
  * @private
- * @param {Object} [error] The error object.
- * @param {Object} response The response data object.
- * @param {Object} body The response body JSON object.
  */
-function onRun(error, response, body) {
-  var id = _.result(body, 'js tests', [])[0],
-      statusCode = _.result(response, 'statusCode');
-
-  if (error || !id || statusCode != 200) {
-    console.error('Failed to start job; status: %d, body:\n%s', statusCode, JSON.stringify(body));
-    if (error) {
-      console.error(error);
-    }
-    process.exit(3);
-  }
-  this.id = id;
-  this.timestamp = _.now();
-  check.call(this);
+function onStop() {
+  this.stopping = false;
+  this.emit('stop');
 }
 
 /*----------------------------------------------------------------------------*/
@@ -380,22 +394,94 @@ function onRun(error, response, body) {
  */
 function Job(properties) {
   EventEmitter.call(this);
-  _.merge(this, { 'attempts': 0, 'options': {} }, properties);
+
+  this.options = {};
+  this.retries = maxRetries;
+
+  _.merge(this, properties);
   _.defaults(this.options, _.cloneDeep(defaultOptions));
+
+  this.attempts = 0;
+  this.checking = false;
+  this.failed = false;
+  this.starting = false;
+  this.stopping = false;
 }
 
 Job.prototype = _.create(EventEmitter.prototype);
 
 /**
- * Runs the job on Sauce Labs.
+ * Restarts the job.
  *
- * @private
+ * @memberOf Job
+ * @param {Function} callback The function called once the job is restarted.
  */
-Job.prototype.run = function() {
-  request.post('https://saucelabs.com/rest/v1/' + this.user + '/js-tests', {
+Job.prototype.restart = function(callback) {
+  var options = this.options,
+      platform = options.platforms[0],
+      description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+      label = options.name + ':';
+
+  logInline();
+  console.log(label + ' ' + description + ' restart #%d', ++this.attempts);
+  this.stop(_.bind(this.start, this, callback));
+};
+
+/**
+ * Starts the job.
+ *
+ * @memberOf Job
+ * @param {Function} callback The function called once the job is started.
+ */
+Job.prototype.start = function(callback) {
+  this.once('start', _.callback(callback, this));
+  if (this.starting) {
+    return;
+  }
+  this.starting = true;
+  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests', this), {
     'auth': { 'user': this.user, 'pass': this.pass },
     'json': this.options
-  }, onRun.bind(this));
+  }, _.bind(onStart, this));
+};
+
+/**
+ * Checks the status of a job.
+ *
+ * @memberOf Job
+ * @param {Function} callback The function called once the status is resolved.
+ */
+Job.prototype.status = function(callback) {
+  this.once('status', _.callback(callback, this));
+  if (this.checking) {
+    return;
+  }
+  this.checking = true;
+  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
+    'auth': { 'user': this.user, 'pass': this.pass },
+    'json': { 'js tests': [this.id] }
+  }, _.bind(onStatus, this));
+};
+
+/**
+ * Stops the job.
+ *
+ * @memberOf Job
+ * @param {Function} callback The function called once the job is stopped.
+ */
+Job.prototype.stop = function(callback) {
+  this.once('stop', _.callback(callback, this));
+  if (this.stopping) {
+    return;
+  }
+  this.stopping = true;
+  if (this.id == null) {
+    _.defer(_.bind(this.emit, this, 'stop'));
+    return;
+  }
+  request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop', this), {
+    'auth': { 'user': this.user, 'pass': this.pass }
+  }, _.bind(onStop, this));
 };
 
 /*----------------------------------------------------------------------------*/
@@ -417,9 +503,8 @@ function run(platforms, onComplete) {
   });
 
   var dequeue = function() {
-    while (queue.length && running < throttled) {
-      running++;
-      queue.shift().run();
+    while (queue.length && running++ < throttled) {
+      queue.shift().start();
     }
   };
 
@@ -446,11 +531,11 @@ function run(platforms, onComplete) {
 
 // cleanup any inline logs when exited via `ctrl+c`
 process.on('SIGINT', function() {
-  logInline('');
+  logInline();
   process.exit();
 });
 
-// create a web server for the local dir
+// create a web server for the current working directory
 http.createServer(function(req, res) {
   // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
   if (compatMode && path.extname(url.parse(req.url).pathname) == '.html') {

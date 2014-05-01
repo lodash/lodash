@@ -1663,6 +1663,18 @@
       });
     });
 
+    test('should not error when `func` is nullish and a `thisArg` is provided', 2, function() {
+      var object = {};
+      _.each([null, undefined], function(value) {
+        try {
+          var callback = _.callback(value, {});
+          strictEqual(callback(object), object);
+        } catch(e) {
+          ok(false);
+        }
+      });
+    });
+
     test('should return a callback created by `_.matches` when `func` is an object', 2, function() {
       var callback = _.callback({ 'a': 1 });
       strictEqual(callback({ 'a': 1, 'b': 2 }), true);

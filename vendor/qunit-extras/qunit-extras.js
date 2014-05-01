@@ -287,7 +287,7 @@
      * Writes an inline message to standard output.
      *
      * @private
-     * @param {string} text The text to log.
+     * @param {string} [text=''] The text to log.
      */
     var logInline = (function() {
       // exit early if not Node.js
@@ -297,13 +297,16 @@
       }
       // cleanup any inline logs when exited via `ctrl+c`
       process.on('SIGINT', function() {
-        logInline('');
+        logInline();
         process.exit();
       });
 
       var prevLine = '';
       return function(text) {
         var blankLine = repeat(' ', prevLine.length);
+        if (text == null) {
+          text = '';
+        }
         if (text.length > hr.length) {
           text = text.slice(0, hr.length - 3) + '...';
         }
@@ -457,7 +460,7 @@
 
           var failures = details.failed;
           var statusColor = failures ? 'magenta' : 'green';
-          logInline('');
+          logInline();
           console.log(hr);
           console.log(color(statusColor, '    PASS: ' + details.passed + '  FAIL: ' + failures + '  TOTAL: ' + details.total));
           console.log(color(statusColor, '    Finished in ' + details.runtime + ' milliseconds.'));
@@ -511,7 +514,7 @@
         if (hidepassed && !failures) {
           return;
         }
-        logInline('');
+        logInline();
         if (!modulePrinted) {
           modulePrinted = true;
           console.log(hr);

@@ -516,8 +516,8 @@ Job.prototype.stop = function(callback) {
   if (this.statusId) {
     this.statusId = clearTimeout(this.statusId);
   }
-  if (this.id == null) {
-    _.defer(_.bind(this.emit, this, 'stop'));
+  if (this.id == null || !this.running) {
+    _.defer(_.bind(onJobStop, this));
     return this;
   }
   request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop', this), {
@@ -541,11 +541,15 @@ function Tunnel(properties) {
   this.retries = maxTunnelRetries;
   _.merge(this, properties);
 
-  this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
+  this.attempts = 0;
+  this.running = false;
+  this.starting = false;
+  this.stopping = false;
 
-  this.jobs = { 'active': [], 'queue': [] };
+  var active = [],
+      queue = [];
 
-  this.jobs.all = _.map(this.platforms, function(platform) {
+  var all = _.map(this.platforms, function(platform) {
     return new Job(_.merge({
       'user': this.user,
       'pass': this.pass,
@@ -554,10 +558,31 @@ function Tunnel(properties) {
     }, this.job));
   }, this);
 
-  this.attempts = 0;
-  this.running = false;
-  this.starting = false;
-  this.stopping = false;
+  var completed = 0,
+      success = true,
+      total = all.length,
+      tunnel = this;
+
+  _.invoke(all, 'on', 'complete', function() {
+    _.pull(active, this);
+    if (success) {
+      success = !this.failed;
+    }
+    if (++completed == total) {
+      tunnel.running = false;
+      tunnel.emit('complete', success);
+      return;
+    }
+    tunnel.dequeue();
+  });
+
+  this.on('stop', function() {
+    completed = 0;
+    success = true;
+  });
+
+  this.jobs = {'active': active, 'all': all, 'queue': queue };
+  this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
 }
 
 Tunnel.prototype = _.create(EventEmitter.prototype);
@@ -594,9 +619,7 @@ Tunnel.prototype.start = function(callback) {
   this.starting = true;
 
   this.connection.start(function(success) {
-    tunnel.running = true;
     tunnel.starting = false;
-
     if (!success) {
       if (tunnel.attempts < tunnel.retries) {
         tunnel.restart();
@@ -607,29 +630,11 @@ Tunnel.prototype.start = function(callback) {
     }
     console.log('Sauce Connect tunnel opened');
 
-    var jobs = tunnel.jobs,
-        queue = jobs.queue,
-        active = jobs.active;
+    var jobs = tunnel.jobs;
+    push.apply(jobs.queue, jobs.all);
 
-    push.apply(queue, jobs.all);
-
-    var completed = 0,
-        total = queue.length;
-
+    tunnel.running = true;
     tunnel.emit('start');
-
-    _.invoke(queue, 'on', 'complete', function() {
-      _.pull(active, this);
-      if (success) {
-        success = !this.failed;
-      }
-      if (++completed == total) {
-        tunnel.running = false;
-        tunnel.emit('complete', success);
-        return;
-      }
-      tunnel.dequeue();
-    });
 
     console.log('Starting jobs...');
     tunnel.dequeue();
@@ -686,7 +691,7 @@ Tunnel.prototype.stop = function(callback) {
   this.stopping = true;
   queue.length = 0;
 
-  if (!total) {
+  if (!total || !this.running) {
     _.defer(onTunnelStop);
     return this;
   }

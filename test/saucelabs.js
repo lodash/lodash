@@ -579,6 +579,11 @@ function Tunnel(properties) {
   this.on('stop', function() {
     completed = 0;
     success = true;
+    _.each(all, function(job) {
+      job.attempts = 0;
+      job.failed = false;
+      job.id = job.result = job.url = null;
+    });
   });
 
   this.jobs = {'active': active, 'all': all, 'queue': queue };

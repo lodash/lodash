@@ -324,6 +324,7 @@ function onJobStart(error, res, body) {
     return;
   }
   this.id = id;
+  this.running = true;
   this.timestamp = _.now();
   this.emit('start');
   this.status();
@@ -388,6 +389,7 @@ function onJobStatus(error, res, body) {
   } else {
     console.log(label, description, chalk.green('passed'));
   }
+  this.running = false;
   this.emit('complete');
 }
 
@@ -397,7 +399,7 @@ function onJobStatus(error, res, body) {
  * @private
  */
 function onJobStop() {
-  this.stopping = false;
+  this.running = this.stopping = false;
   if (!this.tunnel.starting) {
     this.emit('stop');
   }
@@ -424,6 +426,7 @@ function Job(properties) {
   this.attempts = 0;
   this.checking = false;
   this.failed = false;
+  this.running = false;
   this.starting = false;
   this.stopping = false;
 }
@@ -461,7 +464,7 @@ Job.prototype.start = function(callback) {
   var tunnel = this.tunnel;
   this.once('start', _.callback(callback, this));
 
-  if (this.starting || tunnel.starting || tunnel.stopping) {
+  if (this.starting || this.running || tunnel.starting || tunnel.stopping) {
     return this;
   }
   this.starting = true;
@@ -540,7 +543,9 @@ function Tunnel(properties) {
 
   this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
 
-  this.jobs = _.map(this.platforms, function(platform) {
+  this.jobs = { 'active': [], 'queue': [] };
+
+  this.jobs.all = _.map(this.platforms, function(platform) {
     return new Job(_.merge({
       'user': this.user,
       'pass': this.pass,
@@ -550,8 +555,7 @@ function Tunnel(properties) {
   }, this);
 
   this.attempts = 0;
-  this.queue = [];
-  this.running = [];
+  this.running = false;
   this.starting = false;
   this.stopping = false;
 }
@@ -581,7 +585,7 @@ Tunnel.prototype.restart = function(callback) {
  */
 Tunnel.prototype.start = function(callback) {
   this.once('start', _.callback(callback, this));
-  if (this.starting) {
+  if (this.starting || this.running) {
     return this;
   }
   console.log('Opening Sauce Connect tunnel...');
@@ -590,7 +594,9 @@ Tunnel.prototype.start = function(callback) {
   this.starting = true;
 
   this.connection.start(function(success) {
+    tunnel.running = true;
     tunnel.starting = false;
+
     if (!success) {
       if (tunnel.attempts < tunnel.retries) {
         tunnel.restart();
@@ -601,21 +607,24 @@ Tunnel.prototype.start = function(callback) {
     }
     console.log('Sauce Connect tunnel opened');
 
+    var jobs = tunnel.jobs,
+        queue = jobs.queue,
+        active = jobs.active;
+
+    push.apply(queue, jobs.all);
+
     var completed = 0,
-        queue = tunnel.queue,
-        running = tunnel.running;
+        total = queue.length;
 
-    push.apply(queue, tunnel.jobs);
-
-    var total = queue.length;
     tunnel.emit('start');
 
     _.invoke(queue, 'on', 'complete', function() {
-      _.pull(running, this);
+      _.pull(active, this);
       if (success) {
         success = !this.failed;
       }
       if (++completed == total) {
+        tunnel.running = false;
         tunnel.emit('complete', success);
         return;
       }
@@ -636,8 +645,13 @@ Tunnel.prototype.start = function(callback) {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.dequeue = function() {
-  while (this.queue.length && (this.running.length < this.throttled)) {
-    this.running.push(this.queue.shift().start());
+  var jobs = this.jobs,
+      active = jobs.active,
+      queue = jobs.queue,
+      throttled = this.throttled;
+
+  while (queue.length && (active.length < throttled)) {
+    active.push(queue.shift().start());
   }
   return this;
 };
@@ -656,25 +670,28 @@ Tunnel.prototype.stop = function(callback) {
   }
   console.log('Shutting down Sauce Connect tunnel...');
 
-  var running = this.running,
-      stopped = 0,
-      total = running.length,
+  var jobs = this.jobs,
+      active = jobs.active,
+      queue = jobs.queue;
+
+  var stopped = 0,
+      total = active.length,
       tunnel = this;
 
   var onTunnelStop = function() {
-    tunnel.stopping = false;
+    tunnel.running = tunnel.stopping = false;
     tunnel.emit('stop');
   };
 
   this.stopping = true;
-  this.queue.length = 0;
+  queue.length = 0;
 
   if (!total) {
     _.defer(onTunnelStop);
     return this;
   }
-  _.invoke(running, 'stop', function() {
-    _.pull(running, this);
+  _.invoke(active, 'stop', function() {
+    _.pull(active, this);
     if (++stopped == total) {
       tunnel.connection.stop(onTunnelStop);
     }

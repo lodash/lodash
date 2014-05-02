@@ -602,13 +602,16 @@ Tunnel.prototype.start = function(callback) {
     console.log('Sauce Connect tunnel opened');
 
     var completed = 0,
-        total = tunnel.jobs.length;
+        queue = tunnel.queue,
+        running = tunnel.running;
 
+    push.apply(queue, tunnel.jobs);
+
+    var total = queue.length;
     tunnel.emit('start');
-    push.apply(tunnel.queue, tunnel.jobs);
 
-    _.invoke(tunnel.queue, 'on', 'complete', function() {
-      _.pull(tunnel.running, this);
+    _.invoke(queue, 'on', 'complete', function() {
+      _.pull(running, this);
       if (success) {
         success = !this.failed;
       }
@@ -653,8 +656,9 @@ Tunnel.prototype.stop = function(callback) {
   }
   console.log('Shutting down Sauce Connect tunnel...');
 
-  var stopped = 0,
-      total = this.jobs.length,
+  var running = this.running,
+      stopped = 0,
+      total = running.length,
       tunnel = this;
 
   var onTunnelStop = function() {
@@ -665,12 +669,12 @@ Tunnel.prototype.stop = function(callback) {
   this.stopping = true;
   this.queue.length = 0;
 
-  if (_.isEmpty(this.running)) {
+  if (!total) {
     _.defer(onTunnelStop);
     return this;
   }
-  _.invoke(this.running, 'stop', function() {
-    _.pull(tunnel.running, this);
+  _.invoke(running, 'stop', function() {
+    _.pull(running, this);
     if (++stopped == total) {
       tunnel.connection.stop(onTunnelStop);
     }

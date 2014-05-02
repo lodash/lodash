@@ -302,9 +302,13 @@ function optionToValue(name, string) {
  */
 function onJobStart(error, res, body) {
   var id = _.result(body, 'js tests', [])[0],
-      statusCode = _.result(res, 'statusCode');
+      statusCode = _.result(res, 'statusCode'),
+      tunnel = this.tunnel;
 
   this.starting = false;
+  if (this.stopping || tunnel.starting || tunnel.stopping) {
+    return;
+  }
   if (error || !id || statusCode != 200) {
     if (this.attempts < this.retries) {
       this.restart();
@@ -349,6 +353,9 @@ function onJobStatus(error, res, body) {
       url = data.url;
 
   this.checking = false;
+  if (this.starting || this.stopping || tunnel.starting || tunnel.stopping) {
+    return;
+  }
   this.emit('status', jobStatus);
 
   if (!completed && !expired) {
@@ -391,7 +398,9 @@ function onJobStatus(error, res, body) {
  */
 function onJobStop() {
   this.stopping = false;
-  this.emit('stop');
+  if (!this.tunnel.starting) {
+    this.emit('stop');
+  }
 }
 
 /*----------------------------------------------------------------------------*/
@@ -449,8 +458,10 @@ Job.prototype.restart = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.start = function(callback) {
+  var tunnel = this.tunnel;
   this.once('start', _.callback(callback, this));
-  if (this.starting) {
+
+  if (this.starting || tunnel.starting || tunnel.stopping) {
     return this;
   }
   this.starting = true;
@@ -470,8 +481,10 @@ Job.prototype.start = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.status = function(callback) {
+  var tunnel = this.tunnel;
   this.once('status', _.callback(callback, this));
-  if (this.checking) {
+
+  if (this.checking || this.starting || this.stopping || tunnel.starting || tunnel.stopping) {
     return this;
   }
   this.checking = true;
@@ -492,7 +505,8 @@ Job.prototype.status = function(callback) {
  */
 Job.prototype.stop = function(callback) {
   this.once('stop', _.callback(callback, this));
-  if (this.stopping) {
+
+  if (this.stopping || this.tunnel.starting) {
     return this;
   }
   this.stopping = true;

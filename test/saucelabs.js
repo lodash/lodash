@@ -26,8 +26,9 @@ var _ = require('../lodash.js'),
 var accessKey = env.SAUCE_ACCESS_KEY,
     username = env.SAUCE_USERNAME;
 
-/** Used as the maximum number of times to retry a job */
-var maxRetries = 3;
+/** Used as the default maximum number of times to retry a job and tunnel */
+var maxJobRetries = 3,
+    maxTunnelRetries = 3;
 
 /** Used as the static file server middleware */
 var mount = ecstatic({
@@ -46,6 +47,9 @@ var ports = [
 
 /** Used by `logInline` to clear previously logged messages */
 var prevLine = '';
+
+/** Method shortcut */
+var push = Array.prototype.push;
 
 /** Used to detect error messages */
 var reError = /\berror\b/i;
@@ -74,7 +78,7 @@ var advisor = getOption('advisor', true),
     tags = getOption('tags', []),
     throttled = getOption('throttled', 10),
     tunneled = getOption('tunneled', true),
-    tunnelId = getOption('tunnelId', 'tunnel_' + env.TRAVIS_JOB_NUMBER),
+    tunnelId = getOption('tunnelId', 'tunnel_' + (env.TRAVIS_JOB_NUMBER || 0)),
     tunnelTimeout = getOption('tunnelTimeout', 10000),
     videoUploadOnPass = getOption('videoUploadOnPass', false);
 
@@ -167,7 +171,7 @@ if (isModern) {
 }
 
 /** Used as the default `Job` options object */
-var defaultOptions = {
+var jobOptions = {
   'build': build,
   'custom-data': customData,
   'framework': framework,
@@ -185,10 +189,10 @@ var defaultOptions = {
 };
 
 if (publicAccess === true) {
-  defaultOptions['public'] = 'public';
+  jobOptions['public'] = 'public';
 }
 if (tunneled) {
-  defaultOptions['tunnel-identifier'] = tunnelId;
+  jobOptions['tunnel-identifier'] = tunnelId;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -296,7 +300,7 @@ function optionToValue(name, string) {
  * @param {Object} res The response data object.
  * @param {Object} body The response body JSON object.
  */
-function onStart(error, res, body) {
+function onJobStart(error, res, body) {
   var id = _.result(body, 'js tests', [])[0],
       statusCode = _.result(res, 'statusCode');
 
@@ -329,7 +333,7 @@ function onStart(error, res, body) {
  * @param {Object} res The response data object.
  * @param {Object} body The response body JSON object.
  */
-function onStatus(error, res, body) {
+function onJobStatus(error, res, body) {
   var data = _.result(body, 'js tests', [{}])[0],
       jobStatus = data.status,
       options = this.options,
@@ -341,13 +345,14 @@ function onStatus(error, res, body) {
       expired = (jobStatus != 'test session in progress' && elapsed >= queueTimeout),
       failures = _.result(result, 'failed'),
       label = options.name + ':',
+      tunnel = this.tunnel,
       url = data.url;
 
   this.checking = false;
   this.emit('status', jobStatus);
 
   if (!completed && !expired) {
-    setTimeout(_.bind(this.status, this), statusInterval);
+    this.statusId = setTimeout(_.bind(this.status, this), this.statusInterval);
     return;
   }
   this.result = result;
@@ -364,7 +369,12 @@ function onStatus(error, res, body) {
     logInline();
     if (failures) {
       console.error(label + ' %s ' + chalk.red('failed') + ' %d test' + (failures > 1 ? 's' : '') + '. %s', description, failures, details);
-    } else {
+    }
+    else if (tunnel.attempts < tunnel.retries) {
+      tunnel.restart();
+      return;
+    }
+    else {
       var message = _.result(result, 'message', 'no results available. ' + details);
       console.error(label, description, chalk.red('failed') + ';', message);
     }
@@ -379,7 +389,7 @@ function onStatus(error, res, body) {
  *
  * @private
  */
-function onStop() {
+function onJobStop() {
   this.stopping = false;
   this.emit('stop');
 }
@@ -390,16 +400,17 @@ function onStop() {
  * The Job constructor.
  *
  * @private
- * @param {Object} [properties] The properties to initial a job with.
+ * @param {Object} [properties] The properties to initialize a job with.
  */
 function Job(properties) {
   EventEmitter.call(this);
 
   this.options = {};
-  this.retries = maxRetries;
+  this.retries = maxJobRetries;
+  this.statusInterval = statusInterval;
 
   _.merge(this, properties);
-  _.defaults(this.options, _.cloneDeep(defaultOptions));
+  _.defaults(this.options, _.cloneDeep(jobOptions));
 
   this.attempts = 0;
   this.checking = false;
@@ -415,6 +426,7 @@ Job.prototype = _.create(EventEmitter.prototype);
  *
  * @memberOf Job
  * @param {Function} callback The function called once the job is restarted.
+ * @param {Object} Returns the job instance.
  */
 Job.prototype.restart = function(callback) {
   var options = this.options,
@@ -424,7 +436,9 @@ Job.prototype.restart = function(callback) {
 
   logInline();
   console.log(label + ' ' + description + ' restart #%d of %d', ++this.attempts, this.retries);
+
   this.stop(_.bind(this.start, this, callback));
+  return this;
 };
 
 /**
@@ -432,17 +446,20 @@ Job.prototype.restart = function(callback) {
  *
  * @memberOf Job
  * @param {Function} callback The function called once the job is started.
+ * @param {Object} Returns the job instance.
  */
 Job.prototype.start = function(callback) {
   this.once('start', _.callback(callback, this));
   if (this.starting) {
-    return;
+    return this;
   }
   this.starting = true;
   request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests', this), {
     'auth': { 'user': this.user, 'pass': this.pass },
     'json': this.options
-  }, _.bind(onStart, this));
+  }, _.bind(onJobStart, this));
+
+  return this;
 };
 
 /**
@@ -450,17 +467,20 @@ Job.prototype.start = function(callback) {
  *
  * @memberOf Job
  * @param {Function} callback The function called once the status is resolved.
+ * @param {Object} Returns the job instance.
  */
 Job.prototype.status = function(callback) {
   this.once('status', _.callback(callback, this));
   if (this.checking) {
-    return;
+    return this;
   }
   this.checking = true;
   request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
     'auth': { 'user': this.user, 'pass': this.pass },
     'json': { 'js tests': [this.id] }
-  }, _.bind(onStatus, this));
+  }, _.bind(onJobStatus, this));
+
+  return this;
 };
 
 /**
@@ -468,67 +488,184 @@ Job.prototype.status = function(callback) {
  *
  * @memberOf Job
  * @param {Function} callback The function called once the job is stopped.
+ * @param {Object} Returns the job instance.
  */
 Job.prototype.stop = function(callback) {
   this.once('stop', _.callback(callback, this));
   if (this.stopping) {
-    return;
+    return this;
   }
   this.stopping = true;
+  if (this.statusId) {
+    this.statusId = clearTimeout(this.statusId);
+  }
   if (this.id == null) {
     _.defer(_.bind(this.emit, this, 'stop'));
-    return;
+    return this;
   }
   request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop', this), {
     'auth': { 'user': this.user, 'pass': this.pass }
-  }, _.bind(onStop, this));
+  }, _.bind(onJobStop, this));
+
+  return this;
 };
 
 /*----------------------------------------------------------------------------*/
 
 /**
- * Runs jobs for the given platforms.
+ * The Tunnel constructor.
  *
  * @private
- * @param {Array} platforms The platforms to run jobs for.
- * @param {Function} onComplete The function called once all jobs have completed.
+ * @param {Object} [properties] The properties to initialize the tunnel with.
  */
-function run(platforms, onComplete) {
-  var queue = _.map(platforms, function(platform) {
-    return new Job({
-      'user': username,
-      'pass': accessKey,
+function Tunnel(properties) {
+  EventEmitter.call(this);
+
+  this.retries = maxTunnelRetries;
+  _.merge(this, properties);
+
+  this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
+
+  this.jobs = _.map(this.platforms, function(platform) {
+    return new Job(_.merge({
+      'user': this.user,
+      'pass': this.pass,
+      'tunnel': this,
       'options': { 'platforms': [platform] }
-    })
+    }, this.job));
+  }, this);
+
+  this.attempts = 0;
+  this.queue = [];
+  this.running = [];
+  this.starting = false;
+  this.stopping = false;
+}
+
+Tunnel.prototype = _.create(EventEmitter.prototype);
+
+/**
+ * Restarts the tunnel.
+ *
+ * @memberOf Tunnel
+ * @param {Function} callback The function called once the tunnel is restarted.
+ */
+Tunnel.prototype.restart = function(callback) {
+  logInline();
+  console.log('Tunnel ' + this.id + ': restart #%d of %d', ++this.attempts, this.retries);
+
+  this.stop(_.bind(this.start, this, callback));
+  return this;
+};
+
+/**
+ * Starts the tunnel.
+ *
+ * @memberOf Tunnel
+ * @param {Function} callback The function called once the tunnel is started.
+ * @param {Object} Returns the tunnel instance.
+ */
+Tunnel.prototype.start = function(callback) {
+  this.once('start', _.callback(callback, this));
+  if (this.starting) {
+    return this;
+  }
+  console.log('Opening Sauce Connect tunnel...');
+
+  var tunnel = this;
+  this.starting = true;
+
+  this.connection.start(function(success) {
+    tunnel.starting = false;
+    if (!success) {
+      if (tunnel.attempts < tunnel.retries) {
+        tunnel.restart();
+        return;
+      }
+      console.error('Failed to open Sauce Connect tunnel');
+      process.exit(2);
+    }
+    console.log('Sauce Connect tunnel opened');
+
+    var completed = 0,
+        total = tunnel.jobs.length;
+
+    tunnel.emit('start');
+    push.apply(tunnel.queue, tunnel.jobs);
+
+    _.invoke(tunnel.queue, 'on', 'complete', function() {
+      _.pull(tunnel.running, this);
+      if (success) {
+        success = !this.failed;
+      }
+      if (++completed == total) {
+        tunnel.emit('complete', success);
+        return;
+      }
+      tunnel.dequeue();
+    });
+
+    console.log('Starting jobs...');
+    tunnel.dequeue();
   });
 
-  var dequeue = function() {
-    while (queue.length && (running < throttled)) {
-      running++;
-      queue.shift().start();
-    }
+  return this;
+};
+
+/**
+ * Removes jobs from the queue and starts them.
+ *
+ * @memberOf Tunnel
+ * @param {Object} Returns the tunnel instance.
+ */
+Tunnel.prototype.dequeue = function() {
+  while (this.queue.length && (this.running.length < this.throttled)) {
+    this.running.push(this.queue.shift().start());
+  }
+  return this;
+};
+
+/**
+ * Stops the tunnel.
+ *
+ * @memberOf Tunnel
+ * @param {Function} callback The function called once the tunnel is stopped.
+ * @param {Object} Returns the tunnel instance.
+ */
+Tunnel.prototype.stop = function(callback) {
+  this.once('stop', _.callback(callback, this));
+  if (this.stopping) {
+    return this;
+  }
+  console.log('Shutting down Sauce Connect tunnel...');
+
+  var stopped = 0,
+      total = this.jobs.length,
+      tunnel = this;
+
+  var onTunnelStop = function() {
+    tunnel.stopping = false;
+    tunnel.emit('stop');
   };
 
-  var completed = 0,
-      running = 0,
-      success = true,
-      total = queue.length;
+  this.stopping = true;
+  this.queue.length = 0;
 
-  _.invoke(queue, 'on', 'complete', function() {
-    running--;
-    if (success) {
-      success = !this.failed;
+  if (_.isEmpty(this.running)) {
+    _.defer(onTunnelStop);
+    return this;
+  }
+  _.invoke(this.running, 'stop', function() {
+    _.pull(tunnel.running, this);
+    if (++stopped == total) {
+      tunnel.connection.stop(onTunnelStop);
     }
-    if (++completed == total) {
-      onComplete(success);
-      return;
-    }
-    dequeue();
   });
 
-  console.log('Starting jobs...');
-  dequeue();
-}
+  return this;
+};
+
+/*----------------------------------------------------------------------------*/
 
 // cleanup any inline logs when exited via `ctrl+c`
 process.on('SIGINT', function() {
@@ -546,21 +683,22 @@ http.createServer(function(req, res) {
 }).listen(port);
 
 // set up Sauce Connect so we can use this server from Sauce Labs
-var tunnel = new SauceTunnel(username, accessKey, tunnelId, tunneled, tunnelTimeout);
-
-console.log('Opening Sauce Connect tunnel...');
-
-tunnel.start(function(success) {
-  if (!success) {
-    console.error('Failed to open Sauce Connect tunnel');
-    process.exit(2);
-  }
-  console.log('Sauce Connect tunnel opened');
-
-  run(platforms, function(success) {
-    console.log('Shutting down Sauce Connect tunnel...');
-    tunnel.stop(function() { process.exit(success ? 0 : 1); });
-  });
-
-  setInterval(logThrobber, throbberDelay);
+var tunnel = new Tunnel({
+  'user': username,
+  'pass': accessKey,
+  'id': tunnelId,
+  'job': { 'retries': maxJobRetries, 'statusInterval': statusInterval },
+  'platforms': platforms,
+  'retries': maxTunnelRetries,
+  'throttled': throttled,
+  'tunneled': tunneled,
+  'timeout': tunnelTimeout
 });
+
+tunnel.on('complete', function(success) {
+  this.stop(function() { process.exit(success ? 0 : 1); });
+});
+
+tunnel.start();
+
+setInterval(logThrobber, throbberDelay);

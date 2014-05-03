@@ -715,7 +715,8 @@
 
       /**
        * Detect if functions can be decompiled by `Function#toString`
-       * (all but PS3 and older Opera mobile browsers; forced `false` for Windows 8 apps).
+       * (all but Firefox OS certified apps, older Opera mobile browsers, and
+       * the PlayStation 3; forced `false` for Windows 8 apps).
        *
        * @memberOf _.support
        * @type boolean
@@ -5236,20 +5237,15 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
-     * var defaultsDeep = _.partialRight(_.merge, _.defaults);
+     * var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
+     *   return _.merge(value, other, deep);
+     * });
      *
-     * var options = {
-     *   'variable': 'data',
-     *   'imports': { 'jq': $ }
-     * };
+     * var object = { 'a': { 'b': { 'c': 1 } } },
+     *     source = { 'a': { 'b': { 'c': 2, 'd': 2 } } };
      *
-     * defaultsDeep(options, _.templateSettings);
-     *
-     * options.variable
-     * // => 'data'
-     *
-     * options.imports
-     * // => { '_': _, 'jq': $ }
+     * defaultsDeep(object, source);
+     * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
       if (func) {
@@ -5551,6 +5547,9 @@
      * Assigns own enumerable properties of source object(s) to the destination
      * object for all destination properties that resolve to `undefined`. Once a
      * property is set, additional defaults of the same property will be ignored.
+     *
+     * Note: See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
+     * for a deep version of this method.
      *
      * @static
      * @memberOf _
@@ -7575,7 +7574,7 @@
     function createCallback(func, thisArg, argCount) {
       var type = typeof func;
       if (type == 'function' || func == null) {
-        return (typeof thisArg == 'undefined' || !('prototype' in func)) &&
+        return (typeof thisArg == 'undefined' || !(func && 'prototype' in func)) &&
           func || baseCreateCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands

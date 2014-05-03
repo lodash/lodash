@@ -3797,6 +3797,9 @@
    * object for all destination properties that resolve to `undefined`. Once a
    * property is set, additional defaults of the same property will be ignored.
    *
+   * Note: See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
+   * for a deep version of this method.
+   *
    * @static
    * @memberOf _
    * @category Objects
@@ -4799,7 +4802,7 @@
   function createCallback(func, thisArg, argCount) {
     var type = typeof func;
     if (type == 'function' || func == null) {
-      return (typeof thisArg == 'undefined' || !('prototype' in func)) &&
+      return (typeof thisArg == 'undefined' || !(func && 'prototype' in func)) &&
         func || baseCreateCallback(func, thisArg, argCount);
     }
     // handle "_.pluck" and "_.where" style callback shorthands

@@ -13,7 +13,8 @@ if (isFinite(env.TRAVIS_PULL_REQUEST)) {
 var EventEmitter = require('events').EventEmitter,
     http = require('http'),
     path = require('path'),
-    url = require('url');
+    url = require('url'),
+    util = require('util');
 
 /** Load other modules */
 var _ = require('../lodash.js'),
@@ -405,6 +406,45 @@ function onJobStop() {
   }
 }
 
+/**
+ * The `SauceTunnel#start` callback used by `Tunnel#start`.
+ *
+ * @private
+ * @param {boolean} success The connection success indicator.
+ */
+function onTunnelStart(success) {
+  this.starting = false;
+  if (!success) {
+    if (this.attempts < this.retries) {
+      this.restart();
+      return;
+    }
+    console.error('Failed to open Sauce Connect tunnel');
+    process.exit(2);
+  }
+  console.log('Sauce Connect tunnel opened');
+
+  var jobs = this.jobs;
+  push.apply(jobs.queue, jobs.all);
+
+  this.running = true;
+  this.emit('start');
+
+  console.log('Starting jobs...');
+  this.dequeue();
+}
+
+/**
+ * The `SauceTunnel#stop` callback used by `Tunnel#stop`.
+ *
+ * @private
+ * @param {Object} [error] The error object.
+ */
+function onTunnelStop(error) {
+  this.running = this.stopping = false;
+  this.emit('stop', error);
+}
+
 /*----------------------------------------------------------------------------*/
 
 /**
@@ -431,7 +471,7 @@ function Job(properties) {
   this.stopping = false;
 }
 
-Job.prototype = _.create(EventEmitter.prototype);
+util.inherits(Job, EventEmitter);
 
 /**
  * Resets the job.
@@ -442,13 +482,14 @@ Job.prototype = _.create(EventEmitter.prototype);
  */
 Job.prototype.reset = function(callback) {
   if (this.running) {
-    return this.stop(_.bind(this.reset, this));
+    return this.stop(_.partial(this.reset, callback));
   }
   this.attempts = 0;
   this.failed = false;
   this.id = this.result = this.url = null;
 
-  _.defer(callback);
+  this.once('start', _.callback(callback, this));
+  _.defer(_.bind(this.emit, this, 'reset'));
   return this;
 };
 
@@ -531,18 +572,20 @@ Job.prototype.stop = function(callback) {
   if (this.stopping || this.tunnel.starting) {
     return this;
   }
+  var onStop = _.bind(onJobStop, this);
   this.stopping = true;
+
   if (this.statusId) {
     this.checking = false;
     this.statusId = clearTimeout(this.statusId);
   }
   if (this.id == null || !this.running) {
-    _.defer(_.bind(onJobStop, this));
+    _.defer(onStop);
     return this;
   }
   request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop', this), {
     'auth': { 'user': this.user, 'pass': this.pass }
-  }, _.bind(onJobStop, this));
+  }, onStop);
 
   return this;
 };
@@ -602,11 +645,11 @@ function Tunnel(properties) {
     _.invoke(all, 'reset');
   });
 
-  this.jobs = {'active': active, 'all': all, 'queue': queue };
+  this.jobs = { 'active': active, 'all': all, 'queue': queue };
   this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
 }
 
-Tunnel.prototype = _.create(EventEmitter.prototype);
+util.inherits(Tunnel, EventEmitter);
 
 /**
  * Restarts the tunnel.
@@ -631,36 +674,12 @@ Tunnel.prototype.restart = function(callback) {
  */
 Tunnel.prototype.start = function(callback) {
   this.once('start', _.callback(callback, this));
-  if (this.starting || this.running) {
-    return this;
+
+  if (!(this.starting || this.running)) {
+    console.log('Opening Sauce Connect tunnel...');
+    this.starting = true;
+    this.connection.start(_.bind(onTunnelStart, this));
   }
-  console.log('Opening Sauce Connect tunnel...');
-
-  var tunnel = this;
-  this.starting = true;
-
-  this.connection.start(function(success) {
-    tunnel.starting = false;
-    if (!success) {
-      if (tunnel.attempts < tunnel.retries) {
-        tunnel.restart();
-        return;
-      }
-      console.error('Failed to open Sauce Connect tunnel');
-      process.exit(2);
-    }
-    console.log('Sauce Connect tunnel opened');
-
-    var jobs = tunnel.jobs;
-    push.apply(jobs.queue, jobs.all);
-
-    tunnel.running = true;
-    tunnel.emit('start');
-
-    console.log('Starting jobs...');
-    tunnel.dequeue();
-  });
-
   return this;
 };
 
@@ -698,28 +717,22 @@ Tunnel.prototype.stop = function(callback) {
 
   var jobs = this.jobs,
       active = jobs.active,
-      queue = jobs.queue;
-
-  var stopped = 0,
+      onStop = _.bind(onTunnelStop, this),
+      stopped = 0,
       total = active.length,
       tunnel = this;
 
-  var onTunnelStop = function() {
-    tunnel.running = tunnel.stopping = false;
-    tunnel.emit('stop');
-  };
-
   this.stopping = true;
-  queue.length = 0;
+  jobs.queue.length = 0;
 
   if (!total || !this.running) {
-    _.defer(onTunnelStop);
+    _.defer(onStop);
     return this;
   }
   _.invoke(active, 'stop', function() {
     _.pull(active, this);
     if (++stopped == total) {
-      tunnel.connection.stop(onTunnelStop);
+      tunnel.connection.stop(onStop);
     }
   });
 

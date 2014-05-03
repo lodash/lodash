@@ -124,7 +124,7 @@
 			};
 
 			// only excuse in Sauce Labs (buggy Safari and timers)
-			if (location.port != '9001') {
+			if (!ui.isSauceLabs) {
 				delete QUnit.config.excused.Chaining['select/reject/sortBy'];
 				delete QUnit.config.excused.Chaining['select/reject/sortBy in functional style'];
 				delete QUnit.config.excused.Functions['throttle repeatedly with results'];
@@ -175,6 +175,12 @@
 				}
 				if (!window.require) {
 					return;
+				}
+				// avoid reporting tests to Sauce Labs when errors occur
+				if (ui.isSauceLabs) {
+					window.onerror = function() {
+						QUnit.config.done.length = 0;
+					};
 				}
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),

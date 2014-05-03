@@ -164,6 +164,9 @@
   // used to indicate testing a modularized build
   ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([location.pathname, location.search, ui.buildPath]);
 
+  // used to indicate testing in Sauce Labs' automated test cloud
+  ui.isSauceLabs = location.port == '9001';
+
   // expose `ui`
   window.ui = ui;
 

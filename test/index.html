@@ -185,6 +185,12 @@
 				if (!window.require) {
 					return;
 				}
+				// avoid reporting tests to Sauce Labs when errors occur
+				if (ui.isSauceLabs) {
+					window.onerror = function() {
+						QUnit.config.done.length = 0;
+					};
+				}
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),

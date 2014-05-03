@@ -306,7 +306,7 @@ function onJobStart(error, res, body) {
       tunnel = this.tunnel;
 
   this.starting = false;
-  if (this.stopping || tunnel.starting || tunnel.stopping) {
+  if (this.stopping || tunnel.starting) {
     return;
   }
   if (error || !id || statusCode != 200) {
@@ -354,7 +354,7 @@ function onJobStatus(error, res, body) {
       url = data.url;
 
   this.checking = false;
-  if (this.starting || this.stopping || tunnel.starting || tunnel.stopping) {
+  if (!this.running || this.stopping) {
     return;
   }
   this.emit('status', jobStatus);
@@ -514,6 +514,7 @@ Job.prototype.stop = function(callback) {
   }
   this.stopping = true;
   if (this.statusId) {
+    this.checking = false;
     this.statusId = clearTimeout(this.statusId);
   }
   if (this.id == null || !this.running) {

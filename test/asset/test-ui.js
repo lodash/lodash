@@ -121,6 +121,10 @@
     var buildList = span1.lastChild,
         loaderList = span2.lastChild;
 
+    setTimeout(function() {
+      ui.timing.loadEventEnd = +new Date;
+    }, 1);
+
     init();
   });
 
@@ -159,6 +163,11 @@
   ui.urlParams = {
     'build': build,
     'loader': loader
+  };
+
+  // expose page load timestamps
+  ui.timing = {
+    'loadEventEnd': 0
   };
 
   // used to indicate testing a modularized build

@@ -185,10 +185,13 @@
 				if (!window.require) {
 					return;
 				}
-				// avoid reporting tests to Sauce Labs when errors occur
+				// avoid reporting tests to Sauce Labs when script load errors occur
 				if (ui.isSauceLabs) {
 					window.onerror = function() {
-						QUnit.config.done.length = 0;
+						var loadEventEnd = ui.timing.loadEventEnd;
+						if (loadEventEnd && (new Date - loadEventEnd > 5000)) {
+							QUnit.config.done.length = 0;
+						}
 					};
 				}
 				var reBasename = /[\w.-]+$/,

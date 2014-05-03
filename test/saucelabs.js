@@ -434,6 +434,25 @@ function Job(properties) {
 Job.prototype = _.create(EventEmitter.prototype);
 
 /**
+ * Resets the job.
+ *
+ * @memberOf Job
+ * @param {Function} callback The function called once the job is reset.
+ * @param {Object} Returns the job instance.
+ */
+Job.prototype.reset = function(callback) {
+  if (this.running) {
+    return this.stop(_.bind(this.reset, this));
+  }
+  this.attempts = 0;
+  this.failed = false;
+  this.id = this.result = this.url = null;
+
+  _.defer(callback);
+  return this;
+};
+
+/**
  * Restarts the job.
  *
  * @memberOf Job
@@ -580,11 +599,7 @@ function Tunnel(properties) {
   this.on('stop', function() {
     completed = 0;
     success = true;
-    _.each(all, function(job) {
-      job.attempts = 0;
-      job.failed = false;
-      job.id = job.result = job.url = null;
-    });
+    _.invoke(all, 'reset');
   });
 
   this.jobs = {'active': active, 'all': all, 'queue': queue };

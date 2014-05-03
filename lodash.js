@@ -801,7 +801,8 @@
 
       /**
        * Detect if functions can be decompiled by `Function#toString`
-       * (all but PS3 and older Opera mobile browsers; forced `false` for Windows 8 apps).
+       * (all but Firefox OS certified apps, older Opera mobile browsers, and
+       * the PlayStation 3; forced `false` for Windows 8 apps).
        *
        * @memberOf _.support
        * @type boolean

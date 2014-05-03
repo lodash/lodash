@@ -5415,20 +5415,15 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
-     * var defaultsDeep = _.partialRight(_.merge, _.defaults);
+     * var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
+     *   return _.merge(value, other, deep);
+     * });
      *
-     * var options = {
-     *   'variable': 'data',
-     *   'imports': { 'jq': $ }
-     * };
+     * var object = { 'a': { 'b': { 'c': 1 } } },
+     *     source = { 'a': { 'b': { 'c': 2, 'd': 2 } } };
      *
-     * defaultsDeep(options, _.templateSettings);
-     *
-     * options.variable
-     * // => 'data'
-     *
-     * options.imports
-     * // => { '_': _, 'jq': $ }
+     * defaultsDeep(object, source);
+     * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
       if (func) {

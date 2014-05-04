@@ -249,6 +249,28 @@
   }
 
   /**
+   * The base implementation of `_.at` without support for strings or individual
+   * key arguments.
+   *
+   * @static
+   * @memberOf _
+   * @category Collections
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {number[]|string[]} [keys] The keys of elements to pick.
+   * @returns {Array} Returns the new array of picked elements.
+   */
+  function baseAt(collection, props) {
+    var index = -1,
+        length = props.length,
+        result = Array(length);
+
+    while(++index < length) {
+      result[index] = collection[props[index]];
+    }
+    return result;
+  }
+
+  /**
    * The base implementation of `compareAscending` used to compare values and
    * sort them in ascending order without guaranteeing a stable sort.
    *
@@ -2936,7 +2958,7 @@
      * returns an array of removed elements. Indexes may be specified as an array
      * of indexes or as individual arguments.
      *
-     * Note: Like `_.pull`, this method mutates `array`.
+     * Note: Unlike `_.at`, this method mutates `array`.
      *
      * @static
      * @memberOf _
@@ -2957,21 +2979,16 @@
      * // => [10, 20]
      */
     function pullAt(array) {
-      var previous,
-          index = -1,
-          removals = baseFlatten(arguments, true, false, 1),
-          length = removals.length,
-          result = Array(length);
+      var indexes = baseFlatten(arguments, true, false, 1),
+          length = indexes.length,
+          result = baseAt(array, indexes);
 
-      while (++index < length) {
-        result[index] = array[removals[index]];
-      }
-      removals.sort(baseCompareAscending);
+      indexes.sort(baseCompareAscending);
       while (length--) {
-        var removal = removals[length];
-        if (removal != previous) {
-          splice.call(array, removal, 1);
-          previous = removal;
+        var index = indexes[length];
+        if (index != previous) {
+          var previous = removal;
+          splice.call(array, index, 1);
         }
       }
       return result;
@@ -3657,18 +3674,10 @@
      * // => ['fred', 'pebbles']
      */
     function at(collection) {
-      var index = -1,
-          props = baseFlatten(arguments, true, false, 1),
-          length = props.length;
-
       if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }
-      var result = Array(length);
-      while(++index < length) {
-        result[index] = collection[props[index]];
-      }
-      return result;
+      return baseAt(collection, baseFlatten(arguments, true, false, 1));
     }
 
     /**

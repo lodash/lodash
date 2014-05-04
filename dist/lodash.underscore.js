@@ -284,8 +284,8 @@
    * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
    * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
    * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
-   * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`,
-   * `partial`, `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`,
+   * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
+   * `partialRight`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`,
    * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
    * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
    * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
@@ -3209,8 +3209,8 @@
    * @memberOf _
    * @category Functions
    * @param {Object} object The object to bind and assign the bound methods to.
-   * @param {...string} [methodName] The object method names to
-   *  bind, specified as individual method names or arrays of method names.
+   * @param {...string} [methodNames] The object method names to bind, specified
+   *  as individual method names or arrays of method names.
    * @returns {Object} Returns `object`.
    * @example
    *
@@ -3703,7 +3703,7 @@
    * @alias extend
    * @category Objects
    * @param {Object} object The destination object.
-   * @param {...Object} [source] The source objects.
+   * @param {...Object} [sources] The source objects.
    * @param {Function} [callback] The function to customize assigning values.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Object} Returns the destination object.
@@ -3804,7 +3804,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The destination object.
-   * @param {...Object} [source] The source objects.
+   * @param {...Object} [sources] The source objects.
    * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
    * @returns {Object} Returns the destination object.
    * @example
@@ -4411,7 +4411,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Function|...string|string[]} [predicate] The function called per
+   * @param {Function|...(string|string[])} [predicate] The function called per
    *  iteration or property names to omit, specified as individual property
    *  names or arrays of property names.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -4433,7 +4433,7 @@
     while (length--) {
       omitProps[length] = String(omitProps[length]);
     }
-    return pick(object, baseDifference(keysIn(object),  omitProps));
+    return pick(object, baseDifference(keysIn(object), omitProps));
   }
 
   /**
@@ -4475,7 +4475,7 @@
    * @memberOf _
    * @category Objects
    * @param {Object} object The source object.
-   * @param {Function|...string|string[]} [predicate] The function called per
+   * @param {Function|...(string|string[])} [predicate] The function called per
    *  iteration or property names to pick, specified as individual property
    *  names or arrays of property names.
    * @param {*} [thisArg] The `this` binding of `predicate`.

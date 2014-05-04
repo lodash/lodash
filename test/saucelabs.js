@@ -464,11 +464,8 @@ function Job(properties) {
   _.defaults(this.options, _.cloneDeep(jobOptions));
 
   this.attempts = 0;
-  this.checking = false;
-  this.failed = false;
-  this.running = false;
-  this.starting = false;
-  this.stopping = false;
+  this.checking = this.failed = this.running = this.starting = this.stopping = false;
+  this.id = this.result = this.url = null;
 }
 
 util.inherits(Job, EventEmitter);
@@ -606,11 +603,6 @@ function Tunnel(properties) {
   this.retries = maxTunnelRetries;
   _.merge(this, properties);
 
-  this.attempts = 0;
-  this.running = false;
-  this.starting = false;
-  this.stopping = false;
-
   var active = [],
       queue = [];
 
@@ -660,6 +652,8 @@ function Tunnel(properties) {
     _.invoke(all, 'reset');
   });
 
+  this.attempts = 0;
+  this.running = this.starting = this.stopping = false;
   this.jobs = { 'active': active, 'all': all, 'queue': queue };
   this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
 }

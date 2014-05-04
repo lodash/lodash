@@ -3599,8 +3599,8 @@
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(number|number[]|string|string[])} [index] The indexes to retrieve,
-     *  specified as individual indexes or arrays of indexes.
+     * @param {...(number|number[]|string|string[])} [keys] The keys of elements
+     *  to pick, specified as individual keys or arrays of keys.
      * @returns {Array} Returns the array of picked elements.
      * @example
      *
@@ -4904,8 +4904,8 @@
      * @memberOf _
      * @category Functions
      * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {...string} [methodName] The object method names to
-     *  bind, specified as individual method names or arrays of method names.
+     * @param {...string} [methodNames] The object method names to bind, specified
+     *  as individual method names or arrays of method names.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -5520,7 +5520,7 @@
      * @alias extend
      * @category Objects
      * @param {Object} object The destination object.
-     * @param {...Object} [source] The source objects.
+     * @param {...Object} [sources] The source objects.
      * @param {Function} [callback] The function to customize assigning values.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the destination object.
@@ -5728,7 +5728,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The destination object.
-     * @param {...Object} [source] The source objects.
+     * @param {...Object} [sources] The source objects.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {Object} Returns the destination object.
      * @example
@@ -6718,7 +6718,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The destination object.
-     * @param {...Object} [source] The source objects.
+     * @param {...Object} [sources] The source objects.
      * @param {Function} [callback] The function to customize merging properties.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the destination object.

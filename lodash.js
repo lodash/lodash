@@ -252,9 +252,7 @@
    * The base implementation of `_.at` without support for strings or individual
    * key arguments.
    *
-   * @static
-   * @memberOf _
-   * @category Collections
+   * @private
    * @param {Array|Object} collection The collection to iterate over.
    * @param {number[]|string[]} [keys] The keys of elements to pick.
    * @returns {Array} Returns the new array of picked elements.
@@ -3664,7 +3662,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {...(number|number[]|string|string[])} [keys] The keys of elements
      *  to pick, specified as individual keys or arrays of keys.
-     * @returns {Array} Returns the array of picked elements.
+     * @returns {Array} Returns the new array of picked elements.
      * @example
      *
      * _.at(['a', 'b', 'c', 'd', 'e'], [0, 2, 4]);
@@ -6851,7 +6849,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The source object.
-     * @param {Function|...string|string[]} [predicate] The function called per
+     * @param {Function|...(string|string[])} [predicate] The function called per
      *  iteration or property names to omit, specified as individual property
      *  names or arrays of property names.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -6919,7 +6917,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The source object.
-     * @param {Function|...string|string[]} [predicate] The function called per
+     * @param {Function|...(string|string[])} [predicate] The function called per
      *  iteration or property names to pick, specified as individual property
      *  names or arrays of property names.
      * @param {*} [thisArg] The `this` binding of `predicate`.

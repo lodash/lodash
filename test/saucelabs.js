@@ -490,6 +490,7 @@ Job.prototype.reset = function(callback) {
 
   this.once('start', _.callback(callback, this));
   _.defer(_.bind(this.emit, this, 'reset'));
+
   return this;
 };
 
@@ -522,8 +523,8 @@ Job.prototype.restart = function(callback) {
  */
 Job.prototype.start = function(callback) {
   var tunnel = this.tunnel;
-  this.once('start', _.callback(callback, this));
 
+  this.once('start', _.callback(callback, this));
   if (this.starting || this.running || tunnel.starting || tunnel.stopping) {
     return this;
   }
@@ -545,8 +546,8 @@ Job.prototype.start = function(callback) {
  */
 Job.prototype.status = function(callback) {
   var tunnel = this.tunnel;
-  this.once('status', _.callback(callback, this));
 
+  this.once('status', _.callback(callback, this));
   if (this.checking || this.starting || this.stopping || tunnel.starting || tunnel.stopping) {
     return this;
   }
@@ -568,13 +569,12 @@ Job.prototype.status = function(callback) {
  */
 Job.prototype.stop = function(callback) {
   this.once('stop', _.callback(callback, this));
-
   if (this.stopping || this.tunnel.starting) {
     return this;
   }
   var onStop = _.bind(onJobStop, this);
-  this.stopping = true;
 
+  this.stopping = true;
   if (this.statusId) {
     this.checking = false;
     this.statusId = clearTimeout(this.statusId);
@@ -674,7 +674,6 @@ Tunnel.prototype.restart = function(callback) {
  */
 Tunnel.prototype.start = function(callback) {
   this.once('start', _.callback(callback, this));
-
   if (!(this.starting || this.running)) {
     console.log('Opening Sauce Connect tunnel...');
     this.starting = true;

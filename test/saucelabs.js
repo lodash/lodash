@@ -624,6 +624,7 @@ function Tunnel(properties) {
   }, this);
 
   var completed = 0,
+      restarted = [],
       success = true,
       total = all.length,
       tunnel = this;
@@ -641,9 +642,20 @@ function Tunnel(properties) {
     tunnel.dequeue();
   });
 
+  _.invoke(all, 'on', 'restart', function() {
+    if (!_.contains(restarted, this)) {
+      restarted.push(this);
+    }
+    // restart tunnel if all jobs have restarted
+    if (_.isEmpty(_.difference(all, restarted))) {
+      tunnel.restart();
+    }
+  });
+
   this.on('stop', function() {
     completed = 0;
     success = true;
+    restarted.length = 0;
     _.invoke(all, 'reset');
   });
 

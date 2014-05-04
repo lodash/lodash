@@ -3611,9 +3611,8 @@
      * // => ['fred', 'pebbles']
      */
     function at(collection) {
-      var args = arguments,
-          index = -1,
-          props = baseFlatten(args, true, false, 1),
+      var index = -1,
+          props = baseFlatten(arguments, true, false, 1),
           length = props.length;
 
       if (support.unindexedChars && isString(collection)) {

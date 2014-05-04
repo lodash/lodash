@@ -189,7 +189,7 @@
 				if (ui.isSauceLabs) {
 					window.onerror = function() {
 						var loadEventEnd = ui.timing.loadEventEnd;
-						if (loadEventEnd && (new Date - loadEventEnd > 5000)) {
+						if (loadEventEnd && (new Date - loadEventEnd > 3000)) {
 							QUnit.config.done.length = 0;
 						}
 					};

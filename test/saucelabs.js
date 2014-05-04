@@ -488,7 +488,7 @@ Job.prototype.reset = function(callback) {
   this.failed = false;
   this.id = this.result = this.url = null;
 
-  this.once('reset', _.callback(callback, this));
+  this.once('reset', _.callback(callback));
   _.defer(_.bind(this.emit, this, 'reset'));
 
   return this;
@@ -510,10 +510,10 @@ Job.prototype.restart = function(callback) {
   logInline();
   console.log(label + ' ' + description + ' restart %d of %d', ++this.attempts, this.retries);
 
+  this.once('restart', _.callback(callback));
   _.defer(_.bind(this.emit, this, 'restart'));
-  this.stop(_.partial(this.start, callback));
 
-  return this;
+  return this.stop(this.start);
 };
 
 /**
@@ -526,7 +526,7 @@ Job.prototype.restart = function(callback) {
 Job.prototype.start = function(callback) {
   var tunnel = this.tunnel;
 
-  this.once('start', _.callback(callback, this));
+  this.once('start', _.callback(callback));
   if (this.starting || this.running || tunnel.starting || tunnel.stopping) {
     return this;
   }
@@ -549,7 +549,7 @@ Job.prototype.start = function(callback) {
 Job.prototype.status = function(callback) {
   var tunnel = this.tunnel;
 
-  this.once('status', _.callback(callback, this));
+  this.once('status', _.callback(callback));
   if (this.checking || this.starting || this.stopping || tunnel.starting || tunnel.stopping) {
     return this;
   }
@@ -570,7 +570,7 @@ Job.prototype.status = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.stop = function(callback) {
-  this.once('stop', _.callback(callback, this));
+  this.once('stop', _.callback(callback));
   if (this.stopping || this.tunnel.starting) {
     return this;
   }
@@ -676,10 +676,10 @@ Tunnel.prototype.restart = function(callback) {
   logInline();
   console.log('Tunnel ' + this.id + ': restart %d of %d', ++this.attempts, this.retries);
 
+  this.once('restart', _.callback(callback));
   _.defer(_.bind(this.emit, this, 'restart'));
-  this.stop(_.partial(this.start, callback));
 
-  return this;
+  return this.stop(this.start);
 };
 
 /**
@@ -690,7 +690,7 @@ Tunnel.prototype.restart = function(callback) {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.start = function(callback) {
-  this.once('start', _.callback(callback, this));
+  this.once('start', _.callback(callback));
   if (!(this.starting || this.running)) {
     console.log('Opening Sauce Connect tunnel...');
     this.starting = true;
@@ -725,7 +725,7 @@ Tunnel.prototype.dequeue = function() {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.stop = function(callback) {
-  this.once('stop', _.callback(callback, this));
+  this.once('stop', _.callback(callback));
   if (this.stopping) {
     return this;
   }

@@ -508,7 +508,7 @@ Job.prototype.restart = function(callback) {
       label = options.name + ':';
 
   logInline();
-  console.log(label + ' ' + description + ' restart #%d of %d', ++this.attempts, this.retries);
+  console.log(label + ' ' + description + ' restart %d of %d', ++this.attempts, this.retries);
 
   _.defer(_.bind(this.emit, this, 'restart'));
   this.stop(_.partial(this.start, callback));
@@ -674,7 +674,7 @@ util.inherits(Tunnel, EventEmitter);
  */
 Tunnel.prototype.restart = function(callback) {
   logInline();
-  console.log('Tunnel ' + this.id + ': restart #%d of %d', ++this.attempts, this.retries);
+  console.log('Tunnel ' + this.id + ': restart %d of %d', ++this.attempts, this.retries);
 
   _.defer(_.bind(this.emit, this, 'restart'));
   this.stop(_.partial(this.start, callback));

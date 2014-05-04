@@ -647,7 +647,7 @@ function Tunnel(properties) {
       restarted.push(this);
     }
     // restart tunnel if all active jobs have restarted
-    var threshold = _.isFinite(throttled) ? throttled : 3;
+    var threshold = Math.min(all.length, _.isFinite(throttled) ? throttled : 3);
     if (active.length >= threshold && _.isEmpty(_.difference(active, restarted))) {
       tunnel.restart();
     }

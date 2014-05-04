@@ -2932,9 +2932,9 @@
     }
 
     /**
-     * Removes elements located at the given indexes and returns an array of
-     * removed elements. Indexes may be specified as an array of indexes or as
-     * individual arguments.
+     * Removes elements from `array` corresponding to the specified indexes and
+     * returns an array of removed elements. Indexes may be specified as an array
+     * of indexes or as individual arguments.
      *
      * Note: Like `_.pull`, this method mutates `array`.
      *
@@ -2999,17 +2999,17 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Array} Returns the array of removed elements.
+     * @returns {Array} Returns the new array of removed elements.
      * @example
      *
-     * var array = [1, 2, 3, 4, 5, 6];
+     * var array = [1, 2, 3, 4];
      * var evens = _.remove(array, function(num) { return num % 2 == 0; });
      *
      * console.log(array);
-     * // => [1, 3, 5]
+     * // => [1, 3]
      *
      * console.log(evens);
-     * // => [2, 4, 6]
+     * // => [2, 4]
      */
     function remove(array, predicate, thisArg) {
       var index = -1,
@@ -3637,9 +3637,9 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates an array of elements from the specified indexes, or keys, of the
-     * `collection`. Indexes may be specified as individual arguments or as arrays
-     * of indexes.
+     * Creates an array of elements corresponding to the specified keys, or indexes,
+     * of the collection. Keys may be specified as individual arguments or as arrays
+     * of keys.
      *
      * @static
      * @memberOf _

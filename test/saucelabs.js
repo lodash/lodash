@@ -488,7 +488,7 @@ Job.prototype.reset = function(callback) {
   this.failed = false;
   this.id = this.result = this.url = null;
 
-  this.once('start', _.callback(callback, this));
+  this.once('reset', _.callback(callback, this));
   _.defer(_.bind(this.emit, this, 'reset'));
 
   return this;

@@ -3610,17 +3610,12 @@
      * _.at(['fred', 'barney', 'pebbles'], 0, 2);
      * // => ['fred', 'pebbles']
      */
-    function at(collection, guard) {
+    function at(collection) {
       var args = arguments,
           index = -1,
           props = baseFlatten(args, true, false, 1),
-          length = props.length,
-          type = typeof guard;
+          length = props.length;
 
-      // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && args[2] && args[2][guard] === collection) {
-        length = 1;
-      }
       if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }

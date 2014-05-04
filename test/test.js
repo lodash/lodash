@@ -693,13 +693,6 @@
       deepEqual(actual, [1, 3]);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
-      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-          actual = _.map(array, _.at);
-
-      deepEqual(actual, [[1], [5], [9]]);
-    });
-
     _.each({
       'literal': 'abc',
       'object': Object('abc')

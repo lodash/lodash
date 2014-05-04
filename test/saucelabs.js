@@ -510,7 +510,9 @@ Job.prototype.restart = function(callback) {
   logInline();
   console.log(label + ' ' + description + ' restart #%d of %d', ++this.attempts, this.retries);
 
+  _.defer(_.bind(this.emit, this, 'restart'));
   this.stop(_.partial(this.start, callback));
+
   return this;
 };
 
@@ -661,7 +663,9 @@ Tunnel.prototype.restart = function(callback) {
   logInline();
   console.log('Tunnel ' + this.id + ': restart #%d of %d', ++this.attempts, this.retries);
 
+  _.defer(_.bind(this.emit, this, 'restart'));
   this.stop(_.partial(this.start, callback));
+
   return this;
 };
 

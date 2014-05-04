@@ -244,6 +244,26 @@
   }
 
   /**
+   * The base implementation of `_.at` without support for strings or individual
+   * key arguments.
+   *
+   * @private
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {number[]|string[]} [keys] The keys of elements to pick.
+   * @returns {Array} Returns the new array of picked elements.
+   */
+  function baseAt(collection, props) {
+    var index = -1,
+        length = props.length,
+        result = Array(length);
+
+    while(++index < length) {
+      result[index] = collection[props[index]];
+    }
+    return result;
+  }
+
+  /**
    * The base implementation of `compareAscending` used to compare values and
    * sort them in ascending order without guaranteeing a stable sort.
    *
@@ -629,8 +649,8 @@
      * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
      * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
      * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
-     * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`,
-     * `partial`, `partialRight`, `pick`, `pluck`, `property`, `pull`, `push`,
+     * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
+     * `partialRight`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`,
      * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
      * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
      * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
@@ -2752,6 +2772,47 @@
     }
 
     /**
+     * Removes elements from `array` corresponding to the specified indexes and
+     * returns an array of removed elements. Indexes may be specified as an array
+     * of indexes or as individual arguments.
+     *
+     * Note: Unlike `_.at`, this method mutates `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to modify.
+     * @param {...(number|number[])} [index] The indexes of values to remove,
+     *  specified as individual indexes or arrays of indexes.
+     * @returns {Array} Returns the new array of removed elements.
+     * @example
+     *
+     * var array = [5, 10, 15, 20];
+     * var evens = _.removeAt(array, [1, 3]);
+     *
+     * console.log(array);
+     * // => [5, 15]
+     *
+     * console.log(evens);
+     * // => [10, 20]
+     */
+    function pullAt(array) {
+      var indexes = baseFlatten(arguments, true, false, 1),
+          length = indexes.length,
+          result = baseAt(array, indexes);
+
+      indexes.sort(baseCompareAscending);
+      while (length--) {
+        var index = indexes[length];
+        if (index != previous) {
+          var previous = index;
+          splice.call(array, index, 1);
+        }
+      }
+      return result;
+    }
+
+    /**
      * Removes all elements from `array` that the predicate returns truthy for
      * and returns an array of removed elements. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
@@ -2773,17 +2834,17 @@
      *  per iteration. If a property name or object is provided it will be used
      *  to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {Array} Returns the array of removed elements.
+     * @returns {Array} Returns the new array of removed elements.
      * @example
      *
-     * var array = [1, 2, 3, 4, 5, 6];
+     * var array = [1, 2, 3, 4];
      * var evens = _.remove(array, function(num) { return num % 2 == 0; });
      *
      * console.log(array);
-     * // => [1, 3, 5]
+     * // => [1, 3]
      *
      * console.log(evens);
-     * // => [2, 4, 6]
+     * // => [2, 4]
      */
     function remove(array, predicate, thisArg) {
       var index = -1,
@@ -3411,17 +3472,17 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates an array of elements from the specified indexes, or keys, of the
-     * `collection`. Indexes may be specified as individual arguments or as arrays
-     * of indexes.
+     * Creates an array of elements corresponding to the specified keys, or indexes,
+     * of the collection. Keys may be specified as individual arguments or as arrays
+     * of keys.
      *
      * @static
      * @memberOf _
      * @category Collections
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(number|number[]|string|string[])} [index] The indexes to retrieve,
-     *  specified as individual indexes or arrays of indexes.
-     * @returns {Array} Returns the array of picked elements.
+     * @param {...(number|number[]|string|string[])} [keys] The keys of elements
+     *  to pick, specified as individual keys or arrays of keys.
+     * @returns {Array} Returns the new array of picked elements.
      * @example
      *
      * _.at(['a', 'b', 'c', 'd', 'e'], [0, 2, 4]);
@@ -3430,22 +3491,8 @@
      * _.at(['fred', 'barney', 'pebbles'], 0, 2);
      * // => ['fred', 'pebbles']
      */
-    function at(collection, guard) {
-      var args = arguments,
-          index = -1,
-          props = baseFlatten(args, true, false, 1),
-          length = props.length,
-          type = typeof guard;
-
-      // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && args[2] && args[2][guard] === collection) {
-        length = 1;
-      }
-      var result = Array(length);
-      while(++index < length) {
-        result[index] = collection[props[index]];
-      }
-      return result;
+    function at(collection) {
+      return baseAt(collection, baseFlatten(arguments, true, false, 1));
     }
 
     /**
@@ -4731,8 +4778,8 @@
      * @memberOf _
      * @category Functions
      * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {...string} [methodName] The object method names to
-     *  bind, specified as individual method names or arrays of method names.
+     * @param {...string} [methodNames] The object method names to bind, specified
+     *  as individual method names or arrays of method names.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -5347,7 +5394,7 @@
      * @alias extend
      * @category Objects
      * @param {Object} object The destination object.
-     * @param {...Object} [source] The source objects.
+     * @param {...Object} [sources] The source objects.
      * @param {Function} [callback] The function to customize assigning values.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the destination object.
@@ -5555,7 +5602,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The destination object.
-     * @param {...Object} [source] The source objects.
+     * @param {...Object} [sources] The source objects.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {Object} Returns the destination object.
      * @example
@@ -6508,7 +6555,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The destination object.
-     * @param {...Object} [source] The source objects.
+     * @param {...Object} [sources] The source objects.
      * @param {Function} [callback] The function to customize merging properties.
      * @param {*} [thisArg] The `this` binding of `callback`.
      * @returns {Object} Returns the destination object.
@@ -6587,7 +6634,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The source object.
-     * @param {Function|...string|string[]} [predicate] The function called per
+     * @param {Function|...(string|string[])} [predicate] The function called per
      *  iteration or property names to omit, specified as individual property
      *  names or arrays of property names.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -6613,7 +6660,7 @@
       while (length--) {
         omitProps[length] = String(omitProps[length]);
       }
-      return pick(object, baseDifference(keysIn(object),  omitProps));
+      return pick(object, baseDifference(keysIn(object), omitProps));
     }
 
     /**
@@ -6655,7 +6702,7 @@
      * @memberOf _
      * @category Objects
      * @param {Object} object The source object.
-     * @param {Function|...string|string[]} [predicate] The function called per
+     * @param {Function|...(string|string[])} [predicate] The function called per
      *  iteration or property names to pick, specified as individual property
      *  names or arrays of property names.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -8122,6 +8169,7 @@
     lodash.pluck = pluck;
     lodash.property = property;
     lodash.pull = pull;
+    lodash.pullAt = pullAt;
     lodash.range = range;
     lodash.reject = reject;
     lodash.remove = remove;

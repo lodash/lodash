@@ -49,7 +49,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.negate](http://lodash.com/docs#negate) to create negated predicate functions
  * [_.noop](http://lodash.com/docs#noop) for function placeholders
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
- * [_.pull](http://lodash.com/docs#pull) & [_.remove](http://lodash.com/docs#remove) for mutating arrays
+ * [_.pull](http://lodash.com/docs#pull), [_.pullAt](http://lodash.com/docs#pullAt), & [_.remove](http://lodash.com/docs#remove) for mutating arrays
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
  * [_.slice](http://lodash.com/docs#slice) for creating subsets of array-like values

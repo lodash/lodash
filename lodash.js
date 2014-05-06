@@ -3029,12 +3029,13 @@
     function remove(array, predicate, thisArg) {
       var index = -1,
           length = array ? array.length : 0,
-          result = [];
+          result = [],
+          originalIndex = -1;
 
       predicate = lodash.createCallback(predicate, thisArg, 3);
       while (++index < length) {
         var value = array[index];
-        if (predicate(value, index, array)) {
+        if (predicate(value, ++originalIndex, array)) {
           result.push(value);
           splice.call(array, index--, 1);
           length--;

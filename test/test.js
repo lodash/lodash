@@ -7721,14 +7721,16 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var array = [1, 2, 3];
+    test('should support the `thisArg` argument', 2, function() {
+      var args = [],
+          array = [1, 2, 3];
 
       var actual = _.remove(array, function(num, index) {
-        return this[index] < 3;
+        args.push(this[index]);
       }, array);
 
-      deepEqual(actual, [1, 2]);
+      deepEqual(actual, []);
+      deepEqual(args, [1, 2, 3]);
     });
 
     test('should preserve holes in arrays', 2, function() {
@@ -7747,6 +7749,18 @@
 
       _.remove(array, function(num) { return num == null; });
       deepEqual(array, [1, 3]);
+    });
+
+    test('should pass the original index into the callback', 2, function() {
+      var args = [],
+          array = [1, 2, 3];
+
+      var actual = _.remove(array, function(num, index) {
+        args.push(index);
+        return true;
+      });
+      deepEqual(actual, [1,2,3]);
+      deepEqual(args, [0,1,2]);
     });
   }());
 

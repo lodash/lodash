@@ -298,7 +298,8 @@ function optionToValue(name, string) {
  *
  * @private
  */
-function onJobRemove() {
+function onJobRemove(error, res, body) {
+  console.log('removed job id ' + this.id + ': ' + this.url);
   this.id = this.url = null;
   this.removing = false;
   this.emit('remove');

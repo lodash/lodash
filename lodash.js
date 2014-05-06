@@ -8522,7 +8522,7 @@
     lodash.takeRightWhile = takeRightWhile;
     lodash.takeWhile = takeWhile;
 
-    // add aliases
+    // add alias
     lodash.head = first;
 
     baseForOwn(lodash, function(func, methodName) {

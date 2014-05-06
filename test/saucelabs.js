@@ -611,7 +611,7 @@ Job.prototype.stop = function(callback) {
     this.statusId = clearTimeout(this.statusId);
   }
   var onStop = _.bind(onJobStop, this);
-  if (this.id == null || !this.running) {
+  if (!this.running) {
     _.defer(onStop);
     return this;
   }

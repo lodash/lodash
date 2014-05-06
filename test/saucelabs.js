@@ -294,6 +294,17 @@ function optionToValue(name, string) {
 /*----------------------------------------------------------------------------*/
 
 /**
+ * The `request.del` callback used by `Jobs#remove`.
+ *
+ * @private
+ */
+function onJobRemove() {
+  this.id = this.url = null;
+  this.removing = false;
+  this.emit('remove');
+}
+
+/**
  * The `request.post` callback used by `Jobs#start`.
  *
  * @private
@@ -307,7 +318,7 @@ function onJobStart(error, res, body) {
       tunnel = this.tunnel;
 
   this.starting = false;
-  if (this.stopping || tunnel.starting) {
+  if (this.stopping) {
     return;
   }
   if (error || !id || statusCode != 200) {
@@ -401,9 +412,7 @@ function onJobStatus(error, res, body) {
  */
 function onJobStop() {
   this.running = this.stopping = false;
-  if (!this.tunnel.starting) {
-    this.emit('stop');
-  }
+  this.emit('stop');
 }
 
 /**
@@ -464,11 +473,40 @@ function Job(properties) {
   _.defaults(this.options, _.cloneDeep(jobOptions));
 
   this.attempts = 0;
-  this.checking = this.failed = this.running = this.starting = this.stopping = false;
+  this.checking = this.failed = this.removing = this.running = this.starting = this.stopping = false;
   this.id = this.result = this.url = null;
 }
 
 util.inherits(Job, EventEmitter);
+
+/**
+ * Removes the job.
+ *
+ * @memberOf Job
+ * @param {Function} callback The function called once the job is removed.
+ * @param {Object} Returns the job instance.
+ */
+Job.prototype.remove = function(callback) {
+  if (this.running) {
+    return this.stop(_.partial(this.remove, callback));
+  }
+  this.once('remove', _.callback(callback));
+  if (this.removing) {
+    return this;
+  }
+  var onRemove = _.bind(onJobRemove, this);
+
+  this.removing = true;
+  if (this.id == null) {
+    _.defer(onRemove);
+    return this;
+  }
+  request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}', this), {
+    'auth': { 'user': this.user, 'pass': this.pass }
+  }, onRemove);
+
+  return this;
+};
 
 /**
  * Resets the job.
@@ -478,8 +516,8 @@ util.inherits(Job, EventEmitter);
  * @param {Object} Returns the job instance.
  */
 Job.prototype.reset = function(callback) {
-  if (this.running) {
-    return this.stop(_.partial(this.reset, callback));
+  if (this.id != null) {
+    return this.remove(_.partial(this.reset, callback));
   }
   this.attempts = 0;
   this.failed = false;
@@ -510,7 +548,7 @@ Job.prototype.restart = function(callback) {
   this.once('restart', _.callback(callback));
   _.defer(_.bind(this.emit, this, 'restart'));
 
-  return this.stop(this.start);
+  return this.remove(this.start);
 };
 
 /**
@@ -521,10 +559,8 @@ Job.prototype.restart = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.start = function(callback) {
-  var tunnel = this.tunnel;
-
   this.once('start', _.callback(callback));
-  if (this.starting || this.running || tunnel.starting || tunnel.stopping) {
+  if (this.starting || this.running) {
     return this;
   }
   this.starting = true;
@@ -544,10 +580,8 @@ Job.prototype.start = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.status = function(callback) {
-  var tunnel = this.tunnel;
-
   this.once('status', _.callback(callback));
-  if (this.checking || this.starting || this.stopping || tunnel.starting || tunnel.stopping) {
+  if (this.checking || this.removing || this.starting || this.stopping) {
     return this;
   }
   this.checking = true;
@@ -568,16 +602,15 @@ Job.prototype.status = function(callback) {
  */
 Job.prototype.stop = function(callback) {
   this.once('stop', _.callback(callback));
-  if (this.stopping || this.tunnel.starting) {
+  if (this.stopping) {
     return this;
   }
-  var onStop = _.bind(onJobStop, this);
-
   this.stopping = true;
   if (this.statusId) {
     this.checking = false;
     this.statusId = clearTimeout(this.statusId);
   }
+  var onStop = _.bind(onJobStop, this);
   if (this.id == null || !this.running) {
     _.defer(onStop);
     return this;
@@ -645,7 +678,7 @@ function Tunnel(properties) {
     }
   });
 
-  this.on('stop', function() {
+  this.on('restart', function() {
     completed = 0;
     success = true;
     restarted.length = 0;

@@ -2969,7 +2969,7 @@
      * @example
      *
      * var array = [5, 10, 15, 20];
-     * var evens = _.removeAt(array, [1, 3]);
+     * var evens = _.pullAt(array, [1, 3]);
      *
      * console.log(array);
      * // => [5, 15]
@@ -2984,8 +2984,8 @@
 
       indexes.sort(baseCompareAscending);
       while (length--) {
-        var index = indexes[length];
-        if (index != previous) {
+        var index = parseFloat(indexes[length]);
+        if (index != previous && index > -1 && index % 1 == 0) {
           var previous = index;
           splice.call(array, index, 1);
         }
@@ -5322,28 +5322,28 @@
      * fibonacci(9)
      * // => 34
      *
-     * var data = {
-     *   'fred': { 'name': 'fred', 'age': 40 },
-     *   'pebbles': { 'name': 'pebbles', 'age': 1 }
-     * };
-     *
      * // modifying the result cache
-     * var get = _.memoize(function(name) { return data[name]; }, _.identity);
-     * get('pebbles');
-     * // => { 'name': 'pebbles', 'age': 1 }
+     * var upperCase = _.memoize(function(string) {
+     *   return string.toUpperCase();
+     * });
      *
-     * get.cache.pebbles.name = 'penelope';
-     * get('pebbles');
-     * // => { 'name': 'penelope', 'age': 1 }
+     * upperCase('fred');
+     * // => 'FRED'
+     *
+     * upperCase.cache.fred = 'BARNEY'
+     * upperCase('fred');
+     * // => 'BARNEY'
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
         throw new TypeError(funcErrorText);
       }
       var memoized = function() {
-        var cache = memoized.cache,
-            key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
-
+        var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+        if (key == '__proto__') {
+          return func.apply(this, arguments);
+        }
+        var cache = memoized.cache;
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
@@ -8165,7 +8165,7 @@
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();
-        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max);
+        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + (String(rand).length - 1)))), max);
       }
       return baseRandom(min, max);
     }
@@ -8523,7 +8523,7 @@
     lodash.takeRightWhile = takeRightWhile;
     lodash.takeWhile = takeWhile;
 
-    // add aliases
+    // add alias
     lodash.head = first;
 
     baseForOwn(lodash, function(func, methodName) {

@@ -3496,19 +3496,17 @@
    * fibonacci(9)
    * // => 34
    *
-   * var data = {
-   *   'fred': { 'name': 'fred', 'age': 40 },
-   *   'pebbles': { 'name': 'pebbles', 'age': 1 }
-   * };
-   *
    * // modifying the result cache
-   * var get = _.memoize(function(name) { return data[name]; }, _.identity);
-   * get('pebbles');
-   * // => { 'name': 'pebbles', 'age': 1 }
+   * var upperCase = _.memoize(function(string) {
+   *   return string.toUpperCase();
+   * });
    *
-   * get.cache.pebbles.name = 'penelope';
-   * get('pebbles');
-   * // => { 'name': 'penelope', 'age': 1 }
+   * upperCase('fred');
+   * // => 'FRED'
+   *
+   * upperCase.cache.fred = 'BARNEY'
+   * upperCase('fred');
+   * // => 'BARNEY'
    */
   function memoize(func, resolver) {
     if (!isFunction(func) || (resolver && !isFunction(resolver))) {
@@ -3516,7 +3514,10 @@
     }
     var cache = {};
     return function() {
-      var key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
+      var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+      if (key == '__proto__') {
+        return func.apply(this, arguments);
+      }
       return hasOwnProperty.call(cache, key)
         ? cache[key]
         : (cache[key] = func.apply(this, arguments));
@@ -5312,7 +5313,7 @@
   lodash.sample = sample;
   lodash.take = take;
 
-  // add aliases
+  // add alias
   lodash.head = first;
 
   /*--------------------------------------------------------------------------*/
@@ -5333,36 +5334,36 @@
   lodash.prototype.chain = wrapperChain;
   lodash.prototype.value = wrapperValueOf;
 
-    // add `Array` mutator functions to the wrapper
-    arrayEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
-      lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__;
-        func.apply(value, arguments);
+  // add `Array` mutator functions to the wrapper
+  arrayEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    var func = arrayRef[methodName];
+    lodash.prototype[methodName] = function() {
+      var value = this.__wrapped__;
+      func.apply(value, arguments);
 
-        // avoid array-like object bugs with `Array#shift` and `Array#splice`
-        // in Firefox < 10 and IE < 9
-        if (!support.spliceObjects && value.length === 0) {
-          delete value[0];
-        }
-        return this;
-      };
-    });
+      // avoid array-like object bugs with `Array#shift` and `Array#splice`
+      // in Firefox < 10 and IE < 9
+      if (!support.spliceObjects && value.length === 0) {
+        delete value[0];
+      }
+      return this;
+    };
+  });
 
-    // add `Array` accessor functions to the wrapper
-    arrayEach(['concat', 'join', 'slice'], function(methodName) {
-      var func = arrayRef[methodName];
-      lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__,
-            result = func.apply(value, arguments);
+  // add `Array` accessor functions to the wrapper
+  arrayEach(['concat', 'join', 'slice'], function(methodName) {
+    var func = arrayRef[methodName];
+    lodash.prototype[methodName] = function() {
+      var value = this.__wrapped__,
+          result = func.apply(value, arguments);
 
-        if (this.__chain__) {
-          result = new lodashWrapper(result);
-          result.__chain__ = true;
-        }
-        return result;
-      };
-    });
+      if (this.__chain__) {
+        result = new lodashWrapper(result);
+        result.__chain__ = true;
+      }
+      return result;
+    };
+  });
 
   /*--------------------------------------------------------------------------*/
 

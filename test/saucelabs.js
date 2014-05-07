@@ -300,7 +300,7 @@ function optionToValue(name, string) {
  */
 function onJobRemove(error, res, body) {
   console.log('removed job id ' + this.id + ': ' + this.url);
-  this.id = this.url = null;
+  this.id = this.testId = this.url = null;
   this.removing = false;
   this.emit('remove');
 }
@@ -314,7 +314,7 @@ function onJobRemove(error, res, body) {
  * @param {Object} body The response body JSON object.
  */
 function onJobStart(error, res, body) {
-  var id = _.result(body, 'js tests', [])[0],
+  var testId = _.first(_.result(body, 'js tests')),
       statusCode = _.result(res, 'statusCode'),
       tunnel = this.tunnel;
 
@@ -322,7 +322,7 @@ function onJobStart(error, res, body) {
   if (this.stopping) {
     return;
   }
-  if (error || !id || statusCode != 200) {
+  if (error || !testId || statusCode != 200) {
     if (this.attempts < this.retries) {
       this.restart();
       return;
@@ -336,8 +336,8 @@ function onJobStart(error, res, body) {
     this.emit('complete');
     return;
   }
-  this.id = id;
   this.running = true;
+  this.testId = testId;
   this.timestamp = _.now();
   this.emit('start');
   this.status();
@@ -352,34 +352,34 @@ function onJobStart(error, res, body) {
  * @param {Object} body The response body JSON object.
  */
 function onJobStatus(error, res, body) {
-  var data = _.result(body, 'js tests', [{}])[0],
+  var completed = _.result(body, 'completed'),
+      data = _.result(body, 'js tests', [{}])[0],
+      jobResult = data.result,
       jobStatus = data.status,
+      jobUrl = data.url,
       options = this.options,
       platform = options.platforms[0],
-      result = data.result,
-      completed = _.result(body, 'completed'),
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
       elapsed = (_.now() - this.timestamp) / 1000,
       expired = (jobStatus != 'test session in progress' && elapsed >= queueTimeout),
-      failures = _.result(result, 'failed'),
+      failures = _.result(jobResult, 'failed'),
       label = options.name + ':',
-      tunnel = this.tunnel,
-      url = data.url;
+      tunnel = this.tunnel;
 
   this.checking = false;
+  this.id = _.last(url.parse(jobUrl).pathname.split('/'));
+  this.url = jobUrl;
+
   if (!this.running || this.stopping) {
     return;
   }
   this.emit('status', jobStatus);
-
   if (!completed && !expired) {
-    this.statusId = setTimeout(_.bind(this.status, this), this.statusInterval);
+    this._timerId = setTimeout(_.bind(this.status, this), this.statusInterval);
     return;
   }
-  this.result = result;
-  this.url = url;
-
-  if (!result || failures || reError.test(result.message)) {
+  this.result = jobResult;
+  if (!jobResult || failures || reError.test(jobResult.message)) {
     if (this.attempts < this.retries) {
       this.restart();
       return;
@@ -396,7 +396,7 @@ function onJobStatus(error, res, body) {
       return;
     }
     else {
-      var message = _.result(result, 'message', 'no results available. ' + details);
+      var message = _.result(jobResult, 'message', 'no results available. ' + details);
       console.error(label, description, chalk.red('failed') + ';', message);
     }
   } else {
@@ -475,7 +475,7 @@ function Job(properties) {
 
   this.attempts = 0;
   this.checking = this.failed = this.removing = this.running = this.starting = this.stopping = false;
-  this.id = this.result = this.url = null;
+  this._timerId = this.id = this.result = this.testId = this.url = null;
 }
 
 util.inherits(Job, EventEmitter);
@@ -522,7 +522,7 @@ Job.prototype.reset = function(callback) {
   }
   this.attempts = 0;
   this.failed = false;
-  this.id = this.result = this.url = null;
+  this._timerId = this.id = this.result = this.testId = this.url = null;
 
   this.once('reset', _.callback(callback));
   _.defer(_.bind(this.emit, this, 'reset'));
@@ -588,7 +588,7 @@ Job.prototype.status = function(callback) {
   this.checking = true;
   request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
     'auth': { 'user': this.user, 'pass': this.pass },
-    'json': { 'js tests': [this.id] }
+    'json': { 'js tests': [this.testId] }
   }, _.bind(onJobStatus, this));
 
   return this;
@@ -607,9 +607,10 @@ Job.prototype.stop = function(callback) {
     return this;
   }
   this.stopping = true;
-  if (this.statusId) {
+  if (this._timerId) {
+    clearTimeout(this._timerId);
+    this._timerId = null;
     this.checking = false;
-    this.statusId = clearTimeout(this.statusId);
   }
   var onStop = _.bind(onJobStop, this);
   if (!this.running) {

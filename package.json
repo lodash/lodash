@@ -40,6 +40,9 @@
       "dist/lodash.underscore.min.js"
     ]
   },
+  "spm": {
+    "main": "lodash.js"
+  },
   "volo": {
     "type": "directory",
     "ignore": [

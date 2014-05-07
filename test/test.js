@@ -3443,15 +3443,6 @@
       deepEqual(_.uniq(largeArray), expected);
       deepEqual(_.without.apply(_, [largeArray].concat(largeArray)), []);
     });
-
-    test('lodash.memoize should support values that resolve to the `__proto__` key', 1, function() {
-      var count = 0,
-          memoized = _.memoize(function() { return ++count; });
-
-      memoized('__proto__');
-      memoized('__proto__');
-      strictEqual(count, 1);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -6098,14 +6089,33 @@
     });
 
     test('should expose a `cache` object on the `memoized` function', 4, function() {
-      _.each(['_a', 'a'], function(key, index) {
-        var memoized = _.memoize(_.identity, index && _.identity);
+      _.times(2, function(index) {
+        var resolver = index && _.identity,
+            memoized = _.memoize(_.identity, resolver);
 
         memoized('a');
-        strictEqual(memoized.cache[key], 'a');
+        strictEqual(memoized.cache.a, 'a');
 
-        memoized.cache[key] = 'b';
+        memoized.cache.a = 'b';
         strictEqual(memoized('a'), 'b');
+      });
+    });
+
+    test('should skip the `__proto__` key', 4, function() {
+      _.times(2, function(index) {
+        var count = 0,
+            resolver = index && _.identity;
+
+        var memoized = _.memoize(function() {
+          count++;
+          return [];
+        }, resolver);
+
+        memoized('__proto__');
+        memoized('__proto__');
+
+        strictEqual(count, 2);
+        ok(!(memoized.cache instanceof Array));
       });
     });
   }());

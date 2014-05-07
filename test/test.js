@@ -7278,11 +7278,11 @@
     });
 
     test('should work with unsorted indexes', 2, function() {
-      var array = [1, 2, 3, 4, 5],
-          actual = _.pullAt(array, [4, 1, 0, 3]);
+      var array = [1, 2, 3, 4],
+          actual = _.pullAt(array, [1, 3, 0]);
 
       deepEqual(array, [3]);
-      deepEqual(actual, [5, 2, 1, 4]);
+      deepEqual(actual, [2, 4, 1]);
     });
 
     test('should work with repeated indexes', 2, function() {
@@ -7315,6 +7315,21 @@
 
       deepEqual(array, ['b']);
       deepEqual(actual, ['d', 'a', 'c']);
+    });
+
+    test('should ignore non-index values', 2, function() {
+      var array = ['a', 'b', 'c'],
+          clone = array.slice();
+
+      var values = _.reject(empties, function(value) {
+        return value === 0 || _.isArray(value);
+      }).concat(-1, 1.1);
+
+      var expected = _.map(values, _.constant(undefined)),
+          actual = _.pullAt.apply(_, [array].concat(values));
+
+      deepEqual(actual, expected);
+      deepEqual(array, clone);
     });
   }());
 

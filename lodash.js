@@ -2983,8 +2983,8 @@
 
       indexes.sort(baseCompareAscending);
       while (length--) {
-        var index = indexes[length];
-        if (index != previous) {
+        var index = parseFloat(indexes[length]);
+        if (index != previous && index > -1 && index % 1 == 0) {
           var previous = index;
           splice.call(array, index, 1);
         }

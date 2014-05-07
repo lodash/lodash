@@ -299,7 +299,6 @@ function optionToValue(name, string) {
  * @private
  */
 function onJobRemove(error, res, body) {
-  console.log('removed job id ' + this.id + ': ' + this.url);
   this.id = this.testId = this.url = null;
   this.removing = false;
   this.emit('remove');
@@ -314,8 +313,8 @@ function onJobRemove(error, res, body) {
  * @param {Object} body The response body JSON object.
  */
 function onJobStart(error, res, body) {
-  var testId = _.first(_.result(body, 'js tests')),
-      statusCode = _.result(res, 'statusCode'),
+  var statusCode = _.result(res, 'statusCode'),
+      testId = _.first(_.result(body, 'js tests')),
       tunnel = this.tunnel;
 
   this.starting = false;
@@ -353,10 +352,10 @@ function onJobStart(error, res, body) {
  */
 function onJobStatus(error, res, body) {
   var completed = _.result(body, 'completed'),
-      data = _.result(body, 'js tests', [{}])[0],
-      jobResult = data.result,
-      jobStatus = data.status,
-      jobUrl = data.url,
+      data = _.first(_.result(body, 'js tests')),
+      jobResult = _.result(data, 'result'),
+      jobStatus = _.result(data, 'status'),
+      jobUrl = _.result(data, 'url'),
       options = this.options,
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
@@ -367,13 +366,14 @@ function onJobStatus(error, res, body) {
       tunnel = this.tunnel;
 
   this.checking = false;
-  this.id = _.last(url.parse(jobUrl).pathname.split('/'));
-  this.url = jobUrl;
-
   if (!this.running || this.stopping) {
     return;
   }
   this.emit('status', jobStatus);
+  if (jobUrl) {
+    this.id = _.last(url.parse(jobUrl).pathname.split('/'));
+    this.url = jobUrl;
+  }
   if (!completed && !expired) {
     this._timerId = setTimeout(_.bind(this.status, this), this.statusInterval);
     return;

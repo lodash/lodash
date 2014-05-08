@@ -4947,8 +4947,8 @@
     /**
      * Binds methods of an object to the object itself, overwriting the existing
      * method. Method names may be specified as individual arguments or as arrays
-     * of method names. If no method names are provided all the function properties
-     * of `object` will be bound.
+     * of method names. If no method names are provided all enumerable function
+     * properties, own and inherited, of `object` will be bound.
      *
      * Note: This method does not set the `length` property of bound functions.
      *
@@ -6000,8 +6000,8 @@
     }
 
     /**
-     * Creates a sorted array of property names of all enumerable properties,
-     * own and inherited, of `object` that have function values.
+     * Creates a sorted array of property names of all enumerable function
+     * properties, own and inherited, of `object`.
      *
      * @static
      * @memberOf _

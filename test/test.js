@@ -6383,6 +6383,22 @@
     var value = ['a'],
         source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
 
+    test('should mixin `source` methods into lodash', 4, function() {
+      _.mixin(source);
+
+      strictEqual(_.a(value), 'a');
+      strictEqual(_(value).a().__wrapped__, 'a');
+
+      delete _.a;
+      delete _.prototype.a;
+
+      ok(!('b' in _));
+      ok(!('b' in _.prototype));
+
+      delete _.b;
+      delete _.prototype.b;
+    });
+
     test('should use `this` as the default `object` value', 3, function() {
       var object = _.create(_);
       object.mixin(source);
@@ -6425,20 +6441,11 @@
       delete wrapper.prototype.b;
     });
 
-    test('should mixin `source` methods into lodash', 4, function() {
-      _.mixin(source);
+    test('should not assign inherited `source` properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = { 'a': _.noop };
 
-      strictEqual(_.a(value), 'a');
-      strictEqual(_(value).a().__wrapped__, 'a');
-
-      delete _.a;
-      delete _.prototype.a;
-
-      ok(!('b' in _));
-      ok(!('b' in _.prototype));
-
-      delete _.b;
-      delete _.prototype.b;
+      deepEqual(_.mixin({}, new Foo, {}), {});
     });
 
     test('should accept an `options` argument', 16, function() {

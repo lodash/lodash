@@ -8340,6 +8340,36 @@
       return String(prefix == null ? '' : prefix) + id;
     }
 
+    /**
+     * Rounds the given `value` to the given number of `places`. If `places` is not provided
+     * it will round to 0 decimal places.
+     *
+     * @static
+     * @memberOf
+     * @category Utilities
+     * @param {number} value The value to be rounded.
+     * @param {number} places The number of places `value` should be rounded to.
+     * @returns {number} Returns `value`, rounded to `places` decimal places.
+     * @example
+     *
+     * _.round(5.325, 2);
+     * // => 5.33
+     *
+     * _.round(8.2345);
+     * // => 8
+     */
+    function round(value, places) {
+      if (places === undefined) {
+        return Math.round(value);
+      }
+      if (value === undefined) {
+        return undefined;
+      }
+
+      var shiftWith = Math.pow(10, places);
+      return Math.round(value * shiftWith) / shiftWith;
+    }
+
     /*--------------------------------------------------------------------------*/
 
     // add functions that return wrapped values when chaining
@@ -8407,6 +8437,7 @@
     lodash.reject = reject;
     lodash.remove = remove;
     lodash.rest = rest;
+    lodash.round = round;
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;

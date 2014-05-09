@@ -1600,6 +1600,30 @@
     }
 
     /**
+     * The base implementation of `_.functions` which creates a sorted array of
+     * function property names from those returned by `keysFunc`.
+     *
+     * @private
+     * @param {Object} object The object to inspect.
+     * @param {Function} keysFunc The function to get the keys of `object`.
+     * @returns {Array} Returns the new sorted array of property names.
+     */
+    function baseFunctions(object, keysFunc) {
+      var index = -1,
+          props = keysFunc(object),
+          length = props.length,
+          result = [];
+
+      while (++index < length) {
+        var key = props[index];
+        if (isFunction(object[key])) {
+          result.push(key);
+        }
+      }
+      return result.sort();
+    }
+
+    /**
      * The base implementation of `_.isEqual`, without support for `thisArg`
      * binding, that allows partial "_.where" style comparisons.
      *
@@ -6000,7 +6024,7 @@
     }
 
     /**
-     * Creates a sorted array of property names of all enumerable function
+     * Creates a sorted array of function property names from all enumerable
      * properties, own and inherited, of `object`.
      *
      * @static
@@ -6015,14 +6039,7 @@
      * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
      */
     function functions(object) {
-      var result = [];
-
-      baseForIn(object, function(value, key) {
-        if (isFunction(value)) {
-          result.push(key);
-        }
-      });
-      return result.sort();
+      return baseFunctions(object, keysIn);
     }
 
     /**
@@ -7922,8 +7939,9 @@
     }
 
     /**
-     * Adds function properties of a source object to the destination object.
-     * If `object` is a function methods will be added to its prototype as well.
+     * Adds all own enumerable function properties of a source object to the
+     * destination object. If `object` is a function methods will be added to
+     * its prototype as well.
      *
      * @static
      * @memberOf _
@@ -7955,7 +7973,7 @@
      */
     function mixin(object, source, options) {
       var chain = true,
-          methodNames = source && functions(source);
+          methodNames = source && baseFunctions(source, keys);
 
       if (!source || (!options && !methodNames.length)) {
         if (options == null) {
@@ -7963,7 +7981,7 @@
         }
         source = object;
         object = this;
-        methodNames = functions(source);
+        methodNames = baseFunctions(source, keys);
       }
       if (options === false) {
         chain = false;

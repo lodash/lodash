@@ -1601,6 +1601,30 @@
     }
 
     /**
+     * The base implementation of `_.functions` which creates a sorted array of
+     * function property names from those returned by `keysFunc`.
+     *
+     * @private
+     * @param {Object} object The object to inspect.
+     * @param {Function} keysFunc The function to get the keys of `object`.
+     * @returns {Array} Returns the new sorted array of property names.
+     */
+    function baseFunctions(object, keysFunc) {
+      var index = -1,
+          props = keysFunc(object),
+          length = props.length,
+          result = [];
+
+      while (++index < length) {
+        var key = props[index];
+        if (isFunction(object[key])) {
+          result.push(key);
+        }
+      }
+      return result.sort();
+    }
+
+    /**
      * The base implementation of `_.isEqual`, without support for `thisArg`
      * binding, that allows partial "_.where" style comparisons.
      *
@@ -2969,7 +2993,7 @@
      * @example
      *
      * var array = [5, 10, 15, 20];
-     * var evens = _.removeAt(array, [1, 3]);
+     * var evens = _.pullAt(array, [1, 3]);
      *
      * console.log(array);
      * // => [5, 15]
@@ -2984,8 +3008,8 @@
 
       indexes.sort(baseCompareAscending);
       while (length--) {
-        var index = indexes[length];
-        if (index != previous) {
+        var index = parseFloat(indexes[length]);
+        if (index != previous && index > -1 && index % 1 == 0) {
           var previous = index;
           splice.call(array, index, 1);
         }
@@ -4948,8 +4972,8 @@
     /**
      * Binds methods of an object to the object itself, overwriting the existing
      * method. Method names may be specified as individual arguments or as arrays
-     * of method names. If no method names are provided all the function properties
-     * of `object` will be bound.
+     * of method names. If no method names are provided all enumerable function
+     * properties, own and inherited, of `object` will be bound.
      *
      * Note: This method does not set the `length` property of bound functions.
      *
@@ -5322,28 +5346,28 @@
      * fibonacci(9)
      * // => 34
      *
-     * var data = {
-     *   'fred': { 'name': 'fred', 'age': 40 },
-     *   'pebbles': { 'name': 'pebbles', 'age': 1 }
-     * };
-     *
      * // modifying the result cache
-     * var get = _.memoize(function(name) { return data[name]; }, _.identity);
-     * get('pebbles');
-     * // => { 'name': 'pebbles', 'age': 1 }
+     * var upperCase = _.memoize(function(string) {
+     *   return string.toUpperCase();
+     * });
      *
-     * get.cache.pebbles.name = 'penelope';
-     * get('pebbles');
-     * // => { 'name': 'penelope', 'age': 1 }
+     * upperCase('fred');
+     * // => 'FRED'
+     *
+     * upperCase.cache.fred = 'BARNEY'
+     * upperCase('fred');
+     * // => 'BARNEY'
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
         throw new TypeError(funcErrorText);
       }
       var memoized = function() {
-        var cache = memoized.cache,
-            key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
-
+        var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+        if (key == '__proto__') {
+          return func.apply(this, arguments);
+        }
+        var cache = memoized.cache;
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
@@ -6001,8 +6025,8 @@
     }
 
     /**
-     * Creates a sorted array of property names of all enumerable properties,
-     * own and inherited, of `object` that have function values.
+     * Creates a sorted array of function property names from all enumerable
+     * properties, own and inherited, of `object`.
      *
      * @static
      * @memberOf _
@@ -6016,14 +6040,7 @@
      * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
      */
     function functions(object) {
-      var result = [];
-
-      baseForIn(object, function(value, key) {
-        if (isFunction(value)) {
-          result.push(key);
-        }
-      });
-      return result.sort();
+      return baseFunctions(object, keysIn);
     }
 
     /**
@@ -7923,8 +7940,9 @@
     }
 
     /**
-     * Adds function properties of a source object to the destination object.
-     * If `object` is a function methods will be added to its prototype as well.
+     * Adds all own enumerable function properties of a source object to the
+     * destination object. If `object` is a function methods will be added to
+     * its prototype as well.
      *
      * @static
      * @memberOf _
@@ -7956,7 +7974,7 @@
      */
     function mixin(object, source, options) {
       var chain = true,
-          methodNames = source && functions(source);
+          methodNames = source && baseFunctions(source, keys);
 
       if (!source || (!options && !methodNames.length)) {
         if (options == null) {
@@ -7964,7 +7982,7 @@
         }
         source = object;
         object = this;
-        methodNames = functions(source);
+        methodNames = baseFunctions(source, keys);
       }
       if (options === false) {
         chain = false;
@@ -8165,7 +8183,7 @@
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();
-        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand +'').length - 1)))), max);
+        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + (String(rand).length - 1)))), max);
       }
       return baseRandom(min, max);
     }
@@ -8502,7 +8520,7 @@
     lodash.include = contains;
     lodash.inject = reduce;
 
-    mixin(lodash, function() {
+    mixin(lodash, (function() {
       var source = {}
       baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {
@@ -8510,7 +8528,7 @@
         }
       });
       return source;
-    }(), false);
+    }()), false);
 
     /*--------------------------------------------------------------------------*/
 
@@ -8523,7 +8541,7 @@
     lodash.takeRightWhile = takeRightWhile;
     lodash.takeWhile = takeWhile;
 
-    // add aliases
+    // add alias
     lodash.head = first;
 
     baseForOwn(lodash, function(func, methodName) {

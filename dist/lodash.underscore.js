@@ -808,6 +808,30 @@
   }
 
   /**
+   * The base implementation of `_.functions` which creates a sorted array of
+   * function property names from those returned by `keysFunc`.
+   *
+   * @private
+   * @param {Object} object The object to inspect.
+   * @param {Function} keysFunc The function to get the keys of `object`.
+   * @returns {Array} Returns the new sorted array of property names.
+   */
+  function baseFunctions(object, keysFunc) {
+    var index = -1,
+        props = keysFunc(object),
+        length = props.length,
+        result = [];
+
+    while (++index < length) {
+      var key = props[index];
+      if (isFunction(object[key])) {
+        result.push(key);
+      }
+    }
+    return result.sort();
+  }
+
+  /**
    * The base implementation of `_.isEqual`, without support for `thisArg`
    * binding, that allows partial "_.where" style comparisons.
    *
@@ -3200,8 +3224,8 @@
   /**
    * Binds methods of an object to the object itself, overwriting the existing
    * method. Method names may be specified as individual arguments or as arrays
-   * of method names. If no method names are provided all the function properties
-   * of `object` will be bound.
+   * of method names. If no method names are provided all enumerable function
+   * properties, own and inherited, of `object` will be bound.
    *
    * Note: This method does not set the `length` property of bound functions.
    *
@@ -3496,19 +3520,17 @@
    * fibonacci(9)
    * // => 34
    *
-   * var data = {
-   *   'fred': { 'name': 'fred', 'age': 40 },
-   *   'pebbles': { 'name': 'pebbles', 'age': 1 }
-   * };
-   *
    * // modifying the result cache
-   * var get = _.memoize(function(name) { return data[name]; }, _.identity);
-   * get('pebbles');
-   * // => { 'name': 'pebbles', 'age': 1 }
+   * var upperCase = _.memoize(function(string) {
+   *   return string.toUpperCase();
+   * });
    *
-   * get.cache.pebbles.name = 'penelope';
-   * get('pebbles');
-   * // => { 'name': 'penelope', 'age': 1 }
+   * upperCase('fred');
+   * // => 'FRED'
+   *
+   * upperCase.cache.fred = 'BARNEY'
+   * upperCase('fred');
+   * // => 'BARNEY'
    */
   function memoize(func, resolver) {
     if (!isFunction(func) || (resolver && !isFunction(resolver))) {
@@ -3516,7 +3538,10 @@
     }
     var cache = {};
     return function() {
-      var key = resolver ? resolver.apply(this, arguments) : '_' + arguments[0];
+      var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+      if (key == '__proto__') {
+        return func.apply(this, arguments);
+      }
       return hasOwnProperty.call(cache, key)
         ? cache[key]
         : (cache[key] = func.apply(this, arguments));
@@ -3836,8 +3861,8 @@
   }
 
   /**
-   * Creates a sorted array of property names of all enumerable properties,
-   * own and inherited, of `object` that have function values.
+   * Creates a sorted array of function property names from all enumerable
+   * properties, own and inherited, of `object`.
    *
    * @static
    * @memberOf _
@@ -3851,14 +3876,7 @@
    * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
    */
   function functions(object) {
-    var result = [];
-
-    baseForIn(object, function(value, key) {
-      if (isFunction(value)) {
-        result.push(key);
-      }
-    });
-    return result.sort();
+    return baseFunctions(object, keysIn);
   }
 
   /**
@@ -4874,8 +4892,9 @@
   }
 
   /**
-   * Adds function properties of a source object to the destination object.
-   * If `object` is a function methods will be added to its prototype as well.
+   * Adds all own enumerable function properties of a source object to the
+   * destination object. If `object` is a function methods will be added to
+   * its prototype as well.
    *
    * @static
    * @memberOf _
@@ -5312,7 +5331,7 @@
   lodash.sample = sample;
   lodash.take = take;
 
-  // add aliases
+  // add alias
   lodash.head = first;
 
   /*--------------------------------------------------------------------------*/
@@ -5333,36 +5352,36 @@
   lodash.prototype.chain = wrapperChain;
   lodash.prototype.value = wrapperValueOf;
 
-    // add `Array` mutator functions to the wrapper
-    arrayEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
-      lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__;
-        func.apply(value, arguments);
+  // add `Array` mutator functions to the wrapper
+  arrayEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    var func = arrayRef[methodName];
+    lodash.prototype[methodName] = function() {
+      var value = this.__wrapped__;
+      func.apply(value, arguments);
 
-        // avoid array-like object bugs with `Array#shift` and `Array#splice`
-        // in Firefox < 10 and IE < 9
-        if (!support.spliceObjects && value.length === 0) {
-          delete value[0];
-        }
-        return this;
-      };
-    });
+      // avoid array-like object bugs with `Array#shift` and `Array#splice`
+      // in Firefox < 10 and IE < 9
+      if (!support.spliceObjects && value.length === 0) {
+        delete value[0];
+      }
+      return this;
+    };
+  });
 
-    // add `Array` accessor functions to the wrapper
-    arrayEach(['concat', 'join', 'slice'], function(methodName) {
-      var func = arrayRef[methodName];
-      lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__,
-            result = func.apply(value, arguments);
+  // add `Array` accessor functions to the wrapper
+  arrayEach(['concat', 'join', 'slice'], function(methodName) {
+    var func = arrayRef[methodName];
+    lodash.prototype[methodName] = function() {
+      var value = this.__wrapped__,
+          result = func.apply(value, arguments);
 
-        if (this.__chain__) {
-          result = new lodashWrapper(result);
-          result.__chain__ = true;
-        }
-        return result;
-      };
-    });
+      if (this.__chain__) {
+        result = new lodashWrapper(result);
+        result.__chain__ = true;
+      }
+      return result;
+    };
+  });
 
   /*--------------------------------------------------------------------------*/
 

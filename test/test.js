@@ -9817,6 +9817,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.round');
+
+  (function() {
+    test('should round 8.4353 with 2 places to 8.44', 1, function() {
+      strictEqual(_.round(8.4353, 2), 8.44);
+    });
+
+    test('should round to 0 places with places no provided', 1, function() {
+      strictEqual(_.round(124.3233), 124);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.values');
 
   (function() {
@@ -10611,7 +10625,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 187, function() {
+    test('should accept falsey arguments', 188, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

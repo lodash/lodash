@@ -8519,7 +8519,7 @@
     lodash.include = contains;
     lodash.inject = reduce;
 
-    mixin(lodash, function() {
+    mixin(lodash, (function() {
       var source = {}
       baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {
@@ -8527,7 +8527,7 @@
         }
       });
       return source;
-    }(), false);
+    }()), false);
 
     /*--------------------------------------------------------------------------*/
 

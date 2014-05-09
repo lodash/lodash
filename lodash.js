@@ -8297,7 +8297,7 @@
      * @returns {Array} Returns the array of results.
      * @example
      *
-     * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+     * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
      * // => [3, 6, 4]
      *
      * _.times(3, function(n) { mage.castSpell(n); });

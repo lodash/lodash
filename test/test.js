@@ -639,24 +639,6 @@
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
-      var args;
-
-      _.assign({ 'a': 1 }, { 'b': 2 }, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [undefined, 2]);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
-        return typeof this[a] == 'undefined' ? this[b] : this[a];
-      }, { '1': 1, '2': 2, '3': 3 });
-
-      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
-    });
-
     test('should be aliased', 1, function() {
       strictEqual(_.extend, _.assign);
     });
@@ -3356,26 +3338,46 @@
   });
 
   _.each(['assign', 'merge'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isMerge = methodName == 'merge';
 
-    test('`_.' + methodName + '` should pass the correct `callback` arguments', 2, function() {
-      var args;
+    test('`_.' + methodName + '` should pass the correct `callback` arguments', 3, function() {
+      var args,
+          object = { 'a': 1 },
+          source = { 'a': 2 };
 
-      func({ 'a': 1 }, { 'a': 2 }, function() {
+      func(object, source, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [1, 2], 'primitive property values');
-
-      var array = [1, 2],
-          object = { 'b': 2 };
+      deepEqual(args, [1, 2, 'a', object, source], 'primitive property values');
 
       args = null;
-      func({ 'a': array }, { 'a': object }, function() {
+      object = { 'a': 1 };
+      source = { 'b': 2 };
+
+      func(object, source, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [array, object], 'non-primitive property values');
+      deepEqual(args, [undefined, 2, 'b', object, source], 'missing destination property');
+
+      var argsList = [],
+          objectValue = [1, 2],
+          sourceValue = { 'b': 2 };
+
+      object = { 'a': objectValue };
+      source = { 'a': sourceValue };
+
+      func(object, source, function() {
+        argsList.push(slice.call(arguments));
+      });
+
+      var expected = [[objectValue, sourceValue, 'a', object, source]];
+      if (isMerge) {
+        expected.push([undefined, 2, 'b', sourceValue, sourceValue]);
+      }
+      deepEqual(argsList, expected, 'non-primitive property values');
     });
 
     test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
@@ -6216,18 +6218,6 @@
       });
       deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
     });
-
-    test('should pass the correct values to `callback`', 1, function() {
-      var argsList = [],
-          array = [1, 2],
-          object = { 'b': 2 };
-
-      _.merge({ 'a': array }, { 'a': object }, function(a, b) {
-        argsList.push(slice.call(arguments));
-      });
-
-      deepEqual(argsList, [[array, object], [undefined, 2]]);
-    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -6987,8 +6977,11 @@
           source = { 'a': { 'b': 2, 'c': 3 } },
           expected = { 'a': { 'b': 1, 'c': 3 } };
 
-      var deepDefaults = _.partialRight(_.merge, _.defaults);
-      deepEqual(deepDefaults(object, source), expected);
+      var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
+        return _.merge(value, other, deep);
+      });
+
+      deepEqual(defaultsDeep(object, source), expected);
     });
   }());
 

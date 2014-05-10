@@ -6803,6 +6803,58 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.parseBoolean');
+
+  (function() {
+    test('should accept boolean values', 4, function() {
+      strictEqual(_.parseBoolean(true), true);
+      strictEqual(_.parseBoolean(false), false);
+      strictEqual(_.parseBoolean(new Boolean(true)), true);
+      strictEqual(_.parseBoolean(new Boolean(false)), false);
+    });
+
+    test('should parse true strings with case insensitivity', 5, function() {
+      strictEqual(_.parseBoolean("true"), true);
+      strictEqual(_.parseBoolean(new String("true")), true);
+      strictEqual(_.parseBoolean("TRUE"), true);
+      strictEqual(_.parseBoolean("True"), true);
+      strictEqual(_.parseBoolean("trUe"), true);
+    });
+
+    test('should parse non-true strings', 4, function() {
+      strictEqual(_.parseBoolean("false"), false);
+      strictEqual(_.parseBoolean(new String("false")), false);
+      strictEqual(_.parseBoolean("ABC"), false);
+      strictEqual(_.parseBoolean("1"), false);
+    });
+
+    test('should parse strings with leading and trailing whitespace', 3, function() {
+      strictEqual(_.parseBoolean(whitespace + "true"), true);
+      strictEqual(_.parseBoolean("true" + whitespace), true);
+      strictEqual(_.parseBoolean(whitespace + "true" + whitespace), true);
+    });
+
+    test('should parse numbers', 7, function() {
+      strictEqual(_.parseBoolean(-1), true);
+      strictEqual(_.parseBoolean(1), true);
+      strictEqual(_.parseBoolean(0.1), true);
+      strictEqual(_.parseBoolean(-0.1), true);
+      strictEqual(_.parseBoolean(0), false);
+      strictEqual(_.parseBoolean(new Number(1)), true);
+      strictEqual(_.parseBoolean(new Number(0)), false);
+    });
+
+    test('should accept various other types', 5, function() {
+      strictEqual(_.parseBoolean(null), false);
+      strictEqual(_.parseBoolean(undefined), false);
+      strictEqual(_.parseBoolean({}), false);
+      strictEqual(_.parseBoolean([]), false);
+      strictEqual(_.parseBoolean(NaN), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.parseInt');
 
   (function() {

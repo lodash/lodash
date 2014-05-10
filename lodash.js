@@ -8112,6 +8112,26 @@
     };
 
     /**
+     * Converts a value to a boolean. If the value is a string, equality with 'true'
+     * (ignoring case) will return true. If the value is a number, any value other than 0 will
+     * return true.
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {*} value The value to parse
+     * @returns {boolean} Returns the parse boolean result
+     * @example
+     * _.parseBoolean('TRUE');
+     * // => true
+     */
+    var parseBoolean = function(value) {
+      //double equals deliberately used here for type coercion of primitive wrappers
+      return (isBoolean(value) && value == true) ||
+        (isString(value) && /true/i.test(trim(value))) ||
+        (isNumber(value) && !isNaN(value) && value != 0);
+    };
+
+    /**
      * Converts `value` to an integer of the specified radix. If `radix` is
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
@@ -8531,6 +8551,7 @@
     lodash.pad = pad;
     lodash.padLeft = padLeft;
     lodash.padRight = padRight;
+    lodash.parseBoolean = parseBoolean;
     lodash.parseInt = parseInt;
     lodash.random = random;
     lodash.reduce = reduce;

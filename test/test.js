@@ -6809,7 +6809,6 @@
     test('should accept boolean values', 4, function() {
       strictEqual(_.parseBoolean(true), true);
       strictEqual(_.parseBoolean(false), false);
-      console.log(_.isBoolean(new Boolean(true)));
       strictEqual(_.parseBoolean(new Boolean(true)), true);
       strictEqual(_.parseBoolean(new Boolean(false)), false);
     });

@@ -8119,7 +8119,7 @@
      * @memberOf _
      * @category Utilities
      * @param {*} value The value to parse
-     * @returns {boolean} Retruns the parse boolean result
+     * @returns {boolean} Returns the parse boolean result
      * @example
      * _.parseBoolean('TRUE');
      * // => true

@@ -237,34 +237,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `_.defaults` to customize its `_.assign` use.
-   *
-   * @private
-   * @param {*} objectValue The destination object property value.
-   * @param {*} sourceValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignDefaults(objectValue, sourceValue) {
-    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
-  }
-
-  /**
-   * Used by `defaultsOwn` to customize its `_.assign` use.
-   *
-   * @private
-   * @param {*} objectValue The destination object property value.
-   * @param {*} sourceValue The source object property value.
-   * @param {string} key The key associated with the object and source values.
-   * @param {Object} object The destination object.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignDefaultsOwn(objectValue, sourceValue, key, object) {
-    return (!hasOwnProperty.call(object, key) || typeof objectValue == 'undefined')
-      ? sourceValue
-      : objectValue
-  }
-
-  /**
    * The base implementation of `_.at` without support for strings or individual
    * key arguments.
    *
@@ -1077,6 +1049,37 @@
         result[index] = callback(array[index], index, array);
       }
       return result;
+    }
+
+    /**
+     * Used by `_.defaults` to customize its `_.assign` use.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignDefaults(objectValue, sourceValue) {
+      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+    }
+
+    /**
+     * Used by `_.template` to customize its `_.assign` use.
+     *
+     * Note: This method is like `assignDefaults` except that it ignores
+     * inherited property values when checking if a property is `undefined`.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @param {string} key The key associated with the object and source values.
+     * @param {Object} object The destination object.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignOwnDefaults(objectValue, sourceValue, key, object) {
+      return (!hasOwnProperty.call(object, key) || typeof objectValue == 'undefined')
+        ? sourceValue
+        : objectValue
     }
 
     /**
@@ -2076,27 +2079,6 @@
     }
 
     /**
-     * Creates a function that assigns own enumerable properties of source
-     * object(s) to the destination object executing the callback to produce
-     * the assigned values. The callback is invoked with five arguments;
-     * (objectValue, sourceValue, key, object, source).
-     *
-     * @private
-     * @param {Function} [callback] The function to customize assigning values.
-     * @returns {Function} Returns the new assigner function.
-     */
-    function createAssigner(callback) {
-      return function(object) {
-        if (!object) {
-          return object;
-        }
-        var args = slice(arguments);
-        args.push(callback);
-        return assign.apply(null, args);
-      };
-    }
-
-    /**
      * Creates a cache object to optimize linear searches of large arrays.
      *
      * @private
@@ -2239,17 +2221,6 @@
         ? baseBind(data)
         : baseCreateWrapper(data);
     }
-
-    /**
-     * This method is like `_.defaults` except that it ignores inherited
-     * property values when checking if a property is `undefined`.
-     *
-     * @private
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns the destination object.
-     */
-    var defaultsOwn = createAssigner(assignDefaultsOwn);
 
     /**
      * Finds the indexes of all placeholder elements in `array`.
@@ -5860,7 +5831,14 @@
      * _.defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    var defaults = createAssigner(assignDefaults);
+    function defaults(object) {
+      if (!object) {
+        return object;
+      }
+      var args = slice(arguments);
+      args.push(assignDefaults);
+      return assign.apply(null, args);
+    }
 
     /**
      * This method is like `_.findIndex` except that it returns the key of the
@@ -7546,10 +7524,10 @@
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = defaultsOwn({}, options, settings);
+      options = assign({}, options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
 
-      var imports = defaultsOwn({}, options.imports, settings.imports),
+      var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),
           importsValues = values(imports);
 

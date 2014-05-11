@@ -168,7 +168,7 @@
 				removeBizarroMethods();
 			}
 			// load test scripts
-			document.write(ui.urlParams.loader == 'none'
+			document.write((ui.isForeign || ui.urlParams.loader == 'none')
 				? '<script src="' + ui.buildPath + '"><\/script><script src="test.js"><\/script>'
 				: '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
 			);
@@ -182,7 +182,7 @@
 				if (window.curl) {
 					curl.config({ 'apiName': 'require' });
 				}
-				if (!window.require) {
+				if (ui.isForeign || !window.require) {
 					return;
 				}
 				// avoid reporting tests to Sauce Labs when script load errors occur
@@ -256,8 +256,6 @@
 
 				function loadModulesAndTests() {
 					require(getConfig(), ['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-						var oldDash = window._;
-
 						if (shimmed && shimmed.noConflict) {
 							shimmedModule = shimmed.noConflict();
 							shimmedModule.moduleName = 'shimmed';
@@ -270,7 +268,7 @@
 							lodashModule = lodash;
 							lodashModule.moduleName = 'lodash';
 						}
-						if (oldDash || ui.isModularize) {
+						if (ui.isModularize) {
 							window._ = lodash;
 						}
 						if (ui.isModularize) {

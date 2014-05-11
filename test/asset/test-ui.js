@@ -128,6 +128,15 @@
     init();
   });
 
+  // used to indicate testing a foreign file
+  ui.isForeign = RegExp('^(\\w+:)?//').test(build);
+
+  // used to indicate testing a modularized build
+  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([location.pathname, location.search]);
+
+  // used to indicate testing in Sauce Labs' automated test cloud
+  ui.isSauceLabs = location.port == '9001';
+
   // expose Lo-Dash build file path
   ui.buildPath = (function() {
     var result;
@@ -169,12 +178,6 @@
   ui.timing = {
     'loadEventEnd': 0
   };
-
-  // used to indicate testing a modularized build
-  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([location.pathname, location.search, ui.buildPath]);
-
-  // used to indicate testing in Sauce Labs' automated test cloud
-  ui.isSauceLabs = location.port == '9001';
 
   // expose `ui`
   window.ui = ui;

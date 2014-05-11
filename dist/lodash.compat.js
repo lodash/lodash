@@ -238,18 +238,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `_.defaults` to customize its `_.assign` use.
-   *
-   * @private
-   * @param {*} objectValue The destination object property value.
-   * @param {*} sourceValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignDefaults(objectValue, sourceValue) {
-    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
-  }
-
-  /**
    * The base implementation of `_.at` without support for strings or individual
    * key arguments.
    *
@@ -1065,6 +1053,37 @@
     }
 
     /**
+     * Used by `_.defaults` to customize its `_.assign` use.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignDefaults(objectValue, sourceValue) {
+      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+    }
+
+    /**
+     * Used by `_.template` to customize its `_.assign` use.
+     *
+     * Note: This method is like `assignDefaults` except that it ignores
+     * inherited property values when checking if a property is `undefined`.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @param {string} key The key associated with the object and source values.
+     * @param {Object} object The destination object.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignOwnDefaults(objectValue, sourceValue, key, object) {
+      return (!hasOwnProperty.call(object, key) || typeof objectValue == 'undefined')
+        ? sourceValue
+        : objectValue
+    }
+
+    /**
      * The base implementation of `_.bind` that creates the bound function and
      * sets its metadata.
      *
@@ -1815,17 +1834,17 @@
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
-      (isArray(source) ? arrayEach : baseForOwn)(source, function(source, key) {
+      (isArray(source) ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
         var found,
             isArr,
-            result = source,
+            result = srcValue,
             value = object[key];
 
-        if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
+        if (srcValue && ((isArr = isArray(srcValue)) || isPlainObject(srcValue))) {
           // avoid merging previously merged cyclic sources
           var stackLength = stackA.length;
           while (stackLength--) {
-            if ((found = stackA[stackLength] == source)) {
+            if ((found = stackA[stackLength] == srcValue)) {
               value = stackB[stackLength];
               break;
             }
@@ -1833,7 +1852,7 @@
           if (!found) {
             var isShallow;
             if (callback) {
-              result = callback(value, source);
+              result = callback(value, srcValue, key, object, source);
               if ((isShallow = typeof result != 'undefined')) {
                 value = result;
               }
@@ -1844,20 +1863,20 @@
                 : (isPlainObject(value) ? value : {});
             }
             // add `source` and associated `value` to the stack of traversed objects
-            stackA.push(source);
+            stackA.push(srcValue);
             stackB.push(value);
 
             // recursively merge objects and arrays (susceptible to call stack limits)
             if (!isShallow) {
-              baseMerge(value, source, callback, stackA, stackB);
+              baseMerge(value, srcValue, callback, stackA, stackB);
             }
           }
         }
         else {
           if (callback) {
-            result = callback(value, source);
+            result = callback(value, srcValue, key, object, source);
             if (typeof result == 'undefined') {
-              result = source;
+              result = srcValue;
             }
           }
           if (typeof result != 'undefined') {
@@ -5589,8 +5608,8 @@
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources will overwrite property assignments of previous
      * sources. If a callback is provided it will be executed to produce the
-     * assigned values. The callback is bound to `thisArg` and invoked with two
-     * arguments; (objectValue, sourceValue).
+     * assigned values. The callback is bound to `thisArg` and invoked with
+     * five arguments; (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -5640,7 +5659,7 @@
 
         while (++index < length) {
           var key = props[index];
-          object[key] = callback ? callback(object[key], source[key]) : source[key];
+          object[key] = callback ? callback(object[key], source[key], key, object, source) : source[key];
         }
       }
       return object;
@@ -6782,7 +6801,7 @@
      * provided it will be executed to produce the merged values of the destination
      * and source properties. If the callback returns `undefined` merging will
      * be handled by the method instead. The callback is bound to `thisArg` and
-     * invoked with two arguments; (objectValue, sourceValue).
+     * invoked with five arguments; (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -7506,10 +7525,10 @@
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = defaults({}, options, settings);
+      options = assign({}, options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
 
-      var imports = defaults({}, options.imports, settings.imports),
+      var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),
           importsValues = values(imports);
 
@@ -8298,7 +8317,7 @@
      * @returns {Array} Returns the array of results.
      * @example
      *
-     * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+     * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
      * // => [3, 6, 4]
      *
      * _.times(3, function(n) { mage.castSpell(n); });

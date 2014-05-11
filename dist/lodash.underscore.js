@@ -3720,8 +3720,8 @@
    * Assigns own enumerable properties of source object(s) to the destination
    * object. Subsequent sources will overwrite property assignments of previous
    * sources. If a callback is provided it will be executed to produce the
-   * assigned values. The callback is bound to `thisArg` and invoked with two
-   * arguments; (objectValue, sourceValue).
+   * assigned values. The callback is bound to `thisArg` and invoked with
+   * five arguments; (objectValue, sourceValue, key, object, source).
    *
    * @static
    * @memberOf _
@@ -5160,7 +5160,7 @@
    * @returns {Array} Returns the array of results.
    * @example
    *
-   * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+   * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
    * // => [3, 6, 4]
    *
    * _.times(3, function(n) { mage.castSpell(n); });

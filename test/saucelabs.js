@@ -384,7 +384,7 @@ function onJobStatus(error, res, body) {
       this.restart();
       return;
     }
-    var details = 'See ' + url + ' for details.';
+    var details = 'See ' + jobUrl + ' for details.';
     this.failed = true;
 
     logInline();

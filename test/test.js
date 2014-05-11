@@ -23,15 +23,13 @@
       body = root.document && root.document.body,
       create = Object.create,
       freeze = Object.freeze,
+      JSON = root.JSON,
       noop = function() {},
       params = root.arguments,
       push = Array.prototype.push,
       slice = Array.prototype.slice,
       system = root.system,
       toString = Object.prototype.toString;
-
-  var JSON = root.JSON,
-      Worker = document && root.Worker;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -68,6 +66,7 @@
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
+    'isModularize': /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test(filePath),
     'urlParams': {}
   });
 
@@ -78,7 +77,7 @@
   var isJava = !document && !!root.java;
 
   /** Used to indicate testing a modularized build */
-  var isModularize = ui.isModularize || /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test([ui.buildPath, ui.urlParams.build, basename]);
+  var isModularize = ui.isModularize;
 
   /** Detect if testing `npm` modules */
   var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
@@ -88,6 +87,9 @@
 
   /** Detect if running in Rhino */
   var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
+
+  /** Detect support for testing Web Workers */
+  var Worker = !(ui.isForeign || isModularize) && document && root.Worker;
 
   /** Use a single "load" function */
   var load = (typeof require == 'function' && !amd)
@@ -403,7 +405,7 @@
 
   // add web worker
   (function() {
-    if (!Worker || isModularize) {
+    if (!Worker) {
       return;
     }
     var worker = new Worker('./asset/worker.js?t=' + (+new Date));
@@ -439,7 +441,7 @@
     });
 
     test('supports loading ' + basename + ' as the "underscore" module', 1, function() {
-      if (amd && !/dojo/.test(ui.loaderPath)) {
+      if (amd) {
         strictEqual((underscoreModule || {}).moduleName, 'underscore');
       }
       else {
@@ -448,7 +450,7 @@
     });
 
     asyncTest('supports loading ' + basename + ' in a web worker', 1, function() {
-      if (Worker && !isModularize) {
+      if (Worker) {
         var limit = 15000,
             start = +new Date;
 

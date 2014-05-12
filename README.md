@@ -114,10 +114,10 @@ In browsers:
 Using [`npm`](http://npmjs.org/):
 
 ```bash
-npm i --save lodash
+$ npm i --save lodash
 
-{sudo} npm i -g lodash
-npm ln lodash
+$ {sudo} npm i -g lodash
+$ npm ln lodash
 ```
 
 In [Node.js](http://nodejs.org/) & [Ringo](http://ringojs.org/):

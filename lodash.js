@@ -2276,6 +2276,7 @@
     var setData = !defineProperty ? noop : function(func, value) {
       descriptor.value = value;
       defineProperty(func, expando, descriptor);
+      descriptor.value = null;
     };
 
     /**

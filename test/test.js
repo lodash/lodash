@@ -2403,6 +2403,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.existy');
+
+  (function() {
+    test('should return `true` if all arguments are different from null and undefined', 1, function() {
+      ok(_.existy(0, false, '', []));
+    });
+
+    test('should return `false` if any of the arguments is `null` or `undefined`', 3, function() {
+      var sample = {};
+      ok(!_.existy(sample.notExisting));
+      ok(!_.existy(undefined));
+      ok(!_.existy(null));
+    });
+
+    test('should return `false` if called with no arguments', 1, function() {
+      ok(!_.existy());
+    });
+
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.every');
 
   (function() {
@@ -10618,7 +10640,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 187, function() {
+    test('should accept falsey arguments', 188, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

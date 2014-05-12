@@ -3811,6 +3811,42 @@
     });
 
     /**
+     * Iterates over all arguments returning true if no argument is either equal to
+     * `undefined` or `null`, false otherwise.
+     *
+     * If no arguments are passed it returns false.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @returns {boolean} Boolean representing the existance of the arguments.
+     * @example
+     *
+     * _.existy(0, false, '', []);
+     * // => true
+     *
+     * _.existy(1, 2, null);
+     * // => false
+     *
+     * _.existy(1, 2, undefined);
+     * // => false
+     *
+     * _.existy();
+     * // => false
+     *
+     */
+    function existy() {
+      var argsArray = _.toArray(arguments);
+      if (_.isEmpty(argsArray)) {
+        return false;
+      }
+      
+      return _.every(argsArray, function(arg) {
+        return arg != null;
+      });
+    }
+
+    /**
      * Checks if the predicate returns truthy for **all** elements of a collection.
      * The predicate is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
@@ -8474,6 +8510,7 @@
     lodash.escape = escape;
     lodash.escapeRegExp = escapeRegExp;
     lodash.every = every;
+    lodash.existy = existy;
     lodash.find = find;
     lodash.findIndex = findIndex;
     lodash.findKey = findKey;

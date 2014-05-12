@@ -9118,36 +9118,6 @@
       }
     });
 
-    asyncTest('supports recursive calls', 3, function() {
-      if (!(isRhino && isModularize)) {
-        var args,
-            count = 0,
-            object = {};
-
-        var throttled = _.throttle(function(value) {
-          count++;
-          args = [this];
-          push.apply(args, arguments);
-          if (count < 10) {
-            throttled.call(this, value);
-          }
-        }, 32);
-
-        throttled.call(object, 'a');
-        strictEqual(count, 1);
-
-        setTimeout(function() {
-          ok(count < 3);
-          deepEqual(args, [object, 'a']);
-          QUnit.start();
-        }, 32);
-      }
-      else {
-        skipTest(3);
-        QUnit.start();
-      }
-    });
-
     asyncTest('should not trigger a trailing call when invoked once', 2, function() {
       if (!(isRhino && isModularize)) {
         var count = 0,
@@ -9312,23 +9282,58 @@
 
     asyncTest('_.' + methodName + ' should call `func` with the correct `this` binding', 1, function() {
       if (!(isRhino && isModularize)) {
-        var actual = [];
-
         var object = {
           'funced': func(function() { actual.push(this); }, 32)
         };
+
+        var actual = [],
+            expected = _.times(isThrottle ? 2 : 1, _.constant(object));
 
         object.funced();
         if (isThrottle) {
           object.funced();
         }
         setTimeout(function() {
-          deepEqual(actual, isThrottle ? [object, object] : [object]);
+          deepEqual(actual, expected);
           QUnit.start();
         }, 64);
       }
       else {
         skipTest();
+        QUnit.start();
+      }
+    });
+
+    asyncTest('_.' + methodName + ' supports recursive calls', 2, function() {
+      if (!(isRhino && isModularize)) {
+        var actual = [],
+            args = _.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
+            length = isThrottle ? 2 : 1,
+            expected = args.slice(0, length),
+            queue = args.slice();
+
+        var funced = func(function() {
+          var current = [this];
+          push.apply(current, arguments);
+          actual.push(current);
+
+          var next = queue.shift();
+          if (next) {
+            funced.call(next[0], next[1]);
+          }
+        }, 32);
+
+        var next = queue.shift();
+        funced.call(next[0], next[1]);
+        deepEqual(actual, expected.slice(0, length - 1));
+
+        setTimeout(function() {
+          deepEqual(actual, expected);
+          QUnit.start();
+        }, 32);
+      }
+      else {
+        skipTest(2);
         QUnit.start();
       }
     });

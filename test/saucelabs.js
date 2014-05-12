@@ -547,9 +547,11 @@ Job.prototype.restart = function(callback) {
   console.log(label + ' ' + description + ' restart %d of %d', ++this.attempts, this.retries);
 
   this.once('restart', _.callback(callback));
-  _.defer(_.bind(this.emit, this, 'restart'));
 
-  return this.remove(this.start);
+  return this.remove(function() {
+    this.emit('restart');
+    this.start();
+  });
 };
 
 /**
@@ -684,7 +686,6 @@ function Tunnel(properties) {
     completed = 0;
     success = true;
     restarted.length = 0;
-    _.invoke(all, 'reset');
   });
 
   this.attempts = 0;
@@ -706,9 +707,24 @@ Tunnel.prototype.restart = function(callback) {
   console.log('Tunnel ' + this.id + ': restart %d of %d', ++this.attempts, this.retries);
 
   this.once('restart', _.callback(callback));
-  _.defer(_.bind(this.emit, this, 'restart'));
 
-  return this.stop(this.start);
+  var jobs = this.jobs,
+      active = jobs.active,
+      reset = 0,
+      total = active.length,
+      tunnel = this;
+
+  _.invoke(active, 'reset', function() {
+    _.pull(active, this);
+    if (++reset == total) {
+      tunnel.stop(function() {
+        this.emit('restart');
+        this.start();
+      });
+    }
+  });
+
+  return this;
 };
 
 /**

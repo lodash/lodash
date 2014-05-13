@@ -329,6 +329,18 @@ function onJobRemove(error, res, body) {
 }
 
 /**
+ * The `Job#remove` callback used by `Jobs#reset`.
+ *
+ * @private
+ */
+function onJobReset() {
+  this.attempts = 0;
+  this.failed = this.resetting = false;
+  this._timerId = this.id = this.result = this.testId = this.url = null;
+  this.emit('reset');
+}
+
+/**
  * The `request.post` callback used by `Jobs#start`.
  *
  * @private
@@ -481,7 +493,7 @@ function Job(properties) {
   _.defaults(this.options, _.cloneDeep(jobOptions));
 
   this.attempts = 0;
-  this.checking = this.failed = this.removing = this.restarting = this.running = this.starting = this.stopping = false;
+  this.checking = this.failed = this.removing = this.resetting = this.restarting = this.running = this.starting = this.stopping = false;
   this._timerId = this.id = this.result = this.testId = this.url = null;
 }
 
@@ -495,25 +507,22 @@ util.inherits(Job, EventEmitter);
  * @param {Object} Returns the job instance.
  */
 Job.prototype.remove = function(callback) {
-  if (this.running) {
-    return this.stop(_.partial(this.remove, callback));
-  }
   this.once('remove', _.callback(callback));
   if (this.removing) {
     return this;
   }
-  var onRemove = _.bind(onJobRemove, this);
-
   this.removing = true;
-  if (this.id == null) {
-    _.defer(onRemove);
-    return this;
-  }
-  request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}', this), {
-    'auth': { 'user': this.user, 'pass': this.pass }
-  }, onRemove);
 
-  return this;
+  var onRemove = _.bind(onJobRemove, this);
+  return this.stop(function() {
+    if (this.id == null) {
+      onRemove();
+      return;
+    }
+    request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}', this), {
+      'auth': { 'user': this.user, 'pass': this.pass }
+    }, onRemove);
+  });
 };
 
 /**
@@ -524,17 +533,12 @@ Job.prototype.remove = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.reset = function(callback) {
-  if (this.id != null) {
-    return this.remove(_.partial(this.reset, callback));
-  }
-  this.attempts = 0;
-  this.failed = false;
-  this._timerId = this.id = this.result = this.testId = this.url = null;
-
   this.once('reset', _.callback(callback));
-  _.defer(_.bind(this.emit, this, 'reset'));
-
-  return this;
+  if (this.resetting) {
+    return this;
+  }
+  this.resetting = true;
+  return this.remove(onJobReset);
 };
 
 /**
@@ -592,7 +596,7 @@ Job.prototype.start = function(callback) {
  */
 Job.prototype.status = function(callback) {
   this.once('status', _.callback(callback));
-  if (this.checking || this.removing || this.restarting || this.starting || this.stopping) {
+  if (this.checking || this.removing || this.resetting || this.restarting || this.starting || this.stopping) {
     return this;
   }
   this.checking = true;

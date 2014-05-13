@@ -294,6 +294,30 @@ function optionToValue(name, string) {
 /*----------------------------------------------------------------------------*/
 
 /**
+ * The `Job#remove` and `Tunnel#stop` callback used by `Jobs#restart`
+ * and `Tunnel#restart` respectively.
+ *
+ * @private
+ */
+function onGenericRestart() {
+  this.restarting = false;
+  this.emit('restart');
+  this.start();
+}
+
+/**
+ * The `request.put` and `SauceTunnel#stop` callback used by `Jobs#stop`
+ * and `Tunnel#stop` respectively.
+ *
+ * @private
+ * @param {Object} [error] The error object.
+ */
+function onGenericStop(error) {
+  this.running = this.stopping = false;
+  this.emit('stop', error);
+}
+
+/**
  * The `request.del` callback used by `Jobs#remove`.
  *
  * @private
@@ -407,16 +431,6 @@ function onJobStatus(error, res, body) {
 }
 
 /**
- * The `request.put` callback used by `Jobs#stop`.
- *
- * @private
- */
-function onJobStop() {
-  this.running = this.stopping = false;
-  this.emit('stop');
-}
-
-/**
  * The `SauceTunnel#start` callback used by `Tunnel#start`.
  *
  * @private
@@ -444,17 +458,6 @@ function onTunnelStart(success) {
   this.dequeue();
 }
 
-/**
- * The `SauceTunnel#stop` callback used by `Tunnel#stop`.
- *
- * @private
- * @param {Object} [error] The error object.
- */
-function onTunnelStop(error) {
-  this.running = this.stopping = false;
-  this.emit('stop', error);
-}
-
 /*----------------------------------------------------------------------------*/
 
 /**
@@ -474,7 +477,7 @@ function Job(properties) {
   _.defaults(this.options, _.cloneDeep(jobOptions));
 
   this.attempts = 0;
-  this.checking = this.failed = this.removing = this.running = this.starting = this.stopping = false;
+  this.checking = this.failed = this.removing = this.restarting = this.running = this.starting = this.stopping = false;
   this._timerId = this.id = this.result = this.testId = this.url = null;
 }
 
@@ -538,6 +541,10 @@ Job.prototype.reset = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.restart = function(callback) {
+  this.once('restart', _.callback(callback));
+  if (this.restarting) {
+    return this;
+  }
   var options = this.options,
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
@@ -546,12 +553,8 @@ Job.prototype.restart = function(callback) {
   logInline();
   console.log(label + ' ' + description + ' restart %d of %d', ++this.attempts, this.retries);
 
-  this.once('restart', _.callback(callback));
-
-  return this.remove(function() {
-    this.emit('restart');
-    this.start();
-  });
+  this.restarting = true;
+  return this.remove(onGenericRestart);
 };
 
 /**
@@ -584,7 +587,7 @@ Job.prototype.start = function(callback) {
  */
 Job.prototype.status = function(callback) {
   this.once('status', _.callback(callback));
-  if (this.checking || this.removing || this.starting || this.stopping) {
+  if (this.checking || this.removing || this.restarting || this.starting || this.stopping) {
     return this;
   }
   this.checking = true;
@@ -614,7 +617,7 @@ Job.prototype.stop = function(callback) {
     this._timerId = null;
     this.checking = false;
   }
-  var onStop = _.bind(onJobStop, this);
+  var onStop = _.bind(onGenericStop, this);
   if (!this.running) {
     _.defer(onStop);
     return this;
@@ -689,7 +692,7 @@ function Tunnel(properties) {
   });
 
   this.attempts = 0;
-  this.running = this.starting = this.stopping = false;
+  this.restarting = this.running = this.starting = this.stopping = false;
   this.jobs = { 'active': active, 'all': all, 'queue': queue };
   this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
 }
@@ -703,25 +706,31 @@ util.inherits(Tunnel, EventEmitter);
  * @param {Function} callback The function called once the tunnel is restarted.
  */
 Tunnel.prototype.restart = function(callback) {
+  this.once('restart', _.callback(callback));
+  if (this.restarting) {
+    return this;
+  }
   logInline();
   console.log('Tunnel ' + this.id + ': restart %d of %d', ++this.attempts, this.retries);
 
-  this.once('restart', _.callback(callback));
+  this.restarting = true;
 
   var jobs = this.jobs,
       active = jobs.active,
-      reset = 0,
-      total = active.length,
-      tunnel = this;
+      all = jobs.all;
 
-  _.invoke(active, 'reset', function() {
+  var reset = _.after(all.length, _.bind(this.stop, this, onGenericRestart)),
+      stop = _.after(active.length, _.partial(_.invoke, all, 'reset', reset));
+
+  if (_.isEmpty(active)) {
+    _.defer(stop);
+  }
+  if (_.isEmpty(all)) {
+    _.defer(reset);
+  }
+  _.invoke(active, 'stop', function() {
     _.pull(active, this);
-    if (++reset == total) {
-      tunnel.stop(function() {
-        this.emit('restart');
-        this.start();
-      });
-    }
+    stop();
   });
 
   return this;
@@ -777,24 +786,20 @@ Tunnel.prototype.stop = function(callback) {
   console.log('Shutting down Sauce Connect tunnel...');
 
   var jobs = this.jobs,
-      active = jobs.active,
-      onStop = _.bind(onTunnelStop, this),
-      stopped = 0,
-      total = active.length,
-      tunnel = this;
+      active = jobs.active;
+
+  var onStop = _.bind(onGenericStop, this),
+      stop = _.after(active.length, _.bind(this.connection.stop, this.connection, onStop));
 
   this.stopping = true;
   jobs.queue.length = 0;
 
-  if (!total || !this.running) {
-    _.defer(onStop);
-    return this;
+  if (_.isEmpty(active)) {
+    _.defer(stop);
   }
   _.invoke(active, 'stop', function() {
     _.pull(active, this);
-    if (++stopped == total) {
-      tunnel.connection.stop(onStop);
-    }
+    stop();
   });
 
   return this;

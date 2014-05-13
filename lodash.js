@@ -1139,11 +1139,9 @@
      * @returns {*} Returns the cloned value.
      */
     function baseClone(value, isDeep, callback, stackA, stackB) {
-      if (callback) {
-        var result = callback(value);
-        if (typeof result != 'undefined') {
-          return result;
-        }
+      var result = callback ? callback(value) : undefined;
+      if (typeof result != 'undefined') {
+        return result;
       }
       var isObj = isObject(value);
       if (isObj) {
@@ -1206,7 +1204,10 @@
 
       // recursively populate clone (susceptible to call stack limits)
       (isArr ? arrayEach : baseForOwn)(value, function(valValue, key) {
-        result[key] = baseClone(valValue, isDeep, callback, stackA, stackB);
+        var valClone = callback ? callback(valValue, key) : undefined;
+        result[key] = typeof valClone == 'undefined'
+          ? baseClone(valValue, isDeep, null, stackA, stackB)
+          : valClone;
       });
 
       return result;
@@ -1656,11 +1657,9 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, callback, isWhere, stackA, stackB) {
-      if (callback) {
-        var result = callback(value, other);
-        if (typeof result != 'undefined') {
-          return !!result;
-        }
+      var result = callback ? callback(value, other) : undefined;
+      if (typeof result != 'undefined') {
+        return !!result;
       }
       // exit early for identical values
       if (value === other) {
@@ -1787,8 +1786,14 @@
               if (!result) {
                 break;
               }
-            } else if (!(result = baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB))) {
-              break;
+            } else {
+              result = callback ? callback(value, other, key) : undefined;
+              if (!(result = typeof result == 'undefined'
+                    ? baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB)
+                    : !!result
+                  )) {
+                break;
+              }
             }
           }
         }
@@ -1798,10 +1803,16 @@
         // which, in this case, is more costly
         baseForIn(other, function(othValue, key, other) {
           if (hasOwnProperty.call(other, key)) {
-            // count the number of properties.
+            // count the number of properties
             size++;
-            // deep compare each property value.
-            return (result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB));
+            // deep compare each property value
+            if (!hasOwnProperty.call(value, key)) {
+              return (result = false);
+            }
+            result = callback ? callback(value, other, key) : undefined;
+            return (result = typeof result == 'undefined'
+              ? baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB)
+              : !!result);
           }
         });
 
@@ -5670,7 +5681,7 @@
      * be cloned, otherwise they will be assigned by reference. If a callback
      * is provided it will be executed to produce the cloned values. If the
      * callback returns `undefined` cloning will be handled by the method instead.
-     * The callback is bound to `thisArg` and invoked with one argument; (value).
+     * The callback is bound to `thisArg` and invoked with two argument; (value, index|key).
      *
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -5733,7 +5744,7 @@
      * Creates a deep clone of `value`. If a callback is provided it will be
      * executed to produce the cloned values. If the callback returns `undefined`
      * cloning will be handled by the method instead. The callback is bound to
-     * `thisArg` and invoked with one argument; (value).
+     * `thisArg` and invoked with two argument; (value, index|key).
      *
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -6297,7 +6308,7 @@
      * equivalent. If a callback is provided it will be executed to compare
      * values. If the callback returns `undefined` comparisons will be handled
      * by the method instead. The callback is bound to `thisArg` and invoked
-     * with two arguments; (value, other).
+     * with three arguments; (value, other, key).
      *
      * Note: This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes

@@ -423,7 +423,9 @@ function onJobStatus(error, res, body) {
       var message = _.result(jobResult, 'message', 'no results available. ' + details);
       console.error(label, description, chalk.red('failed') + ';', message);
     }
-  } else {
+  }
+  else {
+    logInline();
     console.log(label, description, chalk.green('passed'));
   }
   this.running = false;
@@ -443,9 +445,11 @@ function onTunnelStart(success) {
       this.restart();
       return;
     }
+    logInline();
     console.error('Failed to open Sauce Connect tunnel');
     process.exit(2);
   }
+  logInline();
   console.log('Sauce Connect tunnel opened');
 
   var jobs = this.jobs;
@@ -545,6 +549,8 @@ Job.prototype.restart = function(callback) {
   if (this.restarting) {
     return this;
   }
+  this.restarting = true;
+
   var options = this.options,
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
@@ -553,7 +559,6 @@ Job.prototype.restart = function(callback) {
   logInline();
   console.log(label + ' ' + description + ' restart %d of %d', ++this.attempts, this.retries);
 
-  this.restarting = true;
   return this.remove(onGenericRestart);
 };
 
@@ -710,10 +715,10 @@ Tunnel.prototype.restart = function(callback) {
   if (this.restarting) {
     return this;
   }
+  this.restarting = true;
+
   logInline();
   console.log('Tunnel ' + this.id + ': restart %d of %d', ++this.attempts, this.retries);
-
-  this.restarting = true;
 
   var jobs = this.jobs,
       active = jobs.active,
@@ -745,11 +750,15 @@ Tunnel.prototype.restart = function(callback) {
  */
 Tunnel.prototype.start = function(callback) {
   this.once('start', _.callback(callback));
-  if (!(this.starting || this.running)) {
-    console.log('Opening Sauce Connect tunnel...');
-    this.starting = true;
-    this.connection.start(_.bind(onTunnelStart, this));
+  if (this.starting || this.running) {
+    return this;
   }
+  this.starting = true;
+
+  logInline();
+  console.log('Opening Sauce Connect tunnel...');
+
+  this.connection.start(_.bind(onTunnelStart, this));
   return this;
 };
 
@@ -783,6 +792,9 @@ Tunnel.prototype.stop = function(callback) {
   if (this.stopping) {
     return this;
   }
+  this.stopping = true;
+
+  logInline();
   console.log('Shutting down Sauce Connect tunnel...');
 
   var jobs = this.jobs,
@@ -791,9 +803,7 @@ Tunnel.prototype.stop = function(callback) {
   var onStop = _.bind(onGenericStop, this),
       stop = _.after(active.length, _.bind(this.connection.stop, this.connection, onStop));
 
-  this.stopping = true;
   jobs.queue.length = 0;
-
   if (_.isEmpty(active)) {
     _.defer(stop);
   }

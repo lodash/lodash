@@ -232,18 +232,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `_.defaults` to customize its `_.assign` use.
-   *
-   * @private
-   * @param {*} objectValue The destination object property value.
-   * @param {*} sourceValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignDefaults(objectValue, sourceValue) {
-    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
-  }
-
-  /**
    * The base implementation of `_.at` without support for strings or individual
    * key arguments.
    *
@@ -907,6 +895,37 @@
     }
 
     /**
+     * Used by `_.defaults` to customize its `_.assign` use.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignDefaults(objectValue, sourceValue) {
+      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+    }
+
+    /**
+     * Used by `_.template` to customize its `_.assign` use.
+     *
+     * Note: This method is like `assignDefaults` except that it ignores
+     * inherited property values when checking if a property is `undefined`.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @param {string} key The key associated with the object and source values.
+     * @param {Object} object The destination object.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignOwnDefaults(objectValue, sourceValue, key, object) {
+      return (!hasOwnProperty.call(object, key) || typeof objectValue == 'undefined')
+        ? sourceValue
+        : objectValue
+    }
+
+    /**
      * The base implementation of `_.bind` that creates the bound function and
      * sets its metadata.
      *
@@ -963,11 +982,9 @@
      * @returns {*} Returns the cloned value.
      */
     function baseClone(value, isDeep, callback, stackA, stackB) {
-      if (callback) {
-        var result = callback(value);
-        if (typeof result != 'undefined') {
-          return result;
-        }
+      var result = callback ? callback(value) : undefined;
+      if (typeof result != 'undefined') {
+        return result;
       }
       var isObj = isObject(value);
       if (isObj) {
@@ -1030,7 +1047,10 @@
 
       // recursively populate clone (susceptible to call stack limits)
       (isArr ? arrayEach : baseForOwn)(value, function(valValue, key) {
-        result[key] = baseClone(valValue, isDeep, callback, stackA, stackB);
+        var valClone = callback ? callback(valValue, key) : undefined;
+        result[key] = typeof valClone == 'undefined'
+          ? baseClone(valValue, isDeep, null, stackA, stackB)
+          : valClone;
       });
 
       return result;
@@ -1474,11 +1494,9 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, callback, isWhere, stackA, stackB) {
-      if (callback) {
-        var result = callback(value, other);
-        if (typeof result != 'undefined') {
-          return !!result;
-        }
+      var result = callback ? callback(value, other) : undefined;
+      if (typeof result != 'undefined') {
+        return !!result;
       }
       // exit early for identical values
       if (value === other) {
@@ -1598,10 +1616,13 @@
                   break;
                 }
               }
-              if (!result) {
-                break;
-              }
-            } else if (!(result = baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB))) {
+            } else {
+              result = callback ? callback(value, other, key) : undefined;
+              result = typeof result == 'undefined'
+                ? baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB)
+                : !!result;
+            }
+            if (!result) {
               break;
             }
           }
@@ -1612,10 +1633,17 @@
         // which, in this case, is more costly
         baseForIn(other, function(othValue, key, other) {
           if (hasOwnProperty.call(other, key)) {
-            // count the number of properties.
+            result = false;
+            // count the number of properties
             size++;
-            // deep compare each property value.
-            return (result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB));
+            // deep compare each property value
+            if (hasOwnProperty.call(value, key)) {
+              result = callback ? callback(value, other, key) : undefined;
+              result = typeof result == 'undefined'
+                ? baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB)
+                : !!result;
+            }
+            return result;
           }
         });
 
@@ -1647,54 +1675,47 @@
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
-      (isArray(source) ? arrayEach : baseForOwn)(source, function(source, key) {
-        var found,
-            isArr,
-            result = source,
+      (isArray(source) ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
+        var isArr = srcValue && isArray(srcValue),
+            isObj = srcValue && isPlainObject(srcValue),
             value = object[key];
 
-        if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
-          // avoid merging previously merged cyclic sources
-          var stackLength = stackA.length;
-          while (stackLength--) {
-            if ((found = stackA[stackLength] == source)) {
-              value = stackB[stackLength];
-              break;
-            }
-          }
-          if (!found) {
-            var isShallow;
-            if (callback) {
-              result = callback(value, source);
-              if ((isShallow = typeof result != 'undefined')) {
-                value = result;
-              }
-            }
-            if (!isShallow) {
-              value = isArr
-                ? (isArray(value) ? value : [])
-                : (isPlainObject(value) ? value : {});
-            }
-            // add `source` and associated `value` to the stack of traversed objects
-            stackA.push(source);
-            stackB.push(value);
-
-            // recursively merge objects and arrays (susceptible to call stack limits)
-            if (!isShallow) {
-              baseMerge(value, source, callback, stackA, stackB);
-            }
-          }
-        }
-        else {
-          if (callback) {
-            result = callback(value, source);
-            if (typeof result == 'undefined') {
-              result = source;
-            }
+        if (!(isArr || isObj)) {
+          result = callback ? callback(value, srcValue, key, object, source) : undefined;
+          if (typeof result == 'undefined') {
+            result = srcValue;
           }
           if (typeof result != 'undefined') {
             value = result;
           }
+          object[key] = value;
+          return;
+        }
+        // avoid merging previously merged cyclic sources
+        var length = stackA.length;
+        while (length--) {
+          if (stackA[length] == srcValue) {
+            object[key] = stackB[length];
+            return;
+          }
+        }
+        var result = callback ? callback(value, srcValue, key, object, source) : undefined,
+            isShallow = typeof result != 'undefined';
+
+        if (isShallow) {
+          value = result;
+        } else {
+          value = isArr
+            ? (isArray(value) ? value : [])
+            : (isPlainObject(value) ? value : {});
+        }
+        // add `source` and associated `value` to the stack of traversed objects
+        stackA.push(srcValue);
+        stackB.push(value);
+
+        // recursively merge objects and arrays (susceptible to call stack limits)
+        if (!isShallow) {
+          baseMerge(value, srcValue, callback, stackA, stackB);
         }
         object[key] = value;
       });
@@ -2090,6 +2111,7 @@
     var setData = !defineProperty ? noop : function(func, value) {
       descriptor.value = value;
       defineProperty(func, expando, descriptor);
+      descriptor.value = null;
     };
 
     /**
@@ -5410,8 +5432,8 @@
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources will overwrite property assignments of previous
      * sources. If a callback is provided it will be executed to produce the
-     * assigned values. The callback is bound to `thisArg` and invoked with two
-     * arguments; (objectValue, sourceValue).
+     * assigned values. The callback is bound to `thisArg` and invoked with
+     * five arguments; (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -5461,7 +5483,7 @@
 
         while (++index < length) {
           var key = props[index];
-          object[key] = callback ? callback(object[key], source[key]) : source[key];
+          object[key] = callback ? callback(object[key], source[key], key, object, source) : source[key];
         }
       }
       return object;
@@ -5472,7 +5494,7 @@
      * be cloned, otherwise they will be assigned by reference. If a callback
      * is provided it will be executed to produce the cloned values. If the
      * callback returns `undefined` cloning will be handled by the method instead.
-     * The callback is bound to `thisArg` and invoked with one argument; (value).
+     * The callback is bound to `thisArg` and invoked with two argument; (value, index|key).
      *
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -5535,7 +5557,7 @@
      * Creates a deep clone of `value`. If a callback is provided it will be
      * executed to produce the cloned values. If the callback returns `undefined`
      * cloning will be handled by the method instead. The callback is bound to
-     * `thisArg` and invoked with one argument; (value).
+     * `thisArg` and invoked with two argument; (value, index|key).
      *
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -6092,7 +6114,7 @@
      * equivalent. If a callback is provided it will be executed to compare
      * values. If the callback returns `undefined` comparisons will be handled
      * by the method instead. The callback is bound to `thisArg` and invoked
-     * with two arguments; (value, other).
+     * with three arguments; (value, other, key).
      *
      * Note: This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
@@ -6566,7 +6588,7 @@
      * provided it will be executed to produce the merged values of the destination
      * and source properties. If the callback returns `undefined` merging will
      * be handled by the method instead. The callback is bound to `thisArg` and
-     * invoked with two arguments; (objectValue, sourceValue).
+     * invoked with five arguments; (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -7290,10 +7312,10 @@
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = defaults({}, options, settings);
+      options = assign({}, options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
 
-      var imports = defaults({}, options.imports, settings.imports),
+      var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),
           importsValues = values(imports);
 
@@ -8082,7 +8104,7 @@
      * @returns {Array} Returns the array of results.
      * @example
      *
-     * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+     * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
      * // => [3, 6, 4]
      *
      * _.times(3, function(n) { mage.castSpell(n); });

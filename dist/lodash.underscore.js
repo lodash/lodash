@@ -3720,8 +3720,8 @@
    * Assigns own enumerable properties of source object(s) to the destination
    * object. Subsequent sources will overwrite property assignments of previous
    * sources. If a callback is provided it will be executed to produce the
-   * assigned values. The callback is bound to `thisArg` and invoked with two
-   * arguments; (objectValue, sourceValue).
+   * assigned values. The callback is bound to `thisArg` and invoked with
+   * five arguments; (objectValue, sourceValue, key, object, source).
    *
    * @static
    * @memberOf _
@@ -3770,7 +3770,7 @@
    * be cloned, otherwise they will be assigned by reference. If a callback
    * is provided it will be executed to produce the cloned values. If the
    * callback returns `undefined` cloning will be handled by the method instead.
-   * The callback is bound to `thisArg` and invoked with one argument; (value).
+   * The callback is bound to `thisArg` and invoked with two argument; (value, index|key).
    *
    * Note: This method is loosely based on the structured clone algorithm. Functions
    * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -4095,7 +4095,7 @@
    * equivalent. If a callback is provided it will be executed to compare
    * values. If the callback returns `undefined` comparisons will be handled
    * by the method instead. The callback is bound to `thisArg` and invoked
-   * with two arguments; (value, other).
+   * with three arguments; (value, other, key).
    *
    * Note: This method supports comparing arrays, booleans, `Date` objects,
    * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
@@ -5160,7 +5160,7 @@
    * @returns {Array} Returns the array of results.
    * @example
    *
-   * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+   * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
    * // => [3, 6, 4]
    *
    * _.times(3, function(n) { mage.castSpell(n); });

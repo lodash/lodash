@@ -599,6 +599,7 @@ Job.prototype.status = function(callback) {
   if (this.checking || this.removing || this.resetting || this.restarting || this.starting || this.stopping) {
     return this;
   }
+  this._timerId = null;
   this.checking = true;
   request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
     'auth': { 'user': this.user, 'pass': this.pass },

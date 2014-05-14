@@ -21,7 +21,7 @@ var _ = require('../lodash.js'),
     chalk = require('chalk'),
     ecstatic = require('ecstatic'),
     request = require('request'),
-    SauceTunnel = require('sauce-tunnel-sc3-1');
+    SauceTunnel = require('sauce-tunnel');
 
 /** Used for Sauce Labs credentials */
 var accessKey = env.SAUCE_ACCESS_KEY,
@@ -704,7 +704,7 @@ function Tunnel(properties) {
   this.attempts = 0;
   this.restarting = this.running = this.starting = this.stopping = false;
   this.jobs = { 'active': active, 'all': all, 'queue': queue };
-  this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, this.timeout);
+  this.connection = new SauceTunnel(this.user, this.pass, this.id, this.tunneled, ['-P', '0']);
 }
 
 util.inherits(Tunnel, EventEmitter);

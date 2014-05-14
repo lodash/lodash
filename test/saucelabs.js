@@ -75,12 +75,12 @@ var advisor = getOption('advisor', true),
     recordScreenshots = getOption('recordScreenshots', false),
     runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
     runnerUrl = getOption('runnerUrl', 'http://localhost:' + port + '/' + runner),
-    statusInterval = getOption('statusInterval', 5000),
+    statusInterval = getOption('statusInterval', 5),
     tags = getOption('tags', []),
     throttled = getOption('throttled', 10),
     tunneled = getOption('tunneled', true),
     tunnelId = getOption('tunnelId', 'tunnel_' + (env.TRAVIS_JOB_NUMBER || 0)),
-    tunnelTimeout = getOption('tunnelTimeout', 10000),
+    tunnelTimeout = getOption('tunnelTimeout', 120),
     videoUploadOnPass = getOption('videoUploadOnPass', false);
 
 /** Used to convert Sauce Labs browser identifiers to their formal names */
@@ -336,7 +336,7 @@ function onJobRemove(error, res, body) {
 function onJobReset() {
   this.attempts = 0;
   this.failed = this.resetting = false;
-  this._timerId = this.id = this.result = this.taskId = this.url = null;
+  this._pollerId = this.id = this.result = this.taskId = this.url = null;
   this.emit('reset');
 }
 
@@ -411,7 +411,7 @@ function onJobStatus(error, res, body) {
     this.url = jobUrl;
   }
   if (!completed && !expired) {
-    this._timerId = setTimeout(_.bind(this.status, this), this.statusInterval);
+    this._pollerId = _.delay(_.bind(this.status, this), this.statusInterval * 1000);
     return;
   }
   this.result = jobResult;
@@ -452,6 +452,11 @@ function onJobStatus(error, res, body) {
  */
 function onTunnelStart(success) {
   this.starting = false;
+
+  if (this._timeoutId) {
+    clearTimeout(this._timeoutId);
+    this._timeoutId = null;
+  }
   if (!success) {
     if (this.attempts < this.retries) {
       this.restart();
@@ -494,7 +499,7 @@ function Job(properties) {
 
   this.attempts = 0;
   this.checking = this.failed = this.removing = this.resetting = this.restarting = this.running = this.starting = this.stopping = false;
-  this._timerId = this.id = this.result = this.taskId = this.url = null;
+  this._pollerId = this.id = this.result = this.taskId = this.url = null;
 }
 
 util.inherits(Job, EventEmitter);
@@ -599,7 +604,7 @@ Job.prototype.status = function(callback) {
   if (this.checking || this.removing || this.resetting || this.restarting || this.starting || this.stopping) {
     return this;
   }
-  this._timerId = null;
+  this._pollerId = null;
   this.checking = true;
   request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
     'auth': { 'user': this.user, 'pass': this.pass },
@@ -622,9 +627,9 @@ Job.prototype.stop = function(callback) {
     return this;
   }
   this.stopping = true;
-  if (this._timerId) {
-    clearTimeout(this._timerId);
-    this._timerId = null;
+  if (this._pollerId) {
+    clearTimeout(this._pollerId);
+    this._pollerId = null;
     this.checking = false;
   }
   var onStop = _.bind(onGenericStop, this);
@@ -701,6 +706,7 @@ function Tunnel(properties) {
     restarted.length = 0;
   });
 
+  this._timeoutId = null;
   this.attempts = 0;
   this.restarting = this.running = this.starting = this.stopping = false;
   this.jobs = { 'active': active, 'all': all, 'queue': queue };
@@ -743,6 +749,10 @@ Tunnel.prototype.restart = function(callback) {
     stop();
   });
 
+  if (this._timeoutId) {
+    clearTimeout(this._timeoutId);
+    this._timeoutId = null;
+  }
   return this;
 };
 
@@ -763,7 +773,11 @@ Tunnel.prototype.start = function(callback) {
   logInline();
   console.log('Opening Sauce Connect tunnel...');
 
-  this.connection.start(_.bind(onTunnelStart, this));
+  var onStart = _.bind(onTunnelStart, this);
+  if (this.timeout) {
+    this._timeoutId = _.delay(onStart, this.timeout * 1000, false);
+  }
+  this.connection.start(onStart);
   return this;
 };
 
@@ -817,6 +831,10 @@ Tunnel.prototype.stop = function(callback) {
     stop();
   });
 
+  if (this._timeoutId) {
+    clearTimeout(this._timeoutId);
+    this._timeoutId = null;
+  }
   return this;
 };
 

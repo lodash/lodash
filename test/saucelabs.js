@@ -323,7 +323,7 @@ function onGenericStop(error) {
  * @private
  */
 function onJobRemove(error, res, body) {
-  this.id = this.testId = this.url = null;
+  this.id = this.taskId = this.url = null;
   this.removing = false;
   this.emit('remove');
 }
@@ -336,7 +336,7 @@ function onJobRemove(error, res, body) {
 function onJobReset() {
   this.attempts = 0;
   this.failed = this.resetting = false;
-  this._timerId = this.id = this.result = this.testId = this.url = null;
+  this._timerId = this.id = this.result = this.taskId = this.url = null;
   this.emit('reset');
 }
 
@@ -350,14 +350,14 @@ function onJobReset() {
  */
 function onJobStart(error, res, body) {
   var statusCode = _.result(res, 'statusCode'),
-      testId = _.first(_.result(body, 'js tests')),
+      taskId = _.first(_.result(body, 'js tests')),
       tunnel = this.tunnel;
 
   this.starting = false;
   if (this.stopping) {
     return;
   }
-  if (error || !testId || statusCode != 200) {
+  if (error || !taskId || statusCode != 200) {
     if (this.attempts < this.retries) {
       this.restart();
       return;
@@ -372,7 +372,7 @@ function onJobStart(error, res, body) {
     return;
   }
   this.running = true;
-  this.testId = testId;
+  this.taskId = taskId;
   this.timestamp = _.now();
   this.emit('start');
   this.status();
@@ -494,7 +494,7 @@ function Job(properties) {
 
   this.attempts = 0;
   this.checking = this.failed = this.removing = this.resetting = this.restarting = this.running = this.starting = this.stopping = false;
-  this._timerId = this.id = this.result = this.testId = this.url = null;
+  this._timerId = this.id = this.result = this.taskId = this.url = null;
 }
 
 util.inherits(Job, EventEmitter);
@@ -603,7 +603,7 @@ Job.prototype.status = function(callback) {
   this.checking = true;
   request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
     'auth': { 'user': this.user, 'pass': this.pass },
-    'json': { 'js tests': [this.testId] }
+    'json': { 'js tests': [this.taskId] }
   }, _.bind(onJobStatus, this));
 
   return this;

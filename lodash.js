@@ -1102,12 +1102,11 @@
         if (partialArgs) {
           // avoid `arguments` object use disqualifying optimizations by
           // converting it to an array before passing it to `composeArgs`
-          var index = -1,
-              length = arguments.length,
+          var length = arguments.length,
               args = Array(length);
 
-          while (++index < length) {
-            args[index] = arguments[index];
+          while (length--) {
+            args[length] = arguments[length];
           }
           args = composeArgs(partialArgs, partialHolders, args);
         }

@@ -111,7 +111,7 @@
     'toLocaleString', 'toString', 'valueOf'
   ];
 
-  /** Used to make template `sourceURL`s easier to identify */
+  /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
 
   /** `Object#toString` result shortcuts */
@@ -1984,7 +1984,7 @@
     }
 
     /**
-     * Compiles a function from the given source using the `varNames` and `varValues`
+     * Compiles a function from `source` using the `varNames` and `varValues`
      * pairs to import free variables into the compiled function. If `sourceURL`
      * is provided it will be used as the sourceURL for the compiled function.
      *
@@ -2075,7 +2075,7 @@
      * Creates a function that aggregates a collection, creating an accumulator
      * object composed from the results of running each element in the collection
      * through a callback. The given setter function sets the keys and values of
-     * the accumulator object. If `initializer` is provided will be used to
+     * the accumulator object. If `initializer` is provided it will be used to
      * initialize the accumulator object.
      *
      * @private
@@ -3750,8 +3750,8 @@
     }
 
     /**
-     * Checks if a given value is present in a collection using strict equality
-     * for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
+     * Checks if `value` is present in `collection` using strict equality for
+     * comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
      * offset from the end of the collection.
      *
      * @static
@@ -7466,7 +7466,7 @@
      * settings object is provided it will override `_.templateSettings` for the
      * template.
      *
-     * Note: In the development build, `_.template` utilizes `sourceURL`s for easier debugging.
+     * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
@@ -7484,9 +7484,9 @@
      * @param {Object} [options] The options object.
      * @param {RegExp} [options.escape] The HTML "escape" delimiter.
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
-     * @param {Object} [options.imports] An object to import into the template as local variables.
+     * @param {Object} [options.imports] An object to import into the template as free variables.
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-     * @param {string} [options.sourceURL] The `sourceURL` of the template's compiled source.
+     * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
      * @returns {Function|string} Returns the interpolated string if a data object
      *  is provided, else the compiled template function.
@@ -7524,7 +7524,7 @@
      * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
      * // => '<li>fred</li><li>barney</li>'
      *
-     * // using the `sourceURL` option to specify a custom `sourceURL` for the template
+     * // using the `sourceURL` option to specify a custom sourceURL for the template
      * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector

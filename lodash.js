@@ -1984,6 +1984,32 @@
     }
 
     /**
+     * Compiles a function from the given source using the `varNames` and `varValues`
+     * pairs to import free variables into the compiled function. If `sourceURL`
+     * is provided it will be used as the sourceURL for the compiled function.
+     *
+     * @private
+     * @param {string} source The source to compile.
+     * @param {Array} varNames An array of free variable names.
+     * @param {Array} varValues An array of free variable values.
+     * @param {string} [sourceURL=''] The sourceURL of the source.
+     * @returns {Function} Returns the compiled function.
+     */
+    function compileFunction(source, varNames, varValues, sourceURL) {
+      sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
+      try {
+        // provide the compiled function's source by its `toString` method or
+        // the `source` property as a convenience for inlining compiled templates
+        var result = Function(varNames, 'return ' + source + sourceURL).apply(undefined, varValues);
+        result.source = source;
+      } catch(e) {
+        e.source = source;
+        throw e;
+      }
+      return result;
+    }
+
+    /**
      * Creates an array that is the composition of partially applied arguments,
      * placeholders, and provided arguments into a single array of arguments.
      *
@@ -7604,24 +7630,12 @@
         source +
         'return __p\n}';
 
-      // Use a `sourceURL` for easier debugging.
+      // Use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = '\n/*\n//# sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
+      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']'),
+          result = compileFunction(source, importsKeys, importsValues, sourceURL);
 
-      try {
-        var result = Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);
-      } catch(e) {
-        e.source = source;
-        throw e;
-      }
-      if (data) {
-        return result(data);
-      }
-      // provide the compiled function's source by its `toString` method, in
-      // supported environments, or the `source` property as a convenience for
-      // inlining compiled templates during the build process
-      result.source = source;
-      return result;
+      return data ? result(data) : result;
     }
 
     /**

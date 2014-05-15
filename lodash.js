@@ -242,7 +242,7 @@
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {number[]|string[]} [keys] The keys of elements to pick.
+   * @param {number[]|string[]} [props] The keys of elements to pick.
    * @returns {Array} Returns the new array of picked elements.
    */
   function baseAt(collection, props) {
@@ -8555,7 +8555,7 @@
     lodash.inject = reduce;
 
     mixin(lodash, (function() {
-      var source = {}
+      var source = {};
       baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {
           source[methodName] = func;
@@ -8579,9 +8579,9 @@
     lodash.head = first;
 
     baseForOwn(lodash, function(func, methodName) {
-      var callbackable = methodName !== 'sample';
+      var callbackable = methodName != 'sample';
       if (!lodash.prototype[methodName]) {
-        lodash.prototype[methodName]= function(n, guard) {
+        lodash.prototype[methodName] = function(n, guard) {
           var chainAll = this.__chain__,
               result = func(this.__wrapped__, n, guard);
 

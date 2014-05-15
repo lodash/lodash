@@ -389,14 +389,15 @@ function onJobStart(error, res, body) {
 function onJobStatus(error, res, body) {
   var completed = _.result(body, 'completed'),
       data = _.first(_.result(body, 'js tests')),
-      jobResult = _.result(data, 'result'),
-      jobStatus = _.result(data, 'status'),
-      jobUrl = _.result(data, 'url'),
+      jobId = _.result(data, 'job_id', null),
+      jobResult = _.result(data, 'result', null),
+      jobStatus = _.result(data, 'status', ''),
+      jobUrl = _.result(data, 'url', null),
       options = this.options,
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
       elapsed = (_.now() - this.timestamp) / 1000,
-      expired = (jobStatus != 'test session in progress' && elapsed >= queueTimeout),
+      expired = (elapsed >= queueTimeout && !_.contains(jobStatus, 'in progress')),
       failures = _.result(jobResult, 'failed'),
       label = options.name + ':',
       tunnel = this.tunnel;
@@ -405,16 +406,15 @@ function onJobStatus(error, res, body) {
   if (!this.running || this.stopping) {
     return;
   }
+  this.id = jobId;
+  this.result = jobResult;
+  this.url = jobUrl;
   this.emit('status', jobStatus);
-  if (jobUrl) {
-    this.id = _.last(url.parse(jobUrl).pathname.split('/'));
-    this.url = jobUrl;
-  }
+
   if (!completed && !expired) {
     this._pollerId = _.delay(_.bind(this.status, this), this.statusInterval * 1000);
     return;
   }
-  this.result = jobResult;
   if (!jobResult || failures || reError.test(jobResult.message)) {
     if (this.attempts < this.retries) {
       this.restart();
@@ -517,9 +517,8 @@ Job.prototype.remove = function(callback) {
     return this;
   }
   this.removing = true;
-
-  var onRemove = _.bind(onJobRemove, this);
   return this.stop(function() {
+    var onRemove = _.bind(onJobRemove, this);
     if (this.id == null) {
       onRemove();
       return;
@@ -819,8 +818,14 @@ Tunnel.prototype.stop = function(callback) {
   var jobs = this.jobs,
       active = jobs.active;
 
-  var onStop = _.bind(onGenericStop, this),
-      stop = _.after(active.length, _.bind(this.connection.stop, this.connection, onStop));
+  var stop = _.after(active.length, _.bind(function() {
+    var onStop = _.bind(onGenericStop, this);
+    if (this.running) {
+      this.connection.stop(onStop);
+    } else {
+      onStop();
+    }
+  }, this));
 
   jobs.queue.length = 0;
   if (_.isEmpty(active)) {

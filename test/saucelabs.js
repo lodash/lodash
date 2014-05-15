@@ -681,8 +681,7 @@ function Tunnel(properties) {
       success = !this.failed;
     }
     if (++completed == total) {
-      tunnel.running = false;
-      tunnel.emit('complete', success);
+      tunnel.stop(_.partial(tunnel.emit, 'complete', success));
       return;
     }
     tunnel.dequeue();
@@ -874,7 +873,7 @@ var tunnel = new Tunnel({
 });
 
 tunnel.on('complete', function(success) {
-  this.stop(function() { process.exit(success ? 0 : 1); });
+  process.exit(success ? 0 : 1);
 });
 
 tunnel.start();

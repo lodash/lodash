@@ -10,7 +10,7 @@
   var maxSafeInteger = Math.pow(2, 53) - 1;
 
   /** Used as a reference to the global object */
-  var root = typeof global == 'object' && global || this;
+  var root = (typeof global == 'object' && global) || this;
 
   /** Used to store Lo-Dash to test for bad extensions/shims */
   var lodashBizarro = root.lodashBizarro;

@@ -394,9 +394,11 @@ function onJobStatus(error, res, body) {
       jobStatus = _.result(data, 'status', ''),
       jobUrl = _.result(data, 'url', null),
       options = this.options,
+      message = _.result(jobResult, 'message'),
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
       elapsed = (_.now() - this.timestamp) / 1000,
+      errored = !jobResult || reError.test(message),
       expired = (elapsed >= queueTimeout && !_.contains(jobStatus, 'in progress')),
       failures = _.result(jobResult, 'failed'),
       label = options.name + ':',
@@ -415,8 +417,8 @@ function onJobStatus(error, res, body) {
     this._pollerId = _.delay(_.bind(this.status, this), this.statusInterval * 1000);
     return;
   }
-  if (!jobResult || failures || reError.test(jobResult.message)) {
-    if (this.attempts < this.retries) {
+  if (errored || failures) {
+    if (errored && this.attempts < this.retries) {
       this.restart();
       return;
     }
@@ -432,7 +434,9 @@ function onJobStatus(error, res, body) {
       return;
     }
     else {
-      var message = _.result(jobResult, 'message', 'no results available. ' + details);
+      if (typeof message == 'undefined') {
+        message = 'no results available. ' + details;
+      }
       console.error(label, description, chalk.red('failed') + ';', message);
     }
   }

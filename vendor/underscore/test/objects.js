@@ -27,7 +27,7 @@
   test('invert', function() {
     var obj = {first: 'Moe', second: 'Larry', third: 'Curly'};
     deepEqual(_.keys(_.invert(obj)), ['Moe', 'Larry', 'Curly'], 'can invert an object');
-    ok(_.isEqual(_.invert(_.invert(obj)), obj), 'two inverts gets you back where you started');
+    deepEqual(_.invert(_.invert(obj)), obj, 'two inverts gets you back where you started');
 
     var obj = {length: 3};
     ok(_.invert(obj)['3'] == 'length', 'can invert an object with "length"')
@@ -35,7 +35,7 @@
 
   test('functions', function() {
     var obj = {a : 'dash', b : _.map, c : (/yo/), d : _.reduce};
-    ok(_.isEqual(['b', 'd'], _.functions(obj)), 'can grab the function names of any passed-in object');
+    deepEqual(['b', 'd'], _.functions(obj), 'can grab the function names of any passed-in object');
 
     var Animal = function(){};
     Animal.prototype.run = function(){};
@@ -48,9 +48,9 @@
     equal(_.extend({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
     equal(_.extend({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overriden");
     result = _.extend({x: 'x'}, {a: 'a'}, {b: 'b'});
-    ok(_.isEqual(result, {x: 'x', a: 'a', b: 'b'}), 'can extend from multiple source objects');
+    deepEqual(result, {x: 'x', a: 'a', b: 'b'}, 'can extend from multiple source objects');
     result = _.extend({x: 'x'}, {a: 'a', x: 2}, {a: 'b'});
-    ok(_.isEqual(result, {x: 2, a: 'b'}), 'extending from multiple source objects last property trumps');
+    deepEqual(result, {x: 2, a: 'b'}, 'extending from multiple source objects last property trumps');
     result = _.extend({}, {a: void 0, b: null});
     deepEqual(_.keys(result), ['a', 'b'], 'extend copies undefined values');
 

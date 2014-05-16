@@ -481,10 +481,11 @@
             length = items.length;
 
         if (expected == null) {
-          expected = 1;
           if (config.requireExpects) {
+            expected = length;
             items.push('Expected number of assertions to be defined, but expect() was not called.');
           } else if (!length) {
+            expected = 1;
             items.push('Expected at least one assertion, but none were run - call expect(0) to accept zero assertions.');
           }
         } else if (expected != length) {
@@ -500,7 +501,7 @@
 
           var assertMessage = isStr ? assert : unescape(result(reMessage.exec(message), 1)),
               assertValue = isStr ? assert : unescape(result(reExpected.exec(message), 1)),
-              assertDied = result(reDied.exec(message), 0);
+              assertDied = result(reDied.exec(assertMessage), 0);
 
           if ((assertMessage && contains(excusedAsserts, assertMessage)) ||
               (assertDied && contains(excusedAsserts, assertDied)) ||

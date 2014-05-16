@@ -232,7 +232,7 @@
     } else {
       _.each(obj, function(value, index, list) {
         computed = iterator ? iterator.call(context, value, index, list) : value;
-        if (computed > lastComputed) {
+        if (computed > lastComputed || (computed === -Infinity && result === -Infinity)) {
           result = value;
           lastComputed = computed;
         }
@@ -255,7 +255,7 @@
     } else {
       _.each(obj, function(value, index, list) {
         computed = iterator ? iterator.call(context, value, index, list) : value;
-        if (computed < lastComputed) {
+        if (computed < lastComputed || (computed === Infinity && result === Infinity)) {
           result = value;
           lastComputed = computed;
         }
@@ -326,7 +326,7 @@
       iterator = lookupIterator(iterator, context);
       _.each(obj, function(value, index) {
         var key = iterator(value, index, obj);
-        behavior(result, key, value);
+        behavior(result, value, key);
       });
       return result;
     };
@@ -334,20 +334,20 @@
 
   // Groups the object's values by a criterion. Pass either a string attribute
   // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, key, value) {
+  _.groupBy = group(function(result, value, key) {
     _.has(result, key) ? result[key].push(value) : result[key] = [value];
   });
 
   // Indexes the object's values by a criterion, similar to `groupBy`, but for
   // when you know that your index values will be unique.
-  _.indexBy = group(function(result, key, value) {
+  _.indexBy = group(function(result, value, key) {
     result[key] = value;
   });
 
   // Counts instances of an object that group by a certain criterion. Pass
   // either a string attribute to count by, or a function that returns the
   // criterion.
-  _.countBy = group(function(result, key) {
+  _.countBy = group(function(result, value, key) {
     _.has(result, key) ? result[key]++ : result[key] = 1;
   });
 
@@ -453,8 +453,8 @@
   _.partition = function(obj, predicate, context) {
     predicate = lookupIterator(predicate, context);
     var pass = [], fail = [];
-    _.each(obj, function(elem) {
-      (predicate(elem) ? pass : fail).push(elem);
+    _.each(obj, function(value, key, obj) {
+      (predicate(value, key, obj) ? pass : fail).push(value);
     });
     return [pass, fail];
   };
@@ -600,7 +600,7 @@
   _.bind = function(func, context) {
     var args, bound;
     if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-    if (!_.isFunction(func)) throw new TypeError;
+    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
     args = slice.call(arguments, 2);
     return bound = function() {
       if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
@@ -641,12 +641,15 @@
 
   // Memoize an expensive function by storing its results.
   _.memoize = function(func, hasher) {
-    var memo = {};
-    hasher || (hasher = _.identity);
-    return function() {
+    if (!hasher) hasher = _.identity;
+    var memoize = function() {
+      var cache = memoize.cache;
       var key = hasher.apply(this, arguments);
-      return _.has(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
+      if (!_.has(cache, key)) cache[key] = func.apply(this, arguments);
+      return cache[key];
     };
+    memoize.cache = {};
+    return memoize;
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -676,7 +679,7 @@
       previous = options.leading === false ? 0 : _.now();
       timeout = null;
       result = func.apply(context, args);
-      context = args = null;
+      if (!timeout) context = args = null;
     };
     return function() {
       var now = _.now();
@@ -689,7 +692,7 @@
         timeout = null;
         previous = now;
         result = func.apply(context, args);
-        context = args = null;
+        if (!timeout) context = args = null;
       } else if (!timeout && options.trailing !== false) {
         timeout = setTimeout(later, remaining);
       }
@@ -713,7 +716,7 @@
         timeout = null;
         if (!immediate) {
           result = func.apply(context, args);
-          context = args = null;
+          if (!timeout) context = args = null;
         }
       }
     };
@@ -723,9 +726,7 @@
       args = arguments;
       timestamp = _.now();
       var callNow = immediate && !timeout;
-      if (!timeout) {
-        timeout = setTimeout(later, wait);
-      }
+      if (!timeout) timeout = setTimeout(later, wait);
       if (callNow) {
         result = func.apply(context, args);
         context = args = null;
@@ -841,11 +842,10 @@
 
   // Extend a given object with all the properties in passed-in object(s).
   _.extend = function(obj) {
+    if (!_.isObject(obj)) return obj;
     _.each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          obj[prop] = source[prop];
-        }
+      for (var prop in source) {
+        obj[prop] = source[prop];
       }
     });
     return obj;
@@ -883,11 +883,10 @@
 
   // Fill in a given object with default properties.
   _.defaults = function(obj) {
+    if (!_.isObject(obj)) return obj;
     _.each(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
-          if (obj[prop] === void 0) obj[prop] = source[prop];
-        }
+      for (var prop in source) {
+        if (obj[prop] === void 0) obj[prop] = source[prop];
       }
     });
     return obj;
@@ -1040,7 +1039,7 @@
   // there isn't any inspectable "Arguments" type.
   if (!_.isArguments(arguments)) {
     _.isArguments = function(obj) {
-      return !!(obj && _.has(obj, 'callee'));
+      return _.has(obj, 'callee');
     };
   }
 
@@ -1079,7 +1078,7 @@
   // Shortcut function for checking if an object has a given property directly
   // on itself (in other words, not on a prototype).
   _.has = function(obj, key) {
-    return hasOwnProperty.call(obj, key);
+    return obj != null && hasOwnProperty.call(obj, key);
   };
 
   // Utility Functions

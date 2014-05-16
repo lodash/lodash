@@ -331,6 +331,36 @@
     Backbone.history.checkUrl();
   });
 
+  test("No events are triggered if #execute returns false.", 1, function() {
+    var Router = Backbone.Router.extend({
+
+      routes: {
+        foo: function() {
+          ok(true);
+        }
+      },
+
+      execute: function(callback, args) {
+        callback.apply(this, args);
+        return false;
+      }
+
+    });
+
+    var router = new Router;
+
+    router.on('route route:foo', function() {
+      ok(false);
+    });
+
+    Backbone.history.on('route', function() {
+      ok(false);
+    });
+
+    location.replace('http://example.com#foo');
+    Backbone.history.checkUrl();
+  });
+
   test("#933, #908 - leading slash", 2, function() {
     location.replace('http://example.com/root/foo');
 
@@ -375,7 +405,7 @@
     Backbone.history.navigate('charñ', {trigger: true});
     equal(router.charType, 'UTF');
     Backbone.history.navigate('char%C3%B1', {trigger: true});
-    equal(router.charType, 'escaped');
+    equal(router.charType, 'UTF');
   });
 
   test("#1185 - Use pathname when hashChange is not wanted.", 1, function() {
@@ -738,7 +768,7 @@
     var Router = Backbone.Router.extend({
       routes: {
         path: function(params){
-          strictEqual(params, 'x=y%20z');
+          strictEqual(params, 'x=y z');
         }
       }
     });
@@ -805,6 +835,51 @@
     });
     new Router;
     Backbone.history.start({pushState: true});
+  });
+
+  test('Router#execute receives callback, args, name.', 3, function() {
+    location.replace('http://example.com#foo/123/bar?x=y');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo/:id/bar': 'foo'},
+      foo: function(){},
+      execute: function(callback, args, name) {
+        strictEqual(callback, this.foo);
+        deepEqual(args, ['123', 'x=y']);
+        strictEqual(name, 'foo');
+      }
+    });
+    var router = new Router;
+    Backbone.history.start();
+  });
+
+  test("pushState to hashChange with only search params.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com?a=b');
+    location.replace = function(url) {
+      strictEqual(url, '/#?a=b');
+    };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: null
+    });
+    Backbone.history.start({pushState: true});
+  });
+
+  test("#3123 - History#navigate decodes before comparison.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/shop/search?keyword=short%20dress');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){ ok(false); },
+        replaceState: function(){ ok(false); }
+      }
+    });
+    Backbone.history.start({pushState: true});
+    Backbone.history.navigate('shop/search?keyword=short%20dress', true);
+    strictEqual(Backbone.history.fragment, 'shop/search?keyword=short dress');
   });
 
 })();

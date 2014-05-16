@@ -38,6 +38,8 @@
     equal(newBoundf.hello, undefined, 'function should not be bound to the context, to comply with ECMAScript 5');
     equal(Boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
     ok(newBoundf instanceof F, 'a bound instance is an instance of the original function');
+
+    raises(function() { _.bind('notafunction'); }, TypeError, 'throws an error when binding to a non-function');
   });
 
   test('partial', function() {
@@ -98,6 +100,17 @@
     var fastO = _.memoize(o);
     equal(o('toString'), 'toString', 'checks hasOwnProperty');
     equal(fastO('toString'), 'toString', 'checks hasOwnProperty');
+
+    // Expose the cache.
+    var upper = _.memoize(function(s) {
+      return s.toUpperCase();
+    });
+    equal(upper('foo'), 'FOO');
+    equal(upper('bar'), 'BAR');
+    deepEqual(upper.cache, {foo: 'FOO', bar: 'BAR'});
+    upper.cache = {foo: 'BAR', bar: 'FOO'};
+    equal(upper('foo'), 'BAR');
+    equal(upper('bar'), 'FOO');
   });
 
   asyncTest('delay', 2, function() {
@@ -298,6 +311,29 @@
     }, 200);
   });
 
+  asyncTest('throttle re-entrant', 2, function() {
+    var sequence = [
+      ['b1', 'b2'],
+      ['c1', 'c2']
+    ];
+    var value = '';
+    var throttledAppend;
+    var append = function(arg){
+      value += this + arg;
+      var args = sequence.pop()
+      if (args) {
+        throttledAppend.call(args[0], args[1]);
+      }
+    };
+    throttledAppend = _.throttle(append, 32);
+    throttledAppend.call('a1', 'a2');
+    equal(value, 'a1a2');
+    _.delay(function(){
+      equal(value, 'a1a2c1c2b1b2', 'append was throttled successfully');
+      start();
+    }, 100);
+  });
+
   asyncTest('debounce', 1, function() {
     var counter = 0;
     var incr = function(){ counter++; };
@@ -353,7 +389,29 @@
       equal(counter, 2, 'incr was debounced successfully');
       start();
       _.now = origNowFunc;
-    },200);
+    }, 200);
+  });
+
+  asyncTest('debounce re-entrant', 2, function() {
+    var sequence = [
+      ['b1', 'b2']
+    ];
+    var value = '';
+    var debouncedAppend;
+    var append = function(arg){
+      value += this + arg;
+      var args = sequence.pop()
+      if (args) {
+        debouncedAppend.call(args[0], args[1]);
+      }
+    };
+    debouncedAppend = _.debounce(append, 32);
+    debouncedAppend.call('a1', 'a2');
+    equal(value, '');
+    _.delay(function(){
+      equal(value, 'a1a2b1b2', 'append was debounced successfully');
+      start();
+    }, 100);
   });
 
   test('once', function() {

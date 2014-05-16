@@ -21,7 +21,7 @@
   });
 
   test('select/reject/sortBy', function() {
-    var numbers = [1,2,3,4,5,6,7,8,9,10];
+    var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     numbers = _(numbers).chain().select(function(n) {
       return n % 2 === 0;
     }).reject(function(n) {
@@ -33,7 +33,7 @@
   });
 
   test('select/reject/sortBy in functional style', function() {
-    var numbers = [1,2,3,4,5,6,7,8,9,10];
+    var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     numbers = _.chain(numbers).select(function(n) {
       return n % 2 === 0;
     }).reject(function(n) {
@@ -45,7 +45,7 @@
   });
 
   test('reverse/concat/unshift/pop/map', function() {
-    var numbers = [1,2,3,4,5];
+    var numbers = [1, 2, 3, 4, 5];
     numbers = _(numbers).chain()
       .reverse()
       .concat([5, 5, 5])

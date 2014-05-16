@@ -20,10 +20,22 @@
     equal(view.el.other, void 0);
   });
 
-  test("jQuery", 1, function() {
+  test("$", 2, function() {
     var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
-    strictEqual(view.$('a b').html(), 'test');
+    var result = view.$('a b');
+
+    strictEqual(result[0].innerHTML, 'test');
+    ok(result.length === +result.length);
+  });
+
+  test("$el", 3, function() {
+    var view = new Backbone.View;
+    view.setElement('<p><a><b>test</b></a></p>');
+    strictEqual(view.el.nodeType, 1);
+
+    ok(view.$el instanceof Backbone.$);
+    strictEqual(view.$el[0], view.el);
   });
 
   test("initialize", 1, function() {
@@ -58,6 +70,17 @@
     view.$('h1').trigger('click');
     equal(counter1, 3);
     equal(counter2, 3);
+  });
+
+  test("delegate", 2, function() {
+    var view = new Backbone.View({el: '#testElement'});
+    view.delegate('click', 'h1', function() {
+      ok(true);
+    });
+    view.delegate('click', function() {
+      ok(true);
+    });
+    view.$('h1').trigger('click');
   });
 
   test("delegateEvents allows functions for callbacks", 3, function() {
@@ -112,6 +135,63 @@
     view.$('h1').trigger('click');
     equal(counter1, 2);
     equal(counter2, 3);
+  });
+
+  test("undelegate", 0, function() {
+    view = new Backbone.View({el: '#testElement'});
+    view.delegate('click', function() { ok(false); });
+    view.delegate('click', 'h1', function() { ok(false); });
+
+    view.undelegate('click');
+
+    view.$('h1').trigger('click');
+    view.$el.trigger('click');
+  });
+
+  test("undelegate with passed handler", 1, function() {
+    view = new Backbone.View({el: '#testElement'});
+    var listener = function() { ok(false); };
+    view.delegate('click', listener);
+    view.delegate('click', function() { ok(true); });
+    view.undelegate('click', listener);
+    view.$el.trigger('click');
+  });
+
+  test("undelegate with selector", 2, function() {
+    view = new Backbone.View({el: '#testElement'});
+    view.delegate('click', function() { ok(true); });
+    view.delegate('click', 'h1', function() { ok(false); });
+    view.undelegate('click', 'h1');
+    view.$('h1').trigger('click');
+    view.$el.trigger('click');
+  });
+
+  test("undelegate with handler and selector", 2, function() {
+    view = new Backbone.View({el: '#testElement'});
+    view.delegate('click', function() { ok(true); });
+    var handler = function(){ ok(false); };
+    view.delegate('click', 'h1', handler);
+    view.undelegate('click', 'h1', handler);
+    view.$('h1').trigger('click');
+    view.$el.trigger('click');
+  });
+
+  test("tagName can be provided as a string", 1, function() {
+    var View = Backbone.View.extend({
+      tagName: 'span'
+    });
+
+    equal(new View().el.tagName, 'SPAN');
+  });
+
+  test("tagName can be provided as a function", 1, function() {
+    var View = Backbone.View.extend({
+      tagName: function() {
+        return 'p';
+      }
+    });
+
+    ok(new View().$el.is('p'));
   });
 
   test("_ensureElement with DOM node el", 1, function() {
@@ -201,26 +281,19 @@
     equal(5, count);
   });
 
-  test("custom events, with namespaces", 2, function() {
-    var count = 0;
-
+  test("custom events", 2, function() {
     var View = Backbone.View.extend({
       el: $('body'),
-      events: function() {
-        return {"fake$event.namespaced": "run"};
-      },
-      run: function() {
-        count++;
+      events: {
+        "fake$event": function() { ok(true); }
       }
     });
 
     var view = new View;
     $('body').trigger('fake$event').trigger('fake$event');
-    equal(count, 2);
 
-    $('body').off('.namespaced');
+    $('body').off('fake$event');
     $('body').trigger('fake$event');
-    equal(count, 2);
   });
 
   test("#1048 - setElement uses provided object.", 2, function() {
@@ -264,21 +337,11 @@
     ok(!view2.el.id);
   });
 
-  test("#1228 - tagName can be provided as a function", 1, function() {
-    var View = Backbone.View.extend({
-      tagName: function() {
-        return 'p';
-      }
-    });
-
-    ok(new View().$el.is('p'));
-  });
-
   test("views stopListening", 0, function() {
     var View = Backbone.View.extend({
       initialize: function() {
-        this.listenTo(this.model, 'all x', function(){ ok(false); }, this);
-        this.listenTo(this.collection, 'all x', function(){ ok(false); }, this);
+        this.listenTo(this.model, 'all x', function(){ ok(false); });
+        this.listenTo(this.collection, 'all x', function(){ ok(false); });
       }
     });
 
@@ -322,6 +385,21 @@
 
     view.$('h1').trigger('click').trigger('click');
     equal(counter, 2);
+  });
+
+  test("remove", 1, function() {
+    var view = new Backbone.View;
+    document.body.appendChild(view.el);
+
+    view.delegate('click', function() { ok(false); });
+    view.listenTo(view, 'all x', function() { ok(false); });
+
+    view.remove();
+    view.$el.trigger('click');
+    view.trigger('x');
+
+    // In IE8 and below, parentNode still exists but is not document.body.
+    notEqual(view.el.parentNode, document.body);
   });
 
 })();

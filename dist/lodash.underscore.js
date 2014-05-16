@@ -222,7 +222,7 @@
   /*--------------------------------------------------------------------------*/
 
   /** Used for native method references */
-  var arrayRef = Array.prototype,
+  var arrayProto = Array.prototype,
       objectProto = Object.prototype;
 
   /** Used to restore the original `_` reference in `_.noConflict` */
@@ -249,9 +249,9 @@
       floor = Math.floor,
       fnToString = Function.prototype.toString,
       hasOwnProperty = objectProto.hasOwnProperty,
-      push = arrayRef.push,
+      push = arrayProto.push,
       propertyIsEnumerable = objectProto.propertyIsEnumerable,
-      splice = arrayRef.splice;
+      splice = arrayProto.splice;
 
   /* Native method shortcuts for methods with the same name as other `lodash` methods */
   var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
@@ -1028,6 +1028,32 @@
   }
 
   /**
+   * Compiles a function from `source` using the `varNames` and `varValues`
+   * pairs to import free variables into the compiled function. If `sourceURL`
+   * is provided it will be used as the sourceURL for the compiled function.
+   *
+   * @private
+   * @param {string} source The source to compile.
+   * @param {Array} varNames An array of free variable names.
+   * @param {Array} varValues An array of free variable values.
+   * @param {string} [sourceURL=''] The sourceURL of the source.
+   * @returns {Function} Returns the compiled function.
+   */
+  function compileFunction(source, varNames, varValues, sourceURL) {
+    sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
+    try {
+      // provide the compiled function's source by its `toString` method or
+      // the `source` property as a convenience for inlining compiled templates
+      var result = Function(varNames, 'return ' + source + sourceURL).apply(undefined, varValues);
+      result.source = source;
+    } catch(e) {
+      e.source = source;
+      throw e;
+    }
+    return result;
+  }
+
+  /**
    * Creates an array that is the composition of partially applied arguments,
    * placeholders, and provided arguments into a single array of arguments.
    *
@@ -1061,7 +1087,7 @@
    * Creates a function that aggregates a collection, creating an accumulator
    * object composed from the results of running each element in the collection
    * through a callback. The given setter function sets the keys and values of
-   * the accumulator object. If `initializer` is provided will be used to
+   * the accumulator object. If `initializer` is provided it will be used to
    * initialize the accumulator object.
    *
    * @private
@@ -2033,8 +2059,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Checks if a given value is present in a collection using strict equality
-   * for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
+   * Checks if `value` is present in `collection` using strict equality for
+   * comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
    * offset from the end of the collection.
    *
    * @static
@@ -3720,8 +3746,8 @@
    * Assigns own enumerable properties of source object(s) to the destination
    * object. Subsequent sources will overwrite property assignments of previous
    * sources. If a callback is provided it will be executed to produce the
-   * assigned values. The callback is bound to `thisArg` and invoked with two
-   * arguments; (objectValue, sourceValue).
+   * assigned values. The callback is bound to `thisArg` and invoked with
+   * five arguments; (objectValue, sourceValue, key, object, source).
    *
    * @static
    * @memberOf _
@@ -3770,7 +3796,7 @@
    * be cloned, otherwise they will be assigned by reference. If a callback
    * is provided it will be executed to produce the cloned values. If the
    * callback returns `undefined` cloning will be handled by the method instead.
-   * The callback is bound to `thisArg` and invoked with one argument; (value).
+   * The callback is bound to `thisArg` and invoked with two argument; (value, index|key).
    *
    * Note: This method is loosely based on the structured clone algorithm. Functions
    * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -4095,7 +4121,7 @@
    * equivalent. If a callback is provided it will be executed to compare
    * values. If the callback returns `undefined` comparisons will be handled
    * by the method instead. The callback is bound to `thisArg` and invoked
-   * with two arguments; (value, other).
+   * with three arguments; (value, other, key).
    *
    * Note: This method supports comparing arrays, booleans, `Date` objects,
    * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
@@ -4601,7 +4627,7 @@
    * settings object is provided it will override `_.templateSettings` for the
    * template.
    *
-   * Note: In the development build, `_.template` utilizes `sourceURL`s for easier debugging.
+   * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
    * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
    * for more details.
    *
@@ -4619,9 +4645,9 @@
    * @param {Object} [options] The options object.
    * @param {RegExp} [options.escape] The HTML "escape" delimiter.
    * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
-   * @param {Object} [options.imports] An object to import into the template as local variables.
+   * @param {Object} [options.imports] An object to import into the template as free variables.
    * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-   * @param {string} [options.sourceURL] The `sourceURL` of the template's compiled source.
+   * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
    * @param {string} [options.variable] The data object variable name.
    * @returns {Function|string} Returns the interpolated string if a data object
    *  is provided, else the compiled template function.
@@ -4659,7 +4685,7 @@
    * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
    * // => '<li>fred</li><li>barney</li>'
    *
-   * // using the `sourceURL` option to specify a custom `sourceURL` for the template
+   * // using the `sourceURL` option to specify a custom sourceURL for the template
    * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
    * compiled(data);
    * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
@@ -4723,17 +4749,8 @@
       source +
       'return __p\n}';
 
-    try {
-      var result = Function('_', 'return ' + source)(_);
-    } catch(e) {
-      e.source = source;
-      throw e;
-    }
-    if (data) {
-      return result(data);
-    }
-    result.source = source;
-    return result;
+    var result = compileFunction(source, ['_'], [_]);
+    return data ? result(data) : result;
   }
 
   /**
@@ -5160,7 +5177,7 @@
    * @returns {Array} Returns the array of results.
    * @example
    *
-   * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+   * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
    * // => [3, 6, 4]
    *
    * _.times(3, function(n) { mage.castSpell(n); });
@@ -5354,7 +5371,7 @@
 
   // add `Array` mutator functions to the wrapper
   arrayEach(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-    var func = arrayRef[methodName];
+    var func = arrayProto[methodName];
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__;
       func.apply(value, arguments);
@@ -5370,7 +5387,7 @@
 
   // add `Array` accessor functions to the wrapper
   arrayEach(['concat', 'join', 'slice'], function(methodName) {
-    var func = arrayRef[methodName];
+    var func = arrayProto[methodName];
     lodash.prototype[methodName] = function() {
       var value = this.__wrapped__,
           result = func.apply(value, arguments);

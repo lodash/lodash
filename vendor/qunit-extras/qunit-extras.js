@@ -12,8 +12,12 @@
   /** Used as a horizontal rule in console output */
   var hr = '----------------------------------------';
 
+  /** Used for native method references */
+  var arrayProto = Array.prototype;
+
   /** Native method shortcut */
-  var unshift = Array.prototype.unshift;
+  var push = arrayProto.push,
+      unshift = arrayProto.unshift;
 
   /** Used to match HTML entities */
   var reEscapedHtml = /(&amp;|&lt;|&gt;|&quot;|&#39;)/g;
@@ -143,6 +147,25 @@
    */
   function unescapeHtmlChar(match) {
     return htmlUnescapes[match];
+  }
+
+  /**
+   * Creates a function that provides `value` to the wrapper function as its
+   * first argument. Additional arguments provided to the function are appended
+   * to those provided to the wrapper function. The wrapper is executed with
+   * the `this` binding of the created function.
+   *
+   * @private
+   * @param {*} value The value to wrap.
+   * @param {Function} wrapper The wrapper function.
+   * @returns {Function} Returns the new function.
+   */
+  function wrap(value, wrapper) {
+    return function() {
+      var args = [value];
+      push.apply(args, arguments);
+      return wrapper.apply(this, args);
+    };
   }
 
   /*--------------------------------------------------------------------------*/
@@ -401,17 +424,17 @@
 
     // add a callback to be triggered at the start of every test
     QUnit.testStart(function(details) {
-      var excused = QUnit.config.excused || {},
+      var config = QUnit.config,
+          test = config.current;
+
+      var excused = config.excused || {},
           excusedTests = excused[details.module],
           excusedAsserts = excusedTests && excusedTests[details.name];
-
-      var test = QUnit.config.current,
-          finish = test.finish;
 
       // allow async tests to retry
       if (test.async && !test.retries) {
         test.retries = 0;
-        test.finish = function() {
+        test.finish = wrap(test.finish, function(finish) {
           var asserts = this.assertions,
               config = QUnit.config,
               index = -1,
@@ -436,7 +459,7 @@
             }
           }
           finish.call(this);
-        };
+        });
       }
       // nothing to excuse
       if (!excusedAsserts) {
@@ -450,28 +473,54 @@
         return;
       }
       // excuse specific assertions
-      test.finish = function() {
+      test.finish = wrap(test.finish, function(finish) {
         var asserts = this.assertions,
-            index = -1,
-            length = asserts.length;
+            config = QUnit.config,
+            expected = this.expected,
+            items = asserts.slice(),
+            length = items.length;
+
+        if (expected == null) {
+          expected = 1;
+          if (config.requireExpects) {
+            items.push('Expected number of assertions to be defined, but expect() was not called.');
+          } else if (!length) {
+            items.push('Expected at least one assertion, but none were run - call expect(0) to accept zero assertions.');
+          }
+        } else if (expected != length) {
+          items.push('Expected ' + expected + ' assertions, but ' + length + ' were run');
+        }
+        var index = -1;
+        length = items.length;
 
         while (++index < length) {
-          var assert = asserts[index],
-              message = unescape(result(reMessage.exec(assert.message), 1)),
-              died = result(reDied.exec(message), 0),
-              expected = unescape(result(reExpected.exec(assert.message), 1));
+          var assert = items[index],
+              isStr = typeof assert == 'string',
+              message = assert.message;
 
-          if ((message && contains(excusedAsserts, message)) ||
-              (died && contains(excusedAsserts, died)) ||
-              (expected && (
-                contains(excusedAsserts, expected) ||
-                contains(excusedAsserts, expected.replace(/\s+/g, ''))
+          var assertMessage = isStr ? assert : unescape(result(reMessage.exec(message), 1)),
+              assertValue = isStr ? assert : unescape(result(reExpected.exec(message), 1)),
+              assertDied = result(reDied.exec(message), 0);
+
+          if ((assertMessage && contains(excusedAsserts, assertMessage)) ||
+              (assertDied && contains(excusedAsserts, assertDied)) ||
+              (assertValue && (
+                contains(excusedAsserts, assertValue) ||
+                contains(excusedAsserts, assertValue.replace(/\s+/g, ''))
               ))) {
-            assert.result = true;
+            if (isStr) {
+              while (asserts.length < expected) {
+                asserts.push({ 'result': true });
+              }
+              asserts.length = expected;
+            }
+            else {
+              assert.result = true;
+            }
           }
         }
         finish.call(this);
-      };
+      });
     });
 
     // replace poisoned `raises` method

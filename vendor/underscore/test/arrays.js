@@ -182,16 +182,16 @@
   test('object', function() {
     var result = _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
     var shouldBe = {moe: 30, larry: 40, curly: 50};
-    ok(_.isEqual(result, shouldBe), 'two arrays zipped together into an object');
+    deepEqual(result, shouldBe, 'two arrays zipped together into an object');
 
     result = _.object([['one', 1], ['two', 2], ['three', 3]]);
     shouldBe = {one: 1, two: 2, three: 3};
-    ok(_.isEqual(result, shouldBe), 'an array of pairs zipped together into an object');
+    deepEqual(result, shouldBe, 'an array of pairs zipped together into an object');
 
     var stooges = {moe: 30, larry: 40, curly: 50};
-    ok(_.isEqual(_.object(_.pairs(stooges)), stooges), 'an object converted to pairs and back to an object');
+    deepEqual(_.object(_.pairs(stooges)), stooges, 'an object converted to pairs and back to an object');
 
-    ok(_.isEqual(_.object(null), {}), 'handles nulls');
+    deepEqual(_.object(null), {}, 'handles nulls');
   });
 
   test('indexOf', function() {

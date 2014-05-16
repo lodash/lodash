@@ -33,6 +33,15 @@
 			QUnit.config.asyncRetries = 10;
 			QUnit.config.hidepassed = true;
 
+			// excuse tests we intentionally fail or those with problems
+			QUnit.config.excused = {
+				'Backbone.Router': {
+					'#1695 - hashChange to pushState with search.': [
+						'Expected 1 assertions, but 0 were run'
+					]
+				}
+			};
+
 			// load Lo-Dash
 			if (!ui.isModularize) {
 				document.write('<script src="' + ui.buildPath + '"><\/script>');

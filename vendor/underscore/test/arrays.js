@@ -3,16 +3,16 @@
   module('Arrays');
 
   test('first', function() {
-    equal(_.first([1,2,3]), 1, 'can pull out the first element of an array');
+    equal(_.first([1, 2, 3]), 1, 'can pull out the first element of an array');
     equal(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
     deepEqual(_.first([1, 2, 3], 0), [], 'can pass an index to first');
     deepEqual(_.first([1, 2, 3], 2), [1, 2], 'can pass an index to first');
     deepEqual(_.first([1, 2, 3], 5), [1, 2, 3], 'can pass an index to first');
     var result = (function(){ return _.first(arguments); })(4, 3, 2, 1);
     equal(result, 4, 'works on an arguments object.');
-    result = _.map([[1,2,3],[1,2,3]], _.first);
+    result = _.map([[1, 2, 3], [1, 2, 3]], _.first);
     deepEqual(result, [1, 1], 'works well with _.map');
-    result = (function() { return _.take([1,2,3], 2); })();
+    result = (function() { return _.take([1, 2, 3], 2); })();
     deepEqual(result, [1, 2], 'aliased as take');
 
     equal(_.first(null), undefined, 'handles nulls');
@@ -26,7 +26,7 @@
     deepEqual(_.rest(numbers, 2), [3, 4], 'rest can take an index');
     var result = (function(){ return _(arguments).tail(); })(1, 2, 3, 4);
     deepEqual(result, [2, 3, 4], 'aliased as tail and works on arguments object');
-    result = _.map([[1,2,3],[1,2,3]], _.rest);
+    result = _.map([[1, 2, 3], [1, 2, 3]], _.rest);
     deepEqual(_.flatten(result), [2, 3, 2, 3], 'works well with _.map');
     result = (function(){ return _(arguments).drop(); })(1, 2, 3, 4);
     deepEqual(result, [2, 3, 4], 'aliased as drop and works on arguments object');
@@ -38,18 +38,18 @@
     deepEqual(_.initial([1, 2, 3, 4], 6), [], 'initial can take a large index');
     var result = (function(){ return _(arguments).initial(); })(1, 2, 3, 4);
     deepEqual(result, [1, 2, 3], 'initial works on arguments object');
-    result = _.map([[1,2,3],[1,2,3]], _.initial);
+    result = _.map([[1, 2, 3], [1, 2, 3]], _.initial);
     deepEqual(_.flatten(result), [1, 2, 1, 2], 'initial works with _.map');
   });
 
   test('last', function() {
-    equal(_.last([1,2,3]), 3, 'can pull out the last element of an array');
+    equal(_.last([1, 2, 3]), 3, 'can pull out the last element of an array');
     deepEqual(_.last([1, 2, 3], 0), [], 'can pass an index to last');
     deepEqual(_.last([1, 2, 3], 2), [2, 3], 'can pass an index to last');
     deepEqual(_.last([1, 2, 3], 5), [1, 2, 3], 'can pass an index to last');
     var result = (function(){ return _(arguments).last(); })(1, 2, 3, 4);
     equal(result, 4, 'works on an arguments object');
-    result = _.map([[1,2,3],[1,2,3]], _.last);
+    result = _.map([[1, 2, 3], [1, 2, 3]], _.last);
     deepEqual(result, [3, 3], 'works well with _.map');
 
     equal(_.last(null), undefined, 'handles nulls');
@@ -64,10 +64,10 @@
 
   test('flatten', function() {
     var list = [1, [2], [3, [[[4]]]]];
-    deepEqual(_.flatten(list), [1,2,3,4], 'can flatten nested arrays');
-    deepEqual(_.flatten(list, true), [1,2,3,[[[4]]]], 'can shallowly flatten nested arrays');
+    deepEqual(_.flatten(list), [1, 2, 3, 4], 'can flatten nested arrays');
+    deepEqual(_.flatten(list, true), [1, 2, 3, [[[4]]]], 'can shallowly flatten nested arrays');
     var result = (function(){ return _.flatten(arguments); })(1, [2], [3, [[[4]]]]);
-    deepEqual(result, [1,2,3,4], 'works on an arguments object');
+    deepEqual(result, [1, 2, 3, 4], 'works on an arguments object');
     list = [[1], [2], [3], [[4]]];
     deepEqual(_.flatten(list, true), [1, 2, 3, [4]], 'can shallowly flatten arrays containing only other arrays');
   });
@@ -90,7 +90,7 @@
     list = [1, 1, 1, 2, 2, 3];
     deepEqual(_.uniq(list, true), [1, 2, 3], 'can find the unique values of a sorted array faster');
 
-    list = [{name:'moe'}, {name:'curly'}, {name:'larry'}, {name:'curly'}];
+    list = [{name: 'moe'}, {name: 'curly'}, {name: 'larry'}, {name: 'curly'}];
     var iterator = function(value) { return value.name; };
     deepEqual(_.map(_.uniq(list, false, iterator), iterator), ['moe', 'curly', 'larry'], 'can find the unique values of an array using a custom iterator');
 
@@ -161,16 +161,19 @@
 
   test('zip', function() {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
-    var stooges = _.zip(names, ages, leaders);
-    equal(String(stooges), 'moe,30,true,larry,40,,curly,50,', 'zipped together arrays of different lengths');
+    deepEqual(_.zip(names, ages, leaders), [
+      ['moe', 30, true],
+      ['larry', 40, undefined],
+      ['curly', 50, undefined]
+    ], 'zipped together arrays of different lengths');
 
-    stooges = _.zip(['moe',30, 'stooge 1'],['larry',40, 'stooge 2'],['curly',50, 'stooge 3']);
-    deepEqual(stooges, [['moe','larry','curly'],[30,40,50], ['stooge 1', 'stooge 2', 'stooge 3']], 'zipped pairs');
+    var stooges = _.zip(['moe', 30, 'stooge 1'], ['larry', 40, 'stooge 2'], ['curly', 50, 'stooge 3']);
+    deepEqual(stooges, [['moe', 'larry', 'curly'], [30, 40, 50], ['stooge 1', 'stooge 2', 'stooge 3']], 'zipped pairs');
 
     // In the case of difference lengths of the tuples undefineds
     // should be used as placeholder
-    stooges = _.zip(['moe',30],['larry',40],['curly',50, 'extra data']);
-    deepEqual(stooges, [['moe','larry','curly'],[30,40,50], [undefined, undefined, 'extra data']], 'zipped pairs with empties');
+    stooges = _.zip(['moe', 30], ['larry', 40], ['curly', 50, 'extra data']);
+    deepEqual(stooges, [['moe', 'larry', 'curly'], [30, 40, 50], [undefined, undefined, 'extra data']], 'zipped pairs with empties');
 
     var empty = _.zip([]);
     deepEqual(empty, [], 'unzipped empty');

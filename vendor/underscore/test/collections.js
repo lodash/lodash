@@ -221,10 +221,10 @@
   });
 
   test('include', function() {
-    ok(_.include([1,2,3], 2), 'two is in the array');
-    ok(!_.include([1,3,9], 2), 'two is not in the array');
-    ok(_.contains({moe:1, larry:3, curly:9}, 3) === true, '_.include on objects checks their values');
-    ok(_([1,2,3]).include(2), 'OO-style include');
+    ok(_.include([1, 2, 3], 2), 'two is in the array');
+    ok(!_.include([1, 3, 9], 2), 'two is not in the array');
+    ok(_.contains({moe: 1, larry: 3, curly: 9}, 3) === true, '_.include on objects checks their values');
+    ok(_([1, 2, 3]).include(2), 'OO-style include');
   });
 
   test('invoke', function() {
@@ -280,10 +280,10 @@
     result = _.findWhere(list, {b: 4});
     deepEqual(result, {a: 1, b: 4});
 
-    result = _.findWhere(list, {c:1})
+    result = _.findWhere(list, {c: 1})
     ok(_.isUndefined(result), 'undefined when not found');
 
-    result = _.findWhere([], {c:1});
+    result = _.findWhere([], {c: 1});
     ok(_.isUndefined(result), 'undefined when searching empty list');
   });
 
@@ -297,10 +297,15 @@
     equal(-Infinity, _.max([]), 'Maximum value of an empty array');
     equal(_.max({'a': 'a'}), -Infinity, 'Maximum value of a non-numeric collection');
 
-    equal(299999, _.max(_.range(1,300000)), 'Maximum value of a too-big array');
+    equal(299999, _.max(_.range(1, 300000)), 'Maximum value of a too-big array');
 
     equal(3, _.max([1, 2, 3, 'test']), 'Finds correct max in array starting with num and containing a NaN');
     equal(3, _.max(['test', 1, 2, 3]), 'Finds correct max in array starting with NaN');
+
+    var a = {x: -Infinity};
+    var b = {x: -Infinity};
+    var iterator = function(o){ return o.x; };
+    equal(_.max([a, b], iterator), a, 'Respects iterator return value of -Infinity');
   });
 
   test('min', function() {
@@ -317,10 +322,15 @@
     var then = new Date(0);
     equal(_.min([now, then]), then);
 
-    equal(1, _.min(_.range(1,300000)), 'Minimum value of a too-big array');
+    equal(1, _.min(_.range(1, 300000)), 'Minimum value of a too-big array');
 
     equal(1, _.min([1, 2, 3, 'test']), 'Finds correct min in array starting with num and containing a NaN');
     equal(1, _.min(['test', 1, 2, 3]), 'Finds correct min in array starting with NaN');
+
+    var a = {x: Infinity};
+    var b = {x: Infinity};
+    var iterator = function(o){ return o.x; };
+    equal(_.min([a, b], iterator), a, 'Respects iterator return value of Infinity');
   });
 
   test('sortBy', function() {
@@ -391,12 +401,12 @@
     equal(grouped['3'].length, 1);
 
     var matrix = [
-      [1,2],
-      [1,3],
-      [2,3]
+      [1, 2],
+      [1, 3],
+      [2, 3]
     ];
-    deepEqual(_.groupBy(matrix, 0), {1: [[1,2], [1,3]], 2: [[2,3]]})
-    deepEqual(_.groupBy(matrix, 1), {2: [[1,2]], 3: [[1,3], [2,3]]})
+    deepEqual(_.groupBy(matrix, 0), {1: [[1, 2], [1, 3]], 2: [[2, 3]]})
+    deepEqual(_.groupBy(matrix, 1), {2: [[1, 2]], 3: [[1, 3], [2, 3]]})
   });
 
   test('indexBy', function() {
@@ -488,7 +498,7 @@
   test('toArray', function() {
     ok(!_.isArray(arguments), 'arguments object is not an array');
     ok(_.isArray(_.toArray(arguments)), 'arguments object converted into array');
-    var a = [1,2,3];
+    var a = [1, 2, 3];
     ok(_.toArray(a) !== a, 'array is cloned');
     deepEqual(_.toArray(a), [1, 2, 3], 'cloned array contains same elements');
 
@@ -522,12 +532,15 @@
 
   test('partition', function() {
     var list = [0, 1, 2, 3, 4, 5];
-    deepEqual(_.partition(list, function(x) { return x < 4; }), [[0,1,2,3],[4,5]], 'handles bool return values');
-    deepEqual(_.partition(list, function(x) { return x & 1; }), [[1,3,5],[0,2,4]], 'handles 0 and 1 return values');
-    deepEqual(_.partition(list, function(x) { return x - 3; }), [[0,1,2,4,5],[3]], 'handles other numeric return values');
-    deepEqual(_.partition(list, function(x) { return x > 1 ? null : true; }), [[0,1],[2,3,4,5]], 'handles null return values');
-    deepEqual(_.partition(list, function(x) { if(x < 2) return true; }), [[0,1],[2,3,4,5]], 'handles undefined return values');
+    deepEqual(_.partition(list, function(x) { return x < 4; }), [[0, 1, 2, 3], [4, 5]], 'handles bool return values');
+    deepEqual(_.partition(list, function(x) { return x & 1; }), [[1, 3, 5], [0, 2, 4]], 'handles 0 and 1 return values');
+    deepEqual(_.partition(list, function(x) { return x - 3; }), [[0, 1, 2, 4, 5], [3]], 'handles other numeric return values');
+    deepEqual(_.partition(list, function(x) { return x > 1 ? null : true; }), [[0, 1], [2, 3, 4, 5]], 'handles null return values');
+    deepEqual(_.partition(list, function(x) { if(x < 2) return true; }), [[0, 1], [2, 3, 4, 5]], 'handles undefined return values');
     deepEqual(_.partition({a: 1, b: 2, c: 3}, function(x) { return x > 1; }), [[2, 3], [1]], 'handles objects');
+
+    deepEqual(_.partition(list, function(x, index) { return index % 2; }), [[1, 3, 5], [0, 2, 4]], 'can reference the array index');
+    deepEqual(_.partition(list, function(x, index, arr) { return x === arr.length - 1; }), [[5], [0, 1, 2, 3, 4]], 'can reference the collection');
 
     // Default iterator
     deepEqual(_.partition([1, false, true, '']), [[1, true], [false, '']], 'Default iterator');

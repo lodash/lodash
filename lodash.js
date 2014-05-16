@@ -561,7 +561,7 @@
         TypeError = context.TypeError;
 
     /** Used for native method references */
-    var arrayRef = Array.prototype,
+    var arrayProto = Array.prototype,
         errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
@@ -595,12 +595,12 @@
         fnToString = Function.prototype.toString,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        push = arrayRef.push,
+        push = arrayProto.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
-        splice = arrayRef.splice,
-        unshift = arrayRef.unshift;
+        splice = arrayProto.splice,
+        unshift = arrayProto.unshift;
 
     /** Used to set metadata on functions */
     var defineProperty = (function() {
@@ -7630,7 +7630,7 @@
         source +
         'return __p\n}';
 
-      // Use a sourceURL for easier debugging
+      // use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
       var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']'),
           result = compileFunction(source, importsKeys, importsValues, sourceURL);
@@ -8612,7 +8612,7 @@
 
     // add `Array` functions that return unwrapped values
     arrayEach(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
             result = func.apply(this.__wrapped__, arguments);
@@ -8625,7 +8625,7 @@
 
     // add `Array` functions that return the existing wrapped value
     arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
         return this;
@@ -8634,7 +8634,7 @@
 
     // add `Array` functions that return new wrapped values
     arrayEach(['concat', 'splice'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
       };
@@ -8644,7 +8644,7 @@
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS
     if (!support.spliceObjects) {
       arrayEach(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayRef[methodName],
+        var func = arrayProto[methodName],
             isSplice = methodName == 'splice';
 
         lodash.prototype[methodName] = function() {

@@ -2025,7 +2025,7 @@
 
     test('should support a `maxWait` option', 2, function() {
       if (!(isRhino && isModularize)) {
-        var limit = (argv || isPhantom) ? 1000 : 256,
+        var limit = (argv || isPhantom) ? 1000 : 320,
             withCount = 0,
             withoutCount = 0;
 

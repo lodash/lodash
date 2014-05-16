@@ -481,10 +481,11 @@
             length = items.length;
 
         if (expected == null) {
-          expected = 1;
           if (config.requireExpects) {
+            expected = length;
             items.push('Expected number of assertions to be defined, but expect() was not called.');
           } else if (!length) {
+            expected = 1;
             items.push('Expected at least one assertion, but none were run - call expect(0) to accept zero assertions.');
           }
         } else if (expected != length) {

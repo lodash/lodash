@@ -79,7 +79,7 @@ var advisor = getOption('advisor', true),
     tags = getOption('tags', []),
     throttled = getOption('throttled', 10),
     tunneled = getOption('tunneled', true),
-    tunnelId = getOption('tunnelId', 'tunnel_' + (env.TRAVIS_JOB_NUMBER || 0)),
+    tunnelId = getOption('tunnelId', 'tunnel_' + (env.TRAVIS_JOB_ID || 0)),
     tunnelTimeout = getOption('tunnelTimeout', 120),
     videoUploadOnPass = getOption('videoUploadOnPass', false);
 
@@ -697,7 +697,8 @@ function Tunnel(properties) {
     }
     // restart tunnel if all active jobs have restarted
     var threshold = Math.min(all.length, _.isFinite(throttled) ? throttled : 3);
-    if (active.length >= threshold && _.isEmpty(_.difference(active, restarted))) {
+    if (tunnel.attempts < tunnel.retries &&
+        active.length >= threshold && _.isEmpty(_.difference(active, restarted))) {
       tunnel.restart();
     }
   });

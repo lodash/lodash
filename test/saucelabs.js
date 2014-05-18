@@ -135,8 +135,9 @@ if (_.contains(tags, 'amd')) {
     var browser = browserName(platform[1]),
         version = +platform[2];
 
-    if (browser == 'Opera') {
-      return version >= 10;
+    switch (browser) {
+      case 'Android': return version >= 4.4;
+      case 'Opera': return version >= 10;
     }
     return true;
   });

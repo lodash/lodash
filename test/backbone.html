@@ -73,15 +73,6 @@
 					mixinPrereqs(_);
 					return;
 				}
-				// avoid reporting tests to Sauce Labs when script load errors occur
-				if (ui.isSauceLabs) {
-					window.onerror = function() {
-						var loadEventEnd = ui.timing.loadEventEnd;
-						if (loadEventEnd && (new Date - loadEventEnd > 3000)) {
-							QUnit.config.done.length = 0;
-						}
-					};
-				}
 				var reBasename = /[\w.-]+$/,
 				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
 				    modulePath = ui.buildPath.replace(/\.js$/, ''),

@@ -237,8 +237,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The base implementation of `_.at` without support for strings or individual
-   * key arguments.
+   * The base implementation of `_.at` without support for strings and
+   * individual key arguments.
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.
@@ -1083,6 +1083,31 @@
     }
 
     /**
+     * The base implementation of `_.assign` without support for argument juggling,
+     * multiple sources, and `this` binding.
+     *
+     * @private
+     * @param {Object} object The destination object.
+     * @param {Object} source The source object.
+     * @param {Function} [callback] The function to customize assigning values.
+     * @returns {Object} Returns the destination object.
+     */
+    function baseAssign(object, source, callback) {
+      if (!object) {
+        return object;
+      }
+      var index = -1,
+          props = keys(source),
+          length = props.length;
+
+      while (++index < length) {
+        var key = props[index];
+        object[key] = callback ? callback(object[key], source[key], key, object, source) : source[key];
+      }
+      return object;
+    }
+
+    /**
      * The base implementation of `_.bind` that creates the bound function and
      * sets its metadata.
      *
@@ -1126,8 +1151,8 @@
     }
 
     /**
-     * The base implementation of `_.clone` without argument juggling or support
-     * for `this` binding.
+     * The base implementation of `_.clone` without support for argument juggling
+     * and `this` binding.
      *
      * @private
      * @param {*} value The value to clone.
@@ -1181,7 +1206,7 @@
         result = isArr ? ctor(value.length) : {};
       }
       else {
-        result = isArr ? slice(value) : assign({}, value);
+        result = isArr ? slice(value) : baseAssign({}, value);
       }
       // add array properties assigned by `RegExp#exec`
       if (isArr) {
@@ -1240,7 +1265,7 @@
 
     /**
      * The base implementation of `_.createCallback` without support for creating
-     * "_.pluck" or "_.where" style callbacks.
+     * "_.pluck" and "_.where" style callbacks.
      *
      * @private
      * @param {*} [func=identity] The value to convert to a callback.
@@ -1320,11 +1345,11 @@
           key = func;
 
       function bound() {
-        var index = -1,
-            length = arguments.length,
+        var length = arguments.length,
+            index = length,
             args = Array(length);
 
-        while (++index < length) {
+        while (index--) {
           args[index] = arguments[index];
         }
         if (partialArgs) {
@@ -1410,7 +1435,7 @@
 
     /**
      * The base implementation of `_.forEach` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1439,7 +1464,7 @@
 
     /**
      * The base implementation of `_.forEachRight` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1466,8 +1491,8 @@
     }
 
     /**
-     * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`
-     * without support for callback shorthands or `this` binding which iterates
+     * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`,
+     * without support for callback shorthands and `this` binding, which iterates
      * over `collection` using the provided `eachFunc`.
      *
      * @private
@@ -1492,7 +1517,7 @@
 
     /**
      * The base implementation of `_.flatten` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to flatten.
@@ -1581,7 +1606,7 @@
 
     /**
      * The base implementation of `_.forIn` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1594,7 +1619,7 @@
 
     /**
      * The base implementation of `_.forOwn` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1607,7 +1632,7 @@
 
     /**
      * The base implementation of `_.forOwnRight` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1644,7 +1669,7 @@
 
     /**
      * The base implementation of `_.isEqual`, without support for `thisArg`
-     * binding, that allows partial "_.where" style comparisons.
+     * binding, which allows partial "_.where" style comparisons.
      *
      * @private
      * @param {*} value The value to compare to `other`.
@@ -1830,8 +1855,32 @@
     }
 
     /**
-     * The base implementation of `_.merge` without argument juggling or support
-     * for `this` binding.
+     * The base implementation of `_.invoke` which requires additional arguments
+     * be provided as an array of arguments rather than individually.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|string} methodName The name of the method to invoke or
+     *  the function invoked per iteration.
+     * @param {Array} [args] The arguments to invoke the method with.
+     * @returns {Array} Returns the array of results.
+     */
+    function baseInvoke(collection, methodName, args) {
+      var index = -1,
+          isFunc = typeof methodName == 'function',
+          length = collection && collection.length,
+          result = Array(length < 0 ? 0 : length >>> 0);
+
+      baseEach(collection, function(value) {
+        var func = isFunc ? methodName : (value != null && value[methodName]);
+        result[++index] = func ? func.apply(value, args) : undefined;
+      });
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.merge` without support for argument juggling,
+     * multiple sources, and `this` binding.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1839,8 +1888,12 @@
      * @param {Function} [callback] The function to customize merging properties.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates values with source counterparts.
+     * @returns {Object} Returns the destination object.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
+      if (!object) {
+        return object;
+      }
       (isArray(source) ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
         var isArr = srcValue && isArray(srcValue),
             isObj = srcValue && isPlainObject(srcValue),
@@ -1858,6 +1911,9 @@
           return;
         }
         // avoid merging previously merged cyclic sources
+        stackA || (stackA = []);
+        stackB || (stackB = []);
+
         var length = stackA.length;
         while (length--) {
           if (stackA[length] == srcValue) {
@@ -1885,11 +1941,71 @@
         }
         object[key] = value;
       });
+
+      return object;
     }
 
     /**
-     * The base implementation of `_.random` without argument juggling or support
-     * for returning floating-point numbers.
+     * The base implementation of `_.pick` without support for `this` binding
+     * and individual property name arguments.
+     *
+     * @private
+     * @param {Object} object The source object.
+     * @param {Function|string[]} predicate The function called per iteration or
+     *  property names to pick.
+     * @returns {Object} Returns the new object.
+     */
+    function basePick(object, predicate) {
+      var result = {};
+
+      if (typeof predicate == 'function') {
+        baseForIn(object, function(value, key, object) {
+          if (predicate(value, key, object)) {
+            result[key] = value;
+          }
+        });
+        return result;
+      }
+      var index = -1,
+          props = predicate,
+          length = props.length;
+
+      while (++index < length) {
+        var key = props[index];
+        if (key in object) {
+          result[key] = object[key];
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.pullAt` without support for individual
+     * index arguments.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {number[]} indexes The indexes of elements to remove.
+     * @returns {Array} Returns the new array of removed elements.
+     */
+    function basePullAt(array, indexes) {
+      var length = indexes.length,
+          result = baseAt(array, indexes);
+
+      indexes.sort(baseCompareAscending);
+      while (length--) {
+        var index = parseFloat(indexes[length]);
+        if (index != previous && index > -1 && index % 1 == 0) {
+          var previous = index;
+          splice.call(array, index, 1);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.random` without support for argument juggling
+     * and returning floating-point numbers.
      *
      * @private
      * @param {number} min The minimum possible value.
@@ -1902,7 +2018,7 @@
 
     /**
      * The base implementation of `_.uniq` without support for callback shorthands
-     * or `this` binding.
+     * and `this` binding.
      *
      * @private
      * @param {Array} array The array to process.
@@ -2102,6 +2218,41 @@
           });
         }
         return result;
+      };
+    }
+
+    /**
+     * Creates a function that assigns properties of source object(s) to a given
+     * destination object.
+     *
+     * @private
+     * @param {Function} assigner The function to customize assigning values.
+     * @returns {Function} Returns the new assigner function.
+     */
+    function createAssigner(assigner) {
+      return function(object) {
+        var args = arguments,
+            length = args.length;
+
+        if (!object || length < 2) {
+          return object;
+        }
+        // enables use as a callback for functions like `_.reduce`
+        var type = typeof args[2];
+        if ((type == 'number' || type == 'string') && args[3] && args[3][args[2]] === args[1]) {
+          length = 2;
+        }
+        // juggle arguments
+        if (length > 3 && typeof args[length - 2] == 'function') {
+          var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
+        } else if (length > 2 && typeof args[length - 1] == 'function') {
+          callback = args[--length];
+        }
+        var index = 0;
+        while (++index < length) {
+          assigner(object, args[index], callback);
+        }
+        return object;
       };
     }
 
@@ -3033,7 +3184,7 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to modify.
-     * @param {...(number|number[])} [index] The indexes of values to remove,
+     * @param {...(number|number[])} [indexes] The indexes of elements to remove,
      *  specified as individual indexes or arrays of indexes.
      * @returns {Array} Returns the new array of removed elements.
      * @example
@@ -3048,19 +3199,7 @@
      * // => [10, 20]
      */
     function pullAt(array) {
-      var indexes = baseFlatten(arguments, true, false, 1),
-          length = indexes.length,
-          result = baseAt(array, indexes);
-
-      indexes.sort(baseCompareAscending);
-      while (length--) {
-        var index = parseFloat(indexes[length]);
-        if (index != previous && index > -1 && index % 1 == 0) {
-          var previous = index;
-          splice.call(array, index, 1);
-        }
-      }
-      return result;
+      return basePullAt(array, baseFlatten(arguments, true, false, 1));
     }
 
     /**
@@ -3167,7 +3306,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      start = typeof start == 'undefined' ? 0 : (+start || 0);
+      start = start == null ? 0 : (+start || 0);
       if (start < 0) {
         start = nativeMax(length + start, 0);
       } else if (start > length) {
@@ -4221,7 +4360,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|string} methodName The name of the method to invoke or
      *  the function invoked per iteration.
-     * @param {...*} [args] Arguments to invoke the method with.
+     * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Array} Returns the array of results.
      * @example
      *
@@ -4232,17 +4371,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      var args = slice(arguments, 2),
-          index = -1,
-          isFunc = typeof methodName == 'function',
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
-
-      baseEach(collection, function(value) {
-        var func = isFunc ? methodName : (value != null && value[methodName]);
-        result[++index] = func ? func.apply(value, args) : undefined;
-      });
-      return result;
+      return baseInvoke(collection, methodName, slice(arguments, 2));
     }
 
     /**
@@ -4990,7 +5119,7 @@
      * @category Functions
      * @param {Function} func The function to bind.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -5027,8 +5156,8 @@
      * @memberOf _
      * @category Functions
      * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {...string} [methodNames] The object method names to bind, specified
-     *  as individual method names or arrays of method names.
+     * @param {...(string|string[])} [methodNames] The object method names to bind,
+     *  specified as individual method names or arrays of method names.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -5042,12 +5171,26 @@
      * // => logs 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = arguments.length > 1 ? baseFlatten(arguments, true, false, 1) : functions(object),
-          index = -1,
-          length = funcs.length;
+      return baseBindAll(object, arguments.length > 1
+        ? baseFlatten(arguments, true, false, 1)
+        : functions(object));
+    }
+
+    /**
+     * The base implementation of `_.bindAll` without support for individual
+     * method name arguments.
+     *
+     * @private
+     * @param {Object} object The object to bind and assign the bound methods to.
+     * @param {string[]} methodNames The object method names to bind.
+     * @returns {Object} Returns `object`.
+     */
+    function baseBindAll(object, methodNames) {
+      var index = -1,
+          length = methodNames.length;
 
       while (++index < length) {
-        var key = funcs[index];
+        var key = methodNames[index];
         object[key] = createWrapper(object[key], BIND_FLAG, null, object);
       }
       return object;
@@ -5066,7 +5209,7 @@
      * @category Functions
      * @param {Object} object The object the method belongs to.
      * @param {string} key The key of the method.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -5330,7 +5473,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to defer.
-     * @param {...*} [args] Arguments to invoke the function with.
+     * @param {...*} [args] The arguments to invoke the function with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -5354,7 +5497,7 @@
      * @category Functions
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay execution.
-     * @param {...*} [args] Arguments to invoke the function with.
+     * @param {...*} [args] The arguments to invoke the function with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -5499,7 +5642,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -5529,7 +5672,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -5659,38 +5802,7 @@
      * defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function assign(object, source, guard) {
-      var args = arguments;
-      if (!object || args.length < 2) {
-        return object;
-      }
-      var argsIndex = 0,
-          argsLength = args.length,
-          type = typeof guard;
-
-      // enables use as a callback for functions like `_.reduce`
-      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
-        argsLength = 2;
-      }
-      // juggle arguments
-      if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
-        var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
-      } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
-        callback = args[--argsLength];
-      }
-      while (++argsIndex < argsLength) {
-        source = args[argsIndex];
-        var index = -1,
-            props = keys(source),
-            length = props.length;
-
-        while (++index < length) {
-          var key = props[index];
-          object[key] = callback ? callback(object[key], source[key], key, object, source) : source[key];
-        }
-      }
-      return object;
-    }
+    var assign = createAssigner(baseAssign);
 
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects will also
@@ -5836,7 +5948,7 @@
      */
     function create(prototype, properties) {
       var result = baseCreate(prototype);
-      return properties ? assign(result, properties) : result;
+      return properties ? baseAssign(result, properties) : result;
     }
 
     /**
@@ -6872,34 +6984,7 @@
      * });
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
      */
-    function merge(object, source, guard) {
-      var args = arguments,
-          length = args.length,
-          type = typeof guard;
-
-      if (!object || length < 2) {
-        return object;
-      }
-      // enables use as a callback for functions like `_.reduce`
-      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
-        length = 2;
-      }
-      // juggle arguments
-      if (length > 3 && typeof args[length - 2] == 'function') {
-        var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
-      } else if (length > 2 && typeof args[length - 1] == 'function') {
-        callback = args[--length];
-      }
-      var sources = slice(args, 1, length),
-          index = -1,
-          stackA = [],
-          stackB = [];
-
-      while (++index < length) {
-        baseMerge(object, sources[index], callback, stackA, stackB);
-      }
-      return object;
-    }
+    var merge = createAssigner(baseMerge);
 
     /**
      * Creates a shallow clone of `object` excluding the specified properties.
@@ -6929,9 +7014,11 @@
      * // => { 'name': 'fred' }
      */
     function omit(object, predicate, thisArg) {
+      if (!isObject(object)) {
+        return {};
+      }
       if (typeof predicate == 'function') {
-        predicate = lodash.createCallback(predicate, thisArg, 3);
-        return pick(object, negate(predicate));
+        return basePick(object, negate(lodash.createCallback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, true, false, 1),
           length = omitProps.length;
@@ -6939,7 +7026,7 @@
       while (length--) {
         omitProps[length] = String(omitProps[length]);
       }
-      return pick(object, baseDifference(keysIn(object), omitProps));
+      return basePick(object, baseDifference(keysIn(object), omitProps));
     }
 
     /**
@@ -6997,28 +7084,12 @@
      * // => { 'name': 'fred' }
      */
     function pick(object, predicate, thisArg) {
-      var result = {};
-
-      if (typeof predicate != 'function') {
-        var index = -1,
-            props = baseFlatten(arguments, true, false, 1),
-            length = isObject(object) ? props.length : 0;
-
-        while (++index < length) {
-          var key = props[index];
-          if (key in object) {
-            result[key] = object[key];
-          }
-        }
-      } else {
-        predicate = lodash.createCallback(predicate, thisArg, 3);
-        baseForIn(object, function(value, key, object) {
-          if (predicate(value, key, object)) {
-            result[key] = value;
-          }
-        });
+      if (!isObject(object)) {
+        return {};
       }
-      return result;
+      return basePick(object, typeof predicate == 'function'
+        ? lodash.createCallback(predicate, thisArg, 3)
+        : baseFlatten(arguments, true, false, 1));
     }
 
     /**
@@ -8475,7 +8546,7 @@
     lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
-    mixin(lodash, assign({}, lodash));
+    mixin(lodash, baseAssign({}, lodash));
 
     /*--------------------------------------------------------------------------*/
 

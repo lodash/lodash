@@ -128,8 +128,15 @@
 				}
 			};
 
+			// avoid reporting tests to Sauce Labs when script errors occur
+			if (ui.isSauceLabs) {
+				window.onerror = function(message) {
+					QUnit.config.done.length = 0;
+					global_test_results = { 'message': message };
+				};
+			}
 			// only excuse in Sauce Labs (buggy Safari and timers)
-			if (!ui.isSauceLabs) {
+			else {
 				delete QUnit.config.excused.Chaining['select/reject/sortBy'];
 				delete QUnit.config.excused.Chaining['select/reject/sortBy in functional style'];
 				delete QUnit.config.excused.Functions['throttle repeatedly with results'];

@@ -33,7 +33,7 @@ var maxJobRetries = 3,
 
 /** Used as the static file server middleware */
 var mount = ecstatic({
-  'cache': false,
+  'cache': 'no-cache',
   'root': process.cwd()
 });
 
@@ -55,6 +55,9 @@ var push = Array.prototype.push;
 /** Used to detect error messages */
 var reError = /\berror\b/i;
 
+/** Used to detect valid job ids */
+var reJobId = /^[a-z0-9]{32}$/;
+
 /** Used to display the wait throbber */
 var throbberDelay = 500,
     waitCount = -1;
@@ -70,7 +73,7 @@ var advisor = getOption('advisor', true),
     maxDuration = getOption('maxDuration', 360),
     port = ports[Math.min(_.sortedIndex(ports, getOption('port', 9001)), ports.length - 1)],
     publicAccess = getOption('public', true),
-    queueTimeout = getOption('queueTimeout', 360),
+    queueTimeout = getOption('queueTimeout', 600),
     recordVideo = getOption('recordVideo', true),
     recordScreenshots = getOption('recordScreenshots', false),
     runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
@@ -399,7 +402,7 @@ function onJobStatus(error, res, body) {
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
       elapsed = (_.now() - this.timestamp) / 1000,
-      errored = !jobResult || reError.test(message),
+      errored = !jobResult || reError.test(message) || reError.test(jobStatus),
       expired = (elapsed >= queueTimeout && !_.contains(jobStatus, 'in progress')),
       failures = _.result(jobResult, 'failed'),
       label = options.name + ':',
@@ -409,9 +412,11 @@ function onJobStatus(error, res, body) {
   if (!this.running || this.stopping) {
     return;
   }
-  this.id = jobId;
-  this.result = jobResult;
-  this.url = jobUrl;
+  if (reJobId.test(jobId)) {
+    this.id = jobId;
+    this.result = jobResult;
+    this.url = jobUrl;
+  }
   this.emit('status', jobStatus);
 
   if (!completed && !expired) {
@@ -524,8 +529,8 @@ Job.prototype.remove = function(callback) {
   this.removing = true;
   return this.stop(function() {
     var onRemove = _.bind(onJobRemove, this);
-    if (this.id == null) {
-      onRemove();
+    if (!reJobId.test(this.id)) {
+      _.defer(onRemove);
       return;
     }
     request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}', this), {
@@ -637,7 +642,7 @@ Job.prototype.stop = function(callback) {
     this.checking = false;
   }
   var onStop = _.bind(onGenericStop, this);
-  if (!this.running) {
+  if (!this.running || !reJobId.test(this.id)) {
     _.defer(onStop);
     return this;
   }

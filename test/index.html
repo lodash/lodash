@@ -152,6 +152,15 @@
 				delete String.prototype._contains;
 			}
 
+			QUnit.config.hidepassed = true;
+
+			// avoid reporting tests to Sauce Labs when script errors occur
+			if (ui.isSauceLabs) {
+				window.onerror = function(message) {
+					QUnit.config.done.length = 0;
+					global_test_results = { 'message': message };
+				};
+			}
 			// load Lo-Dash and expose it to the bad extensions/shims
 			if (!ui.isModularize) {
 				addBizarroMethods();
@@ -159,8 +168,6 @@
 			}
 		</script>
 		<script>
-			QUnit.config.hidepassed = true;
-
 			// store Lo-Dash to test for bad extensions/shims
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;

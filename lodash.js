@@ -539,6 +539,21 @@
    * @category Utilities
    * @param {Object} [context=root] The context object.
    * @returns {Function} Returns a new `lodash` function.
+   * @example
+   *
+   * var lodash = _.runInContext();
+   *
+   * lodash.mixin({
+   *   'exists': function(value) {
+   *     return value != null;
+   *   }
+   * }, false);
+   *
+   * _.isFunction(lodash.exists);
+   * // => true
+   *
+   * _.isFunction(_.exists);
+   * // => false
    */
   function runInContext(context) {
     // Avoid issues with some ES3 environments that attempt to use values, named

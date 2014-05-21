@@ -1201,13 +1201,6 @@
       ok(actual !== expected && actual[0] === expected[0]);
     });
 
-    test('`_.clone` should perform a shallow clone when used as a callback for `_.map`', 1, function() {
-      var expected = [{ 'a': [0] }, { 'b': [1] }],
-          actual = _.map(expected, _.clone);
-
-      ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
-    });
-
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
       var object = {
         'foo': { 'b': { 'foo': { 'c': { } } } },
@@ -1221,12 +1214,9 @@
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
     });
 
-    _.each([
-      'clone',
-      'cloneDeep'
-    ],
-    function(methodName) {
+    _.each(['clone', 'cloneDeep'], function(methodName) {
       var func = _[methodName],
+          isDeep = methodName == 'cloneDeep',
           klass = new Klass;
 
       _.forOwn(objects, function(object, key) {
@@ -1253,14 +1243,27 @@
         notStrictEqual(func(shadowedObject), shadowedObject);
       });
 
+      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 2, function() {
+        var expected = [{ 'a': [0] }, { 'b': [1] }],
+            actual = _.map(expected, func);
+
+        deepEqual(actual, expected);
+
+        if (isDeep) {
+          ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
+        } else {
+          ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
+        }
+      });
+
       test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
-        var args;
+        var argsList = [];
 
         func(klass, function() {
-          args || (args = slice.call(arguments));
+          argsList.push(slice.call(arguments));
         });
 
-        deepEqual(args, [klass]);
+        deepEqual(argsList, isDeep ? [[klass], [1, 'a']] : [[klass]]);
       });
 
       test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
@@ -2757,7 +2760,7 @@
       var args;
 
       _.first(array, function() {
-        args || (args = slice.call(arguments));
+        args = slice.call(arguments);
       });
 
       deepEqual(args, [1, 0, array]);
@@ -2854,7 +2857,7 @@
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [{ 'a': [1, [2]] }, 0, array]);
+      deepEqual(args, [array[0], 0, array]);
     });
 
     test('should support the `thisArg` argument', 1, function() {
@@ -3851,7 +3854,7 @@
       var args;
 
       _.initial(array, function() {
-        args || (args = slice.call(arguments));
+        args = slice.call(arguments);
       });
 
       deepEqual(args, [3, 2, array]);
@@ -4680,13 +4683,33 @@
     });
 
     test('should pass the correct `callback` arguments', 1, function() {
-      var args;
+      var argsList = [];
 
-      _.isEqual('a', 'b', function() {
-        args || (args = slice.call(arguments));
+      var object1 = {
+        'a': [5, 6],
+        'b': [7, 8]
+      };
+
+      var object2 = {
+        'a': [5, 6],
+        'b': [7, 8]
+      };
+
+      var expected = [
+        [object1, object2],
+        [object1.a, object2.a, 'a'],
+        [object1.a[0], object2.a[0], 0],
+        [object1.a[1], object2.a[1], 1],
+        [object1.b, object2.b, 'b'],
+        [object1.b[0], object2.b[0], 0],
+        [object1.b[1], object2.b[1], 1],
+      ];
+
+      _.isEqual(object1, object2, function() {
+        argsList.push(slice.call(arguments));
       });
 
-      deepEqual(args, ['a', 'b']);
+      deepEqual(argsList, expected);
     });
 
     test('should correctly set the `this` binding', 1, function() {
@@ -5644,7 +5667,7 @@
       var args;
 
       _.last(array, function() {
-        args || (args = slice.call(arguments));
+        args = slice.call(arguments);
       });
 
       deepEqual(args, [3, 2, array]);
@@ -7925,7 +7948,7 @@
       var args;
 
       _.rest(array, function() {
-        args || (args = slice.call(arguments));
+        args = slice.call(arguments);
       });
 
       deepEqual(args, [1, 0, array]);

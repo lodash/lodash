@@ -4707,7 +4707,7 @@
         [object1.a[1], object2.a[1], 1],
         [object1.b, object2.b, 'b'],
         [object1.b[0], object2.b[0], 0],
-        [object1.b[1], object2.b[1], 1],
+        [object1.b[1], object2.b[1], 1]
       ];
 
       _.isEqual(object1, object2, function() {

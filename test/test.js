@@ -88,8 +88,13 @@
   /** Detect if running in Rhino */
   var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
 
-  /** Detect support for testing Web Workers */
+  /** Used to test Web Workers */
   var Worker = !(ui.isForeign || isModularize) && document && root.Worker;
+
+  /** Used to test host objects in IE */
+  try {
+    var xml = new ActiveXObject('Microsoft.XMLDOM');
+  } catch(e) { }
 
   /** Use a single "load" function */
   var load = (typeof require == 'function' && !amd)
@@ -4987,6 +4992,19 @@
       deepEqual(actual, expected);
     });
 
+    test('should work with host objects in non-edge document modes (test in IE 11)', 1, function() {
+      if (xml) {
+        // trigger Chakra bug
+        // https://github.com/jashkenas/underscore/issues/1621
+        _.times(100, _.isFunction);
+
+        strictEqual(_.isFunction(xml), false);
+      }
+      else {
+        skipTest();
+      }
+    });
+
     test('should work with functions from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isFunction(_._function), true);
@@ -5186,18 +5204,18 @@
       }
     });
 
-    test('should avoid V8 bug #2291', 1, function() {
+    test('should avoid V8 bug #2291 (test in Chrome 19-20)', 1, function() {
       // trigger V8 bug
       // http://code.google.com/p/v8/issues/detail?id=2291
-      var obj = {},
-          str = 'foo';
+      var object = {};
 
       // 1: Useless comparison statement, this is half the trigger
-      obj == obj;
-      // 2: Initial check with object, this is the other half of the trigger
-      _.isObject(obj);
+      object == object;
 
-      strictEqual(_.isObject(str), false);
+      // 2: Initial check with object, this is the other half of the trigger
+      _.isObject(object);
+
+      strictEqual(_.isObject('x'), false);
     });
   }(1, 2, 3));
 
@@ -5430,10 +5448,6 @@
     });
 
     test('should not error on host objects (test in IE)', 12, function() {
-      try {
-        var xml = new ActiveXObject('Microsoft.XMLDOM');
-      } catch(e) { }
-
       if (xml) {
         var funcs = [
           'isArray', 'isArguments', 'isBoolean', 'isDate', 'isElement', 'isFunction',
@@ -10219,7 +10233,7 @@
   QUnit.module('lodash(...).splice');
 
   (function() {
-    test('should remove the value at index `0` when length is `0` (test in IE < 9, and in compatibility mode for IE9)', 2, function() {
+    test('should remove the value at index `0` when length is `0` (test in IE < 9, and in compatibility mode for IE 9)', 2, function() {
       if (!isNpm) {
         var wrapped = _({ '0': 1, 'length': 1 });
         wrapped.splice(0, 1);

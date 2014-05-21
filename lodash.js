@@ -4034,8 +4034,10 @@
      */
     function every(collection, predicate, thisArg) {
       var result = true;
-      predicate = lodash.createCallback(predicate, thisArg, 3);
 
+      if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+        predicate = lodash.createCallback(predicate, thisArg, 3);
+      }
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4249,7 +4251,7 @@
      * // => logs each number and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, callback, thisArg) {
-      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+      return (typeof callback == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEach(collection, callback)
         : baseEach(collection, baseCreateCallback(callback, thisArg, 3));
     }
@@ -4272,7 +4274,7 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+      return (typeof callback == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEachRight(collection, callback)
         : baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
     }
@@ -4930,8 +4932,10 @@
      */
     function some(collection, predicate, thisArg) {
       var result;
-      predicate = lodash.createCallback(predicate, thisArg, 3);
 
+      if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+        predicate = lodash.createCallback(predicate, thisArg, 3);
+      }
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -6115,7 +6119,9 @@
      * // => logs 'x', 'y', and 'z' (property order is not guaranteed across environments)
      */
     function forIn(object, callback, thisArg) {
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      if (typeof callback != 'function' || typeof thisArg != 'undefined') {
+        callback = baseCreateCallback(callback, thisArg, 3);
+      }
       return baseFor(object, callback, keysIn);
     }
 
@@ -6170,7 +6176,9 @@
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
     function forOwn(object, callback, thisArg) {
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      if (typeof callback != 'function' || typeof thisArg != 'undefined') {
+        callback = baseCreateCallback(callback, thisArg, 3);
+      }
       return baseForOwn(object, callback);
     }
 
@@ -7972,10 +7980,14 @@
      * // => [{ 'name': 'fred', 'age': 40 }]
      */
     function createCallback(func, thisArg, argCount) {
-      var type = typeof func;
-      if (type == 'function' || func == null) {
-        return (typeof thisArg == 'undefined' || !(func && 'prototype' in func)) &&
-          func || baseCreateCallback(func, thisArg, argCount);
+      var type = typeof func,
+          isFunc = type == 'function';
+
+      if (isFunc && (typeof thisArg == 'undefined' || !('prototype' in func))) {
+        return func;
+      }
+      if (isFunc || func == null) {
+        return baseCreateCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands
       return type == 'object' ? matches(func) : property(func);

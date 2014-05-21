@@ -6595,7 +6595,9 @@
      * // => false
      */
     function isFunction(value) {
-      return typeof value == 'function';
+      // avoid a Chakra bug in IE 11
+      // https://github.com/jashkenas/underscore/issues/1621
+      return typeof value == 'function' || false;
     }
     // fallback for older versions of Chrome and Safari
     if (isFunction(/x/)) {
@@ -6607,6 +6609,8 @@
     /**
      * Checks if `value` is the language type of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+     *
+     * Note: See the [ES5 spec](http://es5.github.io/#x8) for more details.
      *
      * @static
      * @memberOf _
@@ -6625,9 +6629,7 @@
      * // => false
      */
     function isObject(value) {
-      // check if the value is the ECMAScript language type of `Object`
-      // http://es5.github.io/#x8
-      // and avoid a V8 bug
+      // avoid a V8 bug in Chrome 19-20
       // https://code.google.com/p/v8/issues/detail?id=2291
       var type = typeof value;
       return type == 'function' || (value && type == 'object') || false;

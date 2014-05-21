@@ -925,7 +925,8 @@
 
       if (result) {
         while (size--) {
-          if (!(result = baseIsEqual(value[size], other[size], stackA, stackB))) {
+          result = baseIsEqual(value[size], other[size], stackA, stackB);
+          if (!result) {
             break;
           }
         }
@@ -935,14 +936,16 @@
       baseForIn(other, function(othValue, key, other) {
         if (hasOwnProperty.call(other, key)) {
           size++;
-          return !(result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, stackA, stackB)) && breakIndicator;
+          result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, stackA, stackB);
+          return result || breakIndicator;
         }
       });
 
       if (result) {
         baseForIn(value, function(valValue, key, value) {
           if (hasOwnProperty.call(value, key)) {
-            return !(result = --size > -1) && breakIndicator;
+            result = --size > -1;
+            return result || breakIndicator;
           }
         });
       }
@@ -2150,8 +2153,10 @@
    */
   function every(collection, predicate, thisArg) {
     var result = true;
-    predicate = createCallback(predicate, thisArg, 3);
 
+    if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+      predicate = createCallback(predicate, thisArg, 3);
+    }
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -2163,7 +2168,8 @@
       }
     } else {
       baseEach(collection, function(value, index, collection) {
-        return !(result = !!predicate(value, index, collection)) && breakIndicator;
+        result = !!predicate(value, index, collection);
+        return result || breakIndicator;
       });
     }
     return result;
@@ -2343,8 +2349,10 @@
    */
   function forEach(collection, callback, thisArg) {
     var length = collection ? collection.length : 0;
-    callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
 
+    if (typeof callback != 'function' || typeof thisArg != 'undefined') {
+      callback = baseCreateCallback(callback, thisArg, 3);
+    }
     return (typeof length == 'number' && length > -1 && length <= maxSafeInteger)
       ? arrayEach(collection, callback)
       : baseEach(collection, callback);
@@ -3008,8 +3016,10 @@
    */
   function some(collection, predicate, thisArg) {
     var result;
-    predicate = createCallback(predicate, thisArg, 3);
 
+    if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+      predicate = createCallback(predicate, thisArg, 3);
+    }
     var index = -1,
         length = collection ? collection.length : 0;
 
@@ -3021,7 +3031,8 @@
       }
     } else {
       baseEach(collection, function(value, index, collection) {
-        return (result = predicate(value, index, collection)) && breakIndicator;
+        result = predicate(value, index, collection);
+        return result && breakIndicator;
       });
     }
     return !!result;
@@ -4818,10 +4829,14 @@
    * // => [{ 'name': 'fred', 'age': 40 }]
    */
   function createCallback(func, thisArg, argCount) {
-    var type = typeof func;
-    if (type == 'function' || func == null) {
-      return (typeof thisArg == 'undefined' || !(func && 'prototype' in func)) &&
-        func || baseCreateCallback(func, thisArg, argCount);
+    var type = typeof func,
+        isFunc = type == 'function';
+
+    if (isFunc && (typeof thisArg == 'undefined' || !('prototype' in func))) {
+      return func;
+    }
+    if (isFunc || func == null) {
+      return baseCreateCallback(func, thisArg, argCount);
     }
     // handle "_.pluck" and "_.where" style callback shorthands
     return type == 'object' ? matches(func) : property(func);
@@ -4879,15 +4894,13 @@
       if (length && !object) {
         return false;
       }
-      var result = true;
       while (length--) {
         var key = props[length];
-        if (!(result = hasOwnProperty.call(object, key) &&
-            object[key] === source[key])) {
-          break;
+        if (!(hasOwnProperty.call(object, key) && object[key] === source[key])) {
+          return false
         }
       }
-      return result;
+      return true;
     };
   }
 

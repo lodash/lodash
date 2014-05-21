@@ -85,7 +85,7 @@
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[a-z]+|[0-9]+/g;
+  var reWords = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g;
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -112,7 +112,7 @@
     'toLocaleString', 'toString', 'valueOf'
   ];
 
-  /** Used to make template `sourceURL`s easier to identify */
+  /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
 
   /** `Object#toString` result shortcuts */
@@ -238,24 +238,12 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Used by `_.defaults` to customize its `_.assign` use.
-   *
-   * @private
-   * @param {*} objectValue The destination object property value.
-   * @param {*} sourceValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignDefaults(objectValue, sourceValue) {
-    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
-  }
-
-  /**
-   * The base implementation of `_.at` without support for strings or individual
-   * key arguments.
+   * The base implementation of `_.at` without support for strings and
+   * individual key arguments.
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {number[]|string[]} [keys] The keys of elements to pick.
+   * @param {number[]|string[]} [props] The keys of elements to pick.
    * @returns {Array} Returns the new array of picked elements.
    */
   function baseAt(collection, props) {
@@ -552,6 +540,21 @@
    * @category Utilities
    * @param {Object} [context=root] The context object.
    * @returns {Function} Returns a new `lodash` function.
+   * @example
+   *
+   * var lodash = _.runInContext();
+   *
+   * lodash.mixin({
+   *   'exists': function(value) {
+   *     return value != null;
+   *   }
+   * }, false);
+   *
+   * _.isFunction(lodash.exists);
+   * // => true
+   *
+   * _.isFunction(_.exists);
+   * // => false
    */
   function runInContext(context) {
     // Avoid issues with some ES3 environments that attempt to use values, named
@@ -574,7 +577,7 @@
         TypeError = context.TypeError;
 
     /** Used for native method references */
-    var arrayRef = Array.prototype,
+    var arrayProto = Array.prototype,
         errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
@@ -608,12 +611,12 @@
         fnToString = Function.prototype.toString,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
-        push = arrayRef.push,
+        push = arrayProto.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
-        splice = arrayRef.splice,
-        unshift = arrayRef.unshift;
+        splice = arrayProto.splice,
+        unshift = arrayProto.unshift;
 
     /** Used to set metadata on functions */
     var defineProperty = (function() {
@@ -1065,6 +1068,62 @@
     }
 
     /**
+     * Used by `_.defaults` to customize its `_.assign` use.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignDefaults(objectValue, sourceValue) {
+      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+    }
+
+    /**
+     * Used by `_.template` to customize its `_.assign` use.
+     *
+     * Note: This method is like `assignDefaults` except that it ignores
+     * inherited property values when checking if a property is `undefined`.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @param {string} key The key associated with the object and source values.
+     * @param {Object} object The destination object.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function assignOwnDefaults(objectValue, sourceValue, key, object) {
+      return (!hasOwnProperty.call(object, key) || typeof objectValue == 'undefined')
+        ? sourceValue
+        : objectValue
+    }
+
+    /**
+     * The base implementation of `_.assign` without support for argument juggling,
+     * multiple sources, and `this` binding.
+     *
+     * @private
+     * @param {Object} object The destination object.
+     * @param {Object} source The source object.
+     * @param {Function} [callback] The function to customize assigning values.
+     * @returns {Object} Returns the destination object.
+     */
+    function baseAssign(object, source, callback) {
+      if (!object) {
+        return object;
+      }
+      var index = -1,
+          props = keys(source),
+          length = props.length;
+
+      while (++index < length) {
+        var key = props[index];
+        object[key] = callback ? callback(object[key], source[key], key, object, source) : source[key];
+      }
+      return object;
+    }
+
+    /**
      * The base implementation of `_.bind` that creates the bound function and
      * sets its metadata.
      *
@@ -1084,12 +1143,11 @@
         if (partialArgs) {
           // avoid `arguments` object use disqualifying optimizations by
           // converting it to an array before passing it to `composeArgs`
-          var index = -1,
-              length = arguments.length,
+          var length = arguments.length,
               args = Array(length);
 
-          while (++index < length) {
-            args[index] = arguments[index];
+          while (length--) {
+            args[length] = arguments[length];
           }
           args = composeArgs(partialArgs, partialHolders, args);
         }
@@ -1109,8 +1167,8 @@
     }
 
     /**
-     * The base implementation of `_.clone` without argument juggling or support
-     * for `this` binding.
+     * The base implementation of `_.clone` without support for argument juggling
+     * and `this` binding.
      *
      * @private
      * @param {*} value The value to clone.
@@ -1121,11 +1179,9 @@
      * @returns {*} Returns the cloned value.
      */
     function baseClone(value, isDeep, callback, stackA, stackB) {
-      if (callback) {
-        var result = callback(value);
-        if (typeof result != 'undefined') {
-          return result;
-        }
+      var result = callback ? callback(value) : undefined;
+      if (typeof result != 'undefined') {
+        return result;
       }
       var isObj = isObject(value);
       if (isObj) {
@@ -1166,7 +1222,7 @@
         result = isArr ? ctor(value.length) : {};
       }
       else {
-        result = isArr ? slice(value) : assign({}, value);
+        result = isArr ? slice(value) : baseAssign({}, value);
       }
       // add array properties assigned by `RegExp#exec`
       if (isArr) {
@@ -1188,7 +1244,10 @@
 
       // recursively populate clone (susceptible to call stack limits)
       (isArr ? arrayEach : baseForOwn)(value, function(valValue, key) {
-        result[key] = baseClone(valValue, isDeep, callback, stackA, stackB);
+        var valClone = callback ? callback(valValue, key) : undefined;
+        result[key] = typeof valClone == 'undefined'
+          ? baseClone(valValue, isDeep, null, stackA, stackB)
+          : valClone;
       });
 
       return result;
@@ -1222,7 +1281,7 @@
 
     /**
      * The base implementation of `_.createCallback` without support for creating
-     * "_.pluck" or "_.where" style callbacks.
+     * "_.pluck" and "_.where" style callbacks.
      *
      * @private
      * @param {*} [func=identity] The value to convert to a callback.
@@ -1302,11 +1361,11 @@
           key = func;
 
       function bound() {
-        var index = -1,
-            length = arguments.length,
+        var length = arguments.length,
+            index = length,
             args = Array(length);
 
-        while (++index < length) {
+        while (index--) {
           args[index] = arguments[index];
         }
         if (partialArgs) {
@@ -1392,7 +1451,7 @@
 
     /**
      * The base implementation of `_.forEach` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1421,7 +1480,7 @@
 
     /**
      * The base implementation of `_.forEachRight` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1448,8 +1507,8 @@
     }
 
     /**
-     * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`
-     * without support for callback shorthands or `this` binding which iterates
+     * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`,
+     * without support for callback shorthands and `this` binding, which iterates
      * over `collection` using the provided `eachFunc`.
      *
      * @private
@@ -1474,7 +1533,7 @@
 
     /**
      * The base implementation of `_.flatten` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to flatten.
@@ -1563,7 +1622,7 @@
 
     /**
      * The base implementation of `_.forIn` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1576,7 +1635,7 @@
 
     /**
      * The base implementation of `_.forOwn` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1589,7 +1648,7 @@
 
     /**
      * The base implementation of `_.forOwnRight` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -1626,7 +1685,7 @@
 
     /**
      * The base implementation of `_.isEqual`, without support for `thisArg`
-     * binding, that allows partial "_.where" style comparisons.
+     * binding, which allows partial "_.where" style comparisons.
      *
      * @private
      * @param {*} value The value to compare to `other`.
@@ -1638,11 +1697,9 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, callback, isWhere, stackA, stackB) {
-      if (callback) {
-        var result = callback(value, other);
-        if (typeof result != 'undefined') {
-          return !!result;
-        }
+      var result = callback && !stackA ? callback(value, other) : undefined;
+      if (typeof result != 'undefined') {
+        return !!result;
       }
       // exit early for identical values
       if (value === other) {
@@ -1740,7 +1797,6 @@
           return stackB[length] == other;
         }
       }
-      var size = 0;
       result = true;
 
       // add `value` and `other` to the stack of traversed objects
@@ -1750,40 +1806,57 @@
       // recursively compare objects and arrays (susceptible to call stack limits)
       if (isArr) {
         // compare lengths to determine if a deep comparison is necessary
+        var othLength = other.length;
         length = value.length;
-        size = other.length;
-        result = size == length;
+        result = othLength == length;
 
         if (result || isWhere) {
+          var othIndex = -1;
+
           // deep compare the contents, ignoring non-numeric properties
-          while (size--) {
-            var index = length,
-                othValue = other[size];
+          while (++othIndex < othLength) {
+            var othValue = other[othIndex];
 
             if (isWhere) {
-              while (index--) {
-                if ((result = baseIsEqual(value[index], othValue, callback, isWhere, stackA, stackB))) {
+              var index = -1;
+              while (++index < length) {
+                result = baseIsEqual(value[index], othValue, callback, isWhere, stackA, stackB);
+                if (result) {
                   break;
                 }
               }
-              if (!result) {
-                break;
-              }
-            } else if (!(result = baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB))) {
+            } else {
+              var valValue = value[othIndex];
+              result = callback ? callback(valValue, othValue, othIndex) : undefined;
+              result = typeof result == 'undefined'
+                ? baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB)
+                : !!result;
+            }
+            if (!result) {
               break;
             }
           }
         }
       }
       else {
+        var size = 0;
+
         // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
         // which, in this case, is more costly
         baseForIn(other, function(othValue, key, other) {
           if (hasOwnProperty.call(other, key)) {
-            // count the number of properties.
+            result = false;
+            // count the number of properties
             size++;
-            // deep compare each property value.
-            return (result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB));
+            // deep compare each property value
+            if (hasOwnProperty.call(value, key)) {
+              var valValue = value[key];
+              result = callback ? callback(valValue, othValue, key) : undefined;
+              result = typeof result == 'undefined'
+                ? baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB)
+                : !!result;
+            }
+            return result;
           }
         });
 
@@ -1792,7 +1865,8 @@
           baseForIn(value, function(valValue, key, value) {
             if (hasOwnProperty.call(value, key)) {
               // `size` will be `-1` if `value` has more properties than `other`
-              return (result = --size > -1);
+              result = --size > -1;
+              return result;
             }
           });
         }
@@ -1804,8 +1878,32 @@
     }
 
     /**
-     * The base implementation of `_.merge` without argument juggling or support
-     * for `this` binding.
+     * The base implementation of `_.invoke` which requires additional arguments
+     * be provided as an array of arguments rather than individually.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|string} methodName The name of the method to invoke or
+     *  the function invoked per iteration.
+     * @param {Array} [args] The arguments to invoke the method with.
+     * @returns {Array} Returns the array of results.
+     */
+    function baseInvoke(collection, methodName, args) {
+      var index = -1,
+          isFunc = typeof methodName == 'function',
+          length = collection && collection.length,
+          result = Array(length < 0 ? 0 : length >>> 0);
+
+      baseEach(collection, function(value) {
+        var func = isFunc ? methodName : (value != null && value[methodName]);
+        result[++index] = func ? func.apply(value, args) : undefined;
+      });
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.merge` without support for argument juggling,
+     * multiple sources, and `this` binding.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1813,64 +1911,124 @@
      * @param {Function} [callback] The function to customize merging properties.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates values with source counterparts.
+     * @returns {Object} Returns the destination object.
      */
     function baseMerge(object, source, callback, stackA, stackB) {
-      (isArray(source) ? arrayEach : baseForOwn)(source, function(source, key) {
-        var found,
-            isArr,
-            result = source,
+      if (!object) {
+        return object;
+      }
+      (isArray(source) ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
+        var isArr = srcValue && isArray(srcValue),
+            isObj = srcValue && isPlainObject(srcValue),
             value = object[key];
 
-        if (source && ((isArr = isArray(source)) || isPlainObject(source))) {
-          // avoid merging previously merged cyclic sources
-          var stackLength = stackA.length;
-          while (stackLength--) {
-            if ((found = stackA[stackLength] == source)) {
-              value = stackB[stackLength];
-              break;
-            }
-          }
-          if (!found) {
-            var isShallow;
-            if (callback) {
-              result = callback(value, source);
-              if ((isShallow = typeof result != 'undefined')) {
-                value = result;
-              }
-            }
-            if (!isShallow) {
-              value = isArr
-                ? (isArray(value) ? value : [])
-                : (isPlainObject(value) ? value : {});
-            }
-            // add `source` and associated `value` to the stack of traversed objects
-            stackA.push(source);
-            stackB.push(value);
-
-            // recursively merge objects and arrays (susceptible to call stack limits)
-            if (!isShallow) {
-              baseMerge(value, source, callback, stackA, stackB);
-            }
-          }
-        }
-        else {
-          if (callback) {
-            result = callback(value, source);
-            if (typeof result == 'undefined') {
-              result = source;
-            }
+        if (!(isArr || isObj)) {
+          result = callback ? callback(value, srcValue, key, object, source) : undefined;
+          if (typeof result == 'undefined') {
+            result = srcValue;
           }
           if (typeof result != 'undefined') {
             value = result;
           }
+          object[key] = value;
+          return;
+        }
+        // avoid merging previously merged cyclic sources
+        stackA || (stackA = []);
+        stackB || (stackB = []);
+
+        var length = stackA.length;
+        while (length--) {
+          if (stackA[length] == srcValue) {
+            object[key] = stackB[length];
+            return;
+          }
+        }
+        var result = callback ? callback(value, srcValue, key, object, source) : undefined,
+            isShallow = typeof result != 'undefined';
+
+        if (isShallow) {
+          value = result;
+        } else {
+          value = isArr
+            ? (isArray(value) ? value : [])
+            : (isPlainObject(value) ? value : {});
+        }
+        // add `source` and associated `value` to the stack of traversed objects
+        stackA.push(srcValue);
+        stackB.push(value);
+
+        // recursively merge objects and arrays (susceptible to call stack limits)
+        if (!isShallow) {
+          baseMerge(value, srcValue, callback, stackA, stackB);
         }
         object[key] = value;
       });
+
+      return object;
     }
 
     /**
-     * The base implementation of `_.random` without argument juggling or support
-     * for returning floating-point numbers.
+     * The base implementation of `_.pick` without support for `this` binding
+     * and individual property name arguments.
+     *
+     * @private
+     * @param {Object} object The source object.
+     * @param {Function|string[]} predicate The function called per iteration or
+     *  property names to pick.
+     * @returns {Object} Returns the new object.
+     */
+    function basePick(object, predicate) {
+      var result = {};
+
+      if (typeof predicate == 'function') {
+        baseForIn(object, function(value, key, object) {
+          if (predicate(value, key, object)) {
+            result[key] = value;
+          }
+        });
+        return result;
+      }
+      var index = -1,
+          props = predicate,
+          length = props.length;
+
+      while (++index < length) {
+        var key = props[index];
+        if (key in object) {
+          result[key] = object[key];
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.pullAt` without support for individual
+     * index arguments.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {number[]} indexes The indexes of elements to remove.
+     * @returns {Array} Returns the new array of removed elements.
+     */
+    function basePullAt(array, indexes) {
+      var length = indexes.length,
+          result = baseAt(array, indexes);
+
+      indexes.sort(baseCompareAscending);
+      while (length--) {
+        var index = parseFloat(indexes[length]);
+        if (index != previous && index > -1 && index % 1 == 0) {
+          var previous = index;
+          splice.call(array, index, 1);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.random` without support for argument juggling
+     * and returning floating-point numbers.
      *
      * @private
      * @param {number} min The minimum possible value.
@@ -1883,7 +2041,7 @@
 
     /**
      * The base implementation of `_.uniq` without support for callback shorthands
-     * or `this` binding.
+     * and `this` binding.
      *
      * @private
      * @param {Array} array The array to process.
@@ -1965,6 +2123,32 @@
     }
 
     /**
+     * Compiles a function from `source` using the `varNames` and `varValues`
+     * pairs to import free variables into the compiled function. If `sourceURL`
+     * is provided it will be used as the sourceURL for the compiled function.
+     *
+     * @private
+     * @param {string} source The source to compile.
+     * @param {Array} varNames An array of free variable names.
+     * @param {Array} varValues An array of free variable values.
+     * @param {string} [sourceURL=''] The sourceURL of the source.
+     * @returns {Function} Returns the compiled function.
+     */
+    function compileFunction(source, varNames, varValues, sourceURL) {
+      sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
+      try {
+        // provide the compiled function's source by its `toString` method or
+        // the `source` property as a convenience for inlining compiled templates
+        var result = Function(varNames, 'return ' + source + sourceURL).apply(undefined, varValues);
+        result.source = source;
+      } catch(e) {
+        e.source = source;
+        throw e;
+      }
+      return result;
+    }
+
+    /**
      * Creates an array that is the composition of partially applied arguments,
      * placeholders, and provided arguments into a single array of arguments.
      *
@@ -2030,7 +2214,7 @@
      * Creates a function that aggregates a collection, creating an accumulator
      * object composed from the results of running each element in the collection
      * through a callback. The given setter function sets the keys and values of
-     * the accumulator object. If `initializer` is provided will be used to
+     * the accumulator object. If `initializer` is provided it will be used to
      * initialize the accumulator object.
      *
      * @private
@@ -2057,6 +2241,41 @@
           });
         }
         return result;
+      };
+    }
+
+    /**
+     * Creates a function that assigns properties of source object(s) to a given
+     * destination object.
+     *
+     * @private
+     * @param {Function} assigner The function to customize assigning values.
+     * @returns {Function} Returns the new assigner function.
+     */
+    function createAssigner(assigner) {
+      return function(object) {
+        var args = arguments,
+            length = args.length;
+
+        if (!object || length < 2) {
+          return object;
+        }
+        // enables use as a callback for functions like `_.reduce`
+        var type = typeof args[2];
+        if ((type == 'number' || type == 'string') && args[3] && args[3][args[2]] === args[1]) {
+          length = 2;
+        }
+        // juggle arguments
+        if (length > 3 && typeof args[length - 2] == 'function') {
+          var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
+        } else if (length > 2 && typeof args[length - 1] == 'function') {
+          callback = args[--length];
+        }
+        var index = 0;
+        while (++index < length) {
+          assigner(object, args[index], callback);
+        }
+        return object;
       };
     }
 
@@ -2258,6 +2477,7 @@
     var setData = !defineProperty ? noop : function(func, value) {
       descriptor.value = value;
       defineProperty(func, expando, descriptor);
+      descriptor.value = null;
     };
 
     /**
@@ -2987,7 +3207,7 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to modify.
-     * @param {...(number|number[])} [index] The indexes of values to remove,
+     * @param {...(number|number[])} [indexes] The indexes of elements to remove,
      *  specified as individual indexes or arrays of indexes.
      * @returns {Array} Returns the new array of removed elements.
      * @example
@@ -3002,19 +3222,7 @@
      * // => [10, 20]
      */
     function pullAt(array) {
-      var indexes = baseFlatten(arguments, true, false, 1),
-          length = indexes.length,
-          result = baseAt(array, indexes);
-
-      indexes.sort(baseCompareAscending);
-      while (length--) {
-        var index = parseFloat(indexes[length]);
-        if (index != previous && index > -1 && index % 1 == 0) {
-          var previous = index;
-          splice.call(array, index, 1);
-        }
-      }
-      return result;
+      return basePullAt(array, baseFlatten(arguments, true, false, 1));
     }
 
     /**
@@ -3121,7 +3329,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      start = typeof start == 'undefined' ? 0 : (+start || 0);
+      start = start == null ? 0 : (+start || 0);
       if (start < 0) {
         start = nativeMax(length + start, 0);
       } else if (start > length) {
@@ -3704,8 +3912,8 @@
     }
 
     /**
-     * Checks if a given value is present in a collection using strict equality
-     * for comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
+     * Checks if `value` is present in `collection` using strict equality for
+     * comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
      * offset from the end of the collection.
      *
      * @static
@@ -3834,8 +4042,10 @@
      */
     function every(collection, predicate, thisArg) {
       var result = true;
-      predicate = lodash.createCallback(predicate, thisArg, 3);
 
+      if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+        predicate = lodash.createCallback(predicate, thisArg, 3);
+      }
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -3847,7 +4057,8 @@
         }
       } else {
         baseEach(collection, function(value, index, collection) {
-          return (result = !!predicate(value, index, collection));
+          result = !!predicate(value, index, collection);
+          return result;
         });
       }
       return result;
@@ -4049,7 +4260,7 @@
      * // => logs each number and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, callback, thisArg) {
-      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+      return (typeof callback == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEach(collection, callback)
         : baseEach(collection, baseCreateCallback(callback, thisArg, 3));
     }
@@ -4072,7 +4283,7 @@
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
-      return (callback && typeof thisArg == 'undefined' && isArray(collection))
+      return (typeof callback == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEachRight(collection, callback)
         : baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
     }
@@ -4175,7 +4386,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|string} methodName The name of the method to invoke or
      *  the function invoked per iteration.
-     * @param {...*} [args] Arguments to invoke the method with.
+     * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Array} Returns the array of results.
      * @example
      *
@@ -4186,17 +4397,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      var args = slice(arguments, 2),
-          index = -1,
-          isFunc = typeof methodName == 'function',
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
-
-      baseEach(collection, function(value) {
-        var func = isFunc ? methodName : (value != null && value[methodName]);
-        result[++index] = func ? func.apply(value, args) : undefined;
-      });
-      return result;
+      return baseInvoke(collection, methodName, slice(arguments, 2));
     }
 
     /**
@@ -4740,8 +4941,10 @@
      */
     function some(collection, predicate, thisArg) {
       var result;
-      predicate = lodash.createCallback(predicate, thisArg, 3);
 
+      if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+        predicate = lodash.createCallback(predicate, thisArg, 3);
+      }
       if (isArray(collection)) {
         var index = -1,
             length = collection.length;
@@ -4753,7 +4956,8 @@
         }
       } else {
         baseEach(collection, function(value, index, collection) {
-          return !(result = predicate(value, index, collection));
+          result = predicate(value, index, collection);
+          return !result;
         });
       }
       return !!result;
@@ -4944,7 +5148,7 @@
      * @category Functions
      * @param {Function} func The function to bind.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -4981,8 +5185,8 @@
      * @memberOf _
      * @category Functions
      * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {...string} [methodNames] The object method names to bind, specified
-     *  as individual method names or arrays of method names.
+     * @param {...(string|string[])} [methodNames] The object method names to bind,
+     *  specified as individual method names or arrays of method names.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -4996,12 +5200,26 @@
      * // => logs 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      var funcs = arguments.length > 1 ? baseFlatten(arguments, true, false, 1) : functions(object),
-          index = -1,
-          length = funcs.length;
+      return baseBindAll(object, arguments.length > 1
+        ? baseFlatten(arguments, true, false, 1)
+        : functions(object));
+    }
+
+    /**
+     * The base implementation of `_.bindAll` without support for individual
+     * method name arguments.
+     *
+     * @private
+     * @param {Object} object The object to bind and assign the bound methods to.
+     * @param {string[]} methodNames The object method names to bind.
+     * @returns {Object} Returns `object`.
+     */
+    function baseBindAll(object, methodNames) {
+      var index = -1,
+          length = methodNames.length;
 
       while (++index < length) {
-        var key = funcs[index];
+        var key = methodNames[index];
         object[key] = createWrapper(object[key], BIND_FLAG, null, object);
       }
       return object;
@@ -5020,7 +5238,7 @@
      * @category Functions
      * @param {Object} object The object the method belongs to.
      * @param {string} key The key of the method.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -5284,7 +5502,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to defer.
-     * @param {...*} [args] Arguments to invoke the function with.
+     * @param {...*} [args] The arguments to invoke the function with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -5308,7 +5526,7 @@
      * @category Functions
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay execution.
-     * @param {...*} [args] Arguments to invoke the function with.
+     * @param {...*} [args] The arguments to invoke the function with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -5453,7 +5671,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -5483,7 +5701,7 @@
      * @memberOf _
      * @category Functions
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [args] Arguments to be partially applied.
+     * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -5589,8 +5807,8 @@
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources will overwrite property assignments of previous
      * sources. If a callback is provided it will be executed to produce the
-     * assigned values. The callback is bound to `thisArg` and invoked with two
-     * arguments; (objectValue, sourceValue).
+     * assigned values. The callback is bound to `thisArg` and invoked with
+     * five arguments; (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -5613,45 +5831,14 @@
      * defaults({ 'name': 'barney' }, { 'name': 'fred', 'employer': 'slate' });
      * // => { 'name': 'barney', 'employer': 'slate' }
      */
-    function assign(object, source, guard) {
-      var args = arguments;
-      if (!object || args.length < 2) {
-        return object;
-      }
-      var argsIndex = 0,
-          argsLength = args.length,
-          type = typeof guard;
-
-      // enables use as a callback for functions like `_.reduce`
-      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
-        argsLength = 2;
-      }
-      // juggle arguments
-      if (argsLength > 3 && typeof args[argsLength - 2] == 'function') {
-        var callback = baseCreateCallback(args[--argsLength - 1], args[argsLength--], 2);
-      } else if (argsLength > 2 && typeof args[argsLength - 1] == 'function') {
-        callback = args[--argsLength];
-      }
-      while (++argsIndex < argsLength) {
-        source = args[argsIndex];
-        var index = -1,
-            props = keys(source),
-            length = props.length;
-
-        while (++index < length) {
-          var key = props[index];
-          object[key] = callback ? callback(object[key], source[key]) : source[key];
-        }
-      }
-      return object;
-    }
+    var assign = createAssigner(baseAssign);
 
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects will also
      * be cloned, otherwise they will be assigned by reference. If a callback
      * is provided it will be executed to produce the cloned values. If the
      * callback returns `undefined` cloning will be handled by the method instead.
-     * The callback is bound to `thisArg` and invoked with one argument; (value).
+     * The callback is bound to `thisArg` and invoked with two argument; (value, index|key).
      *
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -5714,7 +5901,7 @@
      * Creates a deep clone of `value`. If a callback is provided it will be
      * executed to produce the cloned values. If the callback returns `undefined`
      * cloning will be handled by the method instead. The callback is bound to
-     * `thisArg` and invoked with one argument; (value).
+     * `thisArg` and invoked with two argument; (value, index|key).
      *
      * Note: This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
@@ -5790,7 +5977,7 @@
      */
     function create(prototype, properties) {
       var result = baseCreate(prototype);
-      return properties ? assign(result, properties) : result;
+      return properties ? baseAssign(result, properties) : result;
     }
 
     /**
@@ -5942,7 +6129,9 @@
      * // => logs 'x', 'y', and 'z' (property order is not guaranteed across environments)
      */
     function forIn(object, callback, thisArg) {
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      if (typeof callback != 'function' || typeof thisArg != 'undefined') {
+        callback = baseCreateCallback(callback, thisArg, 3);
+      }
       return baseFor(object, callback, keysIn);
     }
 
@@ -5997,7 +6186,9 @@
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
     function forOwn(object, callback, thisArg) {
-      callback = callback && typeof thisArg == 'undefined' ? callback : baseCreateCallback(callback, thisArg, 3);
+      if (typeof callback != 'function' || typeof thisArg != 'undefined') {
+        callback = baseCreateCallback(callback, thisArg, 3);
+      }
       return baseForOwn(object, callback);
     }
 
@@ -6268,7 +6459,8 @@
         return !length;
       }
       baseForOwn(value, function() {
-        return (result = false);
+        result = false;
+        return result;
       });
       return result;
     }
@@ -6278,7 +6470,7 @@
      * equivalent. If a callback is provided it will be executed to compare
      * values. If the callback returns `undefined` comparisons will be handled
      * by the method instead. The callback is bound to `thisArg` and invoked
-     * with two arguments; (value, other).
+     * with three arguments; (value, other, key).
      *
      * Note: This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
@@ -6404,7 +6596,9 @@
      * // => false
      */
     function isFunction(value) {
-      return typeof value == 'function';
+      // avoid a Chakra bug in IE 11
+      // https://github.com/jashkenas/underscore/issues/1621
+      return typeof value == 'function' || false;
     }
     // fallback for older versions of Chrome and Safari
     if (isFunction(/x/)) {
@@ -6416,6 +6610,8 @@
     /**
      * Checks if `value` is the language type of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+     *
+     * Note: See the [ES5 spec](http://es5.github.io/#x8) for more details.
      *
      * @static
      * @memberOf _
@@ -6434,9 +6630,7 @@
      * // => false
      */
     function isObject(value) {
-      // check if the value is the ECMAScript language type of `Object`
-      // http://es5.github.io/#x8
-      // and avoid a V8 bug
+      // avoid a V8 bug in Chrome 19-20
       // https://code.google.com/p/v8/issues/detail?id=2291
       var type = typeof value;
       return type == 'function' || (value && type == 'object') || false;
@@ -6782,7 +6976,7 @@
      * provided it will be executed to produce the merged values of the destination
      * and source properties. If the callback returns `undefined` merging will
      * be handled by the method instead. The callback is bound to `thisArg` and
-     * invoked with two arguments; (objectValue, sourceValue).
+     * invoked with five arguments; (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -6826,34 +7020,7 @@
      * });
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
      */
-    function merge(object, source, guard) {
-      var args = arguments,
-          length = args.length,
-          type = typeof guard;
-
-      if (!object || length < 2) {
-        return object;
-      }
-      // enables use as a callback for functions like `_.reduce`
-      if ((type == 'number' || type == 'string') && args[3] && args[3][guard] === source) {
-        length = 2;
-      }
-      // juggle arguments
-      if (length > 3 && typeof args[length - 2] == 'function') {
-        var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
-      } else if (length > 2 && typeof args[length - 1] == 'function') {
-        callback = args[--length];
-      }
-      var sources = slice(args, 1, length),
-          index = -1,
-          stackA = [],
-          stackB = [];
-
-      while (++index < length) {
-        baseMerge(object, sources[index], callback, stackA, stackB);
-      }
-      return object;
-    }
+    var merge = createAssigner(baseMerge);
 
     /**
      * Creates a shallow clone of `object` excluding the specified properties.
@@ -6883,9 +7050,11 @@
      * // => { 'name': 'fred' }
      */
     function omit(object, predicate, thisArg) {
+      if (!isObject(object)) {
+        return {};
+      }
       if (typeof predicate == 'function') {
-        predicate = lodash.createCallback(predicate, thisArg, 3);
-        return pick(object, negate(predicate));
+        return basePick(object, negate(lodash.createCallback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, true, false, 1),
           length = omitProps.length;
@@ -6893,7 +7062,7 @@
       while (length--) {
         omitProps[length] = String(omitProps[length]);
       }
-      return pick(object, baseDifference(keysIn(object), omitProps));
+      return basePick(object, baseDifference(keysIn(object), omitProps));
     }
 
     /**
@@ -6951,28 +7120,12 @@
      * // => { 'name': 'fred' }
      */
     function pick(object, predicate, thisArg) {
-      var result = {};
-
-      if (typeof predicate != 'function') {
-        var index = -1,
-            props = baseFlatten(arguments, true, false, 1),
-            length = isObject(object) ? props.length : 0;
-
-        while (++index < length) {
-          var key = props[index];
-          if (key in object) {
-            result[key] = object[key];
-          }
-        }
-      } else {
-        predicate = lodash.createCallback(predicate, thisArg, 3);
-        baseForIn(object, function(value, key, object) {
-          if (predicate(value, key, object)) {
-            result[key] = value;
-          }
-        });
+      if (!isObject(object)) {
+        return {};
       }
-      return result;
+      return basePick(object, typeof predicate == 'function'
+        ? lodash.createCallback(predicate, thisArg, 3)
+        : baseFlatten(arguments, true, false, 1));
     }
 
     /**
@@ -7420,7 +7573,7 @@
      * settings object is provided it will override `_.templateSettings` for the
      * template.
      *
-     * Note: In the development build, `_.template` utilizes `sourceURL`s for easier debugging.
+     * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
@@ -7438,9 +7591,9 @@
      * @param {Object} [options] The options object.
      * @param {RegExp} [options.escape] The HTML "escape" delimiter.
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
-     * @param {Object} [options.imports] An object to import into the template as local variables.
+     * @param {Object} [options.imports] An object to import into the template as free variables.
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-     * @param {string} [options.sourceURL] The `sourceURL` of the template's compiled source.
+     * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
      * @returns {Function|string} Returns the interpolated string if a data object
      *  is provided, else the compiled template function.
@@ -7478,7 +7631,7 @@
      * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
      * // => '<li>fred</li><li>barney</li>'
      *
-     * // using the `sourceURL` option to specify a custom `sourceURL` for the template
+     * // using the `sourceURL` option to specify a custom sourceURL for the template
      * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
@@ -7506,10 +7659,10 @@
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = defaults({}, options, settings);
+      options = assign({}, options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
 
-      var imports = defaults({}, options.imports, settings.imports),
+      var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),
           importsValues = values(imports);
 
@@ -7584,24 +7737,12 @@
         source +
         'return __p\n}';
 
-      // Use a `sourceURL` for easier debugging.
+      // use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = '\n/*\n//# sourceURL=' + (options.sourceURL || '/lodash/template/source[' + (templateCounter++) + ']') + '\n*/';
+      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']'),
+          result = compileFunction(source, importsKeys, importsValues, sourceURL);
 
-      try {
-        var result = Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);
-      } catch(e) {
-        e.source = source;
-        throw e;
-      }
-      if (data) {
-        return result(data);
-      }
-      // provide the compiled function's source by its `toString` method, in
-      // supported environments, or the `source` property as a convenience for
-      // inlining compiled templates during the build process
-      result.source = source;
-      return result;
+      return data ? result(data) : result;
     }
 
     /**
@@ -7852,10 +7993,14 @@
      * // => [{ 'name': 'fred', 'age': 40 }]
      */
     function createCallback(func, thisArg, argCount) {
-      var type = typeof func;
-      if (type == 'function' || func == null) {
-        return (typeof thisArg == 'undefined' || !(func && 'prototype' in func)) &&
-          func || baseCreateCallback(func, thisArg, argCount);
+      var type = typeof func,
+          isFunc = type == 'function';
+
+      if (isFunc && (typeof thisArg == 'undefined' || !('prototype' in func))) {
+        return func;
+      }
+      if (isFunc || func == null) {
+        return baseCreateCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands
       return type == 'object' ? matches(func) : property(func);
@@ -7927,15 +8072,14 @@
         if (length && !object) {
           return false;
         }
-        var result = true;
         while (length--) {
           var key = props[length];
-          if (!(result = hasOwnProperty.call(object, key) &&
-              baseIsEqual(object[key], source[key], null, true))) {
-            break;
+          if (!(hasOwnProperty.call(object, key) &&
+                baseIsEqual(object[key], source[key], null, true))) {
+            return false;
           }
         }
-        return result;
+        return true;
       };
     }
 
@@ -8298,7 +8442,7 @@
      * @returns {Array} Returns the array of results.
      * @example
      *
-     * var diceRolls = _.times(3, _.partial(_.random, 1, 6));
+     * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
      * // => [3, 6, 4]
      *
      * _.times(3, function(n) { mage.castSpell(n); });
@@ -8441,7 +8585,7 @@
     lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
-    mixin(lodash, assign({}, lodash));
+    mixin(lodash, baseAssign({}, lodash));
 
     /*--------------------------------------------------------------------------*/
 
@@ -8521,7 +8665,7 @@
     lodash.inject = reduce;
 
     mixin(lodash, (function() {
-      var source = {}
+      var source = {};
       baseForOwn(lodash, function(func, methodName) {
         if (!lodash.prototype[methodName]) {
           source[methodName] = func;
@@ -8545,9 +8689,9 @@
     lodash.head = first;
 
     baseForOwn(lodash, function(func, methodName) {
-      var callbackable = methodName !== 'sample';
+      var callbackable = methodName != 'sample';
       if (!lodash.prototype[methodName]) {
-        lodash.prototype[methodName]= function(n, guard) {
+        lodash.prototype[methodName] = function(n, guard) {
           var chainAll = this.__chain__,
               result = func(this.__wrapped__, n, guard);
 
@@ -8578,7 +8722,7 @@
 
     // add `Array` functions that return unwrapped values
     arrayEach(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
             result = func.apply(this.__wrapped__, arguments);
@@ -8591,7 +8735,7 @@
 
     // add `Array` functions that return the existing wrapped value
     arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
         return this;
@@ -8600,7 +8744,7 @@
 
     // add `Array` functions that return new wrapped values
     arrayEach(['concat', 'splice'], function(methodName) {
-      var func = arrayRef[methodName];
+      var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
       };
@@ -8610,7 +8754,7 @@
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS
     if (!support.spliceObjects) {
       arrayEach(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayRef[methodName],
+        var func = arrayProto[methodName],
             isSplice = methodName == 'splice';
 
         lodash.prototype[methodName] = function() {

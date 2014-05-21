@@ -288,7 +288,11 @@ function optionToArray(name, string) {
  * @returns {string|undefined} Returns the option value, else `undefined`.
  */
 function optionToValue(name, string) {
-  var result = (result = string.match(RegExp('^' + name + '(?:=([\\s\\S]+))?$'))) && (result[1] ? result[1].trim() : true);
+  var result = string.match(RegExp('^' + name + '(?:=([\\s\\S]+))?$'));
+  if (result) {
+    result = _.result(result, 1);
+    result = result ? _.trim(result) : true;
+  }
   if (result === 'false') {
     return false;
   }

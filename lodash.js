@@ -1696,7 +1696,7 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, callback, isWhere, stackA, stackB) {
-      var result = callback ? callback(value, other) : undefined;
+      var result = callback && !stackA ? callback(value, other) : undefined;
       if (typeof result != 'undefined') {
         return !!result;
       }
@@ -1796,7 +1796,6 @@
           return stackB[length] == other;
         }
       }
-      var size = 0;
       result = true;
 
       // add `value` and `other` to the stack of traversed objects
@@ -1806,27 +1805,30 @@
       // recursively compare objects and arrays (susceptible to call stack limits)
       if (isArr) {
         // compare lengths to determine if a deep comparison is necessary
+        var othLength = other.length;
         length = value.length;
-        size = other.length;
-        result = size == length;
+        result = othLength == length;
 
         if (result || isWhere) {
+          var othIndex = -1;
+
           // deep compare the contents, ignoring non-numeric properties
-          while (size--) {
-            var index = length,
-                othValue = other[size];
+          while (++othIndex < othLength) {
+            var othValue = other[othIndex];
 
             if (isWhere) {
-              while (index--) {
+              var index = -1;
+              while (++index < length) {
                 result = baseIsEqual(value[index], othValue, callback, isWhere, stackA, stackB);
                 if (result) {
                   break;
                 }
               }
             } else {
-              result = callback ? callback(value, other, key) : undefined;
+              var valValue = value[othIndex];
+              result = callback ? callback(valValue, othValue, othIndex) : undefined;
               result = typeof result == 'undefined'
-                ? baseIsEqual(value[size], othValue, callback, isWhere, stackA, stackB)
+                ? baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB)
                 : !!result;
             }
             if (!result) {
@@ -1836,6 +1838,8 @@
         }
       }
       else {
+        var size = 0;
+
         // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
         // which, in this case, is more costly
         baseForIn(other, function(othValue, key, other) {
@@ -1845,9 +1849,10 @@
             size++;
             // deep compare each property value
             if (hasOwnProperty.call(value, key)) {
-              result = callback ? callback(value, other, key) : undefined;
+              var valValue = value[key];
+              result = callback ? callback(valValue, othValue, key) : undefined;
               result = typeof result == 'undefined'
-                ? baseIsEqual(value[key], othValue, callback, isWhere, stackA, stackB)
+                ? baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB)
                 : !!result;
             }
             return result;

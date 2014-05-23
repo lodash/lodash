@@ -40,8 +40,8 @@
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
   /** Used to match HTML entities and HTML characters */
-  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
-      reUnescapedHtml = /[&<>"']/g;
+  var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,
+      reUnescapedHtml = /[&<>"'`]/g;
 
   /** Used to match template delimiters */
   var reEscape = /<%-([\s\S]+?)%>/g,
@@ -157,13 +157,19 @@
    * unless they're part of a tag or unquoted attribute value.
    * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
    * (under "semi-related fun fact") for more details.
+   *
+   * Backticks are escaped because in Internet Explorer <= 8, they can be used
+   * to break out of unquoted attribute values or HTML comments. See
+   * <http://html5sec.org/#102>, <http://html5sec.org/#108>, and
+   * <http://html5sec.org/#133> for more details.
    */
   var htmlEscapes = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;'
+    "'": '&#39;',
+    '`': '&#96;'
   };
 
   /** Used to convert HTML entities to characters */
@@ -172,7 +178,8 @@
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
-    '&#39;': "'"
+    '&#39;': "'",
+    '&#96;': '`'
   };
 
   /**

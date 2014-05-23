@@ -2372,8 +2372,8 @@
   QUnit.module('lodash.escape');
 
   (function() {
-    var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
-        unescaped = '&<>"\'\/';
+    var escaped = '&amp;&lt;&gt;&quot;&#39;&#96;\/',
+        unescaped = '&<>"\'`\/';
 
     test('should escape values', 1, function() {
       strictEqual(_.escape(unescaped), escaped);

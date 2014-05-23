@@ -4691,14 +4691,17 @@
       var argsList = [];
 
       var object1 = {
-        'a': [5, 6],
-        'b': [7, 8]
+        'a': [1, 2],
+        'b': null
       };
 
       var object2 = {
-        'a': [5, 6],
-        'b': [7, 8]
+        'a': [1, 2],
+        'b': null
       };
+
+      object1.b = object2;
+      object2.b = object1;
 
       var expected = [
         [object1, object2],
@@ -4706,8 +4709,10 @@
         [object1.a[0], object2.a[0], 0],
         [object1.a[1], object2.a[1], 1],
         [object1.b, object2.b, 'b'],
-        [object1.b[0], object2.b[0], 0],
-        [object1.b[1], object2.b[1], 1]
+        [object1.b.a, object2.b.a, 'a'],
+        [object1.b.a[0], object2.b.a[0], 0],
+        [object1.b.a[1], object2.b.a[1], 1],
+        [object1.b.b, object2.b.b, 'b']
       ];
 
       _.isEqual(object1, object2, function() {

@@ -9412,6 +9412,28 @@
         QUnit.start();
       }
     });
+
+    asyncTest('_.' + methodName + ' should support cancelling delayed calls', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var callCount = 0;
+
+        var funced = func(function() {
+          callCount++;
+        }, 32, { 'leading': false });
+
+        funced();
+        funced.cancel();
+
+        setTimeout(function() {
+          strictEqual(callCount, 0);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest();
+        QUnit.start();
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/

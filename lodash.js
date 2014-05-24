@@ -153,13 +153,13 @@
    * Used to convert characters to HTML entities.
    *
    * Note: Though the ">" character is escaped for symmetry, characters like
-   * ">", "`", and "/" don't require escaping in HTML and have no special meaning
+   * ">" and "/" don't require escaping in HTML and have no special meaning
    * unless they're part of a tag or unquoted attribute value.
    * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
    * (under "semi-related fun fact") for more details.
    *
-   * Backticks are escaped because in Internet Explorer <= 8, they can be used
-   * to break out of unquoted attribute values or HTML comments. See
+   * Backticks are escaped because in Internet Explorer < 9, they can be used
+   * to break out of attribute values or HTML comments. See
    * <http://html5sec.org/#102>, <http://html5sec.org/#108>, and
    * <http://html5sec.org/#133> for more details.
    */

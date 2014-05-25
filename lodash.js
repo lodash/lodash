@@ -5457,7 +5457,7 @@
      *   'maxWait': 1000
      * }, false);
      *
-     * // cancelling a debounced call
+     * // cancel a debounced call
      * var todoChanges = _.debounce(batchLog, 1000);
      * Object.observe(models.todo, todoChanges);
      *
@@ -5849,7 +5849,7 @@
      * var throttled =  _.throttle(renewToken, 300000, { 'trailing': false })
      * jQuery('.interactive').on('click', throttled);
      *
-     * // cancelling a trailing throttled call
+     * // cancel a trailing throttled call
      * jQuery(window).on('popstate', throttled.cancel);
      */
     function throttle(func, wait, options) {

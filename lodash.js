@@ -130,44 +130,44 @@
       weakMapClass = '[object WeakMap]';
 
   var arrayBufferClass = '[object ArrayBuffer]',
-      f32Class = '[object Float32Array]',
-      f64Class = '[object Float64Array]',
-      i8Class = '[object Int8Array]',
-      i16Class = '[object Int16Array]',
-      i32Class = '[object Int32Array]',
-      u8Class = '[object Uint8Array]',
-      u8cClass = '[object Uint8ClampedArray]',
-      u16Class = '[object Uint16Array]',
-      u32Class = '[object Uint32Array]';
-
-  /** Used to identify object classifications that `_.clone` supports */
-  var cloneableClasses = {};
-  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
-  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
-  cloneableClasses[dateClass] = cloneableClasses[errorClass] =
-  cloneableClasses[f64Class] = cloneableClasses[i8Class] =
-  cloneableClasses[i16Class] = cloneableClasses[i32Class] =
-  cloneableClasses[numberClass] = cloneableClasses[objectClass] =
-  cloneableClasses[regexpClass] = cloneableClasses[stringClass] =
-  cloneableClasses[u8Class] = cloneableClasses[u8cClass] =
-  cloneableClasses[u16Class] = cloneableClasses[u32Class] = true;
-  cloneableClasses[funcClass] = cloneableClasses[mapClass] =
-  cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
+      float32Class = '[object Float32Array]',
+      float64Class = '[object Float64Array]',
+      int8Class = '[object Int8Array]',
+      int16Class = '[object Int16Array]',
+      int32Class = '[object Int32Array]',
+      uint8Class = '[object Uint8Array]',
+      uint8ClampedClass = '[object Uint8ClampedArray]',
+      uint16Class = '[object Uint16Array]',
+      uint32Class = '[object Uint32Array]';
 
   /** Used to identify object classifications that are treated like arrays */
   var arrayLikeClasses = {};
   arrayLikeClasses[argsClass] =
-  arrayLikeClasses[arrayClass] = arrayLikeClasses[f32Class] =
-  arrayLikeClasses[f64Class] = arrayLikeClasses[i8Class] =
-  arrayLikeClasses[i16Class] = arrayLikeClasses[i32Class] =
-  arrayLikeClasses[u8Class] = arrayLikeClasses[u8cClass] =
-  arrayLikeClasses[u16Class] = arrayLikeClasses[u32Class] = true;
+  arrayLikeClasses[arrayClass] = arrayLikeClasses[float32Class] =
+  arrayLikeClasses[float64Class] = arrayLikeClasses[int8Class] =
+  arrayLikeClasses[int16Class] = arrayLikeClasses[int32Class] =
+  arrayLikeClasses[uint8Class] = arrayLikeClasses[uint8ClampedClass] =
+  arrayLikeClasses[uint16Class] = arrayLikeClasses[uint32Class] = true;
   arrayLikeClasses[arrayBufferClass] = arrayLikeClasses[boolClass] =
   arrayLikeClasses[dateClass] = arrayLikeClasses[errorClass] =
   arrayLikeClasses[funcClass] = arrayLikeClasses[mapClass] =
   arrayLikeClasses[numberClass] = arrayLikeClasses[objectClass] =
   arrayLikeClasses[regexpClass] = arrayLikeClasses[setClass] =
   arrayLikeClasses[stringClass] = arrayLikeClasses[weakMapClass] = false;
+
+  /** Used to identify object classifications that `_.clone` supports */
+  var cloneableClasses = {};
+  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
+  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
+  cloneableClasses[dateClass] = cloneableClasses[errorClass] =
+  cloneableClasses[float64Class] = cloneableClasses[int8Class] =
+  cloneableClasses[int16Class] = cloneableClasses[int32Class] =
+  cloneableClasses[numberClass] = cloneableClasses[objectClass] =
+  cloneableClasses[regexpClass] = cloneableClasses[stringClass] =
+  cloneableClasses[uint8Class] = cloneableClasses[uint8ClampedClass] =
+  cloneableClasses[uint16Class] = cloneableClasses[uint32Class] = true;
+  cloneableClasses[funcClass] = cloneableClasses[mapClass] =
+  cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
 
   /** Used as an internal `_.debounce` options object by `_.throttle` */
   var debounceOptions = {
@@ -683,17 +683,6 @@
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
-    /** Used to lookup built-in constructors by `[[Class]]` */
-    var ctorByClass = {};
-    ctorByClass[arrayClass] = Array;
-    ctorByClass[boolClass] = Boolean;
-    ctorByClass[dateClass] = Date;
-    ctorByClass[funcClass] = Function;
-    ctorByClass[objectClass] = Object;
-    ctorByClass[numberClass] = Number;
-    ctorByClass[regexpClass] = RegExp;
-    ctorByClass[stringClass] = String;
-
     /** Used to avoid iterating over non-enumerable properties in IE < 9 */
     var nonEnumProps = {};
     nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
@@ -814,12 +803,12 @@
     var support = lodash.support = {};
 
     (function(x) {
-      var ctor = function() { this.x = 1; },
+      var Ctor = function() { this.x = 1; },
           object = { '0': 1, 'length': 1 },
           props = [];
 
-      ctor.prototype = { 'valueOf': 1, 'y': 1 };
-      for (var key in new ctor) { props.push(key); }
+      Ctor.prototype = { 'valueOf': 1, 'y': 1 };
+      for (var key in new Ctor) { props.push(key); }
       for (var argsKey in arguments) { }
       for (var strKey in 'x') { }
 
@@ -862,7 +851,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.enumPrototypes = propertyIsEnumerable.call(ctor, 'prototype');
+      support.enumPrototypes = propertyIsEnumerable.call(Ctor, 'prototype');
 
       /**
        * Detect if functions can be decompiled by `Function#toString`
@@ -1230,29 +1219,32 @@
         if (!cloneableClasses[className] || (!support.nodeClass && isNode(value))) {
           return value;
         }
-        var ctor = ctorByClass[className];
+        var Ctor = value.constructor;
+        if (className == objectClass && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
+          Ctor = Object;
+        }
         switch (className) {
           case arrayBufferClass:
             return value.slice();
 
           case boolClass:
           case dateClass:
-            return new ctor(+value);
+            return new Ctor(+value);
 
           case errorClass:
-            return new ctor(value.message);
+            return new Ctor(value.message);
 
-          case f32Class: case f64Class:
-          case i8Class:  case i16Class: case i32Class:
-          case u8Class:  case u8cClass: case u16Class: case u32Class:
+          case float32Class: case float64Class:
+          case int8Class: case int16Class: case int32Class:
+          case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
             return value.subarray(0);
 
           case numberClass:
           case stringClass:
-            return new ctor(value);
+            return new Ctor(value);
 
           case regexpClass:
-            result = ctor(value.source, reFlags.exec(value));
+            result = Ctor(value.source, reFlags.exec(value));
             result.lastIndex = value.lastIndex;
             return result;
         }
@@ -1271,7 +1263,7 @@
             return stackB[length];
           }
         }
-        result = isArr ? ctor(value.length) : {};
+        result = isArr ? Ctor(value.length) : Ctor();
       }
       else {
         result = isArr ? slice(value) : baseAssign({}, value);
@@ -2554,13 +2546,13 @@
      * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
      */
     function shimIsPlainObject(value) {
-      var ctor,
+      var Ctor,
           result;
 
       // avoid non `Object` objects, `arguments` objects, and DOM elements
       if (!(value && toString.call(value) == objectClass) ||
           (!hasOwnProperty.call(value, 'constructor') &&
-            (ctor = value.constructor, isFunction(ctor) && !(ctor instanceof ctor))) ||
+            (Ctor = value.constructor, isFunction(Ctor) && !(Ctor instanceof Ctor))) ||
           (!support.argsClass && isArguments(value)) ||
           (!support.nodeClass && isNode(value))) {
         return false;
@@ -6937,11 +6929,11 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      var ctor = object && object.constructor,
+      var Ctor = object && object.constructor,
           length = object ? object.length : 0;
 
       if ((typeof length == 'number' && length > 0) ||
-          (ctor && object === ctor.prototype)) {
+          (Ctor && object === Ctor.prototype)) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -6977,9 +6969,9 @@
           (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
 
       var keyIndex,
-          ctor = object.constructor,
+          Ctor = object.constructor,
           index = -1,
-          isProto = ctor && object === ctor.prototype,
+          isProto = Ctor && object === Ctor.prototype,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
@@ -6989,6 +6981,10 @@
       while (++index < length) {
         result[index] = String(index);
       }
+      // Lo-Dash skips the `constructor` property when it infers it's iterating
+      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
+      // attribute of an existing property and the `constructor` property of a
+      // prototype defaults to non-enumerable.
       for (var key in object) {
         if (!(isProto && key == 'constructor') &&
             !(skipProto && key == 'prototype') &&
@@ -6997,10 +6993,6 @@
           result.push(key);
         }
       }
-      // Lo-Dash skips the `constructor` property when it infers it's iterating
-      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
-      // attribute of an existing property and the `constructor` property of a
-      // prototype defaults to non-enumerable.
       if (support.nonEnumShadows && object !== objectProto) {
         index = -1;
         length = shadowedProps.length;
@@ -7262,8 +7254,8 @@
           accumulator = [];
         } else {
           if (isObject(object)) {
-            var ctor = object.constructor,
-                proto = ctor && ctor.prototype;
+            var Ctor = object.constructor,
+                proto = Ctor && Ctor.prototype;
           }
           accumulator = baseCreate(proto);
         }

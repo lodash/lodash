@@ -121,18 +121,53 @@
       dateClass = '[object Date]',
       errorClass = '[object Error]',
       funcClass = '[object Function]',
+      mapClass = '[object Map]',
       numberClass = '[object Number]',
       objectClass = '[object Object]',
       regexpClass = '[object RegExp]',
-      stringClass = '[object String]';
+      setClass = '[object Set]',
+      stringClass = '[object String]',
+      weakMapClass = '[object WeakMap]';
+
+  var arrayBufferClass = '[object ArrayBuffer]',
+      f32Class = '[object Float32Array]',
+      f64Class = '[object Float64Array]',
+      i8Class = '[object Int8Array]',
+      i16Class = '[object Int16Array]',
+      i32Class = '[object Int32Array]',
+      u8Class = '[object Uint8Array]',
+      u8cClass = '[object Uint8ClampedArray]',
+      u16Class = '[object Uint16Array]',
+      u32Class = '[object Uint32Array]';
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
-  cloneableClasses[funcClass] = false;
   cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
-  cloneableClasses[boolClass] = cloneableClasses[dateClass] =
+  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
+  cloneableClasses[dateClass] = cloneableClasses[errorClass] =
+  cloneableClasses[f64Class] = cloneableClasses[i8Class] =
+  cloneableClasses[i16Class] = cloneableClasses[i32Class] =
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
-  cloneableClasses[regexpClass] = cloneableClasses[stringClass] = true;
+  cloneableClasses[regexpClass] = cloneableClasses[stringClass] =
+  cloneableClasses[u8Class] = cloneableClasses[u8cClass] =
+  cloneableClasses[u16Class] = cloneableClasses[u32Class] = true;
+  cloneableClasses[funcClass] = cloneableClasses[mapClass] =
+  cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
+
+  /** Used to identify object classifications that are treated like arrays */
+  var arrayLikeClasses = {};
+  arrayLikeClasses[argsClass] =
+  arrayLikeClasses[arrayClass] = arrayLikeClasses[f32Class] =
+  arrayLikeClasses[f64Class] = arrayLikeClasses[i8Class] =
+  arrayLikeClasses[i16Class] = arrayLikeClasses[i32Class] =
+  arrayLikeClasses[u8Class] = arrayLikeClasses[u8cClass] =
+  arrayLikeClasses[u16Class] = arrayLikeClasses[u32Class] = true;
+  arrayLikeClasses[arrayBufferClass] = arrayLikeClasses[boolClass] =
+  arrayLikeClasses[dateClass] = arrayLikeClasses[errorClass] =
+  arrayLikeClasses[funcClass] = arrayLikeClasses[mapClass] =
+  arrayLikeClasses[numberClass] = arrayLikeClasses[objectClass] =
+  arrayLikeClasses[regexpClass] = arrayLikeClasses[setClass] =
+  arrayLikeClasses[stringClass] = arrayLikeClasses[weakMapClass] = false;
 
   /** Used as an internal `_.debounce` options object by `_.throttle` */
   var debounceOptions = {
@@ -1197,9 +1232,20 @@
         }
         var ctor = ctorByClass[className];
         switch (className) {
+          case arrayBufferClass:
+            return value.slice();
+
           case boolClass:
           case dateClass:
             return new ctor(+value);
+
+          case errorClass:
+            return new ctor(value.message);
+
+          case f32Class: case f64Class:
+          case i8Class:  case i16Class: case i32Class:
+          case u8Class:  case u8cClass: case u16Class: case u32Class:
+            return value.subarray(0);
 
           case numberClass:
           case stringClass:
@@ -1754,7 +1800,7 @@
           // treat string primitives and their corresponding object instances as equal
           return value == String(other);
       }
-      var isArr = valClass == arrayClass;
+      var isArr = arrayLikeClasses[valClass];
       if (!isArr) {
         // exit for functions and DOM nodes
         if (valClass != objectClass || (!support.nodeClass && (isNode(value) || isNode(other)))) {
@@ -1923,8 +1969,8 @@
       if (!object) {
         return object;
       }
-      (isArray(source) ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
-        var isArr = srcValue && isArray(srcValue),
+      (isArrayLike(source) ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
+        var isArr = srcValue && isArrayLike(srcValue),
             isObj = srcValue && isPlainObject(srcValue),
             value = object[key];
 
@@ -2460,6 +2506,18 @@
     function getIndexOf() {
       var result = lodash.indexOf || indexOf;
       return result === indexOf ? baseIndexOf : result;
+    }
+
+    /**
+     * Checks if `value` is an array-like object.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
+     */
+    function isArrayLike(value) {
+      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        arrayLikeClasses[toString.call(value)]) || false;
     }
 
     /**
@@ -7198,7 +7256,7 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function transform(object, callback, accumulator, thisArg) {
-      var isArr = isArray(object);
+      var isArr = isArrayLike(object);
       if (accumulator == null) {
         if (isArr) {
           accumulator = [];

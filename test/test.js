@@ -2779,6 +2779,14 @@
       deepEqual(actual, [1, 2]);
     });
 
+    test('should work with an object for `callback`', 1, function() {
+      deepEqual(_.first(objects, { 'b': 2 }), objects.slice(0, 1));
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      deepEqual(_.first(objects, 'b'), objects.slice(0, 2));
+    });
+
     test('should chain when passing `n`, `callback`, or `thisArg`', 3, function() {
       if (!isNpm) {
         var actual = _(array).first(2);
@@ -2810,14 +2818,6 @@
       else {
         skipTest();
       }
-    });
-
-    test('should work with an object for `callback`', 1, function() {
-      deepEqual(_.first(objects, { 'b': 2 }), objects.slice(0, 1));
-    });
-
-    test('should work with a string for `callback`', 1, function() {
-      deepEqual(_.first(objects, 'b'), objects.slice(0, 2));
     });
 
     test('should be aliased', 2, function() {
@@ -3275,16 +3275,6 @@
       strictEqual(func(), undefined);
     });
 
-    test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
-      if (!isNpm) {
-        var wrapper = _({ 'a': 1 });
-        strictEqual(wrapper[methodName]({ 'b': 2 }), wrapper);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
       var object = {
         'constructor': '0',
@@ -3344,6 +3334,16 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
+      if (!isNpm) {
+        var wrapper = _({ 'a': 1 });
+        strictEqual(wrapper[methodName]({ 'b': 2 }), wrapper);
+      }
+      else {
+        skipTest();
+      }
     });
   });
 
@@ -3915,6 +3915,13 @@
       deepEqual(_.intersection(_.range(largeArraySize), null, [1]), [1]);
     });
 
+    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
+      var array = [0, 1, null, 3];
+      deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
+      deepEqual(_.intersection(null, array, null, [2, 1]), [1]);
+      deepEqual(_.intersection(null, array, null, args), [1, 3]);
+    });
+
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _([1, 3, 2]).intersection([5, 2, 1, 4]);
@@ -3924,13 +3931,6 @@
       else {
         skipTest(2);
       }
-    });
-
-    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
-      var array = [0, 1, null, 3];
-      deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
-      deepEqual(_.intersection(null, array, null, [2, 1]), [1]);
-      deepEqual(_.intersection(null, array, null, args), [1, 3]);
     });
   }(1, 2, 3));
 
@@ -4779,24 +4779,6 @@
       }
     });
 
-    test('should return an unwrapped value when intuitively chaining', 1, function() {
-      if (!isNpm) {
-        strictEqual(_('a').isEqual('a'), true);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should return a wrapped value when explicitly chaining', 1, function() {
-      if (!isNpm) {
-        ok(_('a').chain().isEqual('a') instanceof _);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('should perform comparisons between wrapped values', 4, function() {
       if (!isNpm) {
         var object1 = _({ 'a': 1, 'b': 2 }),
@@ -4858,6 +4840,24 @@
         } catch(e) {
           ok(false);
         }
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return an unwrapped value when intuitively chaining', 1, function() {
+      if (!isNpm) {
+        strictEqual(_('a').isEqual('a'), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_('a').chain().isEqual('a') instanceof _);
       }
       else {
         skipTest();
@@ -5700,6 +5700,14 @@
       deepEqual(actual, [2, 3]);
     });
 
+    test('should work with an object for `callback`', 1, function() {
+      deepEqual(_.last(objects, { 'b': 2 }), objects.slice(-1));
+    });
+
+    test('should work with a string for `callback`', 1, function() {
+      deepEqual(_.last(objects, 'b'), objects.slice(-2));
+    });
+
     test('should chain when passing `n`, `callback`, or `thisArg`', 3, function() {
       if (!isNpm) {
         var actual = _(array).last(2);
@@ -5731,14 +5739,6 @@
       else {
         skipTest();
       }
-    });
-
-    test('should work with an object for `callback`', 1, function() {
-      deepEqual(_.last(objects, { 'b': 2 }), objects.slice(-1));
-    });
-
-    test('should work with a string for `callback`', 1, function() {
-      deepEqual(_.last(objects, 'b'), objects.slice(-2));
     });
   }());
 
@@ -5871,15 +5871,6 @@
       }
     });
 
-    test('should return a wrapped value when chaining', 1, function() {
-      if (!isNpm) {
-        ok(_(array).map(_.noop) instanceof _);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('should treat a nodelist as an array-like object', 1, function() {
       if (document) {
         var actual = _.map(document.getElementsByTagName('body'), function(element) {
@@ -5907,6 +5898,15 @@
 
     test('should treat number values for `collection` as empty', 1, function() {
       deepEqual(_.map(1), []);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).map(_.noop) instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should be aliased', 1, function() {
@@ -5956,15 +5956,6 @@
       deepEqual(actual, object);
     });
 
-    test('should return a wrapped value when chaining', 1, function() {
-      if (!isNpm) {
-        ok(_(object).mapValues(_.noop) instanceof _);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('should accept a falsey `object` argument', 1, function() {
       var expected = _.map(falsey, _.constant({}));
 
@@ -5975,6 +5966,15 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(object).mapValues(_.noop) instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -6386,6 +6386,11 @@
       strictEqual(actual, object);
     });
 
+    test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
+      var array = _.range(0, 5e5);
+      strictEqual(func(array), isMax ? 499999 : 0);
+    });
+
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
       if (!isNpm) {
         var actual = _([40])[methodName]().value();
@@ -6394,11 +6399,6 @@
       else {
         skipTest();
       }
-    });
-
-    test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
-      var array = _.range(0, 5e5);
-      strictEqual(func(array), isMax ? 499999 : 0);
     });
   });
 
@@ -7674,19 +7674,6 @@
       deepEqual(actual, 6);
     });
 
-    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
-      if (!isNpm) {
-        var actual = _(array)[methodName](function(sum, num) {
-          return sum + num;
-        });
-
-        strictEqual(actual, 6);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('`_.' + methodName + '` should support empty or falsey collections without an initial `accumulator` value', 1, function() {
       var actual = [],
           expected = _.map(empties, _.constant());
@@ -7729,6 +7716,19 @@
         skipTest();
       }
       strictEqual(_.reduce(object, _.noop), undefined);
+    });
+
+    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _(array)[methodName](function(sum, num) {
+          return sum + num;
+        });
+
+        strictEqual(actual, 6);
+      }
+      else {
+        skipTest();
+      }
     });
   });
 
@@ -10102,17 +10102,6 @@
       notStrictEqual(_.xor(array), array);
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var actual = _([1, 2, 3]).xor([5, 2, 1, 4]);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [3, 5, 4]);
-      }
-      else {
-        skipTest(2);
-      }
-    });
-
     test('should ignore individual secondary arguments', 1, function() {
       var array = [0];
       deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
@@ -10123,6 +10112,17 @@
       deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
       deepEqual(_.xor(null, array, null, [2, 3]), [1, 3]);
       deepEqual(_.xor(null, array, null, args), [3]);
+    });
+
+    test('should return a wrapped value when chaining', 2, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3]).xor([5, 2, 1, 4]);
+        ok(actual instanceof _);
+        deepEqual(actual.value(), [3, 5, 4]);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }(1, 2, 3));
 

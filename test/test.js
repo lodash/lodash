@@ -1051,6 +1051,16 @@
       strictEqual(func(Object(string)), expected);
       strictEqual(func({ 'toString': _.constant(string) }), expected);
     });
+
+    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _('hello world')[methodName]();
+        strictEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -1080,6 +1090,16 @@
       strictEqual(_.capitalize('fred'), 'Fred');
       strictEqual(_.capitalize('Fred'), 'Fred');
       strictEqual(_.capitalize(' fred'), ' fred');
+    });
+
+    test('should return an unwrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _('fred').capitalize();
+        strictEqual(actual, 'Fred');
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -1312,7 +1332,7 @@
       });
 
       test('`_.' + methodName + '` should handle cloning if `callback` returns `undefined`', 1, function() {
-        var actual = func({ 'a': { 'b': 'c' } }, function() {});
+        var actual = func({ 'a': { 'b': 'c' } }, _.noop);
         deepEqual(actual, { 'a': { 'b': 'c' } });
       });
 
@@ -1346,6 +1366,19 @@
           skipTest();
         }
       });
+
+      test('`_.' + methodName + '` should return a unwrapped value when chaining', 2, function() {
+        if (!isNpm) {
+          var object = objects['an object'],
+              actual = _(object)[methodName]();
+
+          deepEqual(actual, object);
+          notStrictEqual(actual, object);
+        }
+        else {
+          skipTest();
+        }
+      });
     });
   }(1, 2, 3));
 
@@ -1357,6 +1390,16 @@
     test('should filter falsey values', 1, function() {
       var array = ['0', '1', '2'];
       deepEqual(_.compact(falsey.concat(array)), array);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _(falsey).compact();
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -1385,6 +1428,16 @@
 
     test('should return a new function', 1, function() {
       notStrictEqual(_.compose(_.noop), _.noop);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _(_.noop).compose();
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -1422,6 +1475,16 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should return a wrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _(true).constant();
+        ok(actual instanceof _);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 

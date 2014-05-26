@@ -1583,7 +1583,7 @@
         var bench = clone._original,
             stringable = isStringable(bench.fn),
             count = bench.count = clone.count,
-            decompilable = stringable || (support.decompilation && (_.has(clone, 'setup') || _.has(clone, 'teardown'))),
+            decompilable = stringable || (support.decompilation && (clone.setup !== _.noop || clone.teardown !== _.noop)),
             id = bench.id,
             name = bench.name || (typeof id == 'number' ? '<Test #' + id + '>' : id),
             result = 0;

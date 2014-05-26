@@ -206,6 +206,18 @@
   /** Used to check problem JScript properties too */
   var shadowedObject = _.invert(shadowedProps);
 
+  /** Used to check whether methods support typed arrays */
+  var typedArrays = [
+    'Float32Array',
+    'Int8Array',
+    'Int16Array',
+    'Int32Array',
+    'Uint8Array',
+    'Uint8ClampedArray',
+    'Uint16Array',
+    'Uint32Array'
+  ];
+
   /** Used to check for problems removing whitespace */
   var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
@@ -1183,6 +1195,13 @@
       'an array-like-object': { '0': 'a', '1': 'b', '2': 'c',  '3': '', 'length': 5 },
       'boolean': false,
       'boolean object': Object(false),
+      'an Error object': new Error('text'),
+      'an EvalError object': new EvalError('text'),
+      'a RangeError object': new RangeError('text'),
+      'a ReferenceError object': new ReferenceError('text'),
+      'a SyntaxError object': new SyntaxError('text'),
+      'a TypeError object': new TypeError('text'),
+      'a URIError object': new URIError('text'),
       'a Klass instance': new Klass,
       'an object': { 'a': 0, 'b': 1, 'c': 3 },
       'an object with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
@@ -1243,9 +1262,22 @@
         });
       });
 
+      _.each(typedArrays, function(type) {
+        test('`_.' + methodName + '` should clone ' + type + ' arrays', 2, function() {
+          var Ctor = root[type] || Array,
+              buffer = Ctor == Array ? 4 : new ArrayBuffer(4),
+              array = new Ctor(buffer),
+              actual = func(array);
+
+          deepEqual(actual, array);
+          notStrictEqual(actual, array);
+        });
+      });
+
       test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', 2, function() {
-        deepEqual(func(shadowedObject), shadowedObject);
-        notStrictEqual(func(shadowedObject), shadowedObject);
+        var actual = func(shadowedObject);
+        deepEqual(actual, shadowedObject);
+        notStrictEqual(actual, shadowedObject);
       });
 
       test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 2, function() {
@@ -1284,7 +1316,7 @@
         deepEqual(actual, { 'a': { 'b': 'c' } });
       });
 
-      test('`_.' + methodName + '` should deep clone `index` and `input` array properties', 2, function() {
+      test('`_.' + methodName + '` should clone `index` and `input` array properties', 2, function() {
         var array = /x/.exec('vwxyz'),
             actual = func(array);
 
@@ -1292,7 +1324,7 @@
         strictEqual(actual.input, 'vwxyz');
       });
 
-      test('`_.' + methodName + '` should deep clone `lastIndex` regexp property', 1, function() {
+      test('`_.' + methodName + '` should clone `lastIndex` regexp property', 1, function() {
         // avoid a regexp literal for older Opera and use `exec` for older Safari
         var regexp = RegExp('x', 'g');
         regexp.exec('vwxyz');
@@ -4777,6 +4809,23 @@
       else {
         skipTest();
       }
+    });
+
+    test('should perform comparisons between typed arrays', 1, function() {
+      var pairs = _.map(typedArrays, function(type) {
+        var Ctor = root[type] || Array,
+            buffer = Ctor == Array ? 4 : new ArrayBuffer(4);
+
+        return [new Ctor(buffer), new Ctor(buffer)];
+      });
+
+      var expected = _.times(pairs.length, _.constant(true));
+
+      var actual = _.map(pairs, function(pair) {
+        return _.isEqual(pair[0], pair[1]);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should perform comparisons between wrapped values', 4, function() {

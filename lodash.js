@@ -1366,14 +1366,14 @@
         case 1: return function(value) {
           return func.call(thisArg, value);
         };
-        case 2: return function(value, other) {
-          return func.call(thisArg, value, other);
-        };
         case 3: return function(value, index, collection) {
           return func.call(thisArg, value, index, collection);
         };
         case 4: return function(accumulator, value, index, collection) {
           return func.call(thisArg, accumulator, value, index, collection);
+        };
+        case 5: return function(value, other, key, object, source) {
+          return func.call(thisArg, value, other, key, object, source);
         };
       }
       return bind(func, thisArg);
@@ -2312,7 +2312,7 @@
         }
         // juggle arguments
         if (length > 3 && typeof args[length - 2] == 'function') {
-          var callback = baseCreateCallback(args[--length - 1], args[length--], 2);
+          var callback = baseCreateCallback(args[--length - 1], args[length--], 5);
         } else if (length > 2 && typeof args[length - 1] == 'function') {
           callback = args[--length];
         }
@@ -6594,7 +6594,7 @@
      * // => true
      */
     function isEqual(value, other, callback, thisArg) {
-      callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 2);
+      callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 3);
 
       if (!callback) {
         // exit early for identical values

@@ -157,9 +157,10 @@
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
-  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
-  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
-  cloneableClasses[dateClass] = cloneableClasses[errorClass] =
+  cloneableClasses[argsClass] =
+  cloneableClasses[arrayClass] = cloneableClasses[arrayBufferClass] =
+  cloneableClasses[boolClass] = cloneableClasses[dateClass] =
+  cloneableClasses[errorClass] = cloneableClasses[float32Class] =
   cloneableClasses[float64Class] = cloneableClasses[int8Class] =
   cloneableClasses[int16Class] = cloneableClasses[int32Class] =
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
@@ -606,12 +607,10 @@
 
     /** Native constructor references */
     var Array = context.Array,
-        Boolean = context.Boolean,
         Date = context.Date,
         Error = context.Error,
         Function = context.Function,
         Math = context.Math,
-        Number = context.Number,
         Object = context.Object,
         RegExp = context.RegExp,
         String = context.String,
@@ -1786,9 +1785,11 @@
             // but treat `-0` vs. `+0` as not equal
             : (value == 0 ? (1 / value == 1 / other) : value == +other);
 
+        case errorClass:
         case regexpClass:
         case stringClass:
-          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4)
+          // coerce errors (http://es5.github.io/#x15.11.4.4)
+          // and regexes (http://es5.github.io/#x15.10.6.4) to strings
           // treat string primitives and their corresponding object instances as equal
           return value == String(other);
       }

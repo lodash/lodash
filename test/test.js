@@ -4057,6 +4057,19 @@
       deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
       ok(_.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
     });
+
+    test('should return a wrapped value when chaining', 2, function() {
+      if (!isNpm) {
+        var object = { 'a': 1, 'b': 2 },
+            actual = _(object).invert();
+
+        ok(actual instanceof _);
+        deepEqual(actual.value(), { '1': 'a', '2': 'b' });
+      }
+      else {
+        skipTest(2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -9766,8 +9779,10 @@
     parts = parts.join(' and ');
 
     test('`_.' + methodName + '` should remove ' + parts + ' whitespace', 1, function() {
-      var string = whitespace + 'a b c' + whitespace;
-      strictEqual(func(string), (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''));
+      var string = whitespace + 'a b c' + whitespace,
+          expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
+
+      strictEqual(func(string), expected);
     });
 
     test('`_.' + methodName + '` should not remove non-whitespace characters', 1, function() {
@@ -9778,20 +9793,25 @@
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 1, function() {
-      var object = { 'toString': function() { return whitespace + 'a b c' + whitespace; } };
-      strictEqual(func(object), (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''));
+      var object = { 'toString': function() { return whitespace + 'a b c' + whitespace; } },
+          expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
+
+      strictEqual(func(object), expected);
     });
 
     test('`_.' + methodName + '` should remove ' + parts + ' `chars`', 1, function() {
-      var string = '-_-a-b-c-_-';
-      strictEqual(func(string, '_-'), (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : ''));
+      var string = '-_-a-b-c-_-',
+          expected = (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : '');
+
+      strictEqual(func(string, '_-'), expected);
     });
 
     test('`_.' + methodName + '` should coerce `chars` to a string', 1, function() {
       var object = { 'toString': function() { return '_-'; } },
-          string = '-_-a-b-c-_-';
+          string = '-_-a-b-c-_-',
+          expected = (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : '');
 
-      strictEqual(func(string, object), (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : ''));
+      strictEqual(func(string, object), expected);
     });
 
     test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string and `chars`', 6, function() {
@@ -9809,6 +9829,19 @@
       strictEqual(func(string, null), expected);
       strictEqual(func(string, undefined), expected);
       strictEqual(func(string, ''), string);
+    });
+
+    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        var string = whitespace + 'a b c' + whitespace,
+            expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''),
+            actual = _(string)[methodName]();
+
+        strictEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
     });
   });
 

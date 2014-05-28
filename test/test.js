@@ -1376,7 +1376,7 @@
           notStrictEqual(actual, object);
         }
         else {
-          skipTest();
+          skipTest(2);
         }
       });
     });

@@ -140,7 +140,7 @@
 			};
 
 			// only excuse in Sauce Labs (buggy Safari and timers)
-			else {
+			if (!ui.isSauceLabs) {
 				delete QUnit.config.excused.Chaining['select/reject/sortBy'];
 				delete QUnit.config.excused.Chaining['select/reject/sortBy in functional style'];
 				delete QUnit.config.excused.Functions['throttle repeatedly with results'];

@@ -247,6 +247,17 @@ function getOption(name, defaultValue) {
 }
 
 /**
+ * Checks if `value` is a job ID.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a job ID, else `false`.
+ */
+function isJobId(value) {
+  return reJobId.test(value);
+}
+
+/**
  * Writes an inline message to standard output.
  *
  * @private
@@ -395,7 +406,7 @@ function onJobStart(error, res, body) {
  * @param {Object} body The response body JSON object.
  */
 function onJobStatus(error, res, body) {
-  var completed = _.result(body, 'completed'),
+  var completed = _.result(body, 'completed', false),
       data = _.first(_.result(body, 'js tests')),
       jobId = _.result(data, 'job_id', null),
       jobResult = _.result(data, 'result', null),
@@ -416,10 +427,12 @@ function onJobStatus(error, res, body) {
   if (!this.running || this.stopping) {
     return;
   }
-  if (reJobId.test(jobId)) {
+  if (isJobId(jobId)) {
     this.id = jobId;
     this.result = jobResult;
     this.url = jobUrl;
+  } else {
+    completed = false;
   }
   this.emit('status', jobStatus);
 
@@ -533,7 +546,7 @@ Job.prototype.remove = function(callback) {
   this.removing = true;
   return this.stop(function() {
     var onRemove = _.bind(onJobRemove, this);
-    if (!reJobId.test(this.id)) {
+    if (!this.id) {
       _.defer(onRemove);
       return;
     }
@@ -646,7 +659,7 @@ Job.prototype.stop = function(callback) {
     this.checking = false;
   }
   var onStop = _.bind(onGenericStop, this);
-  if (!this.running || !reJobId.test(this.id)) {
+  if (!this.running || !this.id) {
     _.defer(onStop);
     return this;
   }

@@ -1,6 +1,10 @@
 # Lo-Dash v2.4.1
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
+## Documentation
+* **[Lo-Dash API Documentation](http://lodash.com/docs)**
+* [DevDocs &mdash; *a fast, organised & searchable interface for our documentation*](http://devdocs.io/lodash/)
+
 ## Download
 
 Check out our [wiki](https://github.com/lodash/lodash/wiki/build-differences) for details over the differences between builds.

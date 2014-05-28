@@ -113,9 +113,9 @@
   }());
 
   /** Load and install QUnit Extras */
-  var qa = load('../vendor/qunit-extras/qunit-extras.js');
-  if (qa) {
-    qa.runInContext(root);
+  var qe = load('../vendor/qunit-extras/qunit-extras.js');
+  if (qe) {
+    qe.runInContext(root);
   }
 
   /*--------------------------------------------------------------------------*/

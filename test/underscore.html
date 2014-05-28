@@ -19,6 +19,17 @@
 			</div>
 			<img id="chart_image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
 		</div>
+		<script>
+			// avoid reporting tests to Sauce Labs when script errors occur
+			if (location.port == '9001') {
+				window.onerror = function(message) {
+					if (window.QUnit) {
+						QUnit.config.done.length = 0;
+					}
+					global_test_results = { 'message': message };
+				};
+			}
+		</script>
 		<script src="../vendor/qunit/qunit/qunit.js"></script>
 		<script src="../vendor/qunit-extras/qunit-extras.js"></script>
 		<script src="../vendor/jquery/jquery.js"></script>
@@ -128,13 +139,6 @@
 				}
 			};
 
-			// avoid reporting tests to Sauce Labs when script errors occur
-			if (ui.isSauceLabs) {
-				window.onerror = function(message) {
-					QUnit.config.done.length = 0;
-					global_test_results = { 'message': message };
-				};
-			}
 			// only excuse in Sauce Labs (buggy Safari and timers)
 			else {
 				delete QUnit.config.excused.Chaining['select/reject/sortBy'];

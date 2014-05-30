@@ -417,7 +417,7 @@ function onJobStatus(error, res, body) {
       platform = options.platforms[0],
       description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
       elapsed = (_.now() - this.timestamp) / 1000,
-      errored = !jobResult || reError.test(message) || reError.test(jobStatus),
+      errored = !_.isObject(jobResult) || !jobResult.passed || reError.test(message) || reError.test(jobStatus),
       expired = (elapsed >= queueTimeout && !_.contains(jobStatus, 'in progress')),
       failures = _.result(jobResult, 'failed'),
       label = options.name + ':',

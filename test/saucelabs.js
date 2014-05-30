@@ -368,14 +368,14 @@ function onJobReset() {
  * @param {Object} body The response body JSON object.
  */
 function onJobStart(error, res, body) {
-  var statusCode = _.result(res, 'statusCode'),
-      taskId = _.first(_.result(body, 'js tests')),
-      tunnel = this.tunnel;
-
   this.starting = false;
+
   if (this.stopping) {
     return;
   }
+  var statusCode = _.result(res, 'statusCode'),
+      taskId = _.first(_.result(body, 'js tests'));
+
   if (error || !taskId || statusCode != 200) {
     if (this.attempts < this.retries) {
       this.restart();

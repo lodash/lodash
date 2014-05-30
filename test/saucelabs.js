@@ -406,26 +406,29 @@ function onJobStart(error, res, body) {
  * @param {Object} body The response body JSON object.
  */
 function onJobStatus(error, res, body) {
+  this.checking = false;
+
+  if (!this.running || this.stopping) {
+    return;
+  }
   var completed = _.result(body, 'completed', false),
       data = _.first(_.result(body, 'js tests')),
+      elapsed = (_.now() - this.timestamp) / 1000,
       jobId = _.result(data, 'job_id', null),
       jobResult = _.result(data, 'result', null),
       jobStatus = _.result(data, 'status', ''),
       jobUrl = _.result(data, 'url', null),
-      options = this.options,
-      message = _.result(jobResult, 'message'),
-      platform = options.platforms[0],
-      description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
-      elapsed = (_.now() - this.timestamp) / 1000,
-      errored = !_.isObject(jobResult) || !jobResult.passed || reError.test(message) || reError.test(jobStatus),
       expired = (elapsed >= queueTimeout && !_.contains(jobStatus, 'in progress')),
-      failures = _.result(jobResult, 'failed'),
-      label = options.name + ':',
-      tunnel = this.tunnel;
+      options = this.options,
+      platform = options.platforms[0];
 
-  this.checking = false;
-  if (!this.running || this.stopping) {
-    return;
+  if (_.isObject(jobResult)) {
+    var message = _.result(jobResult, 'message');
+  } else {
+    if (typeof jobResult == 'string') {
+      message = jobResult;
+    }
+    jobResult = null;
   }
   if (isJobId(jobId)) {
     this.id = jobId;
@@ -440,6 +443,12 @@ function onJobStatus(error, res, body) {
     this._pollerId = _.delay(_.bind(this.status, this), this.statusInterval * 1000);
     return;
   }
+  var description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+      errored = !jobResult || !jobResult.passed || reError.test(message) || reError.test(jobStatus),
+      failures = _.result(jobResult, 'failed'),
+      label = options.name + ':',
+      tunnel = this.tunnel;
+
   if (errored || failures) {
     if (errored && this.attempts < this.retries) {
       this.restart();

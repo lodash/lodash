@@ -19,6 +19,7 @@
   var phantom = root.phantom,
       amd = root.define && define.amd,
       argv = root.process && process.argv,
+      ArrayBuffer = root.ArrayBuffer,
       document = !phantom && root.document,
       body = root.document && root.document.body,
       create = Object.create,
@@ -1284,14 +1285,31 @@
 
       _.each(typedArrays, function(type) {
         test('`_.' + methodName + '` should clone ' + type + ' arrays', 2, function() {
-          var Ctor = root[type] || Array,
-              buffer = Ctor == Array ? 4 : new ArrayBuffer(4),
-              array = new Ctor(buffer),
-              actual = func(array);
+          var Ctor = root[type];
+          if (Ctor) {
+            var array = new Ctor(new ArrayBuffer(4)),
+                actual = func(array);
 
-          deepEqual(actual, array);
-          notStrictEqual(actual, array);
+            deepEqual(actual, array);
+            notStrictEqual(actual, array);
+          }
+          else {
+            skipTest(2);
+          }
         });
+      });
+
+      test('`_.' + methodName + '` should clone array buffers', 2, function() {
+        if (ArrayBuffer) {
+          var buffer = new ArrayBuffer(4),
+              actual = func(buffer);
+
+          strictEqual(actual.byteLength, buffer.byteLength);
+          notStrictEqual(actual, buffer);
+        }
+        else {
+          skipTest(2);
+        }
       });
 
       test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', 2, function() {

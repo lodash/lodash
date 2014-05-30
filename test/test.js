@@ -9497,7 +9497,7 @@
         setTimeout(function() {
           deepEqual(actual, expected);
           QUnit.start();
-        }, 32);
+        }, 48);
       }
       else {
         skipTest(2);

@@ -63,7 +63,7 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.bind](http://lodash.com/docs#bind), [_.curry](http://lodash.com/docs#curry), [_.partial](http://lodash.com/docs#partial), &
    [more](http://lodash.com/docs  "_.bindKey, _.partialRight") support argument placeholders
  * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
-   [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.truncate") string methods
+   [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc") string methods
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &
    [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.forEachRight, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.where") accept strings
  * [_.dropWhile](http://lodash.com/docs#dropWhile), [_.takeWhile](http://lodash.com/docs#takeWhile), &

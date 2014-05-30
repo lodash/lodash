@@ -1300,10 +1300,9 @@
       });
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
-        if (ArrayBuffer) {
-          var buffer = new ArrayBuffer(4),
-              actual = func(buffer);
-
+        var buffer = ArrayBuffer && new ArrayBuffer(4);
+        if (buffer && buffer.slice) {
+          var actual = func(buffer);
           strictEqual(actual.byteLength, buffer.byteLength);
           notStrictEqual(actual, buffer);
         }

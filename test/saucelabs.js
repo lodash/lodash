@@ -53,7 +53,7 @@ var prevLine = '';
 var push = Array.prototype.push;
 
 /** Used to detect error messages */
-var reError = /\berror\b/i;
+var reError = /(?:\be|E)rror\b/;
 
 /** Used to detect valid job ids */
 var reJobId = /^[a-z0-9]{32}$/;
@@ -592,7 +592,7 @@ Job.prototype.restart = function(callback) {
       label = options.name + ':';
 
   logInline();
-  console.log(label + ' ' + description + ' restart %d of %d', ++this.attempts, this.retries);
+  console.log('%s %s restart %d of %d', label, description, ++this.attempts, this.retries);
 
   return this.remove(onGenericRestart);
 };
@@ -755,7 +755,7 @@ Tunnel.prototype.restart = function(callback) {
   this.restarting = true;
 
   logInline();
-  console.log('Tunnel ' + this.id + ': restart %d of %d', ++this.attempts, this.retries);
+  console.log('Tunnel %s: restart %d of %d', this.id, ++this.attempts, this.retries);
 
   var jobs = this.jobs,
       active = jobs.active,

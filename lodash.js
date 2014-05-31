@@ -196,8 +196,9 @@
    *
    * Backticks are escaped because in Internet Explorer < 9, they can be used
    * to break out of attribute values or HTML comments. See
-   * <http://html5sec.org/#102>, <http://html5sec.org/#108>, and
-   * <http://html5sec.org/#133> for more details.
+   * [#102](http://html5sec.org/#102), [#108](http://html5sec.org/#108), and
+   * [#133](http://html5sec.org/#133) of the [HTML5 Security Cheatsheet](http://html5sec.org/)
+   * for more details.
    */
   var htmlEscapes = {
     '&': '&amp;',

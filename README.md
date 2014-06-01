@@ -1,4 +1,4 @@
-# Lo-Dash v2.4.1
+# Lo-Dash v2.5.0-pre
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Documentation

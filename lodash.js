@@ -1319,6 +1319,31 @@
       }());
     }
 
+      /**
+       * Creates a filter callback which is the result of running all callbacks from the array on the collection
+       * @private
+       * @param {Array} cbArray
+       * @param {*} [thisArg] The `this` binding of the created callback.
+       * @param {number} [argCount] The number of arguments the callback accepts.
+       * @returns {Function} Returns the new function.
+       */
+      function createMultiCallback(cbArray, thisArg, argCount){
+          var callbacks = [];
+          forEach(cbArray, function(cb){
+              callbacks.push(createCallback(cb,thisArg, argCount));
+          });
+
+          return function(val, ind, collection){
+              var result = true,
+                  len = callbacks.length,
+                  index = -1;
+
+              while(++index < len && result){
+                  result = callbacks[index](val,ind,collection);
+              }
+              return result;
+          };
+      }
     /**
      * The base implementation of `_.createCallback` without support for creating
      * "_.pluck" and "_.where" style callbacks.
@@ -4157,7 +4182,7 @@
      */
     function filter(collection, predicate, thisArg) {
       var result = [];
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = isArray(predicate) ? lodash.createMultiCallback(predicate, thisArg, 3) : lodash.createCallback(predicate, thisArg, 3);
 
       if (isArray(collection)) {
         var index = -1,
@@ -8584,6 +8609,7 @@
     lodash.countBy = countBy;
     lodash.create = create;
     lodash.createCallback = createCallback;
+    lodash.createMultiCallback = createMultiCallback;
     lodash.curry = curry;
     lodash.debounce = debounce;
     lodash.defaults = defaults;

@@ -2,8 +2,8 @@
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Documentation
-* [Lo-Dash API Documentation](http://lodash.com/docs)
-* [DevDocs – *a fast, organised, & searchable interface for our documentation*](http://devdocs.io/lodash/)
+* [API Documentation](http://lodash.com/docs)
+* [DevDocs – *a fast, organized, & searchable interface for our documentation*](http://devdocs.io/lodash/)
 
 ## Download
 
@@ -22,7 +22,7 @@ Love modules? We’ve got you covered with [lodash-amd](https://github.com/lodas
 
 ## Dive in
 
-Check out our [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), [benchmarks](http://lodash.com/benchmarks), [changelog](https://github.com/lodash/lodash/wiki/Changelog), [roadmap](https://github.com/lodash/lodash/wiki/Roadmap), as well as [community created podcasts, posts, & videos](https://github.com/lodash/lodash/wiki/Resources).
+Check out our [unit tests](http://lodash.com/tests), [benchmarks](http://lodash.com/benchmarks), [changelog](https://github.com/lodash/lodash/wiki/Changelog), [roadmap](https://github.com/lodash/lodash/wiki/Roadmap), as well as [community created podcasts, posts, & videos](https://github.com/lodash/lodash/wiki/Resources).
 
 ## Installation
 
@@ -116,7 +116,7 @@ Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl
 
 Tested in Chrome (19, 34-35), Firefox (3, 20, 28-29), IE 6-11, Opera 20-21, Safari 5-7, Node.js 0.6.21~0.10.28, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
-Automated browser test results [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
+Automated browser test runs [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
 
 ## Author
 

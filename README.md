@@ -2,28 +2,61 @@
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Documentation
-* **[Lo-Dash API Documentation](http://lodash.com/docs)**
-* [DevDocs &mdash; *a fast, organised & searchable interface for our documentation*](http://devdocs.io/lodash/)
+* [Lo-Dash API Documentation](http://lodash.com/docs)
+* [DevDocs – *a fast, organised, & searchable interface for our documentation*](http://devdocs.io/lodash/)
 
 ## Download
 
-Check out our [wiki](https://github.com/lodash/lodash/wiki/build-differences) for details over the differences between builds.
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick the build that’s right for you.
 
-* [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js)) perfect for new environments<br>(Chrome ≥ 14, Firefox ≥ 10, IE ≥ 9, Node.js, Opera ≥ 12, Safari ≥ 5.1)
-* [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js)) for old environments too
-* [Underscore build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js)) as a drop-in replacement for [Underscore v1.6.0](http://underscorejs.org/#1.6.0)
+* [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js))<br>
+  For new environments like Chrome ≥ 14, Firefox ≥ 10, IE ≥ 9, Node.js, Opera ≥ 12, & Safari ≥ 5.1
+* [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js))<br>
+  For new & old environments like IE ≤ 8 & PhantomJS
+* [Underscore build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js))<br>
+  A drop-in replacement for [Underscore v1.6.0](http://underscorejs.org/#1.6.0)
 
-CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash). For smaller file sizes, create [custom builds](http://lodash.com/custom-builds) with only the features needed.
-
+CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
+Create [custom builds](http://lodash.com/custom-builds) with only the features you need.<br>
 Love modules? We’ve got you covered with [lodash-amd](https://github.com/lodash/lodash-amd/tree/2.4.1), [lodash-es6](https://github.com/lodash/lodash-es6), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
-There’s plenty of **[API documentation](http://lodash.com/docs)**, [unit tests](http://lodash.com/tests), & [benchmarks](http://lodash.com/benchmarks).<br>
-Check out <a href="http://devdocs.io/lodash/">DevDocs</a>; a fast, organized, & searchable interface for our documentation.
+Check out our [documentation](http://lodash.com/docs), [unit tests](http://lodash.com/tests), [benchmarks](http://lodash.com/benchmarks), [changelog](https://github.com/lodash/lodash/wiki/Changelog), [roadmap](https://github.com/lodash/lodash/wiki/Roadmap), as well as [community created podcasts, posts, & videos](https://github.com/lodash/lodash/wiki/Resources).
 
-The full changelog for this release is available on our [wiki](https://github.com/lodash/lodash/wiki/Changelog).<br>
-A list of upcoming features is available on our [roadmap](https://github.com/lodash/lodash/wiki/Roadmap).
+## Installation
+
+In browsers:
+
+```html
+<script src="lodash.js"></script>
+```
+
+In an AMD loader:
+
+```js
+require(['lodash'], function(_) {/*…*/});
+```
+
+Using npm:
+
+```bash
+$ npm i --save lodash
+
+$ {sudo -H} npm i -g lodash
+$ npm ln lodash
+```
+
+In Node.js:
+
+```js
+var _ = require('lodash');
+// or as Underscore
+var _ = require('lodash-underscore');
+```
+
+**Note:**
+Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL
 
 ## Features *not* in Underscore
 
@@ -79,81 +112,11 @@ A list of upcoming features is available on our [roadmap](https://github.com/lod
  * [_.omit](http://lodash.com/docs#omit), [_.pick](http://lodash.com/docs#pick), &
    [more](http://lodash.com/docs "_.assign, _.clone, _.cloneDeep, _.isEqual, _.merge") accept callbacks
 
-## Resources
-
- * Podcasts
-  - [JavaScript Jabber](http://javascriptjabber.com/079-jsj-lo-dash-with-john-david-dalton/)
-
- * Posts
-  - [Say “Hello” to Lo-Dash](http://kitcambridge.be/blog/say-hello-to-lo-dash/)
-  - [Custom builds in Lo-Dash 2.0](http://kitcambridge.be/blog/custom-builds-in-lo-dash-2-dot-0/)
-
- * Videos
-  - [Introduction](https://vimeo.com/44154599)
-  - [Origins](https://vimeo.com/44154600)
-  - [Optimizations & builds](https://vimeo.com/44154601)
-  - [Native method use](https://vimeo.com/48576012)
-  - [Testing](https://vimeo.com/45865290)
-  - [CascadiaJS ’12](http://www.youtube.com/watch?v=dpPy4f_SeEk)
-
- A list of other community created podcasts, posts, & videos is available on our [wiki](https://github.com/lodash/lodash/wiki/Resources).
-
 ## Support
 
-Tested in Chrome (19, 34-35), Firefox (3, 20, 28-29), IE 6-11, Opera (10, 12, 20-21), Safari 5-7, Node.js 0.6.21~0.10.28, Narwhal 0.3.2, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome (19, 34-35), Firefox (3, 20, 28-29), IE 6-11, Opera 20-21, Safari 5-7, Node.js 0.6.21~0.10.28, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
-Automated browser test results [are available](https://saucelabs.com/u/lodash) as well as [Travis CI](https://travis-ci.org/) builds for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash).
-
-Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.<br>
-[![Sauce Labs](http://lodash.com/_img/sauce.png)](https://saucelabs.com/ "Sauce Labs: Selenium Testing & More")
-
-## Installation & usage
-
-In browsers:
-
-```html
-<script src="lodash.js"></script>
-```
-
-Using [`npm`](http://npmjs.org/):
-
-```bash
-$ npm i --save lodash
-
-$ {sudo} npm i -g lodash
-$ npm ln lodash
-```
-
-In [Node.js](http://nodejs.org/) & [Ringo](http://ringojs.org/):
-
-```js
-var _ = require('lodash');
-// or as Underscore
-var _ = require('lodash/dist/lodash.underscore');
-```
-
-**Notes:**
- * Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL
- * If Lo-Dash is installed globally, run [`npm ln lodash`](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/) in your project’s root directory *before* requiring it
-
-In [Rhino](http://www.mozilla.org/rhino/):
-
-```js
-load('lodash.js');
-```
-
-In an AMD loader:
-
-```js
-require({
-  'packages': [
-    { 'name': 'lodash', 'location': 'path/to/lodash', 'main': 'lodash' }
-  ]
-},
-['lodash'], function(_) {
-  console.log(_.VERSION);
-});
-```
+Automated browser test results [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
 
 ## Author
 

@@ -2664,7 +2664,7 @@
 
 	test('when given an array of callbacks, should return true only if all callbacks return truthy value', 3, function() {
 		var john = {age: 40, gender: 'male', skills: ['jump', 'swim']}, 
-			david, = {age: 28, gender: 'male', skills: ['jump', 'run']},
+			david = {age: 28, gender: 'male', skills: ['jump', 'run']},
 			mary = {age: 33, gender: 'female', skills: ['run', 'swim']}, 
 			jessica = {age: 26, gender: 'female', skills: ['run', 'swim', 'jump']};
 		

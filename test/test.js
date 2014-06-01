@@ -2658,10 +2658,44 @@
         deepEqual(actual.value(), [3, 4]);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
 
+	test('when given an array of callbacks, should return true only if all callbacks return truthy value', 3, function() {
+		var john = {age: 40, gender: 'male', skills: ['jump', 'swim']}, 
+			david, = {age: 28, gender: 'male', skills: ['jump', 'run']},
+			mary = {age: 33, gender: 'female', skills: ['run', 'swim']}, 
+			jessica = {age: 26, gender: 'female', skills: ['run', 'swim', 'jump']};
+		
+		var collection = {
+			john: john,
+			david: david,
+			mary: mary,
+			jessica: jessica 
+		}
+
+		var filter1 = function(val, key, coll){
+			return _.contains(key, 'a');
+		}
+		var filter2 = function(val, key, coll){
+			return val.age > 30;
+		}
+
+		var expected, actual;
+		expected = [jessica];
+		actual = _.filter(collection, [filter1, {skills:['swim', 'jump']}]);
+		deepEqual(expected, actual);
+		
+		expected = [mary]
+		actual = _.filter(collection, [filter1, filter2]);
+		deepEqual(expected, actual);
+		
+		expected = [john]
+		actual = _.filter(collection, [filter2, {gender: 'male'}]); 
+		deepEqual(expected, actual);
+    });
+	
     test('should be aliased', 1, function() {
       strictEqual(_.select, _.filter);
     });
@@ -10844,7 +10878,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 187, function() {
+    test('should accept falsey arguments', 188, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

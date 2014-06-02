@@ -1301,7 +1301,7 @@
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
         var buffer = ArrayBuffer && new ArrayBuffer(4);
-        if (buffer && buffer.slice) {
+        if (buffer) {
           var actual = func(buffer);
           strictEqual(actual.byteLength, buffer.byteLength);
           notStrictEqual(actual, buffer);

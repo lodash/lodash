@@ -100,9 +100,10 @@
 
   /** Used to assign default `context` object properties */
   var contextProps = [
-    'Array', 'Boolean', 'Date', 'Error', 'Function', 'Math', 'Number', 'Object',
-    'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document', 'isFinite', 'isNaN',
-    'parseInt', 'setTimeout', 'TypeError', 'window', 'WinRTError'
+    'Array', 'ArrayBuffer', 'Boolean', 'Date', 'Error', 'Float64Array', 'Function',
+    'Math', 'Number', 'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout',
+    'document', 'isFinite', 'isNaN','parseInt', 'setTimeout', 'TypeError',
+    'Uint8Array', 'window', 'WinRTError'
   ];
 
   /** Used to fix the JScript `[[DontEnum]]` bug */
@@ -625,8 +626,8 @@
     /** Used to detect DOM support */
     var document = (document = context.window) && document.document;
 
-    /** Used to restore the original `_` reference in `_.noConflict` */
-    var oldDash = context._;
+    /** Used to resolve the decompiled source of functions */
+    var fnToString = Function.prototype.toString;
 
     /**
      * Used as the maximum length of an array-like object.
@@ -634,6 +635,9 @@
      * for more details.
      */
     var maxSafeInteger = Math.pow(2, 53) - 1;
+
+    /** Used to restore the original `_` reference in `_.noConflict` */
+    var oldDash = context._;
 
     /** Used to resolve the internal `[[Class]]` of values */
     var toString = objectProto.toString;
@@ -645,10 +649,12 @@
     );
 
     /** Native method shortcuts */
-    var ceil = Math.ceil,
+    var ArrayBuffer = isNative(ArrayBuffer = context.ArrayBuffer) && ArrayBuffer,
+        bufferSlice = isNative(bufferSlice = ArrayBuffer && (new ArrayBuffer).slice) && bufferSlice,
+        ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
+        Float64Array = isNative(Float64Array = context.Float64Array) && Float64Array,
         floor = Math.floor,
-        fnToString = Function.prototype.toString,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
@@ -656,6 +662,7 @@
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
         splice = arrayProto.splice,
+        Uint8Array = isNative(Uint8Array = context.Uint8Array) && Uint8Array,
         unshift = arrayProto.unshift;
 
     /** Used to set metadata on functions */
@@ -1217,7 +1224,7 @@
         }
         switch (className) {
           case arrayBufferClass:
-            return value.slice(0);
+            return cloneBuffer(value);
 
           case boolClass:
           case dateClass:
@@ -2512,6 +2519,31 @@
      */
     function isNative(value) {
       return typeof value == 'function' && reNative.test(fnToString.call(value));
+    }
+
+    /**
+     * Creates a clone of the given array buffer.
+     *
+     * @private
+     * @param {ArrayBuffer} buffer The array buffer to clone.
+     * @returns {ArrayBuffer} Returns the cloned array buffer.
+     */
+    function cloneBuffer(buffer) {
+      return bufferSlice.call(buffer, 0);
+    }
+    if (!bufferSlice) {
+      cloneBuffer = !(ArrayBuffer && Float64Array && Uint8Array) ? identity : function(buffer) {
+        var byteLength = buffer.byteLength,
+            floatLength = floor(byteLength / 8),
+            offset = floatLength * 8,
+            result = new ArrayBuffer(byteLength),
+            resultView = new Float64Array(result, 0, floatLength);
+
+        resultView.set(new Float64Array(buffer, 0, floatLength));
+        resultView = new Uint8Array(result, offset);
+        resultView.set(new Uint8Array(buffer, offset));
+        return result;
+      };
     }
 
     /**

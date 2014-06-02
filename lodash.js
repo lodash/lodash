@@ -64,6 +64,9 @@
   /** Used to detect hexadecimal string values */
   var reHexPrefix = /^0[xX]/;
 
+  /** Used to detect host constructors (Safari > 5) */
+  var reHostCtor = /^\[object .+?Constructor\]$/;
+
   /** Used to match latin-1 supplement letters */
   var reLatin1 = /[\xC0-\xFF]/g;
 
@@ -2518,7 +2521,10 @@
      * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
      */
     function isNative(value) {
-      return typeof value == 'function' && reNative.test(fnToString.call(value));
+      var type = typeof value;
+      return type == 'function'
+        ? reNative.test(fnToString.call(value))
+        : (value && type == 'object' && reHostCtor.test(toString.call(value))) || false;
     }
 
     /**

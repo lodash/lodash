@@ -6954,8 +6954,9 @@
       var Ctor = object && object.constructor,
           length = object ? object.length : 0;
 
-      if ((typeof length == 'number' && length > 0) ||
-          (Ctor && object === Ctor.prototype)) {
+      if ((Ctor && object === Ctor.prototype) ||
+          (typeof length == 'number' && length > 0) ||
+          (support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];

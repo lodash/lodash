@@ -2538,16 +2538,21 @@
       return bufferSlice.call(buffer, 0);
     }
     if (!bufferSlice) {
-      cloneBuffer = !(ArrayBuffer && Float64Array && Uint8Array) ? identity : function(buffer) {
+      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
+      cloneBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
         var byteLength = buffer.byteLength,
-            floatLength = floor(byteLength / 8),
+            floatLength = Float64Array ? floor(byteLength / 8) : 0,
             offset = floatLength * 8,
-            result = new ArrayBuffer(byteLength),
-            resultView = new Float64Array(result, 0, floatLength);
+            result = new ArrayBuffer(byteLength);
 
-        resultView.set(new Float64Array(buffer, 0, floatLength));
-        resultView = new Uint8Array(result, offset);
-        resultView.set(new Uint8Array(buffer, offset));
+        if (floatLength) {
+          var view = new Float64Array(result, 0, floatLength);
+          view.set(new Float64Array(buffer, 0, floatLength));
+        }
+        if (byteLength != offset) {
+          view = new Uint8Array(result, offset);
+          view.set(new Uint8Array(buffer, offset));
+        }
         return result;
       };
     }

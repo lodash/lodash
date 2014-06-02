@@ -754,15 +754,11 @@
      * var wrapped = _([1, 2, 3]);
      *
      * // returns an unwrapped value
-     * wrapped.reduce(function(sum, num) {
-     *   return sum + num;
-     * });
+     * wrapped.reduce(function(sum, n) { return sum + n; });
      * // => 6
      *
      * // returns a wrapped value
-     * var squares = wrapped.map(function(num) {
-     *   return num * num;
-     * });
+     * var squares = wrapped.map(function(n) { return n * n; });
      *
      * _.isArray(squares);
      * // => false
@@ -2735,9 +2731,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.dropRightWhile([1, 2, 3], function(num) {
-     *   return num > 1;
-     * });
+     * _.dropRightWhile([1, 2, 3], function(n) { return n > 1; });
      * // => [1]
      *
      * var characters = [
@@ -2778,9 +2772,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.dropWhile([1, 2, 3], function(num) {
-     *   return num < 3;
-     * });
+     * _.dropWhile([1, 2, 3], function(n) { return n < 3; });
      * // => [3]
      *
      * var characters = [
@@ -3302,7 +3294,7 @@
      * @example
      *
      * var array = [1, 2, 3, 4];
-     * var evens = _.remove(array, function(num) { return num % 2 == 0; });
+     * var evens = _.remove(array, function(n) { return n % 2 == 0; });
      *
      * console.log(array);
      * // => [1, 3]
@@ -3542,9 +3534,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.takeRightWhile([1, 2, 3], function(num) {
-     *   return num > 1;
-     * });
+     * _.takeRightWhile([1, 2, 3], function(n) { return n > 1; });
      * // => [2, 3]
      *
      * var characters = [
@@ -3585,9 +3575,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.takeWhile([1, 2, 3], function(num) {
-     *   return num < 3;
-     * });
+     * _.takeWhile([1, 2, 3], function(n) { return n < 3; });
      * // => [1, 2]
      *
      * var characters = [
@@ -3652,20 +3640,20 @@
      * @returns {Array} Returns the new duplicate-value-free array.
      * @example
      *
-     * _.uniq([1, 2, 1, 3, 1]);
-     * // => [1, 2, 3]
+     * _.uniq([1, 2, 1]);
+     * // => [1, 2]
      *
      * // using `isSorted`
-     * _.uniq([1, 1, 2, 2, 3], true);
-     * // => [1, 2, 3]
+     * _.uniq([1, 1, 2], true);
+     * // => [1, 2]
      *
      * // using `callback`
-     * _.uniq(['A', 'b', 'C', 'a', 'B', 'c'], function(letter) { return letter.toLowerCase(); });
-     * // => ['A', 'b', 'C']
+     * _.uniq(['A', 'b', 'a', 'B'], function(chr) { return chr.toLowerCase(); });
+     * // => ['A', 'b']
      *
      * // using `callback` with `thisArg`
-     * _.uniq([1, 2.5, 3, 1.5, 2, 3.5], function(num) { return this.floor(num); }, Math);
-     * // => [1, 2.5, 3]
+     * _.uniq([1, 2.5, 1.5, 2], function(n) { return this.floor(n); }, Math);
+     * // => [1, 2.5]
      *
      * // using "_.pluck" callback shorthand
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
@@ -4037,10 +4025,10 @@
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * _.countBy([4.3, 6.1, 6.4], function(num) { return Math.floor(num); });
+     * _.countBy([4.3, 6.1, 6.4], function(n) { return Math.floor(n); });
      * // => { '4': 1, '6': 2 }
      *
-     * _.countBy([4.3, 6.1, 6.4], function(num) { return this.floor(num); }, Math);
+     * _.countBy([4.3, 6.1, 6.4], function(n) { return this.floor(n); }, Math);
      * // => { '4': 1, '6': 2 }
      *
      * _.countBy(['one', 'two', 'three'], 'length');
@@ -4139,7 +4127,7 @@
      * @returns {Array} Returns the new filtered array.
      * @example
      *
-     * var evens = _.filter([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+     * var evens = _.filter([1, 2, 3, 4], function(n) { return n % 2 == 0; });
      * // => [2, 4]
      *
      * var characters = [
@@ -4246,9 +4234,7 @@
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
-     * _.findLast([1, 2, 3, 4], function(num) {
-     *   return num % 2 == 1;
-     * });
+     * _.findLast([1, 2, 3, 4], function(n) { return n % 2 == 1; });
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
@@ -4304,10 +4290,10 @@
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
-     * _([1, 2, 3]).forEach(function(num) { console.log(num); }).join(',');
+     * _([1, 2, 3]).forEach(function(n) { console.log(n); }).join(',');
      * // => logs each number and returns '1,2,3'
      *
-     * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { console.log(num); });
+     * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n) { console.log(n); });
      * // => logs each number and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, callback, thisArg) {
@@ -4330,7 +4316,7 @@
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
-     * _([1, 2, 3]).forEachRight(function(num) { console.log(num); }).join(',');
+     * _([1, 2, 3]).forEachRight(function(n) { console.log(n); }).join(',');
      * // => logs each number from right to left and returns '3,2,1'
      */
     function forEachRight(collection, callback, thisArg) {
@@ -4364,10 +4350,10 @@
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * _.groupBy([4.2, 6.1, 6.4], function(num) { return Math.floor(num); });
+     * _.groupBy([4.2, 6.1, 6.4], function(n) { return Math.floor(n); });
      * // => { '4': [4.2], '6': [6.1, 6.4] }
      *
-     * _.groupBy([4.2, 6.1, 6.4], function(num) { return this.floor(num); }, Math);
+     * _.groupBy([4.2, 6.1, 6.4], function(n) { return this.floor(n); }, Math);
      * // => { '4': [4.2], '6': [6.1, 6.4] }
      *
      * // using "_.pluck" callback shorthand
@@ -4475,10 +4461,10 @@
      * @returns {Array} Returns the new mapped array.
      * @example
      *
-     * _.map([1, 2, 3], function(num) { return num * 3; });
+     * _.map([1, 2, 3], function(n) { return n * 3; });
      * // => [3, 6, 9]
      *
-     * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { return num * 3; });
+     * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(n) { return n * 3; });
      * // => [3, 6, 9] (property order is not guaranteed across environments)
      *
      * var characters = [
@@ -4685,10 +4671,10 @@
      * @returns {Array} Returns the array of grouped elements.
      * @example
      *
-     * _.partition([1, 2, 3], function(num) { return num % 2; });
+     * _.partition([1, 2, 3], function(n) { return n % 2; });
      * // => [[1, 3], [2]]
      *
-     * _.partition([1.2, 2.3, 3.4], function(num) { return this.floor(num) % 2; }, Math);
+     * _.partition([1.2, 2.3, 3.4], function(n) { return this.floor(n) % 2; }, Math);
      * // => [[1, 3], [2]]
      *
      * var characters = [
@@ -4751,13 +4737,11 @@
      * @returns {*} Returns the accumulated value.
      * @example
      *
-     * var sum = _.reduce([1, 2, 3], function(sum, num) {
-     *   return sum + num;
-     * });
+     * var sum = _.reduce([1, 2, 3], function(sum, n) { return sum + n; });
      * // => 6
      *
-     * var mapped = _.reduce({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) {
-     *   result[key] = num * 3;
+     * var mapped = _.reduce({ 'a': 1, 'b': 2, 'c': 3 }, function(result, n, key) {
+     *   result[key] = n * 3;
      *   return result;
      * }, {});
      * // => { 'a': 3, 'b': 6, 'c': 9 }
@@ -4839,7 +4823,7 @@
      * @returns {Array} Returns the new filtered array.
      * @example
      *
-     * var odds = _.reject([1, 2, 3, 4], function(num) { return num % 2 == 0; });
+     * var odds = _.reject([1, 2, 3, 4], function(n) { return n % 2 == 0; });
      * // => [1, 3]
      *
      * var characters = [
@@ -5042,10 +5026,10 @@
      * @returns {Array} Returns the new sorted array.
      * @example
      *
-     * _.sortBy([1, 2, 3], function(num) { return Math.sin(num); });
+     * _.sortBy([1, 2, 3], function(n) { return Math.sin(n); });
      * // => [3, 1, 2]
      *
-     * _.sortBy([1, 2, 3], function(num) { return this.sin(num); }, Math);
+     * _.sortBy([1, 2, 3], function(n) { return this.sin(n); }, Math);
      * // => [3, 1, 2]
      *
      * var characters = [
@@ -5687,8 +5671,8 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * function isEven(num) {
-     *   return num % 2 == 0;
+     * function isEven(n) {
+     *   return n % 2 == 0;
      * }
      *
      * _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
@@ -6263,7 +6247,7 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
+     * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(n, key) {
      *   console.log(key);
      * });
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
@@ -6288,7 +6272,7 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.forOwnRight({ '0': 'zero', '1': 'one', 'length': 2 }, function(num, key) {
+     * _.forOwnRight({ '0': 'zero', '1': 'one', 'length': 2 }, function(n, key) {
      *   console.log(key);
      * });
      * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
@@ -7030,7 +7014,7 @@
      * @returns {Object} Returns the new mapped object.
      * @example
      *
-     * _.mapValues({ 'a': 1, 'b': 2, 'c': 3} , function(num) { return num * 3; });
+     * _.mapValues({ 'a': 1, 'b': 2, 'c': 3} , function(n) { return n * 3; });
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      *
      * var characters = {
@@ -7229,16 +7213,16 @@
      * @returns {*} Returns the accumulated value.
      * @example
      *
-     * var squares = _.transform([1, 2, 3, 4, 5, 6, 7, 8], function(result, num) {
-     *   num *= num;
-     *   if (num % 2) {
-     *     return result.push(num) < 3;
+     * var squares = _.transform([1, 2, 3, 4, 5, 6], function(result, n) {
+     *   n *= n;
+     *   if (n % 2) {
+     *     return result.push(n) < 3;
      *   }
      * });
      * // => [1, 9, 25]
      *
-     * var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, num, key) {
-     *   result[key] = num * 3;
+     * var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, n, key) {
+     *   result[key] = n * 3;
      * });
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */

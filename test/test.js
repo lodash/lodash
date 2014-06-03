@@ -2580,22 +2580,6 @@
 
       deepEqual(actual, { 'a':  1, 'b': 2, 'c': 3 });
     });
-
-    if (methodName == 'merge') {
-      test('`_.' + methodName + '` should treat sparse arrays as dense', 2, function() {
-        var array = Array(3);
-        array[0] = 1;
-        array[2] = 3;
-
-        var actual = func([], array),
-            expected = array.slice();
-
-        expected[1] = undefined;
-
-        ok('1' in actual);
-        deepEqual(actual, expected);
-      });
-    }
   });
 
   /*--------------------------------------------------------------------------*/
@@ -6365,6 +6349,20 @@
       ok(actual.bar.b === actual.foo.b && actual.foo.b.foo.c === actual.foo.b.foo.c.foo.b.foo.c);
     });
 
+    test('should treat sources that are sparse arrays as dense', 2, function() {
+      var array = Array(3);
+      array[0] = 1;
+      array[2] = 3;
+
+      var actual = _.merge([], array),
+          expected = array.slice();
+
+      expected[1] = undefined;
+
+      ok('1' in actual);
+      deepEqual(actual, expected);
+    });
+
     test('should not treat `arguments` objects as plain objects', 1, function() {
       var object = {
         'args': args
@@ -6389,8 +6387,8 @@
     });
 
     test('should not assign `undefined` values', 1, function() {
-      var actual = _.merge({ 'a': 1 }, { 'a': undefined });
-      strictEqual(actual.a, 1);
+      var actual = _.merge({ 'a': 1 }, { 'a': undefined, 'b': undefined });
+      deepEqual(actual, { 'a': 1 });
     });
 
     test('should handle merging if `callback` returns `undefined`', 1, function() {

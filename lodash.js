@@ -1737,7 +1737,7 @@
      * @param {*} value The value to compare to `other`.
      * @param {*} other The value to compare to `value`.
      * @param {Function} [callback] The function to customize comparing values.
-     * @param {Function} [isWhere=false] A flag to indicate performing partial comparisons.
+     * @param {boolean} [isWhere=false] A flag to indicate performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.

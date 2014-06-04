@@ -3,14 +3,14 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 ## Documentation
 * [API Documentation](http://lodash.com/docs)
-* [DevDocs – *a fast, organized, & searchable interface for our documentation*](http://devdocs.io/lodash/)
+* [DevDocs – *a searchable interface for our documentation*](http://devdocs.io/lodash/)
 
 ## Download
 
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick the build that’s right for you.
 
 * [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js))<br>
-  For new environments like Chrome ≥ 14, Firefox ≥ 10, IE ≥ 9, Node.js, Opera ≥ 12, & Safari ≥ 5.1
+  For new environments like Chrome, Firefox, IE ≥ 9, & Safari ≥ 5.1
 * [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js))<br>
   For new & old environments like IE ≤ 8 & PhantomJS
 * [Underscore build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js))<br>
@@ -18,7 +18,7 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 Create [custom builds](http://lodash.com/custom-builds) with only the features you need.<br>
-Love modules? We’ve got you covered with [lodash-amd](https://github.com/lodash/lodash-amd/tree/2.4.1), [lodash-es6](https://github.com/lodash/lodash-es6), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
+Love modules? We’ve got you covered with [lodash-amd](https://github.com/lodash/lodash-amd/tree/2.4.1), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
@@ -114,7 +114,7 @@ Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl
 
 ## Support
 
-Tested in Chrome (19, 34-35), Firefox (3, 20, 28-29), IE 6-11, Opera 20-21, Safari 5-7, Node.js 0.6.21~0.10.28, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome (19, 34-35), Firefox (3, 20, 28-29), IE 6-11, Opera 21-22, Safari 5-7, Node.js 0.6.21~0.10.28, PhantomJS 1.9.2, RingoJS 0.9, & Rhino 1.7RC5.
 
 Automated browser test runs [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
 

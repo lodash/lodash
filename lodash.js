@@ -653,7 +653,7 @@
 
     /** Native method shortcuts */
     var ArrayBuffer = isNative(ArrayBuffer = context.ArrayBuffer) && ArrayBuffer,
-        bufferSlice = isNative(bufferSlice = ArrayBuffer && (new ArrayBuffer).slice) && bufferSlice,
+        bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
         Float64Array = isNative(Float64Array = context.Float64Array) && Float64Array,

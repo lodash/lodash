@@ -210,6 +210,7 @@
   /** Used to check whether methods support typed arrays */
   var typedArrays = [
     'Float32Array',
+    'Float64Array',
     'Int8Array',
     'Int16Array',
     'Int32Array',
@@ -1287,10 +1288,10 @@
         test('`_.' + methodName + '` should clone ' + type + ' arrays', 2, function() {
           var Ctor = root[type];
           if (Ctor) {
-            var array = new Ctor(new ArrayBuffer(4)),
+            var array = new Ctor(new ArrayBuffer(8)),
                 actual = func(array);
 
-            deepEqual(actual, array);
+            deepEqual(actual, array, ': ' + (array.constructor === ArrayBuffer));
             notStrictEqual(actual, array);
           }
           else {
@@ -1300,7 +1301,7 @@
       });
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
-        var buffer = ArrayBuffer && new ArrayBuffer(4);
+        var buffer = ArrayBuffer && new ArrayBuffer(8);
         if (buffer) {
           var actual = func(buffer);
           strictEqual(actual.byteLength, buffer.byteLength);
@@ -4891,7 +4892,7 @@
     test('should perform comparisons between typed arrays', 1, function() {
       var pairs = _.map(typedArrays, function(type) {
         var Ctor = root[type] || Array,
-            buffer = Ctor == Array ? 4 : new ArrayBuffer(4);
+            buffer = Ctor == Array ? 4 : new ArrayBuffer(8);
 
         return [new Ctor(buffer), new Ctor(buffer)];
       });

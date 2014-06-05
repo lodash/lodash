@@ -103,10 +103,11 @@
 
   /** Used to assign default `context` object properties */
   var contextProps = [
-    'Array', 'ArrayBuffer', 'Boolean', 'Date', 'Error', 'Float64Array', 'Function',
-    'Math', 'Number', 'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout',
-    'document', 'isFinite', 'isNaN','parseInt', 'setTimeout', 'TypeError',
-    'Uint8Array', 'window', 'WinRTError'
+    'Array', 'ArrayBuffer', 'Boolean', 'Date', 'Error', 'Float32Array', 'Float64Array',
+    'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number', 'Object',
+    'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document', 'isFinite', 'isNaN',
+    'parseInt', 'setTimeout', 'TypeError', 'Uint8Array', 'Uint8ClampedArray',
+    'Uint16Array', 'Uint32Array', 'window', 'WinRTError'
   ];
 
   /** Used to fix the JScript `[[DontEnum]]` bug */
@@ -692,6 +693,18 @@
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
+    /** Used to lookup a built-in constructor by [[Class]] */
+    var ctorByClass = {};
+    ctorByClass[float32Class] = context.Float32Array;
+    ctorByClass[float64Class] = context.Float64Array;
+    ctorByClass[int8Class] = context.Int8Array;
+    ctorByClass[int16Class] = context.Int16Array;
+    ctorByClass[int32Class] = context.Int32Array;
+    ctorByClass[uint8Class] = context.Uint8Array;
+    ctorByClass[uint8ClampedClass] = context.Uint8ClampedArray;
+    ctorByClass[uint16Class] = context.Uint16Array;
+    ctorByClass[uint32Class] = context.Uint32Array;
+
     /** Used to avoid iterating over non-enumerable properties in IE < 9 */
     var nonEnumProps = {};
     nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
@@ -1239,7 +1252,7 @@
           case float32Class: case float64Class:
           case int8Class: case int16Class: case int32Class:
           case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-            return new Ctor(value.buffer);
+            return new ctorByClass[className](cloneBuffer(value.buffer));
 
           case numberClass:
           case stringClass:
@@ -1265,7 +1278,7 @@
             return stackB[length];
           }
         }
-        result = isArr ? Ctor(value.length) : Ctor();
+        result = isArr ? Ctor(value.length) : new Ctor();
       }
       else {
         result = isArr ? slice(value) : baseAssign({}, value);

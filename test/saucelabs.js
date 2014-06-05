@@ -113,6 +113,7 @@ var platforms = [
   ['Windows 7', 'opera', '12'],
   ['Windows 7', 'opera', '11'],
   ['OS X 10.9', 'ipad', '7.1'],
+  ['OS X 10.6', 'ipad', '4'],
   ['OS X 10.9', 'safari', '7'],
   ['OS X 10.8', 'safari', '6'],
   ['OS X 10.6', 'safari', '5']
@@ -153,6 +154,7 @@ if (isBackbone) {
 
     switch (browser) {
       case 'Firefox': return version >= 4;
+      case 'iPad': return version >= 5;
       case 'Opera': return version >= 12;
     }
     return true;
@@ -168,6 +170,7 @@ if (isModern) {
       case 'Android': return version >= 4.1;
       case 'Firefox': return version >= 10;
       case 'Internet Explorer': return version >= 9;
+      case 'iPad': return version >= 6;
       case 'Opera': return version >= 12;
       case 'Safari': return version >= 6;
     }

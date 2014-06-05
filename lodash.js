@@ -1239,7 +1239,7 @@
           case float32Class: case float64Class:
           case int8Class: case int16Class: case int32Class:
           case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-            return value.subarray(0);
+            return new Ctor(value.buffer);
 
           case numberClass:
           case stringClass:

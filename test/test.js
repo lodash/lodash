@@ -4661,7 +4661,7 @@
       }
     });
 
-    test('should treat `arguments` objects like `Object` objects', 2, function() {
+    test('should treat `arguments` objects like `Object` objects', 4, function() {
       var args = (function() { return arguments; }(1, 2, 3)),
           object = { '0': 1, '1': 2, '2': 3, 'length': 3 };
 
@@ -4669,12 +4669,14 @@
       Foo.prototype = object;
 
       strictEqual(_.isEqual(args, object), true);
+      strictEqual(_.isEqual(object, args), true);
 
       if (!isPhantom) {
         strictEqual(_.isEqual(args, new Foo), false);
+        strictEqual(_.isEqual(new Foo, args), false);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 

@@ -1278,13 +1278,16 @@
             return stackB[length];
           }
         }
-        result = isArr ? Ctor(value.length) : new Ctor();
+        result = isArr ? Ctor(value.length) : new Ctor;
       }
       else {
         result = isArr ? slice(value) : baseAssign({}, value);
       }
+      if (className == argsClass || (!support.argsClass && isArguments(value))) {
+        result.length = value.length;
+      }
       // add array properties assigned by `RegExp#exec`
-      if (isArr) {
+      else if (isArr) {
         if (hasOwnProperty.call(value, 'index')) {
           result.index = value.index;
         }
@@ -1774,8 +1777,8 @@
         return false;
       }
       var valClass = toString.call(value),
-          othClass = toString.call(other),
           valIsArg = valClass == argsClass,
+          othClass = toString.call(other),
           othIsArg = othClass == argsClass;
 
       if (valIsArg) {
@@ -1809,6 +1812,10 @@
           // treat string primitives and their corresponding object instances as equal
           return value == String(other);
       }
+      if (!support.argsObject) {
+        valIsArg = isArguments(value);
+        othIsArg = isArguments(other);
+      }
       var isArr = arrayLikeClasses[valClass];
       if (!isArr) {
         // exit for functions and DOM nodes
@@ -1821,10 +1828,6 @@
 
         if (valWrapped || othWrapped) {
           return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, callback, isWhere, stackA, stackB);
-        }
-        if (!support.argsObject) {
-          valIsArg = isArguments(value);
-          othIsArg = isArguments(other);
         }
         var hasValCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
             hasOthCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
@@ -1858,7 +1861,7 @@
           return stackB[length] == other;
         }
       }
-      result = true;
+      var index = -1;
 
       // add `value` and `other` to the stack of traversed objects
       stackA.push(value);
@@ -1866,32 +1869,60 @@
 
       // recursively compare objects and arrays (susceptible to call stack limits)
       if (isArr) {
-        // compare lengths to determine if a deep comparison is necessary
         var othLength = other.length;
         length = value.length;
-        result = othLength == length;
+        result = length == othLength;
 
         if (result || isWhere) {
-          var othIndex = -1;
-
           // deep compare the contents, ignoring non-numeric properties
-          while (++othIndex < othLength) {
-            var othValue = other[othIndex];
-
+          while (++index < length) {
+            var valValue = value[index];
             if (isWhere) {
-              var index = -1;
-              while (++index < length) {
-                result = baseIsEqual(value[index], othValue, callback, isWhere, stackA, stackB);
+              var othIndex = -1;
+              while (++othIndex < othLength) {
+                var othValue = other[othIndex];
+                result = baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB);
                 if (result) {
                   break;
                 }
               }
             } else {
-              var valValue = value[othIndex];
-              result = callback ? callback(valValue, othValue, othIndex) : undefined;
-              result = typeof result == 'undefined'
-                ? baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB)
-                : !!result;
+              othValue = other[index];
+              result = callback ? callback(valValue, othValue, index) : undefined;
+              if (typeof result == 'undefined') {
+                result = baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB);
+              }
+              if (!result) {
+                break;
+              }
+            }
+          }
+        }
+      }
+      else {
+        var valProps = keys(value),
+            othProps = keys(other);
+
+        if (valIsArg) {
+          valProps.push('length');
+        }
+        if (othIsArg) {
+          othProps.push('length');
+        }
+        length = valProps.length;
+        result = length == othProps.length;
+
+        if (result || isWhere) {
+          while (++index < length) {
+            var key = valProps[index];
+            result = hasOwnProperty.call(other, key);
+            if (result) {
+              othValue = other[key];
+              valValue = value[key];
+              result = callback ? callback(valValue, othValue, key) : undefined;
+              if (typeof result == 'undefined') {
+                result = baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB);
+              }
             }
             if (!result) {
               break;
@@ -1899,43 +1930,10 @@
           }
         }
       }
-      else {
-        var size = 0;
-
-        // deep compare objects using `forIn`, instead of `forOwn`, to avoid `Object.keys`
-        // which, in this case, is more costly
-        baseForIn(other, function(othValue, key, other) {
-          if (hasOwnProperty.call(other, key)) {
-            result = false;
-            // count the number of properties
-            size++;
-            // deep compare each property value
-            if (hasOwnProperty.call(value, key)) {
-              var valValue = value[key];
-              result = callback ? callback(valValue, othValue, key) : undefined;
-              result = typeof result == 'undefined'
-                ? baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB)
-                : !!result;
-            }
-            return result;
-          }
-        });
-
-        if (result && !isWhere) {
-          // ensure both objects have the same number of properties
-          baseForIn(value, function(valValue, key, value) {
-            if (hasOwnProperty.call(value, key)) {
-              // `size` will be `-1` if `value` has more properties than `other`
-              result = --size > -1;
-              return result;
-            }
-          });
-        }
-      }
       stackA.pop();
       stackB.pop();
 
-      return result;
+      return !!result;
     }
 
     /**
@@ -8198,7 +8196,7 @@
         while (length--) {
           var key = props[length];
           if (!(hasOwnProperty.call(object, key) &&
-                baseIsEqual(object[key], source[key], null, true))) {
+                baseIsEqual(source[key], object[key], null, true))) {
             return false;
           }
         }

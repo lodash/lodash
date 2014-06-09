@@ -1741,13 +1741,18 @@
 
   (function() {
     test('should create a callback with a falsey `thisArg`', 1, function() {
+      var fn = function() { return this; };
+
       var expected = _.map(falsey, function(value) {
-        return Object(value == null ? root : value);
+        var result = fn.call(value);
+        return (result && result.Array) ? root : result;
       });
 
       var actual = _.map(falsey, function(value) {
-        var callback = _.callback(function() { return this; }, value);
-        return callback();
+        var callback = _.callback(fn, value),
+            result = callback();
+
+        return (result && result.Array) ? root : result;
       });
 
       ok(_.isEqual(actual, expected));

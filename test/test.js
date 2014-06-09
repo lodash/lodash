@@ -1741,16 +1741,16 @@
 
   (function() {
     test('should create a callback with a falsey `thisArg`', 1, function() {
-      var values = _.map(falsey, function(value) {
+      var expected = _.map(falsey, function(value) {
         return Object(value == null ? root : value);
       });
 
-      var actual = _.map(values, function(value) {
+      var actual = _.map(falsey, function(value) {
         var callback = _.callback(function() { return this; }, value);
         return callback();
       });
 
-      deepEqual(actual, values);
+      ok(_.isEqual(actual, expected));
     });
 
     test('should return `_.identity` when `func` is nullish', 2, function() {
@@ -1818,15 +1818,18 @@
       deepEqual(callback(2), expected);
     });
 
-    test('should return the function provided if already bound with `Function#bind`', 1, function() {
-      function a() {}
+    test('should support binding built-in methods', 2, function() {
+      var object = { 'a': 1 },
+          callback = _.callback(Object.prototype.hasOwnProperty, object);
 
-      var object = {},
-          bound = a.bind && a.bind(object);
+      strictEqual(callback('a'), true);
 
-      if (bound && !('prototype' in bound)) {
-        var bound = a.bind(object);
-        strictEqual(_.callback(bound, object), bound);
+      var fn = function () {},
+          bound = fn.bind && fn.bind(object);
+
+      if (bound) {
+        callback = _.callback(bound, object);
+        notStrictEqual(callback, bound);
       }
       else {
         skipTest();

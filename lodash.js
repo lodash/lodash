@@ -840,15 +840,6 @@
       support.argsClass = toString.call(arguments) == argsClass;
 
       /**
-       * Detect if `arguments` objects are `Object` objects
-       * (all but Narwhal and Opera < 10.5).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.argsObject = arguments.constructor == Object && !(arguments instanceof Array);
-
-      /**
        * Detect if `name` or `message` properties of `Error.prototype` are
        * enumerable by default (IE < 9, Safari < 5.1).
        *
@@ -1811,7 +1802,7 @@
           // treat string primitives and their corresponding object instances as equal
           return value == String(other);
       }
-      if (!support.argsObject) {
+      if (!support.argsClass) {
         valIsArg = isArguments(value);
         othIsArg = isArguments(other);
       }

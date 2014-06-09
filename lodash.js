@@ -1355,8 +1355,7 @@
       if (typeof func != 'function') {
         return identity;
       }
-      // exit early for no `thisArg` or already bound by `Function#bind`
-      if (typeof thisArg == 'undefined' || !('prototype' in func)) {
+      if (typeof thisArg == 'undefined') {
         return func;
       }
       var data = func[expando];
@@ -1372,7 +1371,7 @@
           }
           if (!data) {
             // checks if `func` references the `this` keyword and stores the result
-            data = reThis.test(source);
+            data = reThis.test(source) || isNative(func);
             setData(func, data);
           }
         }
@@ -8117,7 +8116,7 @@
       var type = typeof func,
           isFunc = type == 'function';
 
-      if (isFunc && (typeof thisArg == 'undefined' || !('prototype' in func))) {
+      if (isFunc && typeof thisArg == 'undefined') {
         return func;
       }
       if (isFunc || func == null) {

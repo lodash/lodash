@@ -6839,33 +6839,33 @@
   QUnit.module('lodash.once');
 
   (function() {
-    test('should execute `func` once', 1, function() {
+    test('should execute `func` once', 2, function() {
       var count = 0,
-          once = _.once(function() { count++; });
+          once = _.once(function() { return ++count; });
 
       once();
-      once();
+      strictEqual(once(), 1);
       strictEqual(count, 1);
     });
 
-    test('should not set a `this` binding', 1, function() {
-      var once = _.once(function() { this.count++; }),
+    test('should not set a `this` binding', 2, function() {
+      var once = _.once(function() { return ++this.count; }),
           object = { 'count': 0, 'once': once };
 
       object.once();
-      object.once();
+      strictEqual(object.once(), 1);
       strictEqual(object.count, 1);
     });
 
-    test('should ignore recursive calls', 1, function() {
+    test('should ignore recursive calls', 2, function() {
       var count = 0;
 
       var once = _.once(function() {
-        count++;
         once();
+        return ++count;
       });
 
-      once();
+      strictEqual(once(), 1);
       strictEqual(count, 1);
     });
 

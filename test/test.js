@@ -2152,7 +2152,7 @@
       }
     });
 
-    test('should support a `maxWait` option', 2, function() {
+    asyncTest('should support a `maxWait` option', 1, function() {
       if (!(isRhino && isModularize)) {
         var limit = (argv || isPhantom) ? 1000 : 320,
             withCount = 0,
@@ -2171,11 +2171,16 @@
           withMaxWait();
           withoutMaxWait();
         }
-        ok(withCount > 0);
-        ok(!withoutCount);
+        var actual = [Boolean(withCount), Boolean(withoutCount)];
+
+        setTimeout(function() {
+          deepEqual(actual, [true, false]);
+          QUnit.start();
+        }, 1);
       }
       else {
-        skipTest(2);
+        skipTest();
+        QUnit.start();
       }
     });
 
@@ -9331,10 +9336,10 @@
     });
 
     _.times(2, function(index) {
-      test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
+      asyncTest('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
         if (!(isRhino && isModularize)) {
           var count = 0,
-              limit = 256,
+              limit = (argv || isPhantom) ? 1000 : 320,
               options = index ? { 'leading': false } : {};
 
           var throttled = _.throttle(function() {
@@ -9345,10 +9350,16 @@
           while ((new Date - start) < limit) {
             throttled();
           }
-          ok(count > 1);
+          var actual = count > 1;
+
+          setTimeout(function() {
+            ok(actual);
+            QUnit.start();
+          }, 1);
         }
         else {
           skipTest();
+          QUnit.start();
         }
       });
     });
@@ -9523,7 +9534,7 @@
         setTimeout(function() {
           deepEqual(actual, expected);
           QUnit.start();
-        }, 48);
+        }, 42);
       }
       else {
         skipTest(2);

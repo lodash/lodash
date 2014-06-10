@@ -275,7 +275,7 @@
 
   /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
   var freeGlobal = freeExports && freeModule && typeof global == 'object' && global;
-  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
+  if (freeGlobal && ((freeGlobal.global === freeGlobal && !freeGlobal.window) || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
     root = freeGlobal;
   }
 

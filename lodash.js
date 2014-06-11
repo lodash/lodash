@@ -1791,6 +1791,10 @@
           // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
           return +value == +other;
 
+        case errorClass:
+          // check properties instead of coercing to strings to support IE < 8
+          return value.name === other.name && value.message === other.message;
+
         case numberClass:
           // treat `NaN` vs. `NaN` as equal
           return (value != +value)
@@ -1798,12 +1802,10 @@
             // but treat `-0` vs. `+0` as not equal
             : (value == 0 ? (1 / value == 1 / other) : value == +other);
 
-        case errorClass:
         case regexpClass:
         case stringClass:
-          // coerce errors (http://es5.github.io/#x15.11.4.4)
-          // and regexes (http://es5.github.io/#x15.10.6.4) to strings
-          // treat string primitives and their corresponding object instances as equal
+          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4)
+          // treat string primitives and object instances as equal
           return value == String(other);
       }
       if (!support.argsClass) {

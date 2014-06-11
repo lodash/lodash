@@ -1272,6 +1272,7 @@
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
           var actual = func(object);
+
           ok(_.isEqual(actual, object));
 
           if (_.isObject(object)) {
@@ -1294,7 +1295,7 @@
               error = new Ctor('text'),
               actual = func(error);
 
-          deepEqual(actual, error);
+          ok(_.isEqual(actual, error));
           notStrictEqual(actual, error);
         });
       });

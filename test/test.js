@@ -1211,6 +1211,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.chunk');
+
+  (function() {
+    var array = [0, 1, 2, 3, 4, 5];
+
+    test('should return chunked arrays', 1, function() {
+      var actual = _.chunk(array, 3);
+      deepEqual(actual, [[0, 1, 2], [3, 4, 5]]);
+    });
+
+    test('should return the last chunk as remaining elements', 1, function() {
+      var actual = _.chunk(array, 4);
+      deepEqual(actual, [[0, 1, 2, 3], [4, 5]]);
+    });
+
+    test('should ignore falsey values', 1, function() {
+      var actual = _.chunk(false, 3);
+      deepEqual(actual, []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('cloning');
 
   (function() {
@@ -10918,7 +10941,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 187, function() {
+    test('should accept falsey arguments', 188, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

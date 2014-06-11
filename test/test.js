@@ -4822,11 +4822,11 @@
     test('should perform comparisons between typed arrays', 1, function() {
       var pairs = _.map(typedArrays, function(type, index) {
         var otherType = typedArrays[++index % typedArrays.length],
-            CtorA = root[type] || Array,
-            CtorB = root[otherType] || Array,
-            bufferA = CtorA == Array ? 8 : new ArrayBuffer(8),
-            bufferB = CtorB == Array ? 8 : new ArrayBuffer(8),
-            bufferC = CtorB == Array ? 16 : new ArrayBuffer(16);
+            CtorA = root[type] || function(n) { this.n = n; },
+            CtorB = root[otherType] || function(n) { this.n = n; },
+            bufferA = root[type] ? new ArrayBuffer(8) : 8,
+            bufferB = root[otherType] ? new ArrayBuffer(8) : 8,
+            bufferC = root[otherType] ? new ArrayBuffer(16) : 16;
 
         return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
       });

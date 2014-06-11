@@ -470,7 +470,7 @@
 
     asyncTest('supports loading ' + basename + ' in a web worker', 1, function() {
       if (Worker) {
-        var limit = 15000,
+        var limit = 30000 / QUnit.config.asyncRetries,
             start = +new Date;
 
         var attempt = function() {
@@ -1741,18 +1741,19 @@
 
   (function() {
     test('should create a callback with a falsey `thisArg`', 1, function() {
-      var fn = function() { return this; };
+      var fn = function() { return this; },
+          object = {};
 
       var expected = _.map(falsey, function(value) {
         var result = fn.call(value);
-        return (result && result.Array) ? root : result;
+        return (result && result.Array) ? object : result;
       });
 
       var actual = _.map(falsey, function(value) {
         var callback = _.callback(fn, value),
             result = callback();
 
-        return (result && result.Array) ? root : result;
+        return (result && result.Array) ? object : result;
       });
 
       ok(_.isEqual(actual, expected));
@@ -7071,8 +7072,8 @@
     });
 
     test('`_.' + methodName + '` creates a function that can be invoked with additional arguments', 1, function() {
-      var fn = function(a, b) { return [a, b]; },
-          expected = ['a', 'b'],
+      var expected = ['a', 'b'],
+          fn = function(a, b) { return [a, b]; },
           par = func(fn, 'a');
 
       deepEqual(par('b'), isPartial ? expected : expected.reverse());

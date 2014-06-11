@@ -10138,16 +10138,24 @@
       { 'a': 3 }
     ];
 
-    test('should filter by `source` properties', 6, function() {
-      deepEqual(_.where(objects, { 'a': 1 }), [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]);
-      deepEqual(_.where(objects, { 'a': 2 }), [{ 'a': 2, 'b': 2 }]);
-      deepEqual(_.where(objects, { 'a': 3 }), [{ 'a': 3 }]);
-      deepEqual(_.where(objects, { 'b': 1 }), []);
-      deepEqual(_.where(objects, { 'b': 2 }), [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]);
-      deepEqual(_.where(objects, { 'a': 1, 'b': 2 }), [{ 'a': 1, 'b': 2 }]);
+    test('should filter by `source` properties', 12, function() {
+      var pairs = [
+        [{ 'a': 1 }, [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]],
+        [{ 'a': 2 }, [{ 'a': 2, 'b': 2 }]],
+        [{ 'a': 3 }, [{ 'a': 3 }]],
+        [{ 'b': 1 }, []],
+        [{ 'b': 2 }, [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]],
+        [{ 'a': 1, 'b': 2 }, [{ 'a': 1, 'b': 2 }]]
+      ];
+
+      _.each(pairs, function(pair) {
+        var actual = _.where(objects, pair[0]);
+        deepEqual(actual, pair[1]);
+        ok(_.isEmpty(_.difference(actual, objects)));
+      });
     });
 
-    test('should not filter by inherited `source` properties', 2, function() {
+    test('should not filter by inherited `source` properties', 1, function() {
       function Foo() {}
       Foo.prototype = { 'a': 2 };
 
@@ -10158,7 +10166,6 @@
           actual = _.where(objects, source);
 
       deepEqual(actual, expected);
-      ok(_.isEmpty(_.difference(actual, objects)));
     });
 
     test('should filter by problem JScript properties (test in IE < 9)', 1, function() {
@@ -10166,7 +10173,7 @@
       deepEqual(_.where(collection, shadowedObject), [shadowedObject]);
     });
 
-    test('should work with an object for `collection`', 2, function() {
+    test('should work with an object for `collection`', 1, function() {
       var collection = {
         'x': { 'a': 1 },
         'y': { 'a': 3 },
@@ -10177,7 +10184,6 @@
           actual = _.where(collection, { 'a': 1 });
 
       deepEqual(actual, expected);
-      ok(_.isEmpty(_.difference(actual, _.values(collection))));
     });
 
     test('should work with a function for `source`', 1, function() {
@@ -10198,32 +10204,38 @@
       deepEqual(actual, expected);
     });
 
-    test('should perform a deep partial comparison of `source`', 2, function() {
+    test('should perform a deep partial comparison of `source`', 1, function() {
       var collection = [{ 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 }],
           expected = collection.slice(),
           actual = _.where(collection, { 'a': { 'b': { 'c': 1 } } });
 
       deepEqual(actual, expected);
-      ok(_.isEmpty(_.difference(actual, collection)));
     });
 
-    test('should search of arrays for values', 2, function() {
-      var collection = [{ 'a': [1, 2] }],
-          expected = collection.slice();
+    test('should search arrays of `source` for values', 4, function() {
+      var collection = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
+          actual = _.where(collection, { 'a': ['d'] });
 
-      deepEqual(_.where(collection, { 'a': [] }), []);
-      deepEqual(_.where(collection, { 'a': [2] }), expected);
+      deepEqual(actual, [collection[1]]);
+
+      actual = _.where(collection, { 'a': [] });
+      deepEqual(actual, []);
+
+      actual = _.where(collection, { 'a': ['b', 'd'] });
+      deepEqual(actual, []);
+
+      actual = _.where(collection, { 'a': ['d', 'b'] });
+      deepEqual(actual, []);
     });
 
-    test('should perform a partial comparison of *all* objects within arrays of `source`', 2, function() {
+    test('should perform a partial comparison of all objects within arrays of `source`', 1, function() {
       var collection = [
-        { 'a': [{ 'b': 1, 'c': 2, 'd': 3 }, { 'b': 4, 'c': 5, 'd': 6 }] },
-        { 'a': [{ 'b': 1, 'c': 2, 'd': 3 }, { 'b': 4, 'c': 6, 'd': 7 }] }
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5, 'd': 6 }] },
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 6, 'd': 7 }] }
       ];
 
-      var actual = _.where(collection, { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5 }] });
+      var actual = _.where(collection, { 'a': [{ 'b': 1 }, { 'b': 4, 'c': 5 }] });
       deepEqual(actual, [collection[0]]);
-      ok(_.isEmpty(_.difference(actual, collection)));
     });
 
     test('should handle a `source` with `undefined` values', 4, function() {

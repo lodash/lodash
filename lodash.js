@@ -1867,28 +1867,27 @@
         length = value.length;
         result = length == othLength;
 
-        if (result || isWhere) {
+        if (result || (isWhere && othLength > length)) {
           // deep compare the contents, ignoring non-numeric properties
           while (++index < length) {
             var valValue = value[index];
             if (isWhere) {
-              var othIndex = -1;
-              while (++othIndex < othLength) {
-                var othValue = other[othIndex];
-                result = baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB);
+              var othIndex = othLength;
+              while (othIndex--) {
+                result = baseIsEqual(valValue, other[othIndex], callback, isWhere, stackA, stackB);
                 if (result) {
                   break;
                 }
               }
             } else {
-              othValue = other[index];
+              var othValue = other[index];
               result = callback ? callback(valValue, othValue, index) : undefined;
               if (typeof result == 'undefined') {
                 result = baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB);
               }
-              if (!result) {
-                break;
-              }
+            }
+            if (!result) {
+              break;
             }
           }
         }
@@ -1911,8 +1910,8 @@
             var key = valProps[index];
             result = hasOwnProperty.call(other, key);
             if (result) {
-              othValue = other[key];
               valValue = value[key];
+              othValue = other[key];
               result = callback ? callback(valValue, othValue, key) : undefined;
               if (typeof result == 'undefined') {
                 result = baseIsEqual(valValue, othValue, callback, isWhere, stackA, stackB);

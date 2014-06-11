@@ -1243,7 +1243,11 @@
           case float32Class: case float64Class:
           case int8Class: case int16Class: case int32Class:
           case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-            return new ctorByClass[className](cloneBuffer(value.buffer));
+            // Safari 5 mobile incorrectly has `Object` as the constructor
+            if (Ctor instanceof Ctor) {
+              Ctor = ctorByClass[className];
+            }
+            return new Ctor(cloneBuffer(value.buffer));
 
           case numberClass:
           case stringClass:

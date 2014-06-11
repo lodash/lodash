@@ -180,6 +180,17 @@
   /** Used to pass empty values to methods */
   var empties = [[], {}].concat(falsey.slice(1));
 
+  /** Used to check whether methods support error objects */
+  var errorTypes = [
+    'Error',
+    'EvalError',
+    'RangeError',
+    'ReferenceError',
+    'SyntaxError',
+    'TypeError',
+    'URIError'
+  ];
+
   /** Used as the property name for wrapper metadata */
   var expando = '__lodash@'  + _.VERSION + '__';
 
@@ -1213,17 +1224,10 @@
 
     var objects = {
       'an `arguments` object': arguments,
-      'an array': ['a', 'b', 'c', ''],
-      'an array-like-object': { '0': 'a', '1': 'b', '2': 'c',  '3': '', 'length': 5 },
+      'an array': ['a', ''],
+      'an array-like-object': { '0': 'a', '1': '', 'length': 3 },
       'boolean': false,
       'boolean object': Object(false),
-      'an Error object': new Error('text'),
-      'an EvalError object': new EvalError('text'),
-      'a RangeError object': new RangeError('text'),
-      'a ReferenceError object': new ReferenceError('text'),
-      'a SyntaxError object': new SyntaxError('text'),
-      'a TypeError object': new TypeError('text'),
-      'a URIError object': new URIError('text'),
       'a Klass instance': new Klass,
       'an object': { 'a': 0, 'b': 1, 'c': 3 },
       'an object with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
@@ -1237,7 +1241,7 @@
       'undefined': undefined
     };
 
-    objects['an array'].length = 5;
+    objects['an array'].length = 3;
 
     test('`_.clone` should shallow clone by default', 2, function() {
       var expected = [{ 'a': 0 }, { 'b': 1 }],
@@ -1267,13 +1271,13 @@
 
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
-          var clone = func(object);
-          ok(_.isEqual(object, clone));
+          var actual = func(object);
+          ok(_.isEqual(actual, object));
 
           if (_.isObject(object)) {
-            notStrictEqual(clone, object);
+            notStrictEqual(actual, object);
           } else {
-            strictEqual(clone, object);
+            strictEqual(actual, object);
           }
         });
       });
@@ -1284,6 +1288,17 @@
         });
       });
 
+      _.each(errorTypes, function(type) {
+        test('`_.' + methodName + '` should clone ' + type + ' objects', 2, function() {
+          var Ctor = root[type],
+              error = new Ctor('text'),
+              actual = func(error);
+
+          deepEqual(actual, error);
+          notStrictEqual(actual, error);
+        });
+      });
+
       _.each(typedArrays, function(type) {
         test('`_.' + methodName + '` should clone ' + type + ' arrays', 2, function() {
           var Ctor = root[type];
@@ -1291,7 +1306,7 @@
             var array = new Ctor(new ArrayBuffer(8)),
                 actual = func(array);
 
-            deepEqual(actual, array, ': ' + (array.constructor === ArrayBuffer));
+            deepEqual(actual, array);
             notStrictEqual(actual, array);
           }
           else {
@@ -4473,20 +4488,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for objects with custom `toString` methods', 1, function() {
-      var primitive,
-          object = { 'toString': function() { return primitive; } },
-          values = [true, null, 1, 'a', undefined],
-          expected = _.map(values, _.constant(false));
-
-      var actual = _.map(values, function(value) {
-        primitive = value;
-        return _.isEqual(object, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-
     test('should perform comparisons between arrays', 6, function() {
       var array1 = [true, null, 1, 'a', undefined],
           array2 = [true, null, 1, 'a', undefined];
@@ -4546,19 +4547,12 @@
       strictEqual(_.isEqual(array1, array2), true);
     });
 
-    test('should perform comparisons between date objects', 4, function() {
-      strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
-      strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
-      strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': function() { return 1337756400000; } }), false);
-      strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
-    });
+    test('should work with sparse arrays', 3, function() {
+      var array = Array(1);
 
-    test('should perform comparisons between functions', 2, function() {
-      function a() { return 1 + 2; }
-      function b() { return 1 + 2; }
-
-      strictEqual(_.isEqual(a, a), true);
-      strictEqual(_.isEqual(a, b), false);
+      strictEqual(_.isEqual(array, Array(1)), true);
+      strictEqual(_.isEqual(array, [undefined]), true);
+      strictEqual(_.isEqual(array, Array(2)), false);
     });
 
     test('should perform comparisons between plain objects', 5, function() {
@@ -4633,69 +4627,6 @@
       strictEqual(_.isEqual(new Foo, new Bar), false);
       strictEqual(_.isEqual({ 'value': 1 }, new Foo), false);
       strictEqual(_.isEqual({ 'value': 2 }, new Bar), false);
-    });
-
-    test('should perform comparisons between regexes', 5, function() {
-      strictEqual(_.isEqual(/x/gim, /x/gim), true);
-      strictEqual(_.isEqual(/x/gim, /x/mgi), true);
-      strictEqual(_.isEqual(/x/gi, /x/g), false);
-      strictEqual(_.isEqual(/x/, /y/), false);
-      strictEqual(_.isEqual(/x/g, { 'global': true, 'ignoreCase': false, 'multiline': false, 'source': 'x' }), false);
-    });
-
-    test('should avoid common type coercions', 9, function() {
-      strictEqual(_.isEqual(true, new Boolean(false)), false);
-      strictEqual(_.isEqual(new Boolean(false), new Number(0)), false);
-      strictEqual(_.isEqual(false, new String('')), false);
-      strictEqual(_.isEqual(new Number(36), new String(36)), false);
-      strictEqual(_.isEqual(0, ''), false);
-      strictEqual(_.isEqual(1, true), false);
-      strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
-      strictEqual(_.isEqual('36', 36), false);
-      strictEqual(_.isEqual(36, '36'), false);
-    });
-
-    test('should work with sparse arrays', 2, function() {
-      strictEqual(_.isEqual(Array(3), Array(3)), true);
-      strictEqual(_.isEqual(Array(3), Array(6)), false);
-    });
-
-    test('should work with `arguments` objects (test in IE < 9)', 2, function() {
-      var args1 = (function() { return arguments; }(1, 2, 3)),
-          args2 = (function() { return arguments; }(1, 2, 3)),
-          args3 = (function() { return arguments; }(1, 2));
-
-      strictEqual(_.isEqual(args1, args2), true);
-
-      if (!isPhantom) {
-        strictEqual(_.isEqual(args1, args3), false);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should treat `arguments` objects like `Object` objects', 4, function() {
-      var args = (function() { return arguments; }(1, 2, 3)),
-          object = { '0': 1, '1': 2, '2': 3, 'length': 3 };
-
-      function Foo() {}
-      Foo.prototype = object;
-
-      strictEqual(_.isEqual(args, object), true);
-      strictEqual(_.isEqual(object, args), true);
-
-      if (!isPhantom) {
-        strictEqual(_.isEqual(args, new Foo), false);
-        strictEqual(_.isEqual(new Foo, args), false);
-      }
-      else {
-        skipTest(2);
-      }
-    });
-
-    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.isEqual(shadowedObject, {}), false);
     });
 
     test('should perform comparisons between objects with constructor properties', 5, function() {
@@ -4813,6 +4744,132 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
+    test('should work with `arguments` objects (test in IE < 9)', 2, function() {
+      var args1 = (function() { return arguments; }(1, 2, 3)),
+          args2 = (function() { return arguments; }(1, 2, 3)),
+          args3 = (function() { return arguments; }(1, 2));
+
+      strictEqual(_.isEqual(args1, args2), true);
+
+      if (!isPhantom) {
+        strictEqual(_.isEqual(args1, args3), false);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should treat `arguments` objects like `Object` objects', 4, function() {
+      var args = (function() { return arguments; }(1, 2, 3)),
+          object = { '0': 1, '1': 2, '2': 3, 'length': 3 };
+
+      function Foo() {}
+      Foo.prototype = object;
+
+      strictEqual(_.isEqual(args, object), true);
+      strictEqual(_.isEqual(object, args), true);
+
+      if (!isPhantom) {
+        strictEqual(_.isEqual(args, new Foo), false);
+        strictEqual(_.isEqual(new Foo, args), false);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should perform comparisons between date objects', 4, function() {
+      strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
+      strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
+      strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': function() { return 1337756400000; } }), false);
+      strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
+    });
+
+    test('should perform comparisons between error objects', 1, function() {
+      var pairs = _.map(errorTypes, function(type, index) {
+        var otherType = errorTypes[++index % errorTypes.length],
+            CtorA = root[type],
+            CtorB = root[otherType];
+
+        return [new CtorA('a'), new CtorA('a'), new CtorB('a'), new CtorB('b')];
+      });
+
+      var expected = _.times(pairs.length, _.constant([true, false, false]));
+
+      var actual = _.map(pairs, function(pair) {
+        return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should perform comparisons between functions', 2, function() {
+      function a() { return 1 + 2; }
+      function b() { return 1 + 2; }
+
+      strictEqual(_.isEqual(a, a), true);
+      strictEqual(_.isEqual(a, b), false);
+    });
+
+    test('should perform comparisons between regexes', 5, function() {
+      strictEqual(_.isEqual(/x/gim, /x/gim), true);
+      strictEqual(_.isEqual(/x/gim, /x/mgi), true);
+      strictEqual(_.isEqual(/x/gi, /x/g), false);
+      strictEqual(_.isEqual(/x/, /y/), false);
+      strictEqual(_.isEqual(/x/g, { 'global': true, 'ignoreCase': false, 'multiline': false, 'source': 'x' }), false);
+    });
+
+    test('should perform comparisons between typed arrays', 1, function() {
+      var pairs = _.map(typedArrays, function(type, index) {
+        var otherType = typedArrays[++index % typedArrays.length],
+            CtorA = root[type] || Array,
+            CtorB = root[otherType] || Array,
+            bufferA = CtorA == Array ? 8 : new ArrayBuffer(8),
+            bufferB = CtorB == Array ? 8 : new ArrayBuffer(8),
+            bufferC = CtorB == Array ? 16 : new ArrayBuffer(16);
+
+        return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
+      });
+
+      var expected = _.times(pairs.length, _.constant([true, false, false]));
+
+      var actual = _.map(pairs, function(pair) {
+        return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should avoid common type coercions', 9, function() {
+      strictEqual(_.isEqual(true, new Boolean(false)), false);
+      strictEqual(_.isEqual(new Boolean(false), new Number(0)), false);
+      strictEqual(_.isEqual(false, new String('')), false);
+      strictEqual(_.isEqual(new Number(36), new String(36)), false);
+      strictEqual(_.isEqual(0, ''), false);
+      strictEqual(_.isEqual(1, true), false);
+      strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
+      strictEqual(_.isEqual('36', 36), false);
+      strictEqual(_.isEqual(36, '36'), false);
+    });
+
+    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+      strictEqual(_.isEqual(shadowedObject, {}), false);
+    });
+
+    test('should return `false` for objects with custom `toString` methods', 1, function() {
+      var primitive,
+          object = { 'toString': function() { return primitive; } },
+          values = [true, null, 1, 'a', undefined],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        primitive = value;
+        return _.isEqual(object, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should pass the correct `callback` arguments', 1, function() {
       var argsList = [];
 
@@ -4905,21 +4962,31 @@
       }
     });
 
-    test('should perform comparisons between typed arrays', 1, function() {
-      var pairs = _.map(typedArrays, function(type) {
-        var Ctor = root[type] || Array,
-            buffer = Ctor == Array ? 4 : new ArrayBuffer(8);
+    test('should return `true` for like-objects from different documents', 1, function() {
+      // ensure `_._object` is assigned (unassigned in Opera 10.00)
+      if (_._object) {
+        var object = { 'a': 1, 'b': 2, 'c': 3 };
+        strictEqual(_.isEqual(object, _._object), true);
+      }
+      else {
+        skipTest();
+      }
+    });
 
-        return [new Ctor(buffer), new Ctor(buffer)];
-      });
+    test('should not error on DOM elements', 1, function() {
+      if (document) {
+        var element1 = document.createElement('div'),
+            element2 = element1.cloneNode(true);
 
-      var expected = _.times(pairs.length, _.constant(true));
-
-      var actual = _.map(pairs, function(pair) {
-        return _.isEqual(pair[0], pair[1]);
-      });
-
-      deepEqual(actual, expected);
+        try {
+          strictEqual(_.isEqual(element1, element2), false);
+        } catch(e) {
+          ok(false);
+        }
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should perform comparisons between wrapped values', 4, function() {
@@ -4959,33 +5026,6 @@
       }
       else {
         skipTest(4);
-      }
-    });
-
-    test('should return `true` for like-objects from different documents', 1, function() {
-      // ensure `_._object` is assigned (unassigned in Opera 10.00)
-      if (_._object) {
-        var object = { 'a': 1, 'b': 2, 'c': 3 };
-        strictEqual(_.isEqual(object, _._object), true);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should not error on DOM elements', 1, function() {
-      if (document) {
-        var element1 = document.createElement('div'),
-            element2 = element1.cloneNode(true);
-
-        try {
-          strictEqual(_.isEqual(element1, element2), false);
-        } catch(e) {
-          ok(false);
-        }
-      }
-      else {
-        skipTest();
       }
     });
 

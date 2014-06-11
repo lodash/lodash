@@ -570,8 +570,7 @@
     if (typeof func != 'function') {
       return identity;
     }
-    // exit early for no `thisArg` or already bound by `Function#bind`
-    if (typeof thisArg == 'undefined' || !('prototype' in func)) {
+    if (typeof thisArg == 'undefined') {
       return func;
     }
     switch (argCount) {
@@ -973,19 +972,16 @@
         return stackB[length] == other;
       }
     }
-    var result = true,
-        size = 0;
-
     stackA.push(value);
     stackB.push(other);
 
     if (isArr) {
-      size = other.length;
-      result = size == value.length;
+      length = value.length;
+      var result = length == other.length;
 
       if (result) {
-        while (size--) {
-          result = baseIsEqual(value[size], other[size], stackA, stackB);
+        while (length--) {
+          result = baseIsEqual(value[length], other[length], stackA, stackB);
           if (!result) {
             break;
           }
@@ -993,25 +989,23 @@
       }
     }
     else {
-      baseForIn(other, function(othValue, key, other) {
-        if (hasOwnProperty.call(other, key)) {
-          size++;
-          result = hasOwnProperty.call(value, key) && baseIsEqual(value[key], othValue, stackA, stackB);
-          return result || breakIndicator;
-        }
-      });
+      var props = keys(value);
+      length = props.length;
+      result = length == keys(other).length;
 
       if (result) {
-        baseForIn(value, function(valValue, key, value) {
-          if (hasOwnProperty.call(value, key)) {
-            result = --size > -1;
-            return result || breakIndicator;
+        while (length--) {
+          var key = props[length];
+          result = hasOwnProperty.call(other, key) && baseIsEqual(value[key], other[key], stackA, stackB);
+          if (!result) {
+            break;
           }
-        });
+        }
       }
     }
     stackA.pop();
     stackB.pop();
+
     return result;
   }
 
@@ -3195,8 +3189,8 @@
    * @category Collections
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Array|Function|Object|string} [callback=identity] The function
-   *  called per iteration. If a property name or object is provided it is
-   *  used to create a "_.pluck" or "_.where" style callback respectively.
+   *  called per iteration. If property name(s) or an object is provided it
+   *  is used to create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `callback`.
    * @returns {Array} Returns the new sorted array.
    * @example
@@ -5000,7 +4994,7 @@
     var type = typeof func,
         isFunc = type == 'function';
 
-    if (isFunc && (typeof thisArg == 'undefined' || !('prototype' in func))) {
+    if (isFunc && typeof thisArg == 'undefined') {
       return func;
     }
     if (isFunc || func == null) {
@@ -5568,9 +5562,9 @@
 
   // some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // Expose Lo-Dash to the global object even when an AMD loader is present in
-    // case Lo-Dash is loaded with a RequireJS shim config.
-    // See http://requirejs.org/docs/api.html#config-shim
+    // Expose Lo-Dash to the global object when an AMD loader is present to avoid
+    // errors in cases where Lo-Dash is loaded by a script tag and not intended
+    // as an AMD module. See http://requirejs.org/docs/errors.html#mismatch
     root._ = lodash;
 
     // define as an anonymous module so, through path mapping, it can be

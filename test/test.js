@@ -2933,7 +2933,7 @@
       deepEqual(_.first(objects, 'b'), objects.slice(0, 2));
     });
 
-    test('should chain when passing `n`, `callback`, or `thisArg`', 3, function() {
+    test('should chain when `n`, `callback`, or `thisArg` are provided', 3, function() {
       if (!isNpm) {
         var actual = _(array).first(2);
 
@@ -5911,7 +5911,7 @@
       deepEqual(_.last(objects, 'b'), objects.slice(-2));
     });
 
-    test('should chain when passing `n`, `callback`, or `thisArg`', 3, function() {
+    test('should chain when `n`, `callback`, or `thisArg` are provided', 3, function() {
       if (!isNpm) {
         var actual = _(array).last(2);
 
@@ -7619,7 +7619,7 @@
       deepEqual(_.uniq(actual).sort(), [0, 1]);
     });
 
-    test('supports not passing a `max` argument', 1, function() {
+    test('supports not providing a `max` argument', 1, function() {
       ok(_.some(array, function() {
         return _.random(5) !== 5;
       }));
@@ -7651,7 +7651,7 @@
       ok(actual >= min && actual <= max);
     });
 
-    test('supports passing a `floating` argument', 3, function() {
+    test('supports providing a `floating` argument', 3, function() {
       var actual = _.random(true);
       ok(actual % 1 && actual >= 0 && actual <= 1);
 
@@ -7668,15 +7668,15 @@
   QUnit.module('lodash.range');
 
   (function() {
-    test('should work when passing a single `end` argument', 1, function() {
+    test('should work with a single `end` argument', 1, function() {
       deepEqual(_.range(4), [0, 1, 2, 3]);
     });
 
-    test('should work when passing `start` and `end` arguments', 1, function() {
+    test('should work with `start` and `end` arguments', 1, function() {
       deepEqual(_.range(1, 5), [1, 2, 3, 4]);
     });
 
-    test('should work when passing `start`, `end`, and `step` arguments', 1, function() {
+    test('should work with `start`, `end`, and `step` arguments', 1, function() {
       deepEqual(_.range(0, 20, 5), [0, 5, 10, 15]);
     });
 
@@ -7684,11 +7684,11 @@
       deepEqual(_.range(1, 4, 0), [1, 1, 1]);
     });
 
-    test('should work when passing `step` larger than `end`', 1, function() {
+    test('should work with a `step` larger than `end`', 1, function() {
       deepEqual(_.range(1, 5, 20), [1]);
     });
 
-    test('should work when passing a negative `step` argument', 2, function() {
+    test('should work with a negative `step` argument', 2, function() {
       deepEqual(_.range(0, -4, -1), [0, -1, -2, -3]);
       deepEqual(_.range(21, 10, -3), [21, 18, 15, 12]);
     });
@@ -8320,7 +8320,7 @@
       ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
     });
 
-    test('should chain when passing `n`', 1, function() {
+    test('should chain when `n` is provided', 1, function() {
       if (!isNpm) {
         var actual = _(array).sample(2);
         ok(actual instanceof _);
@@ -10119,7 +10119,7 @@
       strictEqual(_.uniq(actual).length, actual.length);
     });
 
-    test('should return a string value when not passing a prefix argument', 1, function() {
+    test('should return a string value when not providing a prefix argument', 1, function() {
       strictEqual(typeof _.uniqueId(), 'string');
     });
 

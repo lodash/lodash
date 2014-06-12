@@ -3999,6 +3999,35 @@
     }
 
     /**
+     * Creates an array of elements split into groups the length of `chunkSize`.
+     * If `collection` cannot be split evenly, the final chunk will be the remaining elements.
+     *
+     * @static
+     * @memberOf _
+     * @category Collections
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {numer} chunkSize The size of each chunk.
+     * @returns {Array} Returns the new array containing chunks.
+     * @example
+     *
+     * _.chunk(['a', 'b', 'c', 'd'], 2);
+     * // => [['a', 'b'], ['c', 'd']]
+     *
+     * _.chunk(['a', 'b', 'c', 'd'], 3);
+     * // => [['a', 'b', 'c'], ['d']]
+     */
+    function chunk(collection, chunkSize) {
+      var index = 0,
+          length = collection ? collection.length : 0,
+          result = [];
+
+      while (index < length) {
+        result.push(slice(collection, index, (index += chunkSize)));
+      }
+      return result;
+    }
+
+    /**
      * Checks if `value` is present in `collection` using strict equality for
      * comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
      * offset from the end of the collection.
@@ -8611,6 +8640,7 @@
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
     lodash.chain = chain;
+    lodash.chunk = chunk;
     lodash.compact = compact;
     lodash.compose = compose;
     lodash.constant = constant;

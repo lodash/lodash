@@ -7203,13 +7203,8 @@
       if (typeof predicate == 'function') {
         return basePick(object, negate(lodash.createCallback(predicate, thisArg, 3)));
       }
-      var omitProps = baseFlatten(arguments, true, false, 1),
-          length = omitProps.length;
-
-      while (length--) {
-        omitProps[length] = String(omitProps[length]);
-      }
-      return basePick(object, baseDifference(keysIn(object), omitProps));
+      var omitProps = baseFlatten(arguments, true, false, 1);
+      return basePick(object, baseDifference(keysIn(object), arrayMap(omitProps, String)));
     }
 
     /**

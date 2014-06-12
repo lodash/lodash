@@ -2649,6 +2649,37 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * Creates an array of elements split into groups the length of `chunkSize`.
+     * If `collection` can't be split evenly, the final chunk will be the remaining
+     * elements.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to process.
+     * @param {numer} [chunkSize=1] The size of each chunk.
+     * @returns {Array} Returns the new array containing chunks.
+     * @example
+     *
+     * _.chunk(['a', 'b', 'c', 'd'], 2);
+     * // => [['a', 'b'], ['c', 'd']]
+     *
+     * _.chunk(['a', 'b', 'c', 'd'], 3);
+     * // => [['a', 'b', 'c'], ['d']]
+     */
+    function chunk(array, chunkSize) {
+      var index = 0,
+          length = array ? array.length : 0,
+          result = [];
+
+      chunkSize = nativeMax(+chunkSize || 1, 1);
+      while (index < length) {
+        result.push(slice(array, index, (index += chunkSize)));
+      }
+      return result;
+    }
+
+    /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are all falsey.
      *
@@ -3996,35 +4027,6 @@
         collection = collection.split('');
       }
       return baseAt(collection, baseFlatten(arguments, true, false, 1));
-    }
-
-    /**
-     * Creates an array of elements split into groups the length of `chunkSize`.
-     * If `collection` cannot be split evenly, the final chunk will be the remaining elements.
-     *
-     * @static
-     * @memberOf _
-     * @category Collections
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {numer} chunkSize The size of each chunk.
-     * @returns {Array} Returns the new array containing chunks.
-     * @example
-     *
-     * _.chunk(['a', 'b', 'c', 'd'], 2);
-     * // => [['a', 'b'], ['c', 'd']]
-     *
-     * _.chunk(['a', 'b', 'c', 'd'], 3);
-     * // => [['a', 'b', 'c'], ['d']]
-     */
-    function chunk(collection, chunkSize) {
-      var index = 0,
-          length = collection ? collection.length : 0,
-          result = [];
-
-      while (index < length) {
-        result.push(slice(collection, index, (index += chunkSize)));
-      }
-      return result;
     }
 
     /**

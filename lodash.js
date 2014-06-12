@@ -1461,7 +1461,7 @@
      * of values to exclude.
      *
      * @private
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {Array} [values] The array of values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      */
@@ -1895,7 +1895,7 @@
       }
       else {
         var valProps = isErr ? ['message', 'name'] : keys(value),
-            othProps = isErr ? ['message', 'name'] : keys(other);
+            othProps = isErr ? valProps : keys(other);
 
         if (valIsArg) {
           valProps.push('length');
@@ -2094,7 +2094,7 @@
      * and `this` binding.
      *
      * @private
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
      * @param {Function} [callback] The function called per iteration.
      * @returns {Array} Returns the new duplicate-value-free array.
@@ -2715,7 +2715,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {...Array} [values] The arrays of values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      * @example
@@ -3710,7 +3710,7 @@
      * @memberOf _
      * @alias unique
      * @category Arrays
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
@@ -5545,7 +5545,7 @@
         trailing = false;
       } else if (isObject(options)) {
         leading = options.leading;
-        maxWait = 'maxWait' in options && nativeMax(wait, +options.maxWait || 0);
+        maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
 
@@ -7830,7 +7830,7 @@
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);
 
-        // escape characters that cannot be included in string literals
+        // escape characters that can't be included in string literals
         source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
 
         // replace delimiters with snippets

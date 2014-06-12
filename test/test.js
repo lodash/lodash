@@ -1226,9 +1226,15 @@
       deepEqual(actual, [[0, 1, 2, 3], [4, 5]]);
     });
 
-    test('should ignore falsey values', 1, function() {
-      var actual = _.chunk(false, 3);
-      deepEqual(actual, []);
+    test('should ensure the minimum `chunkSize` is `1`', 1, function() {
+      var values = falsey.concat(-1),
+          expected = _.map(values, _.constant([[0], [1], [2], [3], [4], [5]]));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.chunk(array, value) : _.chunk(array);
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 
@@ -10883,6 +10889,7 @@
 
     var returnArrays = [
       'at',
+      'chunk',
       'compact',
       'difference',
       'filter',
@@ -10937,7 +10944,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 188, function() {
+    test('should accept falsey arguments', 189, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -10980,7 +10987,7 @@
       });
     });
 
-    test('should return an array', 66, function() {
+    test('should return an array', 68, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

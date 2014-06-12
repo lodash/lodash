@@ -162,16 +162,16 @@
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
-  cloneableClasses[argsClass] =
-  cloneableClasses[arrayClass] = cloneableClasses[arrayBufferClass] =
-  cloneableClasses[boolClass] = cloneableClasses[dateClass] =
-  cloneableClasses[errorClass] = cloneableClasses[float32Class] =
+  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
+  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
+  cloneableClasses[dateClass] = cloneableClasses[float32Class] =
   cloneableClasses[float64Class] = cloneableClasses[int8Class] =
   cloneableClasses[int16Class] = cloneableClasses[int32Class] =
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
   cloneableClasses[regexpClass] = cloneableClasses[stringClass] =
   cloneableClasses[uint8Class] = cloneableClasses[uint8ClampedClass] =
   cloneableClasses[uint16Class] = cloneableClasses[uint32Class] = true;
+  cloneableClasses[errorClass] =
   cloneableClasses[funcClass] = cloneableClasses[mapClass] =
   cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
 
@@ -1237,9 +1237,6 @@
           case dateClass:
             return new Ctor(+value);
 
-          case errorClass:
-            return new Ctor(value.message);
-
           case float32Class: case float64Class:
           case int8Class: case int16Class: case int32Class:
           case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
@@ -1791,10 +1788,6 @@
           // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
           return +value == +other;
 
-        case errorClass:
-          // check properties instead of coercing to strings to support IE < 8
-          return value.name === other.name && value.message === other.message;
-
         case numberClass:
           // treat `NaN` vs. `NaN` as equal
           return (value != +value)
@@ -1804,18 +1797,20 @@
 
         case regexpClass:
         case stringClass:
-          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4)
-          // treat string primitives and object instances as equal
+          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
+          // treat strings primitives and string objects as equal
           return value == String(other);
       }
+      var isArr = arrayLikeClasses[valClass],
+          isErr = valClass == errorClass;
+
       if (!support.argsClass) {
         valIsArg = isArguments(value);
         othIsArg = isArguments(other);
       }
-      var isArr = arrayLikeClasses[valClass];
       if (!isArr) {
-        // exit for functions and DOM nodes
-        if (valClass != objectClass || (!support.nodeClass && (isNode(value) || isNode(other)))) {
+        // exit for things like functions and DOM nodes
+        if (!(isErr || valClass == objectClass) || (!support.nodeClass && (isNode(value) || isNode(other)))) {
           return false;
         }
         // unwrap any `lodash` wrapped values
@@ -1836,6 +1831,10 @@
           var valCtor = valIsArg ? Object : value.constructor,
               othCtor = othIsArg ? Object : other.constructor;
 
+          // error objects of different types are not equal
+          if (isErr && valCtor.prototype.name != othCtor.prototype.name) {
+            return false;
+          }
           // non `Object` object instances with different constructors are not equal
           if (valCtor != othCtor &&
                 !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
@@ -1895,8 +1894,8 @@
         }
       }
       else {
-        var valProps = keys(value),
-            othProps = keys(other);
+        var valProps = isErr ? ['message', 'name'] : keys(value),
+            othProps = isErr ? ['message', 'name'] : keys(other);
 
         if (valIsArg) {
           valProps.push('length');
@@ -1910,7 +1909,8 @@
         if (result || isWhere) {
           while (++index < length) {
             var key = valProps[index];
-            result = hasOwnProperty.call(other, key);
+            result = isErr || hasOwnProperty.call(other, key);
+
             if (result) {
               valValue = value[key];
               othValue = other[key];

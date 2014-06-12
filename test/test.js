@@ -1241,30 +1241,30 @@
     Klass.prototype = { 'b': 1 };
 
     var nonCloneable = {
-      'a DOM element': body,
-      'a function': Klass
+      'DOM elements': body,
+      'functions': Klass
     };
 
     var objects = {
-      'an `arguments` object': arguments,
-      'an array': ['a', ''],
-      'an array-like-object': { '0': 'a', '1': '', 'length': 3 },
-      'boolean': false,
-      'boolean object': Object(false),
-      'a Klass instance': new Klass,
-      'an object': { 'a': 0, 'b': 1, 'c': 3 },
-      'an object with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
-      'an object from another document': _._object || {},
-      'null': null,
-      'a number': 3,
-      'a number object': Object(3),
-      'a regexp': /a/gim,
-      'a string': 'a',
-      'a string object': Object('a'),
-      'undefined': undefined
+      '`arguments` objects': arguments,
+      'arrays': ['a', ''],
+      'array-like-objects': { '0': 'a', '1': '', 'length': 3 },
+      'booleans': false,
+      'boolean objects': Object(false),
+      'Klass instances': new Klass,
+      'objects': { 'a': 0, 'b': 1, 'c': 3 },
+      'objects with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
+      'objects from another document': _._object || {},
+      'null values': null,
+      'numbers': 3,
+      'number objects': Object(3),
+      'regexes': /a/gim,
+      'strings': 'a',
+      'string objects': Object('a'),
+      'undefined values': undefined
     };
 
-    objects['an array'].length = 3;
+    objects['arrays'].length = 3;
 
     test('`_.clone` should shallow clone by default', 2, function() {
       var expected = [{ 'a': 0 }, { 'b': 1 }],
@@ -1313,13 +1313,9 @@
       });
 
       _.each(errorTypes, function(type) {
-        test('`_.' + methodName + '` should clone ' + type + ' objects', 2, function() {
-          var Ctor = root[type],
-              error = new Ctor('text'),
-              actual = func(error);
-
-          ok(_.isEqual(actual, error));
-          notStrictEqual(actual, error);
+        test('`_.' + methodName + '` should not clone ' + type + ' objects', 1, function() {
+          var error = new root[type];
+          strictEqual(func(error), error);
         });
       });
 
@@ -1426,7 +1422,7 @@
 
       test('`_.' + methodName + '` should return a unwrapped value when chaining', 2, function() {
         if (!isNpm) {
-          var object = objects['an object'],
+          var object = objects['objects'],
               actual = _(object)[methodName]();
 
           deepEqual(actual, object);

@@ -56,7 +56,7 @@ var _ = require('lodash-underscore');
 ```
 
 **Note:**
-Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL
+Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL
 
 ## Features *not* in Underscore
 
@@ -66,11 +66,12 @@ Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
+ * [_.callback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
+ * [_.chunk](http://lodash.com/docs#chunk) for splitting an array into chunks of a given size
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
- * [_.callback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
  * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
  * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) accept additional `options` for more control
  * [_.findIndex](http://lodash.com/docs#findIndex) & [_.findKey](http://lodash.com/docs#findKey) for finding indexes & keys
@@ -88,7 +89,7 @@ Don’t assign values to [special variable](http://nodejs.org/api/repl.html#repl
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.pull](http://lodash.com/docs#pull), [_.pullAt](http://lodash.com/docs#pullAt), & [_.remove](http://lodash.com/docs#remove) for mutating arrays
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
- * [_.runInContext](http://lodash.com/docs#runInContext) for easier mocking
+ * [_.runInContext](http://lodash.com/docs#runInContext) for collisionless mixins & easier mocking
  * [_.slice](http://lodash.com/docs#slice) for creating subsets of array-like values
  * [_.sortBy](http://lodash.com/docs#sortBy) supports sorting by multiple properties
  * [_.support](http://lodash.com/docs#support) for flagging environment features

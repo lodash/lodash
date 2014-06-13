@@ -6398,19 +6398,19 @@
     * _.getNestedValue({ hero: { name: 'batman' } }, 'villan.name');
     * // => undefined
     */
-    function getNestedValue(object, key) {
+    function getNestedValue(object, key, defaultValue) {
       var objValue,
         keys = key ? key.split('.') : undefined;
 
       if (lodash.isEmpty(object) || !keys) {
-        return;
+        return defaultValue;
       }
 
       objValue = lodash.reduce(keys, function (val, key) {
         return val ? val[key] : undefined;
       }, object);
 
-      return objValue;
+      return objValue ? objValue : defaultValue;
     }
 
     /**

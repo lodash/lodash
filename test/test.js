@@ -3613,12 +3613,44 @@
   QUnit.module('lodash.getNestedValue');
   (function () {
     var batman = {hero:{ name: 'batman', costume: { cape: true, mask: true } } };
+    var defaultValue = 'defaultValue';
 
-    test('should return undefined if key does not exist or object does not have value', function () {
-      equal(_.getNestedValue(undefined, undefined), undefined);
-      equal(_.getNestedValue(batman, undefined), undefined);
-      equal(_.getNestedValue(batman, 'villan.name'), undefined);
+    test('should resort to undefined if no key, object, or default value is provided', function () {
+      equal(_.getNestedValue(), undefined);
+      equal(_.getNestedValue({}, ''), undefined);
+    });
+
+    test('should return undefined if no object or default value is provided', function () {
+      equal(_.getNestedValue(batman), undefined);
+      equal(_.getNestedValue(batman, ''), undefined);
+    });
+
+    test('should return undefined if a key is provided, but no object or default value is defined', function () {
       equal(_.getNestedValue(undefined, 'hero.name'), undefined);
+      equal(_.getNestedValue({}, 'hero.name'), undefined);
+    });
+
+    test('should return undefined if no value is found, and no default value is provided', function () {
+      equal(_.getNestedValue(batman, 'villan.name'), undefined);
+    });
+
+    test('should return default value if neither key nor object is provided, but default value is', function () {
+      equal(_.getNestedValue(undefined, undefined, defaultValue), defaultValue);
+      equal(_.getNestedValue({}, '', defaultValue), defaultValue);
+    });
+
+    test('should return defaultValue if no key is provided, but object and default value are', function () {
+      equal(_.getNestedValue(batman, undefined, defaultValue), defaultValue);
+      equal(_.getNestedValue(batman, '', defaultValue), defaultValue);
+    });
+
+    test('should return defaultValue if no object is provided, but key and default value are', function () {
+      equal(_.getNestedValue(undefined, 'hero.name', defaultValue), defaultValue);
+      equal(_.getNestedValue({}, 'hero.name', defaultValue), defaultValue);
+    });
+
+    test('should return defaultValue if no value is found, and default value is provided', function () {
+      equal(_.getNestedValue(batman, 'villan.name', defaultValue), defaultValue);
     });
 
     test('should return value if object contains the key', function () {
@@ -3627,6 +3659,14 @@
       deepEqual(_.getNestedValue(batman, 'hero.costume'), batman.hero.costume);
       ok(_.getNestedValue(batman, 'hero.costume.cape'));
       ok(_.getNestedValue(batman, 'hero.costume.mask'));
+    });
+
+    test('should not return the default value if object contains the key', function () {
+      deepEqual(_.getNestedValue(batman, 'hero', defaultValue), batman.hero);
+      equal(_.getNestedValue(batman, 'hero.name', defaultValue), 'batman');
+      deepEqual(_.getNestedValue(batman, 'hero.costume', defaultValue), batman.hero.costume);
+      notEqual(_.getNestedValue(batman, 'hero.costume.cape', defaultValue), defaultValue);
+      notEqual(_.getNestedValue(batman, 'hero.costume.mask', defaultValue), defaultValue);
     });
     
   }());

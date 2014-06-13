@@ -5820,9 +5820,9 @@
      * @example
      *
      * var greet = function(greeting, name) { return greeting + ' ' + name; };
-     * var hi = _.partial(greet, 'hi');
-     * hi('fred');
-     * // => 'hi fred'
+     * var sayHelloTo = _.partial(greet, 'hello');
+     * sayHelloTo('fred');
+     * // => 'hello fred'
      */
     function partial(func) {
       if (func) {
@@ -5849,6 +5849,12 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
+     * var greet = function(greeting, name) { return greeting + ' ' + name; };
+     * var greetFred = _.partialRight(greet, 'fred');
+     * greetFred('hello');
+     * // => 'hello fred'
+     *
+     * // create a deep `_.defaults`
      * var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
      *   return _.merge(value, other, deep);
      * });

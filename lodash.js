@@ -6382,6 +6382,7 @@
 
     /**
     * Retrieves a nested value from an object using dot notation.  If the value does not exist, 
+    * undefined is returned instead.
     * 
     * @static
     * @memberOf _

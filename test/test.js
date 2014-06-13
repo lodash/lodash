@@ -3610,6 +3610,14 @@
   }());
 
   /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.getNestedValue');
+  (function () {
+    test('should return undefined if key does not exist', function () {
+      ok(!_.getNestedValue(undefined, undefined));
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.functions');
 

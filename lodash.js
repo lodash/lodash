@@ -6381,6 +6381,38 @@
     }
 
     /**
+    * Retrieves a nested value from an object using dot notation.  If the value does not exist, 
+    * 
+    * @static
+    * @memberOf _
+    * @alias methods
+    * @category Objects
+    * @param {Object} object The object to retrieve the value from
+    * @param {String} key The string including the dot notation to find the value for
+    * @returns Returns any value associated with the dot notation or undefined if no value is found
+    * @example
+    * 
+    * _.getNestedValue({ hero: { name: 'batman' } }, 'hero.name');
+    * // => 'batman'
+    * _.getNestedValue({ hero: { name: 'batman' } }, 'villan.name');
+    * // => undefined
+    */
+    function getNestedValue(object, key) {
+      var objValue,
+        keys = key ? key.split('.') : undefined;
+
+      if (lodash.isEmpty(object) || !keys) {
+        return;
+      }
+
+      objValue = lodash.reduce(keys, function (val, key) {
+        return val ? val[key] : undefined;
+      }, object);
+
+      return objValue;
+    }
+
+    /**
      * Checks if the specified property name exists as a direct property of `object`,
      * instead of an inherited property.
      *
@@ -8663,6 +8695,7 @@
     lodash.forOwn = forOwn;
     lodash.forOwnRight = forOwnRight;
     lodash.functions = functions;
+    lodash.getNestedValue = getNestedValue;
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
     lodash.initial = initial;

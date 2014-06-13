@@ -3613,12 +3613,20 @@
   QUnit.module('lodash.getNestedValue');
   (function () {
     var batman = {hero:{ name: 'batman', costume: { cape: true, mask: true } } };
+    var defaultValue = 'defaultValue';
 
-    test('should return undefined if key does not exist or object does not have value', function () {
-      equal(_.getNestedValue(undefined, undefined), undefined);
-      equal(_.getNestedValue(batman, undefined), undefined);
+    test('should return undefined if key does not exist, object does not have value, and no default value', function () {
+      equal(_.getNestedValue(), undefined);
+      equal(_.getNestedValue(batman), undefined);
       equal(_.getNestedValue(batman, 'villan.name'), undefined);
       equal(_.getNestedValue(undefined, 'hero.name'), undefined);
+    });
+
+    test('should return default value if key does not exist, object does not have value, and default value', function () {
+      equal(_.getNestedValue(undefined, undefined, defaultValue), defaultValue);
+      equal(_.getNestedValue(batman, undefined, defaultValue), defaultValue);
+      equal(_.getNestedValue(batman, 'villan.name', defaultValue), defaultValue);
+      equal(_.getNestedValue(undefined, 'hero.name', defaultValue), defaultValue);
     });
 
     test('should return value if object contains the key', function () {

@@ -3612,10 +3612,24 @@
   /*--------------------------------------------------------------------------*/
   QUnit.module('lodash.getNestedValue');
   (function () {
-    test('should return undefined if key does not exist', function () {
-      ok(!_.getNestedValue(undefined, undefined));
+    var batman = {hero:{ name: 'batman', costume: { cape: true, mask: true } } };
+
+    test('should return undefined if key does not exist or object does not have value', function () {
+      equal(_.getNestedValue(undefined, undefined), undefined);
+      equal(_.getNestedValue(batman, undefined), undefined);
+      equal(_.getNestedValue(batman, 'villan.name'), undefined);
+      equal(_.getNestedValue(undefined, 'hero.name'), undefined);
     });
-  });
+
+    test('should return value if object contains the key', function () {
+      deepEqual(_.getNestedValue(batman, 'hero'), batman.hero);
+      equal(_.getNestedValue(batman, 'hero.name'), 'batman');
+      deepEqual(_.getNestedValue(batman, 'hero.costume'), batman.hero.costume);
+      ok(_.getNestedValue(batman, 'hero.costume.cape'));
+      ok(_.getNestedValue(batman, 'hero.costume.mask'));
+    });
+    
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -10952,7 +10966,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 189, function() {
+    test('should accept falsey arguments', 190, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

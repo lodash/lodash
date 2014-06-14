@@ -712,17 +712,14 @@
     nonEnumProps[errorClass] = nonEnumProps[funcClass] = nonEnumProps[regexpClass] = { 'constructor': true, 'toString': true };
     nonEnumProps[objectClass] = { 'constructor': true };
 
-    (function() {
-      var length = shadowedProps.length;
-      while (length--) {
-        var key = shadowedProps[length];
-        for (var className in nonEnumProps) {
-          if (hasOwnProperty.call(nonEnumProps, className) && !hasOwnProperty.call(nonEnumProps[className], key)) {
-            nonEnumProps[className][key] = false;
-          }
+    arrayEach(shadowedProps, function(key) {
+      for (var className in nonEnumProps) {
+        if (hasOwnProperty.call(nonEnumProps, className)) {
+          var props = nonEnumProps[className];
+          props[key] = hasOwnProperty.call(props, key);
         }
       }
-    }());
+    });
 
     /*--------------------------------------------------------------------------*/
 

@@ -8207,12 +8207,12 @@
       // property containing a primitive value
       if (propsLength == 1 && value === value && !isObject(value)) {
         return function(object) {
-          if (!(object && hasOwnProperty.call(object, key))) {
+          if (object == null) {
             return false;
           }
           // treat `-0` vs. `+0` as not equal
           var other = object[key];
-          return value === other && (value !== 0 || (1 / value == 1 / other));
+          return value === other && (value !== 0 || (1 / value == 1 / other)) && hasOwnProperty.call(object, key);
         };
       }
       return function(object) {

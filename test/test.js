@@ -67,7 +67,7 @@
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
-    'isModularize': /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|node)|modularize|npm)\b/.test(filePath),
+    'isModularize': /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|es6|node)|modularize|npm)\b/.test(filePath),
     'urlParams': {}
   });
 

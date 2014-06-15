@@ -5053,7 +5053,7 @@
 
     return function(object) {
       var length = propsLength;
-      if (length && !object) {
+      if (length && object == null) {
         return false;
       }
       while (length--) {

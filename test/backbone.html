@@ -126,6 +126,9 @@
 				QUnit.config.autostart = false;
 
 				require(getConfig(), ['underscore', 'backbone'], function(lodash) {
+					ui.isStrict || (ui.isStrict = 'default' in lodash);
+					lodash = (lodash['default'] || lodash);
+
 					mixinPrereqs(lodash);
 
 					if (ui.isModularize) {

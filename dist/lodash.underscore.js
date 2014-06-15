@@ -640,7 +640,7 @@
    * of values to exclude.
    *
    * @private
-   * @param {Array} array The array to process.
+   * @param {Array} array The array to inspect.
    * @param {Array} [values] The array of values to exclude.
    * @returns {Array} Returns the new array of filtered values.
    */
@@ -752,6 +752,7 @@
   function baseFlatten(array, isShallow, isStrict, fromIndex) {
     var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0,
+        resIndex = 0,
         result = [];
 
     while (++index < length) {
@@ -764,15 +765,14 @@
           value = baseFlatten(value, isShallow, isStrict);
         }
         var valIndex = -1,
-            valLength = value.length,
-            resIndex = result.length;
+            valLength = value.length;
 
         result.length += valLength;
         while (++valIndex < valLength) {
           result[resIndex++] = value[valIndex];
         }
       } else if (!isStrict) {
-        result.push(value);
+        result[resIndex++] = value;
       }
     }
     return result;
@@ -1085,7 +1085,7 @@
    * and `this` binding.
    *
    * @private
-   * @param {Array} array The array to process.
+   * @param {Array} array The array to inspect.
    * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
    * @param {Function} [callback] The function called per iteration.
    * @returns {Array} Returns the new duplicate-value-free array.
@@ -1388,7 +1388,7 @@
    * @static
    * @memberOf _
    * @category Arrays
-   * @param {Array} array The array to process.
+   * @param {Array} array The array to inspect.
    * @param {...Array} [values] The arrays of values to exclude.
    * @returns {Array} Returns the new array of filtered values.
    * @example
@@ -1934,7 +1934,7 @@
    * @memberOf _
    * @alias unique
    * @category Arrays
-   * @param {Array} array The array to process.
+   * @param {Array} array The array to inspect.
    * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
    * @param {Function|Object|string} [callback] The function called per iteration.
    *  If a property name or object is provided it is used to create a "_.pluck"
@@ -3541,7 +3541,7 @@
       trailing = false;
     } else if (isObject(options)) {
       leading = options.leading;
-      maxWait = 'maxWait' in options && nativeMax(wait, +options.maxWait || 0);
+      maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
       trailing = 'trailing' in options ? options.trailing : trailing;
     }
 
@@ -3814,9 +3814,9 @@
    * @example
    *
    * var greet = function(greeting, name) { return greeting + ' ' + name; };
-   * var hi = _.partial(greet, 'hi');
-   * hi('fred');
-   * // => 'hi fred'
+   * var sayHelloTo = _.partial(greet, 'hello');
+   * sayHelloTo('fred');
+   * // => 'hello fred'
    */
   function partial(func) {
     return createWrapper(func, PARTIAL_FLAG, null, null, slice(arguments, 1));
@@ -4235,7 +4235,7 @@
   /**
    * Checks if a collection is empty. A value is considered empty unless it is
    * an array, array-like object, or string with a length greater than `0` or
-   * an object with own properties.
+   * an object with own enumerable properties.
    *
    * @static
    * @memberOf _
@@ -4636,13 +4636,8 @@
     if (!isObject(object)) {
       return {};
     }
-    var omitProps = baseFlatten(arguments, true, false, 1),
-        length = omitProps.length;
-
-    while (length--) {
-      omitProps[length] = String(omitProps[length]);
-    }
-    return basePick(object, baseDifference(keysIn(object), omitProps));
+    var omitProps = baseFlatten(arguments, true, false, 1);
+    return basePick(object, baseDifference(keysIn(object), arrayMap(omitProps, String)));
   }
 
   /**
@@ -5058,7 +5053,7 @@
       }
       while (length--) {
         var key = props[length];
-        if (!(hasOwnProperty.call(object, key) && object[key] === source[key])) {
+        if (!(object[key] === source[key] && hasOwnProperty.call(object, key))) {
           return false
         }
       }

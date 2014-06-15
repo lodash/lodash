@@ -157,16 +157,16 @@
 
   /** Used to identify object classifications that `_.clone` supports */
   var cloneableClasses = {};
-  cloneableClasses[argsClass] =
-  cloneableClasses[arrayClass] = cloneableClasses[arrayBufferClass] =
-  cloneableClasses[boolClass] = cloneableClasses[dateClass] =
-  cloneableClasses[errorClass] = cloneableClasses[float32Class] =
+  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
+  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
+  cloneableClasses[dateClass] = cloneableClasses[float32Class] =
   cloneableClasses[float64Class] = cloneableClasses[int8Class] =
   cloneableClasses[int16Class] = cloneableClasses[int32Class] =
   cloneableClasses[numberClass] = cloneableClasses[objectClass] =
   cloneableClasses[regexpClass] = cloneableClasses[stringClass] =
   cloneableClasses[uint8Class] = cloneableClasses[uint8ClampedClass] =
   cloneableClasses[uint16Class] = cloneableClasses[uint32Class] = true;
+  cloneableClasses[errorClass] =
   cloneableClasses[funcClass] = cloneableClasses[mapClass] =
   cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
 
@@ -1077,9 +1077,6 @@
           case dateClass:
             return new Ctor(+value);
 
-          case errorClass:
-            return new Ctor(value.message);
-
           case float32Class: case float64Class:
           case int8Class: case int16Class: case int32Class:
           case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
@@ -1300,7 +1297,7 @@
      * of values to exclude.
      *
      * @private
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {Array} [values] The array of values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      */
@@ -1431,6 +1428,7 @@
     function baseFlatten(array, isShallow, isStrict, fromIndex) {
       var index = (fromIndex || 0) - 1,
           length = array ? array.length : 0,
+          resIndex = 0,
           result = [];
 
       while (++index < length) {
@@ -1443,15 +1441,14 @@
             value = baseFlatten(value, isShallow, isStrict);
           }
           var valIndex = -1,
-              valLength = value.length,
-              resIndex = result.length;
+              valLength = value.length;
 
           result.length += valLength;
           while (++valIndex < valLength) {
             result[resIndex++] = value[valIndex];
           }
         } else if (!isStrict) {
-          result.push(value);
+          result[resIndex++] = value;
         }
       }
       return result;
@@ -1621,10 +1618,6 @@
           // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
           return +value == +other;
 
-        case errorClass:
-          // check properties instead of coercing to strings to support IE < 8
-          return value.name === other.name && value.message === other.message;
-
         case numberClass:
           // treat `NaN` vs. `NaN` as equal
           return (value != +value)
@@ -1634,14 +1627,16 @@
 
         case regexpClass:
         case stringClass:
-          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4)
-          // treat string primitives and object instances as equal
+          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
+          // treat strings primitives and string objects as equal
           return value == String(other);
       }
-      var isArr = arrayLikeClasses[valClass];
+      var isArr = arrayLikeClasses[valClass],
+          isErr = valClass == errorClass;
+
       if (!isArr) {
-        // exit for functions and DOM nodes
-        if (valClass != objectClass) {
+        // exit for things like functions and DOM nodes
+        if (!(isErr || valClass == objectClass)) {
           return false;
         }
         // unwrap any `lodash` wrapped values
@@ -1662,6 +1657,10 @@
           var valCtor = valIsArg ? Object : value.constructor,
               othCtor = othIsArg ? Object : other.constructor;
 
+          // error objects of different types are not equal
+          if (isErr && valCtor.prototype.name != othCtor.prototype.name) {
+            return false;
+          }
           // non `Object` object instances with different constructors are not equal
           if (valCtor != othCtor &&
                 !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
@@ -1721,8 +1720,8 @@
         }
       }
       else {
-        var valProps = keys(value),
-            othProps = keys(other);
+        var valProps = isErr ? ['message', 'name'] : keys(value),
+            othProps = isErr ? valProps : keys(other);
 
         if (valIsArg) {
           valProps.push('length');
@@ -1736,7 +1735,8 @@
         if (result || isWhere) {
           while (++index < length) {
             var key = valProps[index];
-            result = hasOwnProperty.call(other, key);
+            result = isErr || hasOwnProperty.call(other, key);
+
             if (result) {
               valValue = value[key];
               othValue = other[key];
@@ -1920,7 +1920,7 @@
      * and `this` binding.
      *
      * @private
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
      * @param {Function} [callback] The function called per iteration.
      * @returns {Array} Returns the new duplicate-value-free array.
@@ -2462,6 +2462,37 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * Creates an array of elements split into groups the length of `chunkSize`.
+     * If `collection` can't be split evenly, the final chunk will be the remaining
+     * elements.
+     *
+     * @static
+     * @memberOf _
+     * @category Arrays
+     * @param {Array} array The array to process.
+     * @param {numer} [chunkSize=1] The size of each chunk.
+     * @returns {Array} Returns the new array containing chunks.
+     * @example
+     *
+     * _.chunk(['a', 'b', 'c', 'd'], 2);
+     * // => [['a', 'b'], ['c', 'd']]
+     *
+     * _.chunk(['a', 'b', 'c', 'd'], 3);
+     * // => [['a', 'b', 'c'], ['d']]
+     */
+    function chunk(array, chunkSize) {
+      var index = 0,
+          length = array ? array.length : 0,
+          result = [];
+
+      chunkSize = nativeMax(+chunkSize || 1, 1);
+      while (index < length) {
+        result.push(slice(array, index, (index += chunkSize)));
+      }
+      return result;
+    }
+
+    /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are all falsey.
      *
@@ -2497,7 +2528,7 @@
      * @static
      * @memberOf _
      * @category Arrays
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {...Array} [values] The arrays of values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      * @example
@@ -3492,7 +3523,7 @@
      * @memberOf _
      * @alias unique
      * @category Arrays
-     * @param {Array} array The array to process.
+     * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
@@ -3618,8 +3649,8 @@
     function zip() {
       var array = arguments.length > 1 ? arguments : arguments[0],
           index = -1,
-          length = array ? max(pluck(array, 'length')) : 0,
-          result = Array(length < 0 ? 0 : length);
+          length = (array && array.length) ? max(array, 'length').length : 0,
+          result = Array(length);
 
       while (++index < length) {
         result[index] = pluck(array, index);
@@ -5333,7 +5364,7 @@
         trailing = false;
       } else if (isObject(options)) {
         leading = options.leading;
-        maxWait = 'maxWait' in options && nativeMax(wait, +options.maxWait || 0);
+        maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
 
@@ -5608,9 +5639,9 @@
      * @example
      *
      * var greet = function(greeting, name) { return greeting + ' ' + name; };
-     * var hi = _.partial(greet, 'hi');
-     * hi('fred');
-     * // => 'hi fred'
+     * var sayHelloTo = _.partial(greet, 'hello');
+     * sayHelloTo('fred');
+     * // => 'hello fred'
      */
     function partial(func) {
       if (func) {
@@ -5637,6 +5668,12 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
+     * var greet = function(greeting, name) { return greeting + ' ' + name; };
+     * var greetFred = _.partialRight(greet, 'fred');
+     * greetFred('hello');
+     * // => 'hello fred'
+     *
+     * // create a deep `_.defaults`
      * var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
      *   return _.merge(value, other, deep);
      * });
@@ -6350,7 +6387,7 @@
     /**
      * Checks if a collection is empty. A value is considered empty unless it is
      * an array, array-like object, or string with a length greater than `0` or
-     * an object with own properties.
+     * an object with own enumerable properties.
      *
      * @static
      * @memberOf _
@@ -6953,13 +6990,8 @@
       if (typeof predicate == 'function') {
         return basePick(object, negate(lodash.createCallback(predicate, thisArg, 3)));
       }
-      var omitProps = baseFlatten(arguments, true, false, 1),
-          length = omitProps.length;
-
-      while (length--) {
-        omitProps[length] = String(omitProps[length]);
-      }
-      return basePick(object, baseDifference(keysIn(object), omitProps));
+      var omitProps = baseFlatten(arguments, true, false, 1);
+      return basePick(object, baseDifference(keysIn(object), arrayMap(omitProps, String)));
     }
 
     /**
@@ -7580,7 +7612,7 @@
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);
 
-        // escape characters that cannot be included in string literals
+        // escape characters that can't be included in string literals
         source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
 
         // replace delimiters with snippets
@@ -7956,17 +7988,17 @@
       // property containing a primitive value
       if (propsLength == 1 && value === value && !isObject(value)) {
         return function(object) {
-          if (!(object && hasOwnProperty.call(object, key))) {
+          if (object == null) {
             return false;
           }
           // treat `-0` vs. `+0` as not equal
           var other = object[key];
-          return value === other && (value !== 0 || (1 / value == 1 / other));
+          return value === other && (value !== 0 || (1 / value == 1 / other)) && hasOwnProperty.call(object, key);
         };
       }
       return function(object) {
         var length = propsLength;
-        if (length && !object) {
+        if (length && object == null) {
           return false;
         }
         while (length--) {
@@ -8392,6 +8424,7 @@
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
     lodash.chain = chain;
+    lodash.chunk = chunk;
     lodash.compact = compact;
     lodash.compose = compose;
     lodash.constant = constant;

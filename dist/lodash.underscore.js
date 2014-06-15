@@ -2026,7 +2026,7 @@
    */
   function zip() {
     var index = -1,
-        length = isArray(length = max(arguments, 'length')) && length.length || 0,
+        length = isObject(length = max(arguments, 'length')) && length.length || 0,
         result = Array(length);
 
     while (++index < length) {

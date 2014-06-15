@@ -2026,8 +2026,8 @@
    */
   function zip() {
     var index = -1,
-        length = max(pluck(arguments, 'length')),
-        result = Array(length < 0 ? 0 : length);
+        length = isArray(length = max(arguments, 'length')) && length.length || 0,
+        result = Array(length);
 
     while (++index < length) {
       result[index] = pluck(arguments, index);

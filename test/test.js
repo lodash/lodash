@@ -67,7 +67,8 @@
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
-    'isModularize': /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|es6|node)|modularize|npm)\b/.test(filePath),
+    'isModularize': /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|es6|node)|modularize|npm|transpiled)\b/.test(filePath),
+    'isStrict': /\b(?:lodash-es6|transpiled)\b/.test(filePath),
     'urlParams': {}
   });
 
@@ -83,11 +84,14 @@
   /** Detect if testing `npm` modules */
   var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
-  /** Detects if running in PhantomJS */
+  /** Detect if running in PhantomJS */
   var isPhantom = phantom || typeof callPhantom == 'function';
 
   /** Detect if running in Rhino */
   var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
+
+  /** Detect if Lo-Dash is in strict mode */
+  var isStrict = ui.isStrict;
 
   /** Used to test Web Workers */
   var Worker = !(ui.isForeign || isModularize) && document && root.Worker;
@@ -170,7 +174,7 @@
   /** The `lodash` function to test */
   var _ = root._ || (root._ = (
     _ = load(filePath) || root._,
-    _ = _._ || _,
+    _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default'])  || _,
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
@@ -322,7 +326,7 @@
       var path = require('path'),
           baseEach = require(path.join(path.dirname(filePath), 'internals', 'baseEach.js'));
 
-      _._baseEach = baseEach.baseEach || baseEach;
+      _._baseEach = baseEach.baseEach || baseEach['default'] || baseEach;
     }
     // allow bypassing native checks
     var _fnToString = Function.prototype.toString;
@@ -380,7 +384,7 @@
     emptyObject(require.cache);
 
     // load Lo-Dash and expose it to the bad extensions/shims
-    lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro;
+    lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
 
     // restore native methods
     setProperty(Array,  'isArray', _isArray);
@@ -2645,9 +2649,9 @@
   _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
     var func = _[methodName];
 
-    test('`_.' + methodName + '` should not throw strict mode errors', 1, function() {
+    test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', 1, function() {
       var object = { 'a': null, 'b': function(){} },
-          pass = true;
+          pass = !isStrict;
 
       if (freeze) {
         freeze(object);
@@ -2658,7 +2662,7 @@
             func(object, { 'a': 1 });
           }
         } catch(e) {
-          pass = false;
+          pass = !pass;
         }
         ok(pass);
       }
@@ -5726,7 +5730,7 @@
     });
 
     test('`_.' + methodName + '` should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!isPhantom) {
+      if (!(isPhantom || isStrict)) {
         var actual = func(args);
         deepEqual(actual.sort(), ['0', '1', '2']);
       } else {
@@ -5735,7 +5739,7 @@
     });
 
     test('`_.' + methodName + '` should custom properties on `arguments` objects', 1, function() {
-      if (!isPhantom) {
+      if (!(isPhantom || isStrict)) {
         args.a = 1;
         var actual = func(args);
 
@@ -5747,7 +5751,7 @@
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', 1, function() {
-      if (!isPhantom) {
+      if (!(isPhantom || isStrict)) {
         Object.prototype.a = 1;
         var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'],
             actual = func(args);

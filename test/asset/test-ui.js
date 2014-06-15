@@ -128,11 +128,14 @@
     init();
   });
 
+  // used to indicate that Lo-Dash is in strict mode
+  ui.isStrict = /\b(?:lodash-es6|transpiled)\b/.test([location.pathname, location.search]);
+
   // used to indicate testing a foreign file
   ui.isForeign = RegExp('^(\\w+:)?//').test(build);
 
   // used to indicate testing a modularized build
-  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|es6|node)|modularize|npm)\b/.test([location.pathname, location.search]);
+  ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|es6|node)|modularize|npm|transpiled)\b/.test([location.pathname, location.search]);
 
   // used to indicate testing in Sauce Labs' automated test cloud
   ui.isSauceLabs = location.port == '9001';

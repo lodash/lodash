@@ -10434,6 +10434,21 @@
       deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
     });
 
+    test('should treat falsey values as empty arrays', 1, function() {
+      var expected = _.map(falsey, _.constant([]));
+
+      var actual = _.map(falsey, function(value) {
+        return _.zip(value, value, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should support consuming its return value', 1, function() {
+      var expected = [['barney', 'fred'], [36, 40]];
+      deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
+    });
+
     test('should support consuming its return value', 1, function() {
       var expected = [['barney', 'fred'], [36, 40]];
       deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);

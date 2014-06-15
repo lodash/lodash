@@ -3833,7 +3833,7 @@
     function zip() {
       var array = arguments.length > 1 ? arguments : arguments[0],
           index = -1,
-          length = (array && array.length) ? max(array, 'length').length : 0,
+          length = isArray(length = max(array, 'length')) && length.length || 0,
           result = Array(length);
 
       while (++index < length) {

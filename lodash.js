@@ -2304,7 +2304,7 @@
         var args = arguments,
             length = args.length;
 
-        if (!object || length < 2) {
+        if (object == null || length < 2) {
           return object;
         }
         // enables use as a callback for functions like `_.reduce`
@@ -6150,7 +6150,7 @@
      * // => { 'name': 'barney', 'age': 36, 'employer': 'slate' }
      */
     function defaults(object) {
-      if (!object) {
+      if (object == null) {
         return object;
       }
       var args = slice(arguments);

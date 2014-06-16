@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "repo": "lodash/lodash",
-  "version": "2.5.0-pre",
+  "version": "3.0.0-pre",
   "description": "A utility library delivering consistency, customization, performance, & extras.",
   "license": "MIT",
   "main": "dist/lodash.compat.js",

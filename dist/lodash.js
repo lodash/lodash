@@ -6799,14 +6799,16 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      var Ctor = object && object.constructor,
-          length = object ? object.length : 0;
+      object = Object(object);
+
+      var Ctor = object.constructor,
+          length = object.length;
 
       if ((Ctor && object === Ctor.prototype) ||
           (typeof length == 'number' && length > 0)) {
         return shimKeys(object);
       }
-      return isObject(object) ? nativeKeys(object) : [];
+      return nativeKeys(object);
     };
 
     /**
@@ -6830,9 +6832,8 @@
      * // => ['x', 'y', 'z'] (property order is not guaranteed across environments)
      */
     function keysIn(object) {
-      if (!isObject(object)) {
-        return [];
-      }
+      object = Object(object);
+
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
@@ -8461,10 +8462,8 @@
     lodash.map = map;
     lodash.mapValues = mapValues;
     lodash.matches = matches;
-    lodash.max = max;
     lodash.memoize = memoize;
     lodash.merge = merge;
-    lodash.min = min;
     lodash.mixin = mixin;
     lodash.negate = negate;
     lodash.omit = omit;
@@ -8559,6 +8558,8 @@
     lodash.isUndefined = isUndefined;
     lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
+    lodash.max = max;
+    lodash.min = min;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;

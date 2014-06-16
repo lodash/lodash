@@ -1,7 +1,9 @@
 # Lo-Dash v3.0.0-pre
+
 A utility library delivering consistency, [customization](http://lodash.com/custom-builds), [performance](http://lodash.com/benchmarks), & [extras](http://lodash.com/#features).
 
 ## Documentation
+
 * [API Documentation](http://lodash.com/docs)
 * [DevDocs – *a searchable interface for our documentation*](http://devdocs.io/lodash/)
 
@@ -26,7 +28,7 @@ Check out our [unit tests](http://lodash.com/tests), [benchmarks](http://lodash.
 
 ## Installation
 
-In browsers:
+In a browser:
 
 ```html
 <script src="lodash.js"></script>

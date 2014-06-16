@@ -5721,6 +5721,11 @@
       deepEqual(actual.sort(), ['a', 'b']);
     });
 
+    test('`_.' + methodName + '` should coerce primitives to objects', 1, function() {
+      var actual = func('abc');
+      deepEqual(actual.sort(), ['0', '1', '2']);
+    });
+
     test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
       var array = [1];
       array[2] = 3;
@@ -5729,7 +5734,7 @@
       deepEqual(actual.sort(), ['0', '1', '2']);
     });
 
-    test('`_.' + methodName + '` should custom properties on arrays', 1, function() {
+    test('`_.' + methodName + '` should return keys for custom properties on arrays', 1, function() {
       var array = [1];
       array.a = 1;
 
@@ -5755,7 +5760,7 @@
       }
     });
 
-    test('`_.' + methodName + '` should custom properties on `arguments` objects', 1, function() {
+    test('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', 1, function() {
       if (!(isPhantom || isStrict)) {
         args.a = 1;
         var actual = func(args);
@@ -5785,7 +5790,7 @@
       deepEqual(actual.sort(), ['0', '1', '2']);
     });
 
-    test('`_.' + methodName + '` should custom properties on string objects', 1, function() {
+    test('`_.' + methodName + '` should return keys for custom properties on string objects', 1, function() {
       var object = Object('a');
       object.a = 1;
 

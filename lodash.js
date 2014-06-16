@@ -8677,10 +8677,8 @@
     lodash.map = map;
     lodash.mapValues = mapValues;
     lodash.matches = matches;
-    lodash.max = max;
     lodash.memoize = memoize;
     lodash.merge = merge;
-    lodash.min = min;
     lodash.mixin = mixin;
     lodash.negate = negate;
     lodash.omit = omit;
@@ -8775,6 +8773,8 @@
     lodash.isUndefined = isUndefined;
     lodash.kebabCase = kebabCase;
     lodash.lastIndexOf = lastIndexOf;
+    lodash.max = max;
+    lodash.min = min;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;

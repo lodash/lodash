@@ -3201,11 +3201,6 @@
       'some'
     ];
 
-    var boolMethods = [
-      'every',
-      'some'
-    ];
-
     var collectionMethods = [
       'countBy',
       'every',
@@ -3253,6 +3248,13 @@
       'forOwnRight'
     ];
 
+    var unwrappedMethods = [
+      'every',
+      'max',
+      'min',
+      'some'
+    ];
+
     _.each(methods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
@@ -3289,7 +3291,7 @@
       });
     });
 
-    _.each(_.difference(methods, boolMethods), function(methodName) {
+    _.each(_.difference(methods, unwrappedMethods), function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
 
@@ -3297,6 +3299,21 @@
         if (!isNpm) {
           var actual = _(array)[methodName](_.noop);
           ok(actual instanceof _);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+
+    _.each(unwrappedMethods, function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName];
+
+      test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+        if (!isNpm) {
+          var actual = _(array)[methodName](_.noop);
+          ok(!(actual instanceof _));
         }
         else {
           skipTest();
@@ -6620,7 +6637,7 @@
 
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
       if (!isNpm) {
-        var actual = _([40])[methodName]().value();
+        var actual = _([40])[methodName]();
         strictEqual(actual, 40);
       }
       else {

@@ -798,7 +798,7 @@
      *
      * @private
      * @param {*} value The value to wrap in a `lodash` instance.
-     * @param {boolean} [chainAll=false] A flag to enable chaining for all methods.
+     * @param {boolean} [chainAll=false] Enable chaining for all methods.
      * @returns {Object} Returns a `lodash` instance.
      */
     function lodashWrapper(value, chainAll) {
@@ -1565,8 +1565,8 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function} predicate The function called per iteration.
      * @param {Function} eachFunc The function to iterate over the collection.
-     * @param {boolean} [retKey=false] A flag to indicate returning the key of
-     *  the found element instead of the element itself.
+     * @param {boolean} [retKey=false] Specify returning the key of the found
+     *  element instead of the element itself.
      * @returns {*} Returns the found element or its key, else `undefined`.
      */
     function baseFind(collection, predicate, eachFunc, retKey) {
@@ -1587,8 +1587,8 @@
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
-     * @param {boolean} [isStrict=false] A flag to restrict flattening to arrays and `arguments` objects.
+     * @param {boolean} [isDeep=false] Specify a deep flatten.
+     * @param {boolean} [isStrict=false] Restrict flattening to arrays and `arguments` objects.
      * @param {number} [fromIndex=0] The index to start from.
      * @returns {Array} Returns the new flattened array.
      */
@@ -1741,7 +1741,7 @@
      * @param {*} value The value to compare to `other`.
      * @param {*} other The value to compare to `value`.
      * @param {Function} [callback] The function to customize comparing values.
-     * @param {boolean} [isWhere=false] A flag to indicate performing partial comparisons.
+     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
@@ -2092,7 +2092,7 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
+     * @param {boolean} [isSorted=false] Specify the array is sorted.
      * @param {Function} [callback] The function called per iteration.
      * @returns {Array} Returns the new duplicate-value-free array.
      */
@@ -3686,7 +3686,7 @@
      * @alias unique
      * @category Arrays
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted=false] A flag to indicate that `array` is sorted.
+     * @param {boolean} [isSorted=false] Specify the array is sorted.
      * @param {Function|Object|string} [callback] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
      *  or "_.where" style callback respectively.

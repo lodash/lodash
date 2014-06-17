@@ -735,13 +735,13 @@
      * implicitly or explicitly included in the build.
      *
      * The chainable wrapper functions are:
-     * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `chain`, `compact`,
-     * `compose`, `concat`, `constant`, `countBy`, `create`, `createCallback`,
-     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`,
-     * `flatten`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
-     * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
-     * `invert`, `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`,
-     * `merge`, `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
+     * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `callback`, `chain`,
+     * `compact`, `compose`, `concat`, `constant`, `countBy`, `create`, `curry`,
+     * `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`,
+     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
+     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
+     * `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`, `merge`,
+     * `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
      * `partialRight`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`,
      * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
      * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
@@ -1331,7 +1331,7 @@
     }
 
     /**
-     * The base implementation of `_.createCallback` without support for creating
+     * The base implementation of `_.callback` without support for creating
      * "_.pluck" and "_.where" style callbacks.
      *
      * @private
@@ -1340,7 +1340,7 @@
      * @param {number} [argCount] The number of arguments the callback accepts.
      * @returns {Function} Returns the new function.
      */
-    function baseCreateCallback(func, thisArg, argCount) {
+    function baseCallback(func, thisArg, argCount) {
       if (typeof func != 'function') {
         return identity;
       }
@@ -2272,7 +2272,7 @@
     function createAggregator(setter, initializer) {
       return function(collection, callback, thisArg) {
         var result = initializer ? initializer() : {};
-        callback = lodash.createCallback(callback, thisArg, 3);
+        callback = lodash.callback(callback, thisArg, 3);
 
         if (isArray(collection)) {
           var index = -1,
@@ -2314,7 +2314,7 @@
         }
         // juggle arguments
         if (length > 3 && typeof args[length - 2] == 'function') {
-          var callback = baseCreateCallback(args[--length - 1], args[length--], 5);
+          var callback = baseCallback(args[--length - 1], args[length--], 5);
         } else if (length > 2 && typeof args[length - 1] == 'function') {
           callback = args[--length];
         }
@@ -2912,7 +2912,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       while (++index < length) {
         if (predicate(array[index], index, array)) {
           return index;
@@ -2965,7 +2965,7 @@
     function findLastIndex(array, predicate, thisArg) {
       var length = array ? array.length : 0;
 
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       while (length--) {
         if (predicate(array[length], length, array)) {
           return length;
@@ -3000,7 +3000,7 @@
             length = array ? array.length : 0,
             n = 0;
 
-        predicate = lodash.createCallback(predicate, thisArg, 3);
+        predicate = lodash.callback(predicate, thisArg, 3);
         while (++index < length && predicate(array[index], index, array)) {
           n++;
         }
@@ -3116,7 +3116,7 @@
         var index = length,
             n = 0;
 
-        predicate = lodash.createCallback(predicate, thisArg, 3);
+        predicate = lodash.callback(predicate, thisArg, 3);
         while (index-- && predicate(array[index], index, array)) {
           n++;
         }
@@ -3207,7 +3207,7 @@
         var index = length,
             n = 0;
 
-        predicate = lodash.createCallback(predicate, thisArg, 3);
+        predicate = lodash.callback(predicate, thisArg, 3);
         while (index-- && predicate(array[index], index, array)) {
           n++;
         }
@@ -3361,7 +3361,7 @@
           length = array ? array.length : 0,
           result = [];
 
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
@@ -3396,7 +3396,7 @@
             length = array ? array.length : 0,
             n = 0;
 
-        predicate = lodash.createCallback(predicate, thisArg, 3);
+        predicate = lodash.callback(predicate, thisArg, 3);
         while (++index < length && predicate(array[index], index, array)) {
           n++;
         }
@@ -3502,7 +3502,7 @@
           high = array ? array.length : low;
 
       // explicitly reference `identity` for better inlining in Firefox
-      callback = callback ? lodash.createCallback(callback, thisArg, 1) : identity;
+      callback = callback ? lodash.callback(callback, thisArg, 1) : identity;
       value = callback(value);
 
       while (low < high) {
@@ -3731,7 +3731,7 @@
         }
       }
       if (callback != null) {
-        callback = lodash.createCallback(callback, thisArg, 3);
+        callback = lodash.callback(callback, thisArg, 3);
       }
       return baseUniq(array, isSorted, callback);
     }
@@ -4137,7 +4137,7 @@
       var result = true;
 
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
-        predicate = lodash.createCallback(predicate, thisArg, 3);
+        predicate = lodash.callback(predicate, thisArg, 3);
       }
       if (isArray(collection)) {
         var index = -1,
@@ -4199,7 +4199,7 @@
      */
     function filter(collection, predicate, thisArg) {
       var result = [];
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
 
       if (isArray(collection)) {
         var index = -1,
@@ -4269,7 +4269,7 @@
         var index = findIndex(collection, predicate, thisArg);
         return index > -1 ? collection[index] : undefined;
       }
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       return baseFind(collection, predicate, baseEach);
     }
 
@@ -4292,7 +4292,7 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       return baseFind(collection, predicate, baseEachRight);
     }
 
@@ -4353,7 +4353,7 @@
     function forEach(collection, callback, thisArg) {
       return (typeof callback == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEach(collection, callback)
-        : baseEach(collection, baseCreateCallback(callback, thisArg, 3));
+        : baseEach(collection, baseCallback(callback, thisArg, 3));
     }
 
     /**
@@ -4376,7 +4376,7 @@
     function forEachRight(collection, callback, thisArg) {
       return (typeof callback == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEachRight(collection, callback)
-        : baseEachRight(collection, baseCreateCallback(callback, thisArg, 3));
+        : baseEachRight(collection, baseCallback(callback, thisArg, 3));
     }
 
     /**
@@ -4531,7 +4531,7 @@
      * // => ['barney', 'fred']
      */
     function map(collection, callback, thisArg) {
-      callback = lodash.createCallback(callback, thisArg, 3);
+      callback = lodash.callback(callback, thisArg, 3);
 
       if (isArray(collection)) {
         return arrayMap(collection, callback, thisArg);
@@ -4610,7 +4610,7 @@
       } else {
         callback = (callback == null && isString(collection))
           ? charAtCallback
-          : lodash.createCallback(callback, thisArg, 3);
+          : lodash.callback(callback, thisArg, 3);
 
         baseEach(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
@@ -4688,7 +4688,7 @@
       } else {
         callback = (callback == null && isString(collection))
           ? charAtCallback
-          : lodash.createCallback(callback, thisArg, 3);
+          : lodash.callback(callback, thisArg, 3);
 
         baseEach(collection, function(value, index, collection) {
           var current = callback(value, index, collection);
@@ -4802,7 +4802,7 @@
      */
     function reduce(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = lodash.createCallback(callback, thisArg, 4);
+      callback = lodash.callback(callback, thisArg, 4);
 
       if (isArray(collection)) {
         var index = -1,
@@ -4845,7 +4845,7 @@
      */
     function reduceRight(collection, callback, accumulator, thisArg) {
       var noaccum = arguments.length < 3;
-      callback = lodash.createCallback(callback, thisArg, 4);
+      callback = lodash.callback(callback, thisArg, 4);
 
       baseEachRight(collection, function(value, index, collection) {
         accumulator = noaccum
@@ -4894,7 +4894,7 @@
      * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
      */
     function reject(collection, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       return filter(collection, negate(predicate));
     }
 
@@ -5032,7 +5032,7 @@
       var result;
 
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
-        predicate = lodash.createCallback(predicate, thisArg, 3);
+        predicate = lodash.callback(predicate, thisArg, 3);
       }
       if (isArray(collection)) {
         var index = -1,
@@ -5108,7 +5108,7 @@
           result = Array(length < 0 ? 0 : length >>> 0);
 
       if (!multi) {
-        callback = lodash.createCallback(callback, thisArg, 3);
+        callback = lodash.callback(callback, thisArg, 3);
       }
       baseEach(collection, function(value, key, collection) {
         if (multi) {
@@ -6020,7 +6020,7 @@
           callback = null;
         }
       }
-      callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 1);
+      callback = typeof callback == 'function' && baseCallback(callback, thisArg, 1);
       return baseClone(value, isDeep, callback);
     }
 
@@ -6067,7 +6067,7 @@
      * // => false
      */
     function cloneDeep(value, callback, thisArg) {
-      callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 1);
+      callback = typeof callback == 'function' && baseCallback(callback, thisArg, 1);
       return baseClone(value, true, callback);
     }
 
@@ -6178,7 +6178,7 @@
      * // => 'fred'
      */
     function findKey(object, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       return baseFind(object, predicate, baseForOwn, true);
     }
 
@@ -6224,7 +6224,7 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
-      predicate = lodash.createCallback(predicate, thisArg, 3);
+      predicate = lodash.callback(predicate, thisArg, 3);
       return baseFind(object, predicate, baseForOwnRight, true);
     }
 
@@ -6257,7 +6257,7 @@
      */
     function forIn(object, callback, thisArg) {
       if (typeof callback != 'function' || typeof thisArg != 'undefined') {
-        callback = baseCreateCallback(callback, thisArg, 3);
+        callback = baseCallback(callback, thisArg, 3);
       }
       return baseFor(object, callback, keysIn);
     }
@@ -6288,7 +6288,7 @@
      * // => logs 'z', 'y', and 'x' assuming `_.forIn ` logs 'x', 'y', and 'z'
      */
     function forInRight(object, callback, thisArg) {
-      callback = baseCreateCallback(callback, thisArg, 3);
+      callback = baseCallback(callback, thisArg, 3);
       return baseForRight(object, callback, keysIn);
     }
 
@@ -6314,7 +6314,7 @@
      */
     function forOwn(object, callback, thisArg) {
       if (typeof callback != 'function' || typeof thisArg != 'undefined') {
-        callback = baseCreateCallback(callback, thisArg, 3);
+        callback = baseCallback(callback, thisArg, 3);
       }
       return baseForOwn(object, callback);
     }
@@ -6338,7 +6338,7 @@
      * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
      */
     function forOwnRight(object, callback, thisArg) {
-      callback = baseCreateCallback(callback, thisArg, 3);
+      callback = baseCallback(callback, thisArg, 3);
       return baseForRight(object, callback, keys);
     }
 
@@ -6632,7 +6632,7 @@
      * // => true
      */
     function isEqual(value, other, callback, thisArg) {
-      callback = typeof callback == 'function' && baseCreateCallback(callback, thisArg, 3);
+      callback = typeof callback == 'function' && baseCallback(callback, thisArg, 3);
 
       if (!callback) {
         // exit early for identical values
@@ -7090,7 +7090,7 @@
      */
     function mapValues(object, callback, thisArg) {
       var result = {};
-      callback = lodash.createCallback(callback, thisArg, 3);
+      callback = lodash.callback(callback, thisArg, 3);
 
       baseForOwn(object, function(value, key, object) {
         result[key] = callback(value, key, object);
@@ -7183,7 +7183,7 @@
         return {};
       }
       if (typeof predicate == 'function') {
-        return basePick(object, negate(lodash.createCallback(predicate, thisArg, 3)));
+        return basePick(object, negate(lodash.callback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, false, false, 1);
       return basePick(object, baseDifference(keysIn(object), arrayMap(omitProps, String)));
@@ -7248,7 +7248,7 @@
         return {};
       }
       return basePick(object, typeof predicate == 'function'
-        ? lodash.createCallback(predicate, thisArg, 3)
+        ? lodash.callback(predicate, thisArg, 3)
         : baseFlatten(arguments, false, false, 1));
     }
 
@@ -7297,7 +7297,7 @@
         }
       }
       if (callback) {
-        callback = lodash.createCallback(callback, thisArg, 4);
+        callback = lodash.callback(callback, thisArg, 4);
         (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
           return callback(accumulator, value, index, object);
         });
@@ -8106,7 +8106,7 @@
      * ];
      *
      * // wrap to create custom callback shorthands
-     * _.createCallback = _.wrap(_.createCallback, function(func, callback, thisArg) {
+     * _.callback = _.wrap(_.callback, function(func, callback, thisArg) {
      *   var match = /^(.+?)__([gl]t)(.+)$/.exec(callback);
      *   return !match ? func(callback, thisArg) : function(object) {
      *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
@@ -8116,7 +8116,7 @@
      * _.filter(characters, 'age__gt38');
      * // => [{ 'name': 'fred', 'age': 40 }]
      */
-    function createCallback(func, thisArg, argCount) {
+    function callback(func, thisArg, argCount) {
       var type = typeof func,
           isFunc = type == 'function';
 
@@ -8124,7 +8124,7 @@
         return func;
       }
       if (isFunc || func == null) {
-        return baseCreateCallback(func, thisArg, argCount);
+        return baseCallback(func, thisArg, argCount);
       }
       // handle "_.pluck" and "_.where" style callback shorthands
       return type == 'object' ? matches(func) : property(func);
@@ -8577,7 +8577,7 @@
      */
     function times(n, callback, thisArg) {
       n = n < 0 ? 0 : n >>> 0;
-      callback = baseCreateCallback(callback, thisArg, 1);
+      callback = baseCallback(callback, thisArg, 1);
 
       var index = -1,
           result = Array(n);
@@ -8618,6 +8618,7 @@
     lodash.bind = bind;
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
+    lodash.callback = callback;
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
@@ -8625,7 +8626,6 @@
     lodash.constant = constant;
     lodash.countBy = countBy;
     lodash.create = create;
-    lodash.createCallback = createCallback;
     lodash.curry = curry;
     lodash.debounce = debounce;
     lodash.defaults = defaults;
@@ -8695,7 +8695,6 @@
     lodash.zipObject = zipObject;
 
     // add aliases
-    lodash.callback = createCallback;
     lodash.collect = map;
     lodash.each = forEach;
     lodash.eachRight = forEachRight;

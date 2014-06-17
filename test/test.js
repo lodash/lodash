@@ -3012,8 +3012,8 @@
     });
 
     test('should perform a shallow flatten when used as a callback for `_.map`', 1, function() {
-      var array = [[['a']], [['b']]];
-      deepEqual(_.map(array, _.flatten), [['a'], ['b']]);
+      var array = [[[['a']]], [[['b']]]];
+      deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
     });
 
     test('should treat sparse arrays as dense', 4, function() {
@@ -10945,7 +10945,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 189, function() {
+    test('should accept falsey arguments', 188, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

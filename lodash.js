@@ -8064,27 +8064,6 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a function that returns `value`.
-     *
-     * @static
-     * @memberOf _
-     * @category Utilities
-     * @param {*} value The value to return from the new function.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var object = { 'name': 'fred' };
-     * var getter = _.constant(object);
-     * getter() === object;
-     * // => true
-     */
-    function constant(value) {
-      return function() {
-        return value;
-      };
-    }
-
-    /**
      * Creates a function bound to an optional `thisArg`. If `func` is a property
      * name the created callback returns the property value for a given element.
      * If `func` is an object the created callback returns `true` for elements
@@ -8128,6 +8107,27 @@
       }
       // handle "_.pluck" and "_.where" style callback shorthands
       return type == 'object' ? matches(func) : property(func);
+    }
+
+    /**
+     * Creates a function that returns `value`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utilities
+     * @param {*} value The value to return from the new function.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var object = { 'name': 'fred' };
+     * var getter = _.constant(object);
+     * getter() === object;
+     * // => true
+     */
+    function constant(value) {
+      return function() {
+        return value;
+      };
     }
 
     /**

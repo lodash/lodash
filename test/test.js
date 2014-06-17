@@ -1276,12 +1276,20 @@
 
     objects['arrays'].length = 3;
 
-    test('`_.clone` should shallow clone by default', 2, function() {
+    test('`_.clone` should perform a shallow clone', 2, function() {
       var expected = [{ 'a': 0 }, { 'b': 1 }],
           actual = _.clone(expected);
 
       deepEqual(actual, expected);
       ok(actual !== expected && actual[0] === expected[0]);
+    });
+
+    test('`_.clone` should work with `isDeep`', 2, function() {
+      var expected = [{ 'a': 0 }, { 'b': 1 }],
+          actual = _.clone(expected, true);
+
+      deepEqual(actual, expected);
+      ok(actual !== expected && actual[0] !== expected[0]);
     });
 
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
@@ -2987,72 +2995,37 @@
   QUnit.module('lodash.flatten');
 
   (function() {
-    var args = arguments,
-        array = [{ 'a': [1, [2]] }, { 'a': [3] }];
+    var args = arguments;
+
+    test('should perform a shallow flatten', 1, function() {
+      var array = [[['a']], [['b']]];
+      deepEqual(_.flatten(array), [['a'], ['b']]);
+    });
+
+    test('should work with `isDeep`', 1, function() {
+      var array = [[['a']], [['b']]];
+      deepEqual(_.flatten(array, true), ['a', 'b']);
+    });
 
     test('should flatten `arguments` objects', 1, function() {
-      var actual = _.flatten([args, args]);
-      deepEqual(actual, [1, 2, 3, 1, 2, 3]);
+      deepEqual(_.flatten([args, args]), [1, 2, 3, 1, 2, 3]);
     });
 
-    test('should work with a callback', 1, function() {
-      var actual = _.flatten(array, function(object) {
-        return object.a;
-      });
-
-      deepEqual(actual, [1, 2, 3]);
-    });
-
-    test('should work with `isShallow` and `callback`', 1, function() {
-      var actual = _.flatten(array, true, function(object) {
-        return object.a;
-      });
-
-      deepEqual(actual, [1, [2], 3]);
-    });
-
-    test('should pass the correct `callback` arguments', 1, function() {
-      var args;
-
-      _.flatten(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [array[0], 0, array]);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.flatten(array, function(object, index) {
-        return this[index].a;
-      }, array);
-
-      deepEqual(actual, [1, 2, 3]);
-    });
-
-    test('should work with a string for `callback`', 1, function() {
-      deepEqual(_.flatten(array, 'a'), [1, 2, 3]);
-    });
-
-    test('should perform a deep flatten when used as a callback for `_.map`', 1, function() {
-      var array = [[[['a']]], [[['b']]]],
-          actual = _.map(array, _.flatten);
-
-      deepEqual(actual, [['a'], ['b']]);
+    test('should perform a shallow flatten when used as a callback for `_.map`', 1, function() {
+      var array = [[['a']], [['b']]];
+      deepEqual(_.map(array, _.flatten), [['a'], ['b']]);
     });
 
     test('should treat sparse arrays as dense', 4, function() {
       var array = [[1, 2, 3], Array(3)],
-          expected = [1, 2, 3],
-          actual1 = _.flatten(array),
-          actual2 = _.flatten(array, true);
+          expected = [1, 2, 3];
 
       expected.push(undefined, undefined, undefined);
 
-      deepEqual(actual1, expected);
-      ok('4' in actual1);
-
-      deepEqual(actual2, expected);
-      ok('4' in actual2);
+      _.each([_.flatten(array), _.flatten(array, true)], function(actual) {
+        deepEqual(actual, expected);
+        ok('4' in actual);
+      });
     });
 
     test('should work with extremely large arrays', 1, function() {
@@ -3071,35 +3044,22 @@
       }
     });
 
-    test('should work with empty arrays', 1, function() {
-      var actual = _.flatten([[], [[]], [[], [[[]]]]]);
-      deepEqual(actual, []);
+    test('should work with empty arrays', 2, function() {
+      var array = [[], [[]], [[], [[[]]]]];
+
+      deepEqual(_.flatten(array), [[], [], [[[]]]]);
+      deepEqual(_.flatten(array, true), []);
     });
 
-    test('should flatten nested arrays', 1, function() {
-      var array = [1, [2], [3, [[4]]]],
-          expected = [1, 2, 3, 4];
+    test('should support flattening of nested arrays', 2, function() {
+      var array = [1, [2], [3, [4]]];
 
-      deepEqual(_.flatten(array), expected);
-    });
-
-    test('should support shallow flattening nested arrays', 1, function() {
-      var array = [1, [2], [3, [4]]],
-          expected = [1, 2, 3, [4]];
-
-      deepEqual(_.flatten(array, true), expected);
-    });
-
-    test('should support shallow flattening arrays of other arrays', 1, function() {
-      var array = [[1], [2], [3], [[4]]],
-          expected = [1, 2, 3, [4]];
-
-      deepEqual(_.flatten(array, true), expected);
+      deepEqual(_.flatten(array), [1, 2, 3, [4]]);
+      deepEqual(_.flatten(array, true), [1, 2, 3, 4]);
     });
 
     test('should return an empty array for non array-like objects', 1, function() {
-      var actual = _.flatten({ 'a': 1 }, _.identity);
-      deepEqual(actual, []);
+      deepEqual(_.flatten({ 'a': 1 }), []);
     });
   }(1, 2, 3));
 
@@ -11073,7 +11033,7 @@
       });
     });
 
-    test('should handle `null` `thisArg` arguments', 44, function() {
+    test('should handle `null` `thisArg` arguments', 43, function() {
       var expected = (function() { return this; }).call(null);
 
       var funcs = [
@@ -11084,7 +11044,6 @@
         'dropWhile',
         'dropRightWhile',
         'every',
-        'flatten',
         'filter',
         'find',
         'findIndex',

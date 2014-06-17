@@ -1582,8 +1582,8 @@
     }
 
     /**
-     * The base implementation of `_.flatten` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.flatten` with added support for restricting
+     * flattening and specifying the start index.
      *
      * @private
      * @param {Array} array The array to flatten.
@@ -1592,7 +1592,7 @@
      * @param {number} [fromIndex=0] The index to start from.
      * @returns {Array} Returns the new flattened array.
      */
-    function baseFlatten(array, isShallow, isStrict, fromIndex) {
+    function baseFlatten(array, isDeep, isStrict, fromIndex) {
       var index = (fromIndex || 0) - 1,
           length = array ? array.length : 0,
           resIndex = 0,
@@ -1604,8 +1604,8 @@
         if (value && typeof value == 'object' && typeof value.length == 'number'
             && (isArray(value) || isArguments(value))) {
           // recursively flatten arrays (susceptible to call stack limits)
-          if (!isShallow) {
-            value = baseFlatten(value, isShallow, isStrict);
+          if (isDeep) {
+            value = baseFlatten(value, isDeep, isStrict);
           }
           var valIndex = -1,
               valLength = value.length;
@@ -2730,7 +2730,7 @@
           break;
         }
       }
-      return baseDifference(arguments[index], baseFlatten(arguments, true, true, ++index));
+      return baseDifference(arguments[index], baseFlatten(arguments, false, true, ++index));
     }
 
     /**
@@ -3031,51 +3031,29 @@
      * @memberOf _
      * @category Arrays
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
-     * @param {Function|Object|string} [callback] The function called per iteration.
-     *  If a property name or object is provided it is used to create a "_.pluck"
-     *  or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `callback`.
+     * @param {boolean} [isDeep=false] Specify a deep flatten.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the new flattened array.
      * @example
      *
      * _.flatten([1, [2], [3, [[4]]]]);
-     * // => [1, 2, 3, 4];
-     *
-     * // using `isShallow`
-     * _.flatten([1, [2], [3, [[4]]]], true);
      * // => [1, 2, 3, [[4]]];
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 30, 'pets': ['hoppy'] },
-     *   { 'name': 'fred',   'age': 40, 'pets': ['baby puss', 'dino'] }
-     * ];
-     *
-     * // using "_.pluck" callback shorthand
-     * _.flatten(characters, 'pets');
-     * // => ['hoppy', 'baby puss', 'dino']
+     * // using `isDeep`
+     * _.flatten([1, [2], [3, [[4]]]], true);
+     * // => [1, 2, 3, 4];
      */
-    function flatten(array, isShallow, callback, thisArg) {
+    function flatten(array, isDeep, guard) {
       var length = array ? array.length : 0;
       if (!length) {
         return [];
       }
-      // juggle arguments
-      var type = typeof isShallow;
-      if (type != 'boolean' && isShallow != null) {
-        thisArg = callback;
-        callback = isShallow;
-        isShallow = false;
-
-        // enables use as a callback for functions like `_.map`
-        if ((type == 'number' || type == 'string') && thisArg && thisArg[callback] === array) {
-          callback = null;
-        }
+      // enables use as a callback for functions like `_.map`
+      var type = typeof isDeep;
+      if ((type == 'number' || type == 'string') && guard && guard[isDeep] === array) {
+        isDeep = false;
       }
-      if (callback != null) {
-        array = map(array, callback, thisArg);
-      }
-      return baseFlatten(array, isShallow);
+      return baseFlatten(array, isDeep);
     }
 
     /**
@@ -3341,7 +3319,7 @@
      * // => [10, 20]
      */
     function pullAt(array) {
-      return basePullAt(array, baseFlatten(arguments, true, false, 1));
+      return basePullAt(array, baseFlatten(arguments, false, false, 1));
     }
 
     /**
@@ -3685,7 +3663,7 @@
      * // => [1, 2, 3, 5, 4]
      */
     function union() {
-      return baseUniq(baseFlatten(arguments, true, true));
+      return baseUniq(baseFlatten(arguments, false, true));
     }
 
     /**
@@ -4023,7 +4001,7 @@
       if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }
-      return baseAt(collection, baseFlatten(arguments, true, false, 1));
+      return baseAt(collection, baseFlatten(arguments, false, false, 1));
     }
 
     /**
@@ -5312,7 +5290,7 @@
      */
     function bindAll(object) {
       return baseBindAll(object, arguments.length > 1
-        ? baseFlatten(arguments, true, false, 1)
+        ? baseFlatten(arguments, false, false, 1)
         : functions(object));
     }
 
@@ -7207,7 +7185,7 @@
       if (typeof predicate == 'function') {
         return basePick(object, negate(lodash.createCallback(predicate, thisArg, 3)));
       }
-      var omitProps = baseFlatten(arguments, true, false, 1);
+      var omitProps = baseFlatten(arguments, false, false, 1);
       return basePick(object, baseDifference(keysIn(object), arrayMap(omitProps, String)));
     }
 
@@ -7271,7 +7249,7 @@
       }
       return basePick(object, typeof predicate == 'function'
         ? lodash.createCallback(predicate, thisArg, 3)
-        : baseFlatten(arguments, true, false, 1));
+        : baseFlatten(arguments, false, false, 1));
     }
 
     /**

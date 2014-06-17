@@ -42,6 +42,12 @@
 			// excuse tests we intentionally fail or those with problems
 			QUnit.config.excused = {
 				'Arrays': {
+					'flatten': [
+						'can flatten nested arrays',
+						'can shallowly flatten nested arrays',
+						'works on an arguments object',
+						'can shallowly flatten arrays containing only other arrays'
+					],
 					'initial': [
 						'initial works on arguments object'
 					],
@@ -158,6 +164,7 @@
 					delete QUnit.config.excused.Functions.partial;
 				}
 				QUnit.config.excused.Arrays.intersection.shift();
+				delete QUnit.config.excused.Arrays.flatten;
 				delete QUnit.config.excused.Arrays.initial;
 				delete QUnit.config.excused.Arrays.rest;
 				delete QUnit.config.excused.Chaining;

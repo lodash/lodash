@@ -2746,6 +2746,7 @@
      * @category Arrays
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -2761,7 +2762,10 @@
      * _.drop([1, 2, 3], 0);
      * // => [1, 2, 3]
      */
-    var drop = rest;
+    function drop(array, n, guard) {
+      n = (n == null || guard) ? 1 : n;
+      return slice(array, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates a slice of `array` with `n` elements dropped from the end.
@@ -2772,6 +2776,7 @@
      * @category Arrays
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -2787,7 +2792,12 @@
      * _.dropRight([1, 2, 3], 0);
      * // => [1, 2, 3]
      */
-    var dropRight = initial;
+    function dropRight(array, n, guard) {
+      var length = array ? array.length : 0;
+      n = (n == null || guard) ? 1 : n;
+      n = length - (n || 0);
+      return slice(array, 0, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates a slice of `array` excluding elements dropped from the end.
@@ -2808,6 +2818,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -2828,7 +2839,18 @@
      * _.pluck(_.dropRightWhile(characters, { 'employer': 'na' }), 'name');
      * // => ['barney', 'fred']
      */
-    var dropRightWhile = initial;
+    function dropRightWhile(array, predicate, thisArg) {
+      var length = array ? array.length : 0,
+          index = length,
+          n = 0;
+
+      predicate = lodash.callback(predicate, thisArg, 3);
+      while (index-- && predicate(array[index], index, array)) {
+        n++;
+      }
+      n = length - (n || 0);
+      return slice(array, 0, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates a slice of `array` excluding elements dropped from the beginning.
@@ -2869,7 +2891,17 @@
      * _.pluck(_.dropWhile(characters, { 'employer': 'slate' }), 'name');
      * // => ['pebbles']
      */
-    var dropWhile = rest;
+    function dropWhile(array, predicate, thisArg) {
+      var index = -1,
+          length = array ? array.length : 0,
+          n = 0;
+
+      predicate = lodash.callback(predicate, thisArg, 3);
+      while (++index < length && predicate(array[index], index, array)) {
+        n++;
+      }
+      return slice(array, n);
+    }
 
     /**
      * This method is like `_.find` except that it returns the index of the first
@@ -2981,9 +3013,6 @@
     /**
      * Gets the first element of `array`.
      *
-     * Note: The `n` and `predicate` arguments are deprecated; replace with
-     * `_.take` and `_.takeWhile` respectively.
-     *
      * @static
      * @memberOf _
      * @alias head
@@ -2998,23 +3027,8 @@
      * _.first([]);
      * // => undefined
      */
-    function first(array, predicate, thisArg) {
-      if (typeof predicate != 'number' && predicate != null) {
-        var index = -1,
-            length = array ? array.length : 0,
-            n = 0;
-
-        predicate = lodash.callback(predicate, thisArg, 3);
-        while (++index < length && predicate(array[index], index, array)) {
-          n++;
-        }
-      } else {
-        n = predicate;
-        if (n == null || thisArg) {
-          return array ? array[0] : undefined;
-        }
-      }
-      return slice(array, 0, n < 0 ? 0 : n);
+    function first(array) {
+      return array ? array[0] : undefined;
     }
 
     /**
@@ -3099,9 +3113,6 @@
 
     /**
      * Gets all but the last element of `array`.
-     *
-     * Note: The `n` and `predicate` arguments are deprecated; replace with
-     * `_.dropRight` and `_.dropRightWhile` respectively.
      *
      * @static
      * @memberOf _
@@ -3191,9 +3202,6 @@
     /**
      * Gets the last element of `array`.
      *
-     * Note: The `n` and `predicate` arguments are deprecated; replace with
-     * `_.takeRight` and `_.takeRightWhile` respectively.
-     *
      * @static
      * @memberOf _
      * @category Arrays
@@ -3204,25 +3212,9 @@
      * _.last([1, 2, 3]);
      * // => 3
      */
-    function last(array, predicate, thisArg) {
+    function last(array) {
       var length = array ? array.length : 0;
-
-      if (typeof predicate != 'number' && predicate != null) {
-        var index = length,
-            n = 0;
-
-        predicate = lodash.callback(predicate, thisArg, 3);
-        while (index-- && predicate(array[index], index, array)) {
-          n++;
-        }
-      } else {
-        n = predicate;
-        if (n == null || thisArg) {
-          return array ? array[length - 1] : undefined;
-        }
-      }
-      n = length - (n || 0);
-      return slice(array, n < 0 ? 0 : n);
+      return length ? array[length - 1] : undefined;
     }
 
     /**
@@ -3380,9 +3372,6 @@
     /**
      * Gets all but the first element of `array`.
      *
-     * Note: The `n` and `predicate` arguments are deprecated; replace with
-     * `_.drop` and `_.dropWhile` respectively.
-     *
      * @static
      * @memberOf _
      * @alias tail
@@ -3394,22 +3383,8 @@
      * _.rest([1, 2, 3]);
      * // => [2, 3]
      */
-    function rest(array, predicate, thisArg) {
-      if (typeof predicate != 'number' && predicate != null) {
-        var index = -1,
-            length = array ? array.length : 0,
-            n = 0;
-
-        predicate = lodash.callback(predicate, thisArg, 3);
-        while (++index < length && predicate(array[index], index, array)) {
-          n++;
-        }
-      } else if (predicate == null || thisArg) {
-        n = 1;
-      } else {
-        n = predicate < 0 ? 0 : predicate;
-      }
-      return slice(array, n);
+    function rest(array) {
+      return slice(array, 1);
     }
 
     /**
@@ -3527,6 +3502,7 @@
      * @category Arrays
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -3542,7 +3518,10 @@
      * _.take([1, 2, 3], 0);
      * // => []
      */
-    var take = first;
+    function take(array, n, guard) {
+      n = (n == null || guard) ? 1 : n;
+      return slice(array, 0, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates a slice of `array` with `n` elements taken from the end.
@@ -3553,6 +3532,7 @@
      * @category Arrays
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -3568,7 +3548,12 @@
      * _.takeRight([1, 2, 3], 0);
      * // => []
      */
-    var takeRight = last;
+    function takeRight(array, n, guard) {
+      var length = array ? array.length : 0;
+      n = (n == null || guard) ? 1 : n;
+      n = length - (n || 0);
+      return slice(array, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates a slice of `array` with elements taken from the end. Elements are
@@ -3609,7 +3594,18 @@
      * _.pluck(_.takeRightWhile(characters, { 'employer': 'na' }), 'name');
      * // => ['pebbles']
      */
-    var takeRightWhile = last;
+    function takeRightWhile(array, predicate, thisArg) {
+      var length = array ? array.length : 0,
+          index = length,
+          n = 0;
+
+      predicate = lodash.callback(predicate, thisArg, 3);
+      while (index-- && predicate(array[index], index, array)) {
+        n++;
+      }
+      n = length - (n || 0);
+      return slice(array, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates a slice of `array` with elements taken from the beginning. Elements
@@ -3650,7 +3646,17 @@
      * _.pluck(_.takeWhile(characters, { 'employer': 'slate' }), 'name');
      * // => ['barney', 'fred']
      */
-    var takeWhile = first;
+    function takeWhile(array, predicate, thisArg) {
+      var index = -1,
+          length = array ? array.length : 0,
+          n = 0;
+
+      predicate = lodash.callback(predicate, thisArg, 3);
+      while (++index < length && predicate(array[index], index, array)) {
+        n++;
+      }
+      return slice(array, 0, n < 0 ? 0 : n);
+    }
 
     /**
      * Creates an array of unique values, in order, of the provided arrays using
@@ -8682,6 +8688,10 @@
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
+    lodash.take = take;
+    lodash.takeRight = takeRight;
+    lodash.takeRightWhile = takeRightWhile;
+    lodash.takeWhile = takeWhile;
     lodash.tap = tap;
     lodash.throttle = throttle;
     lodash.times = times;
@@ -8732,6 +8742,7 @@
     lodash.findLastIndex = findLastIndex;
     lodash.findLastKey = findLastKey;
     lodash.findWhere = findWhere;
+    lodash.first = first;
     lodash.has = has;
     lodash.identity = identity;
     lodash.indexOf = indexOf;
@@ -8754,6 +8765,7 @@
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;
     lodash.kebabCase = kebabCase;
+    lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
     lodash.max = max;
     lodash.min = min;
@@ -8789,6 +8801,7 @@
     lodash.detect = find;
     lodash.foldl = reduce;
     lodash.foldr = reduceRight;
+    lodash.head = first;
     lodash.include = contains;
     lodash.inject = reduce;
 
@@ -8805,16 +8818,7 @@
     /*--------------------------------------------------------------------------*/
 
     // add functions capable of returning wrapped and unwrapped values when chaining
-    lodash.first = first;
-    lodash.last = last;
     lodash.sample = sample;
-    lodash.take = take;
-    lodash.takeRight = takeRight;
-    lodash.takeRightWhile = takeRightWhile;
-    lodash.takeWhile = takeWhile;
-
-    // add alias
-    lodash.head = first;
 
     baseForOwn(lodash, function(func, methodName) {
       var callbackable = methodName != 'sample';

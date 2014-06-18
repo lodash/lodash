@@ -3032,18 +3032,8 @@
     }
 
     /**
-     * Flattens a nested array (the nesting can be to any depth). If `isShallow`
-     * is truthy, the array is only flattened a single level. If a callback is
-     * provided each element of the array is passed through the callback before
-     * flattening. The callback is bound to `thisArg` and invoked with three
-     * arguments; (value, index, array).
-     *
-     * If a property name is provided for `callback` the created "_.pluck" style
-     * callback returns the property value of the given element.
-     *
-     * If an object is provided for `callback` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * Flattens a nested array. If `isDeep` is `true` the array is recursively
+     * flattened, otherwise it is only flattened a single level.
      *
      * @static
      * @memberOf _
@@ -3291,8 +3281,8 @@
 
     /**
      * Removes elements from `array` corresponding to the specified indexes and
-     * returns an array of removed elements. Indexes may be specified as an array
-     * of indexes or as individual arguments.
+     * returns an array of the removed elements. Indexes may be specified as an
+     * array of indexes or as individual arguments.
      *
      * Note: Unlike `_.at`, this method mutates `array`.
      *
@@ -3320,8 +3310,8 @@
 
     /**
      * Removes all elements from `array` that the predicate returns truthy for
-     * and returns an array of removed elements. The predicate is bound to `thisArg`
-     * and invoked with three arguments; (value, index, array).
+     * and returns an array of the removed elements. The predicate is bound to
+     * `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -5471,9 +5461,12 @@
      * @param {Function} func The function to debounce.
      * @param {number} wait The number of milliseconds to delay.
      * @param {Object} [options] The options object.
-     * @param {boolean} [options.leading=false] Specify execution on the leading edge of the timeout.
-     * @param {number} [options.maxWait] The maximum time `func` is allowed to be delayed before it's called.
-     * @param {boolean} [options.trailing=true] Specify execution on the trailing edge of the timeout.
+     * @param {boolean} [options.leading=false] Specify execution on the leading
+     *  edge of the timeout.
+     * @param {number} [options.maxWait] The maximum time `func` is allowed to be
+     *  delayed before it is called.
+     * @param {boolean} [options.trailing=true] Specify execution on the trailing
+     *  edge of the timeout.
      * @returns {Function} Returns the new debounced function.
      * @example
      *
@@ -5878,8 +5871,10 @@
      * @param {Function} func The function to throttle.
      * @param {number} wait The number of milliseconds to throttle executions to.
      * @param {Object} [options] The options object.
-     * @param {boolean} [options.leading=true] Specify execution on the leading edge of the timeout.
-     * @param {boolean} [options.trailing=true] Specify execution on the trailing edge of the timeout.
+     * @param {boolean} [options.leading=true] Specify execution on the leading
+     *  edge of the timeout.
+     * @param {boolean} [options.trailing=true] Specify execution on the trailing
+     *  edge of the timeout.
      * @returns {Function} Returns the new throttled function.
      * @example
      *
@@ -8410,7 +8405,7 @@
     /**
      * Produces a random number between `min` and `max` (inclusive). If only one
      * argument is provided a number between `0` and the given number is returned.
-     * If `floating` is truthy, or either `min` or `max` are floats, a floating-point
+     * If `floating` is `true`, or either `min` or `max` are floats, a floating-point
      * number is returned instead of an integer.
      *
      * @static

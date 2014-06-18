@@ -736,31 +736,35 @@
      *
      * The chainable wrapper functions are:
      * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `callback`, `chain`,
-     * `compact`, `compose`, `concat`, `constant`, `countBy`, `create`, `curry`,
-     * `debounce`, `defaults`, `defer`, `delay`, `difference`, `filter`, `flatten`,
-     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
-     * `invoke`, `keys`, `map`, `mapValues`, `matches`, `max`, `memoize`, `merge`,
-     * `min`, `mixin`, `noop`, `object`, `omit`, `once`, `pairs`, `partial`,
-     * `partialRight`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`,
-     * `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-     * `sortBy`, `splice`, `tap`, `throttle`, `times`, `toArray`, `transform`,
-     * `union`, `uniq`, `unshift`, `unzip`, `values`, `where`, `without`, `wrap`,
-     * `xor`, and `zip`
+     * `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`, `create`,
+     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
+     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`, `forEach`,
+     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
+     * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
+     * `keysIn`, `map`, `mapValues`, `matches`, `memoize`, `merge`, `mixin`,
+     * `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+     * `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`, `range`,
+     * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
+     * `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
+     * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`,
+     * and `zipObject`
      *
      * The non-chainable wrapper functions are:
-     * `capitalize`, `clone`, `cloneDeep`, `contains`, `escape`, `every`, `find`,
-     * `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `has`,
+     * `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`, `endsWith`,
+     * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
+     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
      * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
-     * `isElement`, `isEmpty`, `isEqual`, `isFinite`, `isFunction`, `isNaN`,
-     * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
-     * `isUndefined`, `join`, `lastIndexOf`, `noConflict`, `now`, `parseInt`,
-     * `pop`, `random`, `reduce`, `reduceRight`, `result`, `shift`, `size`, `some`,
-     * `sortedIndex`, `runInContext`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `unescape`, `uniqueId`, and `value`
+     * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
+     * `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`,
+     * `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
+     * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
+     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `startsWith`, `template`,
+     * `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, and `value`
      *
-     * The wrapper functions `first`, `last`, and `sample` return wrapped values
-     * when `n` is provided, otherwise they return unwrapped values.
+     * The wrapper function `sample` will return a wrapped value when `n` is
+     * provided, otherwise it will return an unwrapped value.
      *
      * Explicit chaining can be enabled by using the `_.chain` method.
      *

@@ -7695,12 +7695,10 @@
 
     /**
      * Creates a compiled template function that can interpolate data properties
-     * in "interpolate" delimiters, HTML-escaped interpolated data properties in
-     * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. If
-     * a data object is provided the interpolated template string is returned.
-     * Data properties may be accessed as free variables in the template. If a
-     * settings object is provided it overrides `_.templateSettings` for the
-     * template.
+     * in "interpolate" delimiters, HTML-escape interpolated data properties in
+     * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
+     * properties may be accessed as free variables in the template. If a setting
+     * object is provided it overrides `_.templateSettings` for the template.
      *
      * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
@@ -7716,7 +7714,6 @@
      * @memberOf _
      * @category Strings
      * @param {string} [string=''] The template string.
-     * @param {Object} [data] The data object used to populate the template string.
      * @param {Object} [options] The options object.
      * @param {RegExp} [options.escape] The HTML "escape" delimiter.
      * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
@@ -7724,8 +7721,7 @@
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
-     * @returns {Function|string} Returns the interpolated string if a data object
-     *  is provided, else the compiled template function.
+     * @returns {Function} Returns the compiled template function.
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template
@@ -7734,39 +7730,44 @@
      * // => 'hello fred'
      *
      * // using the HTML "escape" delimiter to escape data property values
-     * _.template('<b><%- value %></b>', { 'value': '<script>' });
+     * var compiled = _.template('<b><%- value %></b>');
+     * compiled({ 'value': '<script>' });
      * // => '<b>&lt;script&gt;</b>'
      *
      * // using the "evaluate" delimiter to execute JavaScript and generate HTML
-     * var list = '<% _.forEach(people, function(name) { %><li><%- name %></li><% }); %>';
-     * _.template(list, { 'people': ['fred', 'barney'] });
+     * var compiled = _.template('<% _.forEach(people, function(name) { %><li><%- name %></li><% }); %>');
+     * compiled({ 'people': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
      * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
-     * _.template('hello ${ name }', { 'name': 'pebbles' });
+     * var compiled = _.template('hello ${ name }');
+     * compiled({ 'name': 'pebbles' });
      * // => 'hello pebbles'
      *
      * // using the internal `print` function in "evaluate" delimiters
-     * _.template('<% print("hello " + name); %>!', { 'name': 'barney' });
+     * var compiled = _.template('<% print("hello " + name); %>!');
+     * compiled({ 'name': 'barney' });
      * // => 'hello barney!'
      *
      * // using a custom template delimiters
      * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-     * _.template('hello {{ name }}!', { 'name': 'mustache' });
+     * var compiled = _.template('hello {{ name }}!');
+     * compiled({ 'name': 'mustache' });
      * // => 'hello mustache!'
      *
      * // using the `imports` option to import jQuery
-     * var list = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
-     * _.template(list, { 'people': ['fred', 'barney'] }, { 'imports': { 'jq': jQuery } });
+     * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
+     * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
+     * compiled({ 'people': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
      * // using the `sourceURL` option to specify a custom sourceURL for the template
-     * var compiled = _.template('hello <%= name %>', null, { 'sourceURL': '/basic/greeting.jst' });
+     * var compiled = _.template('hello <%= name %>', { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
      *
      * // using the `variable` option to ensure a with-statement isn't used in the compiled template
-     * var compiled = _.template('hi <%= data.name %>!', null, { 'variable': 'data' });
+     * var compiled = _.template('hi <%= data.name %>!', { 'variable': 'data' });
      * compiled.source;
      * // => function(data) {
      *   var __t, __p = '', __e = _.escape;
@@ -7782,7 +7783,7 @@
      *   };\
      * ');
      */
-    function template(string, data, options) {
+    function template(string, options) {
       // based on John Resig's `tmpl` implementation
       // http://ejohn.org/blog/javascript-micro-templating/
       // and Laura Doktorova's doT.js
@@ -7808,6 +7809,10 @@
         (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
         (options.evaluate || reNoMatch).source + '|$'
       , 'g');
+
+      // use a sourceURL for easier debugging
+      // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']');
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);
@@ -7866,12 +7871,7 @@
         source +
         'return __p\n}';
 
-      // use a sourceURL for easier debugging
-      // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']'),
-          result = compileFunction(source, importsKeys, importsValues, sourceURL);
-
-      return data ? result(data) : result;
+      return compileFunction(source, importsKeys, importsValues, sourceURL);
     }
 
     /**

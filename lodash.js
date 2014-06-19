@@ -3883,7 +3883,9 @@
      * // => 'pebbles is 1'
      */
     function chain(value) {
-      return new lodashWrapper(value, true);
+      var result = lodash(value);
+      result.__chain__ = true;
+      return result;
     }
 
     /**

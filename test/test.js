@@ -3959,7 +3959,7 @@
   (function() {
     test('should return the function names of an object', 1, function() {
       var object = { 'a': 'a', 'b': _.identity, 'c': /x/, 'd': _.each };
-      deepEqual(_.functions(object), ['b', 'd']);
+      deepEqual(_.functions(object).sort(), ['b', 'd']);
     });
 
     test('should include inherited functions', 1, function() {
@@ -3968,7 +3968,7 @@
         this.b = 'b'
       }
       Foo.prototype.c = _.noop;
-      deepEqual(_.functions(new Foo), ['a', 'c']);
+      deepEqual(_.functions(new Foo).sort(), ['a', 'c']);
     });
 
     test('should be aliased', 1, function() {

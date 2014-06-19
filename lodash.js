@@ -5280,7 +5280,7 @@
     function bindAll(object) {
       return baseBindAll(object, arguments.length > 1
         ? baseFlatten(arguments, false, false, 1)
-        : baseFunctions(object, keysIn));
+        : functions(object));
     }
 
     /**
@@ -6337,8 +6337,8 @@
     }
 
     /**
-     * Creates a sorted array of function property names from all enumerable
-     * properties, own and inherited, of `object`.
+     * Creates an array of function property names from all enumerable properties,
+     * own and inherited, of `object`.
      *
      * @static
      * @memberOf _
@@ -6352,7 +6352,7 @@
      * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
      */
     function functions(object) {
-      return baseFunctions(object, keysIn).sort();
+      return baseFunctions(object, keysIn);
     }
 
     /**

@@ -3114,22 +3114,9 @@
      * _.initial([1, 2, 3]);
      * // => [1, 2]
      */
-    function initial(array, predicate, thisArg) {
+    function initial(array) {
       var length = array ? array.length : 0;
-
-      if (typeof predicate != 'number' && predicate != null) {
-        var index = length,
-            n = 0;
-
-        predicate = lodash.callback(predicate, thisArg, 3);
-        while (index-- && predicate(array[index], index, array)) {
-          n++;
-        }
-      } else {
-        n = (predicate == null || thisArg) ? 1 : predicate;
-      }
-      n = length - (n || 0);
-      return slice(array, 0, n < 0 ? 0 : n);
+      return slice(array, 0, length ? length - 1 : 0);
     }
 
     /**

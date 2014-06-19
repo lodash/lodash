@@ -42,6 +42,10 @@
 			// excuse tests we intentionally fail or those with problems
 			QUnit.config.excused = {
 				'Arrays': {
+					'first': [
+						'can pass an index to first',
+						'0'
+					],
 					'flatten': [
 						'can flatten nested arrays',
 						'can shallowly flatten nested arrays',
@@ -49,6 +53,8 @@
 						'can shallowly flatten arrays containing only other arrays'
 					],
 					'initial': [
+						'initial can take an index',
+						'initial can take a large index',
 						'initial works on arguments object'
 					],
 					'intersection': [
@@ -56,7 +62,13 @@
 						'returns an empty array when passed null as first argument',
 						'returns an empty array when passed null as argument beyond the first'
 					],
+					'last': [
+						'can pass an index to last',
+						'0'
+					],
 					'rest': [
+						'working rest(0)',
+						'rest can take an index',
 						'aliased as drop and works on arguments object',
 						'aliased as tail and works on arguments object',
 					]
@@ -137,6 +149,9 @@
 					'now': [
 						'Produces the correct time in milliseconds'
 					],
+					'_.templateSettings.variable': [
+						'"x"'
+					],
 					'times': [
 						'Died on test #1'
 					],
@@ -164,13 +179,16 @@
 					delete QUnit.config.excused.Functions.partial;
 				}
 				QUnit.config.excused.Arrays.intersection.shift();
+				delete QUnit.config.excused.Arrays.first;
 				delete QUnit.config.excused.Arrays.flatten;
 				delete QUnit.config.excused.Arrays.initial;
+				delete QUnit.config.excused.Arrays.last;
 				delete QUnit.config.excused.Arrays.rest;
 				delete QUnit.config.excused.Chaining;
 				delete QUnit.config.excused.Collections.map;
 				delete QUnit.config.excused.Objects.keys;
 				delete QUnit.config.excused.Utility['_.escape'];
+				delete QUnit.config.excused.Utility['_.templateSettings.variable'];
 				delete QUnit.config.excused.Utility['_.unescape'];
 			}
 			// only execuse edge features for the Underscore build

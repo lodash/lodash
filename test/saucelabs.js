@@ -562,7 +562,7 @@ Job.prototype.remove = function(callback) {
       _.defer(onRemove);
       return;
     }
-    request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}', this), {
+    request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}')(this), {
       'auth': { 'user': this.user, 'pass': this.pass }
     }, onRemove);
   });
@@ -622,7 +622,7 @@ Job.prototype.start = function(callback) {
     return this;
   }
   this.starting = true;
-  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests', this), {
+  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests')(this), {
     'auth': { 'user': this.user, 'pass': this.pass },
     'json': this.options
   }, _.bind(onJobStart, this));
@@ -644,7 +644,7 @@ Job.prototype.status = function(callback) {
   }
   this._pollerId = null;
   this.checking = true;
-  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status', this), {
+  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status')(this), {
     'auth': { 'user': this.user, 'pass': this.pass },
     'json': { 'js tests': [this.taskId] }
   }, _.bind(onJobStatus, this));
@@ -675,7 +675,7 @@ Job.prototype.stop = function(callback) {
     _.defer(onStop);
     return this;
   }
-  request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop', this), {
+  request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop')(this), {
     'auth': { 'user': this.user, 'pass': this.pass }
   }, onStop);
 

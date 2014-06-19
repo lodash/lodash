@@ -1714,8 +1714,8 @@
     }
 
     /**
-     * The base implementation of `_.functions` which creates a sorted array of
-     * function property names from those returned by `keysFunc`.
+     * The base implementation of `_.functions` that creates an array of function
+     * property names from those returned by `keysFunc`.
      *
      * @private
      * @param {Object} object The object to inspect.
@@ -1734,7 +1734,7 @@
           result.push(key);
         }
       }
-      return result.sort();
+      return result;
     }
 
     /**
@@ -5293,7 +5293,7 @@
     function bindAll(object) {
       return baseBindAll(object, arguments.length > 1
         ? baseFlatten(arguments, false, false, 1)
-        : functions(object));
+        : baseFunctions(object, keysIn));
     }
 
     /**
@@ -6365,7 +6365,7 @@
      * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
      */
     function functions(object) {
-      return baseFunctions(object, keysIn);
+      return baseFunctions(object, keysIn).sort();
     }
 
     /**

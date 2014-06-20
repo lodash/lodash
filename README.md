@@ -9,7 +9,7 @@ A utility library delivering consistency, [customization](http://lodash.com/cust
 
 ## Download
 
-Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick the build that’s right for you.
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick the one that’s right for you.
 
 * [Modern build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.min.js))<br>
   For new environments like Chrome, Firefox, IE ≥ 9, & Safari ≥ 5.1

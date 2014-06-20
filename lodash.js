@@ -7176,7 +7176,7 @@
      * // => { 'name': 'fred' }
      */
     function omit(object, predicate, thisArg) {
-      if (!isObject(object)) {
+      if (object == null) {
         return {};
       }
       if (typeof predicate == 'function') {
@@ -7241,7 +7241,7 @@
      * // => { 'name': 'fred' }
      */
     function pick(object, predicate, thisArg) {
-      if (!isObject(object)) {
+      if (object == null) {
         return {};
       }
       return basePick(object, typeof predicate == 'function'

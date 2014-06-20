@@ -7988,7 +7988,7 @@
       var length = 30,
           omission = '...';
 
-      if (options && isObject(options)) {
+      if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
         length = 'length' in options ? +options.length || 0 : length;
         omission = 'omission' in options ? String(options.omission) : omission;

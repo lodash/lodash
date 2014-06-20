@@ -791,10 +791,13 @@
      * // => true
      */
     function lodash(value) {
-      // don't wrap if already wrapped, even if wrapped by a different `lodash` constructor
-      return (value && typeof value == 'object' && !isArray(value) && hasOwnProperty.call(value, '__wrapped__'))
-       ? value
-       : new lodashWrapper(value);
+      if (value instanceof lodashWrapper) {
+        return value;
+      }
+      if (value && typeof value == 'object' && !isArray(value) && hasOwnProperty.call(value, '__wrapped__')) {
+        value = value.__wrapped__;
+      }
+      return new lodashWrapper(value);
     }
 
     /**
@@ -809,8 +812,6 @@
       this.__chain__ = !!chainAll;
       this.__wrapped__ = value;
     }
-    // ensure `new lodashWrapper` is an instance of `lodash`
-    lodashWrapper.prototype = lodash.prototype;
 
     /**
      * An object used to flag environments features.
@@ -8604,6 +8605,9 @@
     }
 
     /*--------------------------------------------------------------------------*/
+
+    // ensure `new lodashWrapper` is an instance of `lodash`
+    lodashWrapper.prototype = lodash.prototype;
 
     // add functions that return wrapped values when chaining
     lodash.after = after;

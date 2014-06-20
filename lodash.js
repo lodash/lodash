@@ -791,11 +791,13 @@
      * // => true
      */
     function lodash(value) {
-      if (value instanceof lodashWrapper) {
-        return value;
-      }
-      if (value && typeof value == 'object' && !isArray(value) && hasOwnProperty.call(value, '__wrapped__')) {
-        value = value.__wrapped__;
+      if (value && typeof value == 'object') {
+        if (value instanceof lodashWrapper) {
+          return value;
+        }
+        if (!isArray(value) && hasOwnProperty.call(value, '__wrapped__')) {
+          value = value.__wrapped__;
+        }
       }
       return new lodashWrapper(value);
     }

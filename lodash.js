@@ -1599,7 +1599,7 @@
      */
     function baseFlatten(array, isDeep, isStrict, fromIndex) {
       var index = (fromIndex || 0) - 1,
-          length = array ? array.length : 0,
+          length = array.length,
           resIndex = 0,
           result = [];
 

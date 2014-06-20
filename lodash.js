@@ -6999,8 +6999,9 @@
      * // => ['x', 'y', 'z'] (property order is not guaranteed across environments)
      */
     function keysIn(object) {
-      object = Object(object);
-
+      if (object == null) {
+        return [];
+      }
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||

@@ -891,7 +891,7 @@
       var object = new Foo;
       _.bindAll(object);
 
-      var actual = _.map(_.functions(object), function(methodName) {
+      var actual = _.map(_.functions(object).sort(), function(methodName) {
         return object[methodName].call({});
       });
 
@@ -910,7 +910,7 @@
 
       _.bindAll(object, 'a', 'b');
 
-      var actual = _.map(_.functions(object), function(methodName) {
+      var actual = _.map(_.functions(object).sort(), function(methodName) {
         return object[methodName].call({});
       });
 
@@ -931,7 +931,7 @@
 
       _.bindAll(object, ['a', 'b'], ['c']);
 
-      var actual = _.map(_.functions(object), function(methodName) {
+      var actual = _.map(_.functions(object).sort(), function(methodName) {
         return object[methodName].call({});
       });
 
@@ -952,7 +952,7 @@
 
       _.bindAll(object, args);
 
-      var actual = _.map(_.functions(object), function(methodName) {
+      var actual = _.map(_.functions(object).sort(), function(methodName) {
         return object[methodName].call({});
       });
 
@@ -11050,7 +11050,7 @@
   QUnit.module('lodash methods');
 
   (function() {
-    var allMethods = _.reject(_.functions(_), function(methodName) {
+    var allMethods = _.reject(_.functions(_).sort(), function(methodName) {
       return /^_/.test(methodName);
     });
 

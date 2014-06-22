@@ -103,7 +103,7 @@
 
   /** Used to assign default `context` object properties */
   var contextProps = [
-    'Array', 'ArrayBuffer', 'Boolean', 'Date', 'Error', 'Float32Array', 'Float64Array',
+    'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number', 'Object',
     'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document', 'isFinite', 'isNaN',
     'parseInt', 'setTimeout', 'TypeError', 'Uint8Array', 'Uint8ClampedArray',
@@ -618,6 +618,7 @@
         Error = context.Error,
         Function = context.Function,
         Math = context.Math,
+        Number = context.Number,
         Object = context.Object,
         RegExp = context.RegExp,
         String = context.String,
@@ -692,6 +693,7 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeNow = isNative(nativeNow = Date.now) && nativeNow,
+        nativeNumIsFinite = isNative(nativeNumIsFinite = Number.isFinite) && nativeNumIsFinite,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
@@ -6667,10 +6669,10 @@
     }
 
     /**
-     * Checks if `value` is, or can be coerced to, a finite number.
+     * Checks if `value` is a finite number.
      *
-     * Note: This method is not the same as native `isFinite` which returns
-     * `true` for booleans and empty strings. See the [ES5 spec](http://es5.github.io/#x15.1.2.5)
+     * Note: This method is based on ES6 `Number.isFinite`. See the
+     * [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
      * for more details.
      *
      * @static
@@ -6680,24 +6682,24 @@
      * @returns {boolean} Returns `true` if `value` is finite, else `false`.
      * @example
      *
-     * _.isFinite(-101);
+     * _.isFinite(10);
      * // => true
      *
      * _.isFinite('10');
-     * // => true
+     * // => false
      *
      * _.isFinite(true);
      * // => false
      *
-     * _.isFinite('');
+     * _.isFinite(Object(10));
      * // => false
      *
      * _.isFinite(Infinity);
      * // => false
      */
-    function isFinite(value) {
+    var isFinite = nativeNumIsFinite || function(value) {
       return typeof value == 'number' && nativeIsFinite(value);
-    }
+    };
 
     /**
      * Checks if `value` is a function.

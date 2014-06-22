@@ -127,6 +127,10 @@
 						'Died on test #60',
 						'Died on test #63'
 					],
+					'isFinite': [
+						'Numeric strings are numbers',
+						'Number instances can be finite'
+					],
 					'keys': [
 						'is not fooled by sparse arrays; see issue #95',
 						'[]'
@@ -186,6 +190,7 @@
 				delete QUnit.config.excused.Arrays.rest;
 				delete QUnit.config.excused.Chaining;
 				delete QUnit.config.excused.Collections.map;
+				delete QUnit.config.excused.Objects.isFinite;
 				delete QUnit.config.excused.Objects.keys;
 				delete QUnit.config.excused.Utility['_.escape'];
 				delete QUnit.config.excused.Utility['_.templateSettings.variable'];

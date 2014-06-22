@@ -301,16 +301,16 @@
         '({',
         "'_arguments': (function() { return arguments; }(1, 2, 3)),",
         "'_array': [1, 2, 3],",
-        "'_boolean': new Boolean(false),",
+        "'_boolean': Object(false),",
         "'_date': new Date,",
         "'_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
         "'_function': function() {},",
         "'_nan': NaN,",
         "'_null': null,",
-        "'_number': new Number(0),",
+        "'_number': Object(0),",
         "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
         "'_regexp': /x/,",
-        "'_string': new String('a'),",
+        "'_string': Object('a'),",
         "'_undefined': undefined",
         '})'
       ].join('\n')));
@@ -420,17 +420,17 @@
       '<script>',
       'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
       'parent._._array = [1, 2, 3];',
-      'parent._._boolean = new Boolean(false);',
+      'parent._._boolean = Object(false);',
       'parent._._date = new Date;',
       "parent._._element = document.createElement('div');",
       'parent._._errors = [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError];',
       'parent._._function = function() {};',
       'parent._._nan = NaN;',
       'parent._._null = null;',
-      'parent._._number = new Number(0);',
+      'parent._._number = Object(0);',
       "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
       'parent._._regexp = /x/;',
-      "parent._._string = new String('a');",
+      "parent._._string = Object('a');",
       'parent._._undefined = undefined;',
       '<\/script>'
     ].join('\n'));
@@ -4551,8 +4551,8 @@
     test('should return `true` for booleans', 4, function() {
       strictEqual(_.isBoolean(true), true);
       strictEqual(_.isBoolean(false), true);
-      strictEqual(_.isBoolean(new Boolean(true)), true);
-      strictEqual(_.isBoolean(new Boolean(false)), true);
+      strictEqual(_.isBoolean(Object(true)), true);
+      strictEqual(_.isBoolean(Object(false)), true);
     });
 
     test('should return `false` for non booleans', 10, function() {
@@ -4642,7 +4642,7 @@
 
       strictEqual(_.isElement(element), true);
       strictEqual(_.isElement({ 'nodeType': 1 }), false);
-      strictEqual(_.isElement({ 'nodeType': new Number(1) }), false);
+      strictEqual(_.isElement({ 'nodeType': Object(1) }), false);
       strictEqual(_.isElement({ 'nodeType': true }), false);
       strictEqual(_.isElement({ 'nodeType': [1] }), false);
       strictEqual(_.isElement({ 'nodeType': '1' }), false);
@@ -4790,12 +4790,12 @@
   (function() {
     test('should perform comparisons between primitive values', 1, function() {
       var pairs = [
-        [1, 1, true], [1, new Number(1), true], [1, '1', false], [1, 2, false],
-        [-0, -0, true], [0, 0, true], [0, new Number(0), true], [new Number(0), new Number(0), true], [-0, 0, false], [0, '0', false], [0, null, false],
-        [NaN, NaN, true], [NaN, new Number(NaN), true], [new Number(NaN), new Number(NaN), true], [NaN, 'a', false], [NaN, Infinity, false],
-        ['a', 'a', true], ['a', new String('a'), true], [new String('a'), new String('a'), true], ['a', 'b', false], ['a', ['a'], false],
-        [true, true, true], [true, new Boolean(true), true], [new Boolean(true), new Boolean(true), true], [true, 1, false], [true, 'a', false],
-        [false, false, true], [false, new Boolean(false), true], [new Boolean(false), new Boolean(false), true], [false, 0, false], [false, '', false],
+        [1, 1, true], [1, Object(1), true], [1, '1', false], [1, 2, false],
+        [-0, -0, true], [0, 0, true], [0, Object(0), true], [Object(0), Object(0), true], [-0, 0, false], [0, '0', false], [0, null, false],
+        [NaN, NaN, true], [NaN, Object(NaN), true], [Object(NaN), Object(NaN), true], [NaN, 'a', false], [NaN, Infinity, false],
+        ['a', 'a', true], ['a', Object('a'), true], [Object('a'), Object('a'), true], ['a', 'b', false], ['a', ['a'], false],
+        [true, true, true], [true, Object(true), true], [Object(true), Object(true), true], [true, 1, false], [true, 'a', false],
+        [false, false, true], [false, Object(false), true], [Object(false), Object(false), true], [false, 0, false], [false, '', false],
         [null, null, true], [null, undefined, false], [null, {}, false], [null, '', false],
         [undefined, undefined, true], [undefined, null, false], [undefined, '', false]
       ];
@@ -4831,8 +4831,8 @@
 
       strictEqual(_.isEqual(array1, array2), true);
 
-      array1 = [new Number(1), false, new String('a'), /x/, new Date(2012, 4, 23), ['a', 'b', [new String('c')]], { 'a': 1 }];
-      array2 = [1, new Boolean(false), 'a', /x/, new Date(2012, 4, 23), ['a', new String('b'), ['c']], { 'a': 1 }];
+      array1 = [Object(1), false, Object('a'), /x/, new Date(2012, 4, 23), ['a', 'b', [Object('c')]], { 'a': 1 }];
+      array2 = [1, Object(false), 'a', /x/, new Date(2012, 4, 23), ['a', Object('b'), ['c']], { 'a': 1 }];
 
       strictEqual(_.isEqual(array1, array2), true);
 
@@ -4909,11 +4909,11 @@
       var object1 = {
         'a': [1, 2, 3],
         'b': true,
-        'c': new Number(1),
+        'c': Object(1),
         'd': 'a',
         'e': {
-          'f': ['a', new String('b'), 'c'],
-          'g': new Boolean(false),
+          'f': ['a', Object('b'), 'c'],
+          'g': Object(false),
           'h': new Date(2012, 4, 23),
           'i': _.noop,
           'j': 'a'
@@ -4921,10 +4921,10 @@
       };
 
       var object2 = {
-        'a': [1, new Number(2), 3],
-        'b': new Boolean(true),
+        'a': [1, Object(2), 3],
+        'b': Object(true),
         'c': 1,
-        'd': new String('a'),
+        'd': Object('a'),
         'e': {
           'f': ['a', 'b', 'c'],
           'g': false,
@@ -4996,12 +4996,12 @@
       strictEqual(_.isEqual(object1, object2), true);
 
       object1.b = 0;
-      object2.b = new Number(0);
+      object2.b = Object(0);
 
       strictEqual(_.isEqual(object1, object2), true);
 
-      object1.c = new Number(1);
-      object2.c = new Number(2);
+      object1.c = Object(1);
+      object2.c = Object(2);
 
       strictEqual(_.isEqual(object1, object2), false);
 
@@ -5022,12 +5022,12 @@
       strictEqual(_.isEqual(array1, array2), true);
 
       array1[0].b = 0;
-      array2[0].b = new Number(0);
+      array2[0].b = Object(0);
 
       strictEqual(_.isEqual(array1, array2), true);
 
-      array1[0].c = new Number(1);
-      array2[0].c = new Number(2);
+      array1[0].c = Object(1);
+      array2[0].c = Object(2);
 
       strictEqual(_.isEqual(array1, array2), false);
     });
@@ -5164,10 +5164,10 @@
     });
 
     test('should avoid common type coercions', 9, function() {
-      strictEqual(_.isEqual(true, new Boolean(false)), false);
-      strictEqual(_.isEqual(new Boolean(false), new Number(0)), false);
-      strictEqual(_.isEqual(false, new String('')), false);
-      strictEqual(_.isEqual(new Number(36), new String(36)), false);
+      strictEqual(_.isEqual(true, Object(false)), false);
+      strictEqual(_.isEqual(Object(false), Object(0)), false);
+      strictEqual(_.isEqual(false, Object('')), false);
+      strictEqual(_.isEqual(Object(36), Object('36')), false);
       strictEqual(_.isEqual(0, ''), false);
       strictEqual(_.isEqual(1, true), false);
       strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
@@ -5535,7 +5535,7 @@
 
     test('should return `true` for NaNs', 2, function() {
       strictEqual(_.isNaN(NaN), true);
-      strictEqual(_.isNaN(new Number(NaN)), true);
+      strictEqual(_.isNaN(Object(NaN)), true);
     });
 
     test('should return `false` for non NaNs', 11, function() {
@@ -5620,7 +5620,7 @@
 
     test('should return `true` for numbers', 2, function() {
       strictEqual(_.isNumber(0), true);
-      strictEqual(_.isNumber(new Number(0)), true);
+      strictEqual(_.isNumber(Object(0)), true);
     });
 
     test('should return `false` for non numbers', 10, function() {
@@ -5667,14 +5667,14 @@
     test('should return `true` for objects', 11, function() {
       strictEqual(_.isObject(args), true);
       strictEqual(_.isObject([1, 2, 3]), true);
-      strictEqual(_.isObject(new Boolean(false)), true);
+      strictEqual(_.isObject(Object(false)), true);
       strictEqual(_.isObject(new Date), true);
       strictEqual(_.isObject(new Error), true);
       strictEqual(_.isObject(_), true);
       strictEqual(_.isObject({ 'a': 1 }), true);
-      strictEqual(_.isObject(new Number(0)), true);
+      strictEqual(_.isObject(Object(0)), true);
       strictEqual(_.isObject(/x/), true);
-      strictEqual(_.isObject(new String('a')), true);
+      strictEqual(_.isObject(Object('a')), true);
 
       if (document) {
         strictEqual(_.isObject(body), true);
@@ -5858,7 +5858,7 @@
 
     test('should return `true` for strings', 2, function() {
       strictEqual(_.isString('a'), true);
-      strictEqual(_.isString(new String('a')), true);
+      strictEqual(_.isString(Object('a')), true);
     });
 
     test('should return `false` for non strings', 10, function() {

@@ -5430,45 +5430,48 @@
   QUnit.module('lodash.isFinite');
 
   (function() {
-    test('should return `true` for finite values', 5, function() {
-      strictEqual(_.isFinite(0), true);
-      strictEqual(_.isFinite(1), true);
-      strictEqual(_.isFinite(3.14), true);
-      strictEqual(_.isFinite(-1), true);
-      strictEqual(_.isFinite(new Number(0)), true);
+    test('should return `true` for finite values', 1, function() {
+      var values = [0, 1, 3.14, -1],
+          expected = _.map(values, _.constant(true));
+
+      var actual = _.map(values, function(value) {
+        return _.isFinite(value);
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-finite values', 3, function() {
-      strictEqual(_.isFinite(NaN), false);
-      strictEqual(_.isFinite(Infinity), false);
-      strictEqual(_.isFinite(-Infinity), false);
+    test('should return `false` for non-finite values', 1, function() {
+      var values = [NaN, Infinity, -Infinity, Object(1)],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        return _.isFinite(value);
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-numeric values', 9, function() {
-      strictEqual(_.isFinite(null), false);
-      strictEqual(_.isFinite(undefined), false);
-      strictEqual(_.isFinite([]), false);
-      strictEqual(_.isFinite(true), false);
-      strictEqual(_.isFinite(new Date), false);
-      strictEqual(_.isFinite(new Error), false);
-      strictEqual(_.isFinite(''), false);
-      strictEqual(_.isFinite(' '), false);
-      strictEqual(_.isFinite('2px'), false);
+    test('should return `false` for non-numeric values', 1, function() {
+      var values = [undefined, [], true, new Date, new Error, '', ' ', '2px'],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        return _.isFinite(value);
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should return `true` for numeric string values', 3, function() {
-      strictEqual(_.isFinite('2'), true);
-      strictEqual(_.isFinite('0'), true);
-      strictEqual(_.isFinite('08'), true);
-    });
+    test('should return `false` for numeric string values', 1, function() {
+      var values = ['2', '0', '08'],
+          expected = _.map(values, _.constant(false));
 
-    test('should work with numbers from another realm', 1, function() {
-      if (_._object) {
-        strictEqual(_.isFinite(_._number), true);
-      }
-      else {
-        skipTest();
-      }
+      var actual = _.map(values, function(value) {
+        return _.isFinite(value);
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 

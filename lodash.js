@@ -6693,7 +6693,7 @@
      * // => false
      */
     function isFinite(value) {
-      return nativeIsFinite(value) && !nativeIsNaN(parseFloat(value));
+      return typeof value == 'number' && nativeIsFinite(value);
     }
 
     /**

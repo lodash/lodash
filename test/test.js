@@ -5961,8 +5961,9 @@
     test('should not error on host objects (test in IE)', 12, function() {
       if (xml) {
         var funcs = [
-          'isArray', 'isArguments', 'isBoolean', 'isDate', 'isElement', 'isFunction',
-          'isObject', 'isNull', 'isNumber', 'isRegExp', 'isString', 'isUndefined'
+          'isArray', 'isArguments', 'isBoolean', 'isDate', 'isElement', 'isError',
+          'isFunction', 'isObject', 'isNull', 'isNumber', 'isRegExp', 'isString',
+          'isUndefined'
         ];
 
         _.each(funcs, function(methodName) {

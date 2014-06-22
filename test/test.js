@@ -5961,12 +5961,12 @@
       });
     });
 
-    test('should not error on host objects (test in IE)', 12, function() {
+    test('should not error on host objects (test in IE)', 15, function() {
       if (xml) {
         var funcs = [
-          'isArray', 'isArguments', 'isBoolean', 'isDate', 'isElement', 'isError',
-          'isFunction', 'isObject', 'isNull', 'isNumber', 'isRegExp', 'isString',
-          'isUndefined'
+          'isArguments', 'isArray', 'isBoolean', 'isDate', 'isElement',
+          'isError', 'isFinite', 'isFunction', 'isNaN', 'isNull', 'isNumber',
+          'isObject', 'isRegExp', 'isString', 'isUndefined'
         ];
 
         _.each(funcs, function(methodName) {
@@ -5980,7 +5980,7 @@
         });
       }
       else {
-        skipTest(17);
+        skipTest(15);
       }
     });
   }());

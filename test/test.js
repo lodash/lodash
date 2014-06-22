@@ -348,26 +348,26 @@
     setProperty(global, 'WinRTError', Error);
 
     // add extensions
-    Function.prototype._method = function() {};
+    Function.prototype._method = _.noop;
 
     // set bad shims
     var _isArray = Array.isArray;
-    setProperty(Array, 'isArray', function() {});
+    setProperty(Array, 'isArray', _.noop);
 
     var _now = Date.now;
-    setProperty(Date, 'now', function() {});
+    setProperty(Date, 'now', _.noop);
 
     var _create = create;
-    setProperty(Object, 'create', function() {});
+    setProperty(Object, 'create', _.noop);
 
     var _defineProperty = Object.defineProperty;
-    setProperty(Object, 'defineProperty', function() {});
+    setProperty(Object, 'defineProperty', _.noop);
 
     var _getPrototypeOf = Object.getPrototypeOf;
-    setProperty(Object, 'getPrototypeOf', function() {});
+    setProperty(Object, 'getPrototypeOf', _.noop);
 
     var _keys = Object.keys;
-    setProperty(Object, 'keys', function() {});
+    setProperty(Object, 'keys', _.noop);
 
     var _hasOwnProperty = Object.prototype.hasOwnProperty;
     setProperty(Object.prototype, 'hasOwnProperty', function(key) {
@@ -378,7 +378,7 @@
     });
 
     var _contains = String.prototype.contains;
-    setProperty(String.prototype, 'contains',  _contains ? function() {} : Boolean);
+    setProperty(String.prototype, 'contains',  _contains ? _.noop : Boolean);
 
     // clear cache so Lo-Dash can be reloaded
     emptyObject(require.cache);
@@ -5226,7 +5226,7 @@
     });
 
     test('should handle comparisons if `callback` returns `undefined`', 1, function() {
-      var actual = _.isEqual('a', 'a', function() {});
+      var actual = _.isEqual('a', 'a', _.noop);
       strictEqual(actual, true);
     });
 
@@ -6676,7 +6676,7 @@
     });
 
     test('should handle merging if `callback` returns `undefined`', 1, function() {
-      var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, function() {});
+      var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });
     });
 

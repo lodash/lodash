@@ -7072,6 +7072,14 @@
       deepEqual(_.omit(new Foo, 'a', 'c'), expected);
     });
 
+    test('should return an empty object when `object` is `null` or `undefined`', 2, function() {
+      Object.prototype.a = 1;
+      _.each([null, undefined], function(value) {
+        deepEqual(_.omit(value, 'valueOf'), {});
+      });
+      delete Object.prototype.a;
+    });
+
     test('should work with `arguments` objects as secondary arguments', 1, function() {
       deepEqual(_.omit(object, args), expected);
     });
@@ -7080,7 +7088,17 @@
       deepEqual(_.omit([1, 2, 3], '0', '2'), { '1': 2 });
     });
 
-    test('should work with a callback argument', 1, function() {
+    test('should work with a primitive `object` argument', 1, function() {
+      Number.prototype.a = 1;
+      Number.prototype.b = 2;
+
+      deepEqual(_.omit(1, 'b'), { 'a': 1 });
+
+      delete Number.prototype.a;
+      delete Number.prototype.b;
+    });
+
+    test('should work with a predicate argument', 1, function() {
       var actual = _.omit(object, function(num) {
         return num != 2;
       });
@@ -7088,7 +7106,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should pass the correct `predicate` arguments', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
@@ -7619,6 +7637,12 @@
       deepEqual(_.pick(new Foo, 'a', 'c'), expected);
     });
 
+    test('should return an empty object when `object` is `null` or `undefined`', 2, function() {
+      _.each([null, undefined], function(value) {
+        deepEqual(_.pick(value, 'valueOf'), {});
+      });
+    });
+
     test('should work with `arguments` objects as secondary arguments', 1, function() {
       deepEqual(_.pick(object, args), expected);
     });
@@ -7627,7 +7651,11 @@
       deepEqual(_.pick([1, 2, 3], '1'), { '1': 2 });
     });
 
-    test('should work with a callback argument', 1, function() {
+    test('should work with a primitive `object` argument', 1, function() {
+      deepEqual(_.pick(1, 'toFixed'), { 'toFixed': (1).toFixed });
+    });
+
+    test('should work with a predicate argument', 1, function() {
       var actual = _.pick(object, function(num) {
         return num != 2;
       });
@@ -7635,7 +7663,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should pass the correct `predicate` arguments', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();

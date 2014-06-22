@@ -7182,7 +7182,7 @@
         return basePick(object, negate(lodash.callback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, false, false, 1);
-      return basePick(object, baseDifference(keysIn(object), arrayMap(omitProps, String)));
+      return basePick(Object(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
     }
 
     /**
@@ -7243,7 +7243,7 @@
       if (object == null) {
         return {};
       }
-      return basePick(object, typeof predicate == 'function'
+      return basePick(Object(object), typeof predicate == 'function'
         ? lodash.callback(predicate, thisArg, 3)
         : baseFlatten(arguments, false, false, 1));
     }

@@ -403,6 +403,7 @@
    */
   function charsRightIndex(string, chars) {
     var index = string.length;
+
     while (index--) {
       if (chars.indexOf(string.charAt(index)) < 0) {
         break;
@@ -556,6 +557,7 @@
    */
   function trimmedRightIndex(string) {
     var index = string.length;
+
     while (index--) {
       var c = string.charCodeAt(index);
       if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
@@ -1082,6 +1084,7 @@
      */
     function arrayEachRight(array, iterator) {
       var length = array ? array.length : 0;
+
       while (length--) {
         if (iterator(array[length], length, array) === false) {
           break;
@@ -7624,6 +7627,7 @@
         n = floor(n / 2);
         string += string;
       } while (n);
+
       return result;
     }
 

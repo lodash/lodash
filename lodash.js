@@ -6566,7 +6566,7 @@
      */
     function isEmpty(value) {
       var result = true;
-      if (!value) {
+      if (value == null) {
         return result;
       }
       var length = value.length;

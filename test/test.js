@@ -3391,7 +3391,7 @@
           var expected = Array(5e5),
               actual = _.flatten([expected]);
 
-          deepEqual(actual, expected)
+          deepEqual(actual, expected);
         } catch(e) {
           ok(false);
         }
@@ -4099,7 +4099,7 @@
       var object = { 'name': 'fred' };
       strictEqual(_.identity(object), object);
     });
-  }())
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -4806,7 +4806,7 @@
 
       var actual = _.map(pairs, function(pair) {
         return _.isEqual(pair[0], pair[1]);
-      })
+      });
 
       deepEqual(actual, expected);
     });
@@ -5977,7 +5977,7 @@
         });
       }
       else {
-        skipTest(12)
+        skipTest(17);
       }
     });
   }());
@@ -7433,7 +7433,7 @@
           par2 = func(par1, 'barney'),
           par3 = func(par1, 'pebbles');
 
-      strictEqual(par1('fred'), isPartial ? 'hi fred' : 'fred hi')
+      strictEqual(par1('fred'), isPartial ? 'hi fred' : 'fred hi');
       strictEqual(par2(), isPartial ? 'hi barney'  : 'barney hi');
       strictEqual(par3(), isPartial ? 'hi pebbles' : 'pebbles hi');
     });
@@ -10999,7 +10999,7 @@
         ok(args.length === 1 && _.isEqual(args[0], [3]), message('remove'));
       }
       else {
-        skipTest(2)
+        skipTest(2);
       }
     });
 

@@ -1503,6 +1503,17 @@
       notStrictEqual(_.compose(_.noop), _.noop);
     });
 
+    test('should return a noop function when no arguments are provided', 2, function() {
+      var composed = _.compose();
+
+      try {
+        strictEqual(composed(), undefined);
+      } catch(e) {
+        ok(false);
+      }
+      notStrictEqual(composed, _.noop);
+    });
+
     test('should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
         var actual = _(_.noop).compose();

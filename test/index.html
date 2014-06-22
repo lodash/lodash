@@ -279,7 +279,7 @@
 							window._ = lodash;
 						}
 						if (ui.isModularize) {
-							require(getConfig(), ['lodash/internals/baseEach'], function(baseEach) {
+							require(getConfig(), ['lodash/internal/baseEach'], function(baseEach) {
 								lodash._baseEach = baseEach['default'] || baseEach;
 								loadTests();
 							});

@@ -324,7 +324,7 @@
     // expose `baseEach` for better code coverage
     if (isModularize && !isNpm) {
       var path = require('path'),
-          baseEach = require(path.join(path.dirname(filePath), 'internals', 'baseEach.js'));
+          baseEach = require(path.join(path.dirname(filePath), 'internal', 'baseEach.js'));
 
       _._baseEach = baseEach.baseEach || baseEach['default'] || baseEach;
     }

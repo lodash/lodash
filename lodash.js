@@ -584,7 +584,7 @@
    *
    * @static
    * @memberOf _
-   * @category Utilities
+   * @category Utility
    * @param {Object} [context=root] The context object.
    * @returns {Function} Returns a new `lodash` function.
    * @example
@@ -770,7 +770,7 @@
      *
      * @name _
      * @constructor
-     * @category Chaining
+     * @category Chain
      * @param {*} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns a `lodash` instance.
      * @example
@@ -2659,7 +2659,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to process.
      * @param {numer} [chunkSize=1] The size of each chunk.
      * @returns {Array} Returns the new array containing chunks.
@@ -2689,7 +2689,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to compact.
      * @returns {Array} Returns the new array of filtered values.
      * @example
@@ -2718,7 +2718,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to inspect.
      * @param {...Array} [values] The arrays of values to exclude.
      * @returns {Array} Returns the new array of filtered values.
@@ -2746,7 +2746,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
@@ -2776,7 +2776,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
@@ -2817,7 +2817,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
@@ -2870,7 +2870,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
@@ -2919,7 +2919,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -2973,7 +2973,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -3019,7 +3019,7 @@
      * @static
      * @memberOf _
      * @alias head
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @returns {*} Returns the first element of `array`.
      * @example
@@ -3040,7 +3040,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to flatten.
      * @param {boolean} [isDeep=false] Specify a deep flatten.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
@@ -3074,7 +3074,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
      * @param {boolean|number} [fromIndex=0] The index to search from or `true`
@@ -3109,7 +3109,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @returns {Array} Returns the slice of `array`.
      * @example
@@ -3128,7 +3128,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of shared values.
      * @example
@@ -3184,7 +3184,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @returns {*} Returns the last element of `array`.
      * @example
@@ -3204,7 +3204,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
      * @param {number} [fromIndex=array.length-1] The index to search from.
@@ -3239,7 +3239,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to modify.
      * @param {...*} [values] The values to remove.
      * @returns {Array} Returns `array`.
@@ -3278,7 +3278,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to modify.
      * @param {...(number|number[])} [indexes] The indexes of elements to remove,
      *  specified as individual indexes or arrays of indexes.
@@ -3314,7 +3314,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to modify.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -3355,7 +3355,7 @@
      * @static
      * @memberOf _
      * @alias tail
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @returns {Array} Returns the slice of `array`.
      * @example
@@ -3375,7 +3375,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to slice.
      * @param {number} [start=0] The start index.
      * @param {number} [end=array.length] The end index.
@@ -3422,7 +3422,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to inspect.
      * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [iterator=identity] The function called
@@ -3473,7 +3473,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
@@ -3503,7 +3503,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
@@ -3544,7 +3544,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
@@ -3596,7 +3596,7 @@
      * @static
      * @memberOf _
      * @type Function
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
@@ -3638,7 +3638,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of combined values.
      * @example
@@ -3668,7 +3668,7 @@
      * @static
      * @memberOf _
      * @alias unique
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted=false] Specify the array is sorted.
      * @param {Function|Object|string} [iterator] The function called per iteration.
@@ -3722,7 +3722,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {Array} array The array to filter.
      * @param {...*} [values] The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
@@ -3742,7 +3742,7 @@
      *
      * @static
      * @memberOf _
-     * @category Arrays
+     * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of values.
      * @example
@@ -3777,7 +3777,7 @@
      * @static
      * @memberOf _
      * @alias unzip
-     * @category Arrays
+     * @category Array
      * @param {...Array} [arrays] The arrays to process.
      * @returns {Array} Returns the array of grouped elements.
      * @example
@@ -3808,7 +3808,7 @@
      * @static
      * @memberOf _
      * @alias object
-     * @category Arrays
+     * @category Array
      * @param {Array} keys The array of keys.
      * @param {Array} [values=[]] The array of values.
      * @returns {Object} Returns the new object.
@@ -3844,7 +3844,7 @@
      *
      * @static
      * @memberOf _
-     * @category Chaining
+     * @category Chain
      * @param {*} value The value to wrap.
      * @returns {Object} Returns the new wrapper object.
      * @example
@@ -3876,7 +3876,7 @@
      *
      * @static
      * @memberOf _
-     * @category Chaining
+     * @category Chain
      * @param {*} value The value to provide to `interceptor`.
      * @param {Function} interceptor The function to invoke.
      * @param {*} [thisArg] The `this` binding of `interceptor`.
@@ -3899,7 +3899,7 @@
      *
      * @name chain
      * @memberOf _
-     * @category Chaining
+     * @category Chain
      * @returns {*} Returns the wrapper object.
      * @example
      *
@@ -3929,7 +3929,7 @@
      *
      * @name toString
      * @memberOf _
-     * @category Chaining
+     * @category Chain
      * @returns {string} Returns the coerced string value.
      * @example
      *
@@ -3946,7 +3946,7 @@
      * @name valueOf
      * @memberOf _
      * @alias toJSON, value
-     * @category Chaining
+     * @category Chain
      * @returns {*} Returns the wrapped value.
      * @example
      *
@@ -3966,7 +3966,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {...(number|number[]|string|string[])} [keys] The keys of elements
      *  to pick, specified as individual keys or arrays of keys.
@@ -3994,7 +3994,7 @@
      * @static
      * @memberOf _
      * @alias include
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to check for.
      * @param {number} [fromIndex=0] The index to search from.
@@ -4052,7 +4052,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iterator=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4089,7 +4089,7 @@
      * @static
      * @memberOf _
      * @alias all
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4154,7 +4154,7 @@
      * @static
      * @memberOf _
      * @alias select
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4218,7 +4218,7 @@
      * @static
      * @memberOf _
      * @alias detect
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4261,7 +4261,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4285,7 +4285,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {Object} source The object of property values to match.
      * @returns {*} Returns the matched element, else `undefined`.
@@ -4319,7 +4319,7 @@
      * @static
      * @memberOf _
      * @alias each
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -4345,7 +4345,7 @@
      * @static
      * @memberOf _
      * @alias eachRight
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -4377,7 +4377,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iterator=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4420,7 +4420,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iterator=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4455,7 +4455,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|string} methodName The name of the method to invoke or
      *  the function invoked per iteration.
@@ -4488,7 +4488,7 @@
      * @static
      * @memberOf _
      * @alias collect
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iterator=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4543,7 +4543,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iterator] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
@@ -4621,7 +4621,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iterator] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
@@ -4698,7 +4698,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4736,7 +4736,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {string} key The name of the property to pluck.
      * @returns {Array} Returns the property values.
@@ -4765,7 +4765,7 @@
      * @static
      * @memberOf _
      * @alias foldl, inject
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [accumulator] Initial value of the accumulator.
@@ -4813,7 +4813,7 @@
      * @static
      * @memberOf _
      * @alias foldr
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [accumulator] Initial value of the accumulator.
@@ -4850,7 +4850,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -4885,7 +4885,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to sample.
      * @param {number} [n] The number of elements to sample.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
@@ -4920,7 +4920,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to shuffle.
      * @returns {Array} Returns the new shuffled array.
      * @example
@@ -4947,7 +4947,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to inspect.
      * @returns {number} Returns `collection.length` or number of own enumerable properties.
      * @example
@@ -4984,7 +4984,7 @@
      * @static
      * @memberOf _
      * @alias any
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -5053,7 +5053,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Array|Function|Object|string} [iterator=identity] The function
      *  called per iteration. If property name(s) or an object is provided it
@@ -5119,7 +5119,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to convert.
      * @returns {Array} Returns the new converted array.
      * @example
@@ -5144,7 +5144,7 @@
      *
      * @static
      * @memberOf _
-     * @category Collections
+     * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {Object} source The object of property values to match.
      * @returns {Array} Returns the new filtered array.
@@ -5176,7 +5176,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {number} n The number of times the function must be called before
      *  `func` is executed.
      * @param {Function} func The function to restrict.
@@ -5216,7 +5216,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to bind.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {...*} [args] The arguments to be partially applied.
@@ -5254,7 +5254,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Object} object The object to bind and assign the bound methods to.
      * @param {...(string|string[])} [methodNames] The object method names to bind,
      *  specified as individual method names or arrays of method names.
@@ -5306,7 +5306,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Object} object The object the method belongs to.
      * @param {string} key The key of the method.
      * @param {...*} [args] The arguments to be partially applied.
@@ -5345,7 +5345,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {...Function} [funcs] Functions to compose.
      * @returns {Function} Returns the new composed function.
      * @example
@@ -5399,7 +5399,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to curry.
      * @param {number} [arity=func.length] The arity of `func`.
      * @returns {Function} Returns the new curried function.
@@ -5439,7 +5439,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to debounce.
      * @param {number} wait The number of milliseconds to delay.
      * @param {Object} [options] The options object.
@@ -5604,7 +5604,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to defer.
      * @param {...*} [args] The arguments to invoke the function with.
      * @returns {number} Returns the timer id.
@@ -5627,7 +5627,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay execution.
      * @param {...*} [args] The arguments to invoke the function with.
@@ -5655,7 +5655,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to have its output memoized.
      * @param {Function} [resolver] The function to resolve the cache key.
      * @returns {Function} Returns the new memoizing function.
@@ -5705,7 +5705,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} predicate The predicate to negate.
      * @returns {Function} Returns the new function.
      * @example
@@ -5733,7 +5733,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
      * @example
@@ -5773,7 +5773,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to partially apply arguments to.
      * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
@@ -5803,7 +5803,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to partially apply arguments to.
      * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
@@ -5849,7 +5849,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {Function} func The function to throttle.
      * @param {number} wait The number of milliseconds to throttle executions to.
      * @param {Object} [options] The options object.
@@ -5898,7 +5898,7 @@
      *
      * @static
      * @memberOf _
-     * @category Functions
+     * @category Function
      * @param {*} value The value to wrap.
      * @param {Function} wrapper The wrapper function.
      * @returns {Function} Returns the new function.
@@ -5927,7 +5927,7 @@
      * @static
      * @memberOf _
      * @alias extend
-     * @category Objects
+     * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @param {Function} [customizer] The function to customize assigning values.
@@ -5962,7 +5962,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to clone.
      * @param {boolean} [isDeep=false] Specify a deep clone.
      * @param {Function} [customizer] The function to customize cloning values.
@@ -6025,7 +6025,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to deep clone.
      * @param {Function} [customizer] The function to customize cloning values.
      * @param {*} [thisArg] The `this` binding of `customizer`.
@@ -6065,7 +6065,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} prototype The object to inherit from.
      * @param {Object} [properties] The properties to assign to the object.
      * @returns {Object} Returns the new object.
@@ -6104,7 +6104,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
@@ -6136,7 +6136,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -6182,7 +6182,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to search.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -6223,7 +6223,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -6255,7 +6255,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -6287,7 +6287,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -6312,7 +6312,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -6336,7 +6336,7 @@
      * @static
      * @memberOf _
      * @alias methods
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the new sorted array of property names.
      * @example
@@ -6354,7 +6354,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @param {string} key The name of the property to check.
      * @returns {boolean} Returns `true` if key is a direct property, else `false`.
@@ -6375,7 +6375,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to invert.
      * @param {boolean} [multiValue=false] Allow multiple values per key.
      * @returns {Object} Returns the new inverted object.
@@ -6421,7 +6421,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
      * @example
@@ -6449,7 +6449,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is an array, else `false`.
      * @example
@@ -6470,7 +6470,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a boolean value, else `false`.
      * @example
@@ -6491,7 +6491,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
      * @example
@@ -6511,7 +6511,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a DOM element, else `false`.
      * @example
@@ -6541,7 +6541,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Array|Object|string} value The value to inspect.
      * @returns {boolean} Returns `true` if `value` is empty, else `false`.
      * @example
@@ -6593,7 +6593,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to compare to `other`.
      * @param {*} other The value to compare to `value`.
      * @param {Function} [customizer] The function to customize comparing values.
@@ -6645,7 +6645,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
      * @example
@@ -6669,7 +6669,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is finite, else `false`.
      * @example
@@ -6698,7 +6698,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a function, else `false`.
      * @example
@@ -6729,7 +6729,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is an object, else `false`.
      * @example
@@ -6759,7 +6759,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
      * @example
@@ -6787,7 +6787,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
      * @example
@@ -6810,7 +6810,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a number, else `false`.
      * @example
@@ -6839,7 +6839,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
      * @example
@@ -6878,7 +6878,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a regexp object, else `false`.
      * @example
@@ -6898,7 +6898,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a string, else `false`.
      * @example
@@ -6919,7 +6919,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
      * @example
@@ -6939,7 +6939,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the array of property names.
      * @example
@@ -6973,7 +6973,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the array of property names.
      * @example
@@ -7055,7 +7055,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to iterate over.
      * @param {Function|Object|string} [iterator=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
@@ -7097,7 +7097,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @param {Function} [customizer] The function to customize merging properties.
@@ -7149,7 +7149,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The source object.
      * @param {Function|...(string|string[])} [predicate] The function called per
      *  iteration or property names to omit, specified as individual property
@@ -7183,7 +7183,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the new array of key-value pairs.
      * @example
@@ -7214,7 +7214,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The source object.
      * @param {Function|...(string|string[])} [predicate] The function called per
      *  iteration or property names to pick, specified as individual property
@@ -7250,7 +7250,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Array|Object} object The object to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [accumulator] The custom accumulator value.
@@ -7298,7 +7298,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the array of property values.
      * @example
@@ -7323,7 +7323,7 @@
      *
      * @static
      * @memberOf _
-     * @category Objects
+     * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the array of property values.
      * @example
@@ -7350,7 +7350,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to camel case.
      * @returns {string} Returns the camel cased string.
      * @example
@@ -7376,7 +7376,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to capitalize.
      * @returns {string} Returns the capitalized string.
      * @example
@@ -7397,7 +7397,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to search.
      * @param {string} [target] The string to search for.
      * @param {number} [position=string.length] The position to search from.
@@ -7436,7 +7436,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to escape.
      * @returns {string} Returns the escaped string.
      * @example
@@ -7454,7 +7454,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to escape.
      * @returns {string} Returns the escaped string.
      * @example
@@ -7473,7 +7473,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to kebab case.
      * @returns {string} Returns the kebab cased string.
      * @example
@@ -7498,7 +7498,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to pad.
      * @param {number} [length=0] The padding length.
      * @param {string} [chars=' '] The string used as padding.
@@ -7537,7 +7537,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to pad.
      * @param {number} [length=0] The padding length.
      * @param {string} [chars=' '] The string used as padding.
@@ -7565,7 +7565,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to pad.
      * @param {number} [length=0] The padding length.
      * @param {string} [chars=' '] The string used as padding.
@@ -7591,7 +7591,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to repeat.
      * @param {number} [n=0] The number of times to repeat the string.
      * @returns {string} Returns the repeated string.
@@ -7630,7 +7630,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to snake case.
      * @returns {string} Returns the snake cased string.
      * @example
@@ -7653,7 +7653,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to search.
      * @param {string} [target] The string to search for.
      * @param {number} [position=0] The position to search from.
@@ -7695,7 +7695,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The template string.
      * @param {Object} [options] The options object.
      * @param {RegExp} [options.escape] The HTML "escape" delimiter.
@@ -7862,7 +7862,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
@@ -7891,7 +7891,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
@@ -7920,7 +7920,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
      * @returns {string} Returns the trimmed string.
@@ -7951,7 +7951,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to truncate.
      * @param {Object|number} [options] The options object or maximum string length.
      * @param {number} [options.length=30] The maximum string length.
@@ -8033,7 +8033,7 @@
      *
      * @static
      * @memberOf _
-     * @category Strings
+     * @category String
      * @param {string} [string=''] The string to unescape.
      * @returns {string} Returns the unescaped string.
      * @example
@@ -8059,7 +8059,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
      * @param {number} [argCount] The number of arguments the callback accepts.
@@ -8101,7 +8101,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {*} value The value to return from the new function.
      * @returns {Function} Returns the new function.
      * @example
@@ -8122,7 +8122,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {*} value Any value.
      * @returns {*} Returns `value`.
      * @example
@@ -8142,7 +8142,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {Object} source The object of property values to match.
      * @returns {Function} Returns the new function.
      * @example
@@ -8201,7 +8201,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {Function|Object} [object=this] object The destination object.
      * @param {Object} source The object of functions to add.
      * @param {Object} [options] The options object.
@@ -8282,7 +8282,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @returns {Function} Returns the `lodash` function.
      * @example
      *
@@ -8298,7 +8298,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @example
      *
      * var object = { 'name': 'fred' };
@@ -8315,7 +8315,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @example
      *
      * var stamp = _.now();
@@ -8337,7 +8337,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {string} value The value to parse.
      * @param {number} [radix] The radix used to interpret the value to parse.
      * @returns {number} Returns the converted integer.
@@ -8360,7 +8360,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {string} key The name of the property to retrieve.
      * @returns {Function} Returns the new function.
      * @example
@@ -8392,7 +8392,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {number} [min=0] The minimum possible value.
      * @param {number} [max=1] The maximum possible value.
      * @param {boolean} [floating=false] Specify returning a floating-point number.
@@ -8450,7 +8450,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
      * @param {number} [step=1] The value to increment or decrement by.
@@ -8507,7 +8507,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {Object} object The object to inspect.
      * @param {string} key The name of the property to resolve.
      * @param {*} [defaultValue] The value returned if the property value
@@ -8546,7 +8546,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {number} n The number of times to execute `iterator`.
      * @param {Function} [iterator=identity] The function called per iteration.
      * @param {*} [thisArg] The `this` binding of `iterator`.
@@ -8580,7 +8580,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utilities
+     * @category Utility
      * @param {string} [prefix] The value to prefix the ID with.
      * @returns {string} Returns the unique ID.
      * @example

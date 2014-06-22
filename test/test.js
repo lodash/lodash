@@ -7150,13 +7150,13 @@
     });
 
     test('should not throw more than once', 2, function() {
+      var pass = true;
+
       var once = _.once(function() {
         throw new Error;
       });
 
       raises(function() { once(); }, Error);
-
-      var pass = true;
 
       try {
         once();
@@ -9876,8 +9876,10 @@
           var nodeList = document.getElementsByTagName('body'),
               actual = func(nodeList);
         } catch(e) { }
+
         deepEqual(actual, [body]);
-      } else {
+      }
+      else {
         skipTest();
       }
     });

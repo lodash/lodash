@@ -2856,8 +2856,7 @@
       while (index-- && predicate(array[index], index, array)) {
         n++;
       }
-      n = length - (n || 0);
-      return slice(array, 0, n < 0 ? 0 : n);
+      return slice(array, 0, length - n);
     }
 
     /**
@@ -2901,14 +2900,11 @@
      */
     function dropWhile(array, predicate, thisArg) {
       var index = -1,
-          length = array ? array.length : 0,
-          n = 0;
+          length = array ? array.length : 0;
 
       predicate = lodash.callback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) {
-        n++;
-      }
-      return slice(array, n);
+      while (++index < length && predicate(array[index], index, array)) { }
+      return slice(array, index);
     }
 
     /**
@@ -3582,8 +3578,7 @@
       while (index-- && predicate(array[index], index, array)) {
         n++;
       }
-      n = length - (n || 0);
-      return slice(array, n < 0 ? 0 : n);
+      return slice(array, length - n);
     }
 
     /**
@@ -3627,14 +3622,11 @@
      */
     function takeWhile(array, predicate, thisArg) {
       var index = -1,
-          length = array ? array.length : 0,
-          n = 0;
+          length = array ? array.length : 0;
 
       predicate = lodash.callback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) {
-        n++;
-      }
-      return slice(array, 0, n < 0 ? 0 : n);
+      while (++index < length && predicate(array[index], index, array)) { }
+      return slice(array, 0, index);
     }
 
     /**

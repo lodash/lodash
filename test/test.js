@@ -5995,47 +5995,58 @@
         isKeys = methodName == 'keys';
 
     test('`_.' + methodName + '` should return the keys of an object', 1, function() {
-      var object = { 'a': 1, 'b': 1 },
-          actual = func(object);
-
-      deepEqual(actual.sort(), ['a', 'b']);
+      deepEqual(func({ 'a': 1, 'b': 1 }).sort(), ['a', 'b']);
     });
 
-    test('`_.' + methodName + '` should coerce primitives to objects', 1, function() {
-      var actual = func('abc');
-      deepEqual(actual.sort(), ['0', '1', '2']);
+    test('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', 2, function() {
+      deepEqual(func('abc').sort(), ['0', '1', '2']);
+
+      if (!isKeys) {
+        // IE 9 doesn't box numbers in for-in loops
+        Number.prototype.a = 1;
+        deepEqual(func(0).sort(), ['a']);
+        delete Number.prototype.a;
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
       var array = [1];
       array[2] = 3;
 
-      var actual = func(array);
-      deepEqual(actual.sort(), ['0', '1', '2']);
+      deepEqual(func(array).sort(), ['0', '1', '2']);
+    });
+
+    test('`_.' + methodName + '` should return an empty array for `null` or `undefined` values', 2, function() {
+      Object.prototype.a = 1;
+      _.each([null, undefined], function(value) {
+        deepEqual(func(value), []);
+      });
+      delete Object.prototype.a;
     });
 
     test('`_.' + methodName + '` should return keys for custom properties on arrays', 1, function() {
       var array = [1];
       array.a = 1;
 
-      var actual = func(array);
-      deepEqual(actual.sort(), ['0', 'a']);
+      deepEqual(func(array).sort(), ['0', 'a']);
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of arrays', 1, function() {
-      Array.prototype.a = 1;
-      var expected = isKeys ? ['0'] : ['0', 'a'],
-          actual = func([1]);
+      var expected = isKeys ? ['0'] : ['0', 'a'];
 
-      deepEqual(actual.sort(), expected);
+      Array.prototype.a = 1;
+      deepEqual(func([1]).sort(), expected);
       delete Array.prototype.a;
     });
 
     test('`_.' + methodName + '` should work with `arguments` objects (test in IE < 9)', 1, function() {
       if (!(isPhantom || isStrict)) {
-        var actual = func(args);
-        deepEqual(actual.sort(), ['0', '1', '2']);
-      } else {
+        deepEqual(func(args).sort(), ['0', '1', '2']);
+      }
+      else {
         skipTest();
       }
     });
@@ -6043,53 +6054,48 @@
     test('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', 1, function() {
       if (!(isPhantom || isStrict)) {
         args.a = 1;
-        var actual = func(args);
-
-        deepEqual(actual.sort(), ['0', '1', '2', 'a']);
+        deepEqual(func(args).sort(), ['0', '1', '2', 'a']);
         delete args.a;
-      } else {
+      }
+      else {
         skipTest();
       }
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', 1, function() {
       if (!(isPhantom || isStrict)) {
-        Object.prototype.a = 1;
-        var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'],
-            actual = func(args);
+        var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'];
 
-        deepEqual(actual.sort(), expected);
+        Object.prototype.a = 1;
+        deepEqual(func(args).sort(), expected);
         delete Object.prototype.a;
-      } else {
+      }
+      else {
         skipTest();
       }
     });
 
     test('`_.' + methodName + '` should work with string objects (test in IE < 9)', 1, function() {
-      var actual = func(Object('abc'));
-      deepEqual(actual.sort(), ['0', '1', '2']);
+      deepEqual(func(Object('abc')).sort(), ['0', '1', '2']);
     });
 
     test('`_.' + methodName + '` should return keys for custom properties on string objects', 1, function() {
       var object = Object('a');
       object.a = 1;
 
-      var actual = func(object);
-      deepEqual(actual.sort(), ['0', 'a']);
+      deepEqual(func(object).sort(), ['0', 'a']);
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of string objects', 1, function() {
-      String.prototype.a = 1;
-      var expected = isKeys ? ['0'] : ['0', 'a'],
-          actual = func(Object('a'));
+      var expected = isKeys ? ['0'] : ['0', 'a'];
 
-      deepEqual(actual.sort(), expected);
+      String.prototype.a = 1;
+      deepEqual(func(Object('a')).sort(), expected);
       delete String.prototype.a;
     });
 
     test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      var actual = func(shadowedObject);
-      deepEqual(actual.sort(), shadowedProps);
+      deepEqual(func(shadowedObject).sort(), shadowedProps);
     });
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
@@ -6098,14 +6104,11 @@
       Foo.b = 2;
       Foo.prototype.c = 3;
 
-      var expected = ['a', 'b'],
-          actual = func(Foo);
-
-      deepEqual(actual.sort(), expected);
+      var expected = ['a', 'b'];
+      deepEqual(func(Foo).sort(), expected);
 
       Foo.prototype = { 'c': 3 };
-      actual = func(Foo);
-      deepEqual(actual.sort(), expected);
+      deepEqual(func(Foo).sort(), expected);
     });
 
     test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 2, function() {
@@ -6126,10 +6129,8 @@
       }
       Foo.prototype.c = 3;
 
-      var expected = isKeys ? ['a', 'b'] : ['a', 'b', 'c'],
-          actual = func(new Foo);
-
-      deepEqual(actual.sort(), expected);
+      var expected = isKeys ? ['a', 'b'] : ['a', 'b', 'c'];
+      deepEqual(func(new Foo).sort(), expected);
     });
   });
 

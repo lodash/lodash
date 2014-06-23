@@ -1,6 +1,6 @@
 cd "$(dirname "$0")"
 
-for cmd in rhino "rhino -require" narwhal ringo phantomjs; do
+for cmd in rhino "rhino -require" ringo phantomjs; do
   echo "Testing in $cmd..."
   $cmd test.js ../dist/lodash.compat.js && $cmd test.js ../dist/lodash.compat.min.js
   echo ""

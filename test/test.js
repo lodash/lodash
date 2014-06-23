@@ -7089,13 +7089,13 @@
     });
 
     test('should work with a primitive `object` argument', 1, function() {
-      Number.prototype.a = 1;
-      Number.prototype.b = 2;
+      String.prototype.a = 1;
+      String.prototype.b = 2;
 
-      deepEqual(_.omit(1, 'b'), { 'a': 1 });
+      deepEqual(_.omit('', 'b'), { 'a': 1 });
 
-      delete Number.prototype.a;
-      delete Number.prototype.b;
+      delete String.prototype.a;
+      delete String.prototype.b;
     });
 
     test('should work with a predicate argument', 1, function() {
@@ -7652,7 +7652,7 @@
     });
 
     test('should work with a primitive `object` argument', 1, function() {
-      deepEqual(_.pick(1, 'toFixed'), { 'toFixed': (1).toFixed });
+      deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
     });
 
     test('should work with a predicate argument', 1, function() {

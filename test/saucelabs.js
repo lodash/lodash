@@ -384,8 +384,12 @@ function onJobStart(error, res, body) {
       this.restart();
       return;
     }
+    var na = 'unavailable',
+        bodyStr = _.isObject(body) ? '\n' + JSON.stringify(body) : na,
+        statusStr = _.isFinite(statusCode) ? statusCode : na;
+
     logInline();
-    console.error('Failed to start job; status: %d, body:\n%s', statusCode, JSON.stringify(body));
+    console.error('Failed to start job; status: %s, body: %s', statusStr, bodyStr);
     if (error) {
       console.error(error);
     }
@@ -470,7 +474,7 @@ function onJobStatus(error, res, body) {
     }
     else {
       if (typeof message == 'undefined') {
-        message = 'no results available. ' + details;
+        message = 'Results are unavailable. ' + details;
       }
       console.error(label, description, chalk.red('failed') + ';', message);
     }

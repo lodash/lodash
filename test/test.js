@@ -11142,6 +11142,7 @@
       'bind',
       'compose',
       'curry',
+      'curryRight',
       'debounce',
       'defer',
       'delay',
@@ -11223,7 +11224,7 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 15, function() {
+    test('should throw a TypeError for falsey arguments', 16, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

@@ -15,9 +15,10 @@
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
       CURRY_FLAG = 4,
-      CURRY_BOUND_FLAG = 8,
-      PARTIAL_FLAG = 16,
-      PARTIAL_RIGHT_FLAG = 32;
+      CURRY_RIGHT_FLAG = 8,
+      CURRY_BOUND_FLAG = 16,
+      PARTIAL_FLAG = 32,
+      PARTIAL_RIGHT_FLAG = 64;
 
   /** Used as the semantic version number */
   var version = '3.0.0-pre';
@@ -1161,7 +1162,7 @@
     }
 
     /**
-     * The base implementation of `_.bind` that creates the bound function and
+     * The base implementation of `_.bind` which creates the bound function and
      * sets its metadata.
      *
      * @private
@@ -1391,7 +1392,7 @@
     }
 
     /**
-     * The base implementation of `createWrapper` that creates the wrapper and
+     * The base implementation of `createWrapper` which creates the wrapper and
      * sets its metadata.
      *
      * @private
@@ -1411,6 +1412,7 @@
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
+          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
           isCurryBound = bitmask & CURRY_BOUND_FLAG,
           key = func;
 
@@ -1428,18 +1430,21 @@
         if (partialRightArgs) {
           args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
-        if (isCurry) {
+        if (isCurry || isCurryRight) {
           var newPartialHolders = getHolders(args);
           length -= newPartialHolders.length;
 
           if (length < arity) {
-            bitmask |= PARTIAL_FLAG;
-            bitmask &= ~PARTIAL_RIGHT_FLAG
+            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
+            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
+
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var newArity = nativeMax(arity - length, 0);
-            return baseCreateWrapper([func, bitmask, newArity, thisArg, args, null, newPartialHolders]);
+            var newData = [func, bitmask, nativeMax(arity - length, 0), thisArg];
+            newData[isCurry ? 4 : 5] = args;
+            newData[isCurry ? 6 : 7] = newPartialHolders;
+            return baseCreateWrapper(newData);
           }
         }
         var thisBinding = isBind ? thisArg : this;
@@ -1458,7 +1463,24 @@
     }
 
     /**
-     * The base implementation of `_.difference` that accepts a single array
+     * The base implementation of `_.curry` and `_.curryRight` which handles
+     * resolving the default arity of `func`.
+     *
+     * @private
+     * @param {Function} func The function to curry.
+     * @param {number} bitmask The bitmask of flags to compose.
+     * @param {number} [arity=func.length] The arity of `func`.
+     * @returns {Function} Returns the new curried function.
+     */
+    function baseCurry(func, bitmask, arity) {
+      if (typeof arity != 'number') {
+        arity = +arity || (func ? func.length : 0);
+      }
+      return createWrapper(func, bitmask, arity);
+    }
+
+    /**
+     * The base implementation of `_.difference` which accepts a single array
      * of values to exclude.
      *
      * @private
@@ -1714,7 +1736,7 @@
     }
 
     /**
-     * The base implementation of `_.functions` that creates an array of function
+     * The base implementation of `_.functions` which creates an array of function
      * property names from those returned by `keysFunc`.
      *
      * @private
@@ -2017,6 +2039,26 @@
       });
 
       return object;
+    }
+
+    /**
+     * The base implementation of `_.partial` and `_.partialRight` which handles
+     * resolving the arity of `func`.
+     *
+     * @private
+     * @param {Function} func The function to partially apply arguments to.
+     * @param {number} bitmask The bitmask of flags to compose.
+     * @param {Array} args The array of arguments to be partially applied.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @returns {Function} Returns the new partially applied function.
+     */
+    function basePartial(func, bitmask, args, thisArg) {
+      if (func) {
+        var arity = func[expando] ? func[expando][2] : func.length;
+        arity -= args.length;
+      }
+      var isPartial = bitmask & PARTIAL_FLAG;
+      return createWrapper(func, bitmask, arity, thisArg, isPartial && args, !isPartial && args);
     }
 
     /**
@@ -2382,9 +2424,10 @@
      *  1  - `_.bind`
      *  2  - `_.bindKey`
      *  4  - `_.curry`
-     *  8  - `_.curry` (bound)
-     *  16 - `_.partial`
-     *  32 - `_.partialRight`
+     *  8  - `_.curryRight`
+     *  16 - `_.curry` or `_.curryRight` of a bound function
+     *  32 - `_.partial`
+     *  64 - `_.partialRight`
      * @param {number} [arity] The arity of `func`.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partialArgs] An array of arguments to prepend to those
@@ -5221,16 +5264,9 @@
      * // => 'hi fred'
      */
     function bind(func, thisArg) {
-      if (arguments.length < 3) {
-        return createWrapper(func, BIND_FLAG, null, thisArg);
-      }
-      if (func) {
-        var arity = func[expando] ? func[expando][2] : func.length,
-            partialArgs = slice(arguments, 2);
-
-        arity -= partialArgs.length;
-      }
-      return createWrapper(func, BIND_FLAG | PARTIAL_FLAG, arity, thisArg, partialArgs);
+      return arguments.length < 3
+        ? createWrapper(func, BIND_FLAG, null, thisArg)
+        : basePartial(func, BIND_FLAG | PARTIAL_FLAG, slice(arguments, 2), thisArg);
     }
 
     /**
@@ -5398,23 +5434,51 @@
      * @example
      *
      * var curried = _.curry(function(a, b, c) {
-     *   console.log(a + b + c);
+     *   console.log([a, b, c]);
      * });
      *
      * curried(1)(2)(3);
-     * // => 6
+     * // => [1, 2, 3]
      *
      * curried(1, 2)(3);
-     * // => 6
+     * // => [1, 2, 3]
      *
      * curried(1, 2, 3);
-     * // => 6
+     * // => [1, 2, 3]
      */
     function curry(func, arity) {
-      if (typeof arity != 'number') {
-        arity = +arity || (func ? func.length : 0);
-      }
-      return createWrapper(func, CURRY_FLAG, arity);
+      return baseCurry(func, CURRY_FLAG, arity);
+    }
+
+    /**
+     * This method is like `_.curry` except that arguments are applied from right
+     * to left.
+     *
+     * Note: This method does not set the `length` property of curried functions.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to curry.
+     * @param {number} [arity=func.length] The arity of `func`.
+     * @returns {Function} Returns the new curried function.
+     * @example
+     *
+     * var curried = _.curryRight(function(a, b, c) {
+     *   console.log([a, b, c]);
+     * });
+     *
+     * curried(3)(2)(1);
+     * // => [1, 2, 3]
+     *
+     * curried(3, 2)(1);
+     * // => [1, 2, 3]
+     *
+     * curried(3, 2, 1);
+     * // => [1, 2, 3]
+     */
+    function curryRight(func, arity) {
+      return baseCurry(func, CURRY_RIGHT_FLAG, arity);
     }
 
     /**
@@ -5777,13 +5841,7 @@
      * // => 'hello fred'
      */
     function partial(func) {
-      if (func) {
-        var arity = func[expando] ? func[expando][2] : func.length,
-            partialArgs = slice(arguments, 1);
-
-        arity -= partialArgs.length;
-      }
-      return createWrapper(func, PARTIAL_FLAG, arity, null, partialArgs);
+      return basePartial(func, PARTIAL_FLAG, slice(arguments, 1));
     }
 
     /**
@@ -5818,13 +5876,7 @@
      * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
-      if (func) {
-        var arity = func[expando] ? func[expando][2] : func.length,
-            partialRightArgs = slice(arguments, 1);
-
-        arity -= partialRightArgs.length;
-      }
-      return createWrapper(func, PARTIAL_RIGHT_FLAG, arity, null, null, partialRightArgs);
+      return basePartial(func, PARTIAL_RIGHT_FLAG, slice(arguments, 1));
     }
 
     /**
@@ -8612,6 +8664,7 @@
     lodash.countBy = countBy;
     lodash.create = create;
     lodash.curry = curry;
+    lodash.curryRight = curryRight;
     lodash.debounce = debounce;
     lodash.defaults = defaults;
     lodash.defer = defer;

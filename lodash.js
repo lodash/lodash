@@ -2884,14 +2884,11 @@
      */
     function dropRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0,
-          index = length,
-          n = 0;
+          index = length;
 
       predicate = lodash.callback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) {
-        n++;
-      }
-      return slice(array, 0, length - n);
+      while (index-- && predicate(array[index], index, array)) { }
+      return slice(array, 0, index + 1);
     }
 
     /**
@@ -3606,14 +3603,11 @@
      */
     function takeRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0,
-          index = length,
-          n = 0;
+          index = length;
 
       predicate = lodash.callback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) {
-        n++;
-      }
-      return slice(array, length - n);
+      while (index-- && predicate(array[index], index, array)) { }
+      return slice(array, index + 1);
     }
 
     /**

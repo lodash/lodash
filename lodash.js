@@ -2044,8 +2044,9 @@
     }
 
     /**
-     * The base implementation of `_.partial` and `_.partialRight` which handles
-     * resolving the arity of `func`.
+     * The base implementation of `_.partial` and `_.partialRight` which accepts
+     * an array of arguments to partially apply and handles resolving the arity
+     * of `func`.
      *
      * @private
      * @param {Function} func The function to partially apply arguments to.
@@ -5447,8 +5448,8 @@
     }
 
     /**
-     * This method is like `_.curry` except that arguments are applied from right
-     * to left.
+     * This method is like `_.curry` except that arguments are applied to `func`
+     * in the manner of `_.partialRight` instead of `_.partial`.
      *
      * Note: This method does not set the `length` property of curried functions.
      *
@@ -5467,10 +5468,10 @@
      * curried(3)(2)(1);
      * // => [1, 2, 3]
      *
-     * curried(3, 2)(1);
+     * curried(2, 3)(1);
      * // => [1, 2, 3]
      *
-     * curried(3, 2, 1);
+     * curried(1, 2, 3);
      * // => [1, 2, 3]
      */
     function curryRight(func, arity) {

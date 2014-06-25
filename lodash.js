@@ -5388,8 +5388,8 @@
      */
     function compose() {
       var funcs = arguments,
-          funcsLength = funcs.length,
-          length = funcsLength;
+          length = funcs.length,
+          fromIndex = length - 1;
 
       if (!length) {
         return function() {};
@@ -5400,11 +5400,11 @@
         }
       }
       return function() {
-        var length = funcsLength - 1,
-            result = funcs[length].apply(this, arguments);
+        var index = fromIndex,
+            result = funcs[index].apply(this, arguments);
 
-        while (length--) {
-          result = funcs[length].call(this, result);
+        while (index--) {
+          result = funcs[index].call(this, result);
         }
         return result;
       };

@@ -1618,8 +1618,8 @@ Note: As with other "Collections" methods, objects with a `length` property are 
 _([1, 2, 3]).forEach(function(num) { console.log(num); }).join(',');
 // => logs each number and returns '1,2,3'
 
-_.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num) { console.log(num); });
-// => logs each number and returns the object (property order is not guaranteed across environments)
+_.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num, key) { console.log(num, key); });
+// => logs each number-key pair ('1 one') and returns the object (property order is not guaranteed across environments)
 ```
 
 * * *

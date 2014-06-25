@@ -2057,6 +2057,95 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.curryRight');
+
+  (function() {
+    function fn(a, b, c, d) {
+      return slice.call(arguments);
+    }
+
+    test('should curry based on the number of arguments provided', 3, function() {
+      var curried = _.curryRight(fn),
+          expected = [1, 2, 3, 4];
+
+      deepEqual(curried(4)(3)(2)(1), expected);
+      deepEqual(curried(3, 4)(1, 2), expected);
+      deepEqual(curried(1, 2, 3, 4), expected);
+    });
+
+    test('should work with partialed methods', 2, function() {
+      var curried = _.curryRight(fn),
+          expected = [1, 2, 3, 4];
+
+      var a = _.partialRight(curried, 4),
+          b = _.partialRight(a, 3),
+          c = _.bind(b, null, 1),
+          d = _.partial(b(2), 1);
+
+      deepEqual(c(2), expected);
+      deepEqual(d(), expected);
+    });
+
+    test('should support placeholders', 4, function() {
+      if (!isModularize) {
+        var curried = _.curryRight(fn);
+        deepEqual(curried(4)(2, _)(1, _)(3), [1, 2, 3, 4]);
+        deepEqual(curried(3, _)(4)(1, _)(2), [1, 2, 3, 4]);
+        deepEqual(curried(_, _, 4)(_, 3)(_, 2)(1), [1, 2, 3, 4]);
+        deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
+    test('should return a function with a `length` of `0`', 6, function() {
+      _.times(2, function(index) {
+        var curried = index ? _.curryRight(fn, 4) : _.curryRight(fn);
+        strictEqual(curried.length, 0);
+        strictEqual(curried(4).length, 0);
+        strictEqual(curried(3, 4).length, 0);
+      });
+    });
+
+    test('ensure `new curried` is an instance of `func`', 2, function() {
+      function Foo(value) {
+        return value && object;
+      }
+
+      var curried = _.curryRight(Foo),
+          object = {};
+
+      ok(new curried(false) instanceof Foo);
+      strictEqual(new curried(true), object);
+    });
+
+    test('should not alter the `this` binding', 9, function() {
+      function fn(a, b, c) {
+        var value = this || {};
+        return [value[a], value[b], value[c]];
+      }
+
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          expected = [1, 2, 3];
+
+      deepEqual(_.curryRight(_.bind(fn, object), 3)('c')('b')('a'), expected);
+      deepEqual(_.curryRight(_.bind(fn, object), 3)('b', 'c')('a'), expected);
+      deepEqual(_.curryRight(_.bind(fn, object), 3)('a', 'b', 'c'), expected);
+
+      deepEqual(_.bind(_.curryRight(fn), object)('c')('b')('a'), Array(3));
+      deepEqual(_.bind(_.curryRight(fn), object)('b', 'c')('a'), Array(3));
+      deepEqual(_.bind(_.curryRight(fn), object)('a', 'b', 'c'), expected);
+
+      object.curried = _.curryRight(fn);
+      deepEqual(object.curried('c')('b')('a'), Array(3));
+      deepEqual(object.curried('b', 'c')('a'), Array(3));
+      deepEqual(object.curried('a', 'b', 'c'), expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.debounce');
 
   (function() {

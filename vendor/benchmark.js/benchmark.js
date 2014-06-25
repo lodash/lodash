@@ -1813,7 +1813,7 @@
        */
       function interpolate(string) {
         // replaces all occurrences of `#` with a unique number and template tokens with content
-        return _.template(string.replace(/\#/g, /\d+/.exec(templateData.uid)), templateData);
+        return _.template(string.replace(/\#/g, /\d+/.exec(templateData.uid)))(templateData);
       }
 
       /*----------------------------------------------------------------------*/

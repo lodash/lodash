@@ -1257,7 +1257,9 @@
           return func.call(thisArg, value, other, key, object, source);
         };
       }
-      return bind(func, thisArg);
+      return function() {
+        return func.apply(thisArg, arguments);
+      };
     }
 
     /**

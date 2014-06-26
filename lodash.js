@@ -1173,12 +1173,13 @@
       var func = data[0],
           thisArg = data[3],
           partialArgs = data[4],
-          partialHolders = data[6];
+          partialHolders = data[6],
+          Ctor = createCtorWrapper(func);
 
-      function bound() {
-        // `Function#bind` spec
-        // http://es5.github.io/#x15.3.4.5
-        if (partialArgs) {
+      // `Function#bind` spec
+      // http://es5.github.io/#x15.3.4.5
+      if (partialArgs) {
+        var bound = function() {
           // avoid `arguments` object use disqualifying optimizations by
           // converting it to an array before passing it to `composeArgs`
           var length = arguments.length,
@@ -1188,17 +1189,12 @@
             args[length] = arguments[length];
           }
           args = composeArgs(partialArgs, partialHolders, args);
-        }
-        // mimic the constructor's `return` behavior
-        // http://es5.github.io/#x13.2.2
-        if (this instanceof bound) {
-          // ensure `new bound` is an instance of `func`
-          var thisBinding = baseCreate(func.prototype),
-              result = func.apply(thisBinding, args || arguments);
-
-          return isObject(result) ? result : thisBinding;
-        }
-        return func.apply(thisArg, args || arguments);
+          return (this instanceof bound ? Ctor : func).apply(thisArg, args);
+        };
+      } else {
+        bound = function() {
+          return (this instanceof bound ? Ctor : func).apply(thisArg, arguments);
+        };
       }
       setData(bound, data);
       return bound;
@@ -1415,7 +1411,9 @@
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
           isCurryRight = bitmask & CURRY_RIGHT_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG;
+
+      var Ctor = !isBindKey && createCtorWrapper(func),
           key = func;
 
       function bound() {
@@ -1453,12 +1451,7 @@
         if (isBindKey) {
           func = thisBinding[key];
         }
-        if (this instanceof bound) {
-          thisBinding = baseCreate(func.prototype);
-          var result = func.apply(thisBinding, args);
-          return isObject(result) ? result : thisBinding;
-        }
-        return func.apply(thisBinding, args);
+        return (this instanceof bound ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
       }
       setData(bound, data);
       return bound;
@@ -2392,6 +2385,25 @@
       }
       return cache;
     };
+
+    /**
+     * Creates a function that produces an instance of `Ctor` regardless of
+     * whether it was invoked as part of a `new` expression or by `call` or `apply`.
+     *
+     * @private
+     * @param {Function} Ctor The constructor to wrap.
+     * @returns {Function} Returns the new function.
+     */
+    function createCtorWrapper(Ctor) {
+      return function() {
+        var thisBinding = baseCreate(Ctor.prototype),
+            result = Ctor.apply(thisBinding, arguments);
+
+        // mimic the constructor's `return` behavior
+        // http://es5.github.io/#x13.2.2
+        return isObject(result) ? result : thisBinding;
+      };
+    }
 
     /**
      * Creates the pad required for `string` based on the given padding length.

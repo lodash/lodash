@@ -4370,8 +4370,8 @@
      * _([1, 2, 3]).forEach(function(n) { console.log(n); }).join(',');
      * // => logs each number and returns '1,2,3'
      *
-     * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(num, key) { console.log(num, key); });
-     * // => logs each number-key pair ('1 one') and returns the object (property order is not guaranteed across environments)
+     * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
+     * // => logs each value-key pair and returns the object (property order is not guaranteed across environments)
      */
     function forEach(collection, iterator, thisArg) {
       return (typeof iterator == 'function' && typeof thisArg == 'undefined' && isArray(collection))

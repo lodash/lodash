@@ -406,6 +406,10 @@
         \
         var words = belt.keys(wordToNumber).slice(0, limit);\
       }\
+      if (typeof flatten != "undefined") {\
+        var _flattenDeep = _.flatten([[1]])[0] !== 1,\
+            lodashFlattenDeep = lodash.flatten([[1]]) !== 1;\
+      }\
       if (typeof isEqual != "undefined") {\
         var objectOfPrimitives = {\
           "boolean": true,\
@@ -498,10 +502,10 @@
         var settingsObject = { "variable": "data" };\
         \
         var _tpl = _.template(tpl),\
-            _tplVerbose = _.template(tplVerbose, null, settingsObject);\
+            _tplVerbose = _.template(tplVerbose, settingsObject);\
         \
         var lodashTpl = lodash.template(tpl),\
-            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject);\
+            lodashTplVerbose = lodash.template(tplVerbose, settingsObject);\
       }\
       if (typeof where != "undefined") {\
         var _findWhere = _.findWhere || _.find,\
@@ -1003,32 +1007,38 @@
 
   suites.push(
     Benchmark.Suite('`_.flatten`')
-      .add(buildName, '\
-        lodash.flatten(nestedNumbers)'
-      )
-      .add(otherName, '\
-        _.flatten(nestedNumbers)'
-      )
+      .add(buildName, {
+        'fn': 'lodash.flatten(nestedNumbers, !lodashFlattenDeep)',
+        'teardown': 'function flatten(){}'
+      })
+      .add(otherName, {
+        'fn': '_.flatten(nestedNumbers, !_flattenDeep)',
+        'teardown': 'function flatten(){}'
+      })
   );
 
   suites.push(
-    Benchmark.Suite('`_.flatten` with objects')
-      .add(buildName, '\
-        lodash.flatten(nestedObjects)'
-      )
-      .add(otherName, '\
-        _.flatten(nestedObjects)'
-      )
+    Benchmark.Suite('`_.flatten` nested arrays of numbers with `isDeep`')
+      .add(buildName, {
+        'fn': 'lodash.flatten(nestedNumbers, lodashFlattenDeep)',
+        'teardown': 'function flatten(){}'
+      })
+      .add(otherName, {
+        'fn': '_.flatten(nestedNumbers, _flattenDeep)',
+        'teardown': 'function flatten(){}'
+      })
   );
 
   suites.push(
-    Benchmark.Suite('`_.flatten` with `shallow`')
-      .add(buildName, '\
-        lodash.flatten(nestedNumbers, true)'
-      )
-      .add(otherName, '\
-        _.flatten(nestedNumbers, true)'
-      )
+    Benchmark.Suite('`_.flatten` nest arrays of objects with `isDeep`')
+      .add(buildName, {
+        'fn': 'lodash.flatten(nestedObjects, lodashFlattenDeep)',
+        'teardown': 'function flatten(){}'
+      })
+      .add(otherName, {
+        'fn': '_.flatten(nestedObjects, _flattenDeep)',
+        'teardown': 'function flatten(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/
@@ -1808,11 +1818,11 @@
   suites.push(
     Benchmark.Suite('`_.template` (slow path)')
       .add(buildName, {
-        'fn': 'lodash.template(tpl, tplData)',
+        'fn': 'lodash.template(tpl)(tplData)',
         'teardown': 'function template(){}'
       })
       .add(otherName, {
-        'fn': '_.template(tpl, tplData)',
+        'fn': '_.template(tpl)(tplData)',
         'teardown': 'function template(){}'
       })
   );

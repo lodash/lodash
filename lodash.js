@@ -1089,6 +1089,28 @@
     }
 
     /**
+     * A specialized version of `_.every` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {Array} Returns `true` if all elements passed the predicate check,
+     *  else `false`
+     */
+    function arrayEvery(array, predicate) {
+      var index = -1,
+          length = array.length;
+
+      while (++index < length) {
+        if (!predicate(array[index], index, array)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    /**
      * A specialized version of `_.map` for arrays without support for callback
      * shorthands or `this` binding.
      *
@@ -1106,6 +1128,76 @@
         result[index] = iterator(array[index], index, array);
       }
       return result;
+    }
+
+    /**
+     * A specialized version of `_.filter` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {Array} Returns the new filtered array.
+     */
+    function arrayFilter(array, predicate) {
+      var index = -1,
+          length = array.length,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index];
+        if (predicate(value, index, array)) {
+          result.push(value);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * A specialized version of `_.reduce` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iterator The function called per iteration.
+     * @param {*} [accumulator] The initial value.
+     * @param {boolean} [initFromArray=false] Specify using the first element of
+     *  `array` as the initial value.
+     * @returns {*} Returns the accumulated value.
+     */
+    function arrayReduce(array, iterator, accumulator, initFromArray) {
+      var index = -1,
+          length = array.length;
+
+      if (initFromArray && length) {
+        accumulator = array[++index];
+      }
+      while (++index < length) {
+        accumulator = iterator(accumulator, array[index], index, array);
+      }
+      return accumulator;
+    }
+
+    /**
+     * A specialized version of `_.some` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {boolean} Returns `true` if any element passed the predicate check,
+     *  else `false`.
+     */
+    function arraySome(array, predicate) {
+      var index = -1,
+          length = array.length;
+
+      while (++index < length) {
+        if (predicate(array[index], index, array)) {
+          return true;
+        }
+      }
+      return false;
     }
 
     /**
@@ -1159,45 +1251,6 @@
         object[key] = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
       }
       return object;
-    }
-
-    /**
-     * The base implementation of `_.bind` which creates the bound function and
-     * sets its metadata.
-     *
-     * @private
-     * @param {Array} data The metadata array.
-     * @returns {Function} Returns the new bound function.
-     */
-    function baseBind(data) {
-      var func = data[0],
-          thisArg = data[3],
-          partialArgs = data[4],
-          partialHolders = data[6],
-          Ctor = createCtorWrapper(func);
-
-      // `Function#bind` spec
-      // http://es5.github.io/#x15.3.4.5
-      if (partialArgs) {
-        var bound = function() {
-          // avoid `arguments` object use disqualifying optimizations by
-          // converting it to an array before passing it to `composeArgs`
-          var length = arguments.length,
-              args = Array(length);
-
-          while (length--) {
-            args[length] = arguments[length];
-          }
-          args = composeArgs(partialArgs, partialHolders, args);
-          return (this instanceof bound ? Ctor : func).apply(thisArg, args);
-        };
-      } else {
-        bound = function() {
-          return (this instanceof bound ? Ctor : func).apply(thisArg, arguments);
-        };
-      }
-      setData(bound, data);
-      return bound;
     }
 
     /**
@@ -1398,13 +1451,19 @@
      * @returns {Function} Returns the new function.
      */
     function baseCreateWrapper(data) {
+      var bitmask = data[1];
+      if (bitmask == BIND_FLAG) {
+        return setData(createBindWrapper(data), data);
+      }
+      var partialHolders = data[6];
+      if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
+        return setData(createPartialWrapper(data), data);
+      }
       var func = data[0],
-          bitmask = data[1],
           arity = data[2],
           thisArg = data[3],
           partialArgs = data[4],
           partialRightArgs = data[5],
-          partialHolders = data[6],
           partialRightHolders = data[7];
 
       var isBind = bitmask & BIND_FLAG,
@@ -1416,7 +1475,7 @@
       var Ctor = !isBindKey && createCtorWrapper(func),
           key = func;
 
-      function bound() {
+      var wrapper = function() {
         var length = arguments.length,
             index = length,
             args = Array(length);
@@ -1451,10 +1510,10 @@
         if (isBindKey) {
           func = thisBinding[key];
         }
-        return (this instanceof bound ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
-      }
-      setData(bound, data);
-      return bound;
+        return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+      };
+
+      return setData(wrapper, data);
     }
 
     /**
@@ -1575,6 +1634,46 @@
         baseForOwnRight(collection, iterator);
       }
       return collection;
+    }
+
+    /**
+     * The base implementation of `_.every` without support for callback shorthands
+     * or `this` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {Array} Returns `true` if all elements passed the predicate check,
+     *  else `false`
+     */
+    function baseEvery(collection, predicate) {
+      var result = true;
+
+      baseEach(collection, function(value, index, collection) {
+        result = !!predicate(value, index, collection);
+        return result;
+      });
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.filter` without support for callback shorthands
+     * or `this` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {Array} Returns the new filtered array.
+     */
+    function baseFilter(collection, predicate) {
+      var result = [];
+
+      baseEach(collection, function(value, index, collection) {
+        if (predicate(value, index, collection)) {
+          result.push(value);
+        }
+      });
+      return result;
     }
 
     /**
@@ -1974,6 +2073,24 @@
     }
 
     /**
+     * The base implementation of `_.map` without support for callback shorthands
+     * or `this` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} iterator The function called per iteration.
+     * @returns {Array} Returns the new mapped array.
+     */
+    function baseMap(collection, iterator) {
+      var result = [];
+
+      baseEach(collection, function(value, key, collection) {
+        result.push(iterator(value, key, collection));
+      });
+      return result;
+    }
+
+    /**
      * The base implementation of `_.merge` without support for argument juggling,
      * multiple sources, and `this` binding.
      *
@@ -2126,6 +2243,47 @@
      */
     function baseRandom(min, max) {
       return min + floor(nativeRandom() * (max - min + 1));
+    }
+
+    /**
+     * The base implementation of  `_.reduce` without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} iterator The function called per iteration.
+     * @param {*} [accumulator] The initial value.
+     * @param {boolean} [initFromCollection=false] Specify using the first element
+     *  of `collection` as the initial value.
+     * @returns {*} Returns the accumulated value.
+     */
+    function baseReduce(collection, iterator, accumulator, initFromCollection) {
+      baseEach(collection, function(value, index, collection) {
+        accumulator = initFromCollection
+          ? (initFromCollection = false, value)
+          : iterator(accumulator, value, index, collection)
+      });
+      return accumulator;
+    }
+
+    /**
+     * The base implementation of `_.some` without support for callback shorthands
+     * or `this` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {boolean} Returns `true` if any element passed the predicate check,
+     *  else `false`.
+     */
+    function baseSome(collection, predicate) {
+      var result;
+
+      baseEach(collection, function(value, index, collection) {
+        result = predicate(value, index, collection);
+        return !result;
+      });
+      return !!result;
     }
 
     /**
@@ -2369,6 +2527,25 @@
     }
 
     /**
+     * Creates a function that invokes the function specified in the metadata
+     * with its associated `this` binding.
+     *
+     * @private
+     * @param {Array} data The metadata array.
+     * @returns {Function} Returns the new bound function.
+     */
+    function createBindWrapper(data) {
+      var func = data[0],
+          thisArg = data[3],
+          Ctor = createCtorWrapper(func);
+
+      function wrapper() {
+        return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
+      }
+      return wrapper;
+    }
+
+    /**
      * Creates a cache object to optimize linear searches of large arrays.
      *
      * @private
@@ -2426,6 +2603,45 @@
       var padLength = length - strLength;
       chars = chars == null ? ' ' : String(chars);
       return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
+    }
+
+    /**
+     * Creates a function that invokes the function specified in the metadata
+     * with its associated partially applied arguments and optional `this` binding.
+     *
+     * @private
+     * @param {Array} data The metadata array.
+     * @returns {Function} Returns the new bound function.
+     */
+    function createPartialWrapper(data) {
+      var func = data[0],
+          bitmask = data[1],
+          thisArg = data[3],
+          partialArgs = data[4],
+          partialHolders = data[6];
+
+      var isBind = bitmask & BIND_FLAG,
+          Ctor = createCtorWrapper(func);
+
+      function wrapper() {
+        // avoid `arguments` object use disqualifying optimizations by
+        // converting it to an array before passing it to `composeArgs`
+        var argsIndex = 0,
+            argsLength = arguments.length,
+            leftIndex = -1,
+            leftLength = partialArgs.length,
+            args = Array(argsLength + leftLength),
+            thisBinding = isBind ? thisArg : this;
+
+        while (++leftIndex < leftLength) {
+          args[leftIndex] = partialArgs[leftIndex];
+        }
+        while (argsLength--) {
+          args[leftIndex++] = arguments[argsIndex++];
+        }
+        return (this instanceof wrapper ? Ctor : func).apply(thisBinding, args);
+      }
+      return wrapper;
     }
 
     /**
@@ -2524,12 +2740,7 @@
         arity = isBindKey ? 0 : func.length;
       }
       arity = nativeMax(arity, 0);
-
-      // fast path for `_.bind`
-      data = [func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders];
-      return (bitmask == BIND_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG))
-        ? baseBind(data)
-        : baseCreateWrapper(data);
+      return baseCreateWrapper([func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders]);
     }
 
     /**
@@ -2627,11 +2838,13 @@
      * @private
      * @param {Function} func The function to set data on.
      * @param {Array} value The data array to set.
+     * @returns {Function} Returns `func`.
      */
-    var setData = !defineProperty ? noop : function(func, value) {
+    var setData = !defineProperty ? identity : function(func, value) {
       descriptor.value = value;
       defineProperty(func, expando, descriptor);
       descriptor.value = null;
+      return func;
     };
 
     /**
@@ -4157,27 +4370,11 @@
      * // => false
      */
     function every(collection, predicate, thisArg) {
-      var result = true;
-
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = lodash.callback(predicate, thisArg, 3);
       }
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          if (!predicate(collection[index], index, collection)) {
-            return false;
-          }
-        }
-      } else {
-        baseEach(collection, function(value, index, collection) {
-          result = !!predicate(value, index, collection);
-          return result;
-        });
-      }
-      return result;
+      var func = isArray(collection) ? arrayEvery : baseEvery;
+      return func(collection, predicate);
     }
 
     /**
@@ -4221,27 +4418,10 @@
      * // => [{ 'name': 'barney', 'age': 36 }]
      */
     function filter(collection, predicate, thisArg) {
-      var result = [];
       predicate = lodash.callback(predicate, thisArg, 3);
 
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          var value = collection[index];
-          if (predicate(value, index, collection)) {
-            result.push(value);
-          }
-        }
-      } else {
-        baseEach(collection, function(value, index, collection) {
-          if (predicate(value, index, collection)) {
-            result.push(value);
-          }
-        });
-      }
-      return result;
+      var func = isArray(collection) ? arrayFilter : baseFilter;
+      return func(collection, predicate);
     }
 
     /**
@@ -4556,16 +4736,8 @@
     function map(collection, iterator, thisArg) {
       iterator = lodash.callback(iterator, thisArg, 3);
 
-      if (isArray(collection)) {
-        return arrayMap(collection, iterator, thisArg);
-      }
-      var index = -1,
-          result = [];
-
-      baseEach(collection, function(value, key, collection) {
-        result[++index] = iterator(value, key, collection);
-      });
-      return result;
+      var func = isArray(collection) ? arrayMap : baseMap;
+      return func(collection, iterator);
     }
 
     /**
@@ -4800,8 +4972,8 @@
      * each element in the collection through `iterator`, where each successive
      * execution consumes the return value of the previous execution. If `accumulator`
      * is not provided the first element of the collection is used as the initial
-     * `accumulator` value. The `iterator` is bound to `thisArg`and invoked with
-     * four arguments; (accumulator, value, index|key, collection).
+     * value. The `iterator` is bound to `thisArg`and invoked with four arguments;
+     * (accumulator, value, index|key, collection).
      *
      * @static
      * @memberOf _
@@ -4809,7 +4981,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [accumulator] Initial value of the accumulator.
+     * @param {*} [accumulator] The initial value.
      * @param {*} [thisArg] The `this` binding of `iterator`.
      * @returns {*} Returns the accumulated value.
      * @example
@@ -4824,27 +4996,10 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function reduce(collection, iterator, accumulator, thisArg) {
-      var noaccum = arguments.length < 3;
       iterator = lodash.callback(iterator, thisArg, 4);
 
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        if (noaccum && length) {
-          accumulator = collection[++index];
-        }
-        while (++index < length) {
-          accumulator = iterator(accumulator, collection[index], index, collection);
-        }
-      } else {
-        baseEach(collection, function(value, index, collection) {
-          accumulator = noaccum
-            ? (noaccum = false, value)
-            : iterator(accumulator, value, index, collection)
-        });
-      }
-      return accumulator;
+      var func = isArray(collection) ? arrayReduce : baseReduce;
+      return func(collection, iterator, accumulator, arguments.length < 3);
     }
 
     /**
@@ -4857,7 +5012,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [accumulator] Initial value of the accumulator.
+     * @param {*} [accumulator] The initial value.
      * @param {*} [thisArg] The `this` binding of `iterator`.
      * @returns {*} Returns the accumulated value.
      * @example
@@ -4940,13 +5095,15 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      if (collection && typeof collection.length != 'number') {
+      var length = collection ? collection.length : 0;
+
+      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
         collection = values(collection);
+        length = collection.length;
       } else if (support.unindexedChars && isString(collection)) {
         collection = collection.split('');
       }
       if (n == null || guard) {
-        var length = collection ? collection.length : 0;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -5052,27 +5209,11 @@
      * // => false
      */
     function some(collection, predicate, thisArg) {
-      var result;
-
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = lodash.callback(predicate, thisArg, 3);
       }
-      if (isArray(collection)) {
-        var index = -1,
-            length = collection.length;
-
-        while (++index < length) {
-          if (predicate(collection[index], index, collection)) {
-            return true;
-          }
-        }
-      } else {
-        baseEach(collection, function(value, index, collection) {
-          result = predicate(value, index, collection);
-          return !result;
-        });
-      }
-      return !!result;
+      var func = isArray(collection) ? arraySome : baseSome;
+      return func(collection, predicate);
     }
 
     /**
@@ -5169,7 +5310,8 @@
      * // => [2, 3, 4]
      */
     function toArray(collection) {
-      var length = collection && collection.length;
+      var length = collection ? collection.length : 0;
+
       if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
         return (support.unindexedChars && isString(collection))
           ? collection.split('')
@@ -6620,7 +6762,7 @@
         return result;
       }
       var length = value.length;
-      if ((length > -1 && length <= maxSafeInteger) &&
+      if ((typeof length == 'number' && length > -1 && length <= maxSafeInteger) &&
           (isArray(value) || isString(value) || isArguments(value) ||
             (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;

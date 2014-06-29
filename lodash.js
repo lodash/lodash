@@ -630,7 +630,7 @@
     var fnToString = Function.prototype.toString;
 
     /**
-     * Used as the maximum length of an array-like object.
+     * Used as the maximum length of an array-like value.
      * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
      * for more details.
      */
@@ -757,8 +757,9 @@
      * `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
      * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
      * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
-     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `startsWith`, `template`,
-     * `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, and `value`
+     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
+     * `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
+     * `unescape`, `uniqueId`, and `value`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is
      * provided, otherwise it will return an unwrapped value.
@@ -1226,7 +1227,7 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function assignOwnDefaults(objectValue, sourceValue, key, object) {
-      return (!hasOwnProperty.call(object, key) || typeof objectValue == 'undefined')
+      return (typeof objectValue == 'undefined' || !hasOwnProperty.call(object, key))
         ? sourceValue
         : objectValue
     }
@@ -1589,21 +1590,17 @@
      * @returns {Array|Object|string} Returns `collection`.
      */
     function baseEach(collection, iterator) {
+      var length = collection ? collection.length : 0;
+      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+        return baseForOwn(collection, iterator);
+      }
       var index = -1,
-          iterable = collection,
-          length = collection ? collection.length : 0;
+          iterable = toIterable(collection);
 
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-        if (support.unindexedChars && isString(iterable)) {
-          iterable = iterable.split('');
+      while (++index < length) {
+        if (iterator(iterable[index], index, collection) === false) {
+          break;
         }
-        while (++index < length) {
-          if (iterator(iterable[index], index, collection) === false) {
-            break;
-          }
-        }
-      } else {
-        baseForOwn(collection, iterator);
       }
       return collection;
     }
@@ -1618,20 +1615,15 @@
      * @returns {Array|Object|string} Returns `collection`.
      */
     function baseEachRight(collection, iterator) {
-      var iterable = collection,
-          length = collection ? collection.length : 0;
-
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-        if (support.unindexedChars && isString(iterable)) {
-          iterable = iterable.split('');
+      var length = collection ? collection.length : 0;
+      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+        return baseForOwnRight(collection, iterator);
+      }
+      var iterable = toIterable(collection);
+      while (length--) {
+        if (iterator(iterable[length], length, collection) === false) {
+          break;
         }
-        while (length--) {
-          if (iterator(iterable[length], length, collection) === false) {
-            break;
-          }
-        }
-      } else {
-        baseForOwnRight(collection, iterator);
       }
       return collection;
     }
@@ -2104,6 +2096,7 @@
      */
     function baseMerge(object, source, customizer, stackA, stackB) {
       var isSrcArr = isArrayLike(source);
+
       (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
         var isArr = srcValue && isArrayLike(srcValue),
             isObj = srcValue && isPlainObject(srcValue),
@@ -2383,6 +2376,7 @@
      */
     function compileFunction(source, varNames, varValues, sourceURL) {
       sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
+
       try {
         // provide the compiled function's source by its `toString` method or
         // the `source` property as a convenience for inlining compiled templates
@@ -2630,8 +2624,7 @@
             argsLength = arguments.length,
             leftIndex = -1,
             leftLength = partialArgs.length,
-            args = Array(argsLength + leftLength),
-            thisBinding = isBind ? thisArg : this;
+            args = Array(argsLength + leftLength);
 
         while (++leftIndex < leftLength) {
           args[leftIndex] = partialArgs[leftIndex];
@@ -2639,7 +2632,7 @@
         while (argsLength--) {
           args[leftIndex++] = arguments[argsIndex++];
         }
-        return (this instanceof wrapper ? Ctor : func).apply(thisBinding, args);
+        return (this instanceof wrapper ? Ctor : func).apply(isBind ? thisArg : this, args);
       }
       return wrapper;
     }
@@ -2916,6 +2909,23 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Converts `collection` to an array if it is not an array-like value.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to inspect.
+     * @returns {Array|Object} Returns the iterable object.
+     */
+    function toIterable(collection) {
+      var length = collection ? collection.length : 0;
+      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+        return values(collection);
+      } else if (support.unindexedChars && isString(collection)) {
+        return collection.split('');
+      }
+      return collection || [];
     }
 
     /*--------------------------------------------------------------------------*/
@@ -3330,8 +3340,9 @@
 
     /**
      * Gets the index at which the first occurrence of `value` is found using
-     * strict equality for comparisons, i.e. `===`. If the array is already sorted
-     * providing `true` for `fromIndex` performs a faster binary search.
+     * strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
+     * it is used as the offset from the end of the collection. If `array` is
+     * sorted providing `true` for `fromIndex` performs a faster binary search.
      *
      * @static
      * @memberOf _
@@ -3356,6 +3367,7 @@
      */
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
+
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
@@ -4234,8 +4246,10 @@
      * // => ['fred', 'pebbles']
      */
     function at(collection) {
-      if (support.unindexedChars && isString(collection)) {
-        collection = collection.split('');
+      var length = collection ? collection.length : 0;
+
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+        collection = toIterable(collection);
       }
       return baseAt(collection, baseFlatten(arguments, false, false, 1));
     }
@@ -4269,6 +4283,7 @@
      */
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
+
       if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
         collection = values(collection);
         length = collection.length;
@@ -5022,12 +5037,12 @@
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, iterator, accumulator, thisArg) {
-      var noaccum = arguments.length < 3;
+      var initFromCollection = arguments.length < 3;
       iterator = lodash.callback(iterator, thisArg, 4);
 
       baseEachRight(collection, function(value, index, collection) {
-        accumulator = noaccum
-          ? (noaccum = false, value)
+        accumulator = initFromCollection
+          ? (initFromCollection = false, value)
           : iterator(accumulator, value, index, collection);
       });
       return accumulator;
@@ -5095,14 +5110,9 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      var length = collection ? collection.length : 0;
+      collection = toIterable(collection);
 
-      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
-        collection = values(collection);
-        length = collection.length;
-      } else if (support.unindexedChars && isString(collection)) {
-        collection = collection.split('');
-      }
+      var length = collection.length;
       if (n == null || guard) {
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
@@ -5127,21 +5137,25 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
-      var index = -1,
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
+      collection = toIterable(collection);
 
-      baseEach(collection, function(value) {
-        var rand = baseRandom(0, ++index);
+      var index = -1,
+          length = collection.length,
+          result = Array(length);
+
+      while (++index < length) {
+        var value = collection[index],
+            rand = baseRandom(0, index);
+
         result[index] = result[rand];
         result[rand] = value;
-      });
+      }
       return result;
     }
 
     /**
-     * Gets the size of the collection by returning `collection.length` for arrays
-     * and array-like objects or the number of own enumerable properties for objects.
+     * Gets the size of the collection by returning `collection.length` for
+     * array-like values or the number of own enumerable properties for objects.
      *
      * @static
      * @memberOf _
@@ -5310,14 +5324,8 @@
      * // => [2, 3, 4]
      */
     function toArray(collection) {
-      var length = collection ? collection.length : 0;
-
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
-        return (support.unindexedChars && isString(collection))
-          ? collection.split('')
-          : slice(collection);
-      }
-      return values(collection);
+      var iterable = toIterable(collection);
+      return iterable === collection ? slice(collection) : iterable;
     }
 
     /**
@@ -5449,7 +5457,8 @@
     function bindAll(object) {
       return baseBindAll(object, arguments.length > 1
         ? baseFlatten(arguments, false, false, 1)
-        : functions(object));
+        : functions(object)
+      );
     }
 
     /**
@@ -6731,8 +6740,8 @@
 
     /**
      * Checks if a collection is empty. A value is considered empty unless it is
-     * an array, array-like object, or string with a length greater than `0` or
-     * an object with own enumerable properties.
+     * an array-like value with a length greater than `0` or an object with own
+     * enumerable properties.
      *
      * @static
      * @memberOf _
@@ -6757,9 +6766,8 @@
      * // => false
      */
     function isEmpty(value) {
-      var result = true;
       if (value == null) {
-        return result;
+        return true;
       }
       var length = value.length;
       if ((typeof length == 'number' && length > -1 && length <= maxSafeInteger) &&
@@ -6767,11 +6775,7 @@
             (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;
       }
-      baseForOwn(value, function() {
-        result = false;
-        return result;
-      });
-      return result;
+      return !keys(value).length;
     }
 
     /**
@@ -7207,7 +7211,7 @@
       while (++index < length) {
         result[index] = String(index);
       }
-      // Lo-Dash skips the `constructor` property when it infers it's iterating
+      // Lo-Dash skips the `constructor` property when it infers it is iterating
       // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
@@ -7434,7 +7438,8 @@
       }
       return basePick(Object(object), typeof predicate == 'function'
         ? lodash.callback(predicate, thisArg, 3)
-        : baseFlatten(arguments, false, false, 1));
+        : baseFlatten(arguments, false, false, 1)
+      );
     }
 
     /**
@@ -7470,6 +7475,7 @@
      */
     function transform(object, iterator, accumulator, thisArg) {
       var isArr = isArrayLike(object);
+
       if (accumulator == null) {
         if (isArr) {
           accumulator = [];

@@ -8643,7 +8643,8 @@
 
   (function() {
     var array = [1, 2, 3],
-        object = { 'a': 1, 'b': 2, 'c': 3 };
+        object = { 'a': 1, 'b': 2, 'c': 3 },
+        string = 'abcdef';
 
     test('should return a new array', 1, function() {
       notStrictEqual(_.shuffle(array), array);
@@ -8657,6 +8658,11 @@
     test('should shuffle an object', 1, function() {
       var actual = _.shuffle(object);
       deepEqual(actual.sort(), array);
+    });
+
+    test('should shuffle a string', 1, function() {
+      var actual = _.shuffle(string);
+      deepEqual(actual.sort(), string.split(''));
     });
 
     test('should treat number values for `collection` as empty', 1, function() {

@@ -5095,19 +5095,13 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      var length = collection ? collection.length : 0;
-
-      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
-        collection = values(collection);
-        length = collection.length;
-      } else if (support.unindexedChars && isString(collection)) {
-        collection = collection.split('');
-      }
+      collection = itervalues(collection);
+      var length = collection.length;
       if (n == null || guard) {
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
-      result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
+      result.length = nativeMin(n < 0 ? 0 : (+n || 0), length);
       return result;
     }
 
@@ -5127,15 +5121,16 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
+      collection = itervalues(collection);
       var index = -1,
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
+          length = collection.length,
+          result = Array(length);
 
-      baseEach(collection, function(value) {
-        var rand = baseRandom(0, ++index);
+      while (++index < length) {
+        var rand = baseRandom(0, index);
         result[index] = result[rand];
-        result[rand] = value;
-      });
+        result[rand] = collection[index];
+      }
       return result;
     }
 
@@ -7512,6 +7507,32 @@
      */
     function values(object) {
       return baseValues(object, keys);
+    }
+
+    /**
+     * Convert an object to an iterable set of its values. If a
+     * Object is provided this will return its values, a array(like)
+     * will return itself. A string will return a list of its characters
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object|string} collection The collection to convert.
+     * @returns {Array} Returns the new converted array.
+     * @example
+     *
+     * itervalues({a: 1, b: 2}); // => [1, 2]
+     *
+     */
+    function itervalues(collection) {
+      if (!collection) return [];
+      var length = collection.length;
+      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+        return values(collection);
+      } else if (support.unindexedChars && isString(collection)) {
+        collection = collection.split('');
+      }
+      return collection;
     }
 
     /**

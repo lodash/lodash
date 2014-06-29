@@ -406,7 +406,7 @@
   }
 
   /**
-   * Used by `_.sortBy` to compare transformed elements of a collection and stable
+   * Used by `_.sortBy` to compare transformed elements of `collection` and stable
    * sort them in ascending order.
    *
    * @private
@@ -3233,7 +3233,7 @@
 
     /**
      * This method is like `_.findIndex` except that it iterates over elements
-     * of a collection from right to left.
+     * of `collection` from right to left.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -3339,8 +3339,8 @@
     }
 
     /**
-     * Gets the index at which the first occurrence of `value` is found using
-     * strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
+     * Gets the index at which the first occurrence of `value` is found in `array`
+     * using strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
      * it is used as the offset from the end of the collection. If `array` is
      * sorted providing `true` for `fromIndex` performs a faster binary search.
      *
@@ -3471,16 +3471,16 @@
     }
 
     /**
-     * Gets the index at which the last occurrence of `value` is found using
-     * strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
-     * it is used as the offset from the end of the collection.
+     * This method is like `_.indexOf` except that it iterates over elements of
+     * `array` from right to left.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
-     * @param {number} [fromIndex=array.length-1] The index to search from.
+     * @param {boolean|number} [fromIndex=array.length-1] The index to search from
+     *  or `true` to perform a binary search on a sorted array.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -3680,11 +3680,11 @@
     }
 
     /**
-     * Uses a binary search to determine the smallest index at which a value
-     * should be inserted into a given sorted array in order to maintain the sort
-     * order of the array. If an iterator function is provided it is executed for
-     * `value` and each element of `array` to compute their sort ranking. The
-     * iterator function is bound to `thisArg` and invoked with one argument; (value).
+     * Uses a binary search to determine the lowest index at which a value should
+     * be inserted into a given sorted array in order to maintain the sort order
+     * of the array. If an iterator function is provided it is executed for `value`
+     * and each element of `array` to compute their sort ranking. The iterator
+     * function is bound to `thisArg` and invoked with one argument; (value).
      *
      * If a property name is provided for `iterator` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -4344,7 +4344,7 @@
     });
 
     /**
-     * Checks if the predicate returns truthy for **all** elements of a collection.
+     * Checks if the predicate returns truthy for **all** elements of `collection`.
      * The predicate is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
@@ -4393,7 +4393,7 @@
     }
 
     /**
-     * Iterates over elements of a collection returning an array of all elements
+     * Iterates over elements of `collection` returning an array of all elements
      * the predicate returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
@@ -4440,7 +4440,7 @@
     }
 
     /**
-     * Iterates over elements of a collection, returning the first element that
+     * Iterates over elements of `collection`, returning the first element that
      * the predicate returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
@@ -4492,8 +4492,8 @@
     }
 
     /**
-     * This method is like `_.find` except that it iterates over elements of a
-     * collection from right to left.
+     * This method is like `_.find` except that it iterates over elements of
+     * `collection` from right to left.
      *
      * @static
      * @memberOf _
@@ -4543,7 +4543,7 @@
     }
 
     /**
-     * Iterates over elements of a collection executing `iterator` for each
+     * Iterates over elements of `collection` executing `iterator` for each
      * element. The `iterator` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection). Iterator functions may exit iteration early
      * by explicitly returning `false`.
@@ -4576,7 +4576,7 @@
 
     /**
      * This method is like `_.forEach` except that it iterates over elements of
-     * a collection from right to left.
+     * `collection` from right to left.
      *
      * @static
      * @memberOf _
@@ -4599,7 +4599,7 @@
 
     /**
      * Creates an object composed of keys generated from the results of running
-     * each element of a collection through `iterator`. The corresponding
+     * each element of `collection` through `iterator`. The corresponding
      * value of each key is an array of the elements responsible for generating
      * the key. The `iterator` is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
@@ -4756,7 +4756,7 @@
     }
 
     /**
-     * Retrieves the maximum value of a collection. If the collection is empty
+     * Retrieves the maximum value of `collection`. If the collection is empty
      * or falsey `-Infinity` is returned. If an iterator function is provided it
      * is executed for each value in the collection to generate the criterion by
      * which the value is ranked. The `iterator` is bound to `thisArg` and invoked
@@ -4834,7 +4834,7 @@
     }
 
     /**
-     * Retrieves the minimum value of a collection. If the collection is empty
+     * Retrieves the minimum value of `collection`. If the collection is empty
      * or falsey `Infinity` is returned. If an iterator function is provided it
      * is executed for each value in the collection to generate the criterion by
      * which the value is ranked. The `iterator` is bound to `thisArg` and invoked
@@ -5018,8 +5018,8 @@
     }
 
     /**
-     * This method is like `_.reduce` except that it iterates over elements of a
-     * collection from right to left.
+     * This method is like `_.reduce` except that it iterates over elements of
+     * `collection` from right to left.
      *
      * @static
      * @memberOf _
@@ -5049,7 +5049,7 @@
     }
 
     /**
-     * The opposite of `_.filter`; this method returns the elements of a collection
+     * The opposite of `_.filter`; this method returns the elements of `collection`
      * the predicate does **not** return truthy for.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -5181,7 +5181,7 @@
     }
 
     /**
-     * Checks if the predicate returns truthy for **any** element of a collection.
+     * Checks if the predicate returns truthy for **any** element of `collection`.
      * The function returns as soon as it finds a passing value and does not iterate
      * over the entire collection. The predicate is bound to `thisArg` and invoked
      * with three arguments; (value, index|key, collection).
@@ -5455,9 +5455,10 @@
      * // => logs 'clicked docs', when the button is clicked
      */
     function bindAll(object) {
-      return baseBindAll(object, arguments.length > 1
-        ? baseFlatten(arguments, false, false, 1)
-        : functions(object)
+      return baseBindAll(object,
+        arguments.length > 1
+          ? baseFlatten(arguments, false, false, 1)
+          : functions(object)
       );
     }
 
@@ -6454,8 +6455,8 @@
     }
 
     /**
-     * This method is like `_.forIn` except that it iterates over elements of a
-     * collection in the opposite order.
+     * This method is like `_.forIn` except that it iterates over properties of
+     * `object` in the opposite order.
      *
      * @static
      * @memberOf _
@@ -6511,8 +6512,8 @@
     }
 
     /**
-     * This method is like `_.forOwn` except that it iterates over elements of a
-     * collection in the opposite order.
+     * This method is like `_.forOwn` except that it iterates over properties of
+     * `object` in the opposite order.
      *
      * @static
      * @memberOf _
@@ -7436,9 +7437,10 @@
       if (object == null) {
         return {};
       }
-      return basePick(Object(object), typeof predicate == 'function'
-        ? lodash.callback(predicate, thisArg, 3)
-        : baseFlatten(arguments, false, false, 1)
+      return basePick(Object(object),
+        typeof predicate == 'function'
+          ? lodash.callback(predicate, thisArg, 3)
+          : baseFlatten(arguments, false, false, 1)
       );
     }
 
@@ -8968,9 +8970,10 @@
     lodash.result = result;
     lodash.runInContext = runInContext;
     lodash.size = size;
+    lodash.snakeCase = snakeCase;
     lodash.some = some;
     lodash.sortedIndex = sortedIndex;
-    lodash.snakeCase = snakeCase;
+    lodash.sortedLastIndex = sortedLastIndex;
     lodash.startsWith = startsWith;
     lodash.template = template;
     lodash.trim = trim;

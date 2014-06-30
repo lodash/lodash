@@ -905,7 +905,7 @@
 
       /**
        * Detect if own properties are iterated after inherited properties
-       * (all but IE < 9).
+       * (IE < 9).
        *
        * @memberOf _.support
        * @type boolean

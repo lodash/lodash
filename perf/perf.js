@@ -443,12 +443,13 @@
       if (typeof multiArrays != "undefined") {\
         var twentyValues = belt.shuffle(belt.range(20)),\
             fortyValues = belt.shuffle(belt.range(40)),\
-            hundredValues = belt.shuffle(belt.range(100)),\
-            hundredValues2 = belt.shuffle(belt.range(100)),\
+            hundredSortedValues = belt.range(100),\
+            hundredValues = belt.shuffle(hundredSortedValues),\
+            hundredValues2 = belt.shuffle(hundredValues),\
             hundredTwentyValues = belt.shuffle(belt.range(120)),\
-            hundredTwentyValues2 = belt.shuffle(belt.range(120)),\
+            hundredTwentyValues2 = belt.shuffle(hundredTwentyValues),\
             twoHundredValues = belt.shuffle(belt.range(200)),\
-            twoHundredValues2 = belt.shuffle(belt.range(200));\
+            twoHundredValues2 = belt.shuffle(twoHundredValues);\
       }\
       if (typeof partial != "undefined") {\
         var func = function(greeting, punctuation) {\
@@ -1130,11 +1131,11 @@
   suites.push(
     Benchmark.Suite('`_.indexOf`')
       .add(buildName, {
-        'fn': 'lodash.indexOf(hundredValues, 99)',
+        'fn': 'lodash.indexOf(hundredSortedValues, 99)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.indexOf(hundredValues, 99)',
+        'fn': '_.indexOf(hundredSortedValues, 99)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1142,11 +1143,11 @@
   suites.push(
     Benchmark.Suite('`_.indexOf` performing a binary search')
       .add(buildName, {
-        'fn': 'lodash.indexOf(hundredValues, 99, true)',
+        'fn': 'lodash.indexOf(hundredSortedValues, 99, true)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.indexOf(hundredValues, 99, true)',
+        'fn': '_.indexOf(hundredSortedValues, 99, true)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1374,11 +1375,11 @@
   suites.push(
     Benchmark.Suite('`_.lastIndexOf`')
       .add(buildName, {
-        'fn': 'lodash.lastIndexOf(hundredValues, 0)',
+        'fn': 'lodash.lastIndexOf(hundredSortedValues, 0)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.lastIndexOf(hundredValues, 0)',
+        'fn': '_.lastIndexOf(hundredSortedValues, 0)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1386,11 +1387,11 @@
   suites.push(
     Benchmark.Suite('`_.lastIndexOf` performing a binary search')
       .add(buildName, {
-        'fn': 'lodash.lastIndexOf(hundredValues, 0, true)',
+        'fn': 'lodash.lastIndexOf(hundredSortedValues, 0, true)',
         'teardown': 'function multiArrays(){}'
       })
       .add(otherName, {
-        'fn': '_.lastIndexOf(hundredValues, 0, true)',
+        'fn': '_.lastIndexOf(hundredSortedValues, 0, true)',
         'teardown': 'function multiArrays(){}'
       })
   );

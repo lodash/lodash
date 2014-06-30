@@ -4248,25 +4248,23 @@
       strictEqual(_.indexOf(array, 3), 2);
     });
 
-    test('should return `-1` for an unmatched value', 4, function() {
-      strictEqual(_.indexOf(array, 4), -1);
-      strictEqual(_.indexOf(array, 4, true), -1);
-
-      var empty = [];
-      strictEqual(_.indexOf(empty, undefined), -1);
-      strictEqual(_.indexOf(empty, undefined, true), -1);
-    });
-
     test('should work with a positive `fromIndex`', 1, function() {
       strictEqual(_.indexOf(array, 1, 2), 3);
     });
 
-    test('should work with `fromIndex` >= `array.length`', 12, function() {
-      _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
-        strictEqual(_.indexOf(array, 1, fromIndex), -1);
-        strictEqual(_.indexOf(array, undefined, fromIndex), -1);
-        strictEqual(_.indexOf(array, '', fromIndex), -1);
+    test('should work with `fromIndex` >= `array.length`', 1, function() {
+      var values = [6, 8, Math.pow(2, 32), Infinity],
+          expected = _.map(values, _.constant([-1, -1, -1]));
+
+      var actual = _.map(values, function(fromIndex) {
+        return [
+          _.indexOf(array, undefined, fromIndex),
+          _.indexOf(array, 1, fromIndex),
+          _.indexOf(array, '', fromIndex)
+        ];
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should treat falsey `fromIndex` values as `0`', 1, function() {
@@ -4279,22 +4277,31 @@
       deepEqual(actual, expected);
     });
 
-    test('should treat non-number `fromIndex` values as `0`', 1, function() {
-      strictEqual(_.indexOf([1, 2, 3], 1, '1'), 0);
+    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
+      var sorted = [4, 4, 5, 5, 6, 6],
+          values = [true, '1', {}],
+          expected = _.map(values, _.constant(2));
+
+      var actual = _.map(values, function(value) {
+        return _.indexOf(sorted, 5, value);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should work with a negative `fromIndex`', 1, function() {
       strictEqual(_.indexOf(array, 2, -3), 4);
     });
 
-    test('should work with a negative `fromIndex` <= `-array.length`', 3, function() {
-      _.each([-6, -8, -Infinity], function(fromIndex) {
-        strictEqual(_.indexOf(array, 1, fromIndex), 0);
-      });
-    });
+    test('should work with a negative `fromIndex` <= `-array.length`', 1, function() {
+      var values = [-6, -8, -Infinity],
+          expected = _.map(values, _.constant(0));
 
-    test('should work with `isSorted`', 1, function() {
-      strictEqual(_.indexOf([1, 2, 3], 1, true), 0);
+      var actual = _.map(values, function(fromIndex) {
+        return _.indexOf(array, 1, fromIndex);
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 
@@ -6268,20 +6275,23 @@
       strictEqual(_.lastIndexOf(array, 3), 5);
     });
 
-    test('should return `-1` for an unmatched value', 1, function() {
-      strictEqual(_.lastIndexOf(array, 4), -1);
-    });
-
     test('should work with a positive `fromIndex`', 1, function() {
       strictEqual(_.lastIndexOf(array, 1, 2), 0);
     });
 
-    test('should work with `fromIndex` >= `array.length`', 12, function() {
-      _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
-        strictEqual(_.lastIndexOf(array, undefined, fromIndex), -1);
-        strictEqual(_.lastIndexOf(array, 1, fromIndex), 3);
-        strictEqual(_.lastIndexOf(array, '', fromIndex), -1);
+    test('should work with `fromIndex` >= `array.length`', 1, function() {
+      var values = [6, 8, Math.pow(2, 32), Infinity],
+          expected = _.map(values, _.constant([-1, 3, -1]));
+
+      var actual = _.map(values, function(fromIndex) {
+        return [
+          _.lastIndexOf(array, undefined, fromIndex),
+          _.lastIndexOf(array, 1, fromIndex),
+          _.lastIndexOf(array, '', fromIndex)
+        ];
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`', 1, function() {
@@ -6296,19 +6306,31 @@
       deepEqual(actual, expected);
     });
 
-    test('should treat non-number `fromIndex` values as `array.length`', 2, function() {
-      strictEqual(_.lastIndexOf(array, 3, '1'), 5);
-      strictEqual(_.lastIndexOf(array, 3, true), 5);
+    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
+      var sorted = [4, 4, 5, 5, 6, 6],
+          values = [true, '1', {}],
+          expected = _.map(values, _.constant(3));
+
+      var actual = _.map(values, function(value) {
+        return _.lastIndexOf(sorted, 5, value);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should work with a negative `fromIndex`', 1, function() {
       strictEqual(_.lastIndexOf(array, 2, -3), 1);
     });
 
-    test('should work with a negative `fromIndex` <= `-array.length`', 3, function() {
-      _.each([-6, -8, -Infinity], function(fromIndex) {
-        strictEqual(_.lastIndexOf(array, 1, fromIndex), 0);
+    test('should work with a negative `fromIndex` <= `-array.length`', 1, function() {
+      var values = [-6, -8, -Infinity],
+          expected = _.map(values, _.constant(0));
+
+      var actual = _.map(values, function(fromIndex) {
+        return _.lastIndexOf(array, 1, fromIndex);
       });
+
+      deepEqual(actual, expected);
     });
   }());
 
@@ -6316,23 +6338,33 @@
 
   QUnit.module('indexOf methods');
 
-  (function() {
-    _.each(['indexOf', 'lastIndexOf'], function(methodName) {
-      var func = _[methodName];
+  _.each(['indexOf', 'lastIndexOf'], function(methodName) {
+    var func = _[methodName];
 
-      test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
-        var expected = _.map(falsey, _.constant(-1));
+    test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
+      var expected = _.map(falsey, _.constant(-1));
 
-        var actual = _.map(falsey, function(value, index) {
-          try {
-            return index ? func(value) : func();
-          } catch(e) { }
-        });
-
-        deepEqual(actual, expected);
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return index ? func(value) : func();
+        } catch(e) { }
       });
+
+      deepEqual(actual, expected);
     });
-  }());
+
+
+    test('`_.' + methodName + '` should return `-1` for an unmatched value', 4, function() {
+      var array = [1, 2, 3],
+          empty = [];
+
+      strictEqual(func(array, 4), -1);
+      strictEqual(func(array, 4, true), -1);
+
+      strictEqual(func(empty, undefined), -1);
+      strictEqual(func(empty, undefined, true), -1);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -8975,38 +9007,94 @@
   QUnit.module('lodash.sortedIndex');
 
   (function() {
-    var array = [20, 30, 50],
-        objects = [{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }];
+    test('should return the correct insert index', 1, function() {
+      var array = [30, 50],
+          values = [30, 40, 50],
+          expected = [0, 1, 1];
 
-    test('should return the insert index of a given value', 2, function() {
-      strictEqual(_.sortedIndex(array, 40), 2);
-      strictEqual(_.sortedIndex(array, 30), 1);
+      var actual = _.map(values, function(value) {
+        return _.sortedIndex(array, value);
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should work with an array of strings', 1, function() {
+      var array = ['a', 'c'],
+          values = ['a', 'b', 'c'],
+          expected = [0, 1, 1];
+
+      var actual = _.map(values, function(value) {
+        return _.sortedIndex(array, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortedLastIndex');
+
+  (function() {
+    test('should return the correct insert index', 1, function() {
+      var array = [30, 50],
+          values = [30, 40, 50],
+          expected = [1, 1, 2];
+
+      var actual = _.map(values, function(value) {
+        return _.sortedLastIndex(array, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with an array of strings', 1, function() {
+      var array = ['a', 'c'],
+          values = ['a', 'b', 'c'],
+          expected = [1, 1, 2];
+
+      var actual = _.map(values, function(value) {
+        return _.sortedLastIndex(array, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('sortedIndex methods');
+
+  _.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
+    var array = [30, 50],
+        func = _[methodName],
+        objects = [{ 'x': 30 }, { 'x': 50 }];
+
+    test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
       var args;
 
-      _.sortedIndex(array, 40, function() {
+      func(array, 40, function() {
         args || (args = slice.call(arguments));
       });
 
       deepEqual(args, [40]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.sortedIndex(array, 40, function(num) {
+    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
+      var actual = func(array, 40, function(num) {
         return this[num];
-      }, { '20': 20, '30': 30, '40': 40 });
+      }, { '30': 30, '40': 40, '50': 50 });
 
-      strictEqual(actual, 2);
+      strictEqual(actual, 1);
     });
 
-    test('should work with a string for `callback`', 1, function() {
-      var actual = _.sortedIndex(objects, { 'x': 40 }, 'x');
-      strictEqual(actual, 2);
+    test('`_.' + methodName + '` should work with a string for `callback`', 1, function() {
+      var actual = func(objects, { 'x': 40 }, 'x');
+      strictEqual(actual, 1);
     });
 
-    test('supports arrays with lengths larger than `Math.pow(2, 31) - 1`', 1, function() {
+    test('`_.' + methodName + '` supports arrays with lengths larger than `Math.pow(2, 31) - 1`', 1, function() {
       var length = Math.pow(2, 32) - 1,
           index = length - 1,
           array = Array(length),
@@ -9014,14 +9102,14 @@
 
       if (array.length == length) {
         array[index] = index;
-        _.sortedIndex(array, index, function() { steps++; });
+        func(array, index, function() { steps++; });
         strictEqual(steps, 33);
       }
       else {
         skipTest();
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -11247,7 +11335,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 190, function() {
+    test('should accept falsey arguments', 191, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

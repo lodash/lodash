@@ -1139,6 +1139,18 @@
       })
   );
 
+  suites.push(
+    Benchmark.Suite('`_.indexOf` performing a binary search')
+      .add(buildName, {
+        'fn': 'lodash.indexOf(hundredValues, 99, true)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.indexOf(hundredValues, 99, true)',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -1361,12 +1373,26 @@
 
   suites.push(
     Benchmark.Suite('`_.lastIndexOf`')
-      .add(buildName, '\
-        lodash.lastIndexOf(numbers, 9)'
-      )
-      .add(otherName, '\
-        _.lastIndexOf(numbers, 9)'
-      )
+      .add(buildName, {
+        'fn': 'lodash.lastIndexOf(hundredValues, 0)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.lastIndexOf(hundredValues, 0)',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.lastIndexOf` performing a binary search')
+      .add(buildName, {
+        'fn': 'lodash.lastIndexOf(hundredValues, 0, true)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.lastIndexOf(hundredValues, 0, true)',
+        'teardown': 'function multiArrays(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/

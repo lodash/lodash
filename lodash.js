@@ -2280,6 +2280,37 @@
     }
 
     /**
+     * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` without
+     * support for callback shorthands and `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function} iterator The function called per iteration.
+     * @param {boolean} [retHighest=false] Specify returning the highest, instead
+     *  of the lowest, index at which a value should be inserted into `array`.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     */
+    function baseSortedIndex(array, value, iterator, retHighest) {
+      var low = 0,
+          high = array ? array.length : low;
+
+      value = iterator(value);
+      while (low < high) {
+        var mid = (low + high) >>> 1,
+            computed = iterator(array[mid]);
+
+        if (retHighest ? computed <= value : computed < value) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return high;
+    }
+
+    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -3362,7 +3393,7 @@
      * // => 4
      *
      * // performing a binary search
-     * _.indexOf([1, 1, 2, 2, 3, 3], 2, true);
+     * _.indexOf([4, 4, 5, 5, 6, 6], 5, true);
      * // => 2
      */
     function indexOf(array, value, fromIndex) {
@@ -3490,11 +3521,20 @@
      * // using `fromIndex`
      * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
      * // => 1
+     *
+     * // performing a binary search
+     * _.lastIndexOf([4, 4, 5, 5, 6, 6], 5, true);
+     * // => 3
      */
     function lastIndexOf(array, value, fromIndex) {
-      var index = array ? array.length : 0;
+      var length = array ? array.length : 0,
+          index = length;
+
       if (typeof fromIndex == 'number') {
         index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
+      } else if (fromIndex) {
+        index = sortedLastIndex(array, value) - 1;
+        return (length && array[index] === value) ? index : -1;
       }
       while (index--) {
         if (array[index] === value) {
@@ -3706,38 +3746,53 @@
      *  into `array`.
      * @example
      *
-     * _.sortedIndex([20, 30, 50], 40);
+     * _.sortedIndex([30, 50], 40);
+     * // => 1
+     *
+     * _.sortedIndex([4, 4, 5, 5, 6, 6], 5);
      * // => 2
      *
-     * var dict = {
-     *   'wordToNumber': { 'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50 }
-     * };
+     * var dict = { 'data': { 'thirty': 30, 'forty': 40, 'fifty': 50 } };
      *
      * // using an iterator function
-     * _.sortedIndex(['twenty', 'thirty', 'fifty'], 'forty', function(word) {
-     *   return this.wordToNumber[word];
+     * _.sortedIndex(['thirty', 'fifty'], 'forty', function(word) {
+     *   return this.data[word];
      * }, dict);
-     * // => 2
+     * // => 1
      *
      * // using "_.pluck" callback shorthand
-     * _.sortedIndex([{ 'x': 20 }, { 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
-     * // => 2
+     * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
+     * // => 1
      */
     function sortedIndex(array, value, iterator, thisArg) {
-      var low = 0,
-          high = array ? array.length : low;
+      iterator = iterator == null ? identity : lodash.callback(iterator, thisArg, 1);
+      return baseSortedIndex(array, value, iterator);
+    }
 
-      // explicitly reference `identity` for better inlining in Firefox
-      iterator = iterator ? lodash.callback(iterator, thisArg, 1) : identity;
-      value = iterator(value);
-
-      while (low < high) {
-        var mid = (low + high) >>> 1;
-        (iterator(array[mid]) < value)
-          ? (low = mid + 1)
-          : (high = mid);
-      }
-      return low;
+    /**
+     * This method is like `_.sortedIndex` except that it returns the highest
+     * index at which a value should be inserted into a given sorted array in
+     * order to maintain the sort order of the array.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function|Object|string} [iterator=identity] The function called
+     *  per iteration. If a property name or object is provided it is used to
+     *  create a "_.pluck" or "_.where" style callback respectively.
+     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     * @example
+     *
+     * _.sortedLastIndex([4, 4, 5, 5, 6, 6], 5);
+     * // => 4
+     */
+    function sortedLastIndex(array, value, iterator, thisArg) {
+      iterator = iterator == null ? identity : lodash.callback(iterator, thisArg, 1);
+      return baseSortedIndex(array, value, iterator, true);
     }
 
     /**

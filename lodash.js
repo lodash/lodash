@@ -200,8 +200,8 @@
    * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
    * (under "semi-related fun fact") for more details.
    *
-   * Backticks are escaped because in Internet Explorer < 9, they can be used to
-   * break out of attribute values or HTML comments. See [#102](http://html5sec.org/#102),
+   * Backticks are escaped because in Internet Explorer < 9, they can break out
+   * of attribute values or HTML comments. See [#102](http://html5sec.org/#102),
    * [#108](http://html5sec.org/#108), and [#133](http://html5sec.org/#133) of
    * the [HTML5 Security Cheatsheet](http://html5sec.org/) for more details.
    */
@@ -306,8 +306,8 @@
   }
 
   /**
-   * The base implementation of `compareAscending` used to compare values and
-   * sort them in ascending order without guaranteeing a stable sort.
+   * The base implementation of `compareAscending` which compares values and
+   * sorts them in ascending order without guaranteeing a stable sort.
    *
    * @private
    * @param {*} value The value to compare to `other`.
@@ -814,7 +814,7 @@
     }
 
     /**
-     * An object used to flag environments features.
+     * An object environment feature flags.
      *
      * @static
      * @memberOf _
@@ -3080,7 +3080,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
@@ -3110,7 +3109,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
@@ -3151,7 +3149,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3200,7 +3197,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3826,7 +3822,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
@@ -3856,7 +3851,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
@@ -3897,7 +3891,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3945,7 +3938,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -4643,8 +4635,8 @@
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
-     * _([1, 2, 3]).forEach(function(n) { console.log(n); }).join(',');
-     * // => logs each number and returns '1,2,3'
+     * _([1, 2, 3]).forEach(function(n) { console.log(n); });
+     * // => logs each value and returns the array
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
      * // => logs each value-key pair and returns the object (property order is not guaranteed across environments)
@@ -4670,7 +4662,7 @@
      * @example
      *
      * _([1, 2, 3]).forEachRight(function(n) { console.log(n); }).join(',');
-     * // => logs each number from right to left and returns '3,2,1'
+     * // => logs each value from right to left and returns the array
      */
     function forEachRight(collection, iterator, thisArg) {
       return (typeof iterator == 'function' && typeof thisArg == 'undefined' && isArray(collection))
@@ -5449,13 +5441,13 @@
      * var saves = ['profile', 'settings'];
      *
      * var done = _.after(saves.length, function() {
-     *   console.log('Done saving!');
+     *   console.log('done saving!');
      * });
      *
      * _.forEach(saves, function(type) {
      *   asyncSave({ 'type': type, 'complete': done });
      * });
-     * // => logs 'Done saving!', after all saves have completed
+     * // => logs 'done saving!' after all saves have completed
      */
     function after(n, func) {
       if (!isFunction(func)) {
@@ -5524,7 +5516,7 @@
      *
      * _.bindAll(view);
      * jQuery('#docs').on('click', view.onClick);
-     * // => logs 'clicked docs', when the button is clicked
+     * // => logs 'clicked docs' when the element is clicked
      */
     function bindAll(object) {
       return baseBindAll(object,
@@ -6860,7 +6852,7 @@
      *
      * Note: This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
-     * are **not** supported. A customizer function may be used to extend support
+     * are **not** supported. Provide a customizer function to extend support
      * for comparing other values.
      *
      * @static
@@ -8016,7 +8008,7 @@
      * compiled({ 'name': 'mustache' });
      * // => 'hello mustache!'
      *
-     * // using the `imports` option to import jQuery
+     * // using the `imports` option to import `jQuery` as `jq`
      * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
      * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
      * compiled({ 'people': ['fred', 'barney'] });
@@ -8233,7 +8225,7 @@
      * @param {string} [string=''] The string to truncate.
      * @param {Object|number} [options] The options object or maximum string length.
      * @param {number} [options.length=30] The maximum string length.
-     * @param {string} [options.omission='...'] The string used to indicate text is omitted.
+     * @param {string} [options.omission='...'] The string to indicate text is omitted.
      * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
      * @returns {string} Returns the truncated string.
      * @example
@@ -8596,8 +8588,7 @@
      * @category Utility
      * @example
      *
-     * var stamp = _.now();
-     * _.defer(function() { console.log(_.now() - stamp); });
+     * _.defer(function(stamp) { console.log(_.now() - stamp); }, _.now());
      * // => logs the number of milliseconds it took for the deferred function to be called
      */
     var now = nativeNow || function() {
@@ -8617,7 +8608,7 @@
      * @memberOf _
      * @category Utility
      * @param {string} value The value to parse.
-     * @param {number} [radix] The radix used to interpret the value to parse.
+     * @param {number} [radix] The radix to interpret `value` by.
      * @returns {number} Returns the converted integer.
      * @example
      *

@@ -1180,6 +1180,30 @@
     }
 
     /**
+     * A specialized version of `_.reduceRight` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iterator The function called per iteration.
+     * @param {*} [accumulator] The initial value.
+     * @param {boolean} [initFromArray=false] Specify using the first element of
+     *  `array` as the initial value.
+     * @returns {*} Returns the accumulated value.
+     */
+    function arrayReduceRight(array, iterator, accumulator, initFromArray) {
+      var length = array.length;
+
+      if (initFromArray && length) {
+        accumulator = array[--length];
+      }
+      while (length--) {
+        accumulator = iterator(accumulator, array[length], length, array);
+      }
+      return accumulator;
+    }
+
+    /**
      * A specialized version of `_.some` for arrays without support for callback
      * shorthands or `this` binding.
      *
@@ -1676,7 +1700,7 @@
      * @private
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function} predicate The function called per iteration.
-     * @param {Function} eachFunc The function to iterate over the collection.
+     * @param {Function} eachFunc The function to iterate over `collection`.
      * @param {boolean} [retKey=false] Specify returning the key of the found
      *  element instead of the element itself.
      * @returns {*} Returns the found element or its key, else `undefined`.
@@ -2239,19 +2263,21 @@
     }
 
     /**
-     * The base implementation of  `_.reduce` without support for callback
-     * shorthands or `this` binding.
+     * The base implementation of `_.reduce` and `_.reduceRight` without support
+     * for callback shorthands or `this` binding, which iterates over `collection`
+     * usingthe provided `eachFunc`.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} iterator The function called per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromCollection=false] Specify using the first element
+     * @param {*} accumulator The initial value.
+     * @param {boolean} initFromCollection Specify using the first element
      *  of `collection` as the initial value.
+     * @param {Function} eachFunc The function to iterate over `collection`.
      * @returns {*} Returns the accumulated value.
      */
-    function baseReduce(collection, iterator, accumulator, initFromCollection) {
-      baseEach(collection, function(value, index, collection) {
+    function baseReduce(collection, iterator, accumulator, initFromCollection, eachFunc) {
+      eachFunc(collection, function(value, index, collection) {
         accumulator = initFromCollection
           ? (initFromCollection = false, value)
           : iterator(accumulator, value, index, collection)
@@ -5066,10 +5092,8 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function reduce(collection, iterator, accumulator, thisArg) {
-      iterator = lodash.callback(iterator, thisArg, 4);
-
       var func = isArray(collection) ? arrayReduce : baseReduce;
-      return func(collection, iterator, accumulator, arguments.length < 3);
+      return func(collection, lodash.callback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEach);
     }
 
     /**
@@ -5092,15 +5116,8 @@
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, iterator, accumulator, thisArg) {
-      var initFromCollection = arguments.length < 3;
-      iterator = lodash.callback(iterator, thisArg, 4);
-
-      baseEachRight(collection, function(value, index, collection) {
-        accumulator = initFromCollection
-          ? (initFromCollection = false, value)
-          : iterator(accumulator, value, index, collection);
-      });
-      return accumulator;
+      var func = isArray(collection) ? arrayReduceRight : baseReduce;
+      return func(collection, lodash.callback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
     }
 
     /**

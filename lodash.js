@@ -732,14 +732,14 @@
      * implicitly or explicitly included in the build.
      *
      * The chainable wrapper functions are:
-     * `after`, `assign`, `at`, `bind`, `bindAll`, `bindKey`, `callback`, `chain`,
-     * `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`, `create`,
-     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
-     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`, `forEach`,
-     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
-     * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
-     * `keysIn`, `map`, `mapValues`, `matches`, `memoize`, `merge`, `mixin`,
-     * `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+     * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
+     * `chain`, `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`,
+     * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
+     * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
+     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
+     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
+     * `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`, `merge`,
+     * `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
      * `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`, `range`,
      * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
      * `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
@@ -5440,14 +5440,13 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates a function that executes `func`, with the `this` binding and
-     * arguments of the created function, only after being called `n` times.
+     * The opposite of `_.before`; this method creates a function that executes
+     * `func` only after it is called `n` times.
      *
      * @static
      * @memberOf _
      * @category Function
-     * @param {number} n The number of times the function must be called before
-     *  `func` is executed.
+     * @param {number} n The number of calls before `func` is executed.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
      * @example
@@ -5472,6 +5471,37 @@
         if (--n < 1) {
           return func.apply(this, arguments);
         }
+      };
+    }
+
+    /**
+     * Creates a function that executes `func`, with the `this` binding and
+     * arguments of the created function, until it is called `n` times.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {number} n The number of times `func` may be executed.
+     * @param {Function} func The function to restrict.
+     * @returns {Function} Returns the new restricted function.
+     * @example
+     *
+     * jQuery('#add').on('click', _.before(5, addContactToList));
+     * // => allows adding up to 5 contacts to the list
+     */
+    function before(n, func) {
+      var result;
+      if (!isFunction(func)) {
+        throw new TypeError(funcErrorText);
+      }
+      n = nativeIsFinite(n = +n) ? n : 0;
+      return function() {
+        if (--n > 0) {
+          result = func.apply(this, arguments);
+        } else {
+          func = null;
+        }
+        return result;
       };
     }
 
@@ -6028,6 +6058,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Function
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
@@ -6038,25 +6069,7 @@
      * initialize();
      * // `initialize` executes `createApplication` once
      */
-    function once(func) {
-      var ran,
-          result;
-
-      if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
-      }
-      return function() {
-        if (ran) {
-          return result;
-        }
-        ran = true;
-        result = func.apply(this, arguments);
-
-        // clear the `func` variable so the function may be garbage collected
-        func = null;
-        return result;
-      };
-    }
+    var once = partial(before, 2);
 
     /**
      * Creates a function that invokes `func` with any additional `partial` arguments
@@ -8888,6 +8901,7 @@
     lodash.after = after;
     lodash.assign = assign;
     lodash.at = at;
+    lodash.before = before;
     lodash.bind = bind;
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;

@@ -621,15 +621,29 @@
     }
     test('should create a function that executes `func` after `n` calls', 4, function() {
       strictEqual(after(5, 5), 1, 'after(n) should execute `func` after being called `n` times');
-      strictEqual(after(5, 4), 0, 'after(n) should not execute `func` unless called `n` times');
+      strictEqual(after(5, 4), 0, 'after(n) should not execute `func` before being called `n` times');
       strictEqual(after(0, 0), 0, 'after(0) should not execute `func` immediately');
       strictEqual(after(0, 1), 1, 'after(0) should execute `func` when called once');
     });
 
-    test('should coerce non-finite `n` values to `0`', 3, function() {
-      _.each([-Infinity, NaN, Infinity], function(n) {
-        strictEqual(after(n, 1), 1);
+    test('should coerce non-finite `n` values to `0`', 1, function() {
+      var values = [-Infinity, NaN, Infinity],
+          expected = _.map(values, _.constant(1));
+
+      var actual = _.map(values, function(n) {
+        return after(n, 1);
       });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not set a `this` binding', 2, function() {
+      var after = _.after(1, function() { return ++this.count; }),
+          object = { 'count': 0, 'after': after };
+
+      object.after();
+      strictEqual(object.after(), 2);
+      strictEqual(object.count, 2);
     });
   }());
 
@@ -721,6 +735,44 @@
       });
     });
   }('a', 'b', 'c'));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.before');
+
+  (function() {
+    function before(n, times) {
+      var count = 0;
+      _.times(times, _.before(n, function() { count++; }));
+      return count;
+    }
+    test('should create a function that executes `func` after `n` calls', 4, function() {
+      strictEqual(before(5, 4), 4, 'before(n) should execute `func` before being called `n` times');
+      strictEqual(before(5, 6), 4, 'before(n) should not execute `func` after being called `n - 1` times');
+      strictEqual(before(0, 0), 0, 'before(0) should not execute `func` immediately');
+      strictEqual(before(0, 1), 0, 'before(0) should not execute `func` when called');
+    });
+
+    test('should coerce non-finite `n` values to `0`', 1, function() {
+      var values = [-Infinity, NaN, Infinity],
+          expected = _.map(values, _.constant(0));
+
+      var actual = _.map(values, function(n) {
+        return before(n);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not set a `this` binding', 2, function() {
+      var before = _.before(2, function() { return ++this.count; }),
+          object = { 'count': 0, 'before': before };
+
+      object.before();
+      strictEqual(object.before(), 1);
+      strictEqual(object.count, 1);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -11316,6 +11368,7 @@
 
     var rejectFalsey = [
       'after',
+      'before',
       'bind',
       'compose',
       'curry',
@@ -11401,7 +11454,7 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 16, function() {
+    test('should throw a TypeError for falsey arguments', 17, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

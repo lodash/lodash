@@ -656,6 +656,16 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.clone` with an array')
+      .add(buildName, '\
+        lodash.clone(numbers)'
+      )
+      .add(otherName, '\
+        _.clone(numbers)'
+      )
+  );
+
+  suites.push(
     Benchmark.Suite('`_.clone` with an object')
       .add(buildName, '\
         lodash.clone(object)'

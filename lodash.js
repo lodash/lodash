@@ -5494,7 +5494,6 @@
       if (!isFunction(func)) {
         throw new TypeError(funcErrorText);
       }
-      n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
         if (--n > 0) {
           result = func.apply(this, arguments);

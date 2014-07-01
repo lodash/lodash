@@ -2083,7 +2083,7 @@
       strictEqual(new curried(true), object);
     });
 
-    test('should not alter the `this` binding', 9, function() {
+    test('should not set a `this` binding', 9, function() {
       function fn(a, b, c) {
         var value = this || {};
         return [value[a], value[b], value[c]];
@@ -2172,7 +2172,7 @@
       strictEqual(new curried(true), object);
     });
 
-    test('should not alter the `this` binding', 9, function() {
+    test('should not set a `this` binding', 9, function() {
       function fn(a, b, c) {
         var value = this || {};
         return [value[a], value[b], value[c]];
@@ -7586,7 +7586,7 @@
       }
     });
 
-    test('`_.' + methodName + '` should not alter the `this` binding', 3, function() {
+    test('`_.' + methodName + '` should not set a `this` binding', 3, function() {
       var fn = function() { return this.a; },
           object = { 'a': 1 };
 

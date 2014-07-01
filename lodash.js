@@ -1353,46 +1353,80 @@
       if (typeof result != 'undefined') {
         return result;
       }
-      var isObj = isObject(value);
-      if (isObj) {
+      var isArr = isArray(value),
+          isShallow = !isDeep;
+
+      if (isArr) {
+        result = isDeep ? value.constructor(value.length) : slice(value);
+
+        // add array properties assigned by `RegExp#exec`
+        if (typeof value[0] == 'string' && hasOwnProperty.call(value, 'index')) {
+          result.index = value.index;
+          result.input = value.input;
+        }
+        if (isShallow) {
+          return result;
+        }
+      }
+      else {
+        if (!isObject(value)) {
+          return value;
+        }
         var className = toString.call(value);
         if (!cloneableClasses[className] || (!support.nodeClass && isNode(value))) {
           return value;
+        }
+        var isArgs = className == argsClass || (!support.argsClass && isArguments(value)),
+            isObj = !isArgs && className == objectClass;
+
+        if (isShallow && (isArgs || isObj)) {
+          result = baseAssign({}, value);
+        }
+        if (isShallow && isObj) {
+          return result;
         }
         var Ctor = value.constructor;
         if (className == objectClass && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
           Ctor = Object;
         }
-        switch (className) {
-          case arrayBufferClass:
-            return cloneBuffer(value);
-
-          case boolClass:
-          case dateClass:
-            return new Ctor(+value);
-
-          case float32Class: case float64Class:
-          case int8Class: case int16Class: case int32Class:
-          case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-            // Safari 5 mobile incorrectly has `Object` as the constructor
-            if (Ctor instanceof Ctor) {
-              Ctor = ctorByClass[className];
-            }
-            return new Ctor(cloneBuffer(value.buffer));
-
-          case numberClass:
-          case stringClass:
-            return new Ctor(value);
-
-          case regexpClass:
-            result = Ctor(value.source, reFlags.exec(value));
-            result.lastIndex = value.lastIndex;
-            return result;
+        if (isDeep && (isArgs || isObj)) {
+          result = new Ctor;
         }
-      } else {
-        return value;
+        else {
+          switch (className) {
+            case arrayBufferClass:
+              return cloneBuffer(value);
+
+            case boolClass:
+            case dateClass:
+              return new Ctor(+value);
+
+            case float32Class: case float64Class:
+            case int8Class: case int16Class: case int32Class:
+            case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
+              // Safari 5 mobile incorrectly has `Object` as the constructor
+              if (Ctor instanceof Ctor) {
+                Ctor = ctorByClass[className];
+              }
+              return new Ctor(cloneBuffer(value.buffer));
+
+            case numberClass:
+            case stringClass:
+              return new Ctor(value);
+
+            case regexpClass:
+              result = Ctor(value.source, reFlags.exec(value));
+              result.lastIndex = value.lastIndex;
+              return result;
+          }
+        }
       }
-      var isArr = isArray(value);
+      if (isArgs) {
+        result.length = value.length;
+      }
+      if (isShallow) {
+        return result;
+      }
       if (isDeep) {
         // check for circular references and return corresponding clone
         stackA || (stackA = []);
@@ -1404,26 +1438,6 @@
             return stackB[length];
           }
         }
-        result = isArr ? Ctor(value.length) : new Ctor;
-      }
-      else {
-        result = isArr ? slice(value) : baseAssign({}, value);
-      }
-      if (className == argsClass || (!support.argsClass && isArguments(value))) {
-        result.length = value.length;
-      }
-      // add array properties assigned by `RegExp#exec`
-      else if (isArr) {
-        if (hasOwnProperty.call(value, 'index')) {
-          result.index = value.index;
-        }
-        if (hasOwnProperty.call(value, 'input')) {
-          result.input = value.input;
-        }
-      }
-      // exit for shallow clone
-      if (!isDeep) {
-        return result;
       }
       // add the source value to the stack of traversed objects
       // and associate it with its clone

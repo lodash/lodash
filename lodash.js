@@ -1357,7 +1357,7 @@
           isShallow = !isDeep;
 
       if (isArr) {
-        result = isDeep ? value.constructor(value.length) : slice(value);
+        result = isShallow ? slice(value) : value.constructor(value.length);
 
         // add array properties assigned by `RegExp#exec`
         if (typeof value[0] == 'string' && hasOwnProperty.call(value, 'index')) {
@@ -1381,9 +1381,9 @@
 
         if (isShallow && (isArgs || isObj)) {
           result = baseAssign({}, value);
-        }
-        if (isShallow && isObj) {
-          return result;
+          if (isObj) {
+            return result;
+          }
         }
         var Ctor = value.constructor;
         if (className == objectClass && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
@@ -1427,16 +1427,14 @@
       if (isShallow) {
         return result;
       }
-      if (isDeep) {
-        // check for circular references and return corresponding clone
-        stackA || (stackA = []);
-        stackB || (stackB = []);
+      // check for circular references and return corresponding clone
+      stackA || (stackA = []);
+      stackB || (stackB = []);
 
-        var length = stackA.length;
-        while (length--) {
-          if (stackA[length] == value) {
-            return stackB[length];
-          }
+      var length = stackA.length;
+      while (length--) {
+        if (stackA[length] == value) {
+          return stackB[length];
         }
       }
       // add the source value to the stack of traversed objects
@@ -2162,9 +2160,9 @@
           }
         }
         var result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-            isShallow = typeof result != 'undefined';
+            isDeep = typeof result == 'undefined';
 
-        if (!isShallow) {
+        if (isDeep) {
           result = isArr
             ? (isArray(value) ? value : [])
             : (isPlainObject(value) ? value : {});
@@ -2175,7 +2173,7 @@
         stackB.push(result);
 
         // recursively merge objects and arrays (susceptible to call stack limits)
-        if (!isShallow) {
+        if (isDeep) {
           baseMerge(result, srcValue, customizer, stackA, stackB);
         }
         object[key] = result;

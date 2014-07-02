@@ -1926,44 +1926,28 @@
       if (valClass != othClass) {
         return false;
       }
-      switch (valClass) {
-        case boolClass:
-        case dateClass:
-          // coerce dates and booleans to numbers, dates to milliseconds and booleans
-          // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
-          return +value == +other;
-
-        case numberClass:
-          // treat `NaN` vs. `NaN` as equal
-          return (value != +value)
-            ? other != +other
-            // but treat `-0` vs. `+0` as not equal
-            : (value == 0 ? (1 / value == 1 / other) : value == +other);
-
-        case regexpClass:
-        case stringClass:
-          // coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
-          // treat strings primitives and string objects as equal
-          return value == String(other);
-      }
       var isArr = arrayLikeClasses[valClass],
           isErr = valClass == errorClass;
 
-      if (!support.argsClass) {
-        valIsArg = isArguments(value);
-        othIsArg = isArguments(other);
-      }
-      if (!isArr) {
-        // exit for things like functions and DOM nodes
-        if (!(isErr || valClass == objectClass) || (!support.nodeClass && (isNode(value) || isNode(other)))) {
+      if (isArr) {
+        var valLength = value.length,
+            othLength = other.length;
+
+        if (valLength != othLength && !(isWhere && othLength > valLength)) {
           return false;
         }
+      }
+      else if (isErr || (valClass == objectClass && (support.nodeClass || !(isNode(value) || isNode(other))))) {
         // unwrap any `lodash` wrapped values
         var valWrapped = hasOwnProperty.call(value, '__wrapped__'),
             othWrapped = hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
           return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, customizer, isWhere, stackA, stackB);
+        }
+        if (!support.argsClass) {
+          valIsArg = isArguments(value);
+          othIsArg = isArguments(other);
         }
         var hasValCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
             hasOthCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
@@ -1988,57 +1972,6 @@
             return false;
           }
         }
-      }
-      // assume cyclic structures are equal
-      // the algorithm for detecting cyclic structures is adapted from ES 5.1
-      // section 15.12.3, abstract operation `JO` (http://es5.github.io/#x15.12.3)
-      stackA || (stackA = []);
-      stackB || (stackB = []);
-
-      var length = stackA.length;
-      while (length--) {
-        if (stackA[length] == value) {
-          return stackB[length] == other;
-        }
-      }
-      var index = -1;
-
-      // add `value` and `other` to the stack of traversed objects
-      stackA.push(value);
-      stackB.push(other);
-
-      // recursively compare objects and arrays (susceptible to call stack limits)
-      if (isArr) {
-        var othLength = other.length;
-        length = value.length;
-        result = length == othLength;
-
-        if (result || (isWhere && othLength > length)) {
-          // deep compare the contents, ignoring non-numeric properties
-          while (++index < length) {
-            var valValue = value[index];
-            if (isWhere) {
-              var othIndex = othLength;
-              while (othIndex--) {
-                result = baseIsEqual(valValue, other[othIndex], customizer, isWhere, stackA, stackB);
-                if (result) {
-                  break;
-                }
-              }
-            } else {
-              var othValue = other[index];
-              result = customizer ? customizer(valValue, othValue, index) : undefined;
-              if (typeof result == 'undefined') {
-                result = baseIsEqual(valValue, othValue, customizer, isWhere, stackA, stackB);
-              }
-            }
-            if (!result) {
-              break;
-            }
-          }
-        }
-      }
-      else {
         var valProps = isErr ? ['message', 'name'] : keys(value),
             othProps = isErr ? valProps : keys(other);
 
@@ -2048,24 +1981,85 @@
         if (othIsArg) {
           othProps.push('length');
         }
-        length = valProps.length;
-        result = length == othProps.length;
+        valLength = valProps.length;
+        othLength = othProps.length;
+        if (valLength != othLength && !isWhere) {
+          return false;
+        }
+      }
+      else {
+        switch (valClass) {
+          case boolClass:
+          case dateClass:
+            // coerce dates and booleans to numbers, dates to milliseconds and booleans
+            // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
+            return +value == +other;
 
-        if (result || isWhere) {
-          while (++index < length) {
-            var key = valProps[index];
-            result = isErr || hasOwnProperty.call(other, key);
+          case numberClass:
+            // treat `NaN` vs. `NaN` as equal
+            return (value != +value)
+              ? other != +other
+              // but treat `-0` vs. `+0` as not equal
+              : (value == 0 ? (1 / value == 1 / other) : value == +other);
 
-            if (result) {
-              valValue = value[key];
-              othValue = other[key];
-              result = customizer ? customizer(valValue, othValue, key) : undefined;
-              if (typeof result == 'undefined') {
-                result = baseIsEqual(valValue, othValue, customizer, isWhere, stackA, stackB);
+          case regexpClass:
+          case stringClass:
+            // coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
+            // treat strings primitives and string objects as equal
+            return value == String(other);
+        }
+        return false;
+      }
+      // assume cyclic structures are equal
+      // the algorithm for detecting cyclic structures is adapted from ES 5.1
+      // section 15.12.3, abstract operation `JO` (http://es5.github.io/#x15.12.3)
+      stackA || (stackA = []);
+      stackB || (stackB = []);
+
+      var index = stackA.length;
+      while (index--) {
+        if (stackA[index] == value) {
+          return stackB[index] == other;
+        }
+      }
+      // add `value` and `other` to the stack of traversed objects
+      stackA.push(value);
+      stackB.push(other);
+
+      // recursively compare objects and arrays (susceptible to call stack limits)
+      result = true;
+      if (isArr) {
+        // deep compare the contents, ignoring non-numeric properties
+        while (result && ++index < valLength) {
+          var valValue = value[index];
+          if (isWhere) {
+            var othIndex = othLength;
+            while (othIndex--) {
+              result = baseIsEqual(valValue, other[othIndex], customizer, isWhere, stackA, stackB);
+              if (result) {
+                break;
               }
             }
-            if (!result) {
-              break;
+          } else {
+            var othValue = other[index];
+            result = customizer ? customizer(valValue, othValue, index) : undefined;
+            if (typeof result == 'undefined') {
+              result = baseIsEqual(valValue, othValue, customizer, isWhere, stackA, stackB);
+            }
+          }
+        }
+      }
+      else {
+        while (result && ++index < valLength) {
+          var key = valProps[index];
+          result = isErr || hasOwnProperty.call(other, key);
+
+          if (result) {
+            valValue = value[key];
+            othValue = other[key];
+            result = customizer ? customizer(valValue, othValue, key) : undefined;
+            if (typeof result == 'undefined') {
+              result = baseIsEqual(valValue, othValue, customizer, isWhere, stackA, stackB);
             }
           }
         }

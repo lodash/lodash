@@ -10663,7 +10663,7 @@
       deepEqual(actual, [collection[1]]);
 
       actual = _.where(collection, { 'a': [] });
-      deepEqual(actual, []);
+      deepEqual(actual, collection);
 
       actual = _.where(collection, { 'a': ['b', 'd'] });
       deepEqual(actual, []);

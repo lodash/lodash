@@ -3094,6 +3094,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
@@ -3123,6 +3124,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
@@ -3163,6 +3165,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3211,6 +3214,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3836,6 +3840,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
@@ -3865,6 +3870,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
@@ -3905,6 +3911,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
@@ -3952,6 +3959,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Array
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called

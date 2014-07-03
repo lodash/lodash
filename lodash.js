@@ -1234,7 +1234,9 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function assignDefaults(objectValue, sourceValue) {
-      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+      return typeof objectValue == 'undefined'
+        ? sourceValue
+        : objectValue;
     }
 
     /**
@@ -1253,7 +1255,7 @@
     function assignOwnDefaults(objectValue, sourceValue, key, object) {
       return (typeof objectValue == 'undefined' || !hasOwnProperty.call(object, key))
         ? sourceValue
-        : objectValue
+        : objectValue;
     }
 
     /**
@@ -1273,7 +1275,9 @@
 
       while (++index < length) {
         var key = props[index];
-        object[key] = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
+        object[key] = customizer
+          ? customizer(object[key], source[key], key, object, source)
+          : source[key];
       }
       return object;
     }

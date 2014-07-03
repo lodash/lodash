@@ -1964,27 +1964,30 @@
           valIsArg = isArguments(value);
           othIsArg = isArguments(other);
         }
-        var hasValCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
-            hasOthCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
+        // in older versions of Opera, `arguments` objects have `Array` constructors
+        var valCtor = valIsArg ? Object : value.constructor,
+            othCtor = othIsArg ? Object : other.constructor;
 
-        if (hasValCtor != hasOthCtor) {
-          return false;
-        }
-        if (!hasValCtor) {
-          // in older versions of Opera, `arguments` objects have `Array` constructors
-          var valCtor = valIsArg ? Object : value.constructor,
-              othCtor = othIsArg ? Object : other.constructor;
-
+        if (isErr) {
           // error objects of different types are not equal
-          if (isErr && valCtor.prototype.name != othCtor.prototype.name) {
+          if (valCtor.prototype.name != othCtor.prototype.name) {
             return false;
           }
-          // non `Object` object instances with different constructors are not equal
-          if (valCtor != othCtor &&
-                !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
-                ('constructor' in value && 'constructor' in other)
-              ) {
+        } else {
+          var valHasCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
+              othHasCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
+
+          if (valHasCtor != othHasCtor) {
             return false;
+          }
+          if (!valHasCtor) {
+            // non `Object` object instances with different constructors are not equal
+            if (valCtor != othCtor &&
+                  !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
+                  ('constructor' in value && 'constructor' in other)
+                ) {
+              return false;
+            }
           }
         }
         var valProps = isErr ? ['message', 'name'] : keys(value),

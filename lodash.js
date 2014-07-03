@@ -4074,6 +4074,35 @@
     }
 
     /**
+     * This method is like `_.zip` except that it accepts an array of grouped
+     * elements and creates an array regrouping the elements to their pre `_.zip`
+     * configuration.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array of grouped elements to process.
+     * @returns {Array} Returns the new array of regrouped elements.
+     * @example
+     *
+     * var zipped = _.zip(['fred', 'barney'], [30, 40], [true, false]);
+     * // => [['fred', 30, true], ['barney', 40, false]]
+     *
+     * _.unzip(zipped);
+     * // => [['fred', 'barney'], [30, 40], [true, false]]
+     */
+    function unzip(array) {
+      var index = -1,
+          length = isObject(length = max(array, 'length')) && length.length || 0,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = pluck(array, index);
+      }
+      return result;
+    }
+
+    /**
      * Creates an array excluding all provided values using strict equality for
      * comparisons, i.e. `===`.
      *
@@ -4128,33 +4157,20 @@
     /**
      * Creates an array of grouped elements, the first of which contains the first
      * elements of the given arrays, the second of which contains the second elements
-     * of the given arrays, and so on. If a zipped value is provided its corresponding
-     * unzipped value is returned.
+     * of the given arrays, and so on.
      *
      * @static
      * @memberOf _
-     * @alias unzip
      * @category Array
      * @param {...Array} [arrays] The arrays to process.
-     * @returns {Array} Returns the array of grouped elements.
+     * @returns {Array} Returns the new array of grouped elements.
      * @example
      *
      * _.zip(['fred', 'barney'], [30, 40], [true, false]);
      * // => [['fred', 30, true], ['barney', 40, false]]
-     *
-     * _.unzip([['fred', 30, true], ['barney', 40, false]]);
-     * // => [['fred', 'barney'], [30, 40], [true, false]]
      */
     function zip() {
-      var array = arguments.length > 1 ? arguments : arguments[0],
-          index = -1,
-          length = isObject(length = max(array, 'length')) && length.length || 0,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = pluck(array, index);
-      }
-      return result;
+      return unzip(arguments);
     }
 
     /**
@@ -8980,6 +8996,7 @@
     lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;
+    lodash.unzip = unzip;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.where = where;
@@ -8999,7 +9016,6 @@
     lodash.select = filter;
     lodash.tail = rest;
     lodash.unique = uniq;
-    lodash.unzip = zip;
 
     // add functions to `lodash.prototype`
     mixin(lodash, baseAssign({}, lodash));

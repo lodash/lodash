@@ -10807,9 +10807,12 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.zip');
+  QUnit.module('lodash.unzip and lodash.zip');
 
-  (function() {
+  _.each(['unzip', 'zip'], function(methodName) {
+    var func = _[methodName];
+    func = _.bind(methodName == 'zip' ? func.apply : func.call, func, null);
+
     var object = {
       'an empty array': [
         [],
@@ -10830,52 +10833,43 @@
     };
 
     _.forOwn(object, function(pair, key) {
-      test('should work with ' + key, 2, function() {
-        var actual = _.zip.apply(_, pair[0]);
+      test('`_.' + methodName + '` should work with ' + key, 2, function() {
+        var actual = func(pair[0]);
         deepEqual(actual, pair[1]);
-        deepEqual(_.zip.apply(_, actual), actual.length ? pair[0] : []);
+        deepEqual(func(actual), actual.length ? pair[0] : []);
       });
     });
 
-    test('should work with tuples of different lengths', 4, function() {
+    test('`_.' + methodName + '` should work with tuples of different lengths', 4, function() {
       var pair = [
         [['barney', 36], ['fred', 40, false]],
         [['barney', 'fred'], [36, 40], [undefined, false]]
       ];
 
-      var actual = _.zip(pair[0]);
+      var actual = func(pair[0]);
       ok('0' in actual[2]);
       deepEqual(actual, pair[1]);
 
-      actual = _.zip.apply(_, actual);
+      actual = func(actual);
       ok('2' in actual[0]);
       deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
     });
 
-    test('should treat falsey values as empty arrays', 1, function() {
+    test('`_.' + methodName + '` should treat falsey values as empty arrays', 1, function() {
       var expected = _.map(falsey, _.constant([]));
 
       var actual = _.map(falsey, function(value) {
-        return _.zip(value, value, value);
+        return func([value, value, value]);
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should support consuming its return value', 1, function() {
+    test('`_.' + methodName + '` should support consuming its return value', 1, function() {
       var expected = [['barney', 'fred'], [36, 40]];
-      deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
+      deepEqual(func(func(func(func(expected)))), expected);
     });
-
-    test('should support consuming its return value', 1, function() {
-      var expected = [['barney', 'fred'], [36, 40]];
-      deepEqual(_.zip(_.zip(_.zip(_.zip(expected)))), expected);
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.unzip, _.zip);
-    });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

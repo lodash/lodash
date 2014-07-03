@@ -1489,6 +1489,17 @@
      *
      * @private
      * @param {Array} data The metadata array.
+     * @param {Function|string} data[0] The function or method name to reference.
+     * @param {number} data[1] The bitmask of flags to compose. See `createWrapper`
+     *  for more details.
+     * @param {number} data[2] The arity of `data[0]`.
+     * @param {*} [data[3]] The `this` binding of `data[0]`.
+     * @param {Array} [data[4]] An array of arguments to prepend to those
+     *  provided to the new function.
+     * @param {Array} [data[5]] An array of arguments to append to those
+     *  provided to the new function.
+     * @param {Array} [data[6]] An array of `data[4]` placeholder indexes.
+     * @param {Array} [data[7]] An array of `data[5]` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
     function baseCreateWrapper(data) {
@@ -2593,6 +2604,8 @@
      *
      * @private
      * @param {Array} data The metadata array.
+     * @param {Function|string} data[0] The function or method name to reference.
+     * @param {*} data[3] The `this` binding of `data[0]`.
      * @returns {Function} Returns the new bound function.
      */
     function createBindWrapper(data) {
@@ -2672,14 +2685,19 @@
      *
      * @private
      * @param {Array} data The metadata array.
+     * @param {Function|string} data[0] The function or method name to reference.
+     * @param {number} data[1] The bitmask of flags to compose. See `createWrapper`
+     *  for more details.
+     * @param {*} [data[3]] The `this` binding of `data[0]`.
+     * @param {Array} data[4] An array of arguments to prepend to those
+     *  provided to the new function.
      * @returns {Function} Returns the new bound function.
      */
     function createPartialWrapper(data) {
       var func = data[0],
           bitmask = data[1],
           thisArg = data[3],
-          partialArgs = data[4],
-          partialHolders = data[6];
+          partialArgs = data[4];
 
       var isBind = bitmask & BIND_FLAG,
           Ctor = createCtorWrapper(func);

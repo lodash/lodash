@@ -2788,7 +2788,7 @@
         }
         // merge flags
         data[1] |= bitmask;
-        return createWrapper.apply(null, data);
+        return createWrapper.apply(undefined, data);
       }
       if (isPartial) {
         var partialHolders = getHolders(partialArgs);
@@ -6419,7 +6419,7 @@
       }
       var args = slice(arguments);
       args.push(assignDefaults);
-      return assign.apply(null, args);
+      return assign.apply(undefined, args);
     }
 
     /**

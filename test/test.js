@@ -8405,6 +8405,45 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.replicate');
+
+  (function() {
+    var complexArray = [
+      [1, 2, 3],
+      [{a: 1, b: 2}, {c: 3}],
+      [[[1]]],
+      {obj: {ect: 0}}
+    ];
+
+    test('should repeat each element of an array `n` times', 3, function() {
+      deepEqual(_.replicate([1, 2], 2), [1, 1, 2, 2]);
+      deepEqual(_.replicate([{a: 1}, {b: 2}], 2), [{a: 1}, {a: 1}, {b: 2}, {b: 2}]);
+
+      var complexArrayReplicatedThreeTimes = [
+        [1, 2, 3], [1, 2, 3], [1, 2, 3],
+        [{a: 1, b: 2}, {c: 3}], [{a: 1, b: 2}, {c: 3}], [{a: 1, b: 2}, {c: 3}],
+        [[[1]]], [[[1]]], [[[1]]],
+        {obj: {ect: 0}}, {obj: {ect: 0}}, {obj: {ect: 0}}
+      ];
+
+      deepEqual(_.replicate(complexArray, 3), complexArrayReplicatedThreeTimes);
+    });
+
+    test('should return an empty array if `n` is 0', 3, function() {
+      deepEqual(_.replicate(['a', 2, 'c'], 0), []);
+      deepEqual(_.replicate([{a: 1}], 0), []);
+      deepEqual(_.replicate(complexArray, 0), []);
+    });
+
+    test('should return an empty array if the first argument is not an array', 3, function () {
+      deepEqual(_.replicate('hello', 3), []);
+      deepEqual(_.replicate({a: 1, b: 2}, 10), []);
+      deepEqual(_.replicate({_: [1, 2, 3]}, 3), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.result');
 
   (function() {
@@ -11247,7 +11286,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 190, function() {
+    test('should accept falsey arguments', 191, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

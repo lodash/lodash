@@ -7823,6 +7823,37 @@
     }
 
     /**
+     * Repeats every element in the given array `n` times.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {array} [array] The subject array.
+     * @param {number} [n=1] Number of times each element will be replicated.
+     * @returns {array} Returns the array with the replicated elements.
+     * @example
+     *
+     * _.replicate(['a', 2, 'c'], 3)
+     * // => ['a', 'a', 'a', 2, 2, 2, 'c', 'c', 'c']
+     */
+    function replicate(array, n) {
+      var len = array ? array.length : 0,
+          result = [],
+          i,
+          j;
+
+      if (!isArray(array) || n === 0) { return []; }
+
+      for (i = 0; i < len; i += 1) {
+        for (j = 0; j < n; j += 1) {
+          result.push(array[i]);
+        }
+      }
+
+      return result;
+    }
+
+    /**
      * Converts `string` to snake case.
      * See [Wikipedia](http://en.wikipedia.org/wiki/Snake_case) for more details.
      *
@@ -8959,6 +8990,7 @@
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
+    lodash.replicate = replicate;
     lodash.result = result;
     lodash.runInContext = runInContext;
     lodash.size = size;

@@ -120,7 +120,7 @@
   /** Used to make template sourceURLs easier to identify */
   var templateCounter = 0;
 
-  /** `Object#toString` result shortcuts */
+  /** `Object#toString` result references */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
@@ -651,7 +651,7 @@
       .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
-    /** Native method shortcuts */
+    /** Native method references */
     var ArrayBuffer = isNative(ArrayBuffer = context.ArrayBuffer) && ArrayBuffer,
         bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
         ceil = Math.ceil,
@@ -679,7 +679,7 @@
       return result;
     }());
 
-    /* Native method shortcuts for methods with the same name as other `lodash` methods */
+    /* Native method references for those with the same name as other `lodash` methods */
     var nativeContains = isNative(nativeContains = stringProto.contains) && nativeContains,
         nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,

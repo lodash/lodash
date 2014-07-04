@@ -629,6 +629,9 @@
     /** Used to resolve the decompiled source of functions */
     var fnToString = Function.prototype.toString;
 
+    /** Used as a references for the max length of an array */
+    var maxArrayLength = Math.pow(2, 32) - 1;
+
     /**
      * Used as the maximum length of an array-like value.
      * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
@@ -1122,7 +1125,7 @@
      */
     function arrayMap(array, iterator) {
       var index = -1,
-          length = array ? array.length >>> 0 : 0,
+          length = array ? array.length : 0,
           result = Array(length);
 
       while (++index < length) {
@@ -2102,9 +2105,12 @@
     function baseInvoke(collection, methodName, args) {
       var index = -1,
           isFunc = typeof methodName == 'function',
-          length = collection && collection.length,
-          result = Array(length < 0 ? 0 : length >>> 0);
+          length = collection ? collection.length : 0,
+          result = [];
 
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+        result.length = length;
+      }
       baseEach(collection, function(value) {
         var func = isFunc ? methodName : (value != null && value[methodName]);
         result[++index] = func ? func.apply(value, args) : undefined;
@@ -5400,10 +5406,13 @@
      */
     function sortBy(collection, iterator, thisArg) {
       var index = -1,
-          length = collection && collection.length,
+          length = collection ? collection.length : 0,
           multi = iterator && isArray(iterator),
-          result = Array(length < 0 ? 0 : length >>> 0);
+          result = [];
 
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+        result.length = length;
+      }
       if (!multi) {
         iterator = lodash.callback(iterator, thisArg, 3);
       }
@@ -7328,7 +7337,7 @@
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
-          (support.nonEnumArgs && isArguments(object))) && length) >>> 0;
+          (support.nonEnumArgs && isArguments(object))) && length) || 0;
 
       var keyIndex,
           Ctor = object.constructor,
@@ -8899,14 +8908,18 @@
      * // => also calls `mage.castSpell(n)` three times
      */
     function times(n, iterator, thisArg) {
-      n = n < 0 ? 0 : n >>> 0;
+      n = nativeIsFinite(n = +n) && n > -1 ? n : 0;
       iterator = baseCallback(iterator, thisArg, 1);
 
       var index = -1,
           result = Array(n);
 
       while (++index < n) {
-        result[index] = iterator(index);
+        if (n < maxArrayLength) {
+          result[index] = iterator(index);
+        } else {
+          iterator(index);
+        }
       }
       return result;
     }

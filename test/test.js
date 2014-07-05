@@ -755,10 +755,9 @@
       deepEqual(actual, expected);
     });
 
-    test('should coerce errors to error objects', function() {
+    test('should coerce errors to error objects', 1, function() {
       var actual = _.attempt(function() { throw 'x'; });
-
-      deepEqual(actual, Error('x'));
+      ok(_.isEqual(actual, Error('x')));
     });
 
     test('should work with an error object from another realm', 1, function() {

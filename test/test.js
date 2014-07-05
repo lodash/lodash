@@ -775,6 +775,15 @@
         skipTest();
       }
     });
+
+    test('should return an unwrapped value when chaining', 1, function() {
+      if (!isNpm) {
+        strictEqual(_(_.constant('x')).attempt(), 'x');
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1164,8 +1173,7 @@
 
     test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var actual = _('hello world')[methodName]();
-        strictEqual(actual, expected);
+        strictEqual(_('hello world')[methodName](), expected);
       }
       else {
         skipTest();
@@ -1204,8 +1212,7 @@
 
     test('should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var actual = _('fred').capitalize();
-        strictEqual(actual, 'Fred');
+        strictEqual(_('fred').capitalize(), 'Fred');
       }
       else {
         skipTest();
@@ -9342,7 +9349,7 @@
       }
     });
 
-    test('should return intercept unwrapped values and return wrapped values when chaining', 2, function() {
+    test('should intercept unwrapped values and return wrapped values when chaining', 2, function() {
       if (!isNpm) {
         var intercepted,
             array = [1, 2, 3];
@@ -10398,10 +10405,9 @@
     test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
         var string = whitespace + 'a b c' + whitespace,
-            expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''),
-            actual = _(string)[methodName]();
+            expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
-        strictEqual(actual, expected);
+        strictEqual(_(string)[methodName](), expected);
       }
       else {
         skipTest();
@@ -11159,10 +11165,7 @@
     _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return an unwrapped value', 1, function() {
         if (!isNpm) {
-          var actual = methodName == 'reduceRight'
-            ? wrapped[methodName](_.identity)
-            : wrapped[methodName]();
-
+          var actual = wrapped[methodName]();
           ok(!(actual instanceof _));
         }
         else {
@@ -11187,7 +11190,8 @@
     _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` called without an `n` argument should return an unwrapped value', 1, function() {
         if (!isNpm) {
-          strictEqual(typeof wrapped[methodName](), 'number');
+          var actual = wrapped[methodName]();
+          strictEqual(typeof actual, 'number');
         }
         else {
           skipTest();

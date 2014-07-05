@@ -184,15 +184,15 @@
   /** Used to pass empty values to methods */
   var empties = [[], {}].concat(falsey.slice(1));
 
-  /** Used to check whether methods support error objects */
-  var errorTypes = [
-    'Error',
-    'EvalError',
-    'RangeError',
-    'ReferenceError',
-    'SyntaxError',
-    'TypeError',
-    'URIError'
+  /** Used to test error objects */
+  var errors = [
+    new Error,
+    new EvalError,
+    new RangeError,
+    new ReferenceError,
+    new SyntaxError,
+    new TypeError,
+    new URIError
   ];
 
   /** Used as the property name for wrapper metadata */
@@ -735,6 +735,47 @@
       });
     });
   }('a', 'b', 'c'));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.attempt');
+
+  (function() {
+    test('should return the result of `func`', 1, function() {
+      strictEqual(_.attempt(_.constant('x')), 'x');
+    });
+
+    test('should return the caught error', 1, function() {
+      var expected = _.map(errors, _.constant(true));
+
+      var actual = _.map(errors, function(error) {
+        return _.attempt(function() { throw error; }) === error;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should coerce errors to error objects', function() {
+      var actual = _.attempt(function() { throw 'x'; });
+
+      deepEqual(actual, Error('x'));
+    });
+
+    test('should work with an error object from another realm', 1, function() {
+      if (_._object) {
+        var expected = _.map(_._errors, _.constant(true));
+
+        var actual = _.map(_._errors, function(error) {
+          return _.attempt(function() { throw error; }) === error;
+        });
+
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -1383,9 +1424,8 @@
         });
       });
 
-      _.each(errorTypes, function(type) {
-        test('`_.' + methodName + '` should not clone ' + type + ' objects', 1, function() {
-          var error = new root[type];
+      _.each(errors, function(error) {
+        test('`_.' + methodName + '` should not clone ' + error.name + ' objects', 1, function() {
           strictEqual(func(error), error);
         });
       });
@@ -5257,7 +5297,15 @@
     });
 
     test('should perform comparisons between error objects', 1, function() {
-      var pairs = _.map(errorTypes, function(type, index) {
+      var pairs = _.map([
+        'Error',
+        'EvalError',
+        'RangeError',
+        'ReferenceError',
+        'SyntaxError',
+        'TypeError',
+        'URIError'
+      ], function(type, index, errorTypes) {
         var otherType = errorTypes[++index % errorTypes.length],
             CtorA = root[type],
             CtorB = root[otherType];
@@ -5527,8 +5575,7 @@
     var args = arguments;
 
     test('should return `true` for error objects', 1, function() {
-      var errors = [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],
-          expected = _.map(errors, _.constant(true));
+      var expected = _.map(errors, _.constant(true));
 
       var actual = _.map(errors, function(error) {
         return _.isError(error) === true;
@@ -11377,7 +11424,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 191, function() {
+    test('should accept falsey arguments', 192, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

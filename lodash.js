@@ -8175,11 +8175,11 @@
         'return __p\n}';
 
       var result = attempt(function() {
-        // provide the compiled function's source by its `toString` method or
-        // the `source` property as a convenience for inlining compiled templates
         return Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);
       });
 
+      // provide the compiled function's source by its `toString` method or
+      // the `source` property as a convenience for inlining compiled templates
       result.source = source;
       if (result instanceof Error) {
         throw result;

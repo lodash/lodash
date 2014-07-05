@@ -629,7 +629,7 @@
     /** Used to resolve the decompiled source of functions */
     var fnToString = Function.prototype.toString;
 
-    /** Used as a references for the max length of an array */
+    /** Used as a reference for the max length of an array */
     var maxArrayLength = Math.pow(2, 32) - 1;
 
     /**
@@ -751,10 +751,10 @@
      * and `zipObject`
      *
      * The non-chainable wrapper functions are:
-     * `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`, `endsWith`,
-     * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
+     * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
+     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
-     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, `isDate`,
+     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
      * `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`,
      * `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
@@ -2445,33 +2445,6 @@
 
       while (++index < length) {
         result[index] = object[props[index]];
-      }
-      return result;
-    }
-
-    /**
-     * Compiles a function from `source` using the `varNames` and `varValues`
-     * pairs to import free variables into the compiled function. If `sourceURL`
-     * is provided it is used as the sourceURL for the compiled function.
-     *
-     * @private
-     * @param {string} source The source to compile.
-     * @param {Array} varNames An array of free variable names.
-     * @param {Array} varValues An array of free variable values.
-     * @param {string} [sourceURL=''] The sourceURL of the source.
-     * @returns {Function} Returns the compiled function.
-     */
-    function compileFunction(source, varNames, varValues, sourceURL) {
-      sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
-
-      try {
-        // provide the compiled function's source by its `toString` method or
-        // the `source` property as a convenience for inlining compiled templates
-        var result = Function(varNames, 'return ' + source + sourceURL).apply(undefined, varValues);
-        result.source = source;
-      } catch(e) {
-        e.source = source;
-        throw e;
       }
       return result;
     }
@@ -8142,6 +8115,7 @@
       // use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
       var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']');
+      sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);
@@ -8200,7 +8174,17 @@
         source +
         'return __p\n}';
 
-      return compileFunction(source, importsKeys, importsValues, sourceURL);
+      var result = attempt(function() {
+        // provide the compiled function's source by its `toString` method or
+        // the `source` property as a convenience for inlining compiled templates
+        return Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);
+      });
+
+      result.source = source;
+      if (result instanceof Error) {
+        throw result;
+      }
+      return result;
     }
 
     /**
@@ -8396,6 +8380,34 @@
     }
 
     /*--------------------------------------------------------------------------*/
+
+    /**
+     * Attempts to execute `func`, returning either the result or the caught
+     * error object.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {*} func The function to attempt.
+     * @returns {*} Returns the `func` result or error object.
+     * @example
+     *
+     * // avoid throwing errors for invalid selectors
+     * var elements = _.attempt(function() {
+     *   return document.querySelectorAll(selector);
+     * });
+     *
+     * if (elements instanceof Error) {
+     *   elements = [];
+     * }
+     */
+    function attempt(func) {
+      try {
+        return func();
+      } catch(e) {
+        return isError(e) ? e : Error(e);
+      }
+    }
 
     /**
      * Creates a function bound to an optional `thisArg`. If `func` is a property
@@ -8912,10 +8924,10 @@
       iterator = baseCallback(iterator, thisArg, 1);
 
       var index = -1,
-          result = Array(n);
+          result = Array(nativeMin(n, maxArrayLength));
 
       while (++index < n) {
-        if (n < maxArrayLength) {
+        if (index < maxArrayLength) {
           result[index] = iterator(index);
         } else {
           iterator(index);
@@ -9057,6 +9069,7 @@
     /*--------------------------------------------------------------------------*/
 
     // add functions that return unwrapped values when chaining
+    lodash.attempt = attempt;
     lodash.camelCase = camelCase;
     lodash.capitalize = capitalize;
     lodash.clone = clone;

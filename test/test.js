@@ -10151,11 +10151,6 @@
   QUnit.module('lodash.times');
 
   (function() {
-    test('should rollover large `n` values', 1, function() {
-      var actual = _.times(Math.pow(2, 32) + 1);
-      deepEqual(actual, [0]);
-    });
-
     test('should coerce non-finite `n` values to `0`', 3, function() {
       _.each([-Infinity, NaN, Infinity], function(n) {
         deepEqual(_.times(n), []);

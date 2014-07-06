@@ -11,6 +11,9 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
+  /** Used as the semantic version number */
+  var VERSION = '3.0.0-pre';
+
   /** Used to compose bitmasks for wrapper metadata */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
@@ -20,14 +23,21 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
-  /** Used as the semantic version number */
-  var version = '3.0.0-pre';
-
   /** Used as the property name for wrapper metadata */
-  var expando = '__lodash@' + version + '__';
+  var EXPANDO = '__lodash@' + VERSION + '__';
 
   /** Used as the TypeError message for "Functions" methods */
-  var funcErrorText = 'Expected a function';
+  var FUNC_ERROR_TEXT = 'Expected a function';
+
+  /** Used as a reference for the max length of an array */
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
+
+  /**
+   * Used as the maximum length of an array-like value.
+   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+   * for more details.
+   */
+  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
   /** Used to generate unique IDs */
   var idCounter = 0;
@@ -629,16 +639,6 @@
     /** Used to resolve the decompiled source of functions */
     var fnToString = Function.prototype.toString;
 
-    /** Used as a reference for the max length of an array */
-    var maxArrayLength = Math.pow(2, 32) - 1;
-
-    /**
-     * Used as the maximum length of an array-like value.
-     * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
-     * for more details.
-     */
-    var maxSafeInteger = Math.pow(2, 53) - 1;
-
     /** Used to restore the original `_` reference in `_.noConflict` */
     var oldDash = context._;
 
@@ -692,6 +692,9 @@
         nativeNumIsFinite = isNative(nativeNumIsFinite = Number.isFinite) && nativeNumIsFinite,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
+
+    /** Used as the size, in bytes, of each Float64Array element */
+    var FLOAT64_BYTES_PER_ELEMENT = Float64Array && Float64Array.BYTES_PER_ELEMENT;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -1302,7 +1305,7 @@
       if (typeof thisArg == 'undefined') {
         return func;
       }
-      var data = func[expando];
+      var data = func[EXPANDO];
       if (typeof data == 'undefined') {
         if (support.funcNames) {
           data = !func.name;
@@ -1645,7 +1648,7 @@
      */
     function baseEach(collection, iterator) {
       var length = collection ? collection.length : 0;
-      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return baseForOwn(collection, iterator);
       }
       var index = -1,
@@ -1670,7 +1673,7 @@
      */
     function baseEachRight(collection, iterator) {
       var length = collection ? collection.length : 0;
-      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return baseForOwnRight(collection, iterator);
       }
       var iterable = toIterable(collection);
@@ -2108,7 +2111,7 @@
           length = collection ? collection.length : 0,
           result = [];
 
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
         result.length = length;
       }
       baseEach(collection, function(value) {
@@ -2214,7 +2217,9 @@
      */
     function basePartial(func, bitmask, args, thisArg) {
       if (func) {
-        var arity = func[expando] ? func[expando][2] : func.length;
+        var data = func[EXPANDO],
+            arity = data ? data[2] : func.length;
+
         arity -= args.length;
       }
       var isPartial = bitmask & PARTIAL_FLAG;
@@ -2734,7 +2739,7 @@
           isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
       if (!isBindKey && !isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       if (isPartial && !partialArgs.length) {
         bitmask &= ~PARTIAL_FLAG;
@@ -2744,7 +2749,7 @@
         bitmask &= ~PARTIAL_RIGHT_FLAG;
         isPartialRight = partialRightArgs = false;
       }
-      var data = !isBindKey && func[expando];
+      var data = !isBindKey && func[EXPANDO];
       if (data && data !== true) {
         // shallow clone `data`
         data = slice(data);
@@ -2876,8 +2881,8 @@
       // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
       cloneBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
         var byteLength = buffer.byteLength,
-            floatLength = Float64Array ? floor(byteLength / 8) : 0,
-            offset = floatLength * 8,
+            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
+            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
             result = new ArrayBuffer(byteLength);
 
         if (floatLength) {
@@ -2902,7 +2907,7 @@
      */
     var setData = !defineProperty ? identity : function(func, value) {
       descriptor.value = value;
-      defineProperty(func, expando, descriptor);
+      defineProperty(func, EXPANDO, descriptor);
       descriptor.value = null;
       return func;
     };
@@ -2987,7 +2992,7 @@
      */
     function toIterable(collection) {
       var length = collection ? collection.length : 0;
-      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return values(collection);
       } else if (support.unindexedChars && isString(collection)) {
         return collection.split('');
@@ -4355,7 +4360,7 @@
     function at(collection) {
       var length = collection ? collection.length : 0;
 
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
         collection = toIterable(collection);
       }
       return baseAt(collection, baseFlatten(arguments, false, false, 1));
@@ -4391,7 +4396,7 @@
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
 
-      if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         collection = values(collection);
         length = collection.length;
       }
@@ -5273,7 +5278,7 @@
      */
     function size(collection) {
       var length = collection ? collection.length : 0;
-      return (typeof length == 'number' && length > -1 && length <= maxSafeInteger)
+      return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)
         ? length
         : keys(collection).length;
     }
@@ -5383,7 +5388,7 @@
           multi = iterator && isArray(iterator),
           result = [];
 
-      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
         result.length = length;
       }
       if (!multi) {
@@ -5487,7 +5492,7 @@
      */
     function after(n, func) {
       if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
@@ -5515,7 +5520,7 @@
     function before(n, func) {
       var result;
       if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       return function() {
         if (--n > 0) {
@@ -5693,7 +5698,7 @@
       }
       while (length--) {
         if (!isFunction(funcs[length])) {
-          throw new TypeError(funcErrorText);
+          throw new TypeError(FUNC_ERROR_TEXT);
         }
       }
       return function() {
@@ -5844,7 +5849,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       wait = wait < 0 ? 0 : wait;
       if (options === true) {
@@ -5962,7 +5967,7 @@
      */
     function defer(func) {
       if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       var args = slice(arguments, 1);
       return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -5986,7 +5991,7 @@
      */
     function delay(func, wait) {
       if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -6029,7 +6034,7 @@
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       var memoized = function() {
         var key = resolver ? resolver.apply(this, arguments) : arguments[0];
@@ -6066,7 +6071,7 @@
      */
     function negate(predicate) {
       if (!isFunction(predicate)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       return function() {
         return !predicate.apply(this, arguments);
@@ -6193,7 +6198,7 @@
           trailing = true;
 
       if (!isFunction(func)) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       if (options === false) {
         leading = false;
@@ -6884,7 +6889,7 @@
         return true;
       }
       var length = value.length;
-      if ((typeof length == 'number' && length > -1 && length <= maxSafeInteger) &&
+      if ((typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) &&
           (isArray(value) || isString(value) || isArguments(value) ||
             (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;
@@ -8924,10 +8929,10 @@
       iterator = baseCallback(iterator, thisArg, 1);
 
       var index = -1,
-          result = Array(nativeMin(n, maxArrayLength));
+          result = Array(nativeMin(n, MAX_ARRAY_LENGTH));
 
       while (++index < n) {
-        if (index < maxArrayLength) {
+        if (index < MAX_ARRAY_LENGTH) {
           result[index] = iterator(index);
         } else {
           iterator(index);
@@ -9188,7 +9193,7 @@
      * @memberOf _
      * @type string
      */
-    lodash.VERSION = version;
+    lodash.VERSION = VERSION;
 
     // add "Chaining" functions to the wrapper
     lodash.prototype.chain = wrapperChain;

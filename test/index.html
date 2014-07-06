@@ -102,10 +102,11 @@
 				setProperty(String.prototype, '_contains', String.prototype.contains);
 				setProperty(String.prototype, 'contains', String.prototype._contains ? function() {} : Boolean);
 
-				setProperty(window, 'WinRTError', Error);
-
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
 				document.createDocumentFragment = function() {};
+
+				setProperty(window, 'global', window);
+				setProperty(window, 'WinRTError', Error);
 			}
 
 			function removeBizarroMethods() {
@@ -144,12 +145,14 @@
 				} else {
 					delete String.prototype.contains;
 				}
-				setProperty(window, 'WinRTError', undefined);
 				setProperty(Function.prototype, 'toString', Function.prototype._toString);
 				setProperty(Object.prototype, 'hasOwnProperty', Object.prototype._hasOwnProperty);
 
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);
+
+				setProperty(window, 'global', undefined);
+				setProperty(window, 'WinRTError', undefined);
 
 				delete Array._isArray;
 				delete Date._now;

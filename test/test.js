@@ -6658,46 +6658,59 @@
   QUnit.module('lodash.matches');
 
   (function() {
-    var object = { 'a': 1, 'b': 2, 'c': 3 },
-        sources = [{ 'a': 1 }, { 'a': 1, 'c': 3 }];
-
     test('should create a function that performs a deep comparison between a given object and the `source` object', 6, function() {
-      _.each(sources, function(source, index) {
-        var matches = _.matches(source);
-        strictEqual(matches.length, 1);
-        strictEqual(matches(object), true);
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          matches = _.matches({ 'a': 1 });
 
-        matches = _.matches(index ? { 'c': 3, 'd': 4 } : { 'b': 1 });
-        strictEqual(matches(object), false);
-      });
+      strictEqual(matches.length, 1);
+      strictEqual(matches(object), true);
+
+      matches = _.matches({ 'b': 1 });
+      strictEqual(matches(object), false);
+
+      matches = _.matches({ 'a': 1, 'c': 3 });
+      strictEqual(matches(object), true);
+
+      matches = _.matches({ 'c': 3, 'd': 4 });
+      strictEqual(matches(object), false);
+
+      object = { 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 };
+      matches = _.matches({ 'a': { 'b': { 'c': 1 } } });
+
+      strictEqual(matches(object), true);
     });
 
     test('should return `true` when comparing an empty `source`', 1, function() {
-      var expected = _.map(empties, _.constant(true));
+      var object = { 'a': 1 },
+          expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
         var matches = _.matches(value);
-        return matches(object) === true;
+        return matches(object);
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should not error error for falsey `object` values', 2, function() {
-      var expected = _.map(falsey, _.constant(true));
+    test('should return `true` when comparing a `source` of empty arrays and objects', 1, function() {
+      var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
+          matches = _.matches({ 'a': [], 'b': {} }),
+          actual = _.filter(objects, matches);
 
-      _.each(sources, function(source) {
-        var matches = _.matches(source);
+      deepEqual(actual, objects);
+    });
 
-        var actual = _.map(falsey, function(value, index) {
-          try {
-            var result = index ? matches(value) : matches();
-            return result === false;
-          } catch(e) { }
-        });
+    test('should not error for falsey `object` values', 1, function() {
+      var expected = _.map(falsey, _.constant(false)),
+          matches = _.matches({ 'a': 1 });
 
-        deepEqual(actual, expected);
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return index ? matches(value) : matches();
+        } catch(e) { }
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should return `true` when comparing an empty `source` to a falsey `object`', 1, function() {
@@ -6710,6 +6723,86 @@
           return result === true;
         } catch(e) { }
       });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should search arrays of `source` for values', 3, function() {
+      var objects = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
+          matches = _.matches({ 'a': ['d'] }),
+          actual = _.filter(objects, matches);
+
+      deepEqual(actual, [objects[1]]);
+
+      matches = _.matches({ 'a': ['b', 'd'] });
+      actual = _.filter(objects, matches);
+      deepEqual(actual, []);
+
+      matches = _.matches({ 'a': ['d', 'b'] });
+      actual = _.filter(objects, matches);
+      deepEqual(actual, []);
+    });
+
+    test('should perform a partial comparison of all objects within arrays of `source`', 1, function() {
+      var objects = [
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5, 'd': 6 }] },
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 6, 'd': 7 }] }
+      ];
+
+      var matches = _.matches({ 'a': [{ 'b': 1 }, { 'b': 4, 'c': 5 }] }),
+          actual = _.filter(objects, matches);
+
+      deepEqual(actual, [objects[0]]);
+    });
+
+    test('should handle a `source` with `undefined` values', 2, function() {
+      var expected = [false, false, true],
+          matches = _.matches({ 'b': undefined }),
+          objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+          actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
+
+      matches = _.matches({ 'a': { 'c': undefined } });
+      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not match by inherited `source` properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = { 'b': 2 };
+
+      var source = new Foo;
+      source.a = 1;
+
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
+          expected = _.map(objects, _.constant(true)),
+          matches = _.matches(source),
+          actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with a function for `source`', 1, function() {
+      function source() {}
+      source.a = 1;
+      source.b = 2;
+
+      var expected = [false, true],
+          matches = _.matches(source),
+          objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
+          actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should match problem JScript properties (test in IE < 9)', 1, function() {
+      var expected = [false, true],
+          matches = _.matches(shadowedObject),
+          objects = [{}, shadowedObject],
+          actual = _.map(objects, matches);
 
       deepEqual(actual, expected);
     });
@@ -10644,15 +10737,15 @@
   QUnit.module('lodash.where');
 
   (function() {
-    var objects = [
-      { 'a': 1 },
-      { 'a': 1 },
-      { 'a': 1, 'b': 2 },
-      { 'a': 2, 'b': 2 },
-      { 'a': 3 }
-    ];
-
     test('should filter by `source` properties', 12, function() {
+      var objects = [
+        { 'a': 1 },
+        { 'a': 1 },
+        { 'a': 1, 'b': 2 },
+        { 'a': 2, 'b': 2 },
+        { 'a': 3 }
+      ];
+
       var pairs = [
         [{ 'a': 1 }, [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]],
         [{ 'a': 2 }, [{ 'a': 2, 'b': 2 }]],
@@ -10669,106 +10762,17 @@
       });
     });
 
-    test('should not filter by inherited `source` properties', 1, function() {
-      function Foo() {}
-      Foo.prototype = { 'a': 2 };
-
-      var source = new Foo;
-      source.b = 2;
-
-      var expected = [objects[2], objects[3]],
-          actual = _.where(objects, source);
-
-      deepEqual(actual, expected);
-    });
-
-    test('should filter by problem JScript properties (test in IE < 9)', 1, function() {
-      var collection = [shadowedObject];
-      deepEqual(_.where(collection, shadowedObject), [shadowedObject]);
-    });
-
     test('should work with an object for `collection`', 1, function() {
-      var collection = {
+      var object = {
         'x': { 'a': 1 },
         'y': { 'a': 3 },
         'z': { 'a': 1, 'b': 2 }
       };
 
-      var expected = [collection.x, collection.z],
-          actual = _.where(collection, { 'a': 1 });
+      var expected = [object.x, object.z],
+          actual = _.where(object, { 'a': 1 });
 
       deepEqual(actual, expected);
-    });
-
-    test('should work with a function for `source`', 1, function() {
-      function source() {}
-      source.a = 2;
-
-      deepEqual(_.where(objects, source), [{ 'a': 2, 'b': 2 }]);
-    });
-
-    test('should match all elements when provided an empty `source`', 1, function() {
-      var expected = _.map(empties, _.constant(objects));
-
-      var actual = _.map(empties, function(value) {
-        var result = _.where(objects, value);
-        return result !== objects && result;
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should perform a deep partial comparison of `source`', 1, function() {
-      var collection = [{ 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 }],
-          expected = collection.slice(),
-          actual = _.where(collection, { 'a': { 'b': { 'c': 1 } } });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should search arrays of `source` for values', 4, function() {
-      var collection = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
-          actual = _.where(collection, { 'a': ['d'] });
-
-      deepEqual(actual, [collection[1]]);
-
-      actual = _.where(collection, { 'a': [] });
-      deepEqual(actual, collection);
-
-      actual = _.where(collection, { 'a': ['b', 'd'] });
-      deepEqual(actual, []);
-
-      actual = _.where(collection, { 'a': ['d', 'b'] });
-      deepEqual(actual, []);
-    });
-
-    test('should perform a partial comparison of all objects within arrays of `source`', 1, function() {
-      var collection = [
-        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5, 'd': 6 }] },
-        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 6, 'd': 7 }] }
-      ];
-
-      var actual = _.where(collection, { 'a': [{ 'b': 1 }, { 'b': 4, 'c': 5 }] });
-      deepEqual(actual, [collection[0]]);
-    });
-
-    test('should handle a `source` with `undefined` values', 4, function() {
-      var source = { 'b': undefined },
-          actual = _.where([{ 'a': 1 }, { 'a': 1, 'b': 1 }], source);
-
-      deepEqual(actual, []);
-
-      var object = { 'a': 1, 'b': undefined };
-      actual = _.where([object], source);
-      deepEqual(actual, [object]);
-
-      source = { 'a': { 'c': undefined } };
-      actual = _.where([{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }], source);
-      deepEqual(actual, []);
-
-      object = { 'a': { 'b': 1, 'c': undefined } };
-      actual = _.where([object], source);
-      deepEqual(actual, [object]);
     });
   }());
 

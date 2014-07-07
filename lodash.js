@@ -8186,7 +8186,7 @@
       // provide the compiled function's source by its `toString` method or
       // the `source` property as a convenience for inlining compiled templates
       result.source = source;
-      if (result instanceof Error) {
+      if (isError(result)) {
         throw result;
       }
       return result;
@@ -8402,7 +8402,7 @@
      *   return document.querySelectorAll(selector);
      * });
      *
-     * if (elements instanceof Error) {
+     * if (_.isError(elements)) {
      *   elements = [];
      * }
      */

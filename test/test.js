@@ -316,7 +316,7 @@
       ].join('\n')));
     }
     catch(e) {
-      if (typeof require != 'function') {
+      if (amd || isJava || typeof require != 'function' || !_.isObject(require.cache)) {
         return;
       }
     }

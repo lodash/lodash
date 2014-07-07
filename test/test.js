@@ -4,10 +4,10 @@
   var undefined;
 
   /** Used as the size to cover large array optimizations */
-  var largeArraySize = 200;
+  var LARGE_ARRAY_SIZE = 200;
 
   /** Used as the maximum length an array-like object */
-  var maxSafeInteger = Math.pow(2, 53) - 1;
+  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
   /** Used as a reference to the global object */
   var root = (typeof global == 'object' && global) || this;
@@ -178,6 +178,9 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
+  /** Used as the property name for wrapper metadata */
+  var EXPANDO = '__lodash@'  + _.VERSION + '__';
+
   /** Used to pass falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
@@ -194,9 +197,6 @@
     new TypeError,
     new URIError
   ];
-
-  /** Used as the property name for wrapper metadata */
-  var expando = '__lodash@'  + _.VERSION + '__';
 
   /** Used to set property descriptors */
   var defineProperty = (function() {
@@ -533,7 +533,7 @@
 
       var object = { 'a': 1 },
           otherObject = { 'b': 2 },
-          largeArray = _.times(largeArraySize, _.constant(object));
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
       if (lodashBizarro) {
         try {
@@ -563,7 +563,7 @@
         } catch(e) {
           actual = null;
         }
-        ok(!(expando in actual), message('Object.defineProperty'));
+        ok(!(EXPANDO in actual), message('Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -2053,16 +2053,16 @@
 
       if (defineProperty && _.support.funcDecomp) {
         _.callback(a, object);
-        ok(expando in a);
+        ok(EXPANDO in a);
 
         _.callback(b, object);
-        ok(!(expando in b));
+        ok(!(EXPANDO in b));
 
         if (_.support.funcNames) {
           _.support.funcNames = false;
           _.callback(c, object);
 
-          ok(expando in c);
+          ok(EXPANDO in c);
           _.support.funcNames = true;
         }
         else {
@@ -2079,7 +2079,7 @@
 
       if (defineProperty && lodashBizarro) {
         lodashBizarro.callback(a, {});
-        ok(!(expando in a));
+        ok(!(EXPANDO in a));
       }
       else {
         skipTest();
@@ -2691,8 +2691,8 @@
     });
 
     test('should work with large arrays', 1, function() {
-      var array1 = _.range(largeArraySize + 1),
-          array2 = _.range(largeArraySize),
+      var array1 = _.range(LARGE_ARRAY_SIZE + 1),
+          array2 = _.range(LARGE_ARRAY_SIZE),
           a = {},
           b = {},
           c = {};
@@ -2700,13 +2700,13 @@
       array1.push(a, b, c);
       array2.push(b, c, a);
 
-      deepEqual(_.difference(array1, array2), [largeArraySize]);
+      deepEqual(_.difference(array1, array2), [LARGE_ARRAY_SIZE]);
     });
 
     test('should work with large arrays of objects', 1, function() {
       var object1 = {},
           object2 = {},
-          largeArray = _.times(largeArraySize, _.constant(object1));
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object1));
 
       deepEqual(_.difference([object1, object2], largeArray), [object2]);
     });
@@ -2957,7 +2957,7 @@
     });
 
     test('should work with `position` >= `string.length`', 4, function() {
-      _.each([3, 5, maxSafeInteger, Infinity], function(position) {
+      _.each([3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
         strictEqual(_.endsWith(string, 'c', position), true);
       });
     });
@@ -2982,7 +2982,7 @@
     });
 
     test('should always return `true` when `target` is an empty string regardless of `position`', 1, function() {
-      ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, maxSafeInteger, Infinity], function(position) {
+      ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
         return _.endsWith(string, '', position, true);
       }));
     });
@@ -4162,7 +4162,7 @@
           stringObject = Object(stringLiteral),
           expected = [stringLiteral, stringObject];
 
-      var largeArray = _.times(largeArraySize, function(count) {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function(count) {
         return count % 2 ? stringObject : stringLiteral;
       });
 
@@ -4449,7 +4449,7 @@
     var array = [1, new Foo, 3, new Foo],
         indexOf = _.indexOf;
 
-    var largeArray = _.times(largeArraySize, function() {
+    var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
       return new Foo;
     });
 
@@ -4568,17 +4568,17 @@
 
     test('should work with large arrays of objects', 1, function() {
       var object = {},
-          largeArray = _.times(largeArraySize, _.constant(object));
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
       deepEqual(_.intersection([object], largeArray), [object]);
     });
 
     test('should work with large arrays of objects', 2, function() {
       var object = {},
-          largeArray = _.times(largeArraySize, _.constant(object));
+          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
       deepEqual(_.intersection([object], largeArray), [object]);
-      deepEqual(_.intersection(_.range(largeArraySize), null, [1]), [1]);
+      deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), null, [1]), [1]);
     });
 
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
@@ -4956,9 +4956,9 @@
       strictEqual(_.isEmpty(new Foo), true);
     });
 
-    test('should not treat objects with lengths larger than `maxSafeInteger` as array-like', 1, function() {
+    test('should not treat objects with lengths larger than `MAX_SAFE_INTEGER` as array-like', 1, function() {
       function Foo() {}
-      Foo.prototype.length = maxSafeInteger + 1;
+      Foo.prototype.length = MAX_SAFE_INTEGER + 1;
 
       strictEqual(_.isEmpty(new Foo), true);
     });
@@ -8878,8 +8878,8 @@
       strictEqual(_.size({ 'length': -1 }), 1);
     });
 
-    test('should not treat objects with lengths larger than `maxSafeInteger` as array-like', 1, function() {
-      strictEqual(_.size({ 'length': maxSafeInteger + 1 }), 1);
+    test('should not treat objects with lengths larger than `MAX_SAFE_INTEGER` as array-like', 1, function() {
+      strictEqual(_.size({ 'length': MAX_SAFE_INTEGER + 1 }), 1);
     });
 
     test('should not treat objects with non-number lengths as array-like', 1, function() {
@@ -9293,7 +9293,7 @@
     });
 
     test('should work with `position` >= `string.length`', 4, function() {
-      _.each([3, 5, maxSafeInteger, Infinity], function(position) {
+      _.each([3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
         strictEqual(_.startsWith(string, 'a', position), false);
       });
     });
@@ -9316,7 +9316,7 @@
     });
 
     test('should always return `true` when `target` is an empty string regardless of `position`', 1, function() {
-      ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, maxSafeInteger, Infinity], function(position) {
+      ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
         return _.startsWith(string, '', position, true);
       }));
     });
@@ -10547,7 +10547,7 @@
     test('should work with large arrays', 1, function() {
       var object = {};
 
-      var largeArray = _.times(largeArraySize, function(index) {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, function(index) {
         switch (index % 3) {
           case 0: return 0;
           case 1: return 'a';
@@ -10561,7 +10561,7 @@
     test('should work with large arrays of boolean, `null`, and `undefined` values', 1, function() {
       var array = [],
           expected = [true, false, null, undefined],
-          count = Math.ceil(largeArraySize / expected.length);
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {
         push.apply(array, expected);
@@ -10573,7 +10573,7 @@
     test('should distinguish between numbers and numeric strings', 1, function() {
       var array = [],
           expected = ['2', 2, Object('2'), Object(2)],
-          count = Math.ceil(largeArraySize / expected.length);
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {
         push.apply(array, expected);

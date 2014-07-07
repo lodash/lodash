@@ -105,6 +105,10 @@
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
 				document.createDocumentFragment = function() {};
 
+				setProperty(window, '_Float64Array', window.Float64Array);
+				if (!_Float64Array) {
+					setProperty(window, 'Float64Array', window.Uint8Array);
+				}
 				setProperty(window, 'global', window);
 				setProperty(window, 'WinRTError', Error);
 			}
@@ -144,6 +148,9 @@
 					setProperty(String.prototype, 'contains', String.prototype._contains);
 				} else {
 					delete String.prototype.contains;
+				}
+				if (!_Float64Array) {
+					setProperty(window, 'Float64Array', undefined);
 				}
 				setProperty(Function.prototype, 'toString', Function.prototype._toString);
 				setProperty(Object.prototype, 'hasOwnProperty', Object.prototype._hasOwnProperty);

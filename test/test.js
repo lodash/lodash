@@ -316,7 +316,9 @@
       ].join('\n')));
     }
     catch(e) {
-      return;
+      if (typeof require != 'function') {
+        return;
+      }
     }
     // load ES6 Set shim
     require('./asset/set');
@@ -338,14 +340,14 @@
     });
 
     // fake DOM
-    setProperty(global, 'window', {});
-    setProperty(global.window, 'document', {});
-    setProperty(global.window.document, 'createDocumentFragment', function() {
+    setProperty(root, 'window', {});
+    setProperty(root.window, 'document', {});
+    setProperty(root.window.document, 'createDocumentFragment', function() {
       return { 'nodeType': 11 };
     });
 
     // fake `WinRTError`
-    setProperty(global, 'WinRTError', Error);
+    setProperty(root, 'WinRTError', Error);
 
     // add extensions
     Function.prototype._method = _.noop;
@@ -380,6 +382,10 @@
     var _contains = String.prototype.contains;
     setProperty(String.prototype, 'contains',  _contains ? _.noop : Boolean);
 
+    var _Float64Array = root.Float64Array;
+    if (!_Float64Array) {
+      setProperty(root, 'Float64Array', root.Uint8Array);
+    }
     // clear cache so Lo-Dash can be reloaded
     emptyObject(require.cache);
 
@@ -401,8 +407,11 @@
     } else {
       delete String.prototype.contains;
     }
-    delete global.window;
-    delete global.WinRTError;
+    if (!_Float64Array) {
+      delete root.Float64Array;
+    }
+    delete root.window;
+    delete root.WinRTError;
     delete Function.prototype._method;
   }());
 
@@ -515,11 +524,11 @@
       }
     });
 
-    test('should avoid overwritten native methods', 9, function() {
+    test('should avoid overwritten native methods', 11, function() {
       function Foo() {}
 
       function message(methodName) {
-        return '`_.' + methodName + '` should avoid overwritten native methods';
+        return '`' + methodName + '` should avoid overwritten native methods';
       }
 
       var object = { 'a': 1 },
@@ -587,9 +596,23 @@
           actual = null;
         }
         strictEqual(actual, true, message('String#contains'));
+
+        if (root.Uint8Array) {
+          try {
+            var array = new Uint8Array(new ArrayBuffer(8));
+            actual = lodashBizarro.clone(array);
+          } catch(e) {
+            actual = null;
+          }
+          deepEqual(actual, array, message('Float64Array'));
+          notStrictEqual(actual, array, message('Float64Array'));
+        }
+        else {
+          skipTest(2);
+        }
       }
       else {
-        skipTest(9);
+        skipTest(11);
       }
     });
   }());
@@ -4847,7 +4870,7 @@
       var expected = !body;
       strictEqual(_.isElement(new Element), expected);
 
-      if (lodashBizarro) {
+      if (lodashBizarro && document) {
         strictEqual(lodashBizarro.isElement(new Element), !expected);
       }
       else {

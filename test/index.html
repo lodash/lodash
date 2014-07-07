@@ -106,7 +106,7 @@
 				document.createDocumentFragment = function() {};
 
 				setProperty(window, '_Float64Array', window.Float64Array);
-				if (!_Float64Array) {
+				if (!window._Float64Array) {
 					setProperty(window, 'Float64Array', window.Uint8Array);
 				}
 				setProperty(window, 'global', window);
@@ -149,7 +149,7 @@
 				} else {
 					delete String.prototype.contains;
 				}
-				if (!_Float64Array) {
+				if (!window._Float64Array) {
 					setProperty(window, 'Float64Array', undefined);
 				}
 				setProperty(Function.prototype, 'toString', Function.prototype._toString);

@@ -8907,9 +8907,12 @@
       deepEqual(_.shuffle(object).sort(), array);
     });
 
-    test('should shuffle an object', 1, function() {
-      var actual = _.shuffle(object);
-      deepEqual(actual.sort(), array);
+    test('should shuffle small collections', 1, function() {
+      var actual = _.times(1000, function() {
+        return _.shuffle([1, 2]);
+      });
+
+      deepEqual(_.sortBy(_.uniq(actual, String), '0'), [[1, 2], [2, 1]]);
     });
 
     test('should treat number values for `collection` as empty', 1, function() {

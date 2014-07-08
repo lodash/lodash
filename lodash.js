@@ -5242,13 +5242,16 @@
     function shuffle(collection) {
       collection = toIterable(collection);
 
-      var index = -1,
+      var index = 0,
           length = collection.length,
           result = Array(length);
 
+      if (length) {
+        result[index] = collection[index];
+      }
       while (++index < length) {
         var value = collection[index],
-            rand = baseRandom(0, index);
+            rand = baseRandom(0, index - 1);
 
         result[index] = result[rand];
         result[rand] = value;

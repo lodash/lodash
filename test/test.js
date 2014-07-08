@@ -6680,6 +6680,15 @@
       strictEqual(matches(object), true);
     });
 
+    test('should compare a variety of `source` object values', 2, function() {
+      var object = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 }  },
+          otherObject = _.assign({}, object, { 'a': false, 'c': 3, 'f': { 'g': '6' } }),
+          matches = _.matches(object);
+
+      strictEqual(matches(object), true);
+      strictEqual(matches(otherObject), false);
+    });
+
     test('should return `true` when comparing an empty `source`', 1, function() {
       var object = { 'a': 1 },
           expected = _.map(empties, _.constant(true));
@@ -10602,6 +10611,10 @@
     test('should return unique values of a sorted array', 1, function() {
       var array = [1, 1, 2, 2, 3];
       deepEqual(_.uniq(array), [1, 2, 3]);
+    });
+
+    test('should treat object instances as uniq', 1, function() {
+      deepEqual(_.uniq(objects), objects);
     });
 
     test('should work with `isSorted`', 1, function() {

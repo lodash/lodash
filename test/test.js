@@ -6689,6 +6689,22 @@
       strictEqual(matches(otherObject), false);
     });
 
+    test('should not change match behavior if `source` is augmented', 6, function() {
+      _.each([{ 'a': 1 }, { 'a': 1, 'b': 2 }], function(source) {
+        var object = _.clone(source),
+            matches = _.matches(source);
+
+        strictEqual(matches(object), true);
+
+        source.a = 2;
+        source.b = 1;
+        source.c = 3;
+
+        strictEqual(matches(object), true);
+        strictEqual(matches(source), false);
+      });
+    });
+
     test('should return `true` when comparing an empty `source`', 1, function() {
       var object = { 'a': 1 },
           expected = _.map(empties, _.constant(true));

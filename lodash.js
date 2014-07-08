@@ -8524,14 +8524,17 @@
      * // => { 'name': 'barney', 'age': 36 }
      */
     function matches(source) {
-      var props = keys(source),
-          propsLength = props.length,
-          key = props[0],
-          value = propsLength && source[key];
+      var keyVals = pairs(source),
+          keyValsLength = keyVals.length;
 
+      if (keyValsLength) {
+        var keyVal = keyVals[0],
+            key = keyVal[0],
+            value = keyVal[1];
+      }
       // fast path the common case of providing an object with a single
       // property containing a primitive value
-      if (propsLength == 1 && value === value && !isObject(value)) {
+      if (keyValsLength == 1 && value === value && !isObject(value)) {
         return function(object) {
           if (object == null) {
             return false;
@@ -8542,14 +8545,15 @@
         };
       }
       return function(object) {
-        var length = propsLength;
+        var length = keyValsLength;
         if (length && object == null) {
           return false;
         }
         while (length--) {
-          var key = props[length];
+          keyVal = keyVals[length];
+          key = keyVal[0];
           if (!(hasOwnProperty.call(object, key) &&
-                baseIsEqual(source[key], object[key], null, true))) {
+                baseIsEqual(keyVal[1], object[key], null, true))) {
             return false;
           }
         }

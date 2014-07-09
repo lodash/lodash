@@ -8525,36 +8525,32 @@
      * // => { 'name': 'barney', 'age': 36 }
      */
     function matches(source) {
-      var keyVals = pairs(source),
-          keyValsLength = keyVals.length;
+      var props = keys(source),
+          length = props.length,
+          index = length,
+          modes = Array(length),
+          vals = Array(length);
 
-      if (keyValsLength) {
-        var keyVal = keyVals[0],
-            key = keyVal[0],
-            value = keyVal[1];
-      }
-      // fast path the common case of providing an object with a single
-      // property containing a primitive value
-      if (keyValsLength == 1 && value === value && !isObject(value)) {
-        return function(object) {
-          if (object == null) {
-            return false;
-          }
-          // treat `-0` vs. `+0` as not equal
-          var other = object[key];
-          return value === other && (value !== 0 || (1 / value == 1 / other)) && hasOwnProperty.call(object, key);
-        };
+      while (index--) {
+        var value = source[props[index]],
+            isDeep = value !== value || (value === 0 && 1 / value < 0) || isObject(value);
+
+        modes[index] = isDeep;
+        vals[index] = isDeep ? baseClone(value, isDeep) : value;
       }
       return function(object) {
-        var length = keyValsLength;
-        if (length && object == null) {
-          return false;
+        index = length;
+        if (object == null) {
+          return !index;
         }
-        while (length--) {
-          keyVal = keyVals[length];
-          key = keyVal[0];
-          if (!(hasOwnProperty.call(object, key) &&
-                baseIsEqual(keyVal[1], object[key], null, true))) {
+        while (index--) {
+          if (modes[index] ? !hasOwnProperty.call(object, props[index]) : vals[index] !== object[props[index]]) {
+            return false;
+          }
+        }
+        index = length;
+        while (index--) {
+          if (modes[index] ? !baseIsEqual(vals[index], object[props[index]], null, true) : !hasOwnProperty.call(object, props[index])) {
             return false;
           }
         }

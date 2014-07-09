@@ -181,10 +181,10 @@
   /** Used as the property name for wrapper metadata */
   var EXPANDO = '__lodash@'  + _.VERSION + '__';
 
-  /** Used to pass falsey values to methods */
+  /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
-  /** Used to pass empty values to methods */
+  /** Used to provide empty values to methods */
   var empties = [[], {}].concat(falsey.slice(1));
 
   /** Used to test error objects */
@@ -1506,7 +1506,7 @@
         }
       });
 
-      test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
+      test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
         var argsList = [];
 
         func(klass, function() {
@@ -1803,7 +1803,7 @@
       deepEqual(actual, { '4': 1, '6':  2 });
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.countBy(array, function() {
@@ -2130,11 +2130,11 @@
         skipTest(4);
       }
     });
-    
-    test('should pass any additional arguments after reaching arity target', 3, function() {
-      var curried = _.curry(fn, 2);
+
+    test('should provide additional arguments after reaching arity target', 3, function() {
+      var curried = _.curry(fn, 3);
       deepEqual(curried(1)(2, 3, 4), [1, 2, 3, 4]);
-      deepEqual(curried(1, 2, 3, 4), [1, 2, 3, 4]);
+      deepEqual(curried(1, 2)(3, 4, 5), [1, 2, 3, 4, 5]);
       deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
     });
 
@@ -2227,13 +2227,13 @@
       }
     });
 
-    test('should pass any additional arguments after reaching arity target', 3, function() {
-      var curried = _.curryRight(fn, 2);
+    test('should provide additional arguments after reaching arity target', 3, function() {
+      var curried = _.curryRight(fn, 3);
       deepEqual(curried(4)(1, 2, 3), [1, 2, 3, 4]);
-      deepEqual(curried(1, 2, 3, 4), [1, 2, 3, 4]);
+      deepEqual(curried(4, 5)(1, 2, 3), [1, 2, 3, 4, 5]);
       deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
     });
-    
+
     test('should return a function with a `length` of `0`', 6, function() {
       _.times(2, function(index) {
         var curried = index ? _.curryRight(fn, 4) : _.curryRight(fn);
@@ -2848,7 +2848,7 @@
       deepEqual(actual, [1]);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args;
 
       _.dropRightWhile(array, function() {
@@ -2910,7 +2910,7 @@
       deepEqual(actual, [3]);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args;
 
       _.dropWhile(array, function() {
@@ -3467,7 +3467,7 @@
       deepEqual(actual, [2, 3]);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args;
 
       _.takeRightWhile(array, function() {
@@ -3529,7 +3529,7 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args;
 
       _.takeWhile(array, function() {
@@ -3816,7 +3816,7 @@
       var array = [1, 2, 3],
           func = _[methodName];
 
-      test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
+      test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
         var args,
             expected = [1, 0, array];
 
@@ -4081,7 +4081,7 @@
     var func = _[methodName],
         isMerge = methodName == 'merge';
 
-    test('`_.' + methodName + '` should pass the correct `callback` arguments', 3, function() {
+    test('`_.' + methodName + '` should provide the correct `callback` arguments', 3, function() {
       var args,
           object = { 'a': 1 },
           source = { 'a': 2 };
@@ -4223,7 +4223,7 @@
       deepEqual(actual, { '4': [4], '6':  [6, 6] });
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.groupBy(array, function() {
@@ -5432,7 +5432,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var argsList = [];
 
       var object1 = {
@@ -6515,7 +6515,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.map(array, function() {
@@ -6610,7 +6610,7 @@
   (function() {
     var object = { 'a': 1, 'b': 2, 'c': 3 };
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.mapValues(object, function() {
@@ -7149,7 +7149,7 @@
       strictEqual(actual, isMax ? 1 : 3);
     });
 
-    test('`_.' + methodName + '` should pass the correct `callback` arguments when iterating an array', 1, function() {
+    test('`_.' + methodName + '` should provide the correct `callback` arguments when iterating an array', 1, function() {
       var args;
 
       func(array, function() {
@@ -7159,7 +7159,7 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('`_.' + methodName + '` should pass the correct `callback` arguments when iterating an object', 1, function() {
+    test('`_.' + methodName + '` should provide the correct `callback` arguments when iterating an object', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           firstKey = _.first(_.keys(object));
@@ -7493,7 +7493,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
@@ -7950,7 +7950,7 @@
       deepEqual(actual, [[1, 1], [0]]);
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.partition(array, function() {
@@ -8050,7 +8050,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
@@ -8358,7 +8358,7 @@
       strictEqual(_.reduce(array), 1);
     });
 
-    test('should pass the correct `callback` arguments when iterating an array', 2, function() {
+    test('should provide the correct `callback` arguments when iterating an array', 2, function() {
       var args;
 
       _.reduce(array, function() {
@@ -8375,7 +8375,7 @@
       deepEqual(args, [1, 2, 1, array]);
     });
 
-    test('should pass the correct `callback` arguments when iterating an object', 2, function() {
+    test('should provide the correct `callback` arguments when iterating an object', 2, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           firstKey = _.first(_.keys(object));
@@ -8437,7 +8437,7 @@
       strictEqual(_.reduceRight(array), 3);
     });
 
-    test('should pass the correct `callback` arguments when iterating an array', 2, function() {
+    test('should provide the correct `callback` arguments when iterating an array', 2, function() {
       var args;
 
       _.reduceRight(array, function() {
@@ -8454,7 +8454,7 @@
       deepEqual(args, [3, 2, 1, array]);
     });
 
-    test('should pass the correct `callback` arguments when iterating an object', 2, function() {
+    test('should provide the correct `callback` arguments when iterating an object', 2, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.last(_.keys(object));
@@ -8633,7 +8633,7 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should pass the correct `predicate` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args,
           array = [1, 2, 3];
 
@@ -9214,7 +9214,7 @@
       deepEqual(actual, [1, 2, 3]);
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.sortBy(objects, function() {
@@ -9339,7 +9339,7 @@
         func = _[methodName],
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
-    test('`_.' + methodName + '` should pass the correct `callback` arguments', 1, function() {
+    test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
       var args;
 
       func(array, 40, function() {
@@ -10373,7 +10373,7 @@
       });
     });
 
-    test('should pass the correct `callback` arguments', 1, function() {
+    test('should provide the correct `callback` arguments', 1, function() {
       var args;
 
       _.times(1, function() {
@@ -10467,7 +10467,7 @@
       'object': { 'a': 1, 'b': 2, 'c': 3 }
     },
     function(object, key) {
-      test('should pass the correct `callback` arguments when transforming an ' + key, 2, function() {
+      test('should provide the correct `callback` arguments when transforming an ' + key, 2, function() {
         var args;
 
         _.transform(object, function() {
@@ -10860,7 +10860,7 @@
       strictEqual(p('fred, barney, & pebbles'), '<p>fred, barney, &amp; pebbles</p>');
     });
 
-    test('should pass the correct `wrapper` arguments', 1, function() {
+    test('should provide the correct `wrapper` arguments', 1, function() {
       var args;
 
       var wrapped = _.wrap(_.noop, function() {
@@ -11118,7 +11118,7 @@
       }
     });
 
-    test('should stringify the wrapped value when passed to `JSON.stringify`', 1, function() {
+    test('should stringify the wrapped value when used by `JSON.stringify`', 1, function() {
       if (!isNpm && JSON) {
         var wrapped = _([1, 2, 3]);
         strictEqual(JSON.stringify(wrapped), '[1,2,3]');

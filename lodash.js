@@ -5692,7 +5692,7 @@
     function compose() {
       var funcs = arguments,
           length = funcs.length,
-          fromIndex = length - 1;
+          index = length - 1;
 
       if (!length) {
         return function() {};
@@ -5703,11 +5703,11 @@
         }
       }
       return function() {
-        var index = fromIndex,
-            result = funcs[index].apply(this, arguments);
+        length = index;
+        var result = funcs[length].apply(this, arguments);
 
-        while (index--) {
-          result = funcs[index].call(this, result);
+        while (length--) {
+          result = funcs[length].call(this, result);
         }
         return result;
       };

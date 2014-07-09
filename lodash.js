@@ -301,8 +301,7 @@
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {number[]|string[]} [props] The property names or indexes of elements
-   *  to pick.
+   * @param {number[]|string[]} [props] The property names or indexes of elements to pick.
    * @returns {Array} Returns the new array of picked elements.
    */
   function baseAt(collection, props) {

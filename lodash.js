@@ -296,12 +296,13 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * The base implementation of `_.at` without support for strings and
-   * individual key arguments.
+   * The base implementation of `_.at` without support for strings and individual
+   * key arguments.
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {number[]|string[]} [props] The keys of elements to pick.
+   * @param {number[]|string[]} [props] The property names or indexes of elements
+   *  to pick.
    * @returns {Array} Returns the new array of picked elements.
    */
   function baseAt(collection, props) {
@@ -4179,34 +4180,34 @@
     }
 
     /**
-     * Creates an object composed from arrays of `keys` and `values`. Provide
+     * Creates an object composed from arrays of property names and values. Provide
      * either a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`
-     * or two arrays, one of `keys` and one of corresponding `values`.
+     * or two arrays, one of property names and one of corresponding values.
      *
      * @static
      * @memberOf _
      * @alias object
      * @category Array
-     * @param {Array} keys The array of keys.
-     * @param {Array} [values=[]] The array of values.
+     * @param {Array} props The array of property names.
+     * @param {Array} [vals=[]] The array of property values.
      * @returns {Object} Returns the new object.
      * @example
      *
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
      */
-    function zipObject(keys, values) {
+    function zipObject(props, vals) {
       var index = -1,
-          length = keys ? keys.length : 0,
+          length = props ? props.length : 0,
           result = {};
 
-      if (!values && length && !isArray(keys[0])) {
-        values = [];
+      if (!vals && length && !isArray(props[0])) {
+        vals = [];
       }
       while (++index < length) {
-        var key = keys[index];
-        if (values) {
-          result[key] = values[index];
+        var key = props[index];
+        if (vals) {
+          result[key] = vals[index];
         } else if (key) {
           result[key[0]] = key[1];
         }
@@ -4346,8 +4347,8 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(number|number[]|string|string[])} [keys] The keys of elements
-     *  to pick, specified as individual keys or arrays of keys.
+     * @param {...(number|number[]|string|string[])} [props] The property names
+     *  or indexes of elements to pick, specified individually or in arrays.
      * @returns {Array} Returns the new array of picked elements.
      * @example
      *

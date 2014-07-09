@@ -2104,6 +2104,15 @@
       deepEqual(curried(1, 2)(3, 4), expected);
       deepEqual(curried(1, 2, 3, 4), expected);
     });
+    
+    test('should allow explicitly setting arity', 3, function(){
+      var curried = _.curry(fn, 3),
+          expected = [1, 2, 3];
+
+      deepEqual(curried(1, 2, 3), expected);
+      deepEqual(curried(1)(2)(3), expected);
+      deepEqual(curried(1)(2, 3), expected);
+    });
 
     test('should work with partialed methods', 2, function() {
       var curried = _.curry(fn),
@@ -2199,6 +2208,15 @@
       deepEqual(curried(4)(3)(2)(1), expected);
       deepEqual(curried(3, 4)(1, 2), expected);
       deepEqual(curried(1, 2, 3, 4), expected);
+    });
+
+    test('should allow explicitly setting arity', 3, function(){
+      var curried = _.curryRight(fn, 3),
+          expected = [1, 2, 3];
+
+      deepEqual(curried(1, 2, 3), expected);
+      deepEqual(curried(3)(2)(1), expected);
+      deepEqual(curried(3)(1, 2), expected);
     });
 
     test('should work with partialed methods', 2, function() {

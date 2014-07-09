@@ -12,6 +12,9 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
+  /** Used as the semantic version number */
+  var VERSION = '3.0.0-pre';
+
   /** Used to compose bitmasks for wrapper metadata */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
@@ -21,17 +24,24 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
-  /** Used as the semantic version number */
-  var version = '3.0.0-pre';
-
   /** Used as the property name for wrapper metadata */
-  var expando = '__lodash@' + version + '__';
+  var EXPANDO = '__lodash@' + VERSION + '__';
 
   /** Used by methods to exit iteration */
-  var breakIndicator = expando + 'breaker__';
+  var breakIndicator = EXPANDO + 'breaker__';
 
   /** Used as the TypeError message for "Functions" methods */
-  var funcErrorText = 'Expected a function';
+  var FUNC_ERROR_TEXT = 'Expected a function';
+
+  /** Used as a reference for the max length of an array */
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
+
+  /**
+   * Used as the maximum length of an array-like value.
+   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+   * for more details.
+   */
+  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
   /** Used to generate unique IDs */
   var idCounter = 0;
@@ -268,16 +278,6 @@
 
   /** Used to resolve the decompiled source of functions */
   var fnToString = Function.prototype.toString;
-
-  /** Used as a reference for the max length of an array */
-  var maxArrayLength = Math.pow(2, 32) - 1;
-
-  /**
-   * Used as the maximum length of an array-like value.
-   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
-   * for more details.
-   */
-  var maxSafeInteger = Math.pow(2, 53) - 1;
 
   /** Used to restore the original `_` reference in `_.noConflict` */
   var oldDash = root._;
@@ -792,7 +792,7 @@
    */
   function baseEach(collection, iterator) {
     var length = collection ? collection.length : 0;
-    if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+    if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
       return baseForOwn(collection, iterator);
     }
     var index = -1,
@@ -817,7 +817,7 @@
    */
   function baseEachRight(collection, iterator) {
     var length = collection ? collection.length : 0;
-    if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+    if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
       return baseForOwnRight(collection, iterator);
     }
     var iterable = toIterable(collection);
@@ -1182,7 +1182,7 @@
         length = collection ? collection.length : 0,
         result = [];
 
-    if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+    if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
       result.length = length;
     }
     baseEach(collection, function(value) {
@@ -1587,7 +1587,7 @@
         isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
 
     if (!isFunction(func)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     if (isPartial && !partialArgs.length) {
       bitmask &= ~PARTIAL_FLAG;
@@ -1682,7 +1682,7 @@
    */
   function toIterable(collection) {
     var length = collection ? collection.length : 0;
-    if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+    if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
       return values(collection);
     }
     return collection || [];
@@ -2347,34 +2347,34 @@
   }
 
   /**
-   * Creates an object composed from arrays of `keys` and `values`. Provide
+   * Creates an object composed from arrays of property names and values. Provide
    * either a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`
-   * or two arrays, one of `keys` and one of corresponding `values`.
+   * or two arrays, one of property names and one of corresponding values.
    *
    * @static
    * @memberOf _
    * @alias object
    * @category Array
-   * @param {Array} keys The array of keys.
-   * @param {Array} [values=[]] The array of values.
+   * @param {Array} props The array of property names.
+   * @param {Array} [vals=[]] The array of property values.
    * @returns {Object} Returns the new object.
    * @example
    *
    * _.zipObject(['fred', 'barney'], [30, 40]);
    * // => { 'fred': 30, 'barney': 40 }
    */
-  function zipObject(keys, values) {
+  function zipObject(props, vals) {
     var index = -1,
-        length = keys ? keys.length : 0,
+        length = props ? props.length : 0,
         result = {};
 
-    if (!values && length && !isArray(keys[0])) {
-      values = [];
+    if (!vals && length && !isArray(props[0])) {
+      vals = [];
     }
     while (++index < length) {
-      var key = keys[index];
-      if (values) {
-        result[key] = values[index];
+      var key = props[index];
+      if (vals) {
+        result[key] = vals[index];
       } else if (key) {
         result[key[0]] = key[1];
       }
@@ -2520,7 +2520,7 @@
     var indexOf = getIndexOf(),
         length = collection ? collection.length : 0;
 
-    if (!(typeof length == 'number' && length > -1 && length <= maxSafeInteger)) {
+    if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
       collection = values(collection);
     }
     return indexOf(collection, target) > -1;
@@ -3306,11 +3306,11 @@
         result = Array(length);
 
     while (++index < length) {
-      var value = collection[index],
-          rand = baseRandom(0, index);
-
-      result[index] = result[rand];
-      result[rand] = value;
+      var rand = baseRandom(0, index);
+      if (index != rand) {
+        result[index] = result[rand];
+      }
+      result[rand] = collection[index];
     }
     return result;
   }
@@ -3337,7 +3337,7 @@
    */
   function size(collection) {
     var length = collection ? collection.length : 0;
-    return (typeof length == 'number' && length > -1 && length <= maxSafeInteger)
+    return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)
       ? length
       : keys(collection).length;
   }
@@ -3539,7 +3539,7 @@
    */
   function after(n, func) {
     if (!isFunction(func)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     n = nativeIsFinite(n = +n) ? n : 0;
     return function() {
@@ -3567,7 +3567,7 @@
   function before(n, func) {
     var result;
     if (!isFunction(func)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     return function() {
       if (--n > 0) {
@@ -3697,22 +3697,22 @@
   function compose() {
     var funcs = arguments,
         length = funcs.length,
-        fromIndex = length - 1;
+        index = length - 1;
 
     if (!length) {
       return function() {};
     }
     while (length--) {
       if (!isFunction(funcs[length])) {
-        throw new TypeError(funcErrorText);
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
     }
     return function() {
-      var index = fromIndex,
-          result = funcs[index].apply(this, arguments);
+      length = index;
+      var result = funcs[length].apply(this, arguments);
 
-      while (index--) {
-        result = funcs[index].call(this, result);
+      while (length--) {
+        result = funcs[length].call(this, result);
       }
       return result;
     };
@@ -3790,7 +3790,7 @@
         trailing = true;
 
     if (!isFunction(func)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     wait = wait < 0 ? 0 : wait;
     if (options === true) {
@@ -3908,7 +3908,7 @@
    */
   function defer(func) {
     if (!isFunction(func)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     var args = slice(arguments, 1);
     return setTimeout(function() { func.apply(undefined, args); }, 1);
@@ -3932,7 +3932,7 @@
    */
   function delay(func, wait) {
     if (!isFunction(func)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     var args = slice(arguments, 2);
     return setTimeout(function() { func.apply(undefined, args); }, wait);
@@ -4010,7 +4010,7 @@
    */
   function negate(predicate) {
     if (!isFunction(predicate)) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
     return function() {
       return !predicate.apply(this, arguments);
@@ -4506,7 +4506,7 @@
       return true;
     }
     var length = value.length;
-    if ((typeof length == 'number' && length > -1 && length <= maxSafeInteger) &&
+    if ((typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) &&
         (isArray(value) || isString(value) || isArguments(value))) {
       return !length;
     }
@@ -5164,7 +5164,7 @@
     });
 
     result.source = source;
-    if (result instanceof Error) {
+    if (isError(result)) {
       throw result;
     }
     return data ? result(data) : result;
@@ -5214,7 +5214,7 @@
    *   return document.querySelectorAll(selector);
    * });
    *
-   * if (elements instanceof Error) {
+   * if (_.isError(elements)) {
    *   elements = [];
    * }
    */
@@ -5336,17 +5336,23 @@
    * // => { 'name': 'barney', 'age': 36 }
    */
   function matches(source) {
-    var props = keys(source),
-        propsLength = props.length;
+    var keyVals = pairs(source),
+        length = keyVals.length;
 
     return function(object) {
-      var length = propsLength;
-      if (length && object == null) {
-        return false;
+      var index = length;
+      if (object == null) {
+        return !index;
       }
-      while (length--) {
-        var key = props[length];
-        if (!(object[key] === source[key] && hasOwnProperty.call(object, key))) {
+      while (index--) {
+        var keyVal = keyVals[index];
+        if (object[keyVal[0]] !== keyVal[1]) {
+          return false
+        }
+      }
+      index = length;
+      while (index--) {
+        if (!hasOwnProperty.call(object, keyVals[index][0])) {
           return false
         }
       }
@@ -5636,10 +5642,10 @@
     iterator = baseCallback(iterator, thisArg, 1);
 
     var index = -1,
-        result = Array(nativeMin(n, maxArrayLength));
+        result = Array(nativeMin(n, MAX_ARRAY_LENGTH));
 
     while (++index < n) {
-      if (index < maxArrayLength) {
+      if (index < MAX_ARRAY_LENGTH) {
         result[index] = iterator(index);
       } else {
         iterator(index);
@@ -5813,7 +5819,7 @@
    * @memberOf _
    * @type string
    */
-  lodash.VERSION = version;
+  lodash.VERSION = VERSION;
 
   // add "Chaining" functions to the wrapper
   lodash.prototype.chain = wrapperChain;

@@ -1927,23 +1927,27 @@
   QUnit.module('lodash.callback');
 
   (function() {
-    test('should create a callback with a falsey `thisArg`', 1, function() {
-      var fn = function() { return this; },
-          object = {};
+    test('should provide `argCount` number of arguments to `func`', 1, function() {
+      var args;
 
-      var expected = _.map(falsey, function(value) {
-        var result = fn.call(value);
-        return (result && result.Array) ? object : result;
+      var callback = _.callback(function() {
+        args = slice.call(arguments);
+      }, 1);
+
+      callback('a', 'b', 'c');
+      deepEqual(args, ['a']);
+    });
+
+    test('should work without an `argCount`', 1, function() {
+      var args,
+          expected = ['a', 'b', 'c', 'd', 'e'];
+
+      var callback = _.callback(function() {
+        args = slice.call(arguments);
       });
 
-      var actual = _.map(falsey, function(value) {
-        var callback = _.callback(fn, value),
-            result = callback();
-
-        return (result && result.Array) ? object : result;
-      });
-
-      ok(_.isEqual(actual, expected));
+      callback.apply(null, expected);
+      deepEqual(args, expected);
     });
 
     test('should return `_.identity` when `func` is nullish', 2, function() {
@@ -1966,6 +1970,25 @@
       });
     });
 
+    test('should create a callback with a falsey `thisArg`', 1, function() {
+      var fn = function() { return this; },
+          object = {};
+
+      var expected = _.map(falsey, function(value) {
+        var result = fn.call(value);
+        return (result && result.Array) ? object : result;
+      });
+
+      var actual = _.map(falsey, function(value) {
+        var callback = _.callback(fn, value),
+            result = callback();
+
+        return (result && result.Array) ? object : result;
+      });
+
+      ok(_.isEqual(actual, expected));
+    });
+
     test('should return a callback created by `_.matches` when `func` is an object', 2, function() {
       var callback = _.callback({ 'a': 1 });
       strictEqual(callback({ 'a': 1, 'b': 2 }), true);
@@ -1980,18 +2003,6 @@
 
       callback = _.callback('0');
       strictEqual(callback(array), 'a');
-    });
-
-    test('should work without an `argCount`', 1, function() {
-      var args,
-          expected = ['a', 'b', 'c', 'd', 'e'];
-
-      var callback = _.callback(function() {
-        args = slice.call(arguments);
-      });
-
-      callback.apply(null, expected);
-      deepEqual(args, expected);
     });
 
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
@@ -2104,14 +2115,14 @@
       deepEqual(curried(1, 2)(3, 4), expected);
       deepEqual(curried(1, 2, 3, 4), expected);
     });
-    
-    test('should allow explicitly setting arity', 3, function(){
+
+    test('should allow specifying `arity`', 3, function(){
       var curried = _.curry(fn, 3),
           expected = [1, 2, 3];
 
-      deepEqual(curried(1, 2, 3), expected);
-      deepEqual(curried(1)(2)(3), expected);
       deepEqual(curried(1)(2, 3), expected);
+      deepEqual(curried(1, 2)(3), expected);
+      deepEqual(curried(1, 2, 3), expected);
     });
 
     test('should work with partialed methods', 2, function() {
@@ -2140,7 +2151,7 @@
       }
     });
 
-    test('should provide additional arguments after reaching arity target', 3, function() {
+    test('should provide additional arguments after reaching the target arity', 3, function() {
       var curried = _.curry(fn, 3);
       deepEqual(curried(1)(2, 3, 4), [1, 2, 3, 4]);
       deepEqual(curried(1, 2)(3, 4, 5), [1, 2, 3, 4, 5]);
@@ -2210,13 +2221,13 @@
       deepEqual(curried(1, 2, 3, 4), expected);
     });
 
-    test('should allow explicitly setting arity', 3, function(){
+    test('should allow specifying `arity`', 3, function(){
       var curried = _.curryRight(fn, 3),
           expected = [1, 2, 3];
 
-      deepEqual(curried(1, 2, 3), expected);
-      deepEqual(curried(3)(2)(1), expected);
       deepEqual(curried(3)(1, 2), expected);
+      deepEqual(curried(2, 3)(1), expected);
+      deepEqual(curried(1, 2, 3), expected);
     });
 
     test('should work with partialed methods', 2, function() {
@@ -2245,7 +2256,7 @@
       }
     });
 
-    test('should provide additional arguments after reaching arity target', 3, function() {
+    test('should provide additional arguments after reaching the target arity', 3, function() {
       var curried = _.curryRight(fn, 3);
       deepEqual(curried(4)(1, 2, 3), [1, 2, 3, 4]);
       deepEqual(curried(4, 5)(1, 2, 3), [1, 2, 3, 4, 5]);

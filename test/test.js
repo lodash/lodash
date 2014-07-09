@@ -2130,6 +2130,13 @@
         skipTest(4);
       }
     });
+    
+    test('should pass any additional arguments after reaching arity target', 3, function() {
+      var curried = _.curry(fn, 2);
+      deepEqual(curried(1)(2, 3, 4), [1, 2, 3, 4]);
+      deepEqual(curried(1, 2, 3, 4), [1, 2, 3, 4]);
+      deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
+    });
 
     test('should return a function with a `length` of `0`', 6, function() {
       _.times(2, function(index) {
@@ -2220,6 +2227,13 @@
       }
     });
 
+    test('should pass any additional arguments after reaching arity target', 3, function() {
+      var curried = _.curryRight(fn, 2);
+      deepEqual(curried(4)(1, 2, 3), [1, 2, 3, 4]);
+      deepEqual(curried(1, 2, 3, 4), [1, 2, 3, 4]);
+      deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
+    });
+    
     test('should return a function with a `length` of `0`', 6, function() {
       _.times(2, function(index) {
         var curried = index ? _.curryRight(fn, 4) : _.curryRight(fn);

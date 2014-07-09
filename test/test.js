@@ -1927,18 +1927,7 @@
   QUnit.module('lodash.callback');
 
   (function() {
-    test('should provide `argCount` number of arguments to `func`', 1, function() {
-      var args;
-
-      var callback = _.callback(function() {
-        args = slice.call(arguments);
-      }, 1);
-
-      callback('a', 'b', 'c');
-      deepEqual(args, ['a']);
-    });
-
-    test('should work without an `argCount`', 1, function() {
+    test('should provide arguments to `func`', 1, function() {
       var args,
           expected = ['a', 'b', 'c', 'd', 'e'];
 

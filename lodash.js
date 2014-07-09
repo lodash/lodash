@@ -1302,51 +1302,57 @@
      * @returns {Function} Returns the new function.
      */
     function baseCallback(func, thisArg, argCount) {
-      if (typeof func != 'function') {
+      var type = typeof func;
+
+      if (type == 'function') {
+        if (typeof thisArg == 'undefined') {
+          return func;
+        }
+        var data = func[EXPANDO];
+        if (typeof data == 'undefined') {
+          if (support.funcNames) {
+            data = !func.name;
+          }
+          data = data || !support.funcDecomp;
+          if (!data) {
+            var source = fnToString.call(func);
+            if (!support.funcNames) {
+              data = !reFuncName.test(source);
+            }
+            if (!data) {
+              // checks if `func` references the `this` keyword and stores the result
+              data = reThis.test(source) || isNative(func);
+              setData(func, data);
+            }
+          }
+        }
+        // exit early if there are no `this` references or `func` is bound
+        if (data === false || (data !== true && data[1] & BIND_FLAG)) {
+          return func;
+        }
+        switch (argCount) {
+          case 1: return function(value) {
+            return func.call(thisArg, value);
+          };
+          case 3: return function(value, index, collection) {
+            return func.call(thisArg, value, index, collection);
+          };
+          case 4: return function(accumulator, value, index, collection) {
+            return func.call(thisArg, accumulator, value, index, collection);
+          };
+          case 5: return function(value, other, key, object, source) {
+            return func.call(thisArg, value, other, key, object, source);
+          };
+        }
+        return function() {
+          return func.apply(thisArg, arguments);
+        };
+      }
+      if (func == null) {
         return identity;
       }
-      if (typeof thisArg == 'undefined') {
-        return func;
-      }
-      var data = func[EXPANDO];
-      if (typeof data == 'undefined') {
-        if (support.funcNames) {
-          data = !func.name;
-        }
-        data = data || !support.funcDecomp;
-        if (!data) {
-          var source = fnToString.call(func);
-          if (!support.funcNames) {
-            data = !reFuncName.test(source);
-          }
-          if (!data) {
-            // checks if `func` references the `this` keyword and stores the result
-            data = reThis.test(source) || isNative(func);
-            setData(func, data);
-          }
-        }
-      }
-      // exit early if there are no `this` references or `func` is bound
-      if (data === false || (data !== true && data[1] & BIND_FLAG)) {
-        return func;
-      }
-      switch (argCount) {
-        case 1: return function(value) {
-          return func.call(thisArg, value);
-        };
-        case 3: return function(value, index, collection) {
-          return func.call(thisArg, value, index, collection);
-        };
-        case 4: return function(accumulator, value, index, collection) {
-          return func.call(thisArg, accumulator, value, index, collection);
-        };
-        case 5: return function(value, other, key, object, source) {
-          return func.call(thisArg, value, other, key, object, source);
-        };
-      }
-      return function() {
-        return func.apply(thisArg, arguments);
-      };
+      // handle "_.pluck" and "_.where" style callback shorthands
+      return type == 'object' ? matches(func) : property(func);
     }
 
     /**
@@ -2534,7 +2540,7 @@
     function createAggregator(setter, initializer) {
       return function(collection, iterator, thisArg) {
         var result = initializer ? initializer() : {};
-        iterator = lodash.callback(iterator, thisArg, 3);
+        iterator = getCallback(iterator, thisArg, 3);
 
         if (isArray(collection)) {
           var index = -1,
@@ -2812,6 +2818,21 @@
     }
 
     /**
+     * Gets the appropriate "callback" function. If the `_.callback` method is
+     * customized this function returns the custom method, otherwise it returns
+     * the `baseCallback` function. If arguments are provided the chosen function
+     * is executed with the arguments and its result is returned.
+     *
+     * @private
+     * @returns {Function} Returns the chosen function or its result.
+     */
+    function getCallback(func, thisArg, argCount) {
+      var result = lodash.callback || callback;
+      result = result === callback ? baseCallback : result;
+      return arguments.length ? result(func, thisArg, argCount) : result;
+    }
+
+    /**
      * Finds the indexes of all placeholder elements in `array`.
      *
      * @private
@@ -2834,14 +2855,16 @@
     /**
      * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
      * customized this function returns the custom method, otherwise it returns
-     * the `baseIndexOf` function.
+     * the `baseIndexOf` function. If arguments are provided the chosen function
+     * is executed with the arguments and its result is returned.
      *
      * @private
-     * @returns {Function} Returns the "indexOf" function.
+     * @returns {Function|number} Returns the chosen function or its result.
      */
-    function getIndexOf() {
+    function getIndexOf(collection, target, fromIndex) {
       var result = lodash.indexOf || indexOf;
-      return result === indexOf ? baseIndexOf : result;
+      result = result === indexOf ? baseIndexOf : result;
+      return collection ? result(collection, target, fromIndex) : result;
     }
 
     /**
@@ -3199,7 +3222,7 @@
       var length = array ? array.length : 0,
           index = length;
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (index-- && predicate(array[index], index, array)) { }
       return slice(array, 0, index + 1);
     }
@@ -3247,7 +3270,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (++index < length && predicate(array[index], index, array)) { }
       return slice(array, index);
     }
@@ -3297,7 +3320,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (++index < length) {
         if (predicate(array[index], index, array)) {
           return index;
@@ -3350,7 +3373,7 @@
     function findLastIndex(array, predicate, thisArg) {
       var length = array ? array.length : 0;
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (length--) {
         if (predicate(array[length], length, array)) {
           return length;
@@ -3694,7 +3717,7 @@
           length = array ? array.length : 0,
           result = [];
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
@@ -3809,7 +3832,7 @@
      * // => 1
      */
     function sortedIndex(array, value, iterator, thisArg) {
-      iterator = iterator == null ? identity : lodash.callback(iterator, thisArg, 1);
+      iterator = iterator == null ? identity : getCallback(iterator, thisArg, 1);
       return baseSortedIndex(array, value, iterator);
     }
 
@@ -3835,7 +3858,7 @@
      * // => 4
      */
     function sortedLastIndex(array, value, iterator, thisArg) {
-      iterator = iterator == null ? identity : lodash.callback(iterator, thisArg, 1);
+      iterator = iterator == null ? identity : getCallback(iterator, thisArg, 1);
       return baseSortedIndex(array, value, iterator, true);
     }
 
@@ -3944,7 +3967,7 @@
       var length = array ? array.length : 0,
           index = length;
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (index-- && predicate(array[index], index, array)) { }
       return slice(array, index + 1);
     }
@@ -3992,7 +4015,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       while (++index < length && predicate(array[index], index, array)) { }
       return slice(array, 0, index);
     }
@@ -4076,7 +4099,7 @@
         }
       }
       if (iterator != null) {
-        iterator = lodash.callback(iterator, thisArg, 3);
+        iterator = getCallback(iterator, thisArg, 3);
       }
       return baseUniq(array, isSorted, iterator);
     }
@@ -4416,8 +4439,7 @@
           ? nativeContains.call(collection, target, fromIndex)
           : collection.indexOf(target, fromIndex) > -1;
       }
-      var indexOf = getIndexOf();
-      return indexOf(collection, target, fromIndex) > -1;
+      return getIndexOf(collection, target, fromIndex) > -1;
     }
 
     /**
@@ -4501,7 +4523,7 @@
      */
     function every(collection, predicate, thisArg) {
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
-        predicate = lodash.callback(predicate, thisArg, 3);
+        predicate = getCallback(predicate, thisArg, 3);
       }
       var func = isArray(collection) ? arrayEvery : baseEvery;
       return func(collection, predicate);
@@ -4548,7 +4570,7 @@
      * // => [{ 'name': 'barney', 'age': 36 }]
      */
     function filter(collection, predicate, thisArg) {
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
 
       var func = isArray(collection) ? arrayFilter : baseFilter;
       return func(collection, predicate);
@@ -4602,7 +4624,7 @@
         var index = findIndex(collection, predicate, thisArg);
         return index > -1 ? collection[index] : undefined;
       }
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       return baseFind(collection, predicate, baseEach);
     }
 
@@ -4625,7 +4647,7 @@
      * // => 3
      */
     function findLast(collection, predicate, thisArg) {
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       return baseFind(collection, predicate, baseEachRight);
     }
 
@@ -4864,7 +4886,7 @@
      * // => ['barney', 'fred']
      */
     function map(collection, iterator, thisArg) {
-      iterator = lodash.callback(iterator, thisArg, 3);
+      iterator = getCallback(iterator, thisArg, 3);
 
       var func = isArray(collection) ? arrayMap : baseMap;
       return func(collection, iterator);
@@ -4935,7 +4957,7 @@
       } else {
         iterator = (iterator == null && isString(collection))
           ? charAtCallback
-          : lodash.callback(iterator, thisArg, 3);
+          : getCallback(iterator, thisArg, 3);
 
         baseEach(collection, function(value, index, collection) {
           var current = iterator(value, index, collection);
@@ -5013,7 +5035,7 @@
       } else {
         iterator = (iterator == null && isString(collection))
           ? charAtCallback
-          : lodash.callback(iterator, thisArg, 3);
+          : getCallback(iterator, thisArg, 3);
 
         baseEach(collection, function(value, index, collection) {
           var current = iterator(value, index, collection);
@@ -5127,7 +5149,7 @@
      */
     function reduce(collection, iterator, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduce : baseReduce;
-      return func(collection, lodash.callback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEach);
+      return func(collection, getCallback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEach);
     }
 
     /**
@@ -5151,7 +5173,7 @@
      */
     function reduceRight(collection, iterator, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduceRight : baseReduce;
-      return func(collection, lodash.callback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
+      return func(collection, getCallback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
     }
 
     /**
@@ -5193,7 +5215,7 @@
      * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
      */
     function reject(collection, predicate, thisArg) {
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       return filter(collection, negate(predicate));
     }
 
@@ -5330,7 +5352,7 @@
      */
     function some(collection, predicate, thisArg) {
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
-        predicate = lodash.callback(predicate, thisArg, 3);
+        predicate = getCallback(predicate, thisArg, 3);
       }
       var func = isArray(collection) ? arraySome : baseSome;
       return func(collection, predicate);
@@ -5395,7 +5417,7 @@
         result.length = length;
       }
       if (!multi) {
-        iterator = lodash.callback(iterator, thisArg, 3);
+        iterator = getCallback(iterator, thisArg, 3);
       }
       baseEach(collection, function(value, key, collection) {
         if (multi) {
@@ -6491,7 +6513,7 @@
      * // => 'fred'
      */
     function findKey(object, predicate, thisArg) {
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       return baseFind(object, predicate, baseForOwn, true);
     }
 
@@ -6537,7 +6559,7 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
-      predicate = lodash.callback(predicate, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       return baseFind(object, predicate, baseForOwnRight, true);
     }
 
@@ -7401,7 +7423,7 @@
      */
     function mapValues(object, iterator, thisArg) {
       var result = {};
-      iterator = lodash.callback(iterator, thisArg, 3);
+      iterator = getCallback(iterator, thisArg, 3);
 
       baseForOwn(object, function(value, key, object) {
         result[key] = iterator(value, key, object);
@@ -7494,7 +7516,7 @@
         return {};
       }
       if (typeof predicate == 'function') {
-        return basePick(object, negate(lodash.callback(predicate, thisArg, 3)));
+        return basePick(object, negate(getCallback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, false, false, 1);
       return basePick(Object(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
@@ -7560,7 +7582,7 @@
       }
       return basePick(Object(object),
         typeof predicate == 'function'
-          ? lodash.callback(predicate, thisArg, 3)
+          ? getCallback(predicate, thisArg, 3)
           : baseFlatten(arguments, false, false, 1)
       );
     }
@@ -7611,7 +7633,7 @@
         }
       }
       if (iterator) {
-        iterator = lodash.callback(iterator, thisArg, 4);
+        iterator = getCallback(iterator, thisArg, 4);
         (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
           return iterator(accumulator, value, index, object);
         });
@@ -8428,7 +8450,6 @@
      * @category Utility
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
-     * @param {number} [argCount] The number of arguments the callback accepts.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -8438,9 +8459,12 @@
      * ];
      *
      * // wrap to create custom callback shorthands
-     * _.callback = _.wrap(_.callback, function(func, callback, thisArg) {
-     *   var match = /^(.+?)__([gl]t)(.+)$/.exec(callback);
-     *   return !match ? func(callback, thisArg) : function(object) {
+     * _.callback = _.wrap(_.callback, function(callback, func, thisArg) {
+     *   var match = /^(.+?)__([gl]t)(.+)$/.exec(func);
+     *   if (!match) {
+     *     return callback(func, thisArg);
+     *   }
+     *   return function(object) {
      *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
      *   };
      * });
@@ -8448,18 +8472,8 @@
      * _.filter(characters, 'age__gt38');
      * // => [{ 'name': 'fred', 'age': 40 }]
      */
-    function callback(func, thisArg, argCount) {
-      var type = typeof func,
-          isFunc = type == 'function';
-
-      if (isFunc && typeof thisArg == 'undefined') {
-        return func;
-      }
-      if (isFunc || func == null) {
-        return baseCallback(func, thisArg, argCount);
-      }
-      // handle "_.pluck" and "_.where" style callback shorthands
-      return type == 'object' ? matches(func) : property(func);
+    function callback(func, thisArg) {
+      return baseCallback(func, thisArg);
     }
 
     /**

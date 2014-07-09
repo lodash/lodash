@@ -585,7 +585,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Create a new `lodash` function using the given `context` object.
+   * Create a new pristine `lodash` function using the given `context` object.
    *
    * @static
    * @memberOf _
@@ -594,19 +594,22 @@
    * @returns {Function} Returns a new `lodash` function.
    * @example
    *
+   * _.mixin({ 'add': function(a, b) { return a + b; } }, false);
+   *
    * var lodash = _.runInContext();
+   * lodash.mixin({ 'sub': function(a, b) { return a - b; } }, false);
    *
-   * lodash.mixin({
-   *   'exists': function(value) {
-   *     return value != null;
-   *   }
-   * }, false);
-   *
-   * _.isFunction(lodash.exists);
+   * _.isFunction(_.add);
    * // => true
    *
-   * _.isFunction(_.exists);
+   * _.isFunction(_.sub);
    * // => false
+   *
+   * lodash.isFunction(lodash.add);
+   * // => false
+   *
+   * lodash.isFunction(lodash.sub);
+   * // => true
    */
   function runInContext(context) {
     // Avoid issues with some ES3 environments that attempt to use values, named

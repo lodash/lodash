@@ -6681,8 +6681,8 @@
     });
 
     test('should compare a variety of `source` object values', 2, function() {
-      var object = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 }  },
-          otherObject = _.assign({}, object, { 'a': false, 'c': 3, 'f': { 'g': '6' } }),
+      var object = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
+          otherObject = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },
           matches = _.matches(object);
 
       strictEqual(matches(object), true);
@@ -6690,18 +6690,23 @@
     });
 
     test('should not change match behavior if `source` is augmented', 6, function() {
-      _.each([{ 'a': 1 }, { 'a': 1, 'b': 2 }], function(source) {
-        var object = _.clone(source),
+      _.each([{ 'a': 1, 'b': 2 }, { 'a': { 'b': 2, 'c': 3 } }], function(source, index) {
+        var object = _.cloneDeep(source),
             matches = _.matches(source);
 
-        strictEqual(matches(object), true);
+        strictEqual(matches(object), true,  'a' + index);
 
-        source.a = 2;
-        source.b = 1;
-        source.c = 3;
-
-        strictEqual(matches(object), true);
-        strictEqual(matches(source), false);
+        if (index) {
+          source.a.b = 1;
+          source.a.c = 2;
+          source.a.d = 3;
+        } else {
+          source.a = 2;
+          source.b = 1;
+          source.c = 3;
+        }
+        strictEqual(matches(object), true, 'b' + index);
+        strictEqual(matches(source), false,  'c' + index);
       });
     });
 
@@ -10801,8 +10806,8 @@
         'z': { 'a': 1, 'b': 2 }
       };
 
-      var expected = [object.x, object.z],
-          actual = _.where(object, { 'a': 1 });
+      var actual = _.where(object, { 'a': 1 }),
+          expected = [object.x, object.z];
 
       deepEqual(actual, expected);
     });

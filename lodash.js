@@ -2894,6 +2894,18 @@
     }
 
     /**
+     * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` if suitable for strict
+     *  equality comparisons, else `false`.
+     */
+    function isStrictComparable(value) {
+      return value === value && (value === 0 ? (1 / value > 0) : !isObject(value));
+    }
+
+    /**
      * Creates a clone of the given array buffer.
      *
      * @private
@@ -6963,23 +6975,9 @@
      */
     function isEqual(value, other, customizer, thisArg) {
       customizer = typeof customizer == 'function' && baseCallback(customizer, thisArg, 3);
-
-      if (!customizer) {
-        // exit early for identical values
-        if (value === other) {
-          // treat `-0` vs. `+0` as not equal
-          return value !== 0 || (1 / value == 1 / other);
-        }
-        var valType = typeof value,
-            othType = typeof other;
-
-        // exit early for unlike primitive values
-        if (value === value && (value == null || other == null ||
-            (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
-          return false;
-        }
-      }
-      return baseIsEqual(value, other, customizer);
+      return (!customizer && isStrictComparable(value) && isStrictComparable(other))
+        ? value === other
+        : baseIsEqual(value, other, customizer);
     }
 
     /**
@@ -8542,17 +8540,28 @@
      */
     function matches(source) {
       var props = keys(source),
-          length = props.length,
-          index = length,
-          modes = Array(length),
+          length = props.length;
+
+      if (length == 1) {
+        var key = props[0],
+            value = source[key];
+
+        if (isStrictComparable(value)) {
+          return function(object) {
+            return object != null && value === object[key] && hasOwnProperty.call(object, key);
+          };
+        }
+      }
+      var index = length,
+          flags = Array(length),
           vals = Array(length);
 
       while (index--) {
-        var value = source[props[index]],
-            isDeep = value !== value || (value === 0 && 1 / value < 0) || isObject(value);
+        value = source[props[index]];
+        var isStrict = isStrictComparable(value);
 
-        modes[index] = isDeep;
-        vals[index] = isDeep ? baseClone(value, isDeep) : value;
+        flags[index] = isStrict;
+        vals[index] = isStrict ? value : baseClone(value, false);
       }
       return function(object) {
         index = length;
@@ -8560,13 +8569,13 @@
           return !index;
         }
         while (index--) {
-          if (modes[index] ? !hasOwnProperty.call(object, props[index]) : vals[index] !== object[props[index]]) {
+          if (flags[index] ? vals[index] !== object[props[index]] : !hasOwnProperty.call(object, props[index])) {
             return false;
           }
         }
         index = length;
         while (index--) {
-          if (modes[index] ? !baseIsEqual(vals[index], object[props[index]], null, true) : !hasOwnProperty.call(object, props[index])) {
+          if (flags[index] ? !hasOwnProperty.call(object, props[index]) : !baseIsEqual(vals[index], object[props[index]], null, true)) {
             return false;
           }
         }

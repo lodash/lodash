@@ -6721,24 +6721,24 @@
       strictEqual(matches(otherObject), false);
     });
 
-    test('should not change match behavior if `source` is augmented', 6, function() {
-      _.each([{ 'a': 1, 'b': 2 }, { 'a': { 'b': 2, 'c': 3 } }], function(source, index) {
+    test('should not change match behavior if `source` is augmented', 9, function() {
+      _.each([{ 'a': { 'b': 2, 'c': 3 } }, { 'a': 1, 'b': 2 }, { 'a': 1 }], function(source, index) {
         var object = _.cloneDeep(source),
             matches = _.matches(source);
 
-        strictEqual(matches(object), true,  'a' + index);
+        strictEqual(matches(object), true);
 
         if (index) {
-          source.a.b = 1;
-          source.a.c = 2;
-          source.a.d = 3;
-        } else {
           source.a = 2;
           source.b = 1;
           source.c = 3;
+        } else {
+          source.a.b = 1;
+          source.a.c = 2;
+          source.a.d = 3;
         }
-        strictEqual(matches(object), true, 'b' + index);
-        strictEqual(matches(source), false,  'c' + index);
+        strictEqual(matches(object), true);
+        strictEqual(matches(source), false);
       });
     });
 

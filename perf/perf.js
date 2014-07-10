@@ -440,6 +440,15 @@
           numbers2[index] = index;\
         }\
       }\
+      if (typeof matches != "undefined") {\
+        var source = { "num": 9 };\
+        \
+        var _findWhere = _.findWhere || _.find,\
+            _match = _.matches && _.matches(source);\
+        \
+        var lodashFindWhere = lodash.findWhere || lodash.find,\
+            lodashMatch = lodash.matches && lodash.matches(source);\
+      }\
       if (typeof multiArrays != "undefined") {\
         var twentyValues = belt.shuffle(belt.range(20)),\
             fortyValues = belt.shuffle(belt.range(40)),\
@@ -507,11 +516,6 @@
         \
         var lodashTpl = lodash.template(tpl),\
             lodashTplVerbose = lodash.template(tplVerbose, settingsObject);\
-      }\
-      if (typeof where != "undefined") {\
-        var _findWhere = _.findWhere || _.find,\
-            lodashFindWhere = lodash.findWhere || lodash.find,\
-            whereObject = { "num": 9 };\
       }\
       if (typeof wrap != "undefined") {\
         var add = function(a, b) {\
@@ -1004,12 +1008,12 @@
     suites.push(
       Benchmark.Suite('`_.find` with `properties`')
         .add(buildName, {
-          'fn': 'lodashFindWhere(objects, whereObject)',
-          'teardown': 'function where(){}'
+          'fn': 'lodashFindWhere(objects, source)',
+          'teardown': 'function matches(){}'
         })
         .add(otherName, {
-          'fn': '_findWhere(objects, whereObject)',
-          'teardown': 'function where(){}'
+          'fn': '_findWhere(objects, source)',
+          'teardown': 'function matches(){}'
         })
     );
   }
@@ -1448,6 +1452,20 @@
           return value;\
         })'
       )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.matches` predicate')
+      .add(buildName, {
+        'fn': 'lodash.filter(objects, lodashMatch)',
+        'teardown': 'function matches(){}'
+      })
+      .add(otherName, {
+        'fn': '_.filter(objects, _match)',
+        'teardown': 'function matches(){}'
+      })
   );
 
   /*--------------------------------------------------------------------------*/
@@ -2037,12 +2055,12 @@
   suites.push(
     Benchmark.Suite('`_.where`')
       .add(buildName, {
-        'fn': 'lodash.where(objects, whereObject)',
-        'teardown': 'function where(){}'
+        'fn': 'lodash.where(objects, source)',
+        'teardown': 'function matches(){}'
       })
       .add(otherName, {
-        'fn': '_.where(objects, whereObject)',
-        'teardown': 'function where(){}'
+        'fn': '_.where(objects, source)',
+        'teardown': 'function matches(){}'
       })
   );
 

@@ -2919,17 +2919,17 @@
       // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
       cloneBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
         var byteLength = buffer.byteLength,
-            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
-            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
             result = new ArrayBuffer(byteLength);
 
-        if (floatLength) {
-          var view = new Float64Array(result, 0, floatLength);
-          view.set(new Float64Array(buffer, 0, floatLength));
-        }
-        if (byteLength != offset) {
-          view = new Uint8Array(result, offset);
-          view.set(new Uint8Array(buffer, offset));
+	if (byteLength >= 1) {
+	  if (Float64Array && floor(byteLength / FLOAT64_BYTES_PER_ELEMENT)) {
+	    var view = new Float64Array(result);
+	    view.set(new Float64Array(buffer));
+	  }
+	  else {
+	    view = new Uint8Array(result);
+	    view.set(new Uint8Array(buffer));
+	  }
         }
         return result;
       };

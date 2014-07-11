@@ -1196,7 +1196,7 @@
      * @param {Array} array The array to iterate over.
      * @param {Function} iterator The function called per iteration.
      * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray=false] Specify using the first element of
+     * @param {boolean} [initFromArray=false] Specify using the last element of
      *  `array` as the initial value.
      * @returns {*} Returns the accumulated value.
      */
@@ -2315,7 +2315,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} iterator The function called per iteration.
      * @param {*} accumulator The initial value.
-     * @param {boolean} initFromCollection Specify using the first element
+     * @param {boolean} initFromCollection Specify using the first or last element
      *  of `collection` as the initial value.
      * @param {Function} eachFunc The function to iterate over `collection`.
      * @returns {*} Returns the accumulated value.

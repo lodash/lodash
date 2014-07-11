@@ -4,8 +4,8 @@
 /** Environment shortcut */
 var env = process.env;
 
-if (isFinite(env.TRAVIS_PULL_REQUEST)) {
-  console.log('Skipping Sauce Labs jobs for pull requests');
+if (env.TRAVIS_SECURE_ENV_VARS == 'false') {
+  console.log('Skipping Sauce Labs jobs; secure environment variables are unavailable');
   process.exit(0);
 }
 

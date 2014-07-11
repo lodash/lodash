@@ -6799,7 +6799,8 @@
     // fallback for environments without a `[[Class]]` for `arguments` objects
     if (!support.argsClass) {
       isArguments = function(value) {
-        return (value && typeof value == 'object' && typeof value.length == 'number' &&
+        var length = (value && typeof value == 'object') ? value.length : undefined;
+        return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER &&
           hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee')) || false;
       };
     }

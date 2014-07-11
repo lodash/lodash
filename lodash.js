@@ -7792,7 +7792,10 @@
      * // => 'fred, barney, &amp; pebbles'
      */
     function escape(string) {
-      return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
+      string = string == null ? '' : String(string);
+      return (reUnescapedHtml.lastIndex = 0, reUnescapedHtml.test(string))
+        ? string.replace(reUnescapedHtml, escapeHtmlChar)
+        : string;
     }
 
     /**
@@ -7810,7 +7813,10 @@
      * // => '\[lodash\]\(http://lodash\.com\)'
      */
     function escapeRegExp(string) {
-      return string == null ? '' : String(string).replace(reRegExpChars, '\\$&');
+      string = string == null ? '' : String(string);
+      return (reRegExpChars.lastIndex = 0, reRegExpChars.test(string))
+        ? string.replace(reRegExpChars, '\\$&')
+        : string;
     }
 
     /**
@@ -8401,11 +8407,10 @@
      * // => 'fred, barney & pebbles'
      */
     function unescape(string) {
-      if (string == null) {
-        return '';
-      }
-      string = String(string);
-      return string.indexOf(';') < 0 ? string : string.replace(reEscapedHtml, unescapeHtmlChar);
+      string = string == null ? '' : String(string);
+      return (reEscapedHtml.lastIndex = 0, reEscapedHtml.test(string))
+        ? string.replace(reEscapedHtml, unescapeHtmlChar)
+        : string;
     }
 
     /*--------------------------------------------------------------------------*/

@@ -7792,6 +7792,7 @@
      * // => 'fred, barney, &amp; pebbles'
      */
     function escape(string) {
+      // reset `lastIndex` because in IE < 9 `String#replace` does not
       string = string == null ? '' : String(string);
       return (reUnescapedHtml.lastIndex = 0, reUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)
@@ -7967,6 +7968,9 @@
         return result;
       }
       string = String(string);
+
+      // leverage the exponentiation by squaring algorithm for a faster repeat
+      // http://en.wikipedia.org/wiki/Exponentiation_by_squaring
       do {
         if (n % 2) {
           result += string;

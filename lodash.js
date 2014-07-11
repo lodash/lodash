@@ -6777,7 +6777,7 @@
     }
 
     /**
-     * Checks if `value` is an `arguments` object.
+     * Checks if `value` is classified as an `arguments` object.
      *
      * @static
      * @memberOf _
@@ -6805,13 +6805,13 @@
     }
 
     /**
-     * Checks if `value` is an array.
+     * Checks if `value` is classified as an `Array` object.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isArray([1, 2, 3]);
@@ -6826,13 +6826,13 @@
     };
 
     /**
-     * Checks if `value` is a boolean value.
+     * Checks if `value` is classified as a boolean primitive or object.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a boolean value, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isBoolean(false);
@@ -6847,13 +6847,13 @@
     }
 
     /**
-     * Checks if `value` is a `Date` object.
+     * Checks if `value` is classified as a `Date` object.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isDate(new Date);
@@ -7002,7 +7002,7 @@
     }
 
     /**
-     * Checks if `value` is a finite number.
+     * Checks if `value` is a finite primitive number.
      *
      * Note: This method is based on ES6 `Number.isFinite`. See the
      * [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
@@ -7012,7 +7012,7 @@
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is finite, else `false`.
+     * @returns {boolean} Returns `true` if `value` is a finite number, else `false`.
      * @example
      *
      * _.isFinite(10);
@@ -7035,13 +7035,13 @@
     };
 
     /**
-     * Checks if `value` is a function.
+     * Checks if `value` is classified as a `Function` object.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isFunction(_);
@@ -7144,16 +7144,16 @@
     }
 
     /**
-     * Checks if `value` is a `Number` primitive or object.
+     * Checks if `value` is classified as a `Number` primitive or object.
      *
-     * Note: `NaN` is considered a number. See the [ES5 spec](http://es5.github.io/#x8.5)
-     * for more details.
+     * Note: To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+     * as numbers, use the `_.isFinite` method.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a number, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isNumber(8.4);
@@ -7215,13 +7215,13 @@
     };
 
     /**
-     * Checks if `value` is a `RegExp` object.
+     * Checks if `value` is classified as a `RegExp` object.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a regexp object, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isRegExp(/abc/);
@@ -7235,13 +7235,13 @@
     }
 
     /**
-     * Checks if `value` is a `String` primitive or object.
+     * Checks if `value` is classified as a `String` primitive or object.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * _.isString('abc');

@@ -3028,6 +3028,9 @@
     var escaped = '&amp;&lt;&gt;&quot;&#39;&#96;\/',
         unescaped = '&<>"\'`\/';
 
+    escaped += escaped;
+    unescaped += unescaped;
+
     test('should escape values', 1, function() {
       strictEqual(_.escape(unescaped), escaped);
     });
@@ -3050,10 +3053,13 @@
   QUnit.module('lodash.escapeRegExp');
 
   (function() {
-    test('should escape values', 1, function() {
-      var escaped = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\/\\\\',
-          unescaped = '.*+?^${}()|[\]\/\\';
+    var escaped = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\/\\\\',
+        unescaped = '.*+?^${}()|[\]\/\\';
 
+    escaped += escaped;
+    unescaped += unescaped;
+
+    test('should escape values', 1, function() {
       strictEqual(_.escapeRegExp(unescaped), escaped);
     });
 
@@ -10602,6 +10608,9 @@
   (function() {
     var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
         unescaped = '&<>"\'\/';
+
+    escaped += escaped;
+    unescaped += unescaped;
 
     test('should unescape entities in the correct order', 1, function() {
       strictEqual(_.unescape('&amp;lt;'), '&lt;');

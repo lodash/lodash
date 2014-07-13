@@ -2381,25 +2381,6 @@
     }
 
     /**
-     * The implementation of `_.uniq` optimized for sorted arrays
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @returns {Array} Returns the new duplicate-value-free array.
-     */
-    function sortedUniq(array) {
-      var result = [],
-          index = -1,
-          length = array ? array.length : 0;
-      while (++index < length) {
-        if (index + 1 > length || array[index] !== array[index + 1]) {
-          result.push(array[index]);
-        }
-      }
-      return result;
-    };
-
-    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -2409,12 +2390,9 @@
      * @returns {Array} Returns the new duplicate-value-free array.
      */
     function baseUniq(array, iterator) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
       var index = -1,
           indexOf = getIndexOf(),
+          length = array.length,
           prereq = indexOf === baseIndexOf,
           isLarge = prereq && createCache && length >= 200,
           isCommon = prereq && !isLarge,
@@ -3028,6 +3006,33 @@
         if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
             hasOwnProperty.call(object, key)) {
           result.push(key);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * An implementation of `_.uniq` optimized for sorted arrays without support
+     * for callback shorthands and `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iterator] The function called per iteration.
+     * @returns {Array} Returns the new duplicate-value-free array.
+     */
+    function sortedUniq(array, iterator) {
+      var seen,
+          index = -1,
+          length = array.length,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index],
+            computed = iterator ? iterator(value, index, array) : value;
+
+        if (!index || seen !== computed) {
+          seen = computed;
+          result.push(value);
         }
       }
       return result;
@@ -4106,23 +4111,28 @@
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
     function uniq(array, isSorted, iterator, thisArg) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       // juggle arguments
       var type = typeof isSorted;
       if (type != 'boolean' && isSorted != null) {
         thisArg = iterator;
         iterator = isSorted;
+        isSorted = false;
 
         // enables use as a callback for functions like `_.map`
         if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === array) {
           iterator = null;
         }
-      } else if (isSorted && getIndexOf() == baseIndexOf) {
-        return sortedUniq(array);
       }
       if (iterator != null) {
         iterator = getCallback(iterator, thisArg, 3);
       }
-      return baseUniq(array, iterator);
+      return (isSorted && getIndexOf() == baseIndexOf)
+        ? sortedUniq(array, iterator)
+        : baseUniq(array, iterator);
     }
 
     /**

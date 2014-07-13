@@ -8271,7 +8271,12 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.random');
+  QUnit.module('lodash.random', {
+    nativeRandom: Math.random,
+    teardown: function() {
+      Math.random = this.nativeRandom;
+    },
+  });
 
   (function() {
     var array = Array(1000);
@@ -8325,6 +8330,15 @@
 
       actual = _.random(2, 4, true);
       ok(actual % 1 && actual >= 2 && actual <= 4);
+    });
+
+    test('supports RNG injection', 1, function() {
+      Math.random = function() { return 0; };
+      var expected = _.random(42);
+
+      ok(_.every(array, function() {
+        return _.random(42) === expected;
+      }));
     });
   }());
 

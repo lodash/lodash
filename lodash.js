@@ -694,7 +694,7 @@
         nativeNow = isNative(nativeNow = Date.now) && nativeNow,
         nativeNumIsFinite = isNative(nativeNumIsFinite = Number.isFinite) && nativeNumIsFinite,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random;
+        nativeRandom = function() { return Math.random(); };
 
     /** Used as the size, in bytes, of each Float64Array element */
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array && Float64Array.BYTES_PER_ELEMENT;

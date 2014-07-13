@@ -2397,11 +2397,12 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          prereq = !isSorted && indexOf === baseIndexOf,
+          prereq = indexOf === baseIndexOf,
           isLarge = prereq && createCache && length >= 200,
           isCommon = prereq && !isLarge,
           result = [];
 
+      isSorted = prereq && isSorted;
       if (isLarge) {
         var seen = createCache();
         indexOf = cacheIndexOf;

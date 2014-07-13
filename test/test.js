@@ -4527,11 +4527,15 @@
       }
     });
 
-    test('`_.uniq` should work with a custom `_.indexOf` method', 2, function() {
+    test('`_.uniq` should work with a custom `_.indexOf` method', 6, function() {
       if (!isModularize) {
         _.indexOf = custom;
-        deepEqual(_.uniq(array), array.slice(0, 3));
-        deepEqual(_.uniq(largeArray), [largeArray[0]]);
+
+        _.each([false, true, _.identity], function(param) {
+          deepEqual(_.uniq(array, param), array.slice(0, 3));
+          deepEqual(_.uniq(largeArray, param), [largeArray[0]]);
+        });
+
         _.indexOf = indexOf;
       }
       else {

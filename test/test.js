@@ -10683,9 +10683,11 @@
       deepEqual(_.uniq(objects), objects);
     });
 
-    test('should work with `isSorted`', 1, function() {
-      var array = [1, 1, 2, 2, 3];
+    test('should work with `isSorted`', 4, function() {
       deepEqual(_.uniq([1, 1, 2, 2, 3], true), [1, 2, 3]);
+      deepEqual(_.uniq(_.range(100), true), _.range(100));
+      deepEqual(_.uniq(_.times(100, _.constant(undefined))), [undefined]);
+      deepEqual(_.uniq([1, 2, 3, 3, 3, 3, 3]), [1, 2, 3]);
     });
 
     test('should work with a callback', 1, function() {

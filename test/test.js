@@ -10683,19 +10683,24 @@
       deepEqual(_.uniq(objects), objects);
     });
 
-    test('should work with `isSorted`', 4, function() {
-      deepEqual(_.uniq([1, 1, 2, 2, 3], true), [1, 2, 3]);
-      deepEqual(_.uniq(_.range(100), true), _.range(100));
-      deepEqual(_.uniq(_.times(100, _.constant(undefined))), [undefined]);
-      deepEqual(_.uniq([1, 2, 3, 3, 3, 3, 3]), [1, 2, 3]);
+    test('should work with `isSorted`', 3, function() {
+      var expected = [1, 2, 3];
+      deepEqual(_.uniq([1, 2, 3], true), expected);
+      deepEqual(_.uniq([1, 1, 2, 2, 3], true), expected);
+      deepEqual(_.uniq([1, 2, 3, 3, 3, 3, 3], true), expected);
     });
 
-    test('should work with a callback', 1, function() {
-      var actual = _.uniq(objects, false, function(object) {
-        return object.a;
-      });
+    test('should work with a callback', 2, function() {
+      _.each([objects, _.sortBy(objects, 'a')], function(array, index) {
+        var isSorted = !!index,
+            expected = isSorted ? [objects[2], objects[0], objects[1]] : objects.slice(0, 3);
 
-      deepEqual(actual, objects.slice(0, 3));
+        var actual = _.uniq(array, isSorted, function(object) {
+          return object.a;
+        });
+
+        deepEqual(actual, expected);
+      });
     });
 
     test('should work with a callback without specifying `isSorted`', 1, function() {

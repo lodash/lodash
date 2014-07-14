@@ -4976,8 +4976,7 @@
         iterator = null;
       }
       var noIterator = iterator == null,
-          isArr = noIterator && isArray(collection),
-          isStr = !isArr && isString(collection);
+          isStr = isString(collection);
 
       if (noIterator && !isStr) {
         var index = -1,
@@ -5059,8 +5058,7 @@
         iterator = null;
       }
       var noIterator = iterator == null,
-          isArr = noIterator && isArray(collection),
-          isStr = !isArr && isString(collection);
+          isStr = isString(collection);
 
       if (noIterator && !isStr) {
         var index = -1,

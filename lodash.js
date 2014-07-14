@@ -5001,7 +5001,7 @@
 
       if (noIterator && !isStr) {
         var index = -1,
-            iterable = isArr ? collection : values(collection),
+            iterable = toIterable(collection),
             length = iterable.length;
 
         while (++index < length) {
@@ -5084,7 +5084,7 @@
 
       if (noIterator && !isStr) {
         var index = -1,
-            iterable = isArr ? collection : values(collection),
+            iterable = toIterable(collection),
             length = iterable.length;
 
         while (++index < length) {

@@ -4539,7 +4539,7 @@
         _.indexOf = indexOf;
       }
       else {
-        skipTest(2);
+        skipTest(6);
       }
     });
   }());

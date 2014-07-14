@@ -1616,7 +1616,7 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          prereq = indexOf === baseIndexOf,
+          prereq = indexOf == baseIndexOf,
           isLarge = prereq && createCache && values && values.length >= 200,
           isCommon = prereq && !isLarge,
           result = [],
@@ -2393,7 +2393,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,
-          prereq = indexOf === baseIndexOf,
+          prereq = indexOf == baseIndexOf,
           isLarge = prereq && createCache && length >= 200,
           isCommon = prereq && !isLarge,
           result = [];
@@ -3542,7 +3542,7 @@
           argsLength = arguments.length,
           caches = [],
           indexOf = getIndexOf(),
-          prereq = createCache && indexOf === baseIndexOf;
+          prereq = createCache && indexOf == baseIndexOf;
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];

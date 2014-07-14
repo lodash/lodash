@@ -1460,23 +1460,6 @@
         });
       });
 
-      _.each(typedArrays, function(type) {
-	test('`_.' + methodName + '` should clone ' + type + ' arrays', 3, function() {
-          var Ctor = root[type];
-          if (Ctor) {
-            var array = new Ctor(new ArrayBuffer(8)),
-                actual = func(array);
-
-            deepEqual(actual, array);
-            notStrictEqual(actual, array);
-	    notStrictEqual(actual.buffer, array.buffer);
-          }
-          else {
-	    skipTest(3);
-          }
-        });
-      });
-
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
         var buffer = ArrayBuffer && new ArrayBuffer(8);
         if (buffer) {
@@ -1487,6 +1470,28 @@
         else {
           skipTest(2);
         }
+      });
+
+      _.each(typedArrays, function(type) {
+        test('`_.' + methodName + '` should clone ' + type + ' arrays', 10, function() {
+          var Ctor = root[type];
+          if (Ctor) {
+            var array = new Ctor(new ArrayBuffer(24));
+
+            _.times(2, function(index) {
+              var actual = index ? func(array, 8, 1) : func(array);
+
+              deepEqual(actual, array);
+              notStrictEqual(actual, array);
+              notStrictEqual(actual.buffer, array.buffer);
+              strictEqual(actual.byteOffset, array.byteOffset);
+              strictEqual(actual.length, array.length);
+            });
+          }
+          else {
+            skipTest(10);
+          }
+        });
       });
 
       test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', 2, function() {
@@ -7454,8 +7459,8 @@
         }, 32);
       }
       else {
-      	skipTest();
-      	QUnit.start();
+        skipTest();
+        QUnit.start();
       }
     });
   }());
@@ -9788,8 +9793,8 @@
 
     test('should work with templates containing newlines and comments', 1, function() {
       var compiled = _.template('<%\n\
-	// comment\n\
-	if (value) { value += 3; }\n\
+        // comment\n\
+        if (value) { value += 3; }\n\
         %><p><%= value %></p>'
       );
 

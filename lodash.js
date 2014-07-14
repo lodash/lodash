@@ -1427,8 +1427,7 @@
               if (Ctor instanceof Ctor) {
                 Ctor = ctorByClass[className];
               }
-
-              return new Ctor(sliceBuffer(value.buffer, value.byteOffset, value.length * Ctor.BYTES_PER_ELEMENT));
+              return new Ctor(cloneBuffer(value.buffer), value.byteOffset, value.length);
 
             case numberClass:
             case stringClass:
@@ -2904,7 +2903,26 @@
      * @returns {ArrayBuffer} Returns the cloned array buffer.
      */
     function cloneBuffer(buffer) {
-      return sliceBuffer(buffer, 0);
+      return bufferSlice.call(buffer, 0);
+    }
+    if (!bufferSlice) {
+      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
+      cloneBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
+        var byteLength = buffer.byteLength,
+            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
+            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
+            result = new ArrayBuffer(byteLength);
+
+        if (floatLength) {
+          var view = new Float64Array(result, 0, floatLength);
+          view.set(new Float64Array(buffer, 0, floatLength));
+        }
+        if (byteLength != offset) {
+          view = new Uint8Array(result, offset);
+          view.set(new Uint8Array(buffer, offset));
+        }
+        return result;
+      };
     }
 
     /**
@@ -2991,44 +3009,6 @@
         }
       }
       return result;
-    }
-
-    /**
-     * Slices the given array buffer from the `start` index up to, but not including, the `end` index.
-     *
-     * @private
-     * @param {ArrayBuffer} buffer The array buffer to slice.
-     * @param {number} [start=0] The start index.
-     * @param {number} [end=buffer.byteLength] The end index.
-     * @returns {ArrayBuffer} Returns the slice of `buffer`.
-     */
-    function sliceBuffer(buffer, start, end) {
-      typeof start == 'number' || (start = 0);
-      typeof end == 'number' || (end = buffer.byteLength);
-      return bufferSlice.call(buffer, start, end);
-    }
-    if (!bufferSlice) {
-      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
-      sliceBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer, start, end) {
-        typeof start == 'number' || (start = 0);
-        typeof end == 'number' || (end = buffer.byteLength);
-
-        var byteLength = end - start,
-            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
-            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
-            result = new ArrayBuffer(byteLength);
-
-        if (floatLength) {
-          var view = new Float64Array(result, 0, floatLength);
-          view.set(new Float64Array(buffer, start, floatLength));
-        }
-        if (byteLength != offset) {
-          offset += start;
-          view = new Uint8Array(result, offset);
-          view.set(new Uint8Array(buffer, offset));
-        }
-        return result;
-      };
     }
 
     /**

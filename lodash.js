@@ -4975,18 +4975,23 @@
       if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === collection) {
         iterator = null;
       }
-      if (iterator == null && isArray(collection)) {
+      var noIterator = iterator == null,
+          isArr = noIterator && isArray(collection),
+          isStr = !isArr && isString(collection);
+
+      if (noIterator && !isStr) {
         var index = -1,
-            length = collection.length;
+            iterable = isArr ? collection : values(collection),
+            length = iterable.length;
 
         while (++index < length) {
-          var value = collection[index];
+          var value = iterable[index];
           if (value > result) {
             result = value;
           }
         }
       } else {
-        iterator = (iterator == null && isString(collection))
+        iterator = (noIterator && isStr)
           ? charAtCallback
           : getCallback(iterator, thisArg, 3);
 
@@ -5053,18 +5058,23 @@
       if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === collection) {
         iterator = null;
       }
-      if (iterator == null && isArray(collection)) {
+      var noIterator = iterator == null,
+          isArr = noIterator && isArray(collection),
+          isStr = !isArr && isString(collection);
+
+      if (noIterator && !isStr) {
         var index = -1,
-            length = collection.length;
+            iterable = isArr ? collection : values(collection),
+            length = iterable.length;
 
         while (++index < length) {
-          var value = collection[index];
+          var value = iterable[index];
           if (value < result) {
             result = value;
           }
         }
       } else {
-        iterator = (iterator == null && isString(collection))
+        iterator = (noIterator && isStr)
           ? charAtCallback
           : getCallback(iterator, thisArg, 3);
 

@@ -524,7 +524,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 11, function() {
+    test('should avoid overwritten native methods', 12, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -605,14 +605,15 @@
             actual = null;
           }
           deepEqual(actual, array, message('Float64Array'));
+          notStrictEqual(actual.buffer, array.buffer, message('Float64Array'));
           notStrictEqual(actual, array, message('Float64Array'));
         }
         else {
-          skipTest(2);
+          skipTest(3);
         }
       }
       else {
-        skipTest(11);
+        skipTest(12);
       }
     });
   }());
@@ -1460,7 +1461,7 @@
       });
 
       _.each(typedArrays, function(type) {
-        test('`_.' + methodName + '` should clone ' + type + ' arrays', 2, function() {
+	test('`_.' + methodName + '` should clone ' + type + ' arrays', 3, function() {
           var Ctor = root[type];
           if (Ctor) {
             var array = new Ctor(new ArrayBuffer(8)),
@@ -1468,9 +1469,10 @@
 
             deepEqual(actual, array);
             notStrictEqual(actual, array);
+	    notStrictEqual(actual.buffer, array.buffer);
           }
           else {
-            skipTest(2);
+	    skipTest(3);
           }
         });
       });

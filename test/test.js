@@ -1286,11 +1286,11 @@
       }
     });
 
-    test('should return an existing wrapper', 2, function() {
+    test('should return existing wrapped values', 2, function() {
       if (!isNpm) {
-        var wrapper = _({ 'a': 0 });
-        strictEqual(_.chain(wrapper), wrapper);
-        strictEqual(wrapper.chain(), wrapper);
+        var wrapped = _({ 'a': 0 });
+        strictEqual(_.chain(wrapped), wrapped);
+        strictEqual(wrapped.chain(), wrapped);
       }
       else {
         skipTest(2);
@@ -1320,9 +1320,9 @@
         _.times(2, function(index) {
           var array = ['one two three four', 'five six seven eight', 'nine ten eleven twelve'],
               expected = { ' ': 9, 'e': 14, 'f': 2, 'g': 1, 'h': 2, 'i': 4, 'l': 2, 'n': 6, 'o': 3, 'r': 2, 's': 2, 't': 5, 'u': 1, 'v': 4, 'w': 2, 'x': 1 },
-              wrapper = index ? _(array).chain() : _.chain(array);
+              wrapped = index ? _(array).chain() : _.chain(array);
 
-          var actual = wrapper
+          var actual = wrapped
             .chain()
             .map(function(value) { return value.split(''); })
             .flatten()
@@ -1336,8 +1336,8 @@
           deepEqual(actual, expected);
 
           array = [1, 2, 3, 4, 5, 6];
-          wrapper = index ? _(array).chain() : _.chain(array);
-          actual = wrapper
+          wrapped = index ? _(array).chain() : _.chain(array);
+          actual = wrapped
             .chain()
             .filter(function(n) { return n % 2; })
             .reject(function(n) { return n % 3 == 0; })
@@ -1347,8 +1347,8 @@
           deepEqual(actual, [5, 1]);
 
           array = [3, 4];
-          wrapper = index ? _(array).chain() : _.chain(array);
-          actual = wrapper
+          wrapped = index ? _(array).chain() : _.chain(array);
+          actual = wrapped
             .reverse()
             .concat([2, 1])
             .unshift(5)
@@ -3961,10 +3961,10 @@
         strictEqual(func(array, Boolean), array);
       });
 
-      test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
+      test('`_.' + methodName + '` should return the existing wrapped value when chaining', 1, function() {
         if (!isNpm) {
-          var wrapper = _(array);
-          strictEqual(wrapper[methodName](_.noop), wrapper);
+          var wrapped = _(array);
+          strictEqual(wrapped[methodName](_.noop), wrapped);
         }
         else {
           skipTest();
@@ -4127,10 +4127,10 @@
       deepEqual(actual, expected);
     });
 
-    test('`_.' + methodName + '` should return the existing wrapper when chaining', 1, function() {
+    test('`_.' + methodName + '` should return the existing wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var wrapper = _({ 'a': 1 });
-        strictEqual(wrapper[methodName]({ 'b': 2 }), wrapper);
+        var wrapped = _({ 'a': 1 });
+        strictEqual(wrapped[methodName]({ 'b': 2 }), wrapped);
       }
       else {
         skipTest();
@@ -7428,19 +7428,19 @@
       ok(pass);
     });
 
-    test('should return the existing wrapper when chaining', 2, function() {
+    test('should return the existing wrapped value when chaining', 2, function() {
       if (!isNpm) {
         _.each([_, wrapper], function(func) {
           if (func === _) {
-            var wrapper = _(source),
-                actual = wrapper.mixin();
+            var wrapped = _(source),
+                actual = wrapped.mixin();
 
             strictEqual(actual.value(), _);
           }
           else {
-            wrapper = _(func);
-            actual = wrapper.mixin(source);
-            strictEqual(actual, wrapper);
+            wrapped = _(func);
+            actual = wrapped.mixin(source);
+            strictEqual(actual, wrapped);
           }
           delete func.a;
           delete func.prototype.a;

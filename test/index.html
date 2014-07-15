@@ -109,7 +109,9 @@
 				if (!window._Float64Array) {
 					setProperty(window, 'Float64Array', window.Uint8Array);
 				}
+				setProperty(window, 'exports', window);
 				setProperty(window, 'global', window);
+				setProperty(window, 'module', {});
 				setProperty(window, 'WinRTError', Error);
 			}
 
@@ -158,7 +160,9 @@
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);
 
+				setProperty(window, 'exports', undefined);
 				setProperty(window, 'global', undefined);
+				setProperty(window, 'module', undefined);
 				setProperty(window, 'WinRTError', undefined);
 
 				delete Array._isArray;

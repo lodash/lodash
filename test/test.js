@@ -7250,11 +7250,34 @@
       strictEqual(actual, isMax ? 1 : 3);
     });
 
+    test('should work with a "_.pluck" style `callback`', 2, function() {
+      var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
+          actual = func(objects, 'a');
+
+      deepEqual(actual, objects[isMax ? 1 : 2]);
+
+      var arrays = [[2], [3], [1]];
+      actual = func(arrays, 0);
+
+      deepEqual(actual, arrays[isMax ? 1 : 2]);
+    });
+
     test('`_.' + methodName + '` should work when used as a callback for `_.map`', 1, function() {
       var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
           actual = _.map(array, func);
 
       deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
+    });
+
+    test('`_.' + methodName + '` should work when `callback` returns +/-Infinity', 1, function() {
+      var value = isMax ? -Infinity : Infinity,
+          object = { 'a': value };
+
+      var actual = func([object, { 'a': value }], function(object) {
+        return object.a;
+      });
+
+      strictEqual(actual, object);
     });
 
     test('`_.' + methodName + '` should iterate an object', 1, function() {
@@ -7267,16 +7290,6 @@
         var actual = func(value);
         strictEqual(actual, isMax ? 'c' : 'a');
       });
-    });
-
-    test('`_.' + methodName + '` should work when `callback` returns +/-Infinity', 1, function() {
-      var object = { 'a': (isMax ? -Infinity : Infinity) };
-
-      var actual = func([object, { 'a': object.a }], function(object) {
-        return object.a;
-      });
-
-      strictEqual(actual, object);
     });
 
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
@@ -10756,6 +10769,17 @@
       }, Math);
 
       deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should work with a "_.pluck" style `callback`', 2, function() {
+      var actual = _.uniq(objects, 'a');
+
+      deepEqual(actual, objects.slice(0, 3));
+
+      var arrays = [[2], [3], [1], [2], [3], [1]];
+      actual = _.uniq(arrays, 0);
+
+      deepEqual(actual, arrays.slice(0, 3));
     });
 
     test('should perform an unsorted uniq operation when used as a callback for `_.map`', 1, function() {

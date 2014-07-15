@@ -623,13 +623,41 @@
   QUnit.module('lodash constructor');
 
   (function() {
+    var values = empties.concat(true, 1, 'a'),
+        expected = _.map(values, _.constant(true));
+
     test('creates a new instance when called without the `new` operator', 1, function() {
-      ok(_() instanceof _);
+      var actual = _.map(values, function(value) {
+        return _(value) instanceof _;
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should return provided `lodash` instances', 1,function() {
-      var wrapped = _(false);
-      strictEqual(_(wrapped), wrapped);
+    test('should return provided `lodash` instances', 1, function() {
+      var actual = _.map(values, function(value) {
+        var wrapped = _(value);
+        return _(wrapped) === wrapped;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should convert foreign wrapped values to `lodash` instances', 1, function() {
+      if (lodashBizarro) {
+        var actual = _.map(values, function(value) {
+          var wrapped = _(lodashBizarro(value)),
+              unwrapped = wrapped.__wrapped__;
+
+          return wrapped instanceof _ &&
+            (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
+        });
+
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -1355,7 +1383,7 @@
     });
 
     test('should ensure the minimum `chunkSize` is `1`', 1, function() {
-      var values = falsey.concat(-1),
+      var values = falsey.concat(-1, -Infinity),
           expected = _.map(values, _.constant([[0], [1], [2], [3], [4], [5]]));
 
       var actual = _.map(values, function(value, index) {
@@ -1660,7 +1688,7 @@
   (function() {
     test('should create a function that always returns `value`', 1, function() {
       var object = { 'a': 1 },
-          values = falsey.concat(null, null, 1, 'a'),
+          values = Array(2).concat(empties, true, 1, 'a'),
           constant = _.constant(object),
           expected = _.map(values, function() { return true; });
 
@@ -1682,8 +1710,10 @@
       var expected = _.map(falsey, function() { return true; });
 
       var actual = _.map(falsey, function(value, index) {
-        var constant = index ? _.constant(value) : _.constant();
-        return constant() === value || _.isNaN(value);
+        var constant = index ? _.constant(value) : _.constant(),
+            result = constant();
+
+        return result === value || (_.isNaN(result) && _.isNaN(value));
       });
 
       deepEqual(actual, expected);
@@ -4334,7 +4364,7 @@
     });
 
     test('should return `false` for primitives', 1, function() {
-      var values = falsey.concat(1, 'a'),
+      var values = falsey.concat(true, 1, 'a'),
           expected = _.map(values, _.constant(false));
 
       var actual = _.map(values, function(value) {
@@ -5960,7 +5990,7 @@
     });
 
     test('should return `false` for non objects', 1, function() {
-      var values = falsey.concat('a', true),
+      var values = falsey.concat(true, 1, 'a'),
           expected = _.map(values, _.constant(false));
 
       var actual = _.map(values, function(value, index) {
@@ -7430,7 +7460,7 @@
 
   (function() {
     test('should always return `undefined`', 1, function() {
-      var values = falsey.concat([], true, new Date, _, {}, /x/, 'a'),
+      var values = empties.concat(true, new Date, _, 1, /x/, 'a'),
           expected = _.map(values, _.constant());
 
       var actual = _.map(values, function(value, index) {
@@ -8759,7 +8789,7 @@
     });
 
     test('should return the specified default value for undefined properties', 1, function() {
-      var values = falsey.concat(1, _.constant(1));
+      var values = empties.concat(true, new Date, _.constant(1), 1, /x/, 'a');
 
       var expected = _.transform(values, function(result, value) {
         result.push(value, value);

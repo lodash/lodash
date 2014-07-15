@@ -4814,6 +4814,8 @@
         return index ? _.isArray(value) : _.isArray();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isArray(args), false);
       strictEqual(_.isArray(true), false);
       strictEqual(_.isArray(new Date), false);
@@ -4823,8 +4825,6 @@
       strictEqual(_.isArray(1), false);
       strictEqual(_.isArray(/x/), false);
       strictEqual(_.isArray('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with arrays from another realm', 1, function() {
@@ -4858,6 +4858,8 @@
         return index ? _.isBoolean(value) : _.isBoolean();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isBoolean(args), false);
       strictEqual(_.isBoolean([1, 2, 3]), false);
       strictEqual(_.isBoolean(new Date), false);
@@ -4867,8 +4869,6 @@
       strictEqual(_.isBoolean(1), false);
       strictEqual(_.isBoolean(/x/), false);
       strictEqual(_.isBoolean('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with booleans from another realm', 1, function() {
@@ -4899,6 +4899,8 @@
         return index ? _.isDate(value) : _.isDate();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isDate(args), false);
       strictEqual(_.isDate([1, 2, 3]), false);
       strictEqual(_.isDate(true), false);
@@ -4908,8 +4910,6 @@
       strictEqual(_.isDate(1), false);
       strictEqual(_.isDate(/x/), false);
       strictEqual(_.isDate('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with dates from another realm', 1, function() {
@@ -4964,6 +4964,8 @@
         return index ? _.isElement(value) : _.isElement();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isElement(args), false);
       strictEqual(_.isElement([1, 2, 3]), false);
       strictEqual(_.isElement(true), false);
@@ -4974,8 +4976,6 @@
       strictEqual(_.isElement(1), false);
       strictEqual(_.isElement(/x/), false);
       strictEqual(_.isElement('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with DOM elements from another realm', 1, function() {
@@ -5002,9 +5002,10 @@
         return _.isEmpty(value);
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isEmpty(), true);
       strictEqual(_.isEmpty(/x/), true);
-      deepEqual(actual, expected);
     });
 
     test('should return `false` for non-empty values', 3, function() {
@@ -5699,6 +5700,8 @@
         return index ? _.isError(value) : _.isError();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isError(args), false);
       strictEqual(_.isError([1, 2, 3]), false);
       strictEqual(_.isError(true), false);
@@ -5708,8 +5711,6 @@
       strictEqual(_.isError(1), false);
       strictEqual(_.isError(/x/), false);
       strictEqual(_.isError('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with an error object from another realm', 1, function() {
@@ -5796,6 +5797,8 @@
         return index ? _.isFunction(value) : _.isFunction();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isFunction(args), false);
       strictEqual(_.isFunction([1, 2, 3]), false);
       strictEqual(_.isFunction(true), false);
@@ -5805,8 +5808,6 @@
       strictEqual(_.isFunction(1), false);
       strictEqual(_.isFunction(/x/), false);
       strictEqual(_.isFunction('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with host objects in non-edge document modes (test in IE 11)', 1, function() {
@@ -5851,6 +5852,8 @@
         return index ? _.isNaN(value) : _.isNaN();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isNaN(args), false);
       strictEqual(_.isNaN([1, 2, 3]), false);
       strictEqual(_.isNaN(true), false);
@@ -5861,8 +5864,6 @@
       strictEqual(_.isNaN(1), false);
       strictEqual(_.isNaN(/x/), false);
       strictEqual(_.isNaN('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with NaNs from another realm', 1, function() {
@@ -5893,6 +5894,8 @@
         return index ? _.isNull(value) : _.isNull();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isNull(args), false);
       strictEqual(_.isNull([1, 2, 3]), false);
       strictEqual(_.isNull(true), false);
@@ -5903,8 +5906,6 @@
       strictEqual(_.isNull(1), false);
       strictEqual(_.isNull(/x/), false);
       strictEqual(_.isNull('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with nulls from another realm', 1, function() {
@@ -5936,6 +5937,8 @@
         return index ? _.isNumber(value) : _.isNumber();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isNumber(args), false);
       strictEqual(_.isNumber([1, 2, 3]), false);
       strictEqual(_.isNumber(true), false);
@@ -5945,8 +5948,6 @@
       strictEqual(_.isNumber({ 'a': 1 }), false);
       strictEqual(_.isNumber(/x/), false);
       strictEqual(_.isNumber('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with numbers from another realm', 1, function() {
@@ -6050,7 +6051,6 @@
       strictEqual(_.isPlainObject({}), true);
       strictEqual(_.isPlainObject({ 'a': 1 }), true);
       strictEqual(_.isPlainObject({ 'constructor': Foo }), true);
-
       strictEqual(_.isPlainObject([1, 2, 3]), false);
       strictEqual(_.isPlainObject(new Foo(1)), false);
     });
@@ -6069,6 +6069,7 @@
       if (element) {
         var valueOf = element.valueOf;
         element.valueOf = 0;
+
         strictEqual(_.isPlainObject(element), false);
         element.valueOf = valueOf;
       }
@@ -6098,9 +6099,10 @@
         return index ? _.isPlainObject(value) : _.isPlainObject();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isPlainObject(true), false);
       strictEqual(_.isPlainObject('a'), false);
-      deepEqual(actual, expected);
     });
 
     test('should work with objects from another realm', 1, function() {
@@ -6132,6 +6134,8 @@
         return index ? _.isRegExp(value) : _.isRegExp();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isRegExp(args), false);
       strictEqual(_.isRegExp([1, 2, 3]), false);
       strictEqual(_.isRegExp(true), false);
@@ -6141,8 +6145,6 @@
       strictEqual(_.isRegExp({ 'a': 1 }), false);
       strictEqual(_.isRegExp(1), false);
       strictEqual(_.isRegExp('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with regexes from another realm', 1, function() {
@@ -6174,6 +6176,8 @@
         return index ? _.isString(value) : _.isString();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isString(args), false);
       strictEqual(_.isString([1, 2, 3]), false);
       strictEqual(_.isString(true), false);
@@ -6183,8 +6187,6 @@
       strictEqual(_.isString({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isString(1), false);
       strictEqual(_.isString(/x/), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with strings from another realm', 1, function() {
@@ -6216,6 +6218,8 @@
         return index ? _.isUndefined(value) : _.isUndefined();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isUndefined(args), false);
       strictEqual(_.isUndefined([1, 2, 3]), false);
       strictEqual(_.isUndefined(true), false);
@@ -6226,8 +6230,6 @@
       strictEqual(_.isUndefined(1), false);
       strictEqual(_.isUndefined(/x/), false);
       strictEqual(_.isUndefined('a'), false);
-
-      deepEqual(actual, expected);
     });
 
     test('should work with `undefined` from another realm', 1, function() {

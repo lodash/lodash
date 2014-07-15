@@ -8125,6 +8125,11 @@
      * compiled({ 'name': 'mustache' });
      * // => 'hello mustache!'
      *
+     * // delimiters cannot be nested, even in strings
+     * var compiled = _.template('<%- "<%- value %>" %>');
+     * compiled({});
+     * // => throws error
+     *
      * // using the `imports` option to import `jQuery` as `jq`
      * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
      * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });

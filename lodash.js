@@ -4237,7 +4237,7 @@
 
     /**
      * Creates an object composed from arrays of property names and values. Provide
-     * either a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`
+     * either a single two dimensional array, e.g. `[[key1, value1], [key2, value2]]`
      * or two arrays, one of property names and one of corresponding values.
      *
      * @static
@@ -7552,7 +7552,7 @@
 
     /**
      * Creates a two dimensional array of a given object's key-value pairs,
-     * i.e. `[[key1, value1], [key2, value2]]`.
+     * e.g. `[[key1, value1], [key2, value2]]`.
      *
      * @static
      * @memberOf _
@@ -8070,7 +8070,7 @@
      * properties may be accessed as free variables in the template. If a setting
      * object is provided it overrides `_.templateSettings` for the template.
      *
-     * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
+     * Note: In the development build `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
@@ -8109,26 +8109,26 @@
      * compiled({ 'people': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
-     * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
-     * var compiled = _.template('hello ${ name }');
-     * compiled({ 'name': 'pebbles' });
-     * // => 'hello pebbles'
-     *
      * // using the internal `print` function in "evaluate" delimiters
      * var compiled = _.template('<% print("hello " + name); %>!');
      * compiled({ 'name': 'barney' });
      * // => 'hello barney!'
      *
-     * // using a custom template delimiters
+     * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
+     * var compiled = _.template('hello ${ name }');
+     * compiled({ 'name': 'pebbles' });
+     * // => 'hello pebbles'
+     *
+     * // using custom template delimiters
      * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
      * var compiled = _.template('hello {{ name }}!');
      * compiled({ 'name': 'mustache' });
      * // => 'hello mustache!'
      *
-     * // delimiters cannot be nested, even in strings
-     * var compiled = _.template('<%- "<%- value %>" %>');
-     * compiled({});
-     * // => throws error
+     * // using backslashes to treat delimiters as plain text
+     * var compiled = _.template('<%= "\\<%- value %\\>" %>');
+     * compiled({ 'value': 'ignored' });
+     * // => '<%- value %>'
      *
      * // using the `imports` option to import `jQuery` as `jq`
      * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';

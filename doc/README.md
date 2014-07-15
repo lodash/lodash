@@ -766,7 +766,7 @@ _.range(0);
 ### <a id="_removearray-callbackidentity-thisarg"></a>`_.remove(array, [callback=identity], [thisArg])`
 <a href="#_removearray-callbackidentity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/master/lodash.js#L2870 "View in source") [&#x24C9;][1]
 
-Removes all elements from an array that the callback returns truey for and returns an array of removed elements. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
+Removes all elements from an array that the callback returns true for and returns an array of removed elements. The callback is bound to `thisArg` and invoked with three arguments; *(value, index, array)*.
 
 If a property name is provided for `callback` the created "_.pluck" style callback will return the property value of the given element.
 

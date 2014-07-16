@@ -303,7 +303,6 @@
   var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
       nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
       nativeIsFinite = root.isFinite,
-      nativeIsNaN = root.isNaN,
       nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
       nativeMax = Math.max,
       nativeMin = Math.min,
@@ -593,7 +592,7 @@
    * @param {Array} array The array to iterate over.
    * @param {Function} iterator The function called per iteration.
    * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray=false] Specify using the first element of
+   * @param {boolean} [initFromArray=false] Specify using the last element of
    *  `array` as the initial value.
    * @returns {*} Returns the accumulated value.
    */
@@ -642,29 +641,35 @@
    * @returns {Function} Returns the new function.
    */
   function baseCallback(func, thisArg, argCount) {
-    if (typeof func != 'function') {
+    var type = typeof func;
+
+    if (type == 'function') {
+      if (typeof thisArg == 'undefined') {
+        return func;
+      }
+      switch (argCount) {
+        case 1: return function(value) {
+          return func.call(thisArg, value);
+        };
+        case 3: return function(value, index, collection) {
+          return func.call(thisArg, value, index, collection);
+        };
+        case 4: return function(accumulator, value, index, collection) {
+          return func.call(thisArg, accumulator, value, index, collection);
+        };
+        case 5: return function(value, other, key, object, source) {
+          return func.call(thisArg, value, other, key, object, source);
+        };
+      }
+      return function() {
+        return func.apply(thisArg, arguments);
+      };
+    }
+    if (func == null) {
       return identity;
     }
-    if (typeof thisArg == 'undefined') {
-      return func;
-    }
-    switch (argCount) {
-      case 1: return function(value) {
-        return func.call(thisArg, value);
-      };
-      case 3: return function(value, index, collection) {
-        return func.call(thisArg, value, index, collection);
-      };
-      case 4: return function(accumulator, value, index, collection) {
-        return func.call(thisArg, accumulator, value, index, collection);
-      };
-      case 5: return function(value, other, key, object, source) {
-        return func.call(thisArg, value, other, key, object, source);
-      };
-    }
-    return function() {
-      return func.apply(thisArg, arguments);
-    };
+    // handle "_.pluck" and "_.where" style callback shorthands
+    return type == 'object' ? matches(func) : property(func);
   }
 
   /**
@@ -1283,7 +1288,7 @@
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Function} iterator The function called per iteration.
    * @param {*} accumulator The initial value.
-   * @param {boolean} initFromCollection Specify using the first element
+   * @param {boolean} initFromCollection Specify using the first or last element
    *  of `collection` as the initial value.
    * @param {Function} eachFunc The function to iterate over `collection`.
    * @returns {*} Returns the accumulated value.
@@ -1354,31 +1359,21 @@
    *
    * @private
    * @param {Array} array The array to inspect.
-   * @param {boolean} [isSorted=false] Specify the array is sorted.
    * @param {Function} [iterator] The function called per iteration.
    * @returns {Array} Returns the new duplicate-value-free array.
    */
-  function baseUniq(array, isSorted, iterator) {
-    var length = array ? array.length : 0;
-    if (!length) {
-      return [];
-    }
+  function baseUniq(array, iterator) {
     var index = -1,
         indexOf = getIndexOf(),
+        length = array.length,
         result = [],
-        seen = (iterator && !isSorted) ? [] : result;
+        seen = iterator ? [] : result;
 
     while (++index < length) {
       var value = array[index],
           computed = iterator ? iterator(value, index, array) : value;
 
-      if (isSorted) {
-        if (!index || seen !== computed) {
-          seen = computed;
-          result.push(value);
-        }
-      }
-      else if (indexOf(seen, computed) < 0) {
+      if (indexOf(seen, computed) < 0) {
         if (iterator) {
           seen.push(computed);
         }
@@ -1455,7 +1450,7 @@
   function createAggregator(setter, initializer) {
     return function(collection, iterator, thisArg) {
       var result = initializer ? initializer() : {};
-      iterator = callback(iterator, thisArg, 3);
+      iterator = baseCallback(iterator, thisArg, 3);
 
       if (isArray(collection)) {
         var index = -1,
@@ -1626,14 +1621,16 @@
   /**
    * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
    * customized this function returns the custom method, otherwise it returns
-   * the `baseIndexOf` function.
+   * the `baseIndexOf` function. If arguments are provided the chosen function
+   * is executed with the arguments and its result is returned.
    *
    * @private
-   * @returns {Function} Returns the "indexOf" function.
+   * @returns {Function|number} Returns the chosen function or its result.
    */
-  function getIndexOf() {
+  function getIndexOf(collection, target, fromIndex) {
     var result = lodash.indexOf || indexOf;
-    return result === indexOf ? baseIndexOf : result;
+    result = result === indexOf ? baseIndexOf : result;
+    return collection ? result(collection, target, fromIndex) : result;
   }
 
   /**
@@ -1668,6 +1665,33 @@
       var key = props[index];
       if (hasOwnProperty.call(object, key)) {
         result.push(key);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * An implementation of `_.uniq` optimized for sorted arrays without support
+   * for callback shorthands and `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to inspect.
+   * @param {Function} [iterator] The function called per iteration.
+   * @returns {Array} Returns the new duplicate-value-free array.
+   */
+  function sortedUniq(array, iterator) {
+    var seen,
+        index = -1,
+        length = array.length,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index],
+          computed = iterator ? iterator(value, index, array) : value;
+
+      if (!index || seen !== computed) {
+        seen = computed;
+        result.push(value);
       }
     }
     return result;
@@ -1819,7 +1843,7 @@
     var index = -1,
         length = array ? array.length : 0;
 
-    predicate = callback(predicate, thisArg, 3);
+    predicate = baseCallback(predicate, thisArg, 3);
     while (++index < length) {
       if (predicate(array[index], index, array)) {
         return index;
@@ -2164,7 +2188,7 @@
    * // => 1
    */
   function sortedIndex(array, value, iterator, thisArg) {
-    iterator = iterator == null ? identity : callback(iterator, thisArg, 1);
+    iterator = iterator == null ? identity : baseCallback(iterator, thisArg, 1);
     return baseSortedIndex(array, value, iterator);
   }
 
@@ -2274,9 +2298,11 @@
       }
     }
     if (iterator != null) {
-      iterator = callback(iterator, thisArg, 3);
+      iterator = baseCallback(iterator, thisArg, 3);
     }
-    return baseUniq(array, isSorted, iterator);
+    return (isSorted && getIndexOf() == baseIndexOf)
+      ? sortedUniq(array, iterator)
+      : baseUniq(array, iterator);
   }
 
   /**
@@ -2348,7 +2374,7 @@
 
   /**
    * Creates an object composed from arrays of property names and values. Provide
-   * either a single two dimensional array, i.e. `[[key1, value1], [key2, value2]]`
+   * either a single two dimensional array, e.g. `[[key1, value1], [key2, value2]]`
    * or two arrays, one of property names and one of corresponding values.
    *
    * @static
@@ -2517,13 +2543,12 @@
    * // => true
    */
   function contains(collection, target) {
-    var indexOf = getIndexOf(),
-        length = collection ? collection.length : 0;
+    var length = collection ? collection.length : 0;
 
     if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
       collection = values(collection);
     }
-    return indexOf(collection, target) > -1;
+    return getIndexOf(collection, target) > -1;
   }
 
   /**
@@ -2607,7 +2632,7 @@
    */
   function every(collection, predicate, thisArg) {
     if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
-      predicate = callback(predicate, thisArg, 3);
+      predicate = baseCallback(predicate, thisArg, 3);
     }
     var func = isArray(collection) ? arrayEvery : baseEvery;
     return func(collection, predicate);
@@ -2654,7 +2679,7 @@
    * // => [{ 'name': 'barney', 'age': 36 }]
    */
   function filter(collection, predicate, thisArg) {
-    predicate = callback(predicate, thisArg, 3);
+    predicate = baseCallback(predicate, thisArg, 3);
 
     var func = isArray(collection) ? arrayFilter : baseFilter;
     return func(collection, predicate);
@@ -2708,7 +2733,7 @@
       var index = findIndex(collection, predicate, thisArg);
       return index > -1 ? collection[index] : undefined;
     }
-    predicate = callback(predicate, thisArg, 3);
+    predicate = baseCallback(predicate, thisArg, 3);
     return baseFind(collection, predicate, baseEach);
   }
 
@@ -2924,7 +2949,7 @@
    * // => ['barney', 'fred']
    */
   function map(collection, iterator, thisArg) {
-    iterator = callback(iterator, thisArg, 3);
+    iterator = baseCallback(iterator, thisArg, 3);
 
     var func = isArray(collection) ? arrayMap : baseMap;
     return func(collection, iterator);
@@ -2982,18 +3007,20 @@
     if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === collection) {
       iterator = null;
     }
-    if (iterator == null && isArray(collection)) {
+
+    if (iterator == null) {
       var index = -1,
-          length = collection.length;
+          iterable = toIterable(collection),
+          length = iterable.length;
 
       while (++index < length) {
-        var value = collection[index];
+        var value = iterable[index];
         if (value > result) {
           result = value;
         }
       }
     } else {
-      iterator = callback(iterator, thisArg, 3);
+      iterator = baseCallback(iterator, thisArg, 3);
 
       baseEach(collection, function(value, index, collection) {
         var current = iterator(value, index, collection);
@@ -3058,18 +3085,20 @@
     if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === collection) {
       iterator = null;
     }
-    if (iterator == null && isArray(collection)) {
+
+    if (iterator == null) {
       var index = -1,
-          length = collection.length;
+          iterable = toIterable(collection),
+          length = iterable.length;
 
       while (++index < length) {
-        var value = collection[index];
+        var value = iterable[index];
         if (value < result) {
           result = value;
         }
       }
     } else {
-      iterator = callback(iterator, thisArg, 3);
+      iterator = baseCallback(iterator, thisArg, 3);
 
       baseEach(collection, function(value, index, collection) {
         var current = iterator(value, index, collection);
@@ -3183,7 +3212,7 @@
    */
   function reduce(collection, iterator, accumulator, thisArg) {
     var func = isArray(collection) ? arrayReduce : baseReduce;
-    return func(collection, callback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEach);
+    return func(collection, baseCallback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEach);
   }
 
   /**
@@ -3207,7 +3236,7 @@
    */
   function reduceRight(collection, iterator, accumulator, thisArg) {
     var func = isArray(collection) ? arrayReduceRight : baseReduce;
-    return func(collection, callback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
+    return func(collection, baseCallback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
   }
 
   /**
@@ -3249,7 +3278,7 @@
    * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
    */
   function reject(collection, predicate, thisArg) {
-    predicate = callback(predicate, thisArg, 3);
+    predicate = baseCallback(predicate, thisArg, 3);
     return filter(collection, negate(predicate));
   }
 
@@ -3386,7 +3415,7 @@
    */
   function some(collection, predicate, thisArg) {
     if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
-      predicate = callback(predicate, thisArg, 3);
+      predicate = baseCallback(predicate, thisArg, 3);
     }
     var func = isArray(collection) ? arraySome : baseSome;
     return func(collection, predicate);
@@ -3446,7 +3475,7 @@
         length = collection && collection.length,
         result = Array(length < 0 ? 0 : length >>> 0);
 
-    iterator = callback(iterator, thisArg, 3);
+    iterator = baseCallback(iterator, thisArg, 3);
     baseEach(collection, function(value, key, collection) {
       result[++index] = {
         'criteria': iterator(value, key, collection),
@@ -4365,7 +4394,7 @@
   }
 
   /**
-   * Checks if `value` is an `arguments` object.
+   * Checks if `value` is classified as an `arguments` object.
    *
    * @static
    * @memberOf _
@@ -4387,19 +4416,20 @@
   // fallback for environments without a `[[Class]]` for `arguments` objects
   if (!isArguments(arguments)) {
     isArguments = function(value) {
-      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+      var length = (value && typeof value == 'object') ? value.length : undefined;
+      return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER &&
         hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee')) || false;
     };
   }
 
   /**
-   * Checks if `value` is an array.
+   * Checks if `value` is classified as an `Array` object.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isArray([1, 2, 3]);
@@ -4414,13 +4444,13 @@
   };
 
   /**
-   * Checks if `value` is a boolean value.
+   * Checks if `value` is classified as a boolean primitive or object.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a boolean value, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isBoolean(false);
@@ -4435,13 +4465,13 @@
   }
 
   /**
-   * Checks if `value` is a `Date` object.
+   * Checks if `value` is classified as a `Date` object.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isDate(new Date);
@@ -4578,7 +4608,7 @@
   }
 
   /**
-   * Checks if `value` is a finite number.
+   * Checks if `value` is a finite primitive number.
    *
    * Note: This method is based on ES6 `Number.isFinite`. See the
    * [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
@@ -4588,7 +4618,7 @@
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is finite, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a finite number, else `false`.
    * @example
    *
    * _.isFinite(10);
@@ -4611,13 +4641,13 @@
   }
 
   /**
-   * Checks if `value` is a function.
+   * Checks if `value` is classified as a `Function` object.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isFunction(_);
@@ -4720,16 +4750,16 @@
   }
 
   /**
-   * Checks if `value` is a `Number` primitive or object.
+   * Checks if `value` is classified as a `Number` primitive or object.
    *
-   * Note: `NaN` is considered a number. See the [ES5 spec](http://es5.github.io/#x8.5)
-   * for more details.
+   * Note: To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+   * as numbers, use the `_.isFinite` method.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a number, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isNumber(8.4);
@@ -4748,13 +4778,13 @@
   }
 
   /**
-   * Checks if `value` is a `RegExp` object.
+   * Checks if `value` is classified as a `RegExp` object.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a regexp object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isRegExp(/abc/);
@@ -4764,17 +4794,17 @@
    * // => false
    */
   function isRegExp(value) {
-    return (isObject(value) && toString.call(value) == regexpClass) || false;
+    return (value && typeof value == 'object' && toString.call(value) == regexpClass) || false;
   }
 
   /**
-   * Checks if `value` is a `String` primitive or object.
+   * Checks if `value` is classified as a `String` primitive or object.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * _.isString('abc');
@@ -4900,7 +4930,7 @@
 
   /**
    * Creates a two dimensional array of a given object's key-value pairs,
-   * i.e. `[[key1, value1], [key2, value2]]`.
+   * e.g. `[[key1, value1], [key2, value2]]`.
    *
    * @static
    * @memberOf _
@@ -5006,7 +5036,11 @@
    * // => 'fred, barney, &amp; pebbles'
    */
   function escape(string) {
-    return string == null ? '' : String(string).replace(reUnescapedHtml, escapeHtmlChar);
+    // reset `lastIndex` because in IE < 9 `String#replace` does not
+    string = string == null ? '' : String(string);
+    return (reUnescapedHtml.lastIndex = 0, reUnescapedHtml.test(string))
+      ? string.replace(reUnescapedHtml, escapeHtmlChar)
+      : string;
   }
 
   /**
@@ -5024,7 +5058,10 @@
    * // => '\[lodash\]\(http://lodash\.com\)'
    */
   function escapeRegExp(string) {
-    return string == null ? '' : String(string).replace(reRegExpChars, '\\$&');
+    string = string == null ? '' : String(string);
+    return (reRegExpChars.lastIndex = 0, reRegExpChars.test(string))
+      ? string.replace(reRegExpChars, '\\$&')
+      : string;
   }
 
   /**
@@ -5034,7 +5071,7 @@
    * properties may be accessed as free variables in the template. If a setting
    * object is provided it overrides `_.templateSettings` for the template.
    *
-   * Note: In the development build, `_.template` utilizes sourceURLs for easier debugging.
+   * Note: In the development build `_.template` utilizes sourceURLs for easier debugging.
    * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
    * for more details.
    *
@@ -5073,21 +5110,26 @@
    * compiled({ 'people': ['fred', 'barney'] });
    * // => '<li>fred</li><li>barney</li>'
    *
-   * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
-   * var compiled = _.template('hello ${ name }');
-   * compiled({ 'name': 'pebbles' });
-   * // => 'hello pebbles'
-   *
    * // using the internal `print` function in "evaluate" delimiters
    * var compiled = _.template('<% print("hello " + name); %>!');
    * compiled({ 'name': 'barney' });
    * // => 'hello barney!'
    *
-   * // using a custom template delimiters
+   * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
+   * var compiled = _.template('hello ${ name }');
+   * compiled({ 'name': 'pebbles' });
+   * // => 'hello pebbles'
+   *
+   * // using custom template delimiters
    * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
    * var compiled = _.template('hello {{ name }}!');
    * compiled({ 'name': 'mustache' });
    * // => 'hello mustache!'
+   *
+   * // using backslashes to treat delimiters as plain text
+   * var compiled = _.template('<%= "\\<%- value %\\>" %>');
+   * compiled({ 'value': 'ignored' });
+   * // => '<%- value %>'
    *
    * // using the `imports` option to import `jQuery` as `jq`
    * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
@@ -5189,11 +5231,10 @@
    * // => 'fred, barney & pebbles'
    */
   function unescape(string) {
-    if (string == null) {
-      return '';
-    }
-    string = String(string);
-    return string.indexOf(';') < 0 ? string : string.replace(reEscapedHtml, unescapeHtmlChar);
+    string = string == null ? '' : String(string);
+    return (reEscapedHtml.lastIndex = 0, reEscapedHtml.test(string))
+      ? string.replace(reEscapedHtml, unescapeHtmlChar)
+      : string;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -5224,51 +5265,6 @@
     } catch(e) {
       return isError(e) ? e : Error(e);
     }
-  }
-
-  /**
-   * Creates a function bound to an optional `thisArg`. If `func` is a property
-   * name the created callback returns the property value for a given element.
-   * If `func` is an object the created callback returns `true` for elements
-   * that contain the equivalent object properties, otherwise it returns `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Utility
-   * @param {*} [func=identity] The value to convert to a callback.
-   * @param {*} [thisArg] The `this` binding of the created callback.
-   * @param {number} [argCount] The number of arguments the callback accepts.
-   * @returns {Function} Returns the new function.
-   * @example
-   *
-   * var characters = [
-   *   { 'name': 'barney', 'age': 36 },
-   *   { 'name': 'fred',   'age': 40 }
-   * ];
-   *
-   * // wrap to create custom callback shorthands
-   * _.callback = _.wrap(_.callback, function(func, callback, thisArg) {
-   *   var match = /^(.+?)__([gl]t)(.+)$/.exec(callback);
-   *   return !match ? func(callback, thisArg) : function(object) {
-   *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
-   *   };
-   * });
-   *
-   * _.filter(characters, 'age__gt38');
-   * // => [{ 'name': 'fred', 'age': 40 }]
-   */
-  function callback(func, thisArg, argCount) {
-    var type = typeof func,
-        isFunc = type == 'function';
-
-    if (isFunc && typeof thisArg == 'undefined') {
-      return func;
-    }
-    if (isFunc || func == null) {
-      return baseCallback(func, thisArg, argCount);
-    }
-    // handle "_.pluck" and "_.where" style callback shorthands
-    return type == 'object' ? matches(func) : property(func);
   }
 
   /**

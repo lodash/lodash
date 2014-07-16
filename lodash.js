@@ -3041,7 +3041,7 @@
      * Converts `collection` to an array if it is not an array-like value.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to convert.
+     * @param {Array|Object|string} collection The collection to process.
      * @returns {Array} Returns the iterable object.
      */
     function toIterable(collection) {

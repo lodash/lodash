@@ -3041,8 +3041,8 @@
      * Converts `collection` to an array if it is not an array-like value.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to inspect.
-     * @returns {Array|Object} Returns the iterable object.
+     * @param {Array|Object|string} collection The collection to convert.
+     * @returns {Array} Returns the iterable object.
      */
     function toIterable(collection) {
       var length = collection ? collection.length : 0;

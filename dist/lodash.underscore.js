@@ -4637,7 +4637,8 @@
    * // => false
    */
   function isFinite(value) {
-    return nativeIsFinite(value) && !nativeIsNaN(parseFloat(value));
+    value = parseFloat(nativeIsFinite(value) && value);
+    return value == value;
   }
 
   /**

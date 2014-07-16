@@ -6578,7 +6578,6 @@
       deepEqual(actual, expected);
     });
 
-
     test('`_.' + methodName + '` should return `-1` for an unmatched value', 4, function() {
       var array = [1, 2, 3],
           empty = [];
@@ -6588,6 +6587,11 @@
 
       strictEqual(func(empty, undefined), -1);
       strictEqual(func(empty, undefined, true), -1);
+    });
+
+    test('`_.' + methodName + '` should be able to find `NaN`', 2, function() {
+      strictEqual(func(falsey, NaN), 4);
+      strictEqual(func(empties, NaN), 5);
     });
   });
 

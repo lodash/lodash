@@ -349,11 +349,23 @@
     var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0;
 
-    while (++index < length) {
-      if (array[index] === value) {
-        return index;
+    if (value == value) {
+      while (++index < length) {
+        if (array[index] === value) {
+          return index;
+        }
       }
     }
+    // special case for NaN
+    else {
+      while (++index < length) {
+        value = array[index];
+        if (value != value) {
+          return index;
+        }
+      }
+    }
+
     return -1;
   }
 
@@ -3631,11 +3643,23 @@
         index = sortedLastIndex(array, value) - 1;
         return (length && array[index] === value) ? index : -1;
       }
-      while (index--) {
-        if (array[index] === value) {
-          return index;
+      if (value == value) {
+        while (index--) {
+          if (array[index] === value) {
+            return index;
+          }
         }
       }
+      // special case for NaN
+      else {
+        while (index--) {
+          value = array[index];
+          if (value != value) {
+            return index;
+          }
+        }
+      }
+
       return -1;
     }
 

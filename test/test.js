@@ -379,6 +379,9 @@
       return _hasOwnProperty.call(this, key);
     });
 
+    var _isFinite = Number.isFinite;
+    setProperty(Number, 'isFinite', _.noop);
+
     var _contains = String.prototype.contains;
     setProperty(String.prototype, 'contains',  _contains ? _.noop : Boolean);
 
@@ -399,9 +402,15 @@
     setProperty(Object, 'defineProperty', _defineProperty);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
+
     setProperty(Object.prototype,   'hasOwnProperty', _hasOwnProperty);
     setProperty(Function.prototype, 'toString', _fnToString);
 
+    if (_isFinite) {
+      setProperty(Number, 'isFinite', _isFinite);
+    } else {
+      delete Number.isFinite;
+    }
     if (_contains) {
       setProperty(String.prototype, 'contains', _contains);
     } else {
@@ -524,7 +533,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 12, function() {
+    test('should avoid overwritten native methods', 13, function() {
       function Foo() {}
 
       function message(methodName) {
@@ -580,6 +589,13 @@
         deepEqual(actual, [['a'], []], message('Object.keys'));
 
         try {
+          actual = [lodashBizarro.isFinite(1), lodashBizarro.isFinite(NaN)];
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, [true, false], message('Number.isFinite'));
+
+        try {
           actual = [
             lodashBizarro.difference([object, otherObject], largeArray),
             lodashBizarro.intersection(largeArray, [object]),
@@ -613,7 +629,7 @@
         }
       }
       else {
-        skipTest(12);
+        skipTest(13);
       }
     });
   }());

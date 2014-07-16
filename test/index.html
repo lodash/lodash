@@ -99,6 +99,9 @@
 					return wrapper;
 				}()));
 
+				setProperty(Number, '_isFinite', Number.isFinite);
+				setProperty(Number, 'isFinite', function() {});
+
 				setProperty(String.prototype, '_contains', String.prototype.contains);
 				setProperty(String.prototype, 'contains', String.prototype._contains ? function() {} : Boolean);
 
@@ -145,6 +148,11 @@
 					setProperty(Object, 'keys', Object._keys);
 				} else {
 					delete Object.keys;
+				}
+				if (Number._isFinite) {
+					setProperty(Number, 'isFinite', Number._isFinite);
+				} else {
+					delete Number.isFinite;
 				}
 				if (String.prototype._contains) {
 					setProperty(String.prototype, 'contains', String.prototype._contains);

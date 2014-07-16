@@ -4795,7 +4795,7 @@
    * // => false
    */
   function isRegExp(value) {
-    return (value && typeof value == 'object' && toString.call(value) == regexpClass) || false;
+    return (isObject(value) && toString.call(value) == regexpClass) || false;
   }
 
   /**

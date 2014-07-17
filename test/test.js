@@ -616,7 +616,7 @@
         if (root.Uint8Array) {
           try {
             var array = new Uint8Array(new ArrayBuffer(8));
-            actual = lodashBizarro.clone(array);
+            actual = lodashBizarro.cloneDeep(array);
           } catch(e) {
             actual = null;
           }
@@ -1475,8 +1475,7 @@
 
     _.each(['clone', 'cloneDeep'], function(methodName) {
       var func = _[methodName],
-          isDeep = methodName == 'cloneDeep',
-          klass = new Klass;
+          isDeep = methodName == 'cloneDeep';
 
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
@@ -1520,14 +1519,14 @@
         test('`_.' + methodName + '` should clone ' + type + ' arrays', 10, function() {
           var Ctor = root[type];
           if (Ctor) {
-            var array = new Ctor(new ArrayBuffer(24));
-
             _.times(2, function(index) {
-              var actual = index ? func(array, 8, 1) : func(array);
+              var buffer = new ArrayBuffer(24),
+                  array = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
+                  actual = func(array);
 
               deepEqual(actual, array);
               notStrictEqual(actual, array);
-              notStrictEqual(actual.buffer, array.buffer);
+              strictEqual(actual.buffer === array.buffer, !isDeep);
               strictEqual(actual.byteOffset, array.byteOffset);
               strictEqual(actual.length, array.length);
             });
@@ -1558,7 +1557,8 @@
       });
 
       test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
-        var argsList = [];
+        var argsList = [],
+            klass = new Klass;
 
         func(klass, function() {
           argsList.push(slice.call(arguments));

@@ -1426,7 +1426,8 @@
               if (Ctor instanceof Ctor) {
                 Ctor = ctorByClass[className];
               }
-              return new Ctor(cloneBuffer(value.buffer), value.byteOffset, value.length);
+              var buffer = value.buffer;
+              return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, value.byteOffset, value.length);
 
             case numberClass:
             case stringClass:

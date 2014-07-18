@@ -551,7 +551,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 13, function() {
+    test('should avoid overwritten native methods', 15, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -622,7 +622,7 @@
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [[otherObject], [object], [object]], message('_.{difference,intersection,uniq}', 'Set'));
+        deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
 
         try {
           actual = lodashBizarro.contains('abc', 'c');
@@ -631,7 +631,20 @@
         }
         strictEqual(actual, true, message('_.contains', 'String#contains'));
 
-        if (root.Uint8Array) {
+        if (root.ArrayBuffer) {
+          try {
+            var buffer = new ArrayBuffer(8);
+            actual = lodashBizarro.clone(buffer);
+          } catch(e) {
+            actual = null;
+          }
+          deepEqual(actual, buffer, message('_.clone', 'ArrayBuffer#slice'));
+          notStrictEqual(actual, buffer, message('_.clone', 'ArrayBuffer#slice'));
+        }
+        else {
+          skipTest(2);
+        }
+        if (root.ArrayBuffer && root.Uint8Array) {
           try {
             var array = new Uint8Array(new ArrayBuffer(8));
             actual = lodashBizarro.cloneDeep(array);
@@ -647,7 +660,7 @@
         }
       }
       else {
-        skipTest(13);
+        skipTest(15);
       }
     });
   }());

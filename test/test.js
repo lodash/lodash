@@ -554,8 +554,8 @@
     test('should avoid overwritten native methods', 13, function() {
       function Foo() {}
 
-      function message(methodName) {
-        return '`' + methodName + '` should avoid overwritten native methods';
+      function message(lodashMethod, nativeMethod) {
+        return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
       }
 
       var object = { 'a': 1 },
@@ -568,50 +568,50 @@
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [true, false], message('Array.isArray'));
+        deepEqual(actual, [true, false], message('_.isArray', 'Array.isArray'));
 
         try {
           actual = lodashBizarro.now();
         } catch(e) {
           actual = null;
         }
-        ok(typeof actual == 'number', message('Date.now'));
+        ok(typeof actual == 'number', message('_.now', 'Date.now'));
 
         try {
           actual = [lodashBizarro.create(Foo.prototype, object), lodashBizarro.create()];
         } catch(e) {
           actual = null;
         }
-        ok(actual[0] instanceof Foo, message('Object.create'));
-        deepEqual(actual[1], {}, message('Object.create'));
+        ok(actual[0] instanceof Foo, message('_.create', 'Object.create'));
+        deepEqual(actual[1], {}, message('_.create', 'Object.create'));
 
         try {
           actual = lodashBizarro.bind(function() { return this.a; }, object);
         } catch(e) {
           actual = null;
         }
-        ok(!(EXPANDO in actual), message('Object.defineProperty'));
+        ok(!(EXPANDO in actual), message('_.bind', 'Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [true, false], message('Object.getPrototypeOf'));
+        deepEqual(actual, [true, false], message('_.isPlainObject', 'Object.getPrototypeOf'));
 
         try {
           actual = [lodashBizarro.keys(object), lodashBizarro.keys()];
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [['a'], []], message('Object.keys'));
+        deepEqual(actual, [['a'], []], message('_.keys', 'Object.keys'));
 
         try {
           actual = [lodashBizarro.isFinite(1), lodashBizarro.isFinite(NaN)];
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [true, false], message('Number.isFinite'));
+        deepEqual(actual, [true, false], message('_.isFinite', 'Number.isFinite'));
 
         try {
           actual = [
@@ -622,14 +622,14 @@
         } catch(e) {
           actual = null;
         }
-        deepEqual(actual, [[otherObject], [object], [object]], message('Set'));
+        deepEqual(actual, [[otherObject], [object], [object]], message('_.{difference,intersection,uniq}', 'Set'));
 
         try {
           actual = lodashBizarro.contains('abc', 'c');
         } catch(e) {
           actual = null;
         }
-        strictEqual(actual, true, message('String#contains'));
+        strictEqual(actual, true, message('_.contains', 'String#contains'));
 
         if (root.Uint8Array) {
           try {
@@ -638,9 +638,9 @@
           } catch(e) {
             actual = null;
           }
-          deepEqual(actual, array, message('Float64Array'));
-          notStrictEqual(actual.buffer, array.buffer, message('Float64Array'));
-          notStrictEqual(actual, array, message('Float64Array'));
+          deepEqual(actual, array, message('_.cloneDeep', 'Float64Array'));
+          notStrictEqual(actual.buffer, array.buffer, message('_.cloneDeep', 'Float64Array'));
+          notStrictEqual(actual, array, message('_.cloneDeep', 'Float64Array'));
         }
         else {
           skipTest(3);

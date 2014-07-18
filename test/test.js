@@ -339,16 +339,6 @@
       return result;
     });
 
-    // fake DOM
-    setProperty(root, 'window', {});
-    setProperty(root.window, 'document', {});
-    setProperty(root.window.document, 'createDocumentFragment', function() {
-      return { 'nodeType': 11 };
-    });
-
-    // fake `WinRTError`
-    setProperty(root, 'WinRTError', Error);
-
     // add extensions
     Function.prototype._method = _.noop;
 
@@ -385,10 +375,33 @@
     var _contains = String.prototype.contains;
     setProperty(String.prototype, 'contains',  _contains ? _.noop : Boolean);
 
-    var _Float64Array = root.Float64Array;
-    if (!_Float64Array) {
-      setProperty(root, 'Float64Array', root.Uint8Array);
+    var _ArrayBuffer = root.ArrayBuffer;
+    if (root.Uint8Array && _ArrayBuffer && !new _ArrayBuffer(0).slice) {
+      setProperty(window, 'ArrayBuffer', function(byteLength) {
+        var buffer = new _ArrayBuffer(byteLength);
+        buffer.slice = !byteLength ? slice : function() {
+          var newBuffer = new _ArrayBuffer(byteLength),
+              view = new Uint8Array(newBuffer);
+
+          view.set(new Uint8Array(this));
+          return newBuffer;
+        };
+        return buffer;
+      });
     }
+    var _Float64Array = root.Float64Array;
+    setProperty(root, 'Float64Array', _Float64Array ? _.noop : root.Uint8Array);
+
+    // fake `WinRTError`
+    setProperty(root, 'WinRTError', Error);
+
+    // fake DOM
+    setProperty(root, 'window', {});
+    setProperty(root.window, 'document', {});
+    setProperty(root.window.document, 'createDocumentFragment', function() {
+      return { 'nodeType': 11 };
+    });
+
     // clear cache so Lo-Dash can be reloaded
     emptyObject(require.cache);
 
@@ -416,7 +429,12 @@
     } else {
       delete String.prototype.contains;
     }
-    if (!_Float64Array) {
+    if (_ArrayBuffer) {
+      setProperty(root, 'ArrayBuffer', _ArrayBuffer);
+    }
+    if (_Float64Array) {
+      setProperty(root, 'Float64Array', _Float64Array);
+    } else {
       delete root.Float64Array;
     }
     delete root.window;

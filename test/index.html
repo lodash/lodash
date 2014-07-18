@@ -108,14 +108,28 @@
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
 				document.createDocumentFragment = function() {};
 
-				setProperty(window, '_Float64Array', window.Float64Array);
-				if (!window._Float64Array) {
-					setProperty(window, 'Float64Array', window.Uint8Array);
+				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
+				if (window.ArrayBuffer && window.Uint8Array && !new ArrayBuffer(0).slice) {
+					setProperty(window, 'ArrayBuffer', function(byteLength) {
+						var buffer = new _ArrayBuffer(byteLength);
+						buffer.slice = !byteLength ? Array.prototype.slice : function() {
+							var newBuffer = new _ArrayBuffer(byteLength),
+							    view = new Uint8Array(newBuffer);
+
+							view.set(new Uint8Array(this));
+							return newBuffer;
+						};
+						return buffer;
+					});
 				}
+				setProperty(window, '_Float64Array', window.Float64Array);
+				setProperty(window, 'Float64Array', window.Float64Array ? function() {} : window.Uint8Array);
+
+				setProperty(window, 'WinRTError', Error);
+
 				setProperty(window, 'exports', window);
 				setProperty(window, 'global', window);
 				setProperty(window, 'module', {});
-				setProperty(window, 'WinRTError', Error);
 			}
 
 			function removeBizarroMethods() {
@@ -159,19 +173,23 @@
 				} else {
 					delete String.prototype.contains;
 				}
-				if (!window._Float64Array) {
-					setProperty(window, 'Float64Array', undefined);
-				}
 				setProperty(Function.prototype, 'toString', Function.prototype._toString);
 				setProperty(Object.prototype, 'hasOwnProperty', Object.prototype._hasOwnProperty);
 
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);
 
+				setProperty(window, 'ArrayBuffer', window._ArrayBuffer);
+				setProperty(window, '_ArrayBuffer', undefined);
+
+				setProperty(window, 'Float64Array', window._Float64Array);
+				setProperty(window, '_Float64Array', undefined);
+
+				setProperty(window, 'WinRTError', undefined);
+
 				setProperty(window, 'exports', undefined);
 				setProperty(window, 'global', undefined);
 				setProperty(window, 'module', undefined);
-				setProperty(window, 'WinRTError', undefined);
 
 				delete Array._isArray;
 				delete Date._now;

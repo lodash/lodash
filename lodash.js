@@ -69,7 +69,7 @@
   /** Used to match `RegExp` flags from their coerced string values */
   var reFlags = /\w*$/;
 
-  /** Used to detected named functions */
+  /** Used to detect named functions */
   var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
   /** Used to detect hexadecimal string values */
@@ -529,6 +529,18 @@
   }
 
   /**
+   * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a charCode is whitespace.
+   *
+   * @private
+   * @param {number} c The charCode to inspect.
+   * @returns {number} Returns the index of the first non-whitespace character.
+   */
+  function isWhitespace(c) {
+    return ((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
+          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)));
+  }
+
+  /**
    * Used by `_.trim` and `_.trimLeft` to get the index of the first non-whitespace
    * character of `string`.
    *
@@ -541,9 +553,7 @@
         length = string.length;
 
     while (++index < length) {
-      var c = string.charCodeAt(index);
-      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
+      if (!isWhitespace(string.charCodeAt(index))) {
         break;
       }
     }
@@ -562,9 +572,7 @@
     var index = string.length;
 
     while (index--) {
-      var c = string.charCodeAt(index);
-      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
+      if (!isWhitespace(string.charCodeAt(index))) {
         break;
       }
     }

@@ -15,6 +15,13 @@
   /** Used to store Lo-Dash to test for bad extensions/shims */
   var lodashBizarro = root.lodashBizarro;
 
+  /** Used for native method references */
+  var arrayProto = Array.prototype,
+      errorProto = Error.prototype,
+      funcProto = Function.prototype,
+      objectProto = Object.prototype,
+      stringProto = String.prototype;
+
   /** Method and object shortcuts */
   var phantom = root.phantom,
       amd = root.define && define.amd,
@@ -27,10 +34,10 @@
       JSON = root.JSON,
       noop = function() {},
       params = root.arguments,
-      push = Array.prototype.push,
-      slice = Array.prototype.slice,
+      push = arrayProto.push,
+      slice = arrayProto.slice,
       system = root.system,
-      toString = Object.prototype.toString;
+      toString = objectProto.toString;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -331,16 +338,19 @@
       _._baseEach = baseEach.baseEach || baseEach['default'] || baseEach;
     }
     // allow bypassing native checks
-    var _fnToString = Function.prototype.toString;
-    setProperty(Function.prototype, 'toString', function wrapper() {
-      setProperty(Function.prototype, 'toString', _fnToString);
-      var result = this === Set ? this.toString() : _fnToString.call(this);
-      setProperty(Function.prototype, 'toString', wrapper);
+    var _fnToString = funcProto.toString;
+    setProperty(funcProto, 'toString', function wrapper() {
+      setProperty(funcProto, 'toString', _fnToString);
+      var result = (this === root.ArrayBuffer || this === root.Set)
+        ? this.toString()
+        : _fnToString.call(this);
+
+      setProperty(funcProto, 'toString', wrapper);
       return result;
     });
 
     // add extensions
-    Function.prototype._method = _.noop;
+    funcProto._method = _.noop;
 
     // set bad shims
     var _isArray = Array.isArray;
@@ -361,8 +371,8 @@
     var _keys = Object.keys;
     setProperty(Object, 'keys', _.noop);
 
-    var _hasOwnProperty = Object.prototype.hasOwnProperty;
-    setProperty(Object.prototype, 'hasOwnProperty', function(key) {
+    var _hasOwnProperty = objectProto.hasOwnProperty;
+    setProperty(objectProto, 'hasOwnProperty', function(key) {
       if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [0, 0])) {
         throw new Error;
       }
@@ -372,12 +382,12 @@
     var _isFinite = Number.isFinite;
     setProperty(Number, 'isFinite', _.noop);
 
-    var _contains = String.prototype.contains;
-    setProperty(String.prototype, 'contains',  _contains ? _.noop : Boolean);
+    var _contains = stringProto.contains;
+    setProperty(stringProto, 'contains',  _contains ? _.noop : Boolean);
 
-    var _ArrayBuffer = root.ArrayBuffer;
-    if (root.Uint8Array && _ArrayBuffer && !new _ArrayBuffer(0).slice) {
-      setProperty(window, 'ArrayBuffer', function(byteLength) {
+    var _ArrayBuffer = ArrayBuffer;
+    if (Uint8Array && new ArrayBuffer(0).slice) {
+      setProperty(root, 'ArrayBuffer', function(byteLength) {
         var buffer = new _ArrayBuffer(byteLength);
         buffer.slice = !byteLength ? slice : function() {
           var newBuffer = new _ArrayBuffer(byteLength),
@@ -388,6 +398,8 @@
         };
         return buffer;
       });
+
+      setPropertu(ArrayBuffer, 'toString', _.constant(String(toString).replace(/toString/g, 'ArrayBuffer')));
     }
     var _Float64Array = root.Float64Array;
     setProperty(root, 'Float64Array', _Float64Array ? _.noop : root.Uint8Array);
@@ -416,8 +428,8 @@
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
-    setProperty(Object.prototype,   'hasOwnProperty', _hasOwnProperty);
-    setProperty(Function.prototype, 'toString', _fnToString);
+    setProperty(objectProto,   'hasOwnProperty', _hasOwnProperty);
+    setProperty(funcProto, 'toString', _fnToString);
 
     if (_isFinite) {
       setProperty(Number, 'isFinite', _isFinite);
@@ -425,9 +437,9 @@
       delete Number.isFinite;
     }
     if (_contains) {
-      setProperty(String.prototype, 'contains', _contains);
+      setProperty(stringProto, 'contains', _contains);
     } else {
-      delete String.prototype.contains;
+      delete stringProto.contains;
     }
     if (_ArrayBuffer) {
       setProperty(root, 'ArrayBuffer', _ArrayBuffer);
@@ -439,7 +451,7 @@
     }
     delete root.window;
     delete root.WinRTError;
-    delete Function.prototype._method;
+    delete funcProto._method;
   }());
 
   // add values from an iframe
@@ -1141,7 +1153,7 @@
     test('should work with an array `object` argument', 1, function() {
       var array = ['push', 'pop'];
       _.bindAll(array);
-      strictEqual(array.pop, Array.prototype.pop);
+      strictEqual(array.pop, arrayProto.pop);
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
@@ -2097,7 +2109,7 @@
 
     test('should support binding built-in methods', 2, function() {
       var object = { 'a': 1 },
-          callback = _.callback(Object.prototype.hasOwnProperty, object);
+          callback = _.callback(objectProto.hasOwnProperty, object);
 
       strictEqual(callback('a'), true);
 
@@ -4057,16 +4069,16 @@
 
     test('`_.' + methodName + '` does not iterate over non-enumerable properties (test in IE < 9)', 10, function() {
       _.forOwn({
-        'Array': Array.prototype,
+        'Array': arrayProto,
         'Boolean': Boolean.prototype,
         'Date': Date.prototype,
-        'Error': Error.prototype,
-        'Function': Function.prototype,
-        'Object': Object.prototype,
+        'Error': errorProto,
+        'Function': funcProto,
+        'Object': objectProto,
         'Number': Number.prototype,
         'TypeError': TypeError.prototype,
         'RegExp': RegExp.prototype,
-        'String': String.prototype
+        'String': stringProto
       },
       function(proto, key) {
         var message = 'non-enumerable properties on ' + key + '.prototype',
@@ -4993,11 +5005,15 @@
     });
 
     test('should use a stronger check in browsers', 2, function() {
-      var expected = !body;
+      var support = _.support,
+          expected = !(support.dom && support.nodeClass);
+
       strictEqual(_.isElement(new Element), expected);
 
-      if (lodashBizarro && document) {
-        strictEqual(lodashBizarro.isElement(new Element), !expected);
+      if (lodashBizarro) {
+        support = lodashBizarro.support;
+        expected = !(support.dom && support.nodeClass);
+        strictEqual(lodashBizarro.isElement(new Element), expected);
       }
       else {
         skipTest();
@@ -5071,7 +5087,7 @@
 
     test('should work with jQuery/MooTools DOM query collections', 1, function() {
       function Foo(elements) { push.apply(this, elements); }
-      Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
+      Foo.prototype = { 'length': 0, 'splice': arrayProto.splice };
 
       strictEqual(_.isEmpty(new Foo([])), true);
     });
@@ -6372,11 +6388,11 @@
     });
 
     test('`_.' + methodName + '` should return an empty array for `null` or `undefined` values', 2, function() {
-      Object.prototype.a = 1;
+      objectProto.a = 1;
       _.each([null, undefined], function(value) {
         deepEqual(func(value), []);
       });
-      delete Object.prototype.a;
+      delete objectProto.a;
     });
 
     test('`_.' + methodName + '` should return keys for custom properties on arrays', 1, function() {
@@ -6389,9 +6405,9 @@
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of arrays', 1, function() {
       var expected = isKeys ? ['0'] : ['0', 'a'];
 
-      Array.prototype.a = 1;
+      arrayProto.a = 1;
       deepEqual(func([1]).sort(), expected);
-      delete Array.prototype.a;
+      delete arrayProto.a;
     });
 
     test('`_.' + methodName + '` should work with `arguments` objects (test in IE < 9)', 1, function() {
@@ -6418,9 +6434,9 @@
       if (!(isPhantom || isStrict)) {
         var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'];
 
-        Object.prototype.a = 1;
+        objectProto.a = 1;
         deepEqual(func(args).sort(), expected);
-        delete Object.prototype.a;
+        delete objectProto.a;
       }
       else {
         skipTest();
@@ -6441,9 +6457,9 @@
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of string objects', 1, function() {
       var expected = isKeys ? ['0'] : ['0', 'a'];
 
-      String.prototype.a = 1;
+      stringProto.a = 1;
       deepEqual(func(Object('a')).sort(), expected);
-      delete String.prototype.a;
+      delete stringProto.a;
     });
 
     test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
@@ -7587,11 +7603,11 @@
     });
 
     test('should return an empty object when `object` is `null` or `undefined`', 2, function() {
-      Object.prototype.a = 1;
+      objectProto.a = 1;
       _.each([null, undefined], function(value) {
         deepEqual(_.omit(value, 'valueOf'), {});
       });
-      delete Object.prototype.a;
+      delete objectProto.a;
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
@@ -7603,13 +7619,13 @@
     });
 
     test('should work with a primitive `object` argument', 1, function() {
-      String.prototype.a = 1;
-      String.prototype.b = 2;
+      stringProto.a = 1;
+      stringProto.b = 2;
 
       deepEqual(_.omit('', 'b'), { 'a': 1 });
 
-      delete String.prototype.a;
-      delete String.prototype.b;
+      delete stringProto.a;
+      delete stringProto.b;
     });
 
     test('should work with a predicate argument', 1, function() {
@@ -9136,7 +9152,7 @@
 
     test('should work with jQuery/MooTools DOM query collections', 1, function() {
       function Foo(elements) { push.apply(this, elements); }
-      Foo.prototype = { 'length': 0, 'splice': Array.prototype.splice };
+      Foo.prototype = { 'length': 0, 'splice': arrayProto.splice };
 
       strictEqual(_.size(new Foo(array)), 3);
     });

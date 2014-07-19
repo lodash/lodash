@@ -51,7 +51,10 @@
 				setProperty(Function.prototype, 'toString', (function() {
 					function wrapper() {
 						setProperty(Function.prototype, 'toString', fnToString);
-						var result = this === Set ? this.toString() : fnToString.call(this);
+						var result = (this === window.ArrayBuffer || this === window.Set)
+							? this.toString()
+							: fnToString.call(this);
+
 						setProperty(Function.prototype, 'toString', wrapper);
 						return result;
 					}

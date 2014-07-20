@@ -1068,7 +1068,7 @@
      */
     function arrayEach(array, iterator) {
       var index = -1,
-          length = array ? array.length : 0;
+          length = array.length;
 
       while (++index < length) {
         if (iterator(array[index], index, array) === false) {
@@ -1088,7 +1088,7 @@
      * @returns {Array} Returns `array`.
      */
     function arrayEachRight(array, iterator) {
-      var length = array ? array.length : 0;
+      var length = array.length;
 
       while (length--) {
         if (iterator(array[length], length, array) === false) {
@@ -1131,7 +1131,7 @@
      */
     function arrayMap(array, iterator) {
       var index = -1,
-          length = array ? array.length : 0,
+          length = array.length,
           result = Array(length);
 
       while (++index < length) {

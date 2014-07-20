@@ -529,7 +529,8 @@
   }
 
   /**
-   * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a charCode is whitespace.
+   * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
+   * charCode is whitespace.
    *
    * @private
    * @param {number} c The charCode to inspect.
@@ -537,7 +538,7 @@
    */
   function isWhitespace(c) {
     return ((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)));
+      (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)));
   }
 
   /**
@@ -552,11 +553,7 @@
     var index = -1,
         length = string.length;
 
-    while (++index < length) {
-      if (!isWhitespace(string.charCodeAt(index))) {
-        break;
-      }
-    }
+    while (++index < length && isWhitespace(string.charCodeAt(index))) { }
     return index;
   }
 
@@ -571,11 +568,7 @@
   function trimmedRightIndex(string) {
     var index = string.length;
 
-    while (index--) {
-      if (!isWhitespace(string.charCodeAt(index))) {
-        break;
-      }
-    }
+    while (index-- && isWhitespace(string.charCodeAt(index))) { }
     return index;
   }
 

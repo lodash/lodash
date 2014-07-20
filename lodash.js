@@ -530,15 +530,15 @@
 
   /**
    * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
-   * charCode is whitespace.
+   * character code is whitespace.
    *
    * @private
-   * @param {number} c The charCode to inspect.
-   * @returns {number} Returns the index of the first non-whitespace character.
+   * @param {number} charCode The character code to inspect.
+   * @returns {boolean} Returns `true` if `charCode` is whitespace, else `false`.
    */
-  function isWhitespace(c) {
-    return ((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-      (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)));
+  function isWhitespace(charCode) {
+    return ((charCode <= 160 && (charCode >= 9 && charCode <= 13) || charCode == 32 || charCode == 160) || charCode == 5760 || charCode == 6158 ||
+      (charCode >= 8192 && (charCode <= 8202 || charCode == 8232 || charCode == 8233 || charCode == 8239 || charCode == 8287 || charCode == 12288 || charCode == 65279)));
   }
 
   /**

@@ -387,19 +387,27 @@
 
     var _ArrayBuffer = ArrayBuffer;
     if (Uint8Array && new ArrayBuffer(0).slice) {
-      setProperty(root, 'ArrayBuffer', function(byteLength) {
-        var buffer = new _ArrayBuffer(byteLength);
-        buffer.slice = !byteLength ? slice : function() {
-          var newBuffer = new _ArrayBuffer(byteLength),
-              view = new Uint8Array(newBuffer);
+      setProperty(root, 'ArrayBuffer', (function() {
+        function ArrayBuffer(byteLength) {
+          var buffer = new _ArrayBuffer(byteLength);
+          buffer.slice = function() {
+            var newBuffer = new _ArrayBuffer(byteLength),
+                view = new Uint8Array(newBuffer);
 
-          view.set(new Uint8Array(this));
-          return newBuffer;
-        };
-        return buffer;
-      });
+            view.set(new Uint8Array(this));
+            return newBuffer;
+          };
+          setProperty(buffer.slice, 'toString', sliceToString);
+          return buffer;
+        }
+        var reToString = /toString/g,
+            nativeString = _fnToString.call(toString),
+            bufferToString = _.constant(nativeString.replace(reToString, 'ArrayBuffer')),
+            sliceToString = _.constant(nativeString.replace(reToString, 'slice'));
 
-      setPropertu(ArrayBuffer, 'toString', _.constant(String(toString).replace(/toString/g, 'ArrayBuffer')));
+        setProperty(ArrayBuffer, 'toString', bufferToString);
+        return ArrayBuffer;
+      }()));
     }
     var _Float64Array = root.Float64Array;
     setProperty(root, 'Float64Array', _Float64Array ? _.noop : root.Uint8Array);

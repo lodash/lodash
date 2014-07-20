@@ -745,14 +745,14 @@
      * `chain`, `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`,
      * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
      * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
-     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
-     * `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`, `merge`,
-     * `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
-     * `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`, `range`,
-     * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-     * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `flattenDeep`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
+     * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+     * `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`,
+     * `merge`, `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`,
+     * `partialRight`, `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`,
+     * `push`, `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`,
+     * `sort`, `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
      * `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`,
      * and `zipObject`
      *
@@ -3464,6 +3464,24 @@
         isDeep = false;
       }
       return baseFlatten(array, isDeep);
+    }
+
+    /**
+     * Recursively flattens a nested array.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to recursively flatten.
+     * @returns {Array} Returns the new flattened array.
+     * @example
+     *
+     * _.flattenDeep([1, [2], [3, [[4]]]]);
+     * // => [1, 2, 3, 4];
+     */
+    function flattenDeep(array) {
+      var length = array ? array.length : 0;
+      return length ? baseFlatten(array, true) : [];
     }
 
     /**
@@ -8092,6 +8110,7 @@
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
+     * @param- {Object} [otherOptions] Enables the legacy `options` param signature.
      * @returns {Function} Returns the compiled template function.
      * @example
      *
@@ -8159,13 +8178,13 @@
      *   };\
      * ');
      */
-    function template(string, options) {
+    function template(string, options, otherOptions) {
       // based on John Resig's `tmpl` implementation
       // http://ejohn.org/blog/javascript-micro-templating/
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = assign({}, options, settings, assignOwnDefaults);
+      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
 
       var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
@@ -9067,6 +9086,7 @@
     lodash.dropWhile = dropWhile;
     lodash.filter = filter;
     lodash.flatten = flatten;
+    lodash.flattenDeep = flattenDeep;
     lodash.forEach = forEach;
     lodash.forEachRight = forEachRight;
     lodash.forIn = forIn;

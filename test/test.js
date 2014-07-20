@@ -3700,7 +3700,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.flatten');
+  QUnit.module('flatten methods');
 
   (function() {
     var args = arguments;
@@ -3710,80 +3710,117 @@
       deepEqual(_.flatten(array), [['a'], ['b']]);
     });
 
-    test('should work with `isDeep`', 1, function() {
-      var array = [[['a']], [['b']]];
-      deepEqual(_.flatten(array, true), ['a', 'b']);
+    test('should work with `isDeep`', 2, function() {
+      var array = [[['a']], [['b']]],
+          expected = ['a', 'b'];
+
+      deepEqual(_.flatten(array, true), expected);
+      deepEqual(_.flattenDeep(array), expected);
     });
 
-    test('should flatten `arguments` objects', 1, function() {
-      deepEqual(_.flatten([args, args]), [1, 2, 3, 1, 2, 3]);
+    test('should flatten `arguments` objects', 3, function() {
+      var array = [args, [args]],
+          expected = [1, 2, 3, args];
+
+      deepEqual(_.flatten(array), expected);
+
+      expected = [1, 2, 3, 1, 2, 3];
+      deepEqual(_.flatten(array, true), expected);
+      deepEqual(_.flattenDeep(array), expected);
     });
 
-    test('should perform a shallow flatten when used as a callback for `_.map`', 1, function() {
+    test('should execute without options when used as a callback for `_.map`', 2, function() {
       var array = [[[['a']]], [[['b']]]];
+
       deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
+      deepEqual(_.map(array, _.flattenDeep), [['a'], ['b']]);
     });
 
-    test('should treat sparse arrays as dense', 4, function() {
+    test('should treat sparse arrays as dense', 6, function() {
       var array = [[1, 2, 3], Array(3)],
           expected = [1, 2, 3];
 
       expected.push(undefined, undefined, undefined);
 
-      _.each([_.flatten(array), _.flatten(array, true)], function(actual) {
+      _.each([_.flatten(array), _.flatten(array, true), _.flattenDeep(array)], function(actual) {
         deepEqual(actual, expected);
         ok('4' in actual);
       });
     });
 
-    test('should work with extremely large arrays', 1, function() {
+    test('should work with extremely large arrays', 3, function() {
       // test in modern browsers
       if (freeze) {
-        try {
-          var expected = Array(5e5),
-              actual = _.flatten([expected]);
+        var expected = Array(5e5);
 
-          deepEqual(actual, expected);
-        } catch(e) {
-          ok(false);
-        }
-      } else {
-        skipTest();
-      }
-    });
-
-    test('should work with empty arrays', 2, function() {
-      var array = [[], [[]], [[], [[[]]]]];
-
-      deepEqual(_.flatten(array), [[], [], [[[]]]]);
-      deepEqual(_.flatten(array, true), []);
-    });
-
-    test('should support flattening of nested arrays', 2, function() {
-      var array = [1, [2], [3, [4]]];
-
-      deepEqual(_.flatten(array), [1, 2, 3, [4]]);
-      deepEqual(_.flatten(array, true), [1, 2, 3, 4]);
-    });
-
-    test('should return an empty array for non array-like objects', 1, function() {
-      deepEqual(_.flatten({ 'a': 1 }), []);
-    });
-
-    test('should return a wrapped value when chaining', 4, function() {
-      if (!isNpm) {
-        var wrapped = _([1, [2], [3, [4]]]),
-            actual = wrapped.flatten();
-
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1, 2, 3, [4]]);
-
-        actual = wrapped.flatten(true);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1, 2, 3, 4]);
+        _.times(3, function(index) {
+          try {
+            if (index) {
+              var actual = actual == 1 ? _.flatten([expected], true) : _.flattenDeep([expected]);
+            } else {
+              actual = _.flatten(expected);
+            }
+            deepEqual(actual, expected);
+          } catch(e) {
+            ok(false);
+          }
+        });
       }
       else {
-        skipTest(4);
+        skipTest(3);
+      }
+    });
+
+    test('should work with empty arrays', 3, function() {
+      var array = [[], [[]], [[], [[[]]]]],
+          expected = [[], [], [[[]]]];
+
+      deepEqual(_.flatten(array), expected);
+
+      expected = [];
+      deepEqual(_.flatten(array, true), expected);
+      deepEqual(_.flattenDeep(array), expected);
+    });
+
+    test('should support flattening of nested arrays', 3, function() {
+      var array = [1, [2], [3, [4]]],
+          expected = [1, 2, 3, [4]];
+
+      deepEqual(_.flatten(array), expected);
+
+      expected = [1, 2, 3, 4];
+      deepEqual(_.flatten(array, true), expected);
+      deepEqual(_.flattenDeep(array), expected);
+    });
+
+    test('should return an empty array for non array-like objects', 3, function() {
+      var expected = [];
+
+      deepEqual(_.flatten({ 'a': 1 }), expected);
+      deepEqual(_.flatten({ 'a': 1 }, true), expected);
+      deepEqual(_.flattenDeep({ 'a': 1 }), expected);
+    });
+
+    test('should return a wrapped value when chaining', 6, function() {
+      if (!isNpm) {
+        var wrapped = _([1, [2], [3, [4]]]),
+            actual = wrapped.flatten(),
+            expected = [1, 2, 3, [4]];
+
+        ok(actual instanceof _);
+        deepEqual(actual.value(), expected);
+
+        expected = [1, 2, 3, 4];
+        actual = wrapped.flatten(true);
+        ok(actual instanceof _);
+        deepEqual(actual.value(), expected);
+
+        actual = wrapped.flattenDeep();
+        ok(actual instanceof _);
+        deepEqual(actual.value(), expected);
+      }
+      else {
+        skipTest(6);
       }
     });
   }(1, 2, 3));
@@ -9804,36 +9841,40 @@
       strictEqual(compiled({ 'value': true }), 'yap');
     });
 
-    test('should work with custom `_.templateSettings` delimiters', 1, function() {
-      var settings = _.clone(_.templateSettings);
+    test('should work with custom delimiters', 2, function() {
+      _.times(2, function(index) {
+        var settingsClone = _.clone(_.templateSettings);
 
-      _.assign(_.templateSettings, {
-        'escape': /\{\{-([\s\S]+?)\}\}/g,
-        'evaluate': /\{\{([\s\S]+?)\}\}/g,
-        'interpolate': /\{\{=([\s\S]+?)\}\}/g
+        var settings = _.assign(index ? _.templateSettings : {}, {
+          'escape': /\{\{-([\s\S]+?)\}\}/g,
+          'evaluate': /\{\{([\s\S]+?)\}\}/g,
+          'interpolate': /\{\{=([\s\S]+?)\}\}/g
+        });
+
+        var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>', index ? null : settings),
+            expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
+
+        strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
+        _.assign(_.templateSettings, settingsClone);
       });
-
-      var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>'),
-          expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
-
-      strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
-      _.assign(_.templateSettings, settings);
     });
 
-    test('should work with `_.templateSettings` delimiters containing special characters', 1, function() {
-      var settings = _.clone(_.templateSettings);
+    test('should work with custom delimiters containing special characters', 2, function() {
+      _.times(2, function(index) {
+        var settingsClone = _.clone(_.templateSettings);
 
-      _.assign(_.templateSettings, {
-        'escape': /<\?-([\s\S]+?)\?>/g,
-        'evaluate': /<\?([\s\S]+?)\?>/g,
-        'interpolate': /<\?=([\s\S]+?)\?>/g
+        var settings = _.assign(index ? _.templateSettings : {}, {
+          'escape': /<\?-([\s\S]+?)\?>/g,
+          'evaluate': /<\?([\s\S]+?)\?>/g,
+          'interpolate': /<\?=([\s\S]+?)\?>/g
+        });
+
+        var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>', index ? null : settings),
+            expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
+
+        strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
+        _.assign(_.templateSettings, settingsClone);
       });
-
-      var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>'),
-          expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
-
-      strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
-      _.assign(_.templateSettings, settings);
     });
 
     test('should work with no delimiters', 1, function() {
@@ -9842,9 +9883,7 @@
     });
 
     test('should support the "imports" option', 1, function() {
-      var options = { 'imports': { 'a': 1 } },
-          compiled = _.template('<%= a %>', options);
-
+      var compiled = _.template('<%= a %>', { 'imports': { 'a': 1 } });
       strictEqual(compiled({}), '1');
     });
 
@@ -9861,6 +9900,11 @@
       } catch(e) {
         ok(false);
       }
+    });
+
+    test('should support the legacy `options` param signature', 1, function() {
+      var compiled = _.template('<%= data.a %>', null, { 'variable': 'data' });
+      strictEqual(compiled({ 'a': 1 }), '1');
     });
 
     test('should use a `with` statement by default', 1, function() {
@@ -11677,7 +11721,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 192, function() {
+    test('should accept falsey arguments', 193, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

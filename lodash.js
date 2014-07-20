@@ -5874,6 +5874,9 @@
      * the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
+     * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+     * for details over the differences between `_.debounce` and `_.throttle`.
+     *
      * @static
      * @memberOf _
      * @category Function
@@ -6254,6 +6257,9 @@
      * Note: If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the throttled function is
      * invoked more than once during the `wait` timeout.
+     *
+     * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+     * for details over the differences between `_.throttle` and `_.debounce`.
      *
      * @static
      * @memberOf _

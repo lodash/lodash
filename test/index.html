@@ -113,17 +113,27 @@
 
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array && !new ArrayBuffer(0).slice) {
-					setProperty(window, 'ArrayBuffer', function(byteLength) {
-						var buffer = new _ArrayBuffer(byteLength);
-						buffer.slice = !byteLength ? Array.prototype.slice : function() {
-							var newBuffer = new _ArrayBuffer(byteLength),
-							    view = new Uint8Array(newBuffer);
+					setProperty(window, 'ArrayBuffer', (function() {
+						function ArrayBuffer(byteLength) {
+							var buffer = new _ArrayBuffer(byteLength);
+							buffer.slice = function() {
+								var newBuffer = new _ArrayBuffer(byteLength),
+								    view = new Uint8Array(newBuffer);
 
-							view.set(new Uint8Array(this));
-							return newBuffer;
-						};
-						return buffer;
-					});
+								view.set(new Uint8Array(this));
+								return newBuffer;
+							};
+							setProperty(buffer.slice, 'toString', sliceToString);
+							return buffer;
+						}
+						var reToString = /toString/g,
+						    nativeString = Function.prototype.toString.call(toString),
+						    bufferToString = _.constant(nativeString.replace(reToString, 'ArrayBuffer')),
+						    sliceToString = _.constant(nativeString.replace(reToString, 'slice'));
+
+						setProperty(ArrayBuffer, 'toString', bufferToString);
+						return ArrayBuffer;
+					}()));
 				}
 				setProperty(window, '_Float64Array', window.Float64Array);
 				setProperty(window, 'Float64Array', window.Float64Array ? function() {} : window.Uint8Array);

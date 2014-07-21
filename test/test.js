@@ -1007,18 +1007,14 @@
     });
 
     test('should support placeholders', 4, function() {
-      if (!isModularize) {
-        var object = {},
-            bound = _.bind(fn, object, _, 'b', _);
+      var object = {},
+          ph = _.bind.placeholder,
+          bound = _.bind(fn, object, ph, 'b', ph);
 
-        deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
-        deepEqual(bound('a'), [object, 'a', 'b', undefined]);
-        deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
-        deepEqual(bound(), [object, undefined, 'b', undefined]);
-      }
-      else {
-        skipTest(4);
-      }
+      deepEqual(bound('a', 'c'), [object, 'a', 'b', 'c']);
+      deepEqual(bound('a'), [object, 'a', 'b', undefined]);
+      deepEqual(bound('a', 'c', 'd'), [object, 'a', 'b', 'c', 'd']);
+      deepEqual(bound(), [object, undefined, 'b', undefined]);
     });
 
     test('should create a function with a `length` of `0`', 2, function() {
@@ -1199,6 +1195,7 @@
       object.greet = function(greeting) {
         return this.name + ' says: ' + greeting + '!';
       };
+
       strictEqual(bound(), 'fred says: hi!');
     });
 
@@ -1209,16 +1206,13 @@
         }
       };
 
-      if (!isModularize) {
-        var bound = _.bindKey(object, 'fn', _, 'b', _);
-        deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
-        deepEqual(bound('a'), ['a', 'b', undefined]);
-        deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-        deepEqual(bound(), [undefined, 'b', undefined]);
-      }
-      else {
-        skipTest(4);
-      }
+      var ph = _.bindKey.placeholder,
+          bound = _.bindKey(object, 'fn', ph, 'b', ph);
+
+      deepEqual(bound('a', 'c'), ['a', 'b', 'c']);
+      deepEqual(bound('a'), ['a', 'b', undefined]);
+      deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+      deepEqual(bound(), [undefined, 'b', undefined]);
     });
   }());
 
@@ -2232,16 +2226,13 @@
     });
 
     test('should support placeholders', 4, function() {
-      if (!isModularize) {
-        var curried = _.curry(fn);
-        deepEqual(curried(1)(_, 3)(_, 4)(2), [1, 2, 3, 4]);
-        deepEqual(curried(_, 2)(1)(_, 4)(3), [1, 2, 3, 4]);
-        deepEqual(curried(_, _, 3)(_, 2)(_, 4)(1), [1, 2, 3, 4]);
-        deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
-      }
-      else {
-        skipTest(4);
-      }
+      var curried = _.curry(fn),
+          ph = curried.placeholder;
+
+      deepEqual(curried(1)(ph, 3)(ph, 4)(2), [1, 2, 3, 4]);
+      deepEqual(curried(ph, 2)(1)(ph, 4)(3), [1, 2, 3, 4]);
+      deepEqual(curried(ph, ph, 3)(ph, 2)(ph, 4)(1), [1, 2, 3, 4]);
+      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
@@ -2337,16 +2328,13 @@
     });
 
     test('should support placeholders', 4, function() {
-      if (!isModularize) {
-        var curried = _.curryRight(fn);
-        deepEqual(curried(4)(2, _)(1, _)(3), [1, 2, 3, 4]);
-        deepEqual(curried(3, _)(4)(1, _)(2), [1, 2, 3, 4]);
-        deepEqual(curried(_, _, 4)(_, 3)(_, 2)(1), [1, 2, 3, 4]);
-        deepEqual(curried(_, _, _, 4)(_, _, 3)(_, 2)(1), [1, 2, 3, 4]);
-      }
-      else {
-        skipTest(4);
-      }
+      var curried = _.curryRight(fn),
+          ph = curried.placeholder;
+
+      deepEqual(curried(4)(2, ph)(1, ph)(3), [1, 2, 3, 4]);
+      deepEqual(curried(3, ph)(4)(1, ph)(2), [1, 2, 3, 4]);
+      deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
+      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
@@ -7967,23 +7955,19 @@
     });
 
     test('`_.' + methodName + '` should support placeholders', 4, function() {
-      if (!isModularize) {
-        var fn = function() { return slice.call(arguments); },
-            par = func(fn, _, 'b', _);
+      var fn = function() { return slice.call(arguments); },
+          ph = func.placeholder,
+          par = func(fn, ph, 'b', ph);
 
-        deepEqual(par('a', 'c'), ['a', 'b', 'c']);
-        deepEqual(par('a'), ['a', 'b', undefined]);
-        deepEqual(par(), [undefined, 'b', undefined]);
+      deepEqual(par('a', 'c'), ['a', 'b', 'c']);
+      deepEqual(par('a'), ['a', 'b', undefined]);
+      deepEqual(par(), [undefined, 'b', undefined]);
 
-        if (isPartial) {
-          deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
-        } else {
-          par = func(fn, _, 'c', _);
-          deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
-        }
-      }
-      else {
-        skipTest(4);
+      if (isPartial) {
+        deepEqual(par('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
+      } else {
+        par = func(fn, ph, 'c', ph);
+        deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
       }
     });
 

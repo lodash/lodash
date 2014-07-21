@@ -113,7 +113,7 @@
 
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array && !new ArrayBuffer(0).slice) {
-					setProperty(window, 'ArrayBuffer', (function() {
+					ArrayBuffer = (function() {
 						function ArrayBuffer(byteLength) {
 							var buffer = new _ArrayBuffer(byteLength);
 							buffer.slice = function() {
@@ -133,10 +133,10 @@
 
 						setProperty(ArrayBuffer, 'toString', bufferToString);
 						return ArrayBuffer;
-					}()));
+					}());
 				}
 				setProperty(window, '_Float64Array', window.Float64Array);
-				setProperty(window, 'Float64Array', window.Float64Array ? function() {} : window.Uint8Array);
+				Float64Array = window.Float64Array ? function() {} : window.Uint8Array;
 
 				setProperty(window, 'WinRTError', Error);
 
@@ -192,10 +192,18 @@
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);
 
-				setProperty(window, 'ArrayBuffer', window._ArrayBuffer);
+				if (window._ArrayBuffer) {
+					ArrayBuffer = _ArrayBuffer;
+				} else {
+					setProperty(window, 'ArrayBuffer', undefined);
+				}
 				setProperty(window, '_ArrayBuffer', undefined);
 
-				setProperty(window, 'Float64Array', window._Float64Array);
+				if (window._Float64Array) {
+					Float64Array = _Float64Array;
+				} else {
+					setProperty(window, 'Float64Array', undefined);
+				}
 				setProperty(window, '_Float64Array', undefined);
 
 				setProperty(window, 'WinRTError', undefined);

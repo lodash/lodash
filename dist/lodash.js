@@ -70,7 +70,7 @@
   /** Used to match `RegExp` flags from their coerced string values */
   var reFlags = /\w*$/;
 
-  /** Used to detected named functions */
+  /** Used to detect named functions */
   var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
   /** Used to detect hexadecimal string values */
@@ -511,6 +511,19 @@
   }
 
   /**
+   * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
+   * character code is whitespace.
+   *
+   * @private
+   * @param {number} charCode The character code to inspect.
+   * @returns {boolean} Returns `true` if `charCode` is whitespace, else `false`.
+   */
+  function isWhitespace(charCode) {
+    return ((charCode <= 160 && (charCode >= 9 && charCode <= 13) || charCode == 32 || charCode == 160) || charCode == 5760 || charCode == 6158 ||
+      (charCode >= 8192 && (charCode <= 8202 || charCode == 8232 || charCode == 8233 || charCode == 8239 || charCode == 8287 || charCode == 12288 || charCode == 65279)));
+  }
+
+  /**
    * Used by `_.trim` and `_.trimLeft` to get the index of the first non-whitespace
    * character of `string`.
    *
@@ -522,13 +535,7 @@
     var index = -1,
         length = string.length;
 
-    while (++index < length) {
-      var c = string.charCodeAt(index);
-      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
-        break;
-      }
-    }
+    while (++index < length && isWhitespace(string.charCodeAt(index))) { }
     return index;
   }
 
@@ -543,13 +550,7 @@
   function trimmedRightIndex(string) {
     var index = string.length;
 
-    while (index--) {
-      var c = string.charCodeAt(index);
-      if (!((c <= 160 && (c >= 9 && c <= 13) || c == 32 || c == 160) || c == 5760 || c == 6158 ||
-          (c >= 8192 && (c <= 8202 || c == 8232 || c == 8233 || c == 8239 || c == 8287 || c == 12288 || c == 65279)))) {
-        break;
-      }
-    }
+    while (index-- && isWhitespace(string.charCodeAt(index))) { }
     return index;
   }
 
@@ -697,14 +698,14 @@
      * `chain`, `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`,
      * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
      * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
-     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
-     * `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`, `merge`,
-     * `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
-     * `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`, `range`,
-     * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-     * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+     * `flattenDeep`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
+     * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+     * `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`,
+     * `merge`, `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`,
+     * `partialRight`, `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`,
+     * `push`, `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`,
+     * `sort`, `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
      * `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`,
      * and `zipObject`
      *
@@ -901,6 +902,26 @@
     /*--------------------------------------------------------------------------*/
 
     /**
+     * Appends placeholder indexes to `array` adding `offset` to each appended index.
+     *
+     * @private
+     * @param {Array} array The array of placeholder indexes to append to.
+     * @param {Array} indexes The array of placeholder indexes to append.
+     * @param {number} offset The placeholder offset.
+     * @returns {Array} Returns `array`.
+     */
+    function appendHolders(array, indexes, offset) {
+      var length = array.length,
+          index = indexes.length;
+
+      array.length += index;
+      while (index--) {
+        array[length + index] = indexes[index] + offset;
+      }
+      return array;
+    }
+
+    /**
      * A specialized version of `_.forEach` for arrays without support for
      * callback shorthands or `this` binding.
      *
@@ -911,7 +932,7 @@
      */
     function arrayEach(array, iterator) {
       var index = -1,
-          length = array ? array.length : 0;
+          length = array.length;
 
       while (++index < length) {
         if (iterator(array[index], index, array) === false) {
@@ -931,7 +952,7 @@
      * @returns {Array} Returns `array`.
      */
     function arrayEachRight(array, iterator) {
-      var length = array ? array.length : 0;
+      var length = array.length;
 
       while (length--) {
         if (iterator(array[length], length, array) === false) {
@@ -974,7 +995,7 @@
      */
     function arrayMap(array, iterator) {
       var index = -1,
-          length = array ? array.length : 0,
+          length = array.length,
           result = Array(length);
 
       while (++index < length) {
@@ -1135,6 +1156,26 @@
     }
 
     /**
+     * The base implementation of `_.bindAll` without support for individual
+     * method name arguments.
+     *
+     * @private
+     * @param {Object} object The object to bind and assign the bound methods to.
+     * @param {string[]} methodNames The object method names to bind.
+     * @returns {Object} Returns `object`.
+     */
+    function baseBindAll(object, methodNames) {
+      var index = -1,
+          length = methodNames.length;
+
+      while (++index < length) {
+        var key = methodNames[index];
+        object[key] = createWrapper([object[key], BIND_FLAG, null, object]);
+      }
+      return object;
+    }
+
+    /**
      * The base implementation of `_.callback` without support for creating
      * "_.pluck" and "_.where" style callbacks.
      *
@@ -1266,7 +1307,8 @@
             case float32Class: case float64Class:
             case int8Class: case int16Class: case int32Class:
             case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-              return new Ctor(cloneBuffer(value.buffer), value.byteOffset, value.length);
+              var buffer = value.buffer;
+              return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, value.byteOffset, value.length);
 
             case numberClass:
             case stringClass:
@@ -1342,18 +1384,7 @@
      * sets its metadata.
      *
      * @private
-     * @param {Array} data The metadata array.
-     * @param {Function|string} data[0] The function or method name to reference.
-     * @param {number} data[1] The bitmask of flags to compose. See `createWrapper`
-     *  for more details.
-     * @param {number} data[2] The arity of `data[0]`.
-     * @param {*} [data[3]] The `this` binding of `data[0]`.
-     * @param {Array} [data[4]] An array of arguments to prepend to those
-     *  provided to the new function.
-     * @param {Array} [data[5]] An array of arguments to append to those
-     *  provided to the new function.
-     * @param {Array} [data[6]] An array of `data[4]` placeholder indexes.
-     * @param {Array} [data[7]] An array of `data[5]` placeholder indexes.
+     * @param {Array} data The metadata array. See `createWrapper` for more details.
      * @returns {Function} Returns the new function.
      */
     function baseCreateWrapper(data) {
@@ -1361,7 +1392,7 @@
       if (bitmask == BIND_FLAG) {
         return setData(createBindWrapper(data), data);
       }
-      var partialHolders = data[6];
+      var partialHolders = data[5];
       if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
         return setData(createPartialWrapper(data), data);
       }
@@ -1369,7 +1400,7 @@
           arity = data[2],
           thisArg = data[3],
           partialArgs = data[4],
-          partialRightArgs = data[5],
+          partialRightArgs = data[6],
           partialRightHolders = data[7];
 
       var isBind = bitmask & BIND_FLAG,
@@ -1396,7 +1427,9 @@
           args = composeArgsRight(partialRightArgs, partialRightHolders, args);
         }
         if (isCurry || isCurryRight) {
-          var newPartialHolders = getHolders(args);
+          var placeholder = wrapper.placeholder,
+              newPartialHolders = getHolders(args, placeholder);
+
           length -= newPartialHolders.length;
 
           if (length < arity) {
@@ -1406,10 +1439,13 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var newData = [func, bitmask, nativeMax(arity - length, 0), thisArg];
-            newData[isCurry ? 4 : 5] = args;
-            newData[isCurry ? 6 : 7] = newPartialHolders;
-            return baseCreateWrapper(newData);
+            var newData = [func, bitmask, nativeMax(arity - length, 0), thisArg, null, null];
+            newData[isCurry ? 4 : 6] = args;
+            newData[isCurry ? 5 : 7] = newPartialHolders;
+
+            var result = baseCreateWrapper(newData);
+            result.placeholder = placeholder;
+            return result;
           }
         }
         var thisBinding = isBind ? thisArg : this;
@@ -1436,7 +1472,7 @@
       if (typeof arity != 'number') {
         arity = +arity || (func ? func.length : 0);
       }
-      return createWrapper(func, bitmask, arity);
+      return createWrapper([func, bitmask, arity]);
     }
 
     /**
@@ -2059,15 +2095,19 @@
      * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new partially applied function.
      */
-    function basePartial(func, bitmask, args, thisArg) {
+    function basePartial(func, bitmask, args, holders, thisArg) {
       if (func) {
         var data = func[EXPANDO],
             arity = data ? data[2] : func.length;
 
         arity -= args.length;
       }
-      var isPartial = bitmask & PARTIAL_FLAG;
-      return createWrapper(func, bitmask, arity, thisArg, isPartial && args, !isPartial && args);
+      var isPartial = bitmask & PARTIAL_FLAG,
+          newData = [func, bitmask, arity, thisArg, null, null];
+
+      newData[isPartial ? 4 : 6] = args;
+      newData[isPartial ? 5 : 7] = holders;
+      return createWrapper(newData);
     }
 
     /**
@@ -2424,9 +2464,7 @@
      * with its associated `this` binding.
      *
      * @private
-     * @param {Array} data The metadata array.
-     * @param {Function|string} data[0] The function or method name to reference.
-     * @param {*} data[3] The `this` binding of `data[0]`.
+     * @param {Array} data The metadata array. See `createWrapper` for more details.
      * @returns {Function} Returns the new bound function.
      */
     function createBindWrapper(data) {
@@ -2505,22 +2543,15 @@
      * with its associated partially applied arguments and optional `this` binding.
      *
      * @private
-     * @param {Array} data The metadata array.
-     * @param {Function|string} data[0] The function or method name to reference.
-     * @param {number} data[1] The bitmask of flags to compose. See `createWrapper`
-     *  for more details.
-     * @param {*} [data[3]] The `this` binding of `data[0]`.
-     * @param {Array} data[4] An array of arguments to prepend to those
-     *  provided to the new function.
+     * @param {Array} data The metadata array. See `createWrapper` for more details.
      * @returns {Function} Returns the new bound function.
      */
     function createPartialWrapper(data) {
       var func = data[0],
-          bitmask = data[1],
           thisArg = data[3],
           partialArgs = data[4];
 
-      var isBind = bitmask & BIND_FLAG,
+      var isBind = data[1] & BIND_FLAG,
           Ctor = createCtorWrapper(func);
 
       function wrapper() {
@@ -2544,29 +2575,35 @@
     }
 
     /**
-     * Creates a function that either curries or invokes `func` with an optional
+     * Creates a function that either curries or invokes `func` with optional
      * `this` binding and partially applied arguments.
      *
      * @private
-     * @param {Function|string} func The function or method name to reference.
-     * @param {number} bitmask The bitmask of flags to compose.
+     * @param {Array} data The metadata array.
+     * @param {Function|string} data[0] The function or method name to reference.
+     * @param {number} data[1] The bitmask of flags to compose.
      *  The bitmask may be composed of the following flags:
-     *  1  - `_.bind`
-     *  2  - `_.bindKey`
-     *  4  - `_.curry`
-     *  8  - `_.curryRight`
-     *  16 - `_.curry` or `_.curryRight` of a bound function
-     *  32 - `_.partial`
-     *  64 - `_.partialRight`
-     * @param {number} [arity] The arity of `func`.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] An array of arguments to prepend to those
+     *   1  - `_.bind`
+     *   2  - `_.bindKey`
+     *   4  - `_.curry`
+     *   8  - `_.curryRight`
+     *   16 - `_.curry` or `_.curryRight` of a bound function
+     *   32 - `_.partial`
+     *   64 - `_.partialRight`
+     * @param {number} data[2] The arity of `data[0]`.
+     * @param {*} [data[3]] The `this` binding of `data[0]`.
+     * @param {Array} [data[4]] An array of arguments to prepend to those
      *  provided to the new function.
-     * @param {Array} [partialRightArgs] An array of arguments to append to those
+     * @param {Array} [data[5]] An array of `data[4]` placeholder indexes.
+     * @param {Array} [data[6]] An array of arguments to append to those
      *  provided to the new function.
+     * @param {Array} [data[7]] An array of `data[6]` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
-    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs) {
+    function createWrapper(data) {
+      var func = data[0],
+          bitmask = data[1];
+
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isPartial = bitmask & PARTIAL_FLAG,
@@ -2575,35 +2612,43 @@
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
+      var arity = data[2],
+          partialArgs = data[4],
+          partialRightArgs = data[6];
+
       if (isPartial && !partialArgs.length) {
-        bitmask &= ~PARTIAL_FLAG;
-        isPartial = partialArgs = false;
+        isPartial = false;
+        data[1] = (bitmask &= ~PARTIAL_FLAG);
+        data[4] = data[5] = partialArgs = null;
       }
       if (isPartialRight && !partialRightArgs.length) {
-        bitmask &= ~PARTIAL_RIGHT_FLAG;
-        isPartialRight = partialRightArgs = false;
+        isPartialRight = false;
+        data[1] = (bitmask &= ~PARTIAL_RIGHT_FLAG);
+        data[6] = data[7] = partialRightArgs = null;
       }
-      var data = !isBindKey && func[EXPANDO];
-      if (data && data !== true) {
-        // shallow clone `data`
-        data = slice(data);
+      var funcData = !isBindKey && func[EXPANDO];
+      if (funcData && funcData !== true) {
+        // shallow clone `funcData`
+        funcData = slice(funcData);
 
         // clone partial left arguments
-        if (data[4]) {
-          data[4] = slice(data[4]);
+        if (funcData[4]) {
+          funcData[4] = slice(funcData[4]);
+          funcData[5] = slice(funcData[5]);
         }
         // clone partial right arguments
-        if (data[5]) {
-          data[5] = slice(data[5]);
+        if (funcData[6]) {
+          funcData[6] = slice(funcData[6]);
+          funcData[7] = slice(funcData[7]);
         }
         // set arity if provided
         if (typeof arity == 'number') {
-          data[2] = arity;
+          funcData[2] = arity;
         }
         // set `thisArg` if not previously bound
-        var bound = data[1] & BIND_FLAG;
+        var bound = funcData[1] & BIND_FLAG;
         if (isBind && !bound) {
-          data[3] = thisArg;
+          funcData[3] = data[3];
         }
         // set if currying a bound function
         if (!isBind && bound) {
@@ -2611,35 +2656,39 @@
         }
         // append partial left arguments
         if (isPartial) {
-          if (data[4]) {
-            push.apply(data[4], partialArgs);
+          var partialHolders = data[5],
+              funcPartialArgs = funcData[4];
+
+          if (funcPartialArgs) {
+            appendHolders(funcData[5], partialHolders, funcPartialArgs.length);
+            push.apply(funcPartialArgs, partialArgs);
           } else {
-            data[4] = partialArgs;
+            funcData[4] = partialArgs;
+            funcData[5] = partialHolders;
           }
         }
         // prepend partial right arguments
         if (isPartialRight) {
-          if (data[5]) {
-            unshift.apply(data[5], partialRightArgs);
+          var partialRightHolders = data[7],
+              funcPartialRightArgs = funcData[6];
+
+          if (funcPartialRightArgs) {
+            appendHolders(funcData[7], partialRightHolders, funcPartialRightArgs.length);
+            unshift.apply(funcPartialRightArgs, partialRightArgs);
           } else {
-            data[5] = partialRightArgs;
+            funcData[6] = partialRightArgs;
+            funcData[7] = partialRightHolders;
           }
         }
         // merge flags
-        data[1] |= bitmask;
-        return createWrapper.apply(undefined, data);
-      }
-      if (isPartial) {
-        var partialHolders = getHolders(partialArgs);
-      }
-      if (isPartialRight) {
-        var partialRightHolders = getHolders(partialRightArgs);
+        funcData[1] |= bitmask;
+        return createWrapper(funcData);
       }
       if (arity == null) {
         arity = isBindKey ? 0 : func.length;
       }
-      arity = nativeMax(arity, 0);
-      return baseCreateWrapper([func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders, partialRightHolders]);
+      data[2] = nativeMax(arity, 0);
+      return baseCreateWrapper(data);
     }
 
     /**
@@ -2664,13 +2713,13 @@
      * @param {Array} array The array to inspect.
      * @returns {Array} Returns the new array of placeholder indexes.
      */
-    function getHolders(array) {
+    function getHolders(array, placeholder) {
       var index = -1,
           length = array.length,
           result = [];
 
       while (++index < length) {
-        if (array[index] === lodash) {
+        if (array[index] === placeholder) {
           result.push(index);
         }
       }
@@ -2864,8 +2913,8 @@
      * Converts `collection` to an array if it is not an array-like value.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to inspect.
-     * @returns {Array|Object} Returns the iterable object.
+     * @param {Array|Object|string} collection The collection to process.
+     * @returns {Array} Returns the iterable object.
      */
     function toIterable(collection) {
       var length = collection ? collection.length : 0;
@@ -3283,6 +3332,24 @@
         isDeep = false;
       }
       return baseFlatten(array, isDeep);
+    }
+
+    /**
+     * Recursively flattens a nested array.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to recursively flatten.
+     * @returns {Array} Returns the new flattened array.
+     * @example
+     *
+     * _.flattenDeep([1, [2], [3, [[4]]]]);
+     * // => [1, 2, 3, 4];
+     */
+    function flattenDeep(array) {
+      var length = array ? array.length : 0;
+      return length ? baseFlatten(array, true) : [];
     }
 
     /**
@@ -5444,9 +5511,13 @@
      * // => 'hi fred'
      */
     function bind(func, thisArg) {
-      return arguments.length < 3
-        ? createWrapper(func, BIND_FLAG, null, thisArg)
-        : basePartial(func, BIND_FLAG | PARTIAL_FLAG, slice(arguments, 2), thisArg);
+      if (arguments.length < 3) {
+        return createWrapper([func, BIND_FLAG, null, thisArg]);
+      }
+      var args = slice(arguments, 2),
+          partialHolders = getHolders(args, bind.placeholder);
+
+      return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, partialHolders, thisArg);
     }
 
     /**
@@ -5481,26 +5552,6 @@
           ? baseFlatten(arguments, false, false, 1)
           : functions(object)
       );
-    }
-
-    /**
-     * The base implementation of `_.bindAll` without support for individual
-     * method name arguments.
-     *
-     * @private
-     * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {string[]} methodNames The object method names to bind.
-     * @returns {Object} Returns `object`.
-     */
-    function baseBindAll(object, methodNames) {
-      var index = -1,
-          length = methodNames.length;
-
-      while (++index < length) {
-        var key = methodNames[index];
-        object[key] = createWrapper(object[key], BIND_FLAG, null, object);
-      }
-      return object;
     }
 
     /**
@@ -5539,9 +5590,12 @@
      * // => 'hiya fred!'
      */
     function bindKey(object, key) {
-      return arguments.length < 3
-        ? createWrapper(key, BIND_FLAG | BIND_KEY_FLAG, null, object)
-        : createWrapper(key, BIND_FLAG | BIND_KEY_FLAG | PARTIAL_FLAG, null, object, slice(arguments, 2));
+      var data = [key, BIND_FLAG | BIND_KEY_FLAG, null, object];
+      if (arguments.length > 2) {
+        var args = slice(arguments, 2);
+        data.push(args, getHolders(args, bindKey.placeholder));
+      }
+      return createWrapper(data);
     }
 
     /**
@@ -5629,7 +5683,9 @@
      * // => [1, 2, 3]
      */
     function curry(func, arity) {
-      return baseCurry(func, CURRY_FLAG, arity);
+      var result = baseCurry(func, CURRY_FLAG, arity);
+      result.placeholder = curry.placeholder;
+      return result;
     }
 
     /**
@@ -5660,7 +5716,9 @@
      * // => [1, 2, 3]
      */
     function curryRight(func, arity) {
-      return baseCurry(func, CURRY_RIGHT_FLAG, arity);
+      var result = baseCurry(func, CURRY_RIGHT_FLAG, arity);
+      result.placeholder = curryRight.placeholder;
+      return result;
     }
 
     /**
@@ -5674,6 +5732,9 @@
      * Note: If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
+     *
+     * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+     * for details over the differences between `_.debounce` and `_.throttle`.
      *
      * @static
      * @memberOf _
@@ -6006,7 +6067,10 @@
      * // => 'hello fred'
      */
     function partial(func) {
-      return basePartial(func, PARTIAL_FLAG, slice(arguments, 1));
+      var args = slice(arguments, 1),
+          partialHolders = getHolders(args, partial.placeholder);
+
+      return basePartial(func, PARTIAL_FLAG, args, partialHolders);
     }
 
     /**
@@ -6041,7 +6105,10 @@
      * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
-      return basePartial(func, PARTIAL_RIGHT_FLAG, slice(arguments, 1));
+      var args = slice(arguments, 1),
+          partialHolders = getHolders(args, partialRight.placeholder);
+
+      return basePartial(func, PARTIAL_RIGHT_FLAG, args, partialHolders);
     }
 
     /**
@@ -6055,6 +6122,9 @@
      * Note: If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the throttled function is
      * invoked more than once during the `wait` timeout.
+     *
+     * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+     * for details over the differences between `_.throttle` and `_.debounce`.
      *
      * @static
      * @memberOf _
@@ -6095,7 +6165,6 @@
       debounceOptions.leading = leading;
       debounceOptions.maxWait = +wait;
       debounceOptions.trailing = trailing;
-
       return debounce(func, wait, debounceOptions);
     }
 
@@ -6121,7 +6190,7 @@
      * // => '<p>fred, barney, &amp; pebbles</p>'
      */
     function wrap(value, wrapper) {
-      return createWrapper(wrapper, PARTIAL_FLAG, null, null, [value]);
+      return basePartial(wrapper, PARTIAL_FLAG, [value], []);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -7872,6 +7941,7 @@
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
+     * @param- {Object} [otherOptions] Enables the legacy `options` param signature.
      * @returns {Function} Returns the compiled template function.
      * @example
      *
@@ -7939,13 +8009,13 @@
      *   };\
      * ');
      */
-    function template(string, options) {
+    function template(string, options, otherOptions) {
       // based on John Resig's `tmpl` implementation
       // http://ejohn.org/blog/javascript-micro-templating/
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = assign({}, options, settings, assignOwnDefaults);
+      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
 
       var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
@@ -8818,6 +8888,9 @@
     // ensure `new lodashWrapper` is an instance of `lodash`
     lodashWrapper.prototype = lodash.prototype;
 
+    // assign default placeholders
+    bind.placeholder = bindKey.placeholder = curry.placeholder = curryRight.placeholder = partial.placeholder = partialRight.placeholder = lodash;
+
     // add functions that return wrapped values when chaining
     lodash.after = after;
     lodash.assign = assign;
@@ -8847,6 +8920,7 @@
     lodash.dropWhile = dropWhile;
     lodash.filter = filter;
     lodash.flatten = flatten;
+    lodash.flattenDeep = flattenDeep;
     lodash.forEach = forEach;
     lodash.forEachRight = forEachRight;
     lodash.forIn = forIn;

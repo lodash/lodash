@@ -327,14 +327,14 @@
    * `chain`, `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`,
    * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
    * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
-   * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-   * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
-   * `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`, `merge`,
-   * `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
-   * `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`, `push`, `range`,
-   * `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`,
-   * `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-   * `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
+   * `flattenDeep`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
+   * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
+   * `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`,
+   * `merge`, `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`,
+   * `partialRight`, `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`,
+   * `push`, `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`,
+   * `sort`, `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+   * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
    * `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`,
    * and `zipObject`
    *
@@ -484,7 +484,7 @@
    */
   function arrayEach(array, iterator) {
     var index = -1,
-        length = array ? array.length : 0;
+        length = array.length;
 
     while (++index < length) {
       if (iterator(array[index], index, array) === breakIndicator) {
@@ -527,7 +527,7 @@
    */
   function arrayMap(array, iterator) {
     var index = -1,
-        length = array ? array.length : 0,
+        length = array.length,
         result = Array(length);
 
     while (++index < length) {
@@ -631,6 +631,26 @@
   }
 
   /**
+   * The base implementation of `_.bindAll` without support for individual
+   * method name arguments.
+   *
+   * @private
+   * @param {Object} object The object to bind and assign the bound methods to.
+   * @param {string[]} methodNames The object method names to bind.
+   * @returns {Object} Returns `object`.
+   */
+  function baseBindAll(object, methodNames) {
+    var index = -1,
+        length = methodNames.length;
+
+    while (++index < length) {
+      var key = methodNames[index];
+      object[key] = createWrapper([object[key], BIND_FLAG, null, object]);
+    }
+    return object;
+  }
+
+  /**
    * The base implementation of `_.callback` without support for creating
    * "_.pluck" and "_.where" style callbacks.
    *
@@ -703,18 +723,7 @@
    * sets its metadata.
    *
    * @private
-   * @param {Array} data The metadata array.
-   * @param {Function|string} data[0] The function or method name to reference.
-   * @param {number} data[1] The bitmask of flags to compose. See `createWrapper`
-   *  for more details.
-   * @param {number} data[2] The arity of `data[0]`.
-   * @param {*} [data[3]] The `this` binding of `data[0]`.
-   * @param {Array} [data[4]] An array of arguments to prepend to those
-   *  provided to the new function.
-   * @param {Array} [data[5]] An array of arguments to append to those
-   *  provided to the new function.
-   * @param {Array} [data[6]] An array of `data[4]` placeholder indexes.
-   * @param {Array} [data[7]] An array of `data[5]` placeholder indexes.
+   * @param {Array} data The metadata array. See `createWrapper` for more details.
    * @returns {Function} Returns the new function.
    */
   function baseCreateWrapper(data) {
@@ -722,7 +731,7 @@
     if (bitmask == BIND_FLAG) {
       return createBindWrapper(data);
     }
-    var partialHolders = data[6];
+    var partialHolders = data[5];
     if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
       return createPartialWrapper(data);
     }
@@ -730,7 +739,7 @@
         arity = data[2],
         thisArg = data[3],
         partialArgs = data[4],
-        partialRightArgs = data[5];
+        partialRightArgs = data[6];
 
     var isBind = bitmask & BIND_FLAG,
         isBindKey = bitmask & BIND_KEY_FLAG,
@@ -1227,9 +1236,19 @@
    * @param {*} [thisArg] The `this` binding of `func`.
    * @returns {Function} Returns the new partially applied function.
    */
-  function basePartial(func, bitmask, args, thisArg) {
-    var isPartial = bitmask & PARTIAL_FLAG;
-    return createWrapper(func, bitmask, null, thisArg, isPartial && args, !isPartial && args);
+  function basePartial(func, bitmask, args, holders, thisArg) {
+    if (func) {
+      var data = func[EXPANDO],
+          arity = data ? data[2] : func.length;
+
+      arity -= args.length;
+    }
+    var isPartial = bitmask & PARTIAL_FLAG,
+        newData = [func, bitmask, arity, thisArg, null, null];
+
+    newData[isPartial ? 4 : 6] = args;
+    newData[isPartial ? 5 : 7] = holders;
+    return createWrapper(newData);
   }
 
   /**
@@ -1474,9 +1493,7 @@
    * with its associated `this` binding.
    *
    * @private
-   * @param {Array} data The metadata array.
-   * @param {Function|string} data[0] The function or method name to reference.
-   * @param {*} data[3] The `this` binding of `data[0]`.
+   * @param {Array} data The metadata array. See `createWrapper` for more details.
    * @returns {Function} Returns the new bound function.
    */
   function createBindWrapper(data) {
@@ -1514,22 +1531,15 @@
    * with its associated partially applied arguments and optional `this` binding.
    *
    * @private
-   * @param {Array} data The metadata array.
-   * @param {Function|string} data[0] The function or method name to reference.
-   * @param {number} data[1] The bitmask of flags to compose. See `createWrapper`
-   *  for more details.
-   * @param {*} [data[3]] The `this` binding of `data[0]`.
-   * @param {Array} data[4] An array of arguments to prepend to those
-   *  provided to the new function.
+   * @param {Array} data The metadata array. See `createWrapper` for more details.
    * @returns {Function} Returns the new bound function.
    */
   function createPartialWrapper(data) {
     var func = data[0],
-        bitmask = data[1],
         thisArg = data[3],
         partialArgs = data[4];
 
-    var isBind = bitmask & BIND_FLAG,
+    var isBind = data[1] & BIND_FLAG,
         Ctor = createCtorWrapper(func);
 
     function wrapper() {
@@ -1553,29 +1563,35 @@
   }
 
   /**
-   * Creates a function that either curries or invokes `func` with an optional
+   * Creates a function that either curries or invokes `func` with optional
    * `this` binding and partially applied arguments.
    *
    * @private
-   * @param {Function|string} func The function or method name to reference.
-   * @param {number} bitmask The bitmask of flags to compose.
+   * @param {Array} data The metadata array.
+   * @param {Function|string} data[0] The function or method name to reference.
+   * @param {number} data[1] The bitmask of flags to compose.
    *  The bitmask may be composed of the following flags:
-   *  1  - `_.bind`
-   *  2  - `_.bindKey`
-   *  4  - `_.curry`
-   *  8  - `_.curryRight`
-   *  16 - `_.curry` or `_.curryRight` of a bound function
-   *  32 - `_.partial`
-   *  64 - `_.partialRight`
-   * @param {number} [arity] The arity of `func`.
-   * @param {*} [thisArg] The `this` binding of `func`.
-   * @param {Array} [partialArgs] An array of arguments to prepend to those
+   *   1  - `_.bind`
+   *   2  - `_.bindKey`
+   *   4  - `_.curry`
+   *   8  - `_.curryRight`
+   *   16 - `_.curry` or `_.curryRight` of a bound function
+   *   32 - `_.partial`
+   *   64 - `_.partialRight`
+   * @param {number} data[2] The arity of `data[0]`.
+   * @param {*} [data[3]] The `this` binding of `data[0]`.
+   * @param {Array} [data[4]] An array of arguments to prepend to those
    *  provided to the new function.
-   * @param {Array} [partialRightArgs] An array of arguments to append to those
+   * @param {Array} [data[5]] An array of `data[4]` placeholder indexes.
+   * @param {Array} [data[6]] An array of arguments to append to those
    *  provided to the new function.
+   * @param {Array} [data[7]] An array of `data[6]` placeholder indexes.
    * @returns {Function} Returns the new function.
    */
-  function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialRightArgs) {
+  function createWrapper(data) {
+    var func = data[0],
+        bitmask = data[1];
+
     var isBind = bitmask & BIND_FLAG,
         isBindKey = bitmask & BIND_KEY_FLAG,
         isPartial = bitmask & PARTIAL_FLAG,
@@ -1584,18 +1600,20 @@
     if (!isFunction(func)) {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
+    var arity = data[2],
+        partialArgs = data[4],
+        partialRightArgs = data[6];
+
     if (isPartial && !partialArgs.length) {
-      bitmask &= ~PARTIAL_FLAG;
-      isPartial = partialArgs = false;
-    }
-    if (isPartial) {
-      var partialHolders = getHolders(partialArgs);
+      isPartial = false;
+      data[1] = (bitmask &= ~PARTIAL_FLAG);
+      data[4] = data[5] = partialArgs = null;
     }
     if (arity == null) {
       arity = isBindKey ? 0 : func.length;
     }
-    arity = nativeMax(arity, 0);
-    return baseCreateWrapper([func, bitmask, arity, thisArg, partialArgs, partialRightArgs, partialHolders]);
+    data[2] = nativeMax(arity, 0);
+    return baseCreateWrapper(data);
   }
 
   /**
@@ -1605,13 +1623,13 @@
    * @param {Array} array The array to inspect.
    * @returns {Array} Returns the new array of placeholder indexes.
    */
-  function getHolders(array) {
+  function getHolders(array, placeholder) {
     var index = -1,
         length = array.length,
         result = [];
 
     while (++index < length) {
-      if (array[index] === lodash) {
+      if (array[index] === placeholder) {
         result.push(index);
       }
     }
@@ -1701,8 +1719,8 @@
    * Converts `collection` to an array if it is not an array-like value.
    *
    * @private
-   * @param {Array|Object|string} collection The collection to inspect.
-   * @returns {Array|Object} Returns the iterable object.
+   * @param {Array|Object|string} collection The collection to process.
+   * @returns {Array} Returns the iterable object.
    */
   function toIterable(collection) {
     var length = collection ? collection.length : 0;
@@ -3635,8 +3653,8 @@
    */
   function bind(func, thisArg) {
     return arguments.length < 3
-      ? createWrapper(func, BIND_FLAG, null, thisArg)
-      : basePartial(func, BIND_FLAG | PARTIAL_FLAG, slice(arguments, 2), thisArg);
+      ? createWrapper([func, BIND_FLAG, null, thisArg])
+      : basePartial(func, BIND_FLAG | PARTIAL_FLAG, slice(arguments, 2), [], thisArg);
   }
 
   /**
@@ -3671,26 +3689,6 @@
         ? baseFlatten(arguments, false, false, 1)
         : functions(object)
     );
-  }
-
-  /**
-   * The base implementation of `_.bindAll` without support for individual
-   * method name arguments.
-   *
-   * @private
-   * @param {Object} object The object to bind and assign the bound methods to.
-   * @param {string[]} methodNames The object method names to bind.
-   * @returns {Object} Returns `object`.
-   */
-  function baseBindAll(object, methodNames) {
-    var index = -1,
-        length = methodNames.length;
-
-    while (++index < length) {
-      var key = methodNames[index];
-      object[key] = createWrapper(object[key], BIND_FLAG, null, object);
-    }
-    return object;
   }
 
   /**
@@ -3758,6 +3756,9 @@
    * Note: If `leading` and `trailing` options are `true`, `func` is called on
    * the trailing edge of the timeout only if the the debounced function is
    * invoked more than once during the `wait` timeout.
+   *
+   * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+   * for details over the differences between `_.debounce` and `_.throttle`.
    *
    * @static
    * @memberOf _
@@ -4088,7 +4089,10 @@
    * // => 'hello fred'
    */
   function partial(func) {
-    return basePartial(func, PARTIAL_FLAG, slice(arguments, 1));
+    var args = slice(arguments, 1),
+        partialHolders = getHolders(args, partial.placeholder);
+
+    return basePartial(func, PARTIAL_FLAG, args, partialHolders);
   }
 
   /**
@@ -4102,6 +4106,9 @@
    * Note: If `leading` and `trailing` options are `true`, `func` is called on
    * the trailing edge of the timeout only if the the throttled function is
    * invoked more than once during the `wait` timeout.
+   *
+   * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+   * for details over the differences between `_.throttle` and `_.debounce`.
    *
    * @static
    * @memberOf _
@@ -4168,7 +4175,7 @@
    * // => '<p>fred, barney, &amp; pebbles</p>'
    */
   function wrap(value, wrapper) {
-    return createWrapper(wrapper, PARTIAL_FLAG, null, null, [value]);
+    return basePartial(wrapper, PARTIAL_FLAG, [value], []);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -5093,6 +5100,7 @@
    * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
    * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
    * @param {string} [options.variable] The data object variable name.
+   * @param- {Object} [otherOptions] Enables the legacy `options` param signature.
    * @returns {Function} Returns the compiled template function.
    * @example
    *
@@ -5676,6 +5684,9 @@
 
   // ensure `new lodashWrapper` is an instance of `lodash`
   lodashWrapper.prototype = lodash.prototype;
+
+  // assign default placeholders
+  bind.placeholder = partial.placeholder = lodash;
 
   // add functions that return wrapped values when chaining
   lodash.after = after;

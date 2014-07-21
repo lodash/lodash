@@ -44,7 +44,7 @@ before_install:
   - "mkdir ./node_modules/lodash-cli/node_modules && cd ./node_modules/lodash-cli/node_modules/ && ln -s ../../../ ./lodash && cd ../ && npm i . && cd ../../"
   - "node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js"
 script:
-  - "[ $ISTANBUL == false ]    || (nvm install 0.11.11 && $BIN --harmony ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.$BUILD.js)"
+  - "[ $ISTANBUL == false ]    || (nvm install 0.11.11 && $BIN --harmony ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.js)"
   - "[ $ISTANBUL == true ] && [ $TRAVIS_SECURE_ENV_VARS == true ] && nvm use 0.10 && cat ./coverage/lcov.info | coveralls || true"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || cd ./test"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"

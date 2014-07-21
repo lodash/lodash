@@ -5039,7 +5039,7 @@
 
     test('should use a stronger check in browsers', 2, function() {
       var support = _.support,
-          expected = !(support.dom && support.nodeClass);
+          expected = !(support.dom && _.result(support, 'nodeClass', true));
 
       strictEqual(_.isElement(new Element), expected);
 

@@ -5038,14 +5038,12 @@
     });
 
     test('should use a stronger check in browsers', 2, function() {
-      var support = _.support,
-          expected = !(support.dom && _.result(support, 'nodeClass', true));
+      var expected = !_.support.dom;
 
       strictEqual(_.isElement(new Element), expected);
 
       if (lodashBizarro) {
-        support = lodashBizarro.support;
-        expected = !(support.dom && support.nodeClass);
+        expected = !lodashBizarro.support.dom;
         strictEqual(lodashBizarro.isElement(new Element), expected);
       }
       else {

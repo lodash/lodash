@@ -1058,24 +1058,23 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Appends `otherHolders` placeholders to `holders` placeholders offseting
-     * `otherHolders` by `offset`.
+     * Appends placeholder indexes to `array` adding `offset` to each appended index.
      *
      * @private
-     * @param {Array} holders The placeholders augment.
-     * @param {Array} otherHolders The placeholders to append.
+     * @param {Array} array The array of placeholder indexes to append to.
+     * @param {Array} indexes The array of placeholder indexes to append.
      * @param {number} offset The placeholder offset.
-     * @returns {Array} Returns `holders`.
+     * @returns {Array} Returns `array`.
      */
-    function appendHolders(holders, otherHolders, offset) {
-      var length = holders.length,
-          index = otherHolders.length;
+    function appendHolders(array, indexes, offset) {
+      var length = array.length,
+          index = indexes.length;
 
-      holders.length += index;
+      array.length += index;
       while (index--) {
-        holders[length + index] = offset + otherHolders[index];
+        array[length + index] = indexes[index] + offset;
       }
-      return holders;
+      return array;
     }
 
     /**

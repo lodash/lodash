@@ -657,7 +657,7 @@
 
         if (ArrayBuffer) {
           try {
-            var buffer = new ArrayBuffer(12);
+            var buffer = new ArrayBuffer(10);
             actual = lodashBizarro.clone(buffer);
           } catch(e) {
             actual = null;
@@ -670,13 +670,13 @@
         }
         if (ArrayBuffer && Uint8Array) {
           try {
-            var array = new Uint8Array(new ArrayBuffer(12));
+            var array = new Uint8Array(new ArrayBuffer(10));
             actual = lodashBizarro.cloneDeep(array);
           } catch(e) {
             actual = null;
           }
           deepEqual(actual, array, message('_.cloneDeep', 'Float64Array'));
-          notStrictEqual(actual.buffer, array.buffer, message('_.cloneDeep', 'Float64Array'));
+          notStrictEqual(actual && actual.buffer, array.buffer, message('_.cloneDeep', 'Float64Array'));
           notStrictEqual(actual, array, message('_.cloneDeep', 'Float64Array'));
         }
         else {
@@ -1553,7 +1553,7 @@
       });
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
-        var buffer = ArrayBuffer && new ArrayBuffer(12);
+        var buffer = ArrayBuffer && new ArrayBuffer(10);
         if (buffer) {
           var actual = func(buffer);
           strictEqual(actual.byteLength, buffer.byteLength);

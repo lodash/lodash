@@ -328,6 +328,13 @@
         return;
       }
     }
+    var fnToString = funcProto.toString,
+        nativeString = fnToString.call(toString),
+        reToString = /toString/g;
+
+    function createToString(funcName) {
+      return _.constant(nativeString.replace(reToString, funcName));
+    }
     // load ES6 Set shim
     require('./asset/set');
 
@@ -339,10 +346,9 @@
       _._baseEach = baseEach.baseEach || baseEach['default'] || baseEach;
     }
     // allow bypassing native checks
-    var _fnToString = funcProto.toString;
     setProperty(funcProto, 'toString', function wrapper() {
-      setProperty(funcProto, 'toString', _fnToString);
-      var result = _.has(this, 'toString') ? this.toString() : _fnToString.call(this);
+      setProperty(funcProto, 'toString', fnToString);
+      var result = _.has(this, 'toString') ? this.toString() : fnToString.call(this);
       setProperty(funcProto, 'toString', wrapper);
       return result;
     });
@@ -374,7 +380,7 @@
       if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [0, 0])) {
         throw new Error;
       }
-      return _hasOwnProperty.call(this, key);
+      return _.has(this, key);
     });
 
     var _isFinite = Number.isFinite;
@@ -399,18 +405,20 @@
         view.set(new Uint8Array(this));
         return newBuffer;
       }
-      var reToString = /toString/g,
-          nativeString = _fnToString.call(toString),
-          bufferToString = _.constant(nativeString.replace(reToString, 'ArrayBuffer')),
-          sliceToString = _.constant(nativeString.replace(reToString, 'slice'));
-
-      setProperty(ArrayBuffer, 'toString', bufferToString);
-      setProperty(bufferSlice, 'toString', sliceToString);
+      setProperty(ArrayBuffer, 'toString', createToString('ArrayBuffer'));
+      setProperty(bufferSlice, 'toString', createToString('slice'));
       return ArrayBuffer;
     }()));
 
     if (!root.Float64Array) {
-      setProperty(root, 'Float64Array', Uint8Array);
+      setProperty(root, 'Float64Array', (function() {
+        function Float64Array(buffer, byteOffset, length) {
+          return new Uint8Array(buffer, byteOffset || 0, length || buffer.byteLength);
+        }
+        setProperty(Float64Array, 'BYTES_PER_ELEMENT', 8);
+        setProperty(Float64Array, 'toString', createToString('Float64Array'));
+        return Float64Array;
+      }()));
     }
     // fake `WinRTError`
     setProperty(root, 'WinRTError', Error);
@@ -437,7 +445,6 @@
     setProperty(Object, 'keys', _keys);
 
     setProperty(objectProto, 'hasOwnProperty', _hasOwnProperty);
-    setProperty(funcProto,   'toString', _fnToString);
 
     if (_isFinite) {
       setProperty(Number, 'isFinite', _isFinite);

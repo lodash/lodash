@@ -341,10 +341,7 @@
     var _fnToString = funcProto.toString;
     setProperty(funcProto, 'toString', function wrapper() {
       setProperty(funcProto, 'toString', _fnToString);
-      var result = (this === root.ArrayBuffer || this === root.Set)
-        ? this.toString()
-        : _fnToString.call(this);
-
+      var result = _.has(this, 'toString') ? this.toString() : _fnToString.call(this);
       setProperty(funcProto, 'toString', wrapper);
       return result;
     });
@@ -391,7 +388,7 @@
         function ArrayBuffer(byteLength) {
           var buffer = new _ArrayBuffer(byteLength);
           buffer.slice = function() {
-            var newBuffer = new _ArrayBuffer(byteLength),
+            var newBuffer = new _ArrayBuffer(this.byteLength),
                 view = new Uint8Array(newBuffer);
 
             view.set(new Uint8Array(this));

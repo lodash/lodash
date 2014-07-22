@@ -114,6 +114,11 @@
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array && !new ArrayBuffer(0).slice) {
 					ArrayBuffer = (function() {
+						function constant(value) {
+							return function() {
+								return value;
+							};
+						}
 						function ArrayBuffer(byteLength) {
 							var buffer = new _ArrayBuffer(byteLength);
 							buffer.slice = function() {
@@ -128,16 +133,19 @@
 						}
 						var reToString = /toString/g,
 						    nativeString = Function.prototype.toString.call(toString),
-						    bufferToString = _.constant(nativeString.replace(reToString, 'ArrayBuffer')),
-						    sliceToString = _.constant(nativeString.replace(reToString, 'slice'));
+						    bufferToString = constant(nativeString.replace(reToString, 'ArrayBuffer')),
+						    sliceToString = constant(nativeString.replace(reToString, 'slice'));
 
 						setProperty(ArrayBuffer, 'toString', bufferToString);
 						return ArrayBuffer;
 					}());
 				}
 				setProperty(window, '_Float64Array', window.Float64Array);
-				Float64Array = window.Float64Array ? function() {} : window.Uint8Array;
-
+				if (window._ArrayBuffer == window.ArrayBuffer && window._Float64Array) {
+					Float64Array = function() {};
+				} else {
+					Float64Array = window.Uint8Array;
+				}
 				setProperty(window, 'WinRTError', Error);
 
 				setProperty(window, 'exports', window);

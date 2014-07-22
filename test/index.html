@@ -113,24 +113,26 @@
 				document.createDocumentFragment = function() {};
 
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
-				if (window.ArrayBuffer && window.Uint8Array && !new ArrayBuffer(0).slice) {
+				if (window.ArrayBuffer && window.Uint8Array) {
 					ArrayBuffer = (function(_ArrayBuffer) {
+						function ArrayBuffer(byteLength) {
+							var buffer = new _ArrayBuffer(byteLength);
+							if (!byteLength) {
+								setProperty(buffer, 'slice', buffer.slice ? null : bufferSlice);
+							}
+							return buffer;
+						}
+						function bufferSlice() {
+							var newBuffer = new _ArrayBuffer(this.byteLength),
+							    view = new Uint8Array(newBuffer);
+
+							view.set(new Uint8Array(this));
+							return newBuffer;
+						}
 						function constant(value) {
 							return function() {
 								return value;
 							};
-						}
-						function ArrayBuffer(byteLength) {
-							var buffer = new _ArrayBuffer(byteLength);
-							buffer.slice = function() {
-								var newBuffer = new _ArrayBuffer(this.byteLength),
-								    view = new Uint8Array(newBuffer);
-
-								view.set(new Uint8Array(this));
-								return newBuffer;
-							};
-							setProperty(buffer.slice, 'toString', sliceToString);
-							return buffer;
 						}
 						var reToString = /toString/g,
 						    nativeString = Function.prototype.toString.call(toString),
@@ -138,13 +140,12 @@
 						    sliceToString = constant(nativeString.replace(reToString, 'slice'));
 
 						setProperty(ArrayBuffer, 'toString', bufferToString);
+						setProperty(bufferSlice, 'toString', sliceToString);
 						return ArrayBuffer;
 					}(_ArrayBuffer));
 				}
 				setProperty(window, '_Float64Array', window.Float64Array);
-				if (window._ArrayBuffer == window.ArrayBuffer && window._Float64Array) {
-					Float64Array = function() {};
-				} else {
+				if (!window._Float64Array) {
 					Float64Array = window.Uint8Array;
 				}
 				setProperty(window, 'WinRTError', Error);

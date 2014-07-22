@@ -37,7 +37,8 @@
       push = arrayProto.push,
       slice = arrayProto.slice,
       system = root.system,
-      toString = objectProto.toString;
+      toString = objectProto.toString,
+      Uint8Array = root.Uint8Array;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -383,34 +384,34 @@
     setProperty(stringProto, 'contains',  _contains ? _.noop : Boolean);
 
     var _ArrayBuffer = ArrayBuffer;
-    if (Uint8Array && new ArrayBuffer(0).slice) {
-      setProperty(root, 'ArrayBuffer', (function() {
-        function ArrayBuffer(byteLength) {
-          var buffer = new _ArrayBuffer(byteLength);
-          buffer.slice = function() {
-            var newBuffer = new _ArrayBuffer(this.byteLength),
-                view = new Uint8Array(newBuffer);
-
-            view.set(new Uint8Array(this));
-            return newBuffer;
-          };
-          setProperty(buffer.slice, 'toString', sliceToString);
-          return buffer;
+    setProperty(root, 'ArrayBuffer', (function() {
+      function ArrayBuffer(byteLength) {
+        var buffer = new _ArrayBuffer(byteLength);
+        if (!byteLength) {
+          setProperty(buffer, 'slice', buffer.slice ? null : bufferSlice);
         }
-        var reToString = /toString/g,
-            nativeString = _fnToString.call(toString),
-            bufferToString = _.constant(nativeString.replace(reToString, 'ArrayBuffer')),
-            sliceToString = _.constant(nativeString.replace(reToString, 'slice'));
+        return buffer;
+      }
+      function bufferSlice() {
+        var newBuffer = new _ArrayBuffer(this.byteLength),
+            view = new Uint8Array(newBuffer);
 
-        setProperty(ArrayBuffer, 'toString', bufferToString);
-        return ArrayBuffer;
-      }()));
-    }
+        view.set(new Uint8Array(this));
+        return newBuffer;
+      }
+      var reToString = /toString/g,
+          nativeString = _fnToString.call(toString),
+          bufferToString = _.constant(nativeString.replace(reToString, 'ArrayBuffer')),
+          sliceToString = _.constant(nativeString.replace(reToString, 'slice'));
+
+      setProperty(ArrayBuffer, 'toString', bufferToString);
+      setProperty(bufferSlice, 'toString', sliceToString);
+      return ArrayBuffer;
+    }()));
+
     var _Float64Array = root.Float64Array;
-    if (_ArrayBuffer == root.ArrayBuffer && _Float64Array) {
-      setProperty(root, 'Float64Array', _.noop);
-    } else {
-      setProperty(root, 'Float64Array', root.Uint8Array);
+    if (!_Float64Array) {
+      setProperty(root, 'Float64Array', Uint8Array);
     }
     // fake `WinRTError`
     setProperty(root, 'WinRTError', Error);
@@ -451,6 +452,8 @@
     }
     if (_ArrayBuffer) {
       setProperty(root, 'ArrayBuffer', _ArrayBuffer);
+    } else {
+      delete root.ArrayBuffer;
     }
     if (_Float64Array) {
       setProperty(root, 'Float64Array', _Float64Array);
@@ -651,9 +654,9 @@
         }
         strictEqual(actual, true, message('_.contains', 'String#contains'));
 
-        if (root.ArrayBuffer) {
+        if (ArrayBuffer) {
           try {
-            var buffer = new ArrayBuffer(8);
+            var buffer = new ArrayBuffer(12);
             actual = lodashBizarro.clone(buffer);
           } catch(e) {
             actual = null;
@@ -664,9 +667,9 @@
         else {
           skipTest(2);
         }
-        if (root.ArrayBuffer && root.Uint8Array) {
+        if (ArrayBuffer && Uint8Array) {
           try {
-            var array = new Uint8Array(new ArrayBuffer(8));
+            var array = new Uint8Array(new ArrayBuffer(12));
             actual = lodashBizarro.cloneDeep(array);
           } catch(e) {
             actual = null;

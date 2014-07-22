@@ -409,8 +409,7 @@
       return ArrayBuffer;
     }()));
 
-    var _Float64Array = root.Float64Array;
-    if (!_Float64Array) {
+    if (!root.Float64Array) {
       setProperty(root, 'Float64Array', Uint8Array);
     }
     // fake `WinRTError`
@@ -437,8 +436,8 @@
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
-    setProperty(objectProto,   'hasOwnProperty', _hasOwnProperty);
-    setProperty(funcProto, 'toString', _fnToString);
+    setProperty(objectProto, 'hasOwnProperty', _hasOwnProperty);
+    setProperty(funcProto,   'toString', _fnToString);
 
     if (_isFinite) {
       setProperty(Number, 'isFinite', _isFinite);
@@ -455,13 +454,8 @@
     } else {
       delete root.ArrayBuffer;
     }
-    if (_Float64Array) {
-      setProperty(root, 'Float64Array', _Float64Array);
-    } else {
-      delete root.Float64Array;
-    }
-    delete root.window;
     delete root.WinRTError;
+    delete root.window;
     delete funcProto._method;
   }());
 

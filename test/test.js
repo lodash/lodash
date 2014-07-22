@@ -1546,7 +1546,7 @@
       });
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
-        var buffer = ArrayBuffer && new ArrayBuffer(8);
+        var buffer = ArrayBuffer && new ArrayBuffer(12);
         if (buffer) {
           var actual = func(buffer);
           strictEqual(actual.byteLength, buffer.byteLength);

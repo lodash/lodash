@@ -144,10 +144,6 @@
 						return ArrayBuffer;
 					}(_ArrayBuffer));
 				}
-				setProperty(window, '_Float64Array', window.Float64Array);
-				if (!window._Float64Array) {
-					Float64Array = window.Uint8Array;
-				}
 				setProperty(window, 'WinRTError', Error);
 
 				setProperty(window, 'exports', window);
@@ -207,13 +203,6 @@
 				}
 				setProperty(window, '_ArrayBuffer', undefined);
 
-				if (window._Float64Array) {
-					Float64Array = _Float64Array;
-				} else {
-					setProperty(window, 'Float64Array', undefined);
-				}
-				setProperty(window, '_Float64Array', undefined);
-
 				setProperty(window, 'WinRTError', undefined);
 
 				setProperty(window, 'exports', undefined);
@@ -232,6 +221,9 @@
 				delete String.prototype._contains;
 			}
 
+			if (!window.Float64Array && window.Uint8Array) {
+				Float64Array = Uint8Array;
+			}
 			QUnit.config.hidepassed = true;
 
 			// load Lo-Dash and expose it to the bad extensions/shims

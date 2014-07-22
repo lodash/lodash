@@ -410,8 +410,11 @@
       }()));
     }
     var _Float64Array = root.Float64Array;
-    setProperty(root, 'Float64Array', _Float64Array ? _.noop : root.Uint8Array);
-
+    if (_ArrayBuffer == root.ArrayBuffer && _Float64Array) {
+      setProperty(root, 'Float64Array', _.noop);
+    } else {
+      setProperty(root, 'Float64Array', root.Uint8Array);
+    }
     // fake `WinRTError`
     setProperty(root, 'WinRTError', Error);
 

@@ -413,7 +413,9 @@
     if (!root.Float64Array) {
       setProperty(root, 'Float64Array', (function() {
         function Float64Array(buffer, byteOffset, length) {
-          return new Uint8Array(buffer, byteOffset || 0, length || buffer.byteLength);
+          return arguments.length == 1
+            ? new Uint8Array(buffer)
+            : new Uint8Array(buffer, byteOffset || 0, length || buffer.byteLength);
         }
         setProperty(Float64Array, 'BYTES_PER_ELEMENT', 8);
         setProperty(Float64Array, 'toString', createToString('Float64Array'));

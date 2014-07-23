@@ -1207,7 +1207,7 @@
 
     test('should support placeholders', 4, function() {
       var object = {
-        'fn': function fn(a, b, c, d) {
+        'fn': function() {
           return slice.call(arguments);
         }
       };
@@ -2335,12 +2335,13 @@
 
     test('should support placeholders', 4, function() {
       var curried = _.curryRight(fn),
+          expected = [1, 2, 3, 4],
           ph = curried.placeholder;
 
-      deepEqual(curried(4)(2, ph)(1, ph)(3), [1, 2, 3, 4]);
-      deepEqual(curried(3, ph)(4)(1, ph)(2), [1, 2, 3, 4]);
-      deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
-      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
+      deepEqual(curried(4)(2, ph)(1, ph)(3), expected);
+      deepEqual(curried(3, ph)(4)(1, ph)(2), expected);
+      deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), expected);
+      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), expected);
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
@@ -8054,6 +8055,11 @@
   QUnit.module('methods using `createWrapper`');
 
   (function() {
+    var ph1 = _.bind.placeholder,
+        ph2 = _.bindKey.placeholder,
+        ph3 = _.partial.placeholder,
+        ph4 = _.partialRight.placeholder;
+
     test('combinations of partial functions should work', 1, function() {
       function fn() {
         return slice.call(arguments);
@@ -8093,6 +8099,60 @@
       c = _.partialRight(b, 4);
 
       deepEqual(c(3), expected);
+    });
+
+    test('combinations of functions with placeholders should work', 3, function() {
+      function fn() {
+        return slice.call(arguments);
+      }
+
+      var expected = [1, 2, 3, 4, 5, 6],
+          object = { 'fn': fn };
+
+      var a = _.bindKey(object, 'fn', ph2, 2),
+          b = _.partialRight(a, ph4, 6),
+          c = _.partial(b, ph3, 4);
+
+      deepEqual(c(1, 3, 5), expected);
+
+      a = _.bind(fn, object, ph1, 2);
+      b = _.partialRight(a, ph4, 6);
+      c = _.partial(b, ph3, 4);
+
+      deepEqual(c(1, 3, 5), expected);
+
+      a = _.partial(fn,  ph3, 2)
+      b = _.bind(a, object, ph1, 4);
+      c = _.partialRight(b, ph4, 6);
+
+      deepEqual(c(1, 3, 5), expected);
+    });
+
+    test('combinations of functions with overlaping placeholders should work', 3, function() {
+      function fn() {
+        return slice.call(arguments);
+      }
+
+      var expected = [1, 2, 3, 4, 5],
+          object = { 'fn': fn };
+
+      var a = _.bindKey(object, 'fn', ph2, 2),
+          b = _.partialRight(a, ph4, 5),
+          c = _.partial(b, ph3, 4);
+
+      deepEqual(c(1, 3), expected);
+
+      a = _.bind(fn, object, ph1, 2);
+      b = _.partialRight(a, ph4, 5);
+      c = _.partial(b, ph3, 4);
+
+      deepEqual(c(1, 3), expected);
+
+      a = _.partial(fn,  ph3, 2)
+      b = _.bind(a, object, ph1, 4);
+      c = _.partialRight(b, ph4, 5);
+
+      deepEqual(c(1, 3), expected);
     });
 
     test('recursively bound functions should work', 1, function() {

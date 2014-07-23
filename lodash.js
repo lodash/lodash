@@ -708,7 +708,7 @@
         nativeRandom = Math.random;
 
     /** Used as the size, in bytes, of each Float64Array element */
-    var FLOAT64_BYTES_PER_ELEMENT = Float64Array && Float64Array.BYTES_PER_ELEMENT;
+    var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};

@@ -8927,6 +8927,10 @@
      * // => a floating-point number between 1.2 and 5.2
      */
     function random(min, max, floating) {
+      // enables use as a callback for functions like `_.map`
+      if (floating && floating[max] === min) {
+        max = floating = null;
+      }
       var noMin = min == null,
           noMax = max == null;
 
@@ -8992,6 +8996,11 @@
      */
     function range(start, end, step) {
       start = +start || 0;
+
+      // enables use as a callback for functions like `_.map`
+      if (step && step[end] === start) {
+        end = step = null;
+      }
       step = step == null ? 1 : (+step || 0);
 
       if (end == null) {

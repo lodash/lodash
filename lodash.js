@@ -8854,13 +8854,20 @@
      * _.parseInt('08');
      * // => 8
      */
-    var parseInt = nativeParseInt(whitespace + '08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
-      // Chrome fails to trim leading <BOM> whitespace characters.
-      // See https://code.google.com/p/v8/issues/detail?id=3109
-      value = trim(value);
-      return nativeParseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
-    };
+    function parseInt(value, radix, guard) {
+      return nativeParseInt(value, guard ? 0 : radix);
+    }
+    // fallback for environments with pre-ES5 implementations
+    if (nativeParseInt(whitespace + '08') != 8) {
+      parseInt = function(value, radix, guard) {
+        // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
+        // Chrome fails to trim leading <BOM> whitespace characters.
+        // See https://code.google.com/p/v8/issues/detail?id=3109
+        value = trim(value);
+        radix = guard ? 0 : +radix;
+        return nativeParseInt(value, radix || (reHexPrefix.test(value) ? 16 : 10));
+      };
+    }
 
     /**
      * Creates a "_.pluck" style function which returns the `key` value of a

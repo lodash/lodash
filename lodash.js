@@ -8848,6 +8848,7 @@
      * @category Utility
      * @param {string} value The value to parse.
      * @param {number} [radix] The radix to interpret `value` by.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {number} Returns the converted integer.
      * @example
      *

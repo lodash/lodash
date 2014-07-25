@@ -187,7 +187,7 @@
   ));
 
   /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash@'  + _.VERSION + '__';
+  var EXPANDO = '__lodash_' + _.VERSION.replace(/[-.]/g, '_') + '__';
 
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];

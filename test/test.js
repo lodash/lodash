@@ -8111,21 +8111,21 @@
 
       var a = _.bindKey(object, 'fn', ph2, 2),
           b = _.partialRight(a, ph4, 6),
-          c = _.partial(b, ph3, 4);
+          c = _.partial(b, 1, ph3, 4);
 
-      deepEqual(c(1, 3, 5), expected);
+      deepEqual(c(3, 5), expected);
 
       a = _.bind(fn, object, ph1, 2);
       b = _.partialRight(a, ph4, 6);
-      c = _.partial(b, ph3, 4);
+      c = _.partial(b, 1, ph3, 4);
 
-      deepEqual(c(1, 3, 5), expected);
+      deepEqual(c(3, 5), expected);
 
-      a = _.partial(fn,  ph3, 2)
-      b = _.bind(a, object, ph1, 4);
+      a = _.partial(fn, ph3, 2)
+      b = _.bind(a, object, 1, ph1, 4);
       c = _.partialRight(b, ph4, 6);
 
-      deepEqual(c(1, 3, 5), expected);
+      deepEqual(c(3, 5), expected);
     });
 
     test('combinations of functions with overlaping placeholders should work', 3, function() {
@@ -8133,26 +8133,26 @@
         return slice.call(arguments);
       }
 
-      var expected = [1, 2, 3, 4, 5],
+      var expected = [1, 2, 3, 4],
           object = { 'fn': fn };
 
       var a = _.bindKey(object, 'fn', ph2, 2),
-          b = _.partialRight(a, ph4, 5),
-          c = _.partial(b, ph3, 4);
+          b = _.partialRight(a, ph4, 4),
+          c = _.partial(b, ph3, 3);
 
-      deepEqual(c(1, 3), expected);
+      deepEqual(c(1), expected);
 
       a = _.bind(fn, object, ph1, 2);
-      b = _.partialRight(a, ph4, 5);
-      c = _.partial(b, ph3, 4);
+      b = _.partialRight(a, ph4, 4);
+      c = _.partial(b, ph3, 3);
 
-      deepEqual(c(1, 3), expected);
+      deepEqual(c(1), expected);
 
-      a = _.partial(fn,  ph3, 2)
-      b = _.bind(a, object, ph1, 4);
-      c = _.partialRight(b, ph4, 5);
+      a = _.partial(fn, ph3, 2)
+      b = _.bind(a, object, ph1, 3);
+      c = _.partialRight(b, ph4, 4);
 
-      deepEqual(c(1, 3), expected);
+      deepEqual(c(1), expected);
     });
 
     test('recursively bound functions should work', 1, function() {

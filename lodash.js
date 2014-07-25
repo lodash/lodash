@@ -39,6 +39,9 @@
    */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
+  /** Used as the internal argument placeholder */
+  var PLACEHOLDER = '__lodash_placeholder__';
+
   /** Used to generate unique IDs */
   var idCounter = 0;
 
@@ -1069,26 +1072,6 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Appends placeholder indexes to `array` adding `offset` to each appended index.
-     *
-     * @private
-     * @param {Array} array The array of placeholder indexes to append to.
-     * @param {Array} indexes The array of placeholder indexes to append.
-     * @param {number} offset The placeholder offset.
-     * @returns {Array} Returns `array`.
-     */
-    function appendHolders(array, indexes, offset) {
-      var length = array.length,
-          index = indexes.length;
-
-      array.length += index;
-      while (index--) {
-        array[length + index] = indexes[index] + offset;
-      }
-      return array;
-    }
-
-    /**
      * A specialized version of `_.forEach` for arrays without support for
      * callback shorthands or `this` binding.
      *
@@ -1599,7 +1582,7 @@
         }
         if (isCurry || isCurryRight) {
           var placeholder = wrapper.placeholder,
-              newPartialHolders = getHolders(args, placeholder);
+              newPartialHolders = replaceHolders(args, placeholder);
 
           length -= newPartialHolders.length;
 
@@ -2831,29 +2814,21 @@
         }
         // append partial left arguments
         if (isPartial) {
-          var partialHolders = data[5],
-              funcPartialArgs = funcData[4];
-
+          var funcPartialArgs = funcData[4];
           if (funcPartialArgs) {
-            appendHolders(funcData[5], partialHolders, funcPartialArgs.length);
-            push.apply(funcPartialArgs, partialArgs);
-          } else {
-            funcData[4] = partialArgs;
-            funcData[5] = partialHolders;
+            funcPartialArgs = composeArgs(funcPartialArgs, funcData[5], partialArgs);
           }
+          funcData[4] = funcPartialArgs || partialArgs;
+          funcData[5] = funcPartialArgs ? replaceHolders(funcPartialArgs, PLACEHOLDER) : data[5];
         }
         // prepend partial right arguments
         if (isPartialRight) {
-          var partialRightHolders = data[7],
-              funcPartialRightArgs = funcData[6];
-
+          var funcPartialRightArgs = funcData[6];
           if (funcPartialRightArgs) {
-            appendHolders(funcData[7], partialRightHolders, funcPartialRightArgs.length);
-            unshift.apply(funcPartialRightArgs, partialRightArgs);
-          } else {
-            funcData[6] = partialRightArgs;
-            funcData[7] = partialRightHolders;
+            funcPartialRightArgs = composeArgsRight(funcPartialRightArgs, funcData[7], partialRightArgs);
           }
+          funcData[6] = funcPartialRightArgs || partialRightArgs;
+          funcData[7] = funcPartialRightArgs ? replaceHolders(funcPartialRightArgs, PLACEHOLDER) : data[7];
         }
         // merge flags
         funcData[1] |= bitmask;
@@ -2879,26 +2854,6 @@
       var result = lodash.callback || callback;
       result = result === callback ? baseCallback : result;
       return arguments.length ? result(func, thisArg, argCount) : result;
-    }
-
-    /**
-     * Finds the indexes of all placeholder elements in `array`.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @returns {Array} Returns the new array of placeholder indexes.
-     */
-    function getHolders(array, placeholder) {
-      var index = -1,
-          length = array.length,
-          result = [];
-
-      while (++index < length) {
-        if (array[index] === placeholder) {
-          result.push(index);
-        }
-      }
-      return result;
     }
 
     /**
@@ -2982,6 +2937,29 @@
         }
         return result;
       };
+    }
+
+    /**
+     * Replaces all `placeholder` elements in `array` with an internal placeholder
+     * and returns an array of their indexes.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {*} placeholder The placeholder to replace.
+     * @returns {Array} Returns the new array of placeholder indexes.
+     */
+    function replaceHolders(array, placeholder) {
+      var index = -1,
+          length = array.length,
+          result = [];
+
+      while (++index < length) {
+        if (array[index] === placeholder) {
+          array[index] = PLACEHOLDER;
+          result.push(index);
+        }
+      }
+      return result;
     }
 
     /**
@@ -5701,7 +5679,7 @@
         return createWrapper([func, BIND_FLAG, null, thisArg]);
       }
       var args = slice(arguments, 2),
-          partialHolders = getHolders(args, bind.placeholder);
+          partialHolders = replaceHolders(args, bind.placeholder);
 
       return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, partialHolders, thisArg);
     }
@@ -5779,7 +5757,7 @@
       var data = [key, BIND_FLAG | BIND_KEY_FLAG, null, object];
       if (arguments.length > 2) {
         var args = slice(arguments, 2);
-        data.push(args, getHolders(args, bindKey.placeholder));
+        data.push(args, replaceHolders(args, bindKey.placeholder));
       }
       return createWrapper(data);
     }
@@ -6254,7 +6232,7 @@
      */
     function partial(func) {
       var args = slice(arguments, 1),
-          partialHolders = getHolders(args, partial.placeholder);
+          partialHolders = replaceHolders(args, partial.placeholder);
 
       return basePartial(func, PARTIAL_FLAG, args, partialHolders);
     }
@@ -6292,7 +6270,7 @@
      */
     function partialRight(func) {
       var args = slice(arguments, 1),
-          partialHolders = getHolders(args, partialRight.placeholder);
+          partialHolders = replaceHolders(args, partialRight.placeholder);
 
       return basePartial(func, PARTIAL_RIGHT_FLAG, args, partialHolders);
     }

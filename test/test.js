@@ -387,7 +387,7 @@
     setProperty(Number, 'isFinite', _.noop);
 
     var _contains = stringProto.contains;
-    setProperty(stringProto, 'contains',  _contains ? _.noop : Boolean);
+    setProperty(stringProto, 'contains', _contains ? _.noop : Boolean);
 
     var _ArrayBuffer = ArrayBuffer;
     setProperty(root, 'ArrayBuffer', (function() {
@@ -827,7 +827,7 @@
     var args = arguments;
 
     test('should return `undefined` for nonexistent keys', 1, function() {
-      var actual = _.at(['a', 'b',  'c'], [2, 4, 0]);
+      var actual = _.at(['a', 'b', 'c'], [2, 4, 0]);
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
@@ -8438,7 +8438,7 @@
     });
 
     test('should return `undefined` for nonexistent keys', 2, function() {
-      var array = ['a', 'b',  'c'],
+      var array = ['a', 'b', 'c'],
           actual = _.pullAt(array, [2, 4, 0]);
 
       deepEqual(array, ['b']);

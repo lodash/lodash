@@ -4612,7 +4612,7 @@
     }
 
     /**
-     * Iterates over elements of `collection` returning an array of all elements
+     * Iterates over elements of `collection`, returning an array of all elements
      * the predicate returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
@@ -4903,7 +4903,7 @@
     });
 
     /**
-     * Invokes the method named by `methodName` on each element in the collection
+     * Invokes the method named by `methodName` on each element in the collection,
      * returning an array of the results of each invoked method. Additional arguments
      * is provided to each invoked method. If `methodName` is a function it is
      * invoked for, and `this` bound to, each element in the collection.

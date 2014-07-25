@@ -24,7 +24,7 @@
       PARTIAL_RIGHT_FLAG = 64;
 
   /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash@' + VERSION + '__';
+  var EXPANDO = '__lodash_' + VERSION.replace(/[-.]/g, '_') + '__';
 
   /** Used as the TypeError message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';

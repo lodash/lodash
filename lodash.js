@@ -1693,7 +1693,7 @@
           iterable = toIterable(collection);
 
       while (++index < length) {
-        if (iterator(iterable[index], index, collection) === false) {
+        if (iterator(iterable[index], index, iterable) === false) {
           break;
         }
       }
@@ -1716,7 +1716,7 @@
       }
       var iterable = toIterable(collection);
       while (length--) {
-        if (iterator(iterable[length], length, collection) === false) {
+        if (iterator(iterable[length], length, iterable) === false) {
           break;
         }
       }
@@ -3083,13 +3083,23 @@
      * @returns {Array} Returns the iterable object.
      */
     function toIterable(collection) {
-      var length = collection ? collection.length : 0;
+      if (collection == null) {
+        return [];
+      }
+      var length = collection.length;
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return values(collection);
-      } else if (support.unindexedChars && isString(collection)) {
-        return collection.split('');
       }
-      return collection || [];
+      collection = Object(collection);
+      if (support.unindexedChars && isString(collection)) {
+        var index = -1;
+            length = collection.length;
+
+        while (++index < length) {
+          collection[index] = collection.charAt(index);
+        }
+      }
+      return collection;
     }
 
     /*--------------------------------------------------------------------------*/
@@ -5547,8 +5557,13 @@
      * // => [2, 3, 4]
      */
     function toArray(collection) {
-      var iterable = toIterable(collection);
-      return iterable === collection ? slice(collection) : iterable;
+      var length = collection ? collection.length : 0;
+      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+        return (support.unindexedChars && isString(collection))
+          ? collection.split('')
+          : slice(collection);
+      }
+      return values(collection);
     }
 
     /**

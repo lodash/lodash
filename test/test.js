@@ -9358,6 +9358,12 @@
       });
     });
 
+    test('should work with `start` >= `end`', 2, function() {
+      _.each([2, 3], function(start) {
+        deepEqual(_.slice(array, start, 2), []);
+      });
+    });
+
     test('should work with a positive `end`', 1, function() {
       deepEqual(_.slice(array, 0, 1), [1]);
     });

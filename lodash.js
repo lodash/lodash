@@ -3082,30 +3082,39 @@
     }
 
     /**
-     * Converts `collection` to an array if it is not an array-like value.
+     * Converts `value` to an array-like object if it is not one.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to process.
-     * @returns {Array} Returns the iterable object.
+     * @param {*} value The value to process.
+     * @returns {Array|Object} Returns the array-like object.
      */
-    function toIterable(collection) {
-      if (collection == null) {
+    function toIterable(value) {
+      if (value == null) {
         return [];
       }
-      var length = collection.length;
+      var length = value.length;
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
-        return values(collection);
+        return values(value);
       }
-      collection = Object(collection);
-      if (support.unindexedChars && isString(collection)) {
+      value = toObject(value);
+      if (support.unindexedChars && isString(value)) {
         var index = -1;
-            length = collection.length;
-
         while (++index < length) {
-          collection[index] = collection.charAt(index);
+          value[index] = value.charAt(index);
         }
       }
-      return collection;
+      return value;
+    }
+
+    /**
+     * Converts `value` to an object if it is not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Object} Returns the object.
+     */
+    function toObject(value) {
+      return isObject(value) ? value : Object(value);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -5346,10 +5355,9 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      collection = toIterable(collection);
-
-      var length = collection.length;
       if (n == null || guard) {
+        collection = toIterable(collection);
+        var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -7400,7 +7408,7 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      object = Object(object);
+      object = toObject(object);
 
       var Ctor = object.constructor,
           length = object.length;
@@ -7437,7 +7445,7 @@
       if (object == null) {
         return [];
       }
-      object = Object(object);
+      object = toObject(object);
 
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
@@ -7621,7 +7629,7 @@
         return basePick(object, negate(getCallback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, false, false, 1);
-      return basePick(Object(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
+      return basePick(toObject(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
     }
 
     /**
@@ -7682,7 +7690,7 @@
       if (object == null) {
         return {};
       }
-      return basePick(Object(object),
+      return basePick(toObject(object),
         typeof predicate == 'function'
           ? getCallback(predicate, thisArg, 3)
           : baseFlatten(arguments, false, false, 1)

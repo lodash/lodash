@@ -1001,8 +1001,7 @@
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, argsKey) &&
-          propertyIsEnumerable.call(arguments, argsKey));
+        support.nonEnumArgs = !(hasOwnProperty.call(arguments, 1) && propertyIsEnumerable.call(arguments, 1));
       } catch(e) {
         support.nonEnumArgs = true;
       }

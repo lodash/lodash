@@ -131,7 +131,7 @@
   ];
 
   /** Used to make template sourceURLs easier to identify */
-  var templateCounter = 0;
+  var templateCounter = -1;
 
   /** `Object#toString` result references */
   var argsClass = '[object Arguments]',
@@ -1802,7 +1802,7 @@
     function baseFlatten(array, isDeep, isStrict, fromIndex) {
       var index = (fromIndex || 0) - 1,
           length = array.length,
-          resIndex = 0,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
@@ -1819,10 +1819,10 @@
 
           result.length += valLength;
           while (++valIndex < valLength) {
-            result[resIndex++] = value[valIndex];
+            result[++resIndex] = value[valIndex];
           }
         } else if (!isStrict) {
-          result[resIndex++] = value;
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -3152,13 +3152,13 @@
     function compact(array) {
       var index = -1,
           length = array ? array.length : 0,
-          resIndex = 0,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var value = array[index];
         if (value) {
-          result[resIndex++] = value;
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -4569,7 +4569,7 @@
      * // => { '3': 2, '5': 1 }
      */
     var countBy = createAggregator(function(result, value, key) {
-      (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
+      hasOwnProperty.call(result, key) ? ++result[key] : (result[key] = 1);
     });
 
     /**
@@ -8256,7 +8256,7 @@
 
       // use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']');
+      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (++templateCounter) + ']');
       sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {

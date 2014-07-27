@@ -2400,10 +2400,16 @@
           high = array ? array.length : low;
 
       value = iterator(value);
+      var hintNum = typeof value == 'number' ||
+        (value != null && isFunction(value.valueOf) && typeof value.valueOf() == 'number');
+
       while (low < high) {
         var mid = (low + high) >>> 1,
             computed = iterator(array[mid]);
 
+        if (hintNum && typeof computed != 'undefined') {
+          computed = +computed || 0;
+        }
         if (retHighest ? computed <= value : computed < value) {
           low = mid + 1;
         } else {

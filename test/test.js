@@ -1463,7 +1463,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('cloning');
+  QUnit.module('clone methods');
 
   (function() {
     function Klass() { this.a = 1; }
@@ -1594,19 +1594,6 @@
         notStrictEqual(actual, shadowedObject);
       });
 
-      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 2, function() {
-        var expected = [{ 'a': [0] }, { 'b': [1] }],
-            actual = _.map(expected, func);
-
-        deepEqual(actual, expected);
-
-        if (isDeep) {
-          ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
-        } else {
-          ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
-        }
-      });
-
       test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
         var argsList = [],
             klass = new Klass;
@@ -1660,6 +1647,21 @@
         else {
           skipTest();
         }
+      });
+
+      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 3, function() {
+        var expected = [{ 'a': [0] }, { 'b': [1] }],
+            actual = _.map(expected, func);
+
+        deepEqual(actual, expected);
+
+        if (isDeep) {
+          ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
+        } else {
+          ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
+        }
+        actual = _.map(isDeep ? Object('abc') : 'abc', func);
+        deepEqual(actual, ['a', 'b', 'c']);
       });
 
       test('`_.' + methodName + '` should return a unwrapped value when chaining', 2, function() {
@@ -2885,6 +2887,13 @@
       });
     });
 
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.drop);
+
+      deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
+    });
+
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).drop(2);
@@ -2930,6 +2939,13 @@
       _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.dropRight(array, n), []);
       });
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.dropRight);
+
+      deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3205,28 +3221,6 @@
       strictEqual(_.all, _.every);
     });
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('source property checks');
-
-  _.each(['assign', 'defaults', 'merge'], function(methodName) {
-    var func = _[methodName];
-
-    test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
-      function Foo() {}
-      Foo.prototype = { 'a': 1 };
-
-      deepEqual(func({}, new Foo), {});
-    });
-
-    test('should work when used as a callback for `_.reduce`', 1, function() {
-      var array = [{ 'a':  1 }, { 'b': 2 }, { 'c': 3 }],
-          actual = _.reduce(array, _.merge);
-
-      deepEqual(actual, { 'a':  1, 'b': 2, 'c': 3 });
-    });
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -3510,6 +3504,13 @@
       });
     });
 
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.take);
+
+      deepEqual(actual, [[1], [4], [7]]);
+    });
+
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).take(2);
@@ -3555,6 +3556,13 @@
       _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.takeRight(array, n), array);
       });
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.takeRight);
+
+      deepEqual(actual, [[3], [6], [9]]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -4165,6 +4173,13 @@
       strictEqual(func(), undefined);
     });
 
+    test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = { 'a': 1 };
+
+      deepEqual(func({}, new Foo), {});
+    });
+
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
       var object = {
         'constructor': '0',
@@ -4199,11 +4214,6 @@
       deepEqual(func({}, Foo), expected);
     });
 
-    test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
-      var array = [{ 'b': 2 }, { 'c': 3 }];
-      deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
-    });
-
     test('`_.' + methodName + '` should not error on nullish sources (test in IE < 9)', 1, function() {
       try {
         deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
@@ -4224,6 +4234,11 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
+      var array = [{ 'b': 2 }, { 'c': 3 }];
+      deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
     });
 
     test('`_.' + methodName + '` should return the existing wrapped value when chaining', 1, function() {
@@ -6663,7 +6678,6 @@
       deepEqual(actual, expected);
     });
 
-
     test('`_.' + methodName + '` should return `-1` for an unmatched value', 4, function() {
       var array = [1, 2, 3],
           empty = [];
@@ -7363,13 +7377,6 @@
       deepEqual(actual, arrays[isMax ? 1 : 2]);
     });
 
-    test('`_.' + methodName + '` should work when used as a callback for `_.map`', 1, function() {
-      var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
-          actual = _.map(array, func);
-
-      deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
-    });
-
     test('`_.' + methodName + '` should work when `callback` returns +/-Infinity', 1, function() {
       var value = isMax ? -Infinity : Infinity,
           object = { 'a': value };
@@ -7396,6 +7403,16 @@
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
       var array = _.range(0, 5e5);
       strictEqual(func(array), isMax ? 499999 : 0);
+    });
+
+    test('`_.' + methodName + '` should work when used as a callback for `_.map`', 2, function() {
+      var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
+          actual = _.map(array, func);
+
+      deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
+
+      actual = _.map('abc', func);
+      deepEqual(actual, ['a', 'b', 'c']);
     });
 
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
@@ -7923,6 +7940,14 @@
       var object = { 'valueOf': function() { return 0; } };
       strictEqual(_.parseInt('08', object), 8);
       strictEqual(_.parseInt('0x20', object), 32);
+    });
+
+    test('should work when used as a callback for `_.map`', 2, function() {
+      var actual = _.map(['1', '10', '08'], _.parseInt);
+      deepEqual(actual, [1, 10, 8]);
+
+      actual = _.map('123', _.parseInt);
+      deepEqual(actual, [1, 2, 3]);
     });
   }());
 
@@ -8534,6 +8559,18 @@
       actual = _.random(2, 4, true);
       ok(actual % 1 && actual >= 2 && actual <= 4);
     });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [1, 2, 3],
+          actual = _.map(array, _.random),
+          expected = _.map(array, _.constant(true));
+
+      actual = _.map(actual, function(result, index) {
+        return result >= 0 && result <= array[index] && (result % 1) == 0;
+      });
+
+      deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -8580,6 +8617,11 @@
     test('should coerce arguments to finite numbers', 1, function() {
       var actual = [_.range('0', 1), _.range('1'), _.range(0, 1, '1'), _.range(NaN), _.range(NaN, NaN)];
       deepEqual(actual, [[0], [0], [0], [], []]);
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var actual = _.map([1, 2, 3], _.range);
+      deepEqual(actual, [[0], [0, 1], [0, 1, 2]]);
     });
   }());
 
@@ -9126,13 +9168,15 @@
       ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
-      var a = [1, 2, 3],
-          b = [4, 5, 6],
-          c = [7, 8, 9],
-          actual = _.map([a, b, c], _.sample);
+    test('should work when used as a callback for `_.map`', 2, function() {
+      _.each([[[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['abc', 'def', 'ghi']], function(values) {
+        var a = values[0],
+            b = values[1],
+            c = values[2],
+            actual = _.map([a, b, c], _.sample);
 
-      ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
+        ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
+      });
     });
 
     test('should chain when `n` is provided', 1, function() {
@@ -11496,8 +11540,10 @@
       'last',
       'max',
       'min',
+      'parseInt',
       'pop',
       'shift',
+      'random',
       'reduce',
       'reduceRight',
       'some'

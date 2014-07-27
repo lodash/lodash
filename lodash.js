@@ -3288,7 +3288,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -3337,6 +3337,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -4048,6 +4049,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -4096,6 +4098,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -6578,7 +6581,6 @@
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -8936,7 +8938,8 @@
      */
     function random(min, max, floating) {
       // enables use as a callback for functions like `_.map`
-      if (floating && floating[max] === min) {
+      var type = typeof max;
+      if ((type == 'number' || type == 'string') && floating && floating[max] === min) {
         max = floating = null;
       }
       var noMin = min == null,
@@ -9006,7 +9009,8 @@
       start = +start || 0;
 
       // enables use as a callback for functions like `_.map`
-      if (step && step[end] === start) {
+      var type = typeof end;
+      if ((type == 'number' || type == 'string') && step && step[end] === start) {
         end = step = null;
       }
       step = step == null ? 1 : (+step || 0);

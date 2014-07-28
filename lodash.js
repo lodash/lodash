@@ -428,7 +428,7 @@
    * @returns {number} Returns the sort order indicator for `object`.
    */
   function compareAscending(object, other) {
-    return baseCompareAscending(object.criteria, other.criteria) || object.index - other.index;
+    return baseCompareAscending(object.criteria, other.criteria) || (object.index - other.index);
   }
 
   /**
@@ -2404,12 +2404,14 @@
 
       while (low < high) {
         var mid = (low + high) >>> 1,
-            computed = iterator(array[mid]);
+            computed = iterator(array[mid]),
+            setLow = retHighest ? computed <= value : computed < value;
 
         if (hintNum && typeof computed != 'undefined') {
-          computed = +computed || 0;
+          computed = +computed;
+          setLow = computed != computed || setLow;
         }
-        if (retHighest ? computed <= value : computed < value) {
+        if (setLow) {
           low = mid + 1;
         } else {
           high = mid;

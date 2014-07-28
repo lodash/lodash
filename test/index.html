@@ -55,7 +55,8 @@
 				    fnToString = funcProto.toString,
 				    nativeString = fnToString.call(objectProto.toString),
 				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
-				    reToString = /toString/g;
+				    reToString = /toString/g,
+				    whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
 				function constant(value) {
 					return function() {
@@ -155,8 +156,27 @@
 						return Float64Array;
 					}());
 				}
+				setProperty(window, '_parseInt', parseInt);
+				setProperty(window, 'parseInt', (function(_parseInt) {
+					var checkStr = whitespace + '08',
+					    isFaked = _parseInt(checkStr) != 8,
+					    reHexPrefix = /^0[xX]/,
+					    reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
+
+					return function(value, radix) {
+						if (value == checkStr && !isFaked) {
+							isFaked = true;
+							return 0;
+						}
+						value = String(value == null ? '' : value).replace(reTrim, '');
+						return _parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
+					};
+				}(_parseInt)));
+
+				// fake `WinRTError`
 				setProperty(window, 'WinRTError', Error);
 
+				// fake free variable `global`
 				setProperty(window, 'exports', window);
 				setProperty(window, 'global', window);
 				setProperty(window, 'module', {});
@@ -216,6 +236,10 @@
 					ArrayBuffer = _ArrayBuffer;
 				}
 				setProperty(window, '_ArrayBuffer', undefined);
+
+				setProperty(window, 'parseInt', window._parseInt);
+				setProperty(window, '_parseInt', undefined);
+
 				setProperty(window, 'WinRTError', undefined);
 
 				setProperty(window, 'exports', undefined);

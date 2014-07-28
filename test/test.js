@@ -422,6 +422,23 @@
         return Float64Array;
       }()));
     }
+    var _parseInt = parseInt;
+    setProperty(root, 'parseInt', (function() {
+      var checkStr = whitespace + '08',
+          isFaked = _parseInt(checkStr) != 8,
+          reHexPrefix = /^0[xX]/,
+          reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
+
+      return function(value, radix) {
+        if (value == checkStr && !isFaked) {
+          isFaked = true;
+          return 0;
+        }
+        value = String(value == null ? '' : value).replace(reTrim, '');
+        return _parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
+      };
+    }()));
+
     // fake `WinRTError`
     setProperty(root, 'WinRTError', Error);
 
@@ -447,6 +464,7 @@
     setProperty(Object, 'keys', _keys);
 
     setProperty(objectProto, 'hasOwnProperty', _hasOwnProperty);
+    setProperty(root, 'parseInt', _parseInt);
 
     if (_isFinite) {
       setProperty(Number, 'isFinite', _isFinite);
@@ -7923,16 +7941,34 @@
       strictEqual(_.parseInt('08', 10), 8);
     });
 
-    test('should parse strings with leading whitespace (test in Chrome, Firefox, and Opera)', 8, function() {
-      strictEqual(_.parseInt(whitespace + '10'), 10);
-      strictEqual(_.parseInt(whitespace + '10', 10), 10);
+    test('should parse strings with leading whitespace (test in Chrome, Firefox, and Opera)', 2, function() {
+      var expected = [8, 8, 10, 10, 32, 32, 32, 32];
 
-      strictEqual(_.parseInt(whitespace + '08'), 8);
-      strictEqual(_.parseInt(whitespace + '08', 10), 8);
+      _.times(2, function(index) {
+        var actual = [],
+            func = (index ? (lodashBizarro || {}) : _).parseInt;
 
-      _.each(['0x20', '0X20'], function(string) {
-        strictEqual(_.parseInt(whitespace + string), 32);
-        strictEqual(_.parseInt(whitespace + string, 16), 32);
+        if (func) {
+          _.times(2, function(otherIndex) {
+            var string = otherIndex ? '10' : '08';
+            actual.push(
+              func(whitespace + string, 10),
+              func(whitespace + string)
+            );
+          });
+
+          _.each(['0x20', '0X20'], function(string) {
+            actual.push(
+              func(whitespace + string),
+              func(whitespace + string, 16)
+            );
+          });
+
+          deepEqual(actual, expected);
+        }
+        else {
+          skipTest();
+        }
       });
     });
 

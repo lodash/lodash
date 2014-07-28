@@ -9685,7 +9685,7 @@
     });
 
     test('`_.' + methodName + '` should align with `_.sortBy`', 8, function() {
-      var array = [NaN, {}, NaN, 1, 2, undefined];
+      var array = [NaN, 1, 2, {}, NaN, undefined];
       deepEqual(_.sortBy(array), array);
       strictEqual(func(array, 3), 5);
 
@@ -9693,9 +9693,9 @@
       deepEqual(_.sortBy(array), array);
       strictEqual(func(array, 3), 5);
 
-      array = [NaN, {}, NaN, '1', '2', undefined];
+      array = [NaN, '1', '2', {}, NaN, undefined];
       deepEqual(_.sortBy(array), array);
-      strictEqual(func(array, '3'), 5);
+      strictEqual(func(array, '3'), 3);
 
       array = ['1', '2', NaN, {}, NaN, undefined];
       deepEqual(_.sortBy(array), array);

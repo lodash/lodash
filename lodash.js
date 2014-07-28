@@ -398,7 +398,7 @@
     var index = -1,
         length = string.length;
 
-    while (++index < length && chars.indexOf(string.charAt(index)) > -1) { }
+    while (++index < length && chars.indexOf(string.charAt(index)) > -1) {}
     return index;
   }
 
@@ -414,7 +414,7 @@
   function charsRightIndex(string, chars) {
     var index = string.length;
 
-    while (index-- && chars.indexOf(string.charAt(index)) > -1) { }
+    while (index-- && chars.indexOf(string.charAt(index)) > -1) {}
     return index;
   }
 
@@ -556,7 +556,7 @@
     var index = -1,
         length = string.length;
 
-    while (++index < length && isWhitespace(string.charCodeAt(index))) { }
+    while (++index < length && isWhitespace(string.charCodeAt(index))) {}
     return index;
   }
 
@@ -571,7 +571,7 @@
   function trimmedRightIndex(string) {
     var index = string.length;
 
-    while (index-- && isWhitespace(string.charCodeAt(index))) { }
+    while (index-- && isWhitespace(string.charCodeAt(index))) {}
     return index;
   }
 
@@ -682,7 +682,7 @@
       try {
         var func = isNative(func = context.Float64Array) && func,
             result = new func(new ArrayBuffer(10), 0, 1) && func;
-      } catch(e) { }
+      } catch(e) {}
       return result;
     }());
 
@@ -693,7 +693,7 @@
         var o = {},
             func = isNative(func = Object.defineProperty) && func,
             result = func(o, o, o) && func;
-      } catch(e) { }
+      } catch(e) {}
       return result;
     }());
 
@@ -852,8 +852,8 @@
 
       Ctor.prototype = { 'valueOf': 1, 'y': 1 };
       for (var key in new Ctor) { props.push(key); }
-      for (var argsKey in arguments) { }
-      for (var strKey in 'x') { }
+      for (var argsKey in arguments) {}
+      for (var strKey in 'x') {}
 
       /**
        * Detect if the `[[Class]]` of `arguments` objects is resolvable
@@ -3315,7 +3315,7 @@
           index = length;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) { }
+      while (index-- && predicate(array[index], index, array)) {}
       return slice(array, 0, index + 1);
     }
 
@@ -3364,7 +3364,7 @@
           length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) { }
+      while (++index < length && predicate(array[index], index, array)) {}
       return slice(array, index);
     }
 
@@ -4076,7 +4076,7 @@
           index = length;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) { }
+      while (index-- && predicate(array[index], index, array)) {}
       return slice(array, index + 1);
     }
 
@@ -4125,7 +4125,7 @@
           length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) { }
+      while (++index < length && predicate(array[index], index, array)) {}
       return slice(array, 0, index);
     }
 

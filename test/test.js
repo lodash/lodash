@@ -62,11 +62,11 @@
     if (!amd) {
       try {
         result = require('fs').realpathSync(result);
-      } catch(e) { }
+      } catch(e) {}
 
       try {
         result = require.resolve(result);
-      } catch(e) { }
+      } catch(e) {}
     }
     return result;
   }());
@@ -107,7 +107,7 @@
   /** Used to test host objects in IE */
   try {
     var xml = new ActiveXObject('Microsoft.XMLDOM');
-  } catch(e) { }
+  } catch(e) {}
 
   /** Use a single "load" function */
   var load = (typeof require == 'function' && !amd)
@@ -212,7 +212,7 @@
       var o = {},
           func = Object.defineProperty,
           result = func(o, o, o) && func;
-    } catch(e) { }
+    } catch(e) {}
     return result;
   }());
 
@@ -992,7 +992,7 @@
         try {
           var bound = _.bind(fn, value);
           return bound();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       ok(_.every(actual, function(value, index) {
@@ -1531,8 +1531,8 @@
 
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
       var object = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
-        'bar': { }
+        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'bar': {}
       };
 
       object.foo.b.foo.c = object;
@@ -2025,7 +2025,7 @@
     });
 
     test('should accept a falsey `prototype` argument', 1, function() {
-      var expected = _.map(falsey, function() { return {}; });
+      var expected = _.map(falsey, _.constant({}));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.create(value) : _.create();
@@ -3212,7 +3212,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.every(value, _.identity);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -3360,7 +3360,7 @@
         _.each(emptyValues, function(value) {
           try {
             actual.push(func(value, { 'a': 3 }));
-          } catch(e) { }
+          } catch(e) {}
         });
 
         deepEqual(actual, expecting);
@@ -4726,7 +4726,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.initial(value) : _.initial();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -5465,12 +5465,12 @@
 
     test('should perform comparisons between objects with complex circular references', 1, function() {
       var object1 = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'foo': { 'b': { 'foo': { 'c': {} } } },
         'bar': { 'a': 2 }
       };
 
       var object2 = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'foo': { 'b': { 'foo': { 'c': {} } } },
         'bar': { 'a': 2 }
       };
 
@@ -6690,7 +6690,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? func(value) : func();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -6779,7 +6779,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.map(value) : _.map();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -6851,7 +6851,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.mapValues(value) : _.mapValues();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -6951,7 +6951,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? matches(value) : matches();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -6965,7 +6965,7 @@
         try {
           var result = index ? matches(value) : matches();
           return result === true;
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7067,7 +7067,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.max(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7080,7 +7080,7 @@
       var actual = _.map(collections, function(value) {
         try {
           return _.max(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7129,7 +7129,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return _.isFunction(index ? _.memoize(_.noop, value) : _.memoize(_.noop));
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7224,8 +7224,8 @@
       };
 
       var source = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
-        'bar': { }
+        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'bar': {}
       };
 
       source.foo.b.foo.c = source;
@@ -7305,7 +7305,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.min(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7318,7 +7318,7 @@
       var actual = _.map(collections, function(value) {
         try {
           return _.min(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -8849,7 +8849,7 @@
       _.each(empties, function(value) {
         try {
           actual.push(func(value, _.noop));
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -8861,7 +8861,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return func(value, _.noop, 'x');
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9068,7 +9068,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.rest(value) : _.rest();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9188,7 +9188,7 @@
       _.each(empties, function(value) {
         try {
           actual.push(_.shuffle(value), _.shuffle(value, 1));
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9313,7 +9313,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.size(value) : _.size();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9449,7 +9449,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.some(value, _.identity);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9932,7 +9932,7 @@
 
       try {
         var actual = compiled();
-      } catch(e) { }
+      } catch(e) {}
 
       strictEqual(actual, 'function');
     });
@@ -10003,7 +10003,7 @@
           'interpolate': /\{\{=([\s\S]+?)\}\}/g
         });
 
-        var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>', index ? null : settings),
+        var compiled = _.template('<ul>{{ _.each(collection, function(value, index) {}}<li>{{= index }}: {{- value }}</li>{{}); }}</ul>', index ? null : settings),
             expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
         strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
@@ -10699,7 +10699,7 @@
         try {
           var nodeList = document.getElementsByTagName('body'),
               actual = func(nodeList);
-        } catch(e) { }
+        } catch(e) {}
 
         deepEqual(actual, [body]);
       }
@@ -11402,7 +11402,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.zipObject(value) : _.zipObject();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -11663,7 +11663,7 @@
           _.each(falsey, function(value, index) {
             try {
               actual.push(index ? func(value) : func());
-            } catch(e) { }
+            } catch(e) {}
           });
 
           deepEqual(actual, expected);
@@ -11681,7 +11681,7 @@
           var actual = _.map(falsey, function(value, index) {
             try {
               return func(value, 2);
-            } catch(e) { }
+            } catch(e) {}
           });
 
           deepEqual(actual, expected);

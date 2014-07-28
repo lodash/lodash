@@ -663,7 +663,7 @@
     function req(id) {
       try {
         var result = freeExports && freeRequire(id);
-      } catch(e) { }
+      } catch(e) {}
       return result || null;
     }
 
@@ -905,7 +905,7 @@
           }
           else if (async) {
             // resume execution if previously asynchronous but now synchronous
-            while (execute()) { }
+            while (execute()) {}
           }
           else {
             // continue synchronous execution
@@ -986,7 +986,7 @@
           if (isAsync(bench)) {
             delay(bench, execute);
           } else {
-            while (execute()) { }
+            while (execute()) {}
           }
         }
       }
@@ -1770,30 +1770,30 @@
             divisor = 1e6;
             if (ns.stop) {
               ns.start();
-              while (!(measured = ns.microseconds())) { }
+              while (!(measured = ns.microseconds())) {}
             } else {
               begin = ns();
-              while (!(measured = ns() - begin)) { }
+              while (!(measured = ns() - begin)) {}
             }
           }
           else if (unit == 'ns') {
             divisor = 1e9;
             if (ns.nanoTime) {
               begin = ns.nanoTime();
-              while (!(measured = ns.nanoTime() - begin)) { }
+              while (!(measured = ns.nanoTime() - begin)) {}
             } else {
               begin = (begin = ns())[0] + (begin[1] / divisor);
-              while (!(measured = ((measured = ns())[0] + (measured[1] / divisor)) - begin)) { }
+              while (!(measured = ((measured = ns())[0] + (measured[1] / divisor)) - begin)) {}
               divisor = 1;
             }
           }
           else if (ns.now) {
             begin = ns.now();
-            while (!(measured = ns.now() - begin)) { }
+            while (!(measured = ns.now() - begin)) {}
           }
           else {
             begin = new ns().getTime();
-            while (!(measured = new ns().getTime() - begin)) { }
+            while (!(measured = new ns().getTime() - begin)) {}
           }
           // check for broken timers (`nanoTime` may have issues)
           // http://alivebutsleepy.srnet.cz/unreliable-system-nanotime/
@@ -1828,7 +1828,7 @@
         if (typeof timer.ns.nanoTime() == 'number') {
           timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
         }
-      } catch(e) { }
+      } catch(e) {}
 
       // detect Chrome's microsecond timer:
       // enable benchmarking via the --enable-benchmarking command
@@ -1837,7 +1837,7 @@
         if ((timer.ns = new (context.chrome || context.chromium).Interval)) {
           timers.push({ 'ns': timer.ns, 'res': getRes('us'), 'unit': 'us' });
         }
-      } catch(e) { }
+      } catch(e) {}
 
       // detect Node.js's nanosecond resolution timer available in Node.js >= 0.8
       if (processObject && typeof (timer.ns = processObject.hrtime) == 'function') {

@@ -186,7 +186,7 @@
     var moduleName,
         modulePrinted;
 
-    /** Object shortcuts */
+    /** Object references */
     var phantom = context.phantom,
         define = context.define,
         document = !phantom && context.document,
@@ -324,7 +324,7 @@
       if (!amd && typeof require == 'function') {
         try {
           return require('system').env[name];
-        } catch(e) { }
+        } catch(e) {}
       }
     }
 
@@ -557,7 +557,7 @@
             } else {
               process.exit(0);
             }
-          } catch(e) { }
+          } catch(e) {}
 
           // exit out of Narwhal, Rhino, or RingoJS
           try {
@@ -566,7 +566,7 @@
             } else {
               quit();
             }
-          } catch(e) { }
+          } catch(e) {}
         };
       }());
 
@@ -687,9 +687,9 @@
             context.setTimeout = setTimeout;
           }
         }());
-      } catch(e) { }
+      } catch(e) {}
 
-      // expose shortcuts
+      // expose QUnit API on `context`
       // exclude `module` because some environments have it as a built-in object
       ('asyncTest deepEqual equal equals expect notDeepEqual notEqual notStrictEqual ' +
        'ok raises same start stop strictEqual test throws').replace(/\S+/g, function(methodName) {

@@ -1,12 +1,12 @@
 /*!
- * Platform.js v1.1.0 <http://mths.be/platform>
+ * Platform.js v1.2.0 <http://mths.be/platform>
  * Copyright 2010-2014 John-David Dalton <http://allyoucanleet.com/>
  * Available under MIT license <http://mths.be/mit>
  */
 ;(function() {
   'use strict';
 
-  /** Used to determine if values are of the language type Object */
+  /** Used to determine if values are of the language type `Object` */
   var objectTypes = {
     'function': true,
     'object': true
@@ -67,6 +67,60 @@
   }
 
   /**
+   * A utility function to clean up the OS name.
+   *
+   * @private
+   * @param {string} os The OS name to clean up.
+   * @param {string} [pattern] A `RegExp` pattern matching the OS name.
+   * @param {string} [label] A label for the OS.
+   */
+  function cleanupOS(os, pattern, label) {
+    // platform tokens defined at
+    // http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
+    // http://web.archive.org/web/20081122053950/http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
+    var data = {
+      '6.3':  '8.1',
+      '6.2':  '8',
+      '6.1':  'Server 2008 R2 / 7',
+      '6.0':  'Server 2008 / Vista',
+      '5.2':  'Server 2003 / XP 64-bit',
+      '5.1':  'XP',
+      '5.01': '2000 SP1',
+      '5.0':  '2000',
+      '4.0':  'NT',
+      '4.90': 'ME'
+    };
+    // detect Windows version from platform tokens
+    if (pattern && label && /^Win/i.test(os) &&
+        (data = data[0/*Opera 9.25 fix*/, /[\d.]+$/.exec(os)])) {
+      os = 'Windows ' + data;
+    }
+    // correct character case and cleanup
+    os = String(os);
+
+    if (pattern && label) {
+      os = os.replace(RegExp(pattern, 'i'), label);
+    }
+
+    os = format(
+      os.replace(/ ce$/i, ' CE')
+        .replace(/hpw/i, 'web')
+        .replace(/Macintosh/, 'Mac OS')
+        .replace(/_PowerPC/i, ' OS')
+        .replace(/(OS X) [^ \d]+/i, '$1')
+        .replace(/Mac (OS X)/, '$1')
+        .replace(/\/(\d)/, ' $1')
+        .replace(/_/g, '.')
+        .replace(/(?: BePC|[ .]*fc[ \d.]+)$/i, '')
+        .replace(/x86\.64/gi, 'x86_64')
+        .replace(/(Windows Phone)(?! OS)/, '$1 OS')
+        .split(' on ')[0]
+    );
+
+    return os;
+  }
+
+  /**
    * An iteration utility for arrays and objects.
    *
    * @private
@@ -116,11 +170,11 @@
   }
 
   /**
-   * Gets the internal [[Class]] of a value.
+   * Gets the internal `[[Class]]` of a value.
    *
    * @private
    * @param {*} value The value.
-   * @returns {string} The [[Class]].
+   * @returns {string} The `[[Class]]`.
    */
   function getClassOf(value) {
     return value == null
@@ -222,7 +276,7 @@
       ? !!nav.likeChrome
       : /\bChrome\b/.test(ua) && !/internal|\n/i.test(toString.toString());
 
-    /** Internal [[Class]] value shortcuts */
+    /** Internal `[[Class]]` value shortcuts */
     var objectClass = 'Object',
         airRuntimeClass = isCustomContext ? objectClass : 'ScriptBridgingProxyObject',
         enviroClass = isCustomContext ? objectClass : 'Environment',
@@ -245,13 +299,13 @@
     var doc = context.document || {};
 
     /**
-     * Detect Opera browser
+     * Detect Opera browser (Presto-based)
      * http://www.howtocreate.co.uk/operaStuff/operaObject.html
      * http://dev.opera.com/articles/view/opera-mini-web-content-authoring-guidelines/#operamini
      */
     var opera = context.operamini || context.opera;
 
-    /** Opera [[Class]] */
+    /** Opera `[[Class]]` */
     var operaClass = reOpera.test(operaClass = (isCustomContext && opera) ? opera['[[Class]]'] : getClassOf(opera))
       ? operaClass
       : (opera = null);
@@ -276,6 +330,9 @@
     /** The browser/environment version */
     var version = useFeatures && opera && typeof opera.version == 'function' && opera.version();
 
+    /** A flag to indicate if the OS ends with "/ Version" */
+    var isSpecialCasedOS;
+
     /* Detectable layout engines (order is important) */
     var layout = getLayout([
       { 'label': 'WebKit', 'pattern': 'AppleWebKit' },
@@ -293,6 +350,7 @@
       'Adobe AIR',
       'Arora',
       'Avant Browser',
+      'Breach',
       'Camino',
       'Epiphany',
       'Fennec',
@@ -320,6 +378,7 @@
       'Swiftfox',
       'WebPositive',
       'Opera Mini',
+      { 'label': 'Opera Mini', 'pattern': 'OPiOS' },
       'Opera',
       { 'label': 'Opera', 'pattern': 'OPR' },
       'Chrome',
@@ -366,12 +425,12 @@
       'BlackBerry': { 'PlayBook': 1 },
       'Google': { 'Google TV': 1 },
       'HP': { 'TouchPad': 1 },
-      'HTC': { },
-      'LG': { },
+      'HTC': {},
+      'LG': {},
       'Microsoft': { 'Xbox': 1, 'Xbox One': 1 },
       'Motorola': { 'Xoom': 1 },
       'Nintendo': { 'Wii U': 1,  'Wii': 1 },
-      'Nokia': { },
+      'Nokia': {},
       'Samsung': { 'Galaxy S': 1, 'Galaxy S2': 1, 'Galaxy S3': 1, 'Galaxy S4': 1 },
       'Sony': { 'PlayStation 4': 1, 'PlayStation 3': 1, 'PlayStation Vita': 1 }
     });
@@ -426,7 +485,7 @@
      * Picks the manufacturer from an array of guesses.
      *
      * @private
-     * @param {Object} guesses An object of guesses.
+     * @param {Array} guesses An object of guesses.
      * @returns {null|string} The detected manufacturer.
      */
     function getManufacturer(guesses) {
@@ -468,40 +527,7 @@
         if (!result && (result =
               RegExp('\\b' + pattern + '(?:/[\\d.]+|[ \\w.]*)', 'i').exec(ua)
             )) {
-          // platform tokens defined at
-          // http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
-          // http://web.archive.org/web/20081122053950/http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
-          data = {
-            '6.3':  '8.1',
-            '6.2':  '8',
-            '6.1':  'Server 2008 R2 / 7',
-            '6.0':  'Server 2008 / Vista',
-            '5.2':  'Server 2003 / XP 64-bit',
-            '5.1':  'XP',
-            '5.01': '2000 SP1',
-            '5.0':  '2000',
-            '4.0':  'NT',
-            '4.90': 'ME'
-          };
-          // detect Windows version from platform tokens
-          if (/^Win/i.test(result) &&
-              (data = data[0/*Opera 9.25 fix*/, /[\d.]+$/.exec(result)])) {
-            result = 'Windows ' + data;
-          }
-          // correct character case and cleanup
-          result = format(String(result)
-            .replace(RegExp(pattern, 'i'), guess.label || guess)
-            .replace(/ ce$/i, ' CE')
-            .replace(/hpw/i, 'web')
-            .replace(/Macintosh/, 'Mac OS')
-            .replace(/_PowerPC/i, ' OS')
-            .replace(/(OS X) [^ \d]+/i, '$1')
-            .replace(/Mac (OS X)/, '$1')
-            .replace(/\/(\d)/, ' $1')
-            .replace(/_/g, '.')
-            .replace(/(?: BePC|[ .]*fc[ \d.]+)$/i, '')
-            .replace(/x86\.64/gi, 'x86_64')
-            .split(' on ')[0]);
+          result = cleanupOS(result, pattern, guess.label || guess);
         }
         return result;
       });
@@ -578,6 +604,10 @@
     if (/\bSimulator\b/i.test(ua)) {
       product = (product ? product + ' ' : '') + 'Simulator';
     }
+    // detect Opera Mini 8+ running in Turbo / Uncompressed mode on iOS
+    if (name == 'Opera Mini' && /OPiOS/.test(ua)) {
+      description.push('running in Turbo / Uncompressed mode');
+    }
     // detect iOS
     if (/^iP/.test(product)) {
       name || (name = 'Safari');
@@ -618,7 +648,7 @@
     // detect non-Opera versions (order is important)
     if (!version) {
       version = getVersion([
-        '(?:Cloud9|CriOS|CrMo|Iron|Opera ?Mini|OPR|Raven|Silk(?!/[\\d.]+$))',
+        '(?:Cloud9|CriOS|CrMo|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))',
         'Version',
         qualify(name),
         '(?:Firefox|Minefield|NetFront)'
@@ -639,9 +669,12 @@
       layout = ['NetFront'];
     }
     // detect IE 11 and above
-    if (!name && layout == 'Trident') {
+    if (name != 'IE' && layout == 'Trident' && (data = /\brv:([\d.]+)/.exec(ua))) {
+      if (name) {
+        description.push('identifying as ' + name + (version ? ' ' + version : ''));
+      }
       name = 'IE';
-      version = (/\brv:([\d.]+)/.exec(ua) || 0)[1];
+      version = data[1];
     }
     // leverage environment features
     if (useFeatures) {
@@ -653,28 +686,23 @@
           arch = data.getProperty('os.arch');
           os = os || data.getProperty('os.name') + ' ' + data.getProperty('os.version');
         }
-        if (isHostType(context, 'exports')) {
-          if (isModuleScope && isHostType(context, 'system') && (data = [context.system])[0]) {
-            os || (os = data[0].os || null);
-            try {
-              data[1] = (data[1] = context.require) && data[1]('ringo/engine').version;
-              version = data[1].join('.');
-              name = 'RingoJS';
-            } catch(e) {
-              if (data[0].global.system == context.system) {
-                name = 'Narwhal';
-              }
+        if (isModuleScope && isHostType(context, 'system') && (data = [context.system])[0]) {
+          os || (os = data[0].os || null);
+          try {
+            data[1] = context.require('ringo/engine').version;
+            version = data[1].join('.');
+            name = 'RingoJS';
+          } catch(e) {
+            if (data[0].global.system == context.system) {
+              name = 'Narwhal';
             }
           }
-          else if (typeof context.process == 'object' && (data = context.process)) {
-            name = 'Node.js';
-            arch = data.arch;
-            os = data.platform;
-            version = /[\d.]+/.exec(data.version)[0];
-          }
-          else if (rhino) {
-            name = 'Rhino';
-          }
+        }
+        else if (typeof context.process == 'object' && (data = context.process)) {
+          name = 'Node.js';
+          arch = data.arch;
+          os = data.platform;
+          version = /[\d.]+/.exec(data.version)[0];
         }
         else if (rhino) {
           name = 'Rhino';
@@ -875,7 +903,7 @@
     // add layout engine
     if (layout && !/Avant|Nook/.test(name) && (
         /Browser|Lunascape|Maxthon/.test(name) ||
-        /^(?:Adobe|Arora|Midori|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(name) && layout[1])) {
+        /^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(name) && layout[1])) {
       // don't add layout details to description if they are falsey
       (data = layout[layout.length - 1]) && description.push(data);
     }
@@ -894,13 +922,14 @@
     // parse OS into an object
     if (os) {
       data = / ([\d.+]+)$/.exec(os);
+      isSpecialCasedOS = data && os.charAt(os.length - data[0].length - 1) == '/';
       os = {
         'architecture': 32,
-        'family': data ? os.replace(data[0], '') : os,
+        'family': (data && !isSpecialCasedOS) ? os.replace(data[0], '') : os,
         'version': data ? data[1] : null,
         'toString': function() {
           var version = this.version;
-          return this.family + (version ? ' ' + version : '') + (this.architecture == 64 ? ' 64-bit' : '');
+          return this.family + ((version && !isSpecialCasedOS) ? ' ' + version : '') + (this.architecture == 64 ? ' 64-bit' : '');
         }
       };
     }
@@ -911,7 +940,7 @@
         os.family = os.family.replace(RegExp(' *' + data), '');
       }
       if (name && (/WOW64/i.test(ua) ||
-          (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform)))) {
+          (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform) && !/^win32$/i.test(nav.platform)))) {
         description.unshift('32-bit');
       }
     }
@@ -1010,6 +1039,11 @@
 
       /**
        * The family of the OS.
+       *
+       * Common values include:
+       * "Windows", "Windows Server 2008 R2 / 7", "Windows Server 2008 / Vista",
+       * "Windows XP", "OS X", "Ubuntu", "Debian", "Fedora", "Red Hat", "SuSE",
+       * "Android", "iOS" and "Windows Phone OS"
        *
        * @memberOf platform.os
        * @type string|null

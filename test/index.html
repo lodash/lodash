@@ -54,6 +54,7 @@
 				var hasOwnProperty = objectProto.hasOwnProperty,
 				    fnToString = funcProto.toString,
 				    nativeString = fnToString.call(objectProto.toString),
+				    noop = function() {},
 				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
 				    reToString = /toString/g,
 				    whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
@@ -78,26 +79,26 @@
 				}()));
 
 				// add extensions
-				funcProto._method = function() {};
+				funcProto._method = noop;
 
 				// set bad shims
 				setProperty(Array, '_isArray', Array.isArray);
-				setProperty(Array, 'isArray', function() {});
+				setProperty(Array, 'isArray', noop);
 
 				setProperty(Date, '_now', Date.now);
-				setProperty(Date, 'now', function() {});
+				setProperty(Date, 'now', noop);
 
 				setProperty(Object, '_create', Object.create);
-				setProperty(Object, 'create', function() {});
+				setProperty(Object, 'create', noop);
 
 				setProperty(Object, '_defineProperty', Object.defineProperty);
-				setProperty(Object, 'defineProperty', function() {});
+				setProperty(Object, 'defineProperty', noop);
 
 				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
-				setProperty(Object, 'getPrototypeOf', function() {});
+				setProperty(Object, 'getPrototypeOf', noop);
 
 				setProperty(Object, '_keys', Object.keys);
-				setProperty(Object, 'keys', function() {});
+				setProperty(Object, 'keys', noop);
 
 				setProperty(objectProto, 'hasOwnProperty', (function() {
 					function wrapper(key) {
@@ -114,13 +115,13 @@
 				}()));
 
 				setProperty(Number, '_isFinite', Number.isFinite);
-				setProperty(Number, 'isFinite', function() {});
+				setProperty(Number, 'isFinite', noop);
 
 				setProperty(stringProto, '_contains', stringProto.contains);
-				setProperty(stringProto, 'contains', stringProto._contains ? function() {} : Boolean);
+				setProperty(stringProto, 'contains', stringProto._contains ? noop : Boolean);
 
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
-				document.createDocumentFragment = function() {};
+				document.createDocumentFragment = noop;
 
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array) {

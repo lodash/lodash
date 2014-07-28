@@ -25,7 +25,7 @@
       PARTIAL_RIGHT_FLAG = 64;
 
   /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash@' + VERSION + '__';
+  var EXPANDO = '__lodash_' + VERSION.replace(/[-.]/g, '_') + '__';
 
   /** Used as the TypeError message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -39,6 +39,9 @@
    * for more details.
    */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+
+  /** Used as the internal argument placeholder */
+  var PLACEHOLDER = '__lodash_placeholder__';
 
   /** Used to generate unique IDs */
   var idCounter = 0;
@@ -123,7 +126,7 @@
   ];
 
   /** Used to make template sourceURLs easier to identify */
-  var templateCounter = 0;
+  var templateCounter = -1;
 
   /** `Object#toString` result references */
   var argsClass = '[object Arguments]',
@@ -420,7 +423,7 @@
    * @returns {number} Returns the sort order indicator for `object`.
    */
   function compareAscending(object, other) {
-    return baseCompareAscending(object.criteria, other.criteria) || object.index - other.index;
+    return baseCompareAscending(object.criteria, other.criteria) || (object.index - other.index);
   }
 
   /**
@@ -641,7 +644,6 @@
         bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        Float64Array = isNative(Float64Array = context.Float64Array) && Float64Array,
         floor = Math.floor,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         hasOwnProperty = objectProto.hasOwnProperty,
@@ -650,8 +652,19 @@
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
         splice = arrayProto.splice,
-        Uint8Array = isNative(Uint8Array = context.Uint8Array) && Uint8Array,
-        unshift = arrayProto.unshift;
+        Uint8Array = isNative(Uint8Array = context.Uint8Array) && Uint8Array;
+
+    /** Used to clone array buffers */
+    var Float64Array = (function() {
+      // Safari 5 errors when using an array buffer to initialize a typed array
+      // where the array buffer's `byteLength` is not a multiple of the typed
+      // array's `BYTES_PER_ELEMENT`
+      try {
+        var func = isNative(func = context.Float64Array) && func,
+            result = new func(new ArrayBuffer(10), 0, 1) && func;
+      } catch(e) { }
+      return result;
+    }());
 
     /** Used to set metadata on functions */
     var defineProperty = (function() {
@@ -678,7 +691,7 @@
         nativeRandom = Math.random;
 
     /** Used as the size, in bytes, of each Float64Array element */
-    var FLOAT64_BYTES_PER_ELEMENT = Float64Array && Float64Array.BYTES_PER_ELEMENT;
+    var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
 
     /*--------------------------------------------------------------------------*/
 
@@ -831,8 +844,7 @@
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !(argsKey == '1' && hasOwnProperty.call(arguments, argsKey) &&
-          propertyIsEnumerable.call(arguments, argsKey));
+        support.nonEnumArgs = !(hasOwnProperty.call(arguments, 1) && propertyIsEnumerable.call(arguments, 1));
       } catch(e) {
         support.nonEnumArgs = true;
       }
@@ -900,26 +912,6 @@
     };
 
     /*--------------------------------------------------------------------------*/
-
-    /**
-     * Appends placeholder indexes to `array` adding `offset` to each appended index.
-     *
-     * @private
-     * @param {Array} array The array of placeholder indexes to append to.
-     * @param {Array} indexes The array of placeholder indexes to append.
-     * @param {number} offset The placeholder offset.
-     * @returns {Array} Returns `array`.
-     */
-    function appendHolders(array, indexes, offset) {
-      var length = array.length,
-          index = indexes.length;
-
-      array.length += index;
-      while (index--) {
-        array[length + index] = indexes[index] + offset;
-      }
-      return array;
-    }
 
     /**
      * A specialized version of `_.forEach` for arrays without support for
@@ -1428,7 +1420,7 @@
         }
         if (isCurry || isCurryRight) {
           var placeholder = wrapper.placeholder,
-              newPartialHolders = getHolders(args, placeholder);
+              newPartialHolders = replaceHolders(args, placeholder);
 
           length -= newPartialHolders.length;
 
@@ -1539,7 +1531,7 @@
           iterable = toIterable(collection);
 
       while (++index < length) {
-        if (iterator(iterable[index], index, collection) === false) {
+        if (iterator(iterable[index], index, iterable) === false) {
           break;
         }
       }
@@ -1562,7 +1554,7 @@
       }
       var iterable = toIterable(collection);
       while (length--) {
-        if (iterator(iterable[length], length, collection) === false) {
+        if (iterator(iterable[length], length, iterable) === false) {
           break;
         }
       }
@@ -1648,7 +1640,7 @@
     function baseFlatten(array, isDeep, isStrict, fromIndex) {
       var index = (fromIndex || 0) - 1,
           length = array.length,
-          resIndex = 0,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
@@ -1665,10 +1657,10 @@
 
           result.length += valLength;
           while (++valIndex < valLength) {
-            result[resIndex++] = value[valIndex];
+            result[++resIndex] = value[valIndex];
           }
         } else if (!isStrict) {
-          result[resIndex++] = value;
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -2242,11 +2234,19 @@
           high = array ? array.length : low;
 
       value = iterator(value);
+      var hintNum = typeof value == 'number' ||
+        (value != null && isFunction(value.valueOf) && typeof value.valueOf() == 'number');
+
       while (low < high) {
         var mid = (low + high) >>> 1,
-            computed = iterator(array[mid]);
+            computed = iterator(array[mid]),
+            setLow = retHighest ? computed <= value : computed < value;
 
-        if (retHighest ? computed <= value : computed < value) {
+        if (hintNum && typeof computed != 'undefined') {
+          computed = +computed;
+          setLow = computed != computed || setLow;
+        }
+        if (setLow) {
           low = mid + 1;
         } else {
           high = mid;
@@ -2656,29 +2656,21 @@
         }
         // append partial left arguments
         if (isPartial) {
-          var partialHolders = data[5],
-              funcPartialArgs = funcData[4];
-
+          var funcPartialArgs = funcData[4];
           if (funcPartialArgs) {
-            appendHolders(funcData[5], partialHolders, funcPartialArgs.length);
-            push.apply(funcPartialArgs, partialArgs);
-          } else {
-            funcData[4] = partialArgs;
-            funcData[5] = partialHolders;
+            funcPartialArgs = composeArgs(funcPartialArgs, funcData[5], partialArgs);
           }
+          funcData[4] = funcPartialArgs || partialArgs;
+          funcData[5] = funcPartialArgs ? replaceHolders(funcPartialArgs, PLACEHOLDER) : data[5];
         }
         // prepend partial right arguments
         if (isPartialRight) {
-          var partialRightHolders = data[7],
-              funcPartialRightArgs = funcData[6];
-
+          var funcPartialRightArgs = funcData[6];
           if (funcPartialRightArgs) {
-            appendHolders(funcData[7], partialRightHolders, funcPartialRightArgs.length);
-            unshift.apply(funcPartialRightArgs, partialRightArgs);
-          } else {
-            funcData[6] = partialRightArgs;
-            funcData[7] = partialRightHolders;
+            funcPartialRightArgs = composeArgsRight(funcPartialRightArgs, funcData[7], partialRightArgs);
           }
+          funcData[6] = funcPartialRightArgs || partialRightArgs;
+          funcData[7] = funcPartialRightArgs ? replaceHolders(funcPartialRightArgs, PLACEHOLDER) : data[7];
         }
         // merge flags
         funcData[1] |= bitmask;
@@ -2704,26 +2696,6 @@
       var result = lodash.callback || callback;
       result = result === callback ? baseCallback : result;
       return arguments.length ? result(func, thisArg, argCount) : result;
-    }
-
-    /**
-     * Finds the indexes of all placeholder elements in `array`.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @returns {Array} Returns the new array of placeholder indexes.
-     */
-    function getHolders(array, placeholder) {
-      var index = -1,
-          length = array.length,
-          result = [];
-
-      while (++index < length) {
-        if (array[index] === placeholder) {
-          result.push(index);
-        }
-      }
-      return result;
     }
 
     /**
@@ -2807,6 +2779,29 @@
         }
         return result;
       };
+    }
+
+    /**
+     * Replaces all `placeholder` elements in `array` with an internal placeholder
+     * and returns an array of their indexes.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {*} placeholder The placeholder to replace.
+     * @returns {Array} Returns the new array of placeholder indexes.
+     */
+    function replaceHolders(array, placeholder) {
+      var index = -1,
+          length = array.length,
+          result = [];
+
+      while (++index < length) {
+        if (array[index] === placeholder) {
+          array[index] = PLACEHOLDER;
+          result.push(index);
+        }
+      }
+      return result;
     }
 
     /**
@@ -2910,18 +2905,33 @@
     }
 
     /**
-     * Converts `collection` to an array if it is not an array-like value.
+     * Converts `value` to an array-like object if it is not one.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to process.
-     * @returns {Array} Returns the iterable object.
+     * @param {*} value The value to process.
+     * @returns {Array|Object} Returns the array-like object.
      */
-    function toIterable(collection) {
-      var length = collection ? collection.length : 0;
-      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
-        return values(collection);
+    function toIterable(value) {
+      if (value == null) {
+        return [];
       }
-      return collection || [];
+      var length = value.length;
+      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
+        return values(value);
+      }
+      value = toObject(value);
+      return value;
+    }
+
+    /**
+     * Converts `value` to an object if it is not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Object} Returns the object.
+     */
+    function toObject(value) {
+      return isObject(value) ? value : Object(value);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -2974,13 +2984,13 @@
     function compact(array) {
       var index = -1,
           length = array ? array.length : 0,
-          resIndex = 0,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var value = array[index];
         if (value) {
-          result[resIndex++] = value;
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -3095,7 +3105,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -3144,6 +3154,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -3683,21 +3694,17 @@
 
       start = start == null ? 0 : (+start || 0);
       if (start < 0) {
-        start = nativeMax(length + start, 0);
-      } else if (start > length) {
-        start = length;
+        start = -start > length ? 0 : (length + start);
       }
-      end = typeof end == 'undefined' ? length : (+end || 0);
+      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
       if (end < 0) {
-        end = nativeMax(length + end, 0);
-      } else if (end > length) {
-        end = length;
+        end += length;
       }
       length = start > end ? 0 : (end - start);
 
       var result = Array(length);
       while (++index < length) {
-        result[index] = array[start + index];
+        result[index] = array[index + start];
       }
       return result;
     }
@@ -3859,6 +3866,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -3907,6 +3915,7 @@
      * @param {Array} array The array to query.
      * @param {Function|Object|string} [predicate=identity] The function called
      *  per element.
+     * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -4395,7 +4404,7 @@
      * // => { '3': 2, '5': 1 }
      */
     var countBy = createAggregator(function(result, value, key) {
-      (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
+      hasOwnProperty.call(result, key) ? ++result[key] : (result[key] = 1);
     });
 
     /**
@@ -4448,7 +4457,7 @@
     }
 
     /**
-     * Iterates over elements of `collection` returning an array of all elements
+     * Iterates over elements of `collection`, returning an array of all elements
      * the predicate returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
@@ -4739,7 +4748,7 @@
     });
 
     /**
-     * Invokes the method named by `methodName` on each element in the collection
+     * Invokes the method named by `methodName` on each element in the collection,
      * returning an array of the results of each invoked method. Additional arguments
      * is provided to each invoked method. If `methodName` is a function it is
      * invoked for, and `this` bound to, each element in the collection.
@@ -5166,10 +5175,9 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      collection = toIterable(collection);
-
-      var length = collection.length;
       if (n == null || guard) {
+        collection = toIterable(collection);
+        var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
@@ -5383,8 +5391,11 @@
      * // => [2, 3, 4]
      */
     function toArray(collection) {
-      var iterable = toIterable(collection);
-      return iterable === collection ? slice(collection) : iterable;
+      var length = collection ? collection.length : 0;
+      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+        return slice(collection);
+      }
+      return values(collection);
     }
 
     /**
@@ -5515,7 +5526,7 @@
         return createWrapper([func, BIND_FLAG, null, thisArg]);
       }
       var args = slice(arguments, 2),
-          partialHolders = getHolders(args, bind.placeholder);
+          partialHolders = replaceHolders(args, bind.placeholder);
 
       return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, partialHolders, thisArg);
     }
@@ -5593,7 +5604,7 @@
       var data = [key, BIND_FLAG | BIND_KEY_FLAG, null, object];
       if (arguments.length > 2) {
         var args = slice(arguments, 2);
-        data.push(args, getHolders(args, bindKey.placeholder));
+        data.push(args, replaceHolders(args, bindKey.placeholder));
       }
       return createWrapper(data);
     }
@@ -6068,7 +6079,7 @@
      */
     function partial(func) {
       var args = slice(arguments, 1),
-          partialHolders = getHolders(args, partial.placeholder);
+          partialHolders = replaceHolders(args, partial.placeholder);
 
       return basePartial(func, PARTIAL_FLAG, args, partialHolders);
     }
@@ -6106,7 +6117,7 @@
      */
     function partialRight(func) {
       var args = slice(arguments, 1),
-          partialHolders = getHolders(args, partialRight.placeholder);
+          partialHolders = replaceHolders(args, partialRight.placeholder);
 
       return basePartial(func, PARTIAL_RIGHT_FLAG, args, partialHolders);
     }
@@ -6385,7 +6396,6 @@
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {Object} Returns the destination object.
      * @example
      *
@@ -7201,7 +7211,7 @@
      * // => ['x', 'y'] (property order is not guaranteed across environments)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      object = Object(object);
+      object = toObject(object);
 
       var Ctor = object.constructor,
           length = object.length;
@@ -7237,7 +7247,7 @@
       if (object == null) {
         return [];
       }
-      object = Object(object);
+      object = toObject(object);
 
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
@@ -7397,7 +7407,7 @@
         return basePick(object, negate(getCallback(predicate, thisArg, 3)));
       }
       var omitProps = baseFlatten(arguments, false, false, 1);
-      return basePick(Object(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
+      return basePick(toObject(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
     }
 
     /**
@@ -7458,7 +7468,7 @@
       if (object == null) {
         return {};
       }
-      return basePick(Object(object),
+      return basePick(toObject(object),
         typeof predicate == 'function'
           ? getCallback(predicate, thisArg, 3)
           : baseFlatten(arguments, false, false, 1)
@@ -8038,7 +8048,7 @@
 
       // use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (templateCounter++) + ']');
+      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (++templateCounter) + ']');
       sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
@@ -8623,19 +8633,27 @@
      * @category Utility
      * @param {string} value The value to parse.
      * @param {number} [radix] The radix to interpret `value` by.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {number} Returns the converted integer.
      * @example
      *
      * _.parseInt('08');
      * // => 8
      */
-    var parseInt = nativeParseInt(whitespace + '08') == 8 ? nativeParseInt : function(value, radix) {
-      // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
-      // Chrome fails to trim leading <BOM> whitespace characters.
-      // See https://code.google.com/p/v8/issues/detail?id=3109
-      value = trim(value);
-      return nativeParseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
-    };
+    function parseInt(value, radix, guard) {
+      return nativeParseInt(value, guard ? 0 : radix);
+    }
+    // fallback for environments with pre-ES5 implementations
+    if (nativeParseInt(whitespace + '08') != 8) {
+      parseInt = function(value, radix, guard) {
+        // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
+        // Chrome fails to trim leading <BOM> whitespace characters.
+        // See https://code.google.com/p/v8/issues/detail?id=3109
+        value = trim(value);
+        radix = guard ? 0 : +radix;
+        return nativeParseInt(value, radix || (reHexPrefix.test(value) ? 16 : 10));
+      };
+    }
 
     /**
      * Creates a "_.pluck" style function which returns the `key` value of a
@@ -8695,6 +8713,11 @@
      * // => a floating-point number between 1.2 and 5.2
      */
     function random(min, max, floating) {
+      // enables use as a callback for functions like `_.map`
+      var type = typeof max;
+      if ((type == 'number' || type == 'string') && floating && floating[max] === min) {
+        max = floating = null;
+      }
       var noMin = min == null,
           noMax = max == null;
 
@@ -8760,6 +8783,12 @@
      */
     function range(start, end, step) {
       start = +start || 0;
+
+      // enables use as a callback for functions like `_.map`
+      var type = typeof end;
+      if ((type == 'number' || type == 'string') && step && step[end] === start) {
+        end = step = null;
+      }
       step = step == null ? 1 : (+step || 0);
 
       if (end == null) {

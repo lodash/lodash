@@ -25,7 +25,7 @@
       PARTIAL_RIGHT_FLAG = 64;
 
   /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash@' + VERSION + '__';
+  var EXPANDO = '__lodash_' + VERSION.replace(/[-.]/g, '_') + '__';
 
   /** Used by methods to exit iteration */
   var breakIndicator = EXPANDO + 'breaker__';
@@ -42,6 +42,9 @@
    * for more details.
    */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+
+  /** Used as the internal argument placeholder */
+  var PLACEHOLDER = '__lodash_placeholder__';
 
   /** Used to generate unique IDs */
   var idCounter = 0;
@@ -233,7 +236,7 @@
    * @returns {number} Returns the sort order indicator for `object`.
    */
   function compareAscending(object, other) {
-    return baseCompareAscending(object.criteria, other.criteria) || object.index - other.index;
+    return baseCompareAscending(object.criteria, other.criteria) || (object.index - other.index);
   }
 
   /**
@@ -813,7 +816,7 @@
         iterable = toIterable(collection);
 
     while (++index < length) {
-      if (iterator(iterable[index], index, collection) === breakIndicator) {
+      if (iterator(iterable[index], index, iterable) === breakIndicator) {
         break;
       }
     }
@@ -836,7 +839,7 @@
     }
     var iterable = toIterable(collection);
     while (length--) {
-      if (iterator(iterable[length], length, collection) === breakIndicator) {
+      if (iterator(iterable[length], length, iterable) === breakIndicator) {
         break;
       }
     }
@@ -922,7 +925,7 @@
   function baseFlatten(array, isDeep, isStrict, fromIndex) {
     var index = (fromIndex || 0) - 1,
         length = array.length,
-        resIndex = 0,
+        resIndex = -1,
         result = [];
 
     while (++index < length) {
@@ -939,10 +942,10 @@
 
         result.length += valLength;
         while (++valIndex < valLength) {
-          result[resIndex++] = value[valIndex];
+          result[++resIndex] = value[valIndex];
         }
       } else if (!isStrict) {
-        result[resIndex++] = value;
+        result[++resIndex] = value;
       }
     }
     return result;
@@ -1359,11 +1362,19 @@
         high = array ? array.length : low;
 
     value = iterator(value);
+    var hintNum = typeof value == 'number' ||
+      (value != null && isFunction(value.valueOf) && typeof value.valueOf() == 'number');
+
     while (low < high) {
       var mid = (low + high) >>> 1,
-          computed = iterator(array[mid]);
+          computed = iterator(array[mid]),
+          setLow = retHighest ? computed <= value : computed < value;
 
-      if (retHighest ? computed <= value : computed < value) {
+      if (hintNum && typeof computed != 'undefined') {
+        computed = +computed;
+        setLow = computed != computed || setLow;
+      }
+      if (setLow) {
         low = mid + 1;
       } else {
         high = mid;
@@ -1617,26 +1628,6 @@
   }
 
   /**
-   * Finds the indexes of all placeholder elements in `array`.
-   *
-   * @private
-   * @param {Array} array The array to inspect.
-   * @returns {Array} Returns the new array of placeholder indexes.
-   */
-  function getHolders(array, placeholder) {
-    var index = -1,
-        length = array.length,
-        result = [];
-
-    while (++index < length) {
-      if (array[index] === placeholder) {
-        result.push(index);
-      }
-    }
-    return result;
-  }
-
-  /**
    * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
    * customized this function returns the custom method, otherwise it returns
    * the `baseIndexOf` function. If arguments are provided the chosen function
@@ -1663,6 +1654,29 @@
     return type == 'function'
       ? reNative.test(fnToString.call(value))
       : (value && type == 'object' && reHostCtor.test(toString.call(value))) || false;
+  }
+
+  /**
+   * Replaces all `placeholder` elements in `array` with an internal placeholder
+   * and returns an array of their indexes.
+   *
+   * @private
+   * @param {Array} array The array to modify.
+   * @param {*} placeholder The placeholder to replace.
+   * @returns {Array} Returns the new array of placeholder indexes.
+   */
+  function replaceHolders(array, placeholder) {
+    var index = -1,
+        length = array.length,
+        result = [];
+
+    while (++index < length) {
+      if (array[index] === placeholder) {
+        array[index] = PLACEHOLDER;
+        result.push(index);
+      }
+    }
+    return result;
   }
 
   /**
@@ -1716,18 +1730,33 @@
   }
 
   /**
-   * Converts `collection` to an array if it is not an array-like value.
+   * Converts `value` to an array-like object if it is not one.
    *
    * @private
-   * @param {Array|Object|string} collection The collection to process.
-   * @returns {Array} Returns the iterable object.
+   * @param {*} value The value to process.
+   * @returns {Array|Object} Returns the array-like object.
    */
-  function toIterable(collection) {
-    var length = collection ? collection.length : 0;
-    if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
-      return values(collection);
+  function toIterable(value) {
+    if (value == null) {
+      return [];
     }
-    return collection || [];
+    var length = value.length;
+    if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
+      return values(value);
+    }
+    value = toObject(value);
+    return value;
+  }
+
+  /**
+   * Converts `value` to an object if it is not one.
+   *
+   * @private
+   * @param {*} value The value to process.
+   * @returns {Object} Returns the object.
+   */
+  function toObject(value) {
+    return isObject(value) ? value : Object(value);
   }
 
   /*--------------------------------------------------------------------------*/
@@ -1749,13 +1778,13 @@
   function compact(array) {
     var index = -1,
         length = array ? array.length : 0,
-        resIndex = 0,
+        resIndex = -1,
         result = [];
 
     while (++index < length) {
       var value = array[index];
       if (value) {
-        result[resIndex++] = value;
+        result[++resIndex] = value;
       }
     }
     return result;
@@ -2141,21 +2170,17 @@
 
     start = start == null ? 0 : (+start || 0);
     if (start < 0) {
-      start = nativeMax(length + start, 0);
-    } else if (start > length) {
-      start = length;
+      start = -start > length ? 0 : (length + start);
     }
-    end = typeof end == 'undefined' ? length : (+end || 0);
+    end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
     if (end < 0) {
-      end = nativeMax(length + end, 0);
-    } else if (end > length) {
-      end = length;
+      end += length;
     }
     length = start > end ? 0 : (end - start);
 
     var result = Array(length);
     while (++index < length) {
-      result[index] = array[start + index];
+      result[index] = array[index + start];
     }
     return result;
   }
@@ -2604,7 +2629,7 @@
    * // => { '3': 2, '5': 1 }
    */
   var countBy = createAggregator(function(result, value, key) {
-    (hasOwnProperty.call(result, key) ? result[key]++ : result[key] = 1);
+    hasOwnProperty.call(result, key) ? ++result[key] : (result[key] = 1);
   });
 
   /**
@@ -2657,7 +2682,7 @@
   }
 
   /**
-   * Iterates over elements of `collection` returning an array of all elements
+   * Iterates over elements of `collection`, returning an array of all elements
    * the predicate returns truthy for. The predicate is bound to `thisArg` and
    * invoked with three arguments; (value, index|key, collection).
    *
@@ -2902,7 +2927,7 @@
   });
 
   /**
-   * Invokes the method named by `methodName` on each element in the collection
+   * Invokes the method named by `methodName` on each element in the collection,
    * returning an array of the results of each invoked method. Additional arguments
    * is provided to each invoked method. If `methodName` is a function it is
    * invoked for, and `this` bound to, each element in the collection.
@@ -3319,10 +3344,9 @@
    * // => [3, 1]
    */
   function sample(collection, n, guard) {
-    collection = toIterable(collection);
-
-    var length = collection.length;
     if (n == null || guard) {
+      collection = toIterable(collection);
+      var length = collection.length;
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
     var result = shuffle(collection);
@@ -3524,8 +3548,11 @@
    * // => [2, 3, 4]
    */
   function toArray(collection) {
-    var iterable = toIterable(collection);
-    return iterable === collection ? slice(collection) : iterable;
+    var length = collection ? collection.length : 0;
+    if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+      return slice(collection);
+    }
+    return values(collection);
   }
 
   /**
@@ -4090,7 +4117,7 @@
    */
   function partial(func) {
     var args = slice(arguments, 1),
-        partialHolders = getHolders(args, partial.placeholder);
+        partialHolders = replaceHolders(args, partial.placeholder);
 
     return basePartial(func, PARTIAL_FLAG, args, partialHolders);
   }
@@ -4294,7 +4321,6 @@
    * @category Object
    * @param {Object} object The destination object.
    * @param {...Object} [sources] The source objects.
-   * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
    * @returns {Object} Returns the destination object.
    * @example
    *
@@ -4933,7 +4959,7 @@
       return {};
     }
     var omitProps = baseFlatten(arguments, false, false, 1);
-    return basePick(Object(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
+    return basePick(toObject(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
   }
 
   /**
@@ -4993,7 +5019,7 @@
   function pick(object) {
     return object == null
       ? {}
-      : basePick(Object(object), baseFlatten(arguments, false, false, 1));
+      : basePick(toObject(object), baseFlatten(arguments, false, false, 1));
   }
 
   /**
@@ -5558,6 +5584,12 @@
    */
   function range(start, end, step) {
     start = +start || 0;
+
+    // enables use as a callback for functions like `_.map`
+    var type = typeof end;
+    if ((type == 'number' || type == 'string') && step && step[end] === start) {
+      end = step = null;
+    }
     step = +step || 1;
 
     if (end == null) {

@@ -2063,7 +2063,7 @@
             return (value != +value)
               ? other != +other
               // but treat `-0` vs. `+0` as not equal
-              : (value == 0 ? (1 / value == 1 / other) : value == +other);
+              : (value == 0 ? ((1 / value) == (1 / other)) : value == +other);
 
           case regexpClass:
           case stringClass:
@@ -2407,7 +2407,7 @@
       while (low < high) {
         var mid = (low + high) >>> 1,
             computed = iterator(array[mid]),
-            setLow = retHighest ? computed <= value : computed < value;
+            setLow = retHighest ? (computed <= value) : (computed < value);
 
         if (hintNum && typeof computed != 'undefined') {
           computed = +computed;
@@ -2915,7 +2915,7 @@
      *  equality comparisons, else `false`.
      */
     function isStrictComparable(value) {
-      return value === value && (value === 0 ? (1 / value > 0) : !isObject(value));
+      return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
     }
 
     /**

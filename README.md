@@ -67,6 +67,8 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * Follows [semantic versioning](http://semver.org/) for releases
  * [_(…)](http://lodash.com/docs#_) supports intuitive chaining
  * [_.at](http://lodash.com/docs#at) for cherry-picking collection values
+ * [_.attempt](http://lodash.com/docs#attempt) to execute functions which may error without a try-catch
+ * [_.before](http://lodash.com/docs#before) to complement [_.after](http://lodash.com/docs#after)
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
  * [_.callback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
  * [_.chunk](http://lodash.com/docs#chunk) for splitting an array into chunks of a given size
@@ -74,15 +76,15 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
- * [_.curry](http://lodash.com/docs#curry) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
- * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) accept additional `options` for more control
+ * [_.curry](http://lodash.com/docs#curry) & [_.curryRight](http://lodash.com/docs#curryRight) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
+ * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) are cancelable & accept options for more control
  * [_.findIndex](http://lodash.com/docs#findIndex) & [_.findKey](http://lodash.com/docs#findKey) for finding indexes & keys
  * [_.forEach](http://lodash.com/docs#forEach) supports exiting early
- * [_.forIn](http://lodash.com/docs#forIn) for iterating own & inherited properties
+ * [_.forIn](http://lodash.com/docs#forIn) for iterating all enumerable properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties
  * [_.isError](http://lodash.com/docs#isError) to check for error objects
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) to check for objects created by `Object`
- * [_.keysIn](http://lodash.com/docs#keysIn) & [_.valuesIn](http://lodash.com/docs#valuesIn) for keys and values of own & inherited properties
+ * [_.keysIn](http://lodash.com/docs#keysIn) & [_.valuesIn](http://lodash.com/docs#valuesIn) for getting keys and values of all enumerable properties
  * [_.mapValues](http://lodash.com/docs#mapValues) for [mapping](http://lodash.com/docs#map) values to an object
  * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
@@ -95,13 +97,13 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.slice](http://lodash.com/docs#slice) for creating subsets of array-like values
  * [_.sortBy](http://lodash.com/docs#sortBy) supports sorting by multiple properties
  * [_.support](http://lodash.com/docs#support) for flagging environment features
- * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-literals-string-literals)
+ * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
  * [_.transform](http://lodash.com/docs#transform) as a powerful alternative to [_.reduce](http://lodash.com/docs#reduce) for transforming objects
  * [_.where](http://lodash.com/docs#where) supports deep object comparisons
  * [_.xor](http://lodash.com/docs#xor) to complement [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
  * [_.zip](http://lodash.com/docs#zip) is capable of unzipping values
  * [_.bind](http://lodash.com/docs#bind), [_.curry](http://lodash.com/docs#curry), [_.partial](http://lodash.com/docs#partial), &
-   [more](http://lodash.com/docs  "_.bindKey, _.partialRight") support argument placeholders
+   [more](http://lodash.com/docs  "_.bindKey, _.curryRight, _.partialRight") support argument placeholders
  * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
    [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc") string methods
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &

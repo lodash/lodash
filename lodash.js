@@ -1165,12 +1165,13 @@
     function arrayFilter(array, predicate) {
       var index = -1,
           length = array.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
-          result.push(value);
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -1928,12 +1929,13 @@
       var index = -1,
           props = keysFunc(object),
           length = props.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var key = props[index];
         if (isFunction(object[key])) {
-          result.push(key);
+          result[++resIndex] = key;
         }
       }
       return result;
@@ -2958,12 +2960,13 @@
     function replaceHolders(array, placeholder) {
       var index = -1,
           length = array.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         if (array[index] === placeholder) {
           array[index] = PLACEHOLDER;
-          result.push(index);
+          result[++resIndex] = index;
         }
       }
       return result;
@@ -3068,6 +3071,7 @@
       var seen,
           index = -1,
           length = array.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
@@ -3076,7 +3080,7 @@
 
         if (!index || seen !== computed) {
           seen = computed;
-          result.push(value);
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -3142,11 +3146,12 @@
     function chunk(array, chunkSize) {
       var index = 0,
           length = array ? array.length : 0,
+          resIndex = -1,
           result = [];
 
       chunkSize = nativeMax(+chunkSize || 1, 1);
       while (index < length) {
-        result.push(slice(array, index, (index += chunkSize)));
+        result[++resIndex] = slice(array, index, (index += chunkSize));
       }
       return result;
     }

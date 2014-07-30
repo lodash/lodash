@@ -852,8 +852,6 @@
 
       Ctor.prototype = { 'valueOf': 1, 'y': 1 };
       for (var key in new Ctor) { props.push(key); }
-      for (var argsKey in arguments) {}
-      for (var strKey in 'x') {}
 
       /**
        * Detect if the `[[Class]]` of `arguments` objects is resolvable
@@ -912,7 +910,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.nonEnumStrings = strKey != '0';
+      support.nonEnumStrings = !propertyIsEnumerable.call('x', 0);
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are
@@ -1001,7 +999,7 @@
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !(hasOwnProperty.call(arguments, 1) && propertyIsEnumerable.call(arguments, 1));
+        support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
       } catch(e) {
         support.nonEnumArgs = true;
       }

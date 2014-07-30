@@ -100,19 +100,16 @@
 				setProperty(Object, '_keys', Object.keys);
 				setProperty(Object, 'keys', noop);
 
-				setProperty(objectProto, 'hasOwnProperty', (function() {
-					function wrapper(key) {
-						if (key == '1' && this && typeof this == 'object' && this.length === 2 &&
-								hasOwnProperty.call(this, 'callee') &&
-								!propertyIsEnumerable.call(this, 'callee') &&
-								this[0] === 0 && this[1] === 0) {
-							throw new Error;
-						}
-						return hasOwnProperty.call(this, key);
+				setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
+				setProperty(objectProto, 'propertyIsEnumerable', function(key) {
+					if (key == '1' && this && typeof this == 'object' && this.length === 2 &&
+							hasOwnProperty.call(this, 'callee') &&
+							!propertyIsEnumerable.call(this, 'callee') &&
+							this[0] === 0 && this[1] === 0) {
+						throw new Error;
 					}
-					setProperty(objectProto, '_hasOwnProperty', hasOwnProperty);
-					return wrapper;
-				}()));
+					return propertyIsEnumerable.call(this, key);
+				});
 
 				setProperty(Number, '_isFinite', Number.isFinite);
 				setProperty(Number, 'isFinite', noop);
@@ -228,7 +225,7 @@
 				} else {
 					delete stringProto.contains;
 				}
-				setProperty(objectProto, 'hasOwnProperty', objectProto._hasOwnProperty);
+				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);

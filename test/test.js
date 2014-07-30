@@ -375,8 +375,8 @@
     var _keys = Object.keys;
     setProperty(Object, 'keys', _.noop);
 
-    var _hasOwnProperty = objectProto.hasOwnProperty;
-    setProperty(objectProto, 'hasOwnProperty', function(key) {
+    var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
+    setProperty(objectProto, 'propertyIsEnumerable', function(key) {
       if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [0, 0])) {
         throw new Error;
       }
@@ -463,7 +463,7 @@
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
-    setProperty(objectProto, 'hasOwnProperty', _hasOwnProperty);
+    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
     setProperty(root, 'parseInt', _parseInt);
 
     if (_isFinite) {

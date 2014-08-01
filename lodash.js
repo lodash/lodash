@@ -351,11 +351,11 @@
   function baseIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
         length = array ? array.length : 0,
-        nans = value !== value;
+        isReflexive = value === value;
 
     while (++index < length) {
       var other = array[index];
-      if (other === value || (nans && other !== other)) {
+      if ((isReflexive ? other === value : other !== other)) {
         return index;
       }
     }
@@ -3731,10 +3731,10 @@
         index = sortedLastIndex(array, value) - 1;
         return (length && array[index] === value) ? index : -1;
       }
-      var nans = value !== value;
+      var isReflexive = value === value;
       while (index--) {
         var other = array[index];
-        if (other === value || (nans && other !== other)) {
+        if ((isReflexive ? other === value : other !== other)) {
           return index;
         }
       }

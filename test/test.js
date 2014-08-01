@@ -7554,6 +7554,12 @@
       });
     });
 
+    test('should not extend lodash when an `object` is provided with an empty `options` object', 1, function() {
+      _.mixin({ 'a': _.noop }, {});
+      ok(!('a' in _));
+      delete _.a;
+    });
+
     test('should not error for non-object `options` values', 2, function() {
       var pass = true;
 

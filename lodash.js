@@ -1917,17 +1917,16 @@
     }
 
     /**
-     * The base implementation of `_.functions` which creates an array of function
-     * property names from those returned by `keysFunc`.
+     * The base implementation of `_.functions` which creates an array of
+     * `object` function property names filtered from those provided.
      *
      * @private
      * @param {Object} object The object to inspect.
-     * @param {Function} keysFunc The function to get the keys of `object`.
-     * @returns {Array} Returns the new sorted array of property names.
+     * @param {Array} props The property names to filter.
+     * @returns {Array} Returns the new array of filtered property names.
      */
-    function baseFunctions(object, keysFunc) {
+    function baseFunctions(object, props) {
       var index = -1,
-          props = keysFunc(object),
           length = props.length,
           resIndex = -1,
           result = [];
@@ -6848,14 +6847,14 @@
      * @alias methods
      * @category Object
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the new sorted array of property names.
+     * @returns {Array} Returns the new array of property names.
      * @example
      *
      * _.functions(_);
      * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
      */
     function functions(object) {
-      return baseFunctions(object, keysIn);
+      return baseFunctions(object, keysIn(object));
     }
 
     /**
@@ -8784,16 +8783,20 @@
      */
     function mixin(object, source, options) {
       var chain = true,
-          methodNames = source && baseFunctions(source, keys);
+          isObj = isObject(source),
+          noOpts = options == null,
+          props = noOpts && isObj && keys(source),
+          methodNames = props && baseFunctions(source, props);
 
-      if (!source || (!options && !methodNames.length)) {
-        if (options == null) {
+      if (!source || (props && props.length && !methodNames.length) || (noOpts && !isObj)) {
+        if (noOpts) {
           options = source;
         }
+        methodNames = false;
         source = object;
         object = this;
-        methodNames = baseFunctions(source, keys);
       }
+      methodNames || (methodNames = baseFunctions(source, keys(source)));
       if (options === false) {
         chain = false;
       } else if (isObject(options) && 'chain' in options) {
@@ -8801,7 +8804,7 @@
       }
       var index = -1,
           isFunc = isFunction(object),
-          length = methodNames ? methodNames.length : 0;
+          length = methodNames.length;
 
       while (++index < length) {
         var methodName = methodNames[index],

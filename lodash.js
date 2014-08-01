@@ -350,10 +350,12 @@
    */
   function baseIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
-        length = array ? array.length : 0;
+        length = array ? array.length : 0,
+        nans = value !== value;
 
     while (++index < length) {
-      if (array[index] === value) {
+      var other = array[index];
+      if (other === value || (nans && other !== other)) {
         return index;
       }
     }
@@ -1657,7 +1659,7 @@
       while (++index < length) {
         var value = array[index];
 
-        if (isCommon) {
+        if (isCommon && value === value) {
           var valuesIndex = valuesLength;
           while (valuesIndex--) {
             if (values[valuesIndex] === value) {
@@ -2449,7 +2451,7 @@
         var value = array[index],
             computed = iterator ? iterator(value, index, array) : value;
 
-        if (isCommon) {
+        if (isCommon && value === value) {
           var seenIndex = seen.length;
           while (seenIndex--) {
             if (seen[seenIndex] === computed) {
@@ -3184,8 +3186,12 @@
     }
 
     /**
-     * Creates an array excluding all values of the provided arrays using strict
-     * equality for comparisons, i.e. `===`.
+     * Creates an array excluding all values of the provided arrays using
+     * `SameValueZero` for equality comparisons.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3552,9 +3558,13 @@
 
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
-     * using strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
+     * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
      * it is used as the offset from the end of the collection. If `array` is
      * sorted providing `true` for `fromIndex` performs a faster binary search.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3609,7 +3619,11 @@
 
     /**
      * Creates an array of unique values present in all provided arrays using
-     * strict equality for comparisons, i.e. `===`.
+     * `SameValueZero` for equality comparisons.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3717,8 +3731,10 @@
         index = sortedLastIndex(array, value) - 1;
         return (length && array[index] === value) ? index : -1;
       }
+      var nans = value !== value;
       while (index--) {
-        if (array[index] === value) {
+        var other = array[index];
+        if (other === value || (nans && other !== other)) {
           return index;
         }
       }
@@ -3726,10 +3742,14 @@
     }
 
     /**
-     * Removes all provided values from `array` using strict equality for
-     * comparisons, i.e. `===`.
+     * Removes all provided values from `array` using `SameValueZero` for equality
+     * comparisons.
      *
      * Note: Unlike `_.without`, this method mutates `array`.
+     *
+     * `SameValueZero` is like strict equality, e.g. `===`, except that `NaN` matches
+     * `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3747,17 +3767,14 @@
     function pull(array) {
       var argsIndex = 0,
           argsLength = arguments.length,
-          length = array ? array.length : 0;
+          indexOf = getIndexOf();
 
       while (++argsIndex < argsLength) {
-        var index = -1,
+        var fromIndex = 0,
             value = arguments[argsIndex];
 
-        while (++index < length) {
-          if (array[index] === value) {
-            splice.call(array, index--, 1);
-            length--;
-          }
+        while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
+          splice.call(array, fromIndex, 1);
         }
       }
       return array;
@@ -4134,7 +4151,11 @@
 
     /**
      * Creates an array of unique values, in order, of the provided arrays using
-     * strict equality for comparisons, i.e. `===`.
+     * `SameValueZero` for equality comparisons.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -4151,12 +4172,12 @@
     }
 
     /**
-     * Creates a duplicate-value-free version of an array using strict equality
-     * for comparisons, i.e. `===`. Providing `true` for `isSorted` performs a
-     * faster search algorithm for sorted arrays. If an iterator function is
-     * provided it is executed for each value in the array to generate the criterion
-     * by which uniqueness is computed. The `iterator` is bound to `thisArg` and
-     * invoked with three arguments; (value, index, array).
+     * Creates a duplicate-value-free version of an array using `SameValueZero`
+     * for equality comparisons. Providing `true` for `isSorted` performs a faster
+     * search algorithm for sorted arrays. If an iterator function is provided it
+     * is executed for each value in the array to generate the criterion by which
+     * uniqueness is computed. The `iterator` is bound to `thisArg` and invoked
+     * with three arguments; (value, index, array).
      *
      * If a property name is provided for `iterator` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -4164,6 +4185,10 @@
      * If an object is provided for `iterator` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -4248,8 +4273,12 @@
     }
 
     /**
-     * Creates an array excluding all provided values using strict equality for
-     * comparisons, i.e. `===`.
+     * Creates an array excluding all provided values using `SameValueZero` for
+     * equality comparisons.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -4507,9 +4536,13 @@
     }
 
     /**
-     * Checks if `value` is present in `collection` using strict equality for
-     * comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
-     * offset from the end of the collection.
+     * Checks if `value` is present in `collection` using  `SameValueZero` for
+     * equality comparisons. If `fromIndex` is negative, it is used as the offset
+     * from the end of the collection.
+     *
+     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _

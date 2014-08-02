@@ -4381,6 +4381,85 @@
     }
 
     /**
+     * This is a temporary method which eventually replace lodash chaining.
+     *
+     * @param value source object
+     * @returns lazyWrapper
+     */
+
+    function lazy(value) {
+      var result = new lazyWrapper(value);
+      return result;
+    }
+
+    function createPipeline(FILTERED, func1, cond1, func2, cond2, func3, cond3)
+    {
+      return function(x) {
+        if(!func1) return x;
+
+        if(!cond1) x = func1(x);
+        else if(!func1(x)) return FILTERED;
+
+        if(!func2) return x;
+
+        if(!cond2) x = func2(x);
+        else if(!func2(x)) return FILTERED;
+
+        if(!func3) return x;
+
+        if(!cond3) x = func3(x);
+        else if(!func3(x)) return FILTERED;
+
+        return x;
+      }
+    }
+
+    function lazyWrapper(source) {
+      this.source = source
+      this.funcs = [null];
+      this.sourceIndex = 0;
+      this.take = null;
+    }
+
+    lazyWrapper.prototype.map = function(iterator) {
+      this.funcs.push(iterator, false);
+      return this;
+    };
+
+    lazyWrapper.prototype.filter = function(iterator) {
+      this.funcs.push(iterator, true);
+      return this;
+    };
+
+    lazyWrapper.prototype.value = function() {
+
+      var FILTERED_RESULT = {};
+      this.funcs[0] = FILTERED_RESULT;
+      var pipeline = createPipeline.apply(null, this.funcs)
+
+      var take = this.take,
+          source = this.source,
+          sourceIndex = this.sourceIndex;
+
+      if(take === null) take = this.source.length;
+
+      var result = [];
+      var len = source.length;
+
+      while(take > 0 && sourceIndex < len)
+      {
+        var value = pipeline(source[sourceIndex++])
+        if(value !== FILTERED_RESULT)
+        {
+          --take;
+          result.push(value);
+        }
+      }
+
+      return result;
+    };
+
+    /**
      * This method invokes `interceptor` and returns `value`. The interceptor is
      * bound to `thisArg` and invoked with one argument; (value). The purpose of
      * this method is to "tap into" a method chain in order to perform operations
@@ -9165,6 +9244,7 @@
     lodash.invoke = invoke;
     lodash.keys = keys;
     lodash.keysIn = keysIn;
+    lodash.lazy = lazy;
     lodash.map = map;
     lodash.mapValues = mapValues;
     lodash.matches = matches;

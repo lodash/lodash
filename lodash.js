@@ -5090,11 +5090,11 @@
       if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
         iteratee = null;
       }
-      var noIterator = iteratee == null,
-          isArr = noIterator && isArray(collection),
+      var noIteratee = iteratee == null,
+          isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
-      if (noIterator && !isStr) {
+      if (noIteratee && !isStr) {
         var index = -1,
             iterable = toIterable(collection),
             length = iterable.length;
@@ -5106,7 +5106,7 @@
           }
         }
       } else {
-        iteratee = (noIterator && isStr)
+        iteratee = (noIteratee && isStr)
           ? charAtCallback
           : getCallback(iteratee, thisArg, 3);
 
@@ -5173,11 +5173,11 @@
       if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
         iteratee = null;
       }
-      var noIterator = iteratee == null,
-          isArr = noIterator && isArray(collection),
+      var noIteratee = iteratee == null,
+          isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
-      if (noIterator && !isStr) {
+      if (noIteratee && !isStr) {
         var index = -1,
             iterable = toIterable(collection),
             length = iterable.length;
@@ -5189,7 +5189,7 @@
           }
         }
       } else {
-        iteratee = (noIterator && isStr)
+        iteratee = (noIteratee && isStr)
           ? charAtCallback
           : getCallback(iteratee, thisArg, 3);
 

@@ -608,7 +608,7 @@
       function inc(x) { return x + 1; }
 
       test("should return an Object", 1, function() {
-        var actual = _.lazy();
+        var actual = _.lazy([]);
         ok(actual instanceof Object);
       });
 
@@ -621,6 +621,19 @@
         deepEqual(actual, expected);
       });
 
+      test("computes minimal number of elements required", 1, function () {
+        var spy = {
+          toString: function() { throw new Error('this object should never be called')}
+        };
+
+        var collection = [1, 2, 1, spy, spy];
+
+        var actual = _.lazy(collection).map(inc).filter(isEven).map(inc).take(2).value();
+        var expected = [3, 3];
+
+        deepEqual(actual, expected);
+      });
+
     })();
 
     /*--------------------------------------------------------------------------*/
@@ -628,11 +641,78 @@
     QUnit.module('lodash.lazy.value');
 
     (function() {
+      function isEven(x) { return x % 2 == 0; }
 
       test("should return original collection", 1, function() {
         var collection = [1, 2, 3];
 
         deepEqual(_.lazy(collection).value(), collection);
+      });
+
+      test("complex case 1", 1, function() {
+        var collection = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+        var actual = _.lazy(collection).reverse().take(8).filter(isEven)
+          .takeRight(3).take(2).reverse().take(1).value();
+
+        deepEqual(actual, [4]);
+      });
+
+      test("should be limited by source array length", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).take(4).value();
+
+        deepEqual(actual, [1, 2, 3]);
+      });
+
+      test("should be limited by source array length (when input is reversed)", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).reverse().take(4).value();
+
+        deepEqual(actual, [3, 2, 1]);
+      });
+
+
+      test("should be limited by dropRight(1).take(3) subset", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).dropRight(1).take(3).value();
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test("should be limited by limited by take(2).dropRight(2) subset", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).take(2).dropRight(2).value();
+
+        deepEqual(actual, []);
+      });
+
+      test("should be limited by dropRight(2).take(2) subset", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).dropRight(2).take(2).value();
+
+        deepEqual(actual, [1]);
+      });
+
+      test("should ignore subsequent take as in take(x).take(x+1) sequence", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).take(2).take(3).value();
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test("should ignore subsequent take as in takeRight(x).takeRight(x+1) sequence", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).takeRight(2).takeRight(3).value();
+
+        deepEqual(actual, [2, 3]);
       });
 
     })();
@@ -647,7 +727,7 @@
 
     (function() {
       test("should return existing wrapped values", 1, function () {
-        var wrapped = _.lazy();
+        var wrapped = _.lazy([]);
         strictEqual(wrapped.map(), wrapped);
       });
 
@@ -657,6 +737,17 @@
         var actual = _.lazy(collection).map(inc).value();
 
         deepEqual(actual, [2, 3, 4, 5]);
+      });
+
+      test('should provide the correct `predicate` arguments', 1, function() {
+        var args = [],
+            array = [1, 2];
+
+        _.lazy(array).map(function() {
+          args.push(slice.call(arguments));
+        }).value();
+
+        deepEqual(args, [[1, 0, array], [2, 1, array]]);
       });
     })();
 
@@ -670,7 +761,7 @@
     }
     (function() {
       test("should return existing wrapped values", 1, function () {
-        var wrapped = _.lazy();
+        var wrapped = _.lazy([]);
         strictEqual(wrapped.filter(), wrapped);
       });
 
@@ -681,6 +772,468 @@
 
         deepEqual(actual, [2, 4]);
       });
+
+      test("should filter already limited collection", 1, function () {
+        var collection = [1, 2, 3, 4];
+
+        var actual = _.lazy(collection).take(2).filter(isEven).value()
+
+        deepEqual(actual, [2]);
+      });
+
+      test('should provide the correct `predicate` arguments', 1, function() {
+        var args = [],
+            array = [1, 2];
+
+        _.lazy(array).filter(function() {
+          args.push(slice.call(arguments));
+        }).value();
+
+        deepEqual(args, [[1, 0, array], [2, 1, array]]);
+      });
+    })();
+
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.take');
+
+    (function () {
+
+      function gte3(x) { return x >= 3; }
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.take(), wrapped);
+      });
+
+      test("should limit number of elements returned", 1, function () {
+        var collection = [1, 2, 3, 4];
+
+        var actual = _.lazy(collection).take(2).value();
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test("should limit number of elements returned when filter is applied", 1, function () {
+        var spy = {
+          toString: function() { throw new Error('this object should never be called')}
+        };
+
+        var collection = [1, 2, 3, 4, spy];
+
+        var actual = _.lazy(collection).filter(gte3).take(2).value();
+
+        deepEqual(actual, [3, 4]);
+      });
+
+    })();
+
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.first');
+
+    (function () {
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.first(), wrapped);
+      });
+
+      test("should return only first element", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).first().value();
+
+        deepEqual(actual, [1]);
+      });
+
+    })();
+
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.last');
+
+    (function () {
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.last(), wrapped);
+      });
+
+      test("should return only last element", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).last().value();
+
+        deepEqual(actual, [3]);
+      });
+
+    })();
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.takeRight');
+
+    (function () {
+
+      function gte3(x) { return x >= 3; }
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.takeRight(), wrapped);
+      });
+
+      test("should limit number of elements returned", 1, function () {
+        var collection = [1, 2, 3, 4];
+
+        var actual = _.lazy(collection).takeRight(2).value();
+
+        deepEqual(actual, [3, 4]);
+      });
+
+      test("should limit number of elements returned when filter is applied", 1, function () {
+        var spy = {
+          toString: function() { throw new Error('this object should never be called')}
+        };
+
+        var collection = [spy, spy, spy, 4, 5];
+
+        var actual = _.lazy(collection).filter(gte3).takeRight(2).value();
+
+        deepEqual(actual, [4, 5]);
+      });
+
+    })();
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.reverse');
+
+    (function() {
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+        strictEqual(wrapped.reverse(), wrapped);
+      });
+
+      test("should return reversed collection", 1, function () {
+        var collection = [1, 2, 3, 4];
+
+        var actual = _.lazy(collection).reverse().value();
+
+        deepEqual(actual, [4, 3, 2, 1]);
+      });
+
+      test("should respect the sequence in which it was called", 1, function () {
+        var collection = [1, 2, 3, 4];
+
+        var actual = _.lazy(collection).take(3).reverse().take(2).value();
+
+        deepEqual(actual, [3, 2]);
+      });
+
+    })();
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.initial');
+
+    (function () {
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.initial(), wrapped);
+      });
+
+      test("should return all elements except last", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).initial().value();
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test("should work with reverse", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).reverse().initial().value();
+
+        deepEqual(actual, [3, 2]);
+      });
+
+      test("should work with take", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).take(2).initial().value();
+
+        deepEqual(actual, [1]);
+      });
+
+      test("should work with filter", 1, function () {
+        var collection = [1, 0, 2, 0, 3, 0, 4];
+
+        var actual = _.lazy(collection).filter(_.identity).initial().value();
+
+        deepEqual(actual, [1, 2, 3]);
+      });
+
+    })();
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.rest');
+
+    (function () {
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.rest(), wrapped);
+      });
+
+      test("should return all elements except first", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).rest().value();
+
+        deepEqual(actual, [2, 3]);
+      });
+
+      test("should work with reverse", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).reverse().rest().value();
+
+        deepEqual(actual, [2, 1]);
+      });
+
+      test("should work with take", 1, function () {
+        var collection = [1, 2, 3];
+
+        var actual = _.lazy(collection).take(2).rest().value();
+
+        deepEqual(actual, [2]);
+      });
+
+      test("should work with filter", 1, function () {
+        var collection = [1, 0, 2, 0, 3, 0, 4];
+
+        var actual = _.lazy(collection).filter(_.identity).rest().value();
+
+        deepEqual(actual, [2, 3, 4]);
+      });
+
+    })();
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.takeWhile');
+
+    (function() {
+      var array = [1, 2, 3];
+
+      var objects = [
+        { 'a': 2, 'b': 2 },
+        { 'a': 1, 'b': 1 },
+        { 'a': 0, 'b': 0 }
+      ];
+
+      function lt3(num) {
+        return num < 3;
+      }
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.takeWhile(), wrapped);
+      });
+
+      test('should take elements while `predicate` returns truthy', 1, function() {
+        var actual = _.lazy(array).takeWhile(lt3).value();
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test('should provide the correct `predicate` arguments', 1, function() {
+        var args;
+
+        _.lazy(array).takeWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+      });
+
+      test('should support the `thisArg` argument', 1, function() {
+        var actual = _.lazy(array).takeWhile(function(num, index) {
+          return this[index] < 3;
+        }, array).value();
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test('should work with a "_.pluck" style `predicate`', 1, function() {
+        deepEqual(_.lazy(objects).takeWhile('b').value(), objects.slice(0, 2));
+      });
+
+      test('should work with a "_.where" style `predicate`', 1, function() {
+        deepEqual(_.lazy(objects).takeWhile({ 'b': 2 }).value(), objects.slice(0, 1));
+      });
+
+      test('should return a wrapped value when chaining', 2, function() {
+        if (!isNpm) {
+          var actual = _(array).takeWhile(function(num) {
+            return num < 3;
+          });
+
+          ok(actual instanceof _);
+          deepEqual(actual.value(), [1, 2]);
+        }
+        else {
+          skipTest(2);
+        }
+      });
+    }());
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.drop');
+
+    (function() {
+      var array = [1, 2, 3];
+
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.drop(), wrapped);
+      });
+
+      test('should drop the first two elements', 1, function() {
+        deepEqual(_.lazy(array).drop(2).value(), [3]);
+      });
+
+      test('should drop the first two elements when reversed', 1, function() {
+        deepEqual(_.lazy(array).reverse().drop(2).value(), [1]);
+      });
+
+      test('should drop the first two elements when filtered', 1, function() {
+        deepEqual(_.lazy([1, 0, 2, 0, 3, 0]).filter(_.identity).drop(2).value(), [3]);
+      });
+
+      test('should drop the first two elements when filtered and reversed', 1, function() {
+        deepEqual(_.lazy([1, 0, 2, 0, 3, 0]).filter(_.identity).reverse().drop(1).reverse().drop(1).value(), [2]);
+      });
+
+    }());
+
+    /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.dropRight');
+
+    (function() {
+      var array = [1, 2, 3];
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.dropRight(), wrapped);
+      });
+
+      test('should drop the first two elements', 1, function() {
+        deepEqual(_.lazy(array).dropRight(2).value(), [1]);
+      });
+
+      test('should drop the first two elements when reversed', 1, function() {
+        deepEqual(_.lazy(array).reverse().dropRight(2).value(), [3]);
+      });
+
+      test('should drop the first two elements when filtered', 1, function() {
+        deepEqual(_.lazy([1, 0, 2, 0, 3, 0]).filter(_.identity).dropRight(2).value(), [1]);
+      });
+
+      test('should drop the first two elements when filtered and reversed', 1, function() {
+        deepEqual(_.lazy([1, 0, 2, 0, 3, 0]).filter(_.identity).reverse().dropRight(1).reverse().dropRight(1).value(), [2]);
+      });
+    })();
+
+
+      /*--------------------------------------------------------------------------*/
+
+    QUnit.module('lodash.lazy.dropWhile');
+
+    (function () {
+
+      var array = [1, 2, 3];
+
+      var objects = [
+        { 'a': 2, 'b': 2 },
+        { 'a': 1, 'b': 1 },
+        { 'a': 0, 'b': 0 }
+      ];
+
+      function lt3(num) {
+        return num < 3;
+      }
+
+      test("should return existing wrapped values", 1, function () {
+        var wrapped = _.lazy([]);
+
+        strictEqual(wrapped.dropWhile(), wrapped);
+      });
+
+      test('should drop elements while `predicate` returns truthy', 1, function() {
+        var actual = _.lazy(array).dropWhile(lt3).value();
+
+        deepEqual(actual, [3]);
+      });
+
+      test('should provide the correct `predicate` arguments', 1, function() {
+        var args;
+
+        _.lazy(array).dropWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+      });
+
+      test('should support the `thisArg` argument', 1, function() {
+        var actual = _.lazy(array).dropWhile(function(num, index) {
+          return this[index] < 3;
+        }, array).value();
+
+        deepEqual(actual, [3]);
+      });
+
+      test('should work with an object for `predicate`', 1, function() {
+        deepEqual(_.lazy(objects).dropWhile({ 'b': 2 }).value(), objects.slice(1));
+      });
+
+      test('should work with a "_.pluck" style `predicate`', 1, function() {
+        deepEqual(_.lazy(objects).dropWhile('b').value(), objects.slice(2));
+      });
+
+      test('should return a wrapped value when chaining', 2, function() {
+        if (!isNpm) {
+          var actual = _(array).dropWhile(function(num) {
+            return num < 3;
+          });
+
+          ok(actual instanceof _);
+          deepEqual(actual.value(), [3]);
+        }
+        else {
+          skipTest(2);
+        }
+      });
+
     })();
 
     /*--------------------------------------------------------------------------*/

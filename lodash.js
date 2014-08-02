@@ -4388,76 +4388,188 @@
      */
 
     function lazy(value) {
-      var result = new lazyWrapper(value);
-      return result;
+      return new LazyWrapper(value || []);
     }
 
-    function createPipeline(FILTERED, func1, cond1, func2, cond2, func3, cond3)
-    {
-      return function(x) {
-        if(!func1) return x;
+    function LazyWrapper(source) {
+      this.source = source;
+      this.isMap = [];
+      this.iterators = [];
+      this.limit = Number.POSITIVE_INFINITY;
+      this.lazyOperators = [];
+      this.filterApplied = false;
+      this.dir = 1;
+    }
 
-        if(!cond1) x = func1(x);
-        else if(!func1(x)) return FILTERED;
+    LazyWrapper.prototype.map = function(iterator) {
+      this.iterators.push(iterator);
+      this.isMap.push(true);
+      return this;
+    };
 
-        if(!func2) return x;
+    LazyWrapper.prototype.rest = function() {
+      return this.drop(1);
+    };
 
-        if(!cond2) x = func2(x);
-        else if(!func2(x)) return FILTERED;
+    LazyWrapper.prototype.initial = function() {
+      return this.dropRight(1);
+    };
 
-        if(!func3) return x;
+    LazyWrapper.prototype.tail = LazyWrapper.prototype.rest;
 
-        if(!cond3) x = func3(x);
-        else if(!func3(x)) return FILTERED;
-
-        return x;
+    LazyWrapper.prototype.drop = function(n) {
+      if(this.filterApplied) {
+        return new LazyWrapper(this).drop(n);
       }
+      this.lazyOperators.push(new LazyOperator("drop", n, this.dir));
+      return this;
     }
 
-    function lazyWrapper(source) {
-      this.source = source
-      this.funcs = [null];
-      this.sourceIndex = 0;
-      this.take = null;
+    LazyWrapper.prototype.dropRight = function(n) {
+      if(this.filterApplied) {
+        return new LazyWrapper(this).dropRight(n);
+      }
+      this.lazyOperators.push(new LazyOperator("dropRight", n, this.dir));
+      return this;
     }
 
-    lazyWrapper.prototype.map = function(iterator) {
-      this.funcs.push(iterator, false);
+    LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
+      var satisfied = true;
+      predicate = getCallback(predicate, thisArg, 3);
+
+      return this.filter(function(value, index, array) {
+        return satisfied && (satisfied = predicate(value, index, array));
+      });
+    }
+
+    LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
+      var satisfied = false;
+      predicate = getCallback(predicate, thisArg, 3);
+
+      return this.filter(function(value, index, array) {
+        return satisfied || (satisfied = !predicate(value, index, array));
+      });
+    }
+
+    LazyWrapper.prototype.take = function(n) {
+      if(this.filterApplied) {
+        this.limit = n;
+        return new LazyWrapper(this);
+      }
+      this.lazyOperators.push(new LazyOperator("take", n, this.dir));
       return this;
     };
 
-    lazyWrapper.prototype.filter = function(iterator) {
-      this.funcs.push(iterator, true);
+    LazyWrapper.prototype.first = function(count) {
+      this.take(1);
       return this;
     };
 
-    lazyWrapper.prototype.value = function() {
+    LazyWrapper.prototype.head = LazyWrapper.prototype.first;
 
-      var FILTERED_RESULT = {};
-      this.funcs[0] = FILTERED_RESULT;
-      var pipeline = createPipeline.apply(null, this.funcs)
+    LazyWrapper.prototype.last = function(count) {
+      this.takeRight(1);
+      return this;
+    };
 
-      var take = this.take,
-          source = this.source,
-          sourceIndex = this.sourceIndex;
+    LazyWrapper.prototype.takeRight = function(n) {
+      if(this.filterApplied) {
+        this.limit = n;
+        this.reverse();
+        return new LazyWrapper(this).reverse();
+      }
+      this.lazyOperators.push(new LazyOperator("takeRight", n, this.dir));
+      return this;
+    };
 
-      if(take === null) take = this.source.length;
+    LazyWrapper.prototype.filter = function(iterator) {
+      this.filterApplied = true;
+      this.isMap.push(false);
+      this.iterators.push(iterator);
+      return this;
+    };
 
-      var result = [];
-      var len = source.length;
+    LazyWrapper.prototype.reverse = function() {
+      this.dir *= -1;
+      return this;
+    }
 
-      while(take > 0 && sourceIndex < len)
-      {
-        var value = pipeline(source[sourceIndex++])
-        if(value !== FILTERED_RESULT)
-        {
-          --take;
-          result.push(value);
+    function LazyOperator(name, count, dir) {
+      this.name = (dir > 0) ? name : this.revert[name];
+      this.count = count;
+    }
+
+    LazyOperator.prototype.revert = {
+      take: "takeRight",
+      takeRight: "take",
+      drop: "dropRight",
+      dropRight: "drop"
+    };
+
+    function calculateBounds(operators, min, max) {
+      var len = operators.length,
+          op;
+
+      for(var i = 0; i < len; i++) {
+        op = operators[i];
+        switch(op.name) {
+          case "take":      max = Math.min(max, min + (op.count - 1)); break;
+          case "takeRight": min = Math.max(min, max - (op.count - 1)); break;
+          case "drop":      min += op.count; break;
+          case "dropRight": max -= op.count; break;
         }
       }
 
+      return {max: max, min: min};
+    }
+
+    LazyWrapper.prototype.value = function() {
+      var source = this.source,
+          bounds;
+
+      if (source instanceof LazyWrapper) {
+        source = source.value();
+      }
+
+      bounds = calculateBounds(this.lazyOperators, 0, source.length - 1);
+
+      return compute(this, source, bounds);
+    }
+
+    function compute(wrapper, source, bounds) {
+
+      var resultIndex = 0,
+          dir = wrapper.dir,
+          loops = bounds.max - bounds.min + 1,
+          resultLimit = Math.min(wrapper.limit, loops),
+          sourceIndex = (dir == 1 ? bounds.min : bounds.max) - dir,
+          result = [],
+          isMap = wrapper.isMap,
+          iterators = wrapper.iterators,
+          num = isMap.length,
+          iterator,
+          val,
+          i;
+
+      lazy:while (loops-- > 0 && resultIndex < resultLimit) {
+        sourceIndex += dir;
+        val = source[sourceIndex];
+
+        for(i = 0; i < num; i++) {
+          iterator = iterators[i];
+          if(isMap[i]) {
+            val = iterator(val, sourceIndex, source);
+          } else if(!iterator(val, sourceIndex, source)) { // isFilter
+            continue lazy;
+          }
+        }
+
+        result[resultIndex++] = val;
+      }
+
       return result;
     };
+
 
     /**
      * This method invokes `interceptor` and returns `value`. The interceptor is

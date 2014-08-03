@@ -2243,14 +2243,11 @@
           expected = _.map(values, _.constant([]));
 
       var actual = _.map(values, function(arity) {
-        var curried = _.curry(fn, arity);
-        return curried();
+        return _.curry(fn, arity)();
       });
 
       deepEqual(actual, expected);
-
-      curried = _.curry(fn, '2');
-      deepEqual(curried(1)(2), [1, 2]);
+      deepEqual(_.curry(fn, '2')(1)(2), [1, 2]);
     });
 
     test('should work with partialed methods', 2, function() {

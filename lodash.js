@@ -1624,7 +1624,7 @@
      */
     function baseCurry(func, bitmask, arity) {
       if (typeof arity != 'number') {
-        arity = +arity || (func ? func.length : 0);
+        arity = arity == null ? (func ? func.length : 0) : (+arity || 0);
       }
       return createWrapper([func, bitmask, arity]);
     }

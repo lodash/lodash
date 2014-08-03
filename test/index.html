@@ -251,7 +251,7 @@
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
-				delete objectProto._hasOwnProperty;
+				delete objectProto._propertyIsEnumerable;
 				delete stringProto._contains;
 			}
 			QUnit.config.hidepassed = true;

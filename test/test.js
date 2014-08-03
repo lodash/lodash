@@ -2229,13 +2229,28 @@
       deepEqual(curried(1, 2, 3, 4), expected);
     });
 
-    test('should allow specifying `arity`', 3, function(){
+    test('should allow specifying `arity`', 3, function() {
       var curried = _.curry(fn, 3),
           expected = [1, 2, 3];
 
       deepEqual(curried(1)(2, 3), expected);
       deepEqual(curried(1, 2)(3), expected);
       deepEqual(curried(1, 2, 3), expected);
+    });
+
+    test('should coerce `arity` to a number', 2, function() {
+      var values = ['0', 'xyz'],
+          expected = _.map(values, _.constant([]));
+
+      var actual = _.map(values, function(arity) {
+        var curried = _.curry(fn, arity);
+        return curried();
+      });
+
+      deepEqual(actual, expected);
+
+      curried = _.curry(fn, '2');
+      deepEqual(curried(1)(2), [1, 2]);
     });
 
     test('should work with partialed methods', 2, function() {

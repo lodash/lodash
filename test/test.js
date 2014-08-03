@@ -2346,7 +2346,7 @@
       deepEqual(curried(1, 2, 3, 4), expected);
     });
 
-    test('should allow specifying `arity`', 3, function(){
+    test('should allow specifying `arity`', 3, function() {
       var curried = _.curryRight(fn, 3),
           expected = [1, 2, 3];
 
@@ -2721,7 +2721,7 @@
     asyncTest('should defer `func` execution', 1, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.defer(function(){ pass = true; });
+        _.defer(function() { pass = true; });
 
         setTimeout(function() {
           ok(pass);
@@ -2783,7 +2783,7 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function(){ pass = true; }, 96);
+        _.delay(function() { pass = true; }, 96);
 
         setTimeout(function() {
           ok(!pass);
@@ -3263,7 +3263,7 @@
     var func = _[methodName];
 
     test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', 1, function() {
-      var object = { 'a': null, 'b': function(){} },
+      var object = { 'a': null, 'b': function() {} },
           pass = !isStrict;
 
       if (freeze) {

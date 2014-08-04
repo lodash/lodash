@@ -8789,7 +8789,7 @@
           props = noOpts && isObj && keys(source),
           methodNames = props && baseFunctions(source, props);
 
-      if (!source || (props && props.length && !methodNames.length) || (noOpts && !isObj)) {
+      if ((props && props.length && !methodNames.length) || (noOpts && !isObj)) {
         if (noOpts) {
           options = source;
         }

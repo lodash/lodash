@@ -8610,6 +8610,7 @@
      *
      * @static
      * @memberOf _
+     * @alias iteratee
      * @category Utility
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
@@ -9280,6 +9281,7 @@
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
     lodash.extend = assign;
+    lodash.iteratee = callback;
     lodash.methods = functions;
     lodash.object = zipObject;
     lodash.select = filter;

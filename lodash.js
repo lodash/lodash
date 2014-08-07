@@ -299,6 +299,24 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * Creates a shallow clone of `array`.
+   *
+   * @private
+   * @param {Array} array The array to slice.
+   * @returns {Array} Returns the cloned array.
+   */
+  function arrayClone(array) {
+    var index = -1,
+        length = array ? array.length : 0,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = array[index];
+    }
+    return result;
+  }
+
+  /**
    * The base implementation of `_.at` without support for strings and individual
    * key arguments.
    *
@@ -1410,7 +1428,7 @@
           isShallow = !isDeep;
 
       if (isArr) {
-        result = isShallow ? slice(value) : value.constructor(value.length);
+        result = isShallow ? arrayClone(value) : value.constructor(value.length);
 
         // add array properties assigned by `RegExp#exec`
         if (typeof value[0] == 'string' && hasOwnProperty.call(value, 'index')) {
@@ -1448,7 +1466,7 @@
         else {
           switch (className) {
             case arrayBufferClass:
-              return cloneBuffer(value);
+              return bufferClone(value);
 
             case boolClass:
             case dateClass:
@@ -1462,7 +1480,7 @@
                 Ctor = ctorByClass[className];
               }
               var buffer = value.buffer;
-              return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, value.byteOffset, value.length);
+              return new Ctor(isDeep ? bufferClone(buffer) : buffer, value.byteOffset, value.length);
 
             case numberClass:
             case stringClass:
@@ -2269,40 +2287,6 @@
     }
 
     /**
-     * The base implementation of `_.pick` without support for `this` binding
-     * and individual property name arguments.
-     *
-     * @private
-     * @param {Object} object The source object.
-     * @param {Function|string[]} predicate The function called per iteration or
-     *  property names to pick.
-     * @returns {Object} Returns the new object.
-     */
-    function basePick(object, predicate) {
-      var result = {};
-
-      if (typeof predicate == 'function') {
-        baseForIn(object, function(value, key, object) {
-          if (predicate(value, key, object)) {
-            result[key] = value;
-          }
-        });
-        return result;
-      }
-      var index = -1,
-          props = predicate,
-          length = props.length;
-
-      while (++index < length) {
-        var key = props[index];
-        if (key in object) {
-          result[key] = object[key];
-        }
-      }
-      return result;
-    }
-
-    /**
      * The base implementation of `_.pullAt` without support for individual
      * index arguments.
      *
@@ -2495,6 +2479,36 @@
     }
 
     /**
+     * Creates a clone of the given array buffer.
+     *
+     * @private
+     * @param {ArrayBuffer} buffer The array buffer to clone.
+     * @returns {ArrayBuffer} Returns the cloned array buffer.
+     */
+    function bufferClone(buffer) {
+      return bufferSlice.call(buffer, 0);
+    }
+    if (!bufferSlice) {
+      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
+      bufferClone = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
+        var byteLength = buffer.byteLength,
+            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
+            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
+            result = new ArrayBuffer(byteLength);
+
+        if (floatLength) {
+          var view = new Float64Array(result, 0, floatLength);
+          view.set(new Float64Array(buffer, 0, floatLength));
+        }
+        if (byteLength != offset) {
+          view = new Uint8Array(result, offset);
+          view.set(new Uint8Array(buffer, offset));
+        }
+        return result;
+      };
+    }
+
+    /**
      * Creates an array that is the composition of partially applied arguments,
      * placeholders, and provided arguments into a single array of arguments.
      *
@@ -2599,27 +2613,27 @@
      * @returns {Function} Returns the new assigner function.
      */
     function createAssigner(assigner) {
-      return function(object) {
-        var args = arguments,
-            length = args.length;
+      return function() {
+        var length = arguments.length,
+            object = arguments[0];
 
         if (object == null || length < 2) {
           return object;
         }
         // enables use as a callback for functions like `_.reduce`
-        var type = typeof args[2];
-        if ((type == 'number' || type == 'string') && args[3] && args[3][args[2]] === args[1]) {
+        var type = typeof arguments[2];
+        if ((type == 'number' || type == 'string') && arguments[3] && arguments[3][arguments[2]] === arguments[1]) {
           length = 2;
         }
         // juggle arguments
-        if (length > 3 && typeof args[length - 2] == 'function') {
-          var customizer = baseCallback(args[--length - 1], args[length--], 5);
-        } else if (length > 2 && typeof args[length - 1] == 'function') {
-          customizer = args[--length];
+        if (length > 3 && typeof arguments[length - 2] == 'function') {
+          var customizer = baseCallback(arguments[--length - 1], arguments[length--], 5);
+        } else if (length > 2 && typeof arguments[length - 1] == 'function') {
+          customizer = arguments[--length];
         }
         var index = 0;
         while (++index < length) {
-          assigner(object, args[index], customizer);
+          assigner(object, arguments[index], customizer);
         }
         return object;
       };
@@ -2795,17 +2809,17 @@
       var funcData = !isBindKey && func[EXPANDO];
       if (funcData && funcData !== true) {
         // shallow clone `funcData`
-        funcData = slice(funcData);
+        funcData = arrayClone(funcData);
 
         // clone partial left arguments
         if (funcData[4]) {
-          funcData[4] = slice(funcData[4]);
-          funcData[5] = slice(funcData[5]);
+          funcData[4] = arrayClone(funcData[4]);
+          funcData[5] = arrayClone(funcData[5]);
         }
         // clone partial right arguments
         if (funcData[6]) {
-          funcData[6] = slice(funcData[6]);
-          funcData[7] = slice(funcData[7]);
+          funcData[6] = arrayClone(funcData[6]);
+          funcData[7] = arrayClone(funcData[7]);
         }
         // set arity if provided
         if (typeof arity == 'number') {
@@ -2861,7 +2875,7 @@
     function getCallback(func, thisArg, argCount) {
       var result = lodash.callback || callback;
       result = result === callback ? baseCallback : result;
-      return arguments.length ? result(func, thisArg, argCount) : result;
+      return argCount ? result(func, thisArg, argCount) : result;
     }
 
     /**
@@ -2918,33 +2932,46 @@
     }
 
     /**
-     * Creates a clone of the given array buffer.
+     * A specialized version of `_.pick` that picks `object` properties
+     * specified by the `props` array.
      *
      * @private
-     * @param {ArrayBuffer} buffer The array buffer to clone.
-     * @returns {ArrayBuffer} Returns the cloned array buffer.
+     * @param {Object} object The source object.
+     * @param {string[]} props The property names to pick.
+     * @returns {Object} Returns the new object.
      */
-    function cloneBuffer(buffer) {
-      return bufferSlice.call(buffer, 0);
-    }
-    if (!bufferSlice) {
-      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
-      cloneBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
-        var byteLength = buffer.byteLength,
-            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
-            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
-            result = new ArrayBuffer(byteLength);
+    function pickByArray(object, props) {
+      var index = -1,
+          length = props.length,
+          result = {};
 
-        if (floatLength) {
-          var view = new Float64Array(result, 0, floatLength);
-          view.set(new Float64Array(buffer, 0, floatLength));
+      while (++index < length) {
+        var key = props[index];
+        if (key in object) {
+          result[key] = object[key];
         }
-        if (byteLength != offset) {
-          view = new Uint8Array(result, offset);
-          view.set(new Uint8Array(buffer, offset));
+      }
+      return result;
+    }
+
+    /**
+     * A specialized version of `_.pick` that picks `object` properties
+     * the predicate returns truthy for.
+     *
+     * @private
+     * @param {Object} object The source object.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {Object} Returns the new object.
+     */
+    function pickByCallback(object, predicate) {
+      var result = {};
+
+      baseForIn(object, function(value, key, object) {
+        if (predicate(value, key, object)) {
+          result[key] = value;
         }
-        return result;
-      };
+      });
+      return result;
     }
 
     /**
@@ -3763,8 +3790,9 @@
      * console.log(array);
      * // => [1, 1]
      */
-    function pull(array) {
-      var argsIndex = 0,
+    function pull() {
+      var array = arguments[0],
+          argsIndex = 0,
           argsLength = arguments.length,
           indexOf = getIndexOf();
 
@@ -3902,6 +3930,9 @@
       end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
       if (end < 0) {
         end += length;
+      }
+      if (end && end == length && !start) {
+        return arrayClone(array);
       }
       length = start > end ? 0 : (end - start);
 
@@ -4290,8 +4321,8 @@
      * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
      * // => [2, 3, 4]
      */
-    function without() {
-      return baseDifference(arguments[0], slice(arguments, 1));
+    function without(array) {
+      return baseDifference(array, slice(arguments, 1));
     }
 
     /**
@@ -5614,7 +5645,7 @@
       if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
         return (support.unindexedChars && isString(collection))
           ? collection.split('')
-          : slice(collection);
+          : arrayClone(collection);
       }
       return values(collection);
     }
@@ -6627,7 +6658,7 @@
       if (object == null) {
         return object;
       }
-      var args = slice(arguments);
+      var args = arrayClone(arguments);
       args.push(assignDefaults);
       return assign.apply(undefined, args);
     }
@@ -7663,11 +7694,10 @@
       if (object == null) {
         return {};
       }
-      if (typeof predicate == 'function') {
-        return basePick(object, negate(getCallback(predicate, thisArg, 3)));
-      }
-      var omitProps = baseFlatten(arguments, false, false, 1);
-      return basePick(toObject(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
+      var iterable = toObject(object);
+      return typeof predicate == 'function'
+        ? pickByCallback(iterable, negate(getCallback(predicate, thisArg, 3)))
+        : pickByArray(iterable, baseDifference(keysIn(iterable), arrayMap(baseFlatten(arguments, false, false, 1), String)));
     }
 
     /**
@@ -7728,11 +7758,10 @@
       if (object == null) {
         return {};
       }
-      return basePick(toObject(object),
-        typeof predicate == 'function'
-          ? getCallback(predicate, thisArg, 3)
-          : baseFlatten(arguments, false, false, 1)
-      );
+      var iterable = toObject(object);
+      return typeof predicate == 'function'
+        ? pickByCallback(iterable, getCallback(predicate, thisArg, 3))
+        : pickByArray(iterable, baseFlatten(arguments, false, false, 1));
     }
 
     /**

@@ -299,24 +299,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a shallow clone of `array`.
-   *
-   * @private
-   * @param {Array} array The array to slice.
-   * @returns {Array} Returns the cloned array.
-   */
-  function arrayClone(array) {
-    var index = -1,
-        length = array ? array.length : 0,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = array[index];
-    }
-    return result;
-  }
-
-  /**
    * The base implementation of `_.at` without support for strings and individual
    * key arguments.
    *
@@ -378,6 +360,25 @@
       }
     }
     return -1;
+  }
+
+  /**
+   * The base implementation of `_.slice` without support for `start` and `end`
+   * arguments.
+   *
+   * @private
+   * @param {Array} array The array to slice.
+   * @returns {Array} Returns the slice of `array`.
+   */
+  function baseSlice(array) {
+    var index = -1,
+        length = array ? array.length : 0,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = array[index];
+    }
+    return result;
   }
 
   /**
@@ -1424,79 +1425,15 @@
       if (typeof result != 'undefined') {
         return result;
       }
-      var isArr = isArray(value),
-          isShallow = !isDeep;
-
+      var isArr = isArray(value);
+      result = value;
       if (isArr) {
-        result = isShallow ? arrayClone(value) : value.constructor(value.length);
-
-        // add array properties assigned by `RegExp#exec`
-        if (typeof value[0] == 'string' && hasOwnProperty.call(value, 'index')) {
-          result.index = value.index;
-          result.input = value.input;
-        }
-        if (isShallow) {
-          return result;
-        }
+        result = initArrayClone(value, isDeep);
+      } else if (isObject(value)) {
+        result = initObjectClone(value, isDeep);
+        value = (isDeep && toString.call(result) == objectClass) ? value : result;
       }
-      else {
-        if (!isObject(value)) {
-          return value;
-        }
-        var className = toString.call(value);
-        if (!cloneableClasses[className] || (!support.nodeClass && isNode(value))) {
-          return value;
-        }
-        var isArgs = className == argsClass || (!support.argsClass && isArguments(value)),
-            isObj = !isArgs && className == objectClass;
-
-        if (isShallow && (isArgs || isObj)) {
-          result = baseAssign({}, value);
-          if (isObj) {
-            return result;
-          }
-        }
-        var Ctor = value.constructor;
-        if (className == objectClass && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
-          Ctor = Object;
-        }
-        if (isDeep && (isArgs || isObj)) {
-          result = new Ctor;
-        }
-        else {
-          switch (className) {
-            case arrayBufferClass:
-              return bufferClone(value);
-
-            case boolClass:
-            case dateClass:
-              return new Ctor(+value);
-
-            case float32Class: case float64Class:
-            case int8Class: case int16Class: case int32Class:
-            case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-              // Safari 5 mobile incorrectly has `Object` as the constructor
-              if (Ctor instanceof Ctor) {
-                Ctor = ctorByClass[className];
-              }
-              var buffer = value.buffer;
-              return new Ctor(isDeep ? bufferClone(buffer) : buffer, value.byteOffset, value.length);
-
-            case numberClass:
-            case stringClass:
-              return new Ctor(value);
-
-            case regexpClass:
-              result = Ctor(value.source, reFlags.exec(value));
-              result.lastIndex = value.lastIndex;
-              return result;
-          }
-        }
-      }
-      if (isArgs) {
-        result.length = value.length;
-      }
-      if (isShallow) {
+      if (!isDeep || result === value) {
         return result;
       }
       // check for circular references and return corresponding clone
@@ -2809,17 +2746,17 @@
       var funcData = !isBindKey && func[EXPANDO];
       if (funcData && funcData !== true) {
         // shallow clone `funcData`
-        funcData = arrayClone(funcData);
+        funcData = baseSlice(funcData);
 
         // clone partial left arguments
         if (funcData[4]) {
-          funcData[4] = arrayClone(funcData[4]);
-          funcData[5] = arrayClone(funcData[5]);
+          funcData[4] = baseSlice(funcData[4]);
+          funcData[5] = baseSlice(funcData[5]);
         }
         // clone partial right arguments
         if (funcData[6]) {
-          funcData[6] = arrayClone(funcData[6]);
-          funcData[7] = arrayClone(funcData[7]);
+          funcData[6] = baseSlice(funcData[6]);
+          funcData[7] = baseSlice(funcData[7]);
         }
         // set arity if provided
         if (typeof arity == 'number') {
@@ -2891,6 +2828,88 @@
       var result = lodash.indexOf || indexOf;
       result = result === indexOf ? baseIndexOf : result;
       return collection ? result(collection, target, fromIndex) : result;
+    }
+
+    /**
+     * Initializes an array clone.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @returns {*} Returns the initialized clone value.
+     */
+    function initArrayClone(array, isDeep) {
+      var index = -1,
+          length = array.length,
+          result = array.constructor(length);
+
+      if (!isDeep) {
+        while (++index < length) {
+          result[index] = array[index];
+        }
+      }
+      // add array properties assigned by `RegExp#exec`
+      if (typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+        result.index = array.index;
+        result.input = array.input;
+      }
+      return result;
+    }
+
+    /**
+     * Initializes an object clone.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @returns {*} Returns the initialized clone value.
+     */
+    function initObjectClone(object, isDeep) {
+      var className = toString.call(object);
+      if (!cloneableClasses[className] || (!support.nodeClass && isNode(object))) {
+        return object;
+      }
+      var Ctor = object.constructor,
+          isArgs = className == argsClass || (!support.argsClass && isArguments(object)),
+          isObj = className == objectClass;
+
+      if (isObj && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
+        Ctor = Object;
+      }
+      if (isArgs || isObj) {
+        var result = isDeep ? new Ctor : baseAssign(new Ctor, object);
+        if (isArgs) {
+          result.length = object.length;
+        }
+        return result;
+      }
+      switch (className) {
+        case arrayBufferClass:
+          return bufferClone(object);
+
+        case boolClass:
+        case dateClass:
+          return new Ctor(+object);
+
+        case float32Class: case float64Class:
+        case int8Class: case int16Class: case int32Class:
+        case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
+          // Safari 5 mobile incorrectly has `Object` as the constructor
+          if (Ctor instanceof Ctor) {
+            Ctor = ctorByClass[className];
+          }
+          var buffer = object.buffer;
+          return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
+
+        case numberClass:
+        case stringClass:
+          return new Ctor(object);
+
+        case regexpClass:
+          result = Ctor(object.source, reFlags.exec(object));
+          result.lastIndex = object.lastIndex;
+      }
+      return result;
     }
 
     /**
@@ -3932,7 +3951,7 @@
         end += length;
       }
       if (end && end == length && !start) {
-        return arrayClone(array);
+        return baseSlice(array);
       }
       length = start > end ? 0 : (end - start);
 
@@ -5645,7 +5664,7 @@
       if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
         return (support.unindexedChars && isString(collection))
           ? collection.split('')
-          : arrayClone(collection);
+          : baseSlice(collection);
       }
       return values(collection);
     }
@@ -6658,7 +6677,7 @@
       if (object == null) {
         return object;
       }
-      var args = arrayClone(arguments);
+      var args = baseSlice(arguments);
       args.push(assignDefaults);
       return assign.apply(undefined, args);
     }

@@ -8775,7 +8775,7 @@
         var isStrict = isStrictComparable(value);
 
         flags[index] = isStrict;
-        vals[index] = isStrict ? value : baseClone(value, false);
+        vals[index] = isStrict ? value : baseClone(value);
       }
       return function(object) {
         index = length;

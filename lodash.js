@@ -2849,7 +2849,7 @@
         }
       }
       // add array properties assigned by `RegExp#exec`
-      if (typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+      if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
         result.index = array.index;
         result.input = array.input;
       }

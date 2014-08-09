@@ -1902,6 +1902,10 @@
       strictEqual(_.contains([3, 2, 1], 3, true), true);
     });
 
+    test('should match `NaN`', 1, function() {
+      strictEqual(_.contains([1, NaN, 3], NaN), true);
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.include, _.contains);
     });
@@ -2855,6 +2859,10 @@
 
       actual = _.difference([1, 2, 3, 4, 5], [5, 2, 10], [8, 4]);
       deepEqual(actual, [1, 3]);
+    });
+
+    test('should match `NaN`', 1, function() {
+      deepEqual(_.difference([1, NaN, 3], [NaN, 5, NaN]), [1, 3]);
     });
 
     test('should work with large arrays', 1, function() {
@@ -4793,6 +4801,10 @@
       deepEqual(_.intersection(array), [1, 3, 2]);
     });
 
+    test('should match `NaN`', 1, function() {
+      deepEqual(_.intersection([1, NaN, 3], [NaN, 5, NaN]), [NaN]);
+    });
+
     test('should work with large arrays of objects', 1, function() {
       var object = {},
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
@@ -6722,6 +6734,10 @@
       strictEqual(func(empty, undefined), -1);
       strictEqual(func(empty, undefined, true), -1);
     });
+
+    test('`_.' + methodName + '` should match `NaN`', 1, function() {
+      strictEqual(func([1, NaN, 3], NaN), 1);
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -8487,6 +8503,13 @@
       delete array[1];
 
       _.pull(array, undefined);
+      deepEqual(array, [1, 3]);
+    });
+
+    test('should match `NaN`', 1, function() {
+      var array = [1, NaN, 3, NaN];
+
+      _.pull(array, NaN);
       deepEqual(array, [1, 3]);
     });
   }());
@@ -11022,6 +11045,10 @@
 
     test('should treat object instances as uniq', 1, function() {
       deepEqual(_.uniq(objects), objects);
+    });
+
+    test('should not treat `NaN` as uniq', 1, function() {
+      deepEqual(_.uniq([1, NaN, 3, NaN]), [1, NaN, 3]);
     });
 
     test('should work with `isSorted`', 3, function() {

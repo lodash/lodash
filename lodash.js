@@ -3811,13 +3811,13 @@
      */
     function pull() {
       var array = arguments[0],
-          argsIndex = 0,
-          argsLength = arguments.length,
-          indexOf = getIndexOf();
+          index = 0,
+          indexOf = getIndexOf(),
+          length = arguments.length;
 
-      while (++argsIndex < argsLength) {
+      while (++index < length) {
         var fromIndex = 0,
-            value = arguments[argsIndex];
+            value = arguments[index];
 
         while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
           splice.call(array, fromIndex, 1);

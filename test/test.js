@@ -2886,6 +2886,11 @@
       deepEqual(_.difference([object1, object2], largeArray), [object2]);
     });
 
+    test('should work with large arrays of `NaN`', 1, function() {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(NaN));
+      deepEqual(_.difference([1, NaN, 3], largeArray), [1, 3]);
+    });
+
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
       var array = [0, 1, null, 3];
       deepEqual(_.difference(array, 3, null, { '0': 1 }), array);
@@ -4818,6 +4823,11 @@
 
       deepEqual(_.intersection([object], largeArray), [object]);
       deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), null, [1]), [1]);
+    });
+
+    test('should work with large arrays of `NaN`', 1, function() {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(NaN));
+      deepEqual(_.intersection([1, NaN, 3], largeArray), [NaN]);
     });
 
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
@@ -11119,9 +11129,9 @@
       deepEqual(_.uniq(largeArray), [0, 'a', object]);
     });
 
-    test('should work with large arrays of boolean, `null`, and `undefined` values', 1, function() {
+    test('should work with large arrays of boolean, `NaN`, `null`, and `undefined` values', 1, function() {
       var array = [],
-          expected = [true, false, null, undefined],
+          expected = [true, false, NaN, null, undefined],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {

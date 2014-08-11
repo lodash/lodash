@@ -11053,11 +11053,11 @@
       deepEqual(_.uniq(array), [1, 2, 3]);
     });
 
-    test('should treat object instances as uniq', 1, function() {
+    test('should treat object instances as unique', 1, function() {
       deepEqual(_.uniq(objects), objects);
     });
 
-    test('should not treat `NaN` as uniq', 1, function() {
+    test('should not treat `NaN` as unique', 1, function() {
       deepEqual(_.uniq([1, NaN, 3, NaN]), [1, NaN, 3]);
     });
 

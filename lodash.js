@@ -719,8 +719,7 @@
     }());
 
     /* Native method references for those with the same name as other `lodash` methods */
-    var nativeContains = isNative(nativeContains = stringProto.contains) && nativeContains,
-        nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
+    var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
@@ -4627,15 +4626,9 @@
       } else {
         fromIndex = 0;
       }
-      if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
-        if (fromIndex >= length) {
-          return false;
-        }
-        return nativeContains
-          ? nativeContains.call(collection, target, fromIndex)
-          : collection.indexOf(target, fromIndex) > -1;
-      }
-      return getIndexOf(collection, target, fromIndex) > -1;
+      return (typeof collection == 'string' || !isArray(collection) && isString(collection))
+        ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)
+        : (getIndexOf(collection, target, fromIndex) > -1);
     }
 
     /**

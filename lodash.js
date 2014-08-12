@@ -207,7 +207,7 @@
   /**
    * Used to convert characters to HTML entities.
    *
-   * Note: Though the ">" character is escaped for symmetry, characters like
+   * **Note:** Though the ">" character is escaped for symmetry, characters like
    * ">" and "/" don't require escaping in HTML and have no special meaning
    * unless they're part of a tag or unquoted attribute value.
    * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
@@ -1284,7 +1284,7 @@
     /**
      * Used by `_.template` to customize its `_.assign` use.
      *
-     * Note: This method is like `assignDefaults` except that it ignores
+     * **Note:** This method is like `assignDefaults` except that it ignores
      * inherited property values when checking if a property is `undefined`.
      *
      * @private
@@ -3234,7 +3234,7 @@
      * Creates an array excluding all values of the provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -3607,7 +3607,7 @@
      * it is used as the offset from the end of the collection. If `array` is
      * sorted providing `true` for `fromIndex` performs a faster binary search.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -3666,7 +3666,7 @@
      * Creates an array of unique values present in all provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -3790,7 +3790,7 @@
      * Removes all provided values from `array` using `SameValueZero` for equality
      * comparisons.
      *
-     * Note: Unlike `_.without`, this method mutates `array`.
+     * **Note:** Unlike `_.without`, this method mutates `array`.
      *
      * `SameValueZero` is like strict equality, e.g. `===`, except that `NaN` matches
      * `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
@@ -3831,7 +3831,7 @@
      * returns an array of the removed elements. Indexes may be specified as an
      * array of indexes or as individual arguments.
      *
-     * Note: Unlike `_.at`, this method mutates `array`.
+     * **Note:** Unlike `_.at`, this method mutates `array`.
      *
      * @static
      * @memberOf _
@@ -3867,7 +3867,7 @@
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
-     * Note: Unlike `_.filter`, this method mutates `array`.
+     * **Note:** Unlike `_.filter`, this method mutates `array`.
      *
      * @static
      * @memberOf _
@@ -3927,7 +3927,7 @@
     /**
      * Slices `array` from the `start` index up to, but not including, the `end` index.
      *
-     * Note: This function is used instead of `Array#slice` to support node lists
+     * **Note:** This function is used instead of `Array#slice` to support node lists
      * in IE < 9 and to ensure dense arrays are returned.
      *
      * @static
@@ -4202,7 +4202,7 @@
      * Creates an array of unique values, in order, of the provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -4235,7 +4235,7 @@
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -4325,7 +4325,7 @@
      * Creates an array excluding all provided values using `SameValueZero` for
      * equality comparisons.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -4589,7 +4589,7 @@
      * equality comparisons. If `fromIndex` is negative, it is used as the offset
      * from the end of the collection.
      *
-     * Note: `SameValueZero` is like strict equality, e.g. `===`, except that
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
      * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
@@ -4881,7 +4881,7 @@
      * (value, index|key, collection). Iterator functions may exit iteration early
      * by explicitly returning `false`.
      *
-     * Note: As with other "Collections" methods, objects with a `length` property
+     * **Note:** As with other "Collections" methods, objects with a `length` property
      * are iterated like arrays. To avoid this behavior `_.forIn` or `_.forOwn`
      * may be used for object iteration.
      *
@@ -5772,7 +5772,7 @@
      * and prepends any additional `bind` arguments to those provided to the bound
      * function.
      *
-     * Note: Unlike native `Function#bind` this method does not set the `length`
+     * **Note:** Unlike native `Function#bind` this method does not set the `length`
      * property of bound functions.
      *
      * @static
@@ -5808,7 +5808,7 @@
      * of method names. If no method names are provided all enumerable function
      * properties, own and inherited, of `object` are bound.
      *
-     * Note: This method does not set the `length` property of bound functions.
+     * **Note:** This method does not set the `length` property of bound functions.
      *
      * @static
      * @memberOf _
@@ -5941,7 +5941,7 @@
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
      *
-     * Note: This method does not set the `length` property of curried functions.
+     * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
      * @memberOf _
@@ -5974,7 +5974,7 @@
      * This method is like `_.curry` except that arguments are applied to `func`
      * in the manner of `_.partialRight` instead of `_.partial`.
      *
-     * Note: This method does not set the `length` property of curried functions.
+     * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
      * @memberOf _
@@ -6011,7 +6011,7 @@
      * and/or trailing edge of the `wait` timeout. Subsequent calls to the
      * debounced function return the result of the last `func` call.
      *
-     * Note: If `leading` and `trailing` options are `true`, `func` is called on
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
@@ -6332,7 +6332,7 @@
      * prepended to those provided to the new function. This method is similar to
      * `_.bind` except it does **not** alter the `this` binding.
      *
-     * Note: This method does not set the `length` property of partially applied
+     * **Note:** This method does not set the `length` property of partially applied
      * functions.
      *
      * @static
@@ -6359,7 +6359,7 @@
      * This method is like `_.partial` except that partially applied arguments
      * are appended to those provided to the new function.
      *
-     * Note: This method does not set the `length` property of partially applied
+     * **Note:** This method does not set the `length` property of partially applied
      * functions.
      *
      * @static
@@ -6401,7 +6401,7 @@
      * Subsequent calls to the throttled function return the result of the last
      * `func` call.
      *
-     * Note: If `leading` and `trailing` options are `true`, `func` is called on
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the throttled function is
      * invoked more than once during the `wait` timeout.
      *
@@ -6514,7 +6514,7 @@
      * cloning is handled by the method instead. The `customizer` is bound to
      * `thisArg` and invoked with two argument; (value, index|key).
      *
-     * Note: This method is loosely based on the structured clone algorithm. Functions
+     * **Note:** This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
      * objects created by constructors other than `Object` are cloned to plain `Object` objects.
      * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
@@ -6577,7 +6577,7 @@
      * is handled by the method instead. The `customizer` is bound to `thisArg`
      * and invoked with two argument; (value, index|key).
      *
-     * Note: This method is loosely based on the structured clone algorithm. Functions
+     * **Note:** This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
      * objects created by constructors other than `Object` are cloned to plain `Object` objects.
      * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
@@ -6659,7 +6659,7 @@
      * object for all destination properties that resolve to `undefined`. Once a
      * property is set, additional defaults of the same property are ignored.
      *
-     * Note: See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
+     * **Note:** See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
      * for a deep version of this method.
      *
      * @static
@@ -7141,7 +7141,7 @@
      * instead. The `customizer` is bound to `thisArg` and invoked with three
      * arguments; (value, other, key).
      *
-     * Note: This method supports comparing arrays, booleans, `Date` objects,
+     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
      * are **not** supported. Provide a customizer function to extend support
      * for comparing other values.
@@ -7204,7 +7204,7 @@
     /**
      * Checks if `value` is a finite primitive number.
      *
-     * Note: This method is based on ES6 `Number.isFinite`. See the
+     * **Note:** This method is based on ES6 `Number.isFinite`. See the
      * [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
      * for more details.
      *
@@ -7266,7 +7266,7 @@
      * Checks if `value` is the language type of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
-     * Note: See the [ES5 spec](http://es5.github.io/#x8) for more details.
+     * **Note:** See the [ES5 spec](http://es5.github.io/#x8) for more details.
      *
      * @static
      * @memberOf _
@@ -7294,7 +7294,7 @@
     /**
      * Checks if `value` is `NaN`.
      *
-     * Note: This method is not the same as native `isNaN` which returns `true`
+     * **Note:** This method is not the same as native `isNaN` which returns `true`
      * for `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
      * for more details.
      *
@@ -7346,7 +7346,7 @@
     /**
      * Checks if `value` is classified as a `Number` primitive or object.
      *
-     * Note: To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+     * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
      * as numbers, use the `_.isFinite` method.
      *
      * @static
@@ -7375,7 +7375,7 @@
      * Checks if `value` is an object created by the `Object` constructor or has
      * a `[[Prototype]]` of `null`.
      *
-     * Note: This method assumes objects created by the `Object` constructor
+     * **Note:** This method assumes objects created by the `Object` constructor
      * have no inherited enumerable properties.
      *
      * @static
@@ -7971,7 +7971,7 @@
      * Converts the characters "&", "<", ">", '"', and "'" in `string` to
      * their corresponding HTML entities.
      *
-     * Note: No other characters are escaped. To escape additional characters
+     * **Note:** No other characters are escaped. To escape additional characters
      * use a third-party library like [_he_](http://mths.be/he).
      *
      * When working with HTML you should always quote attribute values to reduce
@@ -8238,7 +8238,7 @@
      * properties may be accessed as free variables in the template. If a setting
      * object is provided it overrides `_.templateSettings` for the template.
      *
-     * Note: In the development build `_.template` utilizes sourceURLs for easier debugging.
+     * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
@@ -8600,7 +8600,7 @@
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
      *
-     * Note: No other HTML entities are unescaped. To unescape additional HTML
+     * **Note:** No other HTML entities are unescaped. To unescape additional HTML
      * entities use a third-party library like [_he_](http://mths.be/he).
      *
      * @static
@@ -8937,7 +8937,7 @@
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
      *
-     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
+     * **Note:** This method avoids differences in native ES3 and ES5 `parseInt`
      * implementations. See the [ES5 spec](http://es5.github.io/#E)
      * for more details.
      *

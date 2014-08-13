@@ -444,10 +444,10 @@
         var source = { "num": 9 };\
         \
         var _findWhere = _.findWhere || _.find,\
-            _match = _.matches && _.matches(source);\
+            _match = (_.matches || _.createCallback || _.noop)(source);\
         \
         var lodashFindWhere = lodash.findWhere || lodash.find,\
-            lodashMatch = lodash.matches && lodash.matches(source);\
+            lodashMatch = (lodash.matches || lodash.createCallback || lodash.noop)(source);\
       }\
       if (typeof multiArrays != "undefined") {\
         var twentyValues = belt.shuffle(belt.range(20)),\

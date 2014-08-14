@@ -5865,7 +5865,7 @@
     function bindKey(object, key) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (arguments.length > 2) {
-        var args = slice(arguments, 2);
+        var args = slice(arguments, 2),
             holders = replaceHolders(args, bindKey.placeholder);
       }
       return args

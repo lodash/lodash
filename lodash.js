@@ -121,7 +121,8 @@
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
     'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document',
     'isFinite', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
-    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'window', 'WinRTError'
+    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
+    'window', 'WinRTError'
   ];
 
   /** Used to fix the JScript `[[DontEnum]]` bug */
@@ -693,7 +694,8 @@
         setTimeout = context.setTimeout,
         splice = arrayProto.splice,
         Uint8Array = isNative(Uint8Array = context.Uint8Array) && Uint8Array,
-        unshift = arrayProto.unshift;
+        unshift = arrayProto.unshift,
+        WeakMap = isNative(WeakMap = context.WeakMap) && WeakMap;
 
     /** Used to clone array buffers */
     var Float64Array = (function() {
@@ -732,6 +734,9 @@
 
     /** Used as the size, in bytes, of each Float64Array element */
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
+
+    /** Used to store function metadata */
+    var metaMap = WeakMap && new WeakMap;
 
     /** Used to lookup a built-in constructor by [[Class]] */
     var ctorByClass = {};
@@ -1360,7 +1365,7 @@
         if (typeof thisArg == 'undefined') {
           return func;
         }
-        var data = func[EXPANDO];
+        var data = getData(func);
         if (typeof data == 'undefined') {
           if (support.funcNames) {
             data = !func.name;
@@ -2130,7 +2135,7 @@
      */
     function basePartial(func, bitmask, args, holders, thisArg) {
       if (func) {
-        var data = func[EXPANDO],
+        var data = getData(func),
             arity = data ? data[2] : func.length;
 
         arity -= args.length;
@@ -2718,7 +2723,7 @@
         isPartialRight = false;
         partialRightArgs = partialRightHolders = null;
       }
-      var data = !isBindKey && func[EXPANDO];
+      var data = !isBindKey && getData(func);
       if (data && data !== true) {
         var funcBitmask = data[1],
             funcIsBind = funcBitmask & BIND_FLAG,
@@ -2781,6 +2786,23 @@
       var result = lodash.callback || callback;
       result = result === callback ? baseCallback : result;
       return argCount ? result(func, thisArg, argCount) : result;
+    }
+
+    /**
+     * Gets metadata for `func`.
+     *
+     * @private
+     * @param {Function} func The function to query.
+     * @returns {*} Returns the metadata for `func`.
+     */
+    function getData(func) {
+      return metaMap.get(func);
+    }
+    // fallback for environments without `WeakMap`
+    if (!WeakMap) {
+      getData = !defineProperty ? noop : function(func) {
+        return func[EXPANDO];
+      };
     }
 
     /**
@@ -2986,19 +3008,26 @@
     }
 
     /**
-     * Sets wrapper metadata on a given function.
+     * Sets metadata for `func`.
      *
      * @private
-     * @param {Function} func The function to set data on.
-     * @param {Array} value The data array to set.
+     * @param {Function} func The function to associate metadata with.
+     * @param {*} data The metadata.
      * @returns {Function} Returns `func`.
      */
-    var setData = !defineProperty ? identity : function(func, value) {
-      descriptor.value = value;
-      defineProperty(func, EXPANDO, descriptor);
-      descriptor.value = null;
+    function setData(func, data) {
+      metaMap.set(func, data);
       return func;
-    };
+    }
+    // fallback for environments without `WeakMap`
+    if (!WeakMap) {
+      setData = !defineProperty ? identity : function(func, value) {
+        descriptor.value = value;
+        defineProperty(func, EXPANDO, descriptor);
+        descriptor.value = null;
+        return func;
+      };
+    }
 
     /**
      * A fallback implementation of `_.isPlainObject` which checks if `value`

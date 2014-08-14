@@ -38,7 +38,8 @@
       slice = arrayProto.slice,
       system = root.system,
       toString = objectProto.toString,
-      Uint8Array = root.Uint8Array;
+      Uint8Array = root.Uint8Array,
+      WeakMap = root.WeakMap;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -2179,7 +2180,7 @@
 
       var object = {};
 
-      if (defineProperty && _.support.funcDecomp) {
+      if ((defineProperty && !WeakMap) && _.support.funcDecomp) {
         _.callback(a, object);
         ok(EXPANDO in a);
 
@@ -2205,7 +2206,7 @@
     test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
       function a() {};
 
-      if (defineProperty && lodashBizarro) {
+      if ((defineProperty && !WeakMap) && lodashBizarro) {
         lodashBizarro.callback(a, {});
         ok(!(EXPANDO in a));
       }

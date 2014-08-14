@@ -54,7 +54,7 @@
 				var hasOwnProperty = objectProto.hasOwnProperty,
 				    fnToString = funcProto.toString,
 				    nativeString = fnToString.call(objectProto.toString),
-				    noop = function() {},
+				    noop = function() { },
 				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
 				    reToString = /toString/g,
 				    whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
@@ -154,6 +154,9 @@
 						return Float64Array;
 					}());
 				}
+				setProperty(window, '_WeakMap', window.WeakMap);
+				setProperty(window, 'WeakMap', noop);
+
 				setProperty(window, '_parseInt', parseInt);
 				setProperty(window, 'parseInt', (function(_parseInt) {
 					var checkStr = whitespace + '08',
@@ -234,6 +237,11 @@
 					ArrayBuffer = _ArrayBuffer;
 				}
 				setProperty(window, '_ArrayBuffer', undefined);
+
+				if (window._WeakMap) {
+					WeakMap = _WeakMap;
+				}
+				setProperty(window, '_WeakMap', undefined);
 
 				setProperty(window, 'parseInt', window._parseInt);
 				setProperty(window, '_parseInt', undefined);

@@ -1338,7 +1338,7 @@
 
       while (++index < length) {
         var key = methodNames[index];
-        object[key] = createWrapper([object[key], BIND_FLAG, null, object]);
+        object[key] = createWrapper(object[key], BIND_FLAG, null, object);
       }
       return object;
     }
@@ -1488,85 +1488,6 @@
     }
 
     /**
-     * The base implementation of `createWrapper` which creates the wrapper and
-     * sets its metadata.
-     *
-     * @private
-     * @param {Array} data The metadata array. See `createWrapper` for more details.
-     * @returns {Function} Returns the new function.
-     */
-    function baseCreateWrapper(data) {
-      var bitmask = data[1];
-      if (bitmask == BIND_FLAG) {
-        return setData(createBindWrapper(data), data);
-      }
-      var partialHolders = data[5];
-      if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
-        return setData(createPartialWrapper(data), data);
-      }
-      var func = data[0],
-          arity = data[2],
-          thisArg = data[3],
-          partialArgs = data[4],
-          partialRightArgs = data[6],
-          partialRightHolders = data[7];
-
-      var isBind = bitmask & BIND_FLAG,
-          isBindKey = bitmask & BIND_KEY_FLAG,
-          isCurry = bitmask & CURRY_FLAG,
-          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG;
-
-      var Ctor = !isBindKey && createCtorWrapper(func),
-          key = func;
-
-      var wrapper = function() {
-        var length = arguments.length,
-            index = length,
-            args = Array(length);
-
-        while (index--) {
-          args[index] = arguments[index];
-        }
-        if (partialArgs) {
-          args = composeArgs(partialArgs, partialHolders, args);
-        }
-        if (partialRightArgs) {
-          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
-        }
-        if (isCurry || isCurryRight) {
-          var placeholder = wrapper.placeholder,
-              newPartialHolders = replaceHolders(args, placeholder);
-
-          length -= newPartialHolders.length;
-
-          if (length < arity) {
-            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
-            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
-
-            if (!isCurryBound) {
-              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-            }
-            var newData = [func, bitmask, nativeMax(arity - length, 0), thisArg, null, null];
-            newData[isCurry ? 4 : 6] = args;
-            newData[isCurry ? 5 : 7] = newPartialHolders;
-
-            var result = baseCreateWrapper(newData);
-            result.placeholder = placeholder;
-            return result;
-          }
-        }
-        var thisBinding = isBind ? thisArg : this;
-        if (isBindKey) {
-          func = thisBinding[key];
-        }
-        return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
-      };
-
-      return setData(wrapper, data);
-    }
-
-    /**
      * The base implementation of `_.curry` and `_.curryRight` which handles
      * resolving the default arity of `func`.
      *
@@ -1578,9 +1499,9 @@
      */
     function baseCurry(func, bitmask, arity) {
       if (typeof arity != 'number') {
-        arity = arity == null ? (func ? func.length : 0) : (+arity || 0);
+        arity = arity == null ? (func ? func.length : 0) : nativeMax(+arity || 0, 0);
       }
-      return createWrapper([func, bitmask, arity]);
+      return createWrapper(func, bitmask, arity);
     }
 
     /**
@@ -2214,12 +2135,9 @@
 
         arity -= args.length;
       }
-      var isPartial = bitmask & PARTIAL_FLAG,
-          newData = [func, bitmask, arity, thisArg, null, null];
-
-      newData[isPartial ? 4 : 6] = args;
-      newData[isPartial ? 5 : 7] = holders;
-      return createWrapper(newData);
+      return (bitmask & PARTIAL_FLAG)
+        ? createWrapper(func, bitmask, arity, thisArg, args, holders)
+        : createWrapper(func, bitmask, arity, thisArg, null, null, args, holders);
     }
 
     /**
@@ -2576,17 +2494,16 @@
     }
 
     /**
-     * Creates a function that invokes the function specified in the metadata
-     * with its associated `this` binding.
+     * Creates a function that wraps `func` and invokes it with the `this`
+     * binding of `thisArg`.
      *
      * @private
-     * @param {Array} data The metadata array. See `createWrapper` for more details.
-     * @returns {Function} Returns the new bound function.
+     * @param {Function} func The function to bind.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @returns {Function} Returns the new wrapped function.
      */
-    function createBindWrapper(data) {
-      var func = data[0],
-          thisArg = data[3],
-          Ctor = createCtorWrapper(func);
+    function createBindWrapper(func, thisArg) {
+      var Ctor = createCtorWrapper(func);
 
       function wrapper() {
         return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
@@ -2632,6 +2549,77 @@
     }
 
     /**
+     * Creates a function that wraps `func` and invokes it with optional `this`
+     * binding of, partial application, and currying.
+     *
+     * @private
+     * @param {Function|string} func The function or method name to reference.
+     * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {number} arity The arity of `func`.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {Array} [partialArgs] An array of arguments to prepend to those provided to the new function.
+     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] An array of arguments to append to those provided to the new function.
+     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
+     * @returns {Function} Returns the new function.
+     */
+    function createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
+      var isBind = bitmask & BIND_FLAG,
+          isBindKey = bitmask & BIND_KEY_FLAG,
+          isCurry = bitmask & CURRY_FLAG,
+          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG;
+
+      var Ctor = !isBindKey && createCtorWrapper(func),
+          key = func;
+
+      function wrapper() {
+        var length = arguments.length,
+            index = length,
+            args = Array(length);
+
+        while (index--) {
+          args[index] = arguments[index];
+        }
+        if (partialArgs) {
+          args = composeArgs(partialArgs, partialHolders, args);
+        }
+        if (partialRightArgs) {
+          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
+        }
+        if (isCurry || isCurryRight) {
+          var placeholder = wrapper.placeholder,
+              holders = replaceHolders(args, placeholder);
+
+          length -= holders.length;
+          if (length < arity) {
+            var newArity = nativeMax(arity - length, 0),
+                newPartialArgs = isCurry ? args : null,
+                newPartialHolders = isCurry ? holders : null,
+                newPartialRightArgs = isCurry ? null : args,
+                newPartialRightHolders = isCurry ? null : holders;
+
+            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
+            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
+
+            if (!isCurryBound) {
+              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+            }
+            var result = createHybridWrapper(func, bitmask, newArity, thisArg, newPartialArgs, newPartialHolders, newPartialRightArgs, newPartialRightHolders);
+            result.placeholder = placeholder;
+            return setData(result, [func, bitmask, newArity, thisArg, newPartialArgs, newPartialHolders, newPartialRightArgs, newPartialRightHolders]);
+          }
+        }
+        var thisBinding = isBind ? thisArg : this;
+        if (isBindKey) {
+          func = thisBinding[key];
+        }
+        return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+      }
+      return wrapper;
+    }
+
+    /**
      * Creates the pad required for `string` based on the given padding length.
      * The `chars` string may be truncated if the number of padding characters
      * exceeds the padding length.
@@ -2655,19 +2643,19 @@
     }
 
     /**
-     * Creates a function that invokes the function specified in the metadata
-     * with its associated partially applied arguments and optional `this` binding.
+     * Creates a function that wraps `func` and invokes it with the optional `this`
+     * binding of `thisArg` and the `partialArgs` prepended to those provided to
+     * the wrapper.
      *
      * @private
-     * @param {Array} data The metadata array. See `createWrapper` for more details.
+     * @param {Function} func The function to partially apply arguments to.
+     * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {Array} partialArgs An array of arguments to prepend to those provided to the new function.
+     * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new bound function.
      */
-    function createPartialWrapper(data) {
-      var func = data[0],
-          thisArg = data[3],
-          partialArgs = data[4];
-
-      var isBind = data[1] & BIND_FLAG,
+    function createPartialWrapper(func, bitmask, partialArgs, thisArg) {
+      var isBind = bitmask & BIND_FLAG,
           Ctor = createCtorWrapper(func);
 
       function wrapper() {
@@ -2695,9 +2683,8 @@
      * `this` binding and partially applied arguments.
      *
      * @private
-     * @param {Array} data The metadata array.
-     * @param {Function|string} data[0] The function or method name to reference.
-     * @param {number} data[1] The bitmask of flags to compose.
+     * @param {Function|string} func The function or method name to reference.
+     * @param {number} bitmask The bitmask of flags.
      *  The bitmask may be composed of the following flags:
      *   1  - `_.bind`
      *   2  - `_.bindKey`
@@ -2706,97 +2693,79 @@
      *   16 - `_.curry` or `_.curryRight` of a bound function
      *   32 - `_.partial`
      *   64 - `_.partialRight`
-     * @param {number} data[2] The arity of `data[0]`.
-     * @param {*} [data[3]] The `this` binding of `data[0]`.
-     * @param {Array} [data[4]] An array of arguments to prepend to those
-     *  provided to the new function.
-     * @param {Array} [data[5]] An array of `data[4]` placeholder indexes.
-     * @param {Array} [data[6]] An array of arguments to append to those
-     *  provided to the new function.
-     * @param {Array} [data[7]] An array of `data[6]` placeholder indexes.
+     * @param {number} arity The arity of `func`.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {Array} [partialArgs] An array of arguments to prepend to those provided to the new function.
+     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] An array of arguments to append to those provided to the new function.
+     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
-    function createWrapper(data) {
-      var func = data[0],
-          bitmask = data[1];
-
-      var isBind = bitmask & BIND_FLAG,
-          isBindKey = bitmask & BIND_KEY_FLAG,
-          isPartial = bitmask & PARTIAL_FLAG,
-          isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
-
+    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
+      var isBindKey = bitmask & BIND_KEY_FLAG;
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var arity = data[2],
-          partialArgs = data[4],
-          partialRightArgs = data[6];
-
+      var isPartial = bitmask & PARTIAL_FLAG;
       if (isPartial && !partialArgs.length) {
+        bitmask &= ~PARTIAL_FLAG;
         isPartial = false;
-        data[1] = (bitmask &= ~PARTIAL_FLAG);
-        data[4] = data[5] = partialArgs = null;
+        partialArgs = partialHolders = null;
       }
+      var isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
       if (isPartialRight && !partialRightArgs.length) {
+        bitmask &= ~PARTIAL_RIGHT_FLAG;
         isPartialRight = false;
-        data[1] = (bitmask &= ~PARTIAL_RIGHT_FLAG);
-        data[6] = data[7] = partialRightArgs = null;
+        partialRightArgs = partialRightHolders = null;
       }
-      var funcData = !isBindKey && func[EXPANDO];
-      if (funcData && funcData !== true) {
-        // shallow clone `funcData`
-        funcData = baseSlice(funcData);
+      var data = !isBindKey && func[EXPANDO];
+      if (data && data !== true) {
+        var funcBitmask = data[1],
+            funcIsBind = funcBitmask & BIND_FLAG,
+            isBind = bitmask & BIND_FLAG;
 
-        // clone partial left arguments
-        if (funcData[4]) {
-          funcData[4] = baseSlice(funcData[4]);
-          funcData[5] = baseSlice(funcData[5]);
+        // use metadata `func` and merge bitmasks
+        func = data[0];
+        bitmask |= funcBitmask;
+
+        // use metadata `arity` if not provided
+        if (arity == null) {
+          arity = data[2];
         }
-        // clone partial right arguments
-        if (funcData[6]) {
-          funcData[6] = baseSlice(funcData[6]);
-          funcData[7] = baseSlice(funcData[7]);
-        }
-        // set arity if provided
-        if (typeof arity == 'number') {
-          funcData[2] = arity;
-        }
-        // set `thisArg` if not previously bound
-        var bound = funcData[1] & BIND_FLAG;
-        if (isBind && !bound) {
-          funcData[3] = data[3];
+        // use metadata `thisArg` if available
+        if (funcIsBind) {
+          thisArg = data[3];
         }
         // set if currying a bound function
-        if (!isBind && bound) {
+        if (!isBind && funcIsBind) {
           bitmask |= CURRY_BOUND_FLAG;
         }
         // append partial left arguments
-        if (isPartial) {
-          var funcPartialArgs = funcData[4];
-          if (funcPartialArgs) {
-            funcPartialArgs = composeArgs(funcPartialArgs, funcData[5], partialArgs);
-          }
-          funcData[4] = funcPartialArgs || partialArgs;
-          funcData[5] = funcPartialArgs ? replaceHolders(funcPartialArgs, PLACEHOLDER) : data[5];
+        var funcArgs = data[4];
+        if (funcArgs) {
+          var funcHolders = data[5];
+          partialArgs = isPartial ? composeArgs(funcArgs, funcHolders, partialArgs) : baseSlice(funcArgs);
+          partialHolders = isPartial ? replaceHolders(partialArgs, PLACEHOLDER) : baseSlice(funcHolders);
         }
         // prepend partial right arguments
-        if (isPartialRight) {
-          var funcPartialRightArgs = funcData[6];
-          if (funcPartialRightArgs) {
-            funcPartialRightArgs = composeArgsRight(funcPartialRightArgs, funcData[7], partialRightArgs);
-          }
-          funcData[6] = funcPartialRightArgs || partialRightArgs;
-          funcData[7] = funcPartialRightArgs ? replaceHolders(funcPartialRightArgs, PLACEHOLDER) : data[7];
+        funcArgs = data[6];
+        if (funcArgs) {
+          funcHolders = data[7];
+          partialRightArgs = isPartialRight ? composeArgsRight(funcArgs, funcHolders, partialRightArgs) : baseSlice(funcArgs);
+          partialRightHolders = isPartialRight ? replaceHolders(partialRightArgs, PLACEHOLDER) : baseSlice(funcHolders);
         }
-        // merge flags
-        funcData[1] |= bitmask;
-        return createWrapper(funcData);
       }
       if (arity == null) {
         arity = isBindKey ? 0 : func.length;
       }
-      data[2] = nativeMax(arity, 0);
-      return baseCreateWrapper(data);
+      if (bitmask == BIND_FLAG) {
+        var result = createBindWrapper(func, thisArg);
+      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
+        result = createPartialWrapper(func, bitmask, partialArgs, thisArg);
+      } else {
+        result = createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders);
+      }
+      return setData(result, [func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders]);
     }
 
     /**
@@ -5787,12 +5756,12 @@
      */
     function bind(func, thisArg) {
       if (arguments.length < 3) {
-        return createWrapper([func, BIND_FLAG, null, thisArg]);
+        return createWrapper(func, BIND_FLAG, null, thisArg);
       }
       var args = slice(arguments, 2),
-          partialHolders = replaceHolders(args, bind.placeholder);
+          holders = replaceHolders(args, bind.placeholder);
 
-      return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, partialHolders, thisArg);
+      return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, holders, thisArg);
     }
 
     /**
@@ -5865,12 +5834,14 @@
      * // => 'hiya fred!'
      */
     function bindKey(object, key) {
-      var data = [key, BIND_FLAG | BIND_KEY_FLAG, null, object];
+      var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (arguments.length > 2) {
         var args = slice(arguments, 2);
-        data.push(args, replaceHolders(args, bindKey.placeholder));
+            holders = replaceHolders(args, bindKey.placeholder);
       }
-      return createWrapper(data);
+      return args
+        ? createWrapper(key, bitmask, null, object, args, holders)
+        : createWrapper(key, bitmask, null, object);
     }
 
     /**
@@ -6343,9 +6314,9 @@
      */
     function partial(func) {
       var args = slice(arguments, 1),
-          partialHolders = replaceHolders(args, partial.placeholder);
+          holders = replaceHolders(args, partial.placeholder);
 
-      return basePartial(func, PARTIAL_FLAG, args, partialHolders);
+      return basePartial(func, PARTIAL_FLAG, args, holders);
     }
 
     /**
@@ -6381,9 +6352,9 @@
      */
     function partialRight(func) {
       var args = slice(arguments, 1),
-          partialHolders = replaceHolders(args, partialRight.placeholder);
+          holders = replaceHolders(args, partialRight.placeholder);
 
-      return basePartial(func, PARTIAL_RIGHT_FLAG, args, partialHolders);
+      return basePartial(func, PARTIAL_RIGHT_FLAG, args, holders);
     }
 
     /**

@@ -101,7 +101,6 @@ var platforms = [
   ['Windows 8.1', 'firefox', '31'],
   ['Windows 8.1', 'firefox', '30'],
   ['Windows 8.1', 'firefox', '20'],
-  ['Windows 8.1', 'firefox', '3.0'],
   ['Windows 8.1', 'chrome', '36'],
   ['Windows 8.1', 'chrome', '35'],
   ['Windows 8.1', 'internet explorer', '11'],

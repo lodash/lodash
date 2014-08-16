@@ -4657,7 +4657,8 @@
      * // => [1, 2, 3]
      */
     function wrapperValueOf() {
-      return this.__wrapped__;
+      var wrapped = this.__wrapped__;
+      return wrapped instanceof LazyWrapper ? wrapped.value() : wrapped;
     }
 
     /*--------------------------------------------------------------------------*/
@@ -8960,7 +8961,7 @@
           object.prototype[methodName] = (function(func) {
             return function() {
               var chainAll = this.__chain__,
-                  value = this.__wrapped__,
+                  value = this.value(),
                   args = [value];
 
               push.apply(args, arguments);
@@ -9575,6 +9576,19 @@
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
+      };
+    });
+
+    // add `LazyWrapper` functions
+    arrayEach(['map', 'filter', 'reverse', 'drop', 'dropRight', 'dropWhile',
+               'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail'],
+    function(methodName) {
+      var func = LazyWrapper.prototype[methodName];
+      lodash.prototype[methodName] = function() {
+        var wrapped = this.__wrapped__,
+            lazy = wrapped instanceof LazyWrapper ? wrapped : new LazyWrapper(wrapped);
+        func.apply(lazy, arguments);
+        return new lodashWrapper(lazy, this.__chain__);
       };
     });
 

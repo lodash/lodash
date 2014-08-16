@@ -9575,7 +9575,7 @@
     arrayEach(['concat', 'splice'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
+        return new lodashWrapper(func.apply(this.value(), arguments), this.__chain__);
       };
     });
 

@@ -4462,14 +4462,14 @@
 
     LazyWrapper.prototype.first = function(count) {
       this.take(1);
-      return this;
+      return this.value()[0];
     };
 
     LazyWrapper.prototype.head = LazyWrapper.prototype.first;
 
     LazyWrapper.prototype.last = function(count) {
       this.takeRight(1);
-      return this;
+      return this.value()[0];
     };
 
     LazyWrapper.prototype.takeRight = function(n) {
@@ -9581,14 +9581,18 @@
 
     // add `LazyWrapper` functions
     arrayEach(['map', 'filter', 'reverse', 'drop', 'dropRight', 'dropWhile',
-               'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail'],
+        'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail', 'head', 'first', 'last'],
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];
       lodash.prototype[methodName] = function() {
-        var wrapped = this.__wrapped__,
-            lazy = wrapped instanceof LazyWrapper ? wrapped : new LazyWrapper(wrapped);
-        func.apply(lazy, arguments);
-        return new lodashWrapper(lazy, this.__chain__);
+        var result = this.__wrapped__,
+            chainAll = this.__chain__;
+        result = result instanceof LazyWrapper ? result : new LazyWrapper(result);
+        result = func.apply(result, arguments);
+
+        return (chainAll || result instanceof LazyWrapper)
+                ? new lodashWrapper(result, chainAll)
+                : result;
       };
     });
 

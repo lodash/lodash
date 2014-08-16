@@ -837,18 +837,12 @@
 
     (function () {
 
-      test("should return existing wrapped values", 1, function () {
-        var wrapped = _.lazy([]);
-
-        strictEqual(wrapped.first(), wrapped);
-      });
-
-      test("should return only first element", 1, function () {
+      test("should return first element", 1, function () {
         var collection = [1, 2, 3];
 
-        var actual = _.lazy(collection).first().value();
+        var actual = _.lazy(collection).first();
 
-        deepEqual(actual, [1]);
+        strictEqual(actual, 1);
       });
 
     })();
@@ -860,18 +854,12 @@
 
     (function () {
 
-      test("should return existing wrapped values", 1, function () {
-        var wrapped = _.lazy([]);
-
-        strictEqual(wrapped.last(), wrapped);
-      });
-
-      test("should return only last element", 1, function () {
+      test("should return last element", 1, function () {
         var collection = [1, 2, 3];
 
-        var actual = _.lazy(collection).last().value();
+        var actual = _.lazy(collection).last();
 
-        deepEqual(actual, [3]);
+        deepEqual(actual, 3);
       });
 
     })();

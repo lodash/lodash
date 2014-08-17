@@ -586,11 +586,11 @@
   suites.push(
     Benchmark.Suite('`_.bind` (slow path)')
       .add(buildName, {
-        'fn': 'lodash.bind(func, { "name": "fred" })',
+        'fn': 'lodash.bind(function() { return this.name; }, { "name": "fred" })',
         'teardown': 'function bind(){}'
       })
       .add(otherName, {
-        'fn': '_.bind(func, { "name": "fred" })',
+        'fn': '_.bind(function() { return this.name; }, { "name": "fred" })',
         'teardown': 'function bind(){}'
       })
   );
@@ -1533,11 +1533,11 @@
   suites.push(
     Benchmark.Suite('`_.partial` (slow path)')
       .add(buildName, {
-        'fn': 'lodash.partial(func, "hi")',
+        'fn': 'lodash.partial(function(greeting) { return greeting + " " + this.name; }, "hi")',
         'teardown': 'function partial(){}'
       })
       .add(otherName, {
-        'fn': '_.partial(func, "hi")',
+        'fn': '_.partial(function(greeting) { return greeting + " " + this.name; }, "hi")',
         'teardown': 'function partial(){}'
       })
   );

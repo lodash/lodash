@@ -4415,7 +4415,13 @@
      * // => [['fred', 30, true], ['barney', 40, false]]
      */
     function zip() {
-      return unzip(arguments);
+      var length = arguments.length,
+          array = Array(length);
+
+      while (length--) {
+        array[length] = arguments[length];
+      }
+      return unzip(array);
     }
 
     /**

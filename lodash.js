@@ -3015,19 +3015,44 @@
      * @param {*} data The metadata.
      * @returns {Function} Returns `func`.
      */
-    function setData(func, data) {
+    function baseSetData(func, data) {
       metaMap.set(func, data);
       return func;
     }
     // fallback for environments without `WeakMap`
     if (!WeakMap) {
-      setData = !defineProperty ? identity : function(func, value) {
+      baseSetData = !defineProperty ? identity : function(func, value) {
         descriptor.value = value;
         defineProperty(func, EXPANDO, descriptor);
         descriptor.value = null;
         return func;
       };
     }
+
+    function trip(func, times, wait) {
+      var count = 0,
+          lastCalled = 0;
+
+      return function(key, value) {
+        var stamp = now ? now() : 0,
+            remaining = wait - (stamp - lastCalled);
+
+        lastCalled = stamp;
+        if (remaining > 0) {
+          if (++count > times) {
+            var dataFunc = typeof value == 'object' && isFunction(dataFunc = value[0]) && dataFunc;
+            if (typeof getData(key) == 'undefined' && !(dataFunc && getData(dataFunc) != 'undefined')) {
+              return key;
+            }
+          }
+        } else {
+          count = 0;
+        }
+        return func(key, value);
+      }
+    }
+
+    var setData = trip(baseSetData, 50, 16);
 
     /**
      * A fallback implementation of `_.isPlainObject` which checks if `value`

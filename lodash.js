@@ -5437,8 +5437,12 @@
      * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
      */
     function reject(collection, predicate, thisArg) {
+      var func = isArray(collection) ? arrayFilter : baseFilter;
+
       predicate = getCallback(predicate, thisArg, 3);
-      return filter(collection, negate(predicate));
+      return func(collection, function(value, index, collection) {
+        return !predicate(value, index, collection);
+      });
     }
 
     /**
@@ -7732,9 +7736,14 @@
         return {};
       }
       var iterable = toObject(object);
-      return typeof predicate == 'function'
-        ? pickByCallback(iterable, negate(getCallback(predicate, thisArg, 3)))
-        : pickByArray(iterable, baseDifference(keysIn(iterable), arrayMap(baseFlatten(arguments, false, false, 1), String)));
+      if (typeof predicate != 'function') {
+        var props = arrayMap(baseFlatten(arguments, false, false, 1), String);
+        return pickByArray(iterable, baseDifference(keysIn(iterable), props));
+      }
+      predicate = getCallback(predicate, thisArg, 3);
+      return pickByCallback(iterable, function(value, key, object) {
+        return !predicate(value, key, object);
+      });
     }
 
     /**

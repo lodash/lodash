@@ -2666,7 +2666,7 @@
       function wrapper() {
         // avoid `arguments` object use disqualifying optimizations by
         // converting it to an array before passing it to `composeArgs`
-        var argsIndex = 0,
+        var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
             leftLength = partialArgs.length,
@@ -2676,7 +2676,7 @@
           args[leftIndex] = partialArgs[leftIndex];
         }
         while (argsLength--) {
-          args[leftIndex++] = arguments[argsIndex++];
+          args[leftIndex++] = arguments[++argsIndex];
         }
         return (this instanceof wrapper ? Ctor : func).apply(isBind ? thisArg : this, args);
       }

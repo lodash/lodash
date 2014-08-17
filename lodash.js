@@ -4734,10 +4734,10 @@
      * // => false
      */
     function every(collection, predicate, thisArg) {
+      var func = isArray(collection) ? arrayEvery : baseEvery;
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = getCallback(predicate, thisArg, 3);
       }
-      var func = isArray(collection) ? arrayEvery : baseEvery;
       return func(collection, predicate);
     }
 
@@ -4782,9 +4782,9 @@
      * // => [{ 'name': 'barney', 'age': 36 }]
      */
     function filter(collection, predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-
       var func = isArray(collection) ? arrayFilter : baseFilter;
+
+      predicate = getCallback(predicate, thisArg, 3);
       return func(collection, predicate);
     }
 
@@ -5576,10 +5576,10 @@
      * // => false
      */
     function some(collection, predicate, thisArg) {
+      var func = isArray(collection) ? arraySome : baseSome;
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = getCallback(predicate, thisArg, 3);
       }
-      var func = isArray(collection) ? arraySome : baseSome;
       return func(collection, predicate);
     }
 

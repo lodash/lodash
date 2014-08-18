@@ -23,6 +23,10 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
+  /** Used to detect when a function becomes hot */
+  var HOT_COUNT = 150,
+      HOT_SPAN = 16;
+
   /** Used as the property name for wrapper metadata */
   var EXPANDO = '__lodash_' + VERSION.replace(/[-.]/g, '_') + '__';
 
@@ -1379,7 +1383,7 @@
             if (!data) {
               // checks if `func` references the `this` keyword and stores the result
               data = reThis.test(source) || isNative(func);
-              setData(func, data);
+              baseSetData(func, data);
             }
           }
         }
@@ -2206,6 +2210,28 @@
     }
 
     /**
+     * The base implementation of `setData` without support for hot loop detection.
+     *
+     * @private
+     * @param {Function} func The function to associate metadata with.
+     * @param {*} data The metadata.
+     * @returns {Function} Returns `func`.
+     */
+    function baseSetData(func, data) {
+      metaMap.set(func, data);
+      return func;
+    }
+    // fallback for environments without `WeakMap`
+    if (!WeakMap) {
+      baseSetData = !defineProperty ? identity : function(func, value) {
+        descriptor.value = value;
+        defineProperty(func, EXPANDO, descriptor);
+        descriptor.value = null;
+        return func;
+      };
+    }
+
+    /**
      * The base implementation of `_.some` without support for callback shorthands
      * or `this` binding.
      *
@@ -2723,8 +2749,8 @@
         isPartialRight = false;
         partialRightArgs = partialRightHolders = null;
       }
-      var data = !isBindKey && getData(func);
-      if (data && data !== true) {
+      var data = (data = !isBindKey && getData(func)) && data !== true && data;
+      if (data) {
         var funcBitmask = data[1],
             funcIsBind = funcBitmask & BIND_FLAG,
             isBind = bitmask & BIND_FLAG;
@@ -2770,7 +2796,8 @@
       } else {
         result = createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders);
       }
-      return setData(result, [func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders]);
+      var setter = data ? baseSetData : setData;
+      return setter(result, [func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders]);
     }
 
     /**
@@ -3010,49 +3037,34 @@
     /**
      * Sets metadata for `func`.
      *
+     * **Note**: If this function becomes hot, i.e. is called a lot in a short
+     * period of time, it will trip its breaker and transition to an identity
+     * function to avoid garbage collection pauses.
+     *
      * @private
      * @param {Function} func The function to associate metadata with.
      * @param {*} data The metadata.
      * @returns {Function} Returns `func`.
      */
-    function baseSetData(func, data) {
-      metaMap.set(func, data);
-      return func;
-    }
-    // fallback for environments without `WeakMap`
-    if (!WeakMap) {
-      baseSetData = !defineProperty ? identity : function(func, value) {
-        descriptor.value = value;
-        defineProperty(func, EXPANDO, descriptor);
-        descriptor.value = null;
-        return func;
-      };
-    }
-
-    function trip(func, times, wait) {
+    var setData = (function() {
       var count = 0,
           lastCalled = 0;
 
       return function(key, value) {
         var stamp = now ? now() : 0,
-            remaining = wait - (stamp - lastCalled);
+            remaining = HOT_SPAN - (stamp - lastCalled);
 
         lastCalled = stamp;
         if (remaining > 0) {
-          if (++count > times) {
-            var dataFunc = typeof value == 'object' && isFunction(dataFunc = value[0]) && dataFunc;
-            if (typeof getData(key) == 'undefined' && !(dataFunc && getData(dataFunc) != 'undefined')) {
-              return key;
-            }
+          if (++count > HOT_COUNT) {
+            return key;
           }
         } else {
           count = 0;
         }
-        return func(key, value);
-      }
-    }
-
-    var setData = trip(baseSetData, 50, 16);
+        return baseSetData(key, value);
+      };
+    }());
 
     /**
      * A fallback implementation of `_.isPlainObject` which checks if `value`

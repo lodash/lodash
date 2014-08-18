@@ -189,6 +189,10 @@
   /** Used as the property name for wrapper metadata */
   var EXPANDO = '__lodash@'  + _.VERSION + '__';
 
+  var dynamite = {
+    toString : function() { throw new Error('explode'); }
+  }
+
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
@@ -256,6 +260,14 @@
     _.forOwn(object, function(value, key, object) {
       delete object[key];
     });
+  }
+
+  function getConfig(method) {
+    var o = {};
+    o['`_.' + method + '`'] = _[method];
+    o['`_(...).' + method + '`'] = function(array, n) {
+      return _(array)[method](n).value();
+    }
   }
 
   /**
@@ -3481,20 +3493,13 @@
   (function() {
     var array = [1, 2, 3];
 
-    var config = {
-      "_.take" : _.take,
-      "_(...).take" : function(array, n) {
-        return _(array).take(n).value();
-      }
-    };
+    _.forIn(getConfig('take'), function(take, methodName) {
 
-    _.forIn(config, function(take, name) {
-
-      test(name + ' should take the first two elements', 1, function() {
+      test(methodName + ' should take the first two elements', 1, function() {
         deepEqual(take(array, 2), [1, 2]);
       });
 
-      test(name + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+      test(methodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
         var expected = _.map(falsey, function(value) {
           return value == null ? [1] : [];
         });
@@ -3506,20 +3511,20 @@
         deepEqual(actual, expected);
       });
 
-      test(name + ' should return an empty array when `n` < `1`', 3, function() {
+      test(methodName + ' should return an empty array when `n` < `1`', 3, function() {
         _.each([0, -1, -Infinity], function(n) {
           deepEqual(take(array, n), []);
         });
       });
 
-      test(name + ' should return all elements when `n` >= `array.length`', 4, function() {
+      test(methodName + ' should return all elements when `n` >= `array.length`', 4, function() {
         _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
           deepEqual(take(array, n), array);
         });
       });
     });
 
-    test('_(...).take should return a wrapped value when chaining', 2, function() {
+    test('`_(...).take` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).take(2);
         ok(actual instanceof _);
@@ -3530,11 +3535,7 @@
       }
     });
 
-    test("_(...).take should limit number of elements returned when filter is applied", 1, function () {
-      var dynamite = {
-        toString: function() { throw new Error('explode!'); }
-      };
-
+    test("`_(...).take` should limit number of elements returned when filter is applied", 1, function () {
       var collection = [1, 0, 2, 0, dynamite];
 
       var actual = _.lazy(collection)
@@ -3549,40 +3550,42 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.takeRight');
+  QUnit.module('takeRight methods');
 
   (function() {
     var array = [1, 2, 3];
 
-    test('should take the last two elements', 1, function() {
-      deepEqual(_.takeRight(array, 2), [2, 3]);
-    });
-
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [3] : [];
+    _.forIn(getConfig('takeRight'), function(takeRight, methodName) {
+      test(methodName + ' should take the last two elements', 1, function() {
+        deepEqual(takeRight(array, 2), [2, 3]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.takeRight(array, n);
+      test(methodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+        var expected = _.map(falsey, function(value) {
+          return value == null ? [3] : [];
+        });
+
+        var actual = _.map(falsey, function(n) {
+          return takeRight(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(methodName + ' should return an empty array when `n` < `1`', 3, function() {
+        _.each([0, -1, -Infinity], function(n) {
+          deepEqual(takeRight(array, n), []);
+        });
+      });
 
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.takeRight(array, n), []);
+      test(methodName + ' should return all elements when `n` >= `array.length`', 4, function() {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+          deepEqual(takeRight(array, n), array);
+        });
       });
     });
 
-    test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.takeRight(array, n), array);
-      });
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).takeRight` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).takeRight(2);
         ok(actual instanceof _);
@@ -3591,6 +3594,14 @@
       else {
         skipTest(2);
       }
+    });
+
+    test("`_(...).takeRight` should limit number of elements returned when filter is applied", 1, function () {
+      var collection = [dynamite, 1, 0, 2, 0];
+
+      var actual = _.lazy(collection).filter(_.identity).takeRight(2).map(Number).value();
+
+      deepEqual(actual, [1, 2]);
     });
   }());
 

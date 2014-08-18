@@ -4570,6 +4570,10 @@
       return result;
     };
 
+    function reverse() {
+      this.__wrapped__.reverse();
+      return this;
+    }
 
     /**
      * This method invokes `interceptor` and returns `value`. The interceptor is
@@ -9547,6 +9551,7 @@
 
     // add "Chaining" functions to the wrapper
     lodash.prototype.chain = wrapperChain;
+    lodash.prototype.reverse = reverse;
     lodash.prototype.toJSON = wrapperValueOf;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.value = wrapperValueOf;
@@ -9566,7 +9571,7 @@
     });
 
     // add `Array` functions that return the existing wrapped value
-    arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    arrayEach(['push', 'sort', 'unshift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         func.apply(this.__wrapped__, arguments);
@@ -9583,7 +9588,7 @@
     });
 
     // add `LazyWrapper` functions
-    arrayEach(['map', 'filter', 'reverse', 'drop', 'dropRight', 'dropWhile',
+    arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile',
         'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail', 'head', 'first', 'last'],
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];

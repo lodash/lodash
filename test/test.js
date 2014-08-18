@@ -8778,6 +8778,31 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.prototype.reverse');
+
+  (function() {
+    test('should use native impl. and modify input array in non-lazy chain scenario', 1, function() {
+      var array = [1, 2, 3];
+
+      _(array).reverse();
+
+      deepEqual(array, [3, 2, 1]);
+    });
+
+    test('should be lazy in lazy chain scenario', 1, function() {
+      var dynamite = {
+        toString: function() { throw new Error('exploded!'); }
+      };
+
+      var actual = _([dynamite, 2, 3]).map(Number).reverse().take(2).value();
+
+      deepEqual(actual, [3, 2]);
+    });
+
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('filter methods');
 
   _.each(['filter', 'reject'], function(methodNames) {

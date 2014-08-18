@@ -3476,40 +3476,50 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.take');
+  QUnit.module('take methods');
 
   (function() {
     var array = [1, 2, 3];
 
-    test('should take the first two elements', 1, function() {
-      deepEqual(_.take(array, 2), [1, 2]);
-    });
+    var config = {
+      "_.take" : _.take,
+      "_(...).take" : function(array, n) {
+        return _(array).take(n).value();
+      }
+    };
 
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [1] : [];
+    _.forIn(config, function(take, name) {
+
+      test(name + ' should take the first two elements', 1, function() {
+        deepEqual(take(array, 2), [1, 2]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.take(array, n);
+      test(name + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+        var expected = _.map(falsey, function(value) {
+          return value == null ? [1] : [];
+        });
+
+        var actual = _.map(falsey, function(n) {
+          return take(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(name + ' should return an empty array when `n` < `1`', 3, function() {
+        _.each([0, -1, -Infinity], function(n) {
+          deepEqual(take(array, n), []);
+        });
+      });
 
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.take(array, n), []);
+      test(name + ' should return all elements when `n` >= `array.length`', 4, function() {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+          deepEqual(take(array, n), array);
+        });
       });
     });
 
-    test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.take(array, n), array);
-      });
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
+    test('_(...).take should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).take(2);
         ok(actual instanceof _);
@@ -3518,6 +3528,22 @@
       else {
         skipTest(2);
       }
+    });
+
+    test("_(...).take should limit number of elements returned when filter is applied", 1, function () {
+      var dynamite = {
+        toString: function() { throw new Error('explode!'); }
+      };
+
+      var collection = [1, 0, 2, 0, dynamite];
+
+      var actual = _.lazy(collection)
+        .filter(_.identity) // `filter` changes collection size, what is a special case for take
+        .take(2)
+        .map(Number) // Number-cast cause dynamite explosion. Proper lazy implementation never queries dynamite
+        .value();
+
+      deepEqual(actual, [1, 2]);
     });
   }());
 

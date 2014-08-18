@@ -796,43 +796,6 @@
 
     /*--------------------------------------------------------------------------*/
 
-    QUnit.module('lodash.lazy.take');
-
-    (function () {
-
-      function gte3(x) { return x >= 3; }
-
-      test("should return existing wrapped values", 1, function () {
-        var wrapped = _.lazy([]);
-
-        strictEqual(wrapped.take(), wrapped);
-      });
-
-      test("should limit number of elements returned", 1, function () {
-        var collection = [1, 2, 3, 4];
-
-        var actual = _.lazy(collection).take(2).value();
-
-        deepEqual(actual, [1, 2]);
-      });
-
-      test("should limit number of elements returned when filter is applied", 1, function () {
-        var spy = {
-          toString: function() { throw new Error('this object should never be called')}
-        };
-
-        var collection = [1, 2, 3, 4, spy];
-
-        var actual = _.lazy(collection).filter(gte3).take(2).value();
-
-        deepEqual(actual, [3, 4]);
-      });
-
-    })();
-
-
-    /*--------------------------------------------------------------------------*/
-
     QUnit.module('lodash.lazy.first');
 
     (function () {

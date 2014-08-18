@@ -4456,6 +4456,7 @@
     }
 
     LazyWrapper.prototype.take = function(n) {
+      n = (n == null) ? 1 : n;
       if(this.filterApplied) {
         this.limit = n;
         return new LazyWrapper(this);

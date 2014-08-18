@@ -4380,6 +4380,10 @@
       return result;
     }
 
+    function getWrappedValue(wrapped) {
+      return (wrapped instanceof LazyWrapper) ? wrapped.value() : wrapped;
+    }
+
     /**
      * This is a temporary method which eventually replace lodash chaining.
      *
@@ -4644,7 +4648,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return String(this.__wrapped__);
+      return String(getWrappedValue(this.__wrapped__));
     }
 
     /**
@@ -4662,10 +4666,6 @@
      */
     function wrapperValueOf() {
       return getWrappedValue(this.__wrapped__);
-    }
-
-    function getWrappedValue(wrapped) {
-      return (wrapped instanceof LazyWrapper) ? wrapped.value() : wrapped;
     }
 
     /*--------------------------------------------------------------------------*/

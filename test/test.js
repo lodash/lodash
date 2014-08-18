@@ -11330,6 +11330,16 @@
         skipTest();
       }
     });
+
+    test('should return the `toString` result of the lazy chain', 1, function() {
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3]).map(_.identity);
+        strictEqual(String(wrapped), '1,2,3');
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

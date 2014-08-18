@@ -11408,6 +11408,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...) lazy methods that return the same wrapper');
+
+  (function() {
+    var array = [1, 2, 3],
+      wrapped = _(array).map(); // .map() to open lazy sequence
+
+    var funcs = [
+      'map', 'filter', 'drop', 'dropRight', 'dropWhile', 'reverse',
+      'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('`_(...).' + methodName + '` should return the existing wrapped value', 1, function() {
+        if (!isNpm) {
+          strictEqual(wrapped[methodName](), wrapped);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+  }());
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...) methods that return new wrapped values');
 
   (function() {

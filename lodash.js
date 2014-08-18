@@ -9593,14 +9593,14 @@
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];
       lodash.prototype[methodName] = function() {
-        var result = this.__wrapped__,
-            chainAll = this.__chain__;
-        result = result instanceof LazyWrapper ? result : new LazyWrapper(result);
-        result = func.apply(result, arguments);
+        var wrapped = this.__wrapped__,
+            inLazyChain = wrapped instanceof LazyWrapper;
 
-        return (chainAll || result instanceof LazyWrapper)
-                ? new lodashWrapper(result, chainAll)
-                : result;
+        wrapped = func.apply(inLazyChain ? wrapped : new LazyWrapper(wrapped), arguments);
+
+        return wrapped instanceof LazyWrapper
+          ? (inLazyChain ? this : new lodashWrapper(wrapped, this.__chain__))
+          : (this.__chain__ ? new lodashWrapper(wrapped, true) : wrapped);
       };
     });
 

@@ -5983,17 +5983,18 @@
       strictEqual(_.isFunction('a'), false);
     });
 
-    test('should work with host objects in non-edge document modes (test in IE 11)', 1, function() {
-      if (xml) {
-        // trigger Chakra bug
-        // https://github.com/jashkenas/underscore/issues/1621
-        _.times(100, _.isFunction);
-
-        strictEqual(_.isFunction(xml), false);
-      }
-      else {
-        skipTest();
-      }
+    test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {
+      // trigger Chakra bug
+      // https://github.com/jashkenas/underscore/issues/1621
+      _.each([body, xml], function(object) {
+        if (object) {
+          _.times(100, _.isFunction);
+          strictEqual(_.isFunction(object), false);
+        }
+        else {
+          skipTest();
+        }
+      });
     });
 
     test('should work with functions from another realm', 1, function() {

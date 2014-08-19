@@ -7656,6 +7656,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.negate');
+
+  (function() {
+    test('should create a function that negates the result of `func`', 2, function() {
+      function isEven(n) {
+        return n % 2 == 0;
+      }
+
+      var negate = _.negate(isEven);
+      strictEqual(negate(1), true);
+      strictEqual(negate(2), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.noop');
 
   (function() {

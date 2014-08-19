@@ -3538,7 +3538,7 @@
     test("`_(...).take` should limit number of elements returned when filter is applied", 1, function () {
       var collection = [1, 0, 2, 0, dynamite];
 
-      var actual = _.lazy(collection)
+      var actual = _(collection)
         .filter(_.identity) // `filter` changes collection size, what is a special case for take
         .take(2)
         .map(Number) // Number-cast cause dynamite explosion. Proper lazy implementation never queries dynamite
@@ -3599,7 +3599,7 @@
     test("`_(...).takeRight` should limit number of elements returned when filter is applied", 1, function () {
       var collection = [dynamite, 1, 0, 2, 0];
 
-      var actual = _.lazy(collection).filter(_.identity).takeRight(2).map(Number).value();
+      var actual = _(collection).filter(_.identity).takeRight(2).map(Number).value();
 
       deepEqual(actual, [1, 2]);
     });

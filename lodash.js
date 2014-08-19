@@ -9606,7 +9606,7 @@
         wrapped = func.apply(inLazyChain ? wrapped : new LazyWrapper(wrapped), arguments);
 
         return wrapped instanceof LazyWrapper
-          ? (inLazyChain ? this : new lodashWrapper(wrapped, this.__chain__))
+          ? (inLazyChain ? (this.__wrapped__ = wrapped, this) : new lodashWrapper(wrapped, this.__chain__))
           : (this.__chain__ ? new lodashWrapper(wrapped, true) : wrapped);
       };
     });

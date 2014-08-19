@@ -3668,17 +3668,17 @@
       }
     });
 
-    test('`_(...).takeRightWhile` should work properly with `_(...).reverse`', 2, function() {
+    test('`_(...).takeRightWhile` should work properly with `_(...).reverse`', 1, function() {
       if (!isNpm) {
-        var actual = _(array).reverse().takeRightWhile(function(num) {
-          return num < 3;
-        }).reverse();
+        var actual = _([1, 2, 3, dynamite]).map(Number)
+                                        .reverse()
+                                        .takeRightWhile(function(num) { return num < 3; })
+                                        .reverse();
 
-        ok(actual instanceof _);
         deepEqual(actual.value(), [1, 2]);
       }
       else {
-        skipTest(2);
+        skipTest(1);
       }
     });
   }());
@@ -3696,41 +3696,43 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    test('should take elements while `predicate` returns truthy', 1, function() {
-      var actual = _.takeWhile(array, function(num) {
-        return num < 3;
+    _.forIn(getConfig('takeWhile'), function(takeWhile, methodName) {
+      test(methodName + ' should take elements while `predicate` returns truthy', 1, function() {
+        var actual = takeWhile(array, function(num) {
+          return num < 3;
+        });
+
+        deepEqual(actual, [1, 2]);
       });
 
-      deepEqual(actual, [1, 2]);
-    });
+      test(methodName + ' should provide the correct `predicate` arguments', 1, function() {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        takeWhile(array, function() {
+          args = slice.call(arguments);
+        });
 
-      _.takeWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [1, 0, array]);
       });
 
-      deepEqual(args, [1, 0, array]);
+      test(methodName + ' should support the `thisArg` argument', 1, function() {
+        var actual = takeWhile(array, function(num, index) {
+          return this[index] < 3;
+        }, array);
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test(methodName + ' should work with a "_.pluck" style `predicate`', 1, function() {
+        deepEqual(takeWhile(objects, 'b'), objects.slice(0, 2));
+      });
+
+      test(methodName + ' should work with a "_.where" style `predicate`', 1, function() {
+        deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
+      });
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.takeWhile(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
-
-      deepEqual(actual, [1, 2]);
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
-    });
-
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).takeWhile` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).takeWhile(function(num) {
           return num < 3;
@@ -3741,6 +3743,32 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).takeWhile` should read minimal number of elements', 1, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3, dynamite]).map(Number)
+          .takeWhile(function(num) { return num < 3; });
+
+        deepEqual(actual.value(), [1, 2]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_(...).takeWhile` should work properly with `_(...).reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([dynamite, 3, 2, 1]).map(Number)
+          .reverse()
+          .takeWhile(function(num) { return num < 3; })
+          .reverse();
+
+        deepEqual(actual.value(), [2, 1]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());

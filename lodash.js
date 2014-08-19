@@ -4397,7 +4397,7 @@
 
     function LazyWrapper(source) {
       this.source = source;
-      this.isMap = [];
+      this.type = [];
       this.iterators = [];
       this.limit = Number.POSITIVE_INFINITY;
       this.lazyOperators = [];
@@ -4405,9 +4405,13 @@
       this.dir = 1;
     }
 
+    LazyWrapper.MAP_FLAG = 1;
+    LazyWrapper.FILTER_FLAG = 2;
+    LazyWrapper.WHILE_FLAG = 3;
+
     LazyWrapper.prototype.map = function(iterator) {
       this.iterators.push(iterator);
-      this.isMap.push(true);
+      this.type.push(LazyWrapper.MAP_FLAG);
       return this;
     };
 
@@ -4438,17 +4442,17 @@
     }
 
     LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
-      var satisfied = true;
       predicate = getCallback(predicate, thisArg, 3);
 
-      return this.filter(function(value, index, array) {
-        return satisfied && (satisfied = predicate(value, index, array));
-      });
+      this.filterApplied = true;
+      this.type.push(LazyWrapper.WHILE_FLAG);
+      this.iterators.push(predicate);
+
+      return new LazyWrapper(this);
     }
 
     LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
-      this.reverse().takeWhile(predicate, thisArg);
-      return new LazyWrapper(this).reverse();
+      return this.reverse().takeWhile(predicate, thisArg).reverse();
     }
 
     LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
@@ -4494,7 +4498,7 @@
 
     LazyWrapper.prototype.filter = function(iterator) {
       this.filterApplied = true;
-      this.isMap.push(false);
+      this.type.push(LazyWrapper.FILTER_FLAG);
       this.iterators.push(iterator);
       return this;
     };
@@ -4554,9 +4558,9 @@
           resultLimit = Math.min(wrapper.limit, loops),
           sourceIndex = (dir == 1 ? bounds.min : bounds.max) - dir,
           result = [],
-          isMap = wrapper.isMap,
+          type = wrapper.type,
           iterators = wrapper.iterators,
-          num = isMap.length,
+          num = type.length,
           iterator,
           val,
           i;
@@ -4567,10 +4571,13 @@
 
         for(i = 0; i < num; i++) {
           iterator = iterators[i];
-          if(isMap[i]) {
-            val = iterator(val, sourceIndex, source);
-          } else if(!iterator(val, sourceIndex, source)) { // isFilter
-            continue lazy;
+          switch(type[i]) {
+            // LazyWrapper.MAP_FLAG
+            case 1: val = iterator(val, sourceIndex, source); break;
+            // LazyWrapper.FILTER_FLAG
+            case 2: if(!iterator(val, sourceIndex, source)) { continue lazy; }
+            // LazyWrapper.WHILE_FLAG
+            case 3: if(!iterator(val, sourceIndex, source)) { break lazy; }
           }
         }
 

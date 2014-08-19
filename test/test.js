@@ -265,8 +265,8 @@
   function getConfig(method) {
     var o = {};
     o['`_.' + method + '`'] = _[method];
-    o['`_(...).' + method + '`'] = function(array, n) {
-      return _(array)[method](n).value();
+    o['`_(...).' + method + '`'] = function(array, arg) {
+      return _(array)[method](arg).value();
     }
   }
 
@@ -3618,41 +3618,43 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('should take elements while `predicate` returns truthy', 1, function() {
-      var actual = _.takeRightWhile(array, function(num) {
-        return num > 1;
+    _.forIn(getConfig('takeRightWhile'), function(takeRightWhile, methodName) {
+      test(methodName + ' should take elements while `predicate` returns truthy', 1, function() {
+        var actual = takeRightWhile(array, function(num) {
+          return num > 1;
+        });
+
+        deepEqual(actual, [2, 3]);
       });
 
-      deepEqual(actual, [2, 3]);
-    });
+      test(methodName + ' should provide the correct `predicate` arguments', 1, function() {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        takeRightWhile(array, function() {
+          args = slice.call(arguments);
+        });
 
-      _.takeRightWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [3, 2, array]);
       });
 
-      deepEqual(args, [3, 2, array]);
+      test(methodName + ' should support the `thisArg` argument', 1, function() {
+        var actual = takeRightWhile(array, function(num, index) {
+          return this[index] > 1;
+        }, array);
+
+        deepEqual(actual, [2, 3]);
+      });
+
+      test(methodName + ' should work with a "_.pluck" style `predicate`', 1, function() {
+        deepEqual(takeRightWhile(objects, 'b'), objects.slice(1));
+      });
+
+      test(methodName + ' should work with a "_.where" style `predicate`', 1, function() {
+        deepEqual(takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
+      });
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.takeRightWhile(array, function(num, index) {
-        return this[index] > 1;
-      }, array);
-
-      deepEqual(actual, [2, 3]);
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
-    });
-
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).takeRightWhile` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).takeRightWhile(function(num) {
           return num > 1;
@@ -3660,6 +3662,20 @@
 
         ok(actual instanceof _);
         deepEqual(actual.value(), [2, 3]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_(...).takeRightWhile` should work properly with `_(...).reverse`', 2, function() {
+      if (!isNpm) {
+        var actual = _(array).reverse().takeRightWhile(function(num) {
+          return num < 3;
+        }).reverse();
+
+        ok(actual instanceof _);
+        deepEqual(actual.value(), [1, 2]);
       }
       else {
         skipTest(2);
@@ -11453,7 +11469,7 @@
 
     var funcs = [
       'map', 'filter', 'drop', 'dropRight', 'dropWhile', 'reverse',
-      'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail'
+      'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial', 'tail'
     ];
 
     _.each(funcs, function(methodName) {

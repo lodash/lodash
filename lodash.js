@@ -4446,6 +4446,11 @@
       });
     }
 
+    LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
+      this.reverse().takeWhile(predicate, thisArg);
+      return new LazyWrapper(this).reverse();
+    }
+
     LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
       var satisfied = false;
       predicate = getCallback(predicate, thisArg, 3);
@@ -9590,7 +9595,8 @@
 
     // add `LazyWrapper` functions
     arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile',
-        'take', 'takeRight', 'takeWhile', 'rest', 'initial', 'tail', 'head', 'first', 'last'],
+        'take', 'takeRight', 'takeWhile', 'takeRightWhile',
+        'rest', 'initial', 'tail', 'head', 'first', 'last'],
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];
       lodash.prototype[methodName] = function() {

@@ -265,9 +265,12 @@
   function getConfig(method) {
     var o = {};
     o['`_.' + method + '`'] = _[method];
-    o['`_(...).' + method + '`'] = function(array, arg) {
-      return _(array)[method](arg).value();
+    o['`_(...).' + method + '`'] = function(array) {
+      var wrapper = _(array),
+          args = slice.call(arguments, 1);
+      return wrapper[method].apply(wrapper, args).value();
     }
+    return o;
   }
 
   /**
@@ -3274,12 +3277,14 @@
   QUnit.module('lodash.filter');
 
   (function() {
-    test('should return elements `predicate` returns truthy for', 1, function() {
-      var actual = _.filter([1, 2, 3], function(num) {
-        return num % 2;
-      });
+    _.forIn(getConfig('filter'), function(filter, methodName) {
+      test(methodName + ' should return elements `predicate` returns truthy for', 1, function() {
+        var actual = filter([1, 2, 3], function(num) {
+          return num % 2;
+        });
 
-      deepEqual(actual, [1, 3]);
+        deepEqual(actual, [1, 3]);
+      });
     });
 
     test('should not modify wrapped values', 2, function() {
@@ -8886,16 +8891,16 @@
 
   QUnit.module('filter methods');
 
-  _.each(['filter', 'reject'], function(methodNames) {
-    var func = _[methodNames];
+  _.each(['filter', 'reject'], function(functionName) {
+    _.forIn(getConfig(functionName), function(func, methodName) {
+      test(methodName + ' should not modify the resulting value from within `callback`', 1, function () {
+        var actual = func([0], function (num, index, array) {
+          array[index] = 1;
+          return functionName == 'filter';
+        });
 
-    test('`_.' + methodNames + '` should not modify the resulting value from within `callback`', 1, function() {
-      var actual = func([0], function(num, index, array) {
-        array[index] = 1;
-        return methodNames == 'filter';
+        deepEqual(actual, [0]);
       });
-
-      deepEqual(actual, [0]);
     });
   });
 

@@ -6088,10 +6088,10 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for native methods', 10, function() {
-      _.each([root.alert, Array, create, freeze, root.prompt, push, slice, Uint8Array, WeakMap], function(func, i) {
+    test('should return `true` for native methods', 8, function() {
+      _.each([root.alert, Array, create, freeze, root.prompt, slice, Uint8Array], function(func) {
         if (func) {
-          strictEqual(_.isNative(func), true, String(i));
+          strictEqual(_.isNative(func), true);
         }
         else {
           skipTest();

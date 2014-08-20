@@ -11683,9 +11683,9 @@
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 31, function() {
-      function message(methodName) {
-        return '`_.' + methodName + '` should work with `arguments` objects';
+    test('should work with `arguments` objects', 43, function() {
+      function message(methodName, chain) {
+        return (chain ? '`_(...).' + methodName : '`_.' + methodName) + '` should work with `arguments` objects';
       }
 
       deepEqual(_.at(args, 0, 4), [1, 5], message('at'));
@@ -11699,24 +11699,36 @@
 
       deepEqual(_.compact(args), [1, [3], 5], message('compact'));
       deepEqual(_.drop(args, 3), [null, 5], message('drop'));
+      deepEqual(_(args).drop(3).value(), [null, 5], message('drop', true));
       deepEqual(_.dropRight(args, 3), [1, null], message('dropRight'));
+      deepEqual(_(args).dropRight(3).value(), [1, null], message('dropRight', true));
       deepEqual(_.dropRightWhile(args,_.identity), [1, null, [3], null], message('dropRightWhile'));
+      deepEqual(_(args).dropRightWhile(_.identity).value(), [1, null, [3], null], message('dropRightWhile', true));
       deepEqual(_.dropWhile(args,_.identity), [ null, [3], null, 5], message('dropWhile'));
+      deepEqual(_(args).dropWhile(_.identity).value(), [ null, [3], null, 5], message('dropWhile', true));
       deepEqual(_.findIndex(args, _.identity), 0, message('findIndex'));
       deepEqual(_.findLastIndex(args, _.identity), 4, message('findLastIndex'));
       deepEqual(_.first(args), 1, message('first'));
+      deepEqual(_(args).first(), 1, message('first', true));
       deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
       deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
       deepEqual(_.initial(args), [1, null, [3], null], message('initial'));
+      deepEqual(_(args).initial().value(), [1, null, [3], null], message('initial', true));
       deepEqual(_.intersection(args, [1]), [1], message('intersection'));
       deepEqual(_.last(args), 5, message('last'));
+      deepEqual(_(args).last(), 5, message('last', true));
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
       deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
+      deepEqual(_(args).rest(4).value(), [null, [3], null, 5], message('rest', true));
       deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
       deepEqual(_.take(args, 2), [1, null], message('take'));
+      deepEqual(_(args).take(2).value(), [1, null], message('take', true));
       deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
+      deepEqual(_(args).takeRight(1).value(), [5], message('takeRight', true));
       deepEqual(_.takeRightWhile(args, _.identity), [5], message('takeRightWhile'));
+      deepEqual(_(args).takeRightWhile(_.identity).value(), [5], message('takeRightWhile', true));
       deepEqual(_.takeWhile(args, _.identity), [1], message('takeWhile'));
+      deepEqual(_(args).takeWhile(_.identity).value(), [1], message('takeWhile', true));
       deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));

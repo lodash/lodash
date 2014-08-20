@@ -5178,7 +5178,7 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for empty or falsey values', 9, function() {
+    test('should return `true` for empty or falsey values', 8, function() {
       var expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
@@ -5189,7 +5189,6 @@
 
       strictEqual(_.isEmpty(true), true);
       strictEqual(_.isEmpty(new Date), true);
-      strictEqual(_.isEmpty(new Error), true);
       strictEqual(_.isEmpty(slice), true);
       strictEqual(_.isEmpty(1), true);
       strictEqual(_.isEmpty(NaN), true);

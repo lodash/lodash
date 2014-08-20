@@ -3000,38 +3000,40 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('should drop elements while `predicate` returns truthy', 1, function() {
-      var actual = _.dropRightWhile(array, function(num) {
-        return num > 1;
+    _.forIn(getConfig('dropRightWhile'), function(dropRightWhile, formattedMethodName) {
+      test(formattedMethodName + ' should drop elements while `predicate` returns truthy', 1, function () {
+        var actual = dropRightWhile(array, function (num) {
+          return num > 1;
+        });
+
+        deepEqual(actual, [1]);
       });
 
-      deepEqual(actual, [1]);
-    });
+      test(formattedMethodName + ' should provide the correct `predicate` arguments', 1, function () {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        dropRightWhile(array, function () {
+          args = slice.call(arguments);
+        });
 
-      _.dropRightWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [3, 2, array]);
       });
 
-      deepEqual(args, [3, 2, array]);
-    });
+      test(formattedMethodName + ' should support the `thisArg` argument', 1, function () {
+        var actual = dropRightWhile(array, function (num, index) {
+          return this[index] > 1;
+        }, array);
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.dropRightWhile(array, function(num, index) {
-        return this[index] > 1;
-      }, array);
+        deepEqual(actual, [1]);
+      });
 
-      deepEqual(actual, [1]);
-    });
+      test(formattedMethodName + ' should work with an object for `predicate`', 1, function () {
+        deepEqual(dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
+      });
 
-    test('should work with an object for `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, 'b'), objects.slice(0, 1));
+      test(formattedMethodName + ' should work with a "_.pluck" style `predicate`', 1, function () {
+        deepEqual(dropRightWhile(objects, 'b'), objects.slice(0, 1));
+      });
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3045,6 +3047,19 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).dropRightWhile` should work properly with `_(...).reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([3, 2, 1, 0])
+          .reverse()
+          .dropRightWhile(Boolean);
+
+        deepEqual(actual.value(), [0]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -3062,38 +3077,40 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    test('should drop elements while `predicate` returns truthy', 1, function() {
-      var actual = _.dropWhile(array, function(num) {
-        return num < 3;
+    _.forIn(getConfig('dropWhile'), function(dropWhile, formattedMethodName) {
+      test(formattedMethodName + ' should drop elements while `predicate` returns truthy', 1, function () {
+        var actual = dropWhile(array, function (num) {
+          return num < 3;
+        });
+
+        deepEqual(actual, [3]);
       });
 
-      deepEqual(actual, [3]);
-    });
+      test(formattedMethodName + ' should provide the correct `predicate` arguments', 1, function () {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        dropWhile(array, function () {
+          args = slice.call(arguments);
+        });
 
-      _.dropWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [1, 0, array]);
       });
 
-      deepEqual(args, [1, 0, array]);
-    });
+      test(formattedMethodName + ' should support the `thisArg` argument', 1, function () {
+        var actual = dropWhile(array, function (num, index) {
+          return this[index] < 3;
+        }, array);
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.dropWhile(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
+        deepEqual(actual, [3]);
+      });
 
-      deepEqual(actual, [3]);
-    });
+      test(formattedMethodName + ' should work with an object for `predicate`', 1, function () {
+        deepEqual(dropWhile(objects, { 'b': 2 }), objects.slice(1));
+      });
 
-    test('should work with an object for `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
+      test(formattedMethodName + ' should work with a "_.pluck" style `predicate`', 1, function () {
+        deepEqual(dropWhile(objects, 'b'), objects.slice(2));
+      });
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3107,6 +3124,33 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).dropWhile` should work properly with `reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([0, 1, 2, 3])
+          .reverse()
+          .dropWhile(Boolean);
+
+        deepEqual(actual.value(), [0]);
+      }
+      else {
+        skipTest(1);
+      }
+    });
+
+    test('`_(...).dropWhile` should work properly with double `reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([0, 1, 2, 3])
+          .reverse()
+          .dropWhile(Boolean)
+          .reverse();
+
+        deepEqual(actual.value(), [0]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -11592,15 +11636,15 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...) lazy methods that return the same wrapper');
+  QUnit.module('lodash(...) lazy methods');
 
   (function() {
     var array = [1, 2, 3],
       wrapped = _(array).map(); // .map() to open lazy sequence
 
     var funcs = [
-      'map', 'filter', 'drop', 'dropRight', 'dropWhile', 'reverse',
-      'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial', 'tail'
+      'map', 'filter', 'drop', 'dropRight', 'dropWhile', 'dropRightWhile', 'reverse',
+      'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial'
     ];
 
     _.each(funcs, function(methodName) {

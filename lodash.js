@@ -4456,10 +4456,15 @@
       var satisfied = false;
       predicate = getCallback(predicate, thisArg, 3);
 
-      return this.filter(function(value, index, array) {
+      this.filter(function(value, index, array) {
         return satisfied || (satisfied = !predicate(value, index, array));
       });
-    }
+      return new LazyWrapper(this);
+    };
+
+    LazyWrapper.prototype.dropRightWhile = function(predicate, thisArg) {
+      return this.reverse().dropWhile(predicate, thisArg).reverse();
+    };
 
     LazyWrapper.prototype.take = function(n) {
       n = (n == null) ? 1 : n;
@@ -9600,9 +9605,8 @@
     });
 
     // add `LazyWrapper` functions
-    arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile',
-        'take', 'takeRight', 'takeWhile', 'takeRightWhile',
-        'rest', 'initial', 'head', 'first', 'last'],
+    arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile', 'dropRightWhile',
+        'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial', 'head', 'first', 'last'],
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];
       var overriddenFunc = lodash.prototype[methodName];

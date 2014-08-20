@@ -24,6 +24,10 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
+  /** Used to detect when a function becomes hot */
+  var HOT_COUNT = 150,
+      HOT_SPAN = 16;
+
   /** Used as the property name for wrapper metadata */
   var EXPANDO = '__lodash_' + VERSION.replace(/[-.]/g, '_') + '__';
 
@@ -122,7 +126,8 @@
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
     'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document',
     'isFinite', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
-    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'window', 'WinRTError'
+    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
+    'window', 'WinRTError'
   ];
 
   /** Used to make template sourceURLs easier to identify */
@@ -202,7 +207,7 @@
   /**
    * Used to convert characters to HTML entities.
    *
-   * Note: Though the ">" character is escaped for symmetry, characters like
+   * **Note:** Though the ">" character is escaped for symmetry, characters like
    * ">" and "/" don't require escaping in HTML and have no special meaning
    * unless they're part of a tag or unquoted attribute value.
    * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
@@ -345,14 +350,35 @@
    */
   function baseIndexOf(array, value, fromIndex) {
     var index = (fromIndex || 0) - 1,
-        length = array ? array.length : 0;
+        length = array ? array.length : 0,
+        isReflexive = value === value;
 
     while (++index < length) {
-      if (array[index] === value) {
+      var other = array[index];
+      if ((isReflexive ? other === value : other !== other)) {
         return index;
       }
     }
     return -1;
+  }
+
+  /**
+   * The base implementation of `_.slice` without support for `start` and `end`
+   * arguments.
+   *
+   * @private
+   * @param {Array} array The array to slice.
+   * @returns {Array} Returns the slice of `array`.
+   */
+  function baseSlice(array) {
+    var index = -1,
+        length = array ? array.length : 0,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = array[index];
+    }
+    return result;
   }
 
   /**
@@ -393,7 +419,7 @@
     var index = -1,
         length = string.length;
 
-    while (++index < length && chars.indexOf(string.charAt(index)) > -1) { }
+    while (++index < length && chars.indexOf(string.charAt(index)) > -1) {}
     return index;
   }
 
@@ -409,7 +435,7 @@
   function charsRightIndex(string, chars) {
     var index = string.length;
 
-    while (index-- && chars.indexOf(string.charAt(index)) > -1) { }
+    while (index-- && chars.indexOf(string.charAt(index)) > -1) {}
     return index;
   }
 
@@ -538,7 +564,7 @@
     var index = -1,
         length = string.length;
 
-    while (++index < length && isWhitespace(string.charCodeAt(index))) { }
+    while (++index < length && isWhitespace(string.charCodeAt(index))) {}
     return index;
   }
 
@@ -553,7 +579,7 @@
   function trimmedRightIndex(string) {
     var index = string.length;
 
-    while (index-- && isWhitespace(string.charCodeAt(index))) { }
+    while (index-- && isWhitespace(string.charCodeAt(index))) {}
     return index;
   }
 
@@ -618,14 +644,16 @@
 
     /** Used for native method references */
     var arrayProto = Array.prototype,
-        objectProto = Object.prototype,
-        stringProto = String.prototype;
+        objectProto = Object.prototype;
 
     /** Used to detect DOM support */
     var document = (document = context.window) && document.document;
 
     /** Used to resolve the decompiled source of functions */
     var fnToString = Function.prototype.toString;
+
+    /** Used to check objects for own properties */
+    var hasOwnProperty = objectProto.hasOwnProperty;
 
     /** Used to restore the original `_` reference in `_.noConflict` */
     var oldDash = context._;
@@ -646,13 +674,13 @@
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
-        hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
         splice = arrayProto.splice,
-        Uint8Array = isNative(Uint8Array = context.Uint8Array) && Uint8Array;
+        Uint8Array = isNative(Uint8Array = context.Uint8Array) && Uint8Array,
+        WeakMap = isNative(WeakMap = context.WeakMap) && WeakMap;
 
     /** Used to clone array buffers */
     var Float64Array = (function() {
@@ -662,7 +690,7 @@
       try {
         var func = isNative(func = context.Float64Array) && func,
             result = new func(new ArrayBuffer(10), 0, 1) && func;
-      } catch(e) { }
+      } catch(e) {}
       return result;
     }());
 
@@ -673,13 +701,12 @@
         var o = {},
             func = isNative(func = Object.defineProperty) && func,
             result = func(o, o, o) && func;
-      } catch(e) { }
+      } catch(e) {}
       return result;
     }());
 
     /* Native method references for those with the same name as other `lodash` methods */
-    var nativeContains = isNative(nativeContains = stringProto.contains) && nativeContains,
-        nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
+    var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
@@ -692,6 +719,9 @@
 
     /** Used as the size, in bytes, of each Float64Array element */
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
+
+    /** Used to store function metadata */
+    var metaMap = WeakMap && new WeakMap;
 
     /*--------------------------------------------------------------------------*/
 
@@ -724,17 +754,17 @@
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
-     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
-     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
-     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
+     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
+     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
+     * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
-     * `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`,
-     * `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
-     * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
-     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
-     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
-     * `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
-     * `unescape`, `uniqueId`, and `value`
+     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
+     * `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`,
+     * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
+     * `result`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedLastIndex`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `trunc`, `unescape`, `uniqueId`, and `value`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is
      * provided, otherwise it will return an unwrapped value.
@@ -799,8 +829,6 @@
 
     (function(x) {
 
-      for (var argsKey in arguments) { }
-
       /**
        * Detect if functions can be decompiled by `Function#toString`
        * (all but Firefox OS certified apps, older Opera mobile browsers, and
@@ -844,7 +872,7 @@
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !(hasOwnProperty.call(arguments, 1) && propertyIsEnumerable.call(arguments, 1));
+        support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
       } catch(e) {
         support.nonEnumArgs = true;
       }
@@ -919,15 +947,15 @@
      *
      * @private
      * @param {Array} array The array to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Array} Returns `array`.
      */
-    function arrayEach(array, iterator) {
+    function arrayEach(array, iteratee) {
       var index = -1,
           length = array.length;
 
       while (++index < length) {
-        if (iterator(array[index], index, array) === false) {
+        if (iteratee(array[index], index, array) === false) {
           break;
         }
       }
@@ -940,14 +968,14 @@
      *
      * @private
      * @param {Array} array The array to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Array} Returns `array`.
      */
-    function arrayEachRight(array, iterator) {
+    function arrayEachRight(array, iteratee) {
       var length = array.length;
 
       while (length--) {
-        if (iterator(array[length], length, array) === false) {
+        if (iteratee(array[length], length, array) === false) {
           break;
         }
       }
@@ -982,16 +1010,16 @@
      *
      * @private
      * @param {Array} array The array to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Array} Returns the new mapped array.
      */
-    function arrayMap(array, iterator) {
+    function arrayMap(array, iteratee) {
       var index = -1,
           length = array.length,
           result = Array(length);
 
       while (++index < length) {
-        result[index] = iterator(array[index], index, array);
+        result[index] = iteratee(array[index], index, array);
       }
       return result;
     }
@@ -1008,12 +1036,13 @@
     function arrayFilter(array, predicate) {
       var index = -1,
           length = array.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
-          result.push(value);
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -1025,13 +1054,13 @@
      *
      * @private
      * @param {Array} array The array to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @param {*} [accumulator] The initial value.
      * @param {boolean} [initFromArray=false] Specify using the first element of
      *  `array` as the initial value.
      * @returns {*} Returns the accumulated value.
      */
-    function arrayReduce(array, iterator, accumulator, initFromArray) {
+    function arrayReduce(array, iteratee, accumulator, initFromArray) {
       var index = -1,
           length = array.length;
 
@@ -1039,7 +1068,7 @@
         accumulator = array[++index];
       }
       while (++index < length) {
-        accumulator = iterator(accumulator, array[index], index, array);
+        accumulator = iteratee(accumulator, array[index], index, array);
       }
       return accumulator;
     }
@@ -1050,20 +1079,20 @@
      *
      * @private
      * @param {Array} array The array to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @param {*} [accumulator] The initial value.
      * @param {boolean} [initFromArray=false] Specify using the last element of
      *  `array` as the initial value.
      * @returns {*} Returns the accumulated value.
      */
-    function arrayReduceRight(array, iterator, accumulator, initFromArray) {
+    function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
       var length = array.length;
 
       if (initFromArray && length) {
         accumulator = array[--length];
       }
       while (length--) {
-        accumulator = iterator(accumulator, array[length], length, array);
+        accumulator = iteratee(accumulator, array[length], length, array);
       }
       return accumulator;
     }
@@ -1107,7 +1136,7 @@
     /**
      * Used by `_.template` to customize its `_.assign` use.
      *
-     * Note: This method is like `assignDefaults` except that it ignores
+     * **Note:** This method is like `assignDefaults` except that it ignores
      * inherited property values when checking if a property is `undefined`.
      *
      * @private
@@ -1162,7 +1191,7 @@
 
       while (++index < length) {
         var key = methodNames[index];
-        object[key] = createWrapper([object[key], BIND_FLAG, null, object]);
+        object[key] = createWrapper(object[key], BIND_FLAG, null, object);
       }
       return object;
     }
@@ -1184,7 +1213,7 @@
         if (typeof thisArg == 'undefined') {
           return func;
         }
-        var data = func[EXPANDO];
+        var data = getData(func);
         if (typeof data == 'undefined') {
           if (support.funcNames) {
             data = !func.name;
@@ -1198,7 +1227,7 @@
             if (!data) {
               // checks if `func` references the `this` keyword and stores the result
               data = reThis.test(source) || isNative(func);
-              setData(func, data);
+              baseSetData(func, data);
             }
           }
         }
@@ -1248,75 +1277,15 @@
       if (typeof result != 'undefined') {
         return result;
       }
-      var isArr = isArray(value),
-          isShallow = !isDeep;
-
+      var isArr = isArray(value);
+      result = value;
       if (isArr) {
-        result = isShallow ? slice(value) : value.constructor(value.length);
-
-        // add array properties assigned by `RegExp#exec`
-        if (typeof value[0] == 'string' && hasOwnProperty.call(value, 'index')) {
-          result.index = value.index;
-          result.input = value.input;
-        }
-        if (isShallow) {
-          return result;
-        }
+        result = initArrayClone(value, isDeep);
+      } else if (isObject(value)) {
+        result = initObjectClone(value, isDeep);
+        value = (isDeep && toString.call(result) == objectClass) ? value : result;
       }
-      else {
-        if (!isObject(value)) {
-          return value;
-        }
-        var className = toString.call(value);
-        if (!cloneableClasses[className]) {
-          return value;
-        }
-        var isArgs = className == argsClass,
-            isObj = !isArgs && className == objectClass;
-
-        if (isShallow && (isArgs || isObj)) {
-          result = baseAssign({}, value);
-          if (isObj) {
-            return result;
-          }
-        }
-        var Ctor = value.constructor;
-        if (className == objectClass && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
-          Ctor = Object;
-        }
-        if (isDeep && (isArgs || isObj)) {
-          result = new Ctor;
-        }
-        else {
-          switch (className) {
-            case arrayBufferClass:
-              return cloneBuffer(value);
-
-            case boolClass:
-            case dateClass:
-              return new Ctor(+value);
-
-            case float32Class: case float64Class:
-            case int8Class: case int16Class: case int32Class:
-            case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
-              var buffer = value.buffer;
-              return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, value.byteOffset, value.length);
-
-            case numberClass:
-            case stringClass:
-              return new Ctor(value);
-
-            case regexpClass:
-              result = Ctor(value.source, reFlags.exec(value));
-              result.lastIndex = value.lastIndex;
-              return result;
-          }
-        }
-      }
-      if (isArgs) {
-        result.length = value.length;
-      }
-      if (isShallow) {
+      if (!isDeep || result === value) {
         return result;
       }
       // check for circular references and return corresponding clone
@@ -1372,85 +1341,6 @@
     }
 
     /**
-     * The base implementation of `createWrapper` which creates the wrapper and
-     * sets its metadata.
-     *
-     * @private
-     * @param {Array} data The metadata array. See `createWrapper` for more details.
-     * @returns {Function} Returns the new function.
-     */
-    function baseCreateWrapper(data) {
-      var bitmask = data[1];
-      if (bitmask == BIND_FLAG) {
-        return setData(createBindWrapper(data), data);
-      }
-      var partialHolders = data[5];
-      if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
-        return setData(createPartialWrapper(data), data);
-      }
-      var func = data[0],
-          arity = data[2],
-          thisArg = data[3],
-          partialArgs = data[4],
-          partialRightArgs = data[6],
-          partialRightHolders = data[7];
-
-      var isBind = bitmask & BIND_FLAG,
-          isBindKey = bitmask & BIND_KEY_FLAG,
-          isCurry = bitmask & CURRY_FLAG,
-          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG;
-
-      var Ctor = !isBindKey && createCtorWrapper(func),
-          key = func;
-
-      var wrapper = function() {
-        var length = arguments.length,
-            index = length,
-            args = Array(length);
-
-        while (index--) {
-          args[index] = arguments[index];
-        }
-        if (partialArgs) {
-          args = composeArgs(partialArgs, partialHolders, args);
-        }
-        if (partialRightArgs) {
-          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
-        }
-        if (isCurry || isCurryRight) {
-          var placeholder = wrapper.placeholder,
-              newPartialHolders = replaceHolders(args, placeholder);
-
-          length -= newPartialHolders.length;
-
-          if (length < arity) {
-            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
-            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
-
-            if (!isCurryBound) {
-              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-            }
-            var newData = [func, bitmask, nativeMax(arity - length, 0), thisArg, null, null];
-            newData[isCurry ? 4 : 6] = args;
-            newData[isCurry ? 5 : 7] = newPartialHolders;
-
-            var result = baseCreateWrapper(newData);
-            result.placeholder = placeholder;
-            return result;
-          }
-        }
-        var thisBinding = isBind ? thisArg : this;
-        if (isBindKey) {
-          func = thisBinding[key];
-        }
-        return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
-      };
-
-      return setData(wrapper, data);
-    }
-
-    /**
      * The base implementation of `_.curry` and `_.curryRight` which handles
      * resolving the default arity of `func`.
      *
@@ -1462,9 +1352,9 @@
      */
     function baseCurry(func, bitmask, arity) {
       if (typeof arity != 'number') {
-        arity = +arity || (func ? func.length : 0);
+        arity = arity == null ? (func ? func.length : 0) : nativeMax(+arity || 0, 0);
       }
-      return createWrapper([func, bitmask, arity]);
+      return createWrapper(func, bitmask, arity);
     }
 
     /**
@@ -1497,7 +1387,7 @@
       while (++index < length) {
         var value = array[index];
 
-        if (isCommon) {
+        if (isCommon && value === value) {
           var valuesIndex = valuesLength;
           while (valuesIndex--) {
             if (values[valuesIndex] === value) {
@@ -1519,19 +1409,19 @@
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Array|Object|string} Returns `collection`.
      */
-    function baseEach(collection, iterator) {
+    function baseEach(collection, iteratee) {
       var length = collection ? collection.length : 0;
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
-        return baseForOwn(collection, iterator);
+        return baseForOwn(collection, iteratee);
       }
       var index = -1,
           iterable = toIterable(collection);
 
       while (++index < length) {
-        if (iterator(iterable[index], index, iterable) === false) {
+        if (iteratee(iterable[index], index, iterable) === false) {
           break;
         }
       }
@@ -1544,17 +1434,17 @@
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Array|Object|string} Returns `collection`.
      */
-    function baseEachRight(collection, iterator) {
+    function baseEachRight(collection, iteratee) {
       var length = collection ? collection.length : 0;
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
-        return baseForOwnRight(collection, iterator);
+        return baseForOwnRight(collection, iteratee);
       }
       var iterable = toIterable(collection);
       while (length--) {
-        if (iterator(iterable[length], length, iterable) === false) {
+        if (iteratee(iterable[length], length, iterable) === false) {
           break;
         }
       }
@@ -1668,24 +1558,24 @@
 
     /**
      * The base implementation of `baseForIn` and `baseForOwn` which iterates
-     * over `object` properties returned by `keysFunc` executing `iterator` for
+     * over `object` properties returned by `keysFunc` executing `iteratee` for
      * each property. Iterator functions may exit iteration early by explicitly
      * returning `false`.
      *
      * @private
      * @param {Object} object The object to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @param {Function} keysFunc The function to get the keys of `object`.
      * @returns {Object} Returns `object`.
      */
-    function baseFor(object, iterator, keysFunc) {
+    function baseFor(object, iteratee, keysFunc) {
       var index = -1,
           props = keysFunc(object),
           length = props.length;
 
       while (++index < length) {
         var key = props[index];
-        if (iterator(object[key], key, object) === false) {
+        if (iteratee(object[key], key, object) === false) {
           break;
         }
       }
@@ -1698,17 +1588,17 @@
      *
      * @private
      * @param {Object} object The object to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @param {Function} keysFunc The function to get the keys of `object`.
      * @returns {Object} Returns `object`.
      */
-    function baseForRight(object, iterator, keysFunc) {
+    function baseForRight(object, iteratee, keysFunc) {
       var props = keysFunc(object),
           length = props.length;
 
       while (length--) {
         var key = props[length];
-        if (iterator(object[key], key, object) === false) {
+        if (iteratee(object[key], key, object) === false) {
           break;
         }
       }
@@ -1721,11 +1611,11 @@
      *
      * @private
      * @param {Object} object The object to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Object} Returns `object`.
      */
-    function baseForIn(object, iterator) {
-      return baseFor(object, iterator, keysIn);
+    function baseForIn(object, iteratee) {
+      return baseFor(object, iteratee, keysIn);
     }
 
     /**
@@ -1734,11 +1624,11 @@
      *
      * @private
      * @param {Object} object The object to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Object} Returns `object`.
      */
-    function baseForOwn(object, iterator) {
-      return baseFor(object, iterator, keys);
+    function baseForOwn(object, iteratee) {
+      return baseFor(object, iteratee, keys);
     }
 
     /**
@@ -1747,32 +1637,32 @@
      *
      * @private
      * @param {Object} object The object to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Object} Returns `object`.
      */
-    function baseForOwnRight(object, iterator) {
-      return baseForRight(object, iterator, keys);
+    function baseForOwnRight(object, iteratee) {
+      return baseForRight(object, iteratee, keys);
     }
 
     /**
-     * The base implementation of `_.functions` which creates an array of function
-     * property names from those returned by `keysFunc`.
+     * The base implementation of `_.functions` which creates an array of
+     * `object` function property names filtered from those provided.
      *
      * @private
      * @param {Object} object The object to inspect.
-     * @param {Function} keysFunc The function to get the keys of `object`.
-     * @returns {Array} Returns the new sorted array of property names.
+     * @param {Array} props The property names to filter.
+     * @returns {Array} Returns the new array of filtered property names.
      */
-    function baseFunctions(object, keysFunc) {
+    function baseFunctions(object, props) {
       var index = -1,
-          props = keysFunc(object),
           length = props.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var key = props[index];
         if (isFunction(object[key])) {
-          result.push(key);
+          result[++resIndex] = key;
         }
       }
       return result;
@@ -1896,7 +1786,7 @@
             return (value != +value)
               ? other != +other
               // but treat `-0` vs. `+0` as not equal
-              : (value == 0 ? (1 / value == 1 / other) : value == +other);
+              : (value == 0 ? ((1 / value) == (1 / other)) : value == +other);
 
           case regexpClass:
           case stringClass:
@@ -1999,14 +1889,14 @@
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @returns {Array} Returns the new mapped array.
      */
-    function baseMap(collection, iterator) {
+    function baseMap(collection, iteratee) {
       var result = [];
 
       baseEach(collection, function(value, key, collection) {
-        result.push(iterator(value, key, collection));
+        result.push(iteratee(value, key, collection));
       });
       return result;
     }
@@ -2089,51 +1979,14 @@
      */
     function basePartial(func, bitmask, args, holders, thisArg) {
       if (func) {
-        var data = func[EXPANDO],
+        var data = getData(func),
             arity = data ? data[2] : func.length;
 
         arity -= args.length;
       }
-      var isPartial = bitmask & PARTIAL_FLAG,
-          newData = [func, bitmask, arity, thisArg, null, null];
-
-      newData[isPartial ? 4 : 6] = args;
-      newData[isPartial ? 5 : 7] = holders;
-      return createWrapper(newData);
-    }
-
-    /**
-     * The base implementation of `_.pick` without support for `this` binding
-     * and individual property name arguments.
-     *
-     * @private
-     * @param {Object} object The source object.
-     * @param {Function|string[]} predicate The function called per iteration or
-     *  property names to pick.
-     * @returns {Object} Returns the new object.
-     */
-    function basePick(object, predicate) {
-      var result = {};
-
-      if (typeof predicate == 'function') {
-        baseForIn(object, function(value, key, object) {
-          if (predicate(value, key, object)) {
-            result[key] = value;
-          }
-        });
-        return result;
-      }
-      var index = -1,
-          props = predicate,
-          length = props.length;
-
-      while (++index < length) {
-        var key = props[index];
-        if (key in object) {
-          result[key] = object[key];
-        }
-      }
-      return result;
+      return (bitmask & PARTIAL_FLAG)
+        ? createWrapper(func, bitmask, arity, thisArg, args, holders)
+        : createWrapper(func, bitmask, arity, thisArg, null, null, args, holders);
     }
 
     /**
@@ -2180,20 +2033,42 @@
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @param {*} accumulator The initial value.
      * @param {boolean} initFromCollection Specify using the first or last element
      *  of `collection` as the initial value.
      * @param {Function} eachFunc The function to iterate over `collection`.
      * @returns {*} Returns the accumulated value.
      */
-    function baseReduce(collection, iterator, accumulator, initFromCollection, eachFunc) {
+    function baseReduce(collection, iteratee, accumulator, initFromCollection, eachFunc) {
       eachFunc(collection, function(value, index, collection) {
         accumulator = initFromCollection
           ? (initFromCollection = false, value)
-          : iterator(accumulator, value, index, collection)
+          : iteratee(accumulator, value, index, collection)
       });
       return accumulator;
+    }
+
+    /**
+     * The base implementation of `setData` without support for hot loop detection.
+     *
+     * @private
+     * @param {Function} func The function to associate metadata with.
+     * @param {*} data The metadata.
+     * @returns {Function} Returns `func`.
+     */
+    function baseSetData(func, data) {
+      metaMap.set(func, data);
+      return func;
+    }
+    // fallback for environments without `WeakMap`
+    if (!WeakMap) {
+      baseSetData = !defineProperty ? identity : function(func, value) {
+        descriptor.value = value;
+        defineProperty(func, EXPANDO, descriptor);
+        descriptor.value = null;
+        return func;
+      };
     }
 
     /**
@@ -2223,24 +2098,24 @@
      * @private
      * @param {Array} array The array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} iterator The function called per iteration.
+     * @param {Function} iteratee The function called per iteration.
      * @param {boolean} [retHighest=false] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      */
-    function baseSortedIndex(array, value, iterator, retHighest) {
+    function baseSortedIndex(array, value, iteratee, retHighest) {
       var low = 0,
           high = array ? array.length : low;
 
-      value = iterator(value);
+      value = iteratee(value);
       var hintNum = typeof value == 'number' ||
         (value != null && isFunction(value.valueOf) && typeof value.valueOf() == 'number');
 
       while (low < high) {
         var mid = (low + high) >>> 1,
-            computed = iterator(array[mid]),
-            setLow = retHighest ? computed <= value : computed < value;
+            computed = iteratee(array[mid]),
+            setLow = retHighest ? (computed <= value) : (computed < value);
 
         if (hintNum && typeof computed != 'undefined') {
           computed = +computed;
@@ -2261,10 +2136,10 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Function} [iterator] The function called per iteration.
+     * @param {Function} [iteratee] The function called per iteration.
      * @returns {Array} Returns the new duplicate-value-free array.
      */
-    function baseUniq(array, iterator) {
+    function baseUniq(array, iteratee) {
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,
@@ -2277,27 +2152,27 @@
         var seen = createCache();
         indexOf = cacheIndexOf;
       } else {
-        seen = iterator ? [] : result;
+        seen = iteratee ? [] : result;
       }
       outer:
       while (++index < length) {
         var value = array[index],
-            computed = iterator ? iterator(value, index, array) : value;
+            computed = iteratee ? iteratee(value, index, array) : value;
 
-        if (isCommon) {
+        if (isCommon && value === value) {
           var seenIndex = seen.length;
           while (seenIndex--) {
             if (seen[seenIndex] === computed) {
               continue outer;
             }
           }
-          if (iterator) {
+          if (iteratee) {
             seen.push(computed);
           }
           result.push(value);
         }
         else if (indexOf(seen, computed) < 0) {
-          if (iterator || isLarge) {
+          if (iteratee || isLarge) {
             seen.push(computed);
           }
           result.push(value);
@@ -2326,6 +2201,36 @@
         result[index] = object[props[index]];
       }
       return result;
+    }
+
+    /**
+     * Creates a clone of the given array buffer.
+     *
+     * @private
+     * @param {ArrayBuffer} buffer The array buffer to clone.
+     * @returns {ArrayBuffer} Returns the cloned array buffer.
+     */
+    function bufferClone(buffer) {
+      return bufferSlice.call(buffer, 0);
+    }
+    if (!bufferSlice) {
+      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
+      bufferClone = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
+        var byteLength = buffer.byteLength,
+            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
+            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
+            result = new ArrayBuffer(byteLength);
+
+        if (floatLength) {
+          var view = new Float64Array(result, 0, floatLength);
+          view.set(new Float64Array(buffer, 0, floatLength));
+        }
+        if (byteLength != offset) {
+          view = new Uint8Array(result, offset);
+          view.set(new Uint8Array(buffer, offset));
+        }
+        return result;
+      };
     }
 
     /**
@@ -2393,7 +2298,7 @@
     /**
      * Creates a function that aggregates a collection, creating an accumulator
      * object composed from the results of running each element in the collection
-     * through `iterator`. The given setter function sets the keys and values of
+     * through `iteratee`. The given setter function sets the keys and values of
      * the accumulator object. If `initializer` is provided it is used to initialize
      * the accumulator object.
      *
@@ -2403,9 +2308,9 @@
      * @returns {Function} Returns the new aggregator function.
      */
     function createAggregator(setter, initializer) {
-      return function(collection, iterator, thisArg) {
+      return function(collection, iteratee, thisArg) {
         var result = initializer ? initializer() : {};
-        iterator = getCallback(iterator, thisArg, 3);
+        iteratee = getCallback(iteratee, thisArg, 3);
 
         if (isArray(collection)) {
           var index = -1,
@@ -2413,11 +2318,11 @@
 
           while (++index < length) {
             var value = collection[index];
-            setter(result, value, iterator(value, index, collection), collection);
+            setter(result, value, iteratee(value, index, collection), collection);
           }
         } else {
           baseEach(collection, function(value, key, collection) {
-            setter(result, value, iterator(value, key, collection), collection);
+            setter(result, value, iteratee(value, key, collection), collection);
           });
         }
         return result;
@@ -2433,44 +2338,43 @@
      * @returns {Function} Returns the new assigner function.
      */
     function createAssigner(assigner) {
-      return function(object) {
-        var args = arguments,
-            length = args.length;
+      return function() {
+        var length = arguments.length,
+            object = arguments[0];
 
         if (object == null || length < 2) {
           return object;
         }
         // enables use as a callback for functions like `_.reduce`
-        var type = typeof args[2];
-        if ((type == 'number' || type == 'string') && args[3] && args[3][args[2]] === args[1]) {
+        var type = typeof arguments[2];
+        if ((type == 'number' || type == 'string') && arguments[3] && arguments[3][arguments[2]] === arguments[1]) {
           length = 2;
         }
         // juggle arguments
-        if (length > 3 && typeof args[length - 2] == 'function') {
-          var customizer = baseCallback(args[--length - 1], args[length--], 5);
-        } else if (length > 2 && typeof args[length - 1] == 'function') {
-          customizer = args[--length];
+        if (length > 3 && typeof arguments[length - 2] == 'function') {
+          var customizer = baseCallback(arguments[--length - 1], arguments[length--], 5);
+        } else if (length > 2 && typeof arguments[length - 1] == 'function') {
+          customizer = arguments[--length];
         }
         var index = 0;
         while (++index < length) {
-          assigner(object, args[index], customizer);
+          assigner(object, arguments[index], customizer);
         }
         return object;
       };
     }
 
     /**
-     * Creates a function that invokes the function specified in the metadata
-     * with its associated `this` binding.
+     * Creates a function that wraps `func` and invokes it with the `this`
+     * binding of `thisArg`.
      *
      * @private
-     * @param {Array} data The metadata array. See `createWrapper` for more details.
-     * @returns {Function} Returns the new bound function.
+     * @param {Function} func The function to bind.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @returns {Function} Returns the new wrapped function.
      */
-    function createBindWrapper(data) {
-      var func = data[0],
-          thisArg = data[3],
-          Ctor = createCtorWrapper(func);
+    function createBindWrapper(func, thisArg) {
+      var Ctor = createCtorWrapper(func);
 
       function wrapper() {
         return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
@@ -2516,6 +2420,77 @@
     }
 
     /**
+     * Creates a function that wraps `func` and invokes it with optional `this`
+     * binding of, partial application, and currying.
+     *
+     * @private
+     * @param {Function|string} func The function or method name to reference.
+     * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {number} arity The arity of `func`.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {Array} [partialArgs] An array of arguments to prepend to those provided to the new function.
+     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] An array of arguments to append to those provided to the new function.
+     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
+     * @returns {Function} Returns the new function.
+     */
+    function createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
+      var isBind = bitmask & BIND_FLAG,
+          isBindKey = bitmask & BIND_KEY_FLAG,
+          isCurry = bitmask & CURRY_FLAG,
+          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG;
+
+      var Ctor = !isBindKey && createCtorWrapper(func),
+          key = func;
+
+      function wrapper() {
+        var length = arguments.length,
+            index = length,
+            args = Array(length);
+
+        while (index--) {
+          args[index] = arguments[index];
+        }
+        if (partialArgs) {
+          args = composeArgs(partialArgs, partialHolders, args);
+        }
+        if (partialRightArgs) {
+          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
+        }
+        if (isCurry || isCurryRight) {
+          var placeholder = wrapper.placeholder,
+              holders = replaceHolders(args, placeholder);
+
+          length -= holders.length;
+          if (length < arity) {
+            var newArity = nativeMax(arity - length, 0),
+                newPartialArgs = isCurry ? args : null,
+                newPartialHolders = isCurry ? holders : null,
+                newPartialRightArgs = isCurry ? null : args,
+                newPartialRightHolders = isCurry ? null : holders;
+
+            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
+            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
+
+            if (!isCurryBound) {
+              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+            }
+            var result = createHybridWrapper(func, bitmask, newArity, thisArg, newPartialArgs, newPartialHolders, newPartialRightArgs, newPartialRightHolders);
+            result.placeholder = placeholder;
+            return setData(result, [func, bitmask, newArity, thisArg, newPartialArgs, newPartialHolders, newPartialRightArgs, newPartialRightHolders]);
+          }
+        }
+        var thisBinding = isBind ? thisArg : this;
+        if (isBindKey) {
+          func = thisBinding[key];
+        }
+        return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+      }
+      return wrapper;
+    }
+
+    /**
      * Creates the pad required for `string` based on the given padding length.
      * The `chars` string may be truncated if the number of padding characters
      * exceeds the padding length.
@@ -2539,25 +2514,25 @@
     }
 
     /**
-     * Creates a function that invokes the function specified in the metadata
-     * with its associated partially applied arguments and optional `this` binding.
+     * Creates a function that wraps `func` and invokes it with the optional `this`
+     * binding of `thisArg` and the `partialArgs` prepended to those provided to
+     * the wrapper.
      *
      * @private
-     * @param {Array} data The metadata array. See `createWrapper` for more details.
+     * @param {Function} func The function to partially apply arguments to.
+     * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {Array} partialArgs An array of arguments to prepend to those provided to the new function.
+     * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new bound function.
      */
-    function createPartialWrapper(data) {
-      var func = data[0],
-          thisArg = data[3],
-          partialArgs = data[4];
-
-      var isBind = data[1] & BIND_FLAG,
+    function createPartialWrapper(func, bitmask, partialArgs, thisArg) {
+      var isBind = bitmask & BIND_FLAG,
           Ctor = createCtorWrapper(func);
 
       function wrapper() {
         // avoid `arguments` object use disqualifying optimizations by
         // converting it to an array before passing it to `composeArgs`
-        var argsIndex = 0,
+        var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
             leftLength = partialArgs.length,
@@ -2567,7 +2542,7 @@
           args[leftIndex] = partialArgs[leftIndex];
         }
         while (argsLength--) {
-          args[leftIndex++] = arguments[argsIndex++];
+          args[leftIndex++] = arguments[++argsIndex];
         }
         return (this instanceof wrapper ? Ctor : func).apply(isBind ? thisArg : this, args);
       }
@@ -2579,9 +2554,8 @@
      * `this` binding and partially applied arguments.
      *
      * @private
-     * @param {Array} data The metadata array.
-     * @param {Function|string} data[0] The function or method name to reference.
-     * @param {number} data[1] The bitmask of flags to compose.
+     * @param {Function|string} func The function or method name to reference.
+     * @param {number} bitmask The bitmask of flags.
      *  The bitmask may be composed of the following flags:
      *   1  - `_.bind`
      *   2  - `_.bindKey`
@@ -2590,97 +2564,80 @@
      *   16 - `_.curry` or `_.curryRight` of a bound function
      *   32 - `_.partial`
      *   64 - `_.partialRight`
-     * @param {number} data[2] The arity of `data[0]`.
-     * @param {*} [data[3]] The `this` binding of `data[0]`.
-     * @param {Array} [data[4]] An array of arguments to prepend to those
-     *  provided to the new function.
-     * @param {Array} [data[5]] An array of `data[4]` placeholder indexes.
-     * @param {Array} [data[6]] An array of arguments to append to those
-     *  provided to the new function.
-     * @param {Array} [data[7]] An array of `data[6]` placeholder indexes.
+     * @param {number} arity The arity of `func`.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {Array} [partialArgs] An array of arguments to prepend to those provided to the new function.
+     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] An array of arguments to append to those provided to the new function.
+     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
-    function createWrapper(data) {
-      var func = data[0],
-          bitmask = data[1];
-
-      var isBind = bitmask & BIND_FLAG,
-          isBindKey = bitmask & BIND_KEY_FLAG,
-          isPartial = bitmask & PARTIAL_FLAG,
-          isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
-
+    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
+      var isBindKey = bitmask & BIND_KEY_FLAG;
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var arity = data[2],
-          partialArgs = data[4],
-          partialRightArgs = data[6];
-
+      var isPartial = bitmask & PARTIAL_FLAG;
       if (isPartial && !partialArgs.length) {
+        bitmask &= ~PARTIAL_FLAG;
         isPartial = false;
-        data[1] = (bitmask &= ~PARTIAL_FLAG);
-        data[4] = data[5] = partialArgs = null;
+        partialArgs = partialHolders = null;
       }
+      var isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
       if (isPartialRight && !partialRightArgs.length) {
+        bitmask &= ~PARTIAL_RIGHT_FLAG;
         isPartialRight = false;
-        data[1] = (bitmask &= ~PARTIAL_RIGHT_FLAG);
-        data[6] = data[7] = partialRightArgs = null;
+        partialRightArgs = partialRightHolders = null;
       }
-      var funcData = !isBindKey && func[EXPANDO];
-      if (funcData && funcData !== true) {
-        // shallow clone `funcData`
-        funcData = slice(funcData);
+      var data = (data = !isBindKey && getData(func)) && data !== true && data;
+      if (data) {
+        var funcBitmask = data[1],
+            funcIsBind = funcBitmask & BIND_FLAG,
+            isBind = bitmask & BIND_FLAG;
 
-        // clone partial left arguments
-        if (funcData[4]) {
-          funcData[4] = slice(funcData[4]);
-          funcData[5] = slice(funcData[5]);
+        // use metadata `func` and merge bitmasks
+        func = data[0];
+        bitmask |= funcBitmask;
+
+        // use metadata `arity` if not provided
+        if (arity == null) {
+          arity = data[2];
         }
-        // clone partial right arguments
-        if (funcData[6]) {
-          funcData[6] = slice(funcData[6]);
-          funcData[7] = slice(funcData[7]);
-        }
-        // set arity if provided
-        if (typeof arity == 'number') {
-          funcData[2] = arity;
-        }
-        // set `thisArg` if not previously bound
-        var bound = funcData[1] & BIND_FLAG;
-        if (isBind && !bound) {
-          funcData[3] = data[3];
+        // use metadata `thisArg` if available
+        if (funcIsBind) {
+          thisArg = data[3];
         }
         // set if currying a bound function
-        if (!isBind && bound) {
+        if (!isBind && funcIsBind) {
           bitmask |= CURRY_BOUND_FLAG;
         }
         // append partial left arguments
-        if (isPartial) {
-          var funcPartialArgs = funcData[4];
-          if (funcPartialArgs) {
-            funcPartialArgs = composeArgs(funcPartialArgs, funcData[5], partialArgs);
-          }
-          funcData[4] = funcPartialArgs || partialArgs;
-          funcData[5] = funcPartialArgs ? replaceHolders(funcPartialArgs, PLACEHOLDER) : data[5];
+        var funcArgs = data[4];
+        if (funcArgs) {
+          var funcHolders = data[5];
+          partialArgs = isPartial ? composeArgs(funcArgs, funcHolders, partialArgs) : baseSlice(funcArgs);
+          partialHolders = isPartial ? replaceHolders(partialArgs, PLACEHOLDER) : baseSlice(funcHolders);
         }
         // prepend partial right arguments
-        if (isPartialRight) {
-          var funcPartialRightArgs = funcData[6];
-          if (funcPartialRightArgs) {
-            funcPartialRightArgs = composeArgsRight(funcPartialRightArgs, funcData[7], partialRightArgs);
-          }
-          funcData[6] = funcPartialRightArgs || partialRightArgs;
-          funcData[7] = funcPartialRightArgs ? replaceHolders(funcPartialRightArgs, PLACEHOLDER) : data[7];
+        funcArgs = data[6];
+        if (funcArgs) {
+          funcHolders = data[7];
+          partialRightArgs = isPartialRight ? composeArgsRight(funcArgs, funcHolders, partialRightArgs) : baseSlice(funcArgs);
+          partialRightHolders = isPartialRight ? replaceHolders(partialRightArgs, PLACEHOLDER) : baseSlice(funcHolders);
         }
-        // merge flags
-        funcData[1] |= bitmask;
-        return createWrapper(funcData);
       }
       if (arity == null) {
         arity = isBindKey ? 0 : func.length;
       }
-      data[2] = nativeMax(arity, 0);
-      return baseCreateWrapper(data);
+      if (bitmask == BIND_FLAG) {
+        var result = createBindWrapper(func, thisArg);
+      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
+        result = createPartialWrapper(func, bitmask, partialArgs, thisArg);
+      } else {
+        result = createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders);
+      }
+      var setter = data ? baseSetData : setData;
+      return setter(result, [func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders]);
     }
 
     /**
@@ -2695,7 +2652,24 @@
     function getCallback(func, thisArg, argCount) {
       var result = lodash.callback || callback;
       result = result === callback ? baseCallback : result;
-      return arguments.length ? result(func, thisArg, argCount) : result;
+      return argCount ? result(func, thisArg, argCount) : result;
+    }
+
+    /**
+     * Gets metadata for `func`.
+     *
+     * @private
+     * @param {Function} func The function to query.
+     * @returns {*} Returns the metadata for `func`.
+     */
+    function getData(func) {
+      return metaMap.get(func);
+    }
+    // fallback for environments without `WeakMap`
+    if (!WeakMap) {
+      getData = !defineProperty ? noop : function(func) {
+        return func[EXPANDO];
+      };
     }
 
     /**
@@ -2714,6 +2688,84 @@
     }
 
     /**
+     * Initializes an array clone.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @returns {*} Returns the initialized clone value.
+     */
+    function initArrayClone(array, isDeep) {
+      var index = -1,
+          length = array.length,
+          result = array.constructor(length);
+
+      if (!isDeep) {
+        while (++index < length) {
+          result[index] = array[index];
+        }
+      }
+      // add array properties assigned by `RegExp#exec`
+      if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+        result.index = array.index;
+        result.input = array.input;
+      }
+      return result;
+    }
+
+    /**
+     * Initializes an object clone.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @returns {*} Returns the initialized clone value.
+     */
+    function initObjectClone(object, isDeep) {
+      var className = toString.call(object);
+      if (!cloneableClasses[className]) {
+        return object;
+      }
+      var Ctor = object.constructor,
+          isArgs = className == argsClass,
+          isObj = className == objectClass;
+
+      if (isObj && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
+        Ctor = Object;
+      }
+      if (isArgs || isObj) {
+        var result = isDeep ? new Ctor : baseAssign(new Ctor, object);
+        if (isArgs) {
+          result.length = object.length;
+        }
+        return result;
+      }
+      switch (className) {
+        case arrayBufferClass:
+          return bufferClone(object);
+
+        case boolClass:
+        case dateClass:
+          return new Ctor(+object);
+
+        case float32Class: case float64Class:
+        case int8Class: case int16Class: case int32Class:
+        case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
+          var buffer = object.buffer;
+          return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
+
+        case numberClass:
+        case stringClass:
+          return new Ctor(object);
+
+        case regexpClass:
+          result = Ctor(object.source, reFlags.exec(object));
+          result.lastIndex = object.lastIndex;
+      }
+      return result;
+    }
+
+    /**
      * Checks if `value` is an array-like object.
      *
      * @private
@@ -2726,20 +2778,6 @@
     }
 
     /**
-     * Checks if `value` is a native function.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
-     */
-    function isNative(value) {
-      var type = typeof value;
-      return type == 'function'
-        ? reNative.test(fnToString.call(value))
-        : (value && type == 'object' && reHostCtor.test(toString.call(value))) || false;
-    }
-
-    /**
      * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
      *
      * @private
@@ -2748,37 +2786,50 @@
      *  equality comparisons, else `false`.
      */
     function isStrictComparable(value) {
-      return value === value && (value === 0 ? (1 / value > 0) : !isObject(value));
+      return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
     }
 
     /**
-     * Creates a clone of the given array buffer.
+     * A specialized version of `_.pick` that picks `object` properties
+     * specified by the `props` array.
      *
      * @private
-     * @param {ArrayBuffer} buffer The array buffer to clone.
-     * @returns {ArrayBuffer} Returns the cloned array buffer.
+     * @param {Object} object The source object.
+     * @param {string[]} props The property names to pick.
+     * @returns {Object} Returns the new object.
      */
-    function cloneBuffer(buffer) {
-      return bufferSlice.call(buffer, 0);
-    }
-    if (!bufferSlice) {
-      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`
-      cloneBuffer = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
-        var byteLength = buffer.byteLength,
-            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
-            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
-            result = new ArrayBuffer(byteLength);
+    function pickByArray(object, props) {
+      var index = -1,
+          length = props.length,
+          result = {};
 
-        if (floatLength) {
-          var view = new Float64Array(result, 0, floatLength);
-          view.set(new Float64Array(buffer, 0, floatLength));
+      while (++index < length) {
+        var key = props[index];
+        if (key in object) {
+          result[key] = object[key];
         }
-        if (byteLength != offset) {
-          view = new Uint8Array(result, offset);
-          view.set(new Uint8Array(buffer, offset));
+      }
+      return result;
+    }
+
+    /**
+     * A specialized version of `_.pick` that picks `object` properties
+     * the predicate returns truthy for.
+     *
+     * @private
+     * @param {Object} object The source object.
+     * @param {Function} predicate The function called per iteration.
+     * @returns {Object} Returns the new object.
+     */
+    function pickByCallback(object, predicate) {
+      var result = {};
+
+      baseForIn(object, function(value, key, object) {
+        if (predicate(value, key, object)) {
+          result[key] = value;
         }
-        return result;
-      };
+      });
+      return result;
     }
 
     /**
@@ -2793,31 +2844,49 @@
     function replaceHolders(array, placeholder) {
       var index = -1,
           length = array.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         if (array[index] === placeholder) {
           array[index] = PLACEHOLDER;
-          result.push(index);
+          result[++resIndex] = index;
         }
       }
       return result;
     }
 
     /**
-     * Sets wrapper metadata on a given function.
+     * Sets metadata for `func`.
+     *
+     * **Note**: If this function becomes hot, i.e. is called a lot in a short
+     * period of time, it will trip its breaker and transition to an identity
+     * function to avoid garbage collection pauses.
      *
      * @private
-     * @param {Function} func The function to set data on.
-     * @param {Array} value The data array to set.
+     * @param {Function} func The function to associate metadata with.
+     * @param {*} data The metadata.
      * @returns {Function} Returns `func`.
      */
-    var setData = !defineProperty ? identity : function(func, value) {
-      descriptor.value = value;
-      defineProperty(func, EXPANDO, descriptor);
-      descriptor.value = null;
-      return func;
-    };
+    var setData = (function() {
+      var count = 0,
+          lastCalled = 0;
+
+      return function(key, value) {
+        var stamp = now ? now() : 0,
+            remaining = HOT_SPAN - (stamp - lastCalled);
+
+        lastCalled = stamp;
+        if (remaining > 0) {
+          if (++count > HOT_COUNT) {
+            return key;
+          }
+        } else {
+          count = 0;
+        }
+        return baseSetData(key, value);
+      };
+    }());
 
     /**
      * A fallback implementation of `_.isPlainObject` which checks if `value`
@@ -2883,22 +2952,23 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Function} [iterator] The function called per iteration.
+     * @param {Function} [iteratee] The function called per iteration.
      * @returns {Array} Returns the new duplicate-value-free array.
      */
-    function sortedUniq(array, iterator) {
+    function sortedUniq(array, iteratee) {
       var seen,
           index = -1,
           length = array.length,
+          resIndex = -1,
           result = [];
 
       while (++index < length) {
         var value = array[index],
-            computed = iterator ? iterator(value, index, array) : value;
+            computed = iteratee ? iteratee(value, index, array) : value;
 
         if (!index || seen !== computed) {
           seen = computed;
-          result.push(value);
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -2937,7 +3007,7 @@
     /*--------------------------------------------------------------------------*/
 
     /**
-     * Creates an array of elements split into groups the length of `chunkSize`.
+     * Creates an array of elements split into groups the length of `size`.
      * If `collection` can't be split evenly, the final chunk will be the remaining
      * elements.
      *
@@ -2945,7 +3015,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to process.
-     * @param {numer} [chunkSize=1] The size of each chunk.
+     * @param {numer} [size=1] The length of each chunk.
      * @returns {Array} Returns the new array containing chunks.
      * @example
      *
@@ -2955,14 +3025,15 @@
      * _.chunk(['a', 'b', 'c', 'd'], 3);
      * // => [['a', 'b', 'c'], ['d']]
      */
-    function chunk(array, chunkSize) {
+    function chunk(array, size) {
       var index = 0,
           length = array ? array.length : 0,
+          resIndex = -1,
           result = [];
 
-      chunkSize = nativeMax(+chunkSize || 1, 1);
+      size = typeof size == 'undefined' ? 1 : nativeMax(+size || 1, 1);
       while (index < length) {
-        result.push(slice(array, index, (index += chunkSize)));
+        result[++resIndex] = slice(array, index, (index += size));
       }
       return result;
     }
@@ -2997,8 +3068,12 @@
     }
 
     /**
-     * Creates an array excluding all values of the provided arrays using strict
-     * equality for comparisons, i.e. `===`.
+     * Creates an array excluding all values of the provided arrays using
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3131,7 +3206,7 @@
           index = length;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) { }
+      while (index-- && predicate(array[index], index, array)) {}
       return slice(array, 0, index + 1);
     }
 
@@ -3180,7 +3255,7 @@
           length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) { }
+      while (++index < length && predicate(array[index], index, array)) {}
       return slice(array, index);
     }
 
@@ -3365,9 +3440,13 @@
 
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
-     * using strict equality for comparisons, i.e. `===`. If `fromIndex` is negative,
+     * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
      * it is used as the offset from the end of the collection. If `array` is
      * sorted providing `true` for `fromIndex` performs a faster binary search.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3422,7 +3501,11 @@
 
     /**
      * Creates an array of unique values present in all provided arrays using
-     * strict equality for comparisons, i.e. `===`.
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3530,8 +3613,10 @@
         index = sortedLastIndex(array, value) - 1;
         return (length && array[index] === value) ? index : -1;
       }
+      var isReflexive = value === value;
       while (index--) {
-        if (array[index] === value) {
+        var other = array[index];
+        if ((isReflexive ? other === value : other !== other)) {
           return index;
         }
       }
@@ -3539,10 +3624,14 @@
     }
 
     /**
-     * Removes all provided values from `array` using strict equality for
-     * comparisons, i.e. `===`.
+     * Removes all provided values from `array` using `SameValueZero` for equality
+     * comparisons.
      *
-     * Note: Unlike `_.without`, this method mutates `array`.
+     * **Note:** Unlike `_.without`, this method mutates `array`.
+     *
+     * `SameValueZero` is like strict equality, e.g. `===`, except that `NaN` matches
+     * `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3557,20 +3646,18 @@
      * console.log(array);
      * // => [1, 1]
      */
-    function pull(array) {
-      var argsIndex = 0,
-          argsLength = arguments.length,
-          length = array ? array.length : 0;
+    function pull() {
+      var array = arguments[0],
+          index = 0,
+          indexOf = getIndexOf(),
+          length = arguments.length;
 
-      while (++argsIndex < argsLength) {
-        var index = -1,
-            value = arguments[argsIndex];
+      while (++index < length) {
+        var fromIndex = 0,
+            value = arguments[index];
 
-        while (++index < length) {
-          if (array[index] === value) {
-            splice.call(array, index--, 1);
-            length--;
-          }
+        while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
+          splice.call(array, fromIndex, 1);
         }
       }
       return array;
@@ -3581,7 +3668,7 @@
      * returns an array of the removed elements. Indexes may be specified as an
      * array of indexes or as individual arguments.
      *
-     * Note: Unlike `_.at`, this method mutates `array`.
+     * **Note:** Unlike `_.at`, this method mutates `array`.
      *
      * @static
      * @memberOf _
@@ -3617,7 +3704,7 @@
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
-     * Note: Unlike `_.filter`, this method mutates `array`.
+     * **Note:** Unlike `_.filter`, this method mutates `array`.
      *
      * @static
      * @memberOf _
@@ -3677,7 +3764,7 @@
     /**
      * Slices `array` from the `start` index up to, but not including, the `end` index.
      *
-     * Note: This function is used instead of `Array#slice` to support node lists
+     * **Note:** This function is used instead of `Array#slice` to support node lists
      * in IE < 9 and to ensure dense arrays are returned.
      *
      * @static
@@ -3700,6 +3787,9 @@
       if (end < 0) {
         end += length;
       }
+      if (end && end == length && !start) {
+        return baseSlice(array);
+      }
       length = start > end ? 0 : (end - start);
 
       var result = Array(length);
@@ -3712,14 +3802,14 @@
     /**
      * Uses a binary search to determine the lowest index at which a value should
      * be inserted into a given sorted array in order to maintain the sort order
-     * of the array. If an iterator function is provided it is executed for `value`
-     * and each element of `array` to compute their sort ranking. The iterator
+     * of the array. If an iteratee function is provided it is executed for `value`
+     * and each element of `array` to compute their sort ranking. The iteratee
      * function is bound to `thisArg` and invoked with one argument; (value).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -3728,10 +3818,10 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      * @example
@@ -3744,7 +3834,7 @@
      *
      * var dict = { 'data': { 'thirty': 30, 'forty': 40, 'fifty': 50 } };
      *
-     * // using an iterator function
+     * // using an iteratee function
      * _.sortedIndex(['thirty', 'fifty'], 'forty', function(word) {
      *   return this.data[word];
      * }, dict);
@@ -3754,9 +3844,9 @@
      * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
      * // => 1
      */
-    function sortedIndex(array, value, iterator, thisArg) {
-      iterator = iterator == null ? identity : getCallback(iterator, thisArg, 1);
-      return baseSortedIndex(array, value, iterator);
+    function sortedIndex(array, value, iteratee, thisArg) {
+      iteratee = iteratee == null ? identity : getCallback(iteratee, thisArg, 1);
+      return baseSortedIndex(array, value, iteratee);
     }
 
     /**
@@ -3769,10 +3859,10 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      * @example
@@ -3780,9 +3870,9 @@
      * _.sortedLastIndex([4, 4, 5, 5, 6, 6], 5);
      * // => 4
      */
-    function sortedLastIndex(array, value, iterator, thisArg) {
-      iterator = iterator == null ? identity : getCallback(iterator, thisArg, 1);
-      return baseSortedIndex(array, value, iterator, true);
+    function sortedLastIndex(array, value, iteratee, thisArg) {
+      iteratee = iteratee == null ? identity : getCallback(iteratee, thisArg, 1);
+      return baseSortedIndex(array, value, iteratee, true);
     }
 
     /**
@@ -3892,7 +3982,7 @@
           index = length;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) { }
+      while (index-- && predicate(array[index], index, array)) {}
       return slice(array, index + 1);
     }
 
@@ -3941,13 +4031,17 @@
           length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) { }
+      while (++index < length && predicate(array[index], index, array)) {}
       return slice(array, 0, index);
     }
 
     /**
      * Creates an array of unique values, in order, of the provided arrays using
-     * strict equality for comparisons, i.e. `===`.
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3964,19 +4058,23 @@
     }
 
     /**
-     * Creates a duplicate-value-free version of an array using strict equality
-     * for comparisons, i.e. `===`. Providing `true` for `isSorted` performs a
-     * faster search algorithm for sorted arrays. If an iterator function is
-     * provided it is executed for each value in the array to generate the criterion
-     * by which uniqueness is computed. The `iterator` is bound to `thisArg` and
-     * invoked with three arguments; (value, index, array).
+     * Creates a duplicate-value-free version of an array using `SameValueZero`
+     * for equality comparisons. Providing `true` for `isSorted` performs a faster
+     * search algorithm for sorted arrays. If an iteratee function is provided it
+     * is executed for each value in the array to generate the criterion by which
+     * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
+     * with three arguments; (value, index, array).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -3984,10 +4082,10 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted=false] Specify the array is sorted.
-     * @param {Function|Object|string} [iterator] The function called per iteration.
+     * @param {Function|Object|string} [iteratee] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
      *  or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new duplicate-value-free array.
      * @example
      *
@@ -3998,7 +4096,7 @@
      * _.uniq([1, 1, 2], true);
      * // => [1, 2]
      *
-     * // using an iterator function
+     * // using an iteratee function
      * _.uniq([1, 2.5, 1.5, 2], function(n) { return this.floor(n); }, Math);
      * // => [1, 2.5]
      *
@@ -4006,7 +4104,7 @@
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    function uniq(array, isSorted, iterator, thisArg) {
+    function uniq(array, isSorted, iteratee, thisArg) {
       var length = array ? array.length : 0;
       if (!length) {
         return [];
@@ -4014,21 +4112,21 @@
       // juggle arguments
       var type = typeof isSorted;
       if (type != 'boolean' && isSorted != null) {
-        thisArg = iterator;
-        iterator = isSorted;
+        thisArg = iteratee;
+        iteratee = isSorted;
         isSorted = false;
 
         // enables use as a callback for functions like `_.map`
-        if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === array) {
-          iterator = null;
+        if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === array) {
+          iteratee = null;
         }
       }
-      if (iterator != null) {
-        iterator = getCallback(iterator, thisArg, 3);
+      if (iteratee != null) {
+        iteratee = getCallback(iteratee, thisArg, 3);
       }
       return (isSorted && getIndexOf() == baseIndexOf)
-        ? sortedUniq(array, iterator)
-        : baseUniq(array, iterator);
+        ? sortedUniq(array, iteratee)
+        : baseUniq(array, iteratee);
     }
 
     /**
@@ -4061,8 +4159,12 @@
     }
 
     /**
-     * Creates an array excluding all provided values using strict equality for
-     * comparisons, i.e. `===`.
+     * Creates an array excluding all provided values using `SameValueZero` for
+     * equality comparisons.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -4075,8 +4177,8 @@
      * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
      * // => [2, 3, 4]
      */
-    function without() {
-      return baseDifference(arguments[0], slice(arguments, 1));
+    function without(array) {
+      return baseDifference(array, slice(arguments, 1));
     }
 
     /**
@@ -4128,7 +4230,13 @@
      * // => [['fred', 30, true], ['barney', 40, false]]
      */
     function zip() {
-      return unzip(arguments);
+      var length = arguments.length,
+          array = Array(length);
+
+      while (length--) {
+        array[length] = arguments[length];
+      }
+      return unzip(array);
     }
 
     /**
@@ -4320,9 +4428,13 @@
     }
 
     /**
-     * Checks if `value` is present in `collection` using strict equality for
-     * comparisons, i.e. `===`. If `fromIndex` is negative, it is used as the
-     * offset from the end of the collection.
+     * Checks if `value` is present in `collection` using  `SameValueZero` for
+     * equality comparisons. If `fromIndex` is negative, it is used as the offset
+     * from the end of the collection.
+     *
+     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
+     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * for more details.
      *
      * @static
      * @memberOf _
@@ -4358,28 +4470,22 @@
       } else {
         fromIndex = 0;
       }
-      if (typeof collection == 'string' || !isArray(collection) && isString(collection)) {
-        if (fromIndex >= length) {
-          return false;
-        }
-        return nativeContains
-          ? nativeContains.call(collection, target, fromIndex)
-          : collection.indexOf(target, fromIndex) > -1;
-      }
-      return getIndexOf(collection, target, fromIndex) > -1;
+      return (typeof collection == 'string' || !isArray(collection) && isString(collection))
+        ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)
+        : (getIndexOf(collection, target, fromIndex) > -1);
     }
 
     /**
      * Creates an object composed of keys generated from the results of running
-     * each element of `collection` through `iterator`. The corresponding value
-     * of each key is the number of times the key was returned by `iterator`.
-     * The `iterator` is bound to `thisArg` and invoked with three arguments;
+     * each element of `collection` through `iteratee`. The corresponding value
+     * of each key is the number of times the key was returned by `iteratee`.
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -4387,10 +4493,10 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -4449,10 +4555,10 @@
      * // => false
      */
     function every(collection, predicate, thisArg) {
+      var func = isArray(collection) ? arrayEvery : baseEvery;
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = getCallback(predicate, thisArg, 3);
       }
-      var func = isArray(collection) ? arrayEvery : baseEvery;
       return func(collection, predicate);
     }
 
@@ -4497,9 +4603,9 @@
      * // => [{ 'name': 'barney', 'age': 36 }]
      */
     function filter(collection, predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-
       var func = isArray(collection) ? arrayFilter : baseFilter;
+
+      predicate = getCallback(predicate, thisArg, 3);
       return func(collection, predicate);
     }
 
@@ -4607,12 +4713,12 @@
     }
 
     /**
-     * Iterates over elements of `collection` executing `iterator` for each
-     * element. The `iterator` is bound to `thisArg` and invoked with three arguments;
+     * Iterates over elements of `collection` executing `iteratee` for each
+     * element. The `iteratee` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection). Iterator functions may exit iteration early
      * by explicitly returning `false`.
      *
-     * Note: As with other "Collections" methods, objects with a `length` property
+     * **Note:** As with other "Collections" methods, objects with a `length` property
      * are iterated like arrays. To avoid this behavior `_.forIn` or `_.forOwn`
      * may be used for object iteration.
      *
@@ -4621,8 +4727,8 @@
      * @alias each
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
@@ -4632,10 +4738,10 @@
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
      * // => logs each value-key pair and returns the object (property order is not guaranteed across environments)
      */
-    function forEach(collection, iterator, thisArg) {
-      return (typeof iterator == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-        ? arrayEach(collection, iterator)
-        : baseEach(collection, baseCallback(iterator, thisArg, 3));
+    function forEach(collection, iteratee, thisArg) {
+      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayEach(collection, iteratee)
+        : baseEach(collection, baseCallback(iteratee, thisArg, 3));
     }
 
     /**
@@ -4647,31 +4753,31 @@
      * @alias eachRight
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
      * _([1, 2, 3]).forEachRight(function(n) { console.log(n); }).join(',');
      * // => logs each value from right to left and returns the array
      */
-    function forEachRight(collection, iterator, thisArg) {
-      return (typeof iterator == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-        ? arrayEachRight(collection, iterator)
-        : baseEachRight(collection, baseCallback(iterator, thisArg, 3));
+    function forEachRight(collection, iteratee, thisArg) {
+      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayEachRight(collection, iteratee)
+        : baseEachRight(collection, baseCallback(iteratee, thisArg, 3));
     }
 
     /**
      * Creates an object composed of keys generated from the results of running
-     * each element of `collection` through `iterator`. The corresponding
+     * each element of `collection` through `iteratee`. The corresponding
      * value of each key is an array of the elements responsible for generating
-     * the key. The `iterator` is bound to `thisArg` and invoked with three
+     * the key. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -4679,10 +4785,10 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -4706,15 +4812,15 @@
 
     /**
      * Creates an object composed of keys generated from the results of running
-     * each element of the collection through `iterator`. The corresponding value
+     * each element of the collection through `iteratee`. The corresponding value
      * of each key is the last element responsible for generating the key. The
-     * iterator function is bound to `thisArg` and invoked with three arguments;
+     * iteratee function is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -4722,10 +4828,10 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -4775,13 +4881,13 @@
 
     /**
      * Creates an array of values by running each element in the collection through
-     * `iterator`. The `iterator` is bound to `thisArg` and invoked with three
+     * `iteratee`. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -4790,10 +4896,10 @@
      * @alias collect
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new mapped array.
      * @example
      *
@@ -4812,24 +4918,24 @@
      * _.map(characters, 'name');
      * // => ['barney', 'fred']
      */
-    function map(collection, iterator, thisArg) {
-      iterator = getCallback(iterator, thisArg, 3);
+    function map(collection, iteratee, thisArg) {
+      iteratee = getCallback(iteratee, thisArg, 3);
 
       var func = isArray(collection) ? arrayMap : baseMap;
-      return func(collection, iterator);
+      return func(collection, iteratee);
     }
 
     /**
      * Retrieves the maximum value of `collection`. If the collection is empty
-     * or falsey `-Infinity` is returned. If an iterator function is provided it
+     * or falsey `-Infinity` is returned. If an iteratee function is provided it
      * is executed for each value in the collection to generate the criterion by
-     * which the value is ranked. The `iterator` is bound to `thisArg` and invoked
+     * which the value is ranked. The `iteratee` is bound to `thisArg` and invoked
      * with three arguments; (value, index, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -4837,10 +4943,10 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iterator] The function called per iteration.
+     * @param {Function|Object|string} [iteratee] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
      *  or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the maximum value.
      * @example
      *
@@ -4862,20 +4968,20 @@
      * _.max(characters, 'age');
      * // => { 'name': 'fred', 'age': 40 };
      */
-    function max(collection, iterator, thisArg) {
+    function max(collection, iteratee, thisArg) {
       var computed = -Infinity,
           result = computed,
-          type = typeof iterator;
+          type = typeof iteratee;
 
       // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === collection) {
-        iterator = null;
+      if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
+        iteratee = null;
       }
-      var noIterator = iterator == null,
-          isArr = noIterator && isArray(collection),
+      var noIteratee = iteratee == null,
+          isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
-      if (noIterator && !isStr) {
+      if (noIteratee && !isStr) {
         var index = -1,
             iterable = toIterable(collection),
             length = iterable.length;
@@ -4887,12 +4993,12 @@
           }
         }
       } else {
-        iterator = (noIterator && isStr)
+        iteratee = (noIteratee && isStr)
           ? charAtCallback
-          : getCallback(iterator, thisArg, 3);
+          : getCallback(iteratee, thisArg, 3);
 
         baseEach(collection, function(value, index, collection) {
-          var current = iterator(value, index, collection);
+          var current = iteratee(value, index, collection);
           if (current > computed || (current === -Infinity && current === result)) {
             computed = current;
             result = value;
@@ -4904,15 +5010,15 @@
 
     /**
      * Retrieves the minimum value of `collection`. If the collection is empty
-     * or falsey `Infinity` is returned. If an iterator function is provided it
+     * or falsey `Infinity` is returned. If an iteratee function is provided it
      * is executed for each value in the collection to generate the criterion by
-     * which the value is ranked. The `iterator` is bound to `thisArg` and invoked
+     * which the value is ranked. The `iteratee` is bound to `thisArg` and invoked
      * with three arguments; (value, index, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -4920,10 +5026,10 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iterator] The function called per iteration.
+     * @param {Function|Object|string} [iteratee] The function called per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
      *  or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the minimum value.
      * @example
      *
@@ -4945,20 +5051,20 @@
      * _.min(characters, 'age');
      * // => { 'name': 'barney', 'age': 36 };
      */
-    function min(collection, iterator, thisArg) {
+    function min(collection, iteratee, thisArg) {
       var computed = Infinity,
           result = computed,
-          type = typeof iterator;
+          type = typeof iteratee;
 
       // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && thisArg && thisArg[iterator] === collection) {
-        iterator = null;
+      if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
+        iteratee = null;
       }
-      var noIterator = iterator == null,
-          isArr = noIterator && isArray(collection),
+      var noIteratee = iteratee == null,
+          isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
-      if (noIterator && !isStr) {
+      if (noIteratee && !isStr) {
         var index = -1,
             iterable = toIterable(collection),
             length = iterable.length;
@@ -4970,12 +5076,12 @@
           }
         }
       } else {
-        iterator = (noIterator && isStr)
+        iteratee = (noIteratee && isStr)
           ? charAtCallback
-          : getCallback(iterator, thisArg, 3);
+          : getCallback(iteratee, thisArg, 3);
 
         baseEach(collection, function(value, index, collection) {
-          var current = iterator(value, index, collection);
+          var current = iteratee(value, index, collection);
           if (current < computed || (current === Infinity && current === result)) {
             computed = current;
             result = value;
@@ -5058,10 +5164,10 @@
 
     /**
      * Reduces a collection to a value which is the accumulated result of running
-     * each element in the collection through `iterator`, where each successive
+     * each element in the collection through `iteratee`, where each successive
      * execution consumes the return value of the previous execution. If `accumulator`
      * is not provided the first element of the collection is used as the initial
-     * value. The `iterator` is bound to `thisArg`and invoked with four arguments;
+     * value. The `iteratee` is bound to `thisArg`and invoked with four arguments;
      * (accumulator, value, index|key, collection).
      *
      * @static
@@ -5069,9 +5175,9 @@
      * @alias foldl, inject
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
+     * @param {Function} [iteratee=identity] The function called per iteration.
      * @param {*} [accumulator] The initial value.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the accumulated value.
      * @example
      *
@@ -5084,9 +5190,9 @@
      * }, {});
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
-    function reduce(collection, iterator, accumulator, thisArg) {
+    function reduce(collection, iteratee, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduce : baseReduce;
-      return func(collection, getCallback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEach);
+      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEach);
     }
 
     /**
@@ -5098,9 +5204,9 @@
      * @alias foldr
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
+     * @param {Function} [iteratee=identity] The function called per iteration.
      * @param {*} [accumulator] The initial value.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the accumulated value.
      * @example
      *
@@ -5108,9 +5214,9 @@
      * _.reduceRight(array, function(flattened, other) { return flattened.concat(other); }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
-    function reduceRight(collection, iterator, accumulator, thisArg) {
+    function reduceRight(collection, iteratee, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduceRight : baseReduce;
-      return func(collection, getCallback(iterator, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
+      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
     }
 
     /**
@@ -5152,8 +5258,12 @@
      * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
      */
     function reject(collection, predicate, thisArg) {
+      var func = isArray(collection) ? arrayFilter : baseFilter;
+
       predicate = getCallback(predicate, thisArg, 3);
-      return filter(collection, negate(predicate));
+      return func(collection, function(value, index, collection) {
+        return !predicate(value, index, collection);
+      });
     }
 
     /**
@@ -5287,27 +5397,27 @@
      * // => false
      */
     function some(collection, predicate, thisArg) {
+      var func = isArray(collection) ? arraySome : baseSome;
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = getCallback(predicate, thisArg, 3);
       }
-      var func = isArray(collection) ? arraySome : baseSome;
       return func(collection, predicate);
     }
 
     /**
      * Creates an array of elements, sorted in ascending order by the results of
-     * running each element in a collection through `iterator`. This method performs
+     * running each element in a collection through `iteratee`. This method performs
      * a stable sort, that is, it preserves the original sort order of equal elements.
-     * The `iterator` is bound to `thisArg` and invoked with three arguments;
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an array of property names is provided for `iterator` the collection
+     * If an array of property names is provided for `iteratee` the collection
      * is sorted by each property value.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -5315,10 +5425,10 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Array|Function|Object|string} [iterator=identity] The function
+     * @param {Array|Function|Object|string} [iteratee=identity] The function
      *  called per iteration. If property name(s) or an object is provided it
      *  is used to create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
@@ -5343,28 +5453,28 @@
      * _.map(_.sortBy(characters, ['name', 'age']), _.values);
      * // = > [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
-    function sortBy(collection, iterator, thisArg) {
+    function sortBy(collection, iteratee, thisArg) {
       var index = -1,
           length = collection ? collection.length : 0,
-          multi = iterator && isArray(iterator),
+          multi = iteratee && isArray(iteratee),
           result = [];
 
       if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
         result.length = length;
       }
       if (!multi) {
-        iterator = getCallback(iterator, thisArg, 3);
+        iteratee = getCallback(iteratee, thisArg, 3);
       }
       baseEach(collection, function(value, key, collection) {
         if (multi) {
-          var length = iterator.length,
+          var length = iteratee.length,
               criteria = Array(length);
 
           while (length--) {
-            criteria[length] = value[iterator[length]];
+            criteria[length] = value[iteratee[length]];
           }
         } else {
-          criteria = iterator(value, key, collection);
+          criteria = iteratee(value, key, collection);
         }
         result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
       });
@@ -5393,7 +5503,7 @@
     function toArray(collection) {
       var length = collection ? collection.length : 0;
       if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
-        return slice(collection);
+        return baseSlice(collection);
       }
       return values(collection);
     }
@@ -5501,7 +5611,7 @@
      * and prepends any additional `bind` arguments to those provided to the bound
      * function.
      *
-     * Note: Unlike native `Function#bind` this method does not set the `length`
+     * **Note:** Unlike native `Function#bind` this method does not set the `length`
      * property of bound functions.
      *
      * @static
@@ -5523,12 +5633,12 @@
      */
     function bind(func, thisArg) {
       if (arguments.length < 3) {
-        return createWrapper([func, BIND_FLAG, null, thisArg]);
+        return createWrapper(func, BIND_FLAG, null, thisArg);
       }
       var args = slice(arguments, 2),
-          partialHolders = replaceHolders(args, bind.placeholder);
+          holders = replaceHolders(args, bind.placeholder);
 
-      return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, partialHolders, thisArg);
+      return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, holders, thisArg);
     }
 
     /**
@@ -5537,7 +5647,7 @@
      * of method names. If no method names are provided all enumerable function
      * properties, own and inherited, of `object` are bound.
      *
-     * Note: This method does not set the `length` property of bound functions.
+     * **Note:** This method does not set the `length` property of bound functions.
      *
      * @static
      * @memberOf _
@@ -5601,12 +5711,14 @@
      * // => 'hiya fred!'
      */
     function bindKey(object, key) {
-      var data = [key, BIND_FLAG | BIND_KEY_FLAG, null, object];
+      var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (arguments.length > 2) {
-        var args = slice(arguments, 2);
-        data.push(args, replaceHolders(args, bindKey.placeholder));
+        var args = slice(arguments, 2),
+            holders = replaceHolders(args, bindKey.placeholder);
       }
-      return createWrapper(data);
+      return args
+        ? createWrapper(key, bitmask, null, object, args, holders)
+        : createWrapper(key, bitmask, null, object);
     }
 
     /**
@@ -5670,7 +5782,7 @@
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
      *
-     * Note: This method does not set the `length` property of curried functions.
+     * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
      * @memberOf _
@@ -5703,7 +5815,7 @@
      * This method is like `_.curry` except that arguments are applied to `func`
      * in the manner of `_.partialRight` instead of `_.partial`.
      *
-     * Note: This method does not set the `length` property of curried functions.
+     * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
      * @memberOf _
@@ -5740,7 +5852,7 @@
      * and/or trailing edge of the `wait` timeout. Subsequent calls to the
      * debounced function return the result of the last `func` call.
      *
-     * Note: If `leading` and `trailing` options are `true`, `func` is called on
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
@@ -6061,7 +6173,7 @@
      * prepended to those provided to the new function. This method is similar to
      * `_.bind` except it does **not** alter the `this` binding.
      *
-     * Note: This method does not set the `length` property of partially applied
+     * **Note:** This method does not set the `length` property of partially applied
      * functions.
      *
      * @static
@@ -6079,16 +6191,16 @@
      */
     function partial(func) {
       var args = slice(arguments, 1),
-          partialHolders = replaceHolders(args, partial.placeholder);
+          holders = replaceHolders(args, partial.placeholder);
 
-      return basePartial(func, PARTIAL_FLAG, args, partialHolders);
+      return basePartial(func, PARTIAL_FLAG, args, holders);
     }
 
     /**
      * This method is like `_.partial` except that partially applied arguments
      * are appended to those provided to the new function.
      *
-     * Note: This method does not set the `length` property of partially applied
+     * **Note:** This method does not set the `length` property of partially applied
      * functions.
      *
      * @static
@@ -6117,9 +6229,9 @@
      */
     function partialRight(func) {
       var args = slice(arguments, 1),
-          partialHolders = replaceHolders(args, partialRight.placeholder);
+          holders = replaceHolders(args, partialRight.placeholder);
 
-      return basePartial(func, PARTIAL_RIGHT_FLAG, args, partialHolders);
+      return basePartial(func, PARTIAL_RIGHT_FLAG, args, holders);
     }
 
     /**
@@ -6130,7 +6242,7 @@
      * Subsequent calls to the throttled function return the result of the last
      * `func` call.
      *
-     * Note: If `leading` and `trailing` options are `true`, `func` is called on
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is called on
      * the trailing edge of the timeout only if the the throttled function is
      * invoked more than once during the `wait` timeout.
      *
@@ -6243,7 +6355,7 @@
      * cloning is handled by the method instead. The `customizer` is bound to
      * `thisArg` and invoked with two argument; (value, index|key).
      *
-     * Note: This method is loosely based on the structured clone algorithm. Functions
+     * **Note:** This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
      * objects created by constructors other than `Object` are cloned to plain `Object` objects.
      * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
@@ -6306,7 +6418,7 @@
      * is handled by the method instead. The `customizer` is bound to `thisArg`
      * and invoked with two argument; (value, index|key).
      *
-     * Note: This method is loosely based on the structured clone algorithm. Functions
+     * **Note:** This method is loosely based on the structured clone algorithm. Functions
      * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
      * objects created by constructors other than `Object` are cloned to plain `Object` objects.
      * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
@@ -6388,7 +6500,7 @@
      * object for all destination properties that resolve to `undefined`. Once a
      * property is set, additional defaults of the same property are ignored.
      *
-     * Note: See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
+     * **Note:** See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
      * for a deep version of this method.
      *
      * @static
@@ -6406,7 +6518,7 @@
       if (object == null) {
         return object;
       }
-      var args = slice(arguments);
+      var args = baseSlice(arguments);
       args.push(assignDefaults);
       return assign.apply(undefined, args);
     }
@@ -6505,7 +6617,7 @@
 
     /**
      * Iterates over own and inherited enumerable properties of an object executing
-     * `iterator` for each property. The `iterator` is bound to `thisArg` and invoked
+     * `iteratee` for each property. The `iteratee` is bound to `thisArg` and invoked
      * with three arguments; (value, key, object). Iterator functions may exit
      * iteration early by explicitly returning `false`.
      *
@@ -6513,8 +6625,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -6530,11 +6642,11 @@
      * });
      * // => logs 'x', 'y', and 'z' (property order is not guaranteed across environments)
      */
-    function forIn(object, iterator, thisArg) {
-      if (typeof iterator != 'function' || typeof thisArg != 'undefined') {
-        iterator = baseCallback(iterator, thisArg, 3);
+    function forIn(object, iteratee, thisArg) {
+      if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+        iteratee = baseCallback(iteratee, thisArg, 3);
       }
-      return baseFor(object, iterator, keysIn);
+      return baseFor(object, iteratee, keysIn);
     }
 
     /**
@@ -6545,8 +6657,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -6562,14 +6674,14 @@
      * });
      * // => logs 'z', 'y', and 'x' assuming `_.forIn ` logs 'x', 'y', and 'z'
      */
-    function forInRight(object, iterator, thisArg) {
-      iterator = baseCallback(iterator, thisArg, 3);
-      return baseForRight(object, iterator, keysIn);
+    function forInRight(object, iteratee, thisArg) {
+      iteratee = baseCallback(iteratee, thisArg, 3);
+      return baseForRight(object, iteratee, keysIn);
     }
 
     /**
-     * Iterates over own enumerable properties of an object executing `iterator`
-     * for each property. The `iterator` is bound to `thisArg` and invoked with
+     * Iterates over own enumerable properties of an object executing `iteratee`
+     * for each property. The `iteratee` is bound to `thisArg` and invoked with
      * three arguments; (value, key, object). Iterator functions may exit iteration
      * early by explicitly returning `false`.
      *
@@ -6577,8 +6689,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -6587,11 +6699,11 @@
      * });
      * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
      */
-    function forOwn(object, iterator, thisArg) {
-      if (typeof iterator != 'function' || typeof thisArg != 'undefined') {
-        iterator = baseCallback(iterator, thisArg, 3);
+    function forOwn(object, iteratee, thisArg) {
+      if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+        iteratee = baseCallback(iteratee, thisArg, 3);
       }
-      return baseForOwn(object, iterator);
+      return baseForOwn(object, iteratee);
     }
 
     /**
@@ -6602,8 +6714,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -6612,9 +6724,9 @@
      * });
      * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
      */
-    function forOwnRight(object, iterator, thisArg) {
-      iterator = baseCallback(iterator, thisArg, 3);
-      return baseForRight(object, iterator, keys);
+    function forOwnRight(object, iteratee, thisArg) {
+      iteratee = baseCallback(iteratee, thisArg, 3);
+      return baseForRight(object, iteratee, keys);
     }
 
     /**
@@ -6626,14 +6738,14 @@
      * @alias methods
      * @category Object
      * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the new sorted array of property names.
+     * @returns {Array} Returns the new array of property names.
      * @example
      *
      * _.functions(_);
      * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
      */
     function functions(object) {
-      return baseFunctions(object, keysIn);
+      return baseFunctions(object, keysIn(object));
     }
 
     /**
@@ -6862,7 +6974,7 @@
      * instead. The `customizer` is bound to `thisArg` and invoked with three
      * arguments; (value, other, key).
      *
-     * Note: This method supports comparing arrays, booleans, `Date` objects,
+     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
      * are **not** supported. Provide a customizer function to extend support
      * for comparing other values.
@@ -6925,7 +7037,7 @@
     /**
      * Checks if `value` is a finite primitive number.
      *
-     * Note: This method is based on ES6 `Number.isFinite`. See the
+     * **Note:** This method is based on ES6 `Number.isFinite`. See the
      * [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
      * for more details.
      *
@@ -6981,7 +7093,7 @@
      * Checks if `value` is the language type of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
-     * Note: See the [ES5 spec](http://es5.github.io/#x8) for more details.
+     * **Note:** See the [ES5 spec](http://es5.github.io/#x8) for more details.
      *
      * @static
      * @memberOf _
@@ -7009,7 +7121,7 @@
     /**
      * Checks if `value` is `NaN`.
      *
-     * Note: This method is not the same as native `isNaN` which returns `true`
+     * **Note:** This method is not the same as native `isNaN` which returns `true`
      * for `undefined` and other non-numeric values. See the [ES5 spec](http://es5.github.io/#x15.1.2.4)
      * for more details.
      *
@@ -7039,6 +7151,28 @@
     }
 
     /**
+     * Checks if `value` is a native function.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+     */
+    function isNative(value) {
+      var type = typeof value;
+      if (type == 'function') {
+        return reNative.test(fnToString.call(value));
+      }
+      if (value && type == 'object') {
+        return !('constructor' in value && 'toString' in value)
+          ? reNative.test(value)
+          : reHostCtor.test(toString.call(value));
+      }
+      return false;
+    }
+
+    /**
      * Checks if `value` is `null`.
      *
      * @static
@@ -7061,7 +7195,7 @@
     /**
      * Checks if `value` is classified as a `Number` primitive or object.
      *
-     * Note: To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+     * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
      * as numbers, use the `_.isFinite` method.
      *
      * @static
@@ -7090,7 +7224,7 @@
      * Checks if `value` is an object created by the `Object` constructor or has
      * a `[[Prototype]]` of `null`.
      *
-     * Note: This method assumes objects created by the `Object` constructor
+     * **Note:** This method assumes objects created by the `Object` constructor
      * have no inherited enumerable properties.
      *
      * @static
@@ -7275,14 +7409,14 @@
 
     /**
      * Creates an object with the same keys as `object` and values generated by
-     * running each own enumerable property of `object` through `iterator`. The
-     * iterator function is bound to `thisArg` and invoked with three arguments;
+     * running each own enumerable property of `object` through `iteratee`. The
+     * iteratee function is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
-     * If a property name is provided for `iterator` the created "_.pluck" style
+     * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an object is provided for `iterator` the created "_.where" style callback
+     * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
@@ -7290,10 +7424,10 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function|Object|string} [iterator=identity] The function called
+     * @param {Function|Object|string} [iteratee=identity] The function called
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the new mapped object.
      * @example
      *
@@ -7309,12 +7443,12 @@
      * _.mapValues(characters, 'age');
      * // => { 'fred': 40, 'pebbles': 1 }
      */
-    function mapValues(object, iterator, thisArg) {
+    function mapValues(object, iteratee, thisArg) {
       var result = {};
-      iterator = getCallback(iterator, thisArg, 3);
+      iteratee = getCallback(iteratee, thisArg, 3);
 
       baseForOwn(object, function(value, key, object) {
-        result[key] = iterator(value, key, object);
+        result[key] = iteratee(value, key, object);
       });
       return result;
     }
@@ -7403,11 +7537,15 @@
       if (object == null) {
         return {};
       }
-      if (typeof predicate == 'function') {
-        return basePick(object, negate(getCallback(predicate, thisArg, 3)));
+      var iterable = toObject(object);
+      if (typeof predicate != 'function') {
+        var props = arrayMap(baseFlatten(arguments, false, false, 1), String);
+        return pickByArray(iterable, baseDifference(keysIn(iterable), props));
       }
-      var omitProps = baseFlatten(arguments, false, false, 1);
-      return basePick(toObject(object), baseDifference(keysIn(object), arrayMap(omitProps, String)));
+      predicate = getCallback(predicate, thisArg, 3);
+      return pickByCallback(iterable, function(value, key, object) {
+        return !predicate(value, key, object);
+      });
     }
 
     /**
@@ -7468,18 +7606,17 @@
       if (object == null) {
         return {};
       }
-      return basePick(toObject(object),
-        typeof predicate == 'function'
-          ? getCallback(predicate, thisArg, 3)
-          : baseFlatten(arguments, false, false, 1)
-      );
+      var iterable = toObject(object);
+      return typeof predicate == 'function'
+        ? pickByCallback(iterable, getCallback(predicate, thisArg, 3))
+        : pickByArray(iterable, baseFlatten(arguments, false, false, 1));
     }
 
     /**
      * An alternative to `_.reduce`; this method transforms `object` to a new
      * `accumulator` object which is the result of running each of its own
-     * enumerable properties through `iterator`, with each execution potentially
-     * mutating the `accumulator` object. The `iterator` is bound to `thisArg`
+     * enumerable properties through `iteratee`, with each execution potentially
+     * mutating the `accumulator` object. The `iteratee` is bound to `thisArg`
      * and invoked with four arguments; (accumulator, value, key, object). Iterator
      * functions may exit iteration early by explicitly returning `false`.
      *
@@ -7487,9 +7624,9 @@
      * @memberOf _
      * @category Object
      * @param {Array|Object} object The object to iterate over.
-     * @param {Function} [iterator=identity] The function called per iteration.
+     * @param {Function} [iteratee=identity] The function called per iteration.
      * @param {*} [accumulator] The custom accumulator value.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the accumulated value.
      * @example
      *
@@ -7506,7 +7643,7 @@
      * });
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
-    function transform(object, iterator, accumulator, thisArg) {
+    function transform(object, iteratee, accumulator, thisArg) {
       var isArr = isArrayLike(object);
 
       if (accumulator == null) {
@@ -7520,10 +7657,10 @@
           accumulator = baseCreate(proto);
         }
       }
-      if (iterator) {
-        iterator = getCallback(iterator, thisArg, 4);
+      if (iteratee) {
+        iteratee = getCallback(iteratee, thisArg, 4);
         (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
-          return iterator(accumulator, value, index, object);
+          return iteratee(accumulator, value, index, object);
         });
       }
       return accumulator;
@@ -7663,7 +7800,7 @@
      * Converts the characters "&", "<", ">", '"', and "'" in `string` to
      * their corresponding HTML entities.
      *
-     * Note: No other characters are escaped. To escape additional characters
+     * **Note:** No other characters are escaped. To escape additional characters
      * use a third-party library like [_he_](http://mths.be/he).
      *
      * When working with HTML you should always quote attribute values to reduce
@@ -7930,7 +8067,7 @@
      * properties may be accessed as free variables in the template. If a setting
      * object is provided it overrides `_.templateSettings` for the template.
      *
-     * Note: In the development build `_.template` utilizes sourceURLs for easier debugging.
+     * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
@@ -8292,7 +8429,7 @@
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
      * corresponding characters.
      *
-     * Note: No other HTML entities are unescaped. To unescape additional HTML
+     * **Note:** No other HTML entities are unescaped. To unescape additional HTML
      * entities use a third-party library like [_he_](http://mths.be/he).
      *
      * @static
@@ -8350,6 +8487,7 @@
      *
      * @static
      * @memberOf _
+     * @alias iteratee
      * @category Utility
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
@@ -8466,7 +8604,7 @@
         var isStrict = isStrictComparable(value);
 
         flags[index] = isStrict;
-        vals[index] = isStrict ? value : baseClone(value, false);
+        vals[index] = isStrict ? value : baseClone(value);
       }
       return function(object) {
         index = length;
@@ -8523,16 +8661,20 @@
      */
     function mixin(object, source, options) {
       var chain = true,
-          methodNames = source && baseFunctions(source, keys);
+          isObj = isObject(source),
+          noOpts = options == null,
+          props = noOpts && isObj && keys(source),
+          methodNames = props && baseFunctions(source, props);
 
-      if (!source || (!options && !methodNames.length)) {
-        if (options == null) {
+      if ((props && props.length && !methodNames.length) || (noOpts && !isObj)) {
+        if (noOpts) {
           options = source;
         }
+        methodNames = false;
         source = object;
         object = this;
-        methodNames = baseFunctions(source, keys);
       }
+      methodNames || (methodNames = baseFunctions(source, keys(source)));
       if (options === false) {
         chain = false;
       } else if (isObject(options) && 'chain' in options) {
@@ -8540,7 +8682,7 @@
       }
       var index = -1,
           isFunc = isFunction(object),
-          length = methodNames ? methodNames.length : 0;
+          length = methodNames.length;
 
       while (++index < length) {
         var methodName = methodNames[index],
@@ -8624,7 +8766,7 @@
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
      *
-     * Note: This method avoids differences in native ES3 and ES5 `parseInt`
+     * **Note:** This method avoids differences in native ES3 and ES5 `parseInt`
      * implementations. See the [ES5 spec](http://es5.github.io/#E)
      * for more details.
      *
@@ -8852,16 +8994,16 @@
     }
 
     /**
-     * Executes the iterator function `n` times, returning an array of the results
-     * of each execution. The `iterator` is bound to `thisArg` and invoked with
+     * Executes the iteratee function `n` times, returning an array of the results
+     * of each execution. The `iteratee` is bound to `thisArg` and invoked with
      * one argument; (index).
      *
      * @static
      * @memberOf _
      * @category Utility
-     * @param {number} n The number of times to execute `iterator`.
-     * @param {Function} [iterator=identity] The function called per iteration.
-     * @param {*} [thisArg] The `this` binding of `iterator`.
+     * @param {number} n The number of times to execute `iteratee`.
+     * @param {Function} [iteratee=identity] The function called per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the array of results.
      * @example
      *
@@ -8874,18 +9016,18 @@
      * _.times(3, function(n) { this.cast(n); }, mage);
      * // => also calls `mage.castSpell(n)` three times
      */
-    function times(n, iterator, thisArg) {
+    function times(n, iteratee, thisArg) {
       n = nativeIsFinite(n = +n) && n > -1 ? n : 0;
-      iterator = baseCallback(iterator, thisArg, 1);
+      iteratee = baseCallback(iteratee, thisArg, 1);
 
       var index = -1,
           result = Array(nativeMin(n, MAX_ARRAY_LENGTH));
 
       while (++index < n) {
         if (index < MAX_ARRAY_LENGTH) {
-          result[index] = iterator(index);
+          result[index] = iteratee(index);
         } else {
-          iterator(index);
+          iteratee(index);
         }
       }
       return result;
@@ -9016,6 +9158,7 @@
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
     lodash.extend = assign;
+    lodash.iteratee = callback;
     lodash.methods = functions;
     lodash.object = zipObject;
     lodash.select = filter;
@@ -9060,6 +9203,7 @@
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isNaN = isNaN;
+    lodash.isNative = isNative;
     lodash.isNull = isNull;
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;

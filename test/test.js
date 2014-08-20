@@ -9755,6 +9755,11 @@
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
     });
 
+    test('should not error on nullish elements when sorting by multiple properties', 1, function() {
+      var actual = _.sortBy(objects.concat(undefined), ['a', 'b']);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
+    });
+
     test('should perform a stable sort when sorting by multiple properties (test in IE > 8, Opera, and V8)', 1, function() {
       var actual = _.sortBy(stableOrder, ['a', 'c']);
       deepEqual(actual, stableOrder);

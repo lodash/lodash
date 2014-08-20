@@ -9611,11 +9611,16 @@
         'rest', 'initial', 'tail', 'head', 'first', 'last'],
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];
+      var overriddenFunc = lodash.prototype[methodName];
       lodash.prototype[methodName] = function() {
         var wrapped = this.__wrapped__,
             inLazyChain = wrapped instanceof LazyWrapper;
 
-        wrapped = func.apply(inLazyChain ? wrapped : new LazyWrapper(wrapped), arguments);
+        if(!inLazyChain && !isArray(wrapped) && overriddenFunc) {
+          wrapped = overriddenFunc.apply(this, arguments);
+        } else {
+          wrapped = func.apply(inLazyChain ? wrapped : new LazyWrapper(wrapped), arguments);
+        }
 
         return wrapped instanceof LazyWrapper
           ? (inLazyChain ? (this.__wrapped__ = wrapped, this) : new lodashWrapper(wrapped, this.__chain__))

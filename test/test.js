@@ -4126,16 +4126,17 @@
     });
 
     _.each(_.difference(methods, forInMethods), function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName];
+      _.forIn(getConfig(methodName), function (func, formattedMethodName) {
+        var array = [1, 2, 3];
 
-      test('`_.' + methodName + '` iterates over own properties of objects', 1, function() {
-        function Foo() { this.a = 1; }
-        Foo.prototype.b = 2;
+        test(formattedMethodName + ' iterates over own properties of objects', 1, function() {
+          function Foo() { this.a = 1; }
+          Foo.prototype.b = 2;
 
-        var keys = [];
-        func(new Foo, function(value, key) { keys.push(key); });
-        deepEqual(keys, ['a']);
+          var keys = [];
+          func(new Foo, function(value, key) { keys.push(key); });
+          deepEqual(keys, ['a']);
+        });
       });
     });
 

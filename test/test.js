@@ -4160,24 +4160,24 @@
     });
 
     _.each(collectionMethods, function(methodName) {
-      var func = _[methodName];
+      _.forIn(getConfig(methodName), function (func, formattedMethodName) {
+        test(formattedMethodName + ' should treat objects with lengths of `0` as array-like', 1, function() {
+          var pass = true;
+          func({ 'length': 0 }, function() { pass = false; }, 0);
+          ok(pass);
+        });
 
-      test('`_.' + methodName + '` should treat objects with lengths of `0` as array-like', 1, function() {
-        var pass = true;
-        func({ 'length': 0 }, function() { pass = false; }, 0);
-        ok(pass);
-      });
+        test(formattedMethodName + ' should not treat objects with negative lengths as array-like', 1, function() {
+          var pass = false;
+          func({ 'length': -1 }, function() { pass = true; }, 0);
+          ok(pass);
+        });
 
-      test('`_.' + methodName + '` should not treat objects with negative lengths as array-like', 1, function() {
-        var pass = false;
-        func({ 'length': -1 }, function() { pass = true; }, 0);
-        ok(pass);
-      });
-
-      test('`_.' + methodName + '` should not treat objects with non-number lengths as array-like', 1, function() {
-        var pass = false;
-        func({ 'length': '0' }, function() { pass = true; }, 0);
-        ok(pass);
+        test(formattedMethodName + ' should not treat objects with non-number lengths as array-like', 1, function() {
+          var pass = false;
+          func({ 'length': '0' }, function() { pass = true; }, 0);
+          ok(pass);
+        });
       });
     });
   }());
@@ -11857,38 +11857,39 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 194, function() {
+    test('should accept falsey arguments', 194 * 2, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
 
       _.each(acceptFalsey, function(methodName) {
-        var expected = emptyArrays,
-            func = _[methodName],
-            pass = true;
+        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+          var expected = emptyArrays,
+              pass = true;
 
-        var actual = _.map(falsey, function(value, index) {
-          try {
-            return index ? func(value) : func();
-          } catch(e) {
-            pass = false;
+          var actual = _.map(falsey, function (value, index) {
+            try {
+              return index ? func(value) : func();
+            } catch (e) {
+              pass = false;
+            }
+          });
+
+          if (methodName == 'noConflict') {
+            if (isExposed) {
+              root._ = oldDash;
+            } else {
+              delete root._;
+            }
           }
+          else if (methodName == 'pull') {
+            expected = falsey;
+          }
+          if (_.contains(returnArrays, methodName) && methodName != 'sample') {
+            deepEqual(actual, expected, formattedMethodName + ' returns an array');
+          }
+          ok(pass, formattedMethodName + '` accepts falsey arguments');
         });
-
-        if (methodName == 'noConflict') {
-          if (isExposed) {
-            root._ = oldDash;
-          } else {
-            delete root._;
-          }
-        }
-        else if (methodName == 'pull') {
-          expected = falsey;
-        }
-        if (_.contains(returnArrays, methodName) && methodName != 'sample') {
-          deepEqual(actual, expected, '_.' + methodName + ' returns an array');
-        }
-        ok(pass, '`_.' + methodName + '` accepts falsey arguments');
       });
 
       // skip tests for missing methods of modularized builds
@@ -11899,50 +11900,52 @@
       });
     });
 
-    test('should return an array', 68, function() {
+    test('should return an array', 68 * 2, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {
-        var actual,
-            func = _[methodName];
+        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+          var actual;
 
-        switch (methodName) {
-          case 'invoke':
-             actual = func(array, 'toFixed');
-             break;
-          case 'sample':
-            actual = func(array, 1);
-            break;
-          default:
-            actual = func(array);
-        }
-        ok(_.isArray(actual), '_.' + methodName + ' returns an array');
-
-        var isPull = methodName == 'pull';
-        strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
-      });
-    });
-
-    test('should throw a TypeError for falsey arguments', 17, function() {
-      _.each(rejectFalsey, function(methodName) {
-        var expected = _.map(falsey, _.constant(true)),
-            func = _[methodName];
-
-        var actual = _.map(falsey, function(value, index) {
-          var pass = !index && methodName == 'compose';
-          try {
-            index ? func(value) : func();
-          } catch(e) {
-            pass = !pass;
+          switch (methodName) {
+            case 'invoke':
+               actual = func(array, 'toFixed');
+               break;
+            case 'sample':
+              actual = func(array, 1);
+              break;
+            default:
+              actual = func(array);
           }
-          return pass;
-        });
+          ok(_.isArray(actual), formattedMethodName + ' returns an array');
 
-        deepEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
+          var isPull = methodName == 'pull';
+          strictEqual(actual === array, isPull, formattedMethodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
+        });
       });
     });
 
-    test('should handle `null` `thisArg` arguments', 43, function() {
+    test('should throw a TypeError for falsey arguments', 17 * 2, function() {
+      _.each(rejectFalsey, function(methodName) {
+        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+          var expected = _.map(falsey, _.constant(true));
+
+          var actual = _.map(falsey, function (value, index) {
+            var pass = !index && func == _.compose;
+            try {
+              index ? func(value) : func();
+            } catch (e) {
+              pass = !pass;
+            }
+            return pass;
+          });
+
+          deepEqual(actual, expected, formattedMethodName + ' rejects falsey arguments');
+        });
+      });
+    });
+
+    test('should handle `null` `thisArg` arguments', 43 * 2, function() {
       var expected = (function() { return this; }).call(null);
 
       var funcs = [
@@ -11992,31 +11995,32 @@
       ];
 
       _.each(funcs, function(methodName) {
-        var actual,
-            array = ['a'],
-            func = _[methodName],
-            message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
+        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+          var actual,
+              array = ['a'],
+              message = formattedMethodName + ' handles `null` `thisArg` arguments';
 
-        function callback() {
-          actual = this;
-        }
-        if (func) {
-          if (/^reduce/.test(methodName) || methodName == 'transform') {
-            func(array, callback, 0, null);
-          } else if (_.contains(['assign', 'merge'], methodName)) {
-            func(array, array, callback, null);
-          } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
-            func(array, 'a', callback, null);
-          } else if (methodName == 'times') {
-            func(1, callback, null);
-          } else {
-            func(array, callback, null);
+          function callback() {
+            actual = this;
           }
-          strictEqual(actual, expected, message);
-        }
-        else {
-          skipTest();
-        }
+          if (func) {
+            if (/^reduce/.test(methodName) || methodName == 'transform') {
+              func(array, callback, 0, null);
+            } else if (_.contains(['assign', 'merge'], methodName)) {
+              func(array, array, callback, null);
+            } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
+              func(array, 'a', callback, null);
+            } else if (methodName == 'times') {
+              func(1, callback, null);
+            } else {
+              func(array, callback, null);
+            }
+            strictEqual(actual, expected, message);
+          }
+          else {
+            skipTest();
+          }
+        });
       });
     });
 

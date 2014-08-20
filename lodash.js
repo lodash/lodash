@@ -4384,17 +4384,6 @@
       return (wrapped instanceof LazyWrapper) ? wrapped.value() : wrapped;
     }
 
-    /**
-     * This is a temporary method which eventually replace lodash chaining.
-     *
-     * @param value source object
-     * @returns lazyWrapper
-     */
-
-    function lazy(value) {
-      return new LazyWrapper(value || []);
-    }
-
     function LazyWrapper(source) {
       this.source = source;
       this.type = [];
@@ -9381,7 +9370,6 @@
     lodash.invoke = invoke;
     lodash.keys = keys;
     lodash.keysIn = keysIn;
-    lodash.lazy = lazy;
     lodash.map = map;
     lodash.mapValues = mapValues;
     lodash.matches = matches;

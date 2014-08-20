@@ -11639,6 +11639,9 @@
   QUnit.module('lodash(...) lazy methods');
 
   (function() {
+    function isEven(x) { return x % 2 == 0 }
+    function inc(x) { return x + 1; }
+
     var array = [1, 2, 3],
       wrapped = _(array).map(); // .map() to open lazy sequence
 
@@ -11657,6 +11660,97 @@
         }
       });
     });
+
+    test("should compute chained methods properly", 1, function () {
+      var collection = [1,2,3,4];
+
+      var actual = _(collection).map(inc).filter(isEven).map(inc).value();
+      var expected = [3, 5];
+
+      deepEqual(actual, expected);
+    });
+
+    test("computes minimal number of elements required", 1, function () {
+      var collection = [1, 2, 1, dynamite, dynamite];
+
+      var actual = _(collection).map(inc).filter(isEven).map(inc).take(2).value();
+      var expected = [3, 3];
+
+      deepEqual(actual, expected);
+    });
+
+    test("should return original collection", 1, function() {
+      var collection = [1, 2, 3];
+
+      deepEqual(_(collection).value(), collection);
+    });
+
+    test("should compute properly complex chains", 1, function() {
+      var collection = [dynamite, 1, 2, 3, 4, 5, 6, dynamite, dynamite];
+
+      var actual = _(collection).reverse().take(8).filter(isEven)
+        .takeRight(3).take(2).reverse().take(1).map(Number).value();
+
+      deepEqual(actual, [4]);
+    });
+
+    test("should be limited by source array length", 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).take(4).value();
+
+      deepEqual(actual, [1, 2, 3]);
+    });
+
+    test("should be limited by reversed source array length", 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).reverse().take(4).value();
+
+      deepEqual(actual, [3, 2, 1]);
+    });
+
+
+    test("should be limited by dropRight(1).take(3) subset", 1, function () {
+      var collection = [1, 2, dynamite];
+
+      var actual = _(collection).dropRight(1).take(3).map(Number).value();
+
+      deepEqual(actual, [1, 2]);
+    });
+
+    test("should be limited by limited by take(2).dropRight(2) subset", 1, function () {
+      var collection = [dynamite, dynamite, dynamite];
+
+      var actual = _(collection).take(2).dropRight(2).map(Number).value();
+
+      deepEqual(actual, []);
+    });
+
+    test("should be limited by dropRight(2).take(2) subset", 1, function () {
+      var collection = [1, dynamite, dynamite];
+
+      var actual = _(collection).dropRight(2).take(2).map(Number).value();
+
+      deepEqual(actual, [1]);
+    });
+
+    test("should ignore subsequent take as in take(x).take(x+1) sequence", 1, function () {
+      var collection = [1, 2, dynamite];
+
+      var actual = _(collection).take(2).take(3).map(Number).value();
+
+      deepEqual(actual, [1, 2]);
+    });
+
+    test("should ignore subsequent take as in takeRight(x).takeRight(x+1) sequence", 1, function () {
+      var collection = [dynamite, 2, 3];
+
+      var actual = _(collection).takeRight(2).takeRight(3).map(Number).value();
+
+      deepEqual(actual, [2, 3]);
+    });
+
   }());
   /*--------------------------------------------------------------------------*/
 
@@ -12008,7 +12102,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 194 * 2, function() {
+    test('should accept falsey arguments', 193 * 2, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

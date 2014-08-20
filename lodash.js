@@ -672,6 +672,9 @@
     /** Used to resolve the decompiled source of functions */
     var fnToString = Function.prototype.toString;
 
+    /** Used to check objects for own properties */
+    var hasOwnProperty = objectProto.hasOwnProperty;
+
     /** Used to restore the original `_` reference in `_.noConflict` */
     var oldDash = context._;
 
@@ -691,7 +694,6 @@
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
-        hasOwnProperty = objectProto.hasOwnProperty,
         push = arrayProto.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
@@ -801,17 +803,17 @@
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
-     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
-     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
-     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
+     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
+     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
+     * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
-     * `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`,
-     * `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
-     * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
-     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
-     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
-     * `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
-     * `unescape`, `uniqueId`, and `value`
+     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
+     * `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`,
+     * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
+     * `result`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedLastIndex`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `trunc`, `unescape`, `uniqueId`, and `value`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is
      * provided, otherwise it will return an unwrapped value.
@@ -2939,20 +2941,6 @@
     function isArrayLike(value) {
       return (value && typeof value == 'object' && typeof value.length == 'number' &&
         arrayLikeClasses[toString.call(value)]) || false;
-    }
-
-    /**
-     * Checks if `value` is a native function.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
-     */
-    function isNative(value) {
-      var type = typeof value;
-      return type == 'function'
-        ? reNative.test(fnToString.call(value))
-        : (value && type == 'object' && reHostCtor.test(toString.call(value))) || false;
     }
 
     /**
@@ -7364,6 +7352,28 @@
     }
 
     /**
+     * Checks if `value` is a native function.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+     */
+    function isNative(value) {
+      var type = typeof value;
+      if (type == 'function') {
+        return reNative.test(fnToString.call(value));
+      }
+      if (value && type == 'object') {
+        return !('constructor' in value && 'toString' in value)
+          ? reNative.test(value)
+          : reHostCtor.test(toString.call(value));
+      }
+      return false;
+    }
+
+    /**
      * Checks if `value` is `null`.
      *
      * @static
@@ -9419,6 +9429,7 @@
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isNaN = isNaN;
+    lodash.isNative = isNative;
     lodash.isNull = isNull;
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;

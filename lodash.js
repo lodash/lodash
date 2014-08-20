@@ -4426,6 +4426,7 @@
     };
 
     LazyWrapper.prototype.drop = function(n) {
+      n = Math.max(0, (n == null) ? 1 : n);
       if(this.filterApplied) {
         return new LazyWrapper(this).drop(n);
       }
@@ -4434,11 +4435,7 @@
     }
 
     LazyWrapper.prototype.dropRight = function(n) {
-      if(this.filterApplied) {
-        return new LazyWrapper(this).dropRight(n);
-      }
-      this.lazyOperators.push(new LazyOperator("dropRight", n, this.dir));
-      return this;
+      return this.reverse().drop(n).reverse();
     }
 
     LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
@@ -4513,14 +4510,13 @@
 
     function LazyOperator(name, count, dir) {
       this.name = (dir > 0) ? name : this.revert[name];
-      this.count = count;
+      this.count = isNaN(count) ? 0 : count;
     }
 
     LazyOperator.prototype.revert = {
       take: "takeRight",
       takeRight: "take",
-      drop: "dropRight",
-      dropRight: "drop"
+      drop: "dropRight"
     };
 
     function calculateBounds(operators, min, max) {

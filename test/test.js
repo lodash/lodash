@@ -2872,31 +2872,33 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should drop the first two elements', 1, function() {
-      deepEqual(_.drop(array, 2), [3]);
-    });
-
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [2, 3] : array;
+    _.forIn(getConfig('drop'), function(drop, formattedMethodName) {
+      test(formattedMethodName + ' should drop the first two elements', 1, function() {
+        deepEqual(drop(array, 2), [3]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.drop(array, n);
+      test(formattedMethodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+        var expected = _.map(falsey, function(value) {
+          return value == null ? [2, 3] : array;
+        });
+
+        var actual = _.map(falsey, function(n) {
+          return drop(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
-
-    test('should return all elements when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.drop(array, n), array);
+      test(formattedMethodName + ' should return all elements when `n` < `1`', 3, function() {
+        _.each([0, -1, -Infinity], function(n) {
+          deepEqual(drop(array, n), array);
+        });
       });
-    });
 
-    test('should return an empty array when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.drop(array, n), []);
+      test(formattedMethodName + ' should return an empty array when `n` >= `array.length`', 4, function() {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+          deepEqual(drop(array, n), []);
+        });
       });
     });
 
@@ -2910,6 +2912,18 @@
         skipTest(2);
       }
     });
+
+    test('should drop the first two elements when reversed in a chain', 1, function() {
+      deepEqual(_(array).reverse().drop(2).value(), [1]);
+    });
+
+    test('should drop the first two elements when filtered in a chain', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).drop(2).value(), [3]);
+    });
+
+    test('should drop the first two elements when filtered and reversed in a chain', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).reverse().drop(1).reverse().drop(1).value(), [2]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -2919,31 +2933,33 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should drop the last two elements', 1, function() {
-      deepEqual(_.dropRight(array, 2), [1]);
-    });
-
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [1, 2] : array;
+    _.forIn(getConfig('dropRight'), function(dropRight, formattedMethodName) {
+      test(formattedMethodName + ' should drop the last two elements', 1, function () {
+        deepEqual(dropRight(array, 2), [1]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.dropRight(array, n);
+      test(formattedMethodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function () {
+        var expected = _.map(falsey, function (value) {
+          return value == null ? [1, 2] : array;
+        });
+
+        var actual = _.map(falsey, function (n) {
+          return dropRight(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
-
-    test('should return all elements when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.dropRight(array, n), array);
+      test(formattedMethodName + ' should return all elements when `n` < `1`', 3, function () {
+        _.each([0, -1, -Infinity], function (n) {
+          deepEqual(dropRight(array, n), array);
+        });
       });
-    });
 
-    test('should return an empty array when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.dropRight(array, n), []);
+      test(formattedMethodName + ' should return an empty array when `n` >= `array.length`', 4, function () {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function (n) {
+          deepEqual(dropRight(array, n), []);
+        });
       });
     });
 
@@ -2956,6 +2972,18 @@
       else {
         skipTest(2);
       }
+    });
+
+    test('should drop the first two elements when reversed', 1, function() {
+      deepEqual(_(array).reverse().dropRight(2).value(), [3]);
+    });
+
+    test('should drop the first two elements when filtered', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).dropRight(2).value(), [1]);
+    });
+
+    test('should drop the first two elements when filtered and reversed', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).reverse().dropRight(1).reverse().dropRight(1).value(), [2]);
     });
   }());
 

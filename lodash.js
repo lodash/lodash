@@ -5656,7 +5656,7 @@
               criteria = Array(length);
 
           while (length--) {
-            criteria[length] = value[iteratee[length]];
+            criteria[length] = value == null ? undefined : value[iteratee[length]];
           }
         } else {
           criteria = iteratee(value, key, collection);

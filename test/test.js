@@ -4937,27 +4937,29 @@
       strictEqual(_.isArguments(args), true);
     });
 
-    test('should return `false` for non `arguments` objects', 10, function() {
+    test('should return `false` for non `arguments` objects', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isArguments(value) : _.isArguments();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isArguments([1, 2, 3]), false);
       strictEqual(_.isArguments(true), false);
       strictEqual(_.isArguments(new Date), false);
       strictEqual(_.isArguments(new Error), false);
       strictEqual(_.isArguments(_), false);
+      strictEqual(_.isArguments(slice), false);
       strictEqual(_.isArguments({ '0': 1, 'callee': _.noop, 'length': 1 }), false);
       strictEqual(_.isArguments(1), false);
+      strictEqual(_.isArguments(NaN), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);
-
-      deepEqual(actual, expected);
     });
 
-    test('should work with `arguments` objects from another realm', 1, function() {
+    test('should work with an `arguments` object from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isArguments(_._arguments), true);
       }
@@ -4978,7 +4980,7 @@
       strictEqual(_.isArray([1, 2, 3]), true);
     });
 
-    test('should return `false` for non arrays', 10, function() {
+    test('should return `false` for non arrays', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -4992,13 +4994,15 @@
       strictEqual(_.isArray(new Date), false);
       strictEqual(_.isArray(new Error), false);
       strictEqual(_.isArray(_), false);
+      strictEqual(_.isArray(slice), false);
       strictEqual(_.isArray({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isArray(1), false);
+      strictEqual(_.isArray(NaN), false);
       strictEqual(_.isArray(/x/), false);
       strictEqual(_.isArray('a'), false);
     });
 
-    test('should work with arrays from another realm', 1, function() {
+    test('should work with an array from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isArray(_._array), true);
       }
@@ -5022,7 +5026,7 @@
       strictEqual(_.isBoolean(Object(false)), true);
     });
 
-    test('should return `false` for non booleans', 10, function() {
+    test('should return `false` for non booleans', 12, function() {
       var expected = _.map(falsey, function(value) { return value === false; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -5036,13 +5040,15 @@
       strictEqual(_.isBoolean(new Date), false);
       strictEqual(_.isBoolean(new Error), false);
       strictEqual(_.isBoolean(_), false);
+      strictEqual(_.isBoolean(slice), false);
       strictEqual(_.isBoolean({ 'a': 1 }), false);
       strictEqual(_.isBoolean(1), false);
+      strictEqual(_.isBoolean(NaN), false);
       strictEqual(_.isBoolean(/x/), false);
       strictEqual(_.isBoolean('a'), false);
     });
 
-    test('should work with booleans from another realm', 1, function() {
+    test('should work with a boolean from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isBoolean(_._boolean), true);
       }
@@ -5063,7 +5069,7 @@
       strictEqual(_.isDate(new Date), true);
     });
 
-    test('should return `false` for non dates', 10, function() {
+    test('should return `false` for non dates', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5077,13 +5083,15 @@
       strictEqual(_.isDate(true), false);
       strictEqual(_.isDate(new Error), false);
       strictEqual(_.isDate(_), false);
+      strictEqual(_.isDate(slice), false);
       strictEqual(_.isDate({ 'a': 1 }), false);
       strictEqual(_.isDate(1), false);
+      strictEqual(_.isDate(NaN), false);
       strictEqual(_.isDate(/x/), false);
       strictEqual(_.isDate('a'), false);
     });
 
-    test('should work with dates from another realm', 1, function() {
+    test('should work with a date object from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isDate(_._date), true);
       }
@@ -5130,7 +5138,7 @@
       }
     });
 
-    test('should return `false` for non DOM elements', 11, function() {
+    test('should return `false` for non DOM elements', 13, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5145,13 +5153,15 @@
       strictEqual(_.isElement(new Date), false);
       strictEqual(_.isElement(new Error), false);
       strictEqual(_.isElement(_), false);
+      strictEqual(_.isElement(slice), false);
       strictEqual(_.isElement({ 'a': 1 }), false);
       strictEqual(_.isElement(1), false);
+      strictEqual(_.isElement(NaN), false);
       strictEqual(_.isElement(/x/), false);
       strictEqual(_.isElement('a'), false);
     });
 
-    test('should work with DOM elements from another realm', 1, function() {
+    test('should work with a DOM element from another realm', 1, function() {
       if (_._element) {
         strictEqual(_.isElement(_._element), true);
       }
@@ -5168,7 +5178,7 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for empty or falsey values', 3, function() {
+    test('should return `true` for empty or falsey values', 9, function() {
       var expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
@@ -5177,8 +5187,14 @@
 
       deepEqual(actual, expected);
 
-      strictEqual(_.isEmpty(), true);
+      strictEqual(_.isEmpty(true), true);
+      strictEqual(_.isEmpty(new Date), true);
+      strictEqual(_.isEmpty(new Error), true);
+      strictEqual(_.isEmpty(slice), true);
+      strictEqual(_.isEmpty(1), true);
+      strictEqual(_.isEmpty(NaN), true);
       strictEqual(_.isEmpty(/x/), true);
+      strictEqual(_.isEmpty(), true);
     });
 
     test('should return `false` for non-empty values', 3, function() {
@@ -5866,7 +5882,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-error objects', 10, function() {
+    test('should return `false` for non-error objects', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5880,8 +5896,10 @@
       strictEqual(_.isError(true), false);
       strictEqual(_.isError(new Date), false);
       strictEqual(_.isError(_), false);
+      strictEqual(_.isError(slice), false);
       strictEqual(_.isError({ 'a': 1 }), false);
       strictEqual(_.isError(1), false);
+      strictEqual(_.isError(NaN), false);
       strictEqual(_.isError(/x/), false);
       strictEqual(_.isError('a'), false);
     });
@@ -5907,6 +5925,8 @@
   QUnit.module('lodash.isFinite');
 
   (function() {
+    var args = arguments;
+
     test('should return `true` for finite values', 1, function() {
       var values = [0, 1, 3.14, -1],
           expected = _.map(values, _.constant(true));
@@ -5918,7 +5938,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-finite values', 1, function() {
+    test('should return `false` for non-finite values', 9, function() {
       var values = [NaN, Infinity, -Infinity, Object(1)],
           expected = _.map(values, _.constant(false));
 
@@ -5927,6 +5947,15 @@
       });
 
       deepEqual(actual, expected);
+
+      strictEqual(_.isFinite(args), false);
+      strictEqual(_.isFinite([1, 2, 3]), false);
+      strictEqual(_.isFinite(true), false);
+      strictEqual(_.isFinite(new Date), false);
+      strictEqual(_.isFinite(new Error), false);
+      strictEqual(_.isFinite({ 'a': 1 }), false);
+      strictEqual(_.isFinite(/x/), false);
+      strictEqual(_.isFinite('a'), false);
     });
 
     test('should return `false` for non-numeric values', 1, function() {
@@ -5950,7 +5979,7 @@
 
       deepEqual(actual, expected);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -5959,11 +5988,12 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for functions', 1, function() {
+    test('should return `true` for functions', 2, function() {
       strictEqual(_.isFunction(_), true);
+      strictEqual(_.isFunction(slice), true);
     });
 
-    test('should return `false` for non functions', 10, function() {
+    test('should return `false` for non functions', 11, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5979,6 +6009,7 @@
       strictEqual(_.isFunction(new Error), false);
       strictEqual(_.isFunction({ 'a': 1 }), false);
       strictEqual(_.isFunction(1), false);
+      strictEqual(_.isFunction(NaN), false);
       strictEqual(_.isFunction(/x/), false);
       strictEqual(_.isFunction('a'), false);
     });
@@ -5997,7 +6028,7 @@
       });
     });
 
-    test('should work with functions from another realm', 1, function() {
+    test('should work with a function from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isFunction(_._function), true);
       }
@@ -6019,7 +6050,7 @@
       strictEqual(_.isNaN(Object(NaN)), true);
     });
 
-    test('should return `false` for non NaNs', 11, function() {
+    test('should return `false` for non NaNs', 12, function() {
       var expected = _.map(falsey, function(value) { return value !== value; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6034,15 +6065,79 @@
       strictEqual(_.isNaN(new Date), false);
       strictEqual(_.isNaN(new Error), false);
       strictEqual(_.isNaN(_), false);
+      strictEqual(_.isNaN(slice), false);
       strictEqual(_.isNaN({ 'a': 1 }), false);
       strictEqual(_.isNaN(1), false);
       strictEqual(_.isNaN(/x/), false);
       strictEqual(_.isNaN('a'), false);
     });
 
-    test('should work with NaNs from another realm', 1, function() {
+    test('should work with `NaN` from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isNaN(_._nan), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isNative');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for native methods', 10, function() {
+      _.each([root.alert, Array, create, freeze, root.prompt, push, slice, Uint8Array, WeakMap], function(func, i) {
+        if (func) {
+          strictEqual(_.isNative(func), true, String(i));
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      if (body) {
+        strictEqual(_.isNative(body.cloneNode), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return `false` for non native methods', 12, function() {
+      var expected = _.map(falsey, _.constant(false));
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isNative(value) : _.isNative();
+      });
+
+      deepEqual(actual, expected);
+
+      strictEqual(_.isNative(args), false);
+      strictEqual(_.isNative([1, 2, 3]), false);
+      strictEqual(_.isNative(true), false);
+      strictEqual(_.isNative(new Date), false);
+      strictEqual(_.isNative(new Error), false);
+      strictEqual(_.isNative(_), false);
+      strictEqual(_.isNative({ 'a': 1 }), false);
+      strictEqual(_.isNative(1), false);
+      strictEqual(_.isNative(NaN), false);
+      strictEqual(_.isNative(/x/), false);
+      strictEqual(_.isNative('a'), false);
+    });
+
+    test('should work with native functions from another realm', 2, function() {
+      if (_._element) {
+        strictEqual(_.isNative(_._element.cloneNode), true);
+      }
+      else {
+        skipTest();
+      }
+      if (_._object) {
+        strictEqual(_.isNative(_._object.valueOf), true);
       }
       else {
         skipTest();
@@ -6061,7 +6156,7 @@
       strictEqual(_.isNull(null), true);
     });
 
-    test('should return `false` for non nulls', 11, function() {
+    test('should return `false` for non nulls', 13, function() {
       var expected = _.map(falsey, function(value) { return value === null; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6076,8 +6171,10 @@
       strictEqual(_.isNull(new Date), false);
       strictEqual(_.isNull(new Error), false);
       strictEqual(_.isNull(_), false);
+      strictEqual(_.isNull(slice), false);
       strictEqual(_.isNull({ 'a': 1 }), false);
       strictEqual(_.isNull(1), false);
+      strictEqual(_.isNull(NaN), false);
       strictEqual(_.isNull(/x/), false);
       strictEqual(_.isNull('a'), false);
     });
@@ -6099,12 +6196,13 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for numbers', 2, function() {
+    test('should return `true` for numbers', 3, function() {
       strictEqual(_.isNumber(0), true);
       strictEqual(_.isNumber(Object(0)), true);
+      strictEqual(_.isNumber(NaN), true);
     });
 
-    test('should return `false` for non numbers', 10, function() {
+    test('should return `false` for non numbers', 11, function() {
       var expected = _.map(falsey, function(value) { return typeof value == 'number'; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6119,6 +6217,7 @@
       strictEqual(_.isNumber(new Date), false);
       strictEqual(_.isNumber(new Error), false);
       strictEqual(_.isNumber(_), false);
+      strictEqual(_.isNumber(slice), false);
       strictEqual(_.isNumber({ 'a': 1 }), false);
       strictEqual(_.isNumber(/x/), false);
       strictEqual(_.isNumber('a'), false);
@@ -6145,13 +6244,14 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for objects', 11, function() {
+    test('should return `true` for objects', 12, function() {
       strictEqual(_.isObject(args), true);
       strictEqual(_.isObject([1, 2, 3]), true);
       strictEqual(_.isObject(Object(false)), true);
       strictEqual(_.isObject(new Date), true);
       strictEqual(_.isObject(new Error), true);
       strictEqual(_.isObject(_), true);
+      strictEqual(_.isObject(slice), true);
       strictEqual(_.isObject({ 'a': 1 }), true);
       strictEqual(_.isObject(Object(0)), true);
       strictEqual(_.isObject(/x/), true);
@@ -6301,7 +6401,7 @@
       strictEqual(_.isRegExp(RegExp('x')), true);
     });
 
-    test('should return `false` for non regexes', 10, function() {
+    test('should return `false` for non regexes', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6316,8 +6416,10 @@
       strictEqual(_.isRegExp(new Date), false);
       strictEqual(_.isRegExp(new Error), false);
       strictEqual(_.isRegExp(_), false);
+      strictEqual(_.isRegExp(slice), false);
       strictEqual(_.isRegExp({ 'a': 1 }), false);
       strictEqual(_.isRegExp(1), false);
+      strictEqual(_.isRegExp(NaN), false);
       strictEqual(_.isRegExp('a'), false);
     });
 
@@ -6343,7 +6445,7 @@
       strictEqual(_.isString(Object('a')), true);
     });
 
-    test('should return `false` for non strings', 10, function() {
+    test('should return `false` for non strings', 12, function() {
       var expected = _.map(falsey, function(value) { return value === ''; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6358,8 +6460,10 @@
       strictEqual(_.isString(new Date), false);
       strictEqual(_.isString(new Error), false);
       strictEqual(_.isString(_), false);
+      strictEqual(_.isString(slice), false);
       strictEqual(_.isString({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isString(1), false);
+      strictEqual(_.isString(NaN), false);
       strictEqual(_.isString(/x/), false);
     });
 
@@ -6385,7 +6489,7 @@
       strictEqual(_.isUndefined(undefined), true);
     });
 
-    test('should return `false` for non `undefined` values', 11, function() {
+    test('should return `false` for non `undefined` values', 13, function() {
       var expected = _.map(falsey, function(value) { return value === undefined; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6400,8 +6504,10 @@
       strictEqual(_.isUndefined(new Date), false);
       strictEqual(_.isUndefined(new Error), false);
       strictEqual(_.isUndefined(_), false);
+      strictEqual(_.isUndefined(slice), false);
       strictEqual(_.isUndefined({ 'a': 1 }), false);
       strictEqual(_.isUndefined(1), false);
+      strictEqual(_.isUndefined(NaN), false);
       strictEqual(_.isUndefined(/x/), false);
       strictEqual(_.isUndefined('a'), false);
     });
@@ -11952,7 +12058,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 194, function() {
+    test('should accept falsey arguments', 195, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

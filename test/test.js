@@ -3309,8 +3309,17 @@
       }
     });
 
-    test('should be aliased', 1, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.select, _.filter);
+      strictEqual(_().select, _().filter);
+    });
+
+    test("should filter already limited collection", 1, function () {
+      var collection = [0, 2, 0, 4];
+
+      var actual = _(collection).take(2).filter(Boolean).value()
+
+      deepEqual(actual, [2]);
     });
   }());
 
@@ -6799,78 +6808,80 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should provide the correct `callback` arguments', 1, function() {
-      var args;
+    _.forIn(getConfig('map'), function(map, formattedMethodName) {
+      test(formattedMethodName + ' should provide the correct `callback` arguments', 1, function() {
+        var args;
 
-      _.map(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [1, 0, array]);
-    });
-
-    test('should support the `thisArg` argument', 2, function() {
-      function callback(num, index) {
-        return this[index] + num;
-      }
-
-      var actual = _.map([1], callback, [2]);
-      deepEqual(actual, [3]);
-
-      actual = _.map({ 'a': 1 }, callback, { 'a': 2 });
-      deepEqual(actual, [3]);
-    });
-
-    test('should iterate over own properties of objects', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var actual = _.map(new Foo, function(value, key) { return key; });
-      deepEqual(actual, ['a']);
-    });
-
-    test('should work on an object with no `callback`', 1, function() {
-      var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 });
-      deepEqual(actual, array);
-    });
-
-    test('should handle object arguments with non-numeric length properties', 1, function() {
-      if (defineProperty) {
-        var object = {};
-        defineProperty(object, 'length', { 'value': 'x' });
-        deepEqual(_.map(object, _.identity), []);
-      } else {
-        skipTest();
-      }
-    });
-
-    test('should treat a nodelist as an array-like object', 1, function() {
-      if (document) {
-        var actual = _.map(document.getElementsByTagName('body'), function(element) {
-          return element.nodeName.toLowerCase();
+        map(array, function() {
+          args || (args = slice.call(arguments));
         });
 
-        deepEqual(actual, ['body']);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should accept a falsey `collection` argument', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
-
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.map(value) : _.map();
-        } catch(e) { }
+        deepEqual(args, [1, 0, array]);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(formattedMethodName + ' should support the `thisArg` argument', 2, function() {
+        function callback(num, index) {
+          return this[index] + num;
+        }
 
-    test('should treat number values for `collection` as empty', 1, function() {
-      deepEqual(_.map(1), []);
+        var actual = map([1], callback, [2]);
+        deepEqual(actual, [3]);
+
+        actual = map({ 'a': 1 }, callback, { 'a': 2 });
+        deepEqual(actual, [3]);
+      });
+
+      test(formattedMethodName + ' should iterate over own properties of objects', 1, function() {
+        function Foo() { this.a = 1; }
+        Foo.prototype.b = 2;
+
+        var actual = map(new Foo, function(value, key) { return key; });
+        deepEqual(actual, ['a']);
+      });
+
+      test(formattedMethodName + ' should work on an object with no `callback`', 1, function() {
+        var actual = map({ 'a': 1, 'b': 2, 'c': 3 });
+        deepEqual(actual, array);
+      });
+
+      test(formattedMethodName + ' should handle object arguments with non-numeric length properties', 1, function() {
+        if (defineProperty) {
+          var object = {};
+          defineProperty(object, 'length', { 'value': 'x' });
+          deepEqual(map(object, _.identity), []);
+        } else {
+          skipTest();
+        }
+      });
+
+      test(formattedMethodName + ' should treat a nodelist as an array-like object', 1, function() {
+        if (document) {
+          var actual = map(document.getElementsByTagName('body'), function(element) {
+            return element.nodeName.toLowerCase();
+          });
+
+          deepEqual(actual, ['body']);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test(formattedMethodName + ' should accept a falsey `collection` argument', 1, function() {
+        var expected = map(falsey, _.constant([]));
+
+        var actual = map(falsey, function(value, index) {
+          try {
+            return index ? map(value) : map();
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expected);
+      });
+
+      test(formattedMethodName + ' should treat number values for `collection` as empty', 1, function() {
+        deepEqual(map(1), []);
+      });
     });
 
     test('should return a wrapped value when chaining', 1, function() {
@@ -6882,8 +6893,9 @@
       }
     });
 
-    test('should be aliased', 1, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.collect, _.map);
+      strictEqual(_().collect, _().map);
     });
   }());
 

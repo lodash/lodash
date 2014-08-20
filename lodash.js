@@ -9627,6 +9627,8 @@
     });
 
     lodash.prototype.tail = lodash.prototype.rest;
+    lodash.prototype.collect = lodash.prototype.map;
+    lodash.prototype.select = lodash.prototype.filter;
 
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS

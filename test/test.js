@@ -265,10 +265,11 @@
   function getConfig(method) {
     var o = {};
     o['`_.' + method + '`'] = _[method];
-    o['`_(...).' + method + '`'] = function(array) {
+    o['`_(...).' + method + '`'] = function chainFunctionCaller(array) {
       var wrapper = _(array),
-          args = slice.call(arguments, 1);
-      return wrapper[method].apply(wrapper, args).value();
+          args = slice.call(arguments, 1),
+          result = wrapper[method].apply(wrapper, args);
+      return result instanceof _ ? result.value() : result;
     }
     return o;
   }
@@ -4058,38 +4059,39 @@
     ];
 
     _.each(methods, function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName];
+      _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+        var array = [1, 2, 3];
 
-      test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
-        var args,
+        test(formattedMethodName + ' should provide the correct `callback` arguments', 1, function() {
+          var args,
             expected = [1, 0, array];
 
-        func(array, function() {
-          args || (args = slice.call(arguments));
+          func(array, function() {
+            args || (args = slice.call(arguments));
+          });
+
+          if (_.contains(rightMethods, methodName)) {
+            expected[0] = 3;
+            expected[1] = 2;
+          }
+          if (_.contains(objectMethods, methodName)) {
+            expected[1] += '';
+          }
+          deepEqual(args, expected);
         });
 
-        if (_.contains(rightMethods, methodName)) {
-          expected[0] = 3;
-          expected[1] = 2;
-        }
-        if (_.contains(objectMethods, methodName)) {
-          expected[1] += '';
-        }
-        deepEqual(args, expected);
-      });
+        test(formattedMethodName + ' should support the `thisArg` argument', 2, function() {
+          var actual;
 
-      test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
-        var actual;
+          function callback(num, index) {
+            actual = this[index];
+          }
+          func([1], callback, [2]);
+          strictEqual(actual, 2);
 
-        function callback(num, index) {
-          actual = this[index];
-        }
-        func([1], callback, [2]);
-        strictEqual(actual, 2);
-
-        func({ 'a': 1 }, callback, { 'a': 2 });
-        strictEqual(actual, 2);
+          func({ 'a': 1 }, callback, { 'a': 2 });
+          strictEqual(actual, 2);
+        });
       });
     });
 

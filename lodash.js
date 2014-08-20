@@ -4409,7 +4409,9 @@
     LazyWrapper.FILTER_FLAG = 2;
     LazyWrapper.WHILE_FLAG = 3;
 
-    LazyWrapper.prototype.map = function(iterator) {
+    LazyWrapper.prototype.map = function(iterator, thisArg) {
+      iterator = getCallback(iterator, thisArg, 3);
+
       this.iterators.push(iterator);
       this.type.push(LazyWrapper.MAP_FLAG);
       return this;
@@ -4497,10 +4499,12 @@
       return this;
     };
 
-    LazyWrapper.prototype.filter = function(iterator) {
+    LazyWrapper.prototype.filter = function(predicate, thisArg) {
+      predicate = getCallback(predicate, thisArg, 3);
+
       this.filterApplied = true;
       this.type.push(LazyWrapper.FILTER_FLAG);
-      this.iterators.push(iterator);
+      this.iterators.push(predicate);
       return this;
     };
 

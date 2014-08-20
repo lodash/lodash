@@ -4777,24 +4777,26 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
+    _.forIn(getConfig('initial'), function(initial, formattedMethodName) {
+      test(formattedMethodName + ' should accept a falsey `array` argument', 1, function() {
+        var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.initial(value) : _.initial();
-        } catch(e) { }
+        var actual = _.map(falsey, function(value, index) {
+          try {
+            return index ? initial(value) : initial();
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(formattedMethodName + ' should exclude last element', 1, function() {
+        deepEqual(initial(array), [1, 2]);
+      });
 
-    test('should exclude last element', 1, function() {
-      deepEqual(_.initial(array), [1, 2]);
-    });
-
-    test('should return an empty when querying empty arrays', 1, function() {
-      deepEqual(_.initial([]), []);
+      test(formattedMethodName + ' should return an empty when querying empty arrays', 1, function() {
+        deepEqual(initial([]), []);
+      });
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -4813,6 +4815,30 @@
       else {
         skipTest(2);
       }
+    });
+
+    test("should work with reverse when chaining", 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).reverse().initial().value();
+
+      deepEqual(actual, [3, 2]);
+    });
+
+    test("should work with take when chaining", 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).take(2).initial().value();
+
+      deepEqual(actual, [1]);
+    });
+
+    test("should work with filter when chaining", 1, function () {
+      var collection = [1, 0, 2, 0, 3, 0, 4];
+
+      var actual = _(collection).filter(_.identity).initial().value();
+
+      deepEqual(actual, [1, 2, 3]);
     });
   }());
 
@@ -9040,24 +9066,26 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
+    _.forIn(getConfig('rest'), function(rest, formattedMethodName) {
+      test(formattedMethodName + ' should accept a falsey `array` argument', 1, function() {
+        var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.rest(value) : _.rest();
-        } catch(e) { }
+        var actual = _.map(falsey, function(value, index) {
+          try {
+            return index ? rest(value) : rest();
+          } catch(e) { }
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(formattedMethodName + ' should exclude the first element', 1, function() {
+        deepEqual(rest(array), [2, 3]);
+      });
 
-    test('should exclude the first element', 1, function() {
-      deepEqual(_.rest(array), [2, 3]);
-    });
-
-    test('should return an empty when querying empty arrays', 1, function() {
-      deepEqual(_.rest([]), []);
+      test(formattedMethodName + ' should return an empty when querying empty arrays', 1, function() {
+        deepEqual(rest([]), []);
+      });
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -9078,8 +9106,33 @@
       }
     });
 
-    test('should be aliased', 1, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.tail, _.rest);
+      strictEqual(_().tail, _().rest);
+    });
+
+    test("should work with reverse when chaining", 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).reverse().rest().value();
+
+      deepEqual(actual, [2, 1]);
+    });
+
+    test("should work with take when chaining", 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).take(2).rest().value();
+
+      deepEqual(actual, [2]);
+    });
+
+    test("should work with filter when chaining", 1, function () {
+      var collection = [1, 0, 2, 0, 3, 0, 4];
+
+      var actual = _(collection).filter(_.identity).rest().value();
+
+      deepEqual(actual, [2, 3, 4]);
     });
   }());
 

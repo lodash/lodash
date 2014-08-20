@@ -4425,8 +4425,6 @@
       return this.dropRight(1);
     };
 
-    LazyWrapper.prototype.tail = LazyWrapper.prototype.rest;
-
     LazyWrapper.prototype.drop = function(n) {
       if(this.filterApplied) {
         return new LazyWrapper(this).drop(n);
@@ -9608,7 +9606,7 @@
     // add `LazyWrapper` functions
     arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile',
         'take', 'takeRight', 'takeWhile', 'takeRightWhile',
-        'rest', 'initial', 'tail', 'head', 'first', 'last'],
+        'rest', 'initial', 'head', 'first', 'last'],
     function(methodName) {
       var func = LazyWrapper.prototype[methodName];
       var overriddenFunc = lodash.prototype[methodName];
@@ -9627,6 +9625,8 @@
           : (this.__chain__ ? new lodashWrapper(wrapped, true) : wrapped);
       };
     });
+
+    lodash.prototype.tail = lodash.prototype.rest;
 
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS

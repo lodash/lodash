@@ -3463,12 +3463,14 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should return the first element', 1, function() {
+    test('should return the first element', 2, function() {
       strictEqual(_.first(array), 1);
+      strictEqual(_(array).first(), 1);
     });
 
-    test('should return `undefined` when querying empty arrays', 1, function() {
+    test('should return `undefined` when querying empty arrays', 2, function() {
       strictEqual(_.first([]), undefined);
+      strictEqual(_([]).first(), undefined);
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -3494,7 +3496,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('take methods');
+  QUnit.module('lodash.take');
 
   (function() {
     var array = [1, 2, 3];
@@ -3556,7 +3558,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('takeRight methods');
+  QUnit.module('lodash.takeRight');
 
   (function() {
     var array = [1, 2, 3];
@@ -6635,14 +6637,14 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should return the last element', 1, function() {
+    test('should return the last element', 2, function() {
       strictEqual(_.last(array), 3);
+      strictEqual(_(array).last(), 3);
     });
 
-    test('should return `undefined` when querying empty arrays', 1, function() {
-      var array = []
-      array['-1'] = 1;
+    test('should return `undefined` when querying empty arrays', 2, function() {
       strictEqual(_.last([]), undefined);
+      strictEqual(_([]).last(), undefined);
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {

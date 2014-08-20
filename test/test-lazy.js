@@ -796,39 +796,6 @@
 
     /*--------------------------------------------------------------------------*/
 
-    QUnit.module('lodash.lazy.first');
-
-    (function () {
-
-      test("should return first element", 1, function () {
-        var collection = [1, 2, 3];
-
-        var actual = _.lazy(collection).first();
-
-        strictEqual(actual, 1);
-      });
-
-    })();
-
-
-    /*--------------------------------------------------------------------------*/
-
-    QUnit.module('lodash.lazy.last');
-
-    (function () {
-
-      test("should return last element", 1, function () {
-        var collection = [1, 2, 3];
-
-        var actual = _.lazy(collection).last();
-
-        deepEqual(actual, 3);
-      });
-
-    })();
-
-    /*--------------------------------------------------------------------------*/
-
     QUnit.module('lodash.lazy.reverse');
 
     (function() {

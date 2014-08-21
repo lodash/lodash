@@ -11924,7 +11924,7 @@
 
   QUnit.module('"Arrays" category methods');
 
- (function() {
+  (function() {
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
@@ -12009,6 +12009,18 @@
       deepEqual(_.difference(array, null), array, message('difference'));
       deepEqual(_.intersection(array, null), array, message('intersection'));
       deepEqual(_.union(array, null), array, message('union'));
+    });
+
+    test('`_(...).join` should resolve lazy chain', 1, function () {
+      strictEqual(_([0, 1, 2]).map(Number).join(), '0,1,2');
+    });
+
+    test('`_(...).pop` should resolve lazy chain', 1, function () {
+      strictEqual(_([0, 1, 2]).map(Number).pop(), 2);
+    });
+
+    test('`_(...).shift` should resolve lazy chain', 1, function () {
+      strictEqual(_([0, 1, 2]).map(Number).shift(), 0);
     });
   }(1, null, [3], null, 5));
 

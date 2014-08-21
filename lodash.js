@@ -9570,7 +9570,7 @@
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
-            result = func.apply(this.__wrapped__, arguments);
+            result = func.apply(getWrappedValue(this.__wrapped__), arguments);
 
         return chainAll
           ? new lodashWrapper(result, chainAll)

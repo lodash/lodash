@@ -4398,22 +4398,6 @@
     LazyWrapper.FILTER_FLAG = 2;
     LazyWrapper.WHILE_FLAG = 3;
 
-    LazyWrapper.prototype.map = function(iterator, thisArg) {
-      iterator = getCallback(iterator, thisArg, 3);
-
-      this.iterators.push(iterator);
-      this.type.push(LazyWrapper.MAP_FLAG);
-      return this;
-    };
-
-    LazyWrapper.prototype.rest = function() {
-      return this.drop(1);
-    };
-
-    LazyWrapper.prototype.initial = function() {
-      return this.dropRight(1);
-    };
-
     LazyWrapper.prototype.drop = function(n) {
       n = Math.max(0, (n == null) ? 1 : n);
       if(this.filterApplied) {
@@ -4421,24 +4405,6 @@
       }
       this.lazyOperators.push(new LazyOperator('drop', n, this.dir));
       return this;
-    };
-
-    LazyWrapper.prototype.dropRight = function(n) {
-      return this.reverse().drop(n).reverse();
-    };
-
-    LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-
-      this.filterApplied = true;
-      this.type.push(LazyWrapper.WHILE_FLAG);
-      this.iterators.push(predicate);
-
-      return new LazyWrapper(this);
-    };
-
-    LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
-      return this.reverse().takeWhile(predicate, thisArg).reverse();
     };
 
     LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
@@ -4451,8 +4417,52 @@
       return new LazyWrapper(this);
     };
 
+    LazyWrapper.prototype.dropRight = function(n) {
+      return this.reverse().drop(n).reverse();
+    };
+
     LazyWrapper.prototype.dropRightWhile = function(predicate, thisArg) {
       return this.reverse().dropWhile(predicate, thisArg).reverse();
+    };
+
+    LazyWrapper.prototype.filter = function(predicate, thisArg) {
+      predicate = getCallback(predicate, thisArg, 3);
+
+      this.filterApplied = true;
+      this.type.push(LazyWrapper.FILTER_FLAG);
+      this.iterators.push(predicate);
+      return this;
+    };
+
+    LazyWrapper.prototype.first = function(count) {
+      this.take(1);
+      return this.value()[0];
+    };
+
+    LazyWrapper.prototype.initial = function() {
+      return this.dropRight(1);
+    };
+
+    LazyWrapper.prototype.last = function(count) {
+      this.takeRight(1);
+      return this.value()[0];
+    };
+
+    LazyWrapper.prototype.map = function(iterator, thisArg) {
+      iterator = getCallback(iterator, thisArg, 3);
+
+      this.iterators.push(iterator);
+      this.type.push(LazyWrapper.MAP_FLAG);
+      return this;
+    };
+
+    LazyWrapper.prototype.rest = function() {
+      return this.drop(1);
+    };
+
+    LazyWrapper.prototype.reverse = function() {
+      this.dir *= -1;
+      return this;
     };
 
     LazyWrapper.prototype.take = function(n) {
@@ -4465,16 +4475,14 @@
       return this;
     };
 
-    LazyWrapper.prototype.first = function(count) {
-      this.take(1);
-      return this.value()[0];
-    };
+    LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
+      predicate = getCallback(predicate, thisArg, 3);
 
-    LazyWrapper.prototype.head = LazyWrapper.prototype.first;
+      this.filterApplied = true;
+      this.type.push(LazyWrapper.WHILE_FLAG);
+      this.iterators.push(predicate);
 
-    LazyWrapper.prototype.last = function(count) {
-      this.takeRight(1);
-      return this.value()[0];
+      return new LazyWrapper(this);
     };
 
     LazyWrapper.prototype.takeRight = function(n) {
@@ -4488,18 +4496,8 @@
       return this;
     };
 
-    LazyWrapper.prototype.filter = function(predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-
-      this.filterApplied = true;
-      this.type.push(LazyWrapper.FILTER_FLAG);
-      this.iterators.push(predicate);
-      return this;
-    };
-
-    LazyWrapper.prototype.reverse = function() {
-      this.dir *= -1;
-      return this;
+    LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
+      return this.reverse().takeWhile(predicate, thisArg).reverse();
     };
 
     function LazyOperator(name, count, dir) {
@@ -4512,23 +4510,6 @@
       takeRight: 'take',
       drop: 'dropRight'
     };
-
-    function calculateBounds(operators, min, max) {
-      var len = operators.length,
-          op;
-
-      for(var i = 0; i < len; i++) {
-        op = operators[i];
-        switch(op.name) {
-          case 'take':      max = Math.min(max, min + (op.count - 1)); break;
-          case 'takeRight': min = Math.max(min, max - (op.count - 1)); break;
-          case 'drop':      min += op.count; break;
-          case 'dropRight': max -= op.count; break;
-        }
-      }
-
-      return {max: max, min: min};
-    }
 
     LazyWrapper.prototype.value = function() {
       var source = this.source,
@@ -4578,6 +4559,23 @@
       }
 
       return result;
+    }
+
+    function calculateBounds(operators, min, max) {
+      var len = operators.length,
+          op;
+
+      for(var i = 0; i < len; i++) {
+        op = operators[i];
+        switch(op.name) {
+          case 'take':      max = Math.min(max, min + (op.count - 1)); break;
+          case 'takeRight': min = Math.max(min, max - (op.count - 1)); break;
+          case 'drop':      min += op.count; break;
+          case 'dropRight': max -= op.count; break;
+        }
+      }
+
+      return {max: max, min: min};
     }
 
     function reverse() {

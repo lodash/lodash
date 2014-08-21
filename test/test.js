@@ -6134,22 +6134,20 @@
       }
     });
 
-//    todo(Filip): this test can be added after #676 is solved
-//    test('should resolve lazy values before comparison', 4, function() {
-//      if (!isNpm) {
-//
-//        var lazyWrapper = _([0, 1, 2]).map(_.identity);
-//
-//        strictEqual(_.isEqual(lazyWrapper, [0, 1, 2]), true);
-//        strictEqual(lazyWrapper.isEqual([0, 1, 2]), true);
-//
-//        strictEqual(_.isEqual(lazyWrapper, [0, 1]), false);
-//        strictEqual(lazyWrapper.isEqual([0, 1]), false);
-//      }
-//      else {
-//        skipTest();
-//      }
-//    });
+    test('should resolve lazy values before comparison', 4, function() {
+      if (!isNpm) {
+        var lazyWrapper = _([0, 1, 2]).map(_.identity);
+
+        strictEqual(_.isEqual(lazyWrapper, [0, 1, 2]), true);
+        strictEqual(lazyWrapper.isEqual([0, 1, 2]), true);
+
+        strictEqual(_.isEqual(lazyWrapper, [0, 1]), false);
+        strictEqual(lazyWrapper.isEqual([0, 1]), false);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

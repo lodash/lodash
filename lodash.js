@@ -1889,15 +1889,9 @@
             othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
-          return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, customizer, isWhere, stackA, stackB);
-          // todo(Filip): After fixing #676, we should add support for comparing lazy arrays:
-          //  `strictEqual(_.isEqual(_([0, 1, 2]).map(), [0, 1, 2]), true);`
-          //
-          // Following code may be useful:
-          //
-          // value = valWrapped ? getWrappedValue(value.__wrapped__) : value;
-          // other = othWrapped ? getWrappedValue(other.__wrapped__) : other;
-          // return baseIsEqual(value, other, customizer, isWhere, stackA, stackB);
+          value = valWrapped ? getWrappedValue(value.__wrapped__) : value;
+          other = othWrapped ? getWrappedValue(other.__wrapped__) : other;
+          return baseIsEqual(value, other, customizer, isWhere, stackA, stackB);
         }
         if (!isSameClass) {
           return false;

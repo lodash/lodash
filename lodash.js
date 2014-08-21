@@ -1846,7 +1846,7 @@
           othType = typeof other;
 
       // exit early for unlike primitive values
-      if (value === value && (value == null || other == null ||
+      if (!(valType == 'number' && othType == 'number') && (value == null || other == null ||
           (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
         return false;
       }
@@ -1861,13 +1861,13 @@
       if (othIsArg) {
         othClass = objectClass;
       }
-      if (valClass != othClass) {
-        return false;
-      }
-      var isArr = arrayLikeClasses[valClass],
-          isErr = valClass == errorClass;
+      var valIsArr = arrayLikeClasses[valClass],
+          valIsErr = valClass == errorClass,
+          valIsObj = valClass == objectClass && !isHostObject(value),
+          othIsObj = othClass == objectClass && !isHostObject(other);
 
-      if (isArr) {
+      var isSameClass = valClass == othClass;
+      if (isSameClass && valIsArr) {
         var valLength = value.length,
             othLength = other.length;
 
@@ -1875,81 +1875,87 @@
           return false;
         }
       }
-      else if (isErr || (valClass == objectClass && (support.nodeClass || !(isHostObject(value) || isHostObject(other))))) {
+      else {
         // unwrap any `lodash` wrapped values
-        var valWrapped = hasOwnProperty.call(value, '__wrapped__'),
-            othWrapped = hasOwnProperty.call(other, '__wrapped__');
+        var valWrapped = valIsObj && hasOwnProperty.call(value, '__wrapped__'),
+            othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
           return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, customizer, isWhere, stackA, stackB);
         }
-        if (!support.argsClass) {
-          valIsArg = isArguments(value);
-          othIsArg = isArguments(other);
+        if (!isSameClass) {
+          return false;
         }
-        // in older versions of Opera, `arguments` objects have `Array` constructors
-        var valCtor = valIsArg ? Object : value.constructor,
-            othCtor = othIsArg ? Object : other.constructor;
-
-        if (isErr) {
-          // error objects of different types are not equal
-          if (valCtor.prototype.name != othCtor.prototype.name) {
-            return false;
+        if (valIsErr || valIsObj) {
+          if (!support.argsClass) {
+            valIsArg = isArguments(value);
+            othIsArg = isArguments(other);
           }
-        } else {
-          var valHasCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
-              othHasCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
+          // in older versions of Opera, `arguments` objects have `Array` constructors
+          var valCtor = valIsArg ? Object : value.constructor,
+              othCtor = othIsArg ? Object : other.constructor;
 
-          if (valHasCtor != othHasCtor) {
-            return false;
-          }
-          if (!valHasCtor) {
-            // non `Object` object instances with different constructors are not equal
-            if (valCtor != othCtor &&
-                  !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
-                  ('constructor' in value && 'constructor' in other)
-                ) {
+          if (valIsErr) {
+            // error objects of different types are not equal
+            if (valCtor.prototype.name != othCtor.prototype.name) {
               return false;
             }
           }
-        }
-        var valProps = isErr ? ['message', 'name'] : keys(value),
-            othProps = isErr ? valProps : keys(other);
+          else {
+            var valHasCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
+                othHasCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
 
-        if (valIsArg) {
-          valProps.push('length');
+            if (valHasCtor != othHasCtor) {
+              return false;
+            }
+            if (!valHasCtor) {
+              // non `Object` object instances with different constructors are not equal
+              if (valCtor != othCtor &&
+                    !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
+                    ('constructor' in value && 'constructor' in other)
+                  ) {
+                return false;
+              }
+            }
+          }
+          var valProps = valIsErr ? ['message', 'name'] : keys(value),
+              othProps = valIsErr ? valProps : keys(other);
+
+          if (valIsArg) {
+            valProps.push('length');
+          }
+          if (othIsArg) {
+            othProps.push('length');
+          }
+          valLength = valProps.length;
+          othLength = othProps.length;
+          if (valLength != othLength && !isWhere) {
+            return false;
+          }
         }
-        if (othIsArg) {
-          othProps.push('length');
-        }
-        valLength = valProps.length;
-        othLength = othProps.length;
-        if (valLength != othLength && !isWhere) {
+        else {
+          switch (valClass) {
+            case boolClass:
+            case dateClass:
+              // coerce dates and booleans to numbers, dates to milliseconds and booleans
+              // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
+              return +value == +other;
+
+            case numberClass:
+              // treat `NaN` vs. `NaN` as equal
+              return (value != +value)
+                ? other != +other
+                // but treat `-0` vs. `+0` as not equal
+                : (value == 0 ? ((1 / value) == (1 / other)) : value == +other);
+
+            case regexpClass:
+            case stringClass:
+              // coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
+              // treat strings primitives and string objects as equal
+              return value == String(other);
+          }
           return false;
         }
-      }
-      else {
-        switch (valClass) {
-          case boolClass:
-          case dateClass:
-            // coerce dates and booleans to numbers, dates to milliseconds and booleans
-            // to `1` or `0` treating invalid dates coerced to `NaN` as not equal
-            return +value == +other;
-
-          case numberClass:
-            // treat `NaN` vs. `NaN` as equal
-            return (value != +value)
-              ? other != +other
-              // but treat `-0` vs. `+0` as not equal
-              : (value == 0 ? ((1 / value) == (1 / other)) : value == +other);
-
-          case regexpClass:
-          case stringClass:
-            // coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
-            // treat strings primitives and string objects as equal
-            return value == String(other);
-        }
-        return false;
       }
       // assume cyclic structures are equal
       // the algorithm for detecting cyclic structures is adapted from ES 5.1
@@ -1969,7 +1975,7 @@
 
       // recursively compare objects and arrays (susceptible to call stack limits)
       result = true;
-      if (isArr) {
+      if (valIsArr) {
         // deep compare the contents, ignoring non-numeric properties
         while (result && ++index < valLength) {
           var valValue = value[index];
@@ -1993,7 +1999,7 @@
       else {
         while (result && ++index < valLength) {
           var key = valProps[index];
-          result = isErr || hasOwnProperty.call(other, key);
+          result = valIsErr || hasOwnProperty.call(other, key);
 
           if (result) {
             valValue = value[key];
@@ -2943,7 +2949,7 @@
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
      */
-    var isHostObject = support.hostObject ? constant(false) : function(value) {
+    var isHostObject = !support.hostObject ? constant(false) : function(value) {
       // IE < 9 presents many host objects as `Object` objects that can coerce to
       // strings despite having improperly defined `toString` methods
       return typeof value.toString != 'function' && typeof (value + '') == 'string';

@@ -5805,25 +5805,38 @@
       }
     });
 
-    test('should perform comparisons between wrapped values', 4, function() {
-      if (!isNpm) {
-        var object1 = _({ 'a': 1, 'b': 2 }),
-            object2 = _({ 'a': 1, 'b': 2 }),
-            actual = object1.isEqual(object2);
+    test('should perform comparisons between wrapped values', 32, function() {
+      var values = [
+        [[1, 2], [1, 2], [1, 2, 3]],
+        [true, true, false],
+        [new Date, new Date, new Date(new Date - 100)],
+        [{ 'a': 1, 'b': 2 }, { 'a': 1, 'b': 2 }, { 'a': 1, 'b': 1 }],
+        [1, 1, 2],
+        [NaN, NaN, Infinity],
+        [/x/, /x/, /x/i],
+        ['a', 'a', 'A']
+      ];
 
-        strictEqual(actual, true);
-        strictEqual(_.isEqual(_(actual), _(true)), true);
+      _.each(values, function(vals) {
+        if (!isNpm) {
+          var wrapper1 = _(vals[0]),
+              wrapper2 = _(vals[1]),
+              actual = wrapper1.isEqual(wrapper2);
 
-        object1 = _({ 'a': 1, 'b': 2 });
-        object2 = _({ 'a': 1, 'b': 1 });
+          strictEqual(actual, true);
+          strictEqual(_.isEqual(_(actual), _(true)), true);
 
-        actual = object1.isEqual(object2);
-        strictEqual(actual, false);
-        strictEqual(_.isEqual(_(actual), _(false)), true);
-      }
-      else {
-        skipTest(4);
-      }
+          wrapper1 = _(vals[0]);
+          wrapper2 = _(vals[2]);
+
+          actual = wrapper1.isEqual(wrapper2);
+          strictEqual(actual, false);
+          strictEqual(_.isEqual(_(actual), _(false)), true);
+        }
+        else {
+          skipTest(4);
+        }
+      });
     });
 
     test('should perform comparisons between wrapped and non-wrapped values', 4, function() {

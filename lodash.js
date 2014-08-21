@@ -215,7 +215,7 @@
    * **Note:** Though the ">" character is escaped for symmetry, characters like
    * ">" and "/" don't require escaping in HTML and have no special meaning
    * unless they're part of a tag or unquoted attribute value.
-   * See [Mathias' article](http://mathiasbynens.be/notes/ambiguous-ampersands)
+   * See [Mathias Bynens's article](http://mathiasbynens.be/notes/ambiguous-ampersands)
    * (under "semi-related fun fact") for more details.
    *
    * Backticks are escaped because in Internet Explorer < 9, they can break out
@@ -3031,7 +3031,7 @@
     /**
      * Sets metadata for `func`.
      *
-     * **Note**: If this function becomes hot, i.e. is called a lot in a short
+     * **Note:** If this function becomes hot, i.e. is called a lot in a short
      * period of time, it will trip its breaker and transition to an identity
      * function to avoid garbage collection pauses.
      *
@@ -3818,11 +3818,11 @@
      * Removes all provided values from `array` using `SameValueZero` for equality
      * comparisons.
      *
-     * **Note:** Unlike `_.without`, this method mutates `array`.
-     *
-     * `SameValueZero` is like strict equality, e.g. `===`, except that `NaN` matches
-     * `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Notes:**
+     *  - Unlike `_.without`, this method mutates `array`.
+     *  - `SameValueZero` is like strict equality, e.g. `===`, except that `NaN` matches `NaN`.
+     *    See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     *    for more details.
      *
      * @static
      * @memberOf _
@@ -8028,7 +8028,7 @@
     }
 
     /**
-     * Converts the characters "&", "<", ">", '"', and "'" in `string` to
+     * Converts the characters "&", "<", ">", '"', "'", and '`', in `string` to
      * their corresponding HTML entities.
      *
      * **Note:** No other characters are escaped. To escape additional characters
@@ -8657,7 +8657,7 @@
 
     /**
      * The inverse of `_.escape`; this method converts the HTML entities
-     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to their
+     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to their
      * corresponding characters.
      *
      * **Note:** No other HTML entities are unescaped. To unescape additional HTML

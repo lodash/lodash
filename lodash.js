@@ -4388,6 +4388,13 @@
       return result;
     }
 
+    function getLimitAction(name, count, dir) {
+      return {
+        name: name + (dir < 0 ? "Right" : ""),
+        count: count || 0
+      };
+    }
+
     function getWrappedValue(wrapped) {
       return (wrapped instanceof LazySequence) ? wrapped.value() : wrapped;
     }
@@ -4411,7 +4418,7 @@
       if(this.filterApplied) {
         return new LazySequence(this).drop(n);
       }
-      this.limitActions.push(new LimitAction('drop', n, this.dir));
+      this.limitActions.push(getLimitAction('drop', n, this.dir));
       return this;
     };
 
@@ -4479,7 +4486,7 @@
         this.limit = n;
         return new LazySequence(this);
       }
-      this.limitActions.push(new LimitAction('take', n, this.dir));
+      this.limitActions.push(getLimitAction('take', n, this.dir));
       return this;
     };
 
@@ -4494,29 +4501,11 @@
     };
 
     LazySequence.prototype.takeRight = function(n) {
-      n = (n == null) ? 1 : n;
-      if(this.filterApplied) {
-        this.limit = n;
-        this.reverse();
-        return new LazySequence(this).reverse();
-      }
-      this.limitActions.push(new LimitAction('takeRight', n, this.dir));
-      return this;
+      return this.reverse().take(n).reverse();
     };
 
     LazySequence.prototype.takeRightWhile = function(predicate, thisArg) {
       return this.reverse().takeWhile(predicate, thisArg).reverse();
-    };
-
-    function LimitAction(name, count, dir) {
-      this.name = (dir > 0) ? name : this.revert[name];
-      this.count = isNaN(count) ? 0 : count;
-    }
-
-    LimitAction.prototype.revert = {
-      take: 'takeRight',
-      takeRight: 'take',
-      drop: 'dropRight'
     };
 
     LazySequence.prototype.value = function() {

@@ -191,7 +191,7 @@
 
   var dynamite = {
     toString : function() { throw new Error('explode'); }
-  }
+  };
 
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
@@ -270,7 +270,7 @@
           args = slice.call(arguments, 1),
           result = wrapper[method].apply(wrapper, args);
       return result instanceof _ ? result.value() : result;
-    }
+    };
     return o;
   }
 
@@ -2165,9 +2165,9 @@
     });
 
     test('should only write metadata to named functions', 3, function() {
-      function a() {};
+      function a() {}
       var b = function() {};
-      function c() {};
+      function c() {}
 
       var object = {};
 
@@ -2195,7 +2195,7 @@
     });
 
     test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
-      function a() {};
+      function a() {}
 
       if (defineProperty && lodashBizarro) {
         lodashBizarro.callback(a, {});
@@ -3386,10 +3386,10 @@
       strictEqual(_().select, _().filter);
     });
 
-    test("should filter already limited collection", 1, function () {
+    test('should filter already limited collection', 1, function () {
       var collection = [0, 2, 0, 4];
 
-      var actual = _(collection).take(2).filter(Boolean).value()
+      var actual = _(collection).take(2).filter(Boolean).value();
 
       deepEqual(actual, [2]);
     });
@@ -3624,7 +3624,7 @@
       }
     });
 
-    test("`_(...).take` should limit number of elements returned when filter is applied", 1, function () {
+    test('`_(...).take` should limit number of elements returned when filter is applied', 1, function () {
       var collection = [1, 0, 2, 0, dynamite];
 
       var actual = _(collection)
@@ -3685,7 +3685,7 @@
       }
     });
 
-    test("`_(...).takeRight` should limit number of elements returned when filter is applied", 1, function () {
+    test('`_(...).takeRight` should limit number of elements returned when filter is applied', 1, function () {
       var collection = [dynamite, 1, 0, 2, 0];
 
       var actual = _(collection).filter(_.identity).takeRight(2).map(Number).value();
@@ -4119,7 +4119,7 @@
       'forInRight',
       'forOwn',
       'forOwnRight'
-    ]
+    ];
 
     var objectMethods = [
       'forIn',
@@ -4898,7 +4898,7 @@
       }
     });
 
-    test("should work with reverse when chaining", 1, function () {
+    test('should work with `reverse` when chaining', 1, function () {
       var collection = [1, 2, 3];
 
       var actual = _(collection).reverse().initial().value();
@@ -4906,7 +4906,7 @@
       deepEqual(actual, [3, 2]);
     });
 
-    test("should work with take when chaining", 1, function () {
+    test('should work with `take` when chaining', 1, function () {
       var collection = [1, 2, 3];
 
       var actual = _(collection).take(2).initial().value();
@@ -4914,7 +4914,7 @@
       deepEqual(actual, [1]);
     });
 
-    test("should work with filter when chaining", 1, function () {
+    test('should work with `filter` when chaining', 1, function () {
       var collection = [1, 0, 2, 0, 3, 0, 4];
 
       var actual = _(collection).filter(_.identity).initial().value();
@@ -8483,7 +8483,7 @@
       fn.toString = _.constant('fn');
 
       var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}]
+          values = [null, undefined, fn, {}];
 
       var actual = _.map(objects, function(object, index) {
         return _.pluck([object], values[index]);
@@ -9195,7 +9195,7 @@
       strictEqual(_().tail, _().rest);
     });
 
-    test("should work with reverse when chaining", 1, function () {
+    test('should work with `reverse` when chaining', 1, function () {
       var collection = [1, 2, 3];
 
       var actual = _(collection).reverse().rest().value();
@@ -9203,7 +9203,7 @@
       deepEqual(actual, [2, 1]);
     });
 
-    test("should work with take when chaining", 1, function () {
+    test('should work with `take` when chaining', 1, function () {
       var collection = [1, 2, 3];
 
       var actual = _(collection).take(2).rest().value();
@@ -9211,7 +9211,7 @@
       deepEqual(actual, [2]);
     });
 
-    test("should work with filter when chaining", 1, function () {
+    test('should work with `filter` when chaining', 1, function () {
       var collection = [1, 0, 2, 0, 3, 0, 4];
 
       var actual = _(collection).filter(_.identity).rest().value();
@@ -11661,7 +11661,7 @@
       });
     });
 
-    test("should compute chained methods properly", 1, function () {
+    test('should compute chained methods properly', 1, function () {
       var collection = [1,2,3,4];
 
       var actual = _(collection).map(inc).filter(isEven).map(inc).value();
@@ -11670,7 +11670,7 @@
       deepEqual(actual, expected);
     });
 
-    test("computes minimal number of elements required", 1, function () {
+    test('computes minimal number of elements required', 1, function () {
       var collection = [1, 2, 1, dynamite, dynamite];
 
       var actual = _(collection).map(inc).filter(isEven).map(inc).take(2).value();
@@ -11679,13 +11679,13 @@
       deepEqual(actual, expected);
     });
 
-    test("should return original collection", 1, function() {
+    test('should return original collection', 1, function() {
       var collection = [1, 2, 3];
 
       deepEqual(_(collection).value(), collection);
     });
 
-    test("should compute properly complex chains", 1, function() {
+    test('should compute properly complex chains', 1, function() {
       var collection = [dynamite, 1, 2, 3, 4, 5, 6, dynamite, dynamite];
 
       var actual = _(collection).reverse().take(8).filter(isEven)
@@ -11694,7 +11694,7 @@
       deepEqual(actual, [4]);
     });
 
-    test("should be limited by source array length", 1, function () {
+    test('should be limited by source array length', 1, function () {
       var collection = [1, 2, 3];
 
       var actual = _(collection).take(4).value();
@@ -11702,7 +11702,7 @@
       deepEqual(actual, [1, 2, 3]);
     });
 
-    test("should be limited by reversed source array length", 1, function () {
+    test('should be limited by reversed source array length', 1, function () {
       var collection = [1, 2, 3];
 
       var actual = _(collection).reverse().take(4).value();
@@ -11711,7 +11711,7 @@
     });
 
 
-    test("should be limited by dropRight(1).take(3) subset", 1, function () {
+    test('should be limited by dropRight(1).take(3) subset', 1, function () {
       var collection = [1, 2, dynamite];
 
       var actual = _(collection).dropRight(1).take(3).map(Number).value();
@@ -11719,7 +11719,7 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test("should be limited by limited by take(2).dropRight(2) subset", 1, function () {
+    test('should be limited by limited by take(2).dropRight(2) subset', 1, function () {
       var collection = [dynamite, dynamite, dynamite];
 
       var actual = _(collection).take(2).dropRight(2).map(Number).value();
@@ -11727,7 +11727,7 @@
       deepEqual(actual, []);
     });
 
-    test("should be limited by dropRight(2).take(2) subset", 1, function () {
+    test('should be limited by dropRight(2).take(2) subset', 1, function () {
       var collection = [1, dynamite, dynamite];
 
       var actual = _(collection).dropRight(2).take(2).map(Number).value();
@@ -11735,7 +11735,7 @@
       deepEqual(actual, [1]);
     });
 
-    test("should ignore subsequent take as in take(x).take(x+1) sequence", 1, function () {
+    test('should ignore subsequent take as in take(x).take(x+1) sequence', 1, function () {
       var collection = [1, 2, dynamite];
 
       var actual = _(collection).take(2).take(3).map(Number).value();
@@ -11743,7 +11743,7 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test("should ignore subsequent take as in takeRight(x).takeRight(x+1) sequence", 1, function () {
+    test('should ignore subsequent take as in takeRight(x).takeRight(x+1) sequence', 1, function () {
       var collection = [dynamite, 2, 3];
 
       var actual = _(collection).takeRight(2).takeRight(3).map(Number).value();

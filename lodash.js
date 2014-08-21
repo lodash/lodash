@@ -4419,13 +4419,13 @@
       if(this.filterApplied) {
         return new LazyWrapper(this).drop(n);
       }
-      this.lazyOperators.push(new LazyOperator("drop", n, this.dir));
+      this.lazyOperators.push(new LazyOperator('drop', n, this.dir));
       return this;
-    }
+    };
 
     LazyWrapper.prototype.dropRight = function(n) {
       return this.reverse().drop(n).reverse();
-    }
+    };
 
     LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
@@ -4435,11 +4435,11 @@
       this.iterators.push(predicate);
 
       return new LazyWrapper(this);
-    }
+    };
 
     LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
       return this.reverse().takeWhile(predicate, thisArg).reverse();
-    }
+    };
 
     LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
       var satisfied = false;
@@ -4461,7 +4461,7 @@
         this.limit = n;
         return new LazyWrapper(this);
       }
-      this.lazyOperators.push(new LazyOperator("take", n, this.dir));
+      this.lazyOperators.push(new LazyOperator('take', n, this.dir));
       return this;
     };
 
@@ -4484,7 +4484,7 @@
         this.reverse();
         return new LazyWrapper(this).reverse();
       }
-      this.lazyOperators.push(new LazyOperator("takeRight", n, this.dir));
+      this.lazyOperators.push(new LazyOperator('takeRight', n, this.dir));
       return this;
     };
 
@@ -4500,7 +4500,7 @@
     LazyWrapper.prototype.reverse = function() {
       this.dir *= -1;
       return this;
-    }
+    };
 
     function LazyOperator(name, count, dir) {
       this.name = (dir > 0) ? name : this.revert[name];
@@ -4508,9 +4508,9 @@
     }
 
     LazyOperator.prototype.revert = {
-      take: "takeRight",
-      takeRight: "take",
-      drop: "dropRight"
+      take: 'takeRight',
+      takeRight: 'take',
+      drop: 'dropRight'
     };
 
     function calculateBounds(operators, min, max) {
@@ -4520,10 +4520,10 @@
       for(var i = 0; i < len; i++) {
         op = operators[i];
         switch(op.name) {
-          case "take":      max = Math.min(max, min + (op.count - 1)); break;
-          case "takeRight": min = Math.max(min, max - (op.count - 1)); break;
-          case "drop":      min += op.count; break;
-          case "dropRight": max -= op.count; break;
+          case 'take':      max = Math.min(max, min + (op.count - 1)); break;
+          case 'takeRight': min = Math.max(min, max - (op.count - 1)); break;
+          case 'drop':      min += op.count; break;
+          case 'dropRight': max -= op.count; break;
         }
       }
 
@@ -4541,7 +4541,7 @@
       bounds = calculateBounds(this.lazyOperators, 0, source.length - 1);
 
       return compute(this, source, bounds);
-    }
+    };
 
     function compute(wrapper, source, bounds) {
 
@@ -4578,7 +4578,7 @@
       }
 
       return result;
-    };
+    }
 
     function reverse() {
       this.__wrapped__.reverse();
@@ -6387,7 +6387,7 @@
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
-      }
+      };
       memoized.cache = {};
       return memoized;
     }

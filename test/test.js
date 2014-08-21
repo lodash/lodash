@@ -189,8 +189,8 @@
   /** Used as the property name for wrapper metadata */
   var EXPANDO = '__lodash@'  + _.VERSION + '__';
 
-  var dynamite = {
-    toString : function() { throw new Error('explode'); }
+  var spy = {
+    toString : function() { throw new Error('The spy was revealed!'); }
   };
 
   /** Used to provide falsey values to methods */
@@ -3625,12 +3625,12 @@
     });
 
     test('`_(...).take` should limit number of elements returned when filter is applied', 1, function () {
-      var collection = [1, 0, 2, 0, dynamite];
+      var collection = [1, 0, 2, 0, spy];
 
       var actual = _(collection)
         .filter(_.identity) // `filter` changes collection size, what is a special case for take
         .take(2)
-        .map(Number) // Number-cast cause dynamite explosion. Proper lazy implementation never queries dynamite
+        .map(Number) // Number-cast cause the spy to be revelead. Proper lazy implementation never queries spy
         .value();
 
       deepEqual(actual, [1, 2]);
@@ -3686,7 +3686,7 @@
     });
 
     test('`_(...).takeRight` should limit number of elements returned when filter is applied', 1, function () {
-      var collection = [dynamite, 1, 0, 2, 0];
+      var collection = [spy, 1, 0, 2, 0];
 
       var actual = _(collection).filter(_.identity).takeRight(2).map(Number).value();
 
@@ -3759,7 +3759,7 @@
 
     test('`_(...).takeRightWhile` should work properly with `_(...).reverse`', 1, function() {
       if (!isNpm) {
-        var actual = _([1, 2, 3, dynamite]).map(Number)
+        var actual = _([1, 2, 3, spy]).map(Number)
                                         .reverse()
                                         .takeRightWhile(function(num) { return num < 3; })
                                         .reverse();
@@ -3837,7 +3837,7 @@
 
     test('`_(...).takeWhile` should read minimal number of elements', 1, function() {
       if (!isNpm) {
-        var actual = _([1, 2, 3, dynamite]).map(Number)
+        var actual = _([1, 2, 3, spy]).map(Number)
           .takeWhile(function(num) { return num < 3; });
 
         deepEqual(actual.value(), [1, 2]);
@@ -3849,7 +3849,7 @@
 
     test('`_(...).takeWhile` should work properly with `_(...).reverse`', 1, function() {
       if (!isNpm) {
-        var actual = _([dynamite, 3, 2, 1]).map(Number)
+        var actual = _([spy, 3, 2, 1]).map(Number)
           .reverse()
           .takeWhile(function(num) { return num < 3; })
           .reverse();
@@ -9008,11 +9008,7 @@
     });
 
     test('should be lazy in lazy chain scenario', 1, function() {
-      var dynamite = {
-        toString: function() { throw new Error('exploded!'); }
-      };
-
-      var actual = _([dynamite, 2, 3]).map(Number).reverse().take(2).value();
+      var actual = _([spy, 2, 3]).map(Number).reverse().take(2).value();
 
       deepEqual(actual, [3, 2]);
     });
@@ -11700,7 +11696,7 @@
     });
 
     test('computes minimal number of elements required', 1, function () {
-      var collection = [1, 2, 1, dynamite, dynamite];
+      var collection = [1, 2, 1, spy, spy];
 
       var actual = _(collection).map(inc).filter(isEven).map(inc).take(2).value();
       var expected = [3, 3];
@@ -11715,7 +11711,7 @@
     });
 
     test('should compute properly complex chains', 1, function() {
-      var collection = [dynamite, 1, 2, 3, 4, 5, 6, dynamite, dynamite];
+      var collection = [spy, 1, 2, 3, 4, 5, 6, spy, spy];
 
       var actual = _(collection).reverse().take(8).filter(isEven)
         .takeRight(3).take(2).reverse().take(1).map(Number).value();
@@ -11741,7 +11737,7 @@
 
 
     test('should be limited by dropRight(1).take(3) subset', 1, function () {
-      var collection = [1, 2, dynamite];
+      var collection = [1, 2, spy];
 
       var actual = _(collection).dropRight(1).take(3).map(Number).value();
 
@@ -11749,7 +11745,7 @@
     });
 
     test('should be limited by limited by take(2).dropRight(2) subset', 1, function () {
-      var collection = [dynamite, dynamite, dynamite];
+      var collection = [spy, spy, spy];
 
       var actual = _(collection).take(2).dropRight(2).map(Number).value();
 
@@ -11757,7 +11753,7 @@
     });
 
     test('should be limited by dropRight(2).take(2) subset', 1, function () {
-      var collection = [1, dynamite, dynamite];
+      var collection = [1, spy, spy];
 
       var actual = _(collection).dropRight(2).take(2).map(Number).value();
 
@@ -11765,7 +11761,7 @@
     });
 
     test('should ignore subsequent take as in take(x).take(x+1) sequence', 1, function () {
-      var collection = [1, 2, dynamite];
+      var collection = [1, 2, spy];
 
       var actual = _(collection).take(2).take(3).map(Number).value();
 
@@ -11773,7 +11769,7 @@
     });
 
     test('should ignore subsequent take as in takeRight(x).takeRight(x+1) sequence', 1, function () {
-      var collection = [dynamite, 2, 3];
+      var collection = [spy, 2, 3];
 
       var actual = _(collection).takeRight(2).takeRight(3).map(Number).value();
 

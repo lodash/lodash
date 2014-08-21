@@ -9923,6 +9923,7 @@
         'fastBind',
         'funcDecomp',
         'funcNames',
+        'hostObject',
         'nodeClass',
         'nonEnumArgs',
         'nonEnumShadows',

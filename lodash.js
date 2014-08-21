@@ -545,19 +545,6 @@
   }
 
   /**
-   * Checks if `value` is a DOM node in IE < 9.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a DOM node, else `false`.
-   */
-  function isNode(value) {
-    // IE < 9 presents DOM nodes as `Object` objects except they have `toString`
-    // methods that are `typeof` "string" and still can coerce nodes to strings
-    return typeof value.toString != 'function' && typeof (value + '') == 'string';
-  }
-
-  /**
    * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -1004,18 +991,24 @@
       }
 
       /**
-       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9)
-       * and that the JS engine errors when attempting to coerce an object to a
-       * string without a `toString` function.
+       * Detect if the host objects are detectable (IE < 9).
        *
        * @memberOf _.support
        * @type boolean
        */
       try {
-        support.nodeClass = !(toString.call(document) == objectClass && !({ 'toString': 0 } + ''));
+        support.hostObject = !({ 'toString': 0 } + '');
       } catch(e) {
-        support.nodeClass = true;
+        support.hostObject = false;
       }
+
+      /**
+       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.nodeClass = !(toString.call(document) == objectClass && support.hostObject);
 
       /**
        * Detect if `arguments` object indexes are non-enumerable.
@@ -1882,7 +1875,7 @@
           return false;
         }
       }
-      else if (isErr || (valClass == objectClass && (support.nodeClass || !(isNode(value) || isNode(other))))) {
+      else if (isErr || (valClass == objectClass && (support.nodeClass || !(isHostObject(value) || isHostObject(other))))) {
         // unwrap any `lodash` wrapped values
         var valWrapped = hasOwnProperty.call(value, '__wrapped__'),
             othWrapped = hasOwnProperty.call(other, '__wrapped__');
@@ -2885,7 +2878,7 @@
      */
     function initObjectClone(object, isDeep) {
       var className = toString.call(object);
-      if (!cloneableClasses[className] || (!support.nodeClass && isNode(object))) {
+      if (!cloneableClasses[className] || (!support.nodeClass && isHostObject(object))) {
         return object;
       }
       var Ctor = object.constructor,
@@ -2942,6 +2935,19 @@
       return (value && typeof value == 'object' && typeof value.length == 'number' &&
         arrayLikeClasses[toString.call(value)]) || false;
     }
+
+    /**
+     * Checks if `value` is a host object in IE < 9.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+     */
+    var isHostObject = support.hostObject ? constant(false) : function(value) {
+      // IE < 9 presents many host objects as `Object` objects that can coerce to
+      // strings despite having improperly defined `toString` methods
+      return typeof value.toString != 'function' && typeof (value + '') == 'string';
+    };
 
     /**
      * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -3072,7 +3078,7 @@
           (!hasOwnProperty.call(value, 'constructor') &&
             (Ctor = value.constructor, isFunction(Ctor) && !(Ctor instanceof Ctor))) ||
           (!support.argsClass && isArguments(value)) ||
-          (!support.nodeClass && isNode(value))) {
+          (!support.nodeClass && isHostObject(value))) {
         return false;
       }
       // IE < 9 iterates inherited properties before own properties. If the first
@@ -7112,7 +7118,7 @@
      */
     function isElement(value) {
       return (value && typeof value == 'object' && value.nodeType === 1 &&
-        (support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isNode(value))) || false;
+        (support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
     }
     // fallback for environments without DOM support
     if (!support.dom) {
@@ -7361,12 +7367,11 @@
      * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
      */
     function isNative(value) {
-      var type = typeof value;
-      if (type == 'function') {
+      if (isFunction(value)) {
         return reNative.test(fnToString.call(value));
       }
-      if (value && type == 'object') {
-        return !('constructor' in value && 'toString' in value)
+      if (value && typeof value == 'object') {
+        return !('constructor' in value) && isHostObject(value)
           ? reNative.test(value)
           : reHostCtor.test(toString.call(value));
       }

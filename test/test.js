@@ -9348,6 +9348,18 @@
       }
     });
 
+    test('should resolve lazy chain', 1, function() {
+      if (!isNpm) {
+        var actual = _(array)
+          .map(_.identitity) // starts lazy sequence
+          .sample(array.length); // should resolve lazy sequence
+        ok(_.isEmpty(_.difference(actual.value(), array)));
+      }
+      else {
+        skipTest();
+      }
+    });
+
     _.each({
       'literal': 'abc',
       'object': Object('abc')

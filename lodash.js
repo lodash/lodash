@@ -9537,7 +9537,7 @@
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName] = function(n, guard) {
           var chainAll = this.__chain__,
-              result = func(this.__wrapped__, n, guard);
+              result = func(getWrappedValue(this.__wrapped__), n, guard);
 
           return !chainAll && (n == null || (guard && !(callbackable && typeof n == 'function')))
             ? result

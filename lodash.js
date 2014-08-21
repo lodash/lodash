@@ -9642,6 +9642,8 @@
 
         lodash.prototype[methodName] = function() {
           var chainAll = this.__chain__,
+          // todo(Filip) - I bet that below should be `getWrappedValue(this.__wrapped__)`.
+          // Proper test for RingoJS should be written.
               value = this.__wrapped__,
               result = func.apply(value, arguments);
 

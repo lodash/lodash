@@ -4927,7 +4927,7 @@
      * // => logs each value and returns the array
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
-     * // => logs each value-key pair and returns the object (property order is not guaranteed across environments)
+     * // => logs each value-key pair and returns the object (property order is not guaranteed)
      */
     function forEach(collection, iteratee, thisArg) {
       return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
@@ -5098,7 +5098,7 @@
      * // => [3, 6, 9]
      *
      * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(n) { return n * 3; });
-     * // => [3, 6, 9] (property order is not guaranteed across environments)
+     * // => [3, 6, 9] (property order is not guaranteed)
      *
      * var characters = [
      *   { 'name': 'barney', 'age': 36 },
@@ -5379,7 +5379,7 @@
      *   result[key] = n * 3;
      *   return result;
      * }, {});
-     * // => { 'a': 3, 'b': 6, 'c': 9 }
+     * // => { 'a': 3, 'b': 6, 'c': 9 } (property order is not guaranteed)
      */
     function reduce(collection, iteratee, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduce : baseReduce;
@@ -6747,7 +6747,7 @@
      * _.findKey(characters, function(chr) {
      *   return chr.age < 40;
      * });
-     * // => 'barney' (property order is not guaranteed across environments)
+     * // => 'barney' (property order is not guaranteed)
      *
      * // using "_.where" callback shorthand
      * _.findKey(characters, { 'age': 1 });
@@ -6833,7 +6833,7 @@
      * _.forIn(new Shape, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'x', 'y', and 'z' (property order is not guaranteed across environments)
+     * // => logs 'x', 'y', and 'z' (property order is not guaranteed)
      */
     function forIn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
@@ -6890,7 +6890,7 @@
      * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(n, key) {
      *   console.log(key);
      * });
-     * // => logs '0', '1', and 'length' (property order is not guaranteed across environments)
+     * // => logs '0', '1', and 'length' (property order is not guaranteed)
      */
     function forOwn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
@@ -7548,7 +7548,7 @@
      * Shape.prototype.z = 0;
      *
      * _.keys(new Shape);
-     * // => ['x', 'y'] (property order is not guaranteed across environments)
+     * // => ['x', 'y'] (property order is not guaranteed)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
       object = toObject(object);
@@ -7582,7 +7582,7 @@
      * Shape.prototype.z = 0;
      *
      * _.keysIn(new Shape);
-     * // => ['x', 'y', 'z'] (property order is not guaranteed across environments)
+     * // => ['x', 'y', 'z'] (property order is not guaranteed)
      */
     function keysIn(object) {
       if (object == null) {
@@ -7791,7 +7791,7 @@
      * @example
      *
      * _.pairs({ 'barney': 36, 'fred': 40 });
-     * // => [['barney', 36], ['fred', 40]] (property order is not guaranteed across environments)
+     * // => [['barney', 36], ['fred', 40]] (property order is not guaranteed)
      */
     function pairs(object) {
       var index = -1,
@@ -7915,7 +7915,7 @@
      * Shape.prototype.z = 0;
      *
      * _.values(new Shape(2, 1));
-     * // => [2, 1] (property order is not guaranteed across environments)
+     * // => [2, 1] (property order is not guaranteed)
      */
     function values(object) {
       return baseValues(object, keys);
@@ -7940,7 +7940,7 @@
      * Shape.prototype.z = 0;
      *
      * _.valuesIn(new Shape(2, 1));
-     * // => [2, 1, 0] (property order is not guaranteed across environments)
+     * // => [2, 1, 0] (property order is not guaranteed)
      */
     function valuesIn(object) {
       return baseValues(object, keysIn);

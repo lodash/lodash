@@ -9582,8 +9582,12 @@
     arrayEach(['push', 'sort', 'unshift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        func.apply(this.__wrapped__, arguments);
-        return this;
+        var wrapped = this.__wrapped__,
+            result = getWrappedValue(wrapped),
+            inLazyChain = (wrapped != result);
+
+        func.apply(result, arguments);
+        return inLazyChain ? new lodashWrapper(result, this.__chain__) : this;
       };
     });
 

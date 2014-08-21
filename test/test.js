@@ -12022,6 +12022,21 @@
     test('`_(...).shift` should resolve lazy chain', 1, function () {
       strictEqual(_([0, 1, 2]).map(Number).shift(), 0);
     });
+
+    test('`_(...).push` should resolve lazy chain', 1, function () {
+      var actual = _([0, 1, 2]).map(Number).push(3);
+      deepEqual(actual.value(), [0, 1, 2, 3]);
+    });
+
+    test('`_(...).sort` should resolve lazy chain', 1, function () {
+      var actual = _([0, 2, 1]).map(Number).sort();
+      deepEqual(actual.value(), [0, 1, 2]);
+    });
+
+    test('`_(...).unshift` should resolve lazy chain', 1, function () {
+      var actual = _([1, 2]).map(Number).unshift(0);
+      deepEqual(actual.value(), [0, 1, 2]);
+    });
   }(1, null, [3], null, 5));
 
   /*--------------------------------------------------------------------------*/

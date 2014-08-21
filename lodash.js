@@ -4381,156 +4381,156 @@
     }
 
     function getWrappedValue(wrapped) {
-      return (wrapped instanceof LazyWrapper) ? wrapped.value() : wrapped;
+      return (wrapped instanceof LazySequence) ? wrapped.value() : wrapped;
     }
 
-    function LazyWrapper(source) {
+    function LazySequence(source) {
       this.source = source;
       this.type = [];
       this.iterators = [];
       this.limit = Number.POSITIVE_INFINITY;
-      this.lazyOperators = [];
+      this.limitActions = [];
       this.filterApplied = false;
       this.dir = 1;
     }
 
-    LazyWrapper.MAP_FLAG = 1;
-    LazyWrapper.FILTER_FLAG = 2;
-    LazyWrapper.WHILE_FLAG = 3;
+    LazySequence.MAP_FLAG = 1;
+    LazySequence.FILTER_FLAG = 2;
+    LazySequence.WHILE_FLAG = 3;
 
-    LazyWrapper.prototype.drop = function(n) {
+    LazySequence.prototype.drop = function(n) {
       n = Math.max(0, (n == null) ? 1 : n);
       if(this.filterApplied) {
-        return new LazyWrapper(this).drop(n);
+        return new LazySequence(this).drop(n);
       }
-      this.lazyOperators.push(new LazyOperator('drop', n, this.dir));
+      this.limitActions.push(new LimitAction('drop', n, this.dir));
       return this;
     };
 
-    LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
+    LazySequence.prototype.dropWhile = function(predicate, thisArg) {
       var satisfied = false;
       predicate = getCallback(predicate, thisArg, 3);
 
       this.filter(function(value, index, array) {
         return satisfied || (satisfied = !predicate(value, index, array));
       });
-      return new LazyWrapper(this);
+      return new LazySequence(this);
     };
 
-    LazyWrapper.prototype.dropRight = function(n) {
+    LazySequence.prototype.dropRight = function(n) {
       return this.reverse().drop(n).reverse();
     };
 
-    LazyWrapper.prototype.dropRightWhile = function(predicate, thisArg) {
+    LazySequence.prototype.dropRightWhile = function(predicate, thisArg) {
       return this.reverse().dropWhile(predicate, thisArg).reverse();
     };
 
-    LazyWrapper.prototype.filter = function(predicate, thisArg) {
+    LazySequence.prototype.filter = function(predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
 
       this.filterApplied = true;
-      this.type.push(LazyWrapper.FILTER_FLAG);
+      this.type.push(LazySequence.FILTER_FLAG);
       this.iterators.push(predicate);
       return this;
     };
 
-    LazyWrapper.prototype.first = function(count) {
+    LazySequence.prototype.first = function(count) {
       this.take(1);
       return this.value()[0];
     };
 
-    LazyWrapper.prototype.initial = function() {
+    LazySequence.prototype.initial = function() {
       return this.dropRight(1);
     };
 
-    LazyWrapper.prototype.last = function(count) {
+    LazySequence.prototype.last = function(count) {
       this.takeRight(1);
       return this.value()[0];
     };
 
-    LazyWrapper.prototype.map = function(iterator, thisArg) {
+    LazySequence.prototype.map = function(iterator, thisArg) {
       iterator = getCallback(iterator, thisArg, 3);
 
       this.iterators.push(iterator);
-      this.type.push(LazyWrapper.MAP_FLAG);
+      this.type.push(LazySequence.MAP_FLAG);
       return this;
     };
 
-    LazyWrapper.prototype.rest = function() {
+    LazySequence.prototype.rest = function() {
       return this.drop(1);
     };
 
-    LazyWrapper.prototype.reverse = function() {
+    LazySequence.prototype.reverse = function() {
       this.dir *= -1;
       return this;
     };
 
-    LazyWrapper.prototype.take = function(n) {
+    LazySequence.prototype.take = function(n) {
       n = (n == null) ? 1 : n;
       if(this.filterApplied) {
         this.limit = n;
-        return new LazyWrapper(this);
+        return new LazySequence(this);
       }
-      this.lazyOperators.push(new LazyOperator('take', n, this.dir));
+      this.limitActions.push(new LimitAction('take', n, this.dir));
       return this;
     };
 
-    LazyWrapper.prototype.takeWhile = function(predicate, thisArg) {
+    LazySequence.prototype.takeWhile = function(predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
 
       this.filterApplied = true;
-      this.type.push(LazyWrapper.WHILE_FLAG);
+      this.type.push(LazySequence.WHILE_FLAG);
       this.iterators.push(predicate);
 
-      return new LazyWrapper(this);
+      return new LazySequence(this);
     };
 
-    LazyWrapper.prototype.takeRight = function(n) {
+    LazySequence.prototype.takeRight = function(n) {
       n = (n == null) ? 1 : n;
       if(this.filterApplied) {
         this.limit = n;
         this.reverse();
-        return new LazyWrapper(this).reverse();
+        return new LazySequence(this).reverse();
       }
-      this.lazyOperators.push(new LazyOperator('takeRight', n, this.dir));
+      this.limitActions.push(new LimitAction('takeRight', n, this.dir));
       return this;
     };
 
-    LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
+    LazySequence.prototype.takeRightWhile = function(predicate, thisArg) {
       return this.reverse().takeWhile(predicate, thisArg).reverse();
     };
 
-    function LazyOperator(name, count, dir) {
+    function LimitAction(name, count, dir) {
       this.name = (dir > 0) ? name : this.revert[name];
       this.count = isNaN(count) ? 0 : count;
     }
 
-    LazyOperator.prototype.revert = {
+    LimitAction.prototype.revert = {
       take: 'takeRight',
       takeRight: 'take',
       drop: 'dropRight'
     };
 
-    LazyWrapper.prototype.value = function() {
+    LazySequence.prototype.value = function() {
       var source = this.source,
-          bounds;
+          sourceLimit;
 
-      if (source instanceof LazyWrapper) {
+      if (source instanceof LazySequence) {
         source = source.value();
       }
 
-      bounds = calculateBounds(this.lazyOperators, 0, source.length - 1);
+      sourceLimit = limitSource(this.limitActions, source);
 
-      return compute(this, source, bounds);
+      return lazySequenceToArray(this, source, sourceLimit);
     };
 
-    function compute(wrapper, source, bounds) {
+    function lazySequenceToArray(wrapper, source, sourceRange) {
 
       var resultIndex = 0,
           dir = wrapper.dir,
-          loops = bounds.max - bounds.min + 1,
+          loops = sourceRange.max - sourceRange.min + 1,
           resultLimit = Math.min(wrapper.limit, loops),
-          sourceIndex = (dir == 1 ? bounds.min : bounds.max) - dir,
+          sourceIndex = (dir == 1 ? sourceRange.min : sourceRange.max) - dir,
           result = [],
           type = wrapper.type,
           iterators = wrapper.iterators,
@@ -4546,11 +4546,11 @@
         for(i = 0; i < num; i++) {
           iterator = iterators[i];
           switch(type[i]) {
-            // LazyWrapper.MAP_FLAG
+            // LazySequence.MAP_FLAG
             case 1: val = iterator(val, sourceIndex, source); break;
-            // LazyWrapper.FILTER_FLAG
+            // LazySequence.FILTER_FLAG
             case 2: if(!iterator(val, sourceIndex, source)) { continue lazy; }
-            // LazyWrapper.WHILE_FLAG
+            // LazySequence.WHILE_FLAG
             case 3: if(!iterator(val, sourceIndex, source)) { break lazy; }
           }
         }
@@ -4561,8 +4561,10 @@
       return result;
     }
 
-    function calculateBounds(operators, min, max) {
+    function limitSource(operators, source) {
       var len = operators.length,
+          min = 0,
+          max = source.length - 1,
           op;
 
       for(var i = 0; i < len; i++) {
@@ -4575,7 +4577,10 @@
         }
       }
 
-      return {max: max, min: min};
+      return {
+        min: min,
+        max: max
+      };
     }
 
     function reverse() {
@@ -9590,23 +9595,23 @@
       };
     });
 
-    // add `LazyWrapper` functions
+    // add `LazySequence` functions
     arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile', 'dropRightWhile',
         'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial', 'head', 'first', 'last'],
     function(methodName) {
-      var func = LazyWrapper.prototype[methodName];
+      var func = LazySequence.prototype[methodName];
       var overriddenFunc = lodash.prototype[methodName];
       lodash.prototype[methodName] = function() {
         var wrapped = this.__wrapped__,
-            inLazyChain = wrapped instanceof LazyWrapper;
+            inLazyChain = wrapped instanceof LazySequence;
 
         if(!inLazyChain && !isArray(wrapped) && overriddenFunc) {
           wrapped = overriddenFunc.apply(this, arguments);
         } else {
-          wrapped = func.apply(inLazyChain ? wrapped : new LazyWrapper(wrapped), arguments);
+          wrapped = func.apply(inLazyChain ? wrapped : new LazySequence(wrapped), arguments);
         }
 
-        return wrapped instanceof LazyWrapper
+        return wrapped instanceof LazySequence
           ? (inLazyChain ? (this.__wrapped__ = wrapped, this) : new lodashWrapper(wrapped, this.__chain__))
           : (this.__chain__ ? new lodashWrapper(wrapped, true) : wrapped);
       };

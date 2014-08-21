@@ -1579,7 +1579,7 @@
           iterable = toIterable(collection);
 
       while (++index < length) {
-        if (iteratee(iterable[index], index, iterable) === false) {
+        if (iteratee(iterable[index], index, collection) === false) {
           break;
         }
       }
@@ -1602,7 +1602,7 @@
       }
       var iterable = toIterable(collection);
       while (length--) {
-        if (iteratee(iterable[length], length, iterable) === false) {
+        if (iteratee(iterable[length], length, collection) === false) {
           break;
         }
       }

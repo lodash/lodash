@@ -4529,45 +4529,8 @@
 
       sourceLimit = limitSource(this.limitActions, source);
 
-      return lazySequenceToArray(this, source, sourceLimit);
+      return resolveLazySequence(this, source, sourceLimit);
     };
-
-    function lazySequenceToArray(wrapper, source, sourceRange) {
-
-      var resultIndex = 0,
-          dir = wrapper.dir,
-          loops = sourceRange.max - sourceRange.min + 1,
-          resultLimit = Math.min(wrapper.limit, loops),
-          sourceIndex = (dir == 1 ? sourceRange.min : sourceRange.max) - dir,
-          result = [],
-          type = wrapper.type,
-          iterators = wrapper.iterators,
-          num = type.length,
-          iterator,
-          val,
-          i;
-
-      lazy:while (loops-- > 0 && resultIndex < resultLimit) {
-        sourceIndex += dir;
-        val = source[sourceIndex];
-
-        for(i = 0; i < num; i++) {
-          iterator = iterators[i];
-          switch(type[i]) {
-            // LazySequence.MAP_FLAG
-            case 1: val = iterator(val, sourceIndex, source); break;
-            // LazySequence.FILTER_FLAG
-            case 2: if(!iterator(val, sourceIndex, source)) { continue lazy; }
-            // LazySequence.WHILE_FLAG
-            case 3: if(!iterator(val, sourceIndex, source)) { break lazy; }
-          }
-        }
-
-        result[resultIndex++] = val;
-      }
-
-      return result;
-    }
 
     function limitSource(operators, source) {
       var len = operators.length,
@@ -4589,6 +4552,43 @@
         min: min,
         max: max
       };
+    }
+
+    function resolveLazySequence(wrapper, source, sourceRange) {
+
+      var resultIndex = 0,
+        dir = wrapper.dir,
+        loops = sourceRange.max - sourceRange.min + 1,
+        resultLimit = Math.min(wrapper.limit, loops),
+        sourceIndex = (dir == 1 ? sourceRange.min : sourceRange.max) - dir,
+        result = [],
+        type = wrapper.type,
+        iterators = wrapper.iterators,
+        num = type.length,
+        iterator,
+        val,
+        i;
+
+      lazy:while (loops-- > 0 && resultIndex < resultLimit) {
+        sourceIndex += dir;
+        val = source[sourceIndex];
+
+        for(i = 0; i < num; i++) {
+          iterator = iterators[i];
+          switch(type[i]) {
+            // LazySequence.MAP_FLAG
+            case 1: val = iterator(val, sourceIndex, source); break;
+            // LazySequence.FILTER_FLAG
+            case 2: if(!iterator(val, sourceIndex, source)) { continue lazy; }
+            // LazySequence.WHILE_FLAG
+            case 3: if(!iterator(val, sourceIndex, source)) { break lazy; }
+          }
+        }
+
+        result[resultIndex++] = val;
+      }
+
+      return result;
     }
 
     function reverse() {

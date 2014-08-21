@@ -11613,6 +11613,16 @@
       deepEqual(_.zipObject(_.pairs(object)), object);
     });
 
+    test('should accept a boolean `values` argument', 1, function() {
+      var actual = _.zipObject(['barney', 'fred'], false);
+      deepEqual(actual, { 'barney': false, 'fred': false });
+    });
+
+    test('should accept a string `values` argument', 1, function() {
+      var actual = _.zipObject(['barney', 'fred'], 'asdf');
+      deepEqual(actual, { 'barney': 'asdf', 'fred': 'asdf' });
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.object, _.zipObject);
     });

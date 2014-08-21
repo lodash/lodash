@@ -4441,6 +4441,9 @@
      * either a single two dimensional array, e.g. `[[key1, value1], [key2, value2]]`
      * or two arrays, one of property names and one of corresponding values.
      *
+     * If a constant is provided for values it will be repeated for each element in
+     * keys.
+     *
      * @static
      * @memberOf _
      * @alias object
@@ -4456,15 +4459,21 @@
     function zipObject(props, vals) {
       var index = -1,
           length = props ? props.length : 0,
-          result = {};
+          result = {},
+          constant;
 
-      if (!vals && length && !isArray(props[0])) {
+      if (!isArrayLike(vals) && length && !isArray(props[0])) {
+        constant = vals;
         vals = [];
       }
       while (++index < length) {
         var key = props[index];
         if (vals) {
-          result[key] = vals[index];
+          var val = vals[index];
+          if (typeof val == 'undefined') {
+            val = constant;
+          }
+          result[key] = val;
         } else if (key) {
           result[key[0]] = key[1];
         }

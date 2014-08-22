@@ -6314,7 +6314,7 @@
         return hasOwnProperty.call(cache, key)
           ? cache[key]
           : (cache[key] = func.apply(this, arguments));
-      }
+      };
       memoized.cache = {};
       return memoized;
     }

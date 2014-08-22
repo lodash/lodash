@@ -6306,7 +6306,8 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       var memoized = function() {
-        var key = resolver ? resolver.apply(this, arguments) : arguments[0];
+        var args = Array.prototype.slice.call(arguments),
+            key = resolver ? resolver.apply(this, arguments) : args.join();
         if (key == '__proto__') {
           return func.apply(this, arguments);
         }

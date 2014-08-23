@@ -12149,13 +12149,21 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('`_(...).' + methodName + '` should return the existing wrapped value', 1, function() {
+      test('`_(...).' + methodName + '` should return new wrapped value', 1, function() {
         if (!isNpm) {
-          strictEqual(wrapped[methodName](), wrapped);
+          ok(wrapped[methodName]() !== wrapped);
         }
         else {
           skipTest();
         }
+      });
+
+      test('`_(...).' + methodName + '` should support chain forking', 1, function () {
+        var lazyWrapper = _([1, 0, 1]).map();
+
+        lazyWrapper.take(0); // should fork
+
+        ok(lazyWrapper[methodName]().value().length > 0);
       });
     });
 

@@ -545,6 +545,26 @@
   }
 
   /**
+   * Checks if `value` is a host object in IE < 9.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+   */
+  var isHostObject = (function() {
+    try {
+      ({ 'toString': 0 } + '');
+    } catch(e) {
+      return function() { return false; };
+    }
+    return function(value) {
+      // IE < 9 presents many host objects as `Object` objects that can coerce to
+      // strings despite having improperly defined `toString` methods
+      return typeof value.toString != 'function' && typeof (value + '') == 'string';
+    };
+  }());
+
+  /**
    * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -922,6 +942,14 @@
       support.funcNames = typeof Function.name == 'string';
 
       /**
+       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9).
+       *
+       * @memberOf _.support
+       * @type boolean
+       */
+      support.nodeClass = toString.call(document) != objectClass;
+
+      /**
        * Detect if string indexes are non-enumerable
        * (IE < 9, RingoJS, Rhino, Narwhal).
        *
@@ -989,26 +1017,6 @@
       } catch(e) {
         support.dom = false;
       }
-
-      /**
-       * Detect if the host objects are detectable (IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      try {
-        support.hostObject = !({ 'toString': 0 } + '');
-      } catch(e) {
-        support.hostObject = false;
-      }
-
-      /**
-       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nodeClass = !(toString.call(document) == objectClass && support.hostObject);
 
       /**
        * Detect if `arguments` object indexes are non-enumerable.
@@ -2884,7 +2892,7 @@
      */
     function initObjectClone(object, isDeep) {
       var className = toString.call(object);
-      if (!cloneableClasses[className] || (!support.nodeClass && isHostObject(object))) {
+      if (!cloneableClasses[className] || isHostObject(object)) {
         return object;
       }
       var Ctor = object.constructor,
@@ -2941,19 +2949,6 @@
       return (value && typeof value == 'object' && typeof value.length == 'number' &&
         arrayLikeClasses[toString.call(value)]) || false;
     }
-
-    /**
-     * Checks if `value` is a host object in IE < 9.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
-     */
-    var isHostObject = !support.hostObject ? constant(false) : function(value) {
-      // IE < 9 presents many host objects as `Object` objects that can coerce to
-      // strings despite having improperly defined `toString` methods
-      return typeof value.toString != 'function' && typeof (value + '') == 'string';
-    };
 
     /**
      * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -3079,12 +3074,12 @@
       var Ctor,
           result;
 
-      // avoid non `Object` objects, `arguments` objects, and DOM elements
-      if (!(value && toString.call(value) == objectClass) ||
+      // exit early for non `Object` objects
+      if (!(value && typeof value == 'object' &&
+            toString.call(value) == objectClass && !isHostObject(value)) ||
           (!hasOwnProperty.call(value, 'constructor') &&
             (Ctor = value.constructor, isFunction(Ctor) && !(Ctor instanceof Ctor))) ||
-          (!support.argsClass && isArguments(value)) ||
-          (!support.nodeClass && isHostObject(value))) {
+          (!support.argsClass && isArguments(value))) {
         return false;
       }
       // IE < 9 iterates inherited properties before own properties. If the first
@@ -7376,12 +7371,8 @@
       if (isFunction(value)) {
         return reNative.test(fnToString.call(value));
       }
-      if (value && typeof value == 'object') {
-        return !('constructor' in value) && isHostObject(value)
-          ? reNative.test(value)
-          : reHostCtor.test(toString.call(value));
-      }
-      return false;
+      return (value && typeof value == 'object' &&
+        (isHostObject(value) ? reNative : reHostCtor).test(value)) || false;
     }
 
     /**

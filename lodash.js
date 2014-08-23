@@ -7027,7 +7027,8 @@
      * // => false
      */
     function isArguments(value) {
-      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+      var length = (value && typeof value == 'object') ? value.length : undefined;
+      return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER &&
         toString.call(value) == argsClass) || false;
     }
     // fallback for environments without a `[[Class]]` for `arguments` objects

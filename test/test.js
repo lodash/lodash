@@ -6102,8 +6102,8 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for native methods', 8, function() {
-      _.each([root.alert, Array, create, freeze, root.prompt, slice, Uint8Array], function(func) {
+    test('should return `true` for native methods', 6, function() {
+      _.each([Array, create, root.encodeURI, slice, Uint8Array], function(func) {
         if (func) {
           strictEqual(_.isNative(func), true);
         }

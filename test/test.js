@@ -3889,7 +3889,7 @@
       'object': Object('abc')
     },
     function(collection, key) {
-      test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 2, function() {
+      test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 3, function() {
         var args,
             values = [];
 
@@ -3905,6 +3905,7 @@
           deepEqual(args, ['c', 2, collection]);
           deepEqual(values, ['c', 'b', 'a']);
         }
+        strictEqual(typeof args[2], 'object');
       });
     });
 

@@ -267,13 +267,14 @@
     });
   }
 
-  function getConfig(method) {
+  /** Returns an object with regular and chained version of provided method */
+  function getMethodVariations(methodName) {
     var o = {};
-    o['`_.' + method + '`'] = _[method];
-    o['`_(...).' + method + '`'] = function chainFunctionCaller(array) {
+    o['`_.' + methodName + '`'] = _[methodName];
+    o['`_(...).' + methodName + '`'] = function chainFunctionCaller(array) {
       var wrapper = _(array),
           args = slice.call(arguments, 1),
-          result = wrapper[method].apply(wrapper, args);
+          result = wrapper[methodName].apply(wrapper, args);
       return result instanceof _ ? result.value() : result;
     };
     return o;
@@ -2958,7 +2959,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('drop'), function(drop, formattedMethodName) {
+    _.forIn(getMethodVariations('drop'), function(drop, formattedMethodName) {
       test(formattedMethodName + ' should drop the first two elements', 1, function() {
         deepEqual(drop(array, 2), [3]);
       });
@@ -3026,7 +3027,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('dropRight'), function(dropRight, formattedMethodName) {
+    _.forIn(getMethodVariations('dropRight'), function(dropRight, formattedMethodName) {
       test(formattedMethodName + ' should drop the last two elements', 1, function () {
         deepEqual(dropRight(array, 2), [1]);
       });
@@ -3100,7 +3101,7 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    _.forIn(getConfig('dropRightWhile'), function(dropRightWhile, formattedMethodName) {
+    _.forIn(getMethodVariations('dropRightWhile'), function(dropRightWhile, formattedMethodName) {
       test(formattedMethodName + ' should drop elements while `predicate` returns truthy', 1, function () {
         var actual = dropRightWhile(array, function (num) {
           return num > 1;
@@ -3177,7 +3178,7 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    _.forIn(getConfig('dropWhile'), function(dropWhile, formattedMethodName) {
+    _.forIn(getMethodVariations('dropWhile'), function(dropWhile, formattedMethodName) {
       test(formattedMethodName + ' should drop elements while `predicate` returns truthy', 1, function () {
         var actual = dropWhile(array, function (num) {
           return num < 3;
@@ -3450,7 +3451,7 @@
   QUnit.module('lodash.filter');
 
   (function() {
-    _.forIn(getConfig('filter'), function(filter, methodName) {
+    _.forIn(getMethodVariations('filter'), function(filter, methodName) {
       test(methodName + ' should return elements `predicate` returns truthy for', 1, function() {
         var actual = filter([1, 2, 3], function(num) {
           return num % 2;
@@ -3682,7 +3683,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('take'), function(take, methodName) {
+    _.forIn(getMethodVariations('take'), function(take, methodName) {
 
       test(methodName + ' should take the first two elements', 1, function() {
         deepEqual(take(array, 2), [1, 2]);
@@ -3751,7 +3752,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('takeRight'), function(takeRight, methodName) {
+    _.forIn(getMethodVariations('takeRight'), function(takeRight, methodName) {
       test(methodName + ' should take the last two elements', 1, function() {
         deepEqual(takeRight(array, 2), [2, 3]);
       });
@@ -3821,7 +3822,7 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    _.forIn(getConfig('takeRightWhile'), function(takeRightWhile, methodName) {
+    _.forIn(getMethodVariations('takeRightWhile'), function(takeRightWhile, methodName) {
       test(methodName + ' should take elements while `predicate` returns truthy', 1, function() {
         var actual = takeRightWhile(array, function(num) {
           return num > 1;
@@ -3899,7 +3900,7 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    _.forIn(getConfig('takeWhile'), function(takeWhile, methodName) {
+    _.forIn(getMethodVariations('takeWhile'), function(takeWhile, methodName) {
       test(methodName + ' should take elements while `predicate` returns truthy', 1, function() {
         var actual = takeWhile(array, function(num) {
           return num < 3;
@@ -4257,7 +4258,7 @@
     ];
 
     _.each(methods, function(methodName) {
-      _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+      _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
         var array = [1, 2, 3];
 
         test(formattedMethodName + ' should provide the correct `callback` arguments', 1, function() {
@@ -4324,7 +4325,7 @@
     });
 
     _.each(_.difference(methods, forInMethods), function(methodName) {
-      _.forIn(getConfig(methodName), function (func, formattedMethodName) {
+      _.forIn(getMethodVariations(methodName), function (func, formattedMethodName) {
         var array = [1, 2, 3];
 
         test(formattedMethodName + ' iterates over own properties of objects', 1, function() {
@@ -4358,7 +4359,7 @@
     });
 
     _.each(collectionMethods, function(methodName) {
-      _.forIn(getConfig(methodName), function (func, formattedMethodName) {
+      _.forIn(getMethodVariations(methodName), function (func, formattedMethodName) {
         test(formattedMethodName + ' should treat objects with lengths of `0` as array-like', 1, function() {
           var pass = true;
           func({ 'length': 0 }, function() { pass = false; }, 0);
@@ -4980,7 +4981,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('initial'), function(initial, formattedMethodName) {
+    _.forIn(getMethodVariations('initial'), function(initial, formattedMethodName) {
       test(formattedMethodName + ' should accept a falsey `array` argument', 1, function() {
         var expected = _.map(falsey, _.constant([]));
 
@@ -7150,7 +7151,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('map'), function(map, formattedMethodName) {
+    _.forIn(getMethodVariations('map'), function(map, formattedMethodName) {
       test(formattedMethodName + ' should provide the correct `callback` arguments', 1, function() {
         var args;
 
@@ -9457,7 +9458,7 @@
   QUnit.module('filter methods');
 
   _.each(['filter', 'reject'], function(functionName) {
-    _.forIn(getConfig(functionName), function(func, methodName) {
+    _.forIn(getMethodVariations(functionName), function(func, methodName) {
       test(methodName + ' should not modify the resulting value from within `callback`', 1, function () {
         var actual = func([0], function (num, index, array) {
           array[index] = 1;
@@ -9600,7 +9601,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    _.forIn(getConfig('rest'), function(rest, formattedMethodName) {
+    _.forIn(getMethodVariations('rest'), function(rest, formattedMethodName) {
       test(formattedMethodName + ' should accept a falsey `array` argument', 1, function() {
         var expected = _.map(falsey, _.constant([]));
 
@@ -12646,7 +12647,7 @@
           oldDash = root._;
 
       _.each(acceptFalsey, function(methodName) {
-        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
           var expected = emptyArrays,
               pass = true;
 
@@ -12687,7 +12688,7 @@
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {
-        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
           var actual;
 
           switch (methodName) {
@@ -12710,7 +12711,7 @@
 
     test('should throw a TypeError for falsey arguments', 20 * 2, function() {
       _.each(rejectFalsey, function(methodName) {
-        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
           var expected = _.map(falsey, _.constant(true));
 
           var actual = _.map(falsey, function(value, index) {
@@ -12778,7 +12779,7 @@
       ];
 
       _.each(funcs, function(methodName) {
-        _.forIn(getConfig(methodName), function(func, formattedMethodName) {
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
           var actual,
               array = ['a'],
               message = formattedMethodName + ' handles `null` `thisArg` arguments';

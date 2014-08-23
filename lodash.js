@@ -1889,8 +1889,8 @@
             othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
-          value = valWrapped ? getWrappedValue(value.__wrapped__) : value;
-          other = othWrapped ? getWrappedValue(other.__wrapped__) : other;
+          value = valWrapped ? getWrappedValue(value) : value;
+          other = othWrapped ? getWrappedValue(other) : other;
           return baseIsEqual(value, other, customizer, isWhere, stackA, stackB);
         }
         if (!isSameClass) {
@@ -4508,7 +4508,8 @@
       };
     }
 
-    function getWrappedValue(wrapped) {
+    function getWrappedValue(wrapper) {
+      var wrapped = wrapper.__wrapped__;
       return (wrapped instanceof LazySequence) ? wrapped.value() : wrapped;
     }
 
@@ -4785,7 +4786,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return String(getWrappedValue(this.__wrapped__));
+      return String(getWrappedValue(this));
     }
 
     /**
@@ -4802,7 +4803,7 @@
      * // => [1, 2, 3]
      */
     function wrapperValueOf() {
-      return getWrappedValue(this.__wrapped__);
+      return getWrappedValue(this);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -9174,7 +9175,7 @@
           object.prototype[methodName] = (function(func) {
             return function() {
               var chainAll = this.__chain__,
-                  value = getWrappedValue(this.__wrapped__),
+                  value = getWrappedValue(this),
                   args = [value];
 
               push.apply(args, arguments);
@@ -9758,7 +9759,7 @@
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName] = function(n, guard) {
           var chainAll = this.__chain__,
-              result = func(getWrappedValue(this.__wrapped__), n, guard);
+              result = func(getWrappedValue(this), n, guard);
 
           return !chainAll && (n == null || (guard && !(callbackable && typeof n == 'function')))
             ? result
@@ -9791,7 +9792,7 @@
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
-            result = func.apply(getWrappedValue(this.__wrapped__), arguments);
+            result = func.apply(getWrappedValue(this), arguments);
 
         return chainAll
           ? new lodashWrapper(result, chainAll)
@@ -9804,7 +9805,7 @@
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var wrapped = this.__wrapped__,
-            result = getWrappedValue(wrapped),
+            result = getWrappedValue(this),
             inLazyChain = (wrapped != result);
 
         func.apply(result, arguments);
@@ -9816,7 +9817,7 @@
     arrayEach(['concat', 'splice'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(getWrappedValue(this.__wrapped__), arguments), this.__chain__);
+        return new lodashWrapper(func.apply(getWrappedValue(this), arguments), this.__chain__);
       };
     });
 
@@ -9855,7 +9856,7 @@
 
         lodash.prototype[methodName] = function() {
           var chainAll = this.__chain__,
-          // todo(Filip) - I bet that below should be `getWrappedValue(this.__wrapped__)`.
+          // todo(Filip) - I bet that below should be `getWrappedValue(this)`.
           // Proper test for RingoJS should be written.
               value = this.__wrapped__,
               result = func.apply(value, arguments);

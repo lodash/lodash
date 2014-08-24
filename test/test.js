@@ -5819,10 +5819,12 @@
     });
 
     test('should perform comparisons between wrapped values', 32, function() {
+      var stamp = +new Date;
+
       var values = [
         [[1, 2], [1, 2], [1, 2, 3]],
         [true, true, false],
-        [new Date, new Date, new Date(new Date - 100)],
+        [new Date(stamp), new Date(stamp), new Date(stamp - 100)],
         [{ 'a': 1, 'b': 2 }, { 'a': 1, 'b': 2 }, { 'a': 1, 'b': 1 }],
         [1, 1, 2],
         [NaN, NaN, Infinity],
@@ -5836,8 +5838,8 @@
               wrapper2 = _(vals[1]),
               actual = wrapper1.isEqual(wrapper2);
 
-          strictEqual(actual, true, vals);
-          strictEqual(_.isEqual(_(actual), _(true)), true, vals);
+          strictEqual(actual, true);
+          strictEqual(_.isEqual(_(actual), _(true)), true);
 
           wrapper1 = _(vals[0]);
           wrapper2 = _(vals[2]);
@@ -7510,10 +7512,10 @@
         isMax = methodName == 'max';
 
     test('`_.' + methodName + '` should work with Date objects', 1, function() {
-      var now = new Date,
+      var curr = new Date,
           past = new Date(0);
 
-      strictEqual(func([now, past]), isMax ? now : past);
+      strictEqual(func([curr, past]), isMax ? curr : past);
     });
 
     test('`_.' + methodName + '` should work with a callback argument', 1, function() {

@@ -5824,8 +5824,8 @@
               wrapper2 = _(vals[1]),
               actual = wrapper1.isEqual(wrapper2);
 
-          strictEqual(actual, true);
-          strictEqual(_.isEqual(_(actual), _(true)), true);
+          strictEqual(actual, true, vals);
+          strictEqual(_.isEqual(_(actual), _(true)), true, vals);
 
           wrapper1 = _(vals[0]);
           wrapper2 = _(vals[2]);

@@ -1104,6 +1104,14 @@
      * A specialized version of `_.forEach` for arrays without support for
      * callback shorthands or `this` binding.
      *
+     * TODO: Fix a bug that occurs when user changes the array that is being iterated through
+     * Example of bug:
+     * var elements = ['a', 'b', 'c', 'd', 'e', 'f'];
+     * _.forEach(elements, function eachElement(el) {
+     *   _.pull(elements, el);
+     * });  //  final `elements` array is ['b','d','f'] (intended outcome would be an empty array)
+     * // NOTE: this bug does not exist in underscore.js's equivalent function _.each
+     *
      * @private
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function called per iteration.

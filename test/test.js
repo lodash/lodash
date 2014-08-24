@@ -1722,52 +1722,64 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.compose');
+  QUnit.module('lodash.consumeRight');
 
   (function() {
-    test('should create a function that is the composition of the provided functions', 1, function() {
-      var realNameMap = {
-        'pebbles': 'penelope'
-      };
+    test('should be aliased', 1, function() {
+      strictEqual(_.compose, _.consumeRight);
+    });
+  }());
 
-      var format = function(name) {
-        name = realNameMap[name.toLowerCase()] || name;
-        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      };
+  /*--------------------------------------------------------------------------*/
 
-      var greet = function(formatted) {
-        return 'Hiya ' + formatted + '!';
-      };
+  QUnit.module('consume methods');
 
-      var welcome = _.compose(greet, format);
-      strictEqual(welcome('pebbles'), 'Hiya Penelope!');
+  _.each(['consume', 'consumeRight'], function(methodName) {
+    var func = _[methodName],
+        isConsume = methodName == 'consume';
+
+    test('`_.' + methodName + '` should create a function that consumes the output of the provided functions', 1, function() {
+      function add(x, y) {
+        return x + y;
+      }
+
+      function square(n) {
+        return n * n;
+      }
+
+      function fixed(n) {
+        return n.toFixed(1);
+      }
+
+      var consumer = isConsume ? func(add, square, fixed) : func(fixed, square, add);
+      strictEqual(consumer(1, 2), '9.0');
     });
 
-    test('should return a new function', 1, function() {
-      notStrictEqual(_.compose(_.noop), _.noop);
+    test('`_.' + methodName + '` should return a new function', 1, function() {
+      notStrictEqual(func(_.noop), _.noop);
     });
 
-    test('should return a noop function when no arguments are provided', 2, function() {
-      var composed = _.compose();
+    test('`_.' + methodName + '` should return a noop function when no arguments are provided', 2, function() {
+      var consumer = func();
 
       try {
-        strictEqual(composed(), undefined);
+        strictEqual(consumer(), undefined);
       } catch(e) {
         ok(false);
       }
-      notStrictEqual(composed, _.noop);
+      notStrictEqual(consumer, _.noop);
     });
 
-    test('should return a wrapped value when chaining', 1, function() {
+    test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var actual = _(_.noop).compose();
+        var actual = _(_.noop)[methodName]();
         ok(actual instanceof _);
       }
       else {
         skipTest();
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -12060,6 +12072,8 @@
       'before',
       'bind',
       'compose',
+      'consume',
+      'consumeRight',
       'curry',
       'curryRight',
       'debounce',
@@ -12143,13 +12157,13 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 17, function() {
+    test('should throw a TypeError for falsey arguments', 19, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
 
         var actual = _.map(falsey, function(value, index) {
-          var pass = !index && methodName == 'compose';
+          var pass = !index && /^(?:compose|consume(Right)?)$/.test(methodName);
           try {
             index ? func(value) : func();
           } catch(e) {

@@ -5916,62 +5916,98 @@
     }
 
     /**
-     * Creates a function that is the composition of the provided functions,
-     * where each function consumes the return value of the function that follows.
-     * For example, composing the functions `f()`, `g()`, and `h()` produces `f(g(h()))`.
-     * Each function is executed with the `this` binding of the composed function.
+     * Creates a function that invokes the provided functions with the `this`
+     * binding of the create function, where each successive invocation consumes
+     * the return value of the previous.
      *
      * @static
      * @memberOf _
      * @category Function
-     * @param {...Function} [funcs] Functions to compose.
-     * @returns {Function} Returns the new composed function.
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
      * @example
      *
-     * var realNameMap = {
-     *   'pebbles': 'penelope'
-     * };
+     * function add(x, y) {
+     *   return x + y;
+     * }
      *
-     * var format = function(name) {
-     *   name = realNameMap[name.toLowerCase()] || name;
-     *   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-     * };
+     * function square(n) {
+     *   return n * n;
+     * }
      *
-     * var greet = function(formatted) {
-     *   return 'Hiya ' + formatted + '!';
-     * };
-     *
-     * var welcome = _.compose(greet, format);
-     * welcome('pebbles');
-     * // => 'Hiya Penelope!'
+     * var addSquare = _.consume(add, square);
+     * addSquare(1, 2);
+     * // => 9
      */
-    function compose() {
+    function consume() {
       var funcs = arguments,
-          length = funcs.length,
-          index = length - 1;
+          length = funcs.length;
 
       if (!length) {
         return function() {};
       }
-      while (length--) {
-        if (!isFunction(funcs[length])) {
-          throw new TypeError(FUNC_ERROR_TEXT);
-        }
+      if (!arrayEvery(funcs, isFunction)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
       return function() {
-        length = index;
-        var result = funcs[length].apply(this, arguments);
+        var index = 0,
+            result = funcs[index].apply(this, arguments);
 
-        while (length--) {
-          result = funcs[length].call(this, result);
+        while (++index < length) {
+          result = funcs[index].call(this, result);
         }
         return result;
       };
     }
 
     /**
-     * Creates a function which accepts one or more arguments of `func` that when
-     * invoked either executes `func` returning its result, if all `func` arguments
+     * This method is like `_.consume` except that it creates a function that
+     * invokes the provided functions from right to left.
+     *
+     * @static
+     * @memberOf _
+     * @alias compose
+     * @category Function
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function add(x, y) {
+     *   return x + y;
+     * }
+     *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
+     * var addSquare = _.consumeRight(square, add);
+     * addSquare(1, 2);
+     * // => 9
+     */
+    function consumeRight() {
+      var funcs = arguments,
+          fromIndex = funcs.length - 1;
+
+      if (fromIndex < 0) {
+        return function() {};
+      }
+      if (!arrayEvery(funcs, isFunction)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
+      return function() {
+        var index = fromIndex,
+            result = funcs[index].apply(this, arguments);
+
+        while (index--) {
+          result = funcs[index].call(this, result);
+        }
+        return result;
+      };
+    }
+
+    /**
+     * Creates a function that accepts one or more arguments of `func` that when
+     * called either invokes `func` returning its result if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
@@ -9303,7 +9339,8 @@
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
-    lodash.compose = compose;
+    lodash.consume = consume;
+    lodash.consumeRight = consumeRight;
     lodash.constant = constant;
     lodash.countBy = countBy;
     lodash.create = create;
@@ -9384,6 +9421,7 @@
 
     // add aliases
     lodash.collect = map;
+    lodash.compose = consumeRight;
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
     lodash.extend = assign;

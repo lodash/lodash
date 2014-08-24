@@ -74,6 +74,7 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.chunk](http://lodash.com/docs#chunk) for splitting an array into chunks of a given size
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
+ * [_.consume](http://lodash.com/docs#consume) to complement [_.consumeRight](http://lodash.com/docs#consumeRight) (a.k.a `_.compose`)
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
  * [_.curry](http://lodash.com/docs#curry) & [_.curryRight](http://lodash.com/docs#curryRight) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
@@ -83,6 +84,7 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.forIn](http://lodash.com/docs#forIn) for iterating all enumerable properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties
  * [_.isError](http://lodash.com/docs#isError) to check for error objects
+ * [_.isNative](http://lodash.com/docs#isNative) to check for native functions
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) to check for objects created by `Object`
  * [_.keysIn](http://lodash.com/docs#keysIn) & [_.valuesIn](http://lodash.com/docs#valuesIn) for getting keys and values of all enumerable properties
  * [_.mapValues](http://lodash.com/docs#mapValues) for [mapping](http://lodash.com/docs#map) values to an object

@@ -794,25 +794,25 @@
      *
      * The chainable wrapper functions are:
      * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
-     * `chain`, `chunk`, `compact`, `compose`, `concat`, `constant`, `countBy`,
-     * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
-     * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
-     * `flattenDeep`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
-     * `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`, `intersection`,
-     * `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`, `matches`, `memoize`,
-     * `merge`, `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`,
-     * `partialRight`, `partition`, `pick`, `pluck`, `property`, `pull`, `pullAt`,
-     * `push`, `range`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`,
-     * `sort`, `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
-     * `tap`, `throttle`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
-     * `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`,
-     * and `zipObject`
+     * `chain`, `chunk`, `compact`, `concat`, `constant`, `consume`, `consumeRight`,
+     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`,
+     * `difference`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
+     * `flatten`, `flattenDeep`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
+     * `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`,
+     * `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`,
+     * `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`, `omit`, `once`,
+     * `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pluck`, `property`,
+     * `pull`, `pullAt`, `push`, `range`, `reject`, `remove`, `rest`, `reverse`,
+     * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`, `takeRight`,
+     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `times`, `toArray`,
+     * `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`,
+     * `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
-     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
-     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
-     * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
+     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
+     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
+     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
      * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
      * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
@@ -5917,7 +5917,7 @@
 
     /**
      * Creates a function that invokes the provided functions with the `this`
-     * binding of the create function, where each successive invocation consumes
+     * binding of the created function, where each successive invocation consumes
      * the return value of the previous.
      *
      * @static

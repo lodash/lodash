@@ -1722,23 +1722,24 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.consumeRight');
+  QUnit.module('lodash.flowRight');
 
   (function() {
-    test('should be aliased', 1, function() {
-      strictEqual(_.compose, _.consumeRight);
+    test('should be aliased', 2, function() {
+      strictEqual(_.backflow, _.flowRight);
+      strictEqual(_.compose, _.flowRight);
     });
   }());
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('consume methods');
+  QUnit.module('flow methods');
 
-  _.each(['consume', 'consumeRight'], function(methodName) {
+  _.each(['flow', 'flowRight'], function(methodName) {
     var func = _[methodName],
-        isConsume = methodName == 'consume';
+        isFlow = methodName == 'flow';
 
-    test('`_.' + methodName + '` should create a function that consumes the output of the provided functions', 1, function() {
+    test('`_.' + methodName + '` should supply each function with the return value of the previous', 1, function() {
       function add(x, y) {
         return x + y;
       }
@@ -1751,8 +1752,8 @@
         return n.toFixed(1);
       }
 
-      var consumer = isConsume ? func(add, square, fixed) : func(fixed, square, add);
-      strictEqual(consumer(1, 2), '9.0');
+      var combined = isFlow ? func(add, square, fixed) : func(fixed, square, add);
+      strictEqual(combined(1, 2), '9.0');
     });
 
     test('`_.' + methodName + '` should return a new function', 1, function() {
@@ -1760,14 +1761,14 @@
     });
 
     test('`_.' + methodName + '` should return a noop function when no arguments are provided', 2, function() {
-      var consumer = func();
+      var combined = func();
 
       try {
-        strictEqual(consumer(), undefined);
+        strictEqual(combined(), undefined);
       } catch(e) {
         ok(false);
       }
-      notStrictEqual(consumer, _.noop);
+      notStrictEqual(combined, _.noop);
     });
 
     test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
@@ -12071,16 +12072,17 @@
 
     var rejectFalsey = [
       'after',
+      'backflow',
       'before',
       'bind',
       'compose',
-      'consume',
-      'consumeRight',
       'curry',
       'curryRight',
       'debounce',
       'defer',
       'delay',
+      'flow',
+      'flowRight',
       'memoize',
       'negate',
       'once',
@@ -12159,13 +12161,13 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 19, function() {
+    test('should throw a TypeError for falsey arguments', 20, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
 
         var actual = _.map(falsey, function(value, index) {
-          var pass = !index && /^(?:compose|consume(Right)?)$/.test(methodName);
+          var pass = !index && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
           try {
             index ? func(value) : func();
           } catch(e) {

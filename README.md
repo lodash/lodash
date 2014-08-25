@@ -74,12 +74,12 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.chunk](http://lodash.com/docs#chunk) for splitting an array into chunks of a given size
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
- * [_.consume](http://lodash.com/docs#consume) to complement [_.consumeRight](http://lodash.com/docs#consumeRight) (a.k.a `_.compose`)
  * [_.contains](http://lodash.com/docs#contains) accepts a `fromIndex`
  * [_.create](http://lodash.com/docs#create) for easier object inheritance
  * [_.curry](http://lodash.com/docs#curry) & [_.curryRight](http://lodash.com/docs#curryRight) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
  * [_.debounce](http://lodash.com/docs#debounce) & [_.throttle](http://lodash.com/docs#throttle) are cancelable & accept options for more control
  * [_.findIndex](http://lodash.com/docs#findIndex) & [_.findKey](http://lodash.com/docs#findKey) for finding indexes & keys
+ * [_.flow](http://lodash.com/docs#flow) to complement [_.flowRight](http://lodash.com/docs#vlowRight) (a.k.a `_.compose`)
  * [_.forEach](http://lodash.com/docs#forEach) supports exiting early
  * [_.forIn](http://lodash.com/docs#forIn) for iterating all enumerable properties
  * [_.forOwn](http://lodash.com/docs#forOwn) for iterating own properties

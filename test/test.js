@@ -38,6 +38,7 @@
       noop = function() {},
       params = root.arguments,
       push = arrayProto.push,
+      Set = root.Set,
       slice = arrayProto.slice,
       system = root.system,
       toString = objectProto.toString,
@@ -339,8 +340,9 @@
     function createToString(funcName) {
       return _.constant(nativeString.replace(reToString, funcName));
     }
-    // load ES6 Set shim
+    // load ES6 Set and WeakMap shims
     require('./asset/set');
+    require('./asset/weakmap');
 
     // expose `baseEach` for better code coverage
     if (isModularize && !isNpm) {
@@ -443,6 +445,12 @@
       };
     }()));
 
+    if (Set) {
+      setProperty(root, 'Set', _.noop);
+    }
+    if (WeakMap) {
+      setProperty(root, 'WeakMap', _.noop);
+    }
     // fake `WinRTError`
     setProperty(root, 'WinRTError', Error);
 
@@ -484,6 +492,16 @@
       setProperty(root, 'ArrayBuffer', _ArrayBuffer);
     } else {
       delete root.ArrayBuffer;
+    }
+    if (Set) {
+      setProperty(root, 'Set', Set);
+    } else {
+      delete root.Set;
+    }
+    if (WeakMap) {
+      setProperty(root, 'WeakMap', WeakMap);
+    } else {
+      delete root.WeakMap;
     }
     delete root.WinRTError;
     delete root.window;

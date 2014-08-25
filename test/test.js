@@ -763,11 +763,11 @@
       _.times(times, _.after(n, function() { count++; }));
       return count;
     }
-    test('should create a function that executes `func` after `n` calls', 4, function() {
-      strictEqual(after(5, 5), 1, 'after(n) should execute `func` after being called `n` times');
-      strictEqual(after(5, 4), 0, 'after(n) should not execute `func` before being called `n` times');
-      strictEqual(after(0, 0), 0, 'after(0) should not execute `func` immediately');
-      strictEqual(after(0, 1), 1, 'after(0) should execute `func` when called once');
+    test('should create a function that invokes `func` after `n` calls', 4, function() {
+      strictEqual(after(5, 5), 1, 'after(n) should invoke `func` after being called `n` times');
+      strictEqual(after(5, 4), 0, 'after(n) should not invoke `func` before being called `n` times');
+      strictEqual(after(0, 0), 0, 'after(0) should not invoke `func` immediately');
+      strictEqual(after(0, 1), 1, 'after(0) should invoke `func` when called once');
     });
 
     test('should coerce non-finite `n` values to `0`', 1, function() {
@@ -939,11 +939,11 @@
       _.times(times, _.before(n, function() { count++; }));
       return count;
     }
-    test('should create a function that executes `func` after `n` calls', 4, function() {
-      strictEqual(before(5, 4), 4, 'before(n) should execute `func` before being called `n` times');
-      strictEqual(before(5, 6), 4, 'before(n) should not execute `func` after being called `n - 1` times');
-      strictEqual(before(0, 0), 0, 'before(0) should not execute `func` immediately');
-      strictEqual(before(0, 1), 0, 'before(0) should not execute `func` when called');
+    test('should create a function that invokes `func` after `n` calls', 4, function() {
+      strictEqual(before(5, 4), 4, 'before(n) should invoke `func` before being called `n` times');
+      strictEqual(before(5, 6), 4, 'before(n) should not invoke `func` after being called `n - 1` times');
+      strictEqual(before(0, 0), 0, 'before(0) should not invoke `func` immediately');
+      strictEqual(before(0, 1), 0, 'before(0) should not invoke `func` when called');
     });
 
     test('should coerce non-finite `n` values to `0`', 1, function() {
@@ -2646,7 +2646,7 @@
       }
     });
 
-    asyncTest('should cancel `maxDelayed` when `delayed` is executed', 1, function() {
+    asyncTest('should cancel `maxDelayed` when `delayed` is invoked', 1, function() {
       if (!(isRhino && isModularize)) {
         var count = 0;
 
@@ -2667,7 +2667,7 @@
       }
     });
 
-    asyncTest('should execute the `trailing` call with the correct arguments and `this` binding', 2, function() {
+    asyncTest('should invoke the `trailing` call with the correct arguments and `this` binding', 2, function() {
       if (!(isRhino && isModularize)) {
         var args,
             count = 0,
@@ -3793,7 +3793,7 @@
       deepEqual(_.flattenDeep(array), expected);
     });
 
-    test('should execute without options when used as a callback for `_.map`', 2, function() {
+    test('should work when used as a callback for `_.map`', 2, function() {
       var array = [[[['a']]], [[['b']]]];
 
       deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
@@ -7943,7 +7943,7 @@
   QUnit.module('lodash.once');
 
   (function() {
-    test('should execute `func` once', 2, function() {
+    test('should invoke `func` once', 2, function() {
       var count = 0,
           once = _.once(function() { return ++count; });
 

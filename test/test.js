@@ -3,6 +3,9 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
+  /** Used to detect when a function becomes hot */
+  var HOT_COUNT = 150;
+
   /** Used as the size to cover large array optimizations */
   var LARGE_ARRAY_SIZE = 200;
 
@@ -2449,6 +2452,28 @@
       deepEqual(object.curried('a', 'b', 'c'), expected);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('curry methods');
+
+  _.each(['curry', 'curryRight'], function(methodName) {
+    var func = _[methodName];
+
+    function fn(a, b, c, d) {
+      return slice.call(arguments);
+    }
+
+    test('`_.' + methodName + '` should work when hot', 1, function() {
+      var curried = func(fn);
+
+      var actual = _.last(_.times(HOT_COUNT, function() {
+        return curried(1)(2)(3)(4);
+      }));
+
+      deepEqual(actual, [1, 2, 3, 4]);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

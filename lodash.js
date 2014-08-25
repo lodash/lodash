@@ -794,10 +794,10 @@
      *
      * The chainable wrapper functions are:
      * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
-     * `chain`, `chunk`, `compact`, `concat`, `constant`, `consume`, `consumeRight`,
-     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`,
-     * `difference`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
-     * `flatten`, `flattenDeep`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
+     * `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`, `create`,
+     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
+     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`, `flattenDeep`,
+     * `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
      * `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`,
      * `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`,
      * `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`, `omit`, `once`,
@@ -5357,8 +5357,8 @@
     /**
      * Reduces a collection to a value which is the accumulated result of running
      * each element in the collection through `iteratee`, where each successive
-     * invocation consumes the return value of the previous. If `accumulator` is
-     * not provided the first element of the collection is used as the initial
+     * invocation is supplied the return value of the previous. If `accumulator`
+     * is not provided the first element of the collection is used as the initial
      * value. The `iteratee` is bound to `thisArg`and invoked with four arguments;
      * (accumulator, value, index|key, collection).
      *
@@ -5916,96 +5916,6 @@
     }
 
     /**
-     * Creates a function that invokes the provided functions with the `this`
-     * binding of the created function, where each successive invocation consumes
-     * the return value of the previous.
-     *
-     * @static
-     * @memberOf _
-     * @category Function
-     * @param {...Function} [funcs] Functions to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function add(x, y) {
-     *   return x + y;
-     * }
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var addSquare = _.consume(add, square);
-     * addSquare(1, 2);
-     * // => 9
-     */
-    function consume() {
-      var funcs = arguments,
-          length = funcs.length;
-
-      if (!length) {
-        return function() {};
-      }
-      if (!arrayEvery(funcs, isFunction)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      return function() {
-        var index = 0,
-            result = funcs[index].apply(this, arguments);
-
-        while (++index < length) {
-          result = funcs[index].call(this, result);
-        }
-        return result;
-      };
-    }
-
-    /**
-     * This method is like `_.consume` except that it creates a function that
-     * invokes the provided functions from right to left.
-     *
-     * @static
-     * @memberOf _
-     * @alias compose
-     * @category Function
-     * @param {...Function} [funcs] Functions to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function add(x, y) {
-     *   return x + y;
-     * }
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var addSquare = _.consumeRight(square, add);
-     * addSquare(1, 2);
-     * // => 9
-     */
-    function consumeRight() {
-      var funcs = arguments,
-          fromIndex = funcs.length - 1;
-
-      if (fromIndex < 0) {
-        return function() {};
-      }
-      if (!arrayEvery(funcs, isFunction)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      return function() {
-        var index = fromIndex,
-            result = funcs[index].apply(this, arguments);
-
-        while (index--) {
-          result = funcs[index].call(this, result);
-        }
-        return result;
-      };
-    }
-
-    /**
      * Creates a function that accepts one or more arguments of `func` that when
      * called either invokes `func` returning its result if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
@@ -6295,6 +6205,96 @@
       }
       var args = slice(arguments, 2);
       return setTimeout(function() { func.apply(undefined, args); }, wait);
+    }
+
+    /**
+     * Creates a function that invokes the provided functions with the `this`
+     * binding of the created function, where each successive invocation is
+     * supplied the return value of the previous.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function add(x, y) {
+     *   return x + y;
+     * }
+     *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
+     * var addSquare = _.flow(add, square);
+     * addSquare(1, 2);
+     * // => 9
+     */
+    function flow() {
+      var funcs = arguments,
+          length = funcs.length;
+
+      if (!length) {
+        return function() {};
+      }
+      if (!arrayEvery(funcs, isFunction)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
+      return function() {
+        var index = 0,
+            result = funcs[index].apply(this, arguments);
+
+        while (++index < length) {
+          result = funcs[index].call(this, result);
+        }
+        return result;
+      };
+    }
+
+    /**
+     * This method is like `_.flow` except that it creates a function that
+     * invokes the provided functions from right to left.
+     *
+     * @static
+     * @memberOf _
+     * @alias backflow, compose
+     * @category Function
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function add(x, y) {
+     *   return x + y;
+     * }
+     *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
+     * var addSquare = _.flowRight(square, add);
+     * addSquare(1, 2);
+     * // => 9
+     */
+    function flowRight() {
+      var funcs = arguments,
+          fromIndex = funcs.length - 1;
+
+      if (fromIndex < 0) {
+        return function() {};
+      }
+      if (!arrayEvery(funcs, isFunction)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
+      return function() {
+        var index = fromIndex,
+            result = funcs[index].apply(this, arguments);
+
+        while (index--) {
+          result = funcs[index].call(this, result);
+        }
+        return result;
+      };
     }
 
     /**
@@ -6972,7 +6972,7 @@
      * @example
      *
      * _.functions(_);
-     * // => ['all', 'any', 'bind', 'bindAll', 'clone', 'compact', 'compose', ...]
+     * // => ['all', 'any', 'bind', ...]
      */
     function functions(object) {
       return baseFunctions(object, keysIn(object));
@@ -9339,8 +9339,6 @@
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
-    lodash.consume = consume;
-    lodash.consumeRight = consumeRight;
     lodash.constant = constant;
     lodash.countBy = countBy;
     lodash.create = create;
@@ -9358,6 +9356,8 @@
     lodash.filter = filter;
     lodash.flatten = flatten;
     lodash.flattenDeep = flattenDeep;
+    lodash.flow = flow;
+    lodash.flowRight = flowRight;
     lodash.forEach = forEach;
     lodash.forEachRight = forEachRight;
     lodash.forIn = forIn;
@@ -9420,8 +9420,9 @@
     lodash.zipObject = zipObject;
 
     // add aliases
+    lodash.backflow = flowRight;
     lodash.collect = map;
-    lodash.compose = consumeRight;
+    lodash.compose = flowRight;
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
     lodash.extend = assign;

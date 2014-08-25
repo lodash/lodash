@@ -21,7 +21,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a Set object to optimize linear searches of large arrays.
+   * Creates a `Set` object.
    */
   function Set() {
     this.__cache__ = {};
@@ -81,7 +81,7 @@
    * Adds `value` to the set.
    *
    * @memberOf Set
-   * @param {*} value The value to add to the set.
+   * @param {*} value The value to add.
    */
   function add(value) {
     var cache = this.__cache__,

@@ -26,6 +26,7 @@
 		<script src="../vendor/qunit-extras/qunit-extras.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="./asset/set.js"></script>
+		<script src="./asset/weakmap.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<div id="qunit"></div>
 		<div id="exports"></div>
@@ -154,6 +155,9 @@
 						return Float64Array;
 					}());
 				}
+				setProperty(window, '_Set', window.Set);
+				setProperty(window, 'Set', noop);
+
 				setProperty(window, '_WeakMap', window.WeakMap);
 				setProperty(window, 'WeakMap', noop);
 
@@ -238,6 +242,11 @@
 				}
 				setProperty(window, '_ArrayBuffer', undefined);
 
+				if (window._Set) {
+					Set = _Set;
+				}
+				setProperty(window, '_Set', undefined);
+
 				if (window._WeakMap) {
 					WeakMap = _WeakMap;
 				}
@@ -274,6 +283,7 @@
 			// store Lo-Dash to test for bad extensions/shims
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;
+				lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 				window._ = undefined;
 				removeBizarroMethods();
 			}

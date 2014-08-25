@@ -466,6 +466,7 @@
 
     // load Lo-Dash and expose it to the bad extensions/shims
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
+    lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 
     // restore native methods
     setProperty(Array,  'isArray', _isArray);

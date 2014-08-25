@@ -404,6 +404,7 @@
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {
 						lodashBizarro = (lodash['default'] || lodash).noConflict();
+						lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 						delete requirejs.s.contexts._;
 
 						removeBizarroMethods();

@@ -3051,7 +3051,7 @@
 
         lastCalled = stamp;
         if (remaining > 0) {
-          if (++count > HOT_COUNT) {
+          if (++count >= HOT_COUNT) {
             return key;
           }
         } else {

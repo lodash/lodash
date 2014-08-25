@@ -2455,28 +2455,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('curry methods');
-
-  _.each(['curry', 'curryRight'], function(methodName) {
-    var func = _[methodName];
-
-    function fn(a, b, c, d) {
-      return slice.call(arguments);
-    }
-
-    test('`_.' + methodName + '` should work when hot', 1, function() {
-      var curried = func(fn);
-
-      var actual = _.last(_.times(HOT_COUNT, function() {
-        return curried(1)(2)(3)(4);
-      }));
-
-      deepEqual(actual, [1, 2, 3, 4]);
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.debounce');
 
   (function() {
@@ -8296,9 +8274,9 @@
     });
 
     test('`_.' + methodName + '` should clone metadata for created functions', 3, function() {
-      var greet = function(greeting, name) {
+      function greet(greeting, name) {
         return greeting + ' ' + name;
-      };
+      }
 
       var par1 = func(greet, 'hi'),
           par2 = func(par1, 'barney'),
@@ -8451,6 +8429,56 @@
           c = _.bind(b,  { 'a': 3 });
 
       strictEqual(c(), 1);
+    });
+
+    test('should work when hot', 6, function() {
+      _.times(2, function(index) {
+        function fn() {
+          var result = [this];
+          push.apply(result, arguments);
+          return result;
+        }
+
+        var object = {},
+            bound1 = index ? _.bind(fn, object, 1) : _.bind(fn, object);
+
+        var actual = _.last(_.times(HOT_COUNT, function() {
+          var bound2 = index ? _.bind(bound1, null, 2) : _.bind(bound1);
+          return index ? bound2(3) : bound2(1, 2, 3);
+        }));
+
+        deepEqual(actual, [object, 1, 2, 3]);
+      });
+
+      _.each(['curry', 'curryRight'], function(methodName) {
+        function fn(a, b, c) {
+          return [a, b, c];
+        }
+
+        var curried = _[methodName](fn);
+
+        var actual = _.last(_.times(HOT_COUNT, function() {
+          return curried(1)(2)(3);
+        }));
+
+        deepEqual(actual, methodName == 'curry' ? [1, 2, 3] : [3, 2, 1]);
+      });
+
+      _.each(['partial', 'partialRight'], function(methodName) {
+        function fn() {
+          return slice.call(arguments);
+        }
+
+        var func = _[methodName],
+            par1 = func(fn, 1);
+
+        var actual = _.last(_.times(HOT_COUNT, function() {
+          var par2 = func(par1, 2);
+          return par2(3);
+        }));
+
+        deepEqual(actual, methodName == 'partial' ? [1, 2, 3] : [3, 2, 1]);
+      });
     });
   }());
 

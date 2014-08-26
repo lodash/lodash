@@ -3,6 +3,9 @@
   /** Used as a safe reference for `undefined` in pre ES5 environments */
   var undefined;
 
+  /** Used to detect when a function becomes hot */
+  var HOT_COUNT = 150;
+
   /** Used as the size to cover large array optimizations */
   var LARGE_ARRAY_SIZE = 200;
 
@@ -35,10 +38,12 @@
       noop = function() {},
       params = root.arguments,
       push = arrayProto.push,
+      Set = root.Set,
       slice = arrayProto.slice,
       system = root.system,
       toString = objectProto.toString,
-      Uint8Array = root.Uint8Array;
+      Uint8Array = root.Uint8Array,
+      WeakMap = root.WeakMap;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -62,11 +67,11 @@
     if (!amd) {
       try {
         result = require('fs').realpathSync(result);
-      } catch(e) { }
+      } catch(e) {}
 
       try {
         result = require.resolve(result);
-      } catch(e) { }
+      } catch(e) {}
     }
     return result;
   }());
@@ -107,7 +112,7 @@
   /** Used to test host objects in IE */
   try {
     var xml = new ActiveXObject('Microsoft.XMLDOM');
-  } catch(e) { }
+  } catch(e) {}
 
   /** Use a single "load" function */
   var load = (typeof require == 'function' && !amd)
@@ -187,7 +192,7 @@
   ));
 
   /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash@'  + _.VERSION + '__';
+  var EXPANDO = '__lodash_' + _.VERSION.replace(/[-.]/g, '_') + '__';
 
   var spy = {
     toString : function() { throw new Error('The spy was revealed!'); }
@@ -216,7 +221,7 @@
       var o = {},
           func = Object.defineProperty,
           result = func(o, o, o) && func;
-    } catch(e) { }
+    } catch(e) {}
     return result;
   }());
 
@@ -351,8 +356,9 @@
     function createToString(funcName) {
       return _.constant(nativeString.replace(reToString, funcName));
     }
-    // load ES6 Set shim
+    // load ES6 Set and WeakMap shims
     require('./asset/set');
+    require('./asset/weakmap');
 
     // expose `baseEach` for better code coverage
     if (isModularize && !isNpm) {
@@ -391,8 +397,8 @@
     var _keys = Object.keys;
     setProperty(Object, 'keys', _.noop);
 
-    var _hasOwnProperty = objectProto.hasOwnProperty;
-    setProperty(objectProto, 'hasOwnProperty', function(key) {
+    var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
+    setProperty(objectProto, 'propertyIsEnumerable', function(key) {
       if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [0, 0])) {
         throw new Error;
       }
@@ -403,7 +409,7 @@
     setProperty(Number, 'isFinite', _.noop);
 
     var _contains = stringProto.contains;
-    setProperty(stringProto, 'contains',  _contains ? _.noop : Boolean);
+    setProperty(stringProto, 'contains', _contains ? _.noop : Boolean);
 
     var _ArrayBuffer = ArrayBuffer;
     setProperty(root, 'ArrayBuffer', (function() {
@@ -438,6 +444,29 @@
         return Float64Array;
       }()));
     }
+    var _parseInt = parseInt;
+    setProperty(root, 'parseInt', (function() {
+      var checkStr = whitespace + '08',
+          isFaked = _parseInt(checkStr) != 8,
+          reHexPrefix = /^0[xX]/,
+          reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
+
+      return function(value, radix) {
+        if (value == checkStr && !isFaked) {
+          isFaked = true;
+          return 0;
+        }
+        value = String(value == null ? '' : value).replace(reTrim, '');
+        return _parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
+      };
+    }()));
+
+    if (Set) {
+      setProperty(root, 'Set', _.noop);
+    }
+    if (WeakMap) {
+      setProperty(root, 'WeakMap', _.noop);
+    }
     // fake `WinRTError`
     setProperty(root, 'WinRTError', Error);
 
@@ -453,6 +482,7 @@
 
     // load Lo-Dash and expose it to the bad extensions/shims
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
+    lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 
     // restore native methods
     setProperty(Array,  'isArray', _isArray);
@@ -462,7 +492,8 @@
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
-    setProperty(objectProto, 'hasOwnProperty', _hasOwnProperty);
+    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
+    setProperty(root, 'parseInt', _parseInt);
 
     if (_isFinite) {
       setProperty(Number, 'isFinite', _isFinite);
@@ -478,6 +509,16 @@
       setProperty(root, 'ArrayBuffer', _ArrayBuffer);
     } else {
       delete root.ArrayBuffer;
+    }
+    if (Set) {
+      setProperty(root, 'Set', Set);
+    } else {
+      delete root.Set;
+    }
+    if (WeakMap) {
+      setProperty(root, 'WeakMap', WeakMap);
+    } else {
+      delete root.WeakMap;
     }
     delete root.WinRTError;
     delete root.window;
@@ -760,11 +801,11 @@
       _.times(times, _.after(n, function() { count++; }));
       return count;
     }
-    test('should create a function that executes `func` after `n` calls', 4, function() {
-      strictEqual(after(5, 5), 1, 'after(n) should execute `func` after being called `n` times');
-      strictEqual(after(5, 4), 0, 'after(n) should not execute `func` before being called `n` times');
-      strictEqual(after(0, 0), 0, 'after(0) should not execute `func` immediately');
-      strictEqual(after(0, 1), 1, 'after(0) should execute `func` when called once');
+    test('should create a function that invokes `func` after `n` calls', 4, function() {
+      strictEqual(after(5, 5), 1, 'after(n) should invoke `func` after being called `n` times');
+      strictEqual(after(5, 4), 0, 'after(n) should not invoke `func` before being called `n` times');
+      strictEqual(after(0, 0), 0, 'after(0) should not invoke `func` immediately');
+      strictEqual(after(0, 1), 1, 'after(0) should invoke `func` when called once');
     });
 
     test('should coerce non-finite `n` values to `0`', 1, function() {
@@ -843,7 +884,7 @@
     var args = arguments;
 
     test('should return `undefined` for nonexistent keys', 1, function() {
-      var actual = _.at(['a', 'b',  'c'], [2, 4, 0]);
+      var actual = _.at(['a', 'b', 'c'], [2, 4, 0]);
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
@@ -936,11 +977,11 @@
       _.times(times, _.before(n, function() { count++; }));
       return count;
     }
-    test('should create a function that executes `func` after `n` calls', 4, function() {
-      strictEqual(before(5, 4), 4, 'before(n) should execute `func` before being called `n` times');
-      strictEqual(before(5, 6), 4, 'before(n) should not execute `func` after being called `n - 1` times');
-      strictEqual(before(0, 0), 0, 'before(0) should not execute `func` immediately');
-      strictEqual(before(0, 1), 0, 'before(0) should not execute `func` when called');
+    test('should create a function that invokes `func` after `n` calls', 4, function() {
+      strictEqual(before(5, 4), 4, 'before(n) should invoke `func` before being called `n` times');
+      strictEqual(before(5, 6), 4, 'before(n) should not invoke `func` after being called `n - 1` times');
+      strictEqual(before(0, 0), 0, 'before(0) should not invoke `func` immediately');
+      strictEqual(before(0, 1), 0, 'before(0) should not invoke `func` when called');
     });
 
     test('should coerce non-finite `n` values to `0`', 1, function() {
@@ -990,7 +1031,7 @@
         try {
           var bound = _.bind(fn, value);
           return bound();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       ok(_.every(actual, function(value, index) {
@@ -1223,7 +1264,7 @@
 
     test('should support placeholders', 4, function() {
       var object = {
-        'fn': function fn(a, b, c, d) {
+        'fn': function() {
           return slice.call(arguments);
         }
       };
@@ -1479,7 +1520,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('cloning');
+  QUnit.module('clone methods');
 
   (function() {
     function Klass() { this.a = 1; }
@@ -1529,8 +1570,8 @@
 
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
       var object = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
-        'bar': { }
+        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'bar': {}
       };
 
       object.foo.b.foo.c = object;
@@ -1610,19 +1651,6 @@
         notStrictEqual(actual, shadowedObject);
       });
 
-      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 2, function() {
-        var expected = [{ 'a': [0] }, { 'b': [1] }],
-            actual = _.map(expected, func);
-
-        deepEqual(actual, expected);
-
-        if (isDeep) {
-          ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
-        } else {
-          ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
-        }
-      });
-
       test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
         var argsList = [],
             klass = new Klass;
@@ -1678,6 +1706,21 @@
         }
       });
 
+      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 3, function() {
+        var expected = [{ 'a': [0] }, { 'b': [1] }],
+            actual = _.map(expected, func);
+
+        deepEqual(actual, expected);
+
+        if (isDeep) {
+          ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
+        } else {
+          ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
+        }
+        actual = _.map(isDeep ? Object('abc') : 'abc', func);
+        deepEqual(actual, ['a', 'b', 'c']);
+      });
+
       test('`_.' + methodName + '` should return a unwrapped value when chaining', 2, function() {
         if (!isNpm) {
           var object = objects['objects'],
@@ -1717,52 +1760,65 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.compose');
+  QUnit.module('lodash.flowRight');
 
   (function() {
-    test('should create a function that is the composition of the provided functions', 1, function() {
-      var realNameMap = {
-        'pebbles': 'penelope'
-      };
+    test('should be aliased', 2, function() {
+      strictEqual(_.backflow, _.flowRight);
+      strictEqual(_.compose, _.flowRight);
+    });
+  }());
 
-      var format = function(name) {
-        name = realNameMap[name.toLowerCase()] || name;
-        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      };
+  /*--------------------------------------------------------------------------*/
 
-      var greet = function(formatted) {
-        return 'Hiya ' + formatted + '!';
-      };
+  QUnit.module('flow methods');
 
-      var welcome = _.compose(greet, format);
-      strictEqual(welcome('pebbles'), 'Hiya Penelope!');
+  _.each(['flow', 'flowRight'], function(methodName) {
+    var func = _[methodName],
+        isFlow = methodName == 'flow';
+
+    test('`_.' + methodName + '` should supply each function with the return value of the previous', 1, function() {
+      function add(x, y) {
+        return x + y;
+      }
+
+      function square(n) {
+        return n * n;
+      }
+
+      function fixed(n) {
+        return n.toFixed(1);
+      }
+
+      var combined = isFlow ? func(add, square, fixed) : func(fixed, square, add);
+      strictEqual(combined(1, 2), '9.0');
     });
 
-    test('should return a new function', 1, function() {
-      notStrictEqual(_.compose(_.noop), _.noop);
+    test('`_.' + methodName + '` should return a new function', 1, function() {
+      notStrictEqual(func(_.noop), _.noop);
     });
 
-    test('should return a noop function when no arguments are provided', 2, function() {
-      var composed = _.compose();
+    test('`_.' + methodName + '` should return a noop function when no arguments are provided', 2, function() {
+      var combined = func();
 
       try {
-        strictEqual(composed(), undefined);
+        strictEqual(combined(), undefined);
       } catch(e) {
         ok(false);
       }
-      notStrictEqual(composed, _.noop);
+      notStrictEqual(combined, _.noop);
     });
 
-    test('should return a wrapped value when chaining', 1, function() {
+    test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var actual = _(_.noop).compose();
+        var actual = _(_.noop)[methodName]();
         ok(actual instanceof _);
       }
       else {
         skipTest();
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -1898,6 +1954,10 @@
       strictEqual(_.contains([3, 2, 1], 3, true), true);
     });
 
+    test('should match `NaN`', 1, function() {
+      strictEqual(_.contains([1, NaN, 3], NaN), true);
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.include, _.contains);
     });
@@ -2021,7 +2081,7 @@
     });
 
     test('should accept a falsey `prototype` argument', 1, function() {
-      var expected = _.map(falsey, function() { return {}; });
+      var expected = _.map(falsey, _.constant({}));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.create(value) : _.create();
@@ -2171,7 +2231,7 @@
 
       var object = {};
 
-      if (defineProperty && _.support.funcDecomp) {
+      if ((defineProperty && !WeakMap) && _.support.funcDecomp) {
         _.callback(a, object);
         ok(EXPANDO in a);
 
@@ -2197,13 +2257,17 @@
     test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
       function a() {}
 
-      if (defineProperty && lodashBizarro) {
+      if ((defineProperty && !WeakMap) && lodashBizarro) {
         lodashBizarro.callback(a, {});
         ok(!(EXPANDO in a));
       }
       else {
         skipTest();
       }
+    });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.iteratee, _.callback);
     });
   }());
 
@@ -2225,13 +2289,25 @@
       deepEqual(curried(1, 2, 3, 4), expected);
     });
 
-    test('should allow specifying `arity`', 3, function(){
+    test('should allow specifying `arity`', 3, function() {
       var curried = _.curry(fn, 3),
           expected = [1, 2, 3];
 
       deepEqual(curried(1)(2, 3), expected);
       deepEqual(curried(1, 2)(3), expected);
       deepEqual(curried(1, 2, 3), expected);
+    });
+
+    test('should coerce `arity` to a number', 2, function() {
+      var values = ['0', 'xyz'],
+          expected = _.map(values, _.constant([]));
+
+      var actual = _.map(values, function(arity) {
+        return _.curry(fn, arity)();
+      });
+
+      deepEqual(actual, expected);
+      deepEqual(_.curry(fn, '2')(1)(2), [1, 2]);
     });
 
     test('should work with partialed methods', 2, function() {
@@ -2327,7 +2403,7 @@
       deepEqual(curried(1, 2, 3, 4), expected);
     });
 
-    test('should allow specifying `arity`', 3, function(){
+    test('should allow specifying `arity`', 3, function() {
       var curried = _.curryRight(fn, 3),
           expected = [1, 2, 3];
 
@@ -2351,12 +2427,13 @@
 
     test('should support placeholders', 4, function() {
       var curried = _.curryRight(fn),
+          expected = [1, 2, 3, 4],
           ph = curried.placeholder;
 
-      deepEqual(curried(4)(2, ph)(1, ph)(3), [1, 2, 3, 4]);
-      deepEqual(curried(3, ph)(4)(1, ph)(2), [1, 2, 3, 4]);
-      deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
-      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
+      deepEqual(curried(4)(2, ph)(1, ph)(3), expected);
+      deepEqual(curried(3, ph)(4)(1, ph)(2), expected);
+      deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), expected);
+      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), expected);
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
@@ -2607,7 +2684,7 @@
       }
     });
 
-    asyncTest('should cancel `maxDelayed` when `delayed` is executed', 1, function() {
+    asyncTest('should cancel `maxDelayed` when `delayed` is invoked', 1, function() {
       if (!(isRhino && isModularize)) {
         var count = 0;
 
@@ -2628,7 +2705,7 @@
       }
     });
 
-    asyncTest('should execute the `trailing` call with the correct arguments and `this` binding', 2, function() {
+    asyncTest('should invoke the `trailing` call with the correct arguments and `this` binding', 2, function() {
       if (!(isRhino && isModularize)) {
         var args,
             count = 0,
@@ -2701,7 +2778,7 @@
     asyncTest('should defer `func` execution', 1, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.defer(function(){ pass = true; });
+        _.defer(function() { pass = true; });
 
         setTimeout(function() {
           ok(pass);
@@ -2763,7 +2840,7 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function(){ pass = true; }, 96);
+        _.delay(function() { pass = true; }, 96);
 
         setTimeout(function() {
           ok(!pass);
@@ -2836,6 +2913,10 @@
       deepEqual(actual, [1, 3]);
     });
 
+    test('should match `NaN`', 1, function() {
+      deepEqual(_.difference([1, NaN, 3], [NaN, 5, NaN]), [1, 3]);
+    });
+
     test('should work with large arrays', 1, function() {
       var array1 = _.range(LARGE_ARRAY_SIZE + 1),
           array2 = _.range(LARGE_ARRAY_SIZE),
@@ -2855,6 +2936,11 @@
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object1));
 
       deepEqual(_.difference([object1, object2], largeArray), [object2]);
+    });
+
+    test('should work with large arrays of `NaN`', 1, function() {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(NaN));
+      deepEqual(_.difference([1, NaN, 3], largeArray), [1, 3]);
     });
 
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
@@ -2900,6 +2986,13 @@
           deepEqual(drop(array, n), []);
         });
       });
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.drop);
+
+      deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -2961,6 +3054,13 @@
           deepEqual(dropRight(array, n), []);
         });
       });
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.dropRight);
+
+      deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3265,7 +3365,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.every(value, _.identity);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -3323,7 +3423,7 @@
     var func = _[methodName];
 
     test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', 1, function() {
-      var object = { 'a': null, 'b': function(){} },
+      var object = { 'a': null, 'b': function() {} },
           pass = !isStrict;
 
       if (freeze) {
@@ -3446,7 +3546,7 @@
         _.each(emptyValues, function(value) {
           try {
             actual.push(func(value, { 'a': 3 }));
-          } catch(e) { }
+          } catch(e) {}
         });
 
         deepEqual(actual, expecting);
@@ -3613,6 +3713,13 @@
       });
     });
 
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.take);
+
+      deepEqual(actual, [[1], [4], [7]]);
+    });
+
     test('`_(...).take` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).take(2);
@@ -3672,6 +3779,13 @@
           deepEqual(takeRight(array, n), array);
         });
       });
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.takeRight);
+
+      deepEqual(actual, [[3], [6], [9]]);
     });
 
     test('`_(...).takeRight` should return a wrapped value when chaining', 2, function() {
@@ -3893,7 +4007,7 @@
       deepEqual(_.flattenDeep(array), expected);
     });
 
-    test('should execute without options when used as a callback for `_.map`', 2, function() {
+    test('should work when used as a callback for `_.map`', 2, function() {
       var array = [[[['a']]], [[['b']]]];
 
       deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
@@ -4002,7 +4116,7 @@
       'object': Object('abc')
     },
     function(collection, key) {
-      test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 2, function() {
+      test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 3, function() {
         var args,
             values = [];
 
@@ -4018,6 +4132,7 @@
           deepEqual(args, ['c', 2, collection]);
           deepEqual(values, ['c', 'b', 'a']);
         }
+        strictEqual(typeof args[2], 'object');
       });
     });
 
@@ -4336,6 +4451,13 @@
       strictEqual(func(), undefined);
     });
 
+    test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = { 'a': 1 };
+
+      deepEqual(func({}, new Foo), {});
+    });
+
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
       var object = {
         'constructor': '0',
@@ -4370,11 +4492,6 @@
       deepEqual(func({}, Foo), expected);
     });
 
-    test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
-      var array = [{ 'b': 2 }, { 'c': 3 }];
-      deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
-    });
-
     test('`_.' + methodName + '` should not error on nullish sources (test in IE < 9)', 1, function() {
       try {
         deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
@@ -4395,6 +4512,11 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
+      var array = [{ 'b': 2 }, { 'c': 3 }];
+      deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
     });
 
     test('`_.' + methodName + '` should return the existing wrapped value when chaining', 1, function() {
@@ -4865,7 +4987,7 @@
         var actual = _.map(falsey, function(value, index) {
           try {
             return index ? initial(value) : initial();
-          } catch(e) { }
+          } catch(e) {}
         });
 
         deepEqual(actual, expected);
@@ -4941,6 +5063,10 @@
       deepEqual(_.intersection(array), [1, 3, 2]);
     });
 
+    test('should match `NaN`', 1, function() {
+      deepEqual(_.intersection([1, NaN, 3], [NaN, 5, NaN]), [NaN]);
+    });
+
     test('should work with large arrays of objects', 1, function() {
       var object = {},
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
@@ -4954,6 +5080,11 @@
 
       deepEqual(_.intersection([object], largeArray), [object]);
       deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), null, [1]), [1]);
+    });
+
+    test('should work with large arrays of `NaN`', 1, function() {
+      var largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(NaN));
+      deepEqual(_.intersection([1, NaN, 3], largeArray), [NaN]);
     });
 
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
@@ -5062,27 +5193,29 @@
       strictEqual(_.isArguments(args), true);
     });
 
-    test('should return `false` for non `arguments` objects', 10, function() {
+    test('should return `false` for non `arguments` objects', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isArguments(value) : _.isArguments();
       });
 
+      deepEqual(actual, expected);
+
       strictEqual(_.isArguments([1, 2, 3]), false);
       strictEqual(_.isArguments(true), false);
       strictEqual(_.isArguments(new Date), false);
       strictEqual(_.isArguments(new Error), false);
       strictEqual(_.isArguments(_), false);
+      strictEqual(_.isArguments(slice), false);
       strictEqual(_.isArguments({ '0': 1, 'callee': _.noop, 'length': 1 }), false);
       strictEqual(_.isArguments(1), false);
+      strictEqual(_.isArguments(NaN), false);
       strictEqual(_.isArguments(/x/), false);
       strictEqual(_.isArguments('a'), false);
-
-      deepEqual(actual, expected);
     });
 
-    test('should work with `arguments` objects from another realm', 1, function() {
+    test('should work with an `arguments` object from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isArguments(_._arguments), true);
       }
@@ -5103,7 +5236,7 @@
       strictEqual(_.isArray([1, 2, 3]), true);
     });
 
-    test('should return `false` for non arrays', 10, function() {
+    test('should return `false` for non arrays', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5117,13 +5250,15 @@
       strictEqual(_.isArray(new Date), false);
       strictEqual(_.isArray(new Error), false);
       strictEqual(_.isArray(_), false);
+      strictEqual(_.isArray(slice), false);
       strictEqual(_.isArray({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isArray(1), false);
+      strictEqual(_.isArray(NaN), false);
       strictEqual(_.isArray(/x/), false);
       strictEqual(_.isArray('a'), false);
     });
 
-    test('should work with arrays from another realm', 1, function() {
+    test('should work with an array from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isArray(_._array), true);
       }
@@ -5147,7 +5282,7 @@
       strictEqual(_.isBoolean(Object(false)), true);
     });
 
-    test('should return `false` for non booleans', 10, function() {
+    test('should return `false` for non booleans', 12, function() {
       var expected = _.map(falsey, function(value) { return value === false; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -5161,13 +5296,15 @@
       strictEqual(_.isBoolean(new Date), false);
       strictEqual(_.isBoolean(new Error), false);
       strictEqual(_.isBoolean(_), false);
+      strictEqual(_.isBoolean(slice), false);
       strictEqual(_.isBoolean({ 'a': 1 }), false);
       strictEqual(_.isBoolean(1), false);
+      strictEqual(_.isBoolean(NaN), false);
       strictEqual(_.isBoolean(/x/), false);
       strictEqual(_.isBoolean('a'), false);
     });
 
-    test('should work with booleans from another realm', 1, function() {
+    test('should work with a boolean from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isBoolean(_._boolean), true);
       }
@@ -5188,7 +5325,7 @@
       strictEqual(_.isDate(new Date), true);
     });
 
-    test('should return `false` for non dates', 10, function() {
+    test('should return `false` for non dates', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5202,13 +5339,15 @@
       strictEqual(_.isDate(true), false);
       strictEqual(_.isDate(new Error), false);
       strictEqual(_.isDate(_), false);
+      strictEqual(_.isDate(slice), false);
       strictEqual(_.isDate({ 'a': 1 }), false);
       strictEqual(_.isDate(1), false);
+      strictEqual(_.isDate(NaN), false);
       strictEqual(_.isDate(/x/), false);
       strictEqual(_.isDate('a'), false);
     });
 
-    test('should work with dates from another realm', 1, function() {
+    test('should work with a date object from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isDate(_._date), true);
       }
@@ -5255,7 +5394,7 @@
       }
     });
 
-    test('should return `false` for non DOM elements', 11, function() {
+    test('should return `false` for non DOM elements', 13, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -5270,13 +5409,15 @@
       strictEqual(_.isElement(new Date), false);
       strictEqual(_.isElement(new Error), false);
       strictEqual(_.isElement(_), false);
+      strictEqual(_.isElement(slice), false);
       strictEqual(_.isElement({ 'a': 1 }), false);
       strictEqual(_.isElement(1), false);
+      strictEqual(_.isElement(NaN), false);
       strictEqual(_.isElement(/x/), false);
       strictEqual(_.isElement('a'), false);
     });
 
-    test('should work with DOM elements from another realm', 1, function() {
+    test('should work with a DOM element from another realm', 1, function() {
       if (_._element) {
         strictEqual(_.isElement(_._element), true);
       }
@@ -5293,7 +5434,7 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for empty or falsey values', 3, function() {
+    test('should return `true` for empty or falsey values', 8, function() {
       var expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
@@ -5302,8 +5443,13 @@
 
       deepEqual(actual, expected);
 
-      strictEqual(_.isEmpty(), true);
+      strictEqual(_.isEmpty(true), true);
+      strictEqual(_.isEmpty(new Date), true);
+      strictEqual(_.isEmpty(slice), true);
+      strictEqual(_.isEmpty(1), true);
+      strictEqual(_.isEmpty(NaN), true);
       strictEqual(_.isEmpty(/x/), true);
+      strictEqual(_.isEmpty(), true);
     });
 
     test('should return `false` for non-empty values', 3, function() {
@@ -5629,12 +5775,12 @@
 
     test('should perform comparisons between objects with complex circular references', 1, function() {
       var object1 = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'foo': { 'b': { 'foo': { 'c': {} } } },
         'bar': { 'a': 2 }
       };
 
       var object2 = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
+        'foo': { 'b': { 'foo': { 'c': {} } } },
         'bar': { 'a': 2 }
       };
 
@@ -5915,25 +6061,40 @@
       }
     });
 
-    test('should perform comparisons between wrapped values', 4, function() {
-      if (!isNpm) {
-        var object1 = _({ 'a': 1, 'b': 2 }),
-            object2 = _({ 'a': 1, 'b': 2 }),
-            actual = object1.isEqual(object2);
+    test('should perform comparisons between wrapped values', 32, function() {
+      var stamp = +new Date;
 
-        strictEqual(actual, true);
-        strictEqual(_.isEqual(_(actual), _(true)), true);
+      var values = [
+        [[1, 2], [1, 2], [1, 2, 3]],
+        [true, true, false],
+        [new Date(stamp), new Date(stamp), new Date(stamp - 100)],
+        [{ 'a': 1, 'b': 2 }, { 'a': 1, 'b': 2 }, { 'a': 1, 'b': 1 }],
+        [1, 1, 2],
+        [NaN, NaN, Infinity],
+        [/x/, /x/, /x/i],
+        ['a', 'a', 'A']
+      ];
 
-        object1 = _({ 'a': 1, 'b': 2 });
-        object2 = _({ 'a': 1, 'b': 1 });
+      _.each(values, function(vals) {
+        if (!isNpm) {
+          var wrapper1 = _(vals[0]),
+              wrapper2 = _(vals[1]),
+              actual = wrapper1.isEqual(wrapper2);
 
-        actual = object1.isEqual(object2);
-        strictEqual(actual, false);
-        strictEqual(_.isEqual(_(actual), _(false)), true);
-      }
-      else {
-        skipTest(4);
-      }
+          strictEqual(actual, true);
+          strictEqual(_.isEqual(_(actual), _(true)), true);
+
+          wrapper1 = _(vals[0]);
+          wrapper2 = _(vals[2]);
+
+          actual = wrapper1.isEqual(wrapper2);
+          strictEqual(actual, false);
+          strictEqual(_.isEqual(_(actual), _(false)), true);
+        }
+        else {
+          skipTest(4);
+        }
+      });
     });
 
     test('should perform comparisons between wrapped and non-wrapped values', 4, function() {
@@ -6008,7 +6169,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-error objects', 10, function() {
+    test('should return `false` for non-error objects', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6022,8 +6183,10 @@
       strictEqual(_.isError(true), false);
       strictEqual(_.isError(new Date), false);
       strictEqual(_.isError(_), false);
+      strictEqual(_.isError(slice), false);
       strictEqual(_.isError({ 'a': 1 }), false);
       strictEqual(_.isError(1), false);
+      strictEqual(_.isError(NaN), false);
       strictEqual(_.isError(/x/), false);
       strictEqual(_.isError('a'), false);
     });
@@ -6049,6 +6212,8 @@
   QUnit.module('lodash.isFinite');
 
   (function() {
+    var args = arguments;
+
     test('should return `true` for finite values', 1, function() {
       var values = [0, 1, 3.14, -1],
           expected = _.map(values, _.constant(true));
@@ -6060,7 +6225,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-finite values', 1, function() {
+    test('should return `false` for non-finite values', 9, function() {
       var values = [NaN, Infinity, -Infinity, Object(1)],
           expected = _.map(values, _.constant(false));
 
@@ -6069,6 +6234,15 @@
       });
 
       deepEqual(actual, expected);
+
+      strictEqual(_.isFinite(args), false);
+      strictEqual(_.isFinite([1, 2, 3]), false);
+      strictEqual(_.isFinite(true), false);
+      strictEqual(_.isFinite(new Date), false);
+      strictEqual(_.isFinite(new Error), false);
+      strictEqual(_.isFinite({ 'a': 1 }), false);
+      strictEqual(_.isFinite(/x/), false);
+      strictEqual(_.isFinite('a'), false);
     });
 
     test('should return `false` for non-numeric values', 1, function() {
@@ -6092,7 +6266,7 @@
 
       deepEqual(actual, expected);
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -6101,11 +6275,12 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for functions', 1, function() {
+    test('should return `true` for functions', 2, function() {
       strictEqual(_.isFunction(_), true);
+      strictEqual(_.isFunction(slice), true);
     });
 
-    test('should return `false` for non functions', 10, function() {
+    test('should return `false` for non functions', 11, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6121,24 +6296,26 @@
       strictEqual(_.isFunction(new Error), false);
       strictEqual(_.isFunction({ 'a': 1 }), false);
       strictEqual(_.isFunction(1), false);
+      strictEqual(_.isFunction(NaN), false);
       strictEqual(_.isFunction(/x/), false);
       strictEqual(_.isFunction('a'), false);
     });
 
-    test('should work with host objects in non-edge document modes (test in IE 11)', 1, function() {
-      if (xml) {
-        // trigger Chakra bug
-        // https://github.com/jashkenas/underscore/issues/1621
-        _.times(100, _.isFunction);
-
-        strictEqual(_.isFunction(xml), false);
-      }
-      else {
-        skipTest();
-      }
+    test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {
+      // trigger Chakra bug
+      // https://github.com/jashkenas/underscore/issues/1621
+      _.each([body, xml], function(object) {
+        if (object) {
+          _.times(100, _.isFunction);
+          strictEqual(_.isFunction(object), false);
+        }
+        else {
+          skipTest();
+        }
+      });
     });
 
-    test('should work with functions from another realm', 1, function() {
+    test('should work with a function from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isFunction(_._function), true);
       }
@@ -6160,7 +6337,7 @@
       strictEqual(_.isNaN(Object(NaN)), true);
     });
 
-    test('should return `false` for non NaNs', 11, function() {
+    test('should return `false` for non NaNs', 12, function() {
       var expected = _.map(falsey, function(value) { return value !== value; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6175,15 +6352,79 @@
       strictEqual(_.isNaN(new Date), false);
       strictEqual(_.isNaN(new Error), false);
       strictEqual(_.isNaN(_), false);
+      strictEqual(_.isNaN(slice), false);
       strictEqual(_.isNaN({ 'a': 1 }), false);
       strictEqual(_.isNaN(1), false);
       strictEqual(_.isNaN(/x/), false);
       strictEqual(_.isNaN('a'), false);
     });
 
-    test('should work with NaNs from another realm', 1, function() {
+    test('should work with `NaN` from another realm', 1, function() {
       if (_._object) {
         strictEqual(_.isNaN(_._nan), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isNative');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for native methods', 6, function() {
+      _.each([Array, create, root.encodeURI, slice, Uint8Array], function(func) {
+        if (func) {
+          strictEqual(_.isNative(func), true);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      if (body) {
+        strictEqual(_.isNative(body.cloneNode), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return `false` for non native methods', 12, function() {
+      var expected = _.map(falsey, _.constant(false));
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isNative(value) : _.isNative();
+      });
+
+      deepEqual(actual, expected);
+
+      strictEqual(_.isNative(args), false);
+      strictEqual(_.isNative([1, 2, 3]), false);
+      strictEqual(_.isNative(true), false);
+      strictEqual(_.isNative(new Date), false);
+      strictEqual(_.isNative(new Error), false);
+      strictEqual(_.isNative(_), false);
+      strictEqual(_.isNative({ 'a': 1 }), false);
+      strictEqual(_.isNative(1), false);
+      strictEqual(_.isNative(NaN), false);
+      strictEqual(_.isNative(/x/), false);
+      strictEqual(_.isNative('a'), false);
+    });
+
+    test('should work with native functions from another realm', 2, function() {
+      if (_._element) {
+        strictEqual(_.isNative(_._element.cloneNode), true);
+      }
+      else {
+        skipTest();
+      }
+      if (_._object) {
+        strictEqual(_.isNative(_._object.valueOf), true);
       }
       else {
         skipTest();
@@ -6202,7 +6443,7 @@
       strictEqual(_.isNull(null), true);
     });
 
-    test('should return `false` for non nulls', 11, function() {
+    test('should return `false` for non nulls', 13, function() {
       var expected = _.map(falsey, function(value) { return value === null; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6217,8 +6458,10 @@
       strictEqual(_.isNull(new Date), false);
       strictEqual(_.isNull(new Error), false);
       strictEqual(_.isNull(_), false);
+      strictEqual(_.isNull(slice), false);
       strictEqual(_.isNull({ 'a': 1 }), false);
       strictEqual(_.isNull(1), false);
+      strictEqual(_.isNull(NaN), false);
       strictEqual(_.isNull(/x/), false);
       strictEqual(_.isNull('a'), false);
     });
@@ -6240,12 +6483,13 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for numbers', 2, function() {
+    test('should return `true` for numbers', 3, function() {
       strictEqual(_.isNumber(0), true);
       strictEqual(_.isNumber(Object(0)), true);
+      strictEqual(_.isNumber(NaN), true);
     });
 
-    test('should return `false` for non numbers', 10, function() {
+    test('should return `false` for non numbers', 11, function() {
       var expected = _.map(falsey, function(value) { return typeof value == 'number'; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6260,6 +6504,7 @@
       strictEqual(_.isNumber(new Date), false);
       strictEqual(_.isNumber(new Error), false);
       strictEqual(_.isNumber(_), false);
+      strictEqual(_.isNumber(slice), false);
       strictEqual(_.isNumber({ 'a': 1 }), false);
       strictEqual(_.isNumber(/x/), false);
       strictEqual(_.isNumber('a'), false);
@@ -6286,13 +6531,14 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for objects', 11, function() {
+    test('should return `true` for objects', 12, function() {
       strictEqual(_.isObject(args), true);
       strictEqual(_.isObject([1, 2, 3]), true);
       strictEqual(_.isObject(Object(false)), true);
       strictEqual(_.isObject(new Date), true);
       strictEqual(_.isObject(new Error), true);
       strictEqual(_.isObject(_), true);
+      strictEqual(_.isObject(slice), true);
       strictEqual(_.isObject({ 'a': 1 }), true);
       strictEqual(_.isObject(Object(0)), true);
       strictEqual(_.isObject(/x/), true);
@@ -6442,7 +6688,7 @@
       strictEqual(_.isRegExp(RegExp('x')), true);
     });
 
-    test('should return `false` for non regexes', 10, function() {
+    test('should return `false` for non regexes', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6457,8 +6703,10 @@
       strictEqual(_.isRegExp(new Date), false);
       strictEqual(_.isRegExp(new Error), false);
       strictEqual(_.isRegExp(_), false);
+      strictEqual(_.isRegExp(slice), false);
       strictEqual(_.isRegExp({ 'a': 1 }), false);
       strictEqual(_.isRegExp(1), false);
+      strictEqual(_.isRegExp(NaN), false);
       strictEqual(_.isRegExp('a'), false);
     });
 
@@ -6484,7 +6732,7 @@
       strictEqual(_.isString(Object('a')), true);
     });
 
-    test('should return `false` for non strings', 10, function() {
+    test('should return `false` for non strings', 12, function() {
       var expected = _.map(falsey, function(value) { return value === ''; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6499,8 +6747,10 @@
       strictEqual(_.isString(new Date), false);
       strictEqual(_.isString(new Error), false);
       strictEqual(_.isString(_), false);
+      strictEqual(_.isString(slice), false);
       strictEqual(_.isString({ '0': 1, 'length': 1 }), false);
       strictEqual(_.isString(1), false);
+      strictEqual(_.isString(NaN), false);
       strictEqual(_.isString(/x/), false);
     });
 
@@ -6526,7 +6776,7 @@
       strictEqual(_.isUndefined(undefined), true);
     });
 
-    test('should return `false` for non `undefined` values', 11, function() {
+    test('should return `false` for non `undefined` values', 13, function() {
       var expected = _.map(falsey, function(value) { return value === undefined; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6541,8 +6791,10 @@
       strictEqual(_.isUndefined(new Date), false);
       strictEqual(_.isUndefined(new Error), false);
       strictEqual(_.isUndefined(_), false);
+      strictEqual(_.isUndefined(slice), false);
       strictEqual(_.isUndefined({ 'a': 1 }), false);
       strictEqual(_.isUndefined(1), false);
+      strictEqual(_.isUndefined(NaN), false);
       strictEqual(_.isUndefined(/x/), false);
       strictEqual(_.isUndefined('a'), false);
     });
@@ -6871,12 +7123,11 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? func(value) : func();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
     });
-
 
     test('`_.' + methodName + '` should return `-1` for an unmatched value', 4, function() {
       var array = [1, 2, 3],
@@ -6887,6 +7138,10 @@
 
       strictEqual(func(empty, undefined), -1);
       strictEqual(func(empty, undefined, true), -1);
+    });
+
+    test('`_.' + methodName + '` should match `NaN`', 1, function() {
+      strictEqual(func([1, NaN, 3], NaN), 1);
     });
   });
 
@@ -6962,7 +7217,7 @@
         var actual = map(falsey, function(value, index) {
           try {
             return index ? map(value) : map();
-          } catch(e) { }
+          } catch(e) {}
         });
 
         deepEqual(actual, expected);
@@ -7036,7 +7291,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.mapValues(value) : _.mapValues();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7136,7 +7391,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? matches(value) : matches();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7150,7 +7405,7 @@
         try {
           var result = index ? matches(value) : matches();
           return result === true;
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7252,7 +7507,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.max(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7265,7 +7520,7 @@
       var actual = _.map(collections, function(value) {
         try {
           return _.max(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7314,7 +7569,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return _.isFunction(index ? _.memoize(_.noop, value) : _.memoize(_.noop));
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7409,8 +7664,8 @@
       };
 
       var source = {
-        'foo': { 'b': { 'foo': { 'c': { } } } },
-        'bar': { }
+        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'bar': {}
       };
 
       source.foo.b.foo.c = source;
@@ -7490,7 +7745,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.min(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7503,7 +7758,7 @@
       var actual = _.map(collections, function(value) {
         try {
           return _.min(value);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -7520,10 +7775,10 @@
         isMax = methodName == 'max';
 
     test('`_.' + methodName + '` should work with Date objects', 1, function() {
-      var now = new Date,
+      var curr = new Date,
           past = new Date(0);
 
-      strictEqual(func([now, past]), isMax ? now : past);
+      strictEqual(func([curr, past]), isMax ? curr : past);
     });
 
     test('`_.' + methodName + '` should work with a callback argument', 1, function() {
@@ -7580,13 +7835,6 @@
       deepEqual(actual, arrays[isMax ? 1 : 2]);
     });
 
-    test('`_.' + methodName + '` should work when used as a callback for `_.map`', 1, function() {
-      var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
-          actual = _.map(array, func);
-
-      deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
-    });
-
     test('`_.' + methodName + '` should work when `callback` returns +/-Infinity', 1, function() {
       var value = isMax ? -Infinity : Infinity,
           object = { 'a': value };
@@ -7613,6 +7861,16 @@
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
       var array = _.range(0, 5e5);
       strictEqual(func(array), isMax ? 499999 : 0);
+    });
+
+    test('`_.' + methodName + '` should work when used as a callback for `_.map`', 2, function() {
+      var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
+          actual = _.map(array, func);
+
+      deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
+
+      actual = _.map('abc', func);
+      deepEqual(actual, ['a', 'b', 'c']);
     });
 
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
@@ -7736,6 +7994,12 @@
       });
     });
 
+    test('should not extend lodash when an `object` is provided with an empty `options` object', 1, function() {
+      _.mixin({ 'a': _.noop }, {});
+      ok(!('a' in _));
+      delete _.a;
+    });
+
     test('should not error for non-object `options` values', 2, function() {
       var pass = true;
 
@@ -7784,6 +8048,22 @@
       else {
         skipTest(2);
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.negate');
+
+  (function() {
+    test('should create a function that negates the result of `func`', 2, function() {
+      function isEven(n) {
+        return n % 2 == 0;
+      }
+
+      var negate = _.negate(isEven);
+      strictEqual(negate(1), true);
+      strictEqual(negate(2), false);
     });
   }());
 
@@ -7925,7 +8205,7 @@
   QUnit.module('lodash.once');
 
   (function() {
-    test('should execute `func` once', 2, function() {
+    test('should invoke `func` once', 2, function() {
       var count = 0,
           once = _.once(function() { return ++count; });
 
@@ -8123,16 +8403,34 @@
       strictEqual(_.parseInt('08', 10), 8);
     });
 
-    test('should parse strings with leading whitespace (test in Chrome, Firefox, and Opera)', 8, function() {
-      strictEqual(_.parseInt(whitespace + '10'), 10);
-      strictEqual(_.parseInt(whitespace + '10', 10), 10);
+    test('should parse strings with leading whitespace (test in Chrome, Firefox, and Opera)', 2, function() {
+      var expected = [8, 8, 10, 10, 32, 32, 32, 32];
 
-      strictEqual(_.parseInt(whitespace + '08'), 8);
-      strictEqual(_.parseInt(whitespace + '08', 10), 8);
+      _.times(2, function(index) {
+        var actual = [],
+            func = (index ? (lodashBizarro || {}) : _).parseInt;
 
-      _.each(['0x20', '0X20'], function(string) {
-        strictEqual(_.parseInt(whitespace + string), 32);
-        strictEqual(_.parseInt(whitespace + string, 16), 32);
+        if (func) {
+          _.times(2, function(otherIndex) {
+            var string = otherIndex ? '10' : '08';
+            actual.push(
+              func(whitespace + string, 10),
+              func(whitespace + string)
+            );
+          });
+
+          _.each(['0x20', '0X20'], function(string) {
+            actual.push(
+              func(whitespace + string),
+              func(whitespace + string, 16)
+            );
+          });
+
+          deepEqual(actual, expected);
+        }
+        else {
+          skipTest();
+        }
       });
     });
 
@@ -8140,6 +8438,14 @@
       var object = { 'valueOf': function() { return 0; } };
       strictEqual(_.parseInt('08', object), 8);
       strictEqual(_.parseInt('0x20', object), 32);
+    });
+
+    test('should work when used as a callback for `_.map`', 2, function() {
+      var actual = _.map(['1', '10', '08'], _.parseInt);
+      deepEqual(actual, [1, 10, 8]);
+
+      actual = _.map('123', _.parseInt);
+      deepEqual(actual, [1, 2, 3]);
     });
   }());
 
@@ -8227,9 +8533,9 @@
     });
 
     test('`_.' + methodName + '` should clone metadata for created functions', 3, function() {
-      var greet = function(greeting, name) {
+      function greet(greeting, name) {
         return greeting + ' ' + name;
-      };
+      }
 
       var par1 = func(greet, 'hi'),
           par2 = func(par1, 'barney'),
@@ -8272,6 +8578,11 @@
   QUnit.module('methods using `createWrapper`');
 
   (function() {
+    var ph1 = _.bind.placeholder,
+        ph2 = _.bindKey.placeholder,
+        ph3 = _.partial.placeholder,
+        ph4 = _.partialRight.placeholder;
+
     test('combinations of partial functions should work', 1, function() {
       function fn() {
         return slice.call(arguments);
@@ -8313,6 +8624,60 @@
       deepEqual(c(3), expected);
     });
 
+    test('combinations of functions with placeholders should work', 3, function() {
+      function fn() {
+        return slice.call(arguments);
+      }
+
+      var expected = [1, 2, 3, 4, 5, 6],
+          object = { 'fn': fn };
+
+      var a = _.bindKey(object, 'fn', ph2, 2),
+          b = _.partialRight(a, ph4, 6),
+          c = _.partial(b, 1, ph3, 4);
+
+      deepEqual(c(3, 5), expected);
+
+      a = _.bind(fn, object, ph1, 2);
+      b = _.partialRight(a, ph4, 6);
+      c = _.partial(b, 1, ph3, 4);
+
+      deepEqual(c(3, 5), expected);
+
+      a = _.partial(fn, ph3, 2)
+      b = _.bind(a, object, 1, ph1, 4);
+      c = _.partialRight(b, ph4, 6);
+
+      deepEqual(c(3, 5), expected);
+    });
+
+    test('combinations of functions with overlaping placeholders should work', 3, function() {
+      function fn() {
+        return slice.call(arguments);
+      }
+
+      var expected = [1, 2, 3, 4],
+          object = { 'fn': fn };
+
+      var a = _.bindKey(object, 'fn', ph2, 2),
+          b = _.partialRight(a, ph4, 4),
+          c = _.partial(b, ph3, 3);
+
+      deepEqual(c(1), expected);
+
+      a = _.bind(fn, object, ph1, 2);
+      b = _.partialRight(a, ph4, 4);
+      c = _.partial(b, ph3, 3);
+
+      deepEqual(c(1), expected);
+
+      a = _.partial(fn, ph3, 2)
+      b = _.bind(a, object, ph1, 3);
+      c = _.partialRight(b, ph4, 4);
+
+      deepEqual(c(1), expected);
+    });
+
     test('recursively bound functions should work', 1, function() {
       function fn() {
         return this.a;
@@ -8323,6 +8688,56 @@
           c = _.bind(b,  { 'a': 3 });
 
       strictEqual(c(), 1);
+    });
+
+    test('should work when hot', 6, function() {
+      _.times(2, function(index) {
+        function fn() {
+          var result = [this];
+          push.apply(result, arguments);
+          return result;
+        }
+
+        var object = {},
+            bound1 = index ? _.bind(fn, object, 1) : _.bind(fn, object);
+
+        var actual = _.last(_.times(HOT_COUNT, function() {
+          var bound2 = index ? _.bind(bound1, null, 2) : _.bind(bound1);
+          return index ? bound2(3) : bound2(1, 2, 3);
+        }));
+
+        deepEqual(actual, [object, 1, 2, 3]);
+      });
+
+      _.each(['curry', 'curryRight'], function(methodName) {
+        function fn(a, b, c) {
+          return [a, b, c];
+        }
+
+        var curried = _[methodName](fn);
+
+        var actual = _.last(_.times(HOT_COUNT, function() {
+          return curried(1)(2)(3);
+        }));
+
+        deepEqual(actual, methodName == 'curry' ? [1, 2, 3] : [3, 2, 1]);
+      });
+
+      _.each(['partial', 'partialRight'], function(methodName) {
+        function fn() {
+          return slice.call(arguments);
+        }
+
+        var func = _[methodName],
+            par1 = func(fn, 1);
+
+        var actual = _.last(_.times(HOT_COUNT, function() {
+          var par2 = func(par1, 2);
+          return par2(3);
+        }));
+
+        deepEqual(actual, methodName == 'partial' ? [1, 2, 3] : [3, 2, 1]);
+      });
     });
   }());
 
@@ -8564,6 +8979,13 @@
       _.pull(array, undefined);
       deepEqual(array, [1, 3]);
     });
+
+    test('should match `NaN`', 1, function() {
+      var array = [1, NaN, 3, NaN];
+
+      _.pull(array, NaN);
+      deepEqual(array, [1, 3]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -8596,7 +9018,7 @@
     });
 
     test('should return `undefined` for nonexistent keys', 2, function() {
-      var array = ['a', 'b',  'c'],
+      var array = ['a', 'b', 'c'],
           actual = _.pullAt(array, [2, 4, 0]);
 
       deepEqual(array, ['b']);
@@ -8692,6 +9114,18 @@
       actual = _.random(2, 4, true);
       ok(actual % 1 && actual >= 2 && actual <= 4);
     });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = [1, 2, 3],
+          actual = _.map(array, _.random),
+          expected = _.map(array, _.constant(true));
+
+      actual = _.map(actual, function(result, index) {
+        return result >= 0 && result <= array[index] && (result % 1) == 0;
+      });
+
+      deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -8738,6 +9172,11 @@
     test('should coerce arguments to finite numbers', 1, function() {
       var actual = [_.range('0', 1), _.range('1'), _.range(0, 1, '1'), _.range(NaN), _.range(NaN, NaN)];
       deepEqual(actual, [[0], [0], [0], [], []]);
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var actual = _.map([1, 2, 3], _.range);
+      deepEqual(actual, [[0], [0, 1], [0, 1, 2]]);
     });
   }());
 
@@ -8929,7 +9368,7 @@
       _.each(empties, function(value) {
         try {
           actual.push(func(value, _.noop));
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -8941,7 +9380,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return func(value, _.noop, 'x');
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9170,7 +9609,7 @@
         var actual = _.map(falsey, function(value, index) {
           try {
             return index ? rest(value) : rest();
-          } catch(e) { }
+          } catch(e) {}
         });
 
         deepEqual(actual, expected);
@@ -9316,7 +9755,7 @@
       _.each(empties, function(value) {
         try {
           actual.push(_.shuffle(value), _.shuffle(value, 1));
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9332,13 +9771,15 @@
       ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
-      var a = [1, 2, 3],
-          b = [4, 5, 6],
-          c = [7, 8, 9],
-          actual = _.map([a, b, c], _.sample);
+    test('should work when used as a callback for `_.map`', 2, function() {
+      _.each([[[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['abc', 'def', 'ghi']], function(values) {
+        var a = values[0],
+            b = values[1],
+            c = values[2],
+            actual = _.map([a, b, c], _.sample);
 
-      ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
+        ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
+      });
     });
 
     test('should chain when `n` is provided', 1, function() {
@@ -9451,7 +9892,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.size(value) : _.size();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9532,6 +9973,12 @@
       });
     });
 
+    test('should work with `start` >= `end`', 2, function() {
+      _.each([2, 3], function(start) {
+        deepEqual(_.slice(array, start, 2), []);
+      });
+    });
+
     test('should work with a positive `end`', 1, function() {
       deepEqual(_.slice(array, 0, 1), [1]);
     });
@@ -9581,7 +10028,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.some(value, _.identity);
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -9708,6 +10155,11 @@
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
     });
 
+    test('should not error on nullish elements when sorting by multiple properties', 1, function() {
+      var actual = _.sortBy(objects.concat(undefined), ['a', 'b']);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
+    });
+
     test('should perform a stable sort when sorting by multiple properties (test in IE > 8, Opera, and V8)', 1, function() {
       var actual = _.sortBy(stableOrder, ['a', 'c']);
       deepEqual(actual, stableOrder);
@@ -9816,7 +10268,25 @@
       strictEqual(actual, 1);
     });
 
-    test('`_.' + methodName + '` supports arrays with lengths larger than `Math.pow(2, 31) - 1`', 1, function() {
+    test('`_.' + methodName + '` should align with `_.sortBy`', 8, function() {
+      var array = [NaN, 1, 2, {}, NaN, undefined];
+      deepEqual(_.sortBy(array), array);
+      strictEqual(func(array, 3), 5);
+
+      array = [1, 2, NaN, {}, NaN, undefined];
+      deepEqual(_.sortBy(array), array);
+      strictEqual(func(array, 3), 5);
+
+      array = [NaN, '1', '2', {}, NaN, undefined];
+      deepEqual(_.sortBy(array), array);
+      strictEqual(func(array, '3'), 3);
+
+      array = ['1', '2', NaN, {}, NaN, undefined];
+      deepEqual(_.sortBy(array), array);
+      strictEqual(func(array, '3'), 2);
+    });
+
+    test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 1, function() {
       var length = Math.pow(2, 32) - 1,
           index = length - 1,
           array = Array(length),
@@ -9854,6 +10324,7 @@
         'fastBind',
         'funcDecomp',
         'funcNames',
+        'hostObject',
         'nodeClass',
         'nonEnumArgs',
         'nonEnumShadows',
@@ -10046,7 +10517,7 @@
 
       try {
         var actual = compiled();
-      } catch(e) { }
+      } catch(e) {}
 
       strictEqual(actual, 'function');
     });
@@ -10117,7 +10588,7 @@
           'interpolate': /\{\{=([\s\S]+?)\}\}/g
         });
 
-        var compiled = _.template('<ul>{{ _.each(collection, function(value, index) { }}<li>{{= index }}: {{- value }}</li>{{ }); }}</ul>', index ? null : settings),
+        var compiled = _.template('<ul>{{ _.each(collection, function(value, index) {}}<li>{{= index }}: {{- value }}</li>{{}); }}</ul>', index ? null : settings),
             expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>';
 
         strictEqual(compiled({ 'collection': ['a & A', 'b & B'] }), expected);
@@ -10813,7 +11284,7 @@
         try {
           var nodeList = document.getElementsByTagName('body'),
               actual = func(nodeList);
-        } catch(e) { }
+        } catch(e) {}
 
         deepEqual(actual, [body]);
       }
@@ -11112,8 +11583,12 @@
       deepEqual(_.uniq(array), [1, 2, 3]);
     });
 
-    test('should treat object instances as uniq', 1, function() {
+    test('should treat object instances as unique', 1, function() {
       deepEqual(_.uniq(objects), objects);
+    });
+
+    test('should not treat `NaN` as unique', 1, function() {
+      deepEqual(_.uniq([1, NaN, 3, NaN]), [1, NaN, 3]);
     });
 
     test('should work with `isSorted`', 3, function() {
@@ -11184,9 +11659,9 @@
       deepEqual(_.uniq(largeArray), [0, 'a', object]);
     });
 
-    test('should work with large arrays of boolean, `null`, and `undefined` values', 1, function() {
+    test('should work with large arrays of boolean, `NaN`, `null`, and `undefined` values', 1, function() {
       var array = [],
-          expected = [true, false, null, undefined],
+          expected = [true, false, NaN, null, undefined],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {
@@ -11516,7 +11991,7 @@
       var actual = _.map(falsey, function(value, index) {
         try {
           return index ? _.zipObject(value) : _.zipObject();
-        } catch(e) { }
+        } catch(e) {}
       });
 
       deepEqual(actual, expected);
@@ -11842,8 +12317,10 @@
       'last',
       'max',
       'min',
+      'parseInt',
       'pop',
       'shift',
+      'random',
       'reduce',
       'reduceRight',
       'some'
@@ -11903,7 +12380,7 @@
           _.each(falsey, function(value, index) {
             try {
               actual.push(index ? func(value) : func());
-            } catch(e) { }
+            } catch(e) {}
           });
 
           deepEqual(actual, expected);
@@ -11921,7 +12398,7 @@
           var actual = _.map(falsey, function(value, index) {
             try {
               return func(value, 2);
-            } catch(e) { }
+            } catch(e) {}
           });
 
           deepEqual(actual, expected);
@@ -12134,6 +12611,7 @@
 
     var rejectFalsey = [
       'after',
+      'backflow',
       'before',
       'bind',
       'compose',
@@ -12142,6 +12620,8 @@
       'debounce',
       'defer',
       'delay',
+      'flow',
+      'flowRight',
       'memoize',
       'negate',
       'once',
@@ -12154,7 +12634,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 193 * 2, function() {
+    test('should accept falsey arguments', 195 * 2, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -12222,16 +12702,16 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 17 * 2, function() {
+    test('should throw a TypeError for falsey arguments', 20 * 2, function() {
       _.each(rejectFalsey, function(methodName) {
         _.forIn(getConfig(methodName), function(func, formattedMethodName) {
           var expected = _.map(falsey, _.constant(true));
 
-          var actual = _.map(falsey, function (value, index) {
-            var pass = !index && func == _.compose;
+          var actual = _.map(falsey, function(value, index) {
+          var pass = !index && _[methodName] == func && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
             try {
               index ? func(value) : func();
-            } catch (e) {
+            } catch(e) {
               pass = !pass;
             }
             return pass;

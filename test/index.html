@@ -26,6 +26,7 @@
 		<script src="../vendor/qunit-extras/qunit-extras.js"></script>
 		<script src="../vendor/platform.js/platform.js"></script>
 		<script src="./asset/set.js"></script>
+		<script src="./asset/weakmap.js"></script>
 		<script src="./asset/test-ui.js"></script>
 		<div id="qunit"></div>
 		<div id="exports"></div>
@@ -54,8 +55,10 @@
 				var hasOwnProperty = objectProto.hasOwnProperty,
 				    fnToString = funcProto.toString,
 				    nativeString = fnToString.call(objectProto.toString),
+				    noop = function() {},
 				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
-				    reToString = /toString/g;
+				    reToString = /toString/g,
+				    whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
 				function constant(value) {
 					return function() {
@@ -77,49 +80,46 @@
 				}()));
 
 				// add extensions
-				funcProto._method = function() {};
+				funcProto._method = noop;
 
 				// set bad shims
 				setProperty(Array, '_isArray', Array.isArray);
-				setProperty(Array, 'isArray', function() {});
+				setProperty(Array, 'isArray', noop);
 
 				setProperty(Date, '_now', Date.now);
-				setProperty(Date, 'now', function() {});
+				setProperty(Date, 'now', noop);
 
 				setProperty(Object, '_create', Object.create);
-				setProperty(Object, 'create', function() {});
+				setProperty(Object, 'create', noop);
 
 				setProperty(Object, '_defineProperty', Object.defineProperty);
-				setProperty(Object, 'defineProperty', function() {});
+				setProperty(Object, 'defineProperty', noop);
 
 				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
-				setProperty(Object, 'getPrototypeOf', function() {});
+				setProperty(Object, 'getPrototypeOf', noop);
 
 				setProperty(Object, '_keys', Object.keys);
-				setProperty(Object, 'keys', function() {});
+				setProperty(Object, 'keys', noop);
 
-				setProperty(objectProto, 'hasOwnProperty', (function() {
-					function wrapper(key) {
-						if (key == '1' && this && typeof this == 'object' && this.length === 2 &&
-								hasOwnProperty.call(this, 'callee') &&
-								!propertyIsEnumerable.call(this, 'callee') &&
-								this[0] === 0 && this[1] === 0) {
-							throw new Error;
-						}
-						return hasOwnProperty.call(this, key);
+				setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
+				setProperty(objectProto, 'propertyIsEnumerable', function(key) {
+					if (key == '1' && this && typeof this == 'object' && this.length === 2 &&
+							hasOwnProperty.call(this, 'callee') &&
+							!propertyIsEnumerable.call(this, 'callee') &&
+							this[0] === 0 && this[1] === 0) {
+						throw new Error;
 					}
-					setProperty(objectProto, '_hasOwnProperty', hasOwnProperty);
-					return wrapper;
-				}()));
+					return propertyIsEnumerable.call(this, key);
+				});
 
 				setProperty(Number, '_isFinite', Number.isFinite);
-				setProperty(Number, 'isFinite', function() {});
+				setProperty(Number, 'isFinite', noop);
 
 				setProperty(stringProto, '_contains', stringProto.contains);
-				setProperty(stringProto, 'contains', stringProto._contains ? function() {} : Boolean);
+				setProperty(stringProto, 'contains', stringProto._contains ? noop : Boolean);
 
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
-				document.createDocumentFragment = function() {};
+				document.createDocumentFragment = noop;
 
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array) {
@@ -155,8 +155,33 @@
 						return Float64Array;
 					}());
 				}
+				setProperty(window, '_Set', window.Set);
+				setProperty(window, 'Set', noop);
+
+				setProperty(window, '_WeakMap', window.WeakMap);
+				setProperty(window, 'WeakMap', noop);
+
+				setProperty(window, '_parseInt', parseInt);
+				setProperty(window, 'parseInt', (function(_parseInt) {
+					var checkStr = whitespace + '08',
+					    isFaked = _parseInt(checkStr) != 8,
+					    reHexPrefix = /^0[xX]/,
+					    reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
+
+					return function(value, radix) {
+						if (value == checkStr && !isFaked) {
+							isFaked = true;
+							return 0;
+						}
+						value = String(value == null ? '' : value).replace(reTrim, '');
+						return _parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
+					};
+				}(_parseInt)));
+
+				// fake `WinRTError`
 				setProperty(window, 'WinRTError', Error);
 
+				// fake free variable `global`
 				setProperty(window, 'exports', window);
 				setProperty(window, 'global', window);
 				setProperty(window, 'module', {});
@@ -207,7 +232,7 @@
 				} else {
 					delete stringProto.contains;
 				}
-				setProperty(objectProto, 'hasOwnProperty', objectProto._hasOwnProperty);
+				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
 				document.createDocumentFragment = document._createDocumentFragment;
 				setProperty(document, '_createDocumentFragment', undefined);
@@ -216,6 +241,20 @@
 					ArrayBuffer = _ArrayBuffer;
 				}
 				setProperty(window, '_ArrayBuffer', undefined);
+
+				if (window._Set) {
+					Set = _Set;
+				}
+				setProperty(window, '_Set', undefined);
+
+				if (window._WeakMap) {
+					WeakMap = _WeakMap;
+				}
+				setProperty(window, '_WeakMap', undefined);
+
+				setProperty(window, 'parseInt', window._parseInt);
+				setProperty(window, '_parseInt', undefined);
+
 				setProperty(window, 'WinRTError', undefined);
 
 				setProperty(window, 'exports', undefined);
@@ -229,7 +268,7 @@
 				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
-				delete objectProto._hasOwnProperty;
+				delete objectProto._propertyIsEnumerable;
 				delete stringProto._contains;
 			}
 			QUnit.config.hidepassed = true;
@@ -244,6 +283,7 @@
 			// store Lo-Dash to test for bad extensions/shims
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;
+				lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 				window._ = undefined;
 				removeBizarroMethods();
 			}
@@ -364,6 +404,7 @@
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {
 						lodashBizarro = (lodash['default'] || lodash).noConflict();
+						lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 						delete requirejs.s.contexts._;
 
 						removeBizarroMethods();

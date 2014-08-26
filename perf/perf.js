@@ -43,11 +43,11 @@
     if (!amd) {
       try {
         result = require('fs').realpathSync(result);
-      } catch(e) { }
+      } catch(e) {}
 
       try {
         result = require.resolve(result);
-      } catch(e) { }
+      } catch(e) {}
     }
     return result;
   }());
@@ -444,10 +444,10 @@
         var source = { "num": 9 };\
         \
         var _findWhere = _.findWhere || _.find,\
-            _match = _.matches && _.matches(source);\
+            _match = (_.matches || _.createCallback || _.noop)(source);\
         \
         var lodashFindWhere = lodash.findWhere || lodash.find,\
-            lodashMatch = lodash.matches && lodash.matches(source);\
+            lodashMatch = (lodash.matches || lodash.createCallback || lodash.noop)(source);\
       }\
       if (typeof multiArrays != "undefined") {\
         var twentyValues = belt.shuffle(belt.range(20)),\
@@ -586,11 +586,11 @@
   suites.push(
     Benchmark.Suite('`_.bind` (slow path)')
       .add(buildName, {
-        'fn': 'lodash.bind(func, { "name": "fred" })',
+        'fn': 'lodash.bind(function() { return this.name; }, { "name": "fred" })',
         'teardown': 'function bind(){}'
       })
       .add(otherName, {
-        'fn': '_.bind(func, { "name": "fred" })',
+        'fn': '_.bind(function() { return this.name; }, { "name": "fred" })',
         'teardown': 'function bind(){}'
       })
   );
@@ -1533,11 +1533,11 @@
   suites.push(
     Benchmark.Suite('`_.partial` (slow path)')
       .add(buildName, {
-        'fn': 'lodash.partial(func, "hi")',
+        'fn': 'lodash.partial(function(greeting) { return greeting + " " + this.name; }, "hi")',
         'teardown': 'function partial(){}'
       })
       .add(otherName, {
-        'fn': '_.partial(func, "hi")',
+        'fn': '_.partial(function(greeting) { return greeting + " " + this.name; }, "hi")',
         'teardown': 'function partial(){}'
       })
   );

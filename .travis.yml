@@ -33,7 +33,7 @@ branches:
   only:
     - master
 before_install:
-  - "mkdir ~/.npm"
+  - "nvm use $TRAVIS_NODE_VERSION && mkdir ~/.npm"
   - "[ $SAUCE_LABS == false ] || npm i chalk@\"^0.5.0\" ecstatic@\"^0.5.0\" request@\"^2.37.0\" sauce-tunnel@\"^2.1.0\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.11.0\" && npm i istanbul@\"^0.3.0\")"
   - "[ $BIN != 'rhino' ] || (sudo mkdir /opt/rhino-1.7R5 && sudo wget -O /opt/rhino-1.7R5/js.jar http://lodash.com/_travis/rhino-1.7R5.jar)"
@@ -45,7 +45,7 @@ before_install:
   - "node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./dist/lodash.$BUILD.js"
 script:
   - "[ $ISTANBUL == false ]    || (nvm install 0.11.11 && cp ./dist/lodash.$BUILD.js ./dist/lodash.js && $BIN --harmony ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.js)"
-  - "[ $ISTANBUL == true ] && [ $TRAVIS_SECURE_ENV_VARS == true ] && nvm use 0.10 && cat ./coverage/lcov.info | coveralls || true"
+  - "([ $ISTANBUL == true ] && [ $TRAVIS_SECURE_ENV_VARS == true ] && nvm use $TRAVIS_NODE_VERSION && cat ./coverage/lcov.info | coveralls) || true"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || cd ./test"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"

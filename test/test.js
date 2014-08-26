@@ -372,9 +372,6 @@
     var _create = create;
     setProperty(Object, 'create', _.noop);
 
-    var _defineProperty = Object.defineProperty;
-    setProperty(Object, 'defineProperty', _.noop);
-
     var _getPrototypeOf = Object.getPrototypeOf;
     setProperty(Object, 'getPrototypeOf', _.noop);
 
@@ -472,7 +469,6 @@
     setProperty(Array,  'isArray', _isArray);
     setProperty(Date,   'now', _now);
     setProperty(Object, 'create', _create);
-    setProperty(Object, 'defineProperty', _defineProperty);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
@@ -618,7 +614,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 15, function() {
+    test('should avoid overwritten native methods', 14, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -651,13 +647,6 @@
         }
         ok(actual[0] instanceof Foo, message('_.create', 'Object.create'));
         deepEqual(actual[1], {}, message('_.create', 'Object.create'));
-
-        try {
-          actual = lodashBizarro.bind(function() { return this.a; }, object);
-        } catch(e) {
-          actual = null;
-        }
-        ok(!(EXPANDO in actual), message('_.bind', 'Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -727,7 +716,7 @@
         }
       }
       else {
-        skipTest(15);
+        skipTest(14);
       }
     });
   }());

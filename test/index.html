@@ -92,9 +92,6 @@
 				setProperty(Object, '_create', Object.create);
 				setProperty(Object, 'create', noop);
 
-				setProperty(Object, '_defineProperty', Object.defineProperty);
-				setProperty(Object, 'defineProperty', noop);
-
 				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
 				setProperty(Object, 'getPrototypeOf', noop);
 
@@ -207,11 +204,6 @@
 				} else {
 					delete Object.create;
 				}
-				if (Object._defineProperty) {
-					setProperty(Object, 'defineProperty', Object._defineProperty);
-				} else {
-					delete Object.defineProperty;
-				}
 				if (Object._getPrototypeOf) {
 					setProperty(Object, 'getPrototypeOf', Object._getPrototypeOf);
 				} else {
@@ -265,7 +257,6 @@
 				delete Date._now;
 				delete funcProto._method;
 				delete Object._create;
-				delete Object._defineProperty;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
 				delete objectProto._propertyIsEnumerable;

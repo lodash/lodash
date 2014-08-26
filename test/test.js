@@ -38,12 +38,10 @@
       noop = function() {},
       params = root.arguments,
       push = arrayProto.push,
-      Set = root.Set,
       slice = arrayProto.slice,
       system = root.system,
       toString = objectProto.toString,
-      Uint8Array = root.Uint8Array,
-      WeakMap = root.WeakMap;
+      Uint8Array = root.Uint8Array;
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -118,6 +116,10 @@
   var load = (typeof require == 'function' && !amd)
     ? require
     : (isJava && root.load) || noop;
+
+  /** Load ES6 Set and WeakMap shims */
+  load('./asset/set.js');
+  load('./asset/weakmap.js');
 
   /** The unit testing framework */
   var QUnit = (function() {
@@ -340,9 +342,6 @@
     function createToString(funcName) {
       return _.constant(nativeString.replace(reToString, funcName));
     }
-    // load ES6 Set and WeakMap shims
-    require('./asset/set');
-    require('./asset/weakmap');
 
     // expose `baseEach` for better code coverage
     if (isModularize && !isNpm) {
@@ -442,14 +441,11 @@
       };
     }()));
 
-    if (Set) {
-      setProperty(root, 'Set', _.noop);
-    }
-    if (WeakMap) {
-      setProperty(root, 'WeakMap', _.noop);
-    }
-    // fake `WinRTError`
-    setProperty(root, 'WinRTError', Error);
+    var _Set = root.Set;
+    setProperty(root, 'Set', _.noop);
+
+    var _WeakMap = root.WeakMap;
+    setProperty(root, 'WeakMap', _.noop);
 
     // fake DOM
     setProperty(root, 'window', {});
@@ -457,6 +453,9 @@
     setProperty(root.window.document, 'createDocumentFragment', function() {
       return { 'nodeType': 11 };
     });
+
+    // fake `WinRTError`
+    setProperty(root, 'WinRTError', Error);
 
     // clear cache so Lo-Dash can be reloaded
     emptyObject(require.cache);
@@ -490,12 +489,12 @@
     } else {
       delete root.ArrayBuffer;
     }
-    if (Set) {
+    if (_Set) {
       setProperty(root, 'Set', Set);
     } else {
       delete root.Set;
     }
-    if (WeakMap) {
+    if (_WeakMap) {
       setProperty(root, 'WeakMap', WeakMap);
     } else {
       delete root.WeakMap;
@@ -614,7 +613,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 14, function() {
+    test('should avoid overwritten native methods', 15, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -647,6 +646,13 @@
         }
         ok(actual[0] instanceof Foo, message('_.create', 'Object.create'));
         deepEqual(actual[1], {}, message('_.create', 'Object.create'));
+
+        try {
+          actual = lodashBizarro.curry(function(a, b) { return [a, b]; })(1)(2);
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, [1, 2], message('_.curry', 'Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -716,7 +722,7 @@
         }
       }
       else {
-        skipTest(14);
+        skipTest(15);
       }
     });
   }());

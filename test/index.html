@@ -115,9 +115,6 @@
 				setProperty(stringProto, '_contains', stringProto.contains);
 				setProperty(stringProto, 'contains', stringProto._contains ? noop : Boolean);
 
-				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
-				document.createDocumentFragment = noop;
-
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array) {
 					ArrayBuffer = (function(_ArrayBuffer) {
@@ -175,6 +172,10 @@
 					};
 				}(_parseInt)));
 
+				// fake lack of DOM support
+				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
+				document.createDocumentFragment = noop;
+
 				// fake `WinRTError`
 				setProperty(window, 'WinRTError', Error);
 
@@ -224,11 +225,6 @@
 				} else {
 					delete stringProto.contains;
 				}
-				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
-
-				document.createDocumentFragment = document._createDocumentFragment;
-				setProperty(document, '_createDocumentFragment', undefined);
-
 				if (window._ArrayBuffer) {
 					ArrayBuffer = _ArrayBuffer;
 				}
@@ -247,11 +243,16 @@
 				setProperty(window, 'parseInt', window._parseInt);
 				setProperty(window, '_parseInt', undefined);
 
+				document.createDocumentFragment = document._createDocumentFragment;
+				setProperty(document, '_createDocumentFragment', undefined);
+
 				setProperty(window, 'WinRTError', undefined);
 
 				setProperty(window, 'exports', undefined);
 				setProperty(window, 'global', undefined);
 				setProperty(window, 'module', undefined);
+
+				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
 				delete Array._isArray;
 				delete Date._now;

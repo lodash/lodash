@@ -2151,7 +2151,7 @@
         var data = getData(func),
             arity = data ? data[2] : func.length;
 
-        arity -= args.length;
+        arity = nativeMax(arity - args.length, 0);
       }
       return (bitmask & PARTIAL_FLAG)
         ? createWrapper(func, bitmask, arity, thisArg, args, holders)

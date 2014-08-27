@@ -10852,7 +10852,7 @@
           if (next) {
             funced.call(next[0], next[1]);
           }
-        }, 32);
+        }, 64);
 
         var next = queue.shift();
         funced.call(next[0], next[1]);
@@ -10861,7 +10861,7 @@
         setTimeout(function() {
           deepEqual(actual, expected);
           QUnit.start();
-        }, 42);
+        }, 96);
       }
       else {
         skipTest(2);

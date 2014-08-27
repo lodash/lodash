@@ -33,10 +33,11 @@
     // These tests are only meaningful when using a browser without a native bind function
     // To test this with a modern browser, set underscore's nativeBind to undefined
     var F = function () { return this; };
-    var Boundf = _.bind(F, {hello: 'moe curly'});
+    var boundf = _.bind(F, {hello: 'moe curly'});
+    var Boundf = boundf; // make eslint happy.
     var newBoundf = new Boundf();
     equal(newBoundf.hello, undefined, 'function should not be bound to the context, to comply with ECMAScript 5');
-    equal(Boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
+    equal(boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
     ok(newBoundf instanceof F, 'a bound instance is an instance of the original function');
 
     raises(function() { _.bind('notafunction'); }, TypeError, 'throws an error when binding to a non-function');
@@ -76,14 +77,20 @@
     moe = {
       name    : 'moe',
       getName : function() { return 'name: ' + this.name; },
-      sayHi   : function() { return 'hi: ' + this.name; }
+      sayHi   : function() { return 'hi: ' + this.name; },
+      sayLast : function() { return this.sayHi(_.last(arguments)); }
     };
 
     raises(function() { _.bindAll(moe); }, Error, 'throws an error for bindAll with no functions named');
+    raises(function() { _.bindAll(moe, 'sayBye'); }, TypeError, 'throws an error for bindAll if the given key is undefined');
+    raises(function() { _.bindAll(moe, 'name'); }, TypeError, 'throws an error for bindAll if the given key is not a function');
 
-    _.bindAll(moe, 'sayHi');
+    _.bindAll(moe, 'sayHi', 'sayLast');
     curly.sayHi = moe.sayHi;
     equal(curly.sayHi(), 'hi: moe');
+
+    var sayLast = moe.sayLast;
+    equal(sayLast(1, 2, 3, 4, 5, 6, 7, 'Tom'), 'hi: moe', 'createCallback works with any number of arguments');
   });
 
   test('memoize', function() {
@@ -111,6 +118,28 @@
     upper.cache = {foo: 'BAR', bar: 'FOO'};
     equal(upper('foo'), 'BAR');
     equal(upper('bar'), 'FOO');
+
+    var hashed = _.memoize(function(key) {
+      //https://github.com/jashkenas/underscore/pull/1679#discussion_r13736209
+      ok(/[a-z]+/.test(key), 'hasher doesn\'t change keys');
+      return key;
+    }, function(key) {
+      return key.toUpperCase();
+    });
+    hashed('yep');
+    deepEqual(hashed.cache, {'YEP': 'yep'}, 'takes a hasher');
+
+    // Test that the hash function can be used to swizzle the key.
+    var objCacher = _.memoize(function(value, key) {
+      return {key: key, value: value};
+    }, function(value, key) {
+      return key;
+    });
+    var myObj = objCacher('a', 'alpha');
+    var myObjAlias = objCacher('b', 'alpha');
+    notStrictEqual(myObj, undefined, 'object is created if second argument used as key');
+    strictEqual(myObj, myObjAlias, 'object is cached if second argument used as key');
+    strictEqual(myObj.value, 'a', 'object is not modified if second argument used as key');
   });
 
   asyncTest('delay', 2, function() {
@@ -170,11 +199,11 @@
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 30);
     throttledIncr(); throttledIncr();
-    ok(counter == 1);
+    equal(counter, 1);
     _.delay(function(){
-      ok(counter == 2);
+      equal(counter, 2);
       throttledIncr();
-      ok(counter == 3);
+      equal(counter, 3);
       start();
     }, 85);
   });
@@ -208,7 +237,7 @@
     var throttledIncr = _.throttle(incr, 32);
 
     var stamp = new Date;
-    while ((new Date - stamp) < limit) {
+    while (new Date - stamp < limit) {
       throttledIncr();
     }
     var lastCount = counter;
@@ -226,10 +255,10 @@
     var throttledIncr = _.throttle(incr, 60, {leading: false});
 
     throttledIncr(); throttledIncr();
-    ok(counter === 0);
+    equal(counter, 0);
 
     _.delay(function() {
-      ok(counter == 1);
+      equal(counter, 1);
       start();
     }, 96);
   });
@@ -243,14 +272,14 @@
     _.delay(throttledIncr, 50);
     _.delay(throttledIncr, 60);
     _.delay(throttledIncr, 200);
-    ok(counter === 0);
+    equal(counter, 0);
 
     _.delay(function() {
-      ok(counter == 1);
+      equal(counter, 1);
     }, 250);
 
     _.delay(function() {
-      ok(counter == 2);
+      equal(counter, 2);
       start();
     }, 350);
   });
@@ -276,16 +305,16 @@
     var throttledIncr = _.throttle(incr, 60, {trailing: false});
 
     throttledIncr(); throttledIncr(); throttledIncr();
-    ok(counter === 1);
+    equal(counter, 1);
 
     _.delay(function() {
-      ok(counter == 1);
+      equal(counter, 1);
 
       throttledIncr(); throttledIncr();
-      ok(counter == 2);
+      equal(counter, 2);
 
       _.delay(function() {
-        ok(counter == 2);
+        equal(counter, 2);
         start();
       }, 96);
     }, 96);
@@ -298,14 +327,14 @@
     var origNowFunc = _.now;
 
     throttledIncr();
-    ok(counter == 1);
+    equal(counter, 1);
     _.now = function () {
       return new Date(2013, 0, 1, 1, 1, 1);
     };
 
     _.delay(function() {
       throttledIncr();
-      ok(counter == 2);
+      equal(counter, 2);
       start();
       _.now = origNowFunc;
     }, 200);
@@ -320,7 +349,7 @@
     var throttledAppend;
     var append = function(arg){
       value += this + arg;
-      var args = sequence.pop()
+      var args = sequence.pop();
       if (args) {
         throttledAppend.call(args[0], args[1]);
       }
@@ -400,7 +429,7 @@
     var debouncedAppend;
     var append = function(arg){
       value += this + arg;
-      var args = sequence.pop()
+      var args = sequence.pop();
       if (args) {
         debouncedAppend.call(args[0], args[1]);
       }
@@ -416,10 +445,12 @@
 
   test('once', function() {
     var num = 0;
-    var increment = _.once(function(){ num++; });
+    var increment = _.once(function(){ return ++num; });
     increment();
     increment();
     equal(num, 1);
+
+    equal(increment(), 1, 'stores a memo to the last value');
   });
 
   test('Recursive onced function.', 1, function() {
@@ -441,13 +472,13 @@
     equal(obj.hi(), 'Hello Moe');
 
     var noop    = function(){};
-    var wrapped = _.wrap(noop, function(fn){ return Array.prototype.slice.call(arguments, 0); });
+    var wrapped = _.wrap(noop, function(){ return Array.prototype.slice.call(arguments, 0); });
     var ret     = wrapped(['whats', 'your'], 'vector', 'victor');
     deepEqual(ret, [noop, ['whats', 'your'], 'vector', 'victor']);
   });
 
   test('negate', function() {
-    var isOdd = function(n){ return (n & 1) == 1; };
+    var isOdd = function(n){ return n & 1; };
     equal(_.negate(isOdd)(2), true, 'should return the complement of the given function');
     equal(_.negate(isOdd)(3), false, 'should return the complement of the given function');
   });
@@ -460,6 +491,22 @@
 
     composed = _.compose(greet, exclaim);
     equal(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative');
+
+    // f(g(h(x, y, z)))
+    function h(x, y, z) {
+      equal(arguments.length, 3, 'First function called with multiple args');
+      return z * y;
+    }
+    function g(x) {
+      equal(arguments.length, 1, 'Composed function is called with 1 argument');
+      return x;
+    }
+    function f(x) {
+      equal(arguments.length, 1, 'Composed function is called with 1 argument');
+      return x * 2;
+    }
+    composed = _.compose(f, g, h);
+    equal(composed(1, 2, 3), 12);
   });
 
   test('after', function() {
@@ -478,4 +525,29 @@
     equal(testAfter(0, 1), 1, 'after(0) should fire when first invoked');
   });
 
-})();
+  test('before', function() {
+    var testBefore = function(beforeAmount, timesCalled) {
+      var beforeCalled = 0;
+      var before = _.before(beforeAmount, function() { beforeCalled++; });
+      while (timesCalled--) before();
+      return beforeCalled;
+    };
+
+    equal(testBefore(5, 5), 4, 'before(N) should not fire after being called N times');
+    equal(testBefore(5, 4), 4, 'before(N) should fire before being called N times');
+    equal(testBefore(0, 0), 0, 'before(0) should not fire immediately');
+    equal(testBefore(0, 1), 0, 'before(0) should not fire when first invoked');
+
+    var context = {num: 0};
+    var increment = _.before(3, function(){ return ++this.num; });
+    _.times(10, increment, context);
+    equal(increment(), 2, 'stores a memo to the last value');
+    equal(context.num, 2, 'provides context');
+  });
+
+  test('iteratee', function() {
+    var identity = _.iteratee();
+    equal(identity, _.identity, '_.iteratee is exposed as an external function.');
+  });
+
+}());

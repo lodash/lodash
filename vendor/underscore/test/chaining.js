@@ -4,10 +4,10 @@
 
   test('map/flatten/reduce', function() {
     var lyrics = [
-      "I'm a lumberjack and I'm okay",
-      "I sleep all night and I work all day",
-      "He's a lumberjack and he's okay",
-      "He sleeps all night and he works all day"
+      'I\'m a lumberjack and I\'m okay',
+      'I sleep all night and I work all day',
+      'He\'s a lumberjack and he\'s okay',
+      'He sleeps all night and he works all day'
     ];
     var counts = _(lyrics).chain()
       .map(function(line) { return line.split(''); })
@@ -17,7 +17,8 @@
         hash[l]++;
         return hash;
     }, {}).value();
-    ok(counts.a == 16 && counts.e == 10, 'counted all the letters in the song');
+    equal(counts.a, 16, 'counted all the letters in the song');
+    equal(counts.e, 10, 'counted all the letters in the song');
   });
 
   test('select/reject/sortBy', function() {
@@ -62,4 +63,4 @@
     deepEqual(o.filter(function(i) { return i > 2; }).value(), [3, 4]);
   });
 
-})();
+}());

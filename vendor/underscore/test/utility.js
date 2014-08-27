@@ -60,7 +60,7 @@
 
   test('uniqueId', function() {
     var ids = [], i = 0;
-    while(i++ < 100) ids.push(_.uniqueId());
+    while (i++ < 100) ids.push(_.uniqueId());
     equal(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
 
@@ -91,19 +91,49 @@
   });
 
   test('_.escape', function() {
-    equal(_.escape('Curly & Moe'), 'Curly &amp; Moe');
-    equal(_.escape('<a href="http://moe.com">Curly & Moe\'s</a>'), '&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;');
-    equal(_.escape('Curly &amp; Moe'), 'Curly &amp;amp; Moe');
     equal(_.escape(null), '');
   });
 
   test('_.unescape', function() {
     var string = 'Curly & Moe';
-    equal(_.unescape('Curly &amp; Moe'), string);
-    equal(_.unescape('&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;'), '<a href="http://moe.com">Curly & Moe\'s</a>');
-    equal(_.unescape('Curly &amp;amp; Moe'), 'Curly &amp; Moe');
     equal(_.unescape(null), '');
     equal(_.unescape(_.escape(string)), string);
+    equal(_.unescape(string), string, 'don\'t unescape unnecessarily');
+  });
+
+  // Don't care what they escape them to just that they're escaped and can be unescaped
+  test('_.escape & unescape', function() {
+    // test & (&amp;) seperately obviously
+    var escapeCharacters = ['<', '>', '"', '\'', '`'];
+
+    _.each(escapeCharacters, function(escapeChar) {
+      var str = 'a ' + escapeChar + ' string escaped';
+      var escaped = _.escape(str);
+      notEqual(str, escaped, escapeChar + ' is escaped');
+      equal(str, _.unescape(escaped), escapeChar + ' can be unescaped');
+
+      str = 'a ' + escapeChar + escapeChar + escapeChar + 'some more string' + escapeChar;
+      escaped = _.escape(str);
+
+      equal(escaped.indexOf(escapeChar), -1, 'can escape multiple occurances of ' + escapeChar);
+      equal(_.unescape(escaped), str, 'multiple occurrences of ' + escapeChar + ' can be unescaped');
+    });
+
+    // handles multiple escape characters at once
+    var joiner = ' other stuff ';
+    var allEscaped = escapeCharacters.join(joiner);
+    allEscaped += allEscaped;
+    ok(_.every(escapeCharacters, function(escapeChar) {
+      return allEscaped.indexOf(escapeChar) !== -1;
+    }), 'handles multiple characters');
+    ok(allEscaped.indexOf(joiner) >= 0, 'can escape multiple escape characters at the same time');
+
+    // test & -> &amp;
+    var str = 'some string & another string & yet another';
+    var escaped = _.escape(str);
+
+    ok(escaped.indexOf('&') !== -1, 'handles & aka &amp;');
+    equal(_.unescape(str), str, 'can unescape &amp;');
   });
 
   test('template', function() {
@@ -120,9 +150,9 @@
     var escapeTemplate = _.template('<%= a ? "checked=\\"checked\\"" : "" %>');
     equal(escapeTemplate({a: true}), 'checked="checked"', 'can handle slash escapes in interpolations.');
 
-    var fancyTemplate = _.template('<ul><% \
-      for (var key in people) { \
-    %><li><%= people[key] %></li><% } %></ul>');
+    var fancyTemplate = _.template('<ul><% ' +
+    '  for (var key in people) { ' +
+    '%><li><%= people[key] %></li><% } %></ul>');
     result = fancyTemplate({people : {moe : 'Moe', larry : 'Larry', curly : 'Curly'}});
     equal(result, '<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>', 'can run arbitrary javascript in templates');
 
@@ -148,16 +178,16 @@
     var quoteTemplate = _.template("It's its, not it's");
     equal(quoteTemplate({}), "It's its, not it's");
 
-    var quoteInStatementAndBody = _.template("<%\
-      if(foo == 'bar'){ \
-    %>Statement quotes and 'quotes'.<% } %>");
+    var quoteInStatementAndBody = _.template('<% ' +
+    "  if(foo == 'bar'){ " +
+    "%>Statement quotes and 'quotes'.<% } %>");
     equal(quoteInStatementAndBody({foo: 'bar'}), "Statement quotes and 'quotes'.");
 
     var withNewlinesAndTabs = _.template('This\n\t\tis: <%= x %>.\n\tok.\nend.');
     equal(withNewlinesAndTabs({x: 'that'}), 'This\n\t\tis: that.\n\tok.\nend.');
 
     var template = _.template('<i><%- value %></i>');
-    var result = template({value: '<script>'});
+    result = template({value: '<script>'});
     equal(result, '<i>&lt;script&gt;</i>');
 
     var stooge = {
@@ -166,12 +196,12 @@
     };
     equal(stooge.template(), "I'm Moe");
 
-    template = _.template('\n \
-      <%\n \
-      // a comment\n \
-      if (data) { data += 12345; }; %>\n \
-      <li><%= data %></li>\n \
-    ');
+    template = _.template('\n ' +
+    '  <%\n ' +
+    '  // a comment\n ' +
+    '  if (data) { data += 12345; }; %>\n ' +
+    '  <li><%= data %></li>\n '
+    );
     equal(template({data : 12345}).replace(/\s/g, ''), '<li>24690</li>');
 
     _.templateSettings = {
@@ -186,7 +216,7 @@
     var customQuote = _.template("It's its, not it's");
     equal(customQuote({}), "It's its, not it's");
 
-    var quoteInStatementAndBody = _.template("{{ if(foo == 'bar'){ }}Statement quotes and 'quotes'.{{ } }}");
+    quoteInStatementAndBody = _.template("{{ if(foo == 'bar'){ }}Statement quotes and 'quotes'.{{ } }}");
     equal(quoteInStatementAndBody({foo: 'bar'}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
@@ -201,7 +231,7 @@
     var customWithSpecialCharsQuote = _.template("It's its, not it's");
     equal(customWithSpecialCharsQuote({}), "It's its, not it's");
 
-    var quoteInStatementAndBody = _.template("<? if(foo == 'bar'){ ?>Statement quotes and 'quotes'.<? } ?>");
+    quoteInStatementAndBody = _.template("<? if(foo == 'bar'){ ?>Statement quotes and 'quotes'.<? } ?>");
     equal(quoteInStatementAndBody({foo: 'bar'}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
@@ -241,7 +271,8 @@
   test('_.templateSettings.variable', function() {
     var s = '<%=data.x%>';
     var data = {x: 'x'};
-    strictEqual(_.template(s, data, {variable: 'data'}), 'x');
+    var tmp = _.template(s, {variable: 'data'});
+    strictEqual(tmp(data), 'x');
     _.templateSettings.variable = 'data';
     strictEqual(_.template(s)(data), 'x');
   });
@@ -262,22 +293,22 @@
     strictEqual(templateEscaped({x: undefined}), '');
 
     var templateWithProperty = _.template('<%=x.foo%>');
-    strictEqual(templateWithProperty({x: {} }), '');
-    strictEqual(templateWithProperty({x: {} }), '');
+    strictEqual(templateWithProperty({x: {}}), '');
+    strictEqual(templateWithProperty({x: {}}), '');
 
     var templateWithPropertyEscaped = _.template('<%-x.foo%>');
-    strictEqual(templateWithPropertyEscaped({x: {} }), '');
-    strictEqual(templateWithPropertyEscaped({x: {} }), '');
+    strictEqual(templateWithPropertyEscaped({x: {}}), '');
+    strictEqual(templateWithPropertyEscaped({x: {}}), '');
   });
 
   test('interpolate evaluates code only once.', 2, function() {
     var count = 0;
     var template = _.template('<%= f() %>');
-    template({f: function(){ ok(!(count++)); }});
+    template({f: function(){ ok(!count++); }});
 
     var countEscaped = 0;
     var templateEscaped = _.template('<%- f() %>');
-    templateEscaped({f: function(){ ok(!(countEscaped++)); }});
+    templateEscaped({f: function(){ ok(!countEscaped++); }});
   });
 
   test('#746 - _.template settings are not modified.', 1, function() {
@@ -291,4 +322,4 @@
     strictEqual(template(), '<<\nx\n>>');
   });
 
-})();
+}());

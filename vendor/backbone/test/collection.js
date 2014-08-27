@@ -60,20 +60,6 @@
     strictEqual(collection.last().get('a'), 4);
   });
 
-  test("clone preserves model and comparator", 3, function() {
-    var Model = Backbone.Model.extend();
-    var comparator = function(model){ return model.id; };
-
-    var collection = new Backbone.Collection([{id: 1}], {
-      model: Model,
-      comparator: comparator
-    }).clone();
-    collection.add({id: 2});
-    ok(collection.at(0) instanceof Model);
-    ok(collection.at(1) instanceof Model);
-    strictEqual(collection.comparator, comparator);
-  });
-
   test("get", 6, function() {
     equal(col.get(0), d);
     equal(col.get(d.clone()), d);
@@ -1347,22 +1333,6 @@
     c.set([{id: 1}, {id: 1}]);
     equal(c.length, 1);
     equal(c.models.length, 1);
-  });
-
-  test('#3020: #set with {add: false} should not throw.', 2, function() {
-    var collection = new Backbone.Collection;
-    collection.set([{id: 1}], {add: false});
-    strictEqual(collection.length, 0);
-    strictEqual(collection.models.length, 0);
-  });
-
-  test("create with wait, model instance, #3028", 1, function() {
-    var collection = new Backbone.Collection();
-    var model = new Backbone.Model({id: 1});
-    model.sync = function(){
-      equal(this.collection, collection);
-    };
-    collection.create(model, {wait: true});
   });
 
 })();

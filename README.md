@@ -70,7 +70,6 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.attempt](http://lodash.com/docs#attempt) to execute functions which may error without a try-catch
  * [_.before](http://lodash.com/docs#before) to complement [_.after](http://lodash.com/docs#after)
  * [_.bindKey](http://lodash.com/docs#bindKey) for binding [*“lazy”*](http://michaux.ca/articles/lazy-function-definition-pattern) defined methods
- * [_.callback](http://lodash.com/docs#createCallback) for extending callbacks in methods & mixins
  * [_.chunk](http://lodash.com/docs#chunk) for splitting an array into chunks of a given size
  * [_.clone](http://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](http://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
@@ -88,10 +87,7 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.isPlainObject](http://lodash.com/docs#isPlainObject) to check for objects created by `Object`
  * [_.keysIn](http://lodash.com/docs#keysIn) & [_.valuesIn](http://lodash.com/docs#valuesIn) for getting keys and values of all enumerable properties
  * [_.mapValues](http://lodash.com/docs#mapValues) for [mapping](http://lodash.com/docs#map) values to an object
- * [_.memoize](http://lodash.com/docs#memoize) exposes the `cache` of memoized functions
  * [_.merge](http://lodash.com/docs#merge) for a deep [_.extend](http://lodash.com/docs#extend)
- * [_.negate](http://lodash.com/docs#negate) to create negated predicate functions
- * [_.noop](http://lodash.com/docs#noop) for function placeholders
  * [_.parseInt](http://lodash.com/docs#parseInt) for consistent behavior
  * [_.pull](http://lodash.com/docs#pull), [_.pullAt](http://lodash.com/docs#pullAt), & [_.remove](http://lodash.com/docs#remove) for mutating arrays
  * [_.random](http://lodash.com/docs#random) supports returning floating-point numbers
@@ -103,25 +99,22 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.transform](http://lodash.com/docs#transform) as a powerful alternative to [_.reduce](http://lodash.com/docs#reduce) for transforming objects
  * [_.where](http://lodash.com/docs#where) supports deep object comparisons
  * [_.xor](http://lodash.com/docs#xor) to complement [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
- * [_.zip](http://lodash.com/docs#zip) is capable of unzipping values
  * [_.bind](http://lodash.com/docs#bind), [_.curry](http://lodash.com/docs#curry), [_.partial](http://lodash.com/docs#partial), &
    [more](http://lodash.com/docs  "_.bindKey, _.curryRight, _.partialRight") support argument placeholders
  * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
    [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc") string methods
+ * [_.clone](http://lodash.com/docs#clone), [_.isEqual](http://lodash.com/docs#isEqual), &
+   [more](http://lodash.com/docs "_.assign, _.cloneDeep, _.merge") accept callbacks
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &
-   [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.forEach, _.forEachRight, _.groupBy, _.invoke, _.map, _.max, _.min, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.where") accept strings
+   [more](http://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.findLast, _.forEach, _.forEachRight, _.groupBy, _.indexBy, _.invoke, _.map, _.max, _.min, _.partition, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy") accept strings
  * [_.dropWhile](http://lodash.com/docs#dropWhile), [_.takeWhile](http://lodash.com/docs#takeWhile), &
    [more](http://lodash.com/docs "_.drop, _.dropRightWhile, _.take, _.takeRightWhile") to complement [_.first](http://lodash.com/docs#first), [_.initial](http://lodash.com/docs#initial), [_.last](http://lodash.com/docs#last), & [_.rest](http://lodash.com/docs#rest)
- * [_.filter](http://lodash.com/docs#filter), [_.map](http://lodash.com/docs#map), &
-   [more](http://lodash.com/docs "_.countBy, _.every, _.find, _.findKey, _.findLast, _.findLastIndex, _.findLastKey, _.first, _.groupBy, _.initial, _.last, _.max, _.min, _.reject, _.rest, _.some, _.sortBy, _.sortedIndex, _.uniq") support *“_.pluck”* & *“_.where”* shorthands
  * [_.findLast](http://lodash.com/docs#findLast), [_.findLastIndex](http://lodash.com/docs#findLastIndex), &
-   [more](http://lodash.com/docs "_.findLastKey, _.forEachRight, _.forInRight, _.forOwnRight, _.partialRight") right-associative methods
- * [_.omit](http://lodash.com/docs#omit), [_.pick](http://lodash.com/docs#pick), &
-   [more](http://lodash.com/docs "_.assign, _.clone, _.cloneDeep, _.isEqual, _.merge") accept callbacks
+   [more](http://lodash.com/docs "_.findLastKey, _.flowRight, _.forEachRight, _.forInRight, _.forOwnRight, _.partialRight") right-associative methods
 
 ## Support
 
-Tested in Chrome (19, 35-36), Firefox (3, 20, 30-31), IE 6-11, Opera 22-23, Safari 5-7, Node.js 0.8.26~0.10.30, PhantomJS 1.9.7, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome (19, 36-37), Firefox (3, 20, 30-31), IE 6-11, Opera 22-23, Safari 5-7, Node.js 0.8.26~0.10.30, PhantomJS 1.9.7, RingoJS 0.9, & Rhino 1.7RC5.
 
 Automated browser test runs [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
 

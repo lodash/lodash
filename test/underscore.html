@@ -42,8 +42,12 @@
 			// excuse tests we intentionally fail or those with problems
 			QUnit.config.excused = {
 				'Arrays': {
+					'drop': [
+						'alias for rest'
+					],
 					'first': [
 						'can pass an index to first',
+						'[1,2]',
 						'0'
 					],
 					'flatten': [
@@ -66,11 +70,16 @@
 						'can pass an index to last',
 						'0'
 					],
+					'lastIndexOf': [
+						'[0,-1,-1]'
+					],
 					'rest': [
 						'working rest(0)',
 						'rest can take an index',
-						'aliased as drop and works on arguments object',
-						'aliased as tail and works on arguments object',
+						'works on arguments object'
+					],
+					'take': [
+						'alias for first'
 					]
 				},
 				'Chaining': {
@@ -85,6 +94,9 @@
 					]
 				},
 				'Collections': {
+					'filter': [
+						'OO-filter'
+					],
 					'map': [
 						'OO-style doubled numbers'
 					],
@@ -105,18 +117,6 @@
 					'bindAll': [
 						'throws an error for bindAll with no functions named'
 					],
-					'memoize': [
-						'{"bar":"BAR","foo":"FOO"}',
-						'"BAR"',
-						'"FOO"'
-					],
-					'negate': true,
-					'partial': [
-						'can partially apply with placeholders',
-						'accepts more arguments than the number of placeholders',
-						'accepts fewer arguments than the number of placeholders',
-						'unfilled placeholders are undefined'
-					],
 					'throttle repeatedly with results': true,
 					'more throttle does not trigger leading call when leading is set to false': true,
 					'throttle does not trigger trailing call when trailing is set to false': true,
@@ -135,21 +135,13 @@
 						'is not fooled by sparse arrays; see issue #95',
 						'[]'
 					],
-					'omit': [
-						'can accept a predicate'
-					],
-					'pick': [
-						'can accept a predicate and context'
+					'matches': [
+						'spec can be a function',
+						'inherited and own properties are checked on the test object',
+						'doesnt fasley match constructor on undefined/null'
 					]
 				},
 				'Utility': {
-					'_.escape': [
-						'"&lt;a href=&quot;http://moe.com&quot;&gt;Curly &amp; Moe&#x27;s&lt;/a&gt;"'
-					],
-					'_.unescape': [
-						'"<a href=\\"http://moe.com\\">Curly & Moe&#039;s</a>"'
-					],
-					'noop': true,
 					'now': [
 						'Produces the correct time in milliseconds'
 					],
@@ -179,29 +171,22 @@
 			}
 			// only excuse for non-Underscore builds
 			if (/\bunderscore\b/i.test(ui.buildPath)) {
-				if (!ui.isModularize) {
-					delete QUnit.config.excused.Functions.partial;
-				}
 				QUnit.config.excused.Arrays.intersection.shift();
+				delete QUnit.config.excused.Arrays.drop;
 				delete QUnit.config.excused.Arrays.first;
 				delete QUnit.config.excused.Arrays.flatten;
 				delete QUnit.config.excused.Arrays.initial;
 				delete QUnit.config.excused.Arrays.last;
 				delete QUnit.config.excused.Arrays.rest;
+				delete QUnit.config.excused.Arrays.take;
 				delete QUnit.config.excused.Chaining;
+				delete QUnit.config.excused.Collections.filter;
 				delete QUnit.config.excused.Collections.map;
 				delete QUnit.config.excused.Objects.isFinite;
 				delete QUnit.config.excused.Objects.keys;
-				delete QUnit.config.excused.Utility['_.escape'];
 				delete QUnit.config.excused.Utility['_.templateSettings.variable'];
-				delete QUnit.config.excused.Utility['_.unescape'];
-			}
-			// only execuse edge features for the Underscore build
-			else {
-				delete QUnit.config.excused.Functions.memoize;
-				delete QUnit.config.excused.Functions.negate;
-				delete QUnit.config.excused.Objects.pick;
-				delete QUnit.config.excused.Utility.noop;
+			} else {
+				QUnit.config.excused.Objects.matches.shift();
 			}
 			// load test scripts
 			document.write(ui.urlParams.loader != 'none'

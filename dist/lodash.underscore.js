@@ -3,7 +3,7 @@
  * Lo-Dash 3.0.0-pre (Custom Build) <http://lodash.com/>
  * Build: `lodash underscore -o ./dist/lodash.underscore.js`
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.6.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <http://lodash.com/license>
  */
@@ -656,6 +656,30 @@
   }
 
   /**
+   * The base implementation of `_.assign` without support for argument juggling,
+   * multiple sources, and `this` binding.
+   *
+   * @private
+   * @param {Object} object The destination object.
+   * @param {Object} source The source object.
+   * @param {Function} [customizer] The function to customize assigning values.
+   * @returns {Object} Returns the destination object.
+   */
+  function baseAssign(object, source, customizer) {
+    var index = -1,
+        props = keys(source),
+        length = props.length;
+
+    while (++index < length) {
+      var key = props[index];
+      object[key] = customizer
+        ? customizer(object[key], source[key], key, object, source)
+        : source[key];
+    }
+    return object;
+  }
+
+  /**
    * The base implementation of `_.bindAll` without support for individual
    * method name arguments.
    *
@@ -1215,7 +1239,7 @@
     if (func) {
       var arity = func.length;
 
-      arity -= args.length;
+      arity = nativeMax(arity - args.length, 0);
     }
     return (bitmask & PARTIAL_FLAG)
       ? createWrapper(func, bitmask, arity, thisArg, args, holders)
@@ -4064,17 +4088,47 @@
    */
   function memoize(func, resolver) {
     if (!isFunction(func) || (resolver && !isFunction(resolver))) {
-      throw new TypeError(funcErrorText);
+      throw new TypeError(FUNC_ERROR_TEXT);
     }
-    var cache = {};
-    return function() {
+    var memoized = function() {
       var key = resolver ? resolver.apply(this, arguments) : arguments[0];
       if (key == '__proto__') {
         return func.apply(this, arguments);
       }
+      var cache = memoized.cache;
       return hasOwnProperty.call(cache, key)
         ? cache[key]
         : (cache[key] = func.apply(this, arguments));
+    };
+    memoized.cache = {};
+    return memoized;
+  }
+
+  /**
+   * Creates a function that negates the result of the predicate `func`. The
+   * `func` predicate is invoked with the `this` binding and arguments of the
+   * created function.
+   *
+   * @static
+   * @memberOf _
+   * @category Function
+   * @param {Function} predicate The predicate to negate.
+   * @returns {Function} Returns the new function.
+   * @example
+   *
+   * function isEven(n) {
+   *   return n % 2 == 0;
+   * }
+   *
+   * _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
+   * // => [1, 3, 5]
+   */
+  function negate(predicate) {
+    if (!isFunction(predicate)) {
+      throw new TypeError(FUNC_ERROR_TEXT);
+    }
+    return function() {
+      return !predicate.apply(this, arguments);
     };
   }
 
@@ -4252,10 +4306,7 @@
       length = 2;
     }
     while (++index < length) {
-      var source = args[index];
-      for (var key in source) {
-        object[key] = source[key];
-      }
+      baseAssign(object, args[index]);
     }
     return object;
   }
@@ -4975,14 +5026,19 @@
    * });
    * // => { 'name': 'fred' }
    */
-  function omit(object) {
+  function omit(object, predicate, thisArg) {
     if (object == null) {
       return {};
     }
-    var iterable = toObject(object),
-        props = arrayMap(baseFlatten(arguments, false, false, 1), String);
-
-    return pickByArray(iterable, baseDifference(keysIn(iterable), props));
+    var iterable = toObject(object);
+    if (typeof predicate != 'function') {
+      var props = arrayMap(baseFlatten(arguments, false, false, 1), String);
+      return pickByArray(iterable, baseDifference(keysIn(iterable), props));
+    }
+    predicate = baseCallback(predicate, thisArg, 3);
+    return pickByCallback(iterable, function(value, key, object) {
+      return !predicate(value, key, object);
+    });
   }
 
   /**
@@ -5039,10 +5095,14 @@
    * });
    * // => { 'name': 'fred' }
    */
-  function pick(object) {
-    return object == null
-      ? {}
-      : pickByArray(toObject(object), baseFlatten(arguments, false, false, 1));
+  function pick(object, predicate, thisArg) {
+    if (object == null) {
+      return {};
+    }
+    var iterable = toObject(object);
+    return typeof predicate == 'function'
+      ? pickByCallback(iterable, baseCallback(predicate, thisArg, 3))
+      : pickByArray(iterable, baseFlatten(arguments, false, false, 1));
   }
 
   /**
@@ -5217,12 +5277,12 @@
    *   };\
    * ');
    */
-  function template(string, data, options) {
+  function template(string, options, otherOptions) {
     var _ = lodash,
         settings = _.templateSettings;
 
     string = String(string == null ? '' : string);
-    options = defaults({}, options, settings);
+    options = defaults({}, otherOptions || options, settings);
 
     var index = 0,
         source = "__p += '",
@@ -5267,7 +5327,7 @@
     if (isError(result)) {
       throw result;
     }
-    return data ? result(data) : result;
+    return result;
   }
 
   /**
@@ -5323,6 +5383,44 @@
     } catch(e) {
       return isError(e) ? e : Error(e);
     }
+  }
+
+  /**
+   * Creates a function bound to an optional `thisArg`. If `func` is a property
+   * name the created callback returns the property value for a given element.
+   * If `func` is an object the created callback returns `true` for elements
+   * that contain the equivalent object properties, otherwise it returns `false`.
+   *
+   * @static
+   * @memberOf _
+   * @alias iteratee
+   * @category Utility
+   * @param {*} [func=identity] The value to convert to a callback.
+   * @param {*} [thisArg] The `this` binding of the created callback.
+   * @returns {Function} Returns the new function.
+   * @example
+   *
+   * var characters = [
+   *   { 'name': 'barney', 'age': 36 },
+   *   { 'name': 'fred',   'age': 40 }
+   * ];
+   *
+   * // wrap to create custom callback shorthands
+   * _.callback = _.wrap(_.callback, function(callback, func, thisArg) {
+   *   var match = /^(.+?)__([gl]t)(.+)$/.exec(func);
+   *   if (!match) {
+   *     return callback(func, thisArg);
+   *   }
+   *   return function(object) {
+   *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
+   *   };
+   * });
+   *
+   * _.filter(characters, 'age__gt38');
+   * // => [{ 'name': 'fred', 'age': 40 }]
+   */
+  function callback(func, thisArg) {
+    return baseCallback(func, thisArg);
   }
 
   /**
@@ -5484,6 +5582,22 @@
   function noConflict() {
     root._ = oldDash;
     return this;
+  }
+
+  /**
+   * A no-operation function.
+   *
+   * @static
+   * @memberOf _
+   * @category Utility
+   * @example
+   *
+   * var object = { 'name': 'fred' };
+   * _.noop(object) === undefined;
+   * // => true
+   */
+  function noop() {
+    // no operation performed
   }
 
   /**
@@ -5745,6 +5859,7 @@
 
   // add functions that return wrapped values when chaining
   lodash.after = after;
+  lodash.before = before;
   lodash.bind = bind;
   lodash.bindAll = bindAll;
   lodash.chain = chain;
@@ -5772,6 +5887,7 @@
   lodash.matches = matches;
   lodash.memoize = memoize;
   lodash.mixin = mixin;
+  lodash.negate = negate;
   lodash.omit = omit;
   lodash.once = once;
   lodash.pairs = pairs;
@@ -5803,6 +5919,7 @@
   lodash.compose = flowRight;
   lodash.each = forEach;
   lodash.extend = assign;
+  lodash.iteratee = callback;
   lodash.methods = functions;
   lodash.object = zipObject;
   lodash.select = filter;
@@ -5843,6 +5960,7 @@
   lodash.max = max;
   lodash.min = min;
   lodash.noConflict = noConflict;
+  lodash.noop = noop;
   lodash.now = now;
   lodash.random = random;
   lodash.reduce = reduce;

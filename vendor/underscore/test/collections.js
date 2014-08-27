@@ -537,8 +537,8 @@
 
   test('indexBy', function() {
     var parity = _.indexBy([1, 2, 3, 4, 5], function(num){ return num % 2 === 0; });
-    equal(parity.true, 4);
-    equal(parity.false, 5);
+    equal(parity['true'], 4);
+    equal(parity['false'], 5);
 
     var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     var grouped = _.indexBy(list, 'length');
@@ -555,8 +555,8 @@
 
   test('countBy', function() {
     var parity = _.countBy([1, 2, 3, 4, 5], function(num){ return num % 2 === 0; });
-    equal(parity.true, 2);
-    equal(parity.false, 3);
+    equal(parity['true'], 2);
+    equal(parity['false'], 3);
 
     var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
     var grouped = _.countBy(list, 'length');

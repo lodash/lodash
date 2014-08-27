@@ -177,10 +177,6 @@
    * @param {Object} context The context object.
    */
   function runInContext(context) {
-    // exit early if no `context` is provided or if `QUnit` does not exist
-    if (!context || !context.QUnit) {
-      return;
-    }
 
     /** Used to report the test module for failing tests */
     var moduleName,

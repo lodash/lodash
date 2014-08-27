@@ -117,10 +117,6 @@
     ? require
     : (isJava && root.load) || noop;
 
-  /** Load ES6 Set and WeakMap shims */
-  load('./asset/set.js');
-  load('./asset/weakmap.js');
-
   /** The unit testing framework */
   var QUnit = (function() {
     return  root.QUnit || (
@@ -132,11 +128,24 @@
     );
   }());
 
-  /** Load and install QUnit Extras */
-  var qe = load('../vendor/qunit-extras/qunit-extras.js');
-  if (qe) {
-    qe.runInContext(root);
-  }
+  /** Load and install QUnit Extras and ES6 Set/WeakMap shims */
+  (function() {
+    var paths = [
+      './asset/set.js',
+      './asset/weakmap.js',
+      '../vendor/qunit-extras/qunit-extras.js'
+    ];
+
+    var index = -1,
+        length = paths.length;
+
+    while (++index < length) {
+      var object = load(paths[index]);
+      if (object) {
+        object.runInContext(root);
+      }
+    }
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -613,7 +622,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 15, function() {
+    test('should avoid overwritten native methods', 14, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -646,13 +655,6 @@
         }
         ok(actual[0] instanceof Foo, message('_.create', 'Object.create'));
         deepEqual(actual[1], {}, message('_.create', 'Object.create'));
-
-        try {
-          actual = lodashBizarro.curry(function(a, b) { return [a, b]; })(1)(2);
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, [1, 2], message('_.curry', 'Object.defineProperty'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -722,7 +724,7 @@
         }
       }
       else {
-        skipTest(15);
+        skipTest(14);
       }
     });
   }());
@@ -2210,19 +2212,19 @@
 
       var object = {};
 
-      if ((defineProperty && !WeakMap) && _.support.funcDecomp) {
-        _.callback(a, object);
+      if (lodashBizarro && lodashBizarro.support.funcDecomp) {
+        lodashBizarro.callback(a, object);
         ok(EXPANDO in a);
 
-        _.callback(b, object);
+        lodashBizarro.callback(b, object);
         ok(!(EXPANDO in b));
 
-        if (_.support.funcNames) {
-          _.support.funcNames = false;
-          _.callback(c, object);
+        if (lodashBizarro.support.funcNames) {
+          lodashBizarro.support.funcNames = false;
+          lodashBizarro.callback(c, object);
 
           ok(EXPANDO in c);
-          _.support.funcNames = true;
+          lodashBizarro.support.funcNames = true;
         }
         else {
           skipTest();
@@ -2236,7 +2238,7 @@
     test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
       function a() {};
 
-      if ((defineProperty && !WeakMap) && lodashBizarro) {
+      if (lodashBizarro) {
         lodashBizarro.callback(a, {});
         ok(!(EXPANDO in a));
       }

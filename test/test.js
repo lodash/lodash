@@ -205,6 +205,10 @@
   /** Used as the property name for wrapper metadata */
   var EXPANDO = '__lodash_' + _.VERSION.replace(/[-.]/g, '_') + '__';
 
+  var spy = {
+    toString : function() { throw new Error('The spy was revealed!'); }
+  };
+
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
@@ -272,6 +276,19 @@
     _.forOwn(object, function(value, key, object) {
       delete object[key];
     });
+  }
+
+  /** Returns an object with regular and chained version of provided method */
+  function getMethodVariations(methodName) {
+    var o = {};
+    o['`_.' + methodName + '`'] = _[methodName];
+    o['`_(...).' + methodName + '`'] = function chainFunctionCaller(array) {
+      var wrapper = _(array),
+          args = slice.call(arguments, 1),
+          result = wrapper[methodName].apply(wrapper, args);
+      return result instanceof _ ? result.value() : result;
+    };
+    return o;
   }
 
   /**
@@ -2206,9 +2223,9 @@
     });
 
     test('should only write metadata to named functions', 3, function() {
-      function a() {};
+      function a() {}
       var b = function() {};
-      function c() {};
+      function c() {}
 
       var object = {};
 
@@ -2236,7 +2253,7 @@
     });
 
     test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
-      function a() {};
+      function a() {}
 
       if (lodashBizarro) {
         lodashBizarro.callback(a, {});
@@ -2939,31 +2956,33 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should drop the first two elements', 1, function() {
-      deepEqual(_.drop(array, 2), [3]);
-    });
-
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [2, 3] : array;
+    _.forIn(getMethodVariations('drop'), function(drop, formattedMethodName) {
+      test(formattedMethodName + ' should drop the first two elements', 1, function() {
+        deepEqual(drop(array, 2), [3]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.drop(array, n);
+      test(formattedMethodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+        var expected = _.map(falsey, function(value) {
+          return value == null ? [2, 3] : array;
+        });
+
+        var actual = _.map(falsey, function(n) {
+          return drop(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
-
-    test('should return all elements when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.drop(array, n), array);
+      test(formattedMethodName + ' should return all elements when `n` < `1`', 3, function() {
+        _.each([0, -1, -Infinity], function(n) {
+          deepEqual(drop(array, n), array);
+        });
       });
-    });
 
-    test('should return an empty array when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.drop(array, n), []);
+      test(formattedMethodName + ' should return an empty array when `n` >= `array.length`', 4, function() {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+          deepEqual(drop(array, n), []);
+        });
       });
     });
 
@@ -2984,6 +3003,18 @@
         skipTest(2);
       }
     });
+
+    test('should drop the first two elements when reversed in a chain', 1, function() {
+      deepEqual(_(array).reverse().drop(2).value(), [1]);
+    });
+
+    test('should drop the first two elements when filtered in a chain', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).drop(2).value(), [3]);
+    });
+
+    test('should drop the first two elements when filtered and reversed in a chain', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).reverse().drop(1).reverse().drop(1).value(), [2]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -2993,31 +3024,33 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should drop the last two elements', 1, function() {
-      deepEqual(_.dropRight(array, 2), [1]);
-    });
-
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [1, 2] : array;
+    _.forIn(getMethodVariations('dropRight'), function(dropRight, formattedMethodName) {
+      test(formattedMethodName + ' should drop the last two elements', 1, function () {
+        deepEqual(dropRight(array, 2), [1]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.dropRight(array, n);
+      test(formattedMethodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function () {
+        var expected = _.map(falsey, function (value) {
+          return value == null ? [1, 2] : array;
+        });
+
+        var actual = _.map(falsey, function (n) {
+          return dropRight(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
-
-    test('should return all elements when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.dropRight(array, n), array);
+      test(formattedMethodName + ' should return all elements when `n` < `1`', 3, function () {
+        _.each([0, -1, -Infinity], function (n) {
+          deepEqual(dropRight(array, n), array);
+        });
       });
-    });
 
-    test('should return an empty array when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.dropRight(array, n), []);
+      test(formattedMethodName + ' should return an empty array when `n` >= `array.length`', 4, function () {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function (n) {
+          deepEqual(dropRight(array, n), []);
+        });
       });
     });
 
@@ -3038,6 +3071,18 @@
         skipTest(2);
       }
     });
+
+    test('should drop the first two elements when reversed', 1, function() {
+      deepEqual(_(array).reverse().dropRight(2).value(), [3]);
+    });
+
+    test('should drop the first two elements when filtered', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).dropRight(2).value(), [1]);
+    });
+
+    test('should drop the first two elements when filtered and reversed', 1, function() {
+      deepEqual(_([1, 0, 2, 0, 3, 0]).filter(_.identity).reverse().dropRight(1).reverse().dropRight(1).value(), [2]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3053,38 +3098,40 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('should drop elements while `predicate` returns truthy', 1, function() {
-      var actual = _.dropRightWhile(array, function(num) {
-        return num > 1;
+    _.forIn(getMethodVariations('dropRightWhile'), function(dropRightWhile, formattedMethodName) {
+      test(formattedMethodName + ' should drop elements while `predicate` returns truthy', 1, function () {
+        var actual = dropRightWhile(array, function (num) {
+          return num > 1;
+        });
+
+        deepEqual(actual, [1]);
       });
 
-      deepEqual(actual, [1]);
-    });
+      test(formattedMethodName + ' should provide the correct `predicate` arguments', 1, function () {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        dropRightWhile(array, function () {
+          args = slice.call(arguments);
+        });
 
-      _.dropRightWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [3, 2, array]);
       });
 
-      deepEqual(args, [3, 2, array]);
-    });
+      test(formattedMethodName + ' should support the `thisArg` argument', 1, function () {
+        var actual = dropRightWhile(array, function (num, index) {
+          return this[index] > 1;
+        }, array);
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.dropRightWhile(array, function(num, index) {
-        return this[index] > 1;
-      }, array);
+        deepEqual(actual, [1]);
+      });
 
-      deepEqual(actual, [1]);
-    });
+      test(formattedMethodName + ' should work with an object for `predicate`', 1, function () {
+        deepEqual(dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
+      });
 
-    test('should work with an object for `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, 'b'), objects.slice(0, 1));
+      test(formattedMethodName + ' should work with a "_.pluck" style `predicate`', 1, function () {
+        deepEqual(dropRightWhile(objects, 'b'), objects.slice(0, 1));
+      });
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3098,6 +3145,19 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).dropRightWhile` should work properly with `_(...).reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([3, 2, 1, 0])
+          .reverse()
+          .dropRightWhile(Boolean);
+
+        deepEqual(actual.value(), [0]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -3115,38 +3175,40 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    test('should drop elements while `predicate` returns truthy', 1, function() {
-      var actual = _.dropWhile(array, function(num) {
-        return num < 3;
+    _.forIn(getMethodVariations('dropWhile'), function(dropWhile, formattedMethodName) {
+      test(formattedMethodName + ' should drop elements while `predicate` returns truthy', 1, function () {
+        var actual = dropWhile(array, function (num) {
+          return num < 3;
+        });
+
+        deepEqual(actual, [3]);
       });
 
-      deepEqual(actual, [3]);
-    });
+      test(formattedMethodName + ' should provide the correct `predicate` arguments', 1, function () {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        dropWhile(array, function () {
+          args = slice.call(arguments);
+        });
 
-      _.dropWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [1, 0, array]);
       });
 
-      deepEqual(args, [1, 0, array]);
-    });
+      test(formattedMethodName + ' should support the `thisArg` argument', 1, function () {
+        var actual = dropWhile(array, function (num, index) {
+          return this[index] < 3;
+        }, array);
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.dropWhile(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
+        deepEqual(actual, [3]);
+      });
 
-      deepEqual(actual, [3]);
-    });
+      test(formattedMethodName + ' should work with an object for `predicate`', 1, function () {
+        deepEqual(dropWhile(objects, { 'b': 2 }), objects.slice(1));
+      });
 
-    test('should work with an object for `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
+      test(formattedMethodName + ' should work with a "_.pluck" style `predicate`', 1, function () {
+        deepEqual(dropWhile(objects, 'b'), objects.slice(2));
+      });
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3160,6 +3222,33 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).dropWhile` should work properly with `reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([0, 1, 2, 3])
+          .reverse()
+          .dropWhile(Boolean);
+
+        deepEqual(actual.value(), [0]);
+      }
+      else {
+        skipTest(1);
+      }
+    });
+
+    test('`_(...).dropWhile` should work properly with double `reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([0, 1, 2, 3])
+          .reverse()
+          .dropWhile(Boolean)
+          .reverse();
+
+        deepEqual(actual.value(), [0]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -3304,6 +3393,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('source property checks');
+
+  _.each(['assign', 'defaults', 'merge'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = { 'a': 1 };
+
+      deepEqual(func({}, new Foo), {});
+    });
+
+    test('should work when used as a callback for `_.reduce`', 1, function() {
+      var array = [{ 'a':  1 }, { 'b': 2 }, { 'c': 3 }],
+          actual = _.reduce(array, _.merge);
+
+      deepEqual(actual, { 'a':  1, 'b': 2, 'c': 3 });
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('strict mode checks');
 
   _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
@@ -3337,12 +3448,14 @@
   QUnit.module('lodash.filter');
 
   (function() {
-    test('should return elements `predicate` returns truthy for', 1, function() {
-      var actual = _.filter([1, 2, 3], function(num) {
-        return num % 2;
-      });
+    _.forIn(getMethodVariations('filter'), function(filter, methodName) {
+      test(methodName + ' should return elements `predicate` returns truthy for', 1, function() {
+        var actual = filter([1, 2, 3], function(num) {
+          return num % 2;
+        });
 
-      deepEqual(actual, [1, 3]);
+        deepEqual(actual, [1, 3]);
+      });
     });
 
     test('should not modify wrapped values', 2, function() {
@@ -3366,8 +3479,17 @@
       }
     });
 
-    test('should be aliased', 1, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.select, _.filter);
+      strictEqual(_().select, _().filter);
+    });
+
+    test('should filter already limited collection', 1, function () {
+      var collection = [0, 2, 0, 4];
+
+      var actual = _(collection).take(2).filter(Boolean).value();
+
+      deepEqual(actual, [2]);
     });
   }());
 
@@ -3520,12 +3642,14 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should return the first element', 1, function() {
+    test('should return the first element', 2, function() {
       strictEqual(_.first(array), 1);
+      strictEqual(_(array).first(), 1);
     });
 
-    test('should return `undefined` when querying empty arrays', 1, function() {
+    test('should return `undefined` when querying empty arrays', 2, function() {
       strictEqual(_.first([]), undefined);
+      strictEqual(_([]).first(), undefined);
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -3556,31 +3680,34 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should take the first two elements', 1, function() {
-      deepEqual(_.take(array, 2), [1, 2]);
-    });
+    _.forIn(getMethodVariations('take'), function(take, methodName) {
 
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [1] : [];
+      test(methodName + ' should take the first two elements', 1, function() {
+        deepEqual(take(array, 2), [1, 2]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.take(array, n);
+      test(methodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+        var expected = _.map(falsey, function(value) {
+          return value == null ? [1] : [];
+        });
+
+        var actual = _.map(falsey, function(n) {
+          return take(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
-
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.take(array, n), []);
+      test(methodName + ' should return an empty array when `n` < `1`', 3, function() {
+        _.each([0, -1, -Infinity], function(n) {
+          deepEqual(take(array, n), []);
+        });
       });
-    });
 
-    test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.take(array, n), array);
+      test(methodName + ' should return all elements when `n` >= `array.length`', 4, function() {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+          deepEqual(take(array, n), array);
+        });
       });
     });
 
@@ -3591,7 +3718,7 @@
       deepEqual(actual, [[1], [4], [7]]);
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).take` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).take(2);
         ok(actual instanceof _);
@@ -3600,6 +3727,18 @@
       else {
         skipTest(2);
       }
+    });
+
+    test('`_(...).take` should limit number of elements returned when filter is applied', 1, function () {
+      var collection = [1, 0, 2, 0, spy];
+
+      var actual = _(collection)
+        .filter(_.identity) // `filter` changes collection size, what is a special case for take
+        .take(2)
+        .map(Number) // Number-cast cause the spy to be revelead. Proper lazy implementation never queries spy
+        .value();
+
+      deepEqual(actual, [1, 2]);
     });
   }());
 
@@ -3610,31 +3749,33 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should take the last two elements', 1, function() {
-      deepEqual(_.takeRight(array, 2), [2, 3]);
-    });
-
-    test('should treat falsey `n` values, except nullish, as `0`', 1, function() {
-      var expected = _.map(falsey, function(value) {
-        return value == null ? [3] : [];
+    _.forIn(getMethodVariations('takeRight'), function(takeRight, methodName) {
+      test(methodName + ' should take the last two elements', 1, function() {
+        deepEqual(takeRight(array, 2), [2, 3]);
       });
 
-      var actual = _.map(falsey, function(n) {
-        return _.takeRight(array, n);
+      test(methodName + ' should treat falsey `n` values, except nullish, as `0`', 1, function() {
+        var expected = _.map(falsey, function(value) {
+          return value == null ? [3] : [];
+        });
+
+        var actual = _.map(falsey, function(n) {
+          return takeRight(array, n);
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
-
-    test('should return an empty array when `n` < `1`', 3, function() {
-      _.each([0, -1, -Infinity], function(n) {
-        deepEqual(_.takeRight(array, n), []);
+      test(methodName + ' should return an empty array when `n` < `1`', 3, function() {
+        _.each([0, -1, -Infinity], function(n) {
+          deepEqual(takeRight(array, n), []);
+        });
       });
-    });
 
-    test('should return all elements when `n` >= `array.length`', 4, function() {
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        deepEqual(_.takeRight(array, n), array);
+      test(methodName + ' should return all elements when `n` >= `array.length`', 4, function() {
+        _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+          deepEqual(takeRight(array, n), array);
+        });
       });
     });
 
@@ -3645,7 +3786,7 @@
       deepEqual(actual, [[3], [6], [9]]);
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).takeRight` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).takeRight(2);
         ok(actual instanceof _);
@@ -3654,6 +3795,14 @@
       else {
         skipTest(2);
       }
+    });
+
+    test('`_(...).takeRight` should limit number of elements returned when filter is applied', 1, function () {
+      var collection = [spy, 1, 0, 2, 0];
+
+      var actual = _(collection).filter(_.identity).takeRight(2).map(Number).value();
+
+      deepEqual(actual, [1, 2]);
     });
   }());
 
@@ -3670,41 +3819,43 @@
       { 'a': 2, 'b': 2 }
     ];
 
-    test('should take elements while `predicate` returns truthy', 1, function() {
-      var actual = _.takeRightWhile(array, function(num) {
-        return num > 1;
+    _.forIn(getMethodVariations('takeRightWhile'), function(takeRightWhile, methodName) {
+      test(methodName + ' should take elements while `predicate` returns truthy', 1, function() {
+        var actual = takeRightWhile(array, function(num) {
+          return num > 1;
+        });
+
+        deepEqual(actual, [2, 3]);
       });
 
-      deepEqual(actual, [2, 3]);
-    });
+      test(methodName + ' should provide the correct `predicate` arguments', 1, function() {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        takeRightWhile(array, function() {
+          args = slice.call(arguments);
+        });
 
-      _.takeRightWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [3, 2, array]);
       });
 
-      deepEqual(args, [3, 2, array]);
+      test(methodName + ' should support the `thisArg` argument', 1, function() {
+        var actual = takeRightWhile(array, function(num, index) {
+          return this[index] > 1;
+        }, array);
+
+        deepEqual(actual, [2, 3]);
+      });
+
+      test(methodName + ' should work with a "_.pluck" style `predicate`', 1, function() {
+        deepEqual(takeRightWhile(objects, 'b'), objects.slice(1));
+      });
+
+      test(methodName + ' should work with a "_.where" style `predicate`', 1, function() {
+        deepEqual(takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
+      });
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.takeRightWhile(array, function(num, index) {
-        return this[index] > 1;
-      }, array);
-
-      deepEqual(actual, [2, 3]);
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
-    });
-
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).takeRightWhile` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).takeRightWhile(function(num) {
           return num > 1;
@@ -3715,6 +3866,20 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).takeRightWhile` should work properly with `_(...).reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3, spy]).map(Number)
+                                        .reverse()
+                                        .takeRightWhile(function(num) { return num < 3; })
+                                        .reverse();
+
+        deepEqual(actual.value(), [1, 2]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -3732,41 +3897,43 @@
       { 'a': 0, 'b': 0 }
     ];
 
-    test('should take elements while `predicate` returns truthy', 1, function() {
-      var actual = _.takeWhile(array, function(num) {
-        return num < 3;
+    _.forIn(getMethodVariations('takeWhile'), function(takeWhile, methodName) {
+      test(methodName + ' should take elements while `predicate` returns truthy', 1, function() {
+        var actual = takeWhile(array, function(num) {
+          return num < 3;
+        });
+
+        deepEqual(actual, [1, 2]);
       });
 
-      deepEqual(actual, [1, 2]);
-    });
+      test(methodName + ' should provide the correct `predicate` arguments', 1, function() {
+        var args;
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
+        takeWhile(array, function() {
+          args = slice.call(arguments);
+        });
 
-      _.takeWhile(array, function() {
-        args = slice.call(arguments);
+        deepEqual(args, [1, 0, array]);
       });
 
-      deepEqual(args, [1, 0, array]);
+      test(methodName + ' should support the `thisArg` argument', 1, function() {
+        var actual = takeWhile(array, function(num, index) {
+          return this[index] < 3;
+        }, array);
+
+        deepEqual(actual, [1, 2]);
+      });
+
+      test(methodName + ' should work with a "_.pluck" style `predicate`', 1, function() {
+        deepEqual(takeWhile(objects, 'b'), objects.slice(0, 2));
+      });
+
+      test(methodName + ' should work with a "_.where" style `predicate`', 1, function() {
+        deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
+      });
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.takeWhile(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
-
-      deepEqual(actual, [1, 2]);
-    });
-
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
-    });
-
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
+    test('`_(...).takeWhile` should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var actual = _(array).takeWhile(function(num) {
           return num < 3;
@@ -3777,6 +3944,32 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_(...).takeWhile` should read minimal number of elements', 1, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3, spy]).map(Number)
+          .takeWhile(function(num) { return num < 3; });
+
+        deepEqual(actual.value(), [1, 2]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_(...).takeWhile` should work properly with `_(...).reverse`', 1, function() {
+      if (!isNpm) {
+        var actual = _([spy, 3, 2, 1]).map(Number)
+          .reverse()
+          .takeWhile(function(num) { return num < 3; })
+          .reverse();
+
+        deepEqual(actual.value(), [2, 1]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -4039,7 +4232,7 @@
       'forInRight',
       'forOwn',
       'forOwnRight'
-    ]
+    ];
 
     var objectMethods = [
       'forIn',
@@ -4062,38 +4255,39 @@
     ];
 
     _.each(methods, function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName];
+      _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
+        var array = [1, 2, 3];
 
-      test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
-        var args,
+        test(formattedMethodName + ' should provide the correct `callback` arguments', 1, function() {
+          var args,
             expected = [1, 0, array];
 
-        func(array, function() {
-          args || (args = slice.call(arguments));
+          func(array, function() {
+            args || (args = slice.call(arguments));
+          });
+
+          if (_.contains(rightMethods, methodName)) {
+            expected[0] = 3;
+            expected[1] = 2;
+          }
+          if (_.contains(objectMethods, methodName)) {
+            expected[1] += '';
+          }
+          deepEqual(args, expected);
         });
 
-        if (_.contains(rightMethods, methodName)) {
-          expected[0] = 3;
-          expected[1] = 2;
-        }
-        if (_.contains(objectMethods, methodName)) {
-          expected[1] += '';
-        }
-        deepEqual(args, expected);
-      });
+        test(formattedMethodName + ' should support the `thisArg` argument', 2, function() {
+          var actual;
 
-      test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
-        var actual;
+          function callback(num, index) {
+            actual = this[index];
+          }
+          func([1], callback, [2]);
+          strictEqual(actual, 2);
 
-        function callback(num, index) {
-          actual = this[index];
-        }
-        func([1], callback, [2]);
-        strictEqual(actual, 2);
-
-        func({ 'a': 1 }, callback, { 'a': 2 });
-        strictEqual(actual, 2);
+          func({ 'a': 1 }, callback, { 'a': 2 });
+          strictEqual(actual, 2);
+        });
       });
     });
 
@@ -4128,16 +4322,17 @@
     });
 
     _.each(_.difference(methods, forInMethods), function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName];
+      _.forIn(getMethodVariations(methodName), function (func, formattedMethodName) {
+        var array = [1, 2, 3];
 
-      test('`_.' + methodName + '` iterates over own properties of objects', 1, function() {
-        function Foo() { this.a = 1; }
-        Foo.prototype.b = 2;
+        test(formattedMethodName + ' iterates over own properties of objects', 1, function() {
+          function Foo() { this.a = 1; }
+          Foo.prototype.b = 2;
 
-        var keys = [];
-        func(new Foo, function(value, key) { keys.push(key); });
-        deepEqual(keys, ['a']);
+          var keys = [];
+          func(new Foo, function(value, key) { keys.push(key); });
+          deepEqual(keys, ['a']);
+        });
       });
     });
 
@@ -4161,24 +4356,24 @@
     });
 
     _.each(collectionMethods, function(methodName) {
-      var func = _[methodName];
+      _.forIn(getMethodVariations(methodName), function (func, formattedMethodName) {
+        test(formattedMethodName + ' should treat objects with lengths of `0` as array-like', 1, function() {
+          var pass = true;
+          func({ 'length': 0 }, function() { pass = false; }, 0);
+          ok(pass);
+        });
 
-      test('`_.' + methodName + '` should treat objects with lengths of `0` as array-like', 1, function() {
-        var pass = true;
-        func({ 'length': 0 }, function() { pass = false; }, 0);
-        ok(pass);
-      });
+        test(formattedMethodName + ' should not treat objects with negative lengths as array-like', 1, function() {
+          var pass = false;
+          func({ 'length': -1 }, function() { pass = true; }, 0);
+          ok(pass);
+        });
 
-      test('`_.' + methodName + '` should not treat objects with negative lengths as array-like', 1, function() {
-        var pass = false;
-        func({ 'length': -1 }, function() { pass = true; }, 0);
-        ok(pass);
-      });
-
-      test('`_.' + methodName + '` should not treat objects with non-number lengths as array-like', 1, function() {
-        var pass = false;
-        func({ 'length': '0' }, function() { pass = true; }, 0);
-        ok(pass);
+        test(formattedMethodName + ' should not treat objects with non-number lengths as array-like', 1, function() {
+          var pass = false;
+          func({ 'length': '0' }, function() { pass = true; }, 0);
+          ok(pass);
+        });
       });
     });
   }());
@@ -4783,24 +4978,26 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
+    _.forIn(getMethodVariations('initial'), function(initial, formattedMethodName) {
+      test(formattedMethodName + ' should accept a falsey `array` argument', 1, function() {
+        var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.initial(value) : _.initial();
-        } catch(e) {}
+        var actual = _.map(falsey, function(value, index) {
+          try {
+            return index ? initial(value) : initial();
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(formattedMethodName + ' should exclude last element', 1, function() {
+        deepEqual(initial(array), [1, 2]);
+      });
 
-    test('should exclude last element', 1, function() {
-      deepEqual(_.initial(array), [1, 2]);
-    });
-
-    test('should return an empty when querying empty arrays', 1, function() {
-      deepEqual(_.initial([]), []);
+      test(formattedMethodName + ' should return an empty when querying empty arrays', 1, function() {
+        deepEqual(initial([]), []);
+      });
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -4819,6 +5016,30 @@
       else {
         skipTest(2);
       }
+    });
+
+    test('should work with `reverse` when chaining', 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).reverse().initial().value();
+
+      deepEqual(actual, [3, 2]);
+    });
+
+    test('should work with `take` when chaining', 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).take(2).initial().value();
+
+      deepEqual(actual, [1]);
+    });
+
+    test('should work with `filter` when chaining', 1, function () {
+      var collection = [1, 0, 2, 0, 3, 0, 4];
+
+      var actual = _(collection).filter(_.identity).initial().value();
+
+      deepEqual(actual, [1, 2, 3]);
     });
   }());
 
@@ -5909,6 +6130,21 @@
         skipTest();
       }
     });
+
+    test('should resolve lazy values before comparison', 4, function() {
+      if (!isNpm) {
+        var lazyWrapper = _([0, 1, 2]).map(_.identity);
+
+        strictEqual(_.isEqual(lazyWrapper, [0, 1, 2]), true);
+        strictEqual(lazyWrapper.isEqual([0, 1, 2]), true);
+
+        strictEqual(_.isEqual(lazyWrapper, [0, 1]), false);
+        strictEqual(lazyWrapper.isEqual([0, 1]), false);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -6772,14 +7008,14 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should return the last element', 1, function() {
+    test('should return the last element', 2, function() {
       strictEqual(_.last(array), 3);
+      strictEqual(_(array).last(), 3);
     });
 
-    test('should return `undefined` when querying empty arrays', 1, function() {
-      var array = []
-      array['-1'] = 1;
+    test('should return `undefined` when querying empty arrays', 2, function() {
       strictEqual(_.last([]), undefined);
+      strictEqual(_([]).last(), undefined);
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -6911,78 +7147,80 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should provide the correct `callback` arguments', 1, function() {
-      var args;
+    _.forIn(getMethodVariations('map'), function(map, formattedMethodName) {
+      test(formattedMethodName + ' should provide the correct `callback` arguments', 1, function() {
+        var args;
 
-      _.map(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [1, 0, array]);
-    });
-
-    test('should support the `thisArg` argument', 2, function() {
-      function callback(num, index) {
-        return this[index] + num;
-      }
-
-      var actual = _.map([1], callback, [2]);
-      deepEqual(actual, [3]);
-
-      actual = _.map({ 'a': 1 }, callback, { 'a': 2 });
-      deepEqual(actual, [3]);
-    });
-
-    test('should iterate over own properties of objects', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var actual = _.map(new Foo, function(value, key) { return key; });
-      deepEqual(actual, ['a']);
-    });
-
-    test('should work on an object with no `callback`', 1, function() {
-      var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 });
-      deepEqual(actual, array);
-    });
-
-    test('should handle object arguments with non-numeric length properties', 1, function() {
-      if (defineProperty) {
-        var object = {};
-        defineProperty(object, 'length', { 'value': 'x' });
-        deepEqual(_.map(object, _.identity), []);
-      } else {
-        skipTest();
-      }
-    });
-
-    test('should treat a nodelist as an array-like object', 1, function() {
-      if (document) {
-        var actual = _.map(document.getElementsByTagName('body'), function(element) {
-          return element.nodeName.toLowerCase();
+        map(array, function() {
+          args || (args = slice.call(arguments));
         });
 
-        deepEqual(actual, ['body']);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should accept a falsey `collection` argument', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
-
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.map(value) : _.map();
-        } catch(e) {}
+        deepEqual(args, [1, 0, array]);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(formattedMethodName + ' should support the `thisArg` argument', 2, function() {
+        function callback(num, index) {
+          return this[index] + num;
+        }
 
-    test('should treat number values for `collection` as empty', 1, function() {
-      deepEqual(_.map(1), []);
+        var actual = map([1], callback, [2]);
+        deepEqual(actual, [3]);
+
+        actual = map({ 'a': 1 }, callback, { 'a': 2 });
+        deepEqual(actual, [3]);
+      });
+
+      test(formattedMethodName + ' should iterate over own properties of objects', 1, function() {
+        function Foo() { this.a = 1; }
+        Foo.prototype.b = 2;
+
+        var actual = map(new Foo, function(value, key) { return key; });
+        deepEqual(actual, ['a']);
+      });
+
+      test(formattedMethodName + ' should work on an object with no `callback`', 1, function() {
+        var actual = map({ 'a': 1, 'b': 2, 'c': 3 });
+        deepEqual(actual, array);
+      });
+
+      test(formattedMethodName + ' should handle object arguments with non-numeric length properties', 1, function() {
+        if (defineProperty) {
+          var object = {};
+          defineProperty(object, 'length', { 'value': 'x' });
+          deepEqual(map(object, _.identity), []);
+        } else {
+          skipTest();
+        }
+      });
+
+      test(formattedMethodName + ' should treat a nodelist as an array-like object', 1, function() {
+        if (document) {
+          var actual = map(document.getElementsByTagName('body'), function(element) {
+            return element.nodeName.toLowerCase();
+          });
+
+          deepEqual(actual, ['body']);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test(formattedMethodName + ' should accept a falsey `collection` argument', 1, function() {
+        var expected = map(falsey, _.constant([]));
+
+        var actual = map(falsey, function(value, index) {
+          try {
+            return index ? map(value) : map();
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
+      });
+
+      test(formattedMethodName + ' should treat number values for `collection` as empty', 1, function() {
+        deepEqual(map(1), []);
+      });
     });
 
     test('should return a wrapped value when chaining', 1, function() {
@@ -6994,8 +7232,9 @@
       }
     });
 
-    test('should be aliased', 1, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.collect, _.map);
+      strictEqual(_().collect, _().map);
     });
   }());
 
@@ -8671,7 +8910,7 @@
       fn.toString = _.constant('fn');
 
       var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}]
+          values = [null, undefined, fn, {}];
 
       var actual = _.map(objects, function(object, index) {
         return _.pluck([object], values[index]);
@@ -9191,18 +9430,39 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.prototype.reverse');
+
+  (function() {
+    test('should use native impl. and modify input array in non-lazy chain scenario', 1, function() {
+      var array = [1, 2, 3];
+
+      _(array).reverse();
+
+      deepEqual(array, [3, 2, 1]);
+    });
+
+    test('should be lazy in lazy chain scenario', 1, function() {
+      var actual = _([spy, 2, 3]).map(Number).reverse().take(2).value();
+
+      deepEqual(actual, [3, 2]);
+    });
+
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('filter methods');
 
-  _.each(['filter', 'reject'], function(methodNames) {
-    var func = _[methodNames];
+  _.each(['filter', 'reject'], function(functionName) {
+    _.forIn(getMethodVariations(functionName), function(func, methodName) {
+      test(methodName + ' should not modify the resulting value from within `callback`', 1, function () {
+        var actual = func([0], function (num, index, array) {
+          array[index] = 1;
+          return functionName == 'filter';
+        });
 
-    test('`_.' + methodNames + '` should not modify the resulting value from within `callback`', 1, function() {
-      var actual = func([0], function(num, index, array) {
-        array[index] = 1;
-        return methodNames == 'filter';
+        deepEqual(actual, [0]);
       });
-
-      deepEqual(actual, [0]);
     });
   });
 
@@ -9337,24 +9597,26 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should accept a falsey `array` argument', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
+    _.forIn(getMethodVariations('rest'), function(rest, formattedMethodName) {
+      test(formattedMethodName + ' should accept a falsey `array` argument', 1, function() {
+        var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.rest(value) : _.rest();
-        } catch(e) {}
+        var actual = _.map(falsey, function(value, index) {
+          try {
+            return index ? rest(value) : rest();
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
       });
 
-      deepEqual(actual, expected);
-    });
+      test(formattedMethodName + ' should exclude the first element', 1, function() {
+        deepEqual(rest(array), [2, 3]);
+      });
 
-    test('should exclude the first element', 1, function() {
-      deepEqual(_.rest(array), [2, 3]);
-    });
-
-    test('should return an empty when querying empty arrays', 1, function() {
-      deepEqual(_.rest([]), []);
+      test(formattedMethodName + ' should return an empty when querying empty arrays', 1, function() {
+        deepEqual(rest([]), []);
+      });
     });
 
     test('should work when used as a callback for `_.map`', 1, function() {
@@ -9375,8 +9637,33 @@
       }
     });
 
-    test('should be aliased', 1, function() {
+    test('should be aliased', 2, function() {
       strictEqual(_.tail, _.rest);
+      strictEqual(_().tail, _().rest);
+    });
+
+    test('should work with `reverse` when chaining', 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).reverse().rest().value();
+
+      deepEqual(actual, [2, 1]);
+    });
+
+    test('should work with `take` when chaining', 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).take(2).rest().value();
+
+      deepEqual(actual, [2]);
+    });
+
+    test('should work with `filter` when chaining', 1, function () {
+      var collection = [1, 0, 2, 0, 3, 0, 4];
+
+      var actual = _(collection).filter(_.identity).rest().value();
+
+      deepEqual(actual, [2, 3, 4]);
     });
   }());
 
@@ -9504,6 +9791,18 @@
       if (!isNpm) {
         var actual = _(array).sample();
         ok(_.contains(array, actual));
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should resolve lazy chain', 1, function() {
+      if (!isNpm) {
+        var actual = _(array)
+          .map(_.identitity) // starts lazy sequence
+          .sample(array.length); // should resolve lazy sequence
+        ok(_.isEmpty(_.difference(actual.value(), array)));
       }
       else {
         skipTest();
@@ -11754,6 +12053,16 @@
         skipTest();
       }
     });
+
+    test('should return the `toString` result of the lazy chain', 1, function() {
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3]).map(_.identity);
+        strictEqual(String(wrapped), '1,2,3');
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -11820,6 +12129,132 @@
     });
   }());
 
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...) lazy methods');
+
+  (function() {
+    function isEven(x) { return x % 2 == 0 }
+    function inc(x) { return x + 1; }
+
+    var array = [1, 2, 3],
+      wrapped = _(array).map(); // .map() to open lazy sequence
+
+    var funcs = [
+      'map', 'filter', 'drop', 'dropRight', 'dropWhile', 'dropRightWhile', 'reverse',
+      'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial'
+    ];
+
+    _.each(funcs, function(methodName) {
+      test('`_(...).' + methodName + '` should return new wrapped value', 1, function() {
+        if (!isNpm) {
+          ok(wrapped[methodName]() !== wrapped);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test('`_(...).' + methodName + '` should support chain forking', 1, function () {
+        var lazyWrapper = _([1, 0, 1]).map();
+
+        lazyWrapper.take(0); // should fork
+
+        ok(lazyWrapper[methodName]().value().length > 0);
+      });
+    });
+
+    test('should compute chained methods properly', 1, function () {
+      var collection = [1,2,3,4];
+
+      var actual = _(collection).map(inc).filter(isEven).map(inc).value();
+      var expected = [3, 5];
+
+      deepEqual(actual, expected);
+    });
+
+    test('computes minimal number of elements required', 1, function () {
+      var collection = [1, 2, 1, spy, spy];
+
+      var actual = _(collection).map(inc).filter(isEven).map(inc).take(2).value();
+      var expected = [3, 3];
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return original collection', 1, function() {
+      var collection = [1, 2, 3];
+
+      deepEqual(_(collection).value(), collection);
+    });
+
+    test('should compute properly complex chains', 1, function() {
+      var collection = [spy, 1, 2, 3, 4, 5, 6, spy, spy];
+
+      var actual = _(collection).reverse().take(8).filter(isEven)
+        .takeRight(3).take(2).reverse().take(1).map(Number).value();
+
+      deepEqual(actual, [4]);
+    });
+
+    test('should be limited by source array length', 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).take(4).value();
+
+      deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should be limited by reversed source array length', 1, function () {
+      var collection = [1, 2, 3];
+
+      var actual = _(collection).reverse().take(4).value();
+
+      deepEqual(actual, [3, 2, 1]);
+    });
+
+
+    test('should be limited by dropRight(1).take(3) subset', 1, function () {
+      var collection = [1, 2, spy];
+
+      var actual = _(collection).dropRight(1).take(3).map(Number).value();
+
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should be limited by limited by take(2).dropRight(2) subset', 1, function () {
+      var collection = [spy, spy, spy];
+
+      var actual = _(collection).take(2).dropRight(2).map(Number).value();
+
+      deepEqual(actual, []);
+    });
+
+    test('should be limited by dropRight(2).take(2) subset', 1, function () {
+      var collection = [1, spy, spy];
+
+      var actual = _(collection).dropRight(2).take(2).map(Number).value();
+
+      deepEqual(actual, [1]);
+    });
+
+    test('should ignore subsequent take as in take(x).take(x+1) sequence', 1, function () {
+      var collection = [1, 2, spy];
+
+      var actual = _(collection).take(2).take(3).map(Number).value();
+
+      deepEqual(actual, [1, 2]);
+    });
+
+    test('should ignore subsequent take as in takeRight(x).takeRight(x+1) sequence', 1, function () {
+      var collection = [spy, 2, 3];
+
+      var actual = _(collection).takeRight(2).takeRight(3).map(Number).value();
+
+      deepEqual(actual, [2, 3]);
+    });
+
+  }());
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash(...) methods that return new wrapped values');
@@ -11982,13 +12417,13 @@
 
   QUnit.module('"Arrays" category methods');
 
- (function() {
+  (function() {
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 31, function() {
-      function message(methodName) {
-        return '`_.' + methodName + '` should work with `arguments` objects';
+    test('should work with `arguments` objects', 43, function() {
+      function message(methodName, chain) {
+        return (chain ? '`_(...).' + methodName : '`_.' + methodName) + '` should work with `arguments` objects';
       }
 
       deepEqual(_.at(args, 0, 4), [1, 5], message('at'));
@@ -12002,24 +12437,36 @@
 
       deepEqual(_.compact(args), [1, [3], 5], message('compact'));
       deepEqual(_.drop(args, 3), [null, 5], message('drop'));
+      deepEqual(_(args).drop(3).value(), [null, 5], message('drop', true));
       deepEqual(_.dropRight(args, 3), [1, null], message('dropRight'));
+      deepEqual(_(args).dropRight(3).value(), [1, null], message('dropRight', true));
       deepEqual(_.dropRightWhile(args,_.identity), [1, null, [3], null], message('dropRightWhile'));
+      deepEqual(_(args).dropRightWhile(_.identity).value(), [1, null, [3], null], message('dropRightWhile', true));
       deepEqual(_.dropWhile(args,_.identity), [ null, [3], null, 5], message('dropWhile'));
+      deepEqual(_(args).dropWhile(_.identity).value(), [ null, [3], null, 5], message('dropWhile', true));
       deepEqual(_.findIndex(args, _.identity), 0, message('findIndex'));
       deepEqual(_.findLastIndex(args, _.identity), 4, message('findLastIndex'));
       deepEqual(_.first(args), 1, message('first'));
+      deepEqual(_(args).first(), 1, message('first', true));
       deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
       deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
       deepEqual(_.initial(args), [1, null, [3], null], message('initial'));
+      deepEqual(_(args).initial().value(), [1, null, [3], null], message('initial', true));
       deepEqual(_.intersection(args, [1]), [1], message('intersection'));
       deepEqual(_.last(args), 5, message('last'));
+      deepEqual(_(args).last(), 5, message('last', true));
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
       deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
+      deepEqual(_(args).rest(4).value(), [null, [3], null, 5], message('rest', true));
       deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
       deepEqual(_.take(args, 2), [1, null], message('take'));
+      deepEqual(_(args).take(2).value(), [1, null], message('take', true));
       deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
+      deepEqual(_(args).takeRight(1).value(), [5], message('takeRight', true));
       deepEqual(_.takeRightWhile(args, _.identity), [5], message('takeRightWhile'));
+      deepEqual(_(args).takeRightWhile(_.identity).value(), [5], message('takeRightWhile', true));
       deepEqual(_.takeWhile(args, _.identity), [1], message('takeWhile'));
+      deepEqual(_(args).takeWhile(_.identity).value(), [1], message('takeWhile', true));
       deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
@@ -12055,6 +12502,33 @@
       deepEqual(_.difference(array, null), array, message('difference'));
       deepEqual(_.intersection(array, null), array, message('intersection'));
       deepEqual(_.union(array, null), array, message('union'));
+    });
+
+    test('`_(...).join` should resolve lazy chain', 1, function () {
+      strictEqual(_([0, 1, 2]).map(Number).join(), '0,1,2');
+    });
+
+    test('`_(...).pop` should resolve lazy chain', 1, function () {
+      strictEqual(_([0, 1, 2]).map(Number).pop(), 2);
+    });
+
+    test('`_(...).shift` should resolve lazy chain', 1, function () {
+      strictEqual(_([0, 1, 2]).map(Number).shift(), 0);
+    });
+
+    test('`_(...).push` should resolve lazy chain', 1, function () {
+      var actual = _([0, 1, 2]).map(Number).push(3);
+      deepEqual(actual.value(), [0, 1, 2, 3]);
+    });
+
+    test('`_(...).sort` should resolve lazy chain', 1, function () {
+      var actual = _([0, 2, 1]).map(Number).sort();
+      deepEqual(actual.value(), [0, 1, 2]);
+    });
+
+    test('`_(...).unshift` should resolve lazy chain', 1, function () {
+      var actual = _([1, 2]).map(Number).unshift(0);
+      deepEqual(actual.value(), [0, 1, 2]);
     });
   }(1, null, [3], null, 5));
 
@@ -12163,38 +12637,39 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 195, function() {
+    test('should accept falsey arguments', 195 * 2, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
 
       _.each(acceptFalsey, function(methodName) {
-        var expected = emptyArrays,
-            func = _[methodName],
-            pass = true;
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
+          var expected = emptyArrays,
+              pass = true;
 
-        var actual = _.map(falsey, function(value, index) {
-          try {
-            return index ? func(value) : func();
-          } catch(e) {
-            pass = false;
+          var actual = _.map(falsey, function (value, index) {
+            try {
+              return index ? func(value) : func();
+            } catch (e) {
+              pass = false;
+            }
+          });
+
+          if (methodName == 'noConflict') {
+            if (isExposed) {
+              root._ = oldDash;
+            } else {
+              delete root._;
+            }
           }
+          else if (methodName == 'pull') {
+            expected = falsey;
+          }
+          if (_.contains(returnArrays, methodName) && methodName != 'sample') {
+            deepEqual(actual, expected, formattedMethodName + ' returns an array');
+          }
+          ok(pass, formattedMethodName + '` accepts falsey arguments');
         });
-
-        if (methodName == 'noConflict') {
-          if (isExposed) {
-            root._ = oldDash;
-          } else {
-            delete root._;
-          }
-        }
-        else if (methodName == 'pull') {
-          expected = falsey;
-        }
-        if (_.contains(returnArrays, methodName) && methodName != 'sample') {
-          deepEqual(actual, expected, '_.' + methodName + ' returns an array');
-        }
-        ok(pass, '`_.' + methodName + '` accepts falsey arguments');
       });
 
       // skip tests for missing methods of modularized builds
@@ -12205,50 +12680,52 @@
       });
     });
 
-    test('should return an array', 68, function() {
+    test('should return an array', 68 * 2, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {
-        var actual,
-            func = _[methodName];
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
+          var actual;
 
-        switch (methodName) {
-          case 'invoke':
-             actual = func(array, 'toFixed');
-             break;
-          case 'sample':
-            actual = func(array, 1);
-            break;
-          default:
-            actual = func(array);
-        }
-        ok(_.isArray(actual), '_.' + methodName + ' returns an array');
-
-        var isPull = methodName == 'pull';
-        strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
-      });
-    });
-
-    test('should throw a TypeError for falsey arguments', 20, function() {
-      _.each(rejectFalsey, function(methodName) {
-        var expected = _.map(falsey, _.constant(true)),
-            func = _[methodName];
-
-        var actual = _.map(falsey, function(value, index) {
-          var pass = !index && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
-          try {
-            index ? func(value) : func();
-          } catch(e) {
-            pass = !pass;
+          switch (methodName) {
+            case 'invoke':
+               actual = func(array, 'toFixed');
+               break;
+            case 'sample':
+              actual = func(array, 1);
+              break;
+            default:
+              actual = func(array);
           }
-          return pass;
-        });
+          ok(_.isArray(actual), formattedMethodName + ' returns an array');
 
-        deepEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
+          var isPull = methodName == 'pull';
+          strictEqual(actual === array, isPull, formattedMethodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
+        });
       });
     });
 
-    test('should handle `null` `thisArg` arguments', 43, function() {
+    test('should throw a TypeError for falsey arguments', 20 * 2, function() {
+      _.each(rejectFalsey, function(methodName) {
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
+          var expected = _.map(falsey, _.constant(true));
+
+          var actual = _.map(falsey, function(value, index) {
+          var pass = !index && _[methodName] == func && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
+            try {
+              index ? func(value) : func();
+            } catch(e) {
+              pass = !pass;
+            }
+            return pass;
+          });
+
+          deepEqual(actual, expected, formattedMethodName + ' rejects falsey arguments');
+        });
+      });
+    });
+
+    test('should handle `null` `thisArg` arguments', 43 * 2, function() {
       var expected = (function() { return this; }).call(null);
 
       var funcs = [
@@ -12298,31 +12775,32 @@
       ];
 
       _.each(funcs, function(methodName) {
-        var actual,
-            array = ['a'],
-            func = _[methodName],
-            message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
+        _.forIn(getMethodVariations(methodName), function(func, formattedMethodName) {
+          var actual,
+              array = ['a'],
+              message = formattedMethodName + ' handles `null` `thisArg` arguments';
 
-        function callback() {
-          actual = this;
-        }
-        if (func) {
-          if (/^reduce/.test(methodName) || methodName == 'transform') {
-            func(array, callback, 0, null);
-          } else if (_.contains(['assign', 'merge'], methodName)) {
-            func(array, array, callback, null);
-          } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
-            func(array, 'a', callback, null);
-          } else if (methodName == 'times') {
-            func(1, callback, null);
-          } else {
-            func(array, callback, null);
+          function callback() {
+            actual = this;
           }
-          strictEqual(actual, expected, message);
-        }
-        else {
-          skipTest();
-        }
+          if (func) {
+            if (/^reduce/.test(methodName) || methodName == 'transform') {
+              func(array, callback, 0, null);
+            } else if (_.contains(['assign', 'merge'], methodName)) {
+              func(array, array, callback, null);
+            } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
+              func(array, 'a', callback, null);
+            } else if (methodName == 'times') {
+              func(1, callback, null);
+            } else {
+              func(array, callback, null);
+            }
+            strictEqual(actual, expected, message);
+          }
+          else {
+            skipTest();
+          }
+        });
       });
     });
 

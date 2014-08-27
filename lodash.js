@@ -1889,7 +1889,9 @@
             othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
-          return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, customizer, isWhere, stackA, stackB);
+          value = valWrapped ? getWrappedValue(value) : value;
+          other = othWrapped ? getWrappedValue(other) : other;
+          return baseIsEqual(value, other, customizer, isWhere, stackA, stackB);
         }
         if (!isSameClass) {
           return false;
@@ -4499,6 +4501,222 @@
       return result;
     }
 
+    function getLimitAction(name, count, dir) {
+      return {
+        name: name + (dir < 0 ? "Right" : ""),
+        count: count || 0
+      };
+    }
+
+    function getWrappedValue(wrapper) {
+      var wrapped = wrapper.__wrapped__;
+      return (wrapped instanceof LazySequence) ? wrapped.value() : wrapped;
+    }
+
+    function LazySequence(source) {
+      this.source = source;
+      this.type = [];
+      this.iterators = [];
+      this.limit = Number.POSITIVE_INFINITY;
+      this.limitActions = [];
+      this.filterApplied = false;
+      this.dir = 1;
+    }
+
+    LazySequence.MAP_FLAG = 1;
+    LazySequence.FILTER_FLAG = 2;
+    LazySequence.WHILE_FLAG = 3;
+
+    LazySequence.prototype.clone = function() {
+      var clone = new LazySequence(this.source);
+      clone.type = this.type.concat();
+      clone.iterators = this.iterators.concat();
+      clone.limit = this.limit;
+      clone.limitActions = this.limitActions.concat();
+      clone.filterApplied = this.filterApplied;
+      clone.dir = this.dir;
+      return clone;
+    };
+
+    LazySequence.prototype.drop = function(n) {
+      n = Math.max(0, (n == null) ? 1 : n);
+      if(this.filterApplied) {
+        return new LazySequence(this).drop(n);
+      }
+      var fork = this.clone();
+      fork.limitActions.push(getLimitAction('drop', n, this.dir));
+      return fork;
+    };
+
+    LazySequence.prototype.dropWhile = function(predicate, thisArg) {
+      var satisfied = false;
+      predicate = getCallback(predicate, thisArg, 3);
+
+      return new LazySequence(this.filter(function(value, index, array) {
+        return satisfied || (satisfied = !predicate(value, index, array));
+      }));
+    };
+
+    LazySequence.prototype.dropRight = function(n) {
+      return this.reverse().drop(n).reverse();
+    };
+
+    LazySequence.prototype.dropRightWhile = function(predicate, thisArg) {
+      return this.reverse().dropWhile(predicate, thisArg).reverse();
+    };
+
+    LazySequence.prototype.filter = function(predicate, thisArg) {
+      predicate = getCallback(predicate, thisArg, 3);
+
+      var fork = this.clone();
+      fork.filterApplied = true;
+      fork.type.push(LazySequence.FILTER_FLAG);
+      fork.iterators.push(predicate);
+      return fork;
+    };
+
+    LazySequence.prototype.first = function(count) {
+      return this.take(1).value()[0];
+    };
+
+    LazySequence.prototype.initial = function() {
+      return this.dropRight(1);
+    };
+
+    LazySequence.prototype.last = function(count) {
+      return this.takeRight(1).value()[0];
+    };
+
+    LazySequence.prototype.map = function(iterator, thisArg) {
+      iterator = getCallback(iterator, thisArg, 3);
+
+      var fork = this.clone();
+      fork.iterators.push(iterator);
+      fork.type.push(LazySequence.MAP_FLAG);
+      return fork;
+    };
+
+    LazySequence.prototype.rest = function() {
+      return this.drop(1);
+    };
+
+    LazySequence.prototype.reverse = function() {
+      var fork = this.clone();
+      fork.dir *= -1;
+      return fork;
+    };
+
+    LazySequence.prototype.take = function(n) {
+      var fork = this.clone();
+      n = (n == null) ? 1 : n;
+      if(fork.filterApplied) {
+        fork.limit = n;
+        return new LazySequence(fork);
+      }
+      fork.limitActions.push(getLimitAction('take', n, this.dir));
+      return fork;
+    };
+
+    LazySequence.prototype.takeWhile = function(predicate, thisArg) {
+      var fork = this.clone();
+      predicate = getCallback(predicate, thisArg, 3);
+
+      fork.filterApplied = true;
+      fork.type.push(LazySequence.WHILE_FLAG);
+      fork.iterators.push(predicate);
+
+      return new LazySequence(fork);
+    };
+
+    LazySequence.prototype.takeRight = function(n) {
+      return this.reverse().take(n).reverse();
+    };
+
+    LazySequence.prototype.takeRightWhile = function(predicate, thisArg) {
+      return this.reverse().takeWhile(predicate, thisArg).reverse();
+    };
+
+    LazySequence.prototype.value = function() {
+      var source = this.source,
+          sourceLimit;
+
+      if (source instanceof LazySequence) {
+        source = source.value();
+      }
+
+      sourceLimit = limitSource(this.limitActions, source);
+
+      return resolveLazySequence(this, source, sourceLimit);
+    };
+
+    function limitSource(operators, source) {
+      var len = operators.length,
+          min = 0,
+          max = source.length - 1,
+          op;
+
+      for(var i = 0; i < len; i++) {
+        op = operators[i];
+        switch(op.name) {
+          case 'take':      max = Math.min(max, min + (op.count - 1)); break;
+          case 'takeRight': min = Math.max(min, max - (op.count - 1)); break;
+          case 'drop':      min += op.count; break;
+          case 'dropRight': max -= op.count; break;
+        }
+      }
+
+      return {
+        min: min,
+        max: max
+      };
+    }
+
+    function resolveLazySequence(wrapper, source, sourceRange) {
+
+      var resultIndex = 0,
+        dir = wrapper.dir,
+        loops = sourceRange.max - sourceRange.min + 1,
+        resultLimit = Math.min(wrapper.limit, loops),
+        sourceIndex = (dir == 1 ? sourceRange.min : sourceRange.max) - dir,
+        result = [],
+        type = wrapper.type,
+        iterators = wrapper.iterators,
+        num = type.length,
+        iterator,
+        val,
+        i;
+
+      lazy:while (loops-- > 0 && resultIndex < resultLimit) {
+        sourceIndex += dir;
+        val = source[sourceIndex];
+
+        for(i = 0; i < num; i++) {
+          iterator = iterators[i];
+          switch(type[i]) {
+            // LazySequence.MAP_FLAG
+            case 1: val = iterator(val, sourceIndex, source); break;
+            // LazySequence.FILTER_FLAG
+            case 2: if(!iterator(val, sourceIndex, source)) { continue lazy; }
+            // LazySequence.WHILE_FLAG
+            case 3: if(!iterator(val, sourceIndex, source)) { break lazy; }
+          }
+        }
+
+        result[resultIndex++] = val;
+      }
+
+      return result;
+    }
+
+    function reverse() {
+      var wrapped = this.__wrapped__;
+      if(wrapped instanceof LazySequence) {
+        return new lodashWrapper(wrapped.reverse(), this.__chain__);
+      }
+      wrapped.reverse();
+      return this;
+    }
+
     /**
      * This method invokes `interceptor` and returns `value`. The interceptor is
      * bound to `thisArg` and invoked with one argument; (value). The purpose of
@@ -4568,7 +4786,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return String(this.__wrapped__);
+      return String(getWrappedValue(this));
     }
 
     /**
@@ -4585,7 +4803,7 @@
      * // => [1, 2, 3]
      */
     function wrapperValueOf() {
-      return this.__wrapped__;
+      return getWrappedValue(this);
     }
 
     /*--------------------------------------------------------------------------*/
@@ -8957,7 +9175,7 @@
           object.prototype[methodName] = (function(func) {
             return function() {
               var chainAll = this.__chain__,
-                  value = this.__wrapped__,
+                  value = getWrappedValue(this),
                   args = [value];
 
               push.apply(args, arguments);
@@ -9541,7 +9759,7 @@
       if (!lodash.prototype[methodName]) {
         lodash.prototype[methodName] = function(n, guard) {
           var chainAll = this.__chain__,
-              result = func(this.__wrapped__, n, guard);
+              result = func(getWrappedValue(this), n, guard);
 
           return !chainAll && (n == null || (guard && !(callbackable && typeof n == 'function')))
             ? result
@@ -9563,6 +9781,7 @@
 
     // add "Chaining" functions to the wrapper
     lodash.prototype.chain = wrapperChain;
+    lodash.prototype.reverse = reverse;
     lodash.prototype.toJSON = wrapperValueOf;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.value = wrapperValueOf;
@@ -9573,7 +9792,7 @@
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
         var chainAll = this.__chain__,
-            result = func.apply(this.__wrapped__, arguments);
+            result = func.apply(getWrappedValue(this), arguments);
 
         return chainAll
           ? new lodashWrapper(result, chainAll)
@@ -9582,11 +9801,15 @@
     });
 
     // add `Array` functions that return the existing wrapped value
-    arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
+    arrayEach(['push', 'sort', 'unshift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        func.apply(this.__wrapped__, arguments);
-        return this;
+        var wrapped = this.__wrapped__,
+            result = getWrappedValue(this),
+            inLazyChain = (wrapped != result);
+
+        func.apply(result, arguments);
+        return inLazyChain ? new lodashWrapper(result, this.__chain__) : this;
       };
     });
 
@@ -9594,9 +9817,35 @@
     arrayEach(['concat', 'splice'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
+        return new lodashWrapper(func.apply(getWrappedValue(this), arguments), this.__chain__);
       };
     });
+
+    // add `LazySequence` functions
+    arrayEach(['map', 'filter', 'drop', 'dropRight', 'dropWhile', 'dropRightWhile',
+        'take', 'takeRight', 'takeWhile', 'takeRightWhile', 'rest', 'initial', 'head', 'first', 'last'],
+    function(methodName) {
+      var func = LazySequence.prototype[methodName];
+      var overriddenFunc = lodash.prototype[methodName];
+      lodash.prototype[methodName] = function() {
+        var wrapped = this.__wrapped__,
+            inLazyChain = wrapped instanceof LazySequence;
+
+        if(!inLazyChain && !isArray(wrapped) && overriddenFunc) {
+          wrapped = overriddenFunc.apply(this, arguments);
+        } else {
+          wrapped = func.apply(inLazyChain ? wrapped : new LazySequence(wrapped), arguments);
+        }
+
+        return (wrapped instanceof LazySequence || this.__chain__)
+          ? new lodashWrapper(wrapped, this.__chain__)
+          : wrapped;
+      };
+    });
+
+    lodash.prototype.tail = lodash.prototype.rest;
+    lodash.prototype.collect = lodash.prototype.map;
+    lodash.prototype.select = lodash.prototype.filter;
 
     // avoid array-like object bugs with `Array#shift` and `Array#splice`
     // in IE < 9, Firefox < 10, Narwhal, and RingoJS
@@ -9607,6 +9856,8 @@
 
         lodash.prototype[methodName] = function() {
           var chainAll = this.__chain__,
+          // todo(Filip) - I bet that below should be `getWrappedValue(this)`.
+          // Proper test for RingoJS should be written.
               value = this.__wrapped__,
               result = func.apply(value, arguments);
 

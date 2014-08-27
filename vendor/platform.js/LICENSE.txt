@@ -1,3 +1,4 @@
+Copyright 2014 Benjamin Tan <http://d10.github.io/>
 Copyright 2011-2014 John-David Dalton <http://allyoucanleet.com/>
 
 Permission is hereby granted, free of charge, to any person obtaining

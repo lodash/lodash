@@ -38,7 +38,7 @@
   var maxSafeInteger = Math.pow(2, 53) - 1;
 
   /** Opera regexp */
-  var reOpera = /Opera/;
+  var reOpera = /\bOpera/;
 
   /** Possible global object */
   var thisBinding = this;
@@ -104,16 +104,16 @@
 
     os = format(
       os.replace(/ ce$/i, ' CE')
-        .replace(/hpw/i, 'web')
-        .replace(/Macintosh/, 'Mac OS')
-        .replace(/_PowerPC/i, ' OS')
-        .replace(/(OS X) [^ \d]+/i, '$1')
-        .replace(/Mac (OS X)/, '$1')
+        .replace(/(\b)hpw/i, '$1web')
+        .replace(/(\b)Macintosh(\b)/, '$1Mac OS$2')
+        .replace(/_PowerPC(\b)/i, ' OS$1')
+        .replace(/(\bOS X) [^ \d]+/i, '$1')
+        .replace(/(\b)Mac (OS X\b)/, '$1$2')
         .replace(/\/(\d)/, ' $1')
         .replace(/_/g, '.')
         .replace(/(?: BePC|[ .]*fc[ \d.]+)$/i, '')
-        .replace(/x86\.64/gi, 'x86_64')
-        .replace(/(Windows Phone)(?! OS)/, '$1 OS')
+        .replace(/(\b)x86\.64(\b)/gi, '$1x86_64$2')
+        .replace(/(\bWindows Phone)(?! OS\b)/, '$1 OS')
         .split(' on ')[0]
     );
 
@@ -284,7 +284,7 @@
         phantomClass = isCustomContext ? objectClass : 'RuntimeObject';
 
     /** Detect Java environment */
-    var java = /Java/.test(javaClass) && context.java;
+    var java = /\bJava/.test(javaClass) && context.java;
 
     /** Detect Rhino */
     var rhino = java && getClassOf(context.environment) == enviroClass;
@@ -597,8 +597,8 @@
       product = getProduct([manufacturer]);
     }
     // clean up Google TV
-    if ((data = /Google TV/.exec(product))) {
-      product = data[0];
+    if ((data = /\b(Google TV)\b/.exec(product))) {
+      product = data[1];
     }
     // detect simulators
     if (/\bSimulator\b/i.test(ua)) {
@@ -621,12 +621,12 @@
     }
     // detect Android browsers
     else if (manufacturer && manufacturer != 'Google' &&
-        ((/Chrome/.test(name) && !/Mobile Safari/.test(ua)) || /Vita/.test(product))) {
+        ((/Chrome/.test(name) && !/\bMobile Safari\b/i.test(ua)) || /\bVita\b/.test(product))) {
       name = 'Android Browser';
-      os = /Android/.test(os) ? os : 'Android';
+      os = /\bAndroid\b/.test(os) ? os : 'Android';
     }
     // detect false positives for Firefox/Safari
-    else if (!name || (data = !/\bMinefield\b|\(Android;/i.test(ua) && /Firefox|Safari/.exec(name))) {
+    else if (!name || (data = !/\bMinefield\b|\(Android;/i.test(ua) && /\b(?:Firefox|Safari)\b/.exec(name))) {
       // escape the `/` for Firefox 1
       if (name && !product && /[\/,]|^[^(]+?\)/.test(ua.slice(ua.indexOf(data + '/') + 8))) {
         // clear name of false positives
@@ -634,8 +634,8 @@
       }
       // reassign a generic name
       if ((data = product || manufacturer || os) &&
-          (product || manufacturer || /Android|Symbian OS|Tablet OS|webOS/.test(os))) {
-        name = /[a-z]+(?: Hat)?/i.exec(/Android/.test(os) ? os : data) + ' Browser';
+          (product || manufacturer || /\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(os))) {
+        name = /[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(os) ? os : data) + ' Browser';
       }
     }
     // detect Firefox OS
@@ -658,7 +658,7 @@
     if (layout == 'iCab' && parseFloat(version) > 3) {
       layout = ['WebKit'];
     } else if ((data =
-          /Opera/.test(name) && (/OPR/.test(ua) ? 'Blink' : 'Presto') ||
+          /\bOpera\b/.test(name) && (/\bOPR\b/.test(ua) ? 'Blink' : 'Presto') ||
           /\b(?:Midori|Nook|Safari)\b/i.test(ua) && 'WebKit' ||
           !layout && /\bMSIE\b/i.test(ua) && (os == 'Mac OS' ? 'Tasman' : 'Trident')
         )) {
@@ -743,7 +743,7 @@
         (prerelease == 'beta' ? beta : alpha) + (/\d+\+?/.exec(data) || '');
     }
     // detect Firefox Mobile
-    if (name == 'Fennec' || name == 'Firefox' && /Android|Firefox OS/.test(os)) {
+    if (name == 'Fennec' || name == 'Firefox' && /\b(?:Android|Firefox OS)\b/.test(os)) {
       name = 'Firefox Mobile';
     }
     // obscure Maxthon's unreliable version
@@ -752,7 +752,7 @@
     }
     // detect Silk desktop/accelerated modes
     else if (name == 'Silk') {
-      if (!/Mobi/i.test(ua)) {
+      if (!/\bMobi/i.test(ua)) {
         os = 'Android';
         description.unshift('desktop mode');
       }
@@ -767,9 +767,9 @@
         description.unshift('desktop mode');
     }
     // detect Xbox 360 and Xbox One
-    else if (/Xbox/i.test(product)) {
+    else if (/\bXbox\b/i.test(product)) {
       os = null;
-      if (product == 'Xbox 360' && /IEMobile/.test(ua)) {
+      if (product == 'Xbox 360' && /\bIEMobile\b/.test(ua)) {
         description.unshift('mobile mode');
       }
     }
@@ -784,7 +784,7 @@
     }
     // detect BlackBerry OS version
     // http://docs.blackberry.com/en/developers/deliverables/18169/HTTP_headers_sent_by_BB_Browser_1234911_11.jsp
-    else if ((/BlackBerry/.test(product) || /BB10/.test(ua)) && (data =
+    else if ((/\bBlackBerry\b/.test(product) || /\bBB10\b/.test(ua)) && (data =
           (RegExp(product.replace(/ +/g, ' *') + '/([.\\d]+)', 'i').exec(ua) || 0)[1] ||
           version
         )) {
@@ -798,11 +798,11 @@
           product != 'Wii' && (
             (useFeatures && opera) ||
             (/Opera/.test(name) && /\b(?:MSIE|Firefox)\b/i.test(ua)) ||
-            (name == 'Firefox' && /OS X (?:\d+\.){2,}/.test(os)) ||
+            (name == 'Firefox' && /\bOS X (?:\d+\.){2,}/.test(os)) ||
             (name == 'IE' && (
               (os && !/^Win/.test(os) && version > 5.5) ||
-              /Windows XP/.test(os) && version > 8 ||
-              version == 8 && !/Trident/.test(ua)
+              /\bWindows XP\b/.test(os) && version > 8 ||
+              version == 8 && !/\bTrident\b/.test(ua)
             ))
           )
         ) && !reOpera.test((data = parse.call(forOwn, ua.replace(reOpera, '') + ';'))) && data.name) {
@@ -810,7 +810,7 @@
       // when "indentifying", the UA contains both Opera and the other browser's name
       data = 'ing as ' + data.name + ((data = data.version) ? ' ' + data : '');
       if (reOpera.test(name)) {
-        if (/IE/.test(data) && os == 'Mac OS') {
+        if (/\bIE\b/.test(data) && os == 'Mac OS') {
           os = null;
         }
         data = 'identify' + data;
@@ -823,7 +823,7 @@
         } else {
           name = 'Opera';
         }
-        if (/IE/.test(data)) {
+        if (/\bIE\b/.test(data)) {
           os = null;
         }
         if (!useFeatures) {
@@ -872,10 +872,10 @@
       }
     }
     // detect Opera desktop modes
-    if (name == 'Opera' &&  (data = /(?:zbov|zvav)$/.exec(os))) {
+    if (name == 'Opera' &&  (data = /\b(zbov|zvav)$/.exec(os))) {
       name += ' ';
       description.unshift('desktop mode');
-      if (data == 'zvav') {
+      if (data[1] == 'zvav') {
         name += 'Mini';
         version = null;
       } else {
@@ -883,12 +883,12 @@
       }
     }
     // detect Chrome desktop mode
-    else if (name == 'Safari' && /Chrome/.exec(layout && layout[1])) {
+    else if (name == 'Safari' && /\bChrome\b/.exec(layout && layout[1])) {
       description.unshift('desktop mode');
       name = 'Chrome Mobile';
       version = null;
 
-      if (/OS X/.test(os)) {
+      if (/\bOS X\b/.test(os)) {
         manufacturer = 'Apple';
         os = 'iOS 4.3+';
       } else {
@@ -901,7 +901,7 @@
       os = trim(os.replace(data, ''));
     }
     // add layout engine
-    if (layout && !/Avant|Nook/.test(name) && (
+    if (layout && !/\b(?:Avant|Nook)\b/.test(name) && (
         /Browser|Lunascape|Maxthon/.test(name) ||
         /^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(name) && layout[1])) {
       // don't add layout details to description if they are falsey
@@ -939,8 +939,10 @@
         os.architecture = 64;
         os.family = os.family.replace(RegExp(' *' + data), '');
       }
-      if (name && (/WOW64/i.test(ua) ||
-          (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform) && !/^win32$/i.test(nav.platform)))) {
+      if (
+          name && (/\bWOW64\b/i.test(ua) ||
+          (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform) && !/\bWin64; x64\b/i.test(ua)))
+      ) {
         description.unshift('32-bit');
       }
     }

@@ -9321,12 +9321,6 @@
 
     /*--------------------------------------------------------------------------*/
 
-    // ensure `new lodashWrapper` is an instance of `lodash`
-    lodashWrapper.prototype = lodash.prototype;
-
-    // assign default placeholders
-    bind.placeholder = bindKey.placeholder = curry.placeholder = curryRight.placeholder = partial.placeholder = partialRight.placeholder = lodash;
-
     // add functions that return wrapped values when chaining
     lodash.after = after;
     lodash.assign = assign;
@@ -9561,12 +9555,18 @@
      */
     lodash.VERSION = VERSION;
 
+    // ensure `new lodashWrapper` is an instance of `lodash`
+    lodashWrapper.prototype = lodash.prototype;
+
     // add "Chaining" functions to the wrapper
     lodash.prototype.chain = wrapperChain;
-    lodash.prototype.toJSON = wrapperValueOf;
     lodash.prototype.toString = wrapperToString;
-    lodash.prototype.value = wrapperValueOf;
-    lodash.prototype.valueOf = wrapperValueOf;
+    lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
+
+    // assign default placeholders
+    arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
+      lodash[methodName].placeholder = lodash;
+    });
 
     // add `Array` functions that return unwrapped values
     arrayEach(['join', 'pop', 'shift'], function(methodName) {

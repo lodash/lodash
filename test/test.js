@@ -4181,6 +4181,25 @@
         ok(pass);
       });
     });
+
+    _.each(collectionMethods.concat(objectMethods), function(methodName) {
+      var func = _[methodName];
+
+      test('`_.' + methodName + '` should compute length before iteration', 2, function() {
+        _.each([[0], { 'a': 0 }], function(collection) {
+          var count = 0;
+
+          func(collection, function() {
+            collection[++count] = count;
+            if (count > 1) {
+              return false;
+            }
+          }, 0);
+
+          strictEqual(count, 1);
+        });
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -3941,6 +3941,20 @@
       });
     });
 
+    test('`_.' + methodName + '` should compute length before iteration', 1, function() {
+      var count = 0,
+          array = [0];
+
+      func(array, function() {
+        array.push(count++);
+        if (count > 1) {
+          return false;
+        }
+      });
+
+      strictEqual(count, 1);
+    });
+
     test('`_.' + methodName + '` should be aliased', 1, function() {
       if (isForEach) {
         strictEqual(_.each, _.forEach);

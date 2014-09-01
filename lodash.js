@@ -2819,8 +2819,7 @@
      * @returns {Function} Returns the chosen function or its result.
      */
     function getCallback(func, thisArg, argCount) {
-      var result = lodash.callback || callback;
-      result = result === callback ? baseCallback : result;
+      var result = lodash.callback || baseCallback;
       return argCount ? result(func, thisArg, argCount) : result;
     }
 

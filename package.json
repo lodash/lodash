@@ -14,7 +14,6 @@
     "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
     "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
   ],
-  "bugs": "https://github.com/lodash/lodash/issues",
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\"" },
   "engines": ["node", "rhino"],

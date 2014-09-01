@@ -5829,14 +5829,16 @@
       }
     });
 
-    test('should return `true` for like-objects from different documents', 1, function() {
+    test('should return `true` for like-objects from different documents', 4, function() {
       // ensure `_._object` is assigned (unassigned in Opera 10.00)
       if (_._object) {
-        var object = { 'a': 1, 'b': 2, 'c': 3 };
-        strictEqual(_.isEqual(object, _._object), true);
+        strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, _._object), true);
+        strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, _._object), false);
+        strictEqual(_.isEqual([1, 2, 3], _._array), true);
+        strictEqual(_.isEqual([1, 2, 2], _._array), false);
       }
       else {
-        skipTest();
+        skipTest(4);
       }
     });
 

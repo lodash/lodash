@@ -5760,7 +5760,13 @@
      */
     function after(n, func) {
       if (!isFunction(func)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
+        if (isFunction(n)) {
+          var temp = n;
+          n = func;
+          func = temp;
+        } else {
+          throw new TypeError(FUNC_ERROR_TEXT);
+        }
       }
       n = nativeIsFinite(n = +n) ? n : 0;
       return function() {
@@ -5788,7 +5794,13 @@
     function before(n, func) {
       var result;
       if (!isFunction(func)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
+        if (isFunction(n)) {
+          var temp = n;
+          n = func;
+          func = temp;
+        } else {
+          throw new TypeError(FUNC_ERROR_TEXT);
+        }
       }
       return function() {
         if (--n > 0) {

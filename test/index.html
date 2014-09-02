@@ -275,7 +275,6 @@
 			// store Lo-Dash to test for bad extensions/shims
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;
-				lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 				window._ = undefined;
 				removeBizarroMethods();
 			}
@@ -396,7 +395,6 @@
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {
 						lodashBizarro = (lodash['default'] || lodash).noConflict();
-						lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 						delete requirejs.s.contexts._;
 
 						removeBizarroMethods();

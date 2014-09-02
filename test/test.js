@@ -2246,7 +2246,7 @@
         if (lodashBizarro && _.support.funcDecomp) {
           var callback = lodashBizarro.callback(fn, object);
           strictEqual(callback(), fn === c ? object : undefined);
-          strictEqual(callback === fn, fn === a);
+          strictEqual(callback === fn, _.support.funcNames && fn === a);
         }
         else {
           skipTest(2);

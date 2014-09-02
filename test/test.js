@@ -2235,7 +2235,7 @@
       }
 
       var object = {},
-          supportBizarro = lodashBizarro.support,
+          supportBizarro = lodashBizarro ? lodashBizarro.support : {},
           funcDecomp = supportBizarro.funcDecomp,
           funcNames = supportBizarro.funcNames;
 
@@ -2243,7 +2243,7 @@
       supportBizarro.funcDecomp = true;
 
       _.each([a, b, c], function(fn) {
-        if (_.support.funcDecomp) {
+        if (lodashBizarro && _.support.funcDecomp) {
           var callback = lodashBizarro.callback(fn, object);
           strictEqual(callback(), fn === c ? object : undefined);
           strictEqual(callback === fn, fn === a);

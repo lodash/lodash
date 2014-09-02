@@ -2212,7 +2212,7 @@
      * @param {*} data The metadata.
      * @returns {Function} Returns `func`.
      */
-    var baseSetData = !WeakMap ? identity : function(func, data) {
+    var baseSetData = !metaMap ? identity : function(func, data) {
       metaMap.set(func, data);
       return func;
     };
@@ -2808,7 +2808,7 @@
      * @param {Function} func The function to query.
      * @returns {*} Returns the metadata for `func`.
      */
-    var getData = !WeakMap ? noop : function(func) {
+    var getData = !metaMap ? noop : function(func) {
       return metaMap.get(func);
     };
 

@@ -11739,13 +11739,18 @@
 
   (function() {
     test('should remove elements from the end of `array`', 4, function() {
-      var wrapped = _([1, 2]);
+      if (!isNpm) {
+        var wrapped = _([1, 2]);
 
-      strictEqual(wrapped.pop(), 2);
-      deepEqual(wrapped.value(), [1]);
+        strictEqual(wrapped.pop(), 2);
+        deepEqual(wrapped.value(), [1]);
 
-      strictEqual(wrapped.pop(), 1);
-      deepEqual(wrapped.value(), []);
+        strictEqual(wrapped.pop(), 1);
+        deepEqual(wrapped.value(), []);
+      }
+      else {
+        skipTest(4);
+      }
     });
   }());
 
@@ -11755,13 +11760,18 @@
 
   (function() {
     test('should remove elements from the front of `array`', 4, function() {
-      var wrapped = _([1, 2]);
+      if (!isNpm) {
+        var wrapped = _([1, 2]);
 
-      strictEqual(wrapped.shift(), 1);
-      deepEqual(wrapped.value(), [2]);
+        strictEqual(wrapped.shift(), 1);
+        deepEqual(wrapped.value(), [2]);
 
-      strictEqual(wrapped.shift(), 2);
-      deepEqual(wrapped.value(), []);
+        strictEqual(wrapped.shift(), 2);
+        deepEqual(wrapped.value(), []);
+      }
+      else {
+        skipTest(4);
+      }
     });
   }());
 
@@ -11771,13 +11781,18 @@
 
   (function() {
     test('should support removing and inserting elements', 4, function() {
-      var wrapped = _([1, 2]);
+      if (!isNpm) {
+        var wrapped = _([1, 2]);
 
-      deepEqual(wrapped.splice(1, 1, 3).value(), [2]);
-      deepEqual(wrapped.value(), [1, 3]);
+        deepEqual(wrapped.splice(1, 1, 3).value(), [2]);
+        deepEqual(wrapped.value(), [1, 3]);
 
-      deepEqual(wrapped.splice(0, 2).value(), [1, 3]);
-      deepEqual(wrapped.value(), []);
+        deepEqual(wrapped.splice(0, 2).value(), [1, 3]);
+        deepEqual(wrapped.value(), []);
+      }
+      else {
+        skipTest(4);
+      }
     });
   }());
 

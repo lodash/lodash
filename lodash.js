@@ -27,9 +27,6 @@
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 
-  /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash_' + VERSION.replace(/[-.]/g, '_') + '__';
-
   /** Used as the TypeError message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -718,17 +715,6 @@
       try {
         var func = isNative(func = context.Float64Array) && func,
             result = new func(new ArrayBuffer(10), 0, 1) && func;
-      } catch(e) {}
-      return result;
-    }());
-
-    /** Used to set metadata on functions */
-    var defineProperty = (function() {
-      // IE 8 only accepts DOM elements
-      try {
-        var o = {},
-            func = isNative(func = Object.defineProperty) && func,
-            result = func(o, o, o) && func;
       } catch(e) {}
       return result;
     }());
@@ -2226,19 +2212,10 @@
      * @param {*} data The metadata.
      * @returns {Function} Returns `func`.
      */
-    function baseSetData(func, data) {
+    var baseSetData = !WeakMap ? identity : function(func, data) {
       metaMap.set(func, data);
       return func;
-    }
-    // fallback for environments without `WeakMap`
-    if (!WeakMap) {
-      baseSetData = !defineProperty ? identity : function(func, value) {
-        descriptor.value = value;
-        defineProperty(func, EXPANDO, descriptor);
-        descriptor.value = null;
-        return func;
-      };
-    }
+    };
 
     /**
      * The base implementation of `_.some` without support for callback shorthands
@@ -2831,15 +2808,9 @@
      * @param {Function} func The function to query.
      * @returns {*} Returns the metadata for `func`.
      */
-    function getData(func) {
+    var getData = !WeakMap ? noop : function(func) {
       return metaMap.get(func);
-    }
-    // fallback for environments without `WeakMap`
-    if (!WeakMap) {
-      getData = !defineProperty ? noop : function(func) {
-        return func[EXPANDO];
-      };
-    }
+    };
 
     /**
      * Gets the appropriate "indexOf" function. If the `_.indexOf` method is

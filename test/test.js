@@ -202,9 +202,6 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
-  /** Used as the property name for wrapper metadata */
-  var EXPANDO = '__lodash_' + _.VERSION.replace(/[-.]/g, '_') + '__';
-
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
@@ -471,7 +468,6 @@
 
     // load Lo-Dash and expose it to the bad extensions/shims
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
-    lodashBizarro.support.funcNames = !lodashBizarro.support.funcNames;
 
     // restore native methods
     setProperty(Array,  'isArray', _isArray);
@@ -2229,46 +2225,36 @@
       }
     });
 
-    test('should only write metadata to named functions', 3, function() {
-      function a() {};
+    test('should work with bizarro `_.support.funcNames`', 6, function() {
+      function a() {}
+
       var b = function() {};
-      function c() {};
 
-      var object = {};
+      function c() {
+        return this;
+      }
 
-      if (lodashBizarro && lodashBizarro.support.funcDecomp) {
-        lodashBizarro.callback(a, object);
-        ok(EXPANDO in a);
+      var object = {},
+          supportBizarro = lodashBizarro.support,
+          funcDecomp = supportBizarro.funcDecomp,
+          funcNames = supportBizarro.funcNames;
 
-        lodashBizarro.callback(b, object);
-        ok(!(EXPANDO in b));
+      supportBizarro.funcNames = !supportBizarro.funcNames;
+      supportBizarro.funcDecomp = true;
 
-        if (lodashBizarro.support.funcNames) {
-          lodashBizarro.support.funcNames = false;
-          lodashBizarro.callback(c, object);
-
-          ok(EXPANDO in c);
-          lodashBizarro.support.funcNames = true;
+      _.each([a, b, c], function(fn) {
+        if (_.support.funcDecomp) {
+          var callback = lodashBizarro.callback(fn, object);
+          strictEqual(callback(), fn === c ? object : undefined);
+          strictEqual(callback === fn, fn === a);
         }
         else {
-          skipTest();
+          skipTest(2);
         }
-      }
-      else {
-        skipTest(3);
-      }
-    });
+      });
 
-    test('should not write metadata when `_.support.funcDecomp` is `false`', 1, function() {
-      function a() {};
-
-      if (lodashBizarro) {
-        lodashBizarro.callback(a, {});
-        ok(!(EXPANDO in a));
-      }
-      else {
-        skipTest();
-      }
+      supportBizarro.funcDecomp = funcDecomp;
+      supportBizarro.funcNames = funcNames;
     });
 
     test('should be aliased', 1, function() {

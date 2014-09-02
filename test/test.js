@@ -800,6 +800,18 @@
       deepEqual(actual, expected);
     });
 
+    test('should allow `func` as the first argument', 1, function() {
+      var count = 0;
+
+      try {
+        var after = _.after(function() { count++; }, 1);
+        after();
+        after();
+      } catch(e) {}
+
+      strictEqual(count, 2);
+    });
+
     test('should not set a `this` binding', 2, function() {
       var after = _.after(1, function() { return ++this.count; }),
           object = { 'count': 0, 'after': after };
@@ -974,6 +986,18 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should allow `func` as the first argument', 1, function() {
+      var count = 0;
+
+      try {
+        var before = _.before(function() { count++; }, 2);
+        before();
+        before();
+      } catch(e) {}
+
+      strictEqual(count, 1);
     });
 
     test('should not set a `this` binding', 2, function() {

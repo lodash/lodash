@@ -11749,20 +11749,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).pop');
+
+  (function() {
+    test('should remove elements from the end of `array`', 4, function() {
+      var wrapped = _([1, 2]);
+
+      strictEqual(wrapped.pop(), 2);
+      deepEqual(wrapped.value(), [1]);
+
+      strictEqual(wrapped.pop(), 1);
+      deepEqual(wrapped.value(), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).shift');
 
   (function() {
-    test('should remove the value at index `0` when length is `0` (test in IE 8 compatibility mode)', 2, function() {
-      if (!isNpm) {
-        var wrapped = _({ '0': 1, 'length': 1 });
-        wrapped.shift();
+    test('should remove elements from the front of `array`', 4, function() {
+      var wrapped = _([1, 2]);
 
-        deepEqual(wrapped.keys().value(), ['length']);
-        strictEqual(wrapped.first(), undefined);
-      }
-      else {
-        skipTest(2);
-      }
+      strictEqual(wrapped.shift(), 1);
+      deepEqual(wrapped.value(), [2]);
+
+      strictEqual(wrapped.shift(), 2);
+      deepEqual(wrapped.value(), []);
     });
   }());
 
@@ -11771,11 +11784,30 @@
   QUnit.module('lodash(...).splice');
 
   (function() {
-    test('should remove the value at index `0` when length is `0` (test in IE < 9, and in compatibility mode for IE 9)', 2, function() {
+    test('should support removing and inserting elements', 4, function() {
+      var wrapped = _([1, 2]);
+
+      deepEqual(wrapped.splice(1, 1, 3).value(), [2]);
+      deepEqual(wrapped.value(), [1, 3]);
+
+      deepEqual(wrapped.splice(0, 2).value(), [1, 3]);
+      deepEqual(wrapped.value(), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('splice objects');
+
+  _.each(['pop', 'shift', 'splice'], function(methodName) {
+    test('`_(...).' + methodName + '` should remove the value at index `0` when length is `0` (test in IE 8 compatibility mode)', 2, function() {
       if (!isNpm) {
         var wrapped = _({ '0': 1, 'length': 1 });
-        wrapped.splice(0, 1);
-
+        if (methodName == 'splice') {
+          wrapped.splice(0, 1);
+        } else {
+          wrapped[methodName]();
+        }
         deepEqual(wrapped.keys().value(), ['length']);
         strictEqual(wrapped.first(), undefined);
       }
@@ -11783,7 +11815,7 @@
         skipTest(2);
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

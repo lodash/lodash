@@ -5355,7 +5355,8 @@
      */
     function reduce(collection, iteratee, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduce : baseReduce;
-      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEach);
+
+      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, accumulator === undefined, baseEach);
     }
 
     /**
@@ -5379,7 +5380,8 @@
      */
     function reduceRight(collection, iteratee, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduceRight : baseReduce;
-      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
+      
+      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, accumulator === undefined, baseEachRight);
     }
 
     /**

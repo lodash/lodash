@@ -331,10 +331,13 @@
    */
   function baseCompareAscending(value, other) {
     if (value !== other) {
-      if (value > other || typeof value == 'undefined') {
+      var valIsReflexive = value === value,
+          othIsReflexive = other === other;
+
+      if (value > other || !valIsReflexive || (typeof value == 'undefined' && othIsReflexive)) {
         return 1;
       }
-      if (value < other || typeof other == 'undefined') {
+      if (value < other || !othIsReflexive || (typeof other == 'undefined' && valIsReflexive)) {
         return -1;
       }
     }

@@ -8974,8 +8974,9 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should use the first element of a collection as the default `accumulator`', 1, function() {
+    test('should use the first element of a collection as the default `accumulator`', 2, function() {
       strictEqual(_.reduce(array), 1);
+      strictEqual(_.reduce(array, undefined, undefined, {}), 1);
     });
 
     test('should provide the correct `callback` arguments when iterating an array', 2, function() {
@@ -9053,8 +9054,9 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should use the last element of a collection as the default `accumulator`', 1, function() {
+    test('should use the last element of a collection as the default `accumulator`', 2, function() {
       strictEqual(_.reduceRight(array), 3);
+      strictEqual(_.reduceRight(array, undefined, undefined, {}), 3);
     });
 
     test('should provide the correct `callback` arguments when iterating an array', 2, function() {

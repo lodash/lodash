@@ -9832,14 +9832,14 @@
       deepEqual(actual, stableOrder);
     });
 
-    test('should work with `undefined` values', 1, function() {
-      var array = [undefined, 4, 1, undefined, 3, 2];
-      deepEqual(_.sortBy(array, _.identity), [1, 2, 3, 4, undefined, undefined]);
-    });
-
     test('should use `_.identity` when no predicate is provided', 1, function() {
       var actual = _.sortBy([3, 2, 1]);
       deepEqual(actual, [1, 2, 3]);
+    });
+
+    test('should move `undefined` and `NaN` values to the end', 1, function() {
+      var array = [NaN, undefined, 4, 1, undefined, 3, NaN, 2];
+      deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN]);
     });
 
     test('should provide the correct `callback` arguments', 1, function() {

@@ -3353,18 +3353,18 @@
      * _.dropRightWhile([1, 2, 3], function(n) { return n > 1; });
      * // => [1]
      *
-     * var characters = [
-     *   { 'name': 'barney',  'employer': 'slate' },
-     *   { 'name': 'fred',    'employer': 'slate', 'blocked': true },
-     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
+     * var users = [
+     *   { 'user': 'barney',  'employer': 'slate' },
+     *   { 'user': 'fred',    'employer': 'slate', 'blocked': true },
+     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.dropRightWhile(characters, 'blocked'), 'name');
+     * _.pluck(_.dropRightWhile(users, 'blocked'), 'user');
      * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.dropRightWhile(characters, { 'employer': 'na' }), 'name');
+     * _.pluck(_.dropRightWhile(users, { 'employer': 'na' }), 'user');
      * // => ['barney', 'fred']
      */
     function dropRightWhile(array, predicate, thisArg) {
@@ -3402,18 +3402,18 @@
      * _.dropWhile([1, 2, 3], function(n) { return n < 3; });
      * // => [3]
      *
-     * var characters = [
-     *   { 'name': 'barney',  'employer': 'slate', 'blocked': true },
-     *   { 'name': 'fred',    'employer': 'slate' },
-     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
+     * var users = [
+     *   { 'user': 'barney',  'employer': 'slate', 'blocked': true },
+     *   { 'user': 'fred',    'employer': 'slate' },
+     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.dropWhile(characters, 'blocked'), 'name');
+     * _.pluck(_.dropWhile(users, 'blocked'), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.dropWhile(characters, { 'employer': 'slate' }), 'name');
+     * _.pluck(_.dropWhile(users, { 'employer': 'slate' }), 'user');
      * // => ['pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
@@ -3447,23 +3447,23 @@
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36 },
-     *   { 'name': 'fred',    'age': 40, 'blocked': true },
-     *   { 'name': 'pebbles', 'age': 1 }
+     * var users = [
+     *   { 'user': 'barney',  'age': 36 },
+     *   { 'user': 'fred',    'age': 40, 'blocked': true },
+     *   { 'user': 'pebbles', 'age': 1 }
      * ];
      *
-     * _.findIndex(characters, function(chr) {
+     * _.findIndex(users, function(chr) {
      *   return chr.age < 20;
      * });
      * // => 2
      *
      * // using "_.where" callback shorthand
-     * _.findIndex(characters, { 'age': 36 });
+     * _.findIndex(users, { 'age': 36 });
      * // => 0
      *
      * // using "_.pluck" callback shorthand
-     * _.findIndex(characters, 'blocked');
+     * _.findIndex(users, 'blocked');
      * // => 1
      */
     function findIndex(array, predicate, thisArg) {
@@ -3501,23 +3501,23 @@
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36, 'blocked': true },
-     *   { 'name': 'fred',    'age': 40 },
-     *   { 'name': 'pebbles', 'age': 1,  'blocked': true }
+     * var users = [
+     *   { 'user': 'barney',  'age': 36, 'blocked': true },
+     *   { 'user': 'fred',    'age': 40 },
+     *   { 'user': 'pebbles', 'age': 1,  'blocked': true }
      * ];
      *
-     * _.findLastIndex(characters, function(chr) {
+     * _.findLastIndex(users, function(chr) {
      *   return chr.age > 30;
      * });
      * // => 1
      *
      * // using "_.where" callback shorthand
-     * _.findLastIndex(characters, { 'age': 36 });
+     * _.findLastIndex(users, { 'age': 36 });
      * // => 0
      *
      * // using "_.pluck" callback shorthand
-     * _.findLastIndex(characters, 'blocked');
+     * _.findLastIndex(users, 'blocked');
      * // => 2
      */
     function findLastIndex(array, predicate, thisArg) {
@@ -4129,18 +4129,18 @@
      * _.takeRightWhile([1, 2, 3], function(n) { return n > 1; });
      * // => [2, 3]
      *
-     * var characters = [
-     *   { 'name': 'barney',  'employer': 'slate' },
-     *   { 'name': 'fred',    'employer': 'slate', 'blocked': true },
-     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
+     * var users = [
+     *   { 'user': 'barney',  'employer': 'slate' },
+     *   { 'user': 'fred',    'employer': 'slate', 'blocked': true },
+     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.takeRightWhile(characters, 'blocked'), 'name');
+     * _.pluck(_.takeRightWhile(users, 'blocked'), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.takeRightWhile(characters, { 'employer': 'na' }), 'name');
+     * _.pluck(_.takeRightWhile(users, { 'employer': 'na' }), 'user');
      * // => ['pebbles']
      */
     function takeRightWhile(array, predicate, thisArg) {
@@ -4178,18 +4178,18 @@
      * _.takeWhile([1, 2, 3], function(n) { return n < 3; });
      * // => [1, 2]
      *
-     * var characters = [
-     *   { 'name': 'barney',  'employer': 'slate', 'blocked': true },
-     *   { 'name': 'fred',    'employer': 'slate' },
-     *   { 'name': 'pebbles', 'employer': 'na',    'blocked': true }
+     * var users = [
+     *   { 'user': 'barney',  'employer': 'slate', 'blocked': true },
+     *   { 'user': 'fred',    'employer': 'slate' },
+     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.takeWhile(characters, 'blocked'), 'name');
+     * _.pluck(_.takeWhile(users, 'blocked'), 'user');
      * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.takeWhile(characters, { 'employer': 'slate' }), 'name');
+     * _.pluck(_.takeWhile(users, { 'employer': 'slate' }), 'user');
      * // => ['barney', 'fred']
      */
     function takeWhile(array, predicate, thisArg) {
@@ -4454,15 +4454,15 @@
      * @returns {Object} Returns the new wrapper object.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36 },
-     *   { 'name': 'fred',    'age': 40 },
-     *   { 'name': 'pebbles', 'age': 1 }
+     * var users = [
+     *   { 'user': 'barney',  'age': 36 },
+     *   { 'user': 'fred',    'age': 40 },
+     *   { 'user': 'pebbles', 'age': 1 }
      * ];
      *
-     * var youngest = _.chain(characters)
+     * var youngest = _.chain(users)
      *     .sortBy('age')
-     *     .map(function(chr) { return chr.name + ' is ' + chr.age; })
+     *     .map(function(chr) { return chr.user + ' is ' + chr.age; })
      *     .first()
      *     .value();
      * // => 'pebbles is 1'
@@ -4508,17 +4508,17 @@
      * @returns {*} Returns the wrapper object.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
      * // without explicit chaining
-     * _(characters).first();
-     * // => { 'name': 'barney', 'age': 36 }
+     * _(users).first();
+     * // => { 'user': 'barney', 'age': 36 }
      *
      * // with explicit chaining
-     * _(characters).chain()
+     * _(users).chain()
      *   .first()
      *   .pick('age')
      *   .value();
@@ -4618,7 +4618,7 @@
      * _.contains([1, 2, 3], 1, 2);
      * // => false
      *
-     * _.contains({ 'name': 'fred', 'age': 40 }, 'fred');
+     * _.contains({ 'user': 'fred', 'age': 40 }, 'fred');
      * // => true
      *
      * _.contains('pebbles', 'eb');
@@ -4707,17 +4707,17 @@
      * _.every([true, 1, null, 'yes']);
      * // => false
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.every(characters, 'age');
+     * _.every(users, 'age');
      * // => true
      *
      * // using "_.where" callback shorthand
-     * _.every(characters, { 'age': 36 });
+     * _.every(users, { 'age': 36 });
      * // => false
      */
     function every(collection, predicate, thisArg) {
@@ -4755,18 +4755,18 @@
      * var evens = _.filter([1, 2, 3, 4], function(n) { return n % 2 == 0; });
      * // => [2, 4]
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40, 'blocked': true }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40, 'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.filter(characters, 'blocked');
-     * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
+     * _.filter(users, 'blocked');
+     * // => [{ 'user': 'fred', 'age': 40, 'blocked': true }]
      *
      * // using "_.where" callback shorthand
-     * _.filter(characters, { 'age': 36 });
-     * // => [{ 'name': 'barney', 'age': 36 }]
+     * _.filter(users, { 'age': 36 });
+     * // => [{ 'user': 'barney', 'age': 36 }]
      */
     function filter(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -4799,24 +4799,24 @@
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36 },
-     *   { 'name': 'fred',    'age': 40, 'blocked': true },
-     *   { 'name': 'pebbles', 'age': 1 }
+     * var users = [
+     *   { 'user': 'barney',  'age': 36 },
+     *   { 'user': 'fred',    'age': 40, 'blocked': true },
+     *   { 'user': 'pebbles', 'age': 1 }
      * ];
      *
-     * _.find(characters, function(chr) {
+     * _.find(users, function(chr) {
      *   return chr.age < 40;
      * });
-     * // => { 'name': 'barney', 'age': 36 }
+     * // => { 'user': 'barney', 'age': 36 }
      *
      * // using "_.where" callback shorthand
-     * _.find(characters, { 'age': 1 });
-     * // =>  { 'name': 'pebbles', 'age': 1 }
+     * _.find(users, { 'age': 1 });
+     * // =>  { 'user': 'pebbles', 'age': 1 }
      *
      * // using "_.pluck" callback shorthand
-     * _.find(characters, 'blocked');
-     * // => { 'name': 'fred', 'age': 40, 'blocked': true }
+     * _.find(users, 'blocked');
+     * // => { 'user': 'fred', 'age': 40, 'blocked': true }
      */
     function find(collection, predicate, thisArg) {
       if (isArray(collection)) {
@@ -4863,16 +4863,16 @@
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36, 'employer': 'slate' },
-     *   { 'name': 'fred',   'age': 40, 'employer': 'slate' }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36, 'employer': 'slate' },
+     *   { 'user': 'fred',   'age': 40, 'employer': 'slate' }
      * ];
      *
-     * _.findWhere(characters, { 'employer': 'slate' });
-     * // => { 'name': 'barney', 'age': 36, 'employer': 'slate' }
+     * _.findWhere(users, { 'employer': 'slate' });
+     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
      *
-     * _.findWhere(characters, { 'age': 40 });
-     * // =>  { 'name': 'fred', 'age': 40, 'employer': 'slate' }
+     * _.findWhere(users, { 'age': 40 });
+     * // =>  { 'user': 'fred', 'age': 40, 'employer': 'slate' }
      */
     function findWhere(collection, source) {
       return find(collection, matches(source));
@@ -5075,13 +5075,13 @@
      * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(n) { return n * 3; });
      * // => [3, 6, 9] (property order is not guaranteed)
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.map(characters, 'name');
+     * _.map(users, 'user');
      * // => ['barney', 'fred']
      */
     function map(collection, iteratee, thisArg) {
@@ -5122,17 +5122,17 @@
      * _.max([]);
      * // => -Infinity
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * _.max(characters, function(chr) { return chr.age; });
-     * // => { 'name': 'fred', 'age': 40 };
+     * _.max(users, function(chr) { return chr.age; });
+     * // => { 'user': 'fred', 'age': 40 };
      *
      * // using "_.pluck" callback shorthand
-     * _.max(characters, 'age');
-     * // => { 'name': 'fred', 'age': 40 };
+     * _.max(users, 'age');
+     * // => { 'user': 'fred', 'age': 40 };
      */
     function max(collection, iteratee, thisArg) {
       var computed = -Infinity,
@@ -5205,17 +5205,17 @@
      * _.min([]);
      * // => Infinity
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * _.min(characters, function(chr) { return chr.age; });
-     * // => { 'name': 'barney', 'age': 36 };
+     * _.min(users, function(chr) { return chr.age; });
+     * // => { 'user': 'barney', 'age': 36 };
      *
      * // using "_.pluck" callback shorthand
-     * _.min(characters, 'age');
-     * // => { 'name': 'barney', 'age': 36 };
+     * _.min(users, 'age');
+     * // => { 'user': 'barney', 'age': 36 };
      */
     function min(collection, iteratee, thisArg) {
       var computed = Infinity,
@@ -5287,18 +5287,18 @@
      * _.partition([1.2, 2.3, 3.4], function(n) { return this.floor(n) % 2; }, Math);
      * // => [[1, 3], [2]]
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36 },
-     *   { 'name': 'fred',    'age': 40, 'blocked': true },
-     *   { 'name': 'pebbles', 'age': 1 }
+     * var users = [
+     *   { 'user': 'barney',  'age': 36 },
+     *   { 'user': 'fred',    'age': 40, 'blocked': true },
+     *   { 'user': 'pebbles', 'age': 1 }
      * ];
      *
      * // using "_.where" callback shorthand
-     * _.map(_.partition(characters, { 'age': 1 }), function(array) { return _.pluck(array, 'name'); });
+     * _.map(_.partition(users, { 'age': 1 }), function(array) { return _.pluck(array, 'user'); });
      * // => [['pebbles'], ['barney', 'fred']]
      *
      * // using "_.pluck" callback shorthand
-     * _.map(_.partition(characters, 'blocked'), function(array) { return _.pluck(array, 'name'); });
+     * _.map(_.partition(users, 'blocked'), function(array) { return _.pluck(array, 'user'); });
      * // => [['fred'], ['barney', 'pebbles']]
      */
     var partition = createAggregator(function(result, value, key) {
@@ -5316,12 +5316,12 @@
      * @returns {Array} Returns the property values.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * _.pluck(characters, 'name');
+     * _.pluck(users, 'user');
      * // => ['barney', 'fred']
      */
     function pluck(collection, key) {
@@ -5410,18 +5410,18 @@
      * var odds = _.reject([1, 2, 3, 4], function(n) { return n % 2 == 0; });
      * // => [1, 3]
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40, 'blocked': true }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40, 'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.reject(characters, 'blocked');
-     * // => [{ 'name': 'barney', 'age': 36 }]
+     * _.reject(users, 'blocked');
+     * // => [{ 'user': 'barney', 'age': 36 }]
      *
      * // using "_.where" callback shorthand
-     * _.reject(characters, { 'age': 36 });
-     * // => [{ 'name': 'fred', 'age': 40, 'blocked': true }]
+     * _.reject(users, { 'age': 36 });
+     * // => [{ 'user': 'fred', 'age': 40, 'blocked': true }]
      */
     function reject(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -5549,17 +5549,17 @@
      * _.some([null, 0, 'yes', false], Boolean);
      * // => true
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40, 'blocked': true }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40, 'blocked': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.some(characters, 'blocked');
+     * _.some(users, 'blocked');
      * // => true
      *
      * // using "_.where" callback shorthand
-     * _.some(characters, { 'age': 1 });
+     * _.some(users, { 'age': 1 });
      * // => false
      */
     function some(collection, predicate, thisArg) {
@@ -5604,19 +5604,19 @@
      * _.sortBy([1, 2, 3], function(n) { return this.sin(n); }, Math);
      * // => [3, 1, 2]
      *
-     * var characters = [
-     *   { 'name': 'barney',  'age': 36 },
-     *   { 'name': 'fred',    'age': 40 },
-     *   { 'name': 'barney',  'age': 26 },
-     *   { 'name': 'fred',    'age': 30 }
+     * var users = [
+     *   { 'user': 'barney',  'age': 36 },
+     *   { 'user': 'fred',    'age': 40 },
+     *   { 'user': 'barney',  'age': 26 },
+     *   { 'user': 'fred',    'age': 30 }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.map(_.sortBy(characters, 'age'), _.values);
+     * _.map(_.sortBy(users, 'age'), _.values);
      * // => [['barney', 26], ['fred', 30], ['barney', 36], ['fred', 40]]
      *
      * // sorting by multiple properties
-     * _.map(_.sortBy(characters, ['name', 'age']), _.values);
+     * _.map(_.sortBy(users, ['user', 'age']), _.values);
      * // = > [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
     function sortBy(collection, iteratee, thisArg) {
@@ -5689,18 +5689,18 @@
      * @returns {Array} Returns the new filtered array.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36, 'employer': 'slate', 'pets': ['hoppy'] },
-     *   { 'name': 'fred',   'age': 40, 'employer': 'slate', 'pets': ['baby puss', 'dino'] }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36, 'employer': 'slate', 'pets': ['hoppy'] },
+     *   { 'user': 'fred',   'age': 40, 'employer': 'slate', 'pets': ['baby puss', 'dino'] }
      * ];
      *
-     * _.pluck(_.where(characters, { 'age': 36 }), 'name');
+     * _.pluck(_.where(users, { 'age': 36 }), 'user');
      * // => ['barney']
      *
-     * _.pluck(_.where(characters, { 'pets': ['dino'] }), 'name');
+     * _.pluck(_.where(users, { 'pets': ['dino'] }), 'user');
      * // => ['fred']
      *
-     * _.pluck(_.where(characters, { 'employer': 'slate' }), 'name');
+     * _.pluck(_.where(users, { 'employer': 'slate' }), 'user');
      * // => ['barney', 'fred']
      */
     function where(collection, source) {
@@ -5804,10 +5804,10 @@
      * @example
      *
      * var func = function(greeting) {
-     *   return greeting + ' ' + this.name;
+     *   return greeting + ' ' + this.user;
      * };
      *
-     * func = _.bind(func, { 'name': 'fred' }, 'hi');
+     * func = _.bind(func, { 'user': 'fred' }, 'hi');
      * func();
      * // => 'hi fred'
      */
@@ -5873,9 +5873,9 @@
      * @example
      *
      * var object = {
-     *   'name': 'fred',
+     *   'user': 'fred',
      *   'greet': function(greeting) {
-     *     return greeting + ' ' + this.name;
+     *     return greeting + ' ' + this.user;
      *   }
      * };
      *
@@ -5884,7 +5884,7 @@
      * // => 'hi fred'
      *
      * object.greet = function(greeting) {
-     *   return greeting + 'ya ' + this.name + '!';
+     *   return greeting + 'ya ' + this.user + '!';
      * };
      *
      * func();
@@ -6020,7 +6020,7 @@
      * Object.observe(models.todo, todoChanges);
      *
      * Object.observe(models, function(changes) {
-     *   if (_.find(changes, { 'name': 'todo', 'type': 'delete'})) {
+     *   if (_.find(changes, { 'user': 'todo', 'type': 'delete'})) {
      *     todoChanges.cancel();
      *   }
      * }, ['delete']);
@@ -6557,17 +6557,17 @@
      * @returns {*} Returns the cloned value.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * var shallow = _.clone(characters);
-     * shallow[0] === characters[0];
+     * var shallow = _.clone(users);
+     * shallow[0] === users[0];
      * // => true
      *
-     * var deep = _.clone(characters, true);
-     * deep[0] === characters[0];
+     * var deep = _.clone(users, true);
+     * deep[0] === users[0];
      * // => false
      *
      * _.mixin({
@@ -6619,13 +6619,13 @@
      * @returns {*} Returns the deep cloned value.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * var deep = _.cloneDeep(characters);
-     * deep[0] === characters[0];
+     * var deep = _.cloneDeep(users);
+     * deep[0] === users[0];
      * // => false
      *
      * var view = {
@@ -6827,8 +6827,8 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
-     * var object = { 'name': 'fred' };
-     * var other = { 'name': 'fred' };
+     * var object = { 'user': 'fred' };
+     * var other = { 'user': 'fred' };
      *
      * object == other;
      * // => false
@@ -7190,15 +7190,15 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.assign({ 'name': 'fred' }, { 'age': 40 }, { 'employer': 'slate' });
-     * // => { 'name': 'fred', 'age': 40, 'employer': 'slate' }
+     * _.assign({ 'user': 'fred' }, { 'age': 40 }, { 'employer': 'slate' });
+     * // => { 'user': 'fred', 'age': 40, 'employer': 'slate' }
      *
      * var defaults = _.partialRight(_.assign, function(value, other) {
      *   return typeof value == 'undefined' ? other : value;
      * });
      *
-     * defaults({ 'name': 'barney' }, { 'age': 36 }, { 'name': 'fred', 'employer': 'slate' });
-     * // => { 'name': 'barney', 'age': 36, 'employer': 'slate' }
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'employer': 'slate' });
+     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
      */
     var assign = createAssigner(baseAssign);
 
@@ -7254,8 +7254,8 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.defaults({ 'name': 'barney' }, { 'age': 36 }, { 'name': 'fred', 'employer': 'slate' });
-     * // => { 'name': 'barney', 'age': 36, 'employer': 'slate' }
+     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'employer': 'slate' });
+     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
      */
     function defaults(object) {
       if (object == null) {
@@ -7288,23 +7288,23 @@
      * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
      * @example
      *
-     * var characters = {
+     * var users = {
      *   'barney': { 'age': 36 },
      *   'fred': { 'age': 40, 'blocked': true },
      *   'pebbles': { 'age': 1 }
      * };
      *
-     * _.findKey(characters, function(chr) {
+     * _.findKey(users, function(chr) {
      *   return chr.age < 40;
      * });
      * // => 'barney' (property order is not guaranteed)
      *
      * // using "_.where" callback shorthand
-     * _.findKey(characters, { 'age': 1 });
+     * _.findKey(users, { 'age': 1 });
      * // => 'pebbles'
      *
      * // using "_.pluck" callback shorthand
-     * _.findKey(characters, 'blocked');
+     * _.findKey(users, 'blocked');
      * // => 'fred'
      */
     function findKey(object, predicate, thisArg) {
@@ -7334,23 +7334,23 @@
      * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
      * @example
      *
-     * var characters = {
+     * var users = {
      *   'barney': { 'age': 36, 'blocked': true },
      *   'fred': { 'age': 40 },
      *   'pebbles': { 'age': 1, 'blocked': true }
      * };
      *
-     * _.findLastKey(characters, function(chr) {
+     * _.findLastKey(users, function(chr) {
      *   return chr.age < 40;
      * });
      * // => returns `pebbles`, assuming `_.findKey` returns `barney`
      *
      * // using "_.where" callback shorthand
-     * _.findLastKey(characters, { 'age': 40 });
+     * _.findLastKey(users, { 'age': 40 });
      * // => 'fred'
      *
      * // using "_.pluck" callback shorthand
-     * _.findLastKey(characters, 'blocked');
+     * _.findLastKey(users, 'blocked');
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
@@ -7694,13 +7694,13 @@
      * _.mapValues({ 'a': 1, 'b': 2, 'c': 3} , function(n) { return n * 3; });
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      *
-     * var characters = {
-     *   'fred': { 'name': 'fred', 'age': 40 },
-     *   'pebbles': { 'name': 'pebbles', 'age': 1 }
+     * var users = {
+     *   'fred': { 'user': 'fred', 'age': 40 },
+     *   'pebbles': { 'user': 'pebbles', 'age': 1 }
      * };
      *
      * // using "_.pluck" callback shorthand
-     * _.mapValues(characters, 'age');
+     * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 }
      */
     function mapValues(object, iteratee, thisArg) {
@@ -7732,22 +7732,16 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * var names = {
-     *   'characters': [
-     *     { 'name': 'barney' },
-     *     { 'name': 'fred' }
-     *   ]
+     * var users = {
+     *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
      * };
      *
      * var ages = {
-     *   'characters': [
-     *     { 'age': 36 },
-     *     { 'age': 40 }
-     *   ]
+     *   'data': [{ 'age': 36 }, { 'age': 40 }]
      * };
      *
-     * _.merge(names, ages);
-     * // => { 'characters': [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred', 'age': 40 }] }
+     * _.merge(users, ages);
+     * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
      *
      * var food = {
      *   'fruits': ['apple'],
@@ -7785,13 +7779,13 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * _.omit({ 'name': 'fred', 'age': 40 }, 'age');
-     * // => { 'name': 'fred' }
+     * _.omit({ 'user': 'fred', 'age': 40 }, 'age');
+     * // => { 'user': 'fred' }
      *
-     * _.omit({ 'name': 'fred', 'age': 40 }, function(value) {
+     * _.omit({ 'user': 'fred', 'age': 40 }, function(value) {
      *   return typeof value == 'number';
      * });
-     * // => { 'name': 'fred' }
+     * // => { 'user': 'fred' }
      */
     function omit(object, predicate, thisArg) {
       if (object == null) {
@@ -7854,13 +7848,13 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * _.pick({ 'name': 'fred', '_userid': 'fred1' }, 'name');
-     * // => { 'name': 'fred' }
+     * _.pick({ 'user': 'fred', '_userid': 'fred1' }, 'user');
+     * // => { 'user': 'fred' }
      *
-     * _.pick({ 'name': 'fred', '_userid': 'fred1' }, function(value, key) {
+     * _.pick({ 'user': 'fred', '_userid': 'fred1' }, function(value, key) {
      *   return key.charAt(0) != '_';
      * });
-     * // => { 'name': 'fred' }
+     * // => { 'user': 'fred' }
      */
     function pick(object, predicate, thisArg) {
       if (object == null) {
@@ -8354,7 +8348,7 @@
      *
      * // using the "interpolate" delimiter to create a compiled template
      * var compiled = _.template('hello <%= name %>');
-     * compiled({ 'name': 'fred' });
+     * compiled({ 'user': 'fred' });
      * // => 'hello fred'
      *
      * // using the HTML "escape" delimiter to escape data property values
@@ -8369,18 +8363,18 @@
      *
      * // using the internal `print` function in "evaluate" delimiters
      * var compiled = _.template('<% print("hello " + name); %>!');
-     * compiled({ 'name': 'barney' });
+     * compiled({ 'user': 'barney' });
      * // => 'hello barney!'
      *
      * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
      * var compiled = _.template('hello ${ name }');
-     * compiled({ 'name': 'pebbles' });
+     * compiled({ 'user': 'pebbles' });
      * // => 'hello pebbles'
      *
      * // using custom template delimiters
      * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
      * var compiled = _.template('hello {{ name }}!');
-     * compiled({ 'name': 'mustache' });
+     * compiled({ 'user': 'mustache' });
      * // => 'hello mustache!'
      *
      * // using backslashes to treat delimiters as plain text
@@ -8400,11 +8394,11 @@
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
      *
      * // using the `variable` option to ensure a with-statement isn't used in the compiled template
-     * var compiled = _.template('hi <%= data.name %>!', { 'variable': 'data' });
+     * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
      * compiled.source;
      * // => function(data) {
      *   var __t, __p = '', __e = _.escape;
-     *   __p += 'hi ' + ((__t = ( data.name )) == null ? '' : __t) + '!';
+     *   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
      *   return __p;
      * }
      *
@@ -8754,9 +8748,9 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'barney', 'age': 36 },
-     *   { 'name': 'fred',   'age': 40 }
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
      * ];
      *
      * // wrap to create custom callback shorthands
@@ -8770,8 +8764,8 @@
      *   };
      * });
      *
-     * _.filter(characters, 'age__gt38');
-     * // => [{ 'name': 'fred', 'age': 40 }]
+     * _.filter(users, 'age__gt38');
+     * // => [{ 'user': 'fred', 'age': 40 }]
      */
     function callback(func, thisArg) {
       return baseCallback(func, thisArg);
@@ -8787,7 +8781,7 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var object = { 'name': 'fred' };
+     * var object = { 'user': 'fred' };
      * var getter = _.constant(object);
      * getter() === object;
      * // => true
@@ -8808,7 +8802,7 @@
      * @returns {*} Returns `value`.
      * @example
      *
-     * var object = { 'name': 'fred' };
+     * var object = { 'user': 'fred' };
      * _.identity(object) === object;
      * // => true
      */
@@ -8828,18 +8822,18 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'fred',   'age': 40 },
-     *   { 'name': 'barney', 'age': 36 }
+     * var users = [
+     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'barney', 'age': 36 }
      * ];
      *
      * var matchesAge = _.matches({ 'age': 36 });
      *
-     * _.filter(characters, matchesAge);
-     * // => [{ 'name': 'barney', 'age': 36 }]
+     * _.filter(users, matchesAge);
+     * // => [{ 'user': 'barney', 'age': 36 }]
      *
-     * _.find(characters, matchesAge);
-     * // => { 'name': 'barney', 'age': 36 }
+     * _.find(users, matchesAge);
+     * // => { 'user': 'barney', 'age': 36 }
      */
     function matches(source) {
       var props = keys(source),
@@ -8997,7 +8991,7 @@
      * @category Utility
      * @example
      *
-     * var object = { 'name': 'fred' };
+     * var object = { 'user': 'fred' };
      * _.noop(object) === undefined;
      * // => true
      */
@@ -9068,18 +9062,18 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var characters = [
-     *   { 'name': 'fred',   'age': 40 },
-     *   { 'name': 'barney', 'age': 36 }
+     * var users = [
+     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'barney', 'age': 36 }
      * ];
      *
-     * var getName = _.property('name');
+     * var getName = _.property('user');
      *
-     * _.map(characters, getName);
+     * _.map(users, getName);
      * // => ['barney', 'fred']
      *
-     * _.sortBy(characters, getName);
-     * // => [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred',   'age': 40 }]
+     * _.sortBy(users, getName);
+     * // => [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred',   'age': 40 }]
      */
     function property(key) {
       return function(object) {
@@ -9230,13 +9224,13 @@
      * @example
      *
      * var object = {
-     *   'name': 'fred',
+     *   'user': 'fred',
      *   'age': function() {
      *     return 40;
      *   }
      * };
      *
-     * _.result(object, 'name');
+     * _.result(object, 'user');
      * // => 'fred'
      *
      * _.result(object, 'age');

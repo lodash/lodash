@@ -1247,9 +1247,9 @@
   (function() {
     test('should work when the target function is overwritten', 2, function() {
       var object = {
-        'name': 'fred',
+        'user': 'fred',
         'greet': function(greeting) {
-          return this.name + ' says: ' + greeting;
+          return this.user + ' says: ' + greeting;
         }
       };
 
@@ -1257,7 +1257,7 @@
       strictEqual(bound(), 'fred says: hi');
 
       object.greet = function(greeting) {
-        return this.name + ' says: ' + greeting + '!';
+        return this.user + ' says: ' + greeting + '!';
       };
 
       strictEqual(bound(), 'fred says: hi!');

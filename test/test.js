@@ -9996,21 +9996,21 @@
     });
 
     test('`_.' + methodName + '` should align with `_.sortBy`', 8, function() {
-      var array = [NaN, 1, 2, {}, NaN, undefined];
-      deepEqual(_.sortBy(array), array);
-      strictEqual(func(array, 3), 5);
+      var expected = [1, 2, {}, undefined, NaN, NaN];
 
-      array = [1, 2, NaN, {}, NaN, undefined];
-      deepEqual(_.sortBy(array), array);
-      strictEqual(func(array, 3), 5);
+      deepEqual(_.sortBy([NaN, 1, 2, {}, NaN, undefined]), expected);
+      strictEqual(func(expected, 3), 2);
 
-      array = [NaN, '1', '2', {}, NaN, undefined];
-      deepEqual(_.sortBy(array), array);
-      strictEqual(func(array, '3'), 3);
+      deepEqual(_.sortBy([1, 2, NaN, {}, NaN, undefined]), expected);
+      strictEqual(func(expected, 3), 2);
 
-      array = ['1', '2', NaN, {}, NaN, undefined];
-      deepEqual(_.sortBy(array), array);
-      strictEqual(func(array, '3'), 2);
+      expected = ['1', '2', {}, undefined, NaN, NaN];
+
+      deepEqual(_.sortBy([NaN, '1', '2', {}, NaN, undefined]), expected);
+      strictEqual(func(expected, '3'), 2);
+
+      deepEqual(_.sortBy(['1', '2', NaN, {}, NaN, undefined]), expected);
+      strictEqual(func(expected, '3'), 2);
     });
 
     test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 1, function() {

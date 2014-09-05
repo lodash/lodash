@@ -2258,17 +2258,20 @@
           high = array ? array.length : low;
 
       value = iteratee(value);
-      var hintNum = typeof value == 'number' ||
-        (value != null && isFunction(value.valueOf) && typeof value.valueOf() == 'number');
+
+      var valIsNaN = value !== value,
+          valIsUndef = typeof value == 'undefined';
 
       while (low < high) {
         var mid = (low + high) >>> 1,
-            computed = iteratee(array[mid]),
-            setLow = retHighest ? (computed <= value) : (computed < value);
+            computed = iteratee(array[mid]);
 
-        if (hintNum && typeof computed != 'undefined') {
-          computed = +computed;
-          setLow = computed != computed || setLow;
+        if (valIsNaN) {
+          var setLow = computed === computed;
+        } else if (valIsUndef) {
+          setLow = computed === computed && typeof computed != 'undefined';
+        } else {
+          setLow = retHighest ? (computed <= value) : (computed < value);
         }
         if (setLow) {
           low = mid + 1;

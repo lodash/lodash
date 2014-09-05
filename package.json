@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "dist/lodash.js",
   "browser": "dist/lodash.compat.js",
-  "keywords": ["amd", "browser", "client", "customize", "functional", "server", "util"],
+  "keywords": "amd, browser, client, customize, functional, server, util",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",

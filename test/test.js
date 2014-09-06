@@ -1286,7 +1286,8 @@
 
   _.each(['camel', 'kebab', 'snake'], function(caseName) {
     var methodName = caseName + 'Case',
-        func = _[methodName];
+        func = _[methodName],
+        isCamel = caseName == 'camel';
 
     var expected = (function() {
       switch (caseName) {
@@ -1322,10 +1323,13 @@
       });
     });
 
+    test('`_.' + methodName + '` should work with words in all caps', 1, function() {
+      strictEqual(func('HELLO WORLD'), isCamel ? 'helloWORLD' : expected);
+    });
+
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
-        var isCamel = caseName == 'camel',
-            deburrLetter = deburredLetters[index];
+        var deburrLetter = deburredLetters[index];
 
         var string = isCamel
           ? func('z' + burred)

@@ -62,18 +62,24 @@ var reJobId = /^[a-z0-9]{32}$/;
 var throbberDelay = 500,
     waitCount = -1;
 
-/** Used as Sauce Labs config values */
-var advisor = getOption('advisor', true),
+/**
+ * Used as Sauce Labs config values.
+ * See the [Sauce Labs documentation](https://docs.saucelabs.com/reference/test-configuration/)
+ * for more details.
+ */
+var advisor = getOption('advisor', false),
     build = getOption('build', (env.TRAVIS_COMMIT || '').slice(0, 10)),
+    commandTimeout = getOption('commandTimeout', 90),
     compatMode = getOption('compatMode', null),
     customData = Function('return {' + getOption('customData', '').replace(/^\{|}$/g, '') + '}')(),
+    deviceOrientation = getOption('deviceOrientation', 'portrait'),
     framework = getOption('framework', 'qunit'),
-    idleTimeout = getOption('idleTimeout', 180),
+    idleTimeout = getOption('idleTimeout', 60),
     jobName = getOption('name', 'unit tests'),
-    maxDuration = getOption('maxDuration', 360),
+    maxDuration = getOption('maxDuration', 120),
     port = ports[Math.min(_.sortedIndex(ports, getOption('port', 9001)), ports.length - 1)],
     publicAccess = getOption('public', true),
-    queueTimeout = getOption('queueTimeout', 600),
+    queueTimeout = getOption('queueTimeout', 240),
     recordVideo = getOption('recordVideo', true),
     recordScreenshots = getOption('recordScreenshots', false),
     runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
@@ -180,7 +186,9 @@ if (isModern) {
 /** Used as the default `Job` options object */
 var jobOptions = {
   'build': build,
+  'command-timeout': commandTimeout,
   'custom-data': customData,
+  'device-orientation': deviceOrientation,
   'framework': framework,
   'idle-timeout': idleTimeout,
   'max-duration': maxDuration,

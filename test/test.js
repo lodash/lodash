@@ -1286,8 +1286,7 @@
 
   _.each(['camel', 'kebab', 'snake'], function(caseName) {
     var methodName = caseName + 'Case',
-        func = _[methodName],
-        isCamel = caseName == 'camel';
+        func = _[methodName];
 
     var expected = (function() {
       switch (caseName) {
@@ -1324,22 +1323,12 @@
     });
 
     test('`_.' + methodName + '` should work with words in all caps', 1, function() {
-      strictEqual(func('HELLO WORLD'), isCamel ? 'helloWORLD' : expected);
+      strictEqual(func('HELLO WORLD'), expected);
     });
 
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
-        var deburrLetter = deburredLetters[index];
-
-        var string = isCamel
-          ? func('z' + burred)
-          : func(burred);
-
-        var deburredString = isCamel
-          ? 'z' + deburrLetter
-          : deburrLetter.toLowerCase();
-
-        return string == deburredString;
+        return func(burred) == deburredLetters[index].toLowerCase();
       });
 
       ok(_.every(actual, _.identity));
@@ -1372,10 +1361,18 @@
       strictEqual(_.camelCase('xhr2 request'), 'xhr2Request');
     });
 
-    test('should handle acronyms', 3, function() {
-      strictEqual(_.camelCase('safe HTML'), 'safeHTML');
-      strictEqual(_.camelCase('escape HTML entities'), 'escapeHTMLEntities');
-      strictEqual(_.camelCase('XMLHttpRequest'), 'xmlHttpRequest');
+    test('should handle acronyms', 6, function() {
+      _.each(['safe HTML', 'safeHTML'], function(string) {
+        strictEqual(_.camelCase(string), 'safeHtml');
+      });
+
+      _.each(['escape HTML entities', 'escapeHTMLEntities'], function(string) {
+        strictEqual(_.camelCase(string), 'escapeHtmlEntities');
+      });
+
+      _.each(['XMLHttpRequest', 'XmlHTTPRequest'], function(string) {
+        strictEqual(_.camelCase(string), 'xmlHttpRequest');
+      });
     });
   }());
 

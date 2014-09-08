@@ -242,22 +242,22 @@
    * for more details.
    */
   var deburredLetters = {
-    '\xC0': 'a',  '\xC1': 'a', '\xC2': 'a', '\xC3': 'a', '\xC4': 'a', '\xC5': 'a',
+    '\xC0': 'A',  '\xC1': 'A', '\xC2': 'A', '\xC3': 'A', '\xC4': 'A', '\xC5': 'A',
     '\xE0': 'a',  '\xE1': 'a', '\xE2': 'a', '\xE3': 'a', '\xE4': 'a', '\xE5': 'a',
-    '\xC7': 'c',  '\xE7': 'c',
-    '\xD0': 'd',  '\xF0': 'd',
-    '\xC8': 'e',  '\xC9': 'e', '\xCA': 'e', '\xCB': 'e',
+    '\xC7': 'C',  '\xE7': 'c',
+    '\xD0': 'D',  '\xF0': 'd',
+    '\xC8': 'E',  '\xC9': 'E', '\xCA': 'E', '\xCB': 'E',
     '\xE8': 'e',  '\xE9': 'e', '\xEA': 'e', '\xEB': 'e',
-    '\xCC': 'i',  '\xCD': 'i', '\xCE': 'i', '\xCF': 'i',
+    '\xCC': 'I',  '\xCD': 'I', '\xCE': 'I', '\xCF': 'I',
     '\xEC': 'i',  '\xED': 'i', '\xEE': 'i', '\xEF': 'i',
-    '\xD1': 'n',  '\xF1': 'n',
-    '\xD2': 'o',  '\xD3': 'o', '\xD4': 'o', '\xD5': 'o', '\xD6': 'o', '\xD8': 'o',
+    '\xD1': 'N',  '\xF1': 'n',
+    '\xD2': 'O',  '\xD3': 'O', '\xD4': 'O', '\xD5': 'O', '\xD6': 'O', '\xD8': 'O',
     '\xF2': 'o',  '\xF3': 'o', '\xF4': 'o', '\xF5': 'o', '\xF6': 'o', '\xF8': 'o',
-    '\xD9': 'u',  '\xDA': 'u', '\xDB': 'u', '\xDC': 'u',
+    '\xD9': 'U',  '\xDA': 'U', '\xDB': 'U', '\xDC': 'U',
     '\xF9': 'u',  '\xFA': 'u', '\xFB': 'u', '\xFC': 'u',
-    '\xDD': 'y',  '\xFD': 'y', '\xFF': 'y',
-    '\xC6': 'ae', '\xE6': 'ae',
-    '\xDE': 'th', '\xFE': 'th',
+    '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
+    '\xC6': 'Ae', '\xE6': 'ae',
+    '\xDE': 'Th', '\xFE': 'th',
     '\xDF': 'ss', '\xD7': ' ', '\xF7': ' '
   };
 
@@ -500,7 +500,7 @@
           result = '';
 
       while (++index < length) {
-        result = callback(result, words[index].toLowerCase(), index, words);
+        result = callback(result, words[index], index, words);
       }
       return result;
     };
@@ -8012,6 +8012,7 @@
      * // => 'helloWorld'
      */
     var camelCase = createCompounder(function(result, word, index) {
+      word = word.toLowerCase();
       return index ? (result + word.charAt(0).toUpperCase() + word.slice(1)) : word;
     });
 
@@ -8139,7 +8140,7 @@
      * // => 'hello-world'
      */
     var kebabCase = createCompounder(function(result, word, index) {
-      return result + (index ? '-' : '') + word;
+      return result + (index ? '-' : '') + word.toLowerCase();
     });
 
     /**
@@ -8300,7 +8301,7 @@
      * // => 'hello_world'
      */
     var snakeCase = createCompounder(function(result, word, index) {
-      return result + (index ? '_' : '') + word;
+      return result + (index ? '_' : '') + word.toLowerCase();
     });
 
     /**

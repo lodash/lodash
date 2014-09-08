@@ -1510,7 +1510,7 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Array} [values] The array of values to exclude.
+     * @param {Array} [values] The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
@@ -2130,7 +2130,7 @@
      * @private
      * @param {Function} func The function to partially apply arguments to.
      * @param {number} bitmask The bitmask of flags to compose.
-     * @param {Array} args The array of arguments to be partially applied.
+     * @param {Array} args The arguments to be partially applied.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new partially applied function.
      */
@@ -2389,8 +2389,8 @@
      * placeholders, and provided arguments into a single array of arguments.
      *
      * @private
-     * @param {Array} partialArgs An array of arguments to prepend to those provided.
-     * @param {Array} partialHolders An array of `partialArgs` placeholder indexes.
+     * @param {Array} partialArgs The arguments to prepend to those provided.
+     * @param {Array} partialHolders The `partialArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
      * @returns {Array} Returns the new array of composed arguments.
      */
@@ -2419,8 +2419,8 @@
      * is tailored for `_.partialRight`.
      *
      * @private
-     * @param {Array} partialRightArgs An array of arguments to append to those provided.
-     * @param {Array} partialHolders An array of `partialRightArgs` placeholder indexes.
+     * @param {Array} partialRightArgs The arguments to append to those provided.
+     * @param {Array} partialHolders The `partialRightArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
      * @returns {Array} Returns the new array of composed arguments.
      */
@@ -2579,10 +2579,10 @@
      * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
      * @param {number} arity The arity of `func`.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] An array of arguments to prepend to those provided to the new function.
-     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightArgs] An array of arguments to append to those provided to the new function.
-     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
+     * @param {Array} [partialArgs] The arguments to prepend to those provided to the new function.
+     * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
+     * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
     function createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
@@ -2672,7 +2672,7 @@
      * @private
      * @param {Function} func The function to partially apply arguments to.
      * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
-     * @param {Array} partialArgs An array of arguments to prepend to those provided to the new function.
+     * @param {Array} partialArgs The arguments to prepend to those provided to the new function.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new bound function.
      */
@@ -2717,10 +2717,10 @@
      *   64 - `_.partialRight`
      * @param {number} arity The arity of `func`.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] An array of arguments to prepend to those provided to the new function.
-     * @param {Array} [partialHolders] An array of `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightArgs] An array of arguments to append to those provided to the new function.
-     * @param {Array} [partialRightHolders] An array of `partialRightArgs` placeholder indexes.
+     * @param {Array} [partialArgs] The arguments to prepend to those provided to the new function.
+     * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
+     * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
+     * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
      * @returns {Function} Returns the new function.
      */
     function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
@@ -4416,8 +4416,8 @@
      * @memberOf _
      * @alias object
      * @category Array
-     * @param {Array} props The array of property names.
-     * @param {Array} [vals=[]] The array of property values.
+     * @param {Array} props The property names.
+     * @param {Array} [vals=[]] The property values.
      * @returns {Object} Returns the new object.
      * @example
      *

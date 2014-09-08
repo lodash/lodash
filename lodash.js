@@ -841,7 +841,7 @@
           return value;
         }
         if (!isArray(value) && hasOwnProperty.call(value, '__wrapped__')) {
-          value = value.__wrapped__;
+          return new lodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__queue__));
         }
       }
       return new lodashWrapper(value);
@@ -853,10 +853,12 @@
      * @private
      * @param {*} value The value to wrap in a `lodash` instance.
      * @param {boolean} [chainAll=false] Enable chaining for all methods.
+     * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
      * @returns {Object} Returns a `lodash` instance.
      */
-    function lodashWrapper(value, chainAll) {
+    function lodashWrapper(value, chainAll, queue) {
       this.__chain__ = !!chainAll;
+      this.__queue__ = queue || [];
       this.__wrapped__ = value;
     }
 
@@ -1875,7 +1877,7 @@
             othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (valWrapped || othWrapped) {
-          return baseIsEqual(valWrapped ? value.__wrapped__ : value, othWrapped ? other.__wrapped__ : other, customizer, isWhere, stackA, stackB);
+          return baseIsEqual(valWrapped ? value.value() : value, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
         }
         if (!isSameClass) {
           return false;
@@ -4525,8 +4527,7 @@
      * // => { 'age': 36 }
      */
     function wrapperChain() {
-      this.__chain__ = true;
-      return this;
+      return chain(this);
     }
 
     /**
@@ -4542,7 +4543,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return String(this.__wrapped__);
+      return String(this.value());
     }
 
     /**
@@ -4559,7 +4560,26 @@
      * // => [1, 2, 3]
      */
     function wrapperValueOf() {
-      return this.__wrapped__;
+      var index = -1,
+          queue = this.__queue__,
+          length = queue.length,
+          result = this.__wrapped__;
+
+      while (++index < length) {
+        var data = queue[index],
+            methodName = data[0];
+
+        if (typeof methodName == 'function') {
+          result = methodName.apply(result, data[2]);
+        } else {
+          var args = [result],
+              object = data[1];
+
+          push.apply(args, data[2]);
+          result = object[methodName].apply(object, args);
+        }
+      }
+      return result;
     }
 
     /*------------------------------------------------------------------------*/
@@ -8936,28 +8956,25 @@
           length = methodNames.length;
 
       while (++index < length) {
-        var methodName = methodNames[index],
-            func = object[methodName] = source[methodName];
-
+        var methodName = methodNames[index];
+        object[methodName] = source[methodName];
         if (isFunc) {
-          object.prototype[methodName] = (function(func) {
+          object.prototype[methodName] = (function(methodName) {
             return function() {
-              var chainAll = this.__chain__,
-                  value = this.__wrapped__,
-                  args = [value];
+              if (chain || this.__chain__) {
+                var queue =  baseSlice(this.__queue__),
+                    result = object(this.__wrapped__);
 
-              push.apply(args, arguments);
-              var result = func.apply(object, args);
-              if (chain || chainAll) {
-                if (value === result && isObject(result)) {
-                  return this;
-                }
-                result = new object(result);
-                result.__chain__ = chainAll;
+                result.__chain__ = this.__chain__;
+                result.__queue__ = queue;
+                queue.push([methodName, object, arguments]);
+                return result;
               }
-              return result;
+              var args = [this.value()];
+              push.apply(args, arguments);
+              return object[methodName].apply(object, args);
             };
-          }(func));
+          }(methodName));
         }
       }
       return object;
@@ -9515,19 +9532,13 @@
     // add functions capable of returning wrapped and unwrapped values when chaining
     lodash.sample = sample;
 
-    baseForOwn(lodash, function(func, methodName) {
-      var callbackable = methodName != 'sample';
-      if (!lodash.prototype[methodName]) {
-        lodash.prototype[methodName] = function(n, guard) {
-          var chainAll = this.__chain__,
-              result = func(this.__wrapped__, n, guard);
-
-          return !chainAll && (n == null || (guard && !(callbackable && typeof n == 'function')))
-            ? result
-            : new lodashWrapper(result, chainAll);
-        };
+    lodash.prototype.sample = function(n, guard) {
+      if (!this.__chain__ && (n == null || guard)) {
+        return lodash.sample(this.value());
       }
-    });
+      this.__queue__.push(['sample', lodash, [n]]);
+      return this;
+    };
 
     /*------------------------------------------------------------------------*/
 
@@ -9557,12 +9568,12 @@
     arrayEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        var chainAll = this.__chain__,
-            result = func.apply(this.__wrapped__, arguments);
-
-        return chainAll
-          ? new lodashWrapper(result, chainAll)
-          : result;
+        if (!this.__chain__) {
+          return func.apply(this.value(), arguments)
+        }
+        var result = new lodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__queue__))
+        result.__queue__.push([func, null, arguments]);
+        return result;
       };
     });
 
@@ -9570,8 +9581,10 @@
     arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        func.apply(this.__wrapped__, arguments);
-        return this;
+        var args = arguments;
+        return this.tap(function(value) {
+          func.apply(value, args);
+        });
       };
     });
 
@@ -9579,7 +9592,7 @@
     arrayEach(['concat', 'splice'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(this.__wrapped__, arguments), this.__chain__);
+        return new lodashWrapper(func.apply(this.value(), arguments), this.__chain__);
       };
     });
 
@@ -9592,7 +9605,7 @@
 
         lodash.prototype[methodName] = function() {
           var chainAll = this.__chain__,
-              value = this.__wrapped__,
+              value = this.value(),
               result = func.apply(value, arguments);
 
           if (value.length === 0) {

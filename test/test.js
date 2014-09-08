@@ -754,7 +754,7 @@
       if (lodashBizarro) {
         var actual = _.map(values, function(value) {
           var wrapped = _(lodashBizarro(value)),
-              unwrapped = wrapped.__wrapped__;
+              unwrapped = wrapped.value();
 
           return wrapped instanceof _ &&
             (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
@@ -4160,10 +4160,10 @@
         strictEqual(func(array, Boolean), array);
       });
 
-      test('`_.' + methodName + '` should return the existing wrapped value when chaining', 1, function() {
+      test('`_.' + methodName + '` should not return the existing wrapped value when chaining', 1, function() {
         if (!isNpm) {
           var wrapped = _(array);
-          strictEqual(wrapped[methodName](_.noop), wrapped);
+          notStrictEqual(wrapped[methodName](_.noop), wrapped);
         }
         else {
           skipTest();
@@ -4352,10 +4352,10 @@
       deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
     });
 
-    test('`_.' + methodName + '` should return the existing wrapped value when chaining', 1, function() {
+    test('`_.' + methodName + '` should not return the existing wrapped value when chaining', 1, function() {
       if (!isNpm) {
         var wrapped = _({ 'a': 1 });
-        strictEqual(wrapped[methodName]({ 'b': 2 }), wrapped);
+        notStrictEqual(wrapped[methodName]({ 'b': 2 }), wrapped);
       }
       else {
         skipTest();
@@ -7681,8 +7681,18 @@
       if (!(this instanceof wrapper)) {
         return new wrapper(value);
       }
+      if (_.has(value, '__wrapped__')) {
+        var chain = value.__chain__,
+            queue = _.slice(value.__queue__);
+
+        value = value.__wrapped__;
+      }
+      this.__chain__ = chain || false;
+      this.__queue__ = queue || [];
       this.__wrapped__ = value;
     }
+
+    wrapper.prototype.value = _.prototype.value;
 
     var value = ['a'],
         source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
@@ -7691,7 +7701,7 @@
       _.mixin(source);
 
       strictEqual(_.a(value), 'a');
-      strictEqual(_(value).a().__wrapped__, 'a');
+      strictEqual(_(value).a().value(), 'a');
 
       delete _.a;
       delete _.prototype.a;
@@ -7736,7 +7746,7 @@
       var wrapped = wrapper(value),
           actual = wrapped.a();
 
-      strictEqual(actual.__wrapped__, 'a');
+      strictEqual(actual.value(), 'a');
       ok(actual instanceof wrapper);
 
       delete wrapper.a;
@@ -7768,7 +7778,7 @@
               actual = wrapped.a();
 
           if (options === true || (options && options.chain)) {
-            strictEqual(actual.__wrapped__, 'a', message(func, true));
+            strictEqual(actual.value(), 'a', message(func, true));
             ok(actual instanceof func, message(func, true));
           } else {
             strictEqual(actual, 'a', message(func, false));
@@ -7813,7 +7823,7 @@
       ok(pass);
     });
 
-    test('should return the existing wrapped value when chaining', 2, function() {
+    test('should not return the existing wrapped value when chaining', 2, function() {
       if (!isNpm) {
         _.each([_, wrapper], function(func) {
           if (func === _) {
@@ -7825,7 +7835,7 @@
           else {
             wrapped = _(func);
             actual = wrapped.mixin(source);
-            strictEqual(actual, wrapped);
+            notStrictEqual(actual, wrapped);
           }
           delete func.a;
           delete func.prototype.a;
@@ -10175,6 +10185,8 @@
         });
 
         ok(actual instanceof _);
+
+        actual.value();
         strictEqual(intercepted, array);
       }
       else {
@@ -11888,9 +11900,9 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('`_(...).' + methodName + '` should return the existing wrapped value', 1, function() {
+      test('`_(...).' + methodName + '` should not return the existing wrapped value', 1, function() {
         if (!isNpm) {
-          strictEqual(wrapped[methodName](), wrapped);
+          notStrictEqual(wrapped[methodName](), wrapped);
         }
         else {
           skipTest();

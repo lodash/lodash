@@ -1288,6 +1288,11 @@
     var methodName = caseName + 'Case',
         func = _[methodName];
 
+    var strings = [
+      'hello world', 'Hello world', 'HELLO WORLD',
+      'helloWorld', '--hello-world', '__hello_world__'
+    ];
+
     var expected = (function() {
       switch (caseName) {
         case 'camel': return 'helloWorld';
@@ -1304,26 +1309,26 @@
     ];
 
     var deburredLetters = [
-      'A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
+      'A', 'A', 'A', 'A', 'A', 'A', 'Ae', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
       'D', 'N', 'O', 'O', 'O', 'O', 'O', '', 'O', 'U', 'U', 'U', 'U', 'Y', 'Th', 'ss',
       'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
       'd', 'n', 'o', 'o', 'o', 'o', 'o', '', 'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
     ];
 
-    test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 4, function() {
-      _.each(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
-        strictEqual(func(string), expected);
+    test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 1, function() {
+      var actual = _.map(strings, function(string) {
+        return func(string) === expected;
       });
+
+      ok(_.every(actual));
     });
 
-    test('`_.' + methodName + '` should handle double-converting strings', 4, function() {
-      _.each(['Hello world', 'helloWorld', '--hello-world', '__hello_world__'], function(string) {
-        strictEqual(func(func(string)), expected);
+    test('`_.' + methodName + '` should handle double-converting strings', 1, function() {
+      var actual = _.map(strings, function(string) {
+        return func(func(string)) === expected;
       });
-    });
 
-    test('`_.' + methodName + '` should work with words in all caps', 1, function() {
-      strictEqual(func('HELLO WORLD'), expected);
+      ok(_.every(actual));
     });
 
     test('`_.' + methodName + '` should deburr letters', 1, function() {
@@ -1331,7 +1336,7 @@
         return func(burred) == deburredLetters[index].toLowerCase();
       });
 
-      ok(_.every(actual, _.identity));
+      ok(_.every(actual));
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {

@@ -149,7 +149,8 @@
 						'"x"'
 					],
 					'times': [
-						'Died on test #1'
+						'Died on test #1',
+						'works as a wrapper'
 					],
 					'uniqueId': [
 						'Died on test #1'
@@ -159,6 +160,7 @@
 
 			// only excuse in Sauce Labs (buggy Safari and timers)
 			if (!ui.isSauceLabs) {
+				QUnit.config.excused.Utility.times.shift();
 				delete QUnit.config.excused.Chaining['select/reject/sortBy'];
 				delete QUnit.config.excused.Chaining['select/reject/sortBy in functional style'];
 				delete QUnit.config.excused.Functions['throttle repeatedly with results'];
@@ -166,12 +168,12 @@
 				delete QUnit.config.excused.Functions['throttle does not trigger trailing call when trailing is set to false'];
 				delete QUnit.config.excused.Functions['debounce asap'];
 				delete QUnit.config.excused.Objects.isEqual;
-				delete QUnit.config.excused.Utility.times;
 				delete QUnit.config.excused.Utility.uniqueId;
 			}
 			// only excuse for non-Underscore builds
 			if (/\bunderscore\b/i.test(ui.buildPath)) {
 				QUnit.config.excused.Arrays.intersection.shift();
+				QUnit.config.excused.Utility.times.pop();
 				delete QUnit.config.excused.Arrays.drop;
 				delete QUnit.config.excused.Arrays.first;
 				delete QUnit.config.excused.Arrays.flatten;

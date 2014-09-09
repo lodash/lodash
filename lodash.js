@@ -204,7 +204,7 @@
   };
 
   /**
-   * Used to convert characters to HTML entities.
+   * Used to map characters to HTML entities.
    *
    * **Note:** Though the ">" character is escaped for symmetry, characters like
    * ">" and "/" don't require escaping in HTML and have no special meaning
@@ -226,7 +226,7 @@
     '`': '&#96;'
   };
 
-  /** Used to convert HTML entities to characters */
+  /** Used to map HTML entities to characters */
   var htmlUnescapes = {
     '&amp;': '&',
     '&lt;': '<',
@@ -236,11 +236,7 @@
     '&#96;': '`'
   };
 
-  /**
-   * Used to convert latin-1 supplement letters to basic latin (ASCII) letters.
-   * See [Wikipedia](http://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
-   * for more details.
-   */
+  /** Used to map latin-1 supplementary letters to basic latin letters */
   var deburredLetters = {
     '\xC0': 'A',  '\xC1': 'A', '\xC2': 'A', '\xC3': 'A', '\xC4': 'A', '\xC5': 'A',
     '\xE0': 'a',  '\xE1': 'a', '\xE2': 'a', '\xE3': 'a', '\xE4': 'a', '\xE5': 'a',
@@ -296,6 +292,184 @@
   var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * A specialized version of `_.forEach` for arrays without support for
+   * callback shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEach(array, iteratee) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (iteratee(array[index], index, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.forEachRight` for arrays without support for
+   * callback shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEachRight(array, iteratee) {
+    var length = array.length;
+
+    while (length--) {
+      if (iteratee(array[length], length, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.every` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {Array} Returns `true` if all elements passed the predicate check,
+   *  else `false`
+   */
+  function arrayEvery(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (!predicate(array[index], index, array)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * A specialized version of `_.map` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns the new mapped array.
+   */
+  function arrayMap(array, iteratee) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = iteratee(array[index], index, array);
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.filter` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {Array} Returns the new filtered array.
+   */
+  function arrayFilter(array, predicate) {
+    var index = -1,
+        length = array.length,
+        resIndex = -1,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if (predicate(value, index, array)) {
+        result[++resIndex] = value;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.reduce` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} [accumulator] The initial value.
+   * @param {boolean} [initFromArray=false] Specify using the first element of
+   *  `array` as the initial value.
+   * @returns {*} Returns the accumulated value.
+   */
+  function arrayReduce(array, iteratee, accumulator, initFromArray) {
+    var index = -1,
+        length = array.length;
+
+    if (initFromArray && length) {
+      accumulator = array[++index];
+    }
+    while (++index < length) {
+      accumulator = iteratee(accumulator, array[index], index, array);
+    }
+    return accumulator;
+  }
+
+  /**
+   * A specialized version of `_.reduceRight` for arrays without support for
+   * callback shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} [accumulator] The initial value.
+   * @param {boolean} [initFromArray=false] Specify using the last element of
+   *  `array` as the initial value.
+   * @returns {*} Returns the accumulated value.
+   */
+  function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
+    var length = array.length;
+
+    if (initFromArray && length) {
+      accumulator = array[--length];
+    }
+    while (length--) {
+      accumulator = iteratee(accumulator, array[length], length, array);
+    }
+    return accumulator;
+  }
+
+  /**
+   * A specialized version of `_.some` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {boolean} Returns `true` if any element passed the predicate check,
+   *  else `false`.
+   */
+  function arraySome(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   /**
    * The base implementation of `_.at` without support for strings and individual
@@ -485,30 +659,7 @@
   }
 
   /**
-   * Creates a function that produces compound words out of the words in a
-   * given string.
-   *
-   * @private
-   * @param {Function} callback The function invoked to combine each word.
-   * @returns {Function} Returns the new compounder function.
-   */
-  function createCompounder(callback) {
-    return function(string) {
-      var index = -1,
-          words = string != null && String(string).replace(reLatin1, deburrLetter).match(reWords),
-          length = words ? words.length : 0,
-          result = '';
-
-      while (++index < length) {
-        result = callback(result, words[index], index, words);
-      }
-      return result;
-    };
-  }
-
-  /**
-   * Used by `createCompounder` to convert latin-1 supplement letters to basic
-   * latin (ASCII) letters.
+   * Used by `deburr` to convert latin-1 to basic latin letters.
    *
    * @private
    * @param {string} letter The matched letter to deburr.
@@ -572,6 +723,58 @@
   function isWhitespace(charCode) {
     return ((charCode <= 160 && (charCode >= 9 && charCode <= 13) || charCode == 32 || charCode == 160) || charCode == 5760 || charCode == 6158 ||
       (charCode >= 8192 && (charCode <= 8202 || charCode == 8232 || charCode == 8233 || charCode == 8239 || charCode == 8287 || charCode == 12288 || charCode == 65279)));
+  }
+
+  /**
+   * Replaces all `placeholder` elements in `array` with an internal placeholder
+   * and returns an array of their indexes.
+   *
+   * @private
+   * @param {Array} array The array to modify.
+   * @param {*} placeholder The placeholder to replace.
+   * @returns {Array} Returns the new array of placeholder indexes.
+   */
+  function replaceHolders(array, placeholder) {
+    var index = -1,
+        length = array.length,
+        resIndex = -1,
+        result = [];
+
+    while (++index < length) {
+      if (array[index] === placeholder) {
+        array[index] = PLACEHOLDER;
+        result[++resIndex] = index;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * An implementation of `_.uniq` optimized for sorted arrays without support
+   * for callback shorthands and `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to inspect.
+   * @param {Function} [iteratee] The function invoked per iteration.
+   * @returns {Array} Returns the new duplicate-value-free array.
+   */
+  function sortedUniq(array, iteratee) {
+    var seen,
+        index = -1,
+        length = array.length,
+        resIndex = -1,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index],
+          computed = iteratee ? iteratee(value, index, array) : value;
+
+      if (!index || seen !== computed) {
+        seen = computed;
+        result[++resIndex] = value;
+      }
+    }
+    return result;
   }
 
   /**
@@ -790,15 +993,15 @@
      * `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pluck`, `property`,
      * `pull`, `pullAt`, `push`, `range`, `reject`, `remove`, `rest`, `reverse`,
      * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`, `takeRight`,
-     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `times`, `toArray`,
-     * `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`,
-     * `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
+     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `times`,
+     * `toArray`, `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`,
+     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
-     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
-     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
-     * `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
+     * `deburr`, endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
+     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
+     * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
      * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
      * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
@@ -806,7 +1009,7 @@
      * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
      * `result`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
      * `sortedLastIndex`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `trunc`, `unescape`, `uniqueId`, and `value`
+     * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is
      * provided, otherwise it will return an unwrapped value.
@@ -1087,184 +1290,6 @@
     };
 
     /*------------------------------------------------------------------------*/
-
-    /**
-     * A specialized version of `_.forEach` for arrays without support for
-     * callback shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayEach(array, iteratee) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (iteratee(array[index], index, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.forEachRight` for arrays without support for
-     * callback shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayEachRight(array, iteratee) {
-      var length = array.length;
-
-      while (length--) {
-        if (iteratee(array[length], length, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.every` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns `true` if all elements passed the predicate check,
-     *  else `false`
-     */
-    function arrayEvery(array, predicate) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (!predicate(array[index], index, array)) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    /**
-     * A specialized version of `_.map` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns the new mapped array.
-     */
-    function arrayMap(array, iteratee) {
-      var index = -1,
-          length = array.length,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = iteratee(array[index], index, array);
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.filter` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns the new filtered array.
-     */
-    function arrayFilter(array, predicate) {
-      var index = -1,
-          length = array.length,
-          resIndex = -1,
-          result = [];
-
-      while (++index < length) {
-        var value = array[index];
-        if (predicate(value, index, array)) {
-          result[++resIndex] = value;
-        }
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.reduce` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray=false] Specify using the first element of
-     *  `array` as the initial value.
-     * @returns {*} Returns the accumulated value.
-     */
-    function arrayReduce(array, iteratee, accumulator, initFromArray) {
-      var index = -1,
-          length = array.length;
-
-      if (initFromArray && length) {
-        accumulator = array[++index];
-      }
-      while (++index < length) {
-        accumulator = iteratee(accumulator, array[index], index, array);
-      }
-      return accumulator;
-    }
-
-    /**
-     * A specialized version of `_.reduceRight` for arrays without support for
-     * callback shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray=false] Specify using the last element of
-     *  `array` as the initial value.
-     * @returns {*} Returns the accumulated value.
-     */
-    function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
-      var length = array.length;
-
-      if (initFromArray && length) {
-        accumulator = array[--length];
-      }
-      while (length--) {
-        accumulator = iteratee(accumulator, array[length], length, array);
-      }
-      return accumulator;
-    }
-
-    /**
-     * A specialized version of `_.some` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if any element passed the predicate check,
-     *  else `false`.
-     */
-    function arraySome(array, predicate) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (predicate(array[index], index, array)) {
-          return true;
-        }
-      }
-      return false;
-    }
 
     /**
      * Used by `_.defaults` to customize its `_.assign` use.
@@ -2552,6 +2577,28 @@
     };
 
     /**
+     * Creates a function that produces compound words out of the words in a
+     * given string.
+     *
+     * @private
+     * @param {Function} callback The function invoked to combine each word.
+     * @returns {Function} Returns the new compounder function.
+     */
+    function createCompounder(callback) {
+      return function(string) {
+        var index = -1,
+            array = words(deburr(string)),
+            length = array.length,
+            result = '';
+
+        while (++index < length) {
+          result = callback(result, array[index], index, words);
+        }
+        return result;
+      };
+    }
+
+    /**
      * Creates a function that produces an instance of `Ctor` regardless of
      * whether it was invoked as part of a `new` expression or by `call` or `apply`.
      *
@@ -2982,30 +3029,6 @@
     }
 
     /**
-     * Replaces all `placeholder` elements in `array` with an internal placeholder
-     * and returns an array of their indexes.
-     *
-     * @private
-     * @param {Array} array The array to modify.
-     * @param {*} placeholder The placeholder to replace.
-     * @returns {Array} Returns the new array of placeholder indexes.
-     */
-    function replaceHolders(array, placeholder) {
-      var index = -1,
-          length = array.length,
-          resIndex = -1,
-          result = [];
-
-      while (++index < length) {
-        if (array[index] === placeholder) {
-          array[index] = PLACEHOLDER;
-          result[++resIndex] = index;
-        }
-      }
-      return result;
-    }
-
-    /**
      * Sets metadata for `func`.
      *
      * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
@@ -3103,34 +3126,6 @@
         if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
             hasOwnProperty.call(object, key)) {
           result.push(key);
-        }
-      }
-      return result;
-    }
-
-    /**
-     * An implementation of `_.uniq` optimized for sorted arrays without support
-     * for callback shorthands and `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per iteration.
-     * @returns {Array} Returns the new duplicate-value-free array.
-     */
-    function sortedUniq(array, iteratee) {
-      var seen,
-          index = -1,
-          length = array.length,
-          resIndex = -1,
-          result = [];
-
-      while (++index < length) {
-        var value = array[index],
-            computed = iteratee ? iteratee(value, index, array) : value;
-
-        if (!index || seen !== computed) {
-          seen = computed;
-          result[++resIndex] = value;
         }
       }
       return result;
@@ -4499,6 +4494,22 @@
     function tap(value, interceptor, thisArg) {
       interceptor.call(thisArg, value);
       return value;
+    }
+
+    /**
+     * This method is like `_.tap` except that it returns the result of `interceptor`.
+     *
+     * @static
+     * @memberOf _
+     * @category Chain
+     * @param {*} value The value to provide to `interceptor`.
+     * @param {Function} interceptor The function to invoke.
+     * @param {*} [thisArg] The `this` binding of `interceptor`.
+     * @returns {*} Returns the result of `interceptor`.
+     * @example
+     */
+    function thru(value, interceptor, thisArg) {
+      return interceptor.call(thisArg, value);
     }
 
     /**
@@ -8030,11 +8041,28 @@
      * // => 'Fred'
      */
     function capitalize(string) {
-      if (string == null) {
-        return '';
-      }
-      string = String(string);
-      return string.charAt(0).toUpperCase() + string.slice(1);
+      string = string == null ? '' : String(string);
+      return string ? (string.charAt(0).toUpperCase() + string.slice(1)) : string;
+    }
+
+    /**
+     * Deburrs `string` by converting latin-1 supplementary letters to basic latin letters.
+     * See [Wikipedia](http://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+     * for more details.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to deburr.
+     * @returns {string} Returns the beburred string.
+     * @example
+     *
+     * _.deburr('déjà vu');
+     * // => 'deja vu'
+     */
+    function deburr(string) {
+      string = string == null ? '' : String(string);
+      return string ? string.replace(reLatin1, deburrLetter) : string;
     }
 
     /**
@@ -8092,7 +8120,7 @@
     function escape(string) {
       // reset `lastIndex` because in IE < 9 `String#replace` does not
       string = string == null ? '' : String(string);
-      return (reUnescapedHtml.lastIndex = 0, reUnescapedHtml.test(string))
+      return string && (reUnescapedHtml.lastIndex = 0, reUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)
         : string;
     }
@@ -8113,7 +8141,7 @@
      */
     function escapeRegExp(string) {
       string = string == null ? '' : String(string);
-      return (reRegExpChars.lastIndex = 0, reRegExpChars.test(string))
+      return string && (reRegExpChars.lastIndex = 0, reRegExpChars.test(string))
         ? string.replace(reRegExpChars, '\\$&')
         : string;
     }
@@ -8207,7 +8235,7 @@
      */
     function padLeft(string, length, chars) {
       string = string == null ? '' : String(string);
-      return createPad(string, length, chars) + string;
+      return string ? (createPad(string, length, chars) + string) : string;
     }
 
     /**
@@ -8235,7 +8263,7 @@
      */
     function padRight(string, length, chars) {
       string = string == null ? '' : String(string);
-      return string + createPad(string, length, chars);
+      return string ? (string + createPad(string, length, chars)) : string;
     }
 
     /**
@@ -8716,9 +8744,27 @@
      */
     function unescape(string) {
       string = string == null ? '' : String(string);
-      return (reEscapedHtml.lastIndex = 0, reEscapedHtml.test(string))
+      return string && (reEscapedHtml.lastIndex = 0, reEscapedHtml.test(string))
         ? string.replace(reEscapedHtml, unescapeHtmlChar)
         : string;
+    }
+
+    /**
+     * Splits `string` into an array of its words.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to inspect.
+     * @returns {Array} Returns the words of `string`.
+     * @example
+     *
+     * _.words('hello world');
+     * // => ['hello', 'world']
+     */
+    function words(string) {
+      string = string == null ? '' : String(string);
+      return (string && string.match(reWords)) || [];
     }
 
     /*------------------------------------------------------------------------*/
@@ -8963,12 +9009,9 @@
           object.prototype[methodName] = (function(methodName) {
             return function() {
               if (chain || this.__chain__) {
-                var queue =  baseSlice(this.__queue__),
-                    result = object(this.__wrapped__);
-
+                var result = object(this.__wrapped__);
                 result.__chain__ = this.__chain__;
-                result.__queue__ = queue;
-                queue.push([methodName, object, arguments]);
+                (result.__queue__ = baseSlice(this.__queue__)).push([methodName, object, arguments]);
                 return result;
               }
               var args = [this.value()];
@@ -9401,6 +9444,7 @@
     lodash.takeWhile = takeWhile;
     lodash.tap = tap;
     lodash.throttle = throttle;
+    lodash.thru = thru;
     lodash.times = times;
     lodash.toArray = toArray;
     lodash.transform = transform;
@@ -9442,6 +9486,7 @@
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
     lodash.contains = contains;
+    lodash.deburr = deburr;
     lodash.endsWith = endsWith;
     lodash.escape = escape;
     lodash.escapeRegExp = escapeRegExp;
@@ -9507,6 +9552,7 @@
     lodash.trunc = trunc;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
+    lodash.words = words;
 
     // add aliases
     lodash.all = every;
@@ -9569,10 +9615,11 @@
     arrayEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        if (!this.__chain__) {
-          return func.apply(this.value(), arguments)
+        var chainAll = this.__chain__;
+        if (!chainAll) {
+          return func.apply(this.value(), arguments);
         }
-        var result = new lodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__queue__))
+        var result = new lodashWrapper(this.__wrapped__, chainAll, baseSlice(this.__queue__));
         result.__queue__.push([func, null, arguments]);
         return result;
       };
@@ -9605,16 +9652,14 @@
             isSplice = methodName == 'splice';
 
         lodash.prototype[methodName] = function() {
-          var chainAll = this.__chain__,
-              value = this.value(),
-              result = func.apply(value, arguments);
-
-          if (value.length === 0) {
-            delete value[0];
-          }
-          return (chainAll || isSplice)
-            ? new lodashWrapper(result, chainAll)
-            : result;
+          var args = arguments;
+          return this[isSplice ? 'thru' : 'tap'](function(value) {
+            var result = func.apply(value, args);
+            if (value.length === 0) {
+              delete value[0];
+            }
+            return result;
+          });
         };
       });
     }

@@ -12254,12 +12254,13 @@
       'partialRight',
       'tap',
       'throttle',
+      'thru',
       'wrap'
     ];
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 195, function() {
+    test('should accept falsey arguments', 197, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -12294,7 +12295,7 @@
       });
 
       // skip tests for missing methods of modularized builds
-      _.each(['noConflict', 'runInContext', 'tap'], function(methodName) {
+      _.each(['noConflict', 'runInContext', 'tap', 'thru'], function(methodName) {
         if (!_[methodName]) {
           skipTest();
         }
@@ -12325,7 +12326,7 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 20, function() {
+    test('should throw a TypeError for falsey arguments', 21, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
@@ -12344,7 +12345,7 @@
       });
     });
 
-    test('should handle `null` `thisArg` arguments', 43, function() {
+    test('should handle `null` `thisArg` arguments', 44, function() {
       var expected = (function() { return this; }).call(null);
 
       var funcs = [
@@ -12390,6 +12391,7 @@
         'tap',
         'times',
         'transform',
+        'thru',
         'uniq'
       ];
 

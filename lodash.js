@@ -8745,8 +8745,8 @@
      * @returns {string} Returns the unescaped string.
      * @example
      *
-     * _.unescape('fred, barney &amp; pebbles');
-     * // => 'fred, barney & pebbles'
+     * _.unescape('fred, barney, &amp; pebbles');
+     * // => 'fred, barney, & pebbles'
      */
     function unescape(string) {
       string = string == null ? '' : String(string);

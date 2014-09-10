@@ -4485,11 +4485,11 @@
      * @returns {*} Returns `value`.
      * @example
      *
-     * _([1, 2, 3, 4])
+     * _([1, 2, 3])
      *  .tap(function(array) { array.pop(); })
      *  .reverse()
      *  .value();
-     * // => [3, 2, 1]
+     * // => [2, 1]
      */
     function tap(value, interceptor, thisArg) {
       interceptor.call(thisArg, value);
@@ -4507,6 +4507,12 @@
      * @param {*} [thisArg] The `this` binding of `interceptor`.
      * @returns {*} Returns the result of `interceptor`.
      * @example
+     *
+     * _([1, 2, 3])
+     *  .last()
+     *  .thru(function(value) { return [value]; })
+     *  .value();
+     * // => [3]
      */
     function thru(value, interceptor, thisArg) {
       return interceptor.call(thisArg, value);
@@ -8756,15 +8762,19 @@
      * @memberOf _
      * @category String
      * @param {string} [string=''] The string to inspect.
+     * @param {RegExp|string} [pattern] The pattern to match words.
      * @returns {Array} Returns the words of `string`.
      * @example
      *
-     * _.words('hello world');
-     * // => ['hello', 'world']
+     * _.words('fred, barney, & pebbles');
+     * // => ['fred', 'barney', 'pebbles']
+     *
+     * _.words('fred, barney, & pebbles', /[^, ]+/g);
+     * // => ['fred', 'barney', '&', 'pebbles']
      */
-    function words(string) {
+    function words(string, pattern) {
       string = string == null ? '' : String(string);
-      return (string && string.match(reWords)) || [];
+      return (string && string.match(pattern || reWords)) || [];
     }
 
     /*------------------------------------------------------------------------*/

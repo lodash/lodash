@@ -99,7 +99,13 @@
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** Used to match words to create compound words */
-  var reWords = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*)|[A-Z]?[a-z]+[0-9]*|[A-Z]+|[0-9]+/g;
+  var reWords = (function() {
+    var nums = '[0-9]',
+        upper = '[A-Z\\xC0-\\xD6\\xD8-\\xDE]',
+        lower = '[a-z\\xDF-\\xF6\\xF8-\\xFF]+' + nums + '*';
+
+    return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|' + nums + '+', 'g');
+  }());
 
   /** Used to detect and test whitespace */
   var whitespace = (
@@ -8773,7 +8779,7 @@
      * // => ['fred', 'barney', '&', 'pebbles']
      */
     function words(string, pattern) {
-      string = string == null ? '' : String(string);
+      string = string != null && String(string);
       return (string && string.match(pattern || reWords)) || [];
     }
 

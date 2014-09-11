@@ -1320,7 +1320,7 @@
         return func(string) === expected;
       });
 
-      ok(_.every(actual));
+      deepEqual(actual, _.map(strings, _.constant(true)));
     });
 
     test('`_.' + methodName + '` should handle double-converting strings', 1, function() {
@@ -1328,15 +1328,15 @@
         return func(func(string)) === expected;
       });
 
-      ok(_.every(actual));
+      deepEqual(actual, _.map(strings, _.constant(true)));
     });
 
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
-        return func(burred) == deburredLetters[index].toLowerCase();
+        return func(burred) === deburredLetters[index].toLowerCase();
       });
 
-      ok(_.every(actual));
+      deepEqual(actual, _.map(burredLetters, _.constant(true)));
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {

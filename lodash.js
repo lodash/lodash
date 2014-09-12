@@ -4945,7 +4945,7 @@
      * // => logs each value and returns the array
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
-     * // => logs each value-key pair and returns the object (property order is not guaranteed)
+     * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
      */
     function forEach(collection, iteratee, thisArg) {
       return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
@@ -5116,7 +5116,7 @@
      * // => [3, 6, 9]
      *
      * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(n) { return n * 3; });
-     * // => [3, 6, 9] (property order is not guaranteed)
+     * // => [3, 6, 9] (iteration order is not guaranteed)
      *
      * var users = [
      *   { 'user': 'barney', 'age': 36 },
@@ -5366,6 +5366,10 @@
      *
      * _.pluck(users, 'user');
      * // => ['barney', 'fred']
+     *
+     * var userIndex = _.indexBy(users, 'user');
+     * _.pluck(userIndex, 'age');
+     * // => [36, 40] (iteration order is not guaranteed)
      */
     function pluck(collection, key) {
       return map(collection, property(key));
@@ -5397,7 +5401,7 @@
      *   result[key] = n * 3;
      *   return result;
      * }, {});
-     * // => { 'a': 3, 'b': 6, 'c': 9 } (property order is not guaranteed)
+     * // => { 'a': 3, 'b': 6, 'c': 9 } (iteration order is not guaranteed)
      */
     function reduce(collection, iteratee, accumulator, thisArg) {
       var func = isArray(collection) ? arrayReduce : baseReduce;
@@ -7340,7 +7344,7 @@
      * _.findKey(users, function(chr) {
      *   return chr.age < 40;
      * });
-     * // => 'barney' (property order is not guaranteed)
+     * // => 'barney' (iteration order is not guaranteed)
      *
      * // using "_.where" callback shorthand
      * _.findKey(users, { 'age': 1 });
@@ -7426,7 +7430,7 @@
      * _.forIn(new Shape, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'x', 'y', and 'z' (property order is not guaranteed)
+     * // => logs 'x', 'y', and 'z' (iteration order is not guaranteed)
      */
     function forIn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
@@ -7483,7 +7487,7 @@
      * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(n, key) {
      *   console.log(key);
      * });
-     * // => logs '0', '1', and 'length' (property order is not guaranteed)
+     * // => logs '0', '1', and 'length' (iteration order is not guaranteed)
      */
     function forOwn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
@@ -7620,7 +7624,7 @@
      * Shape.prototype.z = 0;
      *
      * _.keys(new Shape);
-     * // => ['x', 'y'] (property order is not guaranteed)
+     * // => ['x', 'y'] (iteration order is not guaranteed)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
       object = toObject(object);
@@ -7654,7 +7658,7 @@
      * Shape.prototype.z = 0;
      *
      * _.keysIn(new Shape);
-     * // => ['x', 'y', 'z'] (property order is not guaranteed)
+     * // => ['x', 'y', 'z'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
       if (object == null) {
@@ -7857,7 +7861,7 @@
      * @example
      *
      * _.pairs({ 'barney': 36, 'fred': 40 });
-     * // => [['barney', 36], ['fred', 40]] (property order is not guaranteed)
+     * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
      */
     function pairs(object) {
       var index = -1,
@@ -7981,7 +7985,7 @@
      * Shape.prototype.z = 0;
      *
      * _.values(new Shape(2, 1));
-     * // => [2, 1] (property order is not guaranteed)
+     * // => [2, 1] (iteration order is not guaranteed)
      */
     function values(object) {
       return baseValues(object, keys);
@@ -8006,7 +8010,7 @@
      * Shape.prototype.z = 0;
      *
      * _.valuesIn(new Shape(2, 1));
-     * // => [2, 1, 0] (property order is not guaranteed)
+     * // => [2, 1, 0] (iteration order is not guaranteed)
      */
     function valuesIn(object) {
       return baseValues(object, keysIn);

@@ -9491,7 +9491,7 @@
     lodash.unique = uniq;
 
     // add functions to `lodash.prototype`
-    mixin(lodash, baseAssign({}, lodash));
+    mixin(lodash, lodash);
 
     /*------------------------------------------------------------------------*/
 

@@ -11823,7 +11823,7 @@
       if (!isNpm) {
         var wrapped = _({ '0': 1, 'length': 1 });
         if (methodName == 'splice') {
-          wrapped.splice(0, 1);
+          wrapped.splice(0, 1).value();
         } else {
           wrapped[methodName]();
         }

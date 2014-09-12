@@ -9599,8 +9599,9 @@
       if (!this.__chain__ && (n == null || guard)) {
         return lodash.sample(this.value());
       }
-      this.__queue__.push(['sample', lodash, [n]]);
-      return this;
+      return this.tap(function(value) {
+        lodash.sample(value);
+      });
     };
 
     /*------------------------------------------------------------------------*/
@@ -9636,7 +9637,7 @@
           return func.apply(this.value(), args);
         }
         return this.tap(function(value) {
-          return func.apply(value, args);
+          func.apply(value, args);
         });
       };
     });
@@ -9661,23 +9662,20 @@
         var func = arrayProto[methodName],
             isSplice = methodName == 'splice';
 
-        function process(value, args) {
+        function wrapper(value, args) {
           var result = func.apply(value, args);
           if (value.length === 0) {
             delete value[0];
           }
           return result;
         }
-
         lodash.prototype[methodName] = function() {
-          var args = arguments,
-              chainAll = this.__chain__;
-
-          if (!chainAll && !isSplice) {
-            return process(this.value(), args);
+          var args = arguments;
+          if (!this.__chain__ && !isSplice) {
+            return wrapper(this.value(), args);
           }
           return this[isSplice ? 'thru' : 'tap'](function(value) {
-            return process(value, args);
+            return wrapper(value, args);
           });
         };
       });

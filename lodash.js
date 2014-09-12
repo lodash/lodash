@@ -4589,18 +4589,13 @@
           result = this.__wrapped__;
 
       while (++index < length) {
-        var data = queue[index],
-            methodName = data[0];
+        var args = [result],
+            data = queue[index],
+            methodName = data[0],
+            object = data[1];
 
-        if (typeof methodName == 'function') {
-          result = methodName.apply(result, data[2]);
-        } else {
-          var args = [result],
-              object = data[1];
-
-          push.apply(args, data[2]);
-          result = object[methodName].apply(object, args);
-        }
+        push.apply(args, data[2]);
+        result = object[methodName].apply(object, args);
       }
       return result;
     }
@@ -9640,8 +9635,8 @@
         if (!this.__chain__) {
           return func.apply(this.value(), args);
         }
-        return this.tap(function(value) {
-          func.apply(value, args);
+        return this.thru(function(value) {
+          return func.apply(value, args);
         });
       };
     });
@@ -9649,11 +9644,11 @@
     // add `Array` functions that return wrapped value
     arrayEach(['concat', 'push', 'reverse', 'sort', 'splice', 'unshift'], function(methodName) {
       var func = arrayProto[methodName],
-          retVal = methodName == 'concat' || methodName == 'splice';
+          chainName = (methodName == 'concat' || methodName == 'splice') ? 'thru' : 'tap';
 
       lodash.prototype[methodName] = function() {
         var args = arguments;
-        return this[retVal ? 'thru' : 'tap'](function(value) {
+        return this[chainName](function(value) {
           return func.apply(value, args);
         });
       };
@@ -9664,7 +9659,7 @@
     if (!support.spliceObjects) {
       arrayEach(['pop', 'shift', 'splice'], function(methodName) {
         var func = arrayProto[methodName],
-            isSplice = methodName == 'splice';
+            notSplice = methodName != 'splice';
 
         function wrapper(value, args) {
           var result = func.apply(value, args);
@@ -9675,10 +9670,10 @@
         }
         lodash.prototype[methodName] = function() {
           var args = arguments;
-          if (!this.__chain__ && !isSplice) {
+          if (notSplice && !this.__chain__) {
             return wrapper(this.value(), args);
           }
-          return this[isSplice ? 'thru' : 'tap'](function(value) {
+          return this.thru(function(value) {
             return wrapper(value, args);
           });
         };

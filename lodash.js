@@ -9627,58 +9627,34 @@
       lodash[methodName].placeholder = lodash;
     });
 
-    // add `Array` functions that return unwrapped values
-    arrayEach(['join', 'pop', 'shift'], function(methodName) {
-      var func = arrayProto[methodName];
+    // add `Array.prototype` functions
+    arrayEach(['concat', 'join', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+      var arrayFunc = arrayProto[methodName],
+          retUnwrapped = /join|pop|shift/.test(methodName),
+          chainName = /push|reverse|sort|unshift/.test(methodName) ? 'tap' : 'thru',
+          fixObjects = !support.spliceObjects && /pop|shift|splice/.test(methodName);
+
+      // avoid array-like object bugs with `Array#shift` and `Array#splice` in
+      // IE < 9, Firefox < 10, Narwhal, and RingoJS
+      var func = !fixObjects ? arrayFunc : function() {
+        var result = arrayFunc.apply(this, arguments);
+        if (this.length === 0) {
+          delete this[0];
+        }
+        return result;
+      };
+
       lodash.prototype[methodName] = function() {
         var args = arguments;
-        if (!this.__chain__) {
+        if (retUnwrapped && !this.__chain__) {
           return func.apply(this.value(), args);
         }
-        return this.thru(function(value) {
-          return func.apply(value, args);
-        });
-      };
-    });
-
-    // add `Array` functions that return wrapped value
-    arrayEach(['concat', 'push', 'reverse', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName],
-          chainName = (methodName == 'concat' || methodName == 'splice') ? 'thru' : 'tap';
-
-      lodash.prototype[methodName] = function() {
-        var args = arguments;
         return this[chainName](function(value) {
           return func.apply(value, args);
         });
       };
     });
 
-    // avoid array-like object bugs with `Array#shift` and `Array#splice`
-    // in IE < 9, Firefox < 10, Narwhal, and RingoJS
-    if (!support.spliceObjects) {
-      arrayEach(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayProto[methodName],
-            notSplice = methodName != 'splice';
-
-        function wrapper(value, args) {
-          var result = func.apply(value, args);
-          if (value.length === 0) {
-            delete value[0];
-          }
-          return result;
-        }
-        lodash.prototype[methodName] = function() {
-          var args = arguments;
-          if (notSplice && !this.__chain__) {
-            return wrapper(this.value(), args);
-          }
-          return this.thru(function(value) {
-            return wrapper(value, args);
-          });
-        };
-      });
-    }
     return lodash;
   }
 

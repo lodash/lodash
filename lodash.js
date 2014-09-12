@@ -9641,22 +9641,16 @@
       };
     });
 
-    // add `Array` functions that return the existing wrapped value
-    arrayEach(['push', 'reverse', 'sort', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName];
+    // add `Array` functions that return wrapped value
+    arrayEach(['concat', 'push', 'reverse', 'sort', 'splice', 'unshift'], function(methodName) {
+      var func = arrayProto[methodName],
+          retVal = methodName == 'concat' || methodName == 'splice';
+
       lodash.prototype[methodName] = function() {
         var args = arguments;
-        return this.tap(function(value) {
-          func.apply(value, args);
+        return this[retVal ? 'thru' : 'tap'](function(value) {
+          return func.apply(value, args);
         });
-      };
-    });
-
-    // add `Array` functions that return new wrapped values
-    arrayEach(['concat', 'splice'], function(methodName) {
-      var func = arrayProto[methodName];
-      lodash.prototype[methodName] = function() {
-        return new lodashWrapper(func.apply(this.value(), arguments), this.__chain__);
       };
     });
 
@@ -9667,14 +9661,23 @@
         var func = arrayProto[methodName],
             isSplice = methodName == 'splice';
 
+        function process(value, args) {
+          var result = func.apply(value, args);
+          if (value.length === 0) {
+            delete value[0];
+          }
+          return result;
+        }
+
         lodash.prototype[methodName] = function() {
-          var args = arguments;
+          var args = arguments,
+              chainAll = this.__chain__;
+
+          if (!chainAll && !isSplice) {
+            return process(this.value(), args);
+          }
           return this[isSplice ? 'thru' : 'tap'](function(value) {
-            var result = func.apply(value, args);
-            if (value.length === 0) {
-              delete value[0];
-            }
-            return result;
+            return process(value, args);
           });
         };
       });

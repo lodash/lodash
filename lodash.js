@@ -9631,13 +9631,13 @@
     arrayEach(['join', 'pop', 'shift'], function(methodName) {
       var func = arrayProto[methodName];
       lodash.prototype[methodName] = function() {
-        var chainAll = this.__chain__;
-        if (!chainAll) {
-          return func.apply(this.value(), arguments);
+        var args = arguments;
+        if (!this.__chain__) {
+          return func.apply(this.value(), args);
         }
-        var result = new lodashWrapper(this.__wrapped__, chainAll, baseSlice(this.__queue__));
-        result.__queue__.push([func, null, arguments]);
-        return result;
+        return this.tap(function(value) {
+          return func.apply(value, args);
+        });
       };
     });
 

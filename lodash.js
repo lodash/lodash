@@ -201,14 +201,6 @@
     'trailing': false
   };
 
-  /** Used as the property descriptor for wrapper metadata */
-  var descriptor = {
-    'configurable': false,
-    'enumerable': false,
-    'value': null,
-    'writable': false
-  };
-
   /**
    * Used to map characters to HTML entities.
    *

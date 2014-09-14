@@ -8139,8 +8139,8 @@
      * @returns {string} Returns the escaped string.
      * @example
      *
-     * _.escapeRegExp('[lodash](http://lodash.com)');
-     * // => '\[lodash\]\(http://lodash\.com\)'
+     * _.escapeRegExp('[lodash](http://lodash.com/)');
+     * // => '\[lodash\]\(http://lodash\.com/\)'
      */
     function escapeRegExp(string) {
       string = string == null ? '' : String(string);

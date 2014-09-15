@@ -4546,7 +4546,7 @@
     }
 
     /**
-     * Produces the result of coercing the wrapped value to a string.
+     * Produces the result of coercing the unwrapped value to a string.
      *
      * @name toString
      * @memberOf _
@@ -4562,13 +4562,13 @@
     }
 
     /**
-     * Extracts the wrapped value.
+     * Extracts the unwrapped value from its wrapper.
      *
      * @name valueOf
      * @memberOf _
      * @alias toJSON, value
      * @category Chain
-     * @returns {*} Returns the wrapped value.
+     * @returns {*} Returns the unwrapped value.
      * @example
      *
      * _([1, 2, 3]).valueOf();

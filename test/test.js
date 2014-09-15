@@ -309,6 +309,33 @@
     }
   }
 
+  /**
+   * Extracts the unwrapped value from its wrapper.
+   *
+   * @private
+   * @param {Object} wrapped The value to unwrap.
+   * @returns {*} Returns the unwrapped value.
+   */
+  function getUnwrappedValue(wrapped) {
+    if (typeof wrapped.value == 'function') {
+      return wrapped.value();
+    }
+    var index = -1,
+        queue = wrapped.__queue__,
+        length = queue.length,
+        result = wrapped.__wrapped__;
+
+    while (++index < length) {
+      var args = [result],
+          data = queue[index],
+          object = data[1];
+
+      push.apply(args, data[2]);
+      result = object[data[0]].apply(object, args);
+    }
+    return result;
+  }
+
   /*--------------------------------------------------------------------------*/
 
   // setup values for Node.js
@@ -754,7 +781,7 @@
       if (lodashBizarro) {
         var actual = _.map(values, function(value) {
           var wrapped = _(lodashBizarro(value)),
-              unwrapped = wrapped.value();
+              unwrapped = getUnwrappedValue(wrapped);
 
           return wrapped instanceof _ &&
             (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
@@ -7706,7 +7733,7 @@
       _.mixin(source);
 
       strictEqual(_.a(value), 'a');
-      strictEqual(_(value).a().value(), 'a');
+      strictEqual(getUnwrappedValue(_(value).a()), 'a');
 
       delete _.a;
       delete _.prototype.a;
@@ -7751,7 +7778,7 @@
       var wrapped = wrapper(value),
           actual = wrapped.a();
 
-      strictEqual(actual.value(), 'a');
+      strictEqual(getUnwrappedValue(actual), 'a');
       ok(actual instanceof wrapper);
 
       delete wrapper.a;
@@ -7774,25 +7801,30 @@
 
       _.each([_, wrapper], function(func) {
         _.each([false, true, { 'chain': false }, { 'chain': true }], function(options) {
-          if (func === _) {
-            _.mixin(source, options);
-          } else {
-            _.mixin(func, source, options);
-          }
-          var wrapped = func(value),
-              actual = wrapped.a();
+          if (!isNpm) {
+            if (func === _) {
+              _.mixin(source, options);
+            } else {
+              _.mixin(func, source, options);
+            }
+            var wrapped = func(value),
+                actual = wrapped.a();
 
-          if (options === true || (options && options.chain)) {
-            strictEqual(actual.value(), 'a', message(func, true));
-            ok(actual instanceof func, message(func, true));
-          } else {
-            strictEqual(actual, 'a', message(func, false));
-            ok(!(actual instanceof func), message(func, false));
+            if (options === true || (options && options.chain)) {
+              strictEqual(actual.value(), 'a', message(func, true));
+              ok(actual instanceof func, message(func, true));
+            } else {
+              strictEqual(actual, 'a', message(func, false));
+              ok(!(actual instanceof func), message(func, false));
+            }
+            delete func.a;
+            delete func.prototype.a;
+            delete func.b;
+            delete func.prototype.b;
           }
-          delete func.a;
-          delete func.prototype.a;
-          delete func.b;
-          delete func.prototype.b;
+          else {
+            skipTest(2);
+          }
         });
       });
     });
@@ -12295,7 +12327,7 @@
       });
 
       // skip tests for missing methods of modularized builds
-      _.each(['noConflict', 'runInContext', 'tap', 'thru'], function(methodName) {
+      _.each(['chain', 'noConflict', 'runInContext'], function(methodName) {
         if (!_[methodName]) {
           skipTest();
         }

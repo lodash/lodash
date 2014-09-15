@@ -1782,9 +1782,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(falsey).compact();
-        ok(actual instanceof _);
-        deepEqual(actual.value(), []);
+        var wrapped = _(falsey).compact();
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), []);
       }
       else {
         skipTest(2);
@@ -1845,8 +1845,8 @@
 
     test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var actual = _(_.noop)[methodName]();
-        ok(actual instanceof _);
+        var wrapped = _(_.noop)[methodName]();
+        ok(wrapped instanceof _);
       }
       else {
         skipTest();
@@ -1894,8 +1894,8 @@
 
     test('should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        var actual = _(true).constant();
-        ok(actual instanceof _);
+        var wrapped = _(true).constant();
+        ok(wrapped instanceof _);
       }
       else {
         skipTest();
@@ -3019,9 +3019,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).drop(2);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [3]);
+        var wrapped = _(array).drop(2);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [3]);
       }
       else {
         skipTest(2);
@@ -3073,9 +3073,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).dropRight(2);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1]);
+        var wrapped = _(array).dropRight(2);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [1]);
       }
       else {
         skipTest(2);
@@ -3132,12 +3132,12 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).dropRightWhile(function(num) {
+        var wrapped = _(array).dropRightWhile(function(num) {
           return num > 1;
         });
 
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1]);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [1]);
       }
       else {
         skipTest(2);
@@ -3194,12 +3194,12 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).dropWhile(function(num) {
+        var wrapped = _(array).dropWhile(function(num) {
           return num < 3;
         });
 
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [3]);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [3]);
       }
       else {
         skipTest(2);
@@ -3636,9 +3636,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).take(2);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1, 2]);
+        var wrapped = _(array).take(2);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [1, 2]);
       }
       else {
         skipTest(2);
@@ -3690,9 +3690,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).takeRight(2);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [2, 3]);
+        var wrapped = _(array).takeRight(2);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [2, 3]);
       }
       else {
         skipTest(2);
@@ -3749,12 +3749,12 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).takeRightWhile(function(num) {
+        var wrapped = _(array).takeRightWhile(function(num) {
           return num > 1;
         });
 
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [2, 3]);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [2, 3]);
       }
       else {
         skipTest(2);
@@ -3811,12 +3811,12 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).takeWhile(function(num) {
+        var wrapped = _(array).takeWhile(function(num) {
           return num < 3;
         });
 
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1, 2]);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [1, 2]);
       }
       else {
         skipTest(2);
@@ -4146,8 +4146,8 @@
 
       test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
         if (!isNpm) {
-          var actual = _(array)[methodName](_.noop);
-          ok(actual instanceof _);
+          var wrapped = _(array)[methodName](_.noop);
+          ok(wrapped instanceof _);
         }
         else {
           skipTest();
@@ -4161,8 +4161,8 @@
 
       test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
         if (!isNpm) {
-          var actual = _(array)[methodName](_.noop);
-          ok(!(actual instanceof _));
+          var wrapped = _(array)[methodName](_.noop);
+          ok(!(wrapped instanceof _));
         }
         else {
           skipTest();
@@ -4874,9 +4874,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).initial();
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1, 2]);
+        var wrapped = _(array).initial();
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [1, 2]);
       }
       else {
         skipTest(2);
@@ -4935,9 +4935,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _([1, 3, 2]).intersection([5, 2, 1, 4]);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [1, 2]);
+        var wrapped = _([1, 3, 2]).intersection([5, 2, 1, 4]);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [1, 2]);
       }
       else {
         skipTest(2);
@@ -4977,10 +4977,10 @@
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var object = { 'a': 1, 'b': 2 },
-            actual = _(object).invert();
+            wrapped = _(object).invert();
 
-        ok(actual instanceof _);
-        deepEqual(actual.value(), { '1': 'a', '2': 'b' });
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), { '1': 'a', '2': 'b' });
       }
       else {
         skipTest(2);
@@ -9445,9 +9445,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(array).rest();
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [2, 3]);
+        var wrapped = _(array).rest();
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [2, 3]);
       }
       else {
         skipTest(2);
@@ -10216,14 +10216,14 @@
         var intercepted,
             array = [1, 2, 3];
 
-        var actual = _(array).tap(function(value) {
+        var wrapped = _(array).tap(function(value) {
           intercepted = value;
           value.pop();
         });
 
-        ok(actual instanceof _);
+        ok(wrapped instanceof _);
 
-        actual.value();
+        wrapped.value();
         strictEqual(intercepted, array);
       }
       else {
@@ -10235,11 +10235,11 @@
       if (!isNpm) {
         var array = [1, 2];
 
-        var actual = _(array.slice()).tap(function(value) {
+        var wrapped = _(array.slice()).tap(function(value) {
           value.push(this[0]);
         }, array);
 
-        deepEqual(actual.value(), [1, 2, 1]);
+        deepEqual(wrapped.value(), [1, 2, 1]);
       }
       else {
         skipTest();
@@ -11124,9 +11124,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _(3).times();
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [0, 1, 2]);
+        var wrapped = _(3).times();
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [0, 1, 2]);
       }
       else {
         skipTest(2);
@@ -11654,9 +11654,9 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var actual = _([1, 2, 3]).xor([5, 2, 1, 4]);
-        ok(actual instanceof _);
-        deepEqual(actual.value(), [3, 5, 4]);
+        var wrapped = _([1, 2, 3]).xor([5, 2, 1, 4]);
+        ok(wrapped instanceof _);
+        deepEqual(wrapped.value(), [3, 5, 4]);
       }
       else {
         skipTest(2);

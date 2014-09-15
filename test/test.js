@@ -10056,24 +10056,24 @@
       ], function(array) {
         deepEqual(_.sortBy(array), expected);
         strictEqual(func(expected, 3), 2);
-        strictEqual(func(expected, undefined), 3);
-        strictEqual(func(expected, NaN), isSortedIndex ? 4 : 5);
+        strictEqual(func(expected, undefined), isSortedIndex ? 3 : 4);
+        strictEqual(func(expected, NaN), isSortedIndex ? 4 : 6);
       });
     });
 
-    test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 1, function() {
-      var length = Math.pow(2, 32) - 1,
-          index = length - 1,
-          array = Array(length),
+    test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 2, function() {
+      var array = [0],
+          length = Math.pow(2, 32) - 1,
           steps = 0;
 
+      array.length = length;
       if (array.length == length) {
-        array[index] = index;
-        func(array, index, function() { steps++; });
+        var actual = func(array, undefined, function() { steps++; });
         strictEqual(steps, 33);
+        strictEqual(actual, isSortedIndex ? 0 : (length - 1));
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
   });

@@ -30,8 +30,9 @@
   /** Used as the TypeError message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /** Used as a reference for the max length of an array */
-  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
+  /** Used as references for the max length and index of an array */
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
 
   /**
    * Used as the maximum length of an array-like value.
@@ -2285,13 +2286,14 @@
           valIsUndef = typeof value == 'undefined';
 
       while (low < high) {
-        var mid = (low + high) >>> 1,
-            computed = iteratee(array[mid]);
+        var mid = floor((low + high) / 2),
+            computed = iteratee(array[mid]),
+            isReflexive = computed === computed;
 
         if (valIsNaN) {
-          var setLow = computed === computed;
+          var setLow = isReflexive || retHighest;
         } else if (valIsUndef) {
-          setLow = computed === computed && typeof computed != 'undefined';
+          setLow = isReflexive && (retHighest || typeof computed != 'undefined');
         } else {
           setLow = retHighest ? (computed <= value) : (computed < value);
         }
@@ -2301,7 +2303,7 @@
           high = mid;
         }
       }
-      return high;
+      return nativeMin(high, MAX_ARRAY_INDEX);
     }
 
     /**

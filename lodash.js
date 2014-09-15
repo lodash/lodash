@@ -4585,11 +4585,10 @@
       while (++index < length) {
         var args = [result],
             data = queue[index],
-            methodName = data[0],
             object = data[1];
 
         push.apply(args, data[2]);
-        result = object[methodName].apply(object, args);
+        result = object[data[0]].apply(object, args);
       }
       return result;
     }

@@ -9536,12 +9536,12 @@
       var actual = [];
 
       var expected = _.transform(empties, function(result) {
-        result.push([], []);
+        result.push(undefined, []);
       });
 
       _.each(empties, function(value) {
         try {
-          actual.push(_.shuffle(value), _.shuffle(value, 1));
+          actual.push(_.sample(value), _.sample(value, 1));
         } catch(e) {}
       });
 

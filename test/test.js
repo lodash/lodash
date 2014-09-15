@@ -9569,13 +9569,16 @@
       });
     });
 
-    test('should chain when `n` is provided', 1, function() {
+    test('should chain when `n` is provided', 2, function() {
       if (!isNpm) {
-        var actual = _(array).sample(2);
-        ok(actual instanceof _);
+        var wrapped = _(array).sample(2);
+        ok(wrapped instanceof _);
+
+        var actual = wrapped.value();
+        ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 
@@ -10018,6 +10021,7 @@
   _.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
     var array = [30, 50],
         func = _[methodName],
+        isSortedIndex = methodName == 'sortedIndex',
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
     test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
@@ -10044,21 +10048,17 @@
     });
 
     test('`_.' + methodName + '` should align with `_.sortBy`', 8, function() {
-      var expected = [1, 2, {}, undefined, NaN, NaN];
+      var expected = [1, '2', {}, undefined, NaN, NaN];
 
-      deepEqual(_.sortBy([NaN, 1, 2, {}, NaN, undefined]), expected);
-      strictEqual(func(expected, 3), 2);
-
-      deepEqual(_.sortBy([1, 2, NaN, {}, NaN, undefined]), expected);
-      strictEqual(func(expected, 3), 2);
-
-      expected = ['1', '2', {}, undefined, NaN, NaN];
-
-      deepEqual(_.sortBy([NaN, '1', '2', {}, NaN, undefined]), expected);
-      strictEqual(func(expected, '3'), 2);
-
-      deepEqual(_.sortBy(['1', '2', NaN, {}, NaN, undefined]), expected);
-      strictEqual(func(expected, '3'), 2);
+      _.each([
+        [NaN, 1, '2', {}, NaN, undefined],
+        ['2', 1, NaN, {}, NaN, undefined]
+      ], function(array) {
+        deepEqual(_.sortBy(array), expected);
+        strictEqual(func(expected, 3), 2);
+        strictEqual(func(expected, undefined), 3);
+        strictEqual(func(expected, NaN), isSortedIndex ? 4 : 5);
+      });
     });
 
     test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 1, function() {

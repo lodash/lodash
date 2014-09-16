@@ -11139,7 +11139,7 @@
   QUnit.module('lodash.transform');
 
   (function() {
-    test('should produce an that is an instance of the given object\'s constructor', 2, function() {
+    test('should produce an object with the same `[[Prototype]]` as `object`', 2, function() {
       function Foo() {
         this.a = 1;
         this.b = 2;
@@ -11167,7 +11167,7 @@
       ok(_.transform(new Foo) instanceof Foo);
     });
 
-    test('should check that `object` is an object before using it as the `accumulator` `[[Prototype]]', 1, function() {
+    test('should check that `object` is an object before using its `[[Prototype]]`', 1, function() {
       ok(!(_.transform(1) instanceof Number));
     });
 

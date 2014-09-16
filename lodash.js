@@ -9587,11 +9587,12 @@
     lodash.sample = sample;
 
     lodash.prototype.sample = function(n, guard) {
-      if (!this.__chain__ && (n == null || guard)) {
+      n = guard ? null : n;
+      if (!this.__chain__ && n == null) {
         return lodash.sample(this.value());
       }
-      return this.tap(function(value) {
-        lodash.sample(value);
+      return this.thru(function(value) {
+        return lodash.sample(value, n);
       });
     };
 

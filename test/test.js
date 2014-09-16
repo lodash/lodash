@@ -9496,7 +9496,7 @@
 
     test('should return two random elements', 1, function() {
       var actual = _.sample(array, 2);
-      ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+      ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
     test('should contain elements of the collection', 1, function() {
@@ -9555,7 +9555,7 @@
       ok(_.contains(array, actual));
 
       actual = _.sample(object, 2);
-      ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+      ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
     test('should work when used as a callback for `_.map`', 2, function() {
@@ -9575,7 +9575,7 @@
         ok(wrapped instanceof _);
 
         var actual = wrapped.value();
-        ok(actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+        ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
       }
       else {
         skipTest(2);
@@ -9602,7 +9602,7 @@
         ok(_.contains(collection, actual));
 
         actual = _.sample(collection, 2);
-        ok(actual[0] !== actual[1] && _.contains(collection, actual[0]) && _.contains(collection, actual[1]));
+        ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(collection, actual[0]) && _.contains(collection, actual[1]));
       });
     });
   }());

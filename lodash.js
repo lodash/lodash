@@ -1481,7 +1481,6 @@
           ? baseClone(valValue, isDeep, null, stackA, stackB)
           : valClone;
       });
-
       return result;
     }
 
@@ -1589,7 +1588,7 @@
         return baseForOwn(collection, iteratee);
       }
       var index = -1,
-          iterable = toIterable(collection);
+          iterable = toObject(collection);
 
       while (++index < length) {
         if (iteratee(iterable[index], index, iterable) === false) {
@@ -1613,7 +1612,7 @@
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return baseForOwnRight(collection, iteratee);
       }
-      var iterable = toIterable(collection);
+      var iterable = toObject(collection);
       while (length--) {
         if (iteratee(iterable[length], length, iterable) === false) {
           break;
@@ -2142,7 +2141,6 @@
         }
         object[key] = result;
       });
-
       return object;
     }
 
@@ -2485,9 +2483,9 @@
      */
     function createAggregator(setter, initializer) {
       return function(collection, iteratee, thisArg) {
-        var result = initializer ? initializer() : {};
         iteratee = getCallback(iteratee, thisArg, 3);
 
+        var result = initializer ? initializer() : {};
         if (isArray(collection)) {
           var index = -1,
               length = collection.length;
@@ -3146,14 +3144,10 @@
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return values(value);
       }
-      value = toObject(value);
       if (support.unindexedChars && isString(value)) {
-        var index = -1;
-        while (++index < length) {
-          value[index] = value.charAt(index);
-        }
+        return value.split('');
       }
-      return value;
+      return toObject(value);
     }
 
     /**
@@ -3164,7 +3158,15 @@
      * @returns {Object} Returns the object.
      */
     function toObject(value) {
-      return isObject(value) ? value : Object(value);
+      var result = isObject(value) ? value : Object(value);
+
+      if (support.unindexedChars && isString(value)) {
+        var index = -1;
+        while (++index < length) {
+          result[index] = value.charAt(index);
+        }
+      }
+      return result;
     }
 
     /*------------------------------------------------------------------------*/
@@ -7620,7 +7622,7 @@
       var Ctor = object.constructor,
           length = object.length;
 
-      if ((Ctor && object === Ctor.prototype) ||
+      if ((Ctor && Ctor.prototype === object) ||
           (typeof length == 'number' && length > 0) ||
           (support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
@@ -7662,7 +7664,7 @@
       var keyIndex,
           Ctor = object.constructor,
           index = -1,
-          isProto = Ctor && object === Ctor.prototype,
+          isProto = Ctor && Ctor.prototype === object,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
@@ -7739,9 +7741,9 @@
      * // => { 'fred': 40, 'pebbles': 1 }
      */
     function mapValues(object, iteratee, thisArg) {
-      var result = {};
       iteratee = getCallback(iteratee, thisArg, 3);
 
+      var result = {}
       baseForOwn(object, function(value, key, object) {
         result[key] = iteratee(value, key, object);
       });
@@ -7933,25 +7935,22 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function transform(object, iteratee, accumulator, thisArg) {
-      var isArr = isArrayLike(object);
+      iteratee = getCallback(iteratee, thisArg, 4);
 
+      var isArr = isArrayLike(object);
       if (accumulator == null) {
         if (isArr) {
           accumulator = [];
+        } else if (isObject(object)) {
+          var Ctor = object.constructor;
+          accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
         } else {
-          if (isObject(object)) {
-            var Ctor = object.constructor,
-                proto = Ctor && Ctor.prototype;
-          }
-          accumulator = baseCreate(proto);
+          accumulator = {};
         }
       }
-      if (iteratee) {
-        iteratee = getCallback(iteratee, thisArg, 4);
-        (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
-          return iteratee(accumulator, value, index, object);
-        });
-      }
+      (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
+        return iteratee(accumulator, value, index, object);
+      });
       return accumulator;
     }
 

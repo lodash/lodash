@@ -10067,6 +10067,8 @@
           steps = 0;
 
       array.length = length;
+
+      // avoid false fail in older Firefox
       if (array.length == length) {
         var actual = func(array, undefined, function() { steps++; });
         strictEqual(steps, 33);

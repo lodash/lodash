@@ -272,6 +272,33 @@
   }
 
   /**
+   * Extracts the unwrapped value from its wrapper.
+   *
+   * @private
+   * @param {Object} wrapped The value to unwrap.
+   * @returns {*} Returns the unwrapped value.
+   */
+  function getUnwrappedValue(wrapped) {
+    if (typeof wrapped.value == 'function') {
+      return wrapped.value();
+    }
+    var index = -1,
+        queue = wrapped.__queue__,
+        length = queue.length,
+        result = wrapped.__wrapped__;
+
+    while (++index < length) {
+      var args = [result],
+          data = queue[index],
+          object = data[1];
+
+      push.apply(args, data[2]);
+      result = object[data[0]].apply(object, args);
+    }
+    return result;
+  }
+
+  /**
    * Sets a non-enumerable property value on `object`.
    *
    * Note: This function is used to avoid a bug in older versions of V8 where
@@ -307,33 +334,6 @@
     while (count--) {
       ok(true, 'test skipped');
     }
-  }
-
-  /**
-   * Extracts the unwrapped value from its wrapper.
-   *
-   * @private
-   * @param {Object} wrapped The value to unwrap.
-   * @returns {*} Returns the unwrapped value.
-   */
-  function getUnwrappedValue(wrapped) {
-    if (typeof wrapped.value == 'function') {
-      return wrapped.value();
-    }
-    var index = -1,
-        queue = wrapped.__queue__,
-        length = queue.length,
-        result = wrapped.__wrapped__;
-
-    while (++index < length) {
-      var args = [result],
-          data = queue[index],
-          object = data[1];
-
-      push.apply(args, data[2]);
-      result = object[data[0]].apply(object, args);
-    }
-    return result;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -3953,45 +3953,23 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('forEach methods');
+  QUnit.module('lodash.forEach');
 
-  _.each(['forEach', 'forEachRight'], function(methodName) {
-    var func = _[methodName],
-        isForEach = methodName == 'forEach';
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 3, function() {
-        var args,
-            values = [];
-
-        func(collection, function(value) {
-          args || (args = slice.call(arguments));
-          values.push(value);
-        });
-
-        if (isForEach) {
-          deepEqual(args, ['a', 0, collection]);
-          deepEqual(values, ['a', 'b', 'c']);
-        } else {
-          deepEqual(args, ['c', 2, collection]);
-          deepEqual(values, ['c', 'b', 'a']);
-        }
-        strictEqual(typeof args[2], 'object');
-      });
+  (function() {
+    test('should be aliased', 1, function() {
+      strictEqual(_.each, _.forEach);
     });
+  }());
 
-    test('`_.' + methodName + '` should be aliased', 1, function() {
-      if (isForEach) {
-        strictEqual(_.each, _.forEach);
-      } else {
-        strictEqual(_.eachRight, _.forEachRight);
-      }
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.forEachRight');
+
+  (function() {
+    test('should be aliased', 1, function() {
+      strictEqual(_.eachRight, _.forEachRight);
     });
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -4186,7 +4164,9 @@
 
     _.each(iterationMethods, function(methodName) {
       var array = [1, 2, 3],
-          func = _[methodName];
+          func = _[methodName],
+          isEach = !_.contains(objectMethods, methodName),
+          isRight = _.contains(rightMethods, methodName);
 
       test('`_.' + methodName + '` should return the collection', 1, function() {
         strictEqual(func(array, Boolean), array);
@@ -4200,6 +4180,35 @@
         else {
           skipTest();
         }
+      });
+
+      _.each({
+        'literal': 'abc',
+        'object': Object('abc')
+      },
+      function(collection, key) {
+        test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 5, function() {
+          var args,
+              values = [],
+              expectedChars = ['a', 'b', 'c'];
+
+          var expectedArgs = isEach
+            ? (isRight ? ['c',  2,  collection] : ['a',  0,  collection])
+            : (isRight ? ['c', '2', collection] : ['a', '0', collection])
+
+          func(collection, function(value) {
+            args || (args = slice.call(arguments));
+            values.push(value);
+          });
+
+          var stringObject = args[2];
+          ok(_.isString(stringObject));
+          ok(_.isObject(stringObject));
+
+          deepEqual([stringObject[0], stringObject[1], stringObject[2]], expectedChars);
+          deepEqual(args, expectedArgs);
+          deepEqual(values, isRight ? ['c', 'b', 'a'] : expectedChars);
+        });
       });
     });
 
@@ -10170,9 +10179,10 @@
 
   _.each(['startsWith', 'endsWith'], function(methodName) {
     var func = _[methodName],
-        isEndsWith = methodName == 'endsWith',
-        chr = isEndsWith ? 'c' : 'a',
-        string = 'abc';
+        isStartsWith = methodName == 'startsWith';
+
+    var string = 'abc',
+        chr = isStartsWith ? 'a' : 'c';
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
       strictEqual(func(Object(string), chr), true);
@@ -10185,7 +10195,7 @@
     });
 
     test('`_.' + methodName + '` should coerce `position` to a number', 2, function() {
-      var position = isEndsWith ? 2 : 1;
+      var position = isStartsWith ? 1 : 2;
       strictEqual(func(string, 'b', Object(position)), true);
       strictEqual(func(string, 'b', { 'toString': _.constant(String(position)) }), true);
     });
@@ -10881,7 +10891,7 @@
 
   _.each(['debounce', 'throttle'], function(methodName) {
     var func = _[methodName],
-        isThrottle = methodName == 'throttle';
+        isDebounce = methodName == 'debounce';
 
     test('_.' + methodName + ' should not error for non-object `options` values', 1, function() {
       var pass = true;
@@ -10901,10 +10911,10 @@
         };
 
         var actual = [],
-            expected = _.times(isThrottle ? 2 : 1, _.constant(object));
+            expected = _.times(isDebounce ? 1 : 2, _.constant(object));
 
         object.funced();
-        if (isThrottle) {
+        if (!isDebounce) {
           object.funced();
         }
         setTimeout(function() {
@@ -10922,7 +10932,7 @@
       if (!(isRhino && isModularize)) {
         var actual = [],
             args = _.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
-            length = isThrottle ? 2 : 1,
+            length = isDebounce ? 1 : 2,
             expected = args.slice(0, length),
             queue = args.slice();
 
@@ -10975,7 +10985,7 @@
 
         setTimeout(function() {
           funced();
-          strictEqual(callCount, isThrottle ? 2 : 1);
+          strictEqual(callCount, isDebounce ? 1 : 2);
           QUnit.start();
         }, 64);
       }

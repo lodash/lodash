@@ -1739,6 +1739,8 @@
      * @returns {Object} Returns `object`.
      */
     function baseFor(object, iteratee, keysFunc) {
+      object = toObject(object);
+
       var index = -1,
           props = keysFunc(object),
           length = props.length;
@@ -1763,6 +1765,8 @@
      * @returns {Object} Returns `object`.
      */
     function baseForRight(object, iteratee, keysFunc) {
+      object = toObject(object);
+
       var props = keysFunc(object),
           length = props.length;
 
@@ -3147,7 +3151,7 @@
       if (support.unindexedChars && isString(value)) {
         return value.split('');
       }
-      return toObject(value);
+      return isObject(value) ? value : Object(value);
     }
 
     /**
@@ -3158,15 +3162,17 @@
      * @returns {Object} Returns the object.
      */
     function toObject(value) {
-      var result = isObject(value) ? value : Object(value);
-
       if (support.unindexedChars && isString(value)) {
-        var index = -1;
+        var index = -1,
+            length = value.length,
+            result = Object(value);
+
         while (++index < length) {
           result[index] = value.charAt(index);
         }
+        return result;
       }
-      return result;
+      return isObject(value) ? value : Object(value);
     }
 
     /*------------------------------------------------------------------------*/

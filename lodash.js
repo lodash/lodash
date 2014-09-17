@@ -3120,8 +3120,8 @@
           result = [];
 
       var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
-        (isArray(object) || (support.nonEnumArgs && isArguments(object)) ||
-          (support.nonEnumStrings && isString(object)));
+        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
+          (support.nonEnumArgs && isArguments(object)));
 
       while (++index < length) {
         var key = props[index];

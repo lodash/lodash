@@ -7623,8 +7623,9 @@
      * // => ['x', 'y'] (iteration order is not guaranteed)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      object = toObject(object);
-
+      if (object == null) {
+        return [];
+      }
       var Ctor = object.constructor,
           length = object.length;
 
@@ -7633,7 +7634,7 @@
           (support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
       }
-      return nativeKeys(object);
+      return nativeKeys(toObject(object));
     };
 
     /**

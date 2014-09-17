@@ -7950,7 +7950,7 @@
           accumulator = [];
         } else if (isObject(object)) {
           var Ctor = object.constructor;
-          accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+          accumulator = baseCreate(Ctor && Ctor.prototype);
         } else {
           accumulator = {};
         }

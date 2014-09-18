@@ -97,12 +97,13 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
  * [_.support](http://lodash.com/docs#support) for flagging environment features
  * [_.template](http://lodash.com/docs#template) supports [*“imports”*](http://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
  * [_.transform](http://lodash.com/docs#transform) as a powerful alternative to [_.reduce](http://lodash.com/docs#reduce) for transforming objects
+ * [_.thru](http://lodash.com/docs#thru) to pass values thru method chains
  * [_.where](http://lodash.com/docs#where) supports deep object comparisons
  * [_.xor](http://lodash.com/docs#xor) to complement [_.difference](http://lodash.com/docs#difference), [_.intersection](http://lodash.com/docs#intersection), & [_.union](http://lodash.com/docs#union)
  * [_.bind](http://lodash.com/docs#bind), [_.curry](http://lodash.com/docs#curry), [_.partial](http://lodash.com/docs#partial), &
    [more](http://lodash.com/docs  "_.bindKey, _.curryRight, _.partialRight") support argument placeholders
  * [_.capitalize](http://lodash.com/docs#capitalize), [_.trim](http://lodash.com/docs#trim), &
-   [more](http://lodash.com/docs "_.camelCase, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc") string methods
+   [more](http://lodash.com/docs "_.camelCase, _.deburr, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc, _.words") string methods
  * [_.clone](http://lodash.com/docs#clone), [_.isEqual](http://lodash.com/docs#isEqual), &
    [more](http://lodash.com/docs "_.assign, _.cloneDeep, _.merge") accept callbacks
  * [_.contains](http://lodash.com/docs#contains), [_.toArray](http://lodash.com/docs#toArray), &

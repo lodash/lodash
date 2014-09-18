@@ -1931,11 +1931,9 @@
             }
             if (!valHasCtor) {
               // non `Object` object instances with different constructors are not equal
-              if (valCtor != othCtor &&
-                    !(typeof valCtor == 'function' && valCtor instanceof valCtor &&
-                      typeof othCtor == 'function' && othCtor instanceof othCtor) &&
-                    ('constructor' in value && 'constructor' in other)
-                  ) {
+              if (valCtor != othCtor && ('constructor' in value && 'constructor' in other) &&
+                  !(typeof valCtor == 'function' && valCtor instanceof valCtor &&
+                    typeof othCtor == 'function' && othCtor instanceof othCtor)) {
                 return false;
               }
             }

@@ -1739,15 +1739,14 @@
      * @returns {Object} Returns `object`.
      */
     function baseFor(object, iteratee, keysFunc) {
-      object = toObject(object);
-
       var index = -1,
+          iterable = toObject(object),
           props = keysFunc(object),
           length = props.length;
 
       while (++index < length) {
         var key = props[index];
-        if (iteratee(object[key], key, object) === false) {
+        if (iteratee(iterable[key], key, iterable) === false) {
           break;
         }
       }
@@ -1765,14 +1764,13 @@
      * @returns {Object} Returns `object`.
      */
     function baseForRight(object, iteratee, keysFunc) {
-      object = toObject(object);
-
-      var props = keysFunc(object),
+      var iterable = toObject(object),
+          props = keysFunc(object),
           length = props.length;
 
       while (length--) {
         var key = props[length];
-        if (iteratee(object[key], key, object) === false) {
+        if (iteratee(iterable[key], key, iterable) === false) {
           break;
         }
       }
@@ -1934,7 +1932,8 @@
             if (!valHasCtor) {
               // non `Object` object instances with different constructors are not equal
               if (valCtor != othCtor &&
-                    !(isFunction(valCtor) && valCtor instanceof valCtor && isFunction(othCtor) && othCtor instanceof othCtor) &&
+                    !(typeof valCtor == 'function' && valCtor instanceof valCtor &&
+                      typeof othCtor == 'function' && othCtor instanceof othCtor) &&
                     ('constructor' in value && 'constructor' in other)
                   ) {
                 return false;
@@ -2924,7 +2923,7 @@
           isArgs = className == argsClass || (!support.argsClass && isArguments(object)),
           isObj = className == objectClass;
 
-      if (isObj && !(isFunction(Ctor) && (Ctor instanceof Ctor))) {
+      if (isObj && !(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
         Ctor = Object;
       }
       if (isArgs || isObj) {
@@ -2997,6 +2996,8 @@
      * @returns {Object} Returns the new object.
      */
     function pickByArray(object, props) {
+      object = toObject(object);
+
       var index = -1,
           length = props.length,
           result = {};
@@ -3079,7 +3080,7 @@
       if (!(value && typeof value == 'object' &&
             toString.call(value) == objectClass && !isHostObject(value)) ||
           (!hasOwnProperty.call(value, 'constructor') &&
-            (Ctor = value.constructor, isFunction(Ctor) && !(Ctor instanceof Ctor))) ||
+            (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor))) ||
           (!support.argsClass && isArguments(value))) {
         return false;
       }
@@ -7623,18 +7624,16 @@
      * // => ['x', 'y'] (iteration order is not guaranteed)
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      if (object == null) {
-        return [];
+      if (object) {
+        var Ctor = object.constructor,
+            length = object.length;
       }
-      var Ctor = object.constructor,
-          length = object.length;
-
       if ((Ctor && Ctor.prototype === object) ||
           (typeof length == 'number' && length > 0) ||
           (support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
       }
-      return nativeKeys(toObject(object));
+      return isObject(object) ? nativeKeys(object) : [];
     };
 
     /**
@@ -7833,13 +7832,12 @@
       if (object == null) {
         return {};
       }
-      var iterable = toObject(object);
       if (typeof predicate != 'function') {
         var props = arrayMap(baseFlatten(arguments, false, false, 1), String);
-        return pickByArray(iterable, baseDifference(keysIn(iterable), props));
+        return pickByArray(object, baseDifference(keysIn(object), props));
       }
       predicate = getCallback(predicate, thisArg, 3);
-      return pickByCallback(iterable, function(value, key, object) {
+      return pickByCallback(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
     }
@@ -7902,10 +7900,9 @@
       if (object == null) {
         return {};
       }
-      var iterable = toObject(object);
       return typeof predicate == 'function'
-        ? pickByCallback(iterable, getCallback(predicate, thisArg, 3))
-        : pickByArray(iterable, baseFlatten(arguments, false, false, 1));
+        ? pickByCallback(object, getCallback(predicate, thisArg, 3))
+        : pickByArray(object, baseFlatten(arguments, false, false, 1));
     }
 
     /**

@@ -9623,9 +9623,9 @@
     // add `Array.prototype` functions
     arrayEach(['concat', 'join', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var arrayFunc = arrayProto[methodName],
-          retUnwrapped = /join|pop|shift/.test(methodName),
-          chainName = /push|reverse|sort|unshift/.test(methodName) ? 'tap' : 'thru',
-          fixObjects = !support.spliceObjects && /pop|shift|splice/.test(methodName);
+          retUnwrapped = /^(?:join|pop|shift)$/.test(methodName),
+          chainName = /^(?:push|reverse|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
+          fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName);
 
       // avoid array-like object bugs with `Array#shift` and `Array#splice` in
       // IE < 9, Firefox < 10, Narwhal, and RingoJS

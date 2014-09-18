@@ -4187,7 +4187,7 @@
         'object': Object('abc')
       },
       function(collection, key) {
-        test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 5, function() {
+        test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 6, function() {
           var args,
               values = [],
               expectedChars = ['a', 'b', 'c'];
@@ -4196,18 +4196,21 @@
             ? (isRight ? ['c',  2,  collection] : ['a',  0,  collection])
             : (isRight ? ['c', '2', collection] : ['a', '0', collection])
 
-          func(collection, function(value) {
+          var actual = func(collection, function(value) {
             args || (args = slice.call(arguments));
             values.push(value);
           });
 
           var stringObject = args[2];
+
           ok(_.isString(stringObject));
           ok(_.isObject(stringObject));
 
           deepEqual([stringObject[0], stringObject[1], stringObject[2]], expectedChars);
           deepEqual(args, expectedArgs);
           deepEqual(values, isRight ? ['c', 'b', 'a'] : expectedChars);
+
+          strictEqual(actual, collection);
         });
       });
     });
@@ -9578,7 +9581,7 @@
       });
     });
 
-    test('should chain when `n` is provided', 2, function() {
+    test('should return a wrapped value when chaining and `n` is provided', 2, function() {
       if (!isNpm) {
         var wrapped = _(array).sample(2);
         ok(wrapped instanceof _);
@@ -9591,7 +9594,7 @@
       }
     });
 
-    test('should not chain when arguments are not provided', 1, function() {
+    test('should return an unwrapped value when chaining and `n` is not provided', 1, function() {
       if (!isNpm) {
         var actual = _(array).sample();
         ok(_.contains(array, actual));
@@ -11797,21 +11800,105 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).concat');
+
+  (function() {
+    test('should return a new wrapped array', 3, function() {
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _(array).concat([2, 3]),
+            actual = wrapped.value();
+
+        notStrictEqual(actual, array);
+        deepEqual(actual, [1, 2, 3]);
+        deepEqual(array, [1]);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).join');
+
+  (function() {
+    test('should return join all array elements into a string', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            wrapped = _(array),
+            actual = wrapped.join('.');
+
+        strictEqual(actual, '1.2.3');
+        strictEqual(wrapped.value(), array);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).pop');
 
   (function() {
-    test('should remove elements from the end of `array`', 4, function() {
+    test('should remove elements from the end of `array`', 5, function() {
       if (!isNpm) {
-        var wrapped = _([1, 2]);
+        var array = [1, 2],
+            wrapped = _(array);
 
         strictEqual(wrapped.pop(), 2);
         deepEqual(wrapped.value(), [1]);
-
         strictEqual(wrapped.pop(), 1);
-        deepEqual(wrapped.value(), []);
+
+        var actual = wrapped.value();
+        strictEqual(actual, array);
+        deepEqual(actual, []);
       }
       else {
-        skipTest(4);
+        skipTest(5);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).push');
+
+  (function() {
+      test('should append elements to `array`', 2, function() {
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _(array).push(2, 3),
+            actual = wrapped.value();
+
+        strictEqual(actual, array);
+        deepEqual(actual, [1, 2, 3]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).reverse');
+
+  (function() {
+    test('should return the wrapped reversed `array`', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            wrapped = _(array).reverse(),
+            actual = wrapped.value();
+
+        strictEqual(actual, array);
+        deepEqual(actual, [3, 2, 1]);
+      }
+      else {
+        skipTest(2);
       }
     });
   }());
@@ -11821,18 +11908,62 @@
   QUnit.module('lodash(...).shift');
 
   (function() {
-    test('should remove elements from the front of `array`', 4, function() {
+    test('should remove elements from the front of `array`', 5, function() {
       if (!isNpm) {
-        var wrapped = _([1, 2]);
+        var array = [1, 2],
+            wrapped = _(array);
 
         strictEqual(wrapped.shift(), 1);
         deepEqual(wrapped.value(), [2]);
-
         strictEqual(wrapped.shift(), 2);
-        deepEqual(wrapped.value(), []);
+
+        var actual = wrapped.value();
+        strictEqual(actual, array);
+        deepEqual(actual, []);
       }
       else {
-        skipTest(4);
+        skipTest(5);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).slice');
+
+  (function() {
+    test('should return a slice of `array`', 3, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            wrapped = _(array).slice(0, 2),
+            actual = wrapped.value();
+
+        notStrictEqual(actual, array);
+        deepEqual(actual, [1, 2]);
+        deepEqual(array, [1, 2, 3]);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).sort');
+
+  (function() {
+    test('should return the wrapped sorted `array`', 2, function() {
+      if (!isNpm) {
+        var array = [3, 1, 2],
+            wrapped = _(array).sort(),
+            actual = wrapped.value();
+
+        strictEqual(actual, array);
+        deepEqual(actual, [1, 2, 3]);
+      }
+      else {
+        skipTest(2);
       }
     });
   }());
@@ -11842,18 +11973,42 @@
   QUnit.module('lodash(...).splice');
 
   (function() {
-    test('should support removing and inserting elements', 4, function() {
+    test('should support removing and inserting elements', 5, function() {
       if (!isNpm) {
-        var wrapped = _([1, 2]);
+        var array = [1, 2],
+            wrapped = _(array);
 
         deepEqual(wrapped.splice(1, 1, 3).value(), [2]);
         deepEqual(wrapped.value(), [1, 3]);
 
         deepEqual(wrapped.splice(0, 2).value(), [1, 3]);
-        deepEqual(wrapped.value(), []);
+
+        var actual = wrapped.value();
+        strictEqual(actual, array);
+        deepEqual(actual, []);
       }
       else {
-        skipTest(4);
+        skipTest(5);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).unshift');
+
+  (function() {
+    test('should prepend elements to `array`', 2, function() {
+      if (!isNpm) {
+        var array = [3],
+            wrapped = _(array).unshift(1, 2),
+            actual = wrapped.value();
+
+        strictEqual(actual, array);
+        deepEqual(actual, [1, 2, 3]);
+      }
+      else {
+        skipTest(2);
       }
     });
   }());
@@ -11935,12 +12090,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...) methods that return existing wrapped values');
+  QUnit.module('lodash(...) methods that return the wrapped modified array');
 
   (function() {
-    var array = [1, 2, 3],
-        wrapped = _(array);
-
     var funcs = [
       'push',
       'reverse',
@@ -11949,12 +12101,18 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('`_(...).' + methodName + '` should not return the existing wrapped value', 1, function() {
+      test('`_(...).' + methodName + '` should return a new wrapper', 2, function() {
+
         if (!isNpm) {
-          notStrictEqual(wrapped[methodName](), wrapped);
+          var array = [1, 2, 3],
+              wrapped = _(array),
+              actual = wrapped[methodName]();
+
+          ok(actual instanceof _);
+          notStrictEqual(actual, wrapped);
         }
         else {
-          skipTest();
+          skipTest(2);
         }
       });
     });
@@ -11965,9 +12123,6 @@
   QUnit.module('lodash(...) methods that return new wrapped values');
 
   (function() {
-    var array = [1, 2, 3],
-        wrapped = _(array);
-
     var funcs = [
       'concat',
       'slice',
@@ -11977,7 +12132,10 @@
     _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return a new wrapped value', 2, function() {
         if (!isNpm) {
-          var actual = wrapped[methodName]();
+          var array = [1, 2, 3],
+              wrapped = _(array),
+              actual = wrapped[methodName]();
+
           ok(actual instanceof _);
           notStrictEqual(actual, wrapped);
         }
@@ -11993,9 +12151,6 @@
   QUnit.module('lodash(...) methods that return unwrapped values');
 
   (function() {
-    var array = [1, 2, 3],
-        wrapped = _(array);
-
     var funcs = [
       'clone',
       'contains',
@@ -12035,81 +12190,24 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('`_(...).' + methodName + '` should return an unwrapped value', 1, function() {
+      test('`_(...).' + methodName + '` should return an unwrapped value when intuitively chaining', 1, function() {
         if (!isNpm) {
-          var actual = wrapped[methodName]();
+          var array = [1, 2, 3],
+              actual = _(array)[methodName]();
+
           ok(!(actual instanceof _));
         }
         else {
           skipTest();
         }
       });
-    });
-  }());
 
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash(...) methods capable of returning wrapped and unwrapped values');
-
-  (function() {
-    var array = [1, 2, 3],
-        wrapped = _(array);
-
-    var funcs = [
-      'sample'
-    ];
-
-    _.each(funcs, function(methodName) {
-      test('`_(...).' + methodName + '` called without an `n` argument should return an unwrapped value', 1, function() {
+      test('`_(...).' + methodName + '` should return a wrapped value when explicitly chaining', 1, function() {
         if (!isNpm) {
-          var actual = wrapped[methodName]();
-          strictEqual(typeof actual, 'number');
-        }
-        else {
-          skipTest();
-        }
-      });
+          var array = [1, 2, 3],
+              actual = _(array).chain()[methodName]();
 
-      test('`_(...).' + methodName + '` called with an `n` argument should return a wrapped value', 1, function() {
-        if (!isNpm) {
-          ok(wrapped[methodName](1) instanceof _);
-        }
-        else {
-          skipTest();
-        }
-      });
-
-      test('`_.' + methodName + '` should return `undefined` when querying falsey arguments without an `n` argument', 1, function() {
-        if (!isNpm) {
-          var actual = [],
-              expected = _.map(falsey, _.constant()),
-              func = _[methodName];
-
-          _.each(falsey, function(value, index) {
-            try {
-              actual.push(index ? func(value) : func());
-            } catch(e) {}
-          });
-
-          deepEqual(actual, expected);
-        }
-        else {
-          skipTest();
-        }
-      });
-
-      test('`_.' + methodName + '` should return an empty array when querying falsey arguments with an `n` argument', 1, function() {
-        if (!isNpm) {
-          var expected = _.map(falsey, _.constant([])),
-              func = _[methodName];
-
-          var actual = _.map(falsey, function(value, index) {
-            try {
-              return func(value, 2);
-            } catch(e) {}
-          });
-
-          deepEqual(actual, expected);
+          ok(actual instanceof _);
         }
         else {
           skipTest();

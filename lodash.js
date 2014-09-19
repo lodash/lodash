@@ -7658,6 +7658,9 @@
       if (object == null) {
         return [];
       }
+      if (!isObject(object)) {
+        object = Object(object);
+      }
       var length = object.length;
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||

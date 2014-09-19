@@ -4937,7 +4937,7 @@
      * @example
      *
      * _([1, 2, 3]).forEach(function(n) { console.log(n); });
-     * // => logs each value and returns the array
+     * // => logs each value from left to right and returns the array
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
      * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
@@ -5772,7 +5772,7 @@
      * _.forEach(saves, function(type) {
      *   asyncSave({ 'type': type, 'complete': done });
      * });
-     * // => logs 'done saving!' after all saves have completed
+     * // => logs 'done saving!' after the two async saves have completed
      */
     function after(n, func) {
       if (!isFunction(func)) {
@@ -5793,19 +5793,20 @@
     }
 
     /**
-     * Creates a function that invokes `func`, with the `this` binding and
-     * arguments of the created function, until it is called `n` times.
+     * Creates a function that invokes `func`, with the `this` binding and arguments
+     * of the created function, while it is called less than `n` times. Subsequent
+     * calls to the created function return the result of the last `func` invocation.
      *
      * @static
      * @memberOf _
      * @category Function
-     * @param {number} n The number of times `func` may be called.
+     * @param {number} n The number of calls at which `func` is no longer invoked.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
      * @example
      *
      * jQuery('#add').on('click', _.before(5, addContactToList));
-     * // => allows adding up to 5 contacts to the list
+     * // => allows adding up to 4 contacts to the list
      */
     function before(n, func) {
       var result;
@@ -6013,15 +6014,15 @@
     }
 
     /**
-     * Creates a function that delays the invocation of `func` until after `wait`
-     * milliseconds have elapsed since the last time it was invoked. The created
-     * function comes with a `cancel` method to cancel delayed invokes. Provide an
-     * options object to indicate that `func` should be invoked on the leading
-     * and/or trailing edge of the `wait` timeout. Subsequent calls to the
-     * debounced function return the result of the last `func` invocation.
+     * Creates a function that delays invoking `func` until after `wait` milliseconds
+     * have elapsed since the last time it was invoked. The created function comes
+     * with a `cancel` method to cancel delayed invocations. Provide an options
+     * object to indicate that `func` should be invoked on the leading and/or
+     * trailing edge of the `wait` timeout. Subsequent calls to the debounced
+     * function return the result of the last `func` invocation.
      *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked on
-     * the trailing edge of the timeout only if the the debounced function is
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+     * on the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
      * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
@@ -6495,8 +6496,8 @@
     /**
      * Creates a function that only invokes `func` at most once per every `wait`
      * milliseconds. The created function comes with a `cancel` method to cancel
-     * delayed invokes. Provide an options object to indicate that `func` should
-     * be invoked on the leading and/or trailing edge of the `wait` timeout.
+     * delayed invocations. Provide an options object to indicate that `func`
+     * should be invoked on the leading and/or trailing edge of the `wait` timeout.
      * Subsequent calls to the throttled function return the result of the last
      * `func` call.
      *

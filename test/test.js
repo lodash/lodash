@@ -11834,7 +11834,7 @@
         strictEqual(wrapped.value(), array);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
   }());

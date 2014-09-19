@@ -7418,16 +7418,18 @@
       deepEqual(actual, shadowedProps);
     });
 
-    test('should expose a `cache` object on the `memoized` function', 4, function() {
+    test('should expose a `cache` object on the `memoized` function', 2, function() {
       _.times(2, function(index) {
         var resolver = index && _.identity,
             memoized = _.memoize(_.identity, resolver);
 
         memoized('a');
-        strictEqual(memoized.cache.a, 'a');
 
-        memoized.cache.a = 'b';
-        strictEqual(memoized('a'), 'b');
+        var cached = _.find(memoized.cache, function(val) {
+          return val.key === 'a';
+        });
+
+        deepEqual(cached, { key: 'a', cached: 'a' });
       });
     });
 
@@ -7445,7 +7447,39 @@
         memoized('__proto__');
 
         strictEqual(count, 2);
-        ok(!(memoized.cache instanceof Array));
+        strictEqual(memoized.cache.length, 0);
+      });
+    });
+
+    test('should safely load object references from cache', 4, function() {
+      _.times(2, function() {
+        var firstObject = { id: 'a1' },
+            secondObject = { id: 'a2' };
+
+        var memoized = _.memoize(function(val) {
+          return 'id is ' + val.id;
+        });
+
+        var firstResult = memoized(firstObject);
+        var secondResult = memoized(secondObject);
+
+        strictEqual(firstResult, 'id is ' + firstObject.id);
+        strictEqual(secondResult, 'id is ' + secondObject.id);
+      });
+    });
+
+    test('should safely cache objects as keys by value', 2, function() {
+      _.times(2, function() {
+        var obj = { id: 'a1' };
+
+        var memoized = _.memoize(function(val) {
+          return 'id is ' + obj.id;
+        });
+
+        memoized(obj);
+        memoized(obj);
+
+        deepEqual(memoized.cache, [{ key: obj, cached: 'id is ' + obj.id }]);
       });
     });
   }());

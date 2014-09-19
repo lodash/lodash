@@ -6371,11 +6371,21 @@
           return func.apply(this, arguments);
         }
         var cache = memoized.cache;
-        return hasOwnProperty.call(cache, key)
-          ? cache[key]
-          : (cache[key] = func.apply(this, arguments));
+        var inCache = find(cache, function(meta) {
+          return identity(key) === meta.key;
+        });
+
+        if (inCache) {
+          return inCache.cached;
+        }
+
+        var ret = func.apply(this, arguments);
+
+        cache.push({ key: key, cached: ret });
+
+        return ret;
       };
-      memoized.cache = {};
+      memoized.cache = [];
       return memoized;
     }
 

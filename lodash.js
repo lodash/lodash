@@ -8400,9 +8400,9 @@
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template
-     * var compiled = _.template('hello <%= name %>');
+     * var compiled = _.template('hello <%= user %>!');
      * compiled({ 'user': 'fred' });
-     * // => 'hello fred'
+     * // => 'hello fred!'
      *
      * // using the HTML "escape" delimiter to escape data property values
      * var compiled = _.template('<b><%- value %></b>');
@@ -8410,23 +8410,23 @@
      * // => '<b>&lt;script&gt;</b>'
      *
      * // using the "evaluate" delimiter to execute JavaScript and generate HTML
-     * var compiled = _.template('<% _.forEach(people, function(name) { %><li><%- name %></li><% }); %>');
-     * compiled({ 'people': ['fred', 'barney'] });
+     * var compiled = _.template('<% _.forEach(users, function(user) { %><li><%- user %></li><% }); %>');
+     * compiled({ 'users': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
      * // using the internal `print` function in "evaluate" delimiters
-     * var compiled = _.template('<% print("hello " + name); %>!');
+     * var compiled = _.template('<% print("hello " + user); %>!');
      * compiled({ 'user': 'barney' });
      * // => 'hello barney!'
      *
      * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
-     * var compiled = _.template('hello ${ name }');
+     * var compiled = _.template('hello ${ user }!');
      * compiled({ 'user': 'pebbles' });
-     * // => 'hello pebbles'
+     * // => 'hello pebbles!'
      *
      * // using custom template delimiters
      * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-     * var compiled = _.template('hello {{ name }}!');
+     * var compiled = _.template('hello {{ user }}!');
      * compiled({ 'user': 'mustache' });
      * // => 'hello mustache!'
      *
@@ -8436,13 +8436,13 @@
      * // => '<%- value %>'
      *
      * // using the `imports` option to import `jQuery` as `jq`
-     * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
+     * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
      * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
-     * compiled({ 'people': ['fred', 'barney'] });
+     * compiled({ 'users': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
      * // using the `sourceURL` option to specify a custom sourceURL for the template
-     * var compiled = _.template('hello <%= name %>', { 'sourceURL': '/basic/greeting.jst' });
+     * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
      *
@@ -8450,7 +8450,7 @@
      * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
      * compiled.source;
      * // => function(data) {
-     *   var __t, __p = '', __e = _.escape;
+     *   var __t, __p = '';
      *   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
      *   return __p;
      * }

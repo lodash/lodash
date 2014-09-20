@@ -6818,7 +6818,7 @@
       deepEqual(func(Foo).sort(), expected);
     });
 
-    test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 2, function() {
+    test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 3, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -6827,6 +6827,10 @@
 
       Foo.prototype = { 'constructor': Foo, 'a': 1 };
       deepEqual(func(Foo.prototype), ['a']);
+
+      var Fake = { 'prototype': {} };
+      Fake.prototype.constructor = Fake;
+      deepEqual(func(Fake.prototype), ['constructor']);
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties', 1, function() {

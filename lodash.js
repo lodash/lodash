@@ -7627,7 +7627,7 @@
         var Ctor = object.constructor,
             length = object.length;
       }
-      if ((Ctor && Ctor.prototype === object) ||
+      if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
           (typeof length == 'number' && length > 0) ||
           (support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
@@ -7670,7 +7670,7 @@
       var keyIndex,
           Ctor = object.constructor,
           index = -1,
-          isProto = Ctor && Ctor.prototype === object,
+          isProto = typeof Ctor == 'function' && Ctor.prototype === object,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
@@ -7947,7 +7947,7 @@
           accumulator = [];
         } else if (isObject(object)) {
           var Ctor = object.constructor;
-          accumulator = baseCreate(Ctor && Ctor.prototype);
+          accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
         } else {
           accumulator = {};
         }

@@ -358,14 +358,8 @@
 
 				function loadModulesAndTests() {
 					require(getConfig(), ['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-						ui.isStrict || (ui.isStrict = 'default' in lodash);
-						lodash = lodash['default'] || lodash;
-
 						lodashModule = lodash;
 						lodashModule.moduleName = 'lodash';
-
-						shimmed = shimmed && (shimmed['default'] || shimmed);
-						underscore = underscore && (underscore['default'] || underscore);
 
 						if (shimmed && shimmed.noConflict) {
 							shimmedModule = shimmed.noConflict();
@@ -380,7 +374,7 @@
 						}
 						if (ui.isModularize) {
 							require(getConfig(), ['lodash/internal/baseEach'], function(baseEach) {
-								lodash._baseEach = baseEach['default'] || baseEach;
+								lodash._baseEach = baseEach;
 								loadTests();
 							});
 						} else {
@@ -394,7 +388,7 @@
 				if (window.requirejs) {
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {
-						lodashBizarro = (lodash['default'] || lodash).noConflict();
+						lodashBizarro = lodash.noConflict();
 						delete requirejs.s.contexts._;
 
 						removeBizarroMethods();

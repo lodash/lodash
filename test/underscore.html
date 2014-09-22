@@ -252,9 +252,6 @@
 				QUnit.config.autostart = false;
 
 				require(getConfig(), [moduleId], function(lodash) {
-					ui.isStrict || (ui.isStrict = 'default' in lodash);
-					lodash = (lodash['default'] || lodash);
-
 					if (ui.isModularize) {
 						window._ = lodash;
 					}

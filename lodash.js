@@ -6758,8 +6758,8 @@
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false ||
-        value && typeof value == 'object' && toString.call(value) == boolClass) || false;
+      return (value === true || value === false || value && typeof value == 'object' &&
+        toString.call(value) == boolClass) || false;
     }
 
     /**
@@ -6805,8 +6805,7 @@
     // fallback for environments without DOM support
     if (!support.dom) {
       isElement = function(value) {
-        return (value && typeof value == 'object' && value.nodeType === 1 &&
-          !isPlainObject(value)) || false;
+        return (value && typeof value == 'object' && value.nodeType === 1 && !isPlainObject(value)) || false;
       };
     }
 
@@ -7107,8 +7106,7 @@
      */
     function isNumber(value) {
       var type = typeof value;
-      return type == 'number' ||
-        (value && type == 'object' && toString.call(value) == numberClass) || false;
+      return type == 'number' || (value && type == 'object' && toString.call(value) == numberClass) || false;
     }
 
     /**
@@ -7191,8 +7189,8 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' ||
-        (value && typeof value == 'object' && toString.call(value) == stringClass) || false;
+      return typeof value == 'string' || (value && typeof value == 'object' &&
+        toString.call(value) == stringClass) || false;
     }
 
     /**

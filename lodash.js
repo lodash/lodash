@@ -8473,12 +8473,13 @@
       // http://ejohn.org/blog/javascript-micro-templating/
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
+      var settings = lodash.templateSettings;
+
       if (isIterateeCall(string, options, otherOptions)) {
         options = otherOptions = null;
       }
-      var settings = lodash.templateSettings;
-      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
       string = String(string == null ? '' : string);
+      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
 
       var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),

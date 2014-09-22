@@ -9,6 +9,10 @@
   /** Used as the size to cover large array optimizations */
   var LARGE_ARRAY_SIZE = 200;
 
+  /** Used as references for the max length and index of an array */
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+
   /** Used as the maximum length an array-like object */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
@@ -42,6 +46,16 @@
       system = root.system,
       toString = objectProto.toString,
       Uint8Array = root.Uint8Array;
+
+  /** Used to set property descriptors */
+  var defineProperty = (function() {
+    try {
+      var o = {},
+          func = Object.defineProperty,
+          result = func(o, o, o) && func;
+    } catch(e) {}
+    return result;
+  }());
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -202,6 +216,22 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
+  /** List of latin-1 supplementary letters to basic latin letters */
+  var burredLetters = [
+    '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7', '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE',
+    '\xCF', '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6', '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE',
+    '\xDF', '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7', '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE',
+    '\xEF', '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6', '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF'
+  ];
+
+  /** List of `burredLetters` translated to basic latin letters */
+  var deburredLetters = [
+    'A',  'A', 'A', 'A', 'A', 'A', 'Ae', 'C',  'E', 'E', 'E', 'E', 'I', 'I', 'I',
+    'I',  'D', 'N', 'O', 'O', 'O', 'O',  'O',  'O', 'U', 'U', 'U', 'U', 'Y', 'Th',
+    'ss', 'a', 'a', 'a', 'a', 'a', 'a',  'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i',  'i',
+    'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
+  ];
+
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
@@ -218,16 +248,6 @@
     new TypeError,
     new URIError
   ];
-
-  /** Used to set property descriptors */
-  var defineProperty = (function() {
-    try {
-      var o = {},
-          func = Object.defineProperty,
-          result = func(o, o, o) && func;
-    } catch(e) {}
-    return result;
-  }());
 
   /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug) */
   var shadowedProps = [
@@ -1328,20 +1348,6 @@
       }
     }());
 
-    var burredLetters = [
-      '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7', '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE', '\xCF',
-      '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6', '\xD7', '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE', '\xDF',
-      '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7', '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE', '\xEF',
-      '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6', '\xF7', '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF'
-    ];
-
-    var deburredLetters = [
-      'A', 'A', 'A', 'A', 'A', 'A', 'Ae', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
-      'D', 'N', 'O', 'O', 'O', 'O', 'O', '', 'O', 'U', 'U', 'U', 'U', 'Y', 'Th', 'ss',
-      'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
-      'd', 'n', 'o', 'o', 'o', 'o', 'o', '', 'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
-    ];
-
     test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 1, function() {
       var actual = _.map(strings, function(string) {
         return func(string) === expected;
@@ -1364,6 +1370,11 @@
       });
 
       deepEqual(actual, _.map(burredLetters, _.constant(true)));
+    });
+
+    test('should trim latin-1 mathematical operators', 1, function() {
+      var actual = _.map(['\xD7', '\xF7'], func);
+      deepEqual(actual, ['', '']);
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
@@ -2756,6 +2767,24 @@
         skipTest(2);
         QUnit.start();
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.deburr');
+
+  (function() {
+    test('should convert latin-1 supplementary letters to basic latin', 1, function() {
+      var actual = _.map(burredLetters, _.deburr);
+      deepEqual(actual, deburredLetters);
+    });
+
+    test('should not deburr latin-1 mathematical operators', 1, function() {
+      var operators = ['\xD7', '\xF7'],
+          actual = _.map(operators, _.deburr);
+
+      deepEqual(actual, operators);
     });
   }());
 
@@ -7027,13 +7056,10 @@
     });
 
     test('should handle object arguments with non-numeric length properties', 1, function() {
-      if (defineProperty) {
-        var object = {};
-        defineProperty(object, 'length', { 'value': 'x' });
-        deepEqual(_.map(object, _.identity), []);
-      } else {
-        skipTest();
-      }
+      var value = { 'value': 'x' },
+          object = { 'length': { 'value': 'x' } };
+
+      deepEqual(_.map(object, _.identity), [value]);
     });
 
     test('should treat a nodelist as an array-like object', 1, function() {
@@ -10079,7 +10105,7 @@
 
     test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 2, function() {
       var array = [0],
-          length = Math.pow(2, 32) - 1,
+          length = MAX_ARRAY_LENGTH,
           steps = 0;
 
       array.length = length;
@@ -10088,7 +10114,7 @@
       if (array.length == length) {
         var actual = func(array, undefined, function() { steps++; });
         strictEqual(steps, 33);
-        strictEqual(actual, isSortedIndex ? 0 : (length - 1));
+        strictEqual(actual, isSortedIndex ? 0 : MAX_ARRAY_INDEX);
       }
       else {
         skipTest(2);
@@ -11597,6 +11623,39 @@
     test('should remove all occurrences of each value from an array', 1, function() {
       var array = [1, 2, 3, 1, 2, 3];
       deepEqual(_.without(array, 1, 2), [3, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.words');
+
+  (function() {
+    test('should treat latin-1 supplementary letters as words', 1, function() {
+      var expected = _.map(burredLetters, function(letter) {
+        return [letter];
+      });
+
+      var actual = _.map(burredLetters, function(letter) {
+        return _.words(letter);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not treat mathematical operators as words', 1, function() {
+      var operators = ['\xD7', '\xF7'],
+          expected = _.map(operators, _.constant([])),
+          actual = _.map(operators, _.words);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work when used as a callback for `_.map`', 1, function() {
+      var array = ['a', 'b', 'c'],
+          actual = _.map(array, _.words);
+
+      deepEqual(actual, [['a'], ['b'], ['c']]);
     });
   }());
 

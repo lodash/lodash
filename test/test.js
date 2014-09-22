@@ -212,7 +212,7 @@
   /** The `lodash` function to test */
   var _ = root._ || (root._ = (
     _ = load(filePath) || root._,
-    _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default'])  || _,
+    _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default']) || _,
     (_.runInContext ? _.runInContext(root) : _)
   ));
 

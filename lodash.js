@@ -23,6 +23,10 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
+  /** Used as default options for `_.trunc` */
+  var DEFAULT_TRUNC_LENGTH = 30,
+      DEFAULT_TRUNC_OMISSION = '...';
+
   /** Used to detect when a function becomes hot */
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
@@ -80,8 +84,8 @@
   /** Used to detect host constructors (Safari > 5) */
   var reHostCtor = /^\[object .+?Constructor\]$/;
 
-  /** Used to match latin-1 supplement letters */
-  var reLatin1 = /[\xC0-\xFF]/g;
+  /** Used to match latin-1 supplement letters (excluding mathematical operators) */
+  var reLatin1 = /[\xC0-\xD6\xD8-\xDE\xDF-\xF6\xF8-\xFF]/g;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -253,7 +257,7 @@
     '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
     '\xC6': 'Ae', '\xE6': 'ae',
     '\xDE': 'Th', '\xFE': 'th',
-    '\xDF': 'ss', '\xD7': ' ', '\xF7': ' '
+    '\xDF': 'ss'
   };
 
   /** Used to determine if values are of the language type `Object` */
@@ -8683,9 +8687,11 @@
      * _.trunc('hi-diddly-ho there, neighborino', { 'omission': ' [...]' });
      * // => 'hi-diddly-ho there, neig [...]'
      */
-    function trunc(string, options) {
-      var length = 30,
-          omission = '...';
+    function trunc(string, options, guard) {
+      options = guard ? null : options;
+
+      var length = DEFAULT_TRUNC_LENGTH,
+          omission = DEFAULT_TRUNC_OMISSION;
 
       if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
@@ -8764,6 +8770,7 @@
      * @category String
      * @param {string} [string=''] The string to inspect.
      * @param {RegExp|string} [pattern] The pattern to match words.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the words of `string`.
      * @example
      *
@@ -8773,8 +8780,9 @@
      * _.words('fred, barney, & pebbles', /[^, ]+/g);
      * // => ['fred', 'barney', '&', 'pebbles']
      */
-    function words(string, pattern) {
+    function words(string, pattern, guard) {
       string = string != null && String(string);
+      pattern = guard ? null : pattern;
       return (string && string.match(pattern || reWords)) || [];
     }
 

@@ -11657,6 +11657,16 @@
 
       deepEqual(actual, [['a'], ['b'], ['c']]);
     });
+
+    test('should work with compound words', 6, function() {
+      deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
+      deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
+      deepEqual(_.words('aeiou2Consonants'), ['aeiou', '2', 'Consonants']);
+
+      deepEqual(_.words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are', 'Vowels']);
+      deepEqual(_.words('æiouAreVowels'), ['æiou', 'Are', 'Vowels']);
+      deepEqual(_.words('æiou2Consonants'), ['æiou', '2', 'Consonants']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

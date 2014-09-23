@@ -105,11 +105,10 @@
 
   /** Used to match words to create compound words */
   var reWords = (function() {
-    var nums = '[0-9]',
-        upper = '[A-Z\\xC0-\\xD6\\xD8-\\xDE]',
-        lower = '[a-z\\xDF-\\xF6\\xF8-\\xFF]+' + nums + '*';
+    var upper = '[A-Z\\xC0-\\xD6\\xD8-\\xDE]',
+        lower = '[a-z\\xDF-\\xF6\\xF8-\\xFF]+';
 
-    return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|' + nums + '+', 'g');
+    return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
 
   /** Used to detect and test whitespace */

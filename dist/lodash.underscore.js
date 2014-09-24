@@ -209,7 +209,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {Array} Returns `true` if all elements passed the predicate check,
+   * @returns {Array} Returns `true` if all elements pass the predicate check,
    *  else `false`
    */
   function arrayEvery(array, predicate) {
@@ -324,7 +324,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if any element passed the predicate check,
+   * @returns {boolean} Returns `true` if any element passes the predicate check,
    *  else `false`.
    */
   function arraySome(array, predicate) {
@@ -364,7 +364,8 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches.
+   * The base implementation of `_.indexOf` without support for `fromIndex`
+   * bounds checks and binary searches.
    *
    * @private
    * @param {Array} array The array to search.
@@ -373,12 +374,14 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
+    if (value !== value) {
+      return indexOfNaN(array, fromIndex);
+    }
     var index = (fromIndex || 0) - 1,
-        length = array ? array.length : 0;
+        length = array.length;
 
     while (++index < length) {
-      var other = array[index];
-      if (other === value) {
+      if (array[index] === value) {
         return index;
       }
     }
@@ -438,6 +441,46 @@
    */
   function escapeStringChar(chr) {
     return '\\' + stringEscapes[chr];
+  }
+
+  /**
+   * Gets the index at which the first occurrence of `NaN` is found in `array`.
+   * If `fromRight` is provided elements of `array` are iterated from right to left.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {number} [fromIndex] The index to search from.
+   * @param {boolean} [fromRight=false] Specify iterating from right to left.
+   * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+   */
+  function indexOfNaN(array, fromIndex, fromRight) {
+    var length = array.length,
+        index = fromRight ? (fromIndex || length) : ((fromIndex || 0) - 1);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      var other = array[index];
+      if (other !== other) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Checks if the provided arguments are from an iteratee call.
+   *
+   * @private
+   * @param {*} value The potential iteratee value argument.
+   * @param {*} index The potential iteratee index or key argument.
+   * @param {*} object The potential iteratee object argument.
+   * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
+   */
+  function isIterateeCall(value, index, object) {
+    var indexType = typeof index,
+        objectType = typeof object;
+
+    return (object && (indexType == 'number' || indexType == 'string') &&
+      (objectType == 'function' || objectType == 'object') && object[index] === value) || false;
   }
 
   /**
@@ -827,7 +870,7 @@
    *
    * @private
    * @param {Array} array The array to inspect.
-   * @param {Array} [values] The values to exclude.
+   * @param {Array} values The values to exclude.
    * @returns {Array} Returns the new array of filtered values.
    */
   function baseDifference(array, values) {
@@ -897,13 +940,13 @@
   }
 
   /**
-   * The base implementation of `_.every` without support for callback shorthands
-   * or `this` binding.
+   * The base implementation of `_.every` without support for callback
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {Array} Returns `true` if all elements passed the predicate check,
+   * @returns {Array} Returns `true` if all elements pass the predicate check,
    *  else `false`
    */
   function baseEvery(collection, predicate) {
@@ -1344,7 +1387,7 @@
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if any element passed the predicate check,
+   * @returns {boolean} Returns `true` if any element passes the predicate check,
    *  else `false`.
    */
   function baseSome(collection, predicate) {
@@ -1719,8 +1762,8 @@
   }
 
   /**
-   * A specialized version of `_.pick` that picks `object` properties
-   * the predicate returns truthy for.
+   * A specialized version of `_.pick` that picks `object` properties `predicate`
+   * returns truthy for.
    *
    * @private
    * @param {Object} object The source object.
@@ -1882,7 +1925,7 @@
 
   /**
    * This method is like `_.find` except that it returns the index of the first
-   * element the predicate returns truthy for, instead of the element itself.
+   * element `predicate` returns truthy for, instead of the element itself.
    *
    * If a property name is provided for `predicate` the created "_.pluck" style
    * callback returns the property value of the given element.
@@ -1980,15 +2023,7 @@
    */
   function flatten(array, isDeep, guard) {
     var length = array ? array.length : 0;
-    if (!length) {
-      return [];
-    }
-    // enables use as a callback for functions like `_.map`
-    var type = typeof isDeep;
-    if ((type == 'number' || type == 'string') && guard && guard[isDeep] === array) {
-      isDeep = false;
-    }
-    return baseFlatten(array, !isDeep);
+    return length ? baseFlatten(array, guard ? true : !isDeep) : [];
   }
 
   /**
@@ -2024,12 +2059,14 @@
    */
   function indexOf(array, value, fromIndex) {
     var length = array ? array.length : 0;
-
+    if (!length) {
+      return -1;
+    }
     if (typeof fromIndex == 'number') {
       fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
     } else if (fromIndex) {
       var index = sortedIndex(array, value);
-      return (length && array[index] === value) ? index : -1;
+      return array[index] === value ? index : -1;
     }
     return baseIndexOf(array, value, fromIndex);
   }
@@ -2156,15 +2193,19 @@
    * // => 3
    */
   function lastIndexOf(array, value, fromIndex) {
-    var length = array ? array.length : 0,
-        index = length;
-
+    var length = array ? array.length : 0;
+    if (!length) {
+      return -1;
+    }
+    var index = length;
     if (typeof fromIndex == 'number') {
-      index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
+      index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
+    }
+    if (value !== value) {
+      return indexOfNaN(array, index, true);
     }
     while (index--) {
-      var other = array[index];
-      if (other === value) {
+      if (array[index] === value) {
         return index;
       }
     }
@@ -2210,13 +2251,18 @@
    */
   function slice(array, start, end) {
     var index = -1,
-        length = array ? array.length : 0;
+        length = array ? array.length : 0,
+        endType = typeof end;
 
+    if (end && endType != 'number' && isIterateeCall(array, start, end)) {
+      start = 0;
+      end = length;
+    }
     start = start == null ? 0 : (+start || 0);
     if (start < 0) {
       start = -start > length ? 0 : (length + start);
     }
-    end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+    end = (endType == 'undefined' || end > length) ? length : (+end || 0);
     if (end < 0) {
       end += length;
     }
@@ -2237,7 +2283,7 @@
    * be inserted into a given sorted array in order to maintain the sort order
    * of the array. If an iteratee function is provided it is invoked for `value`
    * and each element of `array` to compute their sort ranking. The iteratee
-   * function is bound to `thisArg` and invoked with one argument; (value).
+   * is bound to `thisArg` and invoked with one argument; (value).
    *
    * If a property name is provided for `iteratee` the created "_.pluck" style
    * callback returns the property value of the given element.
@@ -2384,16 +2430,10 @@
       return [];
     }
     // juggle arguments
-    var type = typeof isSorted;
-    if (type != 'boolean' && isSorted != null) {
+    if (typeof isSorted != 'boolean' && isSorted != null) {
       thisArg = iteratee;
-      iteratee = isSorted;
+      iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
       isSorted = false;
-
-      // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === array) {
-        iteratee = null;
-      }
     }
     if (iteratee != null) {
       iteratee = baseCallback(iteratee, thisArg, 3);
@@ -2658,8 +2698,9 @@
 
     if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
       collection = values(collection);
+      length = collection.length;
     }
-    return getIndexOf(collection, target) > -1;
+    return length ? (getIndexOf(collection, target) > -1) : false;
   }
 
   /**
@@ -2701,7 +2742,7 @@
   });
 
   /**
-   * Checks if the predicate returns truthy for **all** elements of `collection`.
+   * Checks if `predicate` returns truthy for **all** elements of `collection`.
    * The predicate is bound to `thisArg` and invoked with three arguments;
    * (value, index|key, collection).
    *
@@ -2721,7 +2762,7 @@
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
-   * @returns {boolean} Returns `true` if all elements passed the predicate check,
+   * @returns {boolean} Returns `true` if all elements pass the predicate check,
    *  else `false`.
    * @example
    *
@@ -2751,7 +2792,7 @@
 
   /**
    * Iterates over elements of `collection`, returning an array of all elements
-   * the predicate returns truthy for. The predicate is bound to `thisArg` and
+   * `predicate` returns truthy for. The predicate is bound to `thisArg` and
    * invoked with three arguments; (value, index|key, collection).
    *
    * If a property name is provided for `predicate` the created "_.pluck" style
@@ -2797,8 +2838,8 @@
   }
 
   /**
-   * Iterates over elements of `collection`, returning the first element that
-   * the predicate returns truthy for. The predicate is bound to `thisArg` and
+   * Iterates over elements of `collection`, returning the first element
+   * `predicate` returns truthy for. The predicate is bound to `thisArg` and
    * invoked with three arguments; (value, index|key, collection).
    *
    * If a property name is provided for `predicate` the created "_.pluck" style
@@ -3110,14 +3151,10 @@
    * // => { 'user': 'fred', 'age': 40 };
    */
   function max(collection, iteratee, thisArg) {
-    var computed = -Infinity,
-        result = computed,
-        type = typeof iteratee;
+    iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
-    // enables use as a callback for functions like `_.map`
-    if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
-      iteratee = null;
-    }
+    var computed = -Infinity,
+        result = computed;
 
     if (iteratee == null) {
       var index = -1,
@@ -3188,14 +3225,10 @@
    * // => { 'user': 'barney', 'age': 36 };
    */
   function min(collection, iteratee, thisArg) {
-    var computed = Infinity,
-        result = computed,
-        type = typeof iteratee;
+    iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
-    // enables use as a callback for functions like `_.map`
-    if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
-      iteratee = null;
-    }
+    var computed = Infinity,
+        result = computed;
 
     if (iteratee == null) {
       var index = -1,
@@ -3224,8 +3257,8 @@
 
   /**
    * Creates an array of elements split into two groups, the first of which
-   * contains elements the predicate returns truthy for, while the second of which
-   * contains elements the predicate returns falsey for. The predicate is bound
+   * contains elements `predicate` returns truthy for, while the second of which
+   * contains elements `predicate` returns falsey for. The predicate is bound
    * to `thisArg` and invoked with three arguments; (value, index|key, collection).
    *
    * If a property name is provided for `predicate` the created "_.pluck" style
@@ -3356,7 +3389,7 @@
 
   /**
    * The opposite of `_.filter`; this method returns the elements of `collection`
-   * the predicate does **not** return truthy for.
+   * that `predicate` does **not** return truthy for.
    *
    * If a property name is provided for `predicate` the created "_.pluck" style
    * callback returns the property value of the given element.
@@ -3420,7 +3453,7 @@
    * // => [3, 1]
    */
   function sample(collection, n, guard) {
-    if (n == null || guard) {
+    if (guard || n == null) {
       collection = toIterable(collection);
       var length = collection.length;
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
@@ -3490,7 +3523,7 @@
   }
 
   /**
-   * Checks if the predicate returns truthy for **any** element of `collection`.
+   * Checks if `predicate` returns truthy for **any** element of `collection`.
    * The function returns as soon as it finds a passing value and does not iterate
    * over the entire collection. The predicate is bound to `thisArg` and invoked
    * with three arguments; (value, index|key, collection).
@@ -3511,7 +3544,7 @@
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
-   * @returns {boolean} Returns `true` if any element passed the predicate check,
+   * @returns {boolean} Returns `true` if any element passes the predicate check,
    *  else `false`.
    * @example
    *
@@ -3589,10 +3622,15 @@
    * // = > [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
    */
   function sortBy(collection, iteratee, thisArg) {
-    var index = -1,
-        length = collection && collection.length,
-        result = Array(length < 0 ? 0 : length >>> 0);
+    iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
+    var index = -1,
+        length = collection ? collection.length : 0,
+        result = [];
+
+    if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+      result.length = length;
+    }
     iteratee = baseCallback(iteratee, thisArg, 3);
     baseEach(collection, function(value, key, collection) {
       result[++index] = {
@@ -4409,8 +4447,8 @@
    * // => false
    */
   function isBoolean(value) {
-    return (value === true || value === false ||
-      value && typeof value == 'object' && toString.call(value) == boolClass) || false;
+    return (value === true || value === false || value && typeof value == 'object' &&
+      toString.call(value) == boolClass) || false;
   }
 
   /**
@@ -4746,8 +4784,7 @@
    */
   function isNumber(value) {
     var type = typeof value;
-    return type == 'number' ||
-      (value && type == 'object' && toString.call(value) == numberClass) || false;
+    return type == 'number' || (value && type == 'object' && toString.call(value) == numberClass) || false;
   }
 
   /**
@@ -4787,8 +4824,8 @@
    * // => false
    */
   function isString(value) {
-    return typeof value == 'string' ||
-      (value && typeof value == 'object' && toString.call(value) == stringClass) || false;
+    return typeof value == 'string' || (value && typeof value == 'object' &&
+      toString.call(value) == stringClass) || false;
   }
 
   /**
@@ -4847,10 +4884,9 @@
     }
     var args = arguments,
         index = 0,
-        length = args.length,
-        type = typeof args[2];
+        length = args.length;
 
-    if ((type == 'number' || type == 'string') && args[3] && args[3][args[2]] === args[1]) {
+    if (isIterateeCall(args[1], args[2], args[3])) {
       length = 2;
     }
     while (++index < length) {
@@ -4884,10 +4920,9 @@
     }
     var args = arguments,
         index = 0,
-        length = args.length,
-        type = typeof args[2];
+        length = args.length;
 
-    if ((type == 'number' || type == 'string') && args[3] && args[3][args[2]] === args[1]) {
+    if (isIterateeCall(args[1], args[2], args[3])) {
       length = 2;
     }
     while (++index < length) {
@@ -4950,6 +4985,7 @@
    * @category Object
    * @param {Object} object The object to invert.
    * @param {boolean} [multiValue=false] Allow multiple values per key.
+   * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
    * @returns {Object} Returns the new inverted object.
    * @example
    *
@@ -5035,8 +5071,8 @@
   /**
    * Creates a shallow clone of `object` excluding the specified properties.
    * Property names may be specified as individual arguments or as arrays of
-   * property names. If a predicate is provided it is invoked for each property
-   * of `object` omitting the properties the predicate returns truthy for. The
+   * property names. If `predicate` is provided it is invoked for each property
+   * of `object` omitting the properties `predicate` returns truthy for. The
    * predicate is bound to `thisArg` and invoked with three arguments;
    * (value, key, object).
    *
@@ -5103,8 +5139,8 @@
   /**
    * Creates a shallow clone of `object` composed of the specified properties.
    * Property names may be specified as individual arguments or as arrays of
-   * property names. If a predicate is provided it is invoked for each property
-   * of `object` picking the properties the predicate returns truthy for. The
+   * property names. If `predicate` is provided it is invoked for each property
+   * of `object` picking the properties `predicate` returns truthy for. The
    * predicate is bound to `thisArg` and invoked with three arguments;
    * (value, key, object).
    *
@@ -5312,6 +5348,9 @@
     var _ = lodash,
         settings = _.templateSettings;
 
+    if (isIterateeCall(string, options, otherOptions)) {
+      options = otherOptions = null;
+    }
     string = String(string == null ? '' : string);
     options = defaults({}, otherOptions || options, settings);
 
@@ -5428,6 +5467,7 @@
    * @category Utility
    * @param {*} [func=identity] The value to convert to a callback.
    * @param {*} [thisArg] The `this` binding of the created callback.
+   * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
    * @returns {Function} Returns the new function.
    * @example
    *
@@ -5450,8 +5490,8 @@
    * _.filter(users, 'age__gt38');
    * // => [{ 'user': 'fred', 'age': 40 }]
    */
-  function callback(func, thisArg) {
-    return baseCallback(func, thisArg);
+  function callback(func, thisArg, guard) {
+    return baseCallback(func, guard ? undefined : thisArg);
   }
 
   /**
@@ -5702,7 +5742,8 @@
    * _.random(1.2, 5.2);
    * // => a floating-point number between 1.2 and 5.2
    */
-  function random(min, max) {
+  function random(min, max, guard) {
+    max = guard ? null : max;
     if (min == null && max == null) {
       max = 1;
     }
@@ -5749,13 +5790,10 @@
    * // => []
    */
   function range(start, end, step) {
-    start = +start || 0;
-
-    // enables use as a callback for functions like `_.map`
-    var type = typeof end;
-    if ((type == 'number' || type == 'string') && step && step[end] === start) {
+    if (step && isIterateeCall(start, end, step)) {
       end = step = null;
     }
+    start = +start || 0;
     step = +step || 1;
 
     if (end == null) {

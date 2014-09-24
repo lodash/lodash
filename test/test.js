@@ -7506,16 +7506,14 @@
       deepEqual(actual, shadowedProps);
     });
 
-    test('should expose a `cache` object on the `memoized` function', 4, function() {
+    test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 2, function() {
       _.times(2, function(index) {
         var resolver = index && _.identity,
             memoized = _.memoize(_.identity, resolver);
 
         memoized('a');
-        strictEqual(memoized.cache.a, 'a');
 
-        memoized.cache.a = 'b';
-        strictEqual(memoized('a'), 'b');
+        deepEqual(_.methods(memoized.Cache), ['get', 'set', 'has']);
       });
     });
 
@@ -7533,7 +7531,46 @@
         memoized('__proto__');
 
         strictEqual(count, 2);
-        ok(!(memoized.cache instanceof Array));
+        ok(!(memoized.Cache instanceof Array));
+      });
+    });
+
+    test('should allow cache to be set to custom implementation of Map interface', 4, function() {
+      _.times(2, function() {
+        var firstObject = { id: 'a1' },
+            secondObject = { id: 'a2' };
+
+        function MyCache() {
+            this.__wrapped__ = [];
+        }
+
+        _.extend(MyCache.prototype, {
+          get: function(key) {
+            return _.find(this.__wrapped__, function(cached) {
+              return _.identity(key) === cached.key;
+            }).value;
+          },
+          set: function(key, value) {
+            this.__wrapped__.push({ key: key, value: value });
+          },
+          has: function(key) {
+            return _.some(this.__wrapped__, function(cached) {
+              return _.identity(key) === cached.key;
+            });
+          }
+        });
+
+        _.memoize.Cache = MyCache;
+
+        var memoized = _.memoize(function(val) {
+          return 'id is ' + val.id;
+        });
+
+        var firstResult = memoized(firstObject);
+        var secondResult = memoized(secondObject);
+
+        strictEqual(firstResult, 'id is ' + firstObject.id);
+        strictEqual(secondResult, 'id is ' + secondObject.id);
       });
     });
   }());

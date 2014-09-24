@@ -6376,6 +6376,11 @@
      * invoked with the `this` binding of the memoized function. The result cache
      * is exposed as the `cache` property on the memoized function.
      *
+     * The mechanism by which memoize caches results can be customized by setting
+     * a value for the `_.memoize.Cache` property. The objects created by this
+     * constructor must (partially) implement the `Map` interface with `get`,
+     * `set` and `has` functions.
+     *
      * @static
      * @memberOf _
      * @category Function
@@ -6402,6 +6407,33 @@
      * upperCase.cache.fred = 'BARNEY'
      * upperCase('fred');
      * // => 'BARNEY'
+     *
+     * // Using a custom memoize cache
+     * _.memoize.Cache = Map;
+     *
+     * // Using a hand-cranked memoize cache wrapper.
+     * function MyCache() {
+     *   this.__wrapper__ = [];
+     * }
+     *
+     * _.extend(MyCache.prototype, {
+     *   get: function(key) {
+     *     return _.find(this.__wrapper__, function(cached) {
+     *       return _.identity(key) === cached.key;
+     *     }).value;
+     *   },
+     *   set: function(key, value) {
+     *     this.__wrapper__.push({ key: key, value: value });
+     *     return this;
+     *   },
+     *   has: function(key) {
+     *     return _.some(this.__wrapper__, function(cached) {
+     *       return _.identity(key) === cached;
+     *     });
+     *   }
+     * });
+     *
+     * _.memoize.Cache = MyCache;
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
@@ -6412,14 +6444,15 @@
         if (key == '__proto__') {
           return func.apply(this, arguments);
         }
-        var cache = memoized.cache;
-        return hasOwnProperty.call(cache, key)
-          ? cache[key]
-          : (cache[key] = func.apply(this, arguments));
+        var cache = memoized.Cache;
+        if (!cache.has(key)) cache.set(key, func.apply(this, arguments));
+        return cache.get(key);
       };
-      memoized.cache = {};
+      memoized.Cache = new memoize.Cache;
       return memoized;
     }
+
+    memoize.Cache = Cache;
 
     /**
      * Creates a function that negates the result of the predicate `func`. The
@@ -7672,6 +7705,29 @@
       }
       return isObject(object) ? nativeKeys(object) : [];
     };
+
+    /**
+     * Default internal caching mechanism used by _.memoize which
+     * implements the subset of the Map interface (get, set and
+     * has) required my _.memoize.
+     * @private
+     */
+    function Cache() {
+      this.__wrapped__ = {};
+    }
+
+    assign(Cache.prototype, {
+      get: function(key) {
+        return this.__wrapped__[key];
+      },
+      set: function(key, value) {
+        this.__wrapped__[key] = value;
+        return this;
+      },
+      has: function(key) {
+        return hasOwnProperty.call(this.__wrapped__, key);
+      }
+    });
 
     /**
      * Creates an array of the own and inherited enumerable property names of `object`.

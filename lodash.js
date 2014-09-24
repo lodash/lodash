@@ -3173,7 +3173,7 @@
       }
       return isObject(value) ? value : Object(value);
     }
-
+ 
     /*------------------------------------------------------------------------*/
 
     /**
@@ -6371,23 +6371,14 @@
           return func.apply(this, arguments);
         }
         var cache = memoized.cache;
-        var inCache = find(cache, function(meta) {
-          return identity(key) === meta.key;
-        });
-
-        if (inCache) {
-          return inCache.cached;
-        }
-
-        var ret = func.apply(this, arguments);
-
-        cache.push({ key: key, cached: ret });
-
-        return ret;
+        if (!cache.has(key)) cache.set(key, func.apply(this, arguments));
+        return cache.get(key);
       };
-      memoized.cache = [];
+      memoized.cache = new Cache;
       return memoized;
     }
+
+    memoize.cache = Cache;
 
     /**
      * Creates a function that negates the result of the predicate `func`. The
@@ -7561,7 +7552,7 @@
      */
     function has(object, key) {
       return object ? hasOwnProperty.call(object, key) : false;
-    }
+    } 
 
     /**
      * Creates an object composed of the inverted keys and values of the given
@@ -7644,6 +7635,27 @@
       }
       return isObject(object) ? nativeKeys(object) : [];
     };
+
+    /**
+     * @private
+     */
+    function Cache() {
+      this.__wrapped__ = {}; 
+    }
+
+    assign(Cache.prototype, {
+      get: function(key) {
+        return this.__wrapped__[key];
+      },
+      set: function(key, value) {
+        this.__wrapped__[key] = value;
+        // TODO: test for chained stuff?
+        return this;
+      },
+      has: function(key) {
+        return has(this.__wrapped__, key);
+      }
+    });
 
     /**
      * Creates an array of the own and inherited enumerable property names of `object`.

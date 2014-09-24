@@ -7418,18 +7418,14 @@
       deepEqual(actual, shadowedProps);
     });
 
-    test('should expose a `cache` object on the `memoized` function', 2, function() {
+    test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 2, function() {
       _.times(2, function(index) {
         var resolver = index && _.identity,
             memoized = _.memoize(_.identity, resolver);
 
         memoized('a');
 
-        var cached = _.find(memoized.cache, function(val) {
-          return val.key === 'a';
-        });
-
-        deepEqual(cached, { key: 'a', cached: 'a' });
+        deepEqual(_.methods(memoized.Cache), ['get', 'set', 'has']);
       });
     });
 
@@ -7447,14 +7443,36 @@
         memoized('__proto__');
 
         strictEqual(count, 2);
-        strictEqual(memoized.cache.length, 0);
+        ok(!(memoized.Cache instanceof Array)); 
       });
     });
 
-    test('should safely load object references from cache', 4, function() {
+    test('should allow cache to be set to custom implementation of Map interface', 4, function() {
       _.times(2, function() {
         var firstObject = { id: 'a1' },
             secondObject = { id: 'a2' };
+
+        function MyCache() {
+            this.__wrapped__ = [];
+        }
+
+        _.extend(MyCache.prototype, {
+          get: function(key) {
+            return _.find(this.__wrapped__, function(cached) {
+              return _.identity(key) === cached.key;
+            }).value;
+          },
+          set: function(key, value) {
+            this.__wrapped__.push({ key: key, value: value });
+          },
+          has: function(key) {
+            return _.some(this.__wrapped__, function(cached) {
+              return _.identity(key) === cached.key;
+            });
+          }
+        });
+
+        _.memoize.Cache = MyCache;
 
         var memoized = _.memoize(function(val) {
           return 'id is ' + val.id;
@@ -7465,21 +7483,6 @@
 
         strictEqual(firstResult, 'id is ' + firstObject.id);
         strictEqual(secondResult, 'id is ' + secondObject.id);
-      });
-    });
-
-    test('should safely cache objects as keys by value', 2, function() {
-      _.times(2, function() {
-        var obj = { id: 'a1' };
-
-        var memoized = _.memoize(function(val) {
-          return 'id is ' + obj.id;
-        });
-
-        memoized(obj);
-        memoized(obj);
-
-        deepEqual(memoized.cache, [{ key: obj, cached: 'id is ' + obj.id }]);
       });
     });
   }());

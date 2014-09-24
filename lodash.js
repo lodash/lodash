@@ -6370,15 +6370,15 @@
         if (key == '__proto__') {
           return func.apply(this, arguments);
         }
-        var cache = memoized.cache;
+        var cache = memoized.Cache;
         if (!cache.has(key)) cache.set(key, func.apply(this, arguments));
         return cache.get(key);
       };
-      memoized.cache = new Cache;
+      memoized.Cache = new memoize.Cache;
       return memoized;
     }
 
-    memoize.cache = Cache;
+    memoize.Cache = Cache;
 
     /**
      * Creates a function that negates the result of the predicate `func`. The
@@ -7637,6 +7637,7 @@
     };
 
     /**
+     * TODO 
      * @private
      */
     function Cache() {
@@ -7649,7 +7650,6 @@
       },
       set: function(key, value) {
         this.__wrapped__[key] = value;
-        // TODO: test for chained stuff?
         return this;
       },
       has: function(key) {

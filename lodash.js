@@ -4712,6 +4712,9 @@
         collection = values(collection);
         length = collection.length;
       }
+      if (!length) {
+        return false;
+      }
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else {

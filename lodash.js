@@ -343,7 +343,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {Array} Returns `true` if all elements passed the predicate check,
+   * @returns {Array} Returns `true` if all elements pass the predicate check,
    *  else `false`
    */
   function arrayEvery(array, predicate) {
@@ -458,7 +458,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if any element passed the predicate check,
+   * @returns {boolean} Returns `true` if any element passes the predicate check,
    *  else `false`.
    */
   function arraySome(array, predicate) {
@@ -1667,13 +1667,13 @@
     }
 
     /**
-     * The base implementation of `_.every` without support for callback shorthands
-     * or `this` binding.
+     * The base implementation of `_.every` without support for callback
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns `true` if all elements passed the predicate check,
+     * @returns {Array} Returns `true` if all elements pass the predicate check,
      *  else `false`
      */
     function baseEvery(collection, predicate) {
@@ -2294,7 +2294,7 @@
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if any element passed the predicate check,
+     * @returns {boolean} Returns `true` if any element passes the predicate check,
      *  else `false`.
      */
     function baseSome(collection, predicate) {
@@ -3053,8 +3053,8 @@
     }
 
     /**
-     * A specialized version of `_.pick` that picks `object` properties
-     * the predicate returns truthy for.
+     * A specialized version of `_.pick` that picks `object` properties `predicate`
+     * returns truthy for.
      *
      * @private
      * @param {Object} object The source object.
@@ -3377,7 +3377,7 @@
 
     /**
      * Creates a slice of `array` excluding elements dropped from the end.
-     * Elements are dropped until the predicate returns falsey. The predicate is
+     * Elements are dropped until `predicate` returns falsey. The predicate is
      * bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -3426,7 +3426,7 @@
 
     /**
      * Creates a slice of `array` excluding elements dropped from the beginning.
-     * Elements are dropped until the predicate returns falsey. The predicate is
+     * Elements are dropped until `predicate` returns falsey. The predicate is
      * bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -3475,7 +3475,7 @@
 
     /**
      * This method is like `_.find` except that it returns the index of the first
-     * element the predicate returns truthy for, instead of the element itself.
+     * element `predicate` returns truthy for, instead of the element itself.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -3907,7 +3907,7 @@
     }
 
     /**
-     * Removes all elements from `array` that the predicate returns truthy for
+     * Removes all elements from `array` that `predicate` returns truthy for
      * and returns an array of the removed elements. The predicate is bound to
      * `thisArg` and invoked with three arguments; (value, index, array).
      *
@@ -4022,7 +4022,7 @@
      * be inserted into a given sorted array in order to maintain the sort order
      * of the array. If an iteratee function is provided it is invoked for `value`
      * and each element of `array` to compute their sort ranking. The iteratee
-     * function is bound to `thisArg` and invoked with one argument; (value).
+     * is bound to `thisArg` and invoked with one argument; (value).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -4157,7 +4157,7 @@
 
     /**
      * Creates a slice of `array` with elements taken from the end. Elements are
-     * taken until the predicate returns falsey. The predicate is bound to `thisArg`
+     * taken until `predicate` returns falsey. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4206,7 +4206,7 @@
 
     /**
      * Creates a slice of `array` with elements taken from the beginning. Elements
-     * are taken until the predicate returns falsey. The predicate is bound to
+     * are taken until `predicate` returns falsey. The predicate is bound to
      * `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4760,7 +4760,7 @@
     });
 
     /**
-     * Checks if the predicate returns truthy for **all** elements of `collection`.
+     * Checks if `predicate` returns truthy for **all** elements of `collection`.
      * The predicate is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
@@ -4780,7 +4780,7 @@
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {boolean} Returns `true` if all elements passed the predicate check,
+     * @returns {boolean} Returns `true` if all elements pass the predicate check,
      *  else `false`.
      * @example
      *
@@ -4810,7 +4810,7 @@
 
     /**
      * Iterates over elements of `collection`, returning an array of all elements
-     * the predicate returns truthy for. The predicate is bound to `thisArg` and
+     * `predicate` returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4856,8 +4856,8 @@
     }
 
     /**
-     * Iterates over elements of `collection`, returning the first element that
-     * the predicate returns truthy for. The predicate is bound to `thisArg` and
+     * Iterates over elements of `collection`, returning the first element
+     * `predicate` returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -5333,8 +5333,8 @@
 
     /**
      * Creates an array of elements split into two groups, the first of which
-     * contains elements the predicate returns truthy for, while the second of which
-     * contains elements the predicate returns falsey for. The predicate is bound
+     * contains elements `predicate` returns truthy for, while the second of which
+     * contains elements `predicate` returns falsey for. The predicate is bound
      * to `thisArg` and invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -5465,7 +5465,7 @@
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
-     * the predicate does **not** return truthy for.
+     * that `predicate` does **not** return truthy for.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -5599,7 +5599,7 @@
     }
 
     /**
-     * Checks if the predicate returns truthy for **any** element of `collection`.
+     * Checks if `predicate` returns truthy for **any** element of `collection`.
      * The function returns as soon as it finds a passing value and does not iterate
      * over the entire collection. The predicate is bound to `thisArg` and invoked
      * with three arguments; (value, index|key, collection).
@@ -5620,7 +5620,7 @@
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {boolean} Returns `true` if any element passed the predicate check,
+     * @returns {boolean} Returns `true` if any element passes the predicate check,
      *  else `false`.
      * @example
      *
@@ -7345,7 +7345,7 @@
 
     /**
      * This method is like `_.findIndex` except that it returns the key of the
-     * first element the predicate returns truthy for, instead of the element itself.
+     * first element `predicate` returns truthy for, instead of the element itself.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -7843,8 +7843,8 @@
     /**
      * Creates a shallow clone of `object` excluding the specified properties.
      * Property names may be specified as individual arguments or as arrays of
-     * property names. If a predicate is provided it is invoked for each property
-     * of `object` omitting the properties the predicate returns truthy for. The
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` omitting the properties `predicate` returns truthy for. The
      * predicate is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
@@ -7911,8 +7911,8 @@
     /**
      * Creates a shallow clone of `object` composed of the specified properties.
      * Property names may be specified as individual arguments or as arrays of
-     * property names. If a predicate is provided it is invoked for each property
-     * of `object` picking the properties the predicate returns truthy for. The
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` picking the properties `predicate` returns truthy for. The
      * predicate is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *

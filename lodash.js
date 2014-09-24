@@ -518,7 +518,8 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches.
+   * The base implementation of `_.indexOf` without support for `fromIndex`
+   * bounds checks and binary searches.
    *
    * @private
    * @param {Array} array The array to search.
@@ -527,13 +528,14 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
+    if (value !== value) {
+      return indexOfNaN(array, fromIndex);
+    }
     var index = (fromIndex || 0) - 1,
-        length = array ? array.length : 0,
-        isReflexive = value === value;
+        length = array.length;
 
     while (++index < length) {
-      var other = array[index];
-      if ((isReflexive ? other === value : other !== other)) {
+      if (array[index] === value) {
         return index;
       }
     }
@@ -692,6 +694,29 @@
    */
   function escapeStringChar(chr) {
     return '\\' + stringEscapes[chr];
+  }
+
+  /**
+   * Gets the index at which the first occurrence of `NaN` is found in `array`.
+   * If `fromRight` is provided elements of `array` are iterated from right to left.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {number} [fromIndex] The index to search from.
+   * @param {boolean} [fromRight=false] Specify iterating from right to left.
+   * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+   */
+  function indexOfNaN(array, fromIndex, fromRight) {
+    var length = array.length,
+        index = fromRight ? (fromIndex || length) : ((fromIndex || 0) - 1);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      var other = array[index];
+      if (other !== other) {
+        return index;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -1553,7 +1578,7 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Array} [values] The values to exclude.
+     * @param {Array} values The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
@@ -1567,7 +1592,7 @@
           isLarge = prereq && createCache && values && values.length >= 200,
           isCommon = prereq && !isLarge,
           result = [],
-          valuesLength = values ? values.length : 0;
+          valuesLength = values.length;
 
       if (isLarge) {
         indexOf = cacheIndexOf;
@@ -3652,12 +3677,14 @@
      */
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
-
+      if (!length) {
+        return -1;
+      }
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
-        return (length && array[index] === value) ? index : -1;
+        return array[index] === value ? index : -1;
       }
       return baseIndexOf(array, value, fromIndex);
     }
@@ -3677,7 +3704,7 @@
      */
     function initial(array) {
       var length = array ? array.length : 0;
-      return slice(array, 0, length ? length - 1 : 0);
+      return slice(array, 0, (length || 1) - 1);
     }
 
     /**
@@ -3785,19 +3812,22 @@
      * // => 3
      */
     function lastIndexOf(array, value, fromIndex) {
-      var length = array ? array.length : 0,
-          index = length;
-
+      var length = array ? array.length : 0;
+      if (!length) {
+        return -1;
+      }
+      var index = length;
       if (typeof fromIndex == 'number') {
-        index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
+        index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
       } else if (fromIndex) {
         index = sortedLastIndex(array, value) - 1;
-        return (length && array[index] === value) ? index : -1;
+        return array[index] === value ? index : -1;
       }
-      var isReflexive = value === value;
+      if (value !== value) {
+        return indexOfNaN(array, index, true);
+      }
       while (index--) {
-        var other = array[index];
-        if ((isReflexive ? other === value : other !== other)) {
+        if (array[index] === value) {
           return index;
         }
       }
@@ -3828,8 +3858,11 @@
      * // => [1, 1]
      */
     function pull() {
-      var array = arguments[0],
-          index = 0,
+      var array = arguments[0];
+      if (!(array && array.length)) {
+        return array;
+      }
+      var index = 0,
           indexOf = getIndexOf(),
           length = arguments.length;
 
@@ -3960,7 +3993,7 @@
       var index = -1,
           length = array ? array.length : 0;
 
-      if (isIterateeCall(array, start, end)) {
+      if (end && isIterateeCall(array, start, end)) {
         start = 0;
         end = length;
       }

@@ -9,6 +9,10 @@
   /** Used as the size to cover large array optimizations */
   var LARGE_ARRAY_SIZE = 200;
 
+  /** Used as references for the max length and index of an array */
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+
   /** Used as the maximum length an array-like object */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
@@ -34,6 +38,7 @@
       body = root.document && root.document.body,
       create = Object.create,
       freeze = Object.freeze,
+      hasOwnProperty = objectProto.hasOwnProperty,
       JSON = root.JSON,
       noop = function() {},
       params = root.arguments,
@@ -42,6 +47,16 @@
       system = root.system,
       toString = objectProto.toString,
       Uint8Array = root.Uint8Array;
+
+  /** Used to set property descriptors */
+  var defineProperty = (function() {
+    try {
+      var o = {},
+          func = Object.defineProperty,
+          result = func(o, o, o) && func;
+    } catch(e) {}
+    return result;
+  }());
 
   /** The file path of the Lo-Dash file to test */
   var filePath = (function() {
@@ -198,9 +213,25 @@
   /** The `lodash` function to test */
   var _ = root._ || (root._ = (
     _ = load(filePath) || root._,
-    _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default'])  || _,
+    _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default']) || _,
     (_.runInContext ? _.runInContext(root) : _)
   ));
+
+  /** List of latin-1 supplementary letters to basic latin letters */
+  var burredLetters = [
+    '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7', '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE',
+    '\xCF', '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6', '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE',
+    '\xDF', '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7', '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE',
+    '\xEF', '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6', '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF'
+  ];
+
+  /** List of `burredLetters` translated to basic latin letters */
+  var deburredLetters = [
+    'A',  'A', 'A', 'A', 'A', 'A', 'Ae', 'C',  'E', 'E', 'E', 'E', 'I', 'I', 'I',
+    'I',  'D', 'N', 'O', 'O', 'O', 'O',  'O',  'O', 'U', 'U', 'U', 'U', 'Y', 'Th',
+    'ss', 'a', 'a', 'a', 'a', 'a', 'a',  'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i',  'i',
+    'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
+  ];
 
   /** Used to provide falsey values to methods */
   var falsey = [, '', 0, false, NaN, null, undefined];
@@ -218,16 +249,6 @@
     new TypeError,
     new URIError
   ];
-
-  /** Used to set property descriptors */
-  var defineProperty = (function() {
-    try {
-      var o = {},
-          func = Object.defineProperty,
-          result = func(o, o, o) && func;
-    } catch(e) {}
-    return result;
-  }());
 
   /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug) */
   var shadowedProps = [
@@ -1328,20 +1349,6 @@
       }
     }());
 
-    var burredLetters = [
-      '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7', '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE', '\xCF',
-      '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6', '\xD7', '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE', '\xDF',
-      '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7', '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE', '\xEF',
-      '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6', '\xF7', '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF'
-    ];
-
-    var deburredLetters = [
-      'A', 'A', 'A', 'A', 'A', 'A', 'Ae', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
-      'D', 'N', 'O', 'O', 'O', 'O', 'O', '', 'O', 'U', 'U', 'U', 'U', 'Y', 'Th', 'ss',
-      'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
-      'd', 'n', 'o', 'o', 'o', 'o', 'o', '', 'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
-    ];
-
     test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 1, function() {
       var actual = _.map(strings, function(string) {
         return func(string) === expected;
@@ -1364,6 +1371,11 @@
       });
 
       deepEqual(actual, _.map(burredLetters, _.constant(true)));
+    });
+
+    test('should trim latin-1 mathematical operators', 1, function() {
+      var actual = _.map(['\xD7', '\xF7'], func);
+      deepEqual(actual, ['', '']);
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
@@ -1549,6 +1561,11 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var actual = _.map([[1, 2], [3, 4]], _.chunk);
+      deepEqual(actual, [[[1], [2]], [[3], [4]]]);
     });
   }());
 
@@ -1740,7 +1757,7 @@
         }
       });
 
-      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as a callback for `_.map`', 3, function() {
+      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for `_.map`', 3, function() {
         var expected = [{ 'a': [0] }, { 'b': [1] }],
             actual = _.map(expected, func);
 
@@ -2134,6 +2151,18 @@
 
       deepEqual(actual, expected);
     });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
+          expected = _.map(array, _.constant(true)),
+          objects = _.map(array, _.create);
+
+      var actual = _.map(objects, function(object) {
+        return object.a === 1 && !_.keys(object).length;
+      });
+
+      deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -2227,7 +2256,7 @@
 
     test('should support binding built-in methods', 2, function() {
       var object = { 'a': 1 },
-          callback = _.callback(objectProto.hasOwnProperty, object);
+          callback = _.callback(hasOwnProperty, object);
 
       strictEqual(callback('a'), true);
 
@@ -2288,6 +2317,19 @@
 
       supportBizarro.funcDecomp = funcDecomp;
       supportBizarro.funcNames = funcNames;
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var fn = function() { return this instanceof Number; },
+          array = [fn, fn, fn],
+          expected = _.map(array, _.constant(false)),
+          callbacks = _.map(array, _.callback);
+
+      var actual = _.map(callbacks, function(callback) {
+        return callback();
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should be aliased', 1, function() {
@@ -2511,6 +2553,25 @@
       deepEqual(object.curried('a', 'b', 'c'), expected);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('curry methods');
+
+  _.each(['curry', 'curryRight'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 1, function() {
+      var array = [_.identity, _.identity, _.identity],
+          curries = _.map(array, func);
+
+      var actual = _.map(curries, function(curried, index) {
+        return curried(index);
+      });
+
+      deepEqual(actual, [0, 1, 2]);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -2756,6 +2817,24 @@
         skipTest(2);
         QUnit.start();
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.deburr');
+
+  (function() {
+    test('should convert latin-1 supplementary letters to basic latin', 1, function() {
+      var actual = _.map(burredLetters, _.deburr);
+      deepEqual(actual, deburredLetters);
+    });
+
+    test('should not deburr latin-1 mathematical operators', 1, function() {
+      var operators = ['\xD7', '\xF7'],
+          actual = _.map(operators, _.deburr);
+
+      deepEqual(actual, operators);
     });
   }());
 
@@ -3010,7 +3089,7 @@
       });
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.drop);
 
@@ -3064,7 +3143,7 @@
       });
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.dropRight);
 
@@ -3571,7 +3650,7 @@
       strictEqual(_.first([]), undefined);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.first);
 
@@ -3627,7 +3706,7 @@
       });
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.take);
 
@@ -3681,7 +3760,7 @@
       });
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.takeRight);
 
@@ -3855,7 +3934,7 @@
       deepEqual(_.flattenDeep(array), expected);
     });
 
-    test('should work when used as a callback for `_.map`', 2, function() {
+    test('should work as an iteratee for `_.map`', 2, function() {
       var array = [[[['a']]], [[['b']]]];
 
       deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
@@ -4391,7 +4470,7 @@
       deepEqual(actual, expected);
     });
 
-    test('`_.' + methodName + '` should work with `_.reduce`', 1, function() {
+    test('`_.' + methodName + '` should work as an iteratee for `_.reduce`', 1, function() {
       var array = [{ 'b': 2 }, { 'c': 3 }];
       deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
     });
@@ -4877,7 +4956,7 @@
       deepEqual(_.initial([]), []);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.initial);
 
@@ -4984,6 +5063,14 @@
       var object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
       deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
       ok(_.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var inverted = { '1': 'c', '2': 'b' },
+          object = { 'a': 1, 'b': 2, 'c': 1 },
+          actual = _.map([object, object, object], _.invert);
+
+      deepEqual(actual, [inverted, inverted, inverted]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -5862,7 +5949,7 @@
       strictEqual(actual, false);
     });
 
-    test('should work when used as a callback for `_.every`', 1, function() {
+    test('should work as an iteratee for `_.every`', 1, function() {
       var actual = _.every([1, 1, 1], _.partial(_.isEqual, 1));
       ok(actual);
     });
@@ -6818,7 +6905,7 @@
       deepEqual(func(Foo).sort(), expected);
     });
 
-    test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 2, function() {
+    test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 3, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -6827,6 +6914,10 @@
 
       Foo.prototype = { 'constructor': Foo, 'a': 1 };
       deepEqual(func(Foo.prototype), ['a']);
+
+      var Fake = { 'prototype': {} };
+      Fake.prototype.constructor = Fake;
+      deepEqual(func(Fake.prototype), ['constructor']);
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties', 1, function() {
@@ -6858,7 +6949,7 @@
       strictEqual(_.last([]), undefined);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.last);
 
@@ -7023,13 +7114,10 @@
     });
 
     test('should handle object arguments with non-numeric length properties', 1, function() {
-      if (defineProperty) {
-        var object = {};
-        defineProperty(object, 'length', { 'value': 'x' });
-        deepEqual(_.map(object, _.identity), []);
-      } else {
-        skipTest();
-      }
+      var value = { 'value': 'x' },
+          object = { 'length': { 'value': 'x' } };
+
+      deepEqual(_.map(object, _.identity), [value]);
     });
 
     test('should treat a nodelist as an array-like object', 1, function() {
@@ -7732,7 +7820,7 @@
       strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    test('`_.' + methodName + '` should work when used as a callback for `_.map`', 2, function() {
+    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 2, function() {
       var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
           actual = _.map(array, func);
 
@@ -8199,8 +8287,9 @@
 
   QUnit.module('pad methods');
 
-  _.each(['pad', 'padLeft', 'padRight'], function(methodName, index) {
-    var func = _[methodName];
+  _.each(['pad', 'padLeft', 'padRight'], function(methodName) {
+    var func = _[methodName],
+        isPadLeft = methodName == 'padLeft';
 
     test('`_.' + methodName + '` should not pad is string is >= `length`', 2, function() {
       strictEqual(func('abc', 2), 'abc');
@@ -8215,7 +8304,7 @@
 
     test('`_.' + methodName + '` should coerce `length` to a number', 2, function() {
       _.each(['', '4'], function(length) {
-        var actual = length ? (index == 1 ? ' abc' : 'abc ') : 'abc';
+        var actual = length ? (isPadLeft ? ' abc' : 'abc ') : 'abc';
         strictEqual(func('abc', length), actual);
       });
     });
@@ -8324,7 +8413,7 @@
       strictEqual(_.parseInt('0x20', object), 32);
     });
 
-    test('should work when used as a callback for `_.map`', 2, function() {
+    test('should work as an iteratee for `_.map`', 2, function() {
       var actual = _.map(['1', '10', '08'], _.parseInt);
       deepEqual(actual, [1, 10, 8]);
 
@@ -8999,12 +9088,12 @@
       ok(actual % 1 && actual >= 2 && actual <= 4);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [1, 2, 3],
-          actual = _.map(array, _.random),
-          expected = _.map(array, _.constant(true));
+          expected = _.map(array, _.constant(true)),
+          randoms = _.map(array, _.random);
 
-      actual = _.map(actual, function(result, index) {
+      var actual = _.map(randoms, function(result, index) {
         return result >= 0 && result <= array[index] && (result % 1) == 0;
       });
 
@@ -9058,7 +9147,7 @@
       deepEqual(actual, [[0], [0], [0], [], []]);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var actual = _.map([1, 2, 3], _.range);
       deepEqual(actual, [[0], [0, 1], [0, 1, 2]]);
     });
@@ -9485,7 +9574,7 @@
       deepEqual(_.rest([]), []);
     });
 
-    test('should work when used as a callback for `_.map`', 1, function() {
+    test('should work as an iteratee for `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.rest);
 
@@ -9607,12 +9696,12 @@
       ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
     });
 
-    test('should work when used as a callback for `_.map`', 2, function() {
+    test('should work as an iteratee for `_.map`', 2, function() {
       _.each([[[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['abc', 'def', 'ghi']], function(values) {
         var a = values[0],
             b = values[1],
             c = values[2],
-            actual = _.map([a, b, c], _.sample);
+            actual = _.map(values, _.sample);
 
         ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
       });
@@ -9842,6 +9931,14 @@
       var actual = [_.slice(array, '0', 1), _.slice(array, 0, '1'), _.slice(array, '1'), _.slice(array, NaN, 1), _.slice(array, 1, NaN)];
       deepEqual(actual, [[1], [1], [2, 3], [1], []]);
     });
+
+    test('should work as an iteratee for `_.map`', 2, function() {
+      var array = [[1], [2, 3]],
+          actual = _.map(array, _.slice);
+
+      deepEqual(actual, array);
+      notStrictEqual(actual, array)
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -10001,6 +10098,13 @@
 
       deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
     });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var array = [[2, 1, 3], [3, 2, 1]],
+          actual = _.map(array, _.sortBy);
+
+      deepEqual(actual, [[1, 2, 3], [1, 2, 3]]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -10112,7 +10216,7 @@
 
     test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 2, function() {
       var array = [0],
-          length = Math.pow(2, 32) - 1,
+          length = MAX_ARRAY_LENGTH,
           steps = 0;
 
       array.length = length;
@@ -10121,7 +10225,7 @@
       if (array.length == length) {
         var actual = func(array, undefined, function() { steps++; });
         strictEqual(steps, 33);
-        strictEqual(actual, isSortedIndex ? 0 : (length - 1));
+        strictEqual(actual, isSortedIndex ? 0 : MAX_ARRAY_INDEX);
       }
       else {
         skipTest(2);
@@ -10305,11 +10409,14 @@
 
   (function() {
     test('should escape values in "escape" delimiters', 1, function() {
-      var escaped = '<p>&amp;&lt;&gt;&quot;&#39;\/</p>',
-          unescaped = '&<>"\'\/';
+      var strings = ['<p><%- value %></p>', '<p><%-value%></p>', '<p><%-\nvalue\n%></p>'],
+          expected = _.map(strings, _.constant('<p>&amp;&lt;&gt;&quot;&#39;&#96;\/</p>'));
 
-      var compiled = _.template('<p><%- value %></p>');
-      strictEqual(compiled({ 'value': unescaped }), escaped);
+      var actual = _.map(strings, function(string) {
+        return _.template(string)({ 'value': '&<>"\'`\/' });
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should evaluate JavaScript in "evaluate" delimiters', 1, function() {
@@ -10325,8 +10432,14 @@
     });
 
     test('should interpolate data object properties', 1, function() {
-      var compiled = _.template('<%= a %>BC');
-      strictEqual(compiled({ 'a': 'A' }), 'ABC');
+      var strings = ['<%= a %>BC', '<%=a%>BC', '<%=\na\n%>BC'],
+          expected = _.map(strings, _.constant('ABC'));
+
+      var actual = _.map(strings, function(string) {
+        return _.template(string)({ 'a': 'A' });
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should support escaped values in "interpolation" delimiters', 1, function() {
@@ -10570,7 +10683,7 @@
       strictEqual(compiled({ 'a': {} }), '');
     });
 
-    test('should parse delimiters with newlines', 1, function() {
+    test('should parse delimiters without newlines', 1, function() {
       var expected = '<<\nprint("<p>" + (value ? "yes" : "no") + "</p>")\n>>',
           compiled = _.template(expected, { 'evaluate': /<<(.+?)>>/g }),
           data = { 'value': true };
@@ -10635,6 +10748,17 @@
       }
       ok(/__p/.test(source));
     });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var array = ['<%= a %>', '<%- b %>', '<% print(c) %>'],
+          compiles = _.map(array, _.template);
+
+      var actual = _.map(compiles, function(compiled) {
+        return compiled({ 'a': 'one', 'b': '`two`', 'c': 'three' });
+      });
+
+      deepEqual(actual, ['one', '&#96;two&#96;', 'three']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -10688,6 +10812,13 @@
     test('should coerce `string` to a string', 2, function() {
       strictEqual(_.trunc(Object(string), 4), 'h...');
       strictEqual(_.trunc({ 'toString': _.constant(string) }, 5), 'hi...');
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var actual = _.map([string, string, string], _.trunc),
+          truncated = 'hi-diddly-ho there, neighbo...';
+
+      deepEqual(actual, [truncated, truncated, truncated]);
     });
   }());
 
@@ -11325,6 +11456,14 @@
       strictEqual(func(string, ''), string);
     });
 
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var string = whitespace + 'a b c' + whitespace,
+          trimmed = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''),
+          actual = _.map([string, string, string], func);
+
+      deepEqual(actual, [trimmed, trimmed, trimmed]);
+    });
+
     test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
         var string = whitespace + 'a b c' + whitespace,
@@ -11467,7 +11606,7 @@
       deepEqual(actual, arrays.slice(0, 3));
     });
 
-    test('should perform an unsorted uniq operation when used as a callback for `_.map`', 1, function() {
+    test('should perform an unsorted uniq when used as an iteratee for `_.map`', 1, function() {
       var array = [[2, 1, 2], [1, 2, 1]],
           actual = _.map(array, _.uniq);
 
@@ -11630,6 +11769,47 @@
     test('should remove all occurrences of each value from an array', 1, function() {
       var array = [1, 2, 3, 1, 2, 3];
       deepEqual(_.without(array, 1, 2), [3, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.words');
+
+  (function() {
+    test('should treat latin-1 supplementary letters as words', 1, function() {
+      var expected = _.map(burredLetters, function(letter) {
+        return [letter];
+      });
+
+      var actual = _.map(burredLetters, function(letter) {
+        return _.words(letter);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not treat mathematical operators as words', 1, function() {
+      var operators = ['\xD7', '\xF7'],
+          expected = _.map(operators, _.constant([])),
+          actual = _.map(operators, _.words);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var actual = _.map(['a', 'b', 'c'], _.words);
+      deepEqual(actual, [['a'], ['b'], ['c']]);
+    });
+
+    test('should work with compound words', 6, function() {
+      deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
+      deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
+      deepEqual(_.words('aeiou2Consonants'), ['aeiou', '2', 'Consonants']);
+
+      deepEqual(_.words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are', 'Vowels']);
+      deepEqual(_.words('æiouAreVowels'), ['æiou', 'Are', 'Vowels']);
+      deepEqual(_.words('æiou2Consonants'), ['æiou', '2', 'Consonants']);
     });
   }());
 

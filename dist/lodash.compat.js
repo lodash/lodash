@@ -24,6 +24,10 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
+  /** Used as default options for `_.trunc` */
+  var DEFAULT_TRUNC_LENGTH = 30,
+      DEFAULT_TRUNC_OMISSION = '...';
+
   /** Used to detect when a function becomes hot */
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
@@ -81,8 +85,8 @@
   /** Used to detect host constructors (Safari > 5) */
   var reHostCtor = /^\[object .+?Constructor\]$/;
 
-  /** Used to match latin-1 supplement letters */
-  var reLatin1 = /[\xC0-\xFF]/g;
+  /** Used to match latin-1 supplement letters (excluding mathematical operators) */
+  var reLatin1 = /[\xC0-\xD6\xD8-\xDE\xDF-\xF6\xF8-\xFF]/g;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -102,11 +106,10 @@
 
   /** Used to match words to create compound words */
   var reWords = (function() {
-    var nums = '[0-9]',
-        upper = '[A-Z\\xC0-\\xD6\\xD8-\\xDE]',
-        lower = '[a-z\\xDF-\\xF6\\xF8-\\xFF]+' + nums + '*';
+    var upper = '[A-Z\\xC0-\\xD6\\xD8-\\xDE]',
+        lower = '[a-z\\xDF-\\xF6\\xF8-\\xFF]+';
 
-    return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|' + nums + '+', 'g');
+    return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
 
   /** Used to detect and test whitespace */
@@ -254,7 +257,7 @@
     '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
     '\xC6': 'Ae', '\xE6': 'ae',
     '\xDE': 'Th', '\xFE': 'th',
-    '\xDF': 'ss', '\xD7': ' ', '\xF7': ' '
+    '\xDF': 'ss'
   };
 
   /** Used to determine if values are of the language type `Object` */
@@ -341,7 +344,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {Array} Returns `true` if all elements passed the predicate check,
+   * @returns {Array} Returns `true` if all elements pass the predicate check,
    *  else `false`
    */
   function arrayEvery(array, predicate) {
@@ -456,7 +459,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if any element passed the predicate check,
+   * @returns {boolean} Returns `true` if any element passes the predicate check,
    *  else `false`.
    */
   function arraySome(array, predicate) {
@@ -516,7 +519,8 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches.
+   * The base implementation of `_.indexOf` without support for `fromIndex`
+   * bounds checks and binary searches.
    *
    * @private
    * @param {Array} array The array to search.
@@ -525,13 +529,14 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
+    if (value !== value) {
+      return indexOfNaN(array, fromIndex);
+    }
     var index = (fromIndex || 0) - 1,
-        length = array ? array.length : 0,
-        isReflexive = value === value;
+        length = array.length;
 
     while (++index < length) {
-      var other = array[index];
-      if ((isReflexive ? other === value : other !== other)) {
+      if (array[index] === value) {
         return index;
       }
     }
@@ -693,6 +698,29 @@
   }
 
   /**
+   * Gets the index at which the first occurrence of `NaN` is found in `array`.
+   * If `fromRight` is provided elements of `array` are iterated from right to left.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {number} [fromIndex] The index to search from.
+   * @param {boolean} [fromRight=false] Specify iterating from right to left.
+   * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+   */
+  function indexOfNaN(array, fromIndex, fromRight) {
+    var length = array.length,
+        index = fromRight ? (fromIndex || length) : ((fromIndex || 0) - 1);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      var other = array[index];
+      if (other !== other) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * Checks if `value` is a host object in IE < 9.
    *
    * @private
@@ -711,6 +739,23 @@
       return typeof value.toString != 'function' && typeof (value + '') == 'string';
     };
   }());
+
+  /**
+   * Checks if the provided arguments are from an iteratee call.
+   *
+   * @private
+   * @param {*} value The potential iteratee value argument.
+   * @param {*} index The potential iteratee index or key argument.
+   * @param {*} object The potential iteratee object argument.
+   * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
+   */
+  function isIterateeCall(value, index, object) {
+    var indexType = typeof index,
+        objectType = typeof object;
+
+    return (object && (indexType == 'number' || indexType == 'string') &&
+      (objectType == 'function' || objectType == 'object') && object[index] === value) || false;
+  }
 
   /**
    * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
@@ -1534,7 +1579,7 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Array} [values] The values to exclude.
+     * @param {Array} values The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
@@ -1548,7 +1593,7 @@
           isLarge = prereq && createCache && values && values.length >= 200,
           isCommon = prereq && !isLarge,
           result = [],
-          valuesLength = values ? values.length : 0;
+          valuesLength = values.length;
 
       if (isLarge) {
         indexOf = cacheIndexOf;
@@ -1623,13 +1668,13 @@
     }
 
     /**
-     * The base implementation of `_.every` without support for callback shorthands
-     * or `this` binding.
+     * The base implementation of `_.every` without support for callback
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns `true` if all elements passed the predicate check,
+     * @returns {Array} Returns `true` if all elements pass the predicate check,
      *  else `false`
      */
     function baseEvery(collection, predicate) {
@@ -2250,7 +2295,7 @@
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if any element passed the predicate check,
+     * @returns {boolean} Returns `true` if any element passes the predicate check,
      *  else `false`.
      */
     function baseSome(collection, predicate) {
@@ -2518,12 +2563,10 @@
         var length = arguments.length,
             object = arguments[0];
 
-        if (object == null || length < 2) {
+        if (length < 2 || object == null) {
           return object;
         }
-        // enables use as a callback for functions like `_.reduce`
-        var type = typeof arguments[2];
-        if ((type == 'number' || type == 'string') && arguments[3] && arguments[3][arguments[2]] === arguments[1]) {
+        if (length > 3 && isIterateeCall(arguments[1], arguments[2], arguments[3])) {
           length = 2;
         }
         // juggle arguments
@@ -3011,8 +3054,8 @@
     }
 
     /**
-     * A specialized version of `_.pick` that picks `object` properties
-     * the predicate returns truthy for.
+     * A specialized version of `_.pick` that picks `object` properties `predicate`
+     * returns truthy for.
      *
      * @private
      * @param {Object} object The source object.
@@ -3187,6 +3230,7 @@
      * @category Array
      * @param {Array} array The array to process.
      * @param {numer} [size=1] The length of each chunk.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the new array containing chunks.
      * @example
      *
@@ -3196,13 +3240,13 @@
      * _.chunk(['a', 'b', 'c', 'd'], 3);
      * // => [['a', 'b', 'c'], ['d']]
      */
-    function chunk(array, size) {
+    function chunk(array, size, guard) {
       var index = 0,
           length = array ? array.length : 0,
           resIndex = -1,
           result = [];
 
-      size = typeof size == 'undefined' ? 1 : nativeMax(+size || 1, 1);
+      size = (guard || size == null) ? 1 : nativeMax(+size || 1, 1);
       while (index < length) {
         result[++resIndex] = slice(array, index, (index += size));
       }
@@ -3296,7 +3340,7 @@
      * // => [1, 2, 3]
      */
     function drop(array, n, guard) {
-      n = (n == null || guard) ? 1 : n;
+      n = (guard || n == null) ? 1 : n;
       return slice(array, n < 0 ? 0 : n);
     }
 
@@ -3327,14 +3371,14 @@
      */
     function dropRight(array, n, guard) {
       var length = array ? array.length : 0;
-      n = (n == null || guard) ? 1 : n;
+      n = (guard || n == null) ? 1 : n;
       n = length - (n || 0);
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
      * Creates a slice of `array` excluding elements dropped from the end.
-     * Elements are dropped until the predicate returns falsey. The predicate is
+     * Elements are dropped until `predicate` returns falsey. The predicate is
      * bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -3383,7 +3427,7 @@
 
     /**
      * Creates a slice of `array` excluding elements dropped from the beginning.
-     * Elements are dropped until the predicate returns falsey. The predicate is
+     * Elements are dropped until `predicate` returns falsey. The predicate is
      * bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -3432,7 +3476,7 @@
 
     /**
      * This method is like `_.find` except that it returns the index of the first
-     * element the predicate returns truthy for, instead of the element itself.
+     * element `predicate` returns truthy for, instead of the element itself.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -3580,15 +3624,7 @@
      */
     function flatten(array, isDeep, guard) {
       var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      // enables use as a callback for functions like `_.map`
-      var type = typeof isDeep;
-      if ((type == 'number' || type == 'string') && guard && guard[isDeep] === array) {
-        isDeep = false;
-      }
-      return baseFlatten(array, isDeep);
+      return length ? baseFlatten(array, guard ? false : isDeep) : [];
     }
 
     /**
@@ -3642,12 +3678,14 @@
      */
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
-
+      if (!length) {
+        return -1;
+      }
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
         var index = sortedIndex(array, value);
-        return (length && array[index] === value) ? index : -1;
+        return array[index] === value ? index : -1;
       }
       return baseIndexOf(array, value, fromIndex);
     }
@@ -3667,7 +3705,7 @@
      */
     function initial(array) {
       var length = array ? array.length : 0;
-      return slice(array, 0, length ? length - 1 : 0);
+      return slice(array, 0, (length || 1) - 1);
     }
 
     /**
@@ -3775,19 +3813,22 @@
      * // => 3
      */
     function lastIndexOf(array, value, fromIndex) {
-      var length = array ? array.length : 0,
-          index = length;
-
+      var length = array ? array.length : 0;
+      if (!length) {
+        return -1;
+      }
+      var index = length;
       if (typeof fromIndex == 'number') {
-        index = (fromIndex < 0 ? nativeMax(index + fromIndex, 0) : nativeMin(fromIndex || 0, index - 1)) + 1;
+        index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
       } else if (fromIndex) {
         index = sortedLastIndex(array, value) - 1;
-        return (length && array[index] === value) ? index : -1;
+        return array[index] === value ? index : -1;
       }
-      var isReflexive = value === value;
+      if (value !== value) {
+        return indexOfNaN(array, index, true);
+      }
       while (index--) {
-        var other = array[index];
-        if ((isReflexive ? other === value : other !== other)) {
+        if (array[index] === value) {
           return index;
         }
       }
@@ -3818,8 +3859,11 @@
      * // => [1, 1]
      */
     function pull() {
-      var array = arguments[0],
-          index = 0,
+      var array = arguments[0];
+      if (!(array && array.length)) {
+        return array;
+      }
+      var index = 0,
           indexOf = getIndexOf(),
           length = arguments.length;
 
@@ -3864,7 +3908,7 @@
     }
 
     /**
-     * Removes all elements from `array` that the predicate returns truthy for
+     * Removes all elements from `array` that `predicate` returns truthy for
      * and returns an array of the removed elements. The predicate is bound to
      * `thisArg` and invoked with three arguments; (value, index, array).
      *
@@ -3948,13 +3992,18 @@
      */
     function slice(array, start, end) {
       var index = -1,
-          length = array ? array.length : 0;
+          length = array ? array.length : 0,
+          endType = typeof end;
 
+      if (end && endType != 'number' && isIterateeCall(array, start, end)) {
+        start = 0;
+        end = length;
+      }
       start = start == null ? 0 : (+start || 0);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      end = (endType == 'undefined' || end > length) ? length : (+end || 0);
       if (end < 0) {
         end += length;
       }
@@ -3975,7 +4024,7 @@
      * be inserted into a given sorted array in order to maintain the sort order
      * of the array. If an iteratee function is provided it is invoked for `value`
      * and each element of `array` to compute their sort ranking. The iteratee
-     * function is bound to `thisArg` and invoked with one argument; (value).
+     * is bound to `thisArg` and invoked with one argument; (value).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -4072,7 +4121,7 @@
      * // => []
      */
     function take(array, n, guard) {
-      n = (n == null || guard) ? 1 : n;
+      n = (guard || n == null) ? 1 : n;
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -4103,14 +4152,14 @@
      */
     function takeRight(array, n, guard) {
       var length = array ? array.length : 0;
-      n = (n == null || guard) ? 1 : n;
+      n = (guard || n == null) ? 1 : n;
       n = length - (n || 0);
       return slice(array, n < 0 ? 0 : n);
     }
 
     /**
      * Creates a slice of `array` with elements taken from the end. Elements are
-     * taken until the predicate returns falsey. The predicate is bound to `thisArg`
+     * taken until `predicate` returns falsey. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4159,7 +4208,7 @@
 
     /**
      * Creates a slice of `array` with elements taken from the beginning. Elements
-     * are taken until the predicate returns falsey. The predicate is bound to
+     * are taken until `predicate` returns falsey. The predicate is bound to
      * `thisArg` and invoked with three arguments; (value, index, array).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4281,16 +4330,10 @@
         return [];
       }
       // juggle arguments
-      var type = typeof isSorted;
-      if (type != 'boolean' && isSorted != null) {
+      if (typeof isSorted != 'boolean' && isSorted != null) {
         thisArg = iteratee;
-        iteratee = isSorted;
+        iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
         isSorted = false;
-
-        // enables use as a callback for functions like `_.map`
-        if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === array) {
-          iteratee = null;
-        }
       }
       if (iteratee != null) {
         iteratee = getCallback(iteratee, thisArg, 3);
@@ -4670,6 +4713,9 @@
         collection = values(collection);
         length = collection.length;
       }
+      if (!length) {
+        return false;
+      }
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else {
@@ -4719,7 +4765,7 @@
     });
 
     /**
-     * Checks if the predicate returns truthy for **all** elements of `collection`.
+     * Checks if `predicate` returns truthy for **all** elements of `collection`.
      * The predicate is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
@@ -4739,7 +4785,7 @@
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {boolean} Returns `true` if all elements passed the predicate check,
+     * @returns {boolean} Returns `true` if all elements pass the predicate check,
      *  else `false`.
      * @example
      *
@@ -4769,7 +4815,7 @@
 
     /**
      * Iterates over elements of `collection`, returning an array of all elements
-     * the predicate returns truthy for. The predicate is bound to `thisArg` and
+     * `predicate` returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4815,8 +4861,8 @@
     }
 
     /**
-     * Iterates over elements of `collection`, returning the first element that
-     * the predicate returns truthy for. The predicate is bound to `thisArg` and
+     * Iterates over elements of `collection`, returning the first element
+     * `predicate` returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -4938,7 +4984,7 @@
      * @example
      *
      * _([1, 2, 3]).forEach(function(n) { console.log(n); });
-     * // => logs each value and returns the array
+     * // => logs each value from left to right and returns the array
      *
      * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
      * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
@@ -5174,17 +5220,13 @@
      * // => { 'user': 'fred', 'age': 40 };
      */
     function max(collection, iteratee, thisArg) {
-      var computed = -Infinity,
-          result = computed,
-          type = typeof iteratee;
+      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
-      // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
-        iteratee = null;
-      }
-      var noIteratee = iteratee == null,
+      var computed = -Infinity,
+          noIteratee = iteratee == null,
           isArr = noIteratee && isArray(collection),
-          isStr = !isArr && isString(collection);
+          isStr = !isArr && isString(collection),
+          result = computed;
 
       if (noIteratee && !isStr) {
         var index = -1,
@@ -5257,17 +5299,13 @@
      * // => { 'user': 'barney', 'age': 36 };
      */
     function min(collection, iteratee, thisArg) {
-      var computed = Infinity,
-          result = computed,
-          type = typeof iteratee;
+      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
-      // enables use as a callback for functions like `_.map`
-      if ((type == 'number' || type == 'string') && thisArg && thisArg[iteratee] === collection) {
-        iteratee = null;
-      }
-      var noIteratee = iteratee == null,
+      var computed = Infinity,
+          noIteratee = iteratee == null,
           isArr = noIteratee && isArray(collection),
-          isStr = !isArr && isString(collection);
+          isStr = !isArr && isString(collection),
+          result = computed;
 
       if (noIteratee && !isStr) {
         var index = -1,
@@ -5298,8 +5336,8 @@
 
     /**
      * Creates an array of elements split into two groups, the first of which
-     * contains elements the predicate returns truthy for, while the second of which
-     * contains elements the predicate returns falsey for. The predicate is bound
+     * contains elements `predicate` returns truthy for, while the second of which
+     * contains elements `predicate` returns falsey for. The predicate is bound
      * to `thisArg` and invoked with three arguments; (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
@@ -5430,7 +5468,7 @@
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
-     * the predicate does **not** return truthy for.
+     * that `predicate` does **not** return truthy for.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -5494,7 +5532,7 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      if (n == null || guard) {
+      if (guard || n == null) {
         collection = toIterable(collection);
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
@@ -5564,7 +5602,7 @@
     }
 
     /**
-     * Checks if the predicate returns truthy for **any** element of `collection`.
+     * Checks if `predicate` returns truthy for **any** element of `collection`.
      * The function returns as soon as it finds a passing value and does not iterate
      * over the entire collection. The predicate is bound to `thisArg` and invoked
      * with three arguments; (value, index|key, collection).
@@ -5585,7 +5623,7 @@
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
-     * @returns {boolean} Returns `true` if any element passed the predicate check,
+     * @returns {boolean} Returns `true` if any element passes the predicate check,
      *  else `false`.
      * @example
      *
@@ -5663,6 +5701,8 @@
      * // = > [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
     function sortBy(collection, iteratee, thisArg) {
+      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
+
       var index = -1,
           length = collection ? collection.length : 0,
           multi = iteratee && isArray(iteratee),
@@ -5773,7 +5813,7 @@
      * _.forEach(saves, function(type) {
      *   asyncSave({ 'type': type, 'complete': done });
      * });
-     * // => logs 'done saving!' after all saves have completed
+     * // => logs 'done saving!' after the two async saves have completed
      */
     function after(n, func) {
       if (!isFunction(func)) {
@@ -5794,19 +5834,20 @@
     }
 
     /**
-     * Creates a function that invokes `func`, with the `this` binding and
-     * arguments of the created function, until it is called `n` times.
+     * Creates a function that invokes `func`, with the `this` binding and arguments
+     * of the created function, while it is called less than `n` times. Subsequent
+     * calls to the created function return the result of the last `func` invocation.
      *
      * @static
      * @memberOf _
      * @category Function
-     * @param {number} n The number of times `func` may be called.
+     * @param {number} n The number of calls at which `func` is no longer invoked.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
      * @example
      *
      * jQuery('#add').on('click', _.before(5, addContactToList));
-     * // => allows adding up to 5 contacts to the list
+     * // => allows adding up to 4 contacts to the list
      */
     function before(n, func) {
       var result;
@@ -5958,6 +5999,7 @@
      * @category Function
      * @param {Function} func The function to curry.
      * @param {number} [arity=func.length] The arity of `func`.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Function} Returns the new curried function.
      * @example
      *
@@ -5974,8 +6016,8 @@
      * curried(1, 2, 3);
      * // => [1, 2, 3]
      */
-    function curry(func, arity) {
-      var result = baseCurry(func, CURRY_FLAG, arity);
+    function curry(func, arity, guard) {
+      var result = baseCurry(func, CURRY_FLAG, guard ? null : arity);
       result.placeholder = curry.placeholder;
       return result;
     }
@@ -5991,6 +6033,7 @@
      * @category Function
      * @param {Function} func The function to curry.
      * @param {number} [arity=func.length] The arity of `func`.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Function} Returns the new curried function.
      * @example
      *
@@ -6007,22 +6050,22 @@
      * curried(1, 2, 3);
      * // => [1, 2, 3]
      */
-    function curryRight(func, arity) {
-      var result = baseCurry(func, CURRY_RIGHT_FLAG, arity);
+    function curryRight(func, arity, guard) {
+      var result = baseCurry(func, CURRY_RIGHT_FLAG, guard ? null : arity);
       result.placeholder = curryRight.placeholder;
       return result;
     }
 
     /**
-     * Creates a function that delays the invocation of `func` until after `wait`
-     * milliseconds have elapsed since the last time it was invoked. The created
-     * function comes with a `cancel` method to cancel delayed invokes. Provide an
-     * options object to indicate that `func` should be invoked on the leading
-     * and/or trailing edge of the `wait` timeout. Subsequent calls to the
-     * debounced function return the result of the last `func` invocation.
+     * Creates a function that delays invoking `func` until after `wait` milliseconds
+     * have elapsed since the last time it was invoked. The created function comes
+     * with a `cancel` method to cancel delayed invocations. Provide an options
+     * object to indicate that `func` should be invoked on the leading and/or
+     * trailing edge of the `wait` timeout. Subsequent calls to the debounced
+     * function return the result of the last `func` invocation.
      *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked on
-     * the trailing edge of the timeout only if the the debounced function is
+     * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+     * on the trailing edge of the timeout only if the the debounced function is
      * invoked more than once during the `wait` timeout.
      *
      * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
@@ -6496,8 +6539,8 @@
     /**
      * Creates a function that only invokes `func` at most once per every `wait`
      * milliseconds. The created function comes with a `cancel` method to cancel
-     * delayed invokes. Provide an options object to indicate that `func` should
-     * be invoked on the leading and/or trailing edge of the `wait` timeout.
+     * delayed invocations. Provide an options object to indicate that `func`
+     * should be invoked on the leading and/or trailing edge of the `wait` timeout.
      * Subsequent calls to the throttled function return the result of the last
      * `func` call.
      *
@@ -6624,18 +6667,11 @@
      * // => 0
      */
     function clone(value, isDeep, customizer, thisArg) {
-      var type = typeof isDeep;
-
       // juggle arguments
-      if (type != 'boolean' && isDeep != null) {
+      if (typeof isDeep != 'boolean' && isDeep != null) {
         thisArg = customizer;
-        customizer = isDeep;
+        customizer = isIterateeCall(value, isDeep, thisArg) ? null : isDeep;
         isDeep = false;
-
-        // enables use as a callback for functions like `_.map`
-        if ((type == 'number' || type == 'string') && thisArg && thisArg[customizer] === value) {
-          customizer = null;
-        }
       }
       customizer = typeof customizer == 'function' && baseCallback(customizer, thisArg, 1);
       return baseClone(value, isDeep, customizer);
@@ -6756,8 +6792,8 @@
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false ||
-        value && typeof value == 'object' && toString.call(value) == boolClass) || false;
+      return (value === true || value === false || value && typeof value == 'object' &&
+        toString.call(value) == boolClass) || false;
     }
 
     /**
@@ -6803,8 +6839,7 @@
     // fallback for environments without DOM support
     if (!support.dom) {
       isElement = function(value) {
-        return (value && typeof value == 'object' && value.nodeType === 1 &&
-          !isPlainObject(value)) || false;
+        return (value && typeof value == 'object' && value.nodeType === 1 && !isPlainObject(value)) || false;
       };
     }
 
@@ -7105,8 +7140,7 @@
      */
     function isNumber(value) {
       var type = typeof value;
-      return type == 'number' ||
-        (value && type == 'object' && toString.call(value) == numberClass) || false;
+      return type == 'number' || (value && type == 'object' && toString.call(value) == numberClass) || false;
     }
 
     /**
@@ -7189,8 +7223,8 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' ||
-        (value && typeof value == 'object' && toString.call(value) == stringClass) || false;
+      return typeof value == 'string' || (value && typeof value == 'object' &&
+        toString.call(value) == stringClass) || false;
     }
 
     /**
@@ -7255,6 +7289,7 @@
      * @category Object
      * @param {Object} prototype The object to inherit from.
      * @param {Object} [properties] The properties to assign to the object.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -7276,8 +7311,9 @@
      * circle instanceof Shape;
      * // => true
      */
-    function create(prototype, properties) {
+    function create(prototype, properties, guard) {
       var result = baseCreate(prototype);
+      properties = guard ? null : properties;
       return properties ? baseAssign(result, properties) : result;
     }
 
@@ -7311,7 +7347,7 @@
 
     /**
      * This method is like `_.findIndex` except that it returns the key of the
-     * first element the predicate returns truthy for, instead of the element itself.
+     * first element `predicate` returns truthy for, instead of the element itself.
      *
      * If a property name is provided for `predicate` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -7564,6 +7600,7 @@
      * @category Object
      * @param {Object} object The object to invert.
      * @param {boolean} [multiValue=false] Allow multiple values per key.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Object} Returns the new inverted object.
      * @example
      *
@@ -7578,7 +7615,9 @@
      * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
      * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
      */
-    function invert(object, multiValue) {
+    function invert(object, multiValue, guard) {
+      multiValue = guard ? null : multiValue;
+
       var index = -1,
           props = keys(object),
           length = props.length,
@@ -7627,7 +7666,7 @@
         var Ctor = object.constructor,
             length = object.length;
       }
-      if ((Ctor && Ctor.prototype === object) ||
+      if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
           (typeof length == 'number' && length > 0) ||
           (support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
@@ -7670,7 +7709,7 @@
       var keyIndex,
           Ctor = object.constructor,
           index = -1,
-          isProto = Ctor && Ctor.prototype === object,
+          isProto = typeof Ctor == 'function' && Ctor.prototype === object,
           maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
@@ -7806,8 +7845,8 @@
     /**
      * Creates a shallow clone of `object` excluding the specified properties.
      * Property names may be specified as individual arguments or as arrays of
-     * property names. If a predicate is provided it is invoked for each property
-     * of `object` omitting the properties the predicate returns truthy for. The
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` omitting the properties `predicate` returns truthy for. The
      * predicate is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
@@ -7874,8 +7913,8 @@
     /**
      * Creates a shallow clone of `object` composed of the specified properties.
      * Property names may be specified as individual arguments or as arrays of
-     * property names. If a predicate is provided it is invoked for each property
-     * of `object` picking the properties the predicate returns truthy for. The
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` picking the properties `predicate` returns truthy for. The
      * predicate is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
@@ -7947,7 +7986,7 @@
           accumulator = [];
         } else if (isObject(object)) {
           var Ctor = object.constructor;
-          accumulator = baseCreate(Ctor && Ctor.prototype);
+          accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
         } else {
           accumulator = {};
         }
@@ -8400,9 +8439,9 @@
      * @example
      *
      * // using the "interpolate" delimiter to create a compiled template
-     * var compiled = _.template('hello <%= name %>');
+     * var compiled = _.template('hello <%= user %>!');
      * compiled({ 'user': 'fred' });
-     * // => 'hello fred'
+     * // => 'hello fred!'
      *
      * // using the HTML "escape" delimiter to escape data property values
      * var compiled = _.template('<b><%- value %></b>');
@@ -8410,23 +8449,23 @@
      * // => '<b>&lt;script&gt;</b>'
      *
      * // using the "evaluate" delimiter to execute JavaScript and generate HTML
-     * var compiled = _.template('<% _.forEach(people, function(name) { %><li><%- name %></li><% }); %>');
-     * compiled({ 'people': ['fred', 'barney'] });
+     * var compiled = _.template('<% _.forEach(users, function(user) { %><li><%- user %></li><% }); %>');
+     * compiled({ 'users': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
      * // using the internal `print` function in "evaluate" delimiters
-     * var compiled = _.template('<% print("hello " + name); %>!');
+     * var compiled = _.template('<% print("hello " + user); %>!');
      * compiled({ 'user': 'barney' });
      * // => 'hello barney!'
      *
      * // using the ES6 delimiter as an alternative to the default "interpolate" delimiter
-     * var compiled = _.template('hello ${ name }');
+     * var compiled = _.template('hello ${ user }!');
      * compiled({ 'user': 'pebbles' });
-     * // => 'hello pebbles'
+     * // => 'hello pebbles!'
      *
      * // using custom template delimiters
      * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-     * var compiled = _.template('hello {{ name }}!');
+     * var compiled = _.template('hello {{ user }}!');
      * compiled({ 'user': 'mustache' });
      * // => 'hello mustache!'
      *
@@ -8436,13 +8475,13 @@
      * // => '<%- value %>'
      *
      * // using the `imports` option to import `jQuery` as `jq`
-     * var text = '<% jq.each(people, function(name) { %><li><%- name %></li><% }); %>';
+     * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
      * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
-     * compiled({ 'people': ['fred', 'barney'] });
+     * compiled({ 'users': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
      * // using the `sourceURL` option to specify a custom sourceURL for the template
-     * var compiled = _.template('hello <%= name %>', { 'sourceURL': '/basic/greeting.jst' });
+     * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
      *
@@ -8450,7 +8489,7 @@
      * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
      * compiled.source;
      * // => function(data) {
-     *   var __t, __p = '', __e = _.escape;
+     *   var __t, __p = '';
      *   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
      *   return __p;
      * }
@@ -8469,8 +8508,12 @@
       // and Laura Doktorova's doT.js
       // https://github.com/olado/doT
       var settings = lodash.templateSettings;
-      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
+
+      if (isIterateeCall(string, options, otherOptions)) {
+        options = otherOptions = null;
+      }
       string = String(string == null ? '' : string);
+      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
 
       var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),
@@ -8573,6 +8616,7 @@
      * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {string} Returns the trimmed string.
      * @example
      *
@@ -8582,12 +8626,12 @@
      * _.trim('-_-fred-_-', '_-');
      * // => 'fred'
      */
-    function trim(string, chars) {
+    function trim(string, chars, guard) {
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (chars == null) {
+      if (guard || chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = String(chars);
@@ -8602,6 +8646,7 @@
      * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {string} Returns the trimmed string.
      * @example
      *
@@ -8611,12 +8656,12 @@
      * _.trimLeft('-_-fred-_-', '_-');
      * // => 'fred-_-'
      */
-    function trimLeft(string, chars) {
+    function trimLeft(string, chars, guards) {
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (chars == null) {
+      if (guards || chars == null) {
         return string.slice(trimmedLeftIndex(string))
       }
       chars = String(chars);
@@ -8631,6 +8676,7 @@
      * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {string} Returns the trimmed string.
      * @example
      *
@@ -8640,12 +8686,12 @@
      * _.trimRight('-_-fred-_-', '_-');
      * // => '-_-fred'
      */
-    function trimRight(string, chars) {
+    function trimRight(string, chars, guard) {
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (chars == null) {
+      if (guard || chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1)
       }
       chars = String(chars);
@@ -8665,6 +8711,7 @@
      * @param {number} [options.length=30] The maximum string length.
      * @param {string} [options.omission='...'] The string to indicate text is omitted.
      * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {string} Returns the truncated string.
      * @example
      *
@@ -8683,9 +8730,11 @@
      * _.trunc('hi-diddly-ho there, neighborino', { 'omission': ' [...]' });
      * // => 'hi-diddly-ho there, neig [...]'
      */
-    function trunc(string, options) {
-      var length = 30,
-          omission = '...';
+    function trunc(string, options, guard) {
+      options = guard ? null : options;
+
+      var length = DEFAULT_TRUNC_LENGTH,
+          omission = DEFAULT_TRUNC_OMISSION;
 
       if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
@@ -8764,6 +8813,7 @@
      * @category String
      * @param {string} [string=''] The string to inspect.
      * @param {RegExp|string} [pattern] The pattern to match words.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the words of `string`.
      * @example
      *
@@ -8773,8 +8823,9 @@
      * _.words('fred, barney, & pebbles', /[^, ]+/g);
      * // => ['fred', 'barney', '&', 'pebbles']
      */
-    function words(string, pattern) {
+    function words(string, pattern, guard) {
       string = string != null && String(string);
+      pattern = guard ? null : pattern;
       return (string && string.match(pattern || reWords)) || [];
     }
 
@@ -8820,6 +8871,7 @@
      * @category Utility
      * @param {*} [func=identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -8842,8 +8894,8 @@
      * _.filter(users, 'age__gt38');
      * // => [{ 'user': 'fred', 'age': 40 }]
      */
-    function callback(func, thisArg) {
-      return baseCallback(func, thisArg);
+    function callback(func, thisArg, guard) {
+      return baseCallback(func, guard ? undefined : thisArg);
     }
 
     /**
@@ -9177,9 +9229,7 @@
      * // => a floating-point number between 1.2 and 5.2
      */
     function random(min, max, floating) {
-      // enables use as a callback for functions like `_.map`
-      var type = typeof max;
-      if ((type == 'number' || type == 'string') && floating && floating[max] === min) {
+      if (floating && isIterateeCall(min, max, floating)) {
         max = floating = null;
       }
       var noMin = min == null,
@@ -9246,13 +9296,10 @@
      * // => []
      */
     function range(start, end, step) {
-      start = +start || 0;
-
-      // enables use as a callback for functions like `_.map`
-      var type = typeof end;
-      if ((type == 'number' || type == 'string') && step && step[end] === start) {
+      if (step && isIterateeCall(start, end, step)) {
         end = step = null;
       }
+      start = +start || 0;
       step = step == null ? 1 : (+step || 0);
 
       if (end == null) {

@@ -3216,7 +3216,7 @@
       }
       return isObject(value) ? value : Object(value);
     }
- 
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -6376,6 +6376,11 @@
      * invoked with the `this` binding of the memoized function. The result cache
      * is exposed as the `cache` property on the memoized function.
      *
+     * The mechanism by which memoize caches results can be customized by setting
+     * a value for the `_.memoize.Cache` property. The objects created by this
+     * constructor must (partially) implement the `Map` interface with `get`,
+     * `set` and `has` functions.
+     *
      * @static
      * @memberOf _
      * @category Function
@@ -6402,6 +6407,33 @@
      * upperCase.cache.fred = 'BARNEY'
      * upperCase('fred');
      * // => 'BARNEY'
+     *
+     * // Using a custom memoize cache
+     * _.memoize.Cache = Map;
+     *
+     * // Using a hand-cranked memoize cache wrapper.
+     * function MyCache() {
+     *   this.__wrapper__ = [];
+     * }
+     *
+     * _.extend(MyCache.prototype, {
+     *   get: function(key) {
+     *     return _.find(this.__wrapper__, function(cached) {
+     *       return _.identity(key) === cached.key; 
+     *     }).value;
+     *   },
+     *   set: function(key, value) {
+     *     this.__wrapper__.push({ key: key, value: value });
+     *     return this;
+     *   },
+     *   has: function(key) {
+     *     return _.some(this.__wrapper__, function(cached) {
+     *       return _.identity(key) === cached;
+     *     });
+     *   }
+     * });
+     *
+     * _.memoize.Cache = MyCache;
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {
@@ -7587,7 +7619,7 @@
      */
     function has(object, key) {
       return object ? hasOwnProperty.call(object, key) : false;
-    } 
+    }
 
     /**
      * Creates an object composed of the inverted keys and values of the given
@@ -7675,7 +7707,9 @@
     };
 
     /**
-     * TODO 
+     * Default internal caching mechanism used by _.memoize which
+     * implements the subset of the Map interface (get, set and
+     * has) required my _.memoize.
      * @private
      */
     function Cache() {
@@ -7691,7 +7725,7 @@
         return this;
       },
       has: function(key) {
-        return has(this.__wrapped__, key);
+        return hasOwnProperty.call(this.__wrapped__, key);
       }
     });
 

@@ -2565,7 +2565,7 @@
         if (length < 2 || object == null) {
           return object;
         }
-        if (isIterateeCall(arguments[1], arguments[2], arguments[3])) {
+        if (length > 3 && isIterateeCall(arguments[1], arguments[2], arguments[3])) {
           length = 2;
         }
         // juggle arguments
@@ -3991,9 +3991,10 @@
      */
     function slice(array, start, end) {
       var index = -1,
-          length = array ? array.length : 0;
+          length = array ? array.length : 0,
+          endType = typeof end;
 
-      if (end && isIterateeCall(array, start, end)) {
+      if (end && endType != 'number' && isIterateeCall(array, start, end)) {
         start = 0;
         end = length;
       }
@@ -4001,7 +4002,7 @@
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      end = (endType == 'undefined' || end > length) ? length : (+end || 0);
       if (end < 0) {
         end += length;
       }
@@ -5215,9 +5216,8 @@
      * // => { 'user': 'fred', 'age': 40 };
      */
     function max(collection, iteratee, thisArg) {
-      if (isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = null;
-      }
+      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
+
       var computed = -Infinity,
           noIteratee = iteratee == null,
           isArr = noIteratee && isArray(collection),
@@ -5295,9 +5295,8 @@
      * // => { 'user': 'barney', 'age': 36 };
      */
     function min(collection, iteratee, thisArg) {
-      if (isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = null;
-      }
+      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
+
       var computed = Infinity,
           noIteratee = iteratee == null,
           isArr = noIteratee && isArray(collection),
@@ -5698,9 +5697,8 @@
      * // = > [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
     function sortBy(collection, iteratee, thisArg) {
-      if (isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = null;
-      }
+      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
+
       var index = -1,
           length = collection ? collection.length : 0,
           multi = iteratee && isArray(iteratee),
@@ -9227,7 +9225,7 @@
      * // => a floating-point number between 1.2 and 5.2
      */
     function random(min, max, floating) {
-      if (isIterateeCall(min, max, floating)) {
+      if (floating && isIterateeCall(min, max, floating)) {
         max = floating = null;
       }
       var noMin = min == null,
@@ -9294,7 +9292,7 @@
      * // => []
      */
     function range(start, end, step) {
-      if (isIterateeCall(start, end, step)) {
+      if (step && isIterateeCall(start, end, step)) {
         end = step = null;
       }
       start = +start || 0;

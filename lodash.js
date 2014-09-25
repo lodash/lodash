@@ -3683,8 +3683,10 @@
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
-        var index = sortedIndex(array, value);
-        return array[index] === value ? index : -1;
+        var index = sortedIndex(array, value),
+            other = array[index];
+
+        return (value === value ? value === other : other !== other) ? index : -1;
       }
       return baseIndexOf(array, value, fromIndex);
     }
@@ -3821,7 +3823,8 @@
         index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
       } else if (fromIndex) {
         index = sortedLastIndex(array, value) - 1;
-        return array[index] === value ? index : -1;
+        var other = array[index];
+        return (value === value ? value === other : other !== other) ? index : -1;
       }
       if (value !== value) {
         return indexOfNaN(array, index, true);

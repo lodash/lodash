@@ -7066,8 +7066,9 @@
       strictEqual(func(empty, undefined, true), -1);
     });
 
-    test('`_.' + methodName + '` should match `NaN`', 1, function() {
+    test('`_.' + methodName + '` should match `NaN`', 2, function() {
       strictEqual(func([1, NaN, 3], NaN), 1);
+      strictEqual(func([1, 3, NaN], NaN, true), 2);
     });
   });
 

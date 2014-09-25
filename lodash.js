@@ -1417,7 +1417,7 @@
      * "_.pluck" and "_.where" style callbacks.
      *
      * @private
-     * @param {*} [func=identity] The value to convert to a callback.
+     * @param {*} [func=_.identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
      * @param {number} [argCount] The number of arguments the callback accepts.
      * @returns {Function} Returns the new function.
@@ -3392,7 +3392,7 @@
      * @type Function
      * @category Array
      * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per element.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
@@ -3441,7 +3441,7 @@
      * @type Function
      * @category Array
      * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per element.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
@@ -3488,7 +3488,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to search.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -3542,7 +3542,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to search.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -3924,7 +3924,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to modify.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -4037,7 +4037,7 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -4078,7 +4078,7 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -4173,7 +4173,7 @@
      * @type Function
      * @category Array
      * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per element.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
@@ -4222,7 +4222,7 @@
      * @type Function
      * @category Array
      * @param {Array} array The array to query.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per element.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the slice of `array`.
@@ -4743,7 +4743,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -4780,7 +4780,7 @@
      * @alias all
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -4829,7 +4829,7 @@
      * @alias select
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -4876,7 +4876,7 @@
      * @alias detect
      * @category Collection
      * @param {Array|Object|string} collection The collection to search.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -4919,7 +4919,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to search.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -4977,7 +4977,7 @@
      * @alias each
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array|Object|string} Returns `collection`.
      * @example
@@ -5003,7 +5003,7 @@
      * @alias eachRight
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array|Object|string} Returns `collection`.
      * @example
@@ -5035,7 +5035,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -5078,7 +5078,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -5146,7 +5146,7 @@
      * @alias collect
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -5350,7 +5350,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -5421,7 +5421,7 @@
      * @alias foldl, inject
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the accumulated value.
@@ -5450,7 +5450,7 @@
      * @alias foldr
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the accumulated value.
@@ -5480,7 +5480,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -5618,7 +5618,7 @@
      * @alias any
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -5671,7 +5671,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Array|Function|Object|string} [iteratee=identity] The function
+     * @param {Array|Function|Object|string} [iteratee=_.identity] The function
      *  invoked per iteration. If property name(s) or an object is provided it
      *  is used to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -7392,7 +7392,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to search.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -7438,7 +7438,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to search.
-     * @param {Function|Object|string} [predicate=identity] The function invoked
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -7479,7 +7479,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
@@ -7511,7 +7511,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
@@ -7543,7 +7543,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
@@ -7568,7 +7568,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns `object`.
      * @example
@@ -7821,7 +7821,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to iterate over.
-     * @param {Function|Object|string} [iteratee=identity] The function invoked
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
      *  create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -8013,7 +8013,7 @@
      * @memberOf _
      * @category Object
      * @param {Array|Object} object The object to iterate over.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The custom accumulator value.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the accumulated value.
@@ -8924,7 +8924,7 @@
      * @memberOf _
      * @alias iteratee
      * @category Utility
-     * @param {*} [func=identity] The value to convert to a callback.
+     * @param {*} [func=_.identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of the created callback.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Function} Returns the new function.
@@ -9426,7 +9426,7 @@
      * @memberOf _
      * @category Utility
      * @param {number} n The number of times to invoke `iteratee`.
-     * @param {Function} [iteratee=identity] The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the array of results.
      * @example

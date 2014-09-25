@@ -7567,8 +7567,8 @@
           return 'id is ' + val.id;
         });
 
-        var firstResult = memoized(firstObject);
-        var secondResult = memoized(secondObject);
+        var firstResult = memoized(firstObject),
+            secondResult = memoized(secondObject);
 
         strictEqual(firstResult, 'id is ' + firstObject.id);
         strictEqual(secondResult, 'id is ' + secondObject.id);

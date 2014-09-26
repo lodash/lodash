@@ -1431,6 +1431,7 @@
         }
         var data = getData(func);
         if (typeof data == 'undefined') {
+          var support = lodash.support;
           if (support.funcNames) {
             data = !func.name;
           }
@@ -1687,8 +1688,8 @@
     }
 
     /**
-     * The base implementation of `_.filter` without support for callback shorthands
-     * or `this` binding.
+     * The base implementation of `_.filter` without support for callback
+     * shorthands or `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1953,7 +1954,7 @@
           return false;
         }
         if (valIsErr || valIsObj) {
-          if (!support.argsClass) {
+          if (!lodash.support.argsClass) {
             valIsArg = isArguments(value);
             othIsArg = isArguments(other);
           }
@@ -2961,7 +2962,7 @@
         return object;
       }
       var Ctor = object.constructor,
-          isArgs = className == argsClass || (!support.argsClass && isArguments(object)),
+          isArgs = className == argsClass || (!lodash.support.argsClass && isArguments(object)),
           isObj = className == objectClass;
 
       if (isObj && !(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
@@ -3115,7 +3116,7 @@
      */
     function shimIsPlainObject(value) {
       var Ctor,
-          result;
+          support = lodash.support;
 
       // exit early for non `Object` objects
       if (!(value && typeof value == 'object' &&
@@ -3128,6 +3129,7 @@
       // IE < 9 iterates inherited properties before own properties. If the first
       // iterated property is an object's own property then there are no inherited
       // enumerable properties.
+      var result;
       if (support.ownLast) {
         baseForIn(value, function(value, key, object) {
           result = hasOwnProperty.call(object, key);
@@ -3153,17 +3155,19 @@
      * @returns {Array} Returns the array of property names.
      */
     function shimKeys(object) {
-      var keyIndex,
-          index = -1,
-          props = keysIn(object),
+      var props = keysIn(object),
           length = props.length,
           objLength = length && object.length,
-          maxIndex = objLength - 1,
-          result = [];
+          support = lodash.support;
 
       var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object)));
+
+      var keyIndex,
+          index = -1,
+          maxIndex = objLength - 1,
+          result = [];
 
       while (++index < length) {
         var key = props[index];
@@ -3190,7 +3194,7 @@
       if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
         return values(value);
       }
-      if (support.unindexedChars && isString(value)) {
+      if (lodash.support.unindexedChars && isString(value)) {
         return value.split('');
       }
       return isObject(value) ? value : Object(value);
@@ -3204,7 +3208,7 @@
      * @returns {Object} Returns the object.
      */
     function toObject(value) {
-      if (support.unindexedChars && isString(value)) {
+      if (lodash.support.unindexedChars && isString(value)) {
         var index = -1,
             length = value.length,
             result = Object(value);
@@ -5754,7 +5758,7 @@
     function toArray(collection) {
       var length = collection ? collection.length : 0;
       if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
-        return (support.unindexedChars && isString(collection))
+        return (lodash.support.unindexedChars && isString(collection))
           ? collection.split('')
           : baseSlice(collection);
       }
@@ -6869,7 +6873,7 @@
      */
     function isElement(value) {
       return (value && typeof value == 'object' && value.nodeType === 1 &&
-        (support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
+        (lodash.support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
     }
     // fallback for environments without DOM support
     if (!support.dom) {
@@ -7210,7 +7214,7 @@
      * // => true
      */
     var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
-      if (!(value && toString.call(value) == objectClass) || (!support.argsClass && isArguments(value))) {
+      if (!(value && toString.call(value) == objectClass) || (!lodash.support.argsClass && isArguments(value))) {
         return false;
       }
       var valueOf = value.valueOf,
@@ -7703,7 +7707,7 @@
       }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
           (typeof length == 'number' && length > 0) ||
-          (support.enumPrototypes && typeof object == 'function')) {
+          (lodash.support.enumPrototypes && typeof object == 'function')) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -7759,7 +7763,9 @@
       if (!isObject(object)) {
         object = Object(object);
       }
-      var length = object.length;
+      var length = object.length,
+          support = lodash.support;
+
       length = (typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) || 0;

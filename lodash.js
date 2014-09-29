@@ -6601,7 +6601,7 @@
      * initialize();
      * // `initialize` invokes `createApplication` once
      */
-    var once = partial(before, 2);
+    var once = basePartial(before,PARTIAL_FLAG, [2], []);
 
     /**
      * Creates a function that invokes `func` with `partial` arguments prepended

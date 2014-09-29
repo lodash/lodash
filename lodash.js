@@ -35,7 +35,7 @@
       LAZY_MAP_FLAG = 2,
       LAZY_WHILE_FLAG = 3;
 
-  /** Used as the TypeError message for "Functions" methods */
+  /** Used as the `TypeError` message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used as the internal argument placeholder */
@@ -656,7 +656,7 @@
   }
 
   /**
-   * Used by `deburr` to convert latin-1 to basic latin letters.
+   * Used by `_.deburr` to convert latin-1 to basic latin letters.
    *
    * @private
    * @param {string} letter The matched letter to deburr.
@@ -750,7 +750,7 @@
   }
 
   /**
-   * Used by `_.trimmedLeftIndex` and `_.trimmedRightIndex` to determine if a
+   * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
    * @private
@@ -992,7 +992,7 @@
     /** Used to store function metadata */
     var metaMap = WeakMap && new WeakMap;
 
-    /** Used to lookup a built-in constructor by [[Class]] */
+    /** Used to lookup a built-in constructor by `[[Class]]` */
     var ctorByClass = {};
     ctorByClass[float32Class] = context.Float32Array;
     ctorByClass[float64Class] = context.Float64Array;
@@ -1143,7 +1143,7 @@
        *
        * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
        * (if the prototype or a property on the prototype has been set)
-       * incorrectly sets the `[[Enumerable]]` value of a function's `prototype`
+       * incorrectly set the `[[Enumerable]]` value of a function's `prototype`
        * property to `true`.
        *
        * @memberOf _.support
@@ -2192,6 +2192,7 @@
      * @param {Function} func The function to partially apply arguments to.
      * @param {number} bitmask The bitmask of flags to compose.
      * @param {Array} args The arguments to be partially applied.
+     * @param {Array} holders The `args` placeholder indexes.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new partially applied function.
      */
@@ -2482,7 +2483,7 @@
      *
      * @private
      * @param {Array} partialRightArgs The arguments to append to those provided.
-     * @param {Array} partialHolders The `partialRightArgs` placeholder indexes.
+     * @param {Array} partialRightHolders The `partialRightArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
      * @returns {Array} Returns the new array of composed arguments.
      */
@@ -2582,7 +2583,7 @@
      * @private
      * @param {Function} func The function to bind.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @returns {Function} Returns the new wrapped function.
+     * @returns {Function} Returns the new bound function.
      */
     function createBindWrapper(func, thisArg) {
       var Ctor = createCtorWrapper(func);
@@ -2639,7 +2640,7 @@
      *
      * @private
      * @param {Function} Ctor The constructor to wrap.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns the new wrapped function.
      */
     function createCtorWrapper(Ctor) {
       return function() {
@@ -2665,7 +2666,7 @@
      * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
      * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
      * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns the new wrapped function.
      */
     function createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
       var isBind = bitmask & BIND_FLAG,
@@ -2803,7 +2804,7 @@
      * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
      * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
      * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns the new wrapped function.
      */
     function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
       var isBindKey = bitmask & BIND_KEY_FLAG;
@@ -6889,7 +6890,7 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
      * (function() { return _.isArguments(arguments); })();
@@ -8260,7 +8261,7 @@
      * @memberOf _
      * @category String
      * @param {string} [string=''] The string to deburr.
-     * @returns {string} Returns the beburred string.
+     * @returns {string} Returns the deburred string.
      * @example
      *
      * _.deburr('déjà vu');

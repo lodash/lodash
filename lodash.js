@@ -31,6 +31,10 @@
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 
+  var LAZY_FILTER_FLAG = 1,
+      LAZY_MAP_FLAG = 2,
+      LAZY_WHILE_FLAG = 3;
+
   /** Used as the TypeError message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -4640,8 +4644,8 @@
      */
     function wrapperValueOf() {
       var result = this.__wrapped__;
-      if (result instanceof lazyWrapper) {
-        return result.value();
+      if (result instanceof LazyWrapper) {
+        result = result.value();
       }
       var index = -1,
           queue = this.__queue__,
@@ -4650,148 +4654,118 @@
       while (++index < length) {
         var args = [result],
             data = queue[index],
-            object = data[1];
+            object = data.object;
 
-        push.apply(args, data[2]);
-        result = object[data[0]].apply(object, args);
+        push.apply(args, data.args);
+        result = object[data.name].apply(object, args);
       }
       return result;
     }
 
     /*------------------------------------------------------------------------*/
 
-    function limitSource(operators, source) {
-      var len = operators.length,
-          min = 0,
-          max = source.length - 1;
-
-      for(var i = 0; i < len; i++) {
-        var op = operators[i];
-        switch(op.name) {
-          case 'take': max = Math.min(max, min + (op.count - 1)); break;
-        }
-      }
-
-      return {
-        min: min,
-        max: max
-      };
-    }
-
-    function resolveLazyWrapper(wrapper, source, sourceRange) {
-      var resultIndex = 0,
-        dir = wrapper.dir,
-        loops = sourceRange.max - sourceRange.min + 1,
-        resultLimit = Math.min(wrapper.limit, loops),
-        sourceIndex = (dir == 1 ? sourceRange.min : sourceRange.max) - dir,
-        result = [],
-        type = wrapper.type,
-        iterators = wrapper.iterators,
-        num = type.length;
-
-      lazy:
-      while (loops-- && resultIndex < resultLimit) {
-        sourceIndex += dir;
-        val = source[sourceIndex];
-
-        for(i = 0; i < num; i++) {
-          iterator = iterators[i];
-          switch(type[i]) {
-            // LazyWrapper.MAP_FLAG
-            case 1: val = iterator(val, sourceIndex, source); break;
-            // LazyWrapper.FILTER_FLAG
-            case 2: if(!iterator(val, sourceIndex, source)) { continue lazy; }
-            // LazyWrapper.WHILE_FLAG
-            case 3: if(!iterator(val, sourceIndex, source)) { break lazy; }
-          }
-        }
-
-        result[resultIndex++] = val;
-      }
-
-      return result;
-    }
-
     function LazyWrapper(value) {
-      this.value = value;
-      this.queue = [];
-
-
-
-      this.limit = POSITIVE_INFINITY;
-      this.filterApplied = false;
-      this.dir = 1;
-    }
-
-    LodashWrapper(value, chainAll, queue) {
-      this.__chain__ = !!chainAll;
-      this.__queue__ = queue || [];
-      this.__wrapped__ = value;
-    }
-
-    /*
-    this.type = [];
-    this.iterators = [];
-    this.limitActions = [];
-    limitActions = [];
-    */
-
-    function lazyClone() {
-      var clone = new LazyWrapper(this.source);
-      clone.type = this.type.concat();
-      clone.iterators = this.iterators.concat();
-      clone.limit = this.limit;
-      clone.limitActions = this.limitActions.concat();
-      clone.filterApplied = this.filterApplied;
-      clone.dir = this.dir;
-      return clone;
+      if (value instanceof LazyWrapper) {
+        this.dir = value.dir;
+        this.iteratees = baseSlice(value.iteratees);
+        this.views = baseSlice(value.views);
+        this.wrapped = value.wrapped;
+      } else {
+        this.dir = 1;
+        this.iteratees = [];
+        this.views = [];
+        this.wrapped = value;
+      }
     }
 
     function lazyFilter(predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
 
-      var fork = this.clone();
-      fork.filterApplied = true;
-      [methodName, object, arguments]
-      fork.type.push(LazyWrapper.FILTER_FLAG);
-      fork.iterators.push(predicate);
-      return fork;
+      var result = new LazyWrapper(this);
+      result.iteratees.push({ 'type': LAZY_FILTER_FLAG, 'iteratee': predicate });
+      return result;
     }
 
     function lazyFirst() {
       return this.take(1).value()[0];
     }
 
-    function lazyMap(iterator, thisArg) {
-      iterator = getCallback(iterator, thisArg, 3);
+    function lazyMap(iteratee, thisArg) {
+      iteratee = getCallback(iteratee, thisArg, 3);
 
-      var result = this.clone();
-      result.queue.push([iterator);
-      fork.type.push(LazyWrapper.MAP_FLAG);
-      return fork;
+      var result = new LazyWrapper(this);
+      result.iteratees.push({ 'type': LAZY_MAP_FLAG, 'iteratee': iteratee });
+      return result;
     }
 
     function lazyTake(n) {
-      var fork = this.clone();
-      n = (n == null) ? 1 : n;
-      if(fork.filterApplied) {
-        fork.limit = n;
-        return new LazyWrapper(fork);
-      }
-      fork.limitActions.push(getLimitAction('take', n, this.dir));
-      return fork;
+      n = n == null ? 1 : n;
+
+      var result = new LazyWrapper(this);
+      result.views.push({ 'type': 'take', 'size': n });
+      return result;
     }
 
     function lazyValue() {
-      var source = this.source,
-          sourceLimit;
-
-      if (source instanceof LazyWrapper) {
-        source = source.value();
+      var array = this.wrapped;
+      if (array instanceof LodashWrapper || array instanceof LazyWrapper) {
+        array = array.value();
       }
-      sourceLimit = limitSource(this.limitActions, source);
-      console.log('sourceLimit', sourceLimit)
-      return resolveLazyWrapper(this, source, sourceLimit);
+      var start = 0,
+          end = array.length,
+          length = end,
+          views = this.views,
+          viewsLength = views.length;
+
+      while (viewsLength--) {
+        var view = views[viewsLength],
+            size = view.size;
+
+        switch (view.type) {
+          case 'take':      end = nativeMin(end, start + size); break;
+          case 'takeRight': start = nativeMax(start, end - size); break;
+          case 'drop':      start += size; break;
+          case 'dropRight': end -= size; break;
+        }
+      }
+      var dir = this.dir,
+          index = (dir == 1 ? start : end) - dir,
+          iteratees = this.iteratees,
+          iterateesLength = iteratees.length,
+          resLimit = end - start,
+          result = [];
+
+      outer:
+      while (length-- && result.length < resLimit) {
+        index += dir;
+
+        var iterateesIndex = -1,
+            value = array[index];
+
+        while (++iterateesIndex < iterateesLength) {
+          var data = iteratees[iterateesIndex],
+              iteratee = data.iteratee;
+
+          switch (data.type) {
+            case LAZY_FILTER_FLAG:
+              if (!iteratee(value, index, array)) {
+                continue outer;
+              }
+              break;
+
+            case LAZY_MAP_FLAG:
+              value = iteratee(value, index, array);
+              break;
+
+            case LAZY_WHILE_FLAG:
+              if (!iteratee(value, index, array)) {
+                break outer;
+              }
+          }
+        }
+        result.push(value);
+      }
+      return result;
     }
 
     /*------------------------------------------------------------------------*/
@@ -9259,8 +9233,8 @@
             return function() {
               if (chain || this.__chain__) {
                 var result = object(this.__wrapped__);
-                result.__chain__ = this.__chain__;
-                (result.__queue__ = baseSlice(this.__queue__)).push([methodName, object, arguments]);
+                result.__chain__ = true;
+                (result.__queue__ = baseSlice(this.__queue__)).push({ 'name': methodName, 'object': object, 'args': arguments });
                 return result;
               }
               var args = [this.value()];
@@ -9849,23 +9823,46 @@
       lodash[methodName].placeholder = lodash;
     });
 
+    // ensure `new LodashWrapper` is an instance of `lodash`
+    LodashWrapper.prototype = lodash.prototype
+
+    // add functions to the memoize cache
+    MemCache.prototype.get = memGet;
+    MemCache.prototype.has = memHas;
+    MemCache.prototype.set = memSet;
+    memoize.Cache = MemCache;
+
+    // add functions to the lazy wrapper
+    LazyWrapper.prototype.filter = lazyFilter;
+    LazyWrapper.prototype.first = lazyFirst;
+    LazyWrapper.prototype.map = lazyMap;
+    LazyWrapper.prototype.take = lazyTake;
+    LazyWrapper.prototype.value = lazyValue;
+
     // add `LazyWrapper` functions
-    arrayEach(['map', 'filter', 'first', 'take'], function(methodName) {
+    arrayEach(['map', 'filter', 'take'], function(methodName) {
       var func = LazyWrapper.prototype[methodName];
-      var overriddenFunc = lodash.prototype[methodName];
+
       lodash.prototype[methodName] = function() {
-        var isLazy = wrapped instanceof LazyWrapper,
-            value = this.__wrapped__;
+        var value = this.__wrapped__,
+            isLazy = value instanceof LazyWrapper;
 
-        var result = isLazy
-          ? overriddenFunc.apply(this, arguments)
-          : func.apply(inLazyChain ? wrapped : new LazyWrapper(wrapped), arguments);
-
-        return (wrapped instanceof LazyWrapper || this.__chain__)
-          ? new LodashWrapper(wrapped, this.__chain__)
-          : wrapped;
+        if (!isLazy && !isArray(value)) {
+          var args = [this.value()];
+          push.apply(args, arguments);
+          value = lodash[methodName].apply(lodash, args);
+        } else {
+          value = func.apply(isLazy ? value : new LazyWrapper(this), arguments);
+          isLazy = true;
+        }
+        return (isLazy || this.__chain__) ? new LodashWrapper(value, true) : value;
       };
     });
+
+    // add "Chaining" functions to the lodash wrapper
+    lodash.prototype.chain = wrapperChain;
+    lodash.prototype.toString = wrapperToString;
+    lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
 
     // add `Array.prototype` functions
     arrayEach(['concat', 'join', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
@@ -9895,30 +9892,9 @@
       };
     });
 
-    // add functions to the lazy wrapper
-    LazyWrapper.prototype.clone = lazyClone;
-    LazyWrapper.prototype.first = lazyFirst;
-    LazyWrapper.prototype.map = lazyMap;
-    LazyWrapper.prototype.take = lazyTake;
-    LazyWrapper.prototype.value = lazyValue;
-
-    // ensure `new LodashWrapper` is an instance of `lodash`
-    LodashWrapper.prototype = lodash.prototype;
-
-    // add functions to the memoize cache
-    MemCache.prototype.get = memGet;
-    MemCache.prototype.has = memHas;
-    MemCache.prototype.set = memSet;
-    memoize.Cache = MemCache;
-
     // add function aliases to the lodash wrapper
     lodash.prototype.collect = lodash.prototype.map;
     lodash.prototype.select = lodash.prototype.filter;
-
-    // add "Chaining" functions to the lodash wrapper
-    lodash.prototype.chain = wrapperChain;
-    lodash.prototype.toString = wrapperToString;
-    lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
 
     return lodash;
   }

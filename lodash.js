@@ -4678,6 +4678,24 @@
       }
     }
 
+    function getLazyView(type, size, dir) {
+      size = size == null ? 1 : (+size || 0);
+      return {
+        'type': type + (dir < 0 ? 'Right' : ''),
+        'size': (size < 0 ? 0 : size)
+      };
+    }
+
+    function lazyDrop(n) {
+      var result = new LazyWrapper(this);
+      result.views.push(getLazyView('drop', n, result.dir));
+      return result;
+    }
+
+    function lazyDropRight(n) {
+      return this.reverse().drop(n).reverse();
+    }
+
     function lazyFilter(predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
 
@@ -4690,6 +4708,14 @@
       return this.take(1).value()[0];
     }
 
+    function lazyInitial() {
+      return this.dropRight(1);
+    }
+
+    function lazyLast() {
+      return this.takeRight(1).value()[0];
+    }
+
     function lazyMap(iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);
 
@@ -4698,17 +4724,29 @@
       return result;
     }
 
-    function lazyTake(n) {
-      n = n == null ? 1 : n;
+    function lazyRest() {
+      return this.drop(1);
+    }
 
+    function lazyReverse() {
       var result = new LazyWrapper(this);
-      result.views.push({ 'type': 'take', 'size': n });
+      result.dir *= -1;
       return result;
+    }
+
+    function lazyTake(n) {
+      var result = new LazyWrapper(this);
+      result.views.push(getLazyView('take', n, result.dir));
+      return result;
+    }
+
+    function lazyTakeRight(n) {
+      return this.reverse().take(n).reverse();
     }
 
     function lazyValue() {
       var array = this.wrapped;
-      if (array instanceof LodashWrapper || array instanceof LazyWrapper) {
+      if (array instanceof LodashWrapper) {
         array = array.value();
       }
       var start = 0,
@@ -4732,6 +4770,7 @@
           index = (dir == 1 ? start : end) - dir,
           iteratees = this.iteratees,
           iterateesLength = iteratees.length,
+          resIndex = -1,
           resLimit = end - start,
           result = [];
 
@@ -4763,7 +4802,7 @@
               }
           }
         }
-        result.push(value);
+        result[++resIndex] = value;
       }
       return result;
     }
@@ -9818,13 +9857,22 @@
      */
     lodash.VERSION = VERSION;
 
-    // assign default placeholders
-    arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
-      lodash[methodName].placeholder = lodash;
-    });
+    // add functions to the lazy wrapper
+    LazyWrapper.prototype.drop = lazyDrop;
+    LazyWrapper.prototype.dropRight = lazyDropRight;
+    LazyWrapper.prototype.filter = lazyFilter;
+    LazyWrapper.prototype.first = lazyFirst;
+    LazyWrapper.prototype.initial = lazyInitial;
+    LazyWrapper.prototype.last = lazyLast;
+    LazyWrapper.prototype.map = lazyMap;
+    LazyWrapper.prototype.rest = lazyRest;
+    LazyWrapper.prototype.reverse = lazyReverse;
+    LazyWrapper.prototype.take = lazyTake;
+    LazyWrapper.prototype.takeRight = lazyTakeRight;
+    LazyWrapper.prototype.value = lazyValue;
 
     // ensure `new LodashWrapper` is an instance of `lodash`
-    LodashWrapper.prototype = lodash.prototype
+    LodashWrapper.prototype = lodash.prototype;
 
     // add functions to the memoize cache
     MemCache.prototype.get = memGet;
@@ -9832,16 +9880,15 @@
     MemCache.prototype.set = memSet;
     memoize.Cache = MemCache;
 
-    // add functions to the lazy wrapper
-    LazyWrapper.prototype.filter = lazyFilter;
-    LazyWrapper.prototype.first = lazyFirst;
-    LazyWrapper.prototype.map = lazyMap;
-    LazyWrapper.prototype.take = lazyTake;
-    LazyWrapper.prototype.value = lazyValue;
+    // assign default placeholders
+    arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
+      lodash[methodName].placeholder = lodash;
+    });
 
     // add `LazyWrapper` functions
-    arrayEach(['map', 'filter', 'take'], function(methodName) {
-      var func = LazyWrapper.prototype[methodName];
+    arrayEach(['drop', 'dropRight', 'filter', 'first', 'initial', 'last', 'map', 'rest', 'take', 'takeRight'], function(methodName) {
+      var func = LazyWrapper.prototype[methodName],
+          chainAll = !/^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
@@ -9853,9 +9900,8 @@
           value = lodash[methodName].apply(lodash, args);
         } else {
           value = func.apply(isLazy ? value : new LazyWrapper(this), arguments);
-          isLazy = true;
         }
-        return (isLazy || this.__chain__) ? new LodashWrapper(value, true) : value;
+        return (chainAll || this.__chain__) ? new LodashWrapper(value, true) : value;
       };
     });
 
@@ -9863,6 +9909,12 @@
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
+
+    // add function aliases to the lodash wrapper
+    lodash.prototype.collect = lodash.prototype.map;
+    lodash.prototype.head = lodash.prototype.first;
+    lodash.prototype.select = lodash.prototype.filter;
+    lodash.prototype.tail = lodash.prototype.rest;
 
     // add `Array.prototype` functions
     arrayEach(['concat', 'join', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
@@ -9891,10 +9943,6 @@
         });
       };
     });
-
-    // add function aliases to the lodash wrapper
-    lodash.prototype.collect = lodash.prototype.map;
-    lodash.prototype.select = lodash.prototype.filter;
 
     return lodash;
   }

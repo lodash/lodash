@@ -9240,7 +9240,7 @@
      * // => ['e']
      */
     function mixin(object, source, options) {
-      var chain = true,
+      var chainAll = true,
           isObj = isObject(source),
           noOpts = options == null,
           props = noOpts && isObj && keys(source),
@@ -9256,9 +9256,9 @@
       }
       methodNames || (methodNames = baseFunctions(source, keys(source)));
       if (options === false) {
-        chain = false;
+        chainAll = false;
       } else if (isObject(options) && 'chain' in options) {
-        chain = options.chain;
+        chainAll = options.chain;
       }
       var index = -1,
           isFunc = isFunction(object),
@@ -9270,7 +9270,7 @@
         if (isFunc) {
           object.prototype[methodName] = (function(methodName) {
             return function() {
-              if (chain || this.__chain__) {
+              if (chainAll || this.__chain__) {
                 var result = object(this.__wrapped__);
                 result.__chain__ = true;
                 (result.__queue__ = baseSlice(this.__queue__)).push({ 'name': methodName, 'object': object, 'args': arguments });

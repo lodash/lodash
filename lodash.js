@@ -3702,8 +3702,7 @@
      * // => [1, 2]
      */
     function initial(array) {
-      var length = array ? array.length : 0;
-      return slice(array, 0, (length || 1) - 1);
+      return dropRight(array, 1);
     }
 
     /**
@@ -3972,7 +3971,7 @@
      * // => [2, 3]
      */
     function rest(array) {
-      return slice(array, 1);
+      return drop(array, 1);
     }
 
     /**

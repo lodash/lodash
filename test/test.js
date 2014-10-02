@@ -11411,7 +11411,7 @@
     });
 
     test('`_.' + methodName + '` should not remove non-whitespace characters', 1, function() {
-      var problemChars = '\x85\u200b\ufffe',
+      var problemChars = '\x85\u200b',
           string = problemChars + 'a b c' + problemChars;
 
       strictEqual(func(string), string);

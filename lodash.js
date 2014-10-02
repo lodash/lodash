@@ -3082,19 +3082,19 @@
       var count = 0,
           lastCalled = 0;
 
-      return function(key, value) {
+      return function(func, data) {
         var stamp = now ? now() : 0,
             remaining = HOT_SPAN - (stamp - lastCalled);
 
         lastCalled = stamp;
         if (remaining > 0) {
           if (++count >= HOT_COUNT) {
-            return key;
+            return func;
           }
         } else {
           count = 0;
         }
-        return baseSetData(key, value);
+        return baseSetData(func, data);
       };
     }());
 

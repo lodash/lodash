@@ -9881,10 +9881,11 @@
     // add `LazyWrapper` functions
     arrayEach(['drop', 'dropRight', 'filter', 'first', 'initial', 'last', 'map', 'rest', 'take', 'takeRight'], function(methodName) {
       var func = LazyWrapper.prototype[methodName],
-          chainAll = !/^(?:first|last)$/.test(methodName);
+          retWrapped = !/^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__,
+        var chainAll = this.__chain__,
+            value = this.__wrapped__,
             isLazy = value instanceof LazyWrapper;
 
         if (!isLazy && !isArray(value)) {
@@ -9894,7 +9895,7 @@
         } else {
           value = func.apply(isLazy ? value : new LazyWrapper(this), arguments);
         }
-        return (chainAll || this.__chain__) ? new LodashWrapper(value, true) : value;
+        return (retWrapped || chainAll) ? new LodashWrapper(value, chainAll) : value;
       };
     });
 

@@ -4749,9 +4749,9 @@
       if (array instanceof LodashWrapper) {
         array = array.value();
       }
-      var start = 0,
-          end = array.length,
-          length = end,
+      var length = array.length,
+          start = 0,
+          end = length,
           views = this.views,
           viewsLength = views.length;
 
@@ -4760,49 +4760,42 @@
             size = view.size;
 
         switch (view.type) {
-          case 'take':      end = nativeMin(end, start + size); break;
-          case 'takeRight': start = nativeMax(start, end - size); break;
           case 'drop':      start += size; break;
           case 'dropRight': end -= size; break;
+          case 'take':      end = nativeMin(end, start + size); break;
+          case 'takeRight': start = nativeMax(start, end - size); break;
         }
       }
       var dir = this.dir,
           index = (dir == 1 ? start : end) - dir,
           iteratees = this.iteratees,
           iterateesLength = iteratees.length,
-          resIndex = -1,
+          resIndex = 0,
           resLimit = end - start,
           result = [];
 
       outer:
-      while (length-- && result.length < resLimit) {
-        index += dir;
-
+      while (length-- && resIndex < resLimit) {
         var iterateesIndex = -1,
-            value = array[index];
+            value = array[index += dir];
 
         while (++iterateesIndex < iterateesLength) {
           var data = iteratees[iterateesIndex],
-              iteratee = data.iteratee;
+              iteratee = data.iteratee,
+              output = iteratee(value, index, array),
+              type = data.type;
 
-          switch (data.type) {
-            case LAZY_FILTER_FLAG:
-              if (!iteratee(value, index, array)) {
-                continue outer;
-              }
-              break;
-
-            case LAZY_MAP_FLAG:
-              value = iteratee(value, index, array);
-              break;
-
-            case LAZY_WHILE_FLAG:
-              if (!iteratee(value, index, array)) {
-                break outer;
-              }
+          if (type == LAZY_MAP_FLAG) {
+            value = output;
+          } else if (!output) {
+            if (type == LAZY_FILTER_FLAG) {
+              continue outer;
+            } else {
+              break outer;
+            }
           }
         }
-        result[++resIndex] = value;
+        result[resIndex++] = value;
       }
       return result;
     }

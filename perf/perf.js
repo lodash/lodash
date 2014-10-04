@@ -343,8 +343,12 @@
         }\
       }\
       if (typeof chaining != "undefined") {\
-        var _chaining = _.chain ? _(numbers).chain() : _(numbers),\
-            lodashChaining = lodash(numbers);\
+        var odd = function(v) { return !!(v % 2); },\
+            square = function(v) { return v * v; };\
+        \
+        var largeArray = belt.range(10000),\
+            _chaining = _.chain ? _(largeArray).chain() : _(largeArray),\
+            lodashChaining = lodash(largeArray);\
       }\
       if (typeof compact != "undefined") {\
         var uncompacted = numbers.slice();\
@@ -537,7 +541,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_(...)` with a number')
+    Benchmark.Suite('`_(...)` with a number (edge case)')
       .add(buildName, '\
         lodash(2)'
       )
@@ -566,20 +570,17 @@
       )
   );
 
-  // avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo
-  if (!isJava) {
-    suites.push(
-      Benchmark.Suite('`_(...).tap(...)`')
-        .add(buildName, {
-          'fn': 'lodashChaining.tap(lodash.identity)',
-          'teardown': 'function chaining(){}'
-        })
-        .add(otherName, {
-          'fn':  '_chaining.tap(_.identity)',
-          'teardown': 'function chaining(){}'
-        })
-    );
-  }
+  suites.push(
+    Benchmark.Suite('`_(...).map(...).filter(...).take(...).value()`')
+      .add(buildName, {
+        'fn': 'lodashChaining.map(square).filter(odd).take(100).value()',
+        'teardown': 'function chaining(){}'
+      })
+      .add(otherName, {
+        'fn': '_chaining.map(square).filter(odd).take(100).value()',
+        'teardown': 'function chaining(){}'
+      })
+  );
 
   /*--------------------------------------------------------------------------*/
 

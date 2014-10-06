@@ -4649,7 +4649,9 @@
      * // => [3, 2, 1]
      */
     function wrapperReverse() {
-      return new LodashWrapper(this.__wrapped__.reverse(), this.__chain__, baseSlice(this.__queue__));
+      return this.thru(function(value) {
+        return value.reverse();
+      });
     }
 
     /**
@@ -9267,7 +9269,7 @@
      * // => ['e']
      */
     function mixin(object, source, options) {
-      var chainAll = true,
+      var chain = true,
           isObj = isObject(source),
           noOpts = options == null,
           props = noOpts && isObj && keys(source),
@@ -9283,9 +9285,9 @@
       }
       methodNames || (methodNames = baseFunctions(source, keys(source)));
       if (options === false) {
-        chainAll = false;
+        chain = false;
       } else if (isObject(options) && 'chain' in options) {
-        chainAll = options.chain;
+        chain = options.chain;
       }
       var index = -1,
           isFunc = isFunction(object),
@@ -9297,9 +9299,10 @@
         if (isFunc) {
           object.prototype[methodName] = (function(methodName) {
             return function() {
-              if (chainAll || this.__chain__) {
+              var chainAll = this.__chain__;
+              if (chain || chainAll) {
                 var result = object(this.__wrapped__);
-                result.__chain__ = true;
+                result.__chain__ = chainAll;
                 (result.__queue__ = baseSlice(this.__queue__)).push({ 'args': arguments, 'object': object, 'name': methodName });
                 return result;
               }
@@ -9898,7 +9901,7 @@
         iteratee = getCallback(iteratee, thisArg, 3);
 
         var result = new LazyWrapper(this);
-        result.iteratees.push({ 'type': lazyIterateeTypes[methodName], 'iteratee': iteratee });
+        result.iteratees.push({ 'iteratee': iteratee, 'type': lazyIterateeTypes[methodName] });
         return result;
       };
     });
@@ -9912,8 +9915,8 @@
 
         var result = new LazyWrapper(this);
         result.views.push({
-          'type': methodName + (result.dir < 0 ? 'Right' : ''),
-          'size': (n < 0 ? 0 : n)
+          'size': (n < 0 ? 0 : n),
+          'type': methodName + (result.dir < 0 ? 'Right' : '')
         });
         return result;
       };
@@ -9944,23 +9947,31 @@
     });
 
     // add `LazyWrapper` methods to `LodashWrapper`
-    baseForOwn(LazyWrapper.prototype, function(methodName) {
-      var func = LazyWrapper.prototype[methodName],
-          retWrapped = !/^(?:first|last)$/.test(methodName);
+    baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+      var retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
-        var chainAll = this.__chain__,
+        var args = arguments,
+            chainAll = this.__chain__,
             value = this.__wrapped__,
             isLazy = value instanceof LazyWrapper;
 
-        if (!(!isLazy && !isArray(value))) {
-          value = func.apply(isLazy ? value : new LazyWrapper(this), arguments);
-          return (retWrapped || chainAll) ? new LodashWrapper(value, chainAll) : value;
+        if (retUnwrapped && !chainAll) {
+          if (isLazy) {
+            return func.apply(value, args);
+          }
+          var otherArgs = [this.value()];
+          push.apply(otherArgs, args);
+          return lodash[methodName].apply(lodash, otherArgs);
+        }
+        if (isLazy || isArray(value)) {
+          var result = func.apply(isLazy ? value : new LazyWrapper(value), args);
+          return new LodashWrapper(result, chainAll, baseSlice(this.__queue__));
         }
         return this.thru(function(value) {
-          var args = [this.value()];
-          push.apply(args, arguments);
-          return lodash[methodName].apply(lodash, args);
+          var otherArgs = [value];
+          push.apply(otherArgs, args);
+          return lodash[methodName].apply(lodash, otherArgs);
         });
       };
     });
@@ -9968,7 +9979,7 @@
     // add `Array.prototype` functions to `LodashWrapper`
     arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var arrayFunc = arrayProto[methodName],
-          chainName = /^(?:push|reverse|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
+          chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
           fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
           retUnwrapped = /^(?:join|pop|shift)$/.test(methodName);
 

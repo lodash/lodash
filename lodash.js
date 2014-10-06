@@ -9494,7 +9494,7 @@
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to but not including `end`. If `start` is less than `stop` a
+     * `start` up to but not including `end`. If `start` is less than `end` a
      * zero-length range is created unless a negative `step` is specified.
      *
      * @static

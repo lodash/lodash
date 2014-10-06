@@ -198,6 +198,27 @@
     'trailing': false
   };
 
+  /** Used to map latin-1 supplementary letters to basic latin letters */
+  var deburredLetters = {
+    '\xC0': 'A',  '\xC1': 'A', '\xC2': 'A', '\xC3': 'A', '\xC4': 'A', '\xC5': 'A',
+    '\xE0': 'a',  '\xE1': 'a', '\xE2': 'a', '\xE3': 'a', '\xE4': 'a', '\xE5': 'a',
+    '\xC7': 'C',  '\xE7': 'c',
+    '\xD0': 'D',  '\xF0': 'd',
+    '\xC8': 'E',  '\xC9': 'E', '\xCA': 'E', '\xCB': 'E',
+    '\xE8': 'e',  '\xE9': 'e', '\xEA': 'e', '\xEB': 'e',
+    '\xCC': 'I',  '\xCD': 'I', '\xCE': 'I', '\xCF': 'I',
+    '\xEC': 'i',  '\xED': 'i', '\xEE': 'i', '\xEF': 'i',
+    '\xD1': 'N',  '\xF1': 'n',
+    '\xD2': 'O',  '\xD3': 'O', '\xD4': 'O', '\xD5': 'O', '\xD6': 'O', '\xD8': 'O',
+    '\xF2': 'o',  '\xF3': 'o', '\xF4': 'o', '\xF5': 'o', '\xF6': 'o', '\xF8': 'o',
+    '\xD9': 'U',  '\xDA': 'U', '\xDB': 'U', '\xDC': 'U',
+    '\xF9': 'u',  '\xFA': 'u', '\xFB': 'u', '\xFC': 'u',
+    '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
+    '\xC6': 'Ae', '\xE6': 'ae',
+    '\xDE': 'Th', '\xFE': 'th',
+    '\xDF': 'ss'
+  };
+
   /**
    * Used to map characters to HTML entities.
    *
@@ -231,25 +252,12 @@
     '&#96;': '`'
   };
 
-  /** Used to map latin-1 supplementary letters to basic latin letters */
-  var deburredLetters = {
-    '\xC0': 'A',  '\xC1': 'A', '\xC2': 'A', '\xC3': 'A', '\xC4': 'A', '\xC5': 'A',
-    '\xE0': 'a',  '\xE1': 'a', '\xE2': 'a', '\xE3': 'a', '\xE4': 'a', '\xE5': 'a',
-    '\xC7': 'C',  '\xE7': 'c',
-    '\xD0': 'D',  '\xF0': 'd',
-    '\xC8': 'E',  '\xC9': 'E', '\xCA': 'E', '\xCB': 'E',
-    '\xE8': 'e',  '\xE9': 'e', '\xEA': 'e', '\xEB': 'e',
-    '\xCC': 'I',  '\xCD': 'I', '\xCE': 'I', '\xCF': 'I',
-    '\xEC': 'i',  '\xED': 'i', '\xEE': 'i', '\xEF': 'i',
-    '\xD1': 'N',  '\xF1': 'n',
-    '\xD2': 'O',  '\xD3': 'O', '\xD4': 'O', '\xD5': 'O', '\xD6': 'O', '\xD8': 'O',
-    '\xF2': 'o',  '\xF3': 'o', '\xF4': 'o', '\xF5': 'o', '\xF6': 'o', '\xF8': 'o',
-    '\xD9': 'U',  '\xDA': 'U', '\xDB': 'U', '\xDC': 'U',
-    '\xF9': 'u',  '\xFA': 'u', '\xFB': 'u', '\xFC': 'u',
-    '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
-    '\xC6': 'Ae', '\xE6': 'ae',
-    '\xDE': 'Th', '\xFE': 'th',
-    '\xDF': 'ss'
+  /** Used to map lazy iteratee flags to lazy methods */
+  var lazyIterateeTypes = {
+    'dropWhile': LAZY_WHILE_FLAG,
+    'filter': LAZY_FILTER_FLAG,
+    'map': LAZY_MAP_FLAG,
+    'takeWhile': LAZY_WHILE_FLAG
   };
 
   /** Used to determine if values are of the language type `Object` */
@@ -3282,8 +3290,9 @@
      * Creates an array excluding all values of the provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -3647,8 +3656,9 @@
      * it is used as the offset from the end of the collection. If `array` is
      * sorted providing `true` for `fromIndex` performs a faster binary search.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -3709,8 +3719,9 @@
      * Creates an array of unique values present in all provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -3839,8 +3850,9 @@
      *
      * **Notes:**
      *  - Unlike `_.without`, this method mutates `array`.
-     *  - `SameValueZero` is like strict equality, e.g. `===`, except that `NaN` matches `NaN`.
-     *    See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     *  - `SameValueZero` comparisons are like strict equality comparisons,
+     *    e.g. `===`, except that `NaN` matches `NaN`. See the
+     *    [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      *    for more details.
      *
      * @static
@@ -4257,8 +4269,9 @@
      * Creates an array of unique values, in order, of the provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -4290,8 +4303,9 @@
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -4374,8 +4388,9 @@
      * Creates an array excluding all provided values using `SameValueZero` for
      * equality comparisons.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -4497,7 +4512,7 @@
      * @memberOf _
      * @category Chain
      * @param {*} value The value to wrap.
-     * @returns {Object} Returns the new wrapper object.
+     * @returns {Object} Returns the new `LodashWrapper` object.
      * @example
      *
      * var users = [
@@ -4573,10 +4588,10 @@
      * A fast path for creating `lodash` wrapper objects.
      *
      * @private
-     * @param {*} value The value to wrap in a `lodash` instance.
+     * @param {*} value The value to wrap.
      * @param {boolean} [chainAll=false] Enable chaining for all methods.
      * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
-     * @returns {Object} Returns a `lodash` instance.
+     * @returns {Object} Returns a `LodashWrapper` instance.
      */
     function LodashWrapper(value, chainAll, queue) {
       this.__chain__ = !!chainAll;
@@ -4590,7 +4605,7 @@
      * @name chain
      * @memberOf _
      * @category Chain
-     * @returns {*} Returns the wrapper object.
+     * @returns {*} Returns the `LodashWrapper` object.
      * @example
      *
      * var users = [
@@ -4611,6 +4626,30 @@
      */
     function wrapperChain() {
       return chain(this);
+    }
+
+    /**
+     * Reverses the wrapped array so the first element becomes the last, the
+     * second element becomes the second to last, and so on.
+     *
+     * **Note:** This method mutates the wrapped array.
+     *
+     * @name chain
+     * @memberOf _
+     * @category Chain
+     * @returns {Object} Returns the new reversed `LodashWrapper` object.
+     * @example
+     *
+     * var array = [1, 2, 3];
+     *
+     * _(array).reverse().value()
+     * // => [3, 2, 1]
+     *
+     * console.log(array);
+     * // => [3, 2, 1]
+     */
+    function wrapperReverse() {
+      return new LodashWrapper(this.__wrapped__.reverse(), this.__chain__, baseSlice(this.__queue__));
     }
 
     /**
@@ -4664,6 +4703,13 @@
 
     /*------------------------------------------------------------------------*/
 
+    /**
+     * Wraps `value` as a `LazyWrapper` object.
+     *
+     * @private
+     * @param {*} value The value to wrap.
+     * @returns {Object} Returns a `LazyWrapper` instance.
+     */
     function LazyWrapper(value) {
       if (value instanceof LazyWrapper) {
         this.dir = value.dir;
@@ -4678,72 +4724,28 @@
       }
     }
 
-    function getLazyView(type, size, dir) {
-      size = size == null ? 1 : (+size || 0);
-      return {
-        'type': type + (dir < 0 ? 'Right' : ''),
-        'size': (size < 0 ? 0 : size)
-      };
-    }
-
-    function lazyDrop(n) {
-      var result = new LazyWrapper(this);
-      result.views.push(getLazyView('drop', n, result.dir));
-      return result;
-    }
-
-    function lazyDropRight(n) {
-      return this.reverse().drop(n).reverse();
-    }
-
-    function lazyFilter(predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-
-      var result = new LazyWrapper(this);
-      result.iteratees.push({ 'type': LAZY_FILTER_FLAG, 'iteratee': predicate });
-      return result;
-    }
-
-    function lazyFirst() {
-      return this.take(1).value()[0];
-    }
-
-    function lazyInitial() {
-      return this.dropRight(1);
-    }
-
-    function lazyLast() {
-      return this.takeRight(1).value()[0];
-    }
-
-    function lazyMap(iteratee, thisArg) {
-      iteratee = getCallback(iteratee, thisArg, 3);
-
-      var result = new LazyWrapper(this);
-      result.iteratees.push({ 'type': LAZY_MAP_FLAG, 'iteratee': iteratee });
-      return result;
-    }
-
-    function lazyRest() {
-      return this.drop(1);
-    }
-
+    /**
+     * Reverses the direction of lazy iteration.
+     *
+     * @private
+     * @name reverse
+     * @memberOf LazyWrapper
+     * @returns {Object} Returns the new reversed `LazyWrapper` object.
+     */
     function lazyReverse() {
       var result = new LazyWrapper(this);
       result.dir *= -1;
       return result;
     }
 
-    function lazyTake(n) {
-      var result = new LazyWrapper(this);
-      result.views.push(getLazyView('take', n, result.dir));
-      return result;
-    }
-
-    function lazyTakeRight(n) {
-      return this.reverse().take(n).reverse();
-    }
-
+    /**
+     * Extracts the unwrapped value from its wrapper.
+     *
+     * @private
+     * @name value
+     * @memberOf LazyWrapper
+     * @returns {*} Returns the unwrapped value.
+     */
     function lazyValue() {
       var array = this.wrapped;
       if (array instanceof LodashWrapper) {
@@ -4767,7 +4769,7 @@
         }
       }
       var dir = this.dir,
-          index = (dir == 1 ? start : end) - dir,
+          index = (dir == 1 ? start - 1 : end),
           iteratees = this.iteratees,
           iterateesLength = iteratees.length,
           resIndex = 0,
@@ -4782,12 +4784,12 @@
         while (++iterateesIndex < iterateesLength) {
           var data = iteratees[iterateesIndex],
               iteratee = data.iteratee,
-              output = iteratee(value, index, array),
+              computed = iteratee(value, index, array),
               type = data.type;
 
           if (type == LAZY_MAP_FLAG) {
-            value = output;
-          } else if (!output) {
+            value = computed;
+          } else if (!computed) {
             if (type == LAZY_FILTER_FLAG) {
               continue outer;
             } else {
@@ -4836,8 +4838,9 @@
      * equality comparisons. If `fromIndex` is negative, it is used as the offset
      * from the end of the collection.
      *
-     * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-     * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+     * e.g. `===`, except that `NaN` matches `NaN`. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for more details.
      *
      * @static
@@ -6788,19 +6791,50 @@
      * Creates the cache used by `_.memoize`.
      *
      * @private
+     * @static
+     * @name Cache
+     * @memberOf _.memoize
      */
     function MemCache() {
       this.__wrapped__ = {};
     }
 
+    /**
+     * Gets the value associated with `key`.
+     *
+     * @private
+     * @name get
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to retrieve.
+     * @returns {*} Returns the cached value.
+     */
     function memGet(key) {
       return this.__wrapped__[key];
     }
 
+    /**
+     * Checks if an entry for `key` exists.
+     *
+     * @private
+     * @name get
+     * @memberOf _.memoize.Cache
+     * @param {string} key The name of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
     function memHas(key) {
       return key != '__proto__' && hasOwnProperty.call(this.__wrapped__, key);
     }
 
+    /**
+     * Sets the value associated with `key`.
+     *
+     * @private
+     * @name get
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     * @returns {Object} Returns the cache object.
+     */
     function memSet(key, value) {
       if (key != '__proto__') {
         this.__wrapped__[key] = value;
@@ -7769,7 +7803,7 @@
      * @category Object
      * @param {Object} object The object to inspect.
      * @param {string} key The name of the property to check.
-     * @returns {boolean} Returns `true` if key is a direct property, else `false`.
+     * @returns {boolean} Returns `true` if `key` is a direct property, else `false`.
      * @example
      *
      * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
@@ -9266,7 +9300,7 @@
               if (chainAll || this.__chain__) {
                 var result = object(this.__wrapped__);
                 result.__chain__ = true;
-                (result.__queue__ = baseSlice(this.__queue__)).push({ 'name': methodName, 'object': object, 'args': arguments });
+                (result.__queue__ = baseSlice(this.__queue__)).push({ 'args': arguments, 'object': object, 'name': methodName });
                 return result;
               }
               var args = [this.value()];
@@ -9724,6 +9758,9 @@
     lodash.tail = rest;
     lodash.unique = uniq;
 
+    // assign cache to `_.memoize`
+    memoize.Cache = MemCache;
+
     // add functions to `lodash.prototype`
     mixin(lodash, lodash);
 
@@ -9850,36 +9887,64 @@
      */
     lodash.VERSION = VERSION;
 
-    // add functions to the lazy wrapper
-    LazyWrapper.prototype.drop = lazyDrop;
-    LazyWrapper.prototype.dropRight = lazyDropRight;
-    LazyWrapper.prototype.filter = lazyFilter;
-    LazyWrapper.prototype.first = lazyFirst;
-    LazyWrapper.prototype.initial = lazyInitial;
-    LazyWrapper.prototype.last = lazyLast;
-    LazyWrapper.prototype.map = lazyMap;
-    LazyWrapper.prototype.rest = lazyRest;
-    LazyWrapper.prototype.reverse = lazyReverse;
-    LazyWrapper.prototype.take = lazyTake;
-    LazyWrapper.prototype.takeRight = lazyTakeRight;
-    LazyWrapper.prototype.value = lazyValue;
-
-    // ensure `new LodashWrapper` is an instance of `lodash`
-    LodashWrapper.prototype = lodash.prototype;
-
-    // add functions to the memoize cache
-    MemCache.prototype.get = memGet;
-    MemCache.prototype.has = memHas;
-    MemCache.prototype.set = memSet;
-    memoize.Cache = MemCache;
-
     // assign default placeholders
     arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
       lodash[methodName].placeholder = lodash;
     });
 
-    // add `LazyWrapper` functions
-    arrayEach(['drop', 'dropRight', 'filter', 'first', 'initial', 'last', 'map', 'rest', 'take', 'takeRight'], function(methodName) {
+    // add `LazyWrapper` methods that accept an `iteratee` value
+    arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName) {
+      LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
+        iteratee = getCallback(iteratee, thisArg, 3);
+
+        var result = new LazyWrapper(this);
+        result.iteratees.push({ 'type': lazyIterateeTypes[methodName], 'iteratee': iteratee });
+        return result;
+      };
+    });
+
+    // add `LazyWrapper` methods for `_.drop` and `_.take` variants
+    arrayEach(['drop', 'take'], function(methodName) {
+      var whileName = methodName + 'While';
+
+      LazyWrapper.prototype[methodName] = function(n) {
+        n = n == null ? 1 : (+n || 0);
+
+        var result = new LazyWrapper(this);
+        result.views.push({
+          'type': methodName + (result.dir < 0 ? 'Right' : ''),
+          'size': (n < 0 ? 0 : n)
+        });
+        return result;
+      };
+
+      LazyWrapper.prototype[methodName + 'Right'] = function(n) {
+        return this.reverse()[methodName](n).reverse();
+      };
+
+      LazyWrapper.prototype[methodName + 'RightWhile'] = function(predicate, thisArg) {
+        return this.reverse()[whileName](predicate, thisArg).reverse();
+      };
+    });
+
+    // add `LazyWrapper` methods for `_.first` and `_.last`
+    arrayEach(['first', 'last'], function(methodName) {
+      var takeName = 'take' + (methodName == 'last' ? 'Right': '');
+      LazyWrapper.prototype[methodName] = function() {
+        return this[takeName](1).value()[0];
+      };
+    });
+
+    // add `LazyWrapper` methods for `_.initial` and `_.rest`
+    arrayEach(['initial', 'rest'], function(methodName) {
+      var dropName = 'drop' + (methodName == 'initial' ? 'Right': '');
+      LazyWrapper.prototype[methodName] = function() {
+        return this[dropName](1);
+      };
+    });
+
+    // add `LazyWrapper` methods to `LodashWrapper`
+    baseForOwn(LazyWrapper.prototype, function(methodName) {
       var func = LazyWrapper.prototype[methodName],
           retWrapped = !/^(?:first|last)$/.test(methodName);
 
@@ -9888,30 +9953,20 @@
             value = this.__wrapped__,
             isLazy = value instanceof LazyWrapper;
 
-        if (!isLazy && !isArray(value)) {
+        if (!(!isLazy && !isArray(value))) {
+          value = func.apply(isLazy ? value : new LazyWrapper(this), arguments);
+          return (retWrapped || chainAll) ? new LodashWrapper(value, chainAll) : value;
+        }
+        return this.thru(function(value) {
           var args = [this.value()];
           push.apply(args, arguments);
-          value = lodash[methodName].apply(lodash, args);
-        } else {
-          value = func.apply(isLazy ? value : new LazyWrapper(this), arguments);
-        }
-        return (retWrapped || chainAll) ? new LodashWrapper(value, chainAll) : value;
+          return lodash[methodName].apply(lodash, args);
+        });
       };
     });
 
-    // add "Chaining" functions to the lodash wrapper
-    lodash.prototype.chain = wrapperChain;
-    lodash.prototype.toString = wrapperToString;
-    lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
-
-    // add function aliases to the lodash wrapper
-    lodash.prototype.collect = lodash.prototype.map;
-    lodash.prototype.head = lodash.prototype.first;
-    lodash.prototype.select = lodash.prototype.filter;
-    lodash.prototype.tail = lodash.prototype.rest;
-
-    // add `Array.prototype` functions
-    arrayEach(['concat', 'join', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    // add `Array.prototype` functions to `LodashWrapper`
+    arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var arrayFunc = arrayProto[methodName],
           chainName = /^(?:push|reverse|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
           fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
@@ -9937,6 +9992,30 @@
         });
       };
     });
+
+    // ensure `new LodashWrapper` is an instance of `lodash`
+    LodashWrapper.prototype = lodash.prototype;
+
+    // add functions to the lazy wrapper
+    LazyWrapper.prototype.reverse = lazyReverse;
+    LazyWrapper.prototype.value = lazyValue;
+
+    // add functions to the memoize cache
+    MemCache.prototype.get = memGet;
+    MemCache.prototype.has = memHas;
+    MemCache.prototype.set = memSet;
+
+    // add chaining functions to the lodash wrapper
+    lodash.prototype.chain = wrapperChain;
+    lodash.prototype.reverse = wrapperReverse;
+    lodash.prototype.toString = wrapperToString;
+    lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
+
+    // add function aliases to the lodash wrapper
+    lodash.prototype.collect = lodash.prototype.map;
+    lodash.prototype.head = lodash.prototype.first;
+    lodash.prototype.select = lodash.prototype.filter;
+    lodash.prototype.tail = lodash.prototype.rest;
 
     return lodash;
   }

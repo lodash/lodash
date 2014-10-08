@@ -254,7 +254,6 @@
 
   /** Used to map lazy iteratee flags to lazy methods */
   var lazyIterateeTypes = {
-    'dropWhile': LAZY_WHILE_FLAG,
     'filter': LAZY_FILTER_FLAG,
     'map': LAZY_MAP_FLAG,
     'takeWhile': LAZY_WHILE_FLAG
@@ -4713,17 +4712,32 @@
      * @returns {Object} Returns a `LazyWrapper` instance.
      */
     function LazyWrapper(value) {
-      if (value instanceof LazyWrapper) {
-        this.dir = value.dir;
-        this.iteratees = baseSlice(value.iteratees);
-        this.views = baseSlice(value.views);
-        this.wrapped = value.wrapped;
-      } else {
-        this.dir = 1;
-        this.iteratees = [];
-        this.views = [];
-        this.wrapped = value;
-      }
+      this.dir = 1;
+      this.dropCount = 0;
+      this.filtered = false;
+      this.iteratees = [];
+      this.takeCount = POSITIVE_INFINITY;
+      this.views = [];
+      this.wrapped = value;
+    }
+
+    /**
+     * Creates a clone of the `LazyWrapper` object.
+     *
+     * @private
+     * @name clone
+     * @memberOf LazyWrapper
+     * @returns {Object} Returns the cloned `LazyWrapper` object.
+     */
+    function lazyClone() {
+      var result = new LazyWrapper(this.wrapped);
+      result.dir = this.dir;
+      result.dropCount = this.dropCount;
+      result.filtered = this.filtered;
+      result.takeCount = this.takeCount;
+      push.apply(result.iteratees, this.iteratees);
+      push.apply(result.views, this.views);
+      return result;
     }
 
     /**
@@ -4735,8 +4749,11 @@
      * @returns {Object} Returns the new reversed `LazyWrapper` object.
      */
     function lazyReverse() {
-      var result = new LazyWrapper(this);
-      result.dir *= -1;
+      var filtered = this.filtered,
+          result = filtered ? new LazyWrapper(this) : this.clone();
+
+      result.dir = this.dir * -1;
+      result.filtered = filtered;
       return result;
     }
 
@@ -4750,17 +4767,18 @@
      */
     function lazyValue() {
       var array = this.wrapped;
-      if (array instanceof LodashWrapper) {
+      if (array instanceof LodashWrapper || array instanceof LazyWrapper) {
         array = array.value();
       }
       var length = array.length,
           start = 0,
           end = length,
           views = this.views,
+          viewIndex = -1,
           viewsLength = views.length;
 
-      while (viewsLength--) {
-        var view = views[viewsLength],
+      while (++viewIndex < viewsLength) {
+        var view = views[viewIndex],
             size = view.size;
 
         switch (view.type) {
@@ -4771,15 +4789,19 @@
         }
       }
       var dir = this.dir,
-          index = (dir == 1 ? start - 1 : end),
+          dropCount = this.dropCount,
+          droppedCount = 0,
+          doneDropping = !dropCount,
+          takeCount = nativeMin(end - start, this.takeCount - dropCount),
+          isRight = dir < 0,
+          index = isRight ? end : start - 1,
           iteratees = this.iteratees,
           iterateesLength = iteratees.length,
           resIndex = 0,
-          resLimit = end - start,
           result = [];
 
       outer:
-      while (length-- && resIndex < resLimit) {
+      while (length-- && resIndex < takeCount) {
         var iterateesIndex = -1,
             value = array[index += dir];
 
@@ -4799,9 +4821,13 @@
             }
           }
         }
-        result[resIndex++] = value;
+        if (doneDropping) {
+          result[resIndex++] = value;
+        } else {
+          doneDropping = ++droppedCount < dropCount;
+        }
       }
-      return result;
+      return isRight ? result.reverse() : result;
     }
 
     /*------------------------------------------------------------------------*/
@@ -9896,26 +9922,34 @@
     });
 
     // add `LazyWrapper` methods that accept an `iteratee` value
-    arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName) {
+    arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
+      var isFilter = !index;
+
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         iteratee = getCallback(iteratee, thisArg, 3);
 
-        var result = new LazyWrapper(this);
+        var result = this.clone();
+        result.filtered = isFilter || result.filtered;
         result.iteratees.push({ 'iteratee': iteratee, 'type': lazyIterateeTypes[methodName] });
         return result;
       };
     });
 
     // add `LazyWrapper` methods for `_.drop` and `_.take` variants
-    arrayEach(['drop', 'take'], function(methodName) {
-      var whileName = methodName + 'While';
+    arrayEach(['drop', 'take'], function(methodName, index) {
+      var countName = methodName + 'Count',
+          whileName = methodName + 'While';
 
       LazyWrapper.prototype[methodName] = function(n) {
-        n = n == null ? 1 : (+n || 0);
+        n = n == null ? 1 : nativeMax(+n || 0, 0);
 
-        var result = new LazyWrapper(this);
+        var result = this.clone();
+        if (this.filtered) {
+          result[countName] = n;
+          return result;
+        }
         result.views.push({
-          'size': (n < 0 ? 0 : n),
+          'size': n,
           'type': methodName + (result.dir < 0 ? 'Right' : '')
         });
         return result;
@@ -9931,20 +9965,44 @@
     });
 
     // add `LazyWrapper` methods for `_.first` and `_.last`
-    arrayEach(['first', 'last'], function(methodName) {
-      var takeName = 'take' + (methodName == 'last' ? 'Right': '');
+    arrayEach(['first', 'last'], function(methodName, index) {
+      var takeName = 'take' + (index ? 'Right': '');
+
       LazyWrapper.prototype[methodName] = function() {
         return this[takeName](1).value()[0];
       };
     });
 
     // add `LazyWrapper` methods for `_.initial` and `_.rest`
-    arrayEach(['initial', 'rest'], function(methodName) {
-      var dropName = 'drop' + (methodName == 'initial' ? 'Right': '');
+    arrayEach(['initial', 'rest'], function(methodName, index) {
+      var dropName = 'drop' + (index ? '' : 'Right');
+
       LazyWrapper.prototype[methodName] = function() {
         return this[dropName](1);
       };
     });
+
+    LazyWrapper.prototype.dropWhile = function(iteratee, thisArg) {
+      iteratee = getCallback(iteratee, thisArg, 3);
+
+      var done,
+          lastIndex,
+          isRight = this.dir < 0;
+
+      return this.filter(function(value, index, array) {
+        done = done && (isRight ? index < lastIndex : index > lastIndex);
+        lastIndex = index;
+        return done || (done = !iteratee(value, index, array));
+      });
+    };
+
+    LazyWrapper.prototype.reject = function(iteratee, thisArg) {
+      iteratee = getCallback(iteratee, thisArg, 3);
+
+      return this.filter(function(value, index, array) {
+        return !iteratee(value, index, array);
+      });
+    };
 
     // add `LazyWrapper` methods to `LodashWrapper`
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
@@ -9965,8 +10023,8 @@
           return lodash[methodName].apply(lodash, otherArgs);
         }
         if (isLazy || isArray(value)) {
-          var result = func.apply(isLazy ? value : new LazyWrapper(value), args);
-          return new LodashWrapper(result, chainAll, baseSlice(this.__queue__));
+          var result = func.apply(isLazy ? value : new LazyWrapper(this), args);
+          return new LodashWrapper(result, chainAll);
         }
         return this.thru(function(value) {
           var otherArgs = [value];
@@ -10008,6 +10066,7 @@
     LodashWrapper.prototype = lodash.prototype;
 
     // add functions to the lazy wrapper
+    LazyWrapper.prototype.clone = lazyClone;
     LazyWrapper.prototype.reverse = lazyReverse;
     LazyWrapper.prototype.value = lazyValue;
 

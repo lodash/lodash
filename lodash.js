@@ -8763,8 +8763,8 @@
 
       // use a sourceURL for easier debugging
       // http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
-      var sourceURL = options.sourceURL || ('/lodash/template/source[' + (++templateCounter) + ']');
-      sourceURL = sourceURL ? ('\n/*\n//# sourceURL=' + sourceURL + '\n*/') : '';
+      var sourceURL = 'sourceURL' in options ? options.sourceURL : ('/lodash/template/source[' + (++templateCounter) + ']');
+      sourceURL = sourceURL ? ('\n//# sourceURL=' + sourceURL) : '';
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);

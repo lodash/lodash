@@ -296,33 +296,6 @@
   }
 
   /**
-   * Extracts the unwrapped value from its wrapper.
-   *
-   * @private
-   * @param {Object} wrapped The value to unwrap.
-   * @returns {*} Returns the unwrapped value.
-   */
-  function getUnwrappedValue(wrapped) {
-    if (typeof wrapped.value == 'function') {
-      return wrapped.value();
-    }
-    var index = -1,
-        queue = wrapped.__queue__,
-        length = queue.length,
-        result = wrapped.__wrapped__;
-
-    while (++index < length) {
-      var args = [result],
-          data = queue[index],
-          object = data[1];
-
-      push.apply(args, data[2]);
-      result = object[data[0]].apply(object, args);
-    }
-    return result;
-  }
-
-  /**
    * Sets a non-enumerable property value on `object`.
    *
    * Note: This function is used to avoid a bug in older versions of V8 where
@@ -805,7 +778,7 @@
       if (lodashBizarro) {
         var actual = _.map(values, function(value) {
           var wrapped = _(lodashBizarro(value)),
-              unwrapped = getUnwrappedValue(wrapped);
+              unwrapped = wrapped.value();
 
           return wrapped instanceof _ &&
             (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
@@ -3109,6 +3082,16 @@
         skipTest(2);
       }
     });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var actual = _(array).filter(function(value) {return value > 1; }).drop(1).value();
+        deepEqual(actual, [3]);
+      }
+      else {
+        skipTest(1);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3161,6 +3144,16 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var actual = _(array).filter(function(value) {return value < 3; }).dropRight(1).value();
+        deepEqual(actual, [1]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -7849,9 +7842,9 @@
   QUnit.module('lodash.mixin');
 
   (function() {
-    function wrapper(value) {
-      if (!(this instanceof wrapper)) {
-        return new wrapper(value);
+    function Wrapper(value) {
+      if (!(this instanceof Wrapper)) {
+        return new Wrapper(value);
       }
       if (_.has(value, '__wrapped__')) {
         var chain = value.__chain__,
@@ -7864,7 +7857,7 @@
       this.__wrapped__ = value;
     }
 
-    wrapper.prototype.value = _.prototype.value;
+    Wrapper.prototype.value = _.prototype.value;
 
     var value = ['a'],
         source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
@@ -7873,7 +7866,7 @@
       _.mixin(source);
 
       strictEqual(_.a(value), 'a');
-      strictEqual(getUnwrappedValue(_(value).a()), 'a');
+      strictEqual(_(value).a().value(), 'a');
 
       delete _.a;
       delete _.prototype.a;
@@ -7894,10 +7887,10 @@
       ok(!('a' in _));
       ok(!('a' in _.prototype));
 
-      delete wrapper.a;
-      delete wrapper.prototype.a;
-      delete wrapper.b;
-      delete wrapper.prototype.b;
+      delete Wrapper.a;
+      delete Wrapper.prototype.a;
+      delete Wrapper.b;
+      delete Wrapper.prototype.b;
     });
 
     test('should accept an `object` argument', 1, function() {
@@ -7913,18 +7906,18 @@
     });
 
     test('should work with a function for `object`', 2, function() {
-      _.mixin(wrapper, source);
+      _.mixin(Wrapper, source);
 
-      var wrapped = wrapper(value),
+      var wrapped = Wrapper(value),
           actual = wrapped.a();
 
-      strictEqual(getUnwrappedValue(actual), 'a');
-      ok(actual instanceof wrapper);
+      strictEqual(actual.value(), 'a');
+      ok(actual instanceof Wrapper);
 
-      delete wrapper.a;
-      delete wrapper.prototype.a;
-      delete wrapper.b;
-      delete wrapper.prototype.b;
+      delete Wrapper.a;
+      delete Wrapper.prototype.a;
+      delete Wrapper.b;
+      delete Wrapper.prototype.b;
     });
 
     test('should not assign inherited `source` properties', 1, function() {
@@ -7939,7 +7932,7 @@
         return (func === _ ? 'lodash' : 'provided') + ' function should ' + (chain ? '' : 'not ') + 'chain';
       }
 
-      _.each([_, wrapper], function(func) {
+      _.each([_, Wrapper], function(func) {
         _.each([false, true, { 'chain': false }, { 'chain': true }], function(options) {
           if (!isNpm) {
             if (func === _) {
@@ -8002,7 +7995,7 @@
 
     test('should not return the existing wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        _.each([_, wrapper], function(func) {
+        _.each([_, Wrapper], function(func) {
           if (func === _) {
             var wrapped = _(source),
                 actual = wrapped.mixin();

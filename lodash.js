@@ -4821,7 +4821,7 @@
         if (doneDropping) {
           result[resIndex++] = value;
         } else {
-          doneDropping = ++droppedCount < dropCount;
+          doneDropping = ++droppedCount >= dropCount;
         }
       }
       return isRight ? result.reverse() : result;
@@ -9957,7 +9957,9 @@
       };
 
       LazyWrapper.prototype[methodName + 'RightWhile'] = function(predicate, thisArg) {
-        return this.reverse()[whileName](predicate, thisArg).reverse();
+        var result = this.reverse()[whileName](predicate, thisArg);
+        result.filtered = true;
+        return result.reverse();
       };
     });
 

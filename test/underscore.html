@@ -117,6 +117,10 @@
 					'bindAll': [
 						'throws an error for bindAll with no functions named'
 					],
+					'memoize': [
+						'{"bar":"BAR","foo":"FOO"}',
+						'Died on test #8'
+					],
 					'throttle repeatedly with results': true,
 					'more throttle does not trigger leading call when leading is set to false': true,
 					'throttle does not trigger trailing call when trailing is set to false': true,
@@ -184,6 +188,7 @@
 				delete QUnit.config.excused.Chaining;
 				delete QUnit.config.excused.Collections.filter;
 				delete QUnit.config.excused.Collections.map;
+				delete QUnit.config.excused.Functions.memoize;
 				delete QUnit.config.excused.Objects.isFinite;
 				delete QUnit.config.excused.Objects.keys;
 				delete QUnit.config.excused.Utility['_.templateSettings.variable'];

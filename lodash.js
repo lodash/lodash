@@ -4766,11 +4766,8 @@
      * @returns {*} Returns the unwrapped value.
      */
     function lazyValue() {
-      var array = this.wrapped;
-      if (array instanceof LodashWrapper || array instanceof LazyWrapper) {
-        array = array.value();
-      }
-      var length = array.length,
+      var array = this.wrapped.value(),
+          length = array.length,
           start = 0,
           end = length,
           views = this.views,
@@ -9936,7 +9933,7 @@
     });
 
     // add `LazyWrapper` methods for `_.drop` and `_.take` variants
-    arrayEach(['drop', 'take'], function(methodName, index) {
+    arrayEach(['drop', 'take'], function(methodName) {
       var countName = methodName + 'Count',
           whileName = methodName + 'While';
 

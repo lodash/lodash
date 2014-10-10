@@ -3083,13 +3083,19 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 1, function() {
+    test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var actual = _(array).filter(function(value) {return value > 1; }).drop(1).value();
+        var array = [1, 2, 3, 4],
+            predicate = function(value) {return value > 1; },
+            actual = _(array).filter(predicate).drop(2).value();
+
+        deepEqual(actual, [4]);
+
+        actual = _(array).filter(predicate).drop().dropRight().value();
         deepEqual(actual, [3]);
       }
       else {
-        skipTest(1);
+        skipTest(2);
       }
     });
   }());
@@ -3147,13 +3153,19 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 1, function() {
+    test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var actual = _(array).filter(function(value) {return value < 3; }).dropRight(1).value();
+        var array = [1, 2, 3, 4],
+            predicate = function(value) {return value < 4; },
+            actual = _(array).filter(predicate).dropRight(2).value();
+
         deepEqual(actual, [1]);
+
+        actual = _(array).filter(predicate).dropRight().drop().value();
+        deepEqual(actual, [2]);
       }
       else {
-        skipTest(1);
+        skipTest(2);
       }
     });
   }());
@@ -3719,6 +3731,22 @@
         skipTest(2);
       }
     });
+
+    test('should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3, 4],
+            predicate = function(value) {return value > 1; },
+            actual = _(array).filter(predicate).take().value();
+
+        deepEqual(actual, [2]);
+
+        actual = _(array).filter(predicate).take(2).takeRight().value();
+        deepEqual(actual, [3]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3768,6 +3796,22 @@
         var wrapped = _(array).takeRight(2);
         ok(wrapped instanceof _);
         deepEqual(wrapped.value(), [2, 3]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3, 4],
+            predicate = function(value) {return value < 4; },
+            actual = _(array).filter(predicate).takeRight().value();
+
+        deepEqual(actual, [3]);
+
+        actual = _(array).filter(predicate).takeRight(2).take().value();
+        deepEqual(actual, [2]);
       }
       else {
         skipTest(2);

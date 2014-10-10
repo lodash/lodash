@@ -1062,7 +1062,7 @@
      * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
      * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
-     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isPromise`,
      * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
      * `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`,
      * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
@@ -7290,6 +7290,31 @@
     }
 
     /**
+     * Checks if `value` is a `Promise` object.
+     *
+     * **Note:** See the [Promises A+ Spec](https://promisesaplus.com/) for more details.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a Promise object, else `false`.
+     * @example
+     *
+     * _.isPromise({});
+     * // => false
+     *
+     * _.isPromise({then: function () {}});
+     * // => true
+     *
+     * _.isPromise(function () {});
+     * // => false
+     */
+    function isPromise(value) {
+      return isObject(value) && isFunction(value.then);
+    }
+
+    /**
      * Checks if `value` is `NaN`.
      *
      * **Note:** This method is not the same as native `isNaN` which returns `true`
@@ -9831,6 +9856,7 @@
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;
     lodash.isPlainObject = isPlainObject;
+    lodash.isPromise = isPromise;
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;

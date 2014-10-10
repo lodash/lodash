@@ -354,6 +354,7 @@
         "'_null': null,",
         "'_number': Object(0),",
         "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
+        "'_promise': { 'then': function () {} },",
         "'_regexp': /x/,",
         "'_string': Object('a'),",
         "'_undefined': undefined",
@@ -556,6 +557,7 @@
       'parent._._null = null;',
       'parent._._number = Object(0);',
       "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
+      "parent._._promise = { 'then': function () {} },",
       'parent._._regexp = /x/;',
       "parent._._string = Object('a');",
       'parent._._undefined = undefined;',
@@ -6640,6 +6642,49 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isPromise');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for Promises', 1, function() {
+      strictEqual(_.isPromise({ 'then': function () {} }), true);
+    });
+
+    test('should return `false` for non Promises', 12, function() {
+      var expected = _.map(falsey, _.constant(false));
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isPromise(value) : _.isPromise();
+      });
+
+      deepEqual(actual, expected);
+
+      strictEqual(_.isPromise(args), false);
+      strictEqual(_.isPromise([1, 2, 3]), false);
+      strictEqual(_.isPromise(true), false);
+      strictEqual(_.isPromise(new Date), false);
+      strictEqual(_.isPromise(new Error), false);
+      strictEqual(_.isPromise(_), false);
+      strictEqual(_.isPromise(slice), false);
+      strictEqual(_.isPromise({ 'a': 1 }), false);
+      strictEqual(_.isPromise(1), false);
+      strictEqual(_.isPromise(/x/), false);
+      strictEqual(_.isPromise('a'), false);
+    });
+
+    test('should work with Promises from another realm', 1, function() {
+      if (_._object) {
+        strictEqual(_.isPromise(_._promise), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isRegExp');
 
   (function() {
@@ -12660,7 +12705,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 197, function() {
+    test('should accept falsey arguments', 198, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

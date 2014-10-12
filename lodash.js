@@ -9677,6 +9677,17 @@
 
     /*------------------------------------------------------------------------*/
 
+    // ensure `new LodashWrapper` is an instance of `lodash`
+    LodashWrapper.prototype = lodash.prototype;
+
+    // add functions to the memoize cache
+    MemCache.prototype.get = memGet;
+    MemCache.prototype.has = memHas;
+    MemCache.prototype.set = memSet;
+
+    // assign cache to `_.memoize`
+    memoize.Cache = MemCache;
+
     // add functions that return wrapped values when chaining
     lodash.after = after;
     lodash.assign = assign;
@@ -9783,9 +9794,6 @@
     lodash.select = filter;
     lodash.tail = rest;
     lodash.unique = uniq;
-
-    // assign cache to `_.memoize`
-    memoize.Cache = MemCache;
 
     // add functions to `lodash.prototype`
     mixin(lodash, lodash);
@@ -10061,18 +10069,10 @@
       };
     });
 
-    // ensure `new LodashWrapper` is an instance of `lodash`
-    LodashWrapper.prototype = lodash.prototype;
-
     // add functions to the lazy wrapper
     LazyWrapper.prototype.clone = lazyClone;
     LazyWrapper.prototype.reverse = lazyReverse;
     LazyWrapper.prototype.value = lazyValue;
-
-    // add functions to the memoize cache
-    MemCache.prototype.get = memGet;
-    MemCache.prototype.has = memHas;
-    MemCache.prototype.set = memSet;
 
     // add chaining functions to the lodash wrapper
     lodash.prototype.chain = wrapperChain;

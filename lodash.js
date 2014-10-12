@@ -31,6 +31,7 @@
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 
+  /** Used to indicate the type of lazy iteratees */
   var LAZY_FILTER_FLAG = 1,
       LAZY_MAP_FLAG = 2,
       LAZY_WHILE_FLAG = 3;
@@ -252,7 +253,7 @@
     '&#96;': '`'
   };
 
-  /** Used to map lazy iteratee flags to lazy methods */
+  /** Used to map iteratee types to lazy methods */
   var lazyIterateeTypes = {
     'filter': LAZY_FILTER_FLAG,
     'map': LAZY_MAP_FLAG,

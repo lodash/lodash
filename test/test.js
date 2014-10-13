@@ -3110,7 +3110,7 @@
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4],
-            predicate = function(value) {return value > 1; },
+            predicate = function(value) { return value > 1; },
             actual = _(array).filter(predicate).drop(2).value();
 
         deepEqual(actual, [4]);
@@ -3180,7 +3180,7 @@
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4],
-            predicate = function(value) {return value < 4; },
+            predicate = function(value) { return value < 4; },
             actual = _(array).filter(predicate).dropRight(2).value();
 
         deepEqual(actual, [1]);
@@ -3759,7 +3759,7 @@
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4],
-            predicate = function(value) {return value > 1; },
+            predicate = function(value) { return value > 1; },
             actual = _(array).filter(predicate).take().value();
 
         deepEqual(actual, [2]);
@@ -3829,7 +3829,7 @@
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4],
-            predicate = function(value) {return value < 4; },
+            predicate = function(value) { return value < 4; },
             actual = _(array).filter(predicate).takeRight().value();
 
         deepEqual(actual, [3]);
@@ -9476,16 +9476,37 @@
 
   QUnit.module('filter methods');
 
-  _.each(['filter', 'reject'], function(methodNames) {
-    var func = _[methodNames];
+  _.each(['filter', 'reject'], function(methodName) {
+    var func = _[methodName],
+        isFilter = methodName == 'filter';
 
-    test('`_.' + methodNames + '` should not modify the resulting value from within `callback`', 1, function() {
+    test('`_.' + methodName + '` should not modify the resulting value from within `callback`', 1, function() {
       var actual = func([0], function(num, index, array) {
         array[index] = 1;
-        return methodNames == 'filter';
+        return isFilter;
       });
 
       deepEqual(actual, [0]);
+    });
+
+    test('`_.' + methodName + '` should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            object = { 'a': 1, 'b': 2, 'c': 3 },
+            doubled = function(value) { return value * 2; },
+            predicate = function(value) { return isFilter ? (value > 3) : (value < 3); };
+
+        var expected = [4, 6],
+            actual = _(array).map(doubled)[methodName](predicate).value();
+
+        deepEqual(actual, expected);
+
+        actual = _(object).mapValues(doubled)[methodName](predicate).value();
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest(2);
+      }
     });
   });
 

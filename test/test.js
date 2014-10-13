@@ -284,6 +284,30 @@
   var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
   /**
+   * Extracts the unwrapped value from its wrapper.
+   *
+   * @private
+   * @param {Object} wrapper The wrapper to unwrap.
+   * @returns {*} Returns the unwrapped value.
+   */
+  function getUnwrappedValue(wrapper) {
+    var index = -1,
+        queue = wrapper.__queue__,
+        length = queue.length,
+        result = wrapper.__wrapped__;
+
+    while (++index < length) {
+      var args = [result],
+          data = queue[index],
+          object = data.object;
+
+      push.apply(args, data.args);
+      result = object[data.name].apply(object, args);
+    }
+    return result;
+  }
+
+  /**
    * Removes all own enumerable properties from a given object.
    *
    * @private
@@ -778,7 +802,7 @@
       if (lodashBizarro) {
         var actual = _.map(values, function(value) {
           var wrapped = _(lodashBizarro(value)),
-              unwrapped = wrapped.value();
+              unwrapped = getUnwrappedValue(wrapped);
 
           return wrapped instanceof _ &&
             (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
@@ -7901,7 +7925,9 @@
       this.__wrapped__ = value;
     }
 
-    Wrapper.prototype.value = _.prototype.value;
+    Wrapper.prototype.value = function() {
+      return getUnwrappedValue(this);
+    };
 
     var value = ['a'],
         source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
@@ -7910,7 +7936,7 @@
       _.mixin(source);
 
       strictEqual(_.a(value), 'a');
-      strictEqual(_(value).a().value(), 'a');
+      strictEqual(getUnwrappedValue(_(value).a()), 'a');
 
       delete _.a;
       delete _.prototype.a;

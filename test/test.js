@@ -1577,11 +1577,6 @@
     function Klass() { this.a = 1; }
     Klass.prototype = { 'b': 1 };
 
-    var nonCloneable = {
-      'DOM elements': body,
-      'functions': Klass
-    };
-
     var objects = {
       '`arguments` objects': arguments,
       'arrays': ['a', ''],
@@ -1602,6 +1597,15 @@
     };
 
     objects['arrays'].length = 3;
+
+    var nonCloneable = {
+      'DOM elements': body,
+      'functions': Klass
+    };
+
+    _.each(errors, function(error) {
+      nonCloneable[error.name + 's'] = error;
+    });
 
     test('`_.clone` should perform a shallow clone', 2, function() {
       var expected = [{ 'a': 0 }, { 'b': 1 }],
@@ -1652,13 +1656,7 @@
 
       _.forOwn(nonCloneable, function(object, key) {
         test('`_.' + methodName + '` should not clone ' + key, 1, function() {
-          strictEqual(func(object), object);
-        });
-      });
-
-      _.each(errors, function(error) {
-        test('`_.' + methodName + '` should not clone ' + error.name + ' objects', 1, function() {
-          strictEqual(func(error), error);
+          deepEqual(func(object), {});
         });
       });
 
@@ -1747,9 +1745,9 @@
         if (document) {
           var element = document.createElement('div');
           try {
-            strictEqual(func(element), element);
+            deepEqual(func(element), {});
           } catch(e) {
-            ok(false);
+            ok(false, e.message);
           }
         }
         else {
@@ -1855,7 +1853,7 @@
       try {
         strictEqual(combined(), undefined);
       } catch(e) {
-        ok(false);
+        ok(false, e.message);
       }
       notStrictEqual(combined, _.noop);
     });
@@ -2197,7 +2195,7 @@
           var callback = _.callback(value, {});
           strictEqual(callback(object), object);
         } catch(e) {
-          ok(false);
+          ok(false, e.message);
         }
       });
     });
@@ -4031,7 +4029,7 @@
             }
             deepEqual(actual, expected);
           } catch(e) {
-            ok(false);
+            ok(false, e.message);
           }
         });
       }
@@ -4516,7 +4514,7 @@
       try {
         deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
       } catch(e) {
-        ok(false);
+        ok(false, e.message);
       }
     });
 
@@ -6056,7 +6054,7 @@
         try {
           strictEqual(_.isEqual(element1, element2), false);
         } catch(e) {
-          ok(false);
+          ok(false, e.message);
         }
       }
       else {
@@ -10664,7 +10662,7 @@
         var data = { 'a': [1, 2, 3] };
         strictEqual(compiled(data), '123');
       } catch(e) {
-        ok(false);
+        ok(false, e.message);
       }
     });
 

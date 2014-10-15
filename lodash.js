@@ -1500,7 +1500,10 @@
         result = initArrayClone(value, isDeep);
       } else if (isObject(value)) {
         result = initObjectClone(value, isDeep);
-        value = (isDeep && toString.call(result) == objectClass) ? value : result;
+        if (result === null) {
+          isDeep = false;
+          result = {};
+        }
       }
       if (!isDeep || result === value) {
         return result;
@@ -1521,11 +1524,15 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? arrayEach : baseForOwn)(value, function(valValue, key) {
-        var valClone = customizer ? customizer(valValue, key) : undefined;
-        result[key] = typeof valClone == 'undefined'
-          ? baseClone(valValue, isDeep, null, stackA, stackB)
-          : valClone;
+      (isArr ? arrayEach : baseForOwn)(value, function(val, key) {
+        var computed = customizer ? customizer(val, key) : undefined,
+            useComputed = typeof computed != 'undefined',
+            isReflexive = useComputed && computed === computed;
+
+        if (useComputed && (isReflexive ? val === computed : val !== val)) {
+          return;
+        }
+        result[key] = useComputed ? computed : baseClone(val, isDeep, null, stackA, stackB);
       });
       return result;
     }
@@ -2927,9 +2934,9 @@
      * Initializes an array clone.
      *
      * @private
-     * @param {*} value The value to clone.
+     * @param {Array} array The array to clone.
      * @param {boolean} [isDeep=false] Specify a deep clone.
-     * @returns {*} Returns the initialized clone value.
+     * @returns {Array} Returns the initialized array clone.
      */
     function initArrayClone(array, isDeep) {
       var index = -1,
@@ -2953,14 +2960,14 @@
      * Initializes an object clone.
      *
      * @private
-     * @param {*} value The value to clone.
+     * @param {Object} object The object to clone.
      * @param {boolean} [isDeep=false] Specify a deep clone.
-     * @returns {*} Returns the initialized clone value.
+     * @returns {null|Object} Returns the initialized object clone.
      */
     function initObjectClone(object, isDeep) {
       var className = toString.call(object);
       if (!cloneableClasses[className] || isHostObject(object)) {
-        return object;
+        return null;
       }
       var Ctor = object.constructor,
           isArgs = className == argsClass || (!lodash.support.argsClass && isArguments(object)),

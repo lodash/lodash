@@ -1485,12 +1485,17 @@
      * @param {*} value The value to clone.
      * @param {boolean} [isDeep=false] Specify a deep clone.
      * @param {Function} [customizer] The function to customize cloning values.
+     * @param {string} [key] The key of `value`.
+     * @param {Object} [object] The object `value` belongs to.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates clones with source counterparts.
      * @returns {*} Returns the cloned value.
      */
-    function baseClone(value, isDeep, customizer, stackA, stackB) {
-      var result = customizer ? customizer(value) : undefined;
+    function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
+      var result;
+      if (customizer) {
+        result = object ? customizer(value, key, object) : customizer(value);
+      }
       if (typeof result != 'undefined') {
         return result;
       }
@@ -1524,15 +1529,8 @@
       stackB.push(result);
 
       // recursively populate clone (susceptible to call stack limits)
-      (isArr ? arrayEach : baseForOwn)(value, function(val, key) {
-        var computed = customizer ? customizer(val, key) : undefined,
-            useComputed = typeof computed != 'undefined',
-            isReflexive = useComputed && computed === computed;
-
-        if (useComputed && (isReflexive ? val === computed : val !== val)) {
-          return;
-        }
-        result[key] = useComputed ? computed : baseClone(val, isDeep, null, stackA, stackB);
+      (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
+        result[key] = baseClone(subValue, isDeep, customizer, key, value, stackA, stackB);
       });
       return result;
     }
@@ -3139,7 +3137,7 @@
       // enumerable properties.
       var result;
       if (support.ownLast) {
-        baseForIn(value, function(value, key, object) {
+        baseForIn(value, function(subValue, key, object) {
           result = hasOwnProperty.call(object, key);
           return false;
         });
@@ -3148,7 +3146,7 @@
       // In most environments an object's own properties are iterated before
       // its inherited properties. If the last iterated property is an object's
       // own property then there are no inherited enumerable properties.
-      baseForIn(value, function(value, key) {
+      baseForIn(value, function(subValue, key) {
         result = key;
       });
       return typeof result == 'undefined' || hasOwnProperty.call(value, result);
@@ -4867,7 +4865,7 @@
     }
 
     /**
-     * Checks if `value` is present in `collection` using  `SameValueZero` for
+     * Checks if `value` is present in `collection` using `SameValueZero` for
      * equality comparisons. If `fromIndex` is negative, it is used as the offset
      * from the end of the collection.
      *

@@ -1708,7 +1708,7 @@
           argsList.push(slice.call(arguments));
         });
 
-        deepEqual(argsList, isDeep ? [[klass], [1, 'a']] : [[klass]]);
+        deepEqual(argsList, isDeep ? [[klass], [1, 'a', klass]] : [[klass]]);
       });
 
       test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {

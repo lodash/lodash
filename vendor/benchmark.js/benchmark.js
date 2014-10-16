@@ -508,9 +508,9 @@
      * @param {*} value The value to clone.
      * @returns {*} The cloned value.
      */
-    var cloneDeep = _.partialRight(_.cloneDeep, function(value) {
+    var cloneDeep = _.partial(_.cloneDeep, _, function(value) {
       // only clone primitives, arrays, and plain objects
-      return (typeof value == 'object' && !_.isArray(value) && !_.isPlainObject(value))
+      return (_.isObject(value) && !_.isArray(value) && !_.isPlainObject(value))
         ? value
         : undefined;
     });

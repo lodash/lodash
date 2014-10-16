@@ -1508,6 +1508,8 @@
         if (result === null) {
           isDeep = false;
           result = {};
+        } else if (isDeep) {
+          isDeep = toString.call(result) == objectClass;
         }
       }
       if (!isDeep || result === value) {

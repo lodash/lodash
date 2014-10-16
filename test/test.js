@@ -1643,7 +1643,6 @@
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
           var actual = func(object);
-
           ok(_.isEqual(actual, object));
 
           if (_.isObject(object)) {
@@ -1656,7 +1655,7 @@
 
       _.forOwn(nonCloneable, function(object, key) {
         test('`_.' + methodName + '` should not clone ' + key, 1, function() {
-          deepEqual(func(object), {});
+          deepEqual(func(object), object && {});
         });
       });
 

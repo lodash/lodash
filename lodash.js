@@ -9238,15 +9238,15 @@
         }
       }
       var index = length,
-          flags = Array(length),
-          vals = Array(length);
+          values = Array(length),
+          strictCompareFlags = Array(length);
 
       while (index--) {
         value = source[props[index]];
         var isStrict = isStrictComparable(value);
 
-        flags[index] = isStrict;
-        vals[index] = isStrict ? value : baseClone(value);
+        values[index] = isStrict ? value : baseClone(value, true, matchesCloneCallback);
+        strictCompareFlags[index] = isStrict;
       }
       return function(object) {
         index = length;
@@ -9254,13 +9254,19 @@
           return !index;
         }
         while (index--) {
-          if (flags[index] ? vals[index] !== object[props[index]] : !hasOwnProperty.call(object, props[index])) {
+          if (strictCompareFlags[index]
+                ? values[index] !== object[props[index]]
+                : !hasOwnProperty.call(object, props[index])
+              ) {
             return false;
           }
         }
         index = length;
         while (index--) {
-          if (flags[index] ? !hasOwnProperty.call(object, props[index]) : !baseIsEqual(vals[index], object[props[index]], null, true)) {
+          if (strictCompareFlags[index]
+                ? !hasOwnProperty.call(object, props[index])
+                : !baseIsEqual(values[index], object[props[index]], null, true)
+              ) {
             return false;
           }
         }

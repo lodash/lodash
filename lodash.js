@@ -4483,25 +4483,25 @@
      * @alias object
      * @category Array
      * @param {Array} props The property names.
-     * @param {Array} [vals=[]] The property values.
+     * @param {Array} [values=[]] The property values.
      * @returns {Object} Returns the new object.
      * @example
      *
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
      */
-    function zipObject(props, vals) {
+    function zipObject(props, values) {
       var index = -1,
           length = props ? props.length : 0,
           result = {};
 
-      if (!vals && length && !isArray(props[0])) {
-        vals = [];
+      if (!values && length && !isArray(props[0])) {
+        values = [];
       }
       while (++index < length) {
         var key = props[index];
-        if (vals) {
-          result[key] = vals[index];
+        if (values) {
+          result[key] = values[index];
         } else if (key) {
           result[key[0]] = key[1];
         }

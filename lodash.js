@@ -1344,9 +1344,7 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function assignDefaults(objectValue, sourceValue) {
-      return typeof objectValue == 'undefined'
-        ? sourceValue
-        : objectValue;
+      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
     }
 
     /**
@@ -1366,6 +1364,18 @@
       return (typeof objectValue == 'undefined' || !hasOwnProperty.call(object, key))
         ? sourceValue
         : objectValue;
+    }
+
+    /**
+     * Used by `_.matches` to clone `source` values, letting uncloneable values
+     * passthu instead of returning empty objects.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @returns {*} Returns the cloned value.
+     */
+    function clonePassthru(value) {
+      return isCloneable(value) ? undefined : value;
     }
 
     /**
@@ -2965,11 +2975,11 @@
      * @returns {null|Object} Returns the initialized object clone.
      */
     function initObjectClone(object, isDeep) {
-      var className = toString.call(object);
-      if (!cloneableClasses[className] || isHostObject(object)) {
+      if (!isCloneable(object)) {
         return null;
       }
       var Ctor = object.constructor,
+          className = toString.call(object),
           isArgs = className == argsClass || (!lodash.support.argsClass && isArguments(object)),
           isObj = className == objectClass;
 
@@ -3022,6 +3032,17 @@
     function isArrayLike(value) {
       return (value && typeof value == 'object' && typeof value.length == 'number' &&
         arrayLikeClasses[toString.call(value)]) || false;
+    }
+
+    /**
+     * Checks if `value` is cloneable.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is cloneable, else `false`.
+     */
+    function isCloneable(value) {
+      return (value && cloneableClasses[toString.call(value)] && !isHostObject(value)) || false;
     }
 
     /**
@@ -6887,8 +6908,8 @@
      * **Note:** This method is loosely based on the structured clone algorithm.
      * The enumerable properties of `arguments` objects and objects created by
      * constructors other than `Object` are cloned to plain `Object` objects. An
-     * empty object is returned for functions, DOM nodes, Maps, Sets, and WeakMaps.
-     * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
+     * empty object is returned for uncloneable values such as functions, DOM nodes,
+     * Maps, Sets, and WeakMaps. See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
      * for more details.
      *
      * @static
@@ -6944,8 +6965,8 @@
      * **Note:** This method is loosely based on the structured clone algorithm.
      * The enumerable properties of `arguments` objects and objects created by
      * constructors other than `Object` are cloned to plain `Object` objects. An
-     * empty object is returned for functions, DOM nodes, Maps, Sets, and WeakMaps.
-     * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
+     * empty object is returned for uncloneable values such as functions, DOM nodes,
+     * Maps, Sets, and WeakMaps. See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
      * for more details.
      *
      * @static
@@ -9245,7 +9266,7 @@
         value = source[props[index]];
         var isStrict = isStrictComparable(value);
 
-        values[index] = isStrict ? value : baseClone(value, true, matchesCloneCallback);
+        values[index] = isStrict ? value : baseClone(value, true, clonePassthru);
         strictCompareFlags[index] = isStrict;
       }
       return function(object) {

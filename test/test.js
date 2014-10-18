@@ -900,7 +900,7 @@
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
-    test('should work with a callback', 1, function() {
+    test('should work with a `customizer` callback', 1, function() {
       var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
         return typeof a == 'undefined' ? b : a;
       });
@@ -1625,15 +1625,15 @@
 
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
       var object = {
-        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'foo': { 'b': { 'c': { 'd': {} } } },
         'bar': {}
       };
 
-      object.foo.b.foo.c = object;
+      object.foo.b.c.d = object;
       object.bar.b = object.foo.b;
 
       var clone = _.cloneDeep(object);
-      ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.foo.c && clone !== object);
+      ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.c.d && clone !== object);
     });
 
     _.each(['clone', 'cloneDeep'], function(methodName) {
@@ -1653,9 +1653,35 @@
         });
       });
 
-      _.forOwn(nonCloneable, function(object, key) {
-        test('`_.' + methodName + '` should not clone ' + key, 1, function() {
-          deepEqual(func(object), object && {});
+      _.forOwn(nonCloneable, function(value, key) {
+        test('`_.' + methodName + '` should not clone ' + key, 2, function() {
+          var object = { 'a': value, 'b': { 'c': value } },
+              expected = value && {};
+
+          deepEqual(func(value), expected);
+
+          expected = isDeep
+            ? { 'a': expected, 'b': { 'c': expected } }
+            : { 'a': value,    'b': { 'c': value } }
+
+          deepEqual(func(object), expected);
+        });
+
+        test('`_.' + methodName + '` should work a `customizer` callback and ' + key, 4, function() {
+          var customizer = function(value) {
+            return _.isPlainObject(value) ? undefined : value;
+          };
+
+          var actual = func(value, customizer);
+
+          deepEqual(actual, value);
+          strictEqual(actual, value);
+
+          var object = { 'a': value, 'b': { 'c': value } };
+          actual = func(object, customizer);
+
+          deepEqual(actual, object);
+          notStrictEqual(actual, object);
         });
       });
 
@@ -1699,7 +1725,7 @@
         notStrictEqual(actual, shadowedObject);
       });
 
-      test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
+      test('`_.' + methodName + '` should provide the correct `customizer` arguments', 1, function() {
         var argsList = [],
             klass = new Klass;
 
@@ -1718,7 +1744,7 @@
         strictEqual(actual, 'A');
       });
 
-      test('`_.' + methodName + '` should handle cloning if `callback` returns `undefined`', 1, function() {
+      test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', 1, function() {
         var actual = func({ 'a': { 'b': 'c' } }, _.noop);
         deepEqual(actual, { 'a': { 'b': 'c' } });
       });
@@ -4078,10 +4104,12 @@
 
         expected = [1, 2, 3, 4];
         actual = wrapped.flatten(true);
+
         ok(actual instanceof _);
         deepEqual(actual.value(), expected);
 
         actual = wrapped.flattenDeep();
+
         ok(actual instanceof _);
         deepEqual(actual.value(), expected);
       }
@@ -4551,7 +4579,7 @@
     var func = _[methodName],
         isMerge = methodName == 'merge';
 
-    test('`_.' + methodName + '` should provide the correct `callback` arguments', 3, function() {
+    test('`_.' + methodName + '` should provide the correct `customizer` arguments', 3, function() {
       var args,
           object = { 'a': 1 },
           source = { 'a': 2 };
@@ -5708,13 +5736,13 @@
 
       strictEqual(_.isEqual(array1, array2), true);
 
-      array1.push('a');
-      array2.push('a');
+      array1.push('b');
+      array2.push('b');
 
       strictEqual(_.isEqual(array1, array2), true);
 
-      array1.push('b');
-      array2.push('c');
+      array1.push('c');
+      array2.push('d');
 
       strictEqual(_.isEqual(array1, array2), false);
 
@@ -5773,19 +5801,19 @@
 
     test('should perform comparisons between objects with complex circular references', 1, function() {
       var object1 = {
-        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'foo': { 'b': { 'c': { 'd': {} } } },
         'bar': { 'a': 2 }
       };
 
       var object2 = {
-        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'foo': { 'b': { 'c': { 'd': {} } } },
         'bar': { 'a': 2 }
       };
 
-      object1.foo.b.foo.c = object1;
+      object1.foo.b.c.d = object1;
       object1.bar.b = object1.foo.b;
 
-      object2.foo.b.foo.c = object2;
+      object2.foo.b.c.d = object2;
       object2.bar.b = object2.foo.b;
 
       strictEqual(_.isEqual(object1, object2), true);
@@ -5940,7 +5968,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `customizer` arguments', 1, function() {
       var argsList = [];
 
       var object1 = {
@@ -7682,15 +7710,15 @@
       };
 
       var source = {
-        'foo': { 'b': { 'foo': { 'c': {} } } },
+        'foo': { 'b': { 'c': { 'd': {} } } },
         'bar': {}
       };
 
-      source.foo.b.foo.c = source;
+      source.foo.b.c.d = source;
       source.bar.b = source.foo.b;
 
       var actual = _.merge(object, source);
-      ok(actual.bar.b === actual.foo.b && actual.foo.b.foo.c === actual.foo.b.foo.c.foo.b.foo.c);
+      ok(actual.bar.b === actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
     });
 
     test('should treat sources that are sparse arrays as dense', 2, function() {
@@ -7735,12 +7763,12 @@
       deepEqual(actual, { 'a': 1 });
     });
 
-    test('should handle merging if `callback` returns `undefined`', 1, function() {
+    test('should handle merging if `customizer` returns `undefined`', 1, function() {
       var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });
     });
 
-    test('should defer to `callback` when it returns a value other than `undefined`', 1, function() {
+    test('should defer to `customizer` when it returns a value other than `undefined`', 1, function() {
       var actual = _.merge({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {
         return _.isArray(a) ? a.concat(b) : undefined;
       });

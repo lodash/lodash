@@ -35,6 +35,7 @@ branches:
     - master
 before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
+  - "npm config set loglevel error"
   - "npm i -g npm@\"$NPM_VERSION\""
   - "[ $SAUCE_LABS == false ] || npm i chalk@\"0.5.1\" ecstatic@\"0.5.4\" request@\"^2.0.0\" sauce-tunnel@\"^2.0.0\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.0.0\" && npm i istanbul@\"0.3.2\")"

@@ -115,7 +115,7 @@ Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#
 
 ## Support
 
-Tested in Chrome (19, 37-38), Firefox (3, 20, 31-32), IE 6-11, Opera 23-24, Safari 5-7, Node.js 0.8.26~0.10.32, PhantomJS 1.9.7, RingoJS 0.9, & Rhino 1.7RC5.
+Tested in Chrome (19, 37-38), Firefox (3, 20, 31-32), IE 6-11, Opera 24-25, Safari 5-7, Node.js 0.8.26~0.10.32, PhantomJS 1.9.7, RingoJS 0.9, & Rhino 1.7RC5.
 
 Automated browser test runs [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
 

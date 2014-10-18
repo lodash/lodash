@@ -26,19 +26,8 @@
       CURRY_BOUND_FLAG = 16,
       PARTIAL_FLAG = 32;
 
-  /** Used as the TypeError message for "Functions" methods */
+  /** Used as the `TypeError` message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
-
-  /** Used as references for the max length and index of an array */
-  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
-
-  /**
-   * Used as the maximum length of an array-like value.
-   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
-   * for more details.
-   */
-  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
   /** Used as the internal argument placeholder */
   var PLACEHOLDER = '__lodash_placeholder__';
@@ -225,26 +214,6 @@
   }
 
   /**
-   * A specialized version of `_.map` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @returns {Array} Returns the new mapped array.
-   */
-  function arrayMap(array, iteratee) {
-    var index = -1,
-        length = array.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = iteratee(array[index], index, array);
-    }
-    return result;
-  }
-
-  /**
    * A specialized version of `_.filter` for arrays without support for callback
    * shorthands or `this` binding.
    *
@@ -264,6 +233,26 @@
       if (predicate(value, index, array)) {
         result[++resIndex] = value;
       }
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.map` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns the new mapped array.
+   */
+  function arrayMap(array, iteratee) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = iteratee(array[index], index, array);
     }
     return result;
   }
@@ -374,9 +363,6 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    if (value !== value) {
-      return indexOfNaN(array, fromIndex);
-    }
     var index = (fromIndex || 0) - 1,
         length = array.length;
 
@@ -441,29 +427,6 @@
    */
   function escapeStringChar(chr) {
     return '\\' + stringEscapes[chr];
-  }
-
-  /**
-   * Gets the index at which the first occurrence of `NaN` is found in `array`.
-   * If `fromRight` is provided elements of `array` are iterated from right to left.
-   *
-   * @private
-   * @param {Array} array The array to search.
-   * @param {number} [fromIndex] The index to search from.
-   * @param {boolean} [fromRight=false] Specify iterating from right to left.
-   * @returns {number} Returns the index of the matched `NaN`, else `-1`.
-   */
-  function indexOfNaN(array, fromIndex, fromRight) {
-    var length = array.length,
-        index = fromRight ? (fromIndex || length) : ((fromIndex || 0) - 1);
-
-    while ((fromRight ? index-- : ++index < length)) {
-      var other = array[index];
-      if (other !== other) {
-        return index;
-      }
-    }
-    return -1;
   }
 
   /**
@@ -587,6 +550,21 @@
       nativeNow = isNative(nativeNow = Date.now) && nativeNow,
       nativeRandom = Math.random;
 
+  /** Used as references for `-Infinity` and `Infinity` */
+  var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
+      POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
+
+  /** Used as references for the max length and index of an array */
+  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+
+  /**
+   * Used as the maximum length of an array-like value.
+   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+   * for more details.
+   */
+  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+
   /*------------------------------------------------------------------------*/
 
   /**
@@ -660,21 +638,7 @@
   function lodash(value) {
     return (value instanceof lodash)
       ? value
-      : new lodashWrapper(value);
-  }
-
-  /**
-   * A fast path for creating `lodash` wrapper objects.
-   *
-   * @private
-   * @param {*} value The value to wrap in a `lodash` instance.
-   * @param {boolean} [chainAll=false] Enable chaining for all methods.
-   * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
-   * @returns {Object} Returns a `lodash` instance.
-   */
-  function lodashWrapper(value, chainAll) {
-    this.__chain__ = !!chainAll;
-    this.__wrapped__ = value;
+      : new LodashWrapper(value);
   }
 
   /**
@@ -801,7 +765,7 @@
    * "_.pluck" and "_.where" style callbacks.
    *
    * @private
-   * @param {*} [func=identity] The value to convert to a callback.
+   * @param {*} [func=_.identity] The value to convert to a callback.
    * @param {*} [thisArg] The `this` binding of the created callback.
    * @param {number} [argCount] The number of arguments the callback accepts.
    * @returns {Function} Returns the new function.
@@ -960,8 +924,8 @@
   }
 
   /**
-   * The base implementation of `_.filter` without support for callback shorthands
-   * or `this` binding.
+   * The base implementation of `_.filter` without support for callback
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.
@@ -1330,6 +1294,7 @@
    * @param {Function} func The function to partially apply arguments to.
    * @param {number} bitmask The bitmask of flags to compose.
    * @param {Array} args The arguments to be partially applied.
+   * @param {Array} holders The `args` placeholder indexes.
    * @param {*} [thisArg] The `this` binding of `func`.
    * @returns {Function} Returns the new partially applied function.
    */
@@ -1566,7 +1531,7 @@
    * @private
    * @param {Function} func The function to bind.
    * @param {*} [thisArg] The `this` binding of `func`.
-   * @returns {Function} Returns the new wrapped function.
+   * @returns {Function} Returns the new bound function.
    */
   function createBindWrapper(func, thisArg) {
     var Ctor = createCtorWrapper(func);
@@ -1583,7 +1548,7 @@
    *
    * @private
    * @param {Function} Ctor The constructor to wrap.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new wrapped function.
    */
   function createCtorWrapper(Ctor) {
     return function() {
@@ -1609,7 +1574,7 @@
    * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
    * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
    * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new wrapped function.
    */
   function createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
     var isBind = bitmask & BIND_FLAG,
@@ -1695,7 +1660,7 @@
    * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
    * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
    * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new wrapped function.
    */
   function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
     var isBindKey = bitmask & BIND_KEY_FLAG;
@@ -1868,8 +1833,9 @@
    * Creates an array excluding all values of the provided arrays using
    * `SameValueZero` for equality comparisons.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -1938,7 +1904,7 @@
    * @memberOf _
    * @category Array
    * @param {Array} array The array to search.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -2032,8 +1998,9 @@
    * it is used as the offset from the end of the collection. If `array` is
    * sorted providing `true` for `fromIndex` performs a faster binary search.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -2065,8 +2032,10 @@
     if (typeof fromIndex == 'number') {
       fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
     } else if (fromIndex) {
-      var index = sortedIndex(array, value);
-      return array[index] === value ? index : -1;
+      var index = sortedIndex(array, value),
+          other = array[index];
+
+      return value === other ? index : -1;
     }
     return baseIndexOf(array, value, fromIndex);
   }
@@ -2097,8 +2066,9 @@
    * Creates an array of unique values present in all provided arrays using
    * `SameValueZero` for equality comparisons.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -2201,9 +2171,6 @@
     if (typeof fromIndex == 'number') {
       index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
     }
-    if (value !== value) {
-      return indexOfNaN(array, index, true);
-    }
     while (index--) {
       if (array[index] === value) {
         return index;
@@ -2297,7 +2264,7 @@
    * @category Array
    * @param {Array} array The array to inspect.
    * @param {*} value The value to evaluate.
-   * @param {Function|Object|string} [iteratee=identity] The function invoked
+   * @param {Function|Object|string} [iteratee=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -2359,8 +2326,9 @@
    * Creates an array of unique values, in order, of the provided arrays using
    * `SameValueZero` for equality comparisons.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -2392,8 +2360,9 @@
    * returns `true` for elements that have the properties of the given object,
    * else `false`.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -2476,8 +2445,9 @@
    * Creates an array excluding all provided values using `SameValueZero` for
    * equality comparisons.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -2530,25 +2500,25 @@
    * @alias object
    * @category Array
    * @param {Array} props The property names.
-   * @param {Array} [vals=[]] The property values.
+   * @param {Array} [values=[]] The property values.
    * @returns {Object} Returns the new object.
    * @example
    *
    * _.zipObject(['fred', 'barney'], [30, 40]);
    * // => { 'fred': 30, 'barney': 40 }
    */
-  function zipObject(props, vals) {
+  function zipObject(props, values) {
     var index = -1,
         length = props ? props.length : 0,
         result = {};
 
-    if (!vals && length && !isArray(props[0])) {
-      vals = [];
+    if (!values && length && !isArray(props[0])) {
+      values = [];
     }
     while (++index < length) {
       var key = props[index];
-      if (vals) {
-        result[key] = vals[index];
+      if (values) {
+        result[key] = values[index];
       } else if (key) {
         result[key[0]] = key[1];
       }
@@ -2566,7 +2536,7 @@
    * @memberOf _
    * @category Chain
    * @param {*} value The value to wrap.
-   * @returns {Object} Returns the new wrapper object.
+   * @returns {Object} Returns the new `LodashWrapper` object.
    * @example
    *
    * var users = [
@@ -2614,13 +2584,29 @@
     return value;
   }
 
+  /*------------------------------------------------------------------------*/
+
+  /**
+   * A fast path for creating `lodash` wrapper objects.
+   *
+   * @private
+   * @param {*} value The value to wrap.
+   * @param {boolean} [chainAll=false] Enable chaining for all methods.
+   * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
+   * @returns {Object} Returns a `LodashWrapper` instance.
+   */
+  function LodashWrapper(value, chainAll) {
+    this.__chain__ = !!chainAll;
+    this.__wrapped__ = value;
+  }
+
   /**
    * Enables explicit method chaining on the wrapper object.
    *
    * @name chain
    * @memberOf _
    * @category Chain
-   * @returns {*} Returns the wrapper object.
+   * @returns {*} Returns the `LodashWrapper` object.
    * @example
    *
    * var users = [
@@ -2663,12 +2649,13 @@
   /*------------------------------------------------------------------------*/
 
   /**
-   * Checks if `value` is present in `collection` using  `SameValueZero` for
+   * Checks if `value` is present in `collection` using `SameValueZero` for
    * equality comparisons. If `fromIndex` is negative, it is used as the offset
    * from the end of the collection.
    *
-   * **Note:** `SameValueZero` is like strict equality, e.g. `===`, except that
-   * `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
+   * e.g. `===`, except that `NaN` matches `NaN`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for more details.
    *
    * @static
@@ -2721,7 +2708,7 @@
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [iteratee=identity] The function invoked
+   * @param {Function|Object|string} [iteratee=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -2758,7 +2745,7 @@
    * @alias all
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -2807,7 +2794,7 @@
    * @alias select
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -2854,7 +2841,7 @@
    * @alias detect
    * @category Collection
    * @param {Array|Object|string} collection The collection to search.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -2932,7 +2919,7 @@
    * @alias each
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function} [iteratee=identity] The function invoked per iteration.
+   * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {Array|Object|string} Returns `collection`.
    * @example
@@ -2967,7 +2954,7 @@
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [iteratee=identity] The function invoked
+   * @param {Function|Object|string} [iteratee=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -3010,7 +2997,7 @@
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [iteratee=identity] The function invoked
+   * @param {Function|Object|string} [iteratee=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -3078,7 +3065,7 @@
    * @alias collect
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [iteratee=identity] The function invoked
+   * @param {Function|Object|string} [iteratee=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -3153,7 +3140,7 @@
   function max(collection, iteratee, thisArg) {
     iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
-    var computed = -Infinity,
+    var computed = NEGATIVE_INFINITY,
         result = computed;
 
     if (iteratee == null) {
@@ -3172,7 +3159,7 @@
 
       baseEach(collection, function(value, index, collection) {
         var current = iteratee(value, index, collection);
-        if (current > computed || (current === -Infinity && current === result)) {
+        if (current > computed || (current === NEGATIVE_INFINITY && current === result)) {
           computed = current;
           result = value;
         }
@@ -3227,7 +3214,7 @@
   function min(collection, iteratee, thisArg) {
     iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
 
-    var computed = Infinity,
+    var computed = POSITIVE_INFINITY,
         result = computed;
 
     if (iteratee == null) {
@@ -3246,7 +3233,7 @@
 
       baseEach(collection, function(value, index, collection) {
         var current = iteratee(value, index, collection);
-        if (current < computed || (current === Infinity && current === result)) {
+        if (current < computed || (current === POSITIVE_INFINITY && current === result)) {
           computed = current;
           result = value;
         }
@@ -3272,7 +3259,7 @@
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -3343,7 +3330,7 @@
    * @alias foldl, inject
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function} [iteratee=identity] The function invoked per iteration.
+   * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {*} Returns the accumulated value.
@@ -3372,7 +3359,7 @@
    * @alias foldr
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function} [iteratee=identity] The function invoked per iteration.
+   * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {*} Returns the accumulated value.
@@ -3402,7 +3389,7 @@
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -3540,7 +3527,7 @@
    * @alias any
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Function|Object|string} [predicate=identity] The function invoked
+   * @param {Function|Object|string} [predicate=_.identity] The function invoked
    *  per iteration. If a property name or object is provided it is used to
    *  create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `predicate`.
@@ -3593,7 +3580,7 @@
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Array|Function|Object|string} [iteratee=identity] The function
+   * @param {Array|Function|Object|string} [iteratee=_.identity] The function
    *  invoked per iteration. If property name(s) or an object is provided it
    *  is used to create a "_.pluck" or "_.where" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
@@ -4117,9 +4104,16 @@
    * Creates a function that memoizes the result of `func`. If `resolver` is
    * provided it determines the cache key for storing the result based on the
    * arguments provided to the memoized function. By default, the first argument
-   * provided to the memoized function is used as the cache key. The `func` is
-   * invoked with the `this` binding of the memoized function. The result cache
-   * is exposed as the `cache` property on the memoized function.
+   * provided to the memoized function is coerced to a string and used as the
+   * cache key. The `func` is invoked with the `this` binding of the memoized
+   * function.
+   *
+   * **Note:** The cache is exposed as the `cache` property on the memoized
+   * function. Its creation may be customized by replacing the `_.memoize.Cache`
+   * constructor with one whose instances implement the ES6 `Map` method interface
+   * of `get`, `has`, and `set`. See the
+   * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
+   * for more details.
    *
    * @static
    * @memberOf _
@@ -4144,7 +4138,7 @@
    * upperCase('fred');
    * // => 'FRED'
    *
-   * upperCase.cache.fred = 'BARNEY'
+   * upperCase.cache.set('fred, 'BARNEY');
    * upperCase('fred');
    * // => 'BARNEY'
    */
@@ -4212,7 +4206,7 @@
    * initialize();
    * // `initialize` invokes `createApplication` once
    */
-  var once = partial(before, 2);
+  var once = basePartial(before,PARTIAL_FLAG, [2], []);
 
   /**
    * Creates a function that invokes `func` with `partial` arguments prepended
@@ -4334,10 +4328,11 @@
    * cloning is handled by the method instead. The `customizer` is bound to
    * `thisArg` and invoked with two argument; (value, index|key).
    *
-   * **Note:** This method is loosely based on the structured clone algorithm. Functions
-   * and DOM nodes are **not** cloned. The enumerable properties of `arguments` objects and
-   * objects created by constructors other than `Object` are cloned to plain `Object` objects.
-   * See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
+   * **Note:** This method is loosely based on the structured clone algorithm.
+   * The enumerable properties of `arguments` objects and objects created by
+   * constructors other than `Object` are cloned to plain `Object` objects. An
+   * empty object is returned for uncloneable values such as functions, DOM nodes,
+   * Maps, Sets, and WeakMaps. See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
    * for more details.
    *
    * @static
@@ -4386,7 +4381,7 @@
    * @memberOf _
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
    * @example
    *
    * (function() { return _.isArguments(arguments); })();
@@ -4886,7 +4881,7 @@
         index = 0,
         length = args.length;
 
-    if (isIterateeCall(args[1], args[2], args[3])) {
+    if (length > 3 && isIterateeCall(args[1], args[2], args[3])) {
       length = 2;
     }
     while (++index < length) {
@@ -4922,7 +4917,7 @@
         index = 0,
         length = args.length;
 
-    if (isIterateeCall(args[1], args[2], args[3])) {
+    if (length > 3 && isIterateeCall(args[1], args[2], args[3])) {
       length = 2;
     }
     while (++index < length) {
@@ -4964,7 +4959,7 @@
    * @category Object
    * @param {Object} object The object to inspect.
    * @param {string} key The name of the property to check.
-   * @returns {boolean} Returns `true` if key is a direct property, else `false`.
+   * @returns {boolean} Returns `true` if `key` is a direct property, else `false`.
    * @example
    *
    * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
@@ -5465,7 +5460,7 @@
    * @memberOf _
    * @alias iteratee
    * @category Utility
-   * @param {*} [func=identity] The value to convert to a callback.
+   * @param {*} [func=_.identity] The value to convert to a callback.
    * @param {*} [thisArg] The `this` binding of the created callback.
    * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
    * @returns {Function} Returns the new function.
@@ -5630,7 +5625,7 @@
           push.apply(args, arguments);
 
           var result = func.apply(lodash, args);
-          return this.__chain__ ? new lodashWrapper(result, true) : result;
+          return this.__chain__ ? new LodashWrapper(result, true) : result;
         };
       }());
     }
@@ -5759,7 +5754,7 @@
 
   /**
    * Creates an array of numbers (positive and/or negative) progressing from
-   * `start` up to but not including `end`. If `start` is less than `stop` a
+   * `start` up to but not including `end`. If `start` is less than `end` a
    * zero-length range is created unless a negative `step` is specified.
    *
    * @static
@@ -5864,7 +5859,7 @@
    * @memberOf _
    * @category Utility
    * @param {number} n The number of times to invoke `iteratee`.
-   * @param {Function} [iteratee=identity] The function invoked per iteration.
+   * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {Array} Returns the array of results.
    * @example
@@ -5917,6 +5912,9 @@
   }
 
   /*------------------------------------------------------------------------*/
+
+  // ensure `new LodashWrapper` is an instance of `lodash`
+  LodashWrapper.prototype = lodash.prototype;
 
   // add functions that return wrapped values when chaining
   lodash.after = after;
@@ -6063,17 +6061,10 @@
    */
   lodash.VERSION = VERSION;
 
-  // ensure `new lodashWrapper` is an instance of `lodash`
-  lodashWrapper.prototype = lodash.prototype;
-
-  // add "Chaining" functions to the wrapper
-  lodash.prototype.chain = wrapperChain;
-  lodash.prototype.value = wrapperValueOf;
-
   // assign default placeholders
   partial.placeholder = lodash;
 
-  // add `Array.prototype` functions
+  // add `Array.prototype` functions to `LodashWrapper`
   arrayEach(['concat', 'join', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
     var func = arrayProto[methodName],
         retValue = !/^(?:concat|join|slice)$/.test(methodName),
@@ -6091,9 +6082,15 @@
       if (retValue) {
         result = value;
       }
-      return this.__chain__ ? new lodashWrapper(result, true) : result;
+      return this.__chain__ ? new LodashWrapper(result, true) : result;
     };
   });
+
+  // add chaining functions to the lodash wrapper
+  lodash.prototype.chain = wrapperChain;
+  lodash.prototype.value = wrapperValueOf;
+
+  lodash.prototype.tail = lodash.prototype.rest;
 
   /*--------------------------------------------------------------------------*/
 

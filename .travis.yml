@@ -15,7 +15,7 @@ matrix:
     - node_js: "0.8"
       env: BUILD="modern" NPM_VERSION="~1.4.0"
     - node_js: "0.10"
-      env: ISTANBUL=true BUILD="modern"
+      env: BUILD="modern" ISTANBUL=true 
     - node_js: "0.10"
       env: BIN="phantomjs"
     - node_js: "0.10"

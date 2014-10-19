@@ -1336,6 +1336,48 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * A specialized version of `_.max` for arrays without support for iteratees.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @returns {*} Returns the maximum value.
+     */
+    function arrayMax(array) {
+      var index = -1,
+          length = array.length,
+          result = NEGATIVE_INFINITY;
+
+      while (++index < length) {
+        var value = array[index];
+        if (value > result) {
+          result = value;
+        }
+      }
+      return result;
+    }
+
+    /**
+     * A specialized version of `_.min` for arrays without support for iteratees.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @returns {*} Returns the minimum value.
+     */
+    function arrayMin(array) {
+      var index = -1,
+          length = array.length,
+          result = POSITIVE_INFINITY;
+
+      while (++index < length) {
+        var value = array[index];
+        if (value < result) {
+          result = value;
+        }
+      }
+      return result;
+    }
+
+    /**
      * Used by `_.defaults` to customize its `_.assign` use.
      *
      * @private
@@ -5433,38 +5475,31 @@
      * // => { 'user': 'fred', 'age': 40 };
      */
     function max(collection, iteratee, thisArg) {
-      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
-
-      var computed = NEGATIVE_INFINITY,
-          noIteratee = iteratee == null,
-          isArr = noIteratee && isArray(collection),
-          isStr = !isArr && isString(collection),
-          result = computed;
+      var noIteratee = iteratee == null;
+      if (!noIteratee && isIterateeCall(collection, iteratee, thisArg)) {
+        iteratee = null;
+        noIteratee = true;
+      }
+      var isArr = noIteratee && isArray(collection),
+          isStr = !isArr && isString(collection);
 
       if (noIteratee && !isStr) {
-        var index = -1,
-            iterable = toIterable(collection),
-            length = iterable.length;
-
-        while (++index < length) {
-          var value = iterable[index];
-          if (value > result) {
-            result = value;
-          }
-        }
-      } else {
-        iteratee = (noIteratee && isStr)
-          ? charAtCallback
-          : getCallback(iteratee, thisArg, 3);
-
-        baseEach(collection, function(value, index, collection) {
-          var current = iteratee(value, index, collection);
-          if (current > computed || (current === NEGATIVE_INFINITY && current === result)) {
-            computed = current;
-            result = value;
-          }
-        });
+        return arrayMax(isArr ? collection : toIterable(collection));
       }
+      var computed = NEGATIVE_INFINITY,
+          result = computed;
+
+      iteratee = (noIteratee && isStr)
+        ? charAtCallback
+        : getCallback(iteratee, thisArg, 3);
+
+      baseEach(collection, function(value, index, collection) {
+        var current = iteratee(value, index, collection);
+        if (current > computed || (current === NEGATIVE_INFINITY && current === result)) {
+          computed = current;
+          result = value;
+        }
+      });
       return result;
     }
 
@@ -5512,38 +5547,31 @@
      * // => { 'user': 'barney', 'age': 36 };
      */
     function min(collection, iteratee, thisArg) {
-      iteratee = isIterateeCall(collection, iteratee, thisArg) ? null : iteratee;
-
-      var computed = POSITIVE_INFINITY,
-          noIteratee = iteratee == null,
-          isArr = noIteratee && isArray(collection),
-          isStr = !isArr && isString(collection),
-          result = computed;
+      var noIteratee = iteratee == null;
+      if (!noIteratee && isIterateeCall(collection, iteratee, thisArg)) {
+        iteratee = null;
+        noIteratee = true;
+      }
+      var isArr = noIteratee && isArray(collection),
+          isStr = !isArr && isString(collection);
 
       if (noIteratee && !isStr) {
-        var index = -1,
-            iterable = toIterable(collection),
-            length = iterable.length;
-
-        while (++index < length) {
-          var value = iterable[index];
-          if (value < result) {
-            result = value;
-          }
-        }
-      } else {
-        iteratee = (noIteratee && isStr)
-          ? charAtCallback
-          : getCallback(iteratee, thisArg, 3);
-
-        baseEach(collection, function(value, index, collection) {
-          var current = iteratee(value, index, collection);
-          if (current < computed || (current === POSITIVE_INFINITY && current === result)) {
-            computed = current;
-            result = value;
-          }
-        });
+        return arrayMin(isArr ? collection : toIterable(collection));
       }
+      var computed = POSITIVE_INFINITY,
+          result = computed;
+
+      iteratee = (noIteratee && isStr)
+        ? charAtCallback
+        : getCallback(iteratee, thisArg, 3);
+
+      baseEach(collection, function(value, index, collection) {
+        var current = iteratee(value, index, collection);
+        if (current < computed || (current === POSITIVE_INFINITY && current === result)) {
+          computed = current;
+          result = value;
+        }
+      });
       return result;
     }
 

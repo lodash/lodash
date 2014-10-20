@@ -10075,6 +10075,17 @@
       });
     };
 
+    LazyWrapper.prototype.slice = function(start, end) {
+      start = start == null ? 0 : (+start || 0);
+      var result = start < 0 ? this.takeRight(-start) : this.drop(start);
+
+      if (typeof end != 'undefined') {
+        end = (+end || 0);
+        result = end < 0 ? result.dropRight(-end) : result.take(end - start);
+      }
+      return result;
+    };
+
     // add `LazyWrapper` methods to `LodashWrapper`
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var retUnwrapped = /^(?:first|last)$/.test(methodName);

@@ -10006,7 +10006,7 @@
 
     test('should work with a negative `start` <= negative `array.length`', 3, function() {
       _.each([-3, -4, -Infinity], function(start) {
-        deepEqual(_.slice(array, start), [1, 2, 3]);
+        deepEqual(_.slice(array, start), array);
       });
     });
 
@@ -10022,7 +10022,7 @@
 
     test('should work with a `end` >= `array.length`', 4, function() {
       _.each([3, 4, Math.pow(2, 32), Infinity], function(end) {
-        deepEqual(_.slice(array, 0, end), [1, 2, 3]);
+        deepEqual(_.slice(array, 0, end), array);
       });
     });
 
@@ -10059,6 +10059,31 @@
 
       deepEqual(actual, array);
       notStrictEqual(actual, array)
+    });
+
+    test('should work in a lazy chain sequence', 12, function() {
+      if (!isNpm) {
+        var wrapped = _(array);
+
+        deepEqual(wrapped.slice(0, -1).value(), [1, 2]);
+        deepEqual(wrapped.slice(1).value(), [2, 3]);
+        deepEqual(wrapped.slice(-1).value(), [3]);
+
+        deepEqual(wrapped.slice(4).value(), []);
+        deepEqual(wrapped.slice(3, 2).value(), []);
+        deepEqual(wrapped.slice(0, -4).value(), []);
+        deepEqual(wrapped.slice(0, null).value(), []);
+
+        deepEqual(wrapped.slice(0, 4).value(), array);
+        deepEqual(wrapped.slice(-4).value(), array);
+        deepEqual(wrapped.slice(null).value(), array);
+
+        deepEqual(wrapped.slice(0, 1).value(), [1]);
+        deepEqual(wrapped.slice(NaN, '1').value(), [1]);
+      }
+      else {
+        skipTest(12);
+      }
     });
   }());
 

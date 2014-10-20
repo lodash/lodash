@@ -2173,6 +2173,10 @@
           if (isSrcArr || typeof result != 'undefined') {
             object[key] = result;
           }
+			// maybe the key is a getter
+			if(typeof Object.getOwnPropertyDescriptor(source, key).get === 'function'){
+				Object.defineProperty(object,key, Object.getOwnPropertyDescriptor(source, key));
+			}
           return;
         }
         // avoid merging previously merged cyclic sources

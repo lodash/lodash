@@ -7155,6 +7155,14 @@
       strictEqual(func(empty, undefined, true), -1);
     });
 
+    test('`_.' + methodName + '` should not match values on empty arrays', 2, function() {
+      var array = [];
+      array[-1] = 0;
+
+      strictEqual(func(array, undefined), -1);
+      strictEqual(func(array, 0, true), -1);
+    });
+
     test('`_.' + methodName + '` should match `NaN`', 2, function() {
       strictEqual(func([1, NaN, 3], NaN), 1);
       strictEqual(func([1, 3, NaN], NaN, true), 2);

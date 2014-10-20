@@ -7481,12 +7481,14 @@
 
     test('should work with a function for `source`', 1, function() {
       function source() {}
+
       source.a = 1;
-      source.b = 2;
+      source.b = function() {};
+      source.c = 3;
 
       var expected = [false, true],
           matches = _.matches(source),
-          objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
+          objects = [{ 'a': 1 }, { 'a': 1, 'b': source.b, 'c': 3 }],
           actual = _.map(objects, matches);
 
       deepEqual(actual, expected);

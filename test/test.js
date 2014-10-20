@@ -2084,7 +2084,7 @@
       deepEqual(actual.hasOwnProperty, 2);
     });
 
-    test('should work with a "_.pluck" style `callback`', 1, function() {
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
       var actual = _.countBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': 2, '5': 1 });
     });
@@ -4767,7 +4767,7 @@
       deepEqual(_.groupBy(array, 1), { 'a': [[1 , 'a'], [2, 'a']], 'b': [[2, 'b']] });
     });
 
-    test('should work with a "_.pluck" style `callback`', 1, function() {
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
       var actual = _.groupBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
     });
@@ -7871,7 +7871,7 @@
       strictEqual(actual, isMax ? 1 : 3);
     });
 
-    test('should work with a "_.pluck" style `callback`', 2, function() {
+    test('should work with a "_.pluck" style `iteratee`', 2, function() {
       var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
           actual = func(objects, 'a');
 
@@ -8862,7 +8862,7 @@
       deepEqual(_.partition(array, 1), [[array[1]], [array[0], array[2]]]);
     });
 
-    test('should work with a "_.pluck" style `callback`', 1, function() {
+    test('should work with a "_.pluck" style `predicate`', 1, function() {
       var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
           actual = _.partition(objects, 'a');
 
@@ -10170,7 +10170,7 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
-    test('should work with a "_.pluck" style `callback`', 1, function() {
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
       var actual = _.pluck(_.sortBy(objects, 'b'), 'b');
       deepEqual(actual, [1, 2, 3, 4]);
     });
@@ -10308,7 +10308,7 @@
       strictEqual(actual, 1);
     });
 
-    test('`_.' + methodName + '` should work with a "_.pluck" style `callback`', 1, function() {
+    test('`_.' + methodName + '` should work with a "_.pluck" style `iteratee`', 1, function() {
       var actual = func(objects, { 'x': 40 }, 'x');
       strictEqual(actual, 1);
     });
@@ -11733,7 +11733,7 @@
       deepEqual(actual, [1, 2, 3]);
     });
 
-    test('should work with a "_.pluck" style `callback`', 2, function() {
+    test('should work with a "_.pluck" style `iteratee`', 2, function() {
       var actual = _.uniq(objects, 'a');
 
       deepEqual(actual, objects.slice(0, 3));

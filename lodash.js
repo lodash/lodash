@@ -10095,12 +10095,9 @@
             isLazy = value instanceof LazyWrapper;
 
         if (retUnwrapped && !chainAll) {
-          if (isLazy) {
-            return func.apply(value, args);
-          }
-          var otherArgs = [this.value()];
-          push.apply(otherArgs, args);
-          return lodash[methodName].apply(lodash, otherArgs);
+          return isLazy
+            ? func.call(value)
+            : lodash[methodName](this.value());
         }
         if (isLazy || isArray(value)) {
           var result = func.apply(isLazy ? value : new LazyWrapper(this), args);

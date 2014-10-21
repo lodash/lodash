@@ -8267,7 +8267,7 @@
       delete stringProto.b;
     });
 
-    test('should work with a predicate argument', 1, function() {
+    test('should work with a `predicate` argument', 1, function() {
       var actual = _.omit(object, function(num) {
         return num != 2;
       });
@@ -8956,7 +8956,7 @@
       deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
     });
 
-    test('should work with a predicate argument', 1, function() {
+    test('should work with a `predicate` argument', 1, function() {
       var actual = _.pick(object, function(num) {
         return num != 2;
       });

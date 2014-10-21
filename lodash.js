@@ -3237,12 +3237,11 @@
 
       var keyIndex,
           index = -1,
-          maxIndex = objLength - 1,
           result = [];
 
       while (++index < length) {
         var key = props[index];
-        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0)) ||
+        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < objLength && keyIndex % 1 == 0)) ||
             hasOwnProperty.call(object, key)) {
           result.push(key);
         }
@@ -8019,7 +8018,6 @@
           Ctor = object.constructor,
           index = -1,
           isProto = typeof Ctor == 'function' && Ctor.prototype === object,
-          maxIndex = length - 1,
           result = Array(length),
           skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
@@ -8036,7 +8034,7 @@
         if (!(isProto && key == 'constructor') &&
             !(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex <= maxIndex && keyIndex % 1 == 0))) {
+            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0))) {
           result.push(key);
         }
       }

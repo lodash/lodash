@@ -8145,7 +8145,7 @@
      * _.merge(food, otherFood, function(a, b) {
      *   return _.isArray(a) ? a.concat(b) : undefined;
      * });
-     * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot] }
+     * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
      */
     var merge = createAssigner(baseMerge);
 

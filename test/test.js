@@ -3702,7 +3702,9 @@
     });
 
     test('should return `undefined` when querying empty arrays', 1, function() {
-      strictEqual(_.first([]), undefined);
+      var array = [];
+      array['-1'] = 1;
+      strictEqual(_.first(array), undefined);
     });
 
     test('should work as an iteratee for `_.map`', 1, function() {
@@ -3715,6 +3717,21 @@
     test('should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_(array).first(), 1);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3, 4];
+
+        var wrapped = _(array).filter(function(value) {
+          return value % 2 == 0;
+        });
+
+        strictEqual(wrapped.first(), 2);
       }
       else {
         skipTest();
@@ -7033,7 +7050,7 @@
     });
 
     test('should return `undefined` when querying empty arrays', 1, function() {
-      var array = []
+      var array = [];
       array['-1'] = 1;
       strictEqual(_.last([]), undefined);
     });
@@ -7048,6 +7065,21 @@
     test('should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_(array).last(), 3);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3, 4];
+
+        var wrapped = _(array).filter(function(value) {
+          return value % 2;
+        });
+
+        strictEqual(wrapped.last(), 3);
       }
       else {
         skipTest();
@@ -8130,11 +8162,10 @@
 
   (function() {
     test('should create a function that negates the result of `func`', 2, function() {
-      function isEven(n) {
+      var negate = _.negate(function(n) {
         return n % 2 == 0;
-      }
+      });
 
-      var negate = _.negate(isEven);
       strictEqual(negate(1), true);
       strictEqual(negate(2), false);
     });

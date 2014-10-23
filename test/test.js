@@ -1686,7 +1686,7 @@
           deepEqual(func(object), expected);
         });
 
-        test('`_.' + methodName + '` should work a `customizer` callback and ' + key, 4, function() {
+        test('`_.' + methodName + '` should work with a `customizer` callback and ' + key, 4, function() {
           var customizer = function(value) {
             return _.isPlainObject(value) ? undefined : value;
           };
@@ -2063,7 +2063,7 @@
   (function() {
     var array = [4.2, 6.1, 6.4];
 
-    test('should work with a callback', 1, function() {
+    test('should work with an iteratee', 1, function() {
       var actual = _.countBy(array, function(num) {
         return Math.floor(num);
       }, Math);
@@ -2071,12 +2071,12 @@
       deepEqual(actual, { '4': 1, '6': 2 });
     });
 
-    test('should use `_.identity` when no `callback` is provided', 1, function() {
+    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
       var actual = _.countBy([4, 6, 6]);
       deepEqual(actual, { '4': 1, '6':  2 });
     });
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       _.countBy(array, function() {
@@ -2116,7 +2116,7 @@
       deepEqual(actual, { '4': 1, '6': 2 });
     });
 
-    test('should work with a number for `callback`', 2, function() {
+    test('should work with a number for `iteratee`', 2, function() {
       var array = [
         [1, 'a'],
         [2, 'a'],
@@ -4290,7 +4290,7 @@
       var array = [1, 2, 3],
           func = _[methodName];
 
-      test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
+      test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
         var args,
             expected = [1, 0, array];
 
@@ -4662,7 +4662,7 @@
       deepEqual(actual, { 'a': 2 });
     });
 
-    test('`_.' + methodName + '` should not treat the second argument as a callback', 2, function() {
+    test('`_.' + methodName + '` should not treat the second argument as a `customizer` callback', 2, function() {
       function callback() {}
       callback.b = 2;
 
@@ -4752,12 +4752,12 @@
   (function() {
     var array = [4.2, 6.1, 6.4];
 
-    test('should use `_.identity` when no `callback` is provided', 1, function() {
+    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
       var actual = _.groupBy([4, 6, 6]);
       deepEqual(actual, { '4': [4], '6':  [6, 6] });
     });
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       _.groupBy(array, function() {
@@ -4792,7 +4792,7 @@
       deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
-    test('should work with a number for `callback`', 2, function() {
+    test('should work with a number for `iteratee`', 2, function() {
       var array = [
         [1, 'a'],
         [2, 'a'],
@@ -4864,7 +4864,7 @@
   QUnit.module('lodash.indexBy');
 
   (function() {
-    test('should use `_.identity` when no `callback` is provided', 1, function() {
+    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
       var actual = _.indexBy([4, 6, 6]);
       deepEqual(actual, { '4': 4, '6': 6 });
     });
@@ -4894,7 +4894,7 @@
       deepEqual(actual, { '4': 4.2, '6': 6.4 });
     });
 
-    test('should work with a number for `callback`', 2, function() {
+    test('should work with a number for `iteratee`', 2, function() {
       var array = [
         [1, 'a'],
         [2, 'a'],
@@ -6047,12 +6047,12 @@
       strictEqual(actual, true);
     });
 
-    test('should handle comparisons if `callback` returns `undefined`', 1, function() {
+    test('should handle comparisons if `customizer` returns `undefined`', 1, function() {
       var actual = _.isEqual('a', 'a', _.noop);
       strictEqual(actual, true);
     });
 
-    test('should return a boolean value even if `callback` does not', 2, function() {
+    test('should return a boolean value even if `customizer` does not', 2, function() {
       var actual = _.isEqual('a', 'a', function() { return 'a'; });
       strictEqual(actual, true);
 
@@ -6066,7 +6066,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should ensure `callback` is a function', 1, function() {
+    test('should ensure `customizer` is a function', 1, function() {
       var array = [1, 2, 3],
           eq = _.partial(_.isEqual, array),
           actual = _.every([array, [1, 0, 3]], eq);
@@ -7227,7 +7227,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       _.map(array, function() {
@@ -7257,7 +7257,7 @@
       deepEqual(actual, ['a']);
     });
 
-    test('should work on an object with no `callback`', 1, function() {
+    test('should work on an object with no `iteratee`', 1, function() {
       var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 });
       deepEqual(actual, array);
     });
@@ -7319,7 +7319,7 @@
   (function() {
     var object = { 'a': 1, 'b': 2, 'c': 3 };
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       _.mapValues(object, function() {
@@ -7349,7 +7349,7 @@
       deepEqual(actual, { 'a': 'a' });
     });
 
-    test('should work on an object with no `callback`', 1, function() {
+    test('should work on an object with no `iteratee`', 1, function() {
       var actual = _.mapValues({ 'a': 1, 'b': 2, 'c': 3 });
       deepEqual(actual, object);
     });
@@ -7888,7 +7888,7 @@
       strictEqual(func([curr, past]), isMax ? curr : past);
     });
 
-    test('`_.' + methodName + '` should work with a callback argument', 1, function() {
+    test('`_.' + methodName + '` should work with a `iteratee` argument', 1, function() {
       var actual = func(array, function(num) {
         return -num;
       });
@@ -7896,7 +7896,7 @@
       strictEqual(actual, isMax ? 1 : 3);
     });
 
-    test('`_.' + methodName + '` should provide the correct `callback` arguments when iterating an array', 1, function() {
+    test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', 1, function() {
       var args;
 
       func(array, function() {
@@ -7906,7 +7906,7 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('`_.' + methodName + '` should provide the correct `callback` arguments when iterating an object', 1, function() {
+    test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           firstKey = _.first(_.keys(object));
@@ -7942,7 +7942,7 @@
       deepEqual(actual, arrays[isMax ? 1 : 2]);
     });
 
-    test('`_.' + methodName + '` should work when `callback` returns +/-Infinity', 1, function() {
+    test('`_.' + methodName + '` should work when `iteratee` returns +/-Infinity', 1, function() {
       var value = isMax ? -Infinity : Infinity,
           object = { 'a': value };
 
@@ -8878,12 +8878,12 @@
       deepEqual(_.partition(array, _.constant(false)), [[], array]);
     });
 
-    test('should use `_.identity` when no `callback` is provided', 1, function() {
+    test('should use `_.identity` when no `predicate` is provided', 1, function() {
       var actual = _.partition(array);
       deepEqual(actual, [[1, 1], [0]]);
     });
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `predicate` arguments', 1, function() {
       var args;
 
       _.partition(array, function() {
@@ -8909,7 +8909,7 @@
       deepEqual(actual, [[1.1, 1.3], [0.2]]);
     });
 
-    test('should work with a number for `callback`', 2, function() {
+    test('should work with a number for `predicate`', 2, function() {
       var array = [
         [1, 0],
         [0, 1],
@@ -9315,7 +9315,7 @@
       strictEqual(_.reduce(array), 1);
     });
 
-    test('should provide the correct `callback` arguments when iterating an array', 2, function() {
+    test('should provide the correct `iteratee` arguments when iterating an array', 2, function() {
       var args;
 
       _.reduce(array, function() {
@@ -9332,7 +9332,7 @@
       deepEqual(args, [1, 2, 1, array]);
     });
 
-    test('should provide the correct `callback` arguments when iterating an object', 2, function() {
+    test('should provide the correct `iteratee` arguments when iterating an object', 2, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           firstKey = _.first(_.keys(object));
@@ -9394,7 +9394,7 @@
       strictEqual(_.reduceRight(array), 3);
     });
 
-    test('should provide the correct `callback` arguments when iterating an array', 2, function() {
+    test('should provide the correct `iteratee` arguments when iterating an array', 2, function() {
       var args;
 
       _.reduceRight(array, function() {
@@ -9411,7 +9411,7 @@
       deepEqual(args, [3, 2, 1, array]);
     });
 
-    test('should provide the correct `callback` arguments when iterating an object', 2, function() {
+    test('should provide the correct `iteratee` arguments when iterating an object', 2, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.last(_.keys(object));
@@ -9548,7 +9548,7 @@
   QUnit.module('lodash.reject');
 
   (function() {
-    test('should return elements the `callback` returns falsey for', 1, function() {
+    test('should return elements the `predicate` returns falsey for', 1, function() {
       var actual = _.reject([1, 2, 3], function(num) {
         return num % 2;
       });
@@ -9565,7 +9565,7 @@
     var func = _[methodName],
         isFilter = methodName == 'filter';
 
-    test('`_.' + methodName + '` should not modify the resulting value from within `callback`', 1, function() {
+    test('`_.' + methodName + '` should not modify the resulting value from within `predicate`', 1, function() {
       var actual = func([0], function(num, index, array) {
         array[index] = 1;
         return isFilter;
@@ -10235,7 +10235,7 @@
       deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN]);
     });
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       _.sortBy(objects, function() {
@@ -10285,7 +10285,7 @@
       deepEqual(actual, stableOrder);
     });
 
-    test('should coerce arrays returned from a callback', 1, function() {
+    test('should coerce arrays returned from `iteratee`', 1, function() {
       var actual = _.sortBy(objects, function(object) {
         var result = [object.a, object.b];
         result.toString = function() { return String(this[0]); };
@@ -10373,7 +10373,7 @@
         isSortedIndex = methodName == 'sortedIndex',
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
-    test('`_.' + methodName + '` should provide the correct `callback` arguments', 1, function() {
+    test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       func(array, 40, function() {
@@ -11485,7 +11485,7 @@
       });
     });
 
-    test('should provide the correct `callback` arguments', 1, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
       _.times(1, function() {
@@ -11505,12 +11505,12 @@
       deepEqual(actual, expect);
     });
 
-    test('should use `_.identity` when no `callback` is provided', 1, function() {
+    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
       var actual = _.times(3);
       deepEqual(actual, [0, 1, 2]);
     });
 
-    test('should return an array of the results of each `callback` execution', 1, function() {
+    test('should return an array of the results of each `iteratee` execution', 1, function() {
       deepEqual(_.times(3, function(n) { return n * 2; }), [0, 2, 4]);
     });
 
@@ -11565,7 +11565,7 @@
       deepEqual(actual, ['undefined']);
     });
 
-    test('should work without a callback argument', 1, function() {
+    test('should work without an `iteratee` argument', 1, function() {
       function Foo() {}
       ok(_.transform(new Foo) instanceof Foo);
     });
@@ -11579,7 +11579,7 @@
       'object': { 'a': 1, 'b': 2, 'c': 3 }
     },
     function(object, key) {
-      test('should provide the correct `callback` arguments when transforming an ' + key, 2, function() {
+      test('should provide the correct `iteratee` arguments when transforming an ' + key, 2, function() {
         var args;
 
         _.transform(object, function() {
@@ -11811,7 +11811,7 @@
       deepEqual(_.uniq([1, 2, 3, 3, 3, 3, 3], true), expected);
     });
 
-    test('should work with a callback', 2, function() {
+    test('should work with `iteratee`', 2, function() {
       _.each([objects, _.sortBy(objects, 'a')], function(array, index) {
         var isSorted = !!index,
             expected = isSorted ? [objects[2], objects[0], objects[1]] : objects.slice(0, 3);
@@ -11824,7 +11824,7 @@
       });
     });
 
-    test('should work with a callback without specifying `isSorted`', 1, function() {
+    test('should work with `iteratee` without specifying `isSorted`', 1, function() {
       var actual = _.uniq(objects, function(object) {
         return object.a;
       });
@@ -11902,7 +11902,7 @@
       'a string': '0'
     },
     function(callback, key) {
-      test('should work with ' + key + ' for `callback`', 1, function() {
+      test('should work with ' + key + ' for `iteratee`', 1, function() {
         var actual = _.uniq([['a'], ['b'], ['a']], callback);
         deepEqual(actual, [['a'], ['b']]);
       });
@@ -13002,12 +13002,10 @@
       _.each(funcs, function(methodName) {
         var actual,
             array = ['a'],
+            callback = function() { actual = this; },
             func = _[methodName],
             message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
 
-        function callback() {
-          actual = this;
-        }
         if (func) {
           if (/^reduce/.test(methodName) || methodName == 'transform') {
             func(array, callback, 0, null);

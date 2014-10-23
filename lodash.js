@@ -3056,7 +3056,7 @@
      */
     function isArrayLike(value) {
       return (value && typeof value == 'object' && isLength(value.length) &&
-        arrayLikeClasses[toString.call(value)]) || false;
+        (arrayLikeClasses[toString.call(value)] || (!lodash.support.argsClass && isArguments(value)))) || false;
     }
 
     /**

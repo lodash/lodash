@@ -741,23 +741,6 @@
   }());
 
   /**
-   * Checks if the provided arguments are from an iteratee call.
-   *
-   * @private
-   * @param {*} value The potential iteratee value argument.
-   * @param {*} index The potential iteratee index or key argument.
-   * @param {*} object The potential iteratee object argument.
-   * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
-   */
-  function isIterateeCall(value, index, object) {
-    var indexType = typeof index,
-        objectType = typeof object;
-
-    return (object && (indexType == 'number' || indexType == 'string') &&
-      (objectType == 'function' || objectType == 'object') && object[index] === value) || false;
-  }
-
-  /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -1689,7 +1672,7 @@
      */
     function baseEach(collection, iteratee) {
       var length = collection ? collection.length : 0;
-      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
+      if (!isLength(length)) {
         return baseForOwn(collection, iteratee);
       }
       var index = -1,
@@ -1714,7 +1697,7 @@
      */
     function baseEachRight(collection, iteratee) {
       var length = collection ? collection.length : 0;
-      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
+      if (!isLength(length)) {
         return baseForOwnRight(collection, iteratee);
       }
       var iterable = toObject(collection);
@@ -2159,7 +2142,7 @@
           length = collection ? collection.length : 0,
           result = [];
 
-      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+      if (isLength(length)) {
         result.length = length;
       }
       baseEach(collection, function(value) {
@@ -3072,7 +3055,7 @@
      * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
      */
     function isArrayLike(value) {
-      return (value && typeof value == 'object' && typeof value.length == 'number' &&
+      return (value && typeof value == 'object' && isLength(value.length) &&
         arrayLikeClasses[toString.call(value)]) || false;
     }
 
@@ -3085,6 +3068,40 @@
      */
     function isCloneable(value) {
       return (value && cloneableClasses[toString.call(value)] && !isHostObject(value)) || false;
+    }
+
+    /**
+     * Checks if the provided arguments are from an iteratee call.
+     *
+     * @private
+     * @param {*} value The potential iteratee value argument.
+     * @param {*} index The potential iteratee index or key argument.
+     * @param {*} object The potential iteratee object argument.
+     * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
+     */
+    function isIterateeCall(value, index, object) {
+      if (!isObject(object)) {
+        return false;
+      }
+      var type = typeof index,
+          prereq = type == 'string';
+
+      if (type == 'number') {
+        var length = object.length;
+        prereq = (isLength(length) && index > -1 && index < length && index % 1 == 0);
+      }
+      return prereq && object[index] === value;
+    }
+
+    /**
+     * Checks if `value` is valid array-like length.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+     */
+    function isLength(value) {
+      return typeof value == 'number' && value > -1 && value <= MAX_SAFE_INTEGER;
     }
 
     /**
@@ -3260,8 +3277,7 @@
       if (value == null) {
         return [];
       }
-      var length = value.length;
-      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
+      if (!isLength(value.length)) {
         return values(value);
       }
       if (lodash.support.unindexedChars && isString(value)) {
@@ -4920,9 +4936,7 @@
      * // => ['fred', 'pebbles']
      */
     function at(collection) {
-      var length = collection ? collection.length : 0;
-
-      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+      if (!collection || isLength(collection.length)) {
         collection = toIterable(collection);
       }
       return baseAt(collection, baseFlatten(arguments, false, false, 1));
@@ -4963,7 +4977,7 @@
     function contains(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
 
-      if (!(typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)) {
+      if (!isLength(length)) {
         collection = values(collection);
         length = collection.length;
       }
@@ -5834,9 +5848,7 @@
      */
     function size(collection) {
       var length = collection ? collection.length : 0;
-      return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER)
-        ? length
-        : keys(collection).length;
+      return isLength(length) ? length : keys(collection).length;
     }
 
     /**
@@ -5947,7 +5959,7 @@
           multi = iteratee && isArray(iteratee),
           result = [];
 
-      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+      if (isLength(length)) {
         result.length = length;
       }
       if (!multi) {
@@ -5990,7 +6002,7 @@
      */
     function toArray(collection) {
       var length = collection ? collection.length : 0;
-      if (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) {
+      if (isLength(length)) {
         return (lodash.support.unindexedChars && isString(collection))
           ? collection.split('')
           : baseSlice(collection);
@@ -7048,15 +7060,14 @@
      */
     function isArguments(value) {
       var length = (value && typeof value == 'object') ? value.length : undefined;
-      return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER &&
-        toString.call(value) == argsClass) || false;
+      return (isLength(length) && toString.call(value) == argsClass) || false;
     }
     // fallback for environments without a `[[Class]]` for `arguments` objects
     if (!support.argsClass) {
       isArguments = function(value) {
         var length = (value && typeof value == 'object') ? value.length : undefined;
-        return (typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER &&
-          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee')) || false;
+        return (isLength(length) && hasOwnProperty.call(value, 'callee') &&
+          !propertyIsEnumerable.call(value, 'callee')) || false;
       };
     }
 
@@ -7181,9 +7192,8 @@
         return true;
       }
       var length = value.length;
-      if ((typeof length == 'number' && length > -1 && length <= MAX_SAFE_INTEGER) &&
-          (isArray(value) || isString(value) || isArguments(value) ||
-            (typeof value == 'object' && isFunction(value.splice)))) {
+      if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
+          (typeof value == 'object' && isFunction(value.splice)))) {
         return !length;
       }
       return !keys(value).length;
@@ -8289,11 +8299,13 @@
 
       var isArr = isArrayLike(object);
       if (accumulator == null) {
-        if (isArr) {
-          accumulator = [];
-        } else if (isObject(object)) {
+        if (isArr || isObject(object)) {
           var Ctor = object.constructor;
-          accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+          if (isArr) {
+            accumulator = isArray(object) ? new Ctor : [];
+          } else {
+            accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+          }
         } else {
           accumulator = {};
         }

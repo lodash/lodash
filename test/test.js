@@ -367,21 +367,32 @@
     try {
       // add values from a different realm
       _.extend(_, require('vm').runInNewContext([
-        '({',
-        "'_arguments': (function() { return arguments; }(1, 2, 3)),",
-        "'_array': [1, 2, 3],",
-        "'_boolean': Object(false),",
-        "'_date': new Date,",
-        "'_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
-        "'_function': function() {},",
-        "'_nan': NaN,",
-        "'_null': null,",
-        "'_number': Object(0),",
-        "'_object': { 'a': 1, 'b': 2, 'c': 3 },",
-        "'_regexp': /x/,",
-        "'_string': Object('a'),",
-        "'_undefined': undefined",
-        '})'
+        '(function() {',
+        ' var object = {',
+        "  '_arguments': (function() { return arguments; }(1, 2, 3)),",
+        "  '_array': [1, 2, 3],",
+        "  '_boolean': Object(false),",
+        "  '_date': new Date,",
+        "  '_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
+        "  '_function': function() {},",
+        "  '_nan': NaN,",
+        "  '_null': null,",
+        "  '_number': Object(0),",
+        "  '_object': { 'a': 1, 'b': 2, 'c': 3 },",
+        "  '_regexp': /x/,",
+        "  '_string': Object('a'),",
+        "  '_undefined': undefined",
+        '  };',
+        '',
+        "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
+        "    var Ctor = Function('return typeof ' + type + \" != 'undefined' && \" + type)()",
+        '    if (Ctor) {',
+        "      object['_' + type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
+        '    }',
+        "  });",
+        '',
+        '  return object;',
+        '}())'
       ].join('\n')));
     }
     catch(e) {
@@ -583,6 +594,14 @@
       'parent._._regexp = /x/;',
       "parent._._string = Object('a');",
       'parent._._undefined = undefined;',
+      '',
+      'var root = this;',
+      "parent._.each(['" + typedArrays.join("', '") + "'], function(type) {",
+      '  var Ctor = root[type];',
+      '  if (Ctor) {',
+      "    parent._['_' + type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
+      '  }',
+      '});',
       '<\/script>'
     ].join('\n'));
     idoc.close();
@@ -11585,6 +11604,30 @@
         notStrictEqual(actual, object);
         deepEqual(actual, object);
       });
+    });
+
+    test('should produce an object from the same realm as `object`', 1, function() {
+      var objects = _.transform(_, function(result, value, key) {
+        if (_.startsWith(key, '_') && _.isObject(value)) {
+          result.push(value);
+        }
+      }, []);
+
+      var expected = _.times(objects.length, _.constant(true));
+
+      var actual = _.map(objects, function(object) {
+        var result = _.transform(object);
+        if (result === object) {
+          return false;
+        }
+        if (typeof object.length == 'number' &&
+            !_.isArray(object) && !_.isFunction(object) && !_.isString(object)) {
+          return result instanceof Array;
+        }
+        return result instanceof object.constructor;
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 

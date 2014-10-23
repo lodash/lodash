@@ -1824,8 +1824,10 @@
         var expected = _.times(objects.length, _.constant(true));
 
         var actual = _.map(objects, function(object) {
-          var result = func(object);
-          return result !== object && result instanceof object.constructor;
+          var Ctor = object.constructor,
+              result = func(object);
+
+          return result !== object && (result instanceof Ctor || !(new Ctor instanceof Ctor));
         });
 
         deepEqual(actual, expected);
@@ -11625,7 +11627,7 @@
 
     test('should produce an object from the same realm as `object`', 1, function() {
       var objects = _.transform(_, function(result, value, key) {
-        if (_.startsWith(key, '_') && _.isObject(value)) {
+        if (_.startsWith(key, '_') && _.isObject(value) && !_.isElement(value)) {
           result.push(value);
         }
       }, []);
@@ -11633,7 +11635,9 @@
       var expected = _.times(objects.length, _.constant(true));
 
       var actual = _.map(objects, function(object) {
-        var result = _.transform(object);
+        var Ctor = object.constructor,
+            result = _.transform(object);
+
         if (result === object) {
           return false;
         }
@@ -11641,7 +11645,7 @@
             !_.isArray(object) && !_.isFunction(object) && !_.isString(object)) {
           return result instanceof Array;
         }
-        return result instanceof object.constructor;
+        return result instanceof Ctor || !(new Ctor instanceof Ctor);
       });
 
       deepEqual(actual, expected);

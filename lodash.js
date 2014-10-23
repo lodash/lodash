@@ -3999,7 +3999,7 @@
      * // => [10, 20]
      */
     function pullAt(array) {
-      return basePullAt(array, baseFlatten(arguments, false, false, 1));
+      return basePullAt(array || [], baseFlatten(arguments, false, false, 1));
     }
 
     /**

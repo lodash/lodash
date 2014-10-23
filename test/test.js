@@ -953,6 +953,18 @@
       deepEqual(actual, ['d', 'a', 'c']);
     });
 
+    test('should work with a falsey `array` argument when keys are provided', 1, function() {
+      var expected = _.map(falsey, _.constant([undefined, undefined]));
+
+      var actual = _.map(falsey, function(value) {
+        try {
+          return _.at(value, 0, 1);
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should work with an `arguments` object for `collection`', 1, function() {
       var actual = _.at(args, [2, 0]);
       deepEqual(actual, ['c', 'a']);
@@ -9182,6 +9194,18 @@
 
       deepEqual(array, ['b']);
       deepEqual(actual, ['d', 'a', 'c']);
+    });
+
+    test('should work with a falsey `array` argument when keys are provided', 1, function() {
+      var expected = _.map(falsey, _.constant([undefined, undefined]));
+
+      var actual = _.map(falsey, function(value) {
+        try {
+          return _.pullAt(value, 0, 1);
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should ignore non-index values', 2, function() {

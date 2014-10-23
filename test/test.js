@@ -1814,6 +1814,23 @@
         deepEqual(actual, ['a', 'b', 'c']);
       });
 
+      test('`_.' + methodName + '` should produce an object from the same realm as `value`', 1, function() {
+        var objects = _.transform(_, function(result, value, key) {
+          if (_.startsWith(key, '_') && _.isObject(value) && !_.isElement(value) && !_.isFunction(value)) {
+            result.push(value);
+          }
+        }, []);
+
+        var expected = _.times(objects.length, _.constant(true));
+
+        var actual = _.map(objects, function(object) {
+          var result = func(object);
+          return result !== object && result instanceof object.constructor;
+        });
+
+        deepEqual(actual, expected);
+      });
+
       test('`_.' + methodName + '` should return a unwrapped value when chaining', 2, function() {
         if (!isNpm) {
           var object = objects['objects'],

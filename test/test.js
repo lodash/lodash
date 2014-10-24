@@ -1091,9 +1091,9 @@
 
   (function() {
     function fn() {
-      var args = [this];
-      push.apply(args, arguments);
-      return args;
+      var result = [this];
+      push.apply(result, arguments);
+      return result;
     }
 
     test('should bind a function to an object', 1, function() {
@@ -2243,16 +2243,24 @@
   QUnit.module('lodash.callback');
 
   (function() {
-    test('should provide arguments to `func`', 1, function() {
-      var args,
-          expected = ['a', 'b', 'c', 'd', 'e'];
+    test('should provide arguments to `func`', 3, function() {
+      function fn() {
+        var result = [this];
+        push.apply(result, arguments);
+        return result;
+      }
 
-      var callback = _.callback(function() {
-        args = slice.call(arguments);
-      });
+      var callback = _.callback(fn),
+          actual = callback('a', 'b', 'c', 'd', 'e', 'f');
 
-      callback.apply(null, expected);
-      deepEqual(args, expected);
+      ok(actual[0] === null || actual[0] && actual[0].Array);
+      deepEqual(actual.slice(1), ['a', 'b', 'c', 'd', 'e', 'f']);
+
+      var object = {};
+      callback = _.callback(fn, object);
+      actual = callback('a', 'b');
+
+      deepEqual(actual, [object, 'a', 'b']);
     });
 
     test('should return `_.identity` when `func` is nullish', 2, function() {
@@ -2865,13 +2873,13 @@
 
     asyncTest('should invoke the `trailing` call with the correct arguments and `this` binding', 2, function() {
       if (!(isRhino && isModularize)) {
-        var args,
+        var actual,
             count = 0,
             object = {};
 
         var debounced = _.debounce(function(value) {
-          args = [this];
-          push.apply(args, arguments);
+          actual = [this];
+          push.apply(actual, arguments);
           return ++count != 2;
         }, 32, { 'leading': true, 'maxWait': 64 });
 
@@ -2882,7 +2890,7 @@
         }
         setTimeout(function() {
           strictEqual(count, 2);
-          deepEqual(args, [object, 'a']);
+          deepEqual(actual, [object, 'a']);
           QUnit.start();
         }, 64);
       }

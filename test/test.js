@@ -1828,7 +1828,7 @@
 
       test('`_.' + methodName + '` should produce an object from the same realm as `value`', 1, function() {
         var objects = _.transform(_, function(result, value, key) {
-          if (_.startsWith(key, '_') && _.isObject(value) && !_.isElement(value) && !_.isFunction(value)) {
+          if (_.startsWith(key, '_') && _.isObject(value) && !_.isArguments(value) && !_.isElement(value) && !_.isFunction(value)) {
             result.push(value);
           }
         }, []);

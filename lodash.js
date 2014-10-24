@@ -729,7 +729,7 @@
    */
   var isHostObject = (function() {
     try {
-      ({ 'toString': 0 } + '');
+      String({ 'toString': 0 } + '');
     } catch(e) {
       return function() { return false; };
     }

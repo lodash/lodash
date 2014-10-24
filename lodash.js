@@ -2976,7 +2976,7 @@
     function initArrayClone(array, isDeep) {
       var index = -1,
           length = array.length,
-          result = array.constructor(length);
+          result = new array.constructor(length);
 
       if (!isDeep) {
         while (++index < length) {
@@ -3041,7 +3041,7 @@
           return new Ctor(object);
 
         case regexpClass:
-          result = Ctor(object.source, reFlags.exec(object));
+          result = new Ctor(object.source, reFlags.exec(object));
           result.lastIndex = object.lastIndex;
       }
       return result;

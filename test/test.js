@@ -1826,7 +1826,7 @@
         deepEqual(actual, ['a', 'b', 'c']);
       });
 
-      test('`_.' + methodName + '` should produce an object from the same realm as `value`', 1, function() {
+      test('`_.' + methodName + '` should create an object from the same realm as `value`', 1, function() {
         var objects = _.transform(_, function(result, value, key) {
           if (_.startsWith(key, '_') && _.isObject(value) && !_.isArguments(value) && !_.isElement(value) && !_.isFunction(value)) {
             result.push(value);
@@ -4559,8 +4559,12 @@
   _.each(['assign', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName];
 
-    test('`_.' + methodName + '` should return `undefined` when no destination object is provided', 1, function() {
-      strictEqual(func(), undefined);
+    test('`_.' + methodName + '` should pass thru falsey `object` values', 1, function() {
+      var actual = _.map(falsey, function(value, index) {
+        return index ? func(value) : func();
+      });
+
+      deepEqual(actual, falsey);
     });
 
     test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
@@ -11585,19 +11589,48 @@
   QUnit.module('lodash.transform');
 
   (function() {
-    test('should produce an object with the same `[[Prototype]]` as `object`', 2, function() {
+    test('should create an object with the same `[[Prototype]]` as `object` when `accumulator` is `null` or `undefined`', 4, function() {
       function Foo() {
         this.a = 1;
         this.b = 2;
         this.c = 3;
       }
 
-      var actual = _.transform(new Foo, function(result, value, key) {
+      var accumulators = [, null, undefined],
+          expected = _.map(accumulators, _.constant(true)),
+          object = new Foo;
+
+      var iteratee = function(result, value, key) {
         result[key] = value * value;
+      };
+
+      var mapper = function(accumulator, index) {
+        return index ? _.transform(object, iteratee, accumulator) : _.transform(object, iteratee);
+      };
+
+      var results = _.map(accumulators, mapper);
+
+      var actual = _.map(results, function(result) {
+        return result instanceof Foo;
       });
 
-      ok(actual instanceof Foo);
-      deepEqual(_.clone(actual), { 'a': 1, 'b': 4, 'c': 9 });
+      deepEqual(actual, expected);
+
+      expected = _.map(accumulators, _.constant({ 'a': 1, 'b': 4, 'c': 9 }));
+      actual = _.map(results, _.clone);
+
+      deepEqual(actual, expected);
+
+      object = { 'a': 1, 'b': 2, 'c': 3 };
+      actual = _.map(accumulators, mapper);
+
+      deepEqual(actual, expected);
+
+      object = [1, 2, 3];
+      expected = _.map(accumulators, _.constant([1, 4, 9]));
+      actual = _.map(accumulators, mapper);
+
+      deepEqual(actual, expected);
     });
 
     test('should treat sparse arrays as dense', 1, function() {
@@ -11613,8 +11646,34 @@
       ok(_.transform(new Foo) instanceof Foo);
     });
 
-    test('should check that `object` is an object before using its `[[Prototype]]`', 1, function() {
-      ok(!(_.transform(1) instanceof Number));
+    test('should check that `object` is an object before using its `[[Prototype]]`', 2, function() {
+      var Ctors = [Boolean, Boolean, Number, Number, Number, String, String],
+          values = [true, false, 0, 1, NaN, '', 'a'],
+          expected = _.map(values, _.constant({}));
+
+      var results = _.map(values, function(value, index) {
+        return index ? _.transform(value) : _.transform();
+      });
+
+      deepEqual(results, expected);
+
+      expected = _.map(values, _.constant(false));
+
+      var actual = _.map(results, function(value, index) {
+        return value instanceof Ctors[index];
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should create an empty object when provided a falsey `object` argument', 1, function() {
+      var expected = _.map(falsey, _.constant({}));
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.transform(value) : _.transform();
+      });
+
+      deepEqual(actual, expected);
     });
 
     _.each({
@@ -11649,7 +11708,7 @@
       });
     });
 
-    test('should produce an object from the same realm as `object`', 1, function() {
+    test('should create an object from the same realm as `object`', 1, function() {
       var objects = _.transform(_, function(result, value, key) {
         if (_.startsWith(key, '_') && _.isObject(value) && !_.isElement(value)) {
           result.push(value);

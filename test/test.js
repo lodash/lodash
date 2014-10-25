@@ -4256,6 +4256,12 @@
       'countBy',
       'every',
       'filter',
+      'find',
+      'findIndex',
+      'findKey',
+      'findLast',
+      'findLastIndex',
+      'findLastKey',
       'forEachRight',
       'forIn',
       'forInRight',
@@ -4269,6 +4275,11 @@
       'partition',
       'reject',
       'some'
+    ];
+
+    var arrayMethods = [
+      'findIndex',
+      'findLastIndex'
     ];
 
     var collectionMethods = [
@@ -4306,6 +4317,8 @@
     ]
 
     var objectMethods = [
+      'findKey',
+      'findLastKey',
       'forIn',
       'forInRight',
       'forOwn',
@@ -4313,6 +4326,9 @@
     ];
 
     var rightMethods = [
+      'findLast',
+      'findLastIndex',
+      'findLastKey',
       'forEachRight',
       'forInRight',
       'forOwnRight'
@@ -4320,6 +4336,12 @@
 
     var unwrappedMethods = [
       'every',
+      'find',
+      'findIndex',
+      'findKey',
+      'findLast',
+      'findLastIndex',
+      'findLastKey',
       'max',
       'min',
       'some'
@@ -4361,6 +4383,24 @@
       });
     });
 
+    _.each(_.difference(methods, objectMethods), function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName],
+          isEvery = methodName == 'every';
+
+      array.a = 1;
+
+      test('`_.' + methodName + '` should not iterate custom properties on arrays', 1, function() {
+        var keys = [];
+        func(array, function(value, key) {
+          keys.push(key);
+          return isEvery;
+        });
+
+        ok(!_.contains(keys, 'a'));
+      });
+    });
+
     _.each(_.difference(methods, unwrappedMethods), function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
@@ -4391,7 +4431,7 @@
       });
     });
 
-    _.each(_.difference(methods, forInMethods), function(methodName) {
+    _.each(_.difference(methods, arrayMethods, forInMethods), function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName];
 

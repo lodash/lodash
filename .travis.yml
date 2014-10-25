@@ -28,8 +28,6 @@ matrix:
       env: SAUCE_LABS=true
     - node_js: "0.10"
       env: SAUCE_LABS=true BUILD="modern"
-    - node_js: "0.10"
-      env: SAUCE_LABS=true BUILD="underscore"
 git:
   depth: 10
 branches:
@@ -54,10 +52,10 @@ script:
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || cd ./test"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.js"
   - "([ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ]) || $BIN $OPTION ./test.js ../dist/lodash.$BUILD.min.js"
-  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.min.js&noglobals=true\" tags=\"$BUILD,production\""
-  - "([ $SAUCE_LABS == false ] || [ $BUILD != 'compat' ])     || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.min.js\" tags=\"$BUILD,production,ie-compat\" compatMode=7"
-  - "([ $SAUCE_LABS == false ] || [ $BUILD == 'underscore' ]) || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.js&noglobals=true\" tags=\"$BUILD,development\""
-  - "([ $SAUCE_LABS == false ] || [ $BUILD != 'compat' ])     || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.js\" tags=\"$BUILD,development,ie-compat\" compatMode=7"
+  - "[ $SAUCE_LABS == false ]  || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.js&noglobals=true\" tags=\"$BUILD,development\""
+  - "[ $SAUCE_LABS == false ]  || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.min.js&noglobals=true\" tags=\"$BUILD,production\""
+  - "([ $SAUCE_LABS == false ] || [ $BUILD != 'compat' ]) || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.js\" tags=\"$BUILD,development,ie-compat\" compatMode=7"
+  - "([ $SAUCE_LABS == false ] || [ $BUILD != 'compat' ]) || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../dist/lodash.$BUILD.min.js\" tags=\"$BUILD,production,ie-compat\" compatMode=7"
   - "[ $SAUCE_LABS == false ]  || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../dist/lodash.$BUILD.min.js\" tags=\"$BUILD,production,backbone\""
   - "[ $SAUCE_LABS == false ]  || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../dist/lodash.$BUILD.js\" tags=\"$BUILD,development,backbone\""
   - "[ $SAUCE_LABS == false ]  || $BIN ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../dist/lodash.$BUILD.min.js\" tags=\"$BUILD,production,underscore\""

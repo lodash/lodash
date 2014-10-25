@@ -894,22 +894,13 @@
       deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
-    test('should assign own source properties', 1, function() {
-      function Foo() {
-        this.a = 1;
-        this.c = 3;
-      }
-      Foo.prototype.b = 2;
-      deepEqual(_.assign({}, new Foo), { 'a': 1, 'c': 3 });
-    });
-
     test('should accept multiple source objects', 2, function() {
       var expected = { 'a': 1, 'b': 2, 'c': 3 };
       deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }, { 'c': 3 }), expected);
       deepEqual(_.assign({ 'a': 1 }, { 'b': 2, 'c': 2 }, { 'c': 3 }), expected);
     });
 
-    test('should overwrite source properties', 1, function() {
+    test('should overwrite destination properties', 1, function() {
       var expected = { 'a': 3, 'b': 2, 'c': 1 };
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
@@ -2928,15 +2919,6 @@
       deepEqual(_.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
-    test('should assign own source properties', 1, function() {
-      function Foo() {
-        this.a = 1;
-        this.c = 3;
-      }
-      Foo.prototype.b = 2;
-      deepEqual(_.defaults({ 'c': 2 }, new Foo), { 'a': 1, 'c': 2 });
-    });
-
     test('should accept multiple source objects', 2, function() {
       var expected = { 'a': 1, 'b': 2, 'c': 3 };
       deepEqual(_.defaults({ 'a': 1, 'b': 2 }, { 'b': 3 }, { 'c': 3 }), expected);
@@ -4615,11 +4597,14 @@
       deepEqual(actual, falsey);
     });
 
-    test('`_.' + methodName + '` should not assign inherited `source` properties', 1, function() {
-      function Foo() {}
-      Foo.prototype = { 'a': 1 };
+    test('`_.' + methodName + '` should assign own source properties', 1, function() {
+      function Foo() {
+        this.a = 1;
+        this.c = 3;
+      }
+      Foo.prototype.b = 2;
 
-      deepEqual(func({}, new Foo), {});
+      deepEqual(func({}, new Foo), { 'a': 1, 'c': 3 });
     });
 
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {

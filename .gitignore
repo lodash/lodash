@@ -8,4 +8,3 @@
 coverage
 modularize
 node_modules
-dist/*.backbone.*

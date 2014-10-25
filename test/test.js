@@ -3314,12 +3314,12 @@
       deepEqual(actual, [1]);
     });
 
-    test('should work with an object for `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
-    });
-
     test('should work with a "_.pluck" style `predicate`', 1, function() {
       deepEqual(_.dropRightWhile(objects, 'b'), objects.slice(0, 1));
+    });
+
+    test('should work with a "_.where" style `predicate`', 1, function() {
+      deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3376,12 +3376,12 @@
       deepEqual(actual, [3]);
     });
 
-    test('should work with an object for `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
-    });
-
     test('should work with a "_.pluck" style `predicate`', 1, function() {
       deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
+    });
+
+    test('should work with a "_.where" style `predicate`', 1, function() {
+      deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3641,12 +3641,12 @@
         strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
       });
 
-      test('should work with an object for `predicate`', 1, function() {
-        strictEqual(func(objects, { 'b': 2 }), expected[2]);
-      });
-
       test('should work with a "_.pluck" style `predicate`', 1, function() {
         strictEqual(func(objects, 'b'), expected[3]);
+      });
+
+      test('should work with a "_.where" style `predicate`', 1, function() {
+        strictEqual(func(objects, { 'b': 2 }), expected[2]);
       });
 
       test('should return `' + expected[1] + '` for empty or falsey collections', 1, function() {

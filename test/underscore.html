@@ -140,7 +140,6 @@
 						'[]'
 					],
 					'matches': [
-						'spec can be a function',
 						'inherited and own properties are checked on the test object',
 						'doesnt fasley match constructor on undefined/null'
 					]
@@ -173,27 +172,6 @@
 				delete QUnit.config.excused.Functions['debounce asap'];
 				delete QUnit.config.excused.Objects.isEqual;
 				delete QUnit.config.excused.Utility.uniqueId;
-			}
-			// only excuse for non-Underscore builds
-			if (/\bunderscore\b/i.test(ui.buildPath)) {
-				QUnit.config.excused.Arrays.intersection.shift();
-				QUnit.config.excused.Utility.times.pop();
-				delete QUnit.config.excused.Arrays.drop;
-				delete QUnit.config.excused.Arrays.first;
-				delete QUnit.config.excused.Arrays.flatten;
-				delete QUnit.config.excused.Arrays.initial;
-				delete QUnit.config.excused.Arrays.last;
-				delete QUnit.config.excused.Arrays.rest;
-				delete QUnit.config.excused.Arrays.take;
-				delete QUnit.config.excused.Chaining;
-				delete QUnit.config.excused.Collections.filter;
-				delete QUnit.config.excused.Collections.map;
-				delete QUnit.config.excused.Functions.memoize;
-				delete QUnit.config.excused.Objects.isFinite;
-				delete QUnit.config.excused.Objects.keys;
-				delete QUnit.config.excused.Utility['_.templateSettings.variable'];
-			} else {
-				QUnit.config.excused.Objects.matches.shift();
 			}
 			// load test scripts
 			document.write(ui.urlParams.loader != 'none'

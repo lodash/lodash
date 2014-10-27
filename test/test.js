@@ -3172,14 +3172,14 @@
 
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4],
+        var array = [1, 2, 3, 4, 5, 6, 7, 8],
             predicate = function(value) { return value > 1; },
-            actual = _(array).filter(predicate).drop(2).value();
+            actual = _(array).filter(predicate).drop(2).drop(1).value();
 
-        deepEqual(actual, [4]);
+        deepEqual(actual, [5, 6, 7, 8]);
 
-        actual = _(array).filter(predicate).drop().dropRight().value();
-        deepEqual(actual, [3]);
+        actual = _(array).filter(predicate).drop(2).dropRight(1).drop(1).dropRight(2).value();
+        deepEqual(actual, [5]);
       }
       else {
         skipTest(2);

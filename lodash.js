@@ -8027,7 +8027,8 @@
       var keyIndex,
           Ctor = object.constructor,
           index = -1,
-          isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto,
+          isProto = proto === object,
           result = Array(length),
           skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
@@ -8052,13 +8053,16 @@
         index = -1;
         length = shadowedProps.length;
 
-        if (isProto) {
-          var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
-              nonEnum = nonEnumProps[className];
+        var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
+            nonEnum = nonEnumProps[className] || nonEnumProps[objectClass];
+
+        if (className == objectClass) {
+          proto = objectProto;
         }
         while (++index < length) {
           key = shadowedProps[index];
-          if (!(nonEnum && nonEnum[key]) && hasOwnProperty.call(object, key)) {
+          if (!(isProto && nonEnum[key]) &&
+              (key == 'constructor' ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
             result.push(key);
           }
         }

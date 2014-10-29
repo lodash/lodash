@@ -7081,8 +7081,12 @@
       delete stringProto.a;
     });
 
-    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 2, function() {
+      function Foo() {}
+      Foo.prototype = _.create(shadowedObject);
+
       deepEqual(func(shadowedObject).sort(), shadowedProps);
+      deepEqual(func(new Foo).sort(), isKeys ? [] : _.without(shadowedProps, 'constructor'));
     });
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {

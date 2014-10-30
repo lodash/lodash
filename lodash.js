@@ -8042,7 +8042,7 @@
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
       for (var key in object) {
-        if (!(isProto && key == 'constructor') &&
+        if (!(key == 'constructor' && (isProto || (Ctor === proto[key] && !hasOwnProperty.call(object, key)))) &&
             !(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
             !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0))) {

@@ -8042,25 +8042,23 @@
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
       for (var key in object) {
-        if (!(key == 'constructor' && (isProto || (Ctor === proto[key] && !hasOwnProperty.call(object, key)))) &&
-            !(skipProto && key == 'prototype') &&
+        if (!(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0))) {
+            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0)) &&
+            !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
         }
       }
       if (support.nonEnumShadows && object !== objectProto) {
-        index = -1;
-        length = shadowedProps.length;
-
         var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
             nonEnum = nonEnumProps[className] || nonEnumProps[objectClass];
 
         if (className == objectClass) {
           proto = objectProto;
         }
-        while (++index < length) {
-          key = shadowedProps[index];
+        length = shadowedProps.length;
+        while (length--) {
+          key = shadowedProps[length];
           if (!(isProto && nonEnum[key]) &&
               (key == 'constructor' ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
             result.push(key);

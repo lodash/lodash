@@ -277,7 +277,7 @@
   };
 
   /** Used as a reference to the global object */
-  var root = (objectTypes[typeof window] && window) || this;
+  var root = (objectTypes[typeof window] && window !== (this && this.window)) ? window : this;
 
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;

@@ -4799,12 +4799,17 @@
      */
     function LazyWrapper(value) {
       this.dir = 1;
-      this.dropCount = 0;
       this.filtered = false;
       this.iteratees = [];
-      this.takeCount = POSITIVE_INFINITY;
-      this.views = [];
       this.wrapped = value;
+
+      this.end =
+      this.endAfter =
+      this.startRight = POSITIVE_INFINITY;
+
+      this.start =
+      this.startAfter =
+      this.endRight = 0;
     }
 
     /**
@@ -4818,11 +4823,17 @@
     function lazyClone() {
       var result = new LazyWrapper(this.wrapped);
       result.dir = this.dir;
-      result.dropCount = this.dropCount;
       result.filtered = this.filtered;
-      result.takeCount = this.takeCount;
+
+      result.end = this.end;
+      result.endAfter = this.endAfter;
+      result.endRight = this.endRight;
+
+      result.start = this.start;
+      result.startAfter = this.startAfter;
+      result.startRight = this.startRight;
+
       push.apply(result.iteratees, this.iteratees);
-      push.apply(result.views, this.views);
       return result;
     }
 
@@ -4854,28 +4865,15 @@
     function lazyValue() {
       var array = this.wrapped.value(),
           length = array.length,
-          start = 0,
-          end = length,
-          views = this.views,
-          viewIndex = -1,
-          viewsLength = views.length;
+          start = this.start,
+          end = length - this.endRight;
 
-      while (++viewIndex < viewsLength) {
-        var view = views[viewIndex],
-            size = view.size;
+      start = nativeMax(start, end - this.startRight);
+      end = nativeMin(end, start + this.end);
 
-        switch (view.type) {
-          case 'drop':      start += size; break;
-          case 'dropRight': end -= size; break;
-          case 'take':      end = nativeMin(end, start + size); break;
-          case 'takeRight': start = nativeMax(start, end - size); break;
-        }
-      }
       var dir = this.dir,
-          dropCount = this.dropCount,
-          droppedCount = 0,
-          doneDropping = !dropCount,
-          takeCount = nativeMin(end - start, this.takeCount - dropCount),
+          startAfter = this.startAfter,
+          endAfter = nativeMin(end - start, this.endAfter - startAfter),
           isRight = dir < 0,
           index = isRight ? end : start - 1,
           iteratees = this.iteratees,
@@ -4884,9 +4882,11 @@
           result = [];
 
       outer:
-      while (length-- && resIndex < takeCount) {
+      while (length-- && resIndex < endAfter) {
+        index += dir;
+
         var iterateesIndex = -1,
-            value = array[index += dir];
+            value = array[index];
 
         while (++iterateesIndex < iterateesLength) {
           var data = iteratees[iterateesIndex],
@@ -4904,10 +4904,10 @@
             }
           }
         }
-        if (doneDropping) {
-          result[resIndex++] = value;
+        if (startAfter) {
+          startAfter--;
         } else {
-          doneDropping = ++droppedCount >= dropCount;
+          result[resIndex++] = value;
         }
       }
       return isRight ? result.reverse() : result;
@@ -10019,22 +10019,19 @@
     });
 
     // add `LazyWrapper` methods for `_.drop` and `_.take` variants
-    arrayEach(['drop', 'take'], function(methodName) {
-      var countName = methodName + 'Count',
+    arrayEach(['drop', 'take'], function(methodName, index) {
+      var rangeName = index ? 'end' : 'start',
+          afterName = rangeName + 'After',
+          rightName = (index ? 'start' : 'end') + 'Right',
           whileName = methodName + 'While';
 
       LazyWrapper.prototype[methodName] = function(n) {
-        n = n == null ? 1 : nativeMax(+n || 0, 0);
+        var result = this.clone(),
+            key = result.filtered ? afterName : (result.dir < 0 ? rightName : rangeName),
+            value = result[key];
 
-        var result = this.clone();
-        if (this.filtered) {
-          result[countName] = n;
-          return result;
-        }
-        result.views.push({
-          'size': n,
-          'type': methodName + (result.dir < 0 ? 'Right' : '')
-        });
+        n = n == null ? 1 : nativeMax(+n || 0, 0);
+        result[key] = (nativeIsFinite(value) ? value : 0) + n;
         return result;
       };
 

@@ -1,6 +1,5 @@
-if (!self.console) {
-  console = { 'log': function() {} };
-}
+self.console || (self.console = { 'log': function() {} });
+
 addEventListener('message', function(e) {
   if (e.data) {
     try {

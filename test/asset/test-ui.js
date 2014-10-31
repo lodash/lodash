@@ -67,10 +67,8 @@
           case 'lodash-compat':         return 1;
           case 'lodash-modern-dev':     return 2;
           case 'lodash-modern':         return 3;
-          case 'lodash-underscore-dev': return 4;
-          case 'lodash-underscore':     return 5;
-          case 'lodash-custom-dev':     return 6;
-          case 'lodash-custom':         return 7;
+          case 'lodash-custom-dev':     return 4;
+          case 'lodash-custom':         return 5;
           case 'lodash-compat-dev':
           case null:                    return 0;
         }
@@ -101,8 +99,6 @@
       '<option value="lodash-compat">Lo-Dash (compat production)</option>' +
       '<option value="lodash-modern-dev">Lo-Dash (modern development)</option>' +
       '<option value="lodash-modern">Lo-Dash (modern production)</option>' +
-      '<option value="lodash-underscore-dev">Lo-Dash (underscore development)</option>' +
-      '<option value="lodash-underscore">Lo-Dash (underscore production)</option>' +
       '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom production)</option>' +
       '</select>';
@@ -147,8 +143,6 @@
       case 'lodash-compat':         result = 'dist/lodash.compat.min.js'; break;
       case 'lodash-modern-dev':     result = 'dist/lodash.js'; break;
       case 'lodash-modern':         result = 'dist/lodash.min.js'; break;
-      case 'lodash-underscore-dev': result = 'dist/lodash.underscore.js'; break;
-      case 'lodash-underscore':     result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev':     result = 'lodash.custom.js'; break;
       case 'lodash-custom':         result = 'lodash.custom.min.js'; break;
       case null:                    build  = 'lodash-compat-dev';

@@ -59,10 +59,7 @@
       '<label for="perf-build">Build: </label>' +
       '<select id="perf-build">' +
       '<option value="lodash-compat">Lo-Dash (compat)</option>' +
-      '<option value="lodash-legacy">Lo-Dash (legacy)</option>' +
-      '<option value="lodash-mobile">Lo-Dash (mobile)</option>' +
       '<option value="lodash-modern">Lo-Dash (modern)</option>' +
-      '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom production)</option>' +
       '</select>';
@@ -75,10 +72,7 @@
       '<option value="underscore-dev">Underscore (development)</option>' +
       '<option value="underscore">Underscore (production)</option>' +
       '<option value="lodash-compat">Lo-Dash (compat)</option>' +
-      '<option value="lodash-legacy">Lo-Dash (legacy)</option>' +
-      '<option value="lodash-mobile">Lo-Dash (mobile)</option>' +
       '<option value="lodash-modern">Lo-Dash (modern)</option>' +
-      '<option value="lodash-underscore">Lo-Dash (underscore)</option>' +
       '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
       '<option value="lodash-custom">Lo-Dash (custom production)</option>' +
       '</select>';
@@ -93,13 +87,10 @@
     buildList.selectedIndex = (function() {
       switch (build) {
         case 'lodash-compat':     return 0;
-        case 'lodash-legacy':     return 1;
-        case 'lodash-mobile':     return 2;
-        case 'lodash-underscore': return 4;
-        case 'lodash-custom-dev': return 5;
-        case 'lodash-custom':     return 6;
+        case 'lodash-custom-dev': return 2;
+        case 'lodash-custom':     return 3;
         case 'lodash-modern':
-        case null:                return 3;
+        case null:                return 1;
       }
       return -1;
     }());
@@ -108,12 +99,9 @@
       switch (other) {
         case 'underscore-dev':    return 0;
         case 'lodash-compat':     return 2;
-        case 'lodash-legacy':     return 3;
-        case 'lodash-mobile':     return 4;
-        case 'lodash-modern':     return 5;
-        case 'lodash-underscore': return 6;
-        case 'lodash-custom-dev': return 7;
-        case 'lodash-custom':     return 8;
+        case 'lodash-modern':     return 3;
+        case 'lodash-custom-dev': return 4;
+        case 'lodash-custom':     return 5;
         case 'underscore':
         case null:                return 1;
       }
@@ -129,9 +117,6 @@
     var result;
     switch (build) {
       case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
-      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
-      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case null:                build = 'lodash-modern';
@@ -146,10 +131,7 @@
     var result;
     switch (other) {
       case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-legacy':     result = 'dist/lodash.legacy.min.js'; break;
-      case 'lodash-mobile':     result = 'dist/lodash.mobile.min.js'; break;
       case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
-      case 'lodash-underscore': result = 'dist/lodash.underscore.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;

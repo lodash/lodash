@@ -3507,12 +3507,11 @@
      * // => ['barney', 'fred']
      */
     function dropRightWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0,
-          index = length;
+      var length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) {}
-      return slice(array, 0, index + 1);
+      while (length-- && predicate(array[length], length, array)) {}
+      return slice(array, 0, length + 1);
     }
 
     /**
@@ -4293,12 +4292,11 @@
      * // => ['pebbles']
      */
     function takeRightWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0,
-          index = length;
+      var length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) {}
-      return slice(array, index + 1);
+      while (length-- && predicate(array[length], length, array)) {}
+      return slice(array, length + 1);
     }
 
     /**

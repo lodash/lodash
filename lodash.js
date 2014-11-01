@@ -276,7 +276,12 @@
     '\u2029': 'u2029'
   };
 
-  /** Used as a reference to the global object */
+  /**
+   * Used as a reference to the global object.
+   *
+   * The `this` value is used if it is the global object to avoid Greasemonkey's
+   * restricted `window` object, otherwise the `window` object is used.
+   */
   var root = (objectTypes[typeof window] && window !== (this && this.window)) ? window : this;
 
   /** Detect free variable `exports` */
@@ -576,8 +581,7 @@
   }
 
   /**
-   * Used by `_.max` and `_.min` as the default callback when a given collection
-   * is a string value.
+   * Used by `_.max` and `_.min` as the default callback for string values.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -1014,31 +1018,30 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object which wraps the given value to enable intuitive
-     * method chaining.
+     * Creates a `lodash` object which wraps `value` to enable intuitive chaining.
+     * Explicit chaining may be enabled by using `_.chain`. Chaining is supported
+     * in custom builds as long as the `_#value` method is implicitly or explicitly
+     * included in the build.
      *
      * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * Chaining is supported in custom builds as long as the `value` method is
-     * implicitly or explicitly included in the build.
-     *
      * The chainable wrapper functions are:
      * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
      * `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`, `create`,
      * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
-     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`, `flattenDeep`,
-     * `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
-     * `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`,
-     * `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`,
-     * `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`, `omit`, `once`,
-     * `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pluck`, `property`,
-     * `pull`, `pullAt`, `push`, `range`, `reject`, `remove`, `rest`, `reverse`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`, `takeRight`,
-     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `times`,
-     * `toArray`, `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`,
-     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
+     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
+     * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
+     * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
+     * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
+     * `mapValues`, `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`,
+     * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
+     * `pluck`, `property`, `pull`, `pullAt`, `push`, `range`, `reject`, `remove`,
+     * `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`,
+     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
+     * `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`, `unzip`,
+     * `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
@@ -1047,17 +1050,15 @@
      * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
      * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
-     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
-     * `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`,
-     * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
-     * `result`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-     * `sortedLastIndex`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
+     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
+     * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
+     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
+     * `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
+     * `uniqueId`, `value`, and `words`
      *
-     * The wrapper function `sample` will return a wrapped value when `n` is
-     * provided, otherwise it will return an unwrapped value.
-     *
-     * Explicit chaining can be enabled by using the `_.chain` method.
+     * The wrapper function `sample` will return a wrapped value when `n` is provided,
+     * otherwise it will return an unwrapped value.
      *
      * @name _
      * @constructor
@@ -7904,10 +7905,9 @@
     }
 
     /**
-     * Creates an object composed of the inverted keys and values of the given
-     * object. If the given object contains duplicate values, subsequent values
-     * overwrite property assignments of previous values unless `multiValue`
-     * is `true`.
+     * Creates an object composed of the inverted keys and values of `object`.
+     * If `object` contains duplicate values, subsequent values overwrite property
+     * assignments of previous values unless `multiValue` is `true`.
      *
      * @static
      * @memberOf _
@@ -8201,7 +8201,7 @@
     }
 
     /**
-     * Creates a two dimensional array of a given object's key-value pairs,
+     * Creates a two dimensional array of the key-value pairs for `object`,
      * e.g. `[[key1, value1], [key2, value2]]`.
      *
      * @static
@@ -8431,7 +8431,7 @@
     }
 
     /**
-     * Checks if `string` ends with a given target string.
+     * Checks if `string` ends with the given target string.
      *
      * @static
      * @memberOf _
@@ -8439,8 +8439,7 @@
      * @param {string} [string=''] The string to search.
      * @param {string} [target] The string to search for.
      * @param {number} [position=string.length] The position to search from.
-     * @returns {boolean} Returns `true` if the given string ends with the
-     *  target string, else `false`.
+     * @returns {boolean} Returns `true` if `string` ends with `target`, else `false`.
      * @example
      *
      * _.endsWith('abc', 'c');
@@ -8698,7 +8697,7 @@
     });
 
     /**
-     * Checks if `string` starts with a given target string.
+     * Checks if `string` starts with the given target string.
      *
      * @static
      * @memberOf _
@@ -8706,8 +8705,7 @@
      * @param {string} [string=''] The string to search.
      * @param {string} [target] The string to search for.
      * @param {number} [position=0] The position to search from.
-     * @returns {boolean} Returns `true` if the given string starts with the
-     *  target string, else `false`.
+     * @returns {boolean} Returns `true` if `string` starts with `target`, else `false`.
      * @example
      *
      * _.startsWith('abc', 'a');

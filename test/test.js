@@ -9087,6 +9087,18 @@
     test('should coerce property names to strings', 1, function() {
       deepEqual(_.pick({ '0': 'a', '1': 'b' }, 0), { '0': 'a' });
     });
+
+    test('should support picking using a where style callback', 2, function() {
+      var collection = {
+        'obj1': {'a': 1, 'b': 2},
+        'obj2': {'a': 5, 'b': 2, 'c': 3},
+        'obj3': {'a': 1, 'b': 2, 'c': 3},
+        'obj4': {'a': 1, 'b': 4, 'c': 3}
+      };
+
+      deepEqual(_.pick(collection, {'a': 1}), _.pick(collection, ['obj1', 'obj3', 'obj4']));
+      deepEqual(_.pick(collection, {'a': 1, 'c': 3}), _.pick(collection, ['obj3', 'obj4']));
+    });
   }('a', 'c'));
 
   /*--------------------------------------------------------------------------*/

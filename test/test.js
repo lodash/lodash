@@ -4535,36 +4535,6 @@
       deepEqual(props.sort(), shadowedProps);
     });
 
-    test('`_.' + methodName + '` does not iterate over non-enumerable properties (test in IE < 9)', 10, function() {
-      _.forOwn({
-        'Array': arrayProto,
-        'Boolean': Boolean.prototype,
-        'Date': Date.prototype,
-        'Error': errorProto,
-        'Function': funcProto,
-        'Object': objectProto,
-        'Number': Number.prototype,
-        'TypeError': TypeError.prototype,
-        'RegExp': RegExp.prototype,
-        'String': stringProto
-      },
-      function(proto, key) {
-        var message = 'non-enumerable properties on ' + key + '.prototype',
-            props = [];
-
-        func(proto, function(value, prop) { props.push(prop); });
-
-        if (/Error/.test(key)) {
-          ok(_.every(['constructor', 'toString'], function(prop) {
-            return !_.contains(props, prop);
-          }), message);
-        }
-        else {
-          deepEqual(props, [], message);
-        }
-      });
-    });
-
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;
@@ -7092,6 +7062,47 @@
 
       Foo.prototype.constructor = Foo;
       deepEqual(func(new Foo).sort(), actual);
+    });
+
+    test('`_.' + methodName + '` skips non-enumerable properties (test in IE < 9)', 50, function() {
+      _.forOwn({
+        'Array': arrayProto,
+        'Boolean': Boolean.prototype,
+        'Date': Date.prototype,
+        'Error': errorProto,
+        'Function': funcProto,
+        'Object': objectProto,
+        'Number': Number.prototype,
+        'TypeError': TypeError.prototype,
+        'RegExp': RegExp.prototype,
+        'String': stringProto
+      },
+      function(proto, key) {
+        _.each([proto, _.create(proto)], function(object, index) {
+          var actual = func(proto),
+              isErr = /Error/.test(key),
+              message = 'enumerable properties ' + (index ? 'inherited from' : 'on') + ' `' + key + '.prototype`',
+              props = isErr ? ['constructor', 'toString'] : ['constructor'];
+
+          actual = isErr ? _.difference(props, actual) : actual;
+          strictEqual(_.isEmpty(actual), !isErr, 'skips non-' + message);
+
+          proto.a = 1;
+          actual = func(object);
+          delete proto.a;
+
+          strictEqual(_.contains(actual, 'a'), !(isKeys && index), 'includes ' + message);
+
+          if (index) {
+            object.constructor = 1;
+            if (isErr) {
+              object.toString = 2;
+            }
+            actual = func(object);
+            ok(_.isEmpty(_.difference(props, actual)), 'includes shadowed properties on objects that inherit from `' + key + '.prototype`');
+          }
+        });
+      });
     });
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {

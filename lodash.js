@@ -8049,7 +8049,7 @@
       }
       if (support.nonEnumShadows && object !== objectProto) {
         var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
-            nonEnum = nonEnumProps[className] || nonEnumProps[objectClass];
+            nonEnums = nonEnumProps[className] || nonEnumProps[objectClass];
 
         if (className == objectClass) {
           proto = objectProto;
@@ -8057,8 +8057,9 @@
         length = shadowedProps.length;
         while (length--) {
           key = shadowedProps[length];
-          if (!(isProto && nonEnum[key]) &&
-              (key == 'constructor' ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
+          var nonEnum = nonEnums[key];
+          if (!(isProto && nonEnum) &&
+              (nonEnum ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
             result.push(key);
           }
         }

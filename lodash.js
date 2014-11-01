@@ -8239,9 +8239,12 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {Function|...(string|string[])} [predicate] The function invoked per
+     * @param {Object|Function|...(string|string[])} [predicate] The function invoked per
      *  iteration or property names to pick, specified as individual property
      *  names or arrays of property names.
+     * If an object is provided for `predicate` a "_.where" style callback
+     * is created and returns `true` for elements that have the properties of the given object,
+     * else `false`.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Object} Returns the new object.
      * @example
@@ -8258,6 +8261,8 @@
       if (object == null) {
         return {};
       }
+
+      predicate = isPlainObject(predicate) ? matches(predicate) : predicate;
       return typeof predicate == 'function'
         ? pickByCallback(object, getCallback(predicate, thisArg, 3))
         : pickByArray(object, baseFlatten(arguments, false, false, 1));

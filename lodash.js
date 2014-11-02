@@ -32,9 +32,9 @@
       HOT_SPAN = 16;
 
   /** Used to indicate the type of lazy iteratees */
-  var LAZY_FILTER_FLAG = 1,
-      LAZY_MAP_FLAG = 2,
-      LAZY_WHILE_FLAG = 3;
+  var LAZY_FILTER_FLAG = 0,
+      LAZY_MAP_FLAG = 1,
+      LAZY_WHILE_FLAG = 2;
 
   /** Used as the `TypeError` message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -251,13 +251,6 @@
     '&quot;': '"',
     '&#39;': "'",
     '&#96;': '`'
-  };
-
-  /** Used to map iteratee types to lazy methods */
-  var lazyIterateeTypes = {
-    'filter': LAZY_FILTER_FLAG,
-    'map': LAZY_MAP_FLAG,
-    'takeWhile': LAZY_WHILE_FLAG
   };
 
   /** Used to determine if values are of the language type `Object` */
@@ -2967,6 +2960,34 @@
     }
 
     /**
+     * Gets the view applying any `transforms` to the `start` and `end` positions.
+     *
+     * @private
+     * @param {number} start The start of the view.
+     * @param {number} end The end of the view.
+     * @param {Array} [transforms] The transformations to apply to the view.
+     * @returns {Object} Returns an object containing the `start` and `end`
+     *  positions of the view.
+     */
+    function getView(start, end, transforms) {
+      var index = -1,
+          length = transforms ? transforms.length : 0;
+
+      while (++index < length) {
+        var data = transforms[index],
+            size = data.size;
+
+        switch (data.type) {
+          case 'drop':      start += size; break;
+          case 'dropRight': end -= size; break;
+          case 'take':      end = nativeMin(end, start + size); break;
+          case 'takeRight': start = nativeMax(start, end - size); break;
+        }
+      }
+      return { 'start': start, 'end': end };
+    }
+
+    /**
      * Initializes an array clone.
      *
      * @private
@@ -4798,17 +4819,12 @@
      */
     function LazyWrapper(value) {
       this.dir = 1;
+      this.dropCount = 0;
       this.filtered = false;
-      this.iteratees = [];
+      this.iteratees = null;
+      this.takeCount = POSITIVE_INFINITY;
+      this.views = null;
       this.wrapped = value;
-
-      this.end =
-      this.endAfter =
-      this.startRight = POSITIVE_INFINITY;
-
-      this.start =
-      this.startAfter =
-      this.endRight = 0;
     }
 
     /**
@@ -4820,19 +4836,16 @@
      * @returns {Object} Returns the cloned `LazyWrapper` object.
      */
     function lazyClone() {
-      var result = new LazyWrapper(this.wrapped);
+      var iteratees = this.iteratees,
+          views = this.views,
+          result = new LazyWrapper(this.wrapped);
+
       result.dir = this.dir;
+      result.dropCount = this.dropCount;
       result.filtered = this.filtered;
-
-      result.end = this.end;
-      result.endAfter = this.endAfter;
-      result.endRight = this.endRight;
-
-      result.start = this.start;
-      result.startAfter = this.startAfter;
-      result.startRight = this.startRight;
-
-      push.apply(result.iteratees, this.iteratees);
+      result.iteratees = iteratees ? baseSlice(iteratees) : null;
+      result.takeCount = this.takeCount;
+      result.views = views ? baseSlice(views) : null;
       return result;
     }
 
@@ -4863,32 +4876,29 @@
      */
     function lazyValue() {
       var array = this.wrapped.value(),
-          length = array.length,
-          start = this.start,
-          end = length - this.endRight;
-
-      start = nativeMax(start, end - this.startRight);
-      end = nativeMin(end, start + this.end);
-
-      var dir = this.dir,
-          startAfter = this.startAfter,
-          endAfter = nativeMin(end - start, this.endAfter - startAfter),
+          dir = this.dir,
           isRight = dir < 0,
+          length = array.length,
+          view = getView(0, length, this.views),
+          start = view.start,
+          end = view.end,
+          dropCount = this.dropCount,
+          takeCount = nativeMin(end - start, this.takeCount - dropCount),
           index = isRight ? end : start - 1,
           iteratees = this.iteratees,
-          iterateesLength = iteratees.length,
+          iterLength = iteratees ? iteratees.length : 0,
           resIndex = 0,
           result = [];
 
       outer:
-      while (length-- && resIndex < endAfter) {
+      while (length-- && resIndex < takeCount) {
         index += dir;
 
-        var iterateesIndex = -1,
+        var iterIndex = -1,
             value = array[index];
 
-        while (++iterateesIndex < iterateesLength) {
-          var data = iteratees[iterateesIndex],
+        while (++iterIndex < iterLength) {
+          var data = iteratees[iterIndex],
               iteratee = data.iteratee,
               computed = iteratee(value, index, array),
               type = data.type;
@@ -4903,8 +4913,8 @@
             }
           }
         }
-        if (startAfter) {
-          startAfter--;
+        if (dropCount) {
+          dropCount--;
         } else {
           result[resIndex++] = value;
         }
@@ -10006,27 +10016,32 @@
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         iteratee = getCallback(iteratee, thisArg, 3);
 
-        var result = this.clone();
-        result.filtered = isFilter || result.filtered;
-        result.iteratees.push({ 'iteratee': iteratee, 'type': lazyIterateeTypes[methodName] });
+        var result = this.clone(),
+            filtered = result.filtered,
+            iteratees = result.iteratees || (result.iteratees = []);
+
+        result.filtered = filtered || index == LAZY_FILTER_FLAG || (index == LAZY_WHILE_FLAG && result.dir < 0);
+        iteratees.push({ 'iteratee': iteratee, 'type': index });
         return result;
       };
     });
 
     // add `LazyWrapper` methods for `_.drop` and `_.take` variants
     arrayEach(['drop', 'take'], function(methodName, index) {
-      var rangeName = index ? 'end' : 'start',
-          afterName = rangeName + 'After',
-          rightName = (index ? 'start' : 'end') + 'Right',
+      var countName = methodName + 'Count',
           whileName = methodName + 'While';
 
       LazyWrapper.prototype[methodName] = function(n) {
-        var result = this.clone(),
-            key = result.filtered ? afterName : (result.dir < 0 ? rightName : rangeName),
-            value = result[key];
-
         n = n == null ? 1 : nativeMax(+n || 0, 0);
-        result[key] = (nativeIsFinite(value) ? value : 0) + n;
+
+        var result = this.clone();
+        if (result.filtered) {
+          var value = result[countName];
+          result[countName] = index ? nativeMin(value, n) : (value + n);
+        } else {
+          var views = result.views || (result.views = []);
+          views.push({ 'size': n, 'type': methodName + (result.dir < 0 ? 'Right' : '') });
+        }
         return result;
       };
 
@@ -10035,9 +10050,7 @@
       };
 
       LazyWrapper.prototype[methodName + 'RightWhile'] = function(predicate, thisArg) {
-        var result = this.reverse()[whileName](predicate, thisArg);
-        result.filtered = true;
-        return result.reverse();
+        return this.reverse()[whileName](predicate, thisArg).reverse();
       };
     });
 

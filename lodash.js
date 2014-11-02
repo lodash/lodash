@@ -4093,17 +4093,17 @@
     }
 
     /**
-     * Slices `array` from the `start` index up to, but not including, the `end` index.
+     * Creates a slice of `array` from `start` up to, but not including, `end`.
      *
-     * **Note:** This function is used instead of `Array#slice` to support node lists
-     * in IE < 9 and to ensure dense arrays are returned.
+     * **Note:** This function is used instead of `Array#slice` to support node
+     * lists in IE < 9 and to ensure dense arrays are returned.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {Array} array The array to slice.
-     * @param {number} [start=0] The start index.
-     * @param {number} [end=array.length] The end index.
+     * @param {number} [start=0] The start position.
+     * @param {number} [end=array.length] The end position.
      * @returns {Array} Returns the slice of `array`.
      */
     function slice(array, start, end) {
@@ -9600,7 +9600,7 @@
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to but not including `end`. If `start` is less than `end` a
+     * `start` up to, but not including, `end`. If `start` is less than `end` a
      * zero-length range is created unless a negative `step` is specified.
      *
      * @static

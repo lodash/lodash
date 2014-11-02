@@ -3170,19 +3170,25 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 2, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4, 5, 6, 7, 8],
             predicate = function(value) { return value > 1; },
-            actual = _(array).filter(predicate).drop(2).drop(1).value();
+            actual = _(array).drop(2).drop().value();
 
+        deepEqual(actual, [4, 5, 6, 7, 8]);
+
+        actual = _(array).filter(predicate).drop(2).drop().value();
         deepEqual(actual, [5, 6, 7, 8]);
 
-        actual = _(array).filter(predicate).drop(2).dropRight(1).drop(1).dropRight(2).value();
+        actual = _(array).drop(2).dropRight().drop().dropRight(2).value();
+        deepEqual(actual, [4, 5]);
+
+        actual = _(array).filter(predicate).drop(2).dropRight().drop().dropRight(2).value();
         deepEqual(actual, [5]);
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
   }());
@@ -3240,19 +3246,25 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 2, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4],
-            predicate = function(value) { return value < 4; },
-            actual = _(array).filter(predicate).dropRight(2).value();
+        var array = [1, 2, 3, 4, 5, 6, 7, 8],
+            predicate = function(value) { return value < 8; },
+            actual = _(array).dropRight(2).dropRight().value();
 
-        deepEqual(actual, [1]);
+        deepEqual(actual, [1, 2, 3, 4, 5]);
 
-        actual = _(array).filter(predicate).dropRight().drop().value();
-        deepEqual(actual, [2]);
+        actual = _(array).filter(predicate).dropRight(2).dropRight().value();
+        deepEqual(actual, [1, 2, 3, 4]);
+
+        actual = _(array).dropRight(2).drop().dropRight().drop(2).value();
+        deepEqual(actual, [4, 5]);
+
+        actual = _(array).filter(predicate).dropRight(2).drop().dropRight().drop(2).value();
+        deepEqual(actual, [4]);
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
   }());
@@ -3836,19 +3848,25 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 2, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4],
+        var array = [1, 2, 3, 4, 5, 6, 7, 8],
             predicate = function(value) { return value > 1; },
-            actual = _(array).filter(predicate).take().value();
+            actual = _(array).take(2).take().value();
 
+        deepEqual(actual, [1]);
+
+        actual = _(array).filter(predicate).take(2).take().value();
         deepEqual(actual, [2]);
 
-        actual = _(array).filter(predicate).take(2).takeRight().value();
-        deepEqual(actual, [3]);
+        actual = _(array).take(6).takeRight(4).take(2).takeRight().value();
+        deepEqual(actual, [4]);
+
+        actual = _(array).filter(predicate).take(6).takeRight(4).take(2).takeRight().value();
+        deepEqual(actual, [5]);
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
   }());
@@ -3906,19 +3924,25 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 2, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4],
-            predicate = function(value) { return value < 4; },
-            actual = _(array).filter(predicate).takeRight().value();
+        var array = [1, 2, 3, 4, 5, 6, 7, 8],
+            predicate = function(value) { return value < 8; },
+            actual = _(array).takeRight(2).takeRight().value();
 
-        deepEqual(actual, [3]);
+        deepEqual(actual, [8]);
 
-        actual = _(array).filter(predicate).takeRight(2).take().value();
-        deepEqual(actual, [2]);
+        actual = _(array).filter(predicate).takeRight(2).takeRight().value();
+        deepEqual(actual, [7]);
+
+        actual = _(array).takeRight(6).take(4).takeRight(2).take().value();
+        deepEqual(actual, [5]);
+
+        actual = _(array).filter(predicate).takeRight(6).take(4).takeRight(2).take().value();
+        deepEqual(actual, [4]);
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
   }());

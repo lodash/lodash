@@ -33,9 +33,9 @@
       HOT_SPAN = 16;
 
   /** Used to indicate the type of lazy iteratees */
-  var LAZY_FILTER_FLAG = 1,
-      LAZY_MAP_FLAG = 2,
-      LAZY_WHILE_FLAG = 3;
+  var LAZY_FILTER_FLAG = 0,
+      LAZY_MAP_FLAG = 1,
+      LAZY_WHILE_FLAG = 2;
 
   /** Used as the `TypeError` message for "Functions" methods */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -254,13 +254,6 @@
     '&#96;': '`'
   };
 
-  /** Used to map iteratee types to lazy methods */
-  var lazyIterateeTypes = {
-    'filter': LAZY_FILTER_FLAG,
-    'map': LAZY_MAP_FLAG,
-    'takeWhile': LAZY_WHILE_FLAG
-  };
-
   /** Used to determine if values are of the language type `Object` */
   var objectTypes = {
     'function': true,
@@ -277,8 +270,13 @@
     '\u2029': 'u2029'
   };
 
-  /** Used as a reference to the global object */
-  var root = (objectTypes[typeof window] && window) || this;
+  /**
+   * Used as a reference to the global object.
+   *
+   * The `this` value is used if it is the global object to avoid Greasemonkey's
+   * restricted `window` object, otherwise the `window` object is used.
+   */
+  var root = (objectTypes[typeof window] && window !== (this && this.window)) ? window : this;
 
   /** Detect free variable `exports` */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
@@ -577,8 +575,7 @@
   }
 
   /**
-   * Used by `_.max` and `_.min` as the default callback when a given collection
-   * is a string value.
+   * Used by `_.max` and `_.min` as the default callback for string values.
    *
    * @private
    * @param {string} string The string to inspect.
@@ -1015,31 +1012,30 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object which wraps the given value to enable intuitive
-     * method chaining.
+     * Creates a `lodash` object which wraps `value` to enable intuitive chaining.
+     * Explicit chaining may be enabled by using `_.chain`. Chaining is supported
+     * in custom builds as long as the `_#value` method is implicitly or explicitly
+     * included in the build.
      *
      * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * Chaining is supported in custom builds as long as the `value` method is
-     * implicitly or explicitly included in the build.
-     *
      * The chainable wrapper functions are:
      * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
      * `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`, `create`,
      * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
-     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`, `flattenDeep`,
-     * `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
-     * `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`, `initial`,
-     * `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`, `mapValues`,
-     * `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`, `omit`, `once`,
-     * `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pluck`, `property`,
-     * `pull`, `pullAt`, `push`, `range`, `reject`, `remove`, `rest`, `reverse`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`, `takeRight`,
-     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `times`,
-     * `toArray`, `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`,
-     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
+     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
+     * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
+     * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
+     * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
+     * `mapValues`, `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`,
+     * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
+     * `pluck`, `property`, `pull`, `pullAt`, `push`, `range`, `reject`, `remove`,
+     * `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`,
+     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
+     * `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`, `unzip`,
+     * `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
@@ -1048,17 +1044,15 @@
      * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
      * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
-     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
-     * `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`,
-     * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
-     * `result`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-     * `sortedLastIndex`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
+     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
+     * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
+     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
+     * `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
+     * `uniqueId`, `value`, and `words`
      *
-     * The wrapper function `sample` will return a wrapped value when `n` is
-     * provided, otherwise it will return an unwrapped value.
-     *
-     * Explicit chaining can be enabled by using the `_.chain` method.
+     * The wrapper function `sample` will return a wrapped value when `n` is provided,
+     * otherwise it will return an unwrapped value.
      *
      * @name _
      * @constructor
@@ -2967,6 +2961,34 @@
     }
 
     /**
+     * Gets the view, applying any `transforms` to the `start` and `end` positions.
+     *
+     * @private
+     * @param {number} start The start of the view.
+     * @param {number} end The end of the view.
+     * @param {Array} [transforms] The transformations to apply to the view.
+     * @returns {Object} Returns an object containing the `start` and `end`
+     *  positions of the view.
+     */
+    function getView(start, end, transforms) {
+      var index = -1,
+          length = transforms ? transforms.length : 0;
+
+      while (++index < length) {
+        var data = transforms[index],
+            size = data.size;
+
+        switch (data.type) {
+          case 'drop':      start += size; break;
+          case 'dropRight': end -= size; break;
+          case 'take':      end = nativeMin(end, start + size); break;
+          case 'takeRight': start = nativeMax(start, end - size); break;
+        }
+      }
+      return { 'start': start, 'end': end };
+    }
+
+    /**
      * Initializes an array clone.
      *
      * @private
@@ -3508,12 +3530,11 @@
      * // => ['barney', 'fred']
      */
     function dropRightWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0,
-          index = length;
+      var length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) {}
-      return slice(array, 0, index + 1);
+      while (length-- && predicate(array[length], length, array)) {}
+      return slice(array, 0, length + 1);
     }
 
     /**
@@ -4073,17 +4094,17 @@
     }
 
     /**
-     * Slices `array` from the `start` index up to, but not including, the `end` index.
+     * Creates a slice of `array` from `start` up to, but not including, `end`.
      *
-     * **Note:** This function is used instead of `Array#slice` to support node lists
-     * in IE < 9 and to ensure dense arrays are returned.
+     * **Note:** This function is used instead of `Array#slice` to support node
+     * lists in IE < 9 and to ensure dense arrays are returned.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {Array} array The array to slice.
-     * @param {number} [start=0] The start index.
-     * @param {number} [end=array.length] The end index.
+     * @param {number} [start=0] The start position.
+     * @param {number} [end=array.length] The end position.
      * @returns {Array} Returns the slice of `array`.
      */
     function slice(array, start, end) {
@@ -4294,12 +4315,11 @@
      * // => ['pebbles']
      */
     function takeRightWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0,
-          index = length;
+      var length = array ? array.length : 0;
 
       predicate = getCallback(predicate, thisArg, 3);
-      while (index-- && predicate(array[index], index, array)) {}
-      return slice(array, index + 1);
+      while (length-- && predicate(array[length], length, array)) {}
+      return slice(array, length + 1);
     }
 
     /**
@@ -4802,9 +4822,9 @@
       this.dir = 1;
       this.dropCount = 0;
       this.filtered = false;
-      this.iteratees = [];
+      this.iteratees = null;
       this.takeCount = POSITIVE_INFINITY;
-      this.views = [];
+      this.views = null;
       this.wrapped = value;
     }
 
@@ -4817,13 +4837,16 @@
      * @returns {Object} Returns the cloned `LazyWrapper` object.
      */
     function lazyClone() {
-      var result = new LazyWrapper(this.wrapped);
+      var iteratees = this.iteratees,
+          views = this.views,
+          result = new LazyWrapper(this.wrapped);
+
       result.dir = this.dir;
       result.dropCount = this.dropCount;
       result.filtered = this.filtered;
+      result.iteratees = iteratees ? baseSlice(iteratees) : null;
       result.takeCount = this.takeCount;
-      push.apply(result.iteratees, this.iteratees);
-      push.apply(result.views, this.views);
+      result.views = views ? baseSlice(views) : null;
       return result;
     }
 
@@ -4854,43 +4877,29 @@
      */
     function lazyValue() {
       var array = this.wrapped.value(),
-          length = array.length,
-          start = 0,
-          end = length,
-          views = this.views,
-          viewIndex = -1,
-          viewsLength = views.length;
-
-      while (++viewIndex < viewsLength) {
-        var view = views[viewIndex],
-            size = view.size;
-
-        switch (view.type) {
-          case 'drop':      start += size; break;
-          case 'dropRight': end -= size; break;
-          case 'take':      end = nativeMin(end, start + size); break;
-          case 'takeRight': start = nativeMax(start, end - size); break;
-        }
-      }
-      var dir = this.dir,
-          dropCount = this.dropCount,
-          droppedCount = 0,
-          doneDropping = !dropCount,
-          takeCount = nativeMin(end - start, this.takeCount - dropCount),
+          dir = this.dir,
           isRight = dir < 0,
+          length = array.length,
+          view = getView(0, length, this.views),
+          start = view.start,
+          end = view.end,
+          dropCount = this.dropCount,
+          takeCount = nativeMin(end - start, this.takeCount - dropCount),
           index = isRight ? end : start - 1,
           iteratees = this.iteratees,
-          iterateesLength = iteratees.length,
+          iterLength = iteratees ? iteratees.length : 0,
           resIndex = 0,
           result = [];
 
       outer:
       while (length-- && resIndex < takeCount) {
-        var iterateesIndex = -1,
-            value = array[index += dir];
+        index += dir;
 
-        while (++iterateesIndex < iterateesLength) {
-          var data = iteratees[iterateesIndex],
+        var iterIndex = -1,
+            value = array[index];
+
+        while (++iterIndex < iterLength) {
+          var data = iteratees[iterIndex],
               iteratee = data.iteratee,
               computed = iteratee(value, index, array),
               type = data.type;
@@ -4905,10 +4914,10 @@
             }
           }
         }
-        if (doneDropping) {
-          result[resIndex++] = value;
+        if (dropCount) {
+          dropCount--;
         } else {
-          doneDropping = ++droppedCount >= dropCount;
+          result[resIndex++] = value;
         }
       }
       return isRight ? result.reverse() : result;
@@ -7907,10 +7916,9 @@
     }
 
     /**
-     * Creates an object composed of the inverted keys and values of the given
-     * object. If the given object contains duplicate values, subsequent values
-     * overwrite property assignments of previous values unless `multiValue`
-     * is `true`.
+     * Creates an object composed of the inverted keys and values of `object`.
+     * If `object` contains duplicate values, subsequent values overwrite property
+     * assignments of previous values unless `multiValue` is `true`.
      *
      * @static
      * @memberOf _
@@ -8028,7 +8036,8 @@
       var keyIndex,
           Ctor = object.constructor,
           index = -1,
-          isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto,
+          isProto = proto === object,
           result = Array(length),
           skipIndexes = length > 0,
           skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
@@ -8042,24 +8051,26 @@
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
       for (var key in object) {
-        if (!(isProto && key == 'constructor') &&
-            !(skipProto && key == 'prototype') &&
+        if (!(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0))) {
+            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0)) &&
+            !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
         }
       }
       if (support.nonEnumShadows && object !== objectProto) {
-        index = -1;
-        length = shadowedProps.length;
+        var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
+            nonEnums = nonEnumProps[className] || nonEnumProps[objectClass];
 
-        if (isProto) {
-          var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
-              nonEnum = nonEnumProps[className];
+        if (className == objectClass) {
+          proto = objectProto;
         }
-        while (++index < length) {
-          key = shadowedProps[index];
-          if (!(nonEnum && nonEnum[key]) && hasOwnProperty.call(object, key)) {
+        length = shadowedProps.length;
+        while (length--) {
+          key = shadowedProps[length];
+          var nonEnum = nonEnums[key];
+          if (!(isProto && nonEnum) &&
+              (nonEnum ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
             result.push(key);
           }
         }
@@ -8202,7 +8213,7 @@
     }
 
     /**
-     * Creates a two dimensional array of a given object's key-value pairs,
+     * Creates a two dimensional array of the key-value pairs for `object`,
      * e.g. `[[key1, value1], [key2, value2]]`.
      *
      * @static
@@ -8432,7 +8443,7 @@
     }
 
     /**
-     * Checks if `string` ends with a given target string.
+     * Checks if `string` ends with the given target string.
      *
      * @static
      * @memberOf _
@@ -8440,8 +8451,7 @@
      * @param {string} [string=''] The string to search.
      * @param {string} [target] The string to search for.
      * @param {number} [position=string.length] The position to search from.
-     * @returns {boolean} Returns `true` if the given string ends with the
-     *  target string, else `false`.
+     * @returns {boolean} Returns `true` if `string` ends with `target`, else `false`.
      * @example
      *
      * _.endsWith('abc', 'c');
@@ -8699,7 +8709,7 @@
     });
 
     /**
-     * Checks if `string` starts with a given target string.
+     * Checks if `string` starts with the given target string.
      *
      * @static
      * @memberOf _
@@ -8707,8 +8717,7 @@
      * @param {string} [string=''] The string to search.
      * @param {string} [target] The string to search for.
      * @param {number} [position=0] The position to search from.
-     * @returns {boolean} Returns `true` if the given string starts with the
-     *  target string, else `false`.
+     * @returns {boolean} Returns `true` if `string` starts with `target`, else `false`.
      * @example
      *
      * _.startsWith('abc', 'a');
@@ -9592,7 +9601,7 @@
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to but not including `end`. If `start` is less than `end` a
+     * `start` up to, but not including, `end`. If `start` is less than `end` a
      * zero-length range is created unless a negative `step` is specified.
      *
      * @static
@@ -10008,15 +10017,18 @@
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         iteratee = getCallback(iteratee, thisArg, 3);
 
-        var result = this.clone();
-        result.filtered = isFilter || result.filtered;
-        result.iteratees.push({ 'iteratee': iteratee, 'type': lazyIterateeTypes[methodName] });
+        var result = this.clone(),
+            filtered = result.filtered,
+            iteratees = result.iteratees || (result.iteratees = []);
+
+        result.filtered = filtered || index == LAZY_FILTER_FLAG || (index == LAZY_WHILE_FLAG && result.dir < 0);
+        iteratees.push({ 'iteratee': iteratee, 'type': index });
         return result;
       };
     });
 
     // add `LazyWrapper` methods for `_.drop` and `_.take` variants
-    arrayEach(['drop', 'take'], function(methodName) {
+    arrayEach(['drop', 'take'], function(methodName, index) {
       var countName = methodName + 'Count',
           whileName = methodName + 'While';
 
@@ -10024,14 +10036,13 @@
         n = n == null ? 1 : nativeMax(+n || 0, 0);
 
         var result = this.clone();
-        if (this.filtered) {
-          result[countName] = n;
-          return result;
+        if (result.filtered) {
+          var value = result[countName];
+          result[countName] = index ? nativeMin(value, n) : (value + n);
+        } else {
+          var views = result.views || (result.views = []);
+          views.push({ 'size': n, 'type': methodName + (result.dir < 0 ? 'Right' : '') });
         }
-        result.views.push({
-          'size': n,
-          'type': methodName + (result.dir < 0 ? 'Right' : '')
-        });
         return result;
       };
 
@@ -10040,9 +10051,7 @@
       };
 
       LazyWrapper.prototype[methodName + 'RightWhile'] = function(predicate, thisArg) {
-        var result = this.reverse()[whileName](predicate, thisArg);
-        result.filtered = true;
-        return result.reverse();
+        return this.reverse()[whileName](predicate, thisArg).reverse();
       };
     });
 

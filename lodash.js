@@ -2960,7 +2960,7 @@
     }
 
     /**
-     * Gets the view applying any `transforms` to the `start` and `end` positions.
+     * Gets the view, applying any `transforms` to the `start` and `end` positions.
      *
      * @private
      * @param {number} start The start of the view.

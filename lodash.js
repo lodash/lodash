@@ -2809,7 +2809,7 @@
 
       function wrapper() {
         // avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before passing it to `composeArgs`
+        // converting it to an array before providing it to `composeArgs`
         var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
@@ -9715,7 +9715,7 @@
      * // => [3, 6, 4]
      *
      * _.times(3, function(n) { mage.castSpell(n); });
-     * // => invokes `mage.castSpell(n)` three times, passing `n` of `0`, `1`, and `2` respectively
+     * // => invokes `mage.castSpell(n)` three times with `n` of `0`, `1`, and `2` respectively
      *
      * _.times(3, function(n) { this.cast(n); }, mage);
      * // => also invokes `mage.castSpell(n)` three times

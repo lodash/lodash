@@ -6523,8 +6523,8 @@
       if (!isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var args = slice(arguments, 1);
-      return setTimeout(function() { func.apply(undefined, args); }, 1);
+      var args = arguments;
+      return setTimeout(function() { func.apply(undefined, slice(args, 1)); }, 1);
     }
 
     /**
@@ -6547,8 +6547,8 @@
       if (!isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var args = slice(arguments, 2);
-      return setTimeout(function() { func.apply(undefined, args); }, wait);
+      var args = arguments;
+      return setTimeout(function() { func.apply(undefined, slice(args, 2)); }, wait);
     }
 
     /**

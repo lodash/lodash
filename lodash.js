@@ -2721,7 +2721,8 @@
             }
             var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity);
             result.placeholder = placeholder;
-            return setData(result, [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity]);
+            defer(setData, result, [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity]);
+            return result;
           }
         }
         var thisBinding = isBind ? thisArg : this;

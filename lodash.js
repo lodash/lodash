@@ -2729,7 +2729,6 @@
             }
             var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity);
             result.placeholder = placeholder;
-            defer(setData, result, [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity]);
             return result;
           }
         }

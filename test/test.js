@@ -9267,7 +9267,7 @@
       deepEqual(actual, [1, 3, 1, 2, 1, 3]);
     });
 
-    test('should return `undefined` for nonexistent keys', 2, function() {
+    test('should use `undefined` for nonexistent indexes', 2, function() {
       var array = ['a', 'b', 'c'],
           actual = _.pullAt(array, [2, 4, 0]);
 
@@ -9275,9 +9275,31 @@
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
-    test('should return an empty array when no keys are provided', 2, function() {
+    test('should ignore non-index keys', 2, function() {
+      var array = ['a', 'b', 'c'],
+          clone = array.slice();
+
+      array['1.1'] = array['-1'] = 1;
+
+      var values = _.reject(empties, function(value) {
+        return value === 0 || _.isArray(value);
+      }).concat(-1, 1.1);
+
+      var expected = _.map(values, _.constant(undefined)),
+          actual = _.pullAt(array, values);
+
+      deepEqual(actual, expected);
+      deepEqual(array, clone);
+    });
+
+    test('should return an empty array when no indexes are provided', 4, function() {
       var array = ['a', 'b', 'c'],
           actual = _.pullAt(array);
+
+      deepEqual(array, ['a', 'b', 'c']);
+      deepEqual(actual, []);
+
+      actual = _.pullAt(array, [], []);
 
       deepEqual(array, ['a', 'b', 'c']);
       deepEqual(actual, []);
@@ -9286,6 +9308,14 @@
     test('should accept multiple index arguments', 2, function() {
       var array = ['a', 'b', 'c', 'd'],
           actual = _.pullAt(array, 3, 0, 2);
+
+      deepEqual(array, ['b']);
+      deepEqual(actual, ['d', 'a', 'c']);
+    });
+
+    test('should accept multiple arrays of indexes', 2, function() {
+      var array = ['a', 'b', 'c', 'd'],
+          actual = _.pullAt(array, [3], [0, 2]);
 
       deepEqual(array, ['b']);
       deepEqual(actual, ['d', 'a', 'c']);
@@ -9301,21 +9331,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should ignore non-index values', 2, function() {
-      var array = ['a', 'b', 'c'],
-          clone = array.slice();
-
-      var values = _.reject(empties, function(value) {
-        return value === 0 || _.isArray(value);
-      }).concat(-1, 1.1);
-
-      var expected = _.map(values, _.constant(undefined)),
-          actual = _.pullAt.apply(_, [array].concat(values));
-
-      deepEqual(actual, expected);
-      deepEqual(array, clone);
     });
   }());
 

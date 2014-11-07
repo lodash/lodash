@@ -3285,11 +3285,11 @@
      */
     function shimKeys(object) {
       var props = keysIn(object),
-          length = props.length,
-          objLength = length && object.length,
+          propsLength = props.length,
+          length = propsLength && object.length,
           support = lodash.support;
 
-      var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
+      var allowIndexes = typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object)));
 
@@ -3297,9 +3297,9 @@
           index = -1,
           result = [];
 
-      while (++index < length) {
+      while (++index < propsLength) {
         var key = props[index];
-        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < objLength && keyIndex % 1 == 0)) ||
+        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0)) ||
             hasOwnProperty.call(object, key)) {
           result.push(key);
         }

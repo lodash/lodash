@@ -935,6 +935,20 @@
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
+    test('should use `undefined` for non-index keys on array-like values', 1, function() {
+      var array = ['a', 'b', 'c'];
+      array['1.1'] = array['-1'] = 1;
+
+      var values = _.reject(empties, function(value) {
+        return value === 0 || _.isArray(value);
+      }).concat(-1, 1.1);
+
+      var expected = _.map(values, _.constant(undefined)),
+          actual = _.at(array, values);
+
+      deepEqual(actual, expected);
+    });
+
     test('should return an empty array when no keys are provided', 1, function() {
       deepEqual(_.at(['a', 'b', 'c']), []);
     });

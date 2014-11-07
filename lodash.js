@@ -6259,7 +6259,7 @@
 
     /**
      * Creates a function that accepts one or more arguments of `func` that when
-     * called either invokes `func` returning its result if all `func` arguments
+     * called either invokes `func` returning its result, if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
@@ -6276,7 +6276,7 @@
      * @example
      *
      * var curried = _.curry(function(a, b, c) {
-     *   console.log([a, b, c]);
+     *   return [a, b, c];
      * });
      *
      * curried(1)(2)(3);
@@ -6310,7 +6310,7 @@
      * @example
      *
      * var curried = _.curryRight(function(a, b, c) {
-     *   console.log([a, b, c]);
+     *   return [a, b, c];
      * });
      *
      * curried(3)(2)(1);

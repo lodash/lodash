@@ -2692,7 +2692,7 @@
           args[index] = arguments[index];
         }
         if (argPos) {
-          args = reorder(args, argPos);
+          args = arrayReduceRight(argPos, reorder, args);
         }
         if (partials) {
           args = composeArgs(args, partials, holders);
@@ -3171,28 +3171,27 @@
     }
 
     /**
-     * A specialized version of `_.pick` that picks `object` properties `predicate`
-     * returns truthy for.
+     * Reorder `array` according to the specified indexes where the element at
+     * the first index is assigned as the first element, the element at
+     * the second index is assigned as the second element, and so on.
      *
      * @private
-     * @param {Object} object The source object.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {Object} Returns the new object.
+     * @param {Array} array The array to reorder.
+     * @param {Array} indexes The arranged array indexes.
+     * @returns {Array} Returns `array`.
      */
-    function reorder(args, positions) {
-      var length = positions.length;
+    function reorder(array, indexes) {
+      var arrLength = array.length,
+          length = nativeMin(indexes.length, arrLength),
+          oldArray = baseSlice(array);
 
       while (length--) {
-        var pos = positions[length],
-            posIndex = -1,
-            posLength = pos.length,
-            argsClone = baseSlice(args);
-
-        while (++posIndex < posLength) {
-          args[pos[posIndex]] = argsClone[posIndex];
-        }
+        var index = indexes[length];
+        array[length] = (index > -1 && index < arrLength && index % 1 == 0)
+          ? oldArray[index]
+          : undefined;
       }
-      return args;
+      return array;
     }
 
     /**
@@ -6818,19 +6817,30 @@
     }
 
     /**
-     * Creates a function that invokes `func` with `partial` arguments prepended
-     * to those provided to the new function. This method is similar to `_.bind`
-     * except it does **not** alter the `this` binding.
+     * Creates a function that invokes `func` with arguments arranged according
+     * to the specified indexes where the argument value at the first index is
+     * provided as the first argument, the argument value at the second index is
+     * provided as the second argument, and so on.
      *
      * @static
      * @memberOf _
      * @category Function
-     * @param {Function} func The function to partially apply arguments to.
-     * @param {...(number|number[])} [indexes] The indexes of elements to remove,
+     * @param {Function} func The function to rearrange arguments for.
+     * @param {...(number|number[])} [indexes] The arranged argument indexes,
      *  specified as individual indexes or arrays of indexes.
      * @returns {Function} Returns the new function.
      * @example
      *
+     * var rearged = _.rearg(function(a, b, c) {
+     *   return [a, b, c];
+     * }, 2, 0, 1);
+     *
+     * rearged('b', 'c', 'a')
+     * // => ['a', 'b', 'c']
+     *
+     * var map = _.rearg(_.map, [1, 0]);
+     * map(function(n) { return n * 3; }, [1, 2, 3]);
+     * // => [3, 6, 9]
      */
     function rearg(func) {
       var indexes = baseFlatten(arguments, false, false, 1);

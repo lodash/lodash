@@ -2107,9 +2107,16 @@
       deepEqual(actual, { '4': 1, '6': 2 });
     });
 
-    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
-      var actual = _.countBy([4, 6, 6]);
-      deepEqual(actual, { '4': 1, '6':  2 });
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array = [4, 6, 6],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant({ '4': 1, '6':  2 }));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.countBy(array, value) : _.countBy(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should provide the correct `iteratee` arguments', 1, function() {
@@ -2268,12 +2275,17 @@
       deepEqual(actual, [object, 'a', 'b']);
     });
 
-    test('should return `_.identity` when `func` is nullish', 2, function() {
-      var object = {};
-      _.each([null, undefined], function(value) {
-        var callback = _.callback(value);
-        strictEqual(callback(object), object);
+    test('should return `_.identity` when `func` is nullish', 1, function() {
+      var object = {},
+          values = [, null, undefined],
+          expected = _.map(values, _.constant(object));
+
+      var actual = _.map(values, function(value, index) {
+        var callback = index ? _.callback(value) : _.callback();
+        return callback(object);
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should not error when `func` is nullish and a `thisArg` is provided', 2, function() {
@@ -3620,9 +3632,24 @@
       strictEqual(_.every([undefined, undefined, undefined], _.identity), false);
     });
 
-    test('should use `_.identity` when no predicate is provided', 2, function() {
-      strictEqual(_.every([0]), false);
-      strictEqual(_.every([1]), true);
+    test('should use `_.identity` when `predicate` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value, index) {
+        var array = [0];
+        return index ? _.every(array, value) : _.every(array);
+      });
+
+      deepEqual(actual, expected);
+
+      expected = _.map(values, _.constant(true));
+      actual = _.map(values, function(value, index) {
+        var array = [1];
+        return index ? _.every(array, value) : _.every(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should be aliased', 1, function() {
@@ -4913,9 +4940,16 @@
   (function() {
     var array = [4.2, 6.1, 6.4];
 
-    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
-      var actual = _.groupBy([4, 6, 6]);
-      deepEqual(actual, { '4': [4], '6':  [6, 6] });
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array = [4, 6, 6],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant({ '4': [4], '6':  [6, 6] }));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.groupBy(array, value) : _.groupBy(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should provide the correct `iteratee` arguments', 1, function() {
@@ -5025,9 +5059,16 @@
   QUnit.module('lodash.indexBy');
 
   (function() {
-    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
-      var actual = _.indexBy([4, 6, 6]);
-      deepEqual(actual, { '4': 4, '6': 6 });
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array = [4, 6, 6],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant({ '4': 4, '6': 6 }));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.indexBy(array, value) : _.indexBy(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should support the `thisArg` argument', 1, function() {
@@ -9099,9 +9140,15 @@
       deepEqual(_.partition(array, _.constant(false)), [[], array]);
     });
 
-    test('should use `_.identity` when no `predicate` is provided', 1, function() {
-      var actual = _.partition(array);
-      deepEqual(actual, [[1, 1], [0]]);
+    test('should use `_.identity` when `predicate` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant([[1, 1], [0]]));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.partition(array, value) : _.partition(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should provide the correct `predicate` arguments', 1, function() {
@@ -10479,9 +10526,24 @@
       strictEqual(_.some([null, true, null], _.identity), true);
     });
 
-    test('should use `_.identity` when no predicate is provided', 2, function() {
-      strictEqual(_.some([0, 1]), true);
-      strictEqual(_.some([0, 0]), false);
+    test('should use `_.identity` when `predicate` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value, index) {
+        var array = [0, 0];
+        return index ? _.some(array, value) : _.some(array);
+      });
+
+      deepEqual(actual, expected);
+
+      expected = _.map(values, _.constant(true));
+      actual = _.map(values, function(value, index) {
+        var array = [0, 1];
+        return index ? _.some(array, value) : _.some(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should be aliased', 1, function() {
@@ -10536,9 +10598,16 @@
       deepEqual(actual, stableOrder);
     });
 
-    test('should use `_.identity` when no predicate is provided', 1, function() {
-      var actual = _.sortBy([3, 2, 1]);
-      deepEqual(actual, [1, 2, 3]);
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array = [3, 2, 1],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant([1, 2, 3]));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.sortBy(array, value) : _.sortBy(array);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should move `undefined` and `NaN` values to the end', 1, function() {
@@ -11816,9 +11885,15 @@
       deepEqual(actual, expect);
     });
 
-    test('should use `_.identity` when no `iteratee` is provided', 1, function() {
-      var actual = _.times(3);
-      deepEqual(actual, [0, 1, 2]);
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant([0, 1, 2]));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.times(3, value) : _.times(3);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should return an array of the results of each `iteratee` execution', 1, function() {

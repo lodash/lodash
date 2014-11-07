@@ -1011,12 +1011,12 @@
      * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
      * `mapValues`, `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`,
      * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
-     * `pluck`, `property`, `pull`, `pullAt`, `push`, `range`, `rearg`, `reject`,
-     * `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`,
-     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
-     * `thru`, `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`,
-     * `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`,
-     * and `zipObject`
+     * `pluck`, `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`,
+     * `rearg`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
+     * `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `thru`, `times`, `toArray`, `transform`, `union`, `uniq`,
+     * `unshift`, `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`,
+     * `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
@@ -9561,8 +9561,8 @@
     }
 
     /**
-     * Creates a "_.pluck" style function which returns the `key` value of a
-     * given object.
+     * Creates a "_.pluck" style function which returns the value associated with
+     * the `key` of a given object.
      *
      * @static
      * @memberOf _
@@ -9585,7 +9585,33 @@
      * // => [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred',   'age': 40 }]
      */
     function property(key) {
+      key = String(key);
       return function(object) {
+        return object == null ? undefined : object[key];
+      };
+    }
+
+    /**
+     * The inverse of `_.property`; this method creates a function which returns
+     * the value associated with a given key of `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var fred = { 'user': 'fred',   'age': 40, 'active': true };
+     * _.map(['age', 'active', _.propertyOf(fred));
+     * // => [40, true]
+     *
+     * var object = { 'a': 3, 'b': 1, 'c': 2 };
+     * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
+     * // => ['b', 'c', 'a']
+     */
+    function propertyOf(object) {
+      return function(key) {
         return object == null ? undefined : object[key];
       };
     }
@@ -9887,6 +9913,7 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
+    lodash.propertyOf = propertyOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;

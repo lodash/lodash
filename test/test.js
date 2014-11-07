@@ -928,17 +928,22 @@
   QUnit.module('lodash.at');
 
   (function() {
-    var args = arguments;
+    var args = arguments,
+        array = ['a', 'b', 'c'];
+
+    array['1.1'] = array['-1'] = 1;
+
+    test('should return the elements corresponding to the specified keys', 1, function() {
+      var actual = _.at(array, [0, 2]);
+      deepEqual(actual, ['a', 'c']);
+    });
 
     test('should return `undefined` for nonexistent keys', 1, function() {
-      var actual = _.at(['a', 'b', 'c'], [2, 4, 0]);
+      var actual = _.at(array, [2, 4, 0]);
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
     test('should use `undefined` for non-index keys on array-like values', 1, function() {
-      var array = ['a', 'b', 'c'];
-      array['1.1'] = array['-1'] = 1;
-
       var values = _.reject(empties, function(value) {
         return value === 0 || _.isArray(value);
       }).concat(-1, 1.1);
@@ -949,8 +954,9 @@
       deepEqual(actual, expected);
     });
 
-    test('should return an empty array when no keys are provided', 1, function() {
-      deepEqual(_.at(['a', 'b', 'c']), []);
+    test('should return an empty array when no keys are provided', 2, function() {
+      deepEqual(_.at(array), []);
+      deepEqual(_.at(array, [], []), []);
     });
 
     test('should accept multiple key arguments', 1, function() {
@@ -958,7 +964,7 @@
       deepEqual(actual, ['d', 'a', 'c']);
     });
 
-    test('should work with a falsey `array` argument when keys are provided', 1, function() {
+    test('should work with a falsey `collection` argument when keys are provided', 1, function() {
       var expected = _.map(falsey, _.constant([undefined, undefined]));
 
       var actual = _.map(falsey, function(value) {
@@ -972,12 +978,25 @@
 
     test('should work with an `arguments` object for `collection`', 1, function() {
       var actual = _.at(args, [2, 0]);
-      deepEqual(actual, ['c', 'a']);
+      deepEqual(actual, [3, 1]);
+    });
+
+    test('should work with `arguments` object as secondary arguments', 1, function() {
+      var actual = _.at([1, 2, 3, 4, 5], args);
+      deepEqual(actual, [2, 3, 4]);
     });
 
     test('should work with an object for `collection`', 1, function() {
       var actual = _.at({ 'a': 1, 'b': 2, 'c': 3 }, ['c', 'a']);
       deepEqual(actual, [3, 1]);
+    });
+
+    test('should pluck inherited property values', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var actual = _.at(new Foo, 'b');
+      deepEqual(actual, [2]);
     });
 
     _.each({
@@ -989,7 +1008,7 @@
         deepEqual(_.at(collection, [2, 0]), ['c', 'a']);
       });
     });
-  }('a', 'b', 'c'));
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -4922,7 +4941,7 @@
     test('should include inherited functions', 1, function() {
       function Foo() {
         this.a = _.identity;
-        this.b = 'b'
+        this.b = 'b';
       }
       Foo.prototype.c = _.noop;
       deepEqual(_.functions(new Foo).sort(), ['a', 'c']);
@@ -5388,6 +5407,7 @@
 
     test('should only add multiple values to own, not inherited, properties', 2, function() {
       var object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
+
       deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
       ok(_.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
     });
@@ -7298,13 +7318,10 @@
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties', 1, function() {
-      function Foo() {
-        this.a = 1;
-        this.b = 2;
-      }
-      Foo.prototype.c = 3;
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
 
-      var expected = isKeys ? ['a', 'b'] : ['a', 'b', 'c'];
+      var expected = isKeys ? ['a'] : ['a', 'b'];
       deepEqual(func(new Foo).sort(), expected);
     });
   });
@@ -7776,14 +7793,12 @@
     });
 
     test('should not match by inherited `source` properties', 1, function() {
-      function Foo() {}
-      Foo.prototype = { 'b': 2 };
-
-      var source = new Foo;
-      source.a = 1;
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
 
       var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
           expected = _.map(objects, _.constant(true)),
+          source = new Foo,
           matches = _.matches(source),
           actual = _.map(objects, matches);
 
@@ -8330,7 +8345,7 @@
 
     test('should not assign inherited `source` properties', 1, function() {
       function Foo() {}
-      Foo.prototype = { 'a': _.noop };
+      Foo.prototype.a = _.noop;
 
       deepEqual(_.mixin({}, new Foo, {}), {});
     });
@@ -9286,10 +9301,15 @@
 
   (function() {
     test('should return an array of property values from each element of a collection', 1, function() {
-      var objects = [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred', 'age': 40 }],
-          actual = _.pluck(objects, 'name');
+      var objects = [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred', 'age': 40 }];
+      deepEqual(_.pluck(objects, 'name'), ['barney', 'fred']);
+    });
 
-      deepEqual(actual, ['barney', 'fred']);
+    test('should pluck inherited property values', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      deepEqual(_.pluck([new Foo], 'b'), [2]);
     });
 
     test('should work with an object for `collection`', 1, function() {
@@ -9324,20 +9344,88 @@
   (function() {
     test('should create a function that plucks a property value of a given object', 3, function() {
       var object = { 'a': 1, 'b': 2 },
-          property = _.property('a');
+          prop = _.property('a');
 
-      strictEqual(property.length, 1);
-      strictEqual(property(object), 1);
+      strictEqual(prop.length, 1);
+      strictEqual(prop(object), 1);
 
-      property = _.property('b');
-      strictEqual(property(object), 2);
+      prop = _.property('b');
+      strictEqual(prop(object), 2);
     });
 
     test('should work with non-string `prop` arguments', 1, function() {
-      var array = [1, 2, 3],
-          property = _.property(1);
+      var prop = _.property(1);
+      strictEqual(prop([1, 2, 3]), 2);
+    });
 
-      strictEqual(property(array), 2);
+    test('should coerce key to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
+
+      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+          values = [null, undefined, fn, {}]
+
+      var actual = _.map(objects, function(object, index) {
+        var prop = _.property(values[index]);
+        return prop(object);
+      });
+
+      deepEqual(actual, [1, 2, 3, 4]);
+    });
+
+    test('should pluck inherited property values', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var prop = _.property('b');
+      strictEqual(prop(new Foo), 2);
+    });
+
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var prop = _.property('a');
+        return index ? prop(value) : prop();
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.propertyOf');
+
+  (function() {
+    test('should create a function that plucks a property value of a given key', 3, function() {
+      var object = { 'a': 1, 'b': 2 },
+          propOf = _.propertyOf(object);
+
+      strictEqual(propOf.length, 1);
+      strictEqual(propOf('a'), 1);
+      strictEqual(propOf('b'), 2);
+    });
+
+    test('should pluck inherited property values', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var propOf = _.propertyOf(new Foo);
+      strictEqual(propOf('b'), 2);
+    });
+
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var propOf = index ? _.propertyOf(value) : _.propertyOf();
+        return propOf('a');
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 
@@ -13141,13 +13229,10 @@
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 31, function() {
+    test('should work with `arguments` objects', 29, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
-
-      deepEqual(_.at(args, 0, 4), [1, 5], message('at'));
-      deepEqual(_.at(array, args), [2, undefined, 4, undefined, 6], '_.at should work with `arguments` objects as secondary arguments');
 
       deepEqual(_.difference(args, [null]), [1, [3], 5], message('difference'));
       deepEqual(_.difference(array, args), [2, 3, 4, 6], '_.difference should work with `arguments` objects as secondary arguments');
@@ -13319,7 +13404,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 198, function() {
+    test('should accept falsey arguments', 199, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

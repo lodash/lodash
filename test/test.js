@@ -9459,6 +9459,69 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.rearg');
+
+  (function() {
+    function fn(a, b, c) {
+      return slice.call(arguments);
+    }
+
+    test('should reorder arguments provided to `func`', 1, function() {
+      var rearged = _.rearg(fn, [2, 0, 1]);
+      deepEqual(rearged('b', 'c', 'a'), ['a', 'b', 'c']);
+    });
+
+    test('should work with repeated indexes', 1, function() {
+      var rearged = _.rearg(fn, [1, 1, 1]);
+      deepEqual(rearged('c', 'a', 'b'), ['a', 'a', 'a']);
+    });
+
+    test('should use `undefined` for nonexistent indexes', 1, function() {
+      var rearged = _.rearg(fn, [1, 4]);
+      deepEqual(rearged('b', 'a', 'c'), ['a', undefined, 'c']);
+    });
+
+    test('should use `undefined` for non-index values', 1, function() {
+      var values = _.reject(empties, function(value) {
+        return value === 0 || _.isArray(value);
+      }).concat(-1, 1.1);
+
+      var expected = _.map(values, _.constant([undefined, 'b', 'c']));
+
+      var actual = _.map(values, function(value) {
+        var rearged = _.rearg(fn, [value]);
+        return rearged('a', 'b', 'c');
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not rearrange arguments when no indexes are provided', 2, function() {
+      var rearged = _.rearg(fn);
+      deepEqual(rearged('a', 'b', 'c'), ['a', 'b', 'c']);
+
+      rearged = _.rearg(fn, [], []);
+      deepEqual(rearged('a', 'b', 'c'), ['a', 'b', 'c']);
+    });
+
+    test('should accept multiple index arguments', 1, function() {
+      var rearged = _.rearg(fn, 2, 0, 1);
+      deepEqual(rearged('b', 'c', 'a'), ['a', 'b', 'c']);
+    });
+
+    test('should accept multiple arrays of indexes', 1, function() {
+      var rearged = _.rearg(fn, [2], [0, 1]);
+      deepEqual(rearged('b', 'c', 'a'), ['a', 'b', 'c']);
+    });
+
+    test('should work with fewer indexes than arguments', 1, function() {
+      var rearged = _.rearg(fn, [1, 0]);
+      deepEqual(rearged('b', 'a', 'c'), ['a', 'b', 'c']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.reduce');
 
   (function() {
@@ -13066,6 +13129,7 @@
       'once',
       'partial',
       'partialRight',
+      'rearg',
       'tap',
       'throttle',
       'thru',
@@ -13140,7 +13204,7 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 21, function() {
+    test('should throw a TypeError for falsey arguments', 22, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

@@ -2173,8 +2173,8 @@
       var isSrcArr = isArrayLike(source);
 
       (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
-        var isArr = srcValue && isArrayLike(srcValue),
-            isObj = srcValue && isPlainObject(srcValue),
+        var isArr = isArrayLike(srcValue),
+            isObj = isPlainObject(srcValue),
             value = object[key];
 
         if (!(isArr || isObj)) {

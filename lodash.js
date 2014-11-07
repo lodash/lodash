@@ -6936,6 +6936,7 @@
      * // => '<p>fred, barney, &amp; pebbles</p>'
      */
     function wrap(value, wrapper) {
+      wrapper = wrapper == null ? identity : wrapper;
       return createWrapper(wrapper, PARTIAL_FLAG, null, [value]);
     }
 

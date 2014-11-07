@@ -12458,6 +12458,18 @@
       var object = { 'p': p, 'text': 'fred, barney, & pebbles' };
       strictEqual(object.p(), '<p>fred, barney, &amp; pebbles</p>');
     });
+
+    test('should use `_.identity` when `wrapper` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant('a'));
+
+      var actual = _.map(values, function(value, index) {
+        var wrapped = index ? _.wrap('a', value) : _.wrap('a');
+        return wrapped('b', 'c');
+      });
+
+      deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -13227,13 +13239,12 @@
       'rearg',
       'tap',
       'throttle',
-      'thru',
-      'wrap'
+      'thru'
     ];
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 197, function() {
+    test('should accept falsey arguments', 198, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -13299,7 +13310,7 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 22, function() {
+    test('should throw a TypeError for falsey arguments', 21, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

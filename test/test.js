@@ -2433,107 +2433,152 @@
     }
 
     test('should curry based on the number of arguments provided', 3, function() {
-      var curried = _.curry(fn),
-          expected = [1, 2, 3, 4];
+      if (!(isRhino && isModularize)) {
+        var curried = _.curry(fn),
+            expected = [1, 2, 3, 4];
 
-      deepEqual(curried(1)(2)(3)(4), expected);
-      deepEqual(curried(1, 2)(3, 4), expected);
-      deepEqual(curried(1, 2, 3, 4), expected);
+        deepEqual(curried(1)(2)(3)(4), expected);
+        deepEqual(curried(1, 2)(3, 4), expected);
+        deepEqual(curried(1, 2, 3, 4), expected);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should allow specifying `arity`', 3, function() {
-      var curried = _.curry(fn, 3),
-          expected = [1, 2, 3];
+      if (!(isRhino && isModularize)) {
+        var curried = _.curry(fn, 3),
+            expected = [1, 2, 3];
 
-      deepEqual(curried(1)(2, 3), expected);
-      deepEqual(curried(1, 2)(3), expected);
-      deepEqual(curried(1, 2, 3), expected);
+        deepEqual(curried(1)(2, 3), expected);
+        deepEqual(curried(1, 2)(3), expected);
+        deepEqual(curried(1, 2, 3), expected);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should coerce `arity` to a number', 2, function() {
-      var values = ['0', 'xyz'],
-          expected = _.map(values, _.constant([]));
+      if (!(isRhino && isModularize)) {
+        var values = ['0', 'xyz'],
+            expected = _.map(values, _.constant([]));
 
-      var actual = _.map(values, function(arity) {
-        return _.curry(fn, arity)();
-      });
+        var actual = _.map(values, function(arity) {
+          return _.curry(fn, arity)();
+        });
 
-      deepEqual(actual, expected);
-      deepEqual(_.curry(fn, '2')(1)(2), [1, 2]);
+        deepEqual(actual, expected);
+        deepEqual(_.curry(fn, '2')(1)(2), [1, 2]);
+      }
+      else {
+        skipTest(2);
+      }
     });
 
     test('should work with partialed methods', 2, function() {
-      var curried = _.curry(fn),
-          expected = [1, 2, 3, 4];
+      if (!(isRhino && isModularize)) {
+        var curried = _.curry(fn),
+            expected = [1, 2, 3, 4];
 
-      var a = _.partial(curried, 1),
-          b = _.bind(a, null, 2),
-          c = _.partialRight(b, 4),
-          d = _.partialRight(b(3), 4);
+        var a = _.partial(curried, 1),
+            b = _.bind(a, null, 2),
+            c = _.partialRight(b, 4),
+            d = _.partialRight(b(3), 4);
 
-      deepEqual(c(3), expected);
-      deepEqual(d(), expected);
+        deepEqual(c(3), expected);
+        deepEqual(d(), expected);
+      }
+      else {
+        skipTest(2);
+      }
     });
 
     test('should support placeholders', 4, function() {
-      var curried = _.curry(fn),
-          ph = curried.placeholder;
+      if (!(isRhino && isModularize)) {
+        var curried = _.curry(fn),
+            ph = curried.placeholder;
 
-      deepEqual(curried(1)(ph, 3)(ph, 4)(2), [1, 2, 3, 4]);
-      deepEqual(curried(ph, 2)(1)(ph, 4)(3), [1, 2, 3, 4]);
-      deepEqual(curried(ph, ph, 3)(ph, 2)(ph, 4)(1), [1, 2, 3, 4]);
-      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
+        deepEqual(curried(1)(ph, 3)(ph, 4)(2), [1, 2, 3, 4]);
+        deepEqual(curried(ph, 2)(1)(ph, 4)(3), [1, 2, 3, 4]);
+        deepEqual(curried(ph, ph, 3)(ph, 2)(ph, 4)(1), [1, 2, 3, 4]);
+        deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
-      var curried = _.curry(fn, 3);
-      deepEqual(curried(1)(2, 3, 4), [1, 2, 3, 4]);
-      deepEqual(curried(1, 2)(3, 4, 5), [1, 2, 3, 4, 5]);
-      deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
+      if (!(isRhino && isModularize)) {
+        var curried = _.curry(fn, 3);
+        deepEqual(curried(1)(2, 3, 4), [1, 2, 3, 4]);
+        deepEqual(curried(1, 2)(3, 4, 5), [1, 2, 3, 4, 5]);
+        deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should return a function with a `length` of `0`', 6, function() {
-      _.times(2, function(index) {
-        var curried = index ? _.curry(fn, 4) : _.curry(fn);
-        strictEqual(curried.length, 0);
-        strictEqual(curried(1).length, 0);
-        strictEqual(curried(1, 2).length, 0);
-      });
+      if (!(isRhino && isModularize)) {
+        _.times(2, function(index) {
+          var curried = index ? _.curry(fn, 4) : _.curry(fn);
+          strictEqual(curried.length, 0);
+          strictEqual(curried(1).length, 0);
+          strictEqual(curried(1, 2).length, 0);
+        });
+      }
+      else {
+        skipTest(6);
+      }
     });
 
     test('ensure `new curried` is an instance of `func`', 2, function() {
-      function Foo(value) {
-        return value && object;
+      if (!(isRhino && isModularize)) {
+        var Foo = function(value) {
+          return value && object;
+        };
+
+        var curried = _.curry(Foo),
+            object = {};
+
+        ok(new curried(false) instanceof Foo);
+        strictEqual(new curried(true), object);
       }
-
-      var curried = _.curry(Foo),
-          object = {};
-
-      ok(new curried(false) instanceof Foo);
-      strictEqual(new curried(true), object);
+      else {
+        skipTest(2);
+      }
     });
 
     test('should not set a `this` binding', 9, function() {
-      function fn(a, b, c) {
-        var value = this || {};
-        return [value[a], value[b], value[c]];
+      if (!(isRhino && isModularize)) {
+        var fn = function(a, b, c) {
+          var value = this || {};
+          return [value[a], value[b], value[c]];
+        };
+
+        var object = { 'a': 1, 'b': 2, 'c': 3 },
+            expected = [1, 2, 3];
+
+        deepEqual(_.curry(_.bind(fn, object), 3)('a')('b')('c'), expected);
+        deepEqual(_.curry(_.bind(fn, object), 3)('a', 'b')('c'), expected);
+        deepEqual(_.curry(_.bind(fn, object), 3)('a', 'b', 'c'), expected);
+
+        deepEqual(_.bind(_.curry(fn), object)('a')('b')('c'), Array(3));
+        deepEqual(_.bind(_.curry(fn), object)('a', 'b')('c'), Array(3));
+        deepEqual(_.bind(_.curry(fn), object)('a', 'b', 'c'), expected);
+
+        object.curried = _.curry(fn);
+        deepEqual(object.curried('a')('b')('c'), Array(3));
+        deepEqual(object.curried('a', 'b')('c'), Array(3));
+        deepEqual(object.curried('a', 'b', 'c'), expected);
       }
-
-      var object = { 'a': 1, 'b': 2, 'c': 3 },
-          expected = [1, 2, 3];
-
-      deepEqual(_.curry(_.bind(fn, object), 3)('a')('b')('c'), expected);
-      deepEqual(_.curry(_.bind(fn, object), 3)('a', 'b')('c'), expected);
-      deepEqual(_.curry(_.bind(fn, object), 3)('a', 'b', 'c'), expected);
-
-      deepEqual(_.bind(_.curry(fn), object)('a')('b')('c'), Array(3));
-      deepEqual(_.bind(_.curry(fn), object)('a', 'b')('c'), Array(3));
-      deepEqual(_.bind(_.curry(fn), object)('a', 'b', 'c'), expected);
-
-      object.curried = _.curry(fn);
-      deepEqual(object.curried('a')('b')('c'), Array(3));
-      deepEqual(object.curried('a', 'b')('c'), Array(3));
-      deepEqual(object.curried('a', 'b', 'c'), expected);
+      else {
+        skipTest(9);
+      }
     });
   }());
 
@@ -2547,96 +2592,136 @@
     }
 
     test('should curry based on the number of arguments provided', 3, function() {
-      var curried = _.curryRight(fn),
-          expected = [1, 2, 3, 4];
+      if (!(isRhino && isModularize)) {
+        var curried = _.curryRight(fn),
+            expected = [1, 2, 3, 4];
 
-      deepEqual(curried(4)(3)(2)(1), expected);
-      deepEqual(curried(3, 4)(1, 2), expected);
-      deepEqual(curried(1, 2, 3, 4), expected);
+        deepEqual(curried(4)(3)(2)(1), expected);
+        deepEqual(curried(3, 4)(1, 2), expected);
+        deepEqual(curried(1, 2, 3, 4), expected);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should allow specifying `arity`', 3, function() {
-      var curried = _.curryRight(fn, 3),
-          expected = [1, 2, 3];
+      if (!(isRhino && isModularize)) {
+        var curried = _.curryRight(fn, 3),
+            expected = [1, 2, 3];
 
-      deepEqual(curried(3)(1, 2), expected);
-      deepEqual(curried(2, 3)(1), expected);
-      deepEqual(curried(1, 2, 3), expected);
+        deepEqual(curried(3)(1, 2), expected);
+        deepEqual(curried(2, 3)(1), expected);
+        deepEqual(curried(1, 2, 3), expected);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should work with partialed methods', 2, function() {
-      var curried = _.curryRight(fn),
-          expected = [1, 2, 3, 4];
+      if (!(isRhino && isModularize)) {
+        var curried = _.curryRight(fn),
+            expected = [1, 2, 3, 4];
 
-      var a = _.partialRight(curried, 4),
-          b = _.partialRight(a, 3),
-          c = _.bind(b, null, 1),
-          d = _.partial(b(2), 1);
+        var a = _.partialRight(curried, 4),
+            b = _.partialRight(a, 3),
+            c = _.bind(b, null, 1),
+            d = _.partial(b(2), 1);
 
-      deepEqual(c(2), expected);
-      deepEqual(d(), expected);
+        deepEqual(c(2), expected);
+        deepEqual(d(), expected);
+      }
+      else {
+        skipTest(2);
+      }
     });
 
     test('should support placeholders', 4, function() {
-      var curried = _.curryRight(fn),
-          expected = [1, 2, 3, 4],
-          ph = curried.placeholder;
+      if (!(isRhino && isModularize)) {
+        var curried = _.curryRight(fn),
+            expected = [1, 2, 3, 4],
+            ph = curried.placeholder;
 
-      deepEqual(curried(4)(2, ph)(1, ph)(3), expected);
-      deepEqual(curried(3, ph)(4)(1, ph)(2), expected);
-      deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), expected);
-      deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), expected);
+        deepEqual(curried(4)(2, ph)(1, ph)(3), expected);
+        deepEqual(curried(3, ph)(4)(1, ph)(2), expected);
+        deepEqual(curried(ph, ph, 4)(ph, 3)(ph, 2)(1), expected);
+        deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), expected);
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
-      var curried = _.curryRight(fn, 3);
-      deepEqual(curried(4)(1, 2, 3), [1, 2, 3, 4]);
-      deepEqual(curried(4, 5)(1, 2, 3), [1, 2, 3, 4, 5]);
-      deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
+      if (!(isRhino && isModularize)) {
+        var curried = _.curryRight(fn, 3);
+        deepEqual(curried(4)(1, 2, 3), [1, 2, 3, 4]);
+        deepEqual(curried(4, 5)(1, 2, 3), [1, 2, 3, 4, 5]);
+        deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should return a function with a `length` of `0`', 6, function() {
-      _.times(2, function(index) {
-        var curried = index ? _.curryRight(fn, 4) : _.curryRight(fn);
-        strictEqual(curried.length, 0);
-        strictEqual(curried(4).length, 0);
-        strictEqual(curried(3, 4).length, 0);
-      });
+      if (!(isRhino && isModularize)) {
+        _.times(2, function(index) {
+          var curried = index ? _.curryRight(fn, 4) : _.curryRight(fn);
+          strictEqual(curried.length, 0);
+          strictEqual(curried(4).length, 0);
+          strictEqual(curried(3, 4).length, 0);
+        });
+      }
+      else {
+        skipTest(6);
+      }
     });
 
     test('ensure `new curried` is an instance of `func`', 2, function() {
-      function Foo(value) {
-        return value && object;
+      if (!(isRhino && isModularize)) {
+        var Foo = function(value) {
+          return value && object;
+        };
+
+        var curried = _.curryRight(Foo),
+            object = {};
+
+        ok(new curried(false) instanceof Foo);
+        strictEqual(new curried(true), object);
       }
-
-      var curried = _.curryRight(Foo),
-          object = {};
-
-      ok(new curried(false) instanceof Foo);
-      strictEqual(new curried(true), object);
+      else {
+        skipTest(2);
+      }
     });
 
     test('should not set a `this` binding', 9, function() {
-      function fn(a, b, c) {
-        var value = this || {};
-        return [value[a], value[b], value[c]];
+      if (!(isRhino && isModularize)) {
+        var fn = function(a, b, c) {
+          var value = this || {};
+          return [value[a], value[b], value[c]];
+        };
+
+        var object = { 'a': 1, 'b': 2, 'c': 3 },
+            expected = [1, 2, 3];
+
+        deepEqual(_.curryRight(_.bind(fn, object), 3)('c')('b')('a'), expected);
+        deepEqual(_.curryRight(_.bind(fn, object), 3)('b', 'c')('a'), expected);
+        deepEqual(_.curryRight(_.bind(fn, object), 3)('a', 'b', 'c'), expected);
+
+        deepEqual(_.bind(_.curryRight(fn), object)('c')('b')('a'), Array(3));
+        deepEqual(_.bind(_.curryRight(fn), object)('b', 'c')('a'), Array(3));
+        deepEqual(_.bind(_.curryRight(fn), object)('a', 'b', 'c'), expected);
+
+        object.curried = _.curryRight(fn);
+        deepEqual(object.curried('c')('b')('a'), Array(3));
+        deepEqual(object.curried('b', 'c')('a'), Array(3));
+        deepEqual(object.curried('a', 'b', 'c'), expected);
       }
-
-      var object = { 'a': 1, 'b': 2, 'c': 3 },
-          expected = [1, 2, 3];
-
-      deepEqual(_.curryRight(_.bind(fn, object), 3)('c')('b')('a'), expected);
-      deepEqual(_.curryRight(_.bind(fn, object), 3)('b', 'c')('a'), expected);
-      deepEqual(_.curryRight(_.bind(fn, object), 3)('a', 'b', 'c'), expected);
-
-      deepEqual(_.bind(_.curryRight(fn), object)('c')('b')('a'), Array(3));
-      deepEqual(_.bind(_.curryRight(fn), object)('b', 'c')('a'), Array(3));
-      deepEqual(_.bind(_.curryRight(fn), object)('a', 'b', 'c'), expected);
-
-      object.curried = _.curryRight(fn);
-      deepEqual(object.curried('c')('b')('a'), Array(3));
-      deepEqual(object.curried('b', 'c')('a'), Array(3));
-      deepEqual(object.curried('a', 'b', 'c'), expected);
+      else {
+        skipTest(9);
+      }
     });
   }());
 
@@ -8797,11 +8882,16 @@
     });
 
     test('`_.' + methodName + '` should work with curried methods', 2, function() {
-      var fn = function(a, b, c) { return a + b + c; },
-          curried = _.curry(func(fn, 1), 2);
+      if (!(isRhino && isModularize)) {
+        var fn = function(a, b, c) { return a + b + c; },
+            curried = _.curry(func(fn, 1), 2);
 
-      strictEqual(curried(2, 3), 6);
-      strictEqual(curried(2)(3), 6);
+        strictEqual(curried(2, 3), 6);
+        strictEqual(curried(2)(3), 6);
+      }
+      else {
+        skipTest(2);
+      }
     });
   });
 
@@ -8959,20 +9049,6 @@
         deepEqual(actual, [object, 1, 2, 3]);
       });
 
-      _.each(['curry', 'curryRight'], function(methodName) {
-        function fn(a, b, c) {
-          return [a, b, c];
-        }
-
-        var curried = _[methodName](fn);
-
-        var actual = _.last(_.times(HOT_COUNT, function() {
-          return curried(1)(2)(3);
-        }));
-
-        deepEqual(actual, methodName == 'curry' ? [1, 2, 3] : [3, 2, 1]);
-      });
-
       _.each(['partial', 'partialRight'], function(methodName) {
         function fn() {
           return slice.call(arguments);
@@ -8988,6 +9064,25 @@
 
         deepEqual(actual, methodName == 'partial' ? [1, 2, 3] : [3, 2, 1]);
       });
+
+      if (!(isRhino && isModularize)) {
+        _.each(['curry', 'curryRight'], function(methodName) {
+          function fn(a, b, c) {
+            return [a, b, c];
+          }
+
+          var curried = _[methodName](fn);
+
+          var actual = _.last(_.times(HOT_COUNT, function() {
+            return curried(1)(2)(3);
+          }));
+
+          deepEqual(actual, methodName == 'curry' ? [1, 2, 3] : [3, 2, 1]);
+        });
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 

@@ -3533,17 +3533,17 @@
      * // => [1]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate' },
-     *   { 'user': 'fred',    'employer': 'slate', 'blocked': true },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': false },
+     *   { 'user': 'fred',    'status': 'busy', 'active': true },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.dropRightWhile(users, 'blocked'), 'user');
+     * _.pluck(_.dropRightWhile(users, 'active'), 'user');
      * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.dropRightWhile(users, { 'employer': 'na' }), 'user');
+     * _.pluck(_.dropRightWhile(users, { 'status': 'away' }), 'user');
      * // => ['barney', 'fred']
      */
     function dropRightWhile(array, predicate, thisArg) {
@@ -3581,17 +3581,17 @@
      * // => [3]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate', 'blocked': true },
-     *   { 'user': 'fred',    'employer': 'slate' },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': true },
+     *   { 'user': 'fred',    'status': 'busy', 'active': false },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.dropWhile(users, 'blocked'), 'user');
+     * _.pluck(_.dropWhile(users, 'active'), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.dropWhile(users, { 'employer': 'slate' }), 'user');
+     * _.pluck(_.dropWhile(users, { 'status': 'busy' }), 'user');
      * // => ['pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
@@ -3626,22 +3626,20 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40, 'blocked': true },
-     *   { 'user': 'pebbles', 'age': 1 }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': true },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * _.findIndex(users, function(chr) {
-     *   return chr.age < 20;
-     * });
-     * // => 2
-     *
-     * // using "_.where" callback shorthand
-     * _.findIndex(users, { 'age': 36 });
+     * _.findIndex(users, function(chr) { return chr.age < 40; });
      * // => 0
      *
+     * // using "_.where" callback shorthand
+     * _.findIndex(users, { 'age': 1 });
+     * // => 2
+     *
      * // using "_.pluck" callback shorthand
-     * _.findIndex(users, 'blocked');
+     * _.findIndex(users, 'active');
      * // => 1
      */
     function findIndex(array, predicate, thisArg) {
@@ -3680,23 +3678,21 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36, 'blocked': true },
-     *   { 'user': 'fred',    'age': 40 },
-     *   { 'user': 'pebbles', 'age': 1,  'blocked': true }
+     *   { 'user': 'barney',  'age': 36, 'active': true },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * _.findLastIndex(users, function(chr) {
-     *   return chr.age > 30;
-     * });
-     * // => 1
+     * _.findLastIndex(users, function(chr) { return chr.age < 40; });
+     * // => 2
      *
      * // using "_.where" callback shorthand
-     * _.findLastIndex(users, { 'age': 36 });
-     * // => 0
+     * _.findLastIndex(users, { 'age': 40});
+     * // => 1
      *
      * // using "_.pluck" callback shorthand
-     * _.findLastIndex(users, 'blocked');
-     * // => 2
+     * _.findLastIndex(users, 'active');
+     * // => 0
      */
     function findLastIndex(array, predicate, thisArg) {
       var length = array ? array.length : 0;
@@ -4318,17 +4314,17 @@
      * // => [2, 3]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate' },
-     *   { 'user': 'fred',    'employer': 'slate', 'blocked': true },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': false },
+     *   { 'user': 'fred',    'status': 'busy', 'active': true },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.takeRightWhile(users, 'blocked'), 'user');
+     * _.pluck(_.takeRightWhile(users, 'active'), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.takeRightWhile(users, { 'employer': 'na' }), 'user');
+     * _.pluck(_.takeRightWhile(users, { 'status': 'away' }), 'user');
      * // => ['pebbles']
      */
     function takeRightWhile(array, predicate, thisArg) {
@@ -4366,17 +4362,17 @@
      * // => [1, 2]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate', 'blocked': true },
-     *   { 'user': 'fred',    'employer': 'slate' },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': true },
+     *   { 'user': 'fred',    'status': 'busy', 'active': false },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.takeWhile(users, 'blocked'), 'user');
+     * _.pluck(_.takeWhile(users, 'active'), 'user');
      * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.takeWhile(users, { 'employer': 'slate' }), 'user');
+     * _.pluck(_.takeWhile(users, { 'status': 'busy' }), 'user');
      * // => ['barney', 'fred']
      */
     function takeWhile(array, predicate, thisArg) {
@@ -5136,17 +5132,17 @@
      * // => [2, 4]
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40, 'blocked': true }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.filter(users, 'blocked');
-     * // => [{ 'user': 'fred', 'age': 40, 'blocked': true }]
+     * _.pluck(_.filter(users, 'active'), 'user');
+     * // => ['fred']
      *
      * // using "_.where" callback shorthand
-     * _.filter(users, { 'age': 36 });
-     * // => [{ 'user': 'barney', 'age': 36 }]
+     * _.pluck(_.filter(users, { 'age': 36 }), 'user');
+     * // => ['barney']
      */
     function filter(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -5180,23 +5176,21 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40, 'blocked': true },
-     *   { 'user': 'pebbles', 'age': 1 }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': true },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * _.find(users, function(chr) {
-     *   return chr.age < 40;
-     * });
-     * // => { 'user': 'barney', 'age': 36 }
+     * _.result(_.find(users, function(chr) { return chr.age < 40; }), 'user');
+     * // => 'barney'
      *
      * // using "_.where" callback shorthand
-     * _.find(users, { 'age': 1 });
-     * // =>  { 'user': 'pebbles', 'age': 1 }
+     * _.result(_.find(users, { 'age': 1 }), 'user');
+     * // => 'pebbles'
      *
      * // using "_.pluck" callback shorthand
-     * _.find(users, 'blocked');
-     * // => { 'user': 'fred', 'age': 40, 'blocked': true }
+     * _.result(_.find(users, 'active'), 'user');
+     * // => 'fred'
      */
     function find(collection, predicate, thisArg) {
       if (isArray(collection)) {
@@ -5244,15 +5238,15 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'employer': 'slate' },
-     *   { 'user': 'fred',   'age': 40, 'employer': 'slate' }
+     *   { 'user': 'barney', 'age': 36, 'status': 'busy' },
+     *   { 'user': 'fred',   'age': 40, 'status': 'busy' }
      * ];
      *
-     * _.findWhere(users, { 'employer': 'slate' });
-     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
+     * _.findWhere(users, { 'status': 'busy' });
+     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
      *
      * _.findWhere(users, { 'age': 40 });
-     * // =>  { 'user': 'fred', 'age': 40, 'employer': 'slate' }
+     * // =>  { 'user': 'fred', 'age': 40, 'status': 'busy' }
      */
     function findWhere(collection, source) {
       return find(collection, matches(source));
@@ -5644,9 +5638,9 @@
      * // => [[1, 3], [2]]
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40, 'blocked': true },
-     *   { 'user': 'pebbles', 'age': 1 }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': true },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
      * // using "_.where" callback shorthand
@@ -5654,7 +5648,7 @@
      * // => [['pebbles'], ['barney', 'fred']]
      *
      * // using "_.pluck" callback shorthand
-     * _.map(_.partition(users, 'blocked'), function(array) { return _.pluck(array, 'user'); });
+     * _.map(_.partition(users, 'active'), function(array) { return _.pluck(array, 'user'); });
      * // => [['fred'], ['barney', 'pebbles']]
      */
     var partition = createAggregator(function(result, value, key) {
@@ -5771,17 +5765,17 @@
      * // => [1, 3]
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40, 'blocked': true }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.reject(users, 'blocked');
-     * // => [{ 'user': 'barney', 'age': 36 }]
+     * _.pluck(_.reject(users, 'active'), 'user');
+     * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.reject(users, { 'age': 36 });
-     * // => [{ 'user': 'fred', 'age': 40, 'blocked': true }]
+     * _.pluck(_.reject(users, { 'age': 36 }), 'user');
+     * // => ['fred']
      */
     function reject(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -5908,12 +5902,12 @@
      * // => true
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40, 'blocked': true }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.some(users, 'blocked');
+     * _.some(users, 'active');
      * // => true
      *
      * // using "_.where" callback shorthand
@@ -6051,8 +6045,8 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'employer': 'slate', 'pets': ['hoppy'] },
-     *   { 'user': 'fred',   'age': 40, 'employer': 'slate', 'pets': ['baby puss', 'dino'] }
+     *   { 'user': 'barney', 'age': 36, 'status': 'busy', 'pets': ['hoppy'] },
+     *   { 'user': 'fred',   'age': 40, 'status': 'busy', 'pets': ['baby puss', 'dino'] }
      * ];
      *
      * _.pluck(_.where(users, { 'age': 36 }), 'user');
@@ -6061,7 +6055,7 @@
      * _.pluck(_.where(users, { 'pets': ['dino'] }), 'user');
      * // => ['fred']
      *
-     * _.pluck(_.where(users, { 'employer': 'slate' }), 'user');
+     * _.pluck(_.where(users, { 'status': 'busy' }), 'user');
      * // => ['barney', 'fred']
      */
     function where(collection, source) {
@@ -7645,15 +7639,15 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.assign({ 'user': 'fred' }, { 'age': 40 }, { 'employer': 'slate' });
-     * // => { 'user': 'fred', 'age': 40, 'employer': 'slate' }
+     * _.assign({ 'user': 'fred' }, { 'age': 40 }, { 'status': 'busy' });
+     * // => { 'user': 'fred', 'age': 40, 'status': 'busy' }
      *
      * var defaults = _.partialRight(_.assign, function(value, other) {
      *   return typeof value == 'undefined' ? other : value;
      * });
      *
-     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'employer': 'slate' });
-     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
+     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
      */
     var assign = createAssigner(baseAssign);
 
@@ -7711,8 +7705,8 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'employer': 'slate' });
-     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
+     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
+     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
      */
     function defaults(object) {
       if (object == null) {
@@ -7746,14 +7740,12 @@
      * @example
      *
      * var users = {
-     *   'barney': { 'age': 36 },
-     *   'fred': { 'age': 40, 'blocked': true },
-     *   'pebbles': { 'age': 1 }
+     *   'barney':  { 'age': 36, 'active': true },
+     *   'fred':    { 'age': 40, 'active': false },
+     *   'pebbles': { 'age': 1,  'active': true }
      * };
      *
-     * _.findKey(users, function(chr) {
-     *   return chr.age < 40;
-     * });
+     * _.findKey(users, function(chr) { return chr.age < 40; });
      * // => 'barney' (iteration order is not guaranteed)
      *
      * // using "_.where" callback shorthand
@@ -7761,8 +7753,8 @@
      * // => 'pebbles'
      *
      * // using "_.pluck" callback shorthand
-     * _.findKey(users, 'blocked');
-     * // => 'fred'
+     * _.findKey(users, 'active');
+     * // => 'barney'
      */
     function findKey(object, predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
@@ -7792,22 +7784,20 @@
      * @example
      *
      * var users = {
-     *   'barney': { 'age': 36, 'blocked': true },
-     *   'fred': { 'age': 40 },
-     *   'pebbles': { 'age': 1, 'blocked': true }
+     *   'barney':  { 'age': 36, 'active': true },
+     *   'fred':    { 'age': 40, 'active': false },
+     *   'pebbles': { 'age': 1,  'active': true }
      * };
      *
-     * _.findLastKey(users, function(chr) {
-     *   return chr.age < 40;
-     * });
-     * // => returns `pebbles`, assuming `_.findKey` returns `barney`
+     * _.findLastKey(users, function(chr) { return chr.age < 40; });
+     * // => returns `pebbles` assuming `_.findKey` returns `barney`
      *
      * // using "_.where" callback shorthand
      * _.findLastKey(users, { 'age': 40 });
      * // => 'fred'
      *
      * // using "_.pluck" callback shorthand
-     * _.findLastKey(users, 'blocked');
+     * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
@@ -8158,7 +8148,7 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      *
      * var users = {
-     *   'fred': { 'user': 'fred', 'age': 40 },
+     *   'fred':    { 'user': 'fred',    'age': 40 },
      *   'pebbles': { 'user': 'pebbles', 'age': 1 }
      * };
      *
@@ -9765,8 +9755,8 @@
      * _.result(object, 'age');
      * // => 40
      *
-     * _.result(object, 'employer', 'slate');
-     * // => 'slate'
+     * _.result(object, 'status', 'busy');
+     * // => 'busy'
      */
     function result(object, key, defaultValue) {
       var value = object == null ? undefined : object[key];

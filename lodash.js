@@ -7461,10 +7461,13 @@
      * // => false
      */
     function isNative(value) {
-      if (typeof value == 'function' || toString.call(value) == funcClass) {
+      if (value == null) {
+        return false;
+      }
+      if (toString.call(value) == funcClass) {
         return reNative.test(fnToString.call(value));
       }
-      return (value && typeof value == 'object' &&
+      return (typeof value == 'object' &&
         (isHostObject(value) ? reNative : reHostCtor).test(value)) || false;
     }
 

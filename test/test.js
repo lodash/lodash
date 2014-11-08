@@ -6464,6 +6464,19 @@
       strictEqual(_.isFunction(slice), true);
     });
 
+    test('should return `true` for typed array constructors', 1, function() {
+      var expected = _.map(typedArrays, function(type) {
+        return toString.call(root[type]) == '[object Function]';
+      });
+
+      var actual = _.map(typedArrays, function(type) {
+        var Ctor = root[type];
+        return Ctor ? _.isFunction(Ctor) : false;
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should return `false` for non functions', 11, function() {
       var expected = _.map(falsey, _.constant(false));
 

@@ -7377,9 +7377,9 @@
       return typeof value == 'function' || false;
     }
     // fallback for older versions of Chrome and Safari
-    if (isFunction(/x/)) {
+    if (isFunction(/x/) || !Uint8Array || !isFunction(Uint8Array)) {
       isFunction = function(value) {
-        return typeof value == 'function' && toString.call(value) == funcClass;
+        return toString.call(value) == funcClass;
       };
     }
 
@@ -7461,7 +7461,7 @@
      * // => false
      */
     function isNative(value) {
-      if (isFunction(value)) {
+      if (typeof value == 'function' || toString.call(value) == funcClass) {
         return reNative.test(fnToString.call(value));
       }
       return (value && typeof value == 'object' &&

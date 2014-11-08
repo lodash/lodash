@@ -9550,8 +9550,8 @@
     }
 
     /**
-     * Creates a "_.pluck" style function which returns the value associated with
-     * the `key` of a given object.
+     * Creates a "_.pluck" style function which returns the property value
+     * of `key` on a given object.
      *
      * @static
      * @memberOf _
@@ -9568,10 +9568,10 @@
      * var getName = _.property('user');
      *
      * _.map(users, getName);
-     * // => ['barney', 'fred']
+     * // => ['fred', barney']
      *
-     * _.sortBy(users, getName);
-     * // => [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred',   'age': 40 }]
+     * _.pluck(_.sortBy(users, getName), 'user');
+     * // => ['barney', 'fred']
      */
     function property(key) {
       key = String(key);
@@ -9582,7 +9582,7 @@
 
     /**
      * The inverse of `_.property`; this method creates a function which returns
-     * the value associated with a given key of `object`.
+     * the property value of a given key on `object`.
      *
      * @static
      * @memberOf _
@@ -9592,7 +9592,7 @@
      * @example
      *
      * var fred = { 'user': 'fred',   'age': 40, 'active': true };
-     * _.map(['age', 'active', _.propertyOf(fred));
+     * _.map(['age', 'active'], _.propertyOf(fred));
      * // => [40, true]
      *
      * var object = { 'a': 3, 'b': 1, 'c': 2 };

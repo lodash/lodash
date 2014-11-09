@@ -9527,8 +9527,8 @@
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
      *
-     * **Note:** This method avoids differences in native ES3 and ES5 `parseInt`
-     * implementations. See the [ES5 spec](http://es5.github.io/#E) for more details.
+     * **Note:** This method aligns with the ES5 implementation of `parseInt`.
+     * See the [ES5 spec](http://es5.github.io/#E) for more details.
      *
      * @static
      * @memberOf _

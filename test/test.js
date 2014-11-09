@@ -219,10 +219,10 @@
 
   /** List of latin-1 supplementary letters to basic latin letters */
   var burredLetters = [
-    '\xC0', '\xC1', '\xC2', '\xC3', '\xC4', '\xC5', '\xC6', '\xC7', '\xC8', '\xC9', '\xCA', '\xCB', '\xCC', '\xCD', '\xCE',
-    '\xCF', '\xD0', '\xD1', '\xD2', '\xD3', '\xD4', '\xD5', '\xD6', '\xD8', '\xD9', '\xDA', '\xDB', '\xDC', '\xDD', '\xDE',
-    '\xDF', '\xE0', '\xE1', '\xE2', '\xE3', '\xE4', '\xE5', '\xE6', '\xE7', '\xE8', '\xE9', '\xEA', '\xEB', '\xEC', '\xED', '\xEE',
-    '\xEF', '\xF0', '\xF1', '\xF2', '\xF3', '\xF4', '\xF5', '\xF6', '\xF8', '\xF9', '\xFA', '\xFB', '\xFC', '\xFD', '\xFE', '\xFF'
+    '\xc0', '\xc1', '\xc2', '\xc3', '\xc4', '\xc5', '\xc6', '\xc7', '\xc8', '\xc9', '\xca', '\xcb', '\xcc', '\xcd', '\xce',
+    '\xcf', '\xd0', '\xd1', '\xd2', '\xd3', '\xd4', '\xd5', '\xd6', '\xd8', '\xd9', '\xda', '\xdb', '\xdc', '\xdd', '\xde',
+    '\xdf', '\xe0', '\xe1', '\xe2', '\xe3', '\xe4', '\xe5', '\xe6', '\xe7', '\xe8', '\xe9', '\xea', '\xeb', '\xec', '\xed', '\xee',
+    '\xef', '\xf0', '\xf1', '\xf2', '\xf3', '\xf4', '\xf5', '\xf6', '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff'
   ];
 
   /** List of `burredLetters` translated to basic latin letters */
@@ -281,7 +281,7 @@
    * Used to check for problems removing whitespace. For a whitespace reference
    * see V8's unit test https://code.google.com/p/v8/source/browse/branches/bleeding_edge/test/mjsunit/whitespaces.js.
    */
-  var whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+  var whitespace = ' \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
   /**
    * Extracts the unwrapped value from its wrapper.
@@ -1429,7 +1429,7 @@
     });
 
     test('should trim latin-1 mathematical operators', 1, function() {
-      var actual = _.map(['\xD7', '\xF7'], func);
+      var actual = _.map(['\xd7', '\xf7'], func);
       deepEqual(actual, ['', '']);
     });
 
@@ -2948,7 +2948,7 @@
     });
 
     test('should not deburr latin-1 mathematical operators', 1, function() {
-      var operators = ['\xD7', '\xF7'],
+      var operators = ['\xd7', '\xf7'],
           actual = _.map(operators, _.deburr);
 
       deepEqual(actual, operators);
@@ -12492,7 +12492,7 @@
     });
 
     test('should not treat mathematical operators as words', 1, function() {
-      var operators = ['\xD7', '\xF7'],
+      var operators = ['\xd7', '\xf7'],
           expected = _.map(operators, _.constant([])),
           actual = _.map(operators, _.words);
 

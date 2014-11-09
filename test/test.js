@@ -10317,6 +10317,11 @@
       deepEqual(_.shuffle(1), []);
     });
 
+    test('should work with random number generator', 1, function() {
+      var actual = _.shuffle([1, 2, 3, 4, 5], function() { return 0.5; });
+      deepEqual(actual, [1, 3, 5, 2, 4]);
+    });
+
     _.each({
       'literal': 'abc',
       'object': Object('abc')

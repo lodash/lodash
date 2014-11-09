@@ -9599,7 +9599,7 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var fred = { 'user': 'fred',   'age': 40, 'active': true };
+     * var fred = { 'user': 'fred', 'age': 40, 'active': true };
      * _.map(['age', 'active'], _.propertyOf(fred));
      * // => [40, true]
      *

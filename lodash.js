@@ -3370,12 +3370,13 @@
      * // => [['a', 'b', 'c'], ['d']]
      */
     function chunk(array, size, guard) {
+      size = (guard || size == null) ? 1 : nativeMax(+size || 1, 1);
+
       var index = 0,
           length = array ? array.length : 0,
           resIndex = -1,
-          result = [];
+          result = Array(ceil(length / size));
 
-      size = (guard || size == null) ? 1 : nativeMax(+size || 1, 1);
       while (index < length) {
         result[++resIndex] = slice(array, index, (index += size));
       }

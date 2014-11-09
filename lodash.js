@@ -7377,9 +7377,13 @@
       // https://github.com/jashkenas/underscore/issues/1621
       return typeof value == 'function' || false;
     }
-    // fallback for older versions of Chrome and Safari
+    // fallback for environments that return incorrect `typeof` operator results
     if (isFunction(/x/) || !Uint8Array || !isFunction(Uint8Array)) {
       isFunction = function(value) {
+        // the use of `Object#toString` avoids issues with the `typeof` operator
+        // in older versions of Chrome and Safari which return 'function' for
+        // regexes and modern Safari which returns 'object' for typed array
+        // constructors
         return toString.call(value) == funcClass;
       };
     }

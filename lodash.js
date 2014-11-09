@@ -2250,10 +2250,12 @@
      * @private
      * @param {number} min The minimum possible value.
      * @param {number} max The maximum possible value.
+     * @param {Function} [random=Math.random] The random number generator to use.
      * @returns {number} Returns the random number.
      */
-    function baseRandom(min, max) {
-      return min + floor(nativeRandom() * (max - min + 1));
+    function baseRandom(min, max, random) {
+      random = random || nativeRandom;
+      return min + floor(random() * (max - min + 1));
     }
 
     /**
@@ -5824,13 +5826,14 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to shuffle.
+     * @param {Function} [random=Math.random] The random number generator to use.
      * @returns {Array} Returns the new shuffled array.
      * @example
      *
      * _.shuffle([1, 2, 3, 4]);
      * // => [4, 1, 3, 2]
      */
-    function shuffle(collection) {
+    function shuffle(collection, random) {
       collection = toIterable(collection);
 
       var index = -1,
@@ -5838,7 +5841,7 @@
           result = Array(length);
 
       while (++index < length) {
-        var rand = baseRandom(0, index);
+        var rand = baseRandom(0, index, random);
         if (index != rand) {
           result[index] = result[rand];
         }

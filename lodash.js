@@ -1177,12 +1177,11 @@
        * Detect if `Array#shift` and `Array#splice` augment array-like objects
        * correctly.
        *
-       * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+       * Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array `shift()`
        * and `splice()` functions that fail to remove the last element, `value[0]`,
        * of array-like objects even though the `length` property is set to `0`.
-       * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-       * is buggy regardless of mode in IE < 9 and buggy in compatibility mode
-       * in IE 9.
+       * The `shift()` method is buggy in compatibility modes of IE 8, while `splice()`
+       * is buggy regardless of mode in IE < 9.
        *
        * @memberOf _.support
        * @type boolean
@@ -7373,7 +7372,7 @@
      * // => false
      */
     function isFunction(value) {
-      // avoid a Chakra bug in IE 11
+      // use `|| false` to avoid a Chakra bug in compatibility modes of IE 11
       // https://github.com/jashkenas/underscore/issues/1621
       return typeof value == 'function' || false;
     }

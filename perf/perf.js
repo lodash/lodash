@@ -516,10 +516,10 @@
         var settingsObject = { "variable": "data" };\
         \
         var _tpl = _.template(tpl),\
-            _tplVerbose = _.template(tplVerbose, settingsObject);\
+            _tplVerbose = _.template(tplVerbose, null, settingsObject);\
         \
         var lodashTpl = lodash.template(tpl),\
-            lodashTplVerbose = lodash.template(tplVerbose, settingsObject);\
+            lodashTplVerbose = lodash.template(tplVerbose, null, settingsObject);\
       }\
       if (typeof wrap != "undefined") {\
         var add = function(a, b) {\

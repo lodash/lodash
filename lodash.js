@@ -3441,7 +3441,7 @@
           break;
         }
       }
-      return baseDifference(arguments[index], baseFlatten(arguments, false, true, ++index));
+      return baseDifference(value, baseFlatten(arguments, false, true, ++index));
     }
 
     /**

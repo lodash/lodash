@@ -719,6 +719,19 @@
   }());
 
   /**
+   * Checks if `value` is valid array-like index.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @param {number} [length] The upper bound of a valid index.
+   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+   */
+  function isIndex(value, length) {
+    value = +value;
+    return value > -1 && value % 1 == 0 && (length == null || value < length);
+  }
+
+  /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -1422,7 +1435,7 @@
         var key = props[index];
         if (isArr) {
           key = parseFloat(key);
-          result[index] = (key > -1 && key < length && key % 1 == 0) ? collection[key] : undefined;
+          result[index] = isIndex(key, length) ? collection[key] : undefined;
         } else {
           result[index] = collection[key];
         }
@@ -2235,7 +2248,7 @@
       indexes.sort(baseCompareAscending);
       while (length--) {
         var index = parseFloat(indexes[length]);
-        if (index != previous && index > -1 && index % 1 == 0) {
+        if (index != previous && isIndex(index)) {
           var previous = index;
           splice.call(array, index, 1);
         }
@@ -3098,12 +3111,12 @@
       if (!isObject(object)) {
         return false;
       }
-      var type = typeof index,
-          prereq = type == 'string';
-
+      var type = typeof index;
       if (type == 'number') {
-        var length = object.length;
-        prereq = (isLength(length) && index > -1 && index < length && index % 1 == 0);
+        var length = object.length,
+            prereq = isLength(length) && isIndex(index, length);
+      } else {
+          prereq = type == 'string';
       }
       return prereq && object[index] === value;
     }
@@ -3193,9 +3206,7 @@
 
       while (length--) {
         var index = indexes[length];
-        array[length] = (index > -1 && index < arrLength && index % 1 == 0)
-          ? oldArray[index]
-          : undefined;
+        array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
       }
       return array;
     }
@@ -3291,14 +3302,12 @@
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object)));
 
-      var keyIndex,
-          index = -1,
+      var index = -1,
           result = [];
 
       while (++index < propsLength) {
         var key = props[index];
-        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0)) ||
-            hasOwnProperty.call(object, key)) {
+        if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
           result.push(key);
         }
       }
@@ -8082,8 +8091,7 @@
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) || 0;
 
-      var keyIndex,
-          Ctor = object.constructor,
+      var Ctor = object.constructor,
           index = -1,
           proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto,
           isProto = proto === object,
@@ -8102,7 +8110,7 @@
       for (var key in object) {
         if (!(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0)) &&
+            !(skipIndexes && isIndex(key, length)) &&
             !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
         }

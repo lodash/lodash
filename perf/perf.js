@@ -343,7 +343,7 @@
         }\
       }\
       if (typeof chaining != "undefined") {\
-        var odd = function(v) { return !!(v % 2); },\
+        var even = function(v) { return v % 2 == 0; },\
             square = function(v) { return v * v; };\
         \
         var largeArray = belt.range(10000),\
@@ -541,43 +541,13 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_(...)` with a number (edge case)')
-      .add(buildName, '\
-        lodash(2)'
-      )
-      .add(otherName, '\
-        _(2)'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_(...)` with an array')
-      .add(buildName, '\
-        lodash(numbers)'
-      )
-      .add(otherName, '\
-        _(numbers)'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_(...)` with an object (slow path)')
-      .add(buildName, '\
-        lodash(object)'
-      )
-      .add(otherName, '\
-        _(object)'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_(...).map(...).filter(...).take(...).value()`')
       .add(buildName, {
-        'fn': 'lodashChaining.map(square).filter(odd).take(100).value()',
+        'fn': 'lodashChaining.map(square).filter(even).take(100).value()',
         'teardown': 'function chaining(){}'
       })
       .add(otherName, {
-        'fn': '_chaining.map(square).filter(odd).take(100).value()',
+        'fn': '_chaining.map(square).filter(even).take(100).value()',
         'teardown': 'function chaining(){}'
       })
   );

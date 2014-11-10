@@ -1058,11 +1058,11 @@
      * // => true
      */
     function lodash(value) {
-      if (value && typeof value == 'object') {
+      if (value && typeof value == 'object' && !isArray(value)) {
         if (value instanceof LodashWrapper) {
           return value;
         }
-        if (!isArray(value) && hasOwnProperty.call(value, '__wrapped__')) {
+        if (hasOwnProperty.call(value, '__wrapped__')) {
           return new LodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__queue__));
         }
       }

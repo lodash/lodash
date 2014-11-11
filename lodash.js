@@ -542,19 +542,6 @@
   }
 
   /**
-   * An implementation of `_.contains` for cache objects that mimics the return
-   * signature of `_.indexOf` by returning `0` if the value is found, else `-1`.
-   *
-   * @private
-   * @param {Object} cache The cache object to inspect.
-   * @param {*} value The value to search for.
-   * @returns {number} Returns `0` if `value` is found, else `-1`.
-   */
-  function cacheIndexOf(cache, value) {
-    return cache.has(value) ? 0 : -1;
-  }
-
-  /**
    * Used by `_.max` and `_.min` as the default callback for string values.
    *
    * @private
@@ -637,7 +624,7 @@
     // for `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247
     //
     // This also ensures a stable sort in V8 and other engines.
-    // See https://code.google.com/p/v8/issues/detail?id=90
+    // See https://code.google.com/p/v8/issues/detail?id=90.
     return object.index - other.index;
   }
 
@@ -1083,6 +1070,20 @@
     }
 
     /**
+     * The base constructor for creating `lodash` wrapper objects.
+     *
+     * @private
+     * @param {*} value The value to wrap.
+     * @param {boolean} [chainAll=false] Enable chaining for all wrapper methods.
+     * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
+     */
+    function LodashWrapper(value, chainAll, queue) {
+      this.__chain__ = !!chainAll;
+      this.__queue__ = queue || [];
+      this.__wrapped__ = value;
+    }
+
+    /**
      * An object environment feature flags.
      *
      * @static
@@ -1307,6 +1308,229 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
+     *
+     * @private
+     * @param {*} value The value to wrap.
+     */
+    function LazyWrapper(value) {
+      this.dir = 1;
+      this.dropCount = 0;
+      this.filtered = false;
+      this.iteratees = null;
+      this.takeCount = POSITIVE_INFINITY;
+      this.views = null;
+      this.wrapped = value;
+    }
+
+    /**
+     * Creates a clone of the lazy wrapper object.
+     *
+     * @private
+     * @name clone
+     * @memberOf LazyWrapper
+     * @returns {Object} Returns the cloned `LazyWrapper` object.
+     */
+    function lazyClone() {
+      var iteratees = this.iteratees,
+          views = this.views,
+          result = new LazyWrapper(this.wrapped);
+
+      result.dir = this.dir;
+      result.dropCount = this.dropCount;
+      result.filtered = this.filtered;
+      result.iteratees = iteratees ? baseSlice(iteratees) : null;
+      result.takeCount = this.takeCount;
+      result.views = views ? baseSlice(views) : null;
+      return result;
+    }
+
+    /**
+     * Reverses the direction of lazy iteration.
+     *
+     * @private
+     * @name reverse
+     * @memberOf LazyWrapper
+     * @returns {Object} Returns the new reversed `LazyWrapper` object.
+     */
+    function lazyReverse() {
+      var filtered = this.filtered,
+          result = filtered ? new LazyWrapper(this) : this.clone();
+
+      result.dir = this.dir * -1;
+      result.filtered = filtered;
+      return result;
+    }
+
+    /**
+     * Extracts the unwrapped value from its lazy wrapper.
+     *
+     * @private
+     * @name value
+     * @memberOf LazyWrapper
+     * @returns {*} Returns the unwrapped value.
+     */
+    function lazyValue() {
+      var array = this.wrapped.value(),
+          dir = this.dir,
+          isRight = dir < 0,
+          length = array.length,
+          view = getView(0, length, this.views),
+          start = view.start,
+          end = view.end,
+          dropCount = this.dropCount,
+          takeCount = nativeMin(end - start, this.takeCount - dropCount),
+          index = isRight ? end : start - 1,
+          iteratees = this.iteratees,
+          iterLength = iteratees ? iteratees.length : 0,
+          resIndex = 0,
+          result = [];
+
+      outer:
+      while (length-- && resIndex < takeCount) {
+        index += dir;
+
+        var iterIndex = -1,
+            value = array[index];
+
+        while (++iterIndex < iterLength) {
+          var data = iteratees[iterIndex],
+              iteratee = data.iteratee,
+              computed = iteratee(value, index, array),
+              type = data.type;
+
+          if (type == LAZY_MAP_FLAG) {
+            value = computed;
+          } else if (!computed) {
+            if (type == LAZY_FILTER_FLAG) {
+              continue outer;
+            } else {
+              break outer;
+            }
+          }
+        }
+        if (dropCount) {
+          dropCount--;
+        } else {
+          result[resIndex++] = value;
+        }
+      }
+      return isRight ? result.reverse() : result;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
+     * Creates a cache object for use by `_.memoize`.
+     *
+     * @private
+     * @static
+     * @name Cache
+     * @memberOf _.memoize
+     */
+    function MemCache() {
+      this.__data__ = {};
+    }
+
+    /**
+     * Gets the value at `key`.
+     *
+     * @private
+     * @name get
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to retrieve.
+     * @returns {*} Returns the cached value.
+     */
+    function memGet(key) {
+      return this.__data__[key];
+    }
+
+    /**
+     * Checks if a value for `key` exists.
+     *
+     * @private
+     * @name has
+     * @memberOf _.memoize.Cache
+     * @param {string} key The name of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function memHas(key) {
+      return key != '__proto__' && hasOwnProperty.call(this.__data__, key);
+    }
+
+    /**
+     * Adds `value` to the cache at `key`.
+     *
+     * @private
+     * @name set
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     * @returns {Object} Returns the cache object.
+     */
+    function memSet(key, value) {
+      if (key != '__proto__') {
+        this.__data__[key] = value;
+      }
+      return this;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
+     * Creates a cache object to optimize linear searches of large arrays.
+     *
+     * @private
+     * @param {Array} [values] The values to cache.
+     */
+    function SetCache(values) {
+      var length = values ? values.length : 0;
+
+      this.data = { 'number': {}, 'set': new Set };
+      while (length--) {
+        this.push(values[length]);
+      }
+    }
+
+    /**
+     * Checks if `value` is in `cache` mimicking the return signature of
+     * `_.indexOf` by returning `0` if the value is found, else `-1`.
+     *
+     * @private
+     * @param {Object} cache The cache object to search.
+     * @param {*} value The value to search for.
+     * @returns {number} Returns `0` if `value` is found, else `-1`.
+     */
+    function cacheIndexOf(cache, value) {
+      var type = typeof value,
+          data = cache.data,
+          result = type == 'number' ? data[type][value] : data.set.has(value);
+
+      return result ? 0 : -1;
+    }
+
+    /**
+     * Adds `value` to the cache.
+     *
+     * @private
+     * @name push
+     * @memberOf SetCache
+     * @param {*} value The value to add.
+     */
+    function cachePush(value) {
+      var data = this.data,
+          type = typeof value;
+
+      if (type == 'number') {
+        data[type][value] = true;
+      } else {
+        data.set.add(value);
+      }
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
      * A specialized version of `_.max` for arrays without support for iteratees.
      *
      * @private
@@ -1377,18 +1601,6 @@
       return (typeof objectValue == 'undefined' || !hasOwnProperty.call(object, key))
         ? sourceValue
         : objectValue;
-    }
-
-    /**
-     * Used by `_.matches` to clone `source` values, letting uncloneable values
-     * passthu instead of returning empty objects.
-     *
-     * @private
-     * @param {*} value The value to clone.
-     * @returns {*} Returns the cloned value.
-     */
-    function clonePassthru(value) {
-      return isCloneable(value) ? undefined : value;
     }
 
     /**
@@ -1630,15 +1842,16 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          prereq = indexOf == baseIndexOf,
-          isLarge = prereq && createCache && values && values.length >= 200,
-          isCommon = prereq && !isLarge,
+          isCommon = indexOf == baseIndexOf,
+          isLarge = isCommon && values && values.length >= 200,
+          cache = isLarge && createCache(values),
           result = [],
           valuesLength = values.length;
 
-      if (isLarge) {
+      if (cache) {
         indexOf = cacheIndexOf;
-        values = createCache(values);
+        isCommon = false;
+        values = cache;
       }
       outer:
       while (++index < length) {
@@ -2381,14 +2594,14 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,
-          prereq = indexOf == baseIndexOf,
-          isLarge = prereq && createCache && length >= 200,
-          isCommon = prereq && !isLarge,
+          isCommon = indexOf == baseIndexOf,
+          isLarge = isCommon && length >= 200,
+          seen = isLarge && createCache(),
           result = [];
 
-      if (isLarge) {
-        var seen = createCache();
+      if (seen) {
         indexOf = cacheIndexOf;
+        isCommon = false;
       } else {
         seen = iteratee ? [] : result;
       }
@@ -2469,6 +2682,18 @@
         }
         return result;
       };
+    }
+
+    /**
+     * Used by `_.matches` to clone `source` values, letting uncloneable values
+     * passthu instead of returning empty objects.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @returns {*} Returns the cloned value.
+     */
+    function clonePassthru(value) {
+      return isCloneable(value) ? undefined : value;
     }
 
     /**
@@ -2619,21 +2844,14 @@
     }
 
     /**
-     * Creates a cache object to optimize linear searches of large arrays.
+     * Creates a cache object if supported.
      *
      * @private
-     * @param {Array} [array=[]] The array to search.
+     * @param {Array} [values] The values to cache.
      * @returns {Object} Returns the new cache object.
      */
-    var createCache = Set && function(array) {
-      var cache = new Set,
-          length = array ? array.length : 0;
-
-      cache.push = cache.add;
-      while (length--) {
-        cache.push(array[length]);
-      }
-      return cache;
+    var createCache = !Set ? noop : function(values) {
+      return new SetCache(values);
     };
 
     /**
@@ -3116,7 +3334,7 @@
         var length = object.length,
             prereq = isLength(length) && isIndex(index, length);
       } else {
-          prereq = type == 'string';
+        prereq = type == 'string';
       }
       return prereq && object[index] === value;
     }
@@ -3845,8 +4063,8 @@
     }
 
     /**
-     * Creates an array of unique values present in all provided arrays using
-     * `SameValueZero` for equality comparisons.
+     * Creates an array of unique values in all provided arrays using `SameValueZero`
+     * for equality comparisons.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -3869,14 +4087,13 @@
           argsLength = arguments.length,
           caches = [],
           indexOf = getIndexOf(),
-          prereq = createCache && indexOf == baseIndexOf;
+          isCommon = indexOf == baseIndexOf;
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
-          caches.push(prereq && value.length >= 120 &&
-            createCache(argsIndex && value));
+          caches.push(isCommon && value.length >= 120 && createCache(argsIndex && value));
         }
       }
       argsLength = args.length;
@@ -4640,7 +4857,7 @@
      * @memberOf _
      * @category Chain
      * @param {*} value The value to wrap.
-     * @returns {Object} Returns the new `LodashWrapper` object.
+     * @returns {Object} Returns the new `lodash` object.
      * @example
      *
      * var users = [
@@ -4710,30 +4927,13 @@
       return interceptor.call(thisArg, value);
     }
 
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * A fast path for creating `lodash` wrapper objects.
-     *
-     * @private
-     * @param {*} value The value to wrap.
-     * @param {boolean} [chainAll=false] Enable chaining for all methods.
-     * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
-     * @returns {Object} Returns a `LodashWrapper` instance.
-     */
-    function LodashWrapper(value, chainAll, queue) {
-      this.__chain__ = !!chainAll;
-      this.__queue__ = queue || [];
-      this.__wrapped__ = value;
-    }
-
     /**
      * Enables explicit method chaining on the wrapper object.
      *
      * @name chain
      * @memberOf _
      * @category Chain
-     * @returns {*} Returns the `LodashWrapper` object.
+     * @returns {*} Returns the `lodash` object.
      * @example
      *
      * var users = [
@@ -4765,7 +4965,7 @@
      * @name chain
      * @memberOf _
      * @category Chain
-     * @returns {Object} Returns the new reversed `LodashWrapper` object.
+     * @returns {Object} Returns the new reversed `lodash` object.
      * @example
      *
      * var array = [1, 2, 3];
@@ -4834,120 +5034,6 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Wraps `value` as a `LazyWrapper` object.
-     *
-     * @private
-     * @param {*} value The value to wrap.
-     * @returns {Object} Returns a `LazyWrapper` instance.
-     */
-    function LazyWrapper(value) {
-      this.dir = 1;
-      this.dropCount = 0;
-      this.filtered = false;
-      this.iteratees = null;
-      this.takeCount = POSITIVE_INFINITY;
-      this.views = null;
-      this.wrapped = value;
-    }
-
-    /**
-     * Creates a clone of the `LazyWrapper` object.
-     *
-     * @private
-     * @name clone
-     * @memberOf LazyWrapper
-     * @returns {Object} Returns the cloned `LazyWrapper` object.
-     */
-    function lazyClone() {
-      var iteratees = this.iteratees,
-          views = this.views,
-          result = new LazyWrapper(this.wrapped);
-
-      result.dir = this.dir;
-      result.dropCount = this.dropCount;
-      result.filtered = this.filtered;
-      result.iteratees = iteratees ? baseSlice(iteratees) : null;
-      result.takeCount = this.takeCount;
-      result.views = views ? baseSlice(views) : null;
-      return result;
-    }
-
-    /**
-     * Reverses the direction of lazy iteration.
-     *
-     * @private
-     * @name reverse
-     * @memberOf LazyWrapper
-     * @returns {Object} Returns the new reversed `LazyWrapper` object.
-     */
-    function lazyReverse() {
-      var filtered = this.filtered,
-          result = filtered ? new LazyWrapper(this) : this.clone();
-
-      result.dir = this.dir * -1;
-      result.filtered = filtered;
-      return result;
-    }
-
-    /**
-     * Extracts the unwrapped value from its wrapper.
-     *
-     * @private
-     * @name value
-     * @memberOf LazyWrapper
-     * @returns {*} Returns the unwrapped value.
-     */
-    function lazyValue() {
-      var array = this.wrapped.value(),
-          dir = this.dir,
-          isRight = dir < 0,
-          length = array.length,
-          view = getView(0, length, this.views),
-          start = view.start,
-          end = view.end,
-          dropCount = this.dropCount,
-          takeCount = nativeMin(end - start, this.takeCount - dropCount),
-          index = isRight ? end : start - 1,
-          iteratees = this.iteratees,
-          iterLength = iteratees ? iteratees.length : 0,
-          resIndex = 0,
-          result = [];
-
-      outer:
-      while (length-- && resIndex < takeCount) {
-        index += dir;
-
-        var iterIndex = -1,
-            value = array[index];
-
-        while (++iterIndex < iterLength) {
-          var data = iteratees[iterIndex],
-              iteratee = data.iteratee,
-              computed = iteratee(value, index, array),
-              type = data.type;
-
-          if (type == LAZY_MAP_FLAG) {
-            value = computed;
-          } else if (!computed) {
-            if (type == LAZY_FILTER_FLAG) {
-              continue outer;
-            } else {
-              break outer;
-            }
-          }
-        }
-        if (dropCount) {
-          dropCount--;
-        } else {
-          result[resIndex++] = value;
-        }
-      }
-      return isRight ? result.reverse() : result;
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
      * Creates an array of elements corresponding to the specified keys, or indexes,
      * of the collection. Keys may be specified as individual arguments or as arrays
      * of keys.
@@ -4975,9 +5061,9 @@
     }
 
     /**
-     * Checks if `value` is present in `collection` using `SameValueZero` for
-     * equality comparisons. If `fromIndex` is negative, it is used as the offset
-     * from the end of the collection.
+     * Checks if `value` is in `collection` using `SameValueZero` for equality
+     * comparisons. If `fromIndex` is negative, it is used as the offset from
+     * the end of the collection.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -4989,7 +5075,7 @@
      * @alias include
      * @category Collection
      * @param {Array|Object|string} collection The collection to search.
-     * @param {*} target The value to check for.
+     * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
@@ -6945,63 +7031,6 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates the cache used by `_.memoize`.
-     *
-     * @private
-     * @static
-     * @name Cache
-     * @memberOf _.memoize
-     */
-    function MemCache() {
-      this.__wrapped__ = {};
-    }
-
-    /**
-     * Gets the value associated with `key`.
-     *
-     * @private
-     * @name get
-     * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to retrieve.
-     * @returns {*} Returns the cached value.
-     */
-    function memGet(key) {
-      return this.__wrapped__[key];
-    }
-
-    /**
-     * Checks if an entry for `key` exists.
-     *
-     * @private
-     * @name get
-     * @memberOf _.memoize.Cache
-     * @param {string} key The name of the entry to check.
-     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-     */
-    function memHas(key) {
-      return key != '__proto__' && hasOwnProperty.call(this.__wrapped__, key);
-    }
-
-    /**
-     * Sets the value associated with `key`.
-     *
-     * @private
-     * @name get
-     * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to set.
-     * @param {*} value The value to set.
-     * @returns {Object} Returns the cache object.
-     */
-    function memSet(key, value) {
-      if (key != '__proto__') {
-        this.__wrapped__[key] = value;
-      }
-      return this;
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
      * otherwise they are assigned by reference. If `customizer` is provided it is
      * invoked to produce the cloned values. If `customizer` returns `undefined`
@@ -7381,8 +7410,8 @@
      * // => false
      */
     function isFunction(value) {
-      // use `|| false` to avoid a Chakra bug in compatibility modes of IE 11
-      // https://github.com/jashkenas/underscore/issues/1621
+      // Use `|| false` to avoid a Chakra bug in compatibility modes of IE 11.
+      // See https://github.com/jashkenas/underscore/issues/1621.
       return typeof value == 'function' || false;
     }
     // fallback for environments that return incorrect `typeof` operator results
@@ -7419,8 +7448,8 @@
      * // => false
      */
     function isObject(value) {
-      // avoid a V8 bug in Chrome 19-20
-      // https://code.google.com/p/v8/issues/detail?id=2291
+      // Avoid a V8 bug in Chrome 19-20.
+      // See https://code.google.com/p/v8/issues/detail?id=2291.
       var type = typeof value;
       return type == 'function' || (value && type == 'object') || false;
     }
@@ -9557,7 +9586,7 @@
       parseInt = function(value, radix, guard) {
         // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
         // Chrome fails to trim leading <BOM> whitespace characters.
-        // See https://code.google.com/p/v8/issues/detail?id=3109
+        // See https://code.google.com/p/v8/issues/detail?id=3109.
         value = trim(value);
         radix = guard ? 0 : +radix;
         return nativeParseInt(value, radix || (reHexPrefix.test(value) ? 16 : 10));
@@ -9851,6 +9880,9 @@
     MemCache.prototype.get = memGet;
     MemCache.prototype.has = memHas;
     MemCache.prototype.set = memSet;
+
+    // add functions to the set cache
+    SetCache.prototype.push = cachePush;
 
     // assign cache to `_.memoize`
     memoize.Cache = MemCache;
@@ -10191,7 +10223,7 @@
       return result;
     };
 
-    // add `LazyWrapper` methods to `LodashWrapper`
+    // add `LazyWrapper` methods to `lodash.prototype`
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var retUnwrapped = /^(?:first|last)$/.test(methodName);
 
@@ -10218,7 +10250,7 @@
       };
     });
 
-    // add `Array.prototype` functions to `LodashWrapper`
+    // add `Array.prototype` functions to `lodash.prototype`
     arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var arrayFunc = arrayProto[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',

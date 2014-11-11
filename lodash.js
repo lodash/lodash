@@ -1843,8 +1843,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           isCommon = indexOf == baseIndexOf,
-          isLarge = isCommon && values && values.length >= 200,
-          cache = isLarge && createCache(values),
+          cache = isCommon && values.length >= 200 && createCache(values),
           result = [],
           valuesLength = values.length;
 
@@ -2603,6 +2602,7 @@
         indexOf = cacheIndexOf;
         isCommon = false;
       } else {
+        isLarge = false;
         seen = iteratee ? [] : result;
       }
       outer:

@@ -22,7 +22,8 @@
       CURRY_RIGHT_FLAG = 8,
       CURRY_BOUND_FLAG = 16,
       PARTIAL_FLAG = 32,
-      PARTIAL_RIGHT_FLAG = 64;
+      PARTIAL_RIGHT_FLAG = 64,
+      REARG_FLAG = 128;
 
   /** Used as default options for `_.trunc` */
   var DEFAULT_TRUNC_LENGTH = 30,
@@ -80,7 +81,7 @@
   var reHostCtor = /^\[object .+?Constructor\]$/;
 
   /** Used to match latin-1 supplement letters (excluding mathematical operators) */
-  var reLatin1 = /[\xC0-\xD6\xD8-\xDE\xDF-\xF6\xF8-\xFF]/g;
+  var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
 
   /** Used to ensure capturing order of template delimiters */
   var reNoMatch = /($^)/;
@@ -100,8 +101,8 @@
 
   /** Used to match words to create compound words */
   var reWords = (function() {
-    var upper = '[A-Z\\xC0-\\xD6\\xD8-\\xDE]',
-        lower = '[a-z\\xDF-\\xF6\\xF8-\\xFF]+';
+    var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
+        lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+';
 
     return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
@@ -109,13 +110,13 @@
   /** Used to detect and test whitespace */
   var whitespace = (
     // whitespace
-    ' \t\x0B\f\xA0\ufeff' +
+    ' \t\x0b\f\xa0\ufeff' +
 
     // line terminators
     '\n\r\u2028\u2029' +
 
     // unicode category "Zs" space separators
-    '\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
+    '\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
   );
 
   /** Used to assign default `context` object properties */
@@ -202,23 +203,23 @@
 
   /** Used to map latin-1 supplementary letters to basic latin letters */
   var deburredLetters = {
-    '\xC0': 'A',  '\xC1': 'A', '\xC2': 'A', '\xC3': 'A', '\xC4': 'A', '\xC5': 'A',
-    '\xE0': 'a',  '\xE1': 'a', '\xE2': 'a', '\xE3': 'a', '\xE4': 'a', '\xE5': 'a',
-    '\xC7': 'C',  '\xE7': 'c',
-    '\xD0': 'D',  '\xF0': 'd',
-    '\xC8': 'E',  '\xC9': 'E', '\xCA': 'E', '\xCB': 'E',
-    '\xE8': 'e',  '\xE9': 'e', '\xEA': 'e', '\xEB': 'e',
-    '\xCC': 'I',  '\xCD': 'I', '\xCE': 'I', '\xCF': 'I',
-    '\xEC': 'i',  '\xED': 'i', '\xEE': 'i', '\xEF': 'i',
-    '\xD1': 'N',  '\xF1': 'n',
-    '\xD2': 'O',  '\xD3': 'O', '\xD4': 'O', '\xD5': 'O', '\xD6': 'O', '\xD8': 'O',
-    '\xF2': 'o',  '\xF3': 'o', '\xF4': 'o', '\xF5': 'o', '\xF6': 'o', '\xF8': 'o',
-    '\xD9': 'U',  '\xDA': 'U', '\xDB': 'U', '\xDC': 'U',
-    '\xF9': 'u',  '\xFA': 'u', '\xFB': 'u', '\xFC': 'u',
-    '\xDD': 'Y',  '\xFD': 'y', '\xFF': 'y',
-    '\xC6': 'Ae', '\xE6': 'ae',
-    '\xDE': 'Th', '\xFE': 'th',
-    '\xDF': 'ss'
+    '\xc0': 'A',  '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
+    '\xe0': 'a',  '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
+    '\xc7': 'C',  '\xe7': 'c',
+    '\xd0': 'D',  '\xf0': 'd',
+    '\xc8': 'E',  '\xc9': 'E', '\xca': 'E', '\xcb': 'E',
+    '\xe8': 'e',  '\xe9': 'e', '\xea': 'e', '\xeb': 'e',
+    '\xcC': 'I',  '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
+    '\xeC': 'i',  '\xed': 'i', '\xee': 'i', '\xef': 'i',
+    '\xd1': 'N',  '\xf1': 'n',
+    '\xd2': 'O',  '\xd3': 'O', '\xd4': 'O', '\xd5': 'O', '\xd6': 'O', '\xd8': 'O',
+    '\xf2': 'o',  '\xf3': 'o', '\xf4': 'o', '\xf5': 'o', '\xf6': 'o', '\xf8': 'o',
+    '\xd9': 'U',  '\xda': 'U', '\xdb': 'U', '\xdc': 'U',
+    '\xf9': 'u',  '\xfa': 'u', '\xfb': 'u', '\xfc': 'u',
+    '\xdd': 'Y',  '\xfd': 'y', '\xff': 'y',
+    '\xc6': 'Ae', '\xe6': 'ae',
+    '\xde': 'Th', '\xfe': 'th',
+    '\xdf': 'ss'
   };
 
   /**
@@ -474,26 +475,6 @@
   }
 
   /**
-   * The base implementation of `_.at` without support for strings and individual
-   * key arguments.
-   *
-   * @private
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {number[]|string[]} [props] The property names or indexes of elements to pick.
-   * @returns {Array} Returns the new array of picked elements.
-   */
-  function baseAt(collection, props) {
-    var index = -1,
-        length = props.length,
-        result = Array(length);
-
-    while(++index < length) {
-      result[index] = collection[props[index]];
-    }
-    return result;
-  }
-
-  /**
    * The base implementation of `compareAscending` which compares values and
    * sorts them in ascending order without guaranteeing a stable sort.
    *
@@ -559,19 +540,6 @@
       result[index] = array[index];
     }
     return result;
-  }
-
-  /**
-   * An implementation of `_.contains` for cache objects that mimics the return
-   * signature of `_.indexOf` by returning `0` if the value is found, else `-1`.
-   *
-   * @private
-   * @param {Object} cache The cache object to inspect.
-   * @param {*} value The value to search for.
-   * @returns {number} Returns `0` if `value` is found, else `-1`.
-   */
-  function cacheIndexOf(cache, value) {
-    return cache.has(value) ? 0 : -1;
   }
 
   /**
@@ -657,7 +625,7 @@
     // for `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247
     //
     // This also ensures a stable sort in V8 and other engines.
-    // See https://code.google.com/p/v8/issues/detail?id=90
+    // See https://code.google.com/p/v8/issues/detail?id=90.
     return object.index - other.index;
   }
 
@@ -737,6 +705,19 @@
       return typeof value.toString != 'function' && typeof (value + '') == 'string';
     };
   }());
+
+  /**
+   * Checks if `value` is valid array-like index.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @param {number} [length] The upper bound of a valid index.
+   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+   */
+  function isIndex(value, length) {
+    value = +value;
+    return value > -1 && value % 1 == 0 && (length == null || value < length);
+  }
 
   /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
@@ -1031,11 +1012,12 @@
      * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
      * `mapValues`, `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`,
      * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
-     * `pluck`, `property`, `pull`, `pullAt`, `push`, `range`, `reject`, `remove`,
-     * `rest`, `reverse`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `take`,
-     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-     * `times`, `toArray`, `transform`, `union`, `uniq`, `unshift`, `unzip`,
-     * `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
+     * `pluck`, `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`,
+     * `rearg`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
+     * `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `thru`, `times`, `toArray`, `transform`, `union`, `uniq`,
+     * `unshift`, `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`,
+     * `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `contains`,
@@ -1044,12 +1026,12 @@
      * `has`, `identity`, `indexOf`, `isArguments`, `isArray`, `isBoolean`, isDate`,
      * `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`, `isFunction`,
      * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
-     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`, `lastIndexOf`,
-     * `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
-     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
-     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
-     * `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
-     * `uniqueId`, `value`, and `words`
+     * `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`, `last`,
+     * `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`, `padRight`,
+     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`,
+     * `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedLastIndex`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is provided,
      * otherwise it will return an unwrapped value.
@@ -1077,15 +1059,29 @@
      * // => true
      */
     function lodash(value) {
-      if (value && typeof value == 'object') {
+      if (value && typeof value == 'object' && !isArray(value)) {
         if (value instanceof LodashWrapper) {
           return value;
         }
-        if (!isArray(value) && hasOwnProperty.call(value, '__wrapped__')) {
+        if (hasOwnProperty.call(value, '__wrapped__')) {
           return new LodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__queue__));
         }
       }
       return new LodashWrapper(value);
+    }
+
+    /**
+     * The base constructor for creating `lodash` wrapper objects.
+     *
+     * @private
+     * @param {*} value The value to wrap.
+     * @param {boolean} [chainAll=false] Enable chaining for all wrapper methods.
+     * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
+     */
+    function LodashWrapper(value, chainAll, queue) {
+      this.__chain__ = !!chainAll;
+      this.__queue__ = queue || [];
+      this.__wrapped__ = value;
     }
 
     /**
@@ -1196,12 +1192,11 @@
        * Detect if `Array#shift` and `Array#splice` augment array-like objects
        * correctly.
        *
-       * Firefox < 10, IE compatibility mode, and IE < 9 have buggy Array `shift()`
+       * Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array `shift()`
        * and `splice()` functions that fail to remove the last element, `value[0]`,
        * of array-like objects even though the `length` property is set to `0`.
-       * The `shift()` method is buggy in IE 8 compatibility mode, while `splice()`
-       * is buggy regardless of mode in IE < 9 and buggy in compatibility mode
-       * in IE 9.
+       * The `shift()` method is buggy in compatibility modes of IE 8, while `splice()`
+       * is buggy regardless of mode in IE < 9.
        *
        * @memberOf _.support
        * @type boolean
@@ -1314,6 +1309,230 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
+     *
+     * @private
+     * @param {*} value The value to wrap.
+     */
+    function LazyWrapper(value) {
+      this.dir = 1;
+      this.dropCount = 0;
+      this.filtered = false;
+      this.iteratees = null;
+      this.takeCount = POSITIVE_INFINITY;
+      this.views = null;
+      this.wrapped = value;
+    }
+
+    /**
+     * Creates a clone of the lazy wrapper object.
+     *
+     * @private
+     * @name clone
+     * @memberOf LazyWrapper
+     * @returns {Object} Returns the cloned `LazyWrapper` object.
+     */
+    function lazyClone() {
+      var iteratees = this.iteratees,
+          views = this.views,
+          result = new LazyWrapper(this.wrapped);
+
+      result.dir = this.dir;
+      result.dropCount = this.dropCount;
+      result.filtered = this.filtered;
+      result.iteratees = iteratees ? baseSlice(iteratees) : null;
+      result.takeCount = this.takeCount;
+      result.views = views ? baseSlice(views) : null;
+      return result;
+    }
+
+    /**
+     * Reverses the direction of lazy iteration.
+     *
+     * @private
+     * @name reverse
+     * @memberOf LazyWrapper
+     * @returns {Object} Returns the new reversed `LazyWrapper` object.
+     */
+    function lazyReverse() {
+      var filtered = this.filtered,
+          result = filtered ? new LazyWrapper(this) : this.clone();
+
+      result.dir = this.dir * -1;
+      result.filtered = filtered;
+      return result;
+    }
+
+    /**
+     * Extracts the unwrapped value from its lazy wrapper.
+     *
+     * @private
+     * @name value
+     * @memberOf LazyWrapper
+     * @returns {*} Returns the unwrapped value.
+     */
+    function lazyValue() {
+      var array = this.wrapped.value(),
+          dir = this.dir,
+          isRight = dir < 0,
+          length = array.length,
+          view = getView(0, length, this.views),
+          start = view.start,
+          end = view.end,
+          dropCount = this.dropCount,
+          takeCount = nativeMin(end - start, this.takeCount - dropCount),
+          index = isRight ? end : start - 1,
+          iteratees = this.iteratees,
+          iterLength = iteratees ? iteratees.length : 0,
+          resIndex = 0,
+          result = [];
+
+      outer:
+      while (length-- && resIndex < takeCount) {
+        index += dir;
+
+        var iterIndex = -1,
+            value = array[index];
+
+        while (++iterIndex < iterLength) {
+          var data = iteratees[iterIndex],
+              iteratee = data.iteratee,
+              computed = iteratee(value, index, array),
+              type = data.type;
+
+          if (type == LAZY_MAP_FLAG) {
+            value = computed;
+          } else if (!computed) {
+            if (type == LAZY_FILTER_FLAG) {
+              continue outer;
+            } else {
+              break outer;
+            }
+          }
+        }
+        if (dropCount) {
+          dropCount--;
+        } else {
+          result[resIndex++] = value;
+        }
+      }
+      return isRight ? result.reverse() : result;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
+     * Creates a cache object to store key/value pairs.
+     *
+     * @private
+     * @static
+     * @name Cache
+     * @memberOf _.memoize
+     */
+    function MapCache() {
+      this.__data__ = {};
+    }
+
+    /**
+     * Gets the cached value for `key`.
+     *
+     * @private
+     * @name get
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to retrieve.
+     * @returns {*} Returns the cached value.
+     */
+    function mapGet(key) {
+      return this.__data__[key];
+    }
+
+    /**
+     * Checks if a cached value for `key` exists.
+     *
+     * @private
+     * @name has
+     * @memberOf _.memoize.Cache
+     * @param {string} key The name of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function mapHas(key) {
+      return key != '__proto__' && hasOwnProperty.call(this.__data__, key);
+    }
+
+    /**
+     * Adds `value` to `key` of the cache.
+     *
+     * @private
+     * @name set
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to cache.
+     * @param {*} value The value to cache.
+     * @returns {Object} Returns the cache object.
+     */
+    function mapSet(key, value) {
+      if (key != '__proto__') {
+        this.__data__[key] = value;
+      }
+      return this;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
+     *
+     * Creates a cache object to store unique values.
+     *
+     * @private
+     * @param {Array} [values] The values to cache.
+     */
+    function SetCache(values) {
+      var length = values ? values.length : 0;
+
+      this.data = { 'number': {}, 'set': new Set };
+      while (length--) {
+        this.push(values[length]);
+      }
+    }
+
+    /**
+     * Checks if `value` is in `cache` mimicking the return signature of
+     * `_.indexOf` by returning `0` if the value is found, else `-1`.
+     *
+     * @private
+     * @param {Object} cache The cache to search.
+     * @param {*} value The value to search for.
+     * @returns {number} Returns `0` if `value` is found, else `-1`.
+     */
+    function cacheIndexOf(cache, value) {
+      var type = typeof value,
+          data = cache.data,
+          result = type == 'number' ? data[type][value] : data.set.has(value);
+
+      return result ? 0 : -1;
+    }
+
+    /**
+     * Adds `value` to the cache.
+     *
+     * @private
+     * @name push
+     * @memberOf SetCache
+     * @param {*} value The value to cache.
+     */
+    function cachePush(value) {
+      var data = this.data,
+          type = typeof value;
+
+      if (type == 'number') {
+        data[type][value] = true;
+      } else {
+        data.set.add(value);
+      }
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
      * A specialized version of `_.max` for arrays without support for iteratees.
      *
      * @private
@@ -1387,18 +1606,6 @@
     }
 
     /**
-     * Used by `_.matches` to clone `source` values, letting uncloneable values
-     * passthu instead of returning empty objects.
-     *
-     * @private
-     * @param {*} value The value to clone.
-     * @returns {*} Returns the cloned value.
-     */
-    function clonePassthru(value) {
-      return isCloneable(value) ? undefined : value;
-    }
-
-    /**
      * The base implementation of `_.assign` without support for argument juggling,
      * multiple sources, and `this` binding.
      *
@@ -1423,6 +1630,34 @@
     }
 
     /**
+     * The base implementation of `_.at` without support for strings and individual
+     * key arguments.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {number[]|string[]} [props] The property names or indexes of elements to pick.
+     * @returns {Array} Returns the new array of picked elements.
+     */
+    function baseAt(collection, props) {
+      var index = -1,
+          length = collection ? collection.length : 0,
+          isArr = isLength(length),
+          propsLength = props.length,
+          result = Array(propsLength);
+
+      while(++index < propsLength) {
+        var key = props[index];
+        if (isArr) {
+          key = parseFloat(key);
+          result[index] = isIndex(key, length) ? collection[key] : undefined;
+        } else {
+          result[index] = collection[key];
+        }
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `_.bindAll` without support for individual
      * method name arguments.
      *
@@ -1437,7 +1672,7 @@
 
       while (++index < length) {
         var key = methodNames[index];
-        object[key] = createWrapper(object[key], BIND_FLAG, null, object);
+        object[key] = createWrapper(object[key], BIND_FLAG, object);
       }
       return object;
     }
@@ -1594,23 +1829,6 @@
     }
 
     /**
-     * The base implementation of `_.curry` and `_.curryRight` which handles
-     * resolving the default arity of `func`.
-     *
-     * @private
-     * @param {Function} func The function to curry.
-     * @param {number} bitmask The bitmask of flags to compose.
-     * @param {number} [arity=func.length] The arity of `func`.
-     * @returns {Function} Returns the new curried function.
-     */
-    function baseCurry(func, bitmask, arity) {
-      if (typeof arity != 'number') {
-        arity = arity == null ? (func ? func.length : 0) : nativeMax(+arity || 0, 0);
-      }
-      return createWrapper(func, bitmask, arity);
-    }
-
-    /**
      * The base implementation of `_.difference` which accepts a single array
      * of values to exclude.
      *
@@ -1626,15 +1844,15 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          prereq = indexOf == baseIndexOf,
-          isLarge = prereq && createCache && values && values.length >= 200,
-          isCommon = prereq && !isLarge,
+          isCommon = indexOf == baseIndexOf,
+          cache = isCommon && values.length >= 200 && createCache(values),
           result = [],
           valuesLength = values.length;
 
-      if (isLarge) {
+      if (cache) {
         indexOf = cacheIndexOf;
-        values = createCache(values);
+        isCommon = false;
+        values = cache;
       }
       outer:
       while (++index < length) {
@@ -2181,8 +2399,8 @@
       var isSrcArr = isArrayLike(source);
 
       (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
-        var isArr = srcValue && isArrayLike(srcValue),
-            isObj = srcValue && isPlainObject(srcValue),
+        var isArr = isArrayLike(srcValue),
+            isObj = isPlainObject(srcValue),
             value = object[key];
 
         if (!(isArr || isObj)) {
@@ -2229,31 +2447,6 @@
     }
 
     /**
-     * The base implementation of `_.partial` and `_.partialRight` which accepts
-     * an array of arguments to partially apply and handles resolving the arity
-     * of `func`.
-     *
-     * @private
-     * @param {Function} func The function to partially apply arguments to.
-     * @param {number} bitmask The bitmask of flags to compose.
-     * @param {Array} args The arguments to be partially applied.
-     * @param {Array} holders The `args` placeholder indexes.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @returns {Function} Returns the new partially applied function.
-     */
-    function basePartial(func, bitmask, args, holders, thisArg) {
-      if (func) {
-        var data = getData(func),
-            arity = data ? data[2] : func.length;
-
-        arity = nativeMax(arity - args.length, 0);
-      }
-      return (bitmask & PARTIAL_FLAG)
-        ? createWrapper(func, bitmask, arity, thisArg, args, holders)
-        : createWrapper(func, bitmask, arity, thisArg, null, null, args, holders);
-    }
-
-    /**
      * The base implementation of `_.pullAt` without support for individual
      * index arguments.
      *
@@ -2269,7 +2462,7 @@
       indexes.sort(baseCompareAscending);
       while (length--) {
         var index = parseFloat(indexes[length]);
-        if (index != previous && index > -1 && index % 1 == 0) {
+        if (index != previous && isIndex(index)) {
           var previous = index;
           splice.call(array, index, 1);
         }
@@ -2402,15 +2595,16 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,
-          prereq = indexOf == baseIndexOf,
-          isLarge = prereq && createCache && length >= 200,
-          isCommon = prereq && !isLarge,
+          isCommon = indexOf == baseIndexOf,
+          isLarge = isCommon && length >= 200,
+          seen = isLarge && createCache(),
           result = [];
 
-      if (isLarge) {
-        var seen = createCache();
+      if (seen) {
         indexOf = cacheIndexOf;
+        isCommon = false;
       } else {
+        isLarge = false;
         seen = iteratee ? [] : result;
       }
       outer:
@@ -2493,28 +2687,40 @@
     }
 
     /**
+     * Used by `_.matches` to clone `source` values, letting uncloneable values
+     * passthu instead of returning empty objects.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @returns {*} Returns the cloned value.
+     */
+    function clonePassthru(value) {
+      return isCloneable(value) ? undefined : value;
+    }
+
+    /**
      * Creates an array that is the composition of partially applied arguments,
      * placeholders, and provided arguments into a single array of arguments.
      *
      * @private
-     * @param {Array} partialArgs The arguments to prepend to those provided.
-     * @param {Array} partialHolders The `partialArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
+     * @param {Array} partials The arguments to prepend to those provided.
+     * @param {Array} holders The `partials` placeholder indexes.
      * @returns {Array} Returns the new array of composed arguments.
      */
-    function composeArgs(partialArgs, partialHolders, args) {
-      var holdersLength = partialHolders.length,
+    function composeArgs(args, partials, holders) {
+      var holdersLength = holders.length,
           argsIndex = -1,
           argsLength = nativeMax(args.length - holdersLength, 0),
           leftIndex = -1,
-          leftLength = partialArgs.length,
+          leftLength = partials.length,
           result = Array(argsLength + leftLength);
 
       while (++leftIndex < leftLength) {
-        result[leftIndex] = partialArgs[leftIndex];
+        result[leftIndex] = partials[leftIndex];
       }
       while (++argsIndex < holdersLength) {
-        result[partialHolders[argsIndex]] = args[argsIndex];
+        result[holders[argsIndex]] = args[argsIndex];
       }
       while (argsLength--) {
         result[leftIndex++] = args[argsIndex++];
@@ -2527,18 +2733,18 @@
      * is tailored for `_.partialRight`.
      *
      * @private
-     * @param {Array} partialRightArgs The arguments to append to those provided.
-     * @param {Array} partialRightHolders The `partialRightArgs` placeholder indexes.
      * @param {Array|Object} args The provided arguments.
+     * @param {Array} partials The arguments to append to those provided.
+     * @param {Array} holders The `partials` placeholder indexes.
      * @returns {Array} Returns the new array of composed arguments.
      */
-    function composeArgsRight(partialRightArgs, partialRightHolders, args) {
+    function composeArgsRight(args, partials, holders) {
       var holdersIndex = -1,
-          holdersLength = partialRightHolders.length,
+          holdersLength = holders.length,
           argsIndex = -1,
           argsLength = nativeMax(args.length - holdersLength, 0),
           rightIndex = -1,
-          rightLength = partialRightArgs.length,
+          rightLength = partials.length,
           result = Array(argsLength + rightLength);
 
       while (++argsIndex < argsLength) {
@@ -2546,10 +2752,10 @@
       }
       var pad = argsIndex;
       while (++rightIndex < rightLength) {
-        result[pad + rightIndex] = partialRightArgs[rightIndex];
+        result[pad + rightIndex] = partials[rightIndex];
       }
       while (++holdersIndex < holdersLength) {
-        result[pad + partialRightHolders[holdersIndex]] = args[argsIndex++];
+        result[pad + holders[holdersIndex]] = args[argsIndex++];
       }
       return result;
     }
@@ -2640,21 +2846,14 @@
     }
 
     /**
-     * Creates a cache object to optimize linear searches of large arrays.
+     * Creates a `Set` cache object to optimize linear searches of large arrays.
      *
      * @private
-     * @param {Array} [array=[]] The array to search.
-     * @returns {Object} Returns the new cache object.
+     * @param {Array} [values] The values to cache.
+     * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
      */
-    var createCache = Set && function(array) {
-      var cache = new Set,
-          length = array ? array.length : 0;
-
-      cache.push = cache.add;
-      while (length--) {
-        cache.push(array[length]);
-      }
-      return cache;
+    var createCache = !Set ? constant(null) : function(values) {
+      return new SetCache(values);
     };
 
     /**
@@ -2705,15 +2904,16 @@
      * @private
      * @param {Function|string} func The function or method name to reference.
      * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
-     * @param {number} arity The arity of `func`.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] The arguments to prepend to those provided to the new function.
-     * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
-     * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
+     * @param {Array} [partials] The arguments to prepend to those provided to the new function.
+     * @param {Array} [holders] The `partials` placeholder indexes.
+     * @param {Array} [partialsRight] The arguments to append to those provided to the new function.
+     * @param {Array} [holdersRight] The `partialsRight` placeholder indexes.
+     * @param {Array} [argPos] The argument positions of the new function.
+     * @param {number} arity The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
+    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity) {
       var isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
@@ -2731,23 +2931,27 @@
         while (index--) {
           args[index] = arguments[index];
         }
-        if (partialArgs) {
-          args = composeArgs(partialArgs, partialHolders, args);
+        if (argPos) {
+          args = arrayReduceRight(argPos, reorder, args);
         }
-        if (partialRightArgs) {
-          args = composeArgsRight(partialRightArgs, partialRightHolders, args);
+        if (partials) {
+          args = composeArgs(args, partials, holders);
+        }
+        if (partialsRight) {
+          args = composeArgsRight(args, partialsRight, holdersRight);
         }
         if (isCurry || isCurryRight) {
           var placeholder = wrapper.placeholder,
-              holders = replaceHolders(args, placeholder);
+              argsHolders = replaceHolders(args, placeholder);
 
-          length -= holders.length;
+          length -= argsHolders.length;
           if (length < arity) {
-            var newArity = nativeMax(arity - length, 0),
-                newPartialArgs = isCurry ? args : null,
-                newPartialHolders = isCurry ? holders : null,
-                newPartialRightArgs = isCurry ? null : args,
-                newPartialRightHolders = isCurry ? null : holders;
+            var newArgPos = argPos ? baseSlice(argPos) : null,
+                newArity = nativeMax(arity - length, 0),
+                newsHolders = isCurry ? argsHolders : null,
+                newHoldersRight = isCurry ? null : argsHolders,
+                newPartials = isCurry ? args : null,
+                newPartialsRight = isCurry ? null : args;
 
             bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
             bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
@@ -2755,9 +2959,9 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var result = createHybridWrapper(func, bitmask, newArity, thisArg, newPartialArgs, newPartialHolders, newPartialRightArgs, newPartialRightHolders);
+            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity);
             result.placeholder = placeholder;
-            return setData(result, [func, bitmask, newArity, thisArg, newPartialArgs, newPartialHolders, newPartialRightArgs, newPartialRightHolders]);
+            return result;
           }
         }
         var thisBinding = isBind ? thisArg : this;
@@ -2800,25 +3004,25 @@
      * @private
      * @param {Function} func The function to partially apply arguments to.
      * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
-     * @param {Array} partialArgs The arguments to prepend to those provided to the new function.
+     * @param {Array} partials The arguments to prepend to those provided to the new function.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new bound function.
      */
-    function createPartialWrapper(func, bitmask, partialArgs, thisArg) {
+    function createPartialWrapper(func, bitmask, partials, thisArg) {
       var isBind = bitmask & BIND_FLAG,
           Ctor = createCtorWrapper(func);
 
       function wrapper() {
         // avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before passing it to `composeArgs`
+        // converting it to an array before providing it to `composeArgs`
         var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
-            leftLength = partialArgs.length,
+            leftLength = partials.length,
             args = Array(argsLength + leftLength);
 
         while (++leftIndex < leftLength) {
-          args[leftIndex] = partialArgs[leftIndex];
+          args[leftIndex] = partials[leftIndex];
         }
         while (argsLength--) {
           args[leftIndex++] = arguments[++argsIndex];
@@ -2836,37 +3040,44 @@
      * @param {Function|string} func The function or method name to reference.
      * @param {number} bitmask The bitmask of flags.
      *  The bitmask may be composed of the following flags:
-     *   1  - `_.bind`
-     *   2  - `_.bindKey`
-     *   4  - `_.curry`
-     *   8  - `_.curryRight`
-     *   16 - `_.curry` or `_.curryRight` of a bound function
-     *   32 - `_.partial`
-     *   64 - `_.partialRight`
-     * @param {number} arity The arity of `func`.
+     *     1 - `_.bind`
+     *     2 - `_.bindKey`
+     *     4 - `_.curry`
+     *     8 - `_.curryRight`
+     *    16 - `_.curry` or `_.curryRight` of a bound function
+     *    32 - `_.partial`
+     *    64 - `_.partialRight`
+     *   128 - `_.rearg`
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {Array} [partialArgs] The arguments to prepend to those provided to the new function.
-     * @param {Array} [partialHolders] The `partialArgs` placeholder indexes.
-     * @param {Array} [partialRightArgs] The arguments to append to those provided to the new function.
-     * @param {Array} [partialRightHolders] The `partialRightArgs` placeholder indexes.
+     * @param {Array} [partials] The arguments to be partially applied.
+     * @param {Array} [holders] The `partialArgs` placeholder indexes.
+     * @param {Array} [argPos] The argument positions of the new function.
+     * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders) {
+    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, arity) {
       var isBindKey = bitmask & BIND_KEY_FLAG;
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var isPartial = bitmask & PARTIAL_FLAG;
-      if (isPartial && !partialArgs.length) {
-        bitmask &= ~PARTIAL_FLAG;
-        isPartial = false;
-        partialArgs = partialHolders = null;
+      var length = partials ? partials.length : 0;
+      if (!length) {
+        bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
+        partials = holders = null;
       }
-      var isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
-      if (isPartialRight && !partialRightArgs.length) {
-        bitmask &= ~PARTIAL_RIGHT_FLAG;
-        isPartialRight = false;
-        partialRightArgs = partialRightHolders = null;
+      if (partials && !holders) {
+        holders = [];
+      }
+      var oldPartials = partials,
+          oldHolders = holders,
+          isPartial = bitmask & PARTIAL_FLAG,
+          isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
+
+      if (!isPartial) {
+        var partialsRight = partials,
+            holdersRight = holders;
+
+        partials = holders = null;
       }
       var data = (data = !isBindKey && getData(func)) && data !== true && data;
       if (data) {
@@ -2878,45 +3089,59 @@
         func = data[0];
         bitmask |= funcBitmask;
 
-        // use metadata `arity` if not provided
-        if (arity == null) {
-          arity = data[2];
-        }
         // use metadata `thisArg` if available
         if (funcIsBind) {
-          thisArg = data[3];
+          thisArg = data[2];
         }
         // set if currying a bound function
         if (!isBind && funcIsBind) {
           bitmask |= CURRY_BOUND_FLAG;
         }
-        // append partial left arguments
-        var funcArgs = data[4];
-        if (funcArgs) {
-          var funcHolders = data[5];
-          partialArgs = isPartial ? composeArgs(funcArgs, funcHolders, partialArgs) : baseSlice(funcArgs);
-          partialHolders = isPartial ? replaceHolders(partialArgs, PLACEHOLDER) : baseSlice(funcHolders);
+        // compose partial arguments
+        var value = data[3];
+        if (value) {
+          var funcHolders = data[4];
+          partials = isPartial ? composeArgs(partials, value, funcHolders) : baseSlice(value);
+          holders = isPartial ? replaceHolders(partials, PLACEHOLDER) : baseSlice(funcHolders);
         }
-        // prepend partial right arguments
-        funcArgs = data[6];
-        if (funcArgs) {
-          funcHolders = data[7];
-          partialRightArgs = isPartialRight ? composeArgsRight(funcArgs, funcHolders, partialRightArgs) : baseSlice(funcArgs);
-          partialRightHolders = isPartialRight ? replaceHolders(partialRightArgs, PLACEHOLDER) : baseSlice(funcHolders);
+        // compose partial right arguments
+        value = data[5];
+        if (value) {
+          funcHolders = data[6];
+          partialsRight = isPartialRight ? composeArgsRight(partialsRight, value, funcHolders) : baseSlice(value);
+          holdersRight = isPartialRight ? replaceHolders(partialsRight, PLACEHOLDER) : baseSlice(funcHolders);
+        }
+        // append argument positions
+        value = data[7];
+        if (value) {
+          value = baseSlice(value);
+          if (argPos) {
+            push.apply(value, argPos);
+          }
+          argPos = value;
+        }
+        // use metadata `arity` if not provided
+        if (arity == null) {
+          arity = data[8];
         }
       }
       if (arity == null) {
         arity = isBindKey ? 0 : func.length;
+      } else {
+        arity = nativeMax(+arity || 0, 0);
+      }
+      if (oldPartials) {
+        arity = nativeMax(arity - (oldPartials.length - oldHolders.length), 0);
       }
       if (bitmask == BIND_FLAG) {
         var result = createBindWrapper(func, thisArg);
-      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !partialHolders.length) {
-        result = createPartialWrapper(func, bitmask, partialArgs, thisArg);
+      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
+        result = createPartialWrapper(func, bitmask, partials, thisArg);
       } else {
-        result = createHybridWrapper(func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders);
+        result = createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity);
       }
       var setter = data ? baseSetData : setData;
-      return setter(result, [func, bitmask, arity, thisArg, partialArgs, partialHolders, partialRightArgs, partialRightHolders]);
+      return setter(result, [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity]);
     }
 
     /**
@@ -3106,12 +3331,12 @@
       if (!isObject(object)) {
         return false;
       }
-      var type = typeof index,
-          prereq = type == 'string';
-
+      var type = typeof index;
       if (type == 'number') {
-        var length = object.length;
-        prereq = (isLength(length) && index > -1 && index < length && index % 1 == 0);
+        var length = object.length,
+            prereq = isLength(length) && isIndex(index, length);
+      } else {
+        prereq = type == 'string';
       }
       return prereq && object[index] === value;
     }
@@ -3182,6 +3407,28 @@
         }
       });
       return result;
+    }
+
+    /**
+     * Reorder `array` according to the specified indexes where the element at
+     * the first index is assigned as the first element, the element at
+     * the second index is assigned as the second element, and so on.
+     *
+     * @private
+     * @param {Array} array The array to reorder.
+     * @param {Array} indexes The arranged array indexes.
+     * @returns {Array} Returns `array`.
+     */
+    function reorder(array, indexes) {
+      var arrLength = array.length,
+          length = nativeMin(indexes.length, arrLength),
+          oldArray = baseSlice(array);
+
+      while (length--) {
+        var index = indexes[length];
+        array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
+      }
+      return array;
     }
 
     /**
@@ -3267,22 +3514,20 @@
      */
     function shimKeys(object) {
       var props = keysIn(object),
-          length = props.length,
-          objLength = length && object.length,
+          propsLength = props.length,
+          length = propsLength && object.length,
           support = lodash.support;
 
-      var allowIndexes = typeof objLength == 'number' && objLength > 0 &&
+      var allowIndexes = typeof length == 'number' && length > 0 &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object)));
 
-      var keyIndex,
-          index = -1,
+      var index = -1,
           result = [];
 
-      while (++index < length) {
+      while (++index < propsLength) {
         var key = props[index];
-        if ((allowIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < objLength && keyIndex % 1 == 0)) ||
-            hasOwnProperty.call(object, key)) {
+        if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
           result.push(key);
         }
       }
@@ -3353,12 +3598,13 @@
      * // => [['a', 'b', 'c'], ['d']]
      */
     function chunk(array, size, guard) {
+      size = (guard || size == null) ? 1 : nativeMax(+size || 1, 1);
+
       var index = 0,
           length = array ? array.length : 0,
           resIndex = -1,
-          result = [];
+          result = Array(ceil(length / size));
 
-      size = (guard || size == null) ? 1 : nativeMax(+size || 1, 1);
       while (index < length) {
         result[++resIndex] = slice(array, index, (index += size));
       }
@@ -3424,7 +3670,7 @@
           break;
         }
       }
-      return baseDifference(arguments[index], baseFlatten(arguments, false, true, ++index));
+      return baseDifference(value, baseFlatten(arguments, false, true, ++index));
     }
 
     /**
@@ -3516,17 +3762,17 @@
      * // => [1]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate' },
-     *   { 'user': 'fred',    'employer': 'slate', 'blocked': true },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': false },
+     *   { 'user': 'fred',    'status': 'busy', 'active': true },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.dropRightWhile(users, 'blocked'), 'user');
+     * _.pluck(_.dropRightWhile(users, 'active'), 'user');
      * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.dropRightWhile(users, { 'employer': 'na' }), 'user');
+     * _.pluck(_.dropRightWhile(users, { 'status': 'away' }), 'user');
      * // => ['barney', 'fred']
      */
     function dropRightWhile(array, predicate, thisArg) {
@@ -3564,17 +3810,17 @@
      * // => [3]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate', 'blocked': true },
-     *   { 'user': 'fred',    'employer': 'slate' },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': true },
+     *   { 'user': 'fred',    'status': 'busy', 'active': false },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.dropWhile(users, 'blocked'), 'user');
+     * _.pluck(_.dropWhile(users, 'active'), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.dropWhile(users, { 'employer': 'slate' }), 'user');
+     * _.pluck(_.dropWhile(users, { 'status': 'busy' }), 'user');
      * // => ['pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
@@ -3609,22 +3855,20 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40, 'blocked': true },
-     *   { 'user': 'pebbles', 'age': 1 }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': true },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * _.findIndex(users, function(chr) {
-     *   return chr.age < 20;
-     * });
-     * // => 2
-     *
-     * // using "_.where" callback shorthand
-     * _.findIndex(users, { 'age': 36 });
+     * _.findIndex(users, function(chr) { return chr.age < 40; });
      * // => 0
      *
+     * // using "_.where" callback shorthand
+     * _.findIndex(users, { 'age': 1 });
+     * // => 2
+     *
      * // using "_.pluck" callback shorthand
-     * _.findIndex(users, 'blocked');
+     * _.findIndex(users, 'active');
      * // => 1
      */
     function findIndex(array, predicate, thisArg) {
@@ -3663,23 +3907,21 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36, 'blocked': true },
-     *   { 'user': 'fred',    'age': 40 },
-     *   { 'user': 'pebbles', 'age': 1,  'blocked': true }
+     *   { 'user': 'barney',  'age': 36, 'active': true },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * _.findLastIndex(users, function(chr) {
-     *   return chr.age > 30;
-     * });
-     * // => 1
+     * _.findLastIndex(users, function(chr) { return chr.age < 40; });
+     * // => 2
      *
      * // using "_.where" callback shorthand
-     * _.findLastIndex(users, { 'age': 36 });
-     * // => 0
+     * _.findLastIndex(users, { 'age': 40});
+     * // => 1
      *
      * // using "_.pluck" callback shorthand
-     * _.findLastIndex(users, 'blocked');
-     * // => 2
+     * _.findLastIndex(users, 'active');
+     * // => 0
      */
     function findLastIndex(array, predicate, thisArg) {
       var length = array ? array.length : 0;
@@ -3823,8 +4065,8 @@
     }
 
     /**
-     * Creates an array of unique values present in all provided arrays using
-     * `SameValueZero` for equality comparisons.
+     * Creates an array of unique values in all provided arrays using `SameValueZero`
+     * for equality comparisons.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -3847,14 +4089,13 @@
           argsLength = arguments.length,
           caches = [],
           indexOf = getIndexOf(),
-          prereq = createCache && indexOf == baseIndexOf;
+          isCommon = indexOf == baseIndexOf;
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
-          caches.push(prereq && value.length >= 120 &&
-            createCache(argsIndex && value));
+          caches.push(isCommon && value.length >= 120 && createCache(argsIndex && value));
         }
       }
       argsLength = args.length;
@@ -4301,17 +4542,17 @@
      * // => [2, 3]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate' },
-     *   { 'user': 'fred',    'employer': 'slate', 'blocked': true },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': false },
+     *   { 'user': 'fred',    'status': 'busy', 'active': true },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.takeRightWhile(users, 'blocked'), 'user');
+     * _.pluck(_.takeRightWhile(users, 'active'), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.takeRightWhile(users, { 'employer': 'na' }), 'user');
+     * _.pluck(_.takeRightWhile(users, { 'status': 'away' }), 'user');
      * // => ['pebbles']
      */
     function takeRightWhile(array, predicate, thisArg) {
@@ -4349,17 +4590,17 @@
      * // => [1, 2]
      *
      * var users = [
-     *   { 'user': 'barney',  'employer': 'slate', 'blocked': true },
-     *   { 'user': 'fred',    'employer': 'slate' },
-     *   { 'user': 'pebbles', 'employer': 'na',    'blocked': true }
+     *   { 'user': 'barney',  'status': 'busy', 'active': true },
+     *   { 'user': 'fred',    'status': 'busy', 'active': false },
+     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.pluck(_.takeWhile(users, 'blocked'), 'user');
+     * _.pluck(_.takeWhile(users, 'active'), 'user');
      * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.pluck(_.takeWhile(users, { 'employer': 'slate' }), 'user');
+     * _.pluck(_.takeWhile(users, { 'status': 'busy' }), 'user');
      * // => ['barney', 'fred']
      */
     function takeWhile(array, predicate, thisArg) {
@@ -4618,7 +4859,7 @@
      * @memberOf _
      * @category Chain
      * @param {*} value The value to wrap.
-     * @returns {Object} Returns the new `LodashWrapper` object.
+     * @returns {Object} Returns the new `lodash` object.
      * @example
      *
      * var users = [
@@ -4688,30 +4929,13 @@
       return interceptor.call(thisArg, value);
     }
 
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * A fast path for creating `lodash` wrapper objects.
-     *
-     * @private
-     * @param {*} value The value to wrap.
-     * @param {boolean} [chainAll=false] Enable chaining for all methods.
-     * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
-     * @returns {Object} Returns a `LodashWrapper` instance.
-     */
-    function LodashWrapper(value, chainAll, queue) {
-      this.__chain__ = !!chainAll;
-      this.__queue__ = queue || [];
-      this.__wrapped__ = value;
-    }
-
     /**
      * Enables explicit method chaining on the wrapper object.
      *
      * @name chain
      * @memberOf _
      * @category Chain
-     * @returns {*} Returns the `LodashWrapper` object.
+     * @returns {*} Returns the `lodash` object.
      * @example
      *
      * var users = [
@@ -4743,7 +4967,7 @@
      * @name chain
      * @memberOf _
      * @category Chain
-     * @returns {Object} Returns the new reversed `LodashWrapper` object.
+     * @returns {Object} Returns the new reversed `lodash` object.
      * @example
      *
      * var array = [1, 2, 3];
@@ -4812,120 +5036,6 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Wraps `value` as a `LazyWrapper` object.
-     *
-     * @private
-     * @param {*} value The value to wrap.
-     * @returns {Object} Returns a `LazyWrapper` instance.
-     */
-    function LazyWrapper(value) {
-      this.dir = 1;
-      this.dropCount = 0;
-      this.filtered = false;
-      this.iteratees = null;
-      this.takeCount = POSITIVE_INFINITY;
-      this.views = null;
-      this.wrapped = value;
-    }
-
-    /**
-     * Creates a clone of the `LazyWrapper` object.
-     *
-     * @private
-     * @name clone
-     * @memberOf LazyWrapper
-     * @returns {Object} Returns the cloned `LazyWrapper` object.
-     */
-    function lazyClone() {
-      var iteratees = this.iteratees,
-          views = this.views,
-          result = new LazyWrapper(this.wrapped);
-
-      result.dir = this.dir;
-      result.dropCount = this.dropCount;
-      result.filtered = this.filtered;
-      result.iteratees = iteratees ? baseSlice(iteratees) : null;
-      result.takeCount = this.takeCount;
-      result.views = views ? baseSlice(views) : null;
-      return result;
-    }
-
-    /**
-     * Reverses the direction of lazy iteration.
-     *
-     * @private
-     * @name reverse
-     * @memberOf LazyWrapper
-     * @returns {Object} Returns the new reversed `LazyWrapper` object.
-     */
-    function lazyReverse() {
-      var filtered = this.filtered,
-          result = filtered ? new LazyWrapper(this) : this.clone();
-
-      result.dir = this.dir * -1;
-      result.filtered = filtered;
-      return result;
-    }
-
-    /**
-     * Extracts the unwrapped value from its wrapper.
-     *
-     * @private
-     * @name value
-     * @memberOf LazyWrapper
-     * @returns {*} Returns the unwrapped value.
-     */
-    function lazyValue() {
-      var array = this.wrapped.value(),
-          dir = this.dir,
-          isRight = dir < 0,
-          length = array.length,
-          view = getView(0, length, this.views),
-          start = view.start,
-          end = view.end,
-          dropCount = this.dropCount,
-          takeCount = nativeMin(end - start, this.takeCount - dropCount),
-          index = isRight ? end : start - 1,
-          iteratees = this.iteratees,
-          iterLength = iteratees ? iteratees.length : 0,
-          resIndex = 0,
-          result = [];
-
-      outer:
-      while (length-- && resIndex < takeCount) {
-        index += dir;
-
-        var iterIndex = -1,
-            value = array[index];
-
-        while (++iterIndex < iterLength) {
-          var data = iteratees[iterIndex],
-              iteratee = data.iteratee,
-              computed = iteratee(value, index, array),
-              type = data.type;
-
-          if (type == LAZY_MAP_FLAG) {
-            value = computed;
-          } else if (!computed) {
-            if (type == LAZY_FILTER_FLAG) {
-              continue outer;
-            } else {
-              break outer;
-            }
-          }
-        }
-        if (dropCount) {
-          dropCount--;
-        } else {
-          result[resIndex++] = value;
-        }
-      }
-      return isRight ? result.reverse() : result;
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
      * Creates an array of elements corresponding to the specified keys, or indexes,
      * of the collection. Keys may be specified as individual arguments or as arrays
      * of keys.
@@ -4953,9 +5063,9 @@
     }
 
     /**
-     * Checks if `value` is present in `collection` using `SameValueZero` for
-     * equality comparisons. If `fromIndex` is negative, it is used as the offset
-     * from the end of the collection.
+     * Checks if `value` is in `collection` using `SameValueZero` for equality
+     * comparisons. If `fromIndex` is negative, it is used as the offset from
+     * the end of the collection.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -4967,7 +5077,7 @@
      * @alias include
      * @category Collection
      * @param {Array|Object|string} collection The collection to search.
-     * @param {*} target The value to check for.
+     * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
@@ -5119,17 +5229,17 @@
      * // => [2, 4]
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40, 'blocked': true }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.filter(users, 'blocked');
-     * // => [{ 'user': 'fred', 'age': 40, 'blocked': true }]
+     * _.pluck(_.filter(users, 'active'), 'user');
+     * // => ['fred']
      *
      * // using "_.where" callback shorthand
-     * _.filter(users, { 'age': 36 });
-     * // => [{ 'user': 'barney', 'age': 36 }]
+     * _.pluck(_.filter(users, { 'age': 36 }), 'user');
+     * // => ['barney']
      */
     function filter(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -5163,23 +5273,21 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40, 'blocked': true },
-     *   { 'user': 'pebbles', 'age': 1 }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': true },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * _.find(users, function(chr) {
-     *   return chr.age < 40;
-     * });
-     * // => { 'user': 'barney', 'age': 36 }
+     * _.result(_.find(users, function(chr) { return chr.age < 40; }), 'user');
+     * // => 'barney'
      *
      * // using "_.where" callback shorthand
-     * _.find(users, { 'age': 1 });
-     * // =>  { 'user': 'pebbles', 'age': 1 }
+     * _.result(_.find(users, { 'age': 1 }), 'user');
+     * // => 'pebbles'
      *
      * // using "_.pluck" callback shorthand
-     * _.find(users, 'blocked');
-     * // => { 'user': 'fred', 'age': 40, 'blocked': true }
+     * _.result(_.find(users, 'active'), 'user');
+     * // => 'fred'
      */
     function find(collection, predicate, thisArg) {
       if (isArray(collection)) {
@@ -5227,15 +5335,15 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'employer': 'slate' },
-     *   { 'user': 'fred',   'age': 40, 'employer': 'slate' }
+     *   { 'user': 'barney', 'age': 36, 'status': 'busy' },
+     *   { 'user': 'fred',   'age': 40, 'status': 'busy' }
      * ];
      *
-     * _.findWhere(users, { 'employer': 'slate' });
-     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
+     * _.findWhere(users, { 'status': 'busy' });
+     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
      *
      * _.findWhere(users, { 'age': 40 });
-     * // =>  { 'user': 'fred', 'age': 40, 'employer': 'slate' }
+     * // =>  { 'user': 'fred', 'age': 40, 'status': 'busy' }
      */
     function findWhere(collection, source) {
       return find(collection, matches(source));
@@ -5627,9 +5735,9 @@
      * // => [[1, 3], [2]]
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40, 'blocked': true },
-     *   { 'user': 'pebbles', 'age': 1 }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': true },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
      * // using "_.where" callback shorthand
@@ -5637,7 +5745,7 @@
      * // => [['pebbles'], ['barney', 'fred']]
      *
      * // using "_.pluck" callback shorthand
-     * _.map(_.partition(users, 'blocked'), function(array) { return _.pluck(array, 'user'); });
+     * _.map(_.partition(users, 'active'), function(array) { return _.pluck(array, 'user'); });
      * // => [['fred'], ['barney', 'pebbles']]
      */
     var partition = createAggregator(function(result, value, key) {
@@ -5754,17 +5862,17 @@
      * // => [1, 3]
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40, 'blocked': true }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.reject(users, 'blocked');
-     * // => [{ 'user': 'barney', 'age': 36 }]
+     * _.pluck(_.reject(users, 'active'), 'user');
+     * // => ['barney']
      *
      * // using "_.where" callback shorthand
-     * _.reject(users, { 'age': 36 });
-     * // => [{ 'user': 'fred', 'age': 40, 'blocked': true }]
+     * _.pluck(_.reject(users, { 'age': 36 }), 'user');
+     * // => ['fred']
      */
     function reject(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -5891,12 +5999,12 @@
      * // => true
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40, 'blocked': true }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.some(users, 'blocked');
+     * _.some(users, 'active');
      * // => true
      *
      * // using "_.where" callback shorthand
@@ -6034,8 +6142,8 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'employer': 'slate', 'pets': ['hoppy'] },
-     *   { 'user': 'fred',   'age': 40, 'employer': 'slate', 'pets': ['baby puss', 'dino'] }
+     *   { 'user': 'barney', 'age': 36, 'status': 'busy', 'pets': ['hoppy'] },
+     *   { 'user': 'fred',   'age': 40, 'status': 'busy', 'pets': ['baby puss', 'dino'] }
      * ];
      *
      * _.pluck(_.where(users, { 'age': 36 }), 'user');
@@ -6044,7 +6152,7 @@
      * _.pluck(_.where(users, { 'pets': ['dino'] }), 'user');
      * // => ['fred']
      *
-     * _.pluck(_.where(users, { 'employer': 'slate' }), 'user');
+     * _.pluck(_.where(users, { 'status': 'busy' }), 'user');
      * // => ['barney', 'fred']
      */
     function where(collection, source) {
@@ -6157,13 +6265,14 @@
      * // => 'hi fred'
      */
     function bind(func, thisArg) {
-      if (arguments.length < 3) {
-        return createWrapper(func, BIND_FLAG, null, thisArg);
-      }
-      var args = slice(arguments, 2),
-          holders = replaceHolders(args, bind.placeholder);
+      var bitmask = BIND_FLAG;
+      if (arguments.length > 2) {
+        var partials = slice(arguments, 2),
+            holders = replaceHolders(partials, bind.placeholder);
 
-      return basePartial(func, BIND_FLAG | PARTIAL_FLAG, args, holders, thisArg);
+        bitmask |= PARTIAL_FLAG;
+      }
+      return createWrapper(func, bitmask, thisArg, partials, holders);
     }
 
     /**
@@ -6238,17 +6347,17 @@
     function bindKey(object, key) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (arguments.length > 2) {
-        var args = slice(arguments, 2),
-            holders = replaceHolders(args, bindKey.placeholder);
+        var partials = slice(arguments, 2),
+            holders = replaceHolders(partials, bindKey.placeholder);
+
+        bitmask |= PARTIAL_FLAG;
       }
-      return args
-        ? createWrapper(key, bitmask, null, object, args, holders)
-        : createWrapper(key, bitmask, null, object);
+      return createWrapper(key, bitmask, object, partials, holders);
     }
 
     /**
      * Creates a function that accepts one or more arguments of `func` that when
-     * called either invokes `func` returning its result if all `func` arguments
+     * called either invokes `func` returning its result, if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
@@ -6265,7 +6374,7 @@
      * @example
      *
      * var curried = _.curry(function(a, b, c) {
-     *   console.log([a, b, c]);
+     *   return [a, b, c];
      * });
      *
      * curried(1)(2)(3);
@@ -6278,7 +6387,7 @@
      * // => [1, 2, 3]
      */
     function curry(func, arity, guard) {
-      var result = baseCurry(func, CURRY_FLAG, guard ? null : arity);
+      var result = createWrapper(func, CURRY_FLAG, null, null, null, null, guard ? null : arity);
       result.placeholder = curry.placeholder;
       return result;
     }
@@ -6299,7 +6408,7 @@
      * @example
      *
      * var curried = _.curryRight(function(a, b, c) {
-     *   console.log([a, b, c]);
+     *   return [a, b, c];
      * });
      *
      * curried(3)(2)(1);
@@ -6312,7 +6421,7 @@
      * // => [1, 2, 3]
      */
     function curryRight(func, arity, guard) {
-      var result = baseCurry(func, CURRY_RIGHT_FLAG, guard ? null : arity);
+      var result = createWrapper(func, CURRY_RIGHT_FLAG, null, null, null, null, guard ? null : arity);
       result.placeholder = curryRight.placeholder;
       return result;
     }
@@ -6512,8 +6621,8 @@
       if (!isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var args = slice(arguments, 1);
-      return setTimeout(function() { func.apply(undefined, args); }, 1);
+      var args = arguments;
+      return setTimeout(function() { func.apply(undefined, slice(args, 1)); }, 1);
     }
 
     /**
@@ -6536,8 +6645,8 @@
       if (!isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var args = slice(arguments, 2);
-      return setTimeout(function() { func.apply(undefined, args); }, wait);
+      var args = arguments;
+      return setTimeout(function() { func.apply(undefined, slice(args, 2)); }, wait);
     }
 
     /**
@@ -6737,7 +6846,7 @@
      * initialize();
      * // `initialize` invokes `createApplication` once
      */
-    var once = basePartial(before,PARTIAL_FLAG, [2], []);
+    var once = createWrapper(before, PARTIAL_FLAG, null, [2]);
 
     /**
      * Creates a function that invokes `func` with `partial` arguments prepended
@@ -6761,10 +6870,10 @@
      * // => 'hello fred'
      */
     function partial(func) {
-      var args = slice(arguments, 1),
-          holders = replaceHolders(args, partial.placeholder);
+      var partials = slice(arguments, 1),
+          holders = replaceHolders(partials, partial.placeholder);
 
-      return basePartial(func, PARTIAL_FLAG, args, holders);
+      return createWrapper(func, PARTIAL_FLAG, null, partials, holders);
     }
 
     /**
@@ -6799,10 +6908,43 @@
      * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
-      var args = slice(arguments, 1),
-          holders = replaceHolders(args, partialRight.placeholder);
+      var partials = slice(arguments, 1),
+          holders = replaceHolders(partials, partialRight.placeholder);
 
-      return basePartial(func, PARTIAL_RIGHT_FLAG, args, holders);
+      return createWrapper(func, PARTIAL_RIGHT_FLAG, null, partials, holders);
+    }
+
+    /**
+     * Creates a function that invokes `func` with arguments arranged according
+     * to the specified indexes where the argument value at the first index is
+     * provided as the first argument, the argument value at the second index is
+     * provided as the second argument, and so on.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to rearrange arguments for.
+     * @param {...(number|number[])} [indexes] The arranged argument indexes,
+     *  specified as individual indexes or arrays of indexes.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var rearged = _.rearg(function(a, b, c) {
+     *   return [a, b, c];
+     * }, 2, 0, 1);
+     *
+     * rearged('b', 'c', 'a')
+     * // => ['a', 'b', 'c']
+     *
+     * var map = _.rearg(_.map, [1, 0]);
+     * map(function(n) { return n * 3; }, [1, 2, 3]);
+     * // => [3, 6, 9]
+     */
+    function rearg(func) {
+      var indexes = baseFlatten(arguments, false, false, 1);
+      return indexes.length
+        ? createWrapper(func, REARG_FLAG, null, null, null, [indexes])
+        : createWrapper(func);
     }
 
     /**
@@ -6884,64 +7026,8 @@
      * // => '<p>fred, barney, &amp; pebbles</p>'
      */
     function wrap(value, wrapper) {
-      return basePartial(wrapper, PARTIAL_FLAG, [value], []);
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Creates the cache used by `_.memoize`.
-     *
-     * @private
-     * @static
-     * @name Cache
-     * @memberOf _.memoize
-     */
-    function MemCache() {
-      this.__wrapped__ = {};
-    }
-
-    /**
-     * Gets the value associated with `key`.
-     *
-     * @private
-     * @name get
-     * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to retrieve.
-     * @returns {*} Returns the cached value.
-     */
-    function memGet(key) {
-      return this.__wrapped__[key];
-    }
-
-    /**
-     * Checks if an entry for `key` exists.
-     *
-     * @private
-     * @name get
-     * @memberOf _.memoize.Cache
-     * @param {string} key The name of the entry to check.
-     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-     */
-    function memHas(key) {
-      return key != '__proto__' && hasOwnProperty.call(this.__wrapped__, key);
-    }
-
-    /**
-     * Sets the value associated with `key`.
-     *
-     * @private
-     * @name get
-     * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to set.
-     * @param {*} value The value to set.
-     * @returns {Object} Returns the cache object.
-     */
-    function memSet(key, value) {
-      if (key != '__proto__') {
-        this.__wrapped__[key] = value;
-      }
-      return this;
+      wrapper = wrapper == null ? identity : wrapper;
+      return createWrapper(wrapper, PARTIAL_FLAG, null, [value]);
     }
 
     /*------------------------------------------------------------------------*/
@@ -7326,14 +7412,18 @@
      * // => false
      */
     function isFunction(value) {
-      // avoid a Chakra bug in IE 11
-      // https://github.com/jashkenas/underscore/issues/1621
+      // Use `|| false` to avoid a Chakra bug in compatibility modes of IE 11.
+      // See https://github.com/jashkenas/underscore/issues/1621.
       return typeof value == 'function' || false;
     }
-    // fallback for older versions of Chrome and Safari
-    if (isFunction(/x/)) {
+    // fallback for environments that return incorrect `typeof` operator results
+    if (isFunction(/x/) || !Uint8Array || !isFunction(Uint8Array)) {
       isFunction = function(value) {
-        return typeof value == 'function' && toString.call(value) == funcClass;
+        // the use of `Object#toString` avoids issues with the `typeof` operator
+        // in older versions of Chrome and Safari which return 'function' for
+        // regexes and modern Safari which returns 'object' for typed array
+        // constructors
+        return toString.call(value) == funcClass;
       };
     }
 
@@ -7360,8 +7450,8 @@
      * // => false
      */
     function isObject(value) {
-      // avoid a V8 bug in Chrome 19-20
-      // https://code.google.com/p/v8/issues/detail?id=2291
+      // Avoid a V8 bug in Chrome 19-20.
+      // See https://code.google.com/p/v8/issues/detail?id=2291.
       var type = typeof value;
       return type == 'function' || (value && type == 'object') || false;
     }
@@ -7415,10 +7505,13 @@
      * // => false
      */
     function isNative(value) {
-      if (isFunction(value)) {
+      if (value == null) {
+        return false;
+      }
+      if (toString.call(value) == funcClass) {
         return reNative.test(fnToString.call(value));
       }
-      return (value && typeof value == 'object' &&
+      return (typeof value == 'object' &&
         (isHostObject(value) ? reNative : reHostCtor).test(value)) || false;
     }
 
@@ -7593,15 +7686,15 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.assign({ 'user': 'fred' }, { 'age': 40 }, { 'employer': 'slate' });
-     * // => { 'user': 'fred', 'age': 40, 'employer': 'slate' }
+     * _.assign({ 'user': 'fred' }, { 'age': 40 }, { 'status': 'busy' });
+     * // => { 'user': 'fred', 'age': 40, 'status': 'busy' }
      *
      * var defaults = _.partialRight(_.assign, function(value, other) {
      *   return typeof value == 'undefined' ? other : value;
      * });
      *
-     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'employer': 'slate' });
-     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
+     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
      */
     var assign = createAssigner(baseAssign);
 
@@ -7659,8 +7752,8 @@
      * @returns {Object} Returns the destination object.
      * @example
      *
-     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'employer': 'slate' });
-     * // => { 'user': 'barney', 'age': 36, 'employer': 'slate' }
+     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
+     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
      */
     function defaults(object) {
       if (object == null) {
@@ -7694,14 +7787,12 @@
      * @example
      *
      * var users = {
-     *   'barney': { 'age': 36 },
-     *   'fred': { 'age': 40, 'blocked': true },
-     *   'pebbles': { 'age': 1 }
+     *   'barney':  { 'age': 36, 'active': true },
+     *   'fred':    { 'age': 40, 'active': false },
+     *   'pebbles': { 'age': 1,  'active': true }
      * };
      *
-     * _.findKey(users, function(chr) {
-     *   return chr.age < 40;
-     * });
+     * _.findKey(users, function(chr) { return chr.age < 40; });
      * // => 'barney' (iteration order is not guaranteed)
      *
      * // using "_.where" callback shorthand
@@ -7709,8 +7800,8 @@
      * // => 'pebbles'
      *
      * // using "_.pluck" callback shorthand
-     * _.findKey(users, 'blocked');
-     * // => 'fred'
+     * _.findKey(users, 'active');
+     * // => 'barney'
      */
     function findKey(object, predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 3);
@@ -7740,22 +7831,20 @@
      * @example
      *
      * var users = {
-     *   'barney': { 'age': 36, 'blocked': true },
-     *   'fred': { 'age': 40 },
-     *   'pebbles': { 'age': 1, 'blocked': true }
+     *   'barney':  { 'age': 36, 'active': true },
+     *   'fred':    { 'age': 40, 'active': false },
+     *   'pebbles': { 'age': 1,  'active': true }
      * };
      *
-     * _.findLastKey(users, function(chr) {
-     *   return chr.age < 40;
-     * });
-     * // => returns `pebbles`, assuming `_.findKey` returns `barney`
+     * _.findLastKey(users, function(chr) { return chr.age < 40; });
+     * // => returns `pebbles` assuming `_.findKey` returns `barney`
      *
      * // using "_.where" callback shorthand
      * _.findLastKey(users, { 'age': 40 });
      * // => 'fred'
      *
      * // using "_.pluck" callback shorthand
-     * _.findLastKey(users, 'blocked');
+     * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
     function findLastKey(object, predicate, thisArg) {
@@ -8033,8 +8122,7 @@
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) || 0;
 
-      var keyIndex,
-          Ctor = object.constructor,
+      var Ctor = object.constructor,
           index = -1,
           proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto,
           isProto = proto === object,
@@ -8049,11 +8137,11 @@
       // Lo-Dash skips the `constructor` property when it infers it is iterating
       // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
       // attribute of an existing property and the `constructor` property of a
-      // prototype defaults to non-enumerable.
+      // prototype defaults to non-enumerable
       for (var key in object) {
         if (!(skipProto && key == 'prototype') &&
             !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && (keyIndex = +key, keyIndex > -1 && keyIndex < length && keyIndex % 1 == 0)) &&
+            !(skipIndexes && isIndex(key, length)) &&
             !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
         }
@@ -8106,7 +8194,7 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      *
      * var users = {
-     *   'fred': { 'user': 'fred', 'age': 40 },
+     *   'fred':    { 'user': 'fred',    'age': 40 },
      *   'pebbles': { 'user': 'pebbles', 'age': 1 }
      * };
      *
@@ -9477,8 +9565,8 @@
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
      *
-     * **Note:** This method avoids differences in native ES3 and ES5 `parseInt`
-     * implementations. See the [ES5 spec](http://es5.github.io/#E) for more details.
+     * **Note:** This method aligns with the ES5 implementation of `parseInt`.
+     * See the [ES5 spec](http://es5.github.io/#E) for more details.
      *
      * @static
      * @memberOf _
@@ -9500,7 +9588,7 @@
       parseInt = function(value, radix, guard) {
         // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
         // Chrome fails to trim leading <BOM> whitespace characters.
-        // See https://code.google.com/p/v8/issues/detail?id=3109
+        // See https://code.google.com/p/v8/issues/detail?id=3109.
         value = trim(value);
         radix = guard ? 0 : +radix;
         return nativeParseInt(value, radix || (reHexPrefix.test(value) ? 16 : 10));
@@ -9508,8 +9596,8 @@
     }
 
     /**
-     * Creates a "_.pluck" style function which returns the `key` value of a
-     * given object.
+     * Creates a "_.pluck" style function which returns the property value
+     * of `key` on a given object.
      *
      * @static
      * @memberOf _
@@ -9526,13 +9614,39 @@
      * var getName = _.property('user');
      *
      * _.map(users, getName);
-     * // => ['barney', 'fred']
+     * // => ['fred', barney']
      *
-     * _.sortBy(users, getName);
-     * // => [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred',   'age': 40 }]
+     * _.pluck(_.sortBy(users, getName), 'user');
+     * // => ['barney', 'fred']
      */
     function property(key) {
+      key = String(key);
       return function(object) {
+        return object == null ? undefined : object[key];
+      };
+    }
+
+    /**
+     * The inverse of `_.property`; this method creates a function which returns
+     * the property value of a given key on `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var fred = { 'user': 'fred', 'age': 40, 'active': true };
+     * _.map(['age', 'active'], _.propertyOf(fred));
+     * // => [40, true]
+     *
+     * var object = { 'a': 3, 'b': 1, 'c': 2 };
+     * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
+     * // => ['b', 'c', 'a']
+     */
+    function propertyOf(object) {
+      return function(key) {
         return object == null ? undefined : object[key];
       };
     }
@@ -9687,8 +9801,8 @@
      * _.result(object, 'age');
      * // => 40
      *
-     * _.result(object, 'employer', 'slate');
-     * // => 'slate'
+     * _.result(object, 'status', 'busy');
+     * // => 'busy'
      */
     function result(object, key, defaultValue) {
       var value = object == null ? undefined : object[key];
@@ -9716,7 +9830,7 @@
      * // => [3, 6, 4]
      *
      * _.times(3, function(n) { mage.castSpell(n); });
-     * // => invokes `mage.castSpell(n)` three times, passing `n` of `0`, `1`, and `2` respectively
+     * // => invokes `mage.castSpell(n)` three times with `n` of `0`, `1`, and `2` respectively
      *
      * _.times(3, function(n) { this.cast(n); }, mage);
      * // => also invokes `mage.castSpell(n)` three times
@@ -9764,13 +9878,16 @@
     // ensure `new LodashWrapper` is an instance of `lodash`
     LodashWrapper.prototype = lodash.prototype;
 
-    // add functions to the memoize cache
-    MemCache.prototype.get = memGet;
-    MemCache.prototype.has = memHas;
-    MemCache.prototype.set = memSet;
+    // add functions to the `Map` cache
+    MapCache.prototype.get = mapGet;
+    MapCache.prototype.has = mapHas;
+    MapCache.prototype.set = mapSet;
+
+    // add functions to the `Set` cache
+    SetCache.prototype.push = cachePush;
 
     // assign cache to `_.memoize`
-    memoize.Cache = MemCache;
+    memoize.Cache = MapCache;
 
     // add functions that return wrapped values when chaining
     lodash.after = after;
@@ -9834,9 +9951,11 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
+    lodash.propertyOf = propertyOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;
+    lodash.rearg = rearg;
     lodash.reject = reject;
     lodash.remove = remove;
     lodash.rest = rest;
@@ -10106,7 +10225,7 @@
       return result;
     };
 
-    // add `LazyWrapper` methods to `LodashWrapper`
+    // add `LazyWrapper` methods to `lodash.prototype`
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var retUnwrapped = /^(?:first|last)$/.test(methodName);
 
@@ -10133,7 +10252,7 @@
       };
     });
 
-    // add `Array.prototype` functions to `LodashWrapper`
+    // add `Array.prototype` functions to `lodash.prototype`
     arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var arrayFunc = arrayProto[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',

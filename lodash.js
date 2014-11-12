@@ -1421,19 +1421,19 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a cache object for use by `_.memoize`.
+     * Creates a cache object to store key/value pairs.
      *
      * @private
      * @static
      * @name Cache
      * @memberOf _.memoize
      */
-    function MemCache() {
+    function MapCache() {
       this.__data__ = {};
     }
 
     /**
-     * Gets the value at `key`.
+     * Gets the cached value for `key`.
      *
      * @private
      * @name get
@@ -1441,12 +1441,12 @@
      * @param {string} key The key of the value to retrieve.
      * @returns {*} Returns the cached value.
      */
-    function memGet(key) {
+    function mapGet(key) {
       return this.__data__[key];
     }
 
     /**
-     * Checks if a value for `key` exists.
+     * Checks if a cached value for `key` exists.
      *
      * @private
      * @name has
@@ -1454,21 +1454,21 @@
      * @param {string} key The name of the entry to check.
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
-    function memHas(key) {
+    function mapHas(key) {
       return key != '__proto__' && hasOwnProperty.call(this.__data__, key);
     }
 
     /**
-     * Adds `value` to the cache at `key`.
+     * Adds `value` to `key` of the cache.
      *
      * @private
      * @name set
      * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to set.
-     * @param {*} value The value to set.
+     * @param {string} key The key of the value to cache.
+     * @param {*} value The value to cache.
      * @returns {Object} Returns the cache object.
      */
-    function memSet(key, value) {
+    function mapSet(key, value) {
       if (key != '__proto__') {
         this.__data__[key] = value;
       }
@@ -1478,7 +1478,8 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a cache object to optimize linear searches of large arrays.
+     *
+     * Creates a cache object to store unique values.
      *
      * @private
      * @param {Array} [values] The values to cache.
@@ -1497,7 +1498,7 @@
      * `_.indexOf` by returning `0` if the value is found, else `-1`.
      *
      * @private
-     * @param {Object} cache The cache object to search.
+     * @param {Object} cache The cache to search.
      * @param {*} value The value to search for.
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
@@ -1515,7 +1516,7 @@
      * @private
      * @name push
      * @memberOf SetCache
-     * @param {*} value The value to add.
+     * @param {*} value The value to cache.
      */
     function cachePush(value) {
       var data = this.data,
@@ -2844,13 +2845,13 @@
     }
 
     /**
-     * Creates a cache object if supported.
+     * Creates a `Set` cache object to optimize linear searches of large arrays.
      *
      * @private
      * @param {Array} [values] The values to cache.
-     * @returns {Object} Returns the new cache object.
+     * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
      */
-    var createCache = !Set ? noop : function(values) {
+    var createCache = !Set ? constant(null) : function(values) {
       return new SetCache(values);
     };
 
@@ -9876,16 +9877,16 @@
     // ensure `new LodashWrapper` is an instance of `lodash`
     LodashWrapper.prototype = lodash.prototype;
 
-    // add functions to the memoize cache
-    MemCache.prototype.get = memGet;
-    MemCache.prototype.has = memHas;
-    MemCache.prototype.set = memSet;
+    // add functions to the `Map` cache
+    MapCache.prototype.get = mapGet;
+    MapCache.prototype.has = mapHas;
+    MapCache.prototype.set = mapSet;
 
-    // add functions to the set cache
+    // add functions to the `Set` cache
     SetCache.prototype.push = cachePush;
 
     // assign cache to `_.memoize`
-    memoize.Cache = MemCache;
+    memoize.Cache = MapCache;
 
     // add functions that return wrapped values when chaining
     lodash.after = after;

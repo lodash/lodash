@@ -2352,11 +2352,8 @@
       var index = -1,
           isFunc = typeof methodName == 'function',
           length = collection ? collection.length : 0,
-          result = [];
+          result = isLength(length) ? Array(length) : [];
 
-      if (isLength(length)) {
-        result.length = length;
-      }
       baseEach(collection, function(value) {
         var func = isFunc ? methodName : (value != null && value[methodName]);
         result[++index] = func ? func.apply(value, args) : undefined;
@@ -6075,11 +6072,8 @@
       var index = -1,
           length = collection ? collection.length : 0,
           multi = iteratee && isArray(iteratee),
-          result = [];
+          result = isLength(length) ? Array(length) : [];
 
-      if (isLength(length)) {
-        result.length = length;
-      }
       if (!multi) {
         iteratee = getCallback(iteratee, thisArg, 3);
       }
@@ -10135,7 +10129,7 @@
 
     // Add `LazyWrapper` methods that accept an `iteratee` value.
     arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
-      var isFilter = !index;
+      var isFilter = index == LAZY_FILTER_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         iteratee = getCallback(iteratee, thisArg, 3);
@@ -10144,7 +10138,7 @@
             filtered = result.filtered,
             iteratees = result.iteratees || (result.iteratees = []);
 
-        result.filtered = filtered || index == LAZY_FILTER_FLAG || (index == LAZY_WHILE_FLAG && result.dir < 0);
+        result.filtered = filtered || isFilter || (index == LAZY_WHILE_FLAG && result.dir < 0);
         iteratees.push({ 'iteratee': iteratee, 'type': index });
         return result;
       };

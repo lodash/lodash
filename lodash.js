@@ -9836,7 +9836,10 @@
      * // => also invokes `mage.castSpell(n)` three times
      */
     function times(n, iteratee, thisArg) {
-      n = nativeIsFinite(n = +n) && n > -1 ? n : 0;
+      n = +n;
+      if (n < 1 || !nativeIsFinite(n)) {
+        return [];
+      }
       iteratee = baseCallback(iteratee, thisArg, 1);
 
       var index = -1,

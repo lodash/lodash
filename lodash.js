@@ -106,7 +106,7 @@
     return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
 
-  /** Used to detect and test whitespace */
+  /** Used to detect and test for whitespace */
   var whitespace = (
     // whitespace
     ' \t\x0b\f\xa0\ufeff' +
@@ -221,20 +221,7 @@
     '\xdf': 'ss'
   };
 
-  /**
-   * Used to map characters to HTML entities.
-   *
-   * **Note:** Though the ">" character is escaped for symmetry, characters like
-   * ">" and "/" don't require escaping in HTML and have no special meaning
-   * unless they're part of a tag or unquoted attribute value.
-   * See [Mathias Bynens's article](http://mathiasbynens.be/notes/ambiguous-ampersands)
-   * (under "semi-related fun fact") for more details.
-   *
-   * Backticks are escaped because in Internet Explorer < 9, they can break out
-   * of attribute values or HTML comments. See [#102](http://html5sec.org/#102),
-   * [#108](http://html5sec.org/#108), and [#133](http://html5sec.org/#133) of
-   * the [HTML5 Security Cheatsheet](http://html5sec.org/) for more details.
-   */
+  /** Used to map characters to HTML entities. */
   var htmlEscapes = {
     '&': '&amp;',
     '<': '&lt;',
@@ -498,8 +485,7 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for `fromIndex`
-   * bounds checks and binary searches.
+   * The base implementation of `_.indexOf` without support for binary searches.
    *
    * @private
    * @param {Array} array The array to search.
@@ -586,7 +572,7 @@
   }
 
   /**
-   * Used by `_.sortBy` to compare transformed elements of `collection` and stable
+   * Used by `_.sortBy` to compare transformed elements of a collection and stable
    * sort them in ascending order.
    *
    * @private
@@ -1677,8 +1663,7 @@
     }
 
     /**
-     * The base implementation of `_.callback` without support for creating
-     * "_.pluck" and "_.where" style callbacks.
+     * The base implementation of `_.callback`.
      *
      * @private
      * @param {*} [func=_.identity] The value to convert to a callback.
@@ -2486,7 +2471,7 @@
     /**
      * The base implementation of `_.reduce` and `_.reduceRight` without support
      * for callback shorthands or `this` binding, which iterates over `collection`
-     * usingthe provided `eachFunc`.
+     * using the provided `eachFunc`.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2924,6 +2909,8 @@
           key = func;
 
       function wrapper() {
+        // avoid `arguments` object use disqualifying optimizations by
+        // converting it to an array before providing it to `composeArgs`
         var length = arguments.length,
             index = length,
             args = Array(length);
@@ -2998,7 +2985,7 @@
 
     /**
      * Creates a function that wraps `func` and invokes it with the optional `this`
-     * binding of `thisArg` and the `partialArgs` prepended to those provided to
+     * binding of `thisArg` and the `partials` prepended to those provided to
      * the wrapper.
      *
      * @private
@@ -3014,7 +3001,7 @@
 
       function wrapper() {
         // avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before providing it to `composeArgs`
+        // converting it to an array
         var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
@@ -3050,7 +3037,7 @@
      *   128 - `_.rearg`
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to be partially applied.
-     * @param {Array} [holders] The `partialArgs` placeholder indexes.
+     * @param {Array} [holders] The `partials` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
      * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
@@ -3342,7 +3329,7 @@
     }
 
     /**
-     * Checks if `value` is valid array-like length.
+     * Checks if `value` is a valid array-like length.
      *
      * @private
      * @param {*} value The value to check.
@@ -8564,8 +8551,20 @@
      * Converts the characters "&", "<", ">", '"', "'", and '`', in `string` to
      * their corresponding HTML entities.
      *
-     * **Note:** No other characters are escaped. To escape additional characters
-     * use a third-party library like [_he_](http://mths.be/he).
+     * **Notes:** 
+     *  - No other characters are escaped. To escape additional characters
+     *    use a third-party library like [_he_](http://mths.be/he).
+     *
+     *  - Though the ">" character is escaped for symmetry, characters like
+     *    ">" and "/" don't require escaping in HTML and have no special meaning
+     *    unless they're part of a tag or unquoted attribute value.
+     *    See [Mathias Bynens's article](http://mathiasbynens.be/notes/ambiguous-ampersands)
+     *    (under "semi-related fun fact") for more details.
+     *
+     *  - Backticks are escaped because in Internet Explorer < 9, they can break out
+     *    of attribute values or HTML comments. See [#102](http://html5sec.org/#102),
+     *    [#108](http://html5sec.org/#108), and [#133](http://html5sec.org/#133) of
+     *    the [HTML5 Security Cheatsheet](http://html5sec.org/) for more details.
      *
      * When working with HTML you should always quote attribute values to reduce
      * XSS vectors. See [Ryan Grove's article](http://wonko.com/post/html-escaping)

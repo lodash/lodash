@@ -1837,15 +1837,16 @@
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
-      var length = array ? array.length : 0;
+      var length = array ? array.length : 0,
+          result = [];
+
       if (!length) {
-        return [];
+        return result;
       }
       var index = -1,
           indexOf = getIndexOf(),
           isCommon = indexOf == baseIndexOf,
           cache = isCommon && values.length >= 200 && createCache(values),
-          result = [],
           valuesLength = values.length;
 
       if (cache) {

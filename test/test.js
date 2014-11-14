@@ -6500,17 +6500,22 @@
     });
 
     test('should work using its fallback', 3, function() {
-      var lodash = _.runInContext(_.assign({}, root, {
-        'Uint8Array': {
-          'toString': function() {
-            return String(Uint8Array || Array);
+      if (!isModularize) {
+        var lodash = _.runInContext(_.assign({}, root, {
+          'Uint8Array': {
+            'toString': function() {
+              return String(Uint8Array || Array);
+            }
           }
-        }
-      }));
+        }));
 
-      strictEqual(lodash.isFunction(slice), true);
-      strictEqual(lodash.isFunction(/x/), false);
-      strictEqual(lodash.isFunction(Uint8Array), toString.call(Uint8Array) == funcClass);
+        strictEqual(lodash.isFunction(slice), true);
+        strictEqual(lodash.isFunction(/x/), false);
+        strictEqual(lodash.isFunction(Uint8Array), toString.call(Uint8Array) == funcClass);
+      }
+      else {
+        skipTest(3);
+      }
     });
 
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {

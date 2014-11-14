@@ -6457,7 +6457,8 @@
   QUnit.module('lodash.isFunction');
 
   (function() {
-    var args = arguments;
+    var args = arguments,
+        funcClass = '[object Function]';
 
     test('should return `true` for functions', 2, function() {
       strictEqual(_.isFunction(_), true);
@@ -6466,7 +6467,7 @@
 
     test('should return `true` for typed array constructors', 1, function() {
       var expected = _.map(typedArrays, function(type) {
-        return toString.call(root[type]) == '[object Function]';
+        return toString.call(root[type]) == funcClass;
       });
 
       var actual = _.map(typedArrays, function(type) {
@@ -6509,7 +6510,7 @@
 
       strictEqual(lodash.isFunction(slice), true);
       strictEqual(lodash.isFunction(/x/), false);
-      strictEqual(lodash.isFunction(Uint8Array), !!Uint8Array);
+      strictEqual(lodash.isFunction(Uint8Array), toString.call(Uint8Array) == funcClass);
     });
 
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {

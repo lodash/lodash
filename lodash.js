@@ -2667,7 +2667,7 @@
     }
     if (!bufferSlice) {
       // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`.
-      bufferClone = !(ArrayBuffer && Uint8Array) ? identity : function(buffer) {
+      bufferClone = !(ArrayBuffer && Uint8Array) ? constant(null) : function(buffer) {
         var byteLength = buffer.byteLength,
             floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
             offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
@@ -3244,7 +3244,8 @@
      * @private
      * @param {Object} object The object to clone.
      * @param {boolean} [isDeep=false] Specify a deep clone.
-     * @returns {null|Object} Returns the initialized object clone.
+     * @returns {null|Object} Returns the initialized object clone if an object
+     *  is cloneable, else `null`.
      */
     function initObjectClone(object, isDeep) {
       if (!isCloneable(object)) {

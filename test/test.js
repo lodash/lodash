@@ -12465,6 +12465,23 @@
 
       deepEqual(actual, expected);
     });
+
+    test('should work in a lazy chain sequence', 1, function () {
+      if (!isNpm) {
+        var array = [
+          {'a': 1},
+          {'a': 3},
+          {'a': 1, 'b': 2}
+        ];
+
+        var wrapped = _(array).where({'a': 1});
+
+        deepEqual(wrapped.value(), [array[0], array[2]]);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

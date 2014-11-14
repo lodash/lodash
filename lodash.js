@@ -10213,6 +10213,10 @@
       return this.map(property(key));
     };
 
+    LazyWrapper.prototype.where = function(source) {
+      return this.filter(matches(source));
+    };
+
     LazyWrapper.prototype.reject = function(iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);
 

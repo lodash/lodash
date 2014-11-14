@@ -9688,6 +9688,13 @@
       var rearged = _.rearg(fn, [1, 0]);
       deepEqual(rearged('b', 'a', 'c'), ['a', 'b', 'c']);
     });
+
+    test('should work on functions that have been rearged', 1, function() {
+      var rearged1 = _.rearg(fn, 2, 1, 0),
+          rearged2 = _.rearg(rearged1, 1, 0, 2);
+
+      deepEqual(rearged2('b', 'c', 'a'), ['a', 'b', 'c']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -10195,6 +10195,16 @@
       };
     });
 
+    // add `LazyWrapper` methods for `_.pluck` and `_.where`
+    arrayEach(['pluck', 'where'], function (methodName, index) {
+      var operationName = index ? 'filter' : 'map',
+          getCallback = index ? matches : property;
+
+      LazyWrapper.prototype[methodName] = function (arg) {
+        return this[operationName](getCallback(arg));
+      };
+    });
+
     LazyWrapper.prototype.dropWhile = function(iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);
 
@@ -10207,14 +10217,6 @@
         lastIndex = index;
         return done || (done = !iteratee(value, index, array));
       });
-    };
-
-    LazyWrapper.prototype.pluck = function(key) {
-      return this.map(property(key));
-    };
-
-    LazyWrapper.prototype.where = function(source) {
-      return this.filter(matches(source));
     };
 
     LazyWrapper.prototype.reject = function(iteratee, thisArg) {

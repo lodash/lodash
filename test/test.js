@@ -9248,6 +9248,19 @@
       deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);
     });
 
+    test('should work in a lazy chain sequence', 1, function () {
+      if (!isNpm) {
+        var array = [{prop: 1}, null, {prop: 3}, {prop: 4}];
+
+        var wrapped = _(array).filter(Boolean).pluck("prop");
+
+        deepEqual(wrapped.value(), [1, 3, 4]);
+      }
+      else {
+        skipTest();
+      }
+    });
+
     test('should coerce `key` to a string', 1, function() {
       function fn() {}
       fn.toString = _.constant('fn');

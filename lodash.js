@@ -10209,6 +10209,10 @@
       });
     };
 
+    LazyWrapper.prototype.pluck = function(key) {
+      return this.map(property(key));
+    };
+
     LazyWrapper.prototype.reject = function(iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);
 

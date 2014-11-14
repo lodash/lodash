@@ -6498,6 +6498,20 @@
       strictEqual(_.isFunction('a'), false);
     });
 
+    test('should work using its fallback', 3, function() {
+      var lodash = _.runInContext(_.assign({}, root, {
+        'Uint8Array': {
+          'toString': function() {
+            return String(Uint8Array || Array);
+          }
+        }
+      }));
+
+      strictEqual(lodash.isFunction(slice), true);
+      strictEqual(lodash.isFunction(/x/), false);
+      strictEqual(lodash.isFunction(Uint8Array), !!Uint8Array);
+    });
+
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {
       // trigger Chakra bug
       // https://github.com/jashkenas/underscore/issues/1621

@@ -7411,7 +7411,7 @@
       return typeof value == 'function' || false;
     }
     // Fallback for environments that return incorrect `typeof` operator results.
-    if (isFunction(/x/) || !Uint8Array || !isFunction(Uint8Array)) {
+    if (isFunction(/x/) || (Uint8Array && !isFunction(Uint8Array))) {
       isFunction = function(value) {
         // The use of `Object#toString` avoids issues with the `typeof` operator
         // in older versions of Chrome and Safari which return 'function' for

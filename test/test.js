@@ -37,6 +37,7 @@
       document = !phantom && root.document,
       body = root.document && root.document.body,
       create = Object.create,
+      fnToString = funcProto.toString,
       freeze = Object.freeze,
       hasOwnProperty = objectProto.hasOwnProperty,
       JSON = root.JSON,
@@ -400,8 +401,7 @@
         return;
       }
     }
-    var fnToString = funcProto.toString,
-        nativeString = fnToString.call(toString),
+    var nativeString = fnToString.call(toString),
         reToString = /toString/g;
 
     function createToString(funcName) {
@@ -6501,13 +6501,36 @@
 
     test('should work using its fallback', 3, function() {
       if (!isModularize) {
-        var lodash = _.runInContext(_.assign({}, root, {
+        // simulate native `Uint8Array` constructor with a `[[Class]]`
+        // of 'Function' and a `typeof` result of 'object'
+        var lodash = _.runInContext({
+          'Function': {
+            'prototype': {
+              'toString': function() {
+                return _.has(this, 'toString') ? this.toString() : fnToString.call(this);
+              }
+            }
+          },
+          'Object': _.assign(function(value) {
+            return Object(value);
+          }, {
+            'prototype': {
+              'toString': _.assign(function() {
+                return _.has(this, '[[Class]]') ? this['[[Class]]'] : toString.call(this);
+              }, {
+                'toString': function() {
+                  return String(toString);
+                }
+              })
+            }
+          }),
           'Uint8Array': {
+            '[[Class]]': funcClass,
             'toString': function() {
               return String(Uint8Array || Array);
             }
           }
-        }));
+        });
 
         strictEqual(lodash.isFunction(slice), true);
         strictEqual(lodash.isFunction(/x/), false);

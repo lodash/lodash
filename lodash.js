@@ -7415,8 +7415,8 @@
       isFunction = function(value) {
         // The use of `Object#toString` avoids issues with the `typeof` operator
         // in older versions of Chrome and Safari which return 'function' for
-        // regexes and modern Safari which returns 'object' for typed array
-        // constructors.
+        // regexes and Safari 8 equivalents which return 'object' for typed
+        // array constructors.
         return toString.call(value) == funcClass;
       };
     }

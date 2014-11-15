@@ -3075,8 +3075,11 @@
 
         partials = holders = null;
       }
-      var data = (data = !isBindKey && getData(func)) && data !== true && data;
-      if (data) {
+      var data = (data = !isBindKey && getData(func)) && data !== true && data,
+          funcBitmask = data ? data[1] : 0,
+          funcIsPartialed = funcBitmask & PARTIAL_FLAG || funcBitmask & PARTIAL_RIGHT_FLAG;
+
+      if (data && !(argPos && funcIsPartialed)) {
         var funcBitmask = data[1],
             funcIsBind = funcBitmask & BIND_FLAG,
             isBind = bitmask & BIND_FLAG;

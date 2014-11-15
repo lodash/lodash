@@ -10190,13 +10190,13 @@
       };
     });
 
-    // add `LazyWrapper` methods for `_.pluck` and `_.where`
+    // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
     arrayEach(['pluck', 'where'], function (methodName, index) {
       var operationName = index ? 'filter' : 'map',
           getCallback = index ? matches : property;
 
-      LazyWrapper.prototype[methodName] = function (arg) {
-        return this[operationName](getCallback(arg));
+      LazyWrapper.prototype[methodName] = function(value) {
+        return this[operationName](getCallback(value));
       };
     });
 

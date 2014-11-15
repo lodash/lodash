@@ -9291,19 +9291,6 @@
       deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);
     });
 
-    test('should work in a lazy chain sequence', 1, function () {
-      if (!isNpm) {
-        var array = [{prop: 1}, null, {prop: 3}, {prop: 4}];
-
-        var wrapped = _(array).filter(Boolean).pluck("prop");
-
-        deepEqual(wrapped.value(), [1, 3, 4]);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('should coerce `key` to a string', 1, function() {
       function fn() {}
       fn.toString = _.constant('fn');
@@ -9316,6 +9303,21 @@
       });
 
       deepEqual(actual, [[1], [2], [3], [4]]);
+    });
+
+    test('should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [{ 'a': 1 }, null, { 'a': 3 }, { 'a': 4 }],
+            actual = _(array).pluck('a').value();
+
+        deepEqual(actual, [1, undefined, 3, 4]);
+
+        actual = _(array).filter(Boolean).pluck('a').value();
+        deepEqual(actual, [1, 3, 4]);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -12516,17 +12518,16 @@
       deepEqual(actual, expected);
     });
 
-    test('should work in a lazy chain sequence', 1, function () {
+    test('should work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
         var array = [
-          {'a': 1},
-          {'a': 3},
-          {'a': 1, 'b': 2}
+          { 'a': 1 },
+          { 'a': 3 },
+          { 'a': 1, 'b': 2 }
         ];
 
-        var wrapped = _(array).where({'a': 1});
-
-        deepEqual(wrapped.value(), [array[0], array[2]]);
+        var actual = _(array).where({ 'a': 1 }).value();
+        deepEqual(actual, [array[0], array[2]]);
       }
       else {
         skipTest();

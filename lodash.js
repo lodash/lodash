@@ -4054,7 +4054,8 @@
 
     /**
      * Creates an array of unique values in all provided arrays using `SameValueZero`
-     * for equality comparisons.
+     * for equality comparisons. Sort order is preserved if the sorted array is the
+     * first argument.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the

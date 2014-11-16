@@ -1,21 +1,21 @@
 ;(function() {
 
-  /** Used to determine if values are of the language type Object */
+  /** Used to determine if values are of the language type Object. */
   var objectTypes = {
     'function': true,
     'object': true
   };
 
-  /** Used as the `WeakMap#toString` return value */
+  /** Used as the `WeakMap#toString` return value. */
   var nativeString = String(Object.prototype.toString).replace(/toString/g, 'WeakMap');
 
-  /** Used as a reference to the global object */
+  /** Used as a reference to the global object. */
   var root = (objectTypes[typeof window] && window) || this;
 
-  /** Detect free variable `exports` */
+  /** Detect free variable `exports`. */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
   var freeGlobal = objectTypes[typeof global] && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
     root = freeGlobal;
@@ -35,7 +35,7 @@
      * Creates a `WeakMap` object.
      */
     function WeakMap() {
-      // no-op
+      // No operation performed.
     }
 
     /**

@@ -1,15 +1,15 @@
 ;(function() {
 
-  /** Used to access the Firebug Lite panel (set by `run`) */
+  /** Used to access the Firebug Lite panel (set by `run`). */
   var fbPanel;
 
-  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  /** Used as a safe reference for `undefined` in pre ES5 environments. */
   var undefined;
 
-  /** Used as a reference to the global object */
+  /** Used as a reference to the global object. */
   var root = typeof global == 'object' && global || this;
 
-  /** Method and object shortcuts */
+  /** Method and object shortcuts. */
   var phantom = root.phantom,
       amd = root.define && define.amd,
       argv = root.process && process.argv,
@@ -18,10 +18,10 @@
       params = root.arguments,
       system = root.system;
 
-  /** Add `console.log()` support for Narwhal, Rhino, and RingoJS */
+  /** Add `console.log()` support for Narwhal, Rhino, and RingoJS. */
   var console = root.console || (root.console = { 'log': root.print });
 
-  /** The file path of the Lo-Dash file to test */
+  /** The file path of the Lo-Dash file to test. */
   var filePath = (function() {
     var min = 0,
         result = [];
@@ -52,51 +52,51 @@
     return result;
   }());
 
-  /** Used to match path separators */
+  /** Used to match path separators. */
   var rePathSeparator = /[\/\\]/;
 
-  /** Used to detect primitive types */
+  /** Used to detect primitive types. */
   var rePrimitive = /^(?:boolean|number|string|undefined)$/;
 
-  /** Used to match RegExp special characters */
+  /** Used to match RegExp special characters. */
   var reSpecialChars = /[.*+?^=!:${}()|[\]\/\\]/g;
 
-  /** The `ui` object */
+  /** The `ui` object. */
   var ui = root.ui || (root.ui = {
     'buildPath': basename(filePath, '.js'),
     'otherPath': 'underscore'
   });
 
-  /** The Lo-Dash build basename */
+  /** The Lo-Dash build basename. */
   var buildName = root.buildName = basename(ui.buildPath, '.js');
 
-  /** The other library basename */
+  /** The other library basename. */
   var otherName = root.otherName = (function() {
     var result = basename(ui.otherPath, '.js');
     return result + (result == buildName ? ' (2)' : '');
   }());
 
-  /** Used to score performance */
+  /** Used to score performance. */
   var score = { 'a': [], 'b': [] };
 
-  /** Used to queue benchmark suites */
+  /** Used to queue benchmark suites. */
   var suites = [];
 
-  /** Used to resolve a value's internal [[Class]] */
+  /** Used to resolve a value's internal [[Class]]. */
   var toString = Object.prototype.toString;
 
-  /** Detect if in a browser environment */
+  /** Detect if in a browser environment. */
   var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
 
-  /** Detect if in a Java environment */
+  /** Detect if in a Java environment. */
   var isJava = !isBrowser && /Java/.test(toString.call(root.java));
 
-  /** Use a single "load" function */
+  /** Use a single "load" function. */
   var load = (typeof require == 'function' && !amd)
     ? require
     : (isJava && root.load) || noop;
 
-  /** Load Lo-Dash */
+  /** Load Lo-Dash. */
   var lodash = root.lodash || (root.lodash = (
     lodash = load(filePath) || root._,
     lodash = lodash._ || lodash,
@@ -104,14 +104,14 @@
     lodash.noConflict()
   ));
 
-  /** Load Benchmark.js */
+  /** Load Benchmark.js. */
   var Benchmark = root.Benchmark || (root.Benchmark = (
     Benchmark = load('../vendor/benchmark.js/benchmark.js') || root.Benchmark,
     Benchmark = Benchmark.Benchmark || Benchmark,
     Benchmark.runInContext(lodash.extend({}, root, { '_': lodash }))
   ));
 
-  /** Load Underscore */
+  /** Load Underscore. */
   var _ = root._ || (root._ = (
     _ = load('../vendor/underscore/underscore.js') || root._,
     _._ || _
@@ -189,7 +189,7 @@
   function log(text) {
     console.log(text + '');
     if (fbPanel) {
-      // scroll the Firebug Lite panel down
+      // Scroll the Firebug Lite panel down.
       fbPanel.scrollTop = fbPanel.scrollHeight;
     }
   }
@@ -249,15 +249,15 @@
             '% faster.'
           );
         }
-        // add score adjusted for margin of error
+        // Add score adjusted for margin of error.
         score.a.push(aHz);
         score.b.push(bHz);
       }
-      // remove current suite from queue
+      // Remove current suite from queue.
       suites.shift();
 
       if (suites.length) {
-        // run next suite
+        // Run next suite.
         suites[0].run({ 'async': !isJava });
       }
       else {
@@ -269,7 +269,7 @@
             percentFaster = formatNumber(Math.round((xFaster - 1) * 100)),
             message = 'is ' + percentFaster + '% ' + (xFaster == 1 ? '' : '(' + formatNumber(xFaster.toFixed(2)) + 'x) ') + 'faster than';
 
-        // report results
+        // Report results.
         if (aMeanHz >= bMeanHz) {
           log('\n' + buildName + ' ' + message + ' ' + otherName + '.');
         } else {
@@ -334,7 +334,7 @@
           return /^_/.test(funcName);\
         });\
         \
-        // potentially expensive\n\
+        // Potentially expensive.\n\
         for (index = 0; index < this.count; index++) {\
           bindAllObjects[index] = belt.reduce(funcNames, function(object, funcName) {\
             object[funcName] = belt[funcName];\
@@ -974,7 +974,7 @@
       )
   );
 
-  // avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo
+  // Avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo.
   if (!isJava) {
     suites.push(
       Benchmark.Suite('`_.find` with `properties`')
@@ -2080,7 +2080,7 @@
   if (Benchmark.platform + '') {
     log(Benchmark.platform);
   }
-  // in the browser, expose `run` to be called later
+  // Expose `run` to be called later when executing in a browser.
   if (document) {
     root.run = run;
   } else {

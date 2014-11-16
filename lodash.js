@@ -8,13 +8,13 @@
  */
 ;(function() {
 
-  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  /** Used as a safe reference for `undefined` in pre ES5 environments. */
   var undefined;
 
-  /** Used as the semantic version number */
+  /** Used as the semantic version number. */
   var VERSION = '3.0.0-pre';
 
-  /** Used to compose bitmasks for wrapper metadata */
+  /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
       CURRY_FLAG = 4,
@@ -24,38 +24,38 @@
       PARTIAL_RIGHT_FLAG = 64,
       REARG_FLAG = 128;
 
-  /** Used as default options for `_.trunc` */
+  /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
 
-  /** Used to detect when a function becomes hot */
+  /** Used to detect when a function becomes hot. */
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 
-  /** Used to indicate the type of lazy iteratees */
+  /** Used to indicate the type of lazy iteratees. */
   var LAZY_FILTER_FLAG = 0,
       LAZY_MAP_FLAG = 1,
       LAZY_WHILE_FLAG = 2;
 
-  /** Used as the `TypeError` message for "Functions" methods */
+  /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /** Used as the internal argument placeholder */
+  /** Used as the internal argument placeholder. */
   var PLACEHOLDER = '__lodash_placeholder__';
 
-  /** Used to generate unique IDs */
+  /** Used to generate unique IDs. */
   var idCounter = 0;
 
-  /** Used to match empty string literals in compiled template source */
+  /** Used to match empty string literals in compiled template source. */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-  /** Used to match HTML entities and HTML characters */
+  /** Used to match HTML entities and HTML characters. */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,
       reUnescapedHtml = /[&<>"'`]/g;
 
-  /** Used to match template delimiters */
+  /** Used to match template delimiters. */
   var reEscape = /<%-([\s\S]+?)%>/g,
       reEvaluate = /<%([\s\S]+?)%>/g,
       reInterpolate = /<%=([\s\S]+?)%>/g;
@@ -67,22 +67,22 @@
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
-  /** Used to match `RegExp` flags from their coerced string values */
+  /** Used to match `RegExp` flags from their coerced string values. */
   var reFlags = /\w*$/;
 
-  /** Used to detect named functions */
+  /** Used to detect named functions. */
   var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
-  /** Used to detect hexadecimal string values */
+  /** Used to detect hexadecimal string values. */
   var reHexPrefix = /^0[xX]/;
 
-  /** Used to detect host constructors (Safari > 5) */
+  /** Used to detect host constructors (Safari > 5). */
   var reHostCtor = /^\[object .+?Constructor\]$/;
 
-  /** Used to match latin-1 supplement letters (excluding mathematical operators) */
+  /** Used to match latin-1 supplement letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
 
-  /** Used to ensure capturing order of template delimiters */
+  /** Used to ensure capturing order of template delimiters. */
   var reNoMatch = /($^)/;
 
   /**
@@ -92,13 +92,13 @@
    */
   var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g;
 
-  /** Used to detect functions containing a `this` reference */
+  /** Used to detect functions containing a `this` reference. */
   var reThis = /\bthis\b/;
 
-  /** Used to match unescaped characters in compiled string literals */
+  /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
-  /** Used to match words to create compound words */
+  /** Used to match words to create compound words. */
   var reWords = (function() {
     var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
         lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+';
@@ -106,19 +106,19 @@
     return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
 
-  /** Used to detect and test whitespace */
+  /** Used to detect and test for whitespace. */
   var whitespace = (
-    // whitespace
+    // Basic whitespace characters.
     ' \t\x0b\f\xa0\ufeff' +
 
-    // line terminators
+    // Line terminators.
     '\n\r\u2028\u2029' +
 
-    // unicode category "Zs" space separators
+    // Unicode category "Zs" space separators.
     '\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
   );
 
-  /** Used to assign default `context` object properties */
+  /** Used to assign default `context` object properties. */
   var contextProps = [
     'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
@@ -128,16 +128,16 @@
     'window', 'WinRTError'
   ];
 
-  /** Used to fix the JScript `[[DontEnum]]` bug */
+  /** Used to fix the JScript `[[DontEnum]]` bug. */
   var shadowedProps = [
     'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
     'toLocaleString', 'toString', 'valueOf'
   ];
 
-  /** Used to make template sourceURLs easier to identify */
+  /** Used to make template sourceURLs easier to identify. */
   var templateCounter = -1;
 
-  /** `Object#toString` result references */
+  /** `Object#toString` result references. */
   var argsClass = '[object Arguments]',
       arrayClass = '[object Array]',
       boolClass = '[object Boolean]',
@@ -163,7 +163,7 @@
       uint16Class = '[object Uint16Array]',
       uint32Class = '[object Uint32Array]';
 
-  /** Used to identify object classifications that are treated like arrays */
+  /** Used to identify object classifications that are treated like arrays. */
   var arrayLikeClasses = {};
   arrayLikeClasses[argsClass] =
   arrayLikeClasses[arrayClass] = arrayLikeClasses[float32Class] =
@@ -178,7 +178,7 @@
   arrayLikeClasses[regexpClass] = arrayLikeClasses[setClass] =
   arrayLikeClasses[stringClass] = arrayLikeClasses[weakMapClass] = false;
 
-  /** Used to identify object classifications that `_.clone` supports */
+  /** Used to identify object classifications that `_.clone` supports. */
   var cloneableClasses = {};
   cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
   cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
@@ -193,14 +193,14 @@
   cloneableClasses[funcClass] = cloneableClasses[mapClass] =
   cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
 
-  /** Used as an internal `_.debounce` options object by `_.throttle` */
+  /** Used as an internal `_.debounce` options object by `_.throttle`. */
   var debounceOptions = {
     'leading': false,
     'maxWait': 0,
     'trailing': false
   };
 
-  /** Used to map latin-1 supplementary letters to basic latin letters */
+  /** Used to map latin-1 supplementary letters to basic latin letters. */
   var deburredLetters = {
     '\xc0': 'A',  '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
     '\xe0': 'a',  '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
@@ -221,20 +221,7 @@
     '\xdf': 'ss'
   };
 
-  /**
-   * Used to map characters to HTML entities.
-   *
-   * **Note:** Though the ">" character is escaped for symmetry, characters like
-   * ">" and "/" don't require escaping in HTML and have no special meaning
-   * unless they're part of a tag or unquoted attribute value.
-   * See [Mathias Bynens's article](http://mathiasbynens.be/notes/ambiguous-ampersands)
-   * (under "semi-related fun fact") for more details.
-   *
-   * Backticks are escaped because in Internet Explorer < 9, they can break out
-   * of attribute values or HTML comments. See [#102](http://html5sec.org/#102),
-   * [#108](http://html5sec.org/#108), and [#133](http://html5sec.org/#133) of
-   * the [HTML5 Security Cheatsheet](http://html5sec.org/) for more details.
-   */
+  /** Used to map characters to HTML entities. */
   var htmlEscapes = {
     '&': '&amp;',
     '<': '&lt;',
@@ -244,7 +231,7 @@
     '`': '&#96;'
   };
 
-  /** Used to map HTML entities to characters */
+  /** Used to map HTML entities to characters. */
   var htmlUnescapes = {
     '&amp;': '&',
     '&lt;': '<',
@@ -254,13 +241,13 @@
     '&#96;': '`'
   };
 
-  /** Used to determine if values are of the language type `Object` */
+  /** Used to determine if values are of the language type `Object`. */
   var objectTypes = {
     'function': true,
     'object': true
   };
 
-  /** Used to escape characters for inclusion in compiled string literals */
+  /** Used to escape characters for inclusion in compiled string literals. */
   var stringEscapes = {
     '\\': '\\',
     "'": "'",
@@ -278,19 +265,19 @@
    */
   var root = (objectTypes[typeof window] && window !== (this && this.window)) ? window : this;
 
-  /** Detect free variable `exports` */
+  /** Detect free variable `exports`. */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
-  /** Detect free variable `module` */
+  /** Detect free variable `module`. */
   var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
   var freeGlobal = freeExports && freeModule && typeof global == 'object' && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
     root = freeGlobal;
   }
 
-  /** Detect the popular CommonJS extension `module.exports` */
+  /** Detect the popular CommonJS extension `module.exports`. */
   var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
 
   /*--------------------------------------------------------------------------*/
@@ -586,7 +573,7 @@
   }
 
   /**
-   * Used by `_.sortBy` to compare transformed elements of `collection` and stable
+   * Used by `_.sortBy` to compare transformed elements of a collection and stable
    * sort them in ascending order.
    *
    * @private
@@ -861,7 +848,7 @@
     // See http://es5.github.io/#x11.1.5.
     context = context ? _.defaults(root.Object(), context, _.pick(root, contextProps)) : root;
 
-    /** Native constructor references */
+    /** Native constructor references. */
     var Array = context.Array,
         Date = context.Date,
         Error = context.Error,
@@ -873,34 +860,34 @@
         String = context.String,
         TypeError = context.TypeError;
 
-    /** Used for native method references */
+    /** Used for native method references. */
     var arrayProto = Array.prototype,
         errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
 
-    /** Used to detect DOM support */
+    /** Used to detect DOM support. */
     var document = (document = context.window) && document.document;
 
-    /** Used to resolve the decompiled source of functions */
+    /** Used to resolve the decompiled source of functions. */
     var fnToString = Function.prototype.toString;
 
-    /** Used to check objects for own properties */
+    /** Used to check objects for own properties. */
     var hasOwnProperty = objectProto.hasOwnProperty;
 
-    /** Used to restore the original `_` reference in `_.noConflict` */
+    /** Used to restore the original `_` reference in `_.noConflict`. */
     var oldDash = context._;
 
-    /** Used to resolve the internal `[[Class]]` of values */
+    /** Used to resolve the internal `[[Class]]` of values. */
     var toString = objectProto.toString;
 
-    /** Used to detect if a method is native */
+    /** Used to detect if a method is native. */
     var reNative = RegExp('^' +
       escapeRegExp(toString)
       .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
-    /** Native method references */
+    /** Native method references. */
     var ArrayBuffer = isNative(ArrayBuffer = context.ArrayBuffer) && ArrayBuffer,
         bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
         ceil = Math.ceil,
@@ -916,7 +903,7 @@
         unshift = arrayProto.unshift,
         WeakMap = isNative(WeakMap = context.WeakMap) && WeakMap;
 
-    /** Used to clone array buffers */
+    /** Used to clone array buffers. */
     var Float64Array = (function() {
       // Safari 5 errors when using an array buffer to initialize a typed array
       // where the array buffer's `byteLength` is not a multiple of the typed
@@ -928,7 +915,7 @@
       return result;
     }());
 
-    /* Native method references for those with the same name as other `lodash` methods */
+    /* Native method references for those with the same name as other `lodash` methods. */
     var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
         nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
@@ -940,15 +927,15 @@
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
-    /** Used as references for `-Infinity` and `Infinity` */
+    /** Used as references for `-Infinity` and `Infinity`. */
     var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
         POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
 
-    /** Used as references for the max length and index of an array */
+    /** Used as references for the max length and index of an array. */
     var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
         MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
 
-    /** Used as the size, in bytes, of each Float64Array element */
+    /** Used as the size, in bytes, of each Float64Array element. */
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
 
     /**
@@ -958,10 +945,10 @@
      */
     var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
-    /** Used to store function metadata */
+    /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
-    /** Used to lookup a built-in constructor by `[[Class]]` */
+    /** Used to lookup a built-in constructor by `[[Class]]`. */
     var ctorByClass = {};
     ctorByClass[float32Class] = context.Float32Array;
     ctorByClass[float64Class] = context.Float64Array;
@@ -973,7 +960,7 @@
     ctorByClass[uint16Class] = context.Uint16Array;
     ctorByClass[uint32Class] = context.Uint32Array;
 
-    /** Used to avoid iterating over non-enumerable properties in IE < 9 */
+    /** Used to avoid iterating over non-enumerable properties in IE < 9. */
     var nonEnumProps = {};
     nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
     nonEnumProps[boolClass] = nonEnumProps[stringClass] = { 'constructor': true, 'toString': true, 'valueOf': true };
@@ -1677,8 +1664,7 @@
     }
 
     /**
-     * The base implementation of `_.callback` without support for creating
-     * "_.pluck" and "_.where" style callbacks.
+     * The base implementation of `_.callback`.
      *
      * @private
      * @param {*} [func=_.identity] The value to convert to a callback.
@@ -2482,7 +2468,7 @@
     /**
      * The base implementation of `_.reduce` and `_.reduceRight` without support
      * for callback shorthands or `this` binding, which iterates over `collection`
-     * usingthe provided `eachFunc`.
+     * using the provided `eachFunc`.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2920,6 +2906,8 @@
           key = func;
 
       function wrapper() {
+        // Avoid `arguments` object use disqualifying optimizations by
+        // converting it to an array before providing it to other functions.
         var length = arguments.length,
             index = length,
             args = Array(length);
@@ -2994,7 +2982,7 @@
 
     /**
      * Creates a function that wraps `func` and invokes it with the optional `this`
-     * binding of `thisArg` and the `partialArgs` prepended to those provided to
+     * binding of `thisArg` and the `partials` prepended to those provided to
      * the wrapper.
      *
      * @private
@@ -3010,7 +2998,7 @@
 
       function wrapper() {
         // Avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before providing it to `composeArgs`.
+        // converting it to an array before providing it `func`.
         var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
@@ -3046,7 +3034,7 @@
      *   128 - `_.rearg`
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to be partially applied.
-     * @param {Array} [holders] The `partialArgs` placeholder indexes.
+     * @param {Array} [holders] The `partials` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
      * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
@@ -3342,7 +3330,7 @@
     }
 
     /**
-     * Checks if `value` is valid array-like length.
+     * Checks if `value` is a valid array-like length.
      *
      * @private
      * @param {*} value The value to check.
@@ -8563,6 +8551,17 @@
      *
      * **Note:** No other characters are escaped. To escape additional characters
      * use a third-party library like [_he_](http://mths.be/he).
+     *
+     * Though the ">" character is escaped for symmetry, characters like
+     * ">" and "/" don't require escaping in HTML and have no special meaning
+     * unless they're part of a tag or unquoted attribute value.
+     * See [Mathias Bynens's article](http://mathiasbynens.be/notes/ambiguous-ampersands)
+     * (under "semi-related fun fact") for more details.
+     *
+     * Backticks are escaped because in Internet Explorer < 9, they can break out
+     * of attribute values or HTML comments. See [#102](http://html5sec.org/#102),
+     * [#108](http://html5sec.org/#108), and [#133](http://html5sec.org/#133) of
+     * the [HTML5 Security Cheatsheet](http://html5sec.org/) for more details.
      *
      * When working with HTML you should always quote attribute values to reduce
      * XSS vectors. See [Ryan Grove's article](http://wonko.com/post/html-escaping)

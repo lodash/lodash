@@ -1,35 +1,35 @@
 ;(function() {
 
-  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  /** Used as a safe reference for `undefined` in pre ES5 environments. */
   var undefined;
 
-  /** Used to detect when a function becomes hot */
+  /** Used to detect when a function becomes hot. */
   var HOT_COUNT = 150;
 
-  /** Used as the size to cover large array optimizations */
+  /** Used as the size to cover large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
 
-  /** Used as references for the max length and index of an array */
+  /** Used as references for the max length and index of an array. */
   var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
       MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
 
-  /** Used as the maximum length an array-like object */
+  /** Used as the maximum length an array-like object. */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
-  /** Used as a reference to the global object */
+  /** Used as a reference to the global object. */
   var root = (typeof global == 'object' && global) || this;
 
-  /** Used to store Lo-Dash to test for bad extensions/shims */
+  /** Used to store Lo-Dash to test for bad extensions/shims. */
   var lodashBizarro = root.lodashBizarro;
 
-  /** Used for native method references */
+  /** Used for native method references. */
   var arrayProto = Array.prototype,
       errorProto = Error.prototype,
       funcProto = Function.prototype,
       objectProto = Object.prototype,
       stringProto = String.prototype;
 
-  /** Method and object shortcuts */
+  /** Method and object shortcuts. */
   var phantom = root.phantom,
       amd = root.define && define.amd,
       argv = root.process && process.argv,
@@ -49,7 +49,7 @@
       toString = objectProto.toString,
       Uint8Array = root.Uint8Array;
 
-  /** Used to set property descriptors */
+  /** Used to set property descriptors. */
   var defineProperty = (function() {
     try {
       var o = {},
@@ -59,7 +59,7 @@
     return result;
   }());
 
-  /** The file path of the Lo-Dash file to test */
+  /** The file path of the Lo-Dash file to test. */
   var filePath = (function() {
     var min = 0,
         result = [];
@@ -90,7 +90,7 @@
     return result;
   }());
 
-  /** The `ui` object */
+  /** The `ui` object. */
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
@@ -99,41 +99,41 @@
     'urlParams': {}
   });
 
-  /** The basename of the Lo-Dash file to test */
+  /** The basename of the Lo-Dash file to test. */
   var basename = /[\w.-]+$/.exec(filePath)[0];
 
-  /** Detect if in a Java environment */
+  /** Detect if in a Java environment. */
   var isJava = !document && !!root.java;
 
-  /** Used to indicate testing a modularized build */
+  /** Used to indicate testing a modularized build. */
   var isModularize = ui.isModularize;
 
-  /** Detect if testing `npm` modules */
+  /** Detect if testing `npm` modules. */
   var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
-  /** Detect if running in PhantomJS */
+  /** Detect if running in PhantomJS. */
   var isPhantom = phantom || typeof callPhantom == 'function';
 
-  /** Detect if running in Rhino */
+  /** Detect if running in Rhino. */
   var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
 
-  /** Detect if Lo-Dash is in strict mode */
+  /** Detect if Lo-Dash is in strict mode. */
   var isStrict = ui.isStrict;
 
-  /** Used to test Web Workers */
+  /** Used to test Web Workers. */
   var Worker = !(ui.isForeign || ui.isSauceLabs || isModularize) && document && root.Worker;
 
-  /** Used to test host objects in IE */
+  /** Used to test host objects in IE. */
   try {
     var xml = new ActiveXObject('Microsoft.XMLDOM');
   } catch(e) {}
 
-  /** Use a single "load" function */
+  /** Use a single "load" function. */
   var load = (typeof require == 'function' && !amd)
     ? require
     : (isJava && root.load) || noop;
 
-  /** The unit testing framework */
+  /** The unit testing framework. */
   var QUnit = (function() {
     return  root.QUnit || (
       root.addEventListener || (root.addEventListener = noop),
@@ -144,7 +144,7 @@
     );
   }());
 
-  /** Load and install QUnit Extras and ES6 Set/WeakMap shims */
+  /** Load and install QUnit Extras and ES6 Set/WeakMap shims. */
   (function() {
     var paths = [
       './asset/set.js',
@@ -165,11 +165,11 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // log params provided to `test.js`
+  // Log params provided to `test.js`.
   if (params) {
     console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
   }
-  // exit early if going to run tests in a PhantomJS web page
+  // Exit early if going to run tests in a PhantomJS web page.
   if (phantom && isModularize) {
     var page = require('webpage').create();
     page.open(filePath, function(status) {
@@ -211,14 +211,14 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** The `lodash` function to test */
+  /** The `lodash` function to test. */
   var _ = root._ || (root._ = (
     _ = load(filePath) || root._,
     _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default']) || _,
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
-  /** List of latin-1 supplementary letters to basic latin letters */
+  /** List of latin-1 supplementary letters to basic latin letters. */
   var burredLetters = [
     '\xc0', '\xc1', '\xc2', '\xc3', '\xc4', '\xc5', '\xc6', '\xc7', '\xc8', '\xc9', '\xca', '\xcb', '\xcc', '\xcd', '\xce',
     '\xcf', '\xd0', '\xd1', '\xd2', '\xd3', '\xd4', '\xd5', '\xd6', '\xd8', '\xd9', '\xda', '\xdb', '\xdc', '\xdd', '\xde',
@@ -226,7 +226,7 @@
     '\xef', '\xf0', '\xf1', '\xf2', '\xf3', '\xf4', '\xf5', '\xf6', '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff'
   ];
 
-  /** List of `burredLetters` translated to basic latin letters */
+  /** List of `burredLetters` translated to basic latin letters. */
   var deburredLetters = [
     'A',  'A', 'A', 'A', 'A', 'A', 'Ae', 'C',  'E', 'E', 'E', 'E', 'I', 'I', 'I',
     'I',  'D', 'N', 'O', 'O', 'O', 'O',  'O',  'O', 'U', 'U', 'U', 'U', 'Y', 'Th',
@@ -234,13 +234,13 @@
     'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
   ];
 
-  /** Used to provide falsey values to methods */
+  /** Used to provide falsey values to methods. */
   var falsey = [, '', 0, false, NaN, null, undefined];
 
-  /** Used to provide empty values to methods */
+  /** Used to provide empty values to methods. */
   var empties = [[], {}].concat(falsey.slice(1));
 
-  /** Used to test error objects */
+  /** Used to test error objects. */
   var errors = [
     new Error,
     new EvalError,
@@ -251,7 +251,7 @@
     new URIError
   ];
 
-  /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug) */
+  /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug). */
   var shadowedProps = [
     'constructor',
     'hasOwnProperty',
@@ -262,10 +262,10 @@
     'valueOf'
   ];
 
-  /** Used to check problem JScript properties too */
+  /** Used to check problem JScript properties too. */
   var shadowedObject = _.invert(shadowedProps);
 
-  /** Used to check whether methods support typed arrays */
+  /** Used to check whether methods support typed arrays. */
   var typedArrays = [
     'Float32Array',
     'Float64Array',
@@ -360,13 +360,13 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // setup values for Node.js
+  // Setup values for Node.js.
   (function() {
     if (amd) {
       return;
     }
     try {
-      // add values from a different realm
+      // Add values from a different realm.
       _.extend(_, require('vm').runInNewContext([
         '(function() {',
         ' var object = {',
@@ -408,14 +408,14 @@
       return _.constant(nativeString.replace(reToString, funcName));
     }
 
-    // expose `baseEach` for better code coverage
+    // Expose `baseEach` for better code coverage.
     if (isModularize && !isNpm) {
       var path = require('path'),
           baseEach = require(path.join(path.dirname(filePath), 'internal', 'baseEach.js'));
 
       _._baseEach = baseEach.baseEach || baseEach['default'] || baseEach;
     }
-    // allow bypassing native checks
+    // Allow bypassing native checks.
     setProperty(funcProto, 'toString', function wrapper() {
       setProperty(funcProto, 'toString', fnToString);
       var result = _.has(this, 'toString') ? this.toString() : fnToString.call(this);
@@ -423,10 +423,10 @@
       return result;
     });
 
-    // add extensions
+    // Add extensions.
     funcProto._method = _.noop;
 
-    // set bad shims
+    // Set bad shims.
     var _isArray = Array.isArray;
     setProperty(Array, 'isArray', _.noop);
 
@@ -512,23 +512,23 @@
     var _WeakMap = root.WeakMap;
     setProperty(root, 'WeakMap', _.noop);
 
-    // fake DOM
+    // Fake the DOM
     setProperty(root, 'window', {});
     setProperty(root.window, 'document', {});
     setProperty(root.window.document, 'createDocumentFragment', function() {
       return { 'nodeType': 11 };
     });
 
-    // fake `WinRTError`
+    // Fake `WinRTError`.
     setProperty(root, 'WinRTError', Error);
 
-    // clear cache so Lo-Dash can be reloaded
+    // Clear cache so Lo-Dash can be reloaded.
     emptyObject(require.cache);
 
-    // load Lo-Dash and expose it to the bad extensions/shims
+    // Load Lo-Dash and expose it to the bad extensions/shims.
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
 
-    // restore native methods
+    // Restore native methods.
     setProperty(Array,  'isArray', _isArray);
     setProperty(Date,   'now', _now);
     setProperty(Object, 'create', _create);
@@ -568,7 +568,7 @@
     delete funcProto._method;
   }());
 
-  // add values from an iframe
+  // Add values from an iframe.
   (function() {
     if (_._object || !document) {
       return;
@@ -607,7 +607,7 @@
     idoc.close();
   }());
 
-  // add web worker
+  // Add a web worker.
   (function() {
     if (!Worker) {
       return;
@@ -622,8 +622,8 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // explicitly call `QUnit.module()` instead of `module()`
-  // in case we are in a CLI environment
+  // Explicitly call `QUnit.module()` instead of `module()` in case we are
+  // in a CLI environment.
   QUnit.module(basename);
 
   (function() {
@@ -1813,7 +1813,7 @@
       });
 
       test('`_.' + methodName + '` should clone `lastIndex` regexp property', 1, function() {
-        // avoid a regexp literal for older Opera and use `exec` for older Safari
+        // Avoid a regexp literal for older Opera and use `exec` for older Safari.
         var regexp = RegExp('x', 'g');
         regexp.exec('vwxyz');
 
@@ -4182,7 +4182,7 @@
     });
 
     test('should work with extremely large arrays', 3, function() {
-      // test in modern browsers
+      // Test in modern browsers only to avoid browser hangs.
       if (freeze) {
         var expected = Array(5e5);
 
@@ -6234,7 +6234,7 @@
     });
 
     test('should return `true` for like-objects from different documents', 4, function() {
-      // ensure `_._object` is assigned (unassigned in Opera 10.00)
+      // Ensure `_._object` is assigned (unassigned in Opera 10.00).
       if (_._object) {
         strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, _._object), true);
         strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, _._object), false);
@@ -6501,8 +6501,8 @@
 
     test('should work using its fallback', 3, function() {
       if (!isModularize) {
-        // simulate native `Uint8Array` constructor with a `[[Class]]`
-        // of 'Function' and a `typeof` result of 'object'
+        // Simulate native `Uint8Array` constructor with a `[[Class]]`
+        // of 'Function' and a `typeof` result of 'object'.
         var lodash = _.runInContext({
           'Function': {
             'prototype': {
@@ -6542,8 +6542,8 @@
     });
 
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {
-      // trigger Chakra bug
-      // https://github.com/jashkenas/underscore/issues/1621
+      // Trigger a Chakra bug.
+      // See https://github.com/jashkenas/underscore/issues/1621.
       _.each([body, xml], function(object) {
         if (object) {
           _.times(100, _.isFunction);
@@ -6824,14 +6824,14 @@
     });
 
     test('should avoid V8 bug #2291 (test in Chrome 19-20)', 1, function() {
-      // trigger V8 bug
-      // http://code.google.com/p/v8/issues/detail?id=2291
+      // Trigger a V8 bug.
+      // See http://code.google.com/p/v8/issues/detail?id=2291.
       var object = {};
 
-      // 1: Useless comparison statement, this is half the trigger
+      // 1: Useless comparison statement, this is half the trigger.
       object == object;
 
-      // 2: Initial check with object, this is the other half of the trigger
+      // 2: Initial check with object, this is the other half of the trigger.
       _.isObject(object);
 
       strictEqual(_.isObject('x'), false);
@@ -7114,7 +7114,7 @@
       deepEqual(func('abc').sort(), ['0', '1', '2']);
 
       if (!isKeys) {
-        // IE 9 doesn't box numbers in for-in loops
+        // IE 9 doesn't box numbers in for-in loops.
         Number.prototype.a = 1;
         deepEqual(func(0).sort(), ['a']);
         delete Number.prototype.a;
@@ -10876,7 +10876,7 @@
 
       array.length = length;
 
-      // avoid false fail in older Firefox
+      // Avoid false fails in older Firefox.
       if (array.length == length) {
         var actual = func(array, undefined, function() { steps++; });
         strictEqual(steps, 33);
@@ -11177,7 +11177,7 @@
     });
 
     test('should support single line comments in "evaluate" delimiters (test production builds)', 1, function() {
-      var compiled = _.template('<% // comment %><% if (value) { %>yap<% } else { %>nope<% } %>'),
+      var compiled = _.template('<% // A code comment. %><% if (value) { %>yap<% } else { %>nope<% } %>'),
           data = { 'value': true };
 
       strictEqual(compiled(data), 'yap');
@@ -11304,7 +11304,7 @@
 
     test('should work with templates containing newlines and comments', 1, function() {
       var compiled = _.template('<%\n\
-        // comment\n\
+        // A code comment.\n\
         if (value) { value += 3; }\n\
         %><p><%= value %></p>'
       );
@@ -12177,7 +12177,7 @@
     });
 
     test('`_.' + methodName + '` should not remove non-whitespace characters', 1, function() {
-      // zero-width space (zws), next line character (nel), and non-character (bom) are not whitespace
+      // Zero-width space (zws), next line character (nel), and non-character (bom) are not whitespace.
       var problemChars = '\x85\u200b\ufffe',
           string = problemChars + 'a b c' + problemChars;
 
@@ -13445,7 +13445,7 @@
         ok(pass, '`_.' + methodName + '` accepts falsey arguments');
       });
 
-      // skip tests for missing methods of modularized builds
+      // Skip tests for missing methods of modularized builds.
       _.each(['chain', 'noConflict', 'runInContext'], function(methodName) {
         if (!_[methodName]) {
           skipTest();

@@ -1,16 +1,16 @@
 ;(function(window) {
   'use strict';
 
-  /** The base path of the builds */
+  /** The base path of the Lo-Dash builds. */
   var basePath = '../';
 
-  /** The Lo-Dash build to load */
+  /** The Lo-Dash build to load. */
   var build = (build = /build=([^&]+)/.exec(location.search)) && decodeURIComponent(build[1]);
 
-  /** The module loader to use */
+  /** The module loader to use. */
   var loader = (loader = /loader=([^&]+)/.exec(location.search)) && decodeURIComponent(loader[1]);
 
-  /** The `ui` object */
+  /** The `ui` object. */
   var ui = {};
 
   /*--------------------------------------------------------------------------*/
@@ -34,7 +34,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // initialize controls
+  // Initialize controls.
   addListener(window, 'load', function() {
     function eventHandler(event) {
       var buildIndex = buildList.selectedIndex,
@@ -124,19 +124,19 @@
     init();
   });
 
-  // used to indicate that Lo-Dash is in strict mode
+  // Used to indicate that Lo-Dash is in strict mode.
   ui.isStrict = /\b(?:lodash-es6|transpiled)\b/.test([location.pathname, location.search]);
 
-  // used to indicate testing a foreign file
+  // Used to indicate testing a foreign file.
   ui.isForeign = RegExp('^(\\w+:)?//').test(build);
 
-  // used to indicate testing a modularized build
+  // Used to indicate testing a modularized build.
   ui.isModularize = /\b(?:commonjs|(index|main)\.js|lodash-(?:amd|es6|node)|modularize|npm|transpiled)\b/.test([location.pathname, location.search]);
 
-  // used to indicate testing in Sauce Labs' automated test cloud
+  // Used to indicate testing in Sauce Labs' automated test cloud.
   ui.isSauceLabs = location.port == '9001';
 
-  // expose Lo-Dash build file path
+  // The Lo-Dash build file path.
   ui.buildPath = (function() {
     var result;
     switch (build) {
@@ -152,7 +152,7 @@
     return basePath + result;
   }());
 
-  // expose module loader file path
+  // The module loader file path.
   ui.loaderPath = (function() {
     var result;
     switch (loader) {
@@ -165,18 +165,9 @@
     return basePath + result;
   }());
 
-  // expose `ui.urlParams` properties
-  ui.urlParams = {
-    'build': build,
-    'loader': loader
-  };
+  ui.urlParams = { 'build': build, 'loader': loader };
+  ui.timing = { 'loadEventEnd': 0 };
 
-  // expose page load timestamps
-  ui.timing = {
-    'loadEventEnd': 0
-  };
-
-  // expose `ui`
   window.ui = ui;
 
 }(this));

@@ -1,16 +1,16 @@
 ;(function(window) {
   'use strict';
 
-  /** The base path of the builds */
+  /** The base path of the Lo-Dash builds. */
   var basePath = '../';
 
-  /** The Lo-Dash build to load */
+  /** The Lo-Dash build to load. */
   var build = (build = /build=([^&]+)/.exec(location.search)) && decodeURIComponent(build[1]);
 
-  /** The other library to load */
+  /** The other library to load. */
   var other = (other = /other=([^&]+)/.exec(location.search)) && decodeURIComponent(other[1]);
 
-  /** The `ui` object */
+  /** The `ui` object. */
   var ui = {};
 
   /*--------------------------------------------------------------------------*/
@@ -34,7 +34,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // initialize controls
+  // Initialize controls.
   addListener(window, 'load', function() {
     function eventHandler(event) {
       var buildIndex = buildList.selectedIndex,
@@ -112,7 +112,7 @@
     addListener(otherList, 'change', eventHandler);
   });
 
-  // expose Lo-Dash build file path
+  // The Lo-Dash build file path.
   ui.buildPath = (function() {
     var result;
     switch (build) {
@@ -126,7 +126,7 @@
     return basePath + result;
   }());
 
-  // expose other library file path
+  // The other library file path.
   ui.otherPath = (function() {
     var result;
     switch (other) {
@@ -142,13 +142,8 @@
     return basePath + result;
   }());
 
-  // expose `ui.urlParams` properties
-  ui.urlParams = {
-    'build': build,
-    'other': other
-  };
+  ui.urlParams = { 'build': build, 'other': other };
 
-  // expose `ui`
   window.ui = ui;
 
 }(this));

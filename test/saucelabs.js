@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-/** Environment shortcut */
+/** Environment shortcut. */
 var env = process.env;
 
 if (env.TRAVIS_SECURE_ENV_VARS == 'false') {
@@ -9,35 +9,35 @@ if (env.TRAVIS_SECURE_ENV_VARS == 'false') {
   process.exit(0);
 }
 
-/** Load Node.js modules */
+/** Load Node.js modules. */
 var EventEmitter = require('events').EventEmitter,
     http = require('http'),
     path = require('path'),
     url = require('url'),
     util = require('util');
 
-/** Load other modules */
+/** Load other modules. */
 var _ = require('../lodash.js'),
     chalk = require('chalk'),
     ecstatic = require('ecstatic'),
     request = require('request'),
     SauceTunnel = require('sauce-tunnel');
 
-/** Used for Sauce Labs credentials */
+/** Used for Sauce Labs credentials. */
 var accessKey = env.SAUCE_ACCESS_KEY,
     username = env.SAUCE_USERNAME;
 
-/** Used as the default maximum number of times to retry a job and tunnel */
+/** Used as the default maximum number of times to retry a job and tunnel. */
 var maxJobRetries = 3,
     maxTunnelRetries = 3;
 
-/** Used as the static file server middleware */
+/** Used as the static file server middleware. */
 var mount = ecstatic({
   'cache': 'no-cache',
   'root': process.cwd()
 });
 
-/** Used as the list of ports supported by Sauce Connect */
+/** Used as the list of ports supported by Sauce Connect. */
 var ports = [
   80, 443, 888, 2000, 2001, 2020, 2109, 2222, 2310, 3000, 3001, 3030, 3210,
   3333, 4000, 4001, 4040, 4321, 4502, 4503, 4567, 5000, 5001, 5050, 5555, 5432,
@@ -46,19 +46,19 @@ var ports = [
   55001
 ];
 
-/** Used by `logInline` to clear previously logged messages */
+/** Used by `logInline` to clear previously logged messages. */
 var prevLine = '';
 
-/** Method shortcut */
+/** Method shortcut. */
 var push = Array.prototype.push;
 
-/** Used to detect error messages */
+/** Used to detect error messages. */
 var reError = /(?:\be|E)rror\b/;
 
-/** Used to detect valid job ids */
+/** Used to detect valid job ids. */
 var reJobId = /^[a-z0-9]{32}$/;
 
-/** Used to display the wait throbber */
+/** Used to display the wait throbber. */
 var throbberDelay = 500,
     waitCount = -1;
 
@@ -92,7 +92,7 @@ var advisor = getOption('advisor', false),
     tunnelTimeout = getOption('tunnelTimeout', 120),
     videoUploadOnPass = getOption('videoUploadOnPass', false);
 
-/** Used to convert Sauce Labs browser identifiers to their formal names */
+/** Used to convert Sauce Labs browser identifiers to their formal names. */
 var browserNameMap = {
   'googlechrome': 'Chrome',
   'iehta': 'Internet Explorer',
@@ -100,7 +100,7 @@ var browserNameMap = {
   'iphone': 'iPhone'
 };
 
-/** List of platforms to load the runner on */
+/** List of platforms to load the runner on. */
 var platforms = [
   //['Linux', 'android', '4.3'],
   //['Linux', 'android', '4.0'],
@@ -125,12 +125,12 @@ var platforms = [
   ['OS X 10.6', 'safari', '5']
 ];
 
-/** Used to tailor the `platforms` array */
+/** Used to tailor the `platforms` array. */
 var runnerQuery = url.parse(runner, true).query,
     isBackbone = /\bbackbone\b/i.test(runner),
     isModern = /\bmodern\b/i.test(runnerQuery.build);
 
-// platforms to test IE compat mode
+// The platforms to test IE compatibility modes.
 if (compatMode) {
   platforms = [
     ['Windows 8.1', 'internet explorer', '11'],
@@ -139,7 +139,7 @@ if (compatMode) {
     ['Windows 7', 'internet explorer', '8']
   ];
 }
-// platforms for AMD tests
+// The platforms for AMD tests.
 if (_.contains(tags, 'amd')) {
   platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
@@ -152,7 +152,7 @@ if (_.contains(tags, 'amd')) {
     return true;
   });
 }
-// platforms for Backbone tests
+// The platforms for Backbone tests.
 if (isBackbone) {
   platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
@@ -166,7 +166,7 @@ if (isBackbone) {
     return true;
   });
 }
-// platforms for modern builds
+// The platforms for modern builds.
 if (isModern) {
   platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
@@ -184,7 +184,7 @@ if (isModern) {
   });
 }
 
-/** Used as the default `Job` options object */
+/** Used as the default `Job` options object. */
 var jobOptions = {
   'build': build,
   'command-timeout': commandTimeout,
@@ -298,7 +298,7 @@ function logThrobber() {
  * @returns {Array} Returns the new converted array.
  */
 function optionToArray(name, string) {
-  return _.compact(_.invoke((optionToValue(name, string) || '').split(/, */), 'trim'));
+  return _.compact(_.invoke((optionToValue(name, string) || '').split(/,. */), 'trim'));
 }
 
 /**
@@ -742,7 +742,7 @@ function Tunnel(properties) {
     if (!_.contains(restarted, this)) {
       restarted.push(this);
     }
-    // restart tunnel if all active jobs have restarted
+    // Restart tunnel if all active jobs have restarted.
     var threshold = Math.min(all.length, _.isFinite(throttled) ? throttled : 3);
     if (tunnel.attempts < tunnel.retries &&
         active.length >= threshold && _.isEmpty(_.difference(active, restarted))) {
@@ -896,22 +896,22 @@ Tunnel.prototype.stop = function(callback) {
 
 /*----------------------------------------------------------------------------*/
 
-// cleanup any inline logs when exited via `ctrl+c`
+// Cleanup any inline logs when exited via `ctrl+c`.
 process.on('SIGINT', function() {
   logInline();
   process.exit();
 });
 
-// create a web server for the current working directory
+// Create a web server for the current working directory.
 http.createServer(function(req, res) {
-  // see http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx
+  // See http://msdn.microsoft.com/en-us/library/ff955275(v=vs.85).aspx.
   if (compatMode && path.extname(url.parse(req.url).pathname) == '.html') {
     res.setHeader('X-UA-Compatible', 'IE=' + compatMode);
   }
   mount(req, res);
 }).listen(port);
 
-// set up Sauce Connect so we can use this server from Sauce Labs
+// Setup Sauce Connect so we can use this server from Sauce Labs.
 var tunnel = new Tunnel({
   'user': username,
   'pass': accessKey,

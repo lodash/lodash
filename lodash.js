@@ -3990,8 +3990,8 @@
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
      * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
-     * it is used as the offset from the end of the collection. If `array` is
-     * sorted providing `true` for `fromIndex` performs a faster binary search.
+     * it is used as the offset from the end of `array`. If `array` is sorted
+     * providing `true` for `fromIndex` performs a faster binary search.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -5025,7 +5025,7 @@
 
     /**
      * Creates an array of elements corresponding to the specified keys, or indexes,
-     * of the collection. Keys may be specified as individual arguments or as arrays
+     * of `collection`. Keys may be specified as individual arguments or as arrays
      * of keys.
      *
      * @static
@@ -5053,7 +5053,7 @@
     /**
      * Checks if `value` is in `collection` using `SameValueZero` for equality
      * comparisons. If `fromIndex` is negative, it is used as the offset from
-     * the end of the collection.
+     * the end of `collection`.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -5437,7 +5437,7 @@
 
     /**
      * Creates an object composed of keys generated from the results of running
-     * each element of the collection through `iteratee`. The corresponding value
+     * each element of `collection` through `iteratee`. The corresponding value
      * of each key is the last element responsible for generating the key. The
      * iteratee function is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
@@ -5479,10 +5479,10 @@
     });
 
     /**
-     * Invokes the method named by `methodName` on each element in the collection,
+     * Invokes the method named by `methodName` on each element in `collection`,
      * returning an array of the results of each invoked method. Any additional
      * arguments are provided to each invoked method. If `methodName` is a function
-     * it is invoked for, and `this` bound to, each element in the collection.
+     * it is invoked for, and `this` bound to, each element in `collection`.
      *
      * @static
      * @memberOf _
@@ -5505,7 +5505,7 @@
     }
 
     /**
-     * Creates an array of values by running each element in the collection through
+     * Creates an array of values by running each element in `collection` through
      * `iteratee`. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
@@ -5551,11 +5551,11 @@
     }
 
     /**
-     * Retrieves the maximum value of `collection`. If the collection is empty
-     * or falsey `-Infinity` is returned. If an iteratee function is provided it
-     * is invoked for each value in the collection to generate the criterion by
-     * which the value is ranked. The `iteratee` is bound to `thisArg` and invoked
-     * with three arguments; (value, index, collection).
+     * Retrieves the maximum value of `collection`. If `collection` is empty or
+     * falsey `-Infinity` is returned. If an iteratee function is provided it is
+     * invoked for each value in `collection` to generate the criterion by which
+     * the value is ranked. The `iteratee` is bound to `thisArg` and invoked with
+     * three arguments; (value, index, collection).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -5622,11 +5622,11 @@
     }
 
     /**
-     * Retrieves the minimum value of `collection`. If the collection is empty
-     * or falsey `Infinity` is returned. If an iteratee function is provided it
-     * is invoked for each value in the collection to generate the criterion by
-     * which the value is ranked. The `iteratee` is bound to `thisArg` and invoked
-     * with three arguments; (value, index, collection).
+     * Retrieves the minimum value of `collection`. If `collection` is empty or
+     * falsey `Infinity` is returned. If an iteratee function is provided it is
+     * invoked for each value in `collection` to generate the criterion by which
+     * the value is ranked. The `iteratee` is bound to `thisArg` and invoked with
+     * three arguments; (value, index, collection).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -5741,7 +5741,7 @@
     }, function() { return [[], []]; });
 
     /**
-     * Retrieves the value of a specified property from all elements in the collection.
+     * Retrieves the value of a specified property from all elements in `collection`.
      *
      * @static
      * @memberOf _
@@ -5768,10 +5768,10 @@
     }
 
     /**
-     * Reduces a collection to a value which is the accumulated result of running
-     * each element in the collection through `iteratee`, where each successive
+     * Reduces `collection` to a value which is the accumulated result of running
+     * each element in `collection` through `iteratee`, where each successive
      * invocation is supplied the return value of the previous. If `accumulator`
-     * is not provided the first element of the collection is used as the initial
+     * is not provided the first element of `collection` is used as the initial
      * value. The `iteratee` is bound to `thisArg`and invoked with four arguments;
      * (accumulator, value, index|key, collection).
      *
@@ -5933,7 +5933,7 @@
     }
 
     /**
-     * Gets the size of the collection by returning `collection.length` for
+     * Gets the size of `collection` by returning `collection.length` for
      * array-like values or the number of own enumerable properties for objects.
      *
      * @static

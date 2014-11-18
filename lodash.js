@@ -2988,11 +2988,11 @@
      * @private
      * @param {Function} func The function to partially apply arguments to.
      * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {*} thisArg The `this` binding of `func`.
      * @param {Array} partials The arguments to prepend to those provided to the new function.
-     * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {Function} Returns the new bound function.
      */
-    function createPartialWrapper(func, bitmask, partials, thisArg) {
+    function createPartialWrapper(func, bitmask, thisArg, partials) {
       var isBind = bitmask & BIND_FLAG,
           Ctor = createCtorWrapper(func);
 
@@ -3065,70 +3065,33 @@
       }
       var data = (data = !isBindKey && getData(func)) && data !== true && data,
           funcBitmask = data ? data[1] : 0,
-          funcIsPartialed = funcBitmask & PARTIAL_FLAG || funcBitmask & PARTIAL_RIGHT_FLAG;
+          funcIsPartialed = funcBitmask & PARTIAL_FLAG || funcBitmask & PARTIAL_RIGHT_FLAG,
+          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity];
 
       if (data && !(argPos && funcIsPartialed)) {
-        var funcBitmask = data[1],
-            funcIsBind = funcBitmask & BIND_FLAG,
-            isBind = bitmask & BIND_FLAG;
-
-        // Use metadata `func` and merge bitmasks.
-        func = data[0];
-        bitmask |= funcBitmask;
-
-        // Use metadata `thisArg` if available.
-        if (funcIsBind) {
-          thisArg = data[2];
-        }
-        // Set when currying a bound function.
-        if (!isBind && funcIsBind) {
-          bitmask |= CURRY_BOUND_FLAG;
-        }
-        // Compose partial arguments.
-        var value = data[3];
-        if (value) {
-          var funcHolders = data[4];
-          partials = isPartial ? composeArgs(partials, value, funcHolders) : baseSlice(value);
-          holders = isPartial ? replaceHolders(partials, PLACEHOLDER) : baseSlice(funcHolders);
-        }
-        // Compose partial right arguments.
-        value = data[5];
-        if (value) {
-          funcHolders = data[6];
-          partialsRight = isPartialRight ? composeArgsRight(partialsRight, value, funcHolders) : baseSlice(value);
-          holdersRight = isPartialRight ? replaceHolders(partialsRight, PLACEHOLDER) : baseSlice(funcHolders);
-        }
-        // Append argument positions.
-        value = data[7];
-        if (value) {
-          value = baseSlice(value);
-          if (argPos) {
-            push.apply(value, argPos);
-          }
-          argPos = value;
-        }
-        // Use metadata `arity` if one is not provided.
-        if (arity == null) {
-          arity = data[8];
-        }
+        newData = mergeData(newData, data);
       }
+      bitmask = newData[1];
+      arity = newData[8];
+
       if (arity == null) {
-        arity = isBindKey ? 0 : func.length;
+        arity = isBindKey ? 0 : newData[0].length;
       } else {
         arity = nativeMax(+arity || 0, 0);
       }
       if (oldPartials) {
         arity = nativeMax(arity - (oldPartials.length - oldHolders.length), 0);
       }
+      newData[8] = arity;
       if (bitmask == BIND_FLAG) {
-        var result = createBindWrapper(func, thisArg);
-      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
-        result = createPartialWrapper(func, bitmask, partials, thisArg);
+        var result = createBindWrapper(newData[0], newData[2]);
+      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
+        result = createPartialWrapper.apply(null, newData);
       } else {
-        result = createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity);
+        result = createHybridWrapper.apply(null, newData);
       }
       var setter = data ? baseSetData : setData;
-      return setter(result, [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity]);
+      return setter(result, newData);
     }
 
     /**
@@ -3350,6 +3313,58 @@
      */
     function isStrictComparable(value) {
       return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
+    }
+
+    function mergeData(data, otherData) {
+      var bitmask = data[1],
+          oldBitmask = bitmask,
+          funcBitmask = otherData[1],
+          funcIsBind = funcBitmask & BIND_FLAG,
+          isBind = bitmask & BIND_FLAG;
+
+      // Use metadata `func` and merge bitmasks.
+      data[0] = otherData[0];
+      bitmask |= funcBitmask;
+
+      // Use metadata `thisArg` if available.
+      if (funcIsBind) {
+        data[2] = otherData[2];
+      }
+      // Set when currying a bound function.
+      if (!isBind && funcIsBind) {
+        bitmask |= CURRY_BOUND_FLAG;
+      }
+      // Compose partial and partial right arguments.
+      var index = 3;
+      while (index < 6) {
+        var value = otherData[index];
+        if (value) {
+          var partials = data[index],
+              funcHolders = otherData[index + 1],
+              isPartial = oldBitmask & (index < 5 ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
+
+          data[index++] = isPartial ? (index < 5 ? composeArgs : composeArgsRight)(partials, value, funcHolders) : baseSlice(value);
+          data[index++] = isPartial ? replaceHolders(data[index - 2], PLACEHOLDER) : baseSlice(funcHolders);
+        } else {
+          index += 2;
+        }
+      }
+      // Append argument positions.
+      value = otherData[7];
+      if (value) {
+        var argPos = data[7];
+        value = baseSlice(value);
+        if (argPos) {
+          push.apply(value, argPos);
+        }
+        data[7] = value;
+      }
+      // Use metadata `arity` if one is not provided.
+      if (data[8] == null) {
+        data[8] = otherData[8];
+      }
+      data[1] = bitmask;
+      return data;
     }
 
     /**

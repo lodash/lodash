@@ -10266,7 +10266,7 @@
             : lodash[methodName](this.value());
         }
         if (isLazy || isArray(value)) {
-          var result = func.apply(isLazy ? value : new LazyWrapper(this), args);
+          var result = func.apply(isLazy && !this.__queue__.length ? value : new LazyWrapper(this), args);
           return new LodashWrapper(result, chainAll);
         }
         return this.thru(function(value) {

@@ -1894,6 +1894,16 @@
       deepEqual(_.compact(falsey.concat(array)), array);
     });
 
+    test('should filter falsey values when in between lazy operators', 1, function () {
+      if (!isNpm) {
+        var wrapped = _(falsey).map(_.identity).compact().map(_.identity);
+        deepEqual(wrapped.value(), []);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var wrapped = _(falsey).compact();

@@ -252,7 +252,7 @@
   ];
 
   /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug). */
-  var shadowedProps = [
+  var shadowProps = [
     'constructor',
     'hasOwnProperty',
     'isPrototypeOf',
@@ -263,7 +263,7 @@
   ];
 
   /** Used to check problem JScript properties too. */
-  var shadowedObject = _.invert(shadowedProps);
+  var shadowObject = _.invert(shadowProps);
 
   /** Used to check whether methods support typed arrays. */
   var typedArrays = [
@@ -1775,9 +1775,9 @@
       });
 
       test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', 2, function() {
-        var actual = func(shadowedObject);
-        deepEqual(actual, shadowedObject);
-        notStrictEqual(actual, shadowedObject);
+        var actual = func(shadowObject);
+        deepEqual(actual, shadowObject);
+        notStrictEqual(actual, shadowObject);
       });
 
       test('`_.' + methodName + '` should provide the correct `customizer` arguments', 1, function() {
@@ -4625,8 +4625,8 @@
 
     test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       var props = [];
-      func(shadowedObject, function(value, prop) { props.push(prop); });
-      deepEqual(props.sort(), shadowedProps);
+      func(shadowObject, function(value, prop) { props.push(prop); });
+      deepEqual(props.sort(), shadowProps);
     });
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
@@ -4689,7 +4689,7 @@
         'valueOf': '6'
       };
 
-      deepEqual(func(object, source), shadowedObject);
+      deepEqual(func(object, source), shadowObject);
     });
 
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
@@ -5701,7 +5701,7 @@
     });
 
     test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.isEmpty(shadowedObject), false);
+      strictEqual(_.isEmpty(shadowObject), false);
     });
 
     test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
@@ -6134,7 +6134,7 @@
     });
 
     test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.isEqual(shadowedObject, {}), false);
+      strictEqual(_.isEqual(shadowObject, {}), false);
     });
 
     test('should return `false` for objects with custom `toString` methods', 1, function() {
@@ -7218,11 +7218,11 @@
 
     test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 3, function() {
       function Foo() {}
-      Foo.prototype = _.create(shadowedObject);
+      Foo.prototype = _.create(shadowObject);
 
-      deepEqual(func(shadowedObject).sort(), shadowedProps);
+      deepEqual(func(shadowObject).sort(), shadowProps);
 
-      var actual = isKeys ? [] : _.without(shadowedProps, 'constructor');
+      var actual = isKeys ? [] : _.without(shadowProps, 'constructor');
       deepEqual(func(new Foo).sort(), actual);
 
       Foo.prototype.constructor = Foo;
@@ -7264,7 +7264,7 @@
               object.toString = 2;
             }
             actual = func(object);
-            ok(_.isEmpty(_.difference(props, actual)), 'includes shadowed properties on objects that inherit from `' + key + '.prototype`');
+            ok(_.isEmpty(_.difference(props, actual)), 'includes properties on objects that shadow those on `' + key + '.prototype`');
           }
         });
       });
@@ -7803,8 +7803,8 @@
 
     test('should match problem JScript properties (test in IE < 9)', 1, function() {
       var expected = [false, true],
-          matches = _.matches(shadowedObject),
-          objects = [{}, shadowedObject],
+          matches = _.matches(shadowObject),
+          objects = [{}, shadowObject],
           actual = _.map(objects, matches);
 
       deepEqual(actual, expected);
@@ -7898,11 +7898,11 @@
       var actual = [],
           memoized = _.memoize(_.identity);
 
-      _.each(shadowedProps, function(value) {
+      _.each(shadowProps, function(value) {
         actual.push(memoized(value));
       });
 
-      deepEqual(actual, shadowedProps);
+      deepEqual(actual, shadowProps);
     });
 
     test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 2, function() {
@@ -10456,7 +10456,7 @@
     });
 
     test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.size(shadowedObject), 7);
+      strictEqual(_.size(shadowObject), 7);
     });
 
     _.each({

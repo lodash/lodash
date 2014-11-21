@@ -129,7 +129,7 @@
   ];
 
   /** Used to fix the JScript `[[DontEnum]]` bug. */
-  var shadowedProps = [
+  var shadowProps = [
     'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
     'toLocaleString', 'toString', 'valueOf'
   ];
@@ -967,7 +967,7 @@
     nonEnumProps[errorClass] = nonEnumProps[funcClass] = nonEnumProps[regexpClass] = { 'constructor': true, 'toString': true };
     nonEnumProps[objectClass] = { 'constructor': true };
 
-    arrayEach(shadowedProps, function(key) {
+    arrayEach(shadowProps, function(key) {
       for (var className in nonEnumProps) {
         if (hasOwnProperty.call(nonEnumProps, className)) {
           var props = nonEnumProps[className];
@@ -8153,9 +8153,9 @@
         if (className == objectClass) {
           proto = objectProto;
         }
-        length = shadowedProps.length;
+        length = shadowProps.length;
         while (length--) {
-          key = shadowedProps[length];
+          key = shadowProps[length];
           var nonEnum = nonEnums[key];
           if (!(isProto && nonEnum) &&
               (nonEnum ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {

@@ -1894,9 +1894,10 @@
       deepEqual(_.compact(falsey.concat(array)), array);
     });
 
-    test('should filter falsey values when in between lazy operators', 1, function () {
+    test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-        var wrapped = _(falsey).map(_.identity).compact().map(_.identity);
+        var wrapped = _(falsey).compact();
+        ok(wrapped instanceof _);
         deepEqual(wrapped.value(), []);
       }
       else {
@@ -1904,11 +1905,13 @@
       }
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
+    test('should work when in between lazy operators', 2, function() {
       if (!isNpm) {
-        var wrapped = _(falsey).compact();
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), []);
+        var actual = _(falsey).map().compact().map().value();
+        deepEqual(actual, []);
+
+        actual = _(falsey).map().push(true, 1).compact().push('a').map().value();
+        deepEqual(actual, [true, 1, 'a']);
       }
       else {
         skipTest(2);
@@ -3565,7 +3568,7 @@
     });
 
     test('should return `true` if `predicate` returns truthy for all elements in the collection', 1, function() {
-      strictEqual(_.every([true, 1, 'x'], _.identity), true);
+      strictEqual(_.every([true, 1, 'a'], _.identity), true);
     });
 
     test('should return `false` as soon as `predicate` returns falsey', 1, function() {

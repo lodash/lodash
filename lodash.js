@@ -4201,6 +4201,7 @@
      *
      * **Notes:**
      *  - Unlike `_.without`, this method mutates `array`.
+     *    However, when in a chain, it creates a new array.
      *  - `SameValueZero` comparisons are like strict equality comparisons,
      *    e.g. `===`, except that `NaN` matches `NaN`. See the
      *    [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)

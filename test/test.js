@@ -2390,7 +2390,7 @@
 
       strictEqual(callback('a'), true);
 
-      var fn = function () {},
+      var fn = function() {},
           bound = fn.bind && fn.bind(object);
 
       if (bound) {
@@ -12697,6 +12697,16 @@
         var wrapped = _([1, 2, 3]).xor([5, 2, 1, 4]);
         ok(wrapped instanceof _);
         deepEqual(wrapped.value(), [3, 5, 4]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should work when in a lazy chain sequence, before `.last`', 1, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3]).map().xor([4]).last();
+        strictEqual(actual, 4);
       }
       else {
         skipTest(2);

@@ -2140,7 +2140,7 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, customizer, isWhere, stackA, stackB) {
-      var result = customizer && !stackA ? customizer(value, other) : undefined;
+      var result = (customizer && !stackA) ? customizer(value, other) : undefined;
       if (typeof result != 'undefined') {
         return !!result;
       }
@@ -10208,7 +10208,7 @@
     });
 
     // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
-    arrayEach(['pluck', 'where'], function (methodName, index) {
+    arrayEach(['pluck', 'where'], function(methodName, index) {
       var operationName = index ? 'filter' : 'map',
           createCallback = index ? matches : property;
 
@@ -10258,18 +10258,18 @@
         var args = arguments,
             chainAll = this.__chain__,
             value = this.__wrapped__,
-            isLazy = value instanceof LazyWrapper;
+            isLazy = value instanceof LazyWrapper,
+            noQueue = !this.__queue__.length,
+            unwrap = retUnwrapped && !chainAll;
 
-        if (retUnwrapped && !chainAll) {
-          return isLazy
-            ? func.call(value)
-            : lodash[methodName](this.value());
+        if (unwrap && !isLazy) {
+          return lodash[methodName](this.value());
         }
         if (isLazy || isArray(value)) {
-          var wrapper = (isLazy && !this.__queue__.length) ? value : new LazyWrapper(this),
+          var wrapper = (isLazy && noQueue) ? value : new LazyWrapper(this),
               result = func.apply(wrapper, args);
 
-          return new LodashWrapper(result, chainAll);
+          return unwrap ? result : new LodashWrapper(result, chainAll);
         }
         return this.thru(function(value) {
           var otherArgs = [value];

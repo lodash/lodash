@@ -12941,6 +12941,27 @@
         skipTest(2);
       }
     });
+
+
+    test('should be lazy when in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var spy = {
+          toString: function () {
+            throw new Error("Spy was revealed");
+          }
+        };
+
+        var actual = _(["a", spy])
+          .map(String)
+          .reverse()
+          .last();
+
+        strictEqual(actual, "a");
+      }
+      else {
+        skipTest(1);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

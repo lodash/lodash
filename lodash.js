@@ -4982,6 +4982,12 @@
      * // => [3, 2, 1]
      */
     function wrapperReverse() {
+      var wrapped = this.__wrapped__;
+
+      if(wrapped instanceof LazyWrapper) {
+        return wrapped.reverse();
+      }
+
       return this.thru(function(value) {
         return value.reverse();
       });

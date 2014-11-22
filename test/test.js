@@ -12928,38 +12928,39 @@
   QUnit.module('lodash(...).reverse');
 
   (function() {
-    test('should return the wrapped reversed `array`', 2, function() {
+    test('should return the wrapped reversed `array`', 3, function() {
       if (!isNpm) {
         var array = [1, 2, 3],
-            wrapped = _(array).reverse(),
-            actual = wrapped.value();
+            wrapper = _(array).reverse(),
+            actual = wrapper.value();
 
+        ok(wrapper instanceof _);
         strictEqual(actual, array);
         deepEqual(actual, [3, 2, 1]);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
 
-
-    test('should be lazy when in a lazy chain sequence', 1, function() {
+    test('should be lazy when in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var spy = {
-          toString: function () {
-            throw new Error("Spy was revealed");
+          'toString': function() {
+            throw new Error('Spy was revealed');
           }
         };
 
-        var actual = _(["a", spy])
-          .map(String)
-          .reverse()
-          .last();
+        try {
+          var wrapper = _(['a', spy]).map(String).reverse(),
+              actual = wrapper.last();
+        } catch(e) {}
 
-        strictEqual(actual, "a");
+        ok(wrapper instanceof _);
+        strictEqual(actual, 'a');
       }
       else {
-        skipTest(1);
+        skipTest(2);
       }
     });
   }());

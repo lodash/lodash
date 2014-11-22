@@ -6291,17 +6291,17 @@
 
       _.each(values, function(vals) {
         if (!isNpm) {
-          var wrapper1 = _(vals[0]),
-              wrapper2 = _(vals[1]),
-              actual = wrapper1.isEqual(wrapper2);
+          var wrapped1 = _(vals[0]),
+              wrapped2 = _(vals[1]),
+              actual = wrapped1.isEqual(wrapped2);
 
           strictEqual(actual, true);
           strictEqual(_.isEqual(_(actual), _(true)), true);
 
-          wrapper1 = _(vals[0]);
-          wrapper2 = _(vals[2]);
+          wrapped1 = _(vals[0]);
+          wrapped2 = _(vals[2]);
 
-          actual = wrapper1.isEqual(wrapper2);
+          actual = wrapped1.isEqual(wrapped2);
           strictEqual(actual, false);
           strictEqual(_.isEqual(_(actual), _(false)), true);
         }
@@ -12705,10 +12705,10 @@
 
     test('should work when in a lazy chain sequence before `first` or `last`', 1, function() {
       if (!isNpm) {
-        var wrapper = _([1, 2]).slice().xor([2, 3]);
+        var wrapped = _([1, 2]).slice().xor([2, 3]);
 
         var actual = _.map(['first', 'last'], function(methodName) {
-          return wrapper[methodName]();
+          return wrapped[methodName]();
         });
 
         deepEqual(actual, [1, 3]);
@@ -12931,10 +12931,10 @@
     test('should return the wrapped reversed `array`', 3, function() {
       if (!isNpm) {
         var array = [1, 2, 3],
-            wrapper = _(array).reverse(),
-            actual = wrapper.value();
+            wrapped = _(array).reverse(),
+            actual = wrapped.value();
 
-        ok(wrapper instanceof _);
+        ok(wrapped instanceof _);
         strictEqual(actual, array);
         deepEqual(actual, [3, 2, 1]);
       }
@@ -12952,11 +12952,11 @@
         };
 
         try {
-          var wrapper = _(['a', spy]).map(String).reverse(),
-              actual = wrapper.last();
+          var wrapped = _(['a', spy]).map(String).reverse(),
+              actual = wrapped.last();
         } catch(e) {}
 
-        ok(wrapper instanceof _);
+        ok(wrapped instanceof _);
         strictEqual(actual, 'a');
       }
       else {

@@ -1907,10 +1907,10 @@
 
     test('should work when in between lazy operators', 2, function() {
       if (!isNpm) {
-        var actual = _(falsey).map().compact().map().value();
+        var actual = _(falsey).slice().compact().slice().value();
         deepEqual(actual, []);
 
-        actual = _(falsey).map().push(true, 1).compact().push('a').map().value();
+        actual = _(falsey).slice().push(true, 1).compact().push('a').slice().value();
         deepEqual(actual, [true, 1, 'a']);
       }
       else {
@@ -12705,7 +12705,7 @@
 
     test('should work when in a lazy chain sequence before `first` or `last`', 1, function() {
       if (!isNpm) {
-        var wrapper = _([1, 2]).map().xor([2, 3]);
+        var wrapper = _([1, 2]).slice().xor([2, 3]);
 
         var actual = _.map(['first', 'last'], function(methodName) {
           return wrapper[methodName]();

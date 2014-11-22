@@ -12703,13 +12703,18 @@
       }
     });
 
-    test('should work when in a lazy chain sequence, before `.last`', 1, function() {
+    test('should work when in a lazy chain sequence before `first` or `last`', 1, function() {
       if (!isNpm) {
-        var actual = _([1, 2, 3]).map().xor([4]).last();
-        strictEqual(actual, 4);
+        var wrapper = _([1, 2]).map().xor([2, 3]);
+
+        var actual = _.map(['first', 'last'], function(methodName) {
+          return wrapper[methodName]();
+        });
+
+        deepEqual(actual, [1, 3]);
       }
       else {
-        skipTest(2);
+        skipTest();
       }
     });
   }(1, 2, 3));

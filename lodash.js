@@ -10255,21 +10255,22 @@
       var retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
-        var args = arguments,
+        var value = this.__wrapped__,
+            args = arguments,
             chainAll = this.__chain__,
-            value = this.__wrapped__,
             isLazy = value instanceof LazyWrapper,
-            noQueue = !this.__queue__.length,
-            unwrap = retUnwrapped && !chainAll;
+            onlyLazy = isLazy && !this.__queue__.length;
 
-        if (unwrap && !isLazy) {
-          return lodash[methodName](this.value());
+        if (retUnwrapped && !chainAll) {
+          return onlyLazy
+            ? func.call(value)
+            : lodash[methodName](this.value());
         }
         if (isLazy || isArray(value)) {
-          var wrapper = (isLazy && noQueue) ? value : new LazyWrapper(this),
+          var wrapper = onlyLazy ? value : new LazyWrapper(this),
               result = func.apply(wrapper, args);
 
-          return unwrap ? result : new LodashWrapper(result, chainAll);
+          return new LodashWrapper(result, chainAll);
         }
         return this.thru(function(value) {
           var otherArgs = [value];

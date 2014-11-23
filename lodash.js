@@ -8966,7 +8966,7 @@
       // Use a sourceURL for easier debugging.
       // See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl.
       var sourceURL = 'sourceURL' in options ? options.sourceURL : ('/lodash/template/source[' + (++templateCounter) + ']');
-      sourceURL = sourceURL ? ('\n//# sourceURL=' + sourceURL) : '';
+      sourceURL = sourceURL ? ('//# sourceURL=' + sourceURL + '\n') : '';
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
         interpolateValue || (interpolateValue = esTemplateValue);
@@ -9026,7 +9026,7 @@
         'return __p\n}';
 
       var result = attempt(function() {
-        return Function(importsKeys, 'return ' + source + sourceURL).apply(undefined, importsValues);
+        return Function(importsKeys, sourceURL + 'return ' + source).apply(undefined, importsValues);
       });
 
       // Provide the compiled function's source by its `toString` method or

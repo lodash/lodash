@@ -3422,8 +3422,8 @@
      * Sets metadata for `func`.
      *
      * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
-     * period of time, it will trip its breaker and transition to an identity
-     * function to avoid garbage collection pauses.
+     * period of time, it will trip its breaker and transition to an identity function
+     * to avoid garbage collection pauses in V8. See https://code.google.com/p/v8/issues/detail?id=2070.
      *
      * @private
      * @param {Function} func The function to associate metadata with.

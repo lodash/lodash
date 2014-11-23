@@ -693,40 +693,6 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.contains` iterating an array')
-      .add(buildName, '\
-        lodash.contains(numbers, limit - 1)'
-      )
-      .add(otherName, '\
-        _.contains(numbers, limit - 1)'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.contains` iterating an object')
-      .add(buildName, '\
-        lodash.contains(object, limit - 1)'
-      )
-      .add(otherName, '\
-        _.contains(object, limit - 1)'
-      )
-  );
-
-  if (lodash.contains('ab', 'ab') && _.contains('ab', 'ab')) {
-    suites.push(
-      Benchmark.Suite('`_.contains` iterating a string')
-        .add(buildName, '\
-          lodash.contains(strNumbers, "," + (limit - 1))'
-        )
-        .add(otherName, '\
-          _.contains(strNumbers, "," + (limit - 1))'
-        )
-    );
-  }
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
     Benchmark.Suite('`_.countBy` with `callback` iterating an array')
       .add(buildName, '\
         lodash.countBy(numbers, function(num) { return num >> 1; })'
@@ -1074,6 +1040,40 @@
         'teardown': 'function countBy(){}'
       })
   );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.includes` iterating an array')
+      .add(buildName, '\
+        lodash.includes(numbers, limit - 1)'
+      )
+      .add(otherName, '\
+        _.includes(numbers, limit - 1)'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.includes` iterating an object')
+      .add(buildName, '\
+        lodash.includes(object, limit - 1)'
+      )
+      .add(otherName, '\
+        _.includes(object, limit - 1)'
+      )
+  );
+
+  if (lodash.includes('ab', 'ab') && _.includes('ab', 'ab')) {
+    suites.push(
+      Benchmark.Suite('`_.includes` iterating a string')
+        .add(buildName, '\
+          lodash.includes(strNumbers, "," + (limit - 1))'
+        )
+        .add(otherName, '\
+          _.includes(strNumbers, "," + (limit - 1))'
+        )
+    );
+  }
 
   /*--------------------------------------------------------------------------*/
 

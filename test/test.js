@@ -453,9 +453,6 @@
     var _isFinite = Number.isFinite;
     setProperty(Number, 'isFinite', _.noop);
 
-    var _contains = stringProto.contains;
-    setProperty(stringProto, 'contains', _contains ? _.noop : Boolean);
-
     var _ArrayBuffer = ArrayBuffer;
     setProperty(root, 'ArrayBuffer', (function() {
       function ArrayBuffer(byteLength) {
@@ -542,11 +539,6 @@
       setProperty(Number, 'isFinite', _isFinite);
     } else {
       delete Number.isFinite;
-    }
-    if (_contains) {
-      setProperty(stringProto, 'contains', _contains);
-    } else {
-      delete stringProto.contains;
     }
     if (_ArrayBuffer) {
       setProperty(root, 'ArrayBuffer', _ArrayBuffer);
@@ -685,7 +677,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 14, function() {
+    test('should avoid overwritten native methods', 13, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -751,13 +743,6 @@
         }
         deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
 
-        try {
-          actual = lodashBizarro.contains('abc', 'c');
-        } catch(e) {
-          actual = null;
-        }
-        strictEqual(actual, true, message('_.contains', 'String#contains'));
-
         if (ArrayBuffer) {
           try {
             var buffer = new ArrayBuffer(10);
@@ -787,7 +772,7 @@
         }
       }
       else {
-        skipTest(14);
+        skipTest(13);
       }
     });
   }());
@@ -2029,100 +2014,6 @@
       }
     });
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.contains');
-
-  (function() {
-    _.each({
-      'an `arguments` object': arguments,
-      'an array': [1, 2, 3, 4],
-      'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-      'a string': '1234'
-    },
-    function(collection, key) {
-      var values = _.toArray(collection);
-
-      test('should work with ' + key + ' and  return `true` for  matched values', 1, function() {
-        strictEqual(_.contains(collection, 3), true);
-      });
-
-      test('should work with ' + key + ' and  return `false` for unmatched values', 1, function() {
-        strictEqual(_.contains(collection, 5), false);
-      });
-
-      test('should work with ' + key + ' and a positive `fromIndex`', 2, function() {
-        strictEqual(_.contains(collection, values[2], 2), true);
-        strictEqual(_.contains(collection, values[1], 2), false);
-      });
-
-      test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 12, function() {
-        _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
-          strictEqual(_.contains(collection, 1, fromIndex), false);
-          strictEqual(_.contains(collection, undefined, fromIndex), false);
-          strictEqual(_.contains(collection, '', fromIndex), false);
-        });
-      });
-
-      test('should work with ' + key + ' and treat falsey `fromIndex` values as `0`', 1, function() {
-        var expected = _.map(falsey, _.constant(true));
-
-        var actual = _.map(falsey, function(fromIndex) {
-          return _.contains(collection, values[0], fromIndex);
-        });
-
-        deepEqual(actual, expected);
-      });
-
-      test('should work with ' + key + ' and treat non-number `fromIndex` values as `0`', 1, function() {
-        strictEqual(_.contains(collection, values[0], '1'), true);
-      });
-
-      test('should work with ' + key + ' and a negative `fromIndex`', 2, function() {
-        strictEqual(_.contains(collection, values[2], -2), true);
-        strictEqual(_.contains(collection, values[1], -2), false);
-      });
-
-      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 3, function() {
-        _.each([-4, -6, -Infinity], function(fromIndex) {
-          strictEqual(_.contains(collection, values[0], fromIndex), true);
-        });
-      });
-
-      test('should work with ' + key + ' and return an unwrapped value when chaining', 1, function() {
-        if (!isNpm) {
-          strictEqual(_(collection).contains(3), true);
-        }
-        else {
-          skipTest();
-        }
-      });
-    });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection`', 2, function() {
-        strictEqual(_.contains(collection, 'bc'), true);
-        strictEqual(_.contains(collection, 'd'), false);
-      });
-    });
-
-    test('should not be possible to perform a binary search', 1, function() {
-      strictEqual(_.contains([3, 2, 1], 3, true), true);
-    });
-
-    test('should match `NaN`', 1, function() {
-      strictEqual(_.contains([1, NaN, 3], NaN), true);
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.include, _.contains);
-    });
-  }(1, 2, 3, 4));
 
   /*--------------------------------------------------------------------------*/
 
@@ -4438,11 +4329,11 @@
           args || (args = slice.call(arguments));
         });
 
-        if (_.contains(rightMethods, methodName)) {
+        if (_.includes(rightMethods, methodName)) {
           expected[0] = 3;
           expected[1] = 2;
         }
-        if (_.contains(objectMethods, methodName)) {
+        if (_.includes(objectMethods, methodName)) {
           expected[1] += '';
         }
         deepEqual(args, expected);
@@ -4476,7 +4367,7 @@
           return isEvery;
         });
 
-        ok(!_.contains(keys, 'a'));
+        ok(!_.includes(keys, 'a'));
       });
     });
 
@@ -4527,8 +4418,8 @@
     _.each(iterationMethods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName],
-          isEach = !_.contains(objectMethods, methodName),
-          isRight = _.contains(rightMethods, methodName);
+          isEach = !_.includes(objectMethods, methodName),
+          isRight = _.includes(rightMethods, methodName);
 
       test('`_.' + methodName + '` should return the collection', 1, function() {
         strictEqual(func(array, Boolean), array);
@@ -5003,6 +4894,101 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.includes');
+
+  (function() {
+    _.each({
+      'an `arguments` object': arguments,
+      'an array': [1, 2, 3, 4],
+      'an object': { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
+      'a string': '1234'
+    },
+    function(collection, key) {
+      var values = _.toArray(collection);
+
+      test('should work with ' + key + ' and  return `true` for  matched values', 1, function() {
+        strictEqual(_.includes(collection, 3), true);
+      });
+
+      test('should work with ' + key + ' and  return `false` for unmatched values', 1, function() {
+        strictEqual(_.includes(collection, 5), false);
+      });
+
+      test('should work with ' + key + ' and a positive `fromIndex`', 2, function() {
+        strictEqual(_.includes(collection, values[2], 2), true);
+        strictEqual(_.includes(collection, values[1], 2), false);
+      });
+
+      test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 12, function() {
+        _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
+          strictEqual(_.includes(collection, 1, fromIndex), false);
+          strictEqual(_.includes(collection, undefined, fromIndex), false);
+          strictEqual(_.includes(collection, '', fromIndex), false);
+        });
+      });
+
+      test('should work with ' + key + ' and treat falsey `fromIndex` values as `0`', 1, function() {
+        var expected = _.map(falsey, _.constant(true));
+
+        var actual = _.map(falsey, function(fromIndex) {
+          return _.includes(collection, values[0], fromIndex);
+        });
+
+        deepEqual(actual, expected);
+      });
+
+      test('should work with ' + key + ' and treat non-number `fromIndex` values as `0`', 1, function() {
+        strictEqual(_.includes(collection, values[0], '1'), true);
+      });
+
+      test('should work with ' + key + ' and a negative `fromIndex`', 2, function() {
+        strictEqual(_.includes(collection, values[2], -2), true);
+        strictEqual(_.includes(collection, values[1], -2), false);
+      });
+
+      test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', 3, function() {
+        _.each([-4, -6, -Infinity], function(fromIndex) {
+          strictEqual(_.includes(collection, values[0], fromIndex), true);
+        });
+      });
+
+      test('should work with ' + key + ' and return an unwrapped value when chaining', 1, function() {
+        if (!isNpm) {
+          strictEqual(_(collection).contains(3), true);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+
+    _.each({
+      'literal': 'abc',
+      'object': Object('abc')
+    },
+    function(collection, key) {
+      test('should work with a string ' + key + ' for `collection`', 2, function() {
+        strictEqual(_.includes(collection, 'bc'), true);
+        strictEqual(_.includes(collection, 'd'), false);
+      });
+    });
+
+    test('should not be possible to perform a binary search', 1, function() {
+      strictEqual(_.includes([3, 2, 1], 3, true), true);
+    });
+
+    test('should match `NaN`', 1, function() {
+      strictEqual(_.includes([1, NaN, 3], NaN), true);
+    });
+
+    test('should be aliased', 2, function() {
+      strictEqual(_.contains, _.includes);
+      strictEqual(_.include, _.includes);
+    });
+  }(1, 2, 3, 4));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.indexBy');
 
   (function() {
@@ -5150,11 +5136,11 @@
       return new Foo;
     });
 
-    test('`_.contains` should work with a custom `_.indexOf` method', 2, function() {
+    test('`_.includes` should work with a custom `_.indexOf` method', 2, function() {
       if (!isModularize) {
         _.indexOf = custom;
-        ok(_.contains(array, new Foo));
-        ok(_.contains({ 'a': 1, 'b': new Foo, 'c': 3 }, new Foo));
+        ok(_.includes(array, new Foo));
+        ok(_.includes({ 'a': 1, 'b': new Foo, 'c': 3 }, new Foo));
         _.indexOf = indexOf;
       }
       else {
@@ -7259,7 +7245,7 @@
           actual = func(object);
           delete proto.a;
 
-          strictEqual(_.contains(actual, 'a'), !(isKeys && index), 'includes ' + message);
+          strictEqual(_.includes(actual, 'a'), !(isKeys && index), 'includes ' + message);
 
           if (index) {
             object.constructor = 1;
@@ -10251,12 +10237,12 @@
 
     test('should return a random element', 1, function() {
       var actual = _.sample(array);
-      ok(_.contains(array, actual));
+      ok(_.includes(array, actual));
     });
 
     test('should return two random elements', 1, function() {
       var actual = _.sample(array, 2);
-      ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+      ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
     });
 
     test('should contain elements of the collection', 1, function() {
@@ -10311,10 +10297,10 @@
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           actual = _.sample(object);
 
-      ok(_.contains(array, actual));
+      ok(_.includes(array, actual));
 
       actual = _.sample(object, 2);
-      ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+      ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
     });
 
     test('should work as an iteratee for `_.map`', 2, function() {
@@ -10324,7 +10310,7 @@
             c = values[2],
             actual = _.map(values, _.sample);
 
-        ok(_.contains(a, actual[0]) && _.contains(b, actual[1]) && _.contains(c, actual[2]));
+        ok(_.includes(a, actual[0]) && _.includes(b, actual[1]) && _.includes(c, actual[2]));
       });
     });
 
@@ -10334,7 +10320,7 @@
         ok(wrapped instanceof _);
 
         var actual = wrapped.value();
-        ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(array, actual[0]) && _.contains(array, actual[1]));
+        ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
       }
       else {
         skipTest(2);
@@ -10344,7 +10330,7 @@
     test('should return an unwrapped value when chaining and `n` is not provided', 1, function() {
       if (!isNpm) {
         var actual = _(array).sample();
-        ok(_.contains(array, actual));
+        ok(_.includes(array, actual));
       }
       else {
         skipTest();
@@ -10358,10 +10344,10 @@
     function(collection, key) {
       test('should work with a string ' + key + ' for `collection`', 2, function() {
         var actual = _.sample(collection);
-        ok(_.contains(collection, actual));
+        ok(_.includes(collection, actual));
 
         actual = _.sample(collection, 2);
-        ok(actual.length == 2 && actual[0] !== actual[1] && _.contains(collection, actual[0]) && _.contains(collection, actual[1]));
+        ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(collection, actual[0]) && _.includes(collection, actual[1]));
       });
     });
   }());
@@ -13461,7 +13447,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 199, function() {
+    test('should accept falsey arguments', 200, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -13489,7 +13475,7 @@
         else if (methodName == 'pull') {
           expected = falsey;
         }
-        if (_.contains(returnArrays, methodName) && methodName != 'sample') {
+        if (_.includes(returnArrays, methodName) && methodName != 'sample') {
           deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
         ok(pass, '`_.' + methodName + '` accepts falsey arguments');
@@ -13606,9 +13592,9 @@
         if (func) {
           if (/^reduce/.test(methodName) || methodName == 'transform') {
             func(array, callback, 0, null);
-          } else if (_.contains(['assign', 'merge'], methodName)) {
+          } else if (_.includes(['assign', 'merge'], methodName)) {
             func(array, array, callback, null);
-          } else if (_.contains(['isEqual', 'sortedIndex'], methodName)) {
+          } else if (_.includes(['isEqual', 'sortedIndex'], methodName)) {
             func(array, 'a', callback, null);
           } else if (methodName == 'times') {
             func(1, callback, null);

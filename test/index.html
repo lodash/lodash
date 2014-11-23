@@ -112,9 +112,6 @@
 				setProperty(Number, '_isFinite', Number.isFinite);
 				setProperty(Number, 'isFinite', noop);
 
-				setProperty(stringProto, '_contains', stringProto.contains);
-				setProperty(stringProto, 'contains', stringProto._contains ? noop : Boolean);
-
 				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
 				if (window.ArrayBuffer && window.Uint8Array) {
 					ArrayBuffer = (function(_ArrayBuffer) {
@@ -220,11 +217,6 @@
 				} else {
 					delete Number.isFinite;
 				}
-				if (stringProto._contains) {
-					setProperty(stringProto, 'contains', stringProto._contains);
-				} else {
-					delete stringProto.contains;
-				}
 				if (window._ArrayBuffer) {
 					ArrayBuffer = _ArrayBuffer;
 				}
@@ -261,7 +253,6 @@
 				delete Object._getPrototypeOf;
 				delete Object._keys;
 				delete objectProto._propertyIsEnumerable;
-				delete stringProto._contains;
 			}
 			QUnit.config.hidepassed = true;
 

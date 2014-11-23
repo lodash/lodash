@@ -3049,40 +3049,26 @@
         bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
         partials = holders = null;
       }
-      if (partials && !holders) {
-        holders = [];
-      }
-      var oldPartials = partials,
-          oldHolders = holders,
-          isPartial = bitmask & PARTIAL_FLAG,
-          isPartialRight = bitmask & PARTIAL_RIGHT_FLAG;
+      holders = (partials && !holders) ? [] : holders;
+      length -= (holders ? holders.length : 0);
 
-      if (!isPartial) {
+      if (bitmask & PARTIAL_RIGHT_FLAG) {
         var partialsRight = partials,
             holdersRight = holders;
 
         partials = holders = null;
       }
-      var data = (data = !isBindKey && getData(func)) && data !== true && data,
-          funcBitmask = data ? data[1] : 0,
-          funcIsPartialed = funcBitmask & PARTIAL_FLAG || funcBitmask & PARTIAL_RIGHT_FLAG,
+      var data = !isBindKey && getData(func),
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity];
 
-      if (data && !(argPos && funcIsPartialed)) {
+      if (data && data !== true && !(argPos && (data[3] || data[5]))) {
         newData = mergeData(newData, data);
       }
-      bitmask = newData[1];
-      arity = newData[8];
+      newData[8] = newData[8] == null
+        ? (isBindKey ? 0 : newData[0].length)
+        : nativeMax(newData[8] - length, 0) || 0;
 
-      if (arity == null) {
-        arity = isBindKey ? 0 : newData[0].length;
-      } else {
-        arity = nativeMax(+arity || 0, 0);
-      }
-      if (oldPartials) {
-        arity = nativeMax(arity - (oldPartials.length - oldHolders.length), 0);
-      }
-      newData[8] = arity;
+      bitmask = newData[1];
       if (bitmask == BIND_FLAG) {
         var result = createBindWrapper(newData[0], newData[2]);
       } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
@@ -3315,55 +3301,53 @@
       return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
     }
 
-    function mergeData(data, otherData) {
+    /**
+     * Merges the function metadata of `source` into `data`.
+     *
+     * @private
+     * @param {Array} data The destination metadata.
+     * @param {Array} source The source metadata.
+     * @returns {Array} Returns `data`.
+     */
+    function mergeData(data, source) {
       var bitmask = data[1],
-          oldBitmask = bitmask,
-          funcBitmask = otherData[1],
-          funcIsBind = funcBitmask & BIND_FLAG,
-          isBind = bitmask & BIND_FLAG;
-
-      // Use metadata `func` and merge bitmasks.
-      data[0] = otherData[0];
-      bitmask |= funcBitmask;
+          funcBitmask = source[1];
 
       // Use metadata `thisArg` if available.
-      if (funcIsBind) {
-        data[2] = otherData[2];
+      if (funcBitmask & BIND_FLAG) {
+        data[2] = source[2];
+        // Set when currying a bound function.
+        bitmask |= (bitmask & BIND_FLAG) ? 0 : CURRY_BOUND_FLAG;
       }
-      // Set when currying a bound function.
-      if (!isBind && funcIsBind) {
-        bitmask |= CURRY_BOUND_FLAG;
+      // Compose partial arguments.
+      var value = source[3];
+      if (value) {
+        var partials = data[3];
+        data[3] = partials ? composeArgs(partials, value, source[4]) : baseSlice(value);
+        data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : baseSlice(source[4]);
       }
-      // Compose partial and partial right arguments.
-      var index = 3;
-      while (index < 6) {
-        var value = otherData[index];
-        if (value) {
-          var partials = data[index],
-              funcHolders = otherData[index + 1],
-              isPartial = oldBitmask & (index < 5 ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
-
-          data[index++] = isPartial ? (index < 5 ? composeArgs : composeArgsRight)(partials, value, funcHolders) : baseSlice(value);
-          data[index++] = isPartial ? replaceHolders(data[index - 2], PLACEHOLDER) : baseSlice(funcHolders);
-        } else {
-          index += 2;
-        }
+      // Compose partial right arguments.
+      value = source[5];
+      if (value) {
+        partials = data[5];
+        data[5] = partials ? composeArgsRight(partials, value, source[6]) : baseSlice(value);
+        data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : baseSlice(source[6]);
       }
       // Append argument positions.
-      value = otherData[7];
+      value = source[7];
       if (value) {
-        var argPos = data[7];
         value = baseSlice(value);
-        if (argPos) {
-          push.apply(value, argPos);
-        }
+        push.apply(value, data[7]);
         data[7] = value;
       }
       // Use metadata `arity` if one is not provided.
       if (data[8] == null) {
-        data[8] = otherData[8];
+        data[8] = source[8];
       }
-      data[1] = bitmask;
+      // Use metadata `func` and merge bitmasks.
+      data[0] = source[0];
+      data[1] = bitmask | funcBitmask;
+
       return data;
     }
 

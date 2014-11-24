@@ -298,7 +298,7 @@ function logThrobber() {
  * @returns {Array} Returns the new converted array.
  */
 function optionToArray(name, string) {
-  return _.compact(_.invoke((optionToValue(name, string) || '').split(/,. */), 'trim'));
+  return _.compact(_.invoke((optionToValue(name, string) || '').split(/, */), 'trim'));
 }
 
 /**

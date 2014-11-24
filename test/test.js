@@ -10712,8 +10712,8 @@
     });
 
     test('should work with a "_.pluck" style `iteratee`', 1, function() {
-      var actual = _.pluck(_.sortBy(objects, 'b'), 'b');
-      deepEqual(actual, [1, 2, 3, 4]);
+      var actual = _.pluck(_.sortBy(objects.concat(undefined), 'b'), 'b');
+      deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
 
     test('should work with an object for `collection`', 1, function() {
@@ -10728,21 +10728,6 @@
       deepEqual(_.sortBy(1), []);
     });
 
-    test('should support sorting by an array of properties', 1, function() {
-      var actual = _.sortBy(objects, ['a', 'b']);
-      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
-    });
-
-    test('should not error on nullish elements when sorting by multiple properties', 1, function() {
-      var actual = _.sortBy(objects.concat(undefined), ['a', 'b']);
-      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
-    });
-
-    test('should perform a stable sort when sorting by multiple properties (test in IE > 8, Opera, and V8)', 1, function() {
-      var actual = _.sortBy(stableOrder, ['a', 'c']);
-      deepEqual(actual, stableOrder);
-    });
-
     test('should coerce arrays returned from `iteratee`', 1, function() {
       var actual = _.sortBy(objects, function(object) {
         var result = [object.a, object.b];
@@ -10754,10 +10739,67 @@
     });
 
     test('should work as an iteratee for `_.map`', 1, function() {
-      var array = [[2, 1, 3], [3, 2, 1]],
-          actual = _.map(array, _.sortBy);
-
+      var actual = _.map([[2, 1, 3], [3, 2, 1]], _.sortBy);
       deepEqual(actual, [[1, 2, 3], [1, 2, 3]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortByMultiple');
+
+  (function() {
+    function Pair(a, b, c) {
+      this.a = a;
+      this.b = b;
+      this.c = c;
+    }
+
+    var objects = [
+      { 'a': 'x', 'b': 3 },
+      { 'a': 'y', 'b': 4 },
+      { 'a': 'x', 'b': 1 },
+      { 'a': 'y', 'b': 2 }
+    ];
+
+    var stableOrder = [
+      new Pair(1, 1, 1), new Pair(1, 2, 1),
+      new Pair(1, 1, 1), new Pair(1, 2, 1),
+      new Pair(1, 3, 1), new Pair(1, 4, 1),
+      new Pair(1, 5, 1), new Pair(1, 6, 1),
+      new Pair(2, 1, 2), new Pair(2, 2, 2),
+      new Pair(2, 3, 2), new Pair(2, 4, 2),
+      new Pair(2, 5, 2), new Pair(2, 6, 2),
+      new Pair(undefined, 1, 1), new Pair(undefined, 2, 1),
+      new Pair(undefined, 3, 1), new Pair(undefined, 4, 1),
+      new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
+    ];
+
+    test('should sort mutliple properties in ascending order', 1, function() {
+      var actual = _.sortByMultiple(objects, ['a', 'b']);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
+    });
+
+    test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
+      var actual = _.sortByMultiple(stableOrder, ['a', 'c']);
+      deepEqual(actual, stableOrder);
+    });
+
+    test('should not error on nullish elements', 1, function() {
+      var actual = _.sortByMultiple(objects.concat(undefined), ['a', 'b']);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
+    });
+
+    test('should work as an iteratee for `_.reduce`', 1, function() {
+      var objects = [
+        { 'a': 'x', '0': 3 },
+        { 'a': 'y', '0': 4 },
+        { 'a': 'x', '0': 1 },
+        { 'a': 'y', '0': 2 }
+      ];
+
+      var actual = _.reduce([['a']], _.sortByMultiple, objects);
+      deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
     });
   }());
 
@@ -13409,6 +13451,7 @@
       'sample',
       'shuffle',
       'sortBy',
+      'sortByMultiple',
       'take',
       'times',
       'toArray',
@@ -13447,7 +13490,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 200, function() {
+    test('should accept falsey arguments', 202, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -13489,7 +13532,7 @@
       });
     });
 
-    test('should return an array', 68, function() {
+    test('should return an array', 70, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

@@ -529,6 +529,26 @@
   }
 
   /**
+   * The base implementation of `_.sortBy` and `_.sortByMultiple` which uses
+   * `comparer` to define the sort order of `array` and replaces criteria objects
+   * with their corresponding values.
+   *
+   * @private
+   * @param {Array} array The array to sort.
+   * @param {Function} comparer The function to define sort order.
+   * @returns {Array} Returns `array`.
+   */
+  function baseSortBy(array, comparer) {
+    var length = array.length;
+
+    array.sort(comparer);
+    while (length--) {
+      array[length] = array[length].value;
+    }
+    return array;
+  }
+
+  /**
    * Used by `_.max` and `_.min` as the default callback for string values.
    *
    * @private
@@ -586,8 +606,8 @@
   }
 
   /**
-   * Used by `_.sortBy` to compare multiple properties of each element in a
-   * collection and stable sort them in ascending order.
+   * Used by `_.sortByMultiple` to compare multiple properties of each element
+   * in a collection and stable sort them in ascending order.
    *
    * @private
    * @param {Object} object The object to compare to `other`.
@@ -1000,10 +1020,10 @@
      * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
      * `pluck`, `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`,
      * `rearg`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-     * `sortBy`, `splice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
-     * `tap`, `throttle`, `thru`, `times`, `toArray`, `transform`, `union`, `uniq`,
-     * `unshift`, `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`,
-     * `zip`, and `zipObject`
+     * `sortBy`, `sortByMultiple`, `splice`, `take`, `takeRight`, `takeRightWhile`,
+     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `transform`,
+     * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
+     * `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
      * The non-chainable wrapper functions are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
@@ -6020,9 +6040,6 @@
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
      *
-     * If an array of property names is provided for `iteratee` the collection
-     * is sorted by each property value.
-     *
      * If an object is provided for `iteratee` the created "_.where" style callback
      * returns `true` for elements that have the properties of the given object,
      * else `false`.
@@ -6032,8 +6049,8 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Array|Function|Object|string} [iteratee=_.identity] The function
-     *  invoked per iteration. If property name(s) or an object is provided it
-     *  is used to create a "_.pluck" or "_.where" style callback respectively.
+     *  invoked per iteration. If a property name or an object is provided it is
+     *  used to create a "_.pluck" or "_.where" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new sorted array.
      * @example
@@ -6045,52 +6062,74 @@
      * // => [3, 1, 2]
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36 },
-     *   { 'user': 'fred',    'age': 40 },
-     *   { 'user': 'barney',  'age': 26 },
-     *   { 'user': 'fred',    'age': 30 }
+     *   { 'user': 'fred' },
+     *   { 'user': 'pebbles' },
+     *   { 'user': 'barney' }
      * ];
      *
      * // using "_.pluck" callback shorthand
-     * _.map(_.sortBy(users, 'age'), _.values);
-     * // => [['barney', 26], ['fred', 30], ['barney', 36], ['fred', 40]]
-     *
-     * // sorting by multiple properties
-     * _.map(_.sortBy(users, ['user', 'age']), _.values);
-     * // = > [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
+     * _.pluck(_.sortBy(users, 'user'), 'user');
+     * // => ['barney', 'fred', 'pebbles']
      */
     function sortBy(collection, iteratee, thisArg) {
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
+      iteratee = getCallback(iteratee, thisArg, 3);
+
       var index = -1,
           length = collection ? collection.length : 0,
-          multi = iteratee && isArray(iteratee),
           result = isLength(length) ? Array(length) : [];
 
-      if (!multi) {
-        iteratee = getCallback(iteratee, thisArg, 3);
-      }
       baseEach(collection, function(value, key, collection) {
-        if (multi) {
-          var length = iteratee.length,
-              criteria = Array(length);
+        result[++index] = { 'criteria': iteratee(value, key, collection), 'index': index, 'value': value };
+      });
+      return baseSortBy(result, compareAscending);
+    }
 
-          while (length--) {
-            criteria[length] = value == null ? undefined : value[iteratee[length]];
-          }
-        } else {
-          criteria = iteratee(value, key, collection);
+    /**
+     * This method is like `_.sortBy` except that it sorts by property names
+     * instead of an iteratee function.
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {...(string|string[])} props The property names to sort by,
+     *  specified as individual property names or arrays of property names.
+     * @returns {Array} Returns the new sorted array.
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'barney', 'age': 26 },
+     *   { 'user': 'fred',   'age': 30 }
+     * ];
+     *
+     * _.map(_.sortBy(users, ['user', 'age']), _.values);
+     * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
+     */
+    function sortByMultiple(collection) {
+      var args = arguments;
+      if (args.length == 4 && isIterateeCall(args[1], args[2], args[3])) {
+        args = [collection, args[1]];
+      }
+      var index = -1,
+          length = collection ? collection.length : 0,
+          props = baseFlatten(args, false, false, 1),
+          result = isLength(length) ? Array(length) : [];
+
+      baseEach(collection, function(value, key, collection) {
+        var length = props.length,
+            criteria = Array(length);
+
+        while (length--) {
+          criteria[length] = value == null ? undefined : value[props[length]];
         }
         result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
       });
-
-      length = result.length;
-      result.sort(multi ? compareMultipleAscending : compareAscending);
-      while (length--) {
-        result[length] = result[length].value;
-      }
-      return result;
+      return baseSortBy(result, compareMultipleAscending);
     }
 
     /**
@@ -9965,6 +10004,7 @@
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
+    lodash.sortByMultiple = sortByMultiple;
     lodash.take = take;
     lodash.takeRight = takeRight;
     lodash.takeRightWhile = takeRightWhile;

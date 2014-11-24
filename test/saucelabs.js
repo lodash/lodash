@@ -140,7 +140,7 @@ if (compatMode) {
   ];
 }
 // The platforms for AMD tests.
-if (_.contains(tags, 'amd')) {
+if (_.includes(tags, 'amd')) {
   platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
         version = +platform[2];
@@ -433,7 +433,7 @@ function onJobStatus(error, res, body) {
       jobResult = _.result(data, 'result', null),
       jobStatus = _.result(data, 'status', ''),
       jobUrl = _.result(data, 'url', null),
-      expired = (elapsed >= queueTimeout && !_.contains(jobStatus, 'in progress')),
+      expired = (elapsed >= queueTimeout && !_.includes(jobStatus, 'in progress')),
       options = this.options,
       platform = options.platforms[0];
 
@@ -739,7 +739,7 @@ function Tunnel(properties) {
   });
 
   _.invoke(all, 'on', 'restart', function() {
-    if (!_.contains(restarted, this)) {
+    if (!_.includes(restarted, this)) {
       restarted.push(this);
     }
     // Restart tunnel if all active jobs have restarted.

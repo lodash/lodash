@@ -1232,8 +1232,8 @@
     }(0, 0));
 
     /**
-     * By default, the template delimiters used by Lo-Dash are similar to those
-     * in embedded Ruby (ERB). Change the following template settings to use
+     * By default, the template delimiters used by Lo-Dash are like those in
+     * embedded Ruby (ERB). Change the following template settings to use
      * alternative delimiters.
      *
      * @static
@@ -3903,7 +3903,7 @@
      * // => 2
      *
      * // using "_.where" callback shorthand
-     * _.findLastIndex(users, { 'age': 40});
+     * _.findLastIndex(users, { 'age': 40 });
      * // => 1
      *
      * // using "_.pluck" callback shorthand
@@ -4856,10 +4856,10 @@
      * ];
      *
      * var youngest = _.chain(users)
-     *     .sortBy('age')
-     *     .map(function(chr) { return chr.user + ' is ' + chr.age; })
-     *     .first()
-     *     .value();
+     *   .sortBy('age')
+     *   .map(function(chr) { return chr.user + ' is ' + chr.age; })
+     *   .first()
+     *   .value();
      * // => 'pebbles is 1'
      */
     function chain(value) {
@@ -4937,9 +4937,9 @@
      * // with explicit chaining
      * _(users).chain()
      *   .first()
-     *   .pick('age')
+     *   .pick('user')
      *   .value();
-     * // => { 'age': 36 }
+     * // => { 'user': 'barney' }
      */
     function wrapperChain() {
       return chain(this);
@@ -5330,11 +5330,11 @@
      *   { 'user': 'fred',   'age': 40, 'status': 'busy' }
      * ];
      *
-     * _.findWhere(users, { 'status': 'busy' });
-     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
+     * _.result(_.findWhere(users, { 'status': 'busy' }), 'user');
+     * // => 'barney'
      *
-     * _.findWhere(users, { 'age': 40 });
-     * // =>  { 'user': 'fred', 'age': 40, 'status': 'busy' }
+     * _.result(_.findWhere(users, { 'age': 40 }), 'user');
+     * // => 'fred'
      */
     function findWhere(collection, source) {
       return find(collection, matches(source));
@@ -5538,8 +5538,8 @@
      * // => [3, 6, 9] (iteration order is not guaranteed)
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
+     *   { 'user': 'barney' },
+     *   { 'user': 'fred' }
      * ];
      *
      * // using "_.pluck" callback shorthand
@@ -6838,8 +6838,8 @@
 
     /**
      * Creates a function that invokes `func` with `partial` arguments prepended
-     * to those provided to the new function. This method is similar to `_.bind`
-     * except it does **not** alter the `this` binding.
+     * to those provided to the new function. This method is like `_.bind` except
+     * it does **not** alter the `this` binding.
      *
      * **Note:** This method does not set the `length` property of partially
      * applied functions.
@@ -6868,8 +6868,8 @@
      * This method is like `_.partial` except that partially applied arguments
      * are appended to those provided to the new function.
      *
-     * **Note:** This method does not set the `length` property of partially applied
-     * functions.
+     * **Note:** This method does not set the `length` property of partially
+     * applied functions.
      *
      * @static
      * @memberOf _
@@ -6912,7 +6912,7 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to rearrange arguments for.
-     * @param {...(number|number[])} [indexes] The arranged argument indexes,
+     * @param {...(number|number[])} indexes The arranged argument indexes,
      *  specified as individual indexes or arrays of indexes.
      * @returns {Function} Returns the new function.
      * @example
@@ -7045,8 +7045,8 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
+     *   { 'user': 'barney' },
+     *   { 'user': 'fred' }
      * ];
      *
      * var shallow = _.clone(users);
@@ -7101,8 +7101,8 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
+     *   { 'user': 'barney' },
+     *   { 'user': 'fred' }
      * ];
      *
      * var deep = _.cloneDeep(users);
@@ -9305,7 +9305,7 @@
      *   };
      * });
      *
-     * _.filter(users, 'age__gt38');
+     * _.filter(users, 'age__gt36');
      * // => [{ 'user': 'fred', 'age': 40 }]
      */
     function callback(func, thisArg, guard) {
@@ -9604,8 +9604,8 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'fred',   'age': 40 },
-     *   { 'user': 'barney', 'age': 36 }
+     *   { 'user': 'fred' },
+     *   { 'user': 'barney' }
      * ];
      *
      * var getName = _.property('user');

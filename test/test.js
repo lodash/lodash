@@ -10774,7 +10774,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.sortByMultiple');
+  QUnit.module('lodash.sortByAll');
 
   (function() {
     function Pair(a, b, c) {
@@ -10804,17 +10804,17 @@
     ];
 
     test('should sort mutliple properties in ascending order', 1, function() {
-      var actual = _.sortByMultiple(objects, ['a', 'b']);
+      var actual = _.sortByAll(objects, ['a', 'b']);
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
     });
 
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
-      var actual = _.sortByMultiple(stableOrder, ['a', 'c']);
+      var actual = _.sortByAll(stableOrder, ['a', 'c']);
       deepEqual(actual, stableOrder);
     });
 
     test('should not error on nullish elements', 1, function() {
-      var actual = _.sortByMultiple(objects.concat(undefined), ['a', 'b']);
+      var actual = _.sortByAll(objects.concat(undefined), ['a', 'b']);
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
     });
 
@@ -10826,7 +10826,7 @@
         { 'a': 'y', '0': 2 }
       ];
 
-      var actual = _.reduce([['a']], _.sortByMultiple, objects);
+      var actual = _.reduce([['a']], _.sortByAll, objects);
       deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
     });
   }());
@@ -13479,7 +13479,7 @@
       'sample',
       'shuffle',
       'sortBy',
-      'sortByMultiple',
+      'sortByAll',
       'take',
       'times',
       'toArray',

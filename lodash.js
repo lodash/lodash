@@ -529,9 +529,9 @@
   }
 
   /**
-   * The base implementation of `_.sortBy` and `_.sortByMultiple` which uses
-   * `comparer` to define the sort order of `array` and replaces criteria objects
-   * with their corresponding values.
+   * The base implementation of `_.sortBy` and `_.sortByAll` which uses `comparer`
+   * to define the sort order of `array` and replaces criteria objects with their
+   * corresponding values.
    *
    * @private
    * @param {Array} array The array to sort.
@@ -606,7 +606,7 @@
   }
 
   /**
-   * Used by `_.sortByMultiple` to compare multiple properties of each element
+   * Used by `_.sortByAll` to compare multiple properties of each element
    * in a collection and stable sort them in ascending order.
    *
    * @private
@@ -1020,7 +1020,7 @@
      * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
      * `pluck`, `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`,
      * `rearg`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-     * `sortBy`, `sortByMultiple`, `splice`, `take`, `takeRight`, `takeRightWhile`,
+     * `sortBy`, `sortByAll`, `splice`, `take`, `takeRight`, `takeRightWhile`,
      * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `transform`,
      * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
      * `without`, `wrap`, `xor`, `zip`, and `zipObject`
@@ -6107,10 +6107,10 @@
      *   { 'user': 'fred',   'age': 30 }
      * ];
      *
-     * _.map(_.sortBy(users, ['user', 'age']), _.values);
+     * _.map(_.sortByAll(users, ['user', 'age']), _.values);
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
-    function sortByMultiple(collection) {
+    function sortByAll(collection) {
       var args = arguments;
       if (args.length == 4 && isIterateeCall(args[1], args[2], args[3])) {
         args = [collection, args[1]];
@@ -10004,7 +10004,7 @@
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
-    lodash.sortByMultiple = sortByMultiple;
+    lodash.sortByAll = sortByAll;
     lodash.take = take;
     lodash.takeRight = takeRight;
     lodash.takeRightWhile = takeRightWhile;

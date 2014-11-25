@@ -1676,9 +1676,9 @@
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.c.d && clone !== object);
     });
 
-    _.each(['clone', 'cloneDeep'], function(methodName) {
+    _.each(['clone', 'cloneDeep'], function(methodName, index) {
       var func = _[methodName],
-          isDeep = methodName == 'cloneDeep';
+          isDeep = !!index;
 
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
@@ -1919,9 +1919,9 @@
 
   QUnit.module('flow methods');
 
-  _.each(['flow', 'flowRight'], function(methodName) {
+  _.each(['flow', 'flowRight'], function(methodName, index) {
     var func = _[methodName],
-        isFlow = methodName == 'flow';
+        isFlow = !index;
 
     test('`_.' + methodName + '` should supply each function with the return value of the previous', 1, function() {
       function add(x, y) {
@@ -4637,9 +4637,9 @@
     });
   });
 
-  _.each(['assign', 'merge'], function(methodName) {
+  _.each(['assign', 'merge'], function(methodName, index) {
     var func = _[methodName],
-        isMerge = methodName == 'merge';
+        isMerge = !!index;
 
     test('`_.' + methodName + '` should provide the correct `customizer` arguments', 3, function() {
       var args,
@@ -7100,10 +7100,10 @@
 
   QUnit.module('keys methods');
 
-  _.each(['keys', 'keysIn'], function(methodName) {
+  _.each(['keys', 'keysIn'], function(methodName, index) {
     var args = arguments,
         func = _[methodName],
-        isKeys = methodName == 'keys';
+        isKeys = !index;
 
     test('`_.' + methodName + '` should return the keys of an object', 1, function() {
       deepEqual(func({ 'a': 1, 'b': 1 }).sort(), ['a', 'b']);
@@ -8113,10 +8113,10 @@
 
   QUnit.module('lodash.max and lodash.min');
 
-  _.each(['max', 'min'], function(methodName) {
+  _.each(['max', 'min'], function(methodName, index) {
     var array = [1, 2, 3],
         func = _[methodName],
-        isMax = methodName == 'max';
+        isMax = !index;
 
     test('`_.' + methodName + '` should work with Date objects', 1, function() {
       var curr = new Date,
@@ -8814,9 +8814,9 @@
 
   QUnit.module('partial methods');
 
-  _.each(['partial', 'partialRight'], function(methodName) {
+  _.each(['partial', 'partialRight'], function(methodName, index) {
     var func = _[methodName],
-        isPartial = methodName == 'partial',
+        isPartial = !index,
         ph = func.placeholder;
 
     test('`_.' + methodName + '` partially applies arguments', 1, function() {
@@ -9088,7 +9088,7 @@
         deepEqual(actual, expected);
       });
 
-      _.each(['curry', 'curryRight'], function(methodName) {
+      _.each(['curry', 'curryRight'], function(methodName, index) {
         function fn(a, b, c) {
           return [a, b, c];
         }
@@ -9929,7 +9929,7 @@
 
   QUnit.module('reduce methods');
 
-  _.each(['reduce', 'reduceRight'], function(methodName) {
+  _.each(['reduce', 'reduceRight'], function(methodName, index) {
     var array = [1, 2, 3],
         func = _[methodName];
 
@@ -9938,7 +9938,7 @@
         return accumulator + value;
       }, '');
 
-      strictEqual(actual, methodName == 'reduce' ? 'abc' : 'cba');
+      strictEqual(actual, index ? 'cba' : 'abc');
     });
 
     test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
@@ -10025,9 +10025,9 @@
 
   QUnit.module('filter methods');
 
-  _.each(['filter', 'reject'], function(methodName) {
+  _.each(['filter', 'reject'], function(methodName, index) {
     var func = _[methodName],
-        isFilter = methodName == 'filter';
+        isFilter = !index;
 
     test('`_.' + methodName + '` should not modify the resulting value from within `predicate`', 1, function() {
       var actual = func([0], function(num, index, array) {
@@ -10895,10 +10895,10 @@
 
   QUnit.module('sortedIndex methods');
 
-  _.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
+  _.each(['sortedIndex', 'sortedLastIndex'], function(methodName, index) {
     var array = [30, 50],
         func = _[methodName],
-        isSortedIndex = methodName == 'sortedIndex',
+        isSortedIndex = !index,
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
     test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
@@ -11045,9 +11045,9 @@
 
   QUnit.module('lodash.startsWith and lodash.endsWith');
 
-  _.each(['startsWith', 'endsWith'], function(methodName) {
+  _.each(['startsWith', 'endsWith'], function(methodName, index) {
     var func = _[methodName],
-        isStartsWith = methodName == 'startsWith';
+        isStartsWith = !index;
 
     var string = 'abc',
         chr = isStartsWith ? 'a' : 'c';
@@ -11808,9 +11808,9 @@
 
   QUnit.module('lodash.debounce and lodash.throttle');
 
-  _.each(['debounce', 'throttle'], function(methodName) {
+  _.each(['debounce', 'throttle'], function(methodName, index) {
     var func = _[methodName],
-        isDebounce = methodName == 'debounce';
+        isDebounce = !index;
 
     test('_.' + methodName + ' should not error for non-object `options` values', 1, function() {
       var pass = true;
@@ -12779,9 +12779,9 @@
 
   QUnit.module('lodash.unzip and lodash.zip');
 
-  _.each(['unzip', 'zip'], function(methodName) {
+  _.each(['unzip', 'zip'], function(methodName, index) {
     var func = _[methodName];
-    func = _.bind(methodName == 'zip' ? func.apply : func.call, func, null);
+    func = _.bind(index ? func.apply : func.call, func, null);
 
     var object = {
       'an empty array': [

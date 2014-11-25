@@ -9059,7 +9059,7 @@
       strictEqual(c(), 1);
     });
 
-    test('should work when hot', 6, function() {
+    test('should work when hot', 12, function() {
       _.times(2, function(index) {
         function fn() {
           var result = [this];
@@ -9068,14 +9068,24 @@
         }
 
         var object = {},
-            bound1 = index ? _.bind(fn, object, 1) : _.bind(fn, object);
+            bound1 = index ? _.bind(fn, object, 1) : _.bind(fn, object),
+            expected = [object, 1, 2, 3];
 
         var actual = _.last(_.times(HOT_COUNT, function() {
           var bound2 = index ? _.bind(bound1, null, 2) : _.bind(bound1);
           return index ? bound2(3) : bound2(1, 2, 3);
         }));
 
-        deepEqual(actual, [object, 1, 2, 3]);
+        deepEqual(actual, expected);
+
+        actual = _.last(_.times(HOT_COUNT, function() {
+          var bound1 = index ? _.bind(fn, object, 1) : _.bind(fn, object),
+              bound2 = index ? _.bind(bound1, null, 2) : _.bind(bound1);
+
+          return index ? bound2(3) : bound2(1, 2, 3);
+        }));
+
+        deepEqual(actual, expected);
       });
 
       _.each(['curry', 'curryRight'], function(methodName) {
@@ -9083,29 +9093,47 @@
           return [a, b, c];
         }
 
-        var curried = _[methodName](fn);
+        var curried = _[methodName](fn),
+            expected = index ? [3, 2, 1] :  [1, 2, 3];
 
         var actual = _.last(_.times(HOT_COUNT, function() {
           return curried(1)(2)(3);
         }));
 
-        deepEqual(actual, methodName == 'curry' ? [1, 2, 3] : [3, 2, 1]);
+        deepEqual(actual, expected);
+
+        actual = _.last(_.times(HOT_COUNT, function() {
+          var curried = _[methodName](fn);
+          return curried(1)(2)(3);
+        }));
+
+        deepEqual(actual, expected);
       });
 
-      _.each(['partial', 'partialRight'], function(methodName) {
+      _.each(['partial', 'partialRight'], function(methodName, index) {
         function fn() {
           return slice.call(arguments);
         }
 
         var func = _[methodName],
-            par1 = func(fn, 1);
+            par1 = func(fn, 1),
+            expected = index ? [3, 2, 1] : [1, 2, 3];
 
         var actual = _.last(_.times(HOT_COUNT, function() {
           var par2 = func(par1, 2);
           return par2(3);
         }));
 
-        deepEqual(actual, methodName == 'partial' ? [1, 2, 3] : [3, 2, 1]);
+        deepEqual(actual, expected);
+
+        actual = _.last(_.times(HOT_COUNT, function() {
+          var par1 = func(fn, 1),
+              par2 = func(par1, 2);
+
+          return par2(3);
+        }));
+
+        deepEqual(actual, expected);
       });
     });
   }());

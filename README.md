@@ -6,6 +6,7 @@ A utility library delivering consistency, [customization](https://lodash.com/cus
 
 * [API Documentation](https://lodash.com/docs)
 * [DevDocs – *a searchable interface for our documentation*](http://devdocs.io/lodash/)
+* [![changelog](http://allmychanges.com/p/javascript/lodash/badge/)](http://allmychanges.com/p/javascript/lodash/?utm_source=badge)
 
 ## Download
 

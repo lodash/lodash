@@ -7549,6 +7549,16 @@
     test('should be aliased', 1, function() {
       strictEqual(_.collect, _.map);
     });
+
+    test('should handle objects when chaining', 1, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3]).mapValues().map().value();
+        deepEqual(actual, [1, 2, 3]);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

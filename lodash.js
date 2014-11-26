@@ -247,6 +247,13 @@
     'object': true
   };
 
+  /** Used to determine method's return type */
+  var returnTypes = {
+    'mapValues' : 'object',
+    'groupBy' : 'object'
+    // todo(Filip): complete if PR looks good
+  };
+
   /** Used to escape characters for inclusion in compiled string literals. */
   var stringEscapes = {
     '\\': '\\',
@@ -9534,6 +9541,7 @@
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
                 result.__chain__ = chainAll;
+                result.__type__ = returnTypes[methodName];
                 (result.__queue__ = baseSlice(this.__queue__)).push({ 'args': arguments, 'object': object, 'name': methodName });
                 return result;
               }
@@ -10288,14 +10296,15 @@
             args = arguments,
             chainAll = this.__chain__,
             isLazy = value instanceof LazyWrapper,
-            onlyLazy = isLazy && !this.__queue__.length;
+            onlyLazy = isLazy && !this.__queue__.length,
+            notObject = this.__type__ != "object";
 
         if (retUnwrapped && !chainAll) {
-          return onlyLazy
+          return onlyLazy && notObject
             ? func.call(value)
             : lodash[methodName](this.value());
         }
-        if (isLazy || isArray(value)) {
+        if (notObject && (isLazy || isArray(value))) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),
               result = func.apply(wrapper, args);
 

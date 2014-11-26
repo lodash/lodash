@@ -3566,6 +3566,24 @@
       }
     });
 
+    test('should iterate correctly over an object with numeric keys (test in Safari 8)', 1, function() {
+      // Trigger a Mobile Safari 8 JIT bug.
+      // See https://github.com/lodash/lodash/issues/799.
+      var counter = 0,
+          object = { '1': 'foo', '8': 'bar', '50': 'baz' };
+
+      _.times(10000, function() {
+        _.filter([]);
+      });
+
+      _.filter(object, function() {
+          counter++;
+          return true;
+      });
+
+      strictEqual(counter, 3);
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.select, _.filter);
     });
@@ -6548,7 +6566,7 @@
     });
 
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {
-      // Trigger a Chakra bug.
+      // Trigger a Chakra JIT bug.
       // See https://github.com/jashkenas/underscore/issues/1621.
       _.each([body, xml], function(object) {
         if (object) {
@@ -6830,7 +6848,7 @@
     });
 
     test('should avoid V8 bug #2291 (test in Chrome 19-20)', 1, function() {
-      // Trigger a V8 bug.
+      // Trigger a V8 JIT bug.
       // See http://code.google.com/p/v8/issues/detail?id=2291.
       var object = {};
 

@@ -2083,6 +2083,28 @@
       }
     });
 
+    test('should iterate correctly over an object with numeric keys', 1, function(){
+      var numOfIterations = 10000;
+      var counter = 0;
+      var obj = {
+          1: 'foo',
+          8: 'bar',
+          50: 'baz'
+      };
+      var expectedCounter = 3;
+
+      for (var i = 0; i < numOfIterations; i++) {
+          _.filter([], function() { return true; });
+      }
+
+      _.filter(obj, function() {
+          counter++;
+          return true;
+      });
+
+      strictEqual(counter, expectedCounter, 'Incorrect number of iterated keys');
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.select, _.filter);
     });

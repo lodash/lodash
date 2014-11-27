@@ -3605,8 +3605,11 @@
      * // => [['a', 'b', 'c'], ['d']]
      */
     function chunk(array, size, guard) {
-      size = (guard || size == null) ? 1 : nativeMax(+size || 1, 1);
-
+      if (guard ? isIterateeCall(array, size, guard) : size == null) {
+        size = 1;
+      } else {
+        size = nativeMax(+size || 1, 1);
+      }
       var index = 0,
           length = array ? array.length : 0,
           resIndex = -1,
@@ -3706,7 +3709,9 @@
      * // => [1, 2, 3]
      */
     function drop(array, n, guard) {
-      n = (guard || n == null) ? 1 : n;
+      if (guard ? isIterateeCall(array, n, guard) : n == null) {
+        n = 1;
+      }
       return slice(array, n < 0 ? 0 : n);
     }
 
@@ -3736,9 +3741,10 @@
      * // => [1, 2, 3]
      */
     function dropRight(array, n, guard) {
-      var length = array ? array.length : 0;
-      n = (guard || n == null) ? 1 : n;
-      n = length - (n || 0);
+      if (guard ? isIterateeCall(array, n, guard) : n == null) {
+        n = 1;
+      }
+      n = array ? (array.length - (+n || 0)) : 0;
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -3985,7 +3991,10 @@
      */
     function flatten(array, isDeep, guard) {
       var length = array ? array.length : 0;
-      return length ? baseFlatten(array, guard ? false : isDeep) : [];
+      if (guard && isIterateeCall(array, isDeep, guard)) {
+        isDeep = false;
+      }
+      return length ? baseFlatten(array, isDeep) : [];
     }
 
     /**
@@ -4486,7 +4495,9 @@
      * // => []
      */
     function take(array, n, guard) {
-      n = (guard || n == null) ? 1 : n;
+      if (guard ? isIterateeCall(array, n, guard) : n == null) {
+        n = 1;
+      }
       return slice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -4516,9 +4527,10 @@
      * // => []
      */
     function takeRight(array, n, guard) {
-      var length = array ? array.length : 0;
-      n = (guard || n == null) ? 1 : n;
-      n = length - (n || 0);
+      if (guard ? isIterateeCall(array, n, guard) : n == null) {
+        n = 1;
+      }
+      n = array ? (array.length - (+n || 0)) : 0;
       return slice(array, n < 0 ? 0 : n);
     }
 
@@ -5913,7 +5925,7 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      if (guard || n == null) {
+      if (guard ? isIterateeCall(collection, n, guard) : n == null) {
         collection = toIterable(collection);
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
@@ -6414,7 +6426,10 @@
      * // => [1, 2, 3]
      */
     function curry(func, arity, guard) {
-      var result = createWrapper(func, CURRY_FLAG, null, null, null, null, guard ? null : arity);
+      if (guard && isIterateeCall(func, arity, guard)) {
+        arity = null;
+      }
+      var result = createWrapper(func, CURRY_FLAG, null, null, null, null, arity);
       result.placeholder = curry.placeholder;
       return result;
     }
@@ -6448,6 +6463,9 @@
      * // => [1, 2, 3]
      */
     function curryRight(func, arity, guard) {
+      if (guard && isIterateeCall(func, arity, guard)) {
+        arity = null;
+      }
       var result = createWrapper(func, CURRY_RIGHT_FLAG, null, null, null, null, guard ? null : arity);
       result.placeholder = curryRight.placeholder;
       return result;
@@ -7759,7 +7777,9 @@
      */
     function create(prototype, properties, guard) {
       var result = baseCreate(prototype);
-      properties = guard ? null : properties;
+      if (guard && isIterateeCall(prototype, properties, guard)) {
+        properties = null;
+      }
       return properties ? baseAssign(result, properties) : result;
     }
 
@@ -8057,8 +8077,9 @@
      * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
      */
     function invert(object, multiValue, guard) {
-      multiValue = guard ? null : multiValue;
-
+      if (guard && isIterateeCall(object, multiValue, guard)) {
+        multiValue = null;
+      }
       var index = -1,
           props = keys(object),
           length = props.length,
@@ -9084,7 +9105,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard ? isIterateeCall(string, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = String(chars);
@@ -9109,12 +9130,12 @@
      * _.trimLeft('-_-fred-_-', '_-');
      * // => 'fred-_-'
      */
-    function trimLeft(string, chars, guards) {
+    function trimLeft(string, chars, guard) {
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (guards || chars == null) {
+      if (guard ? isIterateeCall(string, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string))
       }
       chars = String(chars);
@@ -9144,7 +9165,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard ? isIterateeCall(string, chars, guard) : chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1)
       }
       chars = String(chars);
@@ -9184,8 +9205,9 @@
      * // => 'hi-diddly-ho there, neig [...]'
      */
     function trunc(string, options, guard) {
-      options = guard ? null : options;
-
+      if (guard && isIterateeCall(string, options, guard)) {
+        options = null;
+      }
       var length = DEFAULT_TRUNC_LENGTH,
           omission = DEFAULT_TRUNC_OMISSION;
 
@@ -9278,7 +9300,9 @@
      */
     function words(string, pattern, guard) {
       string = string != null && String(string);
-      pattern = guard ? null : pattern;
+      if (guard && isIterateeCall(string, pattern, guard)) {
+        pattern = null;
+      }
       return (string && string.match(pattern || reWords)) || [];
     }
 
@@ -9348,7 +9372,10 @@
      * // => [{ 'user': 'fred', 'age': 40 }]
      */
     function callback(func, thisArg, guard) {
-      return baseCallback(func, guard ? undefined : thisArg);
+      if (guard && isIterateeCall(func, thisArg, guard)) {
+        thisArg = null;
+      }
+      return baseCallback(func, thisArg);
     }
 
     /**
@@ -9617,7 +9644,10 @@
      * // => 8
      */
     function parseInt(value, radix, guard) {
-      return nativeParseInt(value, guard ? 0 : radix);
+      if (guard && isIterateeCall(value, radix, guard)) {
+        radix = 0;
+      }
+      return nativeParseInt(value, radix);
     }
     // Fallback for environments with pre-ES5 implementations.
     if (nativeParseInt(whitespace + '08') != 8) {
@@ -9626,7 +9656,7 @@
         // Chrome fails to trim leading <BOM> whitespace characters.
         // See https://code.google.com/p/v8/issues/detail?id=3109.
         value = trim(value);
-        radix = guard ? 0 : +radix;
+        radix = (guard && isIterateeCall(value, radix, guard)) ? 0 : +radix;
         return nativeParseInt(value, radix || (reHexPrefix.test(value) ? 16 : 10));
       };
     }
@@ -10147,8 +10177,7 @@
     // Add functions capable of returning wrapped and unwrapped values when chaining.
     lodash.sample = sample;
 
-    lodash.prototype.sample = function(n, guard) {
-      n = guard ? null : n;
+    lodash.prototype.sample = function(n) {
       if (!this.__chain__ && n == null) {
         return lodash.sample(this.value());
       }

@@ -2084,6 +2084,8 @@
     });
 
     test('should iterate correctly over an object with numeric keys', 1, function(){
+      // Testing for a JIT bug in Safari 8
+      // For more information see - https://github.com/lodash/lodash/issues/799
       var numOfIterations = 10000;
       var counter = 0;
       var obj = {

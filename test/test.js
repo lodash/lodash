@@ -677,7 +677,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 13, function() {
+    test('should avoid overwritten native methods', 14, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -743,6 +743,13 @@
         }
         deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
 
+        try {
+          actual = _.map(['6', '08', '10'], lodashBizarro.parseInt);
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, [6, 8, 10], '`_.parseInt` should work in its bizarro form');
+
         if (ArrayBuffer) {
           try {
             var buffer = new ArrayBuffer(10);
@@ -772,7 +779,7 @@
         }
       }
       else {
-        skipTest(13);
+        skipTest(14);
       }
     });
   }());
@@ -8802,8 +8809,8 @@
     });
 
     test('should work as an iteratee for `_.map`', 2, function() {
-      var actual = _.map(['1', '10', '08'], _.parseInt);
-      deepEqual(actual, [1, 10, 8]);
+      var actual = _.map(['6', '08', '10'], _.parseInt);
+      deepEqual(actual, [6, 8, 10]);
 
       actual = _.map('123', _.parseInt);
       deepEqual(actual, [1, 2, 3]);

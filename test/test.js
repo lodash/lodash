@@ -7959,20 +7959,31 @@
       deepEqual(actual, shadowProps);
     });
 
-    test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 2, function() {
+    test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 18, function() {
       _.times(2, function(index) {
         var resolver = index ? _.identity : null,
-            memoized = _.memoize(_.identity, resolver);
+            memoized = _.memoize(function(value) { return 'value:' + value; }, resolver),
+            cache = memoized.cache;
 
         memoized('a');
 
-        deepEqual(_.functions(memoized.cache).sort(), ['delete', 'get', 'has', 'set']);
+        strictEqual(cache.has('a'), true);
+        strictEqual(cache.get('a'), 'value:a');
+        strictEqual(cache['delete']('a'), true);
+        strictEqual(cache['delete']('b'), false);
+
+        strictEqual(cache.set('b', 'value:b'), cache);
+        strictEqual(cache.has('b'), true);
+        strictEqual(cache.get('b'), 'value:b');
+        strictEqual(cache['delete']('b'), true);
+        strictEqual(cache['delete']('a'), false);
       });
     });
 
-    test('should skip the `__proto__` key', 4, function() {
+    test('should skip the `__proto__` key', 8, function() {
       _.times(2, function(index) {
         var count = 0,
+            key = '__proto__',
             resolver = index && _.identity;
 
         var memoized = _.memoize(function() {
@@ -7980,11 +7991,15 @@
           return [];
         }, resolver);
 
-        memoized('__proto__');
-        memoized('__proto__');
+        var cache = memoized.cache;
+
+        memoized(key);
+        memoized(key);
 
         strictEqual(count, 2);
-        ok(!(memoized.cache instanceof Array));
+        strictEqual(cache.get(key), undefined);
+        strictEqual(cache['delete'](key), false);
+        ok(!(cache.__data__ instanceof Array));
       });
     });
 

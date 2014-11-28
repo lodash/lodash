@@ -1455,7 +1455,7 @@
      * @returns {boolean} Returns `true` if the entry was removed successfully, else `false`.
      */
     function mapDelete(key) {
-      return delete this.__data__[key];
+      return this.has(key) && delete this.__data__[key];
     }
 
     /**
@@ -1468,7 +1468,7 @@
      * @returns {*} Returns the cached value.
      */
     function mapGet(key) {
-      return this.__data__[key];
+      return key == '__proto__' ? undefined : this.__data__[key];
     }
 
     /**

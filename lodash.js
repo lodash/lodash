@@ -1070,7 +1070,7 @@
           return value;
         }
         if (hasOwnProperty.call(value, '__wrapped__')) {
-          return new LodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__queue__));
+          return new LodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__actions__));
         }
       }
       return new LodashWrapper(value);
@@ -1082,11 +1082,11 @@
      * @private
      * @param {*} value The value to wrap.
      * @param {boolean} [chainAll=false] Enable chaining for all wrapper methods.
-     * @param {Array} [queue=[]] Actions to peform to resolve the unwrapped value.
+     * @param {Array} [actions=[]] Actions to peform to resolve the unwrapped value.
      */
-    function LodashWrapper(value, chainAll, queue) {
+    function LodashWrapper(value, chainAll, actions) {
+      this.__actions__ = actions || [];
       this.__chain__ = !!chainAll;
-      this.__queue__ = queue || [];
       this.__wrapped__ = value;
     }
 
@@ -1321,6 +1321,7 @@
      * @param {*} value The value to wrap.
      */
     function LazyWrapper(value) {
+      this.actions = null;
       this.dir = 1;
       this.dropCount = 0;
       this.filtered = false;
@@ -1339,10 +1340,12 @@
      * @returns {Object} Returns the cloned `LazyWrapper` object.
      */
     function lazyClone() {
-      var iteratees = this.iteratees,
+      var actions = this.actions,
+          iteratees = this.iteratees,
           views = this.views,
           result = new LazyWrapper(this.wrapped);
 
+      result.actions = actions ? baseSlice(actions) : null;
       result.dir = this.dir;
       result.dropCount = this.dropCount;
       result.filtered = this.filtered;
@@ -1378,8 +1381,11 @@
      * @returns {*} Returns the unwrapped value.
      */
     function lazyValue() {
-      var array = this.wrapped.value(),
-          dir = this.dir,
+      var array = this.wrapped.value();
+      if (!isArray(array)) {
+        return baseWrapperValue(array, this.actions);
+      }
+      var dir = this.dir,
           isRight = dir < 0,
           length = array.length,
           view = getView(0, length, this.views),
@@ -2654,6 +2660,35 @@
 
       while (++index < length) {
         result[index] = object[props[index]];
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `wrapperValue` which returns the result of
+     * performing a sequence of actions on the unwrapped `value`, where each
+     * successive action is supplied the return value of the previous.
+     *
+     * @private
+     * @param {*} value The unwrapped value.
+     * @param {Array} actions Actions to peform to resolve the unwrapped value.
+     * @returns {*} Returns the resolved unwrapped value.
+     */
+    function baseWrapperValue(value, actions) {
+      var result = value;
+      if (result instanceof LazyWrapper) {
+        result = result.value();
+      }
+      var index = -1,
+          length = actions.length;
+
+      while (++index < length) {
+        var args = [result],
+            action = actions[index],
+            object = action.object;
+
+        push.apply(args, action.args);
+        result = object[action.name].apply(object, args);
       }
       return result;
     }
@@ -5026,34 +5061,18 @@
     /**
      * Extracts the unwrapped value from its wrapper.
      *
-     * @name valueOf
+     * @name value
      * @memberOf _
-     * @alias toJSON, value
+     * @alias toJSON, valueOf
      * @category Chain
-     * @returns {*} Returns the unwrapped value.
+     * @returns {*} Returns the resolved unwrapped value.
      * @example
      *
-     * _([1, 2, 3]).valueOf();
+     * _([1, 2, 3]).value();
      * // => [1, 2, 3]
      */
-    function wrapperValueOf() {
-      var result = this.__wrapped__;
-      if (result instanceof LazyWrapper) {
-        result = result.value();
-      }
-      var index = -1,
-          queue = this.__queue__,
-          length = queue.length;
-
-      while (++index < length) {
-        var args = [result],
-            data = queue[index],
-            object = data.object;
-
-        push.apply(args, data.args);
-        result = object[data.name].apply(object, args);
-      }
-      return result;
+    function wrapperValue() {
+      return baseWrapperValue(this.__wrapped__, this.__actions__);
     }
 
     /*------------------------------------------------------------------------*/
@@ -6695,9 +6714,9 @@
     }
 
     /**
-     * Creates a function that invokes the provided functions with the `this`
-     * binding of the created function, where each successive invocation is
-     * supplied the return value of the previous.
+     * Creates a function that returns the result of invoking the provided
+     * functions with the `this` binding of the created function, where each
+     * successive invocation is supplied the return value of the previous.
      *
      * @static
      * @memberOf _
@@ -9560,8 +9579,8 @@
               var chainAll = this.__chain__;
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
+                (result.__actions__ = baseSlice(this.__actions__)).push({ 'args': arguments, 'object': object, 'name': methodName });
                 result.__chain__ = chainAll;
-                (result.__queue__ = baseSlice(this.__queue__)).push({ 'args': arguments, 'object': object, 'name': methodName });
                 return result;
               }
               var args = [this.value()];
@@ -10316,25 +10335,31 @@
         var value = this.__wrapped__,
             args = arguments,
             chainAll = this.__chain__,
+            isHybrid = !!this.__actions__.length,
             isLazy = value instanceof LazyWrapper,
-            onlyLazy = isLazy && !this.__queue__.length;
+            onlyLazy = isLazy && !isHybrid;
 
         if (retUnwrapped && !chainAll) {
           return onlyLazy
             ? func.call(value)
             : lodash[methodName](this.value());
         }
+        var interceptor = function(value) {
+          var otherArgs = [value];
+          push.apply(otherArgs, args);
+          return lodash[methodName].apply(lodash, otherArgs);
+        };
         if (isLazy || isArray(value)) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),
               result = func.apply(wrapper, args);
 
+          if (!retUnwrapped && (isHybrid || result.actions)) {
+            var actions = result.actions || (result.actions = []);
+            actions.push({ 'args': [interceptor], 'object': lodash, 'name': 'thru' });
+          }
           return new LodashWrapper(result, chainAll);
         }
-        return this.thru(function(value) {
-          var otherArgs = [value];
-          push.apply(otherArgs, args);
-          return lodash[methodName].apply(lodash, otherArgs);
-        });
+        return this.thru(interceptor);
       };
     });
 
@@ -10375,7 +10400,7 @@
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.reverse = wrapperReverse;
     lodash.prototype.toString = wrapperToString;
-    lodash.prototype.toJSON = lodash.prototype.value = lodash.prototype.valueOf = wrapperValueOf;
+    lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 
     // Add function aliases to the lodash wrapper.
     lodash.prototype.collect = lodash.prototype.map;

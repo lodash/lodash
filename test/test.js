@@ -293,17 +293,17 @@
    */
   function getUnwrappedValue(wrapper) {
     var index = -1,
-        queue = wrapper.__queue__,
-        length = queue.length,
+        actions = wrapper.__actions__,
+        length = actions.length,
         result = wrapper.__wrapped__;
 
     while (++index < length) {
       var args = [result],
-          data = queue[index],
-          object = data.object;
+          action = actions[index],
+          object = action.object;
 
-      push.apply(args, data.args);
-      result = object[data.name].apply(object, args);
+      push.apply(args, action.args);
+      result = object[action.name].apply(object, args);
     }
     return result;
   }
@@ -2098,6 +2098,19 @@
 
       deepEqual(_.countBy(array, 0), { '1': 1, '2': 2 });
       deepEqual(_.countBy(array, 1), { 'a': 2, 'b': 1 });
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2, 1, 3],
+            predicate = function(value) { return value > 1; },
+            actual = _(array).countBy(_.identity).map(String).filter(predicate).take().value();
+
+        deepEqual(actual, ['2']);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -4865,6 +4878,20 @@
       var actual = _.groupBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
     });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2, 1, 3],
+            iteratee = function(value) { value.push(value[0]); return value; },
+            predicate = function(value, index) { return index; },
+            actual = _(array).groupBy(_.identity).map(iteratee).filter(predicate).take().value();
+
+        deepEqual(actual, [[2, 2]]);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -5063,6 +5090,19 @@
 
       deepEqual(_.indexBy(array, 0), { '1': [1 , 'a'], '2': [2, 'b'] });
       deepEqual(_.indexBy(array, 1), { 'a': [2, 'a'], 'b': [2, 'b'] });
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2, 1, 3],
+            predicate = function(value) { return value > 1; },
+            actual = _(array).indexBy(_.identity).map(String).filter(predicate).take().value();
+
+        deepEqual(actual, ['2']);
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -8263,13 +8303,13 @@
         return new Wrapper(value);
       }
       if (_.has(value, '__wrapped__')) {
-        var chain = value.__chain__,
-            queue = _.slice(value.__queue__);
+        var actions = _.slice(value.__actions__),
+            chain = value.__chain__;
 
         value = value.__wrapped__;
       }
+      this.__actions__ = actions || [];
       this.__chain__ = chain || false;
-      this.__queue__ = queue || [];
       this.__wrapped__ = value;
     }
 
@@ -8433,6 +8473,26 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should produce methods that work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, 2, 1, 3],
+            predicate = function(value) { return value > 1; };
+
+        _.mixin({ 'a': _.countBy, 'b': _.filter });
+
+        var actual = _(array).a(_.identity).map(String).b(predicate).take().value();
+        deepEqual(actual, ['2']);
+
+        delete _.a;
+        delete _.prototype.a;
+        delete _.b;
+        delete _.prototype.b;
+      }
+      else {
+        skipTest();
       }
     });
   }());
@@ -12912,6 +12972,19 @@
 
     test('should support consuming the return value of `_.pairs`', 1, function() {
       deepEqual(_.zipObject(_.pairs(object)), object);
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [['a', 1], ['b', 2]],
+            predicate = function(value) { return value > 1; },
+            actual = _(array).zipObject().map(String).filter(predicate).take().value();
+
+        deepEqual(actual, ['2']);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should be aliased', 1, function() {

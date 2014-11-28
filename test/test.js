@@ -7966,7 +7966,7 @@
 
         memoized('a');
 
-        deepEqual(_.functions(memoized.cache).sort(), ['get', 'has', 'set']);
+        deepEqual(_.functions(memoized.cache).sort(), ['delete', 'get', 'has', 'set']);
       });
     });
 
@@ -7988,26 +7988,39 @@
       });
     });
 
-    test('should allow `_.memoize.Cache` to be customized', 2, function() {
-      var oldCache = _.memoize.Cache;
+    test('should allow `_.memoize.Cache` to be customized', 4, function() {
+      var oldCache = _.memoize.Cache
 
       function Cache() {
-        this.__wrapped__ = [];
+        this.__data__ = [];
       }
 
       Cache.prototype = {
+        'delete': function(key) {
+          var data = this.__data__;
+
+          var index = _.findIndex(data, function(entry) {
+            return key === entry.key;
+          });
+
+          if (index < 0) {
+            return false;
+          }
+          data.splice(index, 1);
+          return true;
+        },
         'get': function(key) {
-          return _.find(this.__wrapped__, function(entry) {
+          return _.find(this.__data__, function(entry) {
             return key === entry.key;
           }).value;
         },
         'has': function(key) {
-          return _.some(this.__wrapped__, function(entry) {
+          return _.some(this.__data__, function(entry) {
             return key === entry.key;
           });
         },
         'set': function(key, value) {
-          this.__wrapped__.push({ 'key': key, 'value': value });
+          this.__data__.push({ 'key': key, 'value': value });
         }
       };
 
@@ -8020,8 +8033,15 @@
       var actual = memoized({ 'id': 'a' });
       strictEqual(actual, '`id` is "a"');
 
-      actual = memoized({ 'id': 'b' });
+      var key = { 'id': 'b' };
+      actual = memoized(key);
       strictEqual(actual, '`id` is "b"');
+
+      var cache = memoized.cache;
+      strictEqual(cache.has(key), true);
+
+      cache['delete'](key);
+      strictEqual(cache.has(key), false);
 
       _.memoize.Cache = oldCache;
     });

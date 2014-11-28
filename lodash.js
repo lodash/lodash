@@ -1446,6 +1446,19 @@
     }
 
     /**
+     * Removes `key` and its value from the cache.
+     *
+     * @private
+     * @name get
+     * @memberOf _.memoize.Cache
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed successfully, else `false`.
+     */
+    function mapDelete(key) {
+      return delete this.__data__[key];
+    }
+
+    /**
      * Gets the cached value for `key`.
      *
      * @private
@@ -9970,6 +9983,7 @@
     LodashWrapper.prototype = lodash.prototype;
 
     // Add functions to the `Map` cache.
+    MapCache.prototype['delete'] = mapDelete;
     MapCache.prototype.get = mapGet;
     MapCache.prototype.has = mapHas;
     MapCache.prototype.set = mapSet;

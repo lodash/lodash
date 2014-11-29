@@ -3579,14 +3579,14 @@
       }
     });
 
-    test('should iterate correctly over an object with numeric keys (test in Safari 8)', 1, function() {
+    test('should iterate correctly over an object with numeric keys (test in Mobile Safari 8)', 1, function() {
       // Trigger a Mobile Safari 8 JIT bug.
       // See https://github.com/lodash/lodash/issues/799.
       var counter = 0,
           object = { '1': 'foo', '8': 'bar', '50': 'baz' };
 
-      _.times(10000, function() {
-        _.filter([]);
+      _.times(1000, function() {
+        _.filter([], _.constant(true));
       });
 
       _.filter(object, function() {

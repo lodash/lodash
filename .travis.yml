@@ -37,7 +37,7 @@ before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm config set loglevel error"
   - "npm i -g npm@\"$NPM_VERSION\""
-  - "[ $SAUCE_LABS == false ] || npm i chalk@\"0.5.1\" ecstatic@\"0.5.4\" request@\"^2.0.0\" sauce-tunnel@\"^2.0.0\""
+  - "[ $SAUCE_LABS == false ] || npm i chalk@\"0.5.1\" ecstatic@\"0.5.6\" request@\"^2.0.0\" sauce-tunnel@\"^2.0.0\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.0.0\" && npm i istanbul@\"0.3.2\")"
   - "[ $BIN != 'rhino' ] || (sudo mkdir /opt/rhino-1.7R5 && sudo wget --no-check-certificate -O /opt/rhino-1.7R5/js.jar https://lodash.com/_travis/rhino-1.7R5.jar)"
   - "[ $BIN != 'rhino' ] || (echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino)"

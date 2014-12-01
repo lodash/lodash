@@ -16,7 +16,19 @@
   ],
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\"" },
-  "engines": ["node", "rhino"],
+  "devDependencies": {
+    "curl-amd": "0.8.12",
+    "dojo": "~1.10.2",
+    "jquery": "~1.11.1",
+    "platform": "~1.2.0",
+    "qunit-extras": "~1.2.0",
+    "qunitjs": "~1.11.0",
+    "requirejs": "~2.1.15"
+  },
+  "engines": [
+    "node",
+    "rhino"
+  ],
   "files": [
     "LICENSE.txt",
     "lodash.js",

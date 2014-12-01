@@ -156,9 +156,9 @@
   ui.loaderPath = (function() {
     var result;
     switch (loader) {
-      case 'curl':      result = 'vendor/curl/dist/curl-kitchen-sink/curl.js'; break;
-      case 'dojo':      result = 'vendor/dojo/dojo.js'; break;
-      case 'requirejs': result = 'vendor/requirejs/require.js'; break;
+      case 'curl':      result = 'node_modules/curl-amd/dist/curl-kitchen-sink/curl.js'; break;
+      case 'dojo':      result = 'node_modules/dojo/dojo.js'; break;
+      case 'requirejs': result = 'node_modules/requirejs/require.js'; break;
       case null:        loader = 'none'; return '';
       default:          return loader;
     }

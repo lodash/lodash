@@ -3618,11 +3618,10 @@
      */
     function toObject(value) {
       if (lodash.support.unindexedChars && isString(value)) {
-        var index = -1,
-            length = value.length,
+        var index = value.length,
             result = Object(value);
 
-        while (++index < length) {
+        while (index--) {
           result[index] = value.charAt(index);
         }
         return result;

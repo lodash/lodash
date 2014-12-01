@@ -1044,33 +1044,33 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.includes` iterating an array')
+    Benchmark.Suite('`_.include` iterating an array')
       .add(buildName, '\
-        lodash.includes(numbers, limit - 1)'
+        lodash.include(numbers, limit - 1)'
       )
       .add(otherName, '\
-        _.includes(numbers, limit - 1)'
+        _.include(numbers, limit - 1)'
       )
   );
 
   suites.push(
-    Benchmark.Suite('`_.includes` iterating an object')
+    Benchmark.Suite('`_.include` iterating an object')
       .add(buildName, '\
-        lodash.includes(object, limit - 1)'
+        lodash.include(object, limit - 1)'
       )
       .add(otherName, '\
-        _.includes(object, limit - 1)'
+        _.include(object, limit - 1)'
       )
   );
 
-  if (lodash.includes('ab', 'ab') && _.includes('ab', 'ab')) {
+  if (lodash.include('ab', 'ab') && _.include('ab', 'ab')) {
     suites.push(
-      Benchmark.Suite('`_.includes` iterating a string')
+      Benchmark.Suite('`_.include` iterating a string')
         .add(buildName, '\
-          lodash.includes(strNumbers, "," + (limit - 1))'
+          lodash.include(strNumbers, "," + (limit - 1))'
         )
         .add(otherName, '\
-          _.includes(strNumbers, "," + (limit - 1))'
+          _.include(strNumbers, "," + (limit - 1))'
         )
     );
   }

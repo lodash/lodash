@@ -138,7 +138,7 @@
     return  root.QUnit || (
       root.addEventListener || (root.addEventListener = noop),
       root.setTimeout || (root.setTimeout = noop),
-      root.QUnit = load('../vendor/qunit/qunit/qunit.js') || root.QUnit,
+      root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
       addEventListener === noop && delete root.addEventListener,
       root.QUnit
     );
@@ -149,7 +149,7 @@
     var paths = [
       './asset/set.js',
       './asset/weakmap.js',
-      '../vendor/qunit-extras/qunit-extras.js'
+      '../node_modules/qunit-extras/qunit-extras.js'
     ];
 
     var index = -1,

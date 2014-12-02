@@ -2159,6 +2159,16 @@
       deepEqual(Circle.prototype, expected);
     });
 
+    test('should assign own properties', 1, function() {
+      function Foo() {
+        this.a = 1;
+        this.c = 3;
+      }
+      Foo.prototype.b = 2;
+
+      deepEqual(_.create({}, new Foo), { 'a': 1, 'c': 3 });
+    });
+
     test('should accept a falsey `prototype` argument', 1, function() {
       var expected = _.map(falsey, _.constant({}));
 
@@ -5023,6 +5033,18 @@
         strictEqual(_.includes(collection, 'bc'), true);
         strictEqual(_.includes(collection, 'd'), false);
       });
+    });
+
+    test('should return `false` for empty collections', 1, function() {
+      var expected = _.map(empties, _.constant(false));
+
+      var actual = _.map(empties, function(value) {
+        try {
+          return _.includes(value);
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should not be possible to perform a binary search', 1, function() {

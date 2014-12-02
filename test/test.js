@@ -3476,7 +3476,7 @@
   QUnit.module('lodash.every');
 
   (function() {
-    test('should return `true` for empty or falsey collections', 1, function() {
+    test('should return `true` for empty collections', 1, function() {
       var expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
@@ -3655,7 +3655,7 @@
         strictEqual(func(objects, { 'b': 2 }), expected[2]);
       });
 
-      test('should return `' + expected[1] + '` for empty or falsey collections', 1, function() {
+      test('should return `' + expected[1] + '` for empty collections', 1, function() {
         var actual = [],
             emptyValues = /Index/.test(methodName) ? _.reject(empties, _.isPlainObject) : empties,
             expecting = _.map(emptyValues, function() { return expected[1]; });
@@ -5720,7 +5720,7 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for empty or falsey values', 7, function() {
+    test('should return `true` for empty values', 7, function() {
       var expected = _.map(empties, _.constant(true));
 
       var actual = _.map(empties, function(value) {
@@ -10091,7 +10091,7 @@
       deepEqual(actual, 6);
     });
 
-    test('`_.' + methodName + '` should support empty or falsey collections without an initial `accumulator` value', 1, function() {
+    test('`_.' + methodName + '` should support empty collections without an initial `accumulator` value', 1, function() {
       var actual = [],
           expected = _.map(empties, _.constant());
 
@@ -10104,7 +10104,7 @@
       deepEqual(actual, expected);
     });
 
-    test('`_.' + methodName + '` should support empty or falsey collections with an initial `accumulator` value', 1, function() {
+    test('`_.' + methodName + '` should support empty collections with an initial `accumulator` value', 1, function() {
       var expected = _.map(empties, _.constant('x'));
 
       var actual = _.map(empties, function(value) {
@@ -10448,7 +10448,7 @@
       strictEqual(_.sample([]), undefined);
     });
 
-    test('should return an empty array for empty or falsey collections', 1, function() {
+    test('should return an empty array for empty collections', 1, function() {
       var expected = _.transform(empties, function(result) {
         result.push(undefined, []);
       });
@@ -10748,7 +10748,7 @@
   QUnit.module('lodash.some');
 
   (function() {
-    test('should return `false` for empty or falsey collections', 1, function() {
+    test('should return `false` for empty collections', 1, function() {
       var expected = _.map(empties, _.constant(false));
 
       var actual = _.map(empties, function(value) {

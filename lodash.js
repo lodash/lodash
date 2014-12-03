@@ -6312,8 +6312,11 @@
 
     /**
      * Creates a function that invokes `func` with the `this` binding of `thisArg`
-     * and prepends any additional `bind` arguments to those provided to the bound
-     * function.
+     * and prepends any additional `_.bind` arguments to those provided to the
+     * bound function.
+     *
+     * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
+     * may be used as a placeholder for partially applied arguments.
      *
      * **Note:** Unlike native `Function#bind` this method does not set the `length`
      * property of bound functions.
@@ -6327,13 +6330,20 @@
      * @returns {Function} Returns the new bound function.
      * @example
      *
-     * var func = function(greeting) {
-     *   return greeting + ' ' + this.user;
+     * var greet = function(greeting, punctuation) {
+     *   return greeting + ' ' + this.user + punctuation;
      * };
      *
-     * func = _.bind(func, { 'user': 'fred' }, 'hi');
-     * func();
-     * // => 'hi fred'
+     * var object = { 'user': 'fred' };
+     *
+     * var bound = _.bind(greet, object, 'hi');
+     * bound('!');
+     * // => 'hi fred!'
+     *
+     * // using placeholders
+     * var bound = _.bind(greet, object, _, '!');
+     * bound('hi');
+     * // => 'hi fred!'
      */
     function bind(func, thisArg) {
       var bitmask = BIND_FLAG;
@@ -6382,11 +6392,15 @@
 
     /**
      * Creates a function that invokes the method at `object[key]` and prepends
-     * any additional `bindKey` arguments to those provided to the bound function.
+     * any additional `_.bindKey` arguments to those provided to the bound function.
+     *
      * This method differs from `_.bind` by allowing bound functions to reference
      * methods that may be redefined or don't yet exist.
      * See [Peter Michaux's article](http://michaux.ca/articles/lazy-function-definition-pattern)
      * for more details.
+     *
+     * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for partially applied arguments.
      *
      * @static
      * @memberOf _
@@ -6399,20 +6413,25 @@
      *
      * var object = {
      *   'user': 'fred',
-     *   'greet': function(greeting) {
-     *     return greeting + ' ' + this.user;
+     *   'greet': function(greeting, punctuation) {
+     *     return greeting + ' ' + this.user + punctuation;
      *   }
      * };
      *
-     * var func = _.bindKey(object, 'greet', 'hi');
-     * func();
-     * // => 'hi fred'
+     * var bound = _.bindKey(object, 'greet', 'hi');
+     * bound('!');
+     * // => 'hi fred!'
      *
-     * object.greet = function(greeting) {
-     *   return greeting + 'ya ' + this.user + '!';
+     * object.greet = function(greeting, punctuation) {
+     *   return greeting + 'ya ' + this.user + punctuation;
      * };
      *
-     * func();
+     * bound('!');
+     * // => 'hiya fred!'
+     *
+     * // using placeholders
+     * var bound = _.bindKey(object, 'greet', _, '!');
+     * bound('hi');
      * // => 'hiya fred!'
      */
     function bindKey(object, key) {
@@ -6433,6 +6452,9 @@
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
      *
+     * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
+     * may be used as a placeholder for provided arguments.
+     *
      * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
@@ -6444,9 +6466,11 @@
      * @returns {Function} Returns the new curried function.
      * @example
      *
-     * var curried = _.curry(function(a, b, c) {
+     * var abc = function(a, b, c) {
      *   return [a, b, c];
-     * });
+     * };
+     *
+     * var curried = _.curry(abc);
      *
      * curried(1)(2)(3);
      * // => [1, 2, 3]
@@ -6455,6 +6479,10 @@
      * // => [1, 2, 3]
      *
      * curried(1, 2, 3);
+     * // => [1, 2, 3]
+     *
+     * // using placeholders
+     * curried(1)(_, 3)(2);
      * // => [1, 2, 3]
      */
     function curry(func, arity, guard) {
@@ -6470,6 +6498,9 @@
      * This method is like `_.curry` except that arguments are applied to `func`
      * in the manner of `_.partialRight` instead of `_.partial`.
      *
+     * The `_.curryRight.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for provided arguments.
+     *
      * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
@@ -6481,9 +6512,11 @@
      * @returns {Function} Returns the new curried function.
      * @example
      *
-     * var curried = _.curryRight(function(a, b, c) {
+     * var abc = function(a, b, c) {
      *   return [a, b, c];
-     * });
+     * };
+     *
+     * var curried = _.curryRight(abc);
      *
      * curried(3)(2)(1);
      * // => [1, 2, 3]
@@ -6492,6 +6525,10 @@
      * // => [1, 2, 3]
      *
      * curried(1, 2, 3);
+     * // => [1, 2, 3]
+     *
+     * // using placeholders
+     * curried(3)(1, _)(2);
      * // => [1, 2, 3]
      */
     function curryRight(func, arity, guard) {
@@ -6930,6 +6967,9 @@
      * to those provided to the new function. This method is like `_.bind` except
      * it does **not** alter the `this` binding.
      *
+     * The `_.partial.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for partially applied arguments.
+     *
      * **Note:** This method does not set the `length` property of partially
      * applied functions.
      *
@@ -6941,10 +6981,18 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
-     * var greet = function(greeting, name) { return greeting + ' ' + name; };
+     * var greet = function(greeting, name) {
+     *   return greeting + ' ' + name;
+     * };
+     *
      * var sayHelloTo = _.partial(greet, 'hello');
      * sayHelloTo('fred');
      * // => 'hello fred'
+     *
+     * // using placeholders
+     * var greetFred = _.partial(greet, _, 'fred');
+     * greetFred('hi');
+     * // => 'hi fred'
      */
     function partial(func) {
       var partials = slice(arguments, 1),
@@ -6957,6 +7005,9 @@
      * This method is like `_.partial` except that partially applied arguments
      * are appended to those provided to the new function.
      *
+     * The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for partially applied arguments.
+     *
      * **Note:** This method does not set the `length` property of partially
      * applied functions.
      *
@@ -6968,21 +7019,18 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
-     * var greet = function(greeting, name) { return greeting + ' ' + name; };
+     * var greet = function(greeting, name) {
+     *   return greeting + ' ' + name;
+     * };
+     *
      * var greetFred = _.partialRight(greet, 'fred');
-     * greetFred('hello');
+     * greetFred('hi');
+     * // => 'hi fred'
+     *
+     * // using placeholders
+     * var sayHelloTo = _.partialRight(greet, 'hello', _);
+     * sayHelloTo('fred');
      * // => 'hello fred'
-     *
-     * // create a deep `_.defaults`
-     * var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
-     *   return _.merge(value, other, deep);
-     * });
-     *
-     * var object = { 'a': { 'b': { 'c': 1 } } },
-     *     source = { 'a': { 'b': { 'c': 2, 'd': 2 } } };
-     *
-     * defaultsDeep(object, source);
-     * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
       var partials = slice(arguments, 1),
@@ -8919,7 +8967,7 @@
      * in "interpolate" delimiters, HTML-escape interpolated data properties in
      * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
      * properties may be accessed as free variables in the template. If a setting
-     * object is provided it overrides `_.templateSettings` for the template.
+     * object is provided it takes precedence over `_.templateSettings` values.
      *
      * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
@@ -9735,9 +9783,9 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var fred = { 'user': 'fred', 'age': 40, 'active': true };
-     * _.map(['age', 'active'], _.propertyOf(fred));
-     * // => [40, true]
+     * var object = { 'user': 'fred', 'age': 40, 'active': true };
+     * _.map(['active', 'user'], _.propertyOf(object));
+     * // => [true, 'fred']
      *
      * var object = { 'a': 3, 'b': 1, 'c': 2 };
      * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));

@@ -52,9 +52,14 @@ $ npm ln lodash
 In Node.js:
 
 ```js
+// the default modern build
 var _ = require('lodash');
-// or as Underscore
-var _ = require('lodash-underscore');
+
+// or the compat build
+var _ = require('lodash-compat');
+
+// or a specific method
+var clone = require('lodash/lang/clone');
 ```
 
 **Note:**

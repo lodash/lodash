@@ -22,7 +22,8 @@
       CURRY_BOUND_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64,
-      REARG_FLAG = 128;
+      ARY_FLAG = 128,
+      REARG_FLAG = 256;
 
   /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
@@ -2960,11 +2961,13 @@
      * @param {Array} [partialsRight] The arguments to append to those provided to the new function.
      * @param {Array} [holdersRight] The `partialsRight` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
-     * @param {number} arity The arity of `func`.
+     * @param {number} [arity] The arity of `func`.
+     * @param {number} [ary] The arity cap of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity) {
-      var isBind = bitmask & BIND_FLAG,
+    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary) {
+      var isAry = bitmask & ARY_FLAG,
+          isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
           isCurryRight = bitmask & CURRY_RIGHT_FLAG,
@@ -2985,6 +2988,9 @@
         }
         if (argPos) {
           args = arrayReduceRight(argPos, reorder, args);
+        }
+        if (isAry && ary < length) {
+          args.length = ary;
         }
         if (partials) {
           args = composeArgs(args, partials, holders);
@@ -3011,7 +3017,7 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity);
+            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity, ary);
             result.placeholder = placeholder;
             return result;
           }
@@ -3099,15 +3105,17 @@
      *    16 - `_.curry` or `_.curryRight` of a bound function
      *    32 - `_.partial`
      *    64 - `_.partialRight`
-     *   128 - `_.rearg`
+     *   128 - `_.ary`
+     *   256 - `_.rearg`
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to be partially applied.
      * @param {Array} [holders] The `partials` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
      * @param {number} [arity] The arity of `func`.
+     * @param {number} [ary] The arity cap of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, arity) {
+    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, arity, ary) {
       var isBindKey = bitmask & BIND_KEY_FLAG;
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
@@ -3127,14 +3135,16 @@
         partials = holders = null;
       }
       var data = !isBindKey && getData(func),
-          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity];
+          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary];
 
-      if (data && data !== true && !(argPos && (data[3] || data[5]))) {
+      if (data && data !== true &&
+          !(bitmask > 127 && data[1] > 3) &&
+          !((bitmask > 3 && bitmask < 128) && data[1] > 127)) {
         newData = mergeData(newData, data);
       }
       newData[8] = newData[8] == null
         ? (isBindKey ? 0 : newData[0].length)
-        : nativeMax(newData[8] - length, 0) || 0;
+        : (nativeMax(newData[8] - length, 0) || 0);
 
       bitmask = newData[1];
       if (bitmask == BIND_FLAG) {
@@ -3379,10 +3389,10 @@
      */
     function mergeData(data, source) {
       var bitmask = data[1],
-          funcBitmask = source[1];
+          srcBitmask = source[1];
 
-      // Use metadata `thisArg` if available.
-      if (funcBitmask & BIND_FLAG) {
+      // Use source `thisArg` if available.
+      if (srcBitmask & BIND_FLAG) {
         data[2] = source[2];
         // Set when currying a bound function.
         bitmask |= (bitmask & BIND_FLAG) ? 0 : CURRY_BOUND_FLAG;
@@ -3408,13 +3418,17 @@
         push.apply(value, data[7]);
         data[7] = value;
       }
-      // Use metadata `arity` if one is not provided.
+      // Use source `arity` if one is not provided.
       if (data[8] == null) {
         data[8] = source[8];
       }
-      // Use metadata `func` and merge bitmasks.
+      // Use source `ary` if it's smaller.
+      if (srcBitmask & ARY_FLAG) {
+        data[9] = data[9] == null ? source[9] : nativeMin(data[9], source[9]);
+      }
+      // Use source `func` and merge bitmasks.
       data[0] = source[0];
-      data[1] = bitmask | funcBitmask;
+      data[1] = bitmask | srcBitmask;
 
       return data;
     }
@@ -6271,6 +6285,30 @@
           return func.apply(this, arguments);
         }
       };
+    }
+
+    /**
+     * Creates a function that accepts up to `n` arguments ignoring any
+     * additional arguments.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to cap arguments for.
+     * @param {number} [n=func.length] The arity cap.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * _.map(['6', '8', '10'], _.ary(parseInt, 1));
+     * // => [6, 8, 10]
+     */
+    function ary(func, n, guard) {
+      if (guard && isIterateeCall(func, n, guard)) {
+        n = null;
+      }
+      n = n == null ? func.length : (+n || 0);
+      return createWrapper(func, ARY_FLAG, null, null, null, null, null, n);
     }
 
     /**
@@ -10044,6 +10082,7 @@
 
     // Add functions that return wrapped values when chaining.
     lodash.after = after;
+    lodash.ary = ary;
     lodash.assign = assign;
     lodash.at = at;
     lodash.before = before;

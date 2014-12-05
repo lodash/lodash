@@ -2,7 +2,8 @@
   "name": "lodash",
   "version": "3.0.0-pre",
   "description": "A utility library delivering consistency, customization, performance, & extras.",
-  "homepage": "http://lodash.com/",
+  "homepage": "https://lodash.com/",
+  "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
   "main": "dist/lodash.js",
   "browser": "dist/lodash.compat.js",
@@ -12,7 +13,7 @@
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
     "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
     "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
-    "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)"
+    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\"" },

@@ -882,7 +882,7 @@
   QUnit.module('lodash.ary');
 
   (function() {
-    function fn() {
+    function fn(a, b, c) {
       return slice.call(arguments);
     }
 
@@ -894,9 +894,21 @@
       deepEqual(capped('a', 'b', 'c', 'd'), ['a', 'b']);
     });
 
+    test('should use `func.length` if `n` is not provided', 1, function() {
+      var capped = _.ary(fn);
+      deepEqual(capped('a', 'b', 'c', 'd'), ['a', 'b', 'c']);
+    });
+
     test('should work when provided less than the capped numer of arguments', 1, function() {
       var capped = _.ary(fn, 3);
       deepEqual(capped('a'), ['a']);
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var funcs = _.map([fn], _.ary),
+          actual = funcs[0]('a', 'b', 'c');
+
+      deepEqual(actual, ['a', 'b', 'c']);
     });
 
     test('should work when combined with other methods that use metadata', 2, function() {
@@ -912,76 +924,6 @@
       else {
         skipTest();
       }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.rearg');
-
-  (function() {
-    function fn() {
-      return slice.call(arguments);
-    }
-
-    test('should reorder arguments provided to `func`', 1, function() {
-      var rearged = _.rearg(fn, [2, 0, 1]);
-      deepEqual(rearged('b', 'c', 'a'), ['a', 'b', 'c']);
-    });
-
-    test('should work with repeated indexes', 1, function() {
-      var rearged = _.rearg(fn, [1, 1, 1]);
-      deepEqual(rearged('c', 'a', 'b'), ['a', 'a', 'a']);
-    });
-
-    test('should use `undefined` for nonexistent indexes', 1, function() {
-      var rearged = _.rearg(fn, [1, 4]);
-      deepEqual(rearged('b', 'a', 'c'), ['a', undefined, 'c']);
-    });
-
-    test('should use `undefined` for non-index values', 1, function() {
-      var values = _.reject(empties, function(value) {
-        return value === 0 || _.isArray(value);
-      }).concat(-1, 1.1);
-
-      var expected = _.map(values, _.constant([undefined, 'b', 'c']));
-
-      var actual = _.map(values, function(value) {
-        var rearged = _.rearg(fn, [value]);
-        return rearged('a', 'b', 'c');
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should not rearrange arguments when no indexes are provided', 2, function() {
-      var rearged = _.rearg(fn);
-      deepEqual(rearged('a', 'b', 'c'), ['a', 'b', 'c']);
-
-      rearged = _.rearg(fn, [], []);
-      deepEqual(rearged('a', 'b', 'c'), ['a', 'b', 'c']);
-    });
-
-    test('should accept multiple index arguments', 1, function() {
-      var rearged = _.rearg(fn, 2, 0, 1);
-      deepEqual(rearged('b', 'c', 'a'), ['a', 'b', 'c']);
-    });
-
-    test('should accept multiple arrays of indexes', 1, function() {
-      var rearged = _.rearg(fn, [2], [0, 1]);
-      deepEqual(rearged('b', 'c', 'a'), ['a', 'b', 'c']);
-    });
-
-    test('should work with fewer indexes than arguments', 1, function() {
-      var rearged = _.rearg(fn, [1, 0]);
-      deepEqual(rearged('b', 'a', 'c'), ['a', 'b', 'c']);
-    });
-
-    test('should work on functions that have been rearged', 1, function() {
-      var rearged1 = _.rearg(fn, 2, 1, 0),
-          rearged2 = _.rearg(rearged1, 1, 0, 2);
-
-      deepEqual(rearged2('b', 'c', 'a'), ['a', 'b', 'c']);
     });
   }());
 
@@ -9953,7 +9895,7 @@
   QUnit.module('lodash.rearg');
 
   (function() {
-    function fn(a, b, c) {
+    function fn() {
       return slice.call(arguments);
     }
 

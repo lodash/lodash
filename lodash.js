@@ -3150,7 +3150,7 @@
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary];
 
       if (data && data !== true) {
-        newData = mergeData(newData, data);
+        mergeData(newData, data);
       }
       newData[8] = newData[8] == null
         ? (isBindKey ? 0 : newData[0].length)
@@ -3424,6 +3424,7 @@
       var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
         (bitmask < ARY_FLAG || ((isRearg || isAry) && argPos[0].length <= ary));
 
+      // Exit early if metadata can't be merged.
       if (!(isCommon || isCombo)) {
         return data;
       }

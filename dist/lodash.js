@@ -1,11 +1,11 @@
 /**
  * @license
- * Lo-Dash 3.0.0-pre (Custom Build) <http://lodash.com/>
+ * Lo-Dash 3.0.0-pre (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -o ./dist/lodash.js`
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
+ * Available under MIT license <https://lodash.com/license>
  */
 ;(function() {
 
@@ -18,12 +18,13 @@
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
-      CURRY_FLAG = 4,
-      CURRY_RIGHT_FLAG = 8,
-      CURRY_BOUND_FLAG = 16,
+      CURRY_BOUND_FLAG = 4,
+      CURRY_FLAG = 8,
+      CURRY_RIGHT_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64,
-      REARG_FLAG = 128;
+      ARY_FLAG = 128,
+      REARG_FLAG = 256;
 
   /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
@@ -701,6 +702,17 @@
   }
 
   /**
+   * Checks if `value` is object-like.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+   */
+  function isObjectLike(value) {
+    return (value && typeof value == 'object') || false;
+  }
+
+  /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -945,19 +957,21 @@
 
     /**
      * Creates a `lodash` object which wraps `value` to enable intuitive chaining.
-     * Explicit chaining may be enabled by using `_.chain`. Chaining is supported
-     * in custom builds as long as the `_#value` method is implicitly or explicitly
-     * included in the build.
+     * The execution of chained methods is deferred until `_#value` is implicitly
+     * or explicitly called. Explicit chaining may be enabled by using `_.chain`.
+     *
+     * Chaining is supported in custom builds as long as the `_#value` method is
+     * directly or indirectly included in the build.
      *
      * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * The chainable wrapper functions are:
-     * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
-     * `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`, `create`,
-     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
-     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
+     * The wrapper functions that are chainable by default are:
+     * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
+     * `callback`, `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`,
+     * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
+     * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
      * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
      * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
      * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
@@ -970,7 +984,7 @@
      * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
      * `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
-     * The non-chainable wrapper functions are:
+     * The wrapper functions that are non-chainable by default are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
      * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
@@ -985,7 +999,7 @@
      * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is provided,
-     * otherwise it will return an unwrapped value.
+     * otherwise an unwrapped value is returned.
      *
      * @name _
      * @constructor
@@ -1010,7 +1024,7 @@
      * // => true
      */
     function lodash(value) {
-      if (value && typeof value == 'object' && !isArray(value)) {
+      if (isObjectLike(value) && !isArray(value)) {
         if (value instanceof LodashWrapper) {
           return value;
         }
@@ -1875,8 +1889,7 @@
       while (++index < length) {
         var value = array[index];
 
-        if (value && typeof value == 'object' && typeof value.length == 'number'
-            && (isArray(value) || isArguments(value))) {
+        if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
           // Recursively flatten arrays (susceptible to call stack limits).
           if (isDeep) {
             value = baseFlatten(value, isDeep, isStrict);
@@ -2800,15 +2813,17 @@
      * @param {Array} [partialsRight] The arguments to append to those provided to the new function.
      * @param {Array} [holdersRight] The `partialsRight` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
-     * @param {number} arity The arity of `func`.
+     * @param {number} [arity] The arity of `func`.
+     * @param {number} [ary] The arity cap of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity) {
-      var isBind = bitmask & BIND_FLAG,
+    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary) {
+      var isAry = bitmask & ARY_FLAG,
+          isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
-          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG;
+          isCurryBound = bitmask & CURRY_BOUND_FLAG,
+          isCurryRight = bitmask & CURRY_RIGHT_FLAG;
 
       var Ctor = !isBindKey && createCtorWrapper(func),
           key = func;
@@ -2822,9 +2837,6 @@
 
         while (index--) {
           args[index] = arguments[index];
-        }
-        if (argPos) {
-          args = arrayReduceRight(argPos, reorder, args);
         }
         if (partials) {
           args = composeArgs(args, partials, holders);
@@ -2851,7 +2863,7 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity);
+            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity, ary);
             result.placeholder = placeholder;
             return result;
           }
@@ -2859,6 +2871,12 @@
         var thisBinding = isBind ? thisArg : this;
         if (isBindKey) {
           func = thisBinding[key];
+        }
+        if (argPos) {
+          args = arrayReduceRight(argPos, reorder, args);
+        }
+        if (isAry && ary < args.length) {
+          args.length = ary;
         }
         return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
       }
@@ -2934,20 +2952,22 @@
      *  The bitmask may be composed of the following flags:
      *     1 - `_.bind`
      *     2 - `_.bindKey`
-     *     4 - `_.curry`
-     *     8 - `_.curryRight`
-     *    16 - `_.curry` or `_.curryRight` of a bound function
+     *     4 - `_.curry` or `_.curryRight` of a bound function
+     *     8 - `_.curry`
+     *    16 - `_.curryRight`
      *    32 - `_.partial`
      *    64 - `_.partialRight`
-     *   128 - `_.rearg`
+     *   128 - `_.ary`
+     *   256 - `_.rearg`
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to be partially applied.
      * @param {Array} [holders] The `partials` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
      * @param {number} [arity] The arity of `func`.
+     * @param {number} [ary] The arity cap of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, arity) {
+    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, arity, ary) {
       var isBindKey = bitmask & BIND_KEY_FLAG;
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
@@ -2967,14 +2987,14 @@
         partials = holders = null;
       }
       var data = !isBindKey && getData(func),
-          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity];
+          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary];
 
-      if (data && data !== true && !(argPos && (data[3] || data[5]))) {
-        newData = mergeData(newData, data);
+      if (data && data !== true) {
+        mergeData(newData, data);
       }
       newData[8] = newData[8] == null
         ? (isBindKey ? 0 : newData[0].length)
-        : nativeMax(newData[8] - length, 0) || 0;
+        : (nativeMax(newData[8] - length, 0) || 0);
 
       bitmask = newData[1];
       if (bitmask == BIND_FLAG) {
@@ -3144,7 +3164,7 @@
      * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
      */
     function isArrayLike(value) {
-      return (value && typeof value == 'object' && isLength(value.length) &&
+      return (isObjectLike(value) && isLength(value.length) &&
         (arrayLikeClasses[toString.call(value)])) || false;
     }
 
@@ -3208,6 +3228,13 @@
     /**
      * Merges the function metadata of `source` into `data`.
      *
+     * Merging metadata reduces the number of wrappers required to invoke a function.
+     * This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
+     * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
+     * augment function arguments, making the order in which they are executed important,
+     * preventing the merging of metadata. However, we make an exception for a safe
+     * common case where curried functions have `_.ary` and or `_.rearg` applied.
+     *
      * @private
      * @param {Array} data The destination metadata.
      * @param {Array} source The source metadata.
@@ -3215,13 +3242,33 @@
      */
     function mergeData(data, source) {
       var bitmask = data[1],
-          funcBitmask = source[1];
+          srcBitmask = source[1],
+          newBitmask = bitmask | srcBitmask;
 
-      // Use metadata `thisArg` if available.
-      if (funcBitmask & BIND_FLAG) {
+      var arityFlags = ARY_FLAG | REARG_FLAG,
+          bindFlags = BIND_FLAG | BIND_KEY_FLAG,
+          comboFlags = arityFlags | bindFlags | CURRY_BOUND_FLAG | CURRY_RIGHT_FLAG;
+
+      var isAry = bitmask & ARY_FLAG && !(srcBitmask & ARY_FLAG),
+          isRearg = bitmask & REARG_FLAG && !(srcBitmask & REARG_FLAG),
+          argPos = (isRearg ? data : source)[7],
+          ary = (isAry ? data : source)[9];
+
+      var isCommon = !(bitmask >= ARY_FLAG && srcBitmask > bindFlags) &&
+        !(bitmask > bindFlags && srcBitmask >= ARY_FLAG);
+
+      var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
+        (bitmask < ARY_FLAG || ((isRearg || isAry) && argPos[0].length <= ary));
+
+      // Exit early if metadata can't be merged.
+      if (!(isCommon || isCombo)) {
+        return data;
+      }
+      // Use source `thisArg` if available.
+      if (srcBitmask & BIND_FLAG) {
         data[2] = source[2];
         // Set when currying a bound function.
-        bitmask |= (bitmask & BIND_FLAG) ? 0 : CURRY_BOUND_FLAG;
+        newBitmask |= (bitmask & BIND_FLAG) ? 0 : CURRY_BOUND_FLAG;
       }
       // Compose partial arguments.
       var value = source[3];
@@ -3240,17 +3287,23 @@
       // Append argument positions.
       value = source[7];
       if (value) {
-        value = baseSlice(value);
-        push.apply(value, data[7]);
-        data[7] = value;
+        argPos = data[7];
+        value = data[7] = baseSlice(value);
+        if (argPos) {
+          push.apply(value, argPos);
+        }
       }
-      // Use metadata `arity` if one is not provided.
+      // Use source `arity` if one is not provided.
       if (data[8] == null) {
         data[8] = source[8];
       }
-      // Use metadata `func` and merge bitmasks.
+      // Use source `ary` if it's smaller.
+      if (srcBitmask & ARY_FLAG) {
+        data[9] = data[9] == null ? source[9] : nativeMin(data[9], source[9]);
+      }
+      // Use source `func` and merge bitmasks.
       data[0] = source[0];
-      data[1] = bitmask | funcBitmask;
+      data[1] = newBitmask;
 
       return data;
     }
@@ -3368,8 +3421,7 @@
           support = lodash.support;
 
       // Exit early for non `Object` objects.
-      if (!(value && typeof value == 'object' &&
-            toString.call(value) == objectClass) ||
+      if (!(isObjectLike(value) && toString.call(value) == objectClass) ||
           (!hasOwnProperty.call(value, 'constructor') &&
             (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
         return false;
@@ -4886,7 +4938,7 @@
     }
 
     /**
-     * Extracts the unwrapped value from its wrapper.
+     * Executes the chained sequence to extract the unwrapped value.
      *
      * @name value
      * @memberOf _
@@ -6086,6 +6138,30 @@
     }
 
     /**
+     * Creates a function that accepts up to `n` arguments ignoring any
+     * additional arguments.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to cap arguments for.
+     * @param {number} [n=func.length] The arity cap.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * _.map(['6', '8', '10'], _.ary(parseInt, 1));
+     * // => [6, 8, 10]
+     */
+    function ary(func, n, guard) {
+      if (guard && isIterateeCall(func, n, guard)) {
+        n = null;
+      }
+      n = n == null ? func.length : (+n || 0);
+      return createWrapper(func, ARY_FLAG, null, null, null, null, null, n);
+    }
+
+    /**
      * Creates a function that invokes `func`, with the `this` binding and arguments
      * of the created function, while it is called less than `n` times. Subsequent
      * calls to the created function return the result of the last `func` invocation.
@@ -6124,8 +6200,11 @@
 
     /**
      * Creates a function that invokes `func` with the `this` binding of `thisArg`
-     * and prepends any additional `bind` arguments to those provided to the bound
-     * function.
+     * and prepends any additional `_.bind` arguments to those provided to the
+     * bound function.
+     *
+     * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
+     * may be used as a placeholder for partially applied arguments.
      *
      * **Note:** Unlike native `Function#bind` this method does not set the `length`
      * property of bound functions.
@@ -6139,13 +6218,20 @@
      * @returns {Function} Returns the new bound function.
      * @example
      *
-     * var func = function(greeting) {
-     *   return greeting + ' ' + this.user;
+     * var greet = function(greeting, punctuation) {
+     *   return greeting + ' ' + this.user + punctuation;
      * };
      *
-     * func = _.bind(func, { 'user': 'fred' }, 'hi');
-     * func();
-     * // => 'hi fred'
+     * var object = { 'user': 'fred' };
+     *
+     * var bound = _.bind(greet, object, 'hi');
+     * bound('!');
+     * // => 'hi fred!'
+     *
+     * // using placeholders
+     * var bound = _.bind(greet, object, _, '!');
+     * bound('hi');
+     * // => 'hi fred!'
      */
     function bind(func, thisArg) {
       var bitmask = BIND_FLAG;
@@ -6194,11 +6280,15 @@
 
     /**
      * Creates a function that invokes the method at `object[key]` and prepends
-     * any additional `bindKey` arguments to those provided to the bound function.
+     * any additional `_.bindKey` arguments to those provided to the bound function.
+     *
      * This method differs from `_.bind` by allowing bound functions to reference
      * methods that may be redefined or don't yet exist.
      * See [Peter Michaux's article](http://michaux.ca/articles/lazy-function-definition-pattern)
      * for more details.
+     *
+     * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for partially applied arguments.
      *
      * @static
      * @memberOf _
@@ -6211,20 +6301,25 @@
      *
      * var object = {
      *   'user': 'fred',
-     *   'greet': function(greeting) {
-     *     return greeting + ' ' + this.user;
+     *   'greet': function(greeting, punctuation) {
+     *     return greeting + ' ' + this.user + punctuation;
      *   }
      * };
      *
-     * var func = _.bindKey(object, 'greet', 'hi');
-     * func();
-     * // => 'hi fred'
+     * var bound = _.bindKey(object, 'greet', 'hi');
+     * bound('!');
+     * // => 'hi fred!'
      *
-     * object.greet = function(greeting) {
-     *   return greeting + 'ya ' + this.user + '!';
+     * object.greet = function(greeting, punctuation) {
+     *   return greeting + 'ya ' + this.user + punctuation;
      * };
      *
-     * func();
+     * bound('!');
+     * // => 'hiya fred!'
+     *
+     * // using placeholders
+     * var bound = _.bindKey(object, 'greet', _, '!');
+     * bound('hi');
      * // => 'hiya fred!'
      */
     function bindKey(object, key) {
@@ -6245,6 +6340,9 @@
      * remaining `func` arguments, and so on. The arity of `func` can be specified
      * if `func.length` is not sufficient.
      *
+     * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
+     * may be used as a placeholder for provided arguments.
+     *
      * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
@@ -6256,9 +6354,11 @@
      * @returns {Function} Returns the new curried function.
      * @example
      *
-     * var curried = _.curry(function(a, b, c) {
+     * var abc = function(a, b, c) {
      *   return [a, b, c];
-     * });
+     * };
+     *
+     * var curried = _.curry(abc);
      *
      * curried(1)(2)(3);
      * // => [1, 2, 3]
@@ -6267,6 +6367,10 @@
      * // => [1, 2, 3]
      *
      * curried(1, 2, 3);
+     * // => [1, 2, 3]
+     *
+     * // using placeholders
+     * curried(1)(_, 3)(2);
      * // => [1, 2, 3]
      */
     function curry(func, arity, guard) {
@@ -6282,6 +6386,9 @@
      * This method is like `_.curry` except that arguments are applied to `func`
      * in the manner of `_.partialRight` instead of `_.partial`.
      *
+     * The `_.curryRight.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for provided arguments.
+     *
      * **Note:** This method does not set the `length` property of curried functions.
      *
      * @static
@@ -6293,9 +6400,11 @@
      * @returns {Function} Returns the new curried function.
      * @example
      *
-     * var curried = _.curryRight(function(a, b, c) {
+     * var abc = function(a, b, c) {
      *   return [a, b, c];
-     * });
+     * };
+     *
+     * var curried = _.curryRight(abc);
      *
      * curried(3)(2)(1);
      * // => [1, 2, 3]
@@ -6304,6 +6413,10 @@
      * // => [1, 2, 3]
      *
      * curried(1, 2, 3);
+     * // => [1, 2, 3]
+     *
+     * // using placeholders
+     * curried(3)(1, _)(2);
      * // => [1, 2, 3]
      */
     function curryRight(func, arity, guard) {
@@ -6742,6 +6855,9 @@
      * to those provided to the new function. This method is like `_.bind` except
      * it does **not** alter the `this` binding.
      *
+     * The `_.partial.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for partially applied arguments.
+     *
      * **Note:** This method does not set the `length` property of partially
      * applied functions.
      *
@@ -6753,10 +6869,18 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
-     * var greet = function(greeting, name) { return greeting + ' ' + name; };
+     * var greet = function(greeting, name) {
+     *   return greeting + ' ' + name;
+     * };
+     *
      * var sayHelloTo = _.partial(greet, 'hello');
      * sayHelloTo('fred');
      * // => 'hello fred'
+     *
+     * // using placeholders
+     * var greetFred = _.partial(greet, _, 'fred');
+     * greetFred('hi');
+     * // => 'hi fred'
      */
     function partial(func) {
       var partials = slice(arguments, 1),
@@ -6769,6 +6893,9 @@
      * This method is like `_.partial` except that partially applied arguments
      * are appended to those provided to the new function.
      *
+     * The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
+     * builds, may be used as a placeholder for partially applied arguments.
+     *
      * **Note:** This method does not set the `length` property of partially
      * applied functions.
      *
@@ -6780,21 +6907,18 @@
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
-     * var greet = function(greeting, name) { return greeting + ' ' + name; };
+     * var greet = function(greeting, name) {
+     *   return greeting + ' ' + name;
+     * };
+     *
      * var greetFred = _.partialRight(greet, 'fred');
-     * greetFred('hello');
+     * greetFred('hi');
+     * // => 'hi fred'
+     *
+     * // using placeholders
+     * var sayHelloTo = _.partialRight(greet, 'hello', _);
+     * sayHelloTo('fred');
      * // => 'hello fred'
-     *
-     * // create a deep `_.defaults`
-     * var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
-     *   return _.merge(value, other, deep);
-     * });
-     *
-     * var object = { 'a': { 'b': { 'c': 1 } } },
-     *     source = { 'a': { 'b': { 'c': 2, 'd': 2 } } };
-     *
-     * defaultsDeep(object, source);
-     * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function partialRight(func) {
       var partials = slice(arguments, 1),
@@ -7044,7 +7168,7 @@
      * // => false
      */
     function isArguments(value) {
-      var length = (value && typeof value == 'object') ? value.length : undefined;
+      var length = isObjectLike(value) ? value.length : undefined;
       return (isLength(length) && toString.call(value) == argsClass) || false;
     }
 
@@ -7065,8 +7189,7 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return (value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == arrayClass) || false;
+      return (isObjectLike(value) && isLength(value.length) && toString.call(value) == arrayClass) || false;
     };
 
     /**
@@ -7086,8 +7209,7 @@
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false || value && typeof value == 'object' &&
-        toString.call(value) == boolClass) || false;
+      return (value === true || value === false || isObjectLike(value) && toString.call(value) == boolClass) || false;
     }
 
     /**
@@ -7107,7 +7229,7 @@
      * // => false
      */
     function isDate(value) {
-      return (value && typeof value == 'object' && toString.call(value) == dateClass) || false;
+      return (isObjectLike(value) && toString.call(value) == dateClass) || false;
     }
 
     /**
@@ -7127,13 +7249,13 @@
      * // => false
      */
     function isElement(value) {
-      return (value && typeof value == 'object' && value.nodeType === 1 &&
+      return (value && value.nodeType === 1 && isObjectLike(value) &&
         toString.call(value).indexOf('Element') > -1) || false;
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
       isElement = function(value) {
-        return (value && typeof value == 'object' && value.nodeType === 1 && !isPlainObject(value)) || false;
+        return (value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value)) || false;
       };
     }
 
@@ -7170,7 +7292,7 @@
       }
       var length = value.length;
       if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
-          (typeof value == 'object' && isFunction(value.splice)))) {
+          (isObjectLike(value) && isFunction(value.splice)))) {
         return !length;
       }
       return !keys(value).length;
@@ -7240,7 +7362,7 @@
      * // => false
      */
     function isError(value) {
-      return (value && typeof value == 'object' && toString.call(value) == errorClass) || false;
+      return (isObjectLike(value) && toString.call(value) == errorClass) || false;
     }
 
     /**
@@ -7392,7 +7514,7 @@
       if (toString.call(value) == funcClass) {
         return reNative.test(fnToString.call(value));
       }
-      return (typeof value == 'object' && reHostCtor.test(value)) || false;
+      return (isObjectLike(value) && reHostCtor.test(value)) || false;
     }
 
     /**
@@ -7438,8 +7560,7 @@
      * // => false
      */
     function isNumber(value) {
-      var type = typeof value;
-      return type == 'number' || (value && type == 'object' && toString.call(value) == numberClass) || false;
+      return typeof value == 'number' || (isObjectLike(value) && toString.call(value) == numberClass) || false;
     }
 
     /**
@@ -7502,7 +7623,7 @@
      * // => false
      */
     function isRegExp(value) {
-      return (value && typeof value == 'object' && toString.call(value) == regexpClass) || false;
+      return (isObjectLike(value) && toString.call(value) == regexpClass) || false;
     }
 
     /**
@@ -7522,8 +7643,7 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' || (value && typeof value == 'object' &&
-        toString.call(value) == stringClass) || false;
+      return typeof value == 'string' || (isObjectLike(value) && toString.call(value) == stringClass) || false;
     }
 
     /**
@@ -7623,7 +7743,7 @@
      * object for all destination properties that resolve to `undefined`. Once a
      * property is set, additional defaults of the same property are ignored.
      *
-     * **Note:** See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
+     * **Note:** See the [documentation example of `_.partialRight`](https://lodash.com/docs#partialRight)
      * for a deep version of this method.
      *
      * @static
@@ -8464,8 +8584,8 @@
      * @returns {string} Returns the escaped string.
      * @example
      *
-     * _.escapeRegExp('[lodash](http://lodash.com/)');
-     * // => '\[lodash\]\(http://lodash\.com/\)'
+     * _.escapeRegExp('[lodash](https://lodash.com/)');
+     * // => '\[lodash\]\(https://lodash\.com/\)'
      */
     function escapeRegExp(string) {
       string = string == null ? '' : String(string);
@@ -8692,14 +8812,14 @@
      * in "interpolate" delimiters, HTML-escape interpolated data properties in
      * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
      * properties may be accessed as free variables in the template. If a setting
-     * object is provided it overrides `_.templateSettings` for the template.
+     * object is provided it takes precedence over `_.templateSettings` values.
      *
      * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
      * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
      * for more details.
      *
      * For more information on precompiling templates see
-     * [Lo-Dash's custom builds documentation](http://lodash.com/custom-builds).
+     * [Lo-Dash's custom builds documentation](https://lodash.com/custom-builds).
      *
      * For more information on Chrome extension sandboxes see
      * [Chrome's extensions documentation](http://developer.chrome.com/stable/extensions/sandboxingEval.html).
@@ -9508,9 +9628,9 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var fred = { 'user': 'fred', 'age': 40, 'active': true };
-     * _.map(['age', 'active'], _.propertyOf(fred));
-     * // => [40, true]
+     * var object = { 'user': 'fred', 'age': 40, 'active': true };
+     * _.map(['active', 'user'], _.propertyOf(object));
+     * // => [true, 'fred']
      *
      * var object = { 'a': 3, 'b': 1, 'c': 2 };
      * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
@@ -9769,6 +9889,7 @@
 
     // Add functions that return wrapped values when chaining.
     lodash.after = after;
+    lodash.ary = ary;
     lodash.assign = assign;
     lodash.at = at;
     lodash.before = before;

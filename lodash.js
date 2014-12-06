@@ -3150,34 +3150,7 @@
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary];
 
       if (data && data !== true) {
-        var srcBitmask = data[1],
-            newBitmask = bitmask | srcBitmask;
-
-        var arityFlags = ARY_FLAG | REARG_FLAG,
-            bindFlags = BIND_FLAG | BIND_KEY_FLAG,
-            comboFlags = arityFlags | bindFlags | CURRY_BOUND_FLAG | CURRY_RIGHT_FLAG;
-
-        var isAry = bitmask & ARY_FLAG && !(srcBitmask & ARY_FLAG),
-            isRearg = bitmask & REARG_FLAG && !(srcBitmask & REARG_FLAG),
-            argPosValue = isRearg ? argPos : data[6],
-            aryValue = isAry ? ary : data[9];
-
-        var isCommon = !(bitmask >= ARY_FLAG && srcBitmask > bindFlags) &&
-          !(bitmask > bindFlags && srcBitmask >= ARY_FLAG);
-
-        var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
-          (bitmask < ARY_FLAG || ((isRearg || isAry) && argPosValue.length <= aryValue));
-
-        // Metadata is used to reduce the number of wrapper functions around `func`.
-        // This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
-        // may be applied regardless of order. Methods like `_.ary` and `_.rearg`
-        // augment arguments, making the order in which they are applied important,
-        // preventing their use with metadata. However, we make an exception for
-        // a safe common case where curried functions have `_.ary` and or `_.rearg`
-        // applied.
-        if (isCommon || isCombo) {
-          newData = mergeData(newData, data);
-        }
+        newData = mergeData(newData, data);
       }
       newData[8] = newData[8] == null
         ? (isBindKey ? 0 : newData[0].length)
@@ -3419,6 +3392,13 @@
     /**
      * Merges the function metadata of `source` into `data`.
      *
+     * Merging metadata reduces the number of wrappers required to invoke a function.
+     * This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
+     * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
+     * augment function arguments, making the order in which they are executed important,
+     * preventing the merging of metadata. However, we make an exception for a safe
+     * common case where curried functions have `_.ary` and or `_.rearg` applied.
+     *
      * @private
      * @param {Array} data The destination metadata.
      * @param {Array} source The source metadata.
@@ -3426,13 +3406,32 @@
      */
     function mergeData(data, source) {
       var bitmask = data[1],
-          srcBitmask = source[1];
+          srcBitmask = source[1],
+          newBitmask = bitmask | srcBitmask;
 
+      var arityFlags = ARY_FLAG | REARG_FLAG,
+          bindFlags = BIND_FLAG | BIND_KEY_FLAG,
+          comboFlags = arityFlags | bindFlags | CURRY_BOUND_FLAG | CURRY_RIGHT_FLAG;
+
+      var isAry = bitmask & ARY_FLAG && !(srcBitmask & ARY_FLAG),
+          isRearg = bitmask & REARG_FLAG && !(srcBitmask & REARG_FLAG),
+          argPos = (isRearg ? data : source)[7],
+          ary = (isAry ? data : source)[9];
+
+      var isCommon = !(bitmask >= ARY_FLAG && srcBitmask > bindFlags) &&
+        !(bitmask > bindFlags && srcBitmask >= ARY_FLAG);
+
+      var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
+        (bitmask < ARY_FLAG || ((isRearg || isAry) && argPos[0].length <= ary));
+
+      if (!(isCommon || isCombo)) {
+        return data;
+      }
       // Use source `thisArg` if available.
       if (srcBitmask & BIND_FLAG) {
         data[2] = source[2];
         // Set when currying a bound function.
-        bitmask |= (bitmask & BIND_FLAG) ? 0 : CURRY_BOUND_FLAG;
+        newBitmask |= (bitmask & BIND_FLAG) ? 0 : CURRY_BOUND_FLAG;
       }
       // Compose partial arguments.
       var value = source[3];
@@ -3465,7 +3464,7 @@
       }
       // Use source `func` and merge bitmasks.
       data[0] = source[0];
-      data[1] = bitmask | srcBitmask;
+      data[1] = newBitmask;
 
       return data;
     }

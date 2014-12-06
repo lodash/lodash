@@ -1012,19 +1012,21 @@
 
     /**
      * Creates a `lodash` object which wraps `value` to enable intuitive chaining.
-     * Explicit chaining may be enabled by using `_.chain`. Chaining is supported
-     * in custom builds as long as the `_#value` method is implicitly or explicitly
-     * included in the build.
+     * The execution of chained methods is deferred until `_#value` is implicitly
+     * or explicitly called. Explicit chaining may be enabled by using `_.chain`.
+     *
+     * Chaining is supported in custom builds as long as the `_#value` method is
+     * directly or indirectly included in the build.
      *
      * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * The chainable wrapper functions are:
-     * `after`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`, `callback`,
-     * `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`, `create`,
-     * `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`, `drop`,
-     * `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
+     * The wrapper functions that are chainable by default are:
+     * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
+     * `callback`, `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`,
+     * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
+     * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
      * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
      * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
      * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
@@ -1037,7 +1039,7 @@
      * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
      * `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
-     * The non-chainable wrapper functions are:
+     * The wrapper functions that are non-chainable by default are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
      * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
@@ -1052,7 +1054,7 @@
      * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper function `sample` will return a wrapped value when `n` is provided,
-     * otherwise it will return an unwrapped value.
+     * otherwise an unwrapped value is returned.
      *
      * @name _
      * @constructor
@@ -5120,7 +5122,7 @@
     }
 
     /**
-     * Extracts the unwrapped value from its wrapper.
+     * Executes the chained sequence to extract the unwrapped value.
      *
      * @name value
      * @memberOf _

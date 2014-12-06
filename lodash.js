@@ -17,9 +17,9 @@
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
-      CURRY_FLAG = 4,
-      CURRY_RIGHT_FLAG = 8,
-      CURRY_BOUND_FLAG = 16,
+      CURRY_BOUND_FLAG = 4,
+      CURRY_FLAG = 8,
+      CURRY_RIGHT_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64,
       ARY_FLAG = 128,
@@ -2970,8 +2970,8 @@
           isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
-          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG;
+          isCurryBound = bitmask & CURRY_BOUND_FLAG,
+          isCurryRight = bitmask & CURRY_RIGHT_FLAG;
 
       var Ctor = !isBindKey && createCtorWrapper(func),
           key = func;
@@ -2985,12 +2985,6 @@
 
         while (index--) {
           args[index] = arguments[index];
-        }
-        if (argPos) {
-          args = arrayReduceRight(argPos, reorder, args);
-        }
-        if (isAry && ary < length) {
-          args.length = ary;
         }
         if (partials) {
           args = composeArgs(args, partials, holders);
@@ -3025,6 +3019,12 @@
         var thisBinding = isBind ? thisArg : this;
         if (isBindKey) {
           func = thisBinding[key];
+        }
+        if (argPos) {
+          args = arrayReduceRight(argPos, reorder, args);
+        }
+        if (isAry && ary < args.length) {
+          args.length = ary;
         }
         return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
       }
@@ -3100,9 +3100,9 @@
      *  The bitmask may be composed of the following flags:
      *     1 - `_.bind`
      *     2 - `_.bindKey`
-     *     4 - `_.curry`
-     *     8 - `_.curryRight`
-     *    16 - `_.curry` or `_.curryRight` of a bound function
+     *     4 - `_.curry` or `_.curryRight` of a bound function
+     *     8 - `_.curry`
+     *    16 - `_.curryRight`
      *    32 - `_.partial`
      *    64 - `_.partialRight`
      *   128 - `_.ary`
@@ -3137,10 +3137,35 @@
       var data = !isBindKey && getData(func),
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary];
 
-      if (data && data !== true &&
-          !(bitmask > 127 && data[1] > 3) &&
-          !((bitmask > 3 && bitmask < 128) && data[1] > 127)) {
-        newData = mergeData(newData, data);
+      if (data && data !== true) {
+        var srcBitmask = data[1],
+            newBitmask = bitmask | srcBitmask;
+
+        var arityFlags = ARY_FLAG | REARG_FLAG,
+            bindFlags = BIND_FLAG | BIND_KEY_FLAG,
+            comboFlags = arityFlags | bindFlags | CURRY_BOUND_FLAG | CURRY_RIGHT_FLAG;
+
+        var isAry = bitmask & ARY_FLAG && !(srcBitmask & ARY_FLAG),
+            isRearg = bitmask & REARG_FLAG && !(srcBitmask & REARG_FLAG),
+            argPosValue = isRearg ? argPos : data[6],
+            aryValue = isAry ? ary : data[9];
+
+        var isCommon = !(bitmask >= ARY_FLAG && srcBitmask > bindFlags) &&
+          !(bitmask > bindFlags && srcBitmask >= ARY_FLAG);
+
+        var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
+          (bitmask < ARY_FLAG || ((isRearg || isAry) && argPosValue.length <= aryValue));
+
+        // Metadata is used to reduce the number of wrapper functions around `func`.
+        // This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
+        // may be applied regardless of order. Methods like `_.ary` and `_.rearg`
+        // augment arguments, making the order in which they are applied important,
+        // preventing their use with metadata. However, we make an exception for
+        // a safe common case where curried functions have `_.ary` and or `_.rearg`
+        // applied.
+        if (isCommon || isCombo) {
+          newData = mergeData(newData, data);
+        }
       }
       newData[8] = newData[8] == null
         ? (isBindKey ? 0 : newData[0].length)

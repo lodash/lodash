@@ -3450,9 +3450,11 @@
       // Append argument positions.
       value = source[7];
       if (value) {
-        value = baseSlice(value);
-        push.apply(value, data[7]);
-        data[7] = value;
+        argPos = data[7];
+        value = data[7] = baseSlice(value);
+        if (argPos) {
+          push.apply(value, argPos);
+        }
       }
       // Use source `arity` if one is not provided.
       if (data[8] == null) {

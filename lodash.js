@@ -727,6 +727,17 @@
   }
 
   /**
+   * Checks if `value` is object-like.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+   */
+  function isObjectLike(value) {
+    return (value && typeof value == 'object') || false;
+  }
+
+  /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -1066,7 +1077,7 @@
      * // => true
      */
     function lodash(value) {
-      if (value && typeof value == 'object' && !isArray(value)) {
+      if (isObjectLike(value) && !isArray(value)) {
         if (value instanceof LodashWrapper) {
           return value;
         }
@@ -2032,8 +2043,7 @@
       while (++index < length) {
         var value = array[index];
 
-        if (value && typeof value == 'object' && typeof value.length == 'number'
-            && (isArray(value) || isArguments(value))) {
+        if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
           // Recursively flatten arrays (susceptible to call stack limits).
           if (isDeep) {
             value = baseFlatten(value, isDeep, isStrict);
@@ -3343,7 +3353,7 @@
      * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
      */
     function isArrayLike(value) {
-      return (value && typeof value == 'object' && isLength(value.length) &&
+      return (isObjectLike(value) && isLength(value.length) &&
         (arrayLikeClasses[toString.call(value)] || (!lodash.support.argsClass && isArguments(value)))) || false;
     }
 
@@ -3571,8 +3581,7 @@
           support = lodash.support;
 
       // Exit early for non `Object` objects.
-      if (!(value && typeof value == 'object' &&
-            toString.call(value) == objectClass && !isHostObject(value)) ||
+      if (!(isObjectLike(value) && toString.call(value) == objectClass && !isHostObject(value)) ||
           (!hasOwnProperty.call(value, 'constructor') &&
             (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor))) ||
           (!support.argsClass && isArguments(value))) {
@@ -7343,13 +7352,13 @@
      * // => false
      */
     function isArguments(value) {
-      var length = (value && typeof value == 'object') ? value.length : undefined;
+      var length = isObjectLike(value) ? value.length : undefined;
       return (isLength(length) && toString.call(value) == argsClass) || false;
     }
     // Fallback for environments without a `[[Class]]` for `arguments` objects.
     if (!support.argsClass) {
       isArguments = function(value) {
-        var length = (value && typeof value == 'object') ? value.length : undefined;
+        var length = isObjectLike(value) ? value.length : undefined;
         return (isLength(length) && hasOwnProperty.call(value, 'callee') &&
           !propertyIsEnumerable.call(value, 'callee')) || false;
       };
@@ -7372,8 +7381,7 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return (value && typeof value == 'object' && typeof value.length == 'number' &&
-        toString.call(value) == arrayClass) || false;
+      return (isObjectLike(value) && isLength(value.length) && toString.call(value) == arrayClass) || false;
     };
 
     /**
@@ -7393,8 +7401,7 @@
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false || value && typeof value == 'object' &&
-        toString.call(value) == boolClass) || false;
+      return (value === true || value === false || isObjectLike(value) && toString.call(value) == boolClass) || false;
     }
 
     /**
@@ -7414,7 +7421,7 @@
      * // => false
      */
     function isDate(value) {
-      return (value && typeof value == 'object' && toString.call(value) == dateClass) || false;
+      return (isObjectLike(value) && toString.call(value) == dateClass) || false;
     }
 
     /**
@@ -7434,13 +7441,13 @@
      * // => false
      */
     function isElement(value) {
-      return (value && typeof value == 'object' && value.nodeType === 1 &&
+      return (value && value.nodeType === 1 && isObjectLike(value) &&
         (lodash.support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
       isElement = function(value) {
-        return (value && typeof value == 'object' && value.nodeType === 1 && !isPlainObject(value)) || false;
+        return (value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value)) || false;
       };
     }
 
@@ -7477,7 +7484,7 @@
       }
       var length = value.length;
       if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
-          (typeof value == 'object' && isFunction(value.splice)))) {
+          (isObjectLike(value) && isFunction(value.splice)))) {
         return !length;
       }
       return !keys(value).length;
@@ -7547,7 +7554,7 @@
      * // => false
      */
     function isError(value) {
-      return (value && typeof value == 'object' && toString.call(value) == errorClass) || false;
+      return (isObjectLike(value) && toString.call(value) == errorClass) || false;
     }
 
     /**
@@ -7699,7 +7706,7 @@
       if (toString.call(value) == funcClass) {
         return reNative.test(fnToString.call(value));
       }
-      return (typeof value == 'object' &&
+      return (isObjectLike(value) &&
         (isHostObject(value) ? reNative : reHostCtor).test(value)) || false;
     }
 
@@ -7746,8 +7753,7 @@
      * // => false
      */
     function isNumber(value) {
-      var type = typeof value;
-      return type == 'number' || (value && type == 'object' && toString.call(value) == numberClass) || false;
+      return typeof value == 'number' || (isObjectLike(value) && toString.call(value) == numberClass) || false;
     }
 
     /**
@@ -7830,8 +7836,7 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' || (value && typeof value == 'object' &&
-        toString.call(value) == stringClass) || false;
+      return typeof value == 'string' || (isObjectLike(value) && toString.call(value) == stringClass) || false;
     }
 
     /**

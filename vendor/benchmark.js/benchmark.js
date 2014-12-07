@@ -1,5 +1,5 @@
 /*!
- * Benchmark.js v1.0.0 <http://benchmarkjs.com/>
+ * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
  * Copyright 2010-2014 Mathias Bynens <http://mths.be/>
  * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
  * Modified by John-David Dalton <http://allyoucanleet.com/>
@@ -293,10 +293,10 @@
      * Note: The Benchmark constructor exposes a handful of Lo-Dash methods to
      * make working with arrays, collections, and objects easier. The Lo-Dash
      * methods are:
-     * [`each/forEach`](https://lodash.com//docs#forEach), [`forOwn`](https://lodash.com//docs#forOwn),
-     * [`has`](https://lodash.com//docs#has), [`indexOf`](https://lodash.com//docs#indexOf),
-     * [`map`](https://lodash.com//docs#map), [`pluck`](https://lodash.com//docs#pluck),
-     * and [`reduce`](https://lodash.com//docs#reduce)
+     * [`each/forEach`](https://lodash.com/docs#forEach), [`forOwn`](https://lodash.com/docs#forOwn),
+     * [`has`](https://lodash.com/docs#has), [`indexOf`](https://lodash.com/docs#indexOf),
+     * [`map`](https://lodash.com/docs#map), [`pluck`](https://lodash.com/docs#pluck),
+     * and [`reduce`](https://lodash.com/docs#reduce)
      *
      * @constructor
      * @param {string} name A name to identify the benchmark.
@@ -443,9 +443,9 @@
      *
      * Note: Each Suite instance has a handful of wrapped Lo-Dash methods to
      * make working with Suites easier. The wrapped Lo-Dash methods are:
-     * [`each/forEach`](https://lodash.com//docs#forEach), [`indexOf`](https://lodash.com//docs#indexOf),
-     * [`map`](https://lodash.com//docs#map), [`pluck`](https://lodash.com//docs#pluck),
-     * and [`reduce`](https://lodash.com//docs#reduce)
+     * [`each/forEach`](https://lodash.com/docs#forEach), [`indexOf`](https://lodash.com/docs#indexOf),
+     * [`map`](https://lodash.com/docs#map), [`pluck`](https://lodash.com/docs#pluck),
+     * and [`reduce`](https://lodash.com/docs#reduce)
      *
      * @constructor
      * @memberOf Benchmark
@@ -2342,7 +2342,7 @@
        * @memberOf Benchmark
        * @type string
        */
-      'version': '1.0.0'
+      'version': '2.0.0-pre'
     });
 
     _.assign(Benchmark, {

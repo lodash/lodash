@@ -1,10 +1,10 @@
 /**
  * @license
- * Lo-Dash 3.0.0-pre <http://lodash.com/>
+ * Lo-Dash 3.0.0-pre <https://lodash.com/>
  * Copyright 2012-2014 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
+ * Available under MIT license <https://lodash.com/license>
  */
 ;(function() {
 
@@ -7940,7 +7940,7 @@
      * object for all destination properties that resolve to `undefined`. Once a
      * property is set, additional defaults of the same property are ignored.
      *
-     * **Note:** See the [documentation example of `_.partialRight`](http://lodash.com/docs#partialRight)
+     * **Note:** See the [documentation example of `_.partialRight`](https://lodash.com/docs#partialRight)
      * for a deep version of this method.
      *
      * @static
@@ -8811,8 +8811,8 @@
      * @returns {string} Returns the escaped string.
      * @example
      *
-     * _.escapeRegExp('[lodash](http://lodash.com/)');
-     * // => '\[lodash\]\(http://lodash\.com/\)'
+     * _.escapeRegExp('[lodash](https://lodash.com/)');
+     * // => '\[lodash\]\(https://lodash\.com/\)'
      */
     function escapeRegExp(string) {
       string = string == null ? '' : String(string);
@@ -9046,7 +9046,7 @@
      * for more details.
      *
      * For more information on precompiling templates see
-     * [Lo-Dash's custom builds documentation](http://lodash.com/custom-builds).
+     * [Lo-Dash's custom builds documentation](https://lodash.com/custom-builds).
      *
      * For more information on Chrome extension sandboxes see
      * [Chrome's extensions documentation](http://developer.chrome.com/stable/extensions/sandboxingEval.html).

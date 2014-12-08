@@ -1012,8 +1012,16 @@
 
     /**
      * Creates a `lodash` object which wraps `value` to enable intuitive chaining.
-     * The execution of chained methods is deferred until `_#value` is implicitly
-     * or explicitly called. Explicit chaining may be enabled by using `_.chain`.
+     * Methods that operate on and return arrays, collections, and functions can
+     * be chained together. Methods that return a boolean or single value will
+     * automatically end the chain returning the unwrapped result. Explicit chaining
+     * may be enabled by using `_.chain`. The execution of chained methods is lazy,
+     * that is, execution is deferred until `_#value` is implicitly or explicitly
+     * called.
+     *
+     * Lazy evaluation allows several methods to support shortcut fusion. Shortcut
+     * fusion is an optimization that merges iteratees to avoid creating intermediate
+     * arrays and reduce the number of iteratee executions.
      *
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.
@@ -1022,7 +1030,12 @@
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * The wrapper functions that are chainable by default are:
+     * The wrapper functons that support shortcut fusion are:
+     * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `first`,
+     * `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`, `slice`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `where`
+     *
+     * The chainable wrapper functions are:
      * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
      * `callback`, `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`,
      * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
@@ -1039,7 +1052,7 @@
      * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
      * `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
-     * The wrapper functions that are non-chainable by default are:
+     * The wrapper functions that are **not** chainable by default are:
      * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
      * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,

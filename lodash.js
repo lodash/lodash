@@ -54,7 +54,9 @@
 
   /** Used to match HTML entities and HTML characters. */
   var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,
-      reUnescapedHtml = /[&<>"'`]/g;
+      reUnescapedHtml = /[&<>"'`]/g,
+      reHasEscapedHtml = RegExp(reEscapedHtml.source),
+      reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 
   /** Used to match template delimiters. */
   var reEscape = /<%-([\s\S]+?)%>/g,
@@ -91,7 +93,8 @@
    * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
    * for more details.
    */
-  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g;
+  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
+      reHasRegExpChars = RegExp(reRegExpChars.source);
 
   /** Used to detect functions containing a `this` reference. */
   var reThis = /\bthis\b/;
@@ -8836,7 +8839,7 @@
     function escape(string) {
       // Reset `lastIndex` because in IE < 9 `String#replace` does not.
       string = string == null ? '' : String(string);
-      return string && (reUnescapedHtml.lastIndex = 0, reUnescapedHtml.test(string))
+      return (string && reHasUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)
         : string;
     }
@@ -8857,7 +8860,7 @@
      */
     function escapeRegExp(string) {
       string = string == null ? '' : String(string);
-      return string && (reRegExpChars.lastIndex = 0, reRegExpChars.test(string))
+      return (string && reHasRegExpChars.test(string))
         ? string.replace(reRegExpChars, '\\$&')
         : string;
     }
@@ -9468,7 +9471,7 @@
      */
     function unescape(string) {
       string = string == null ? '' : String(string);
-      return string && (reEscapedHtml.lastIndex = 0, reEscapedHtml.test(string))
+      return (string && reHasEscapedHtml.test(string))
         ? string.replace(reEscapedHtml, unescapeHtmlChar)
         : string;
     }

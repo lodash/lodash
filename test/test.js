@@ -5492,15 +5492,24 @@
   (function() {
     test('should invoke a methods on each element of a collection', 1, function() {
       var array = ['a', 'b', 'c'];
-      deepEqual( _.invoke(array, 'toUpperCase'), ['A', 'B', 'C']);
+      deepEqual(_.invoke(array, 'toUpperCase'), ['A', 'B', 'C']);
+    });
+
+    test('should support invoking with arguments', 1, function() {
+      var array = [function() { return slice.call(arguments); }],
+          actual = _.invoke(array, 'call', null, 'a', 'b', 'c');
+
+      deepEqual(actual, [['a', 'b', 'c']]);
     });
 
     test('should work with a function `methodName` argument', 1, function() {
-      var actual = _.invoke(['a', 'b', 'c'], function() {
-        return this.toUpperCase();
-      });
+      var array = ['a', 'b', 'c'];
 
-      deepEqual(actual, ['A', 'B', 'C']);
+      var actual = _.invoke(array, function(left, right) {
+        return left + this.toUpperCase() + right;
+      }, '(', ')');
+
+      deepEqual(actual, ['(A)', '(B)', '(C)']);
     });
 
     test('should work with an object for `collection`', 1, function() {

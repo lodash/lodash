@@ -5032,7 +5032,7 @@
       });
 
       test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', 12, function() {
-        _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
+        _.each([4, 6, Math.pow(2, 32), Infinity], function(fromIndex) {
           strictEqual(_.includes(collection, 1, fromIndex), false);
           strictEqual(_.includes(collection, undefined, fromIndex), false);
           strictEqual(_.includes(collection, '', fromIndex), false);

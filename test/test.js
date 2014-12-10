@@ -9514,6 +9514,13 @@
       deepEqual(_.pluck(object, 'length'), [1, 2, 3]);
     });
 
+    test('should return `undefined` for undefined properties', 1, function() {
+      var array = [{ 'a': 1 }],
+          actual = [_.pluck(array, 'b'), _.pluck(array, 'c')];
+
+      deepEqual(actual, [[undefined], [undefined]]);
+    });
+
     test('should work with nullish elements', 1, function() {
       var objects = [{ 'a': 1 }, null, undefined, { 'a': 4 }];
       deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);

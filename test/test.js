@@ -11498,7 +11498,7 @@
       });
     });
 
-    test('should work with no delimiters', 1, function() {
+    test('should work with strings without delimiters', 1, function() {
       var expected = 'abc';
       strictEqual(_.template(expected)({}), expected);
     });
@@ -11695,13 +11695,44 @@
       ok(pass);
     });
 
-    test('should provide the template source when a SyntaxError occurs', 1, function() {
+    test('should expose the source for compiled templates', 1, function() {
+      var compiled = _.template('x'),
+          values = [String(compiled), compiled.source],
+          expected = _.map(values, _.constant(true));
+
+      var actual = _.map(values, function(value) {
+        return _.includes(value, '__p');
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should expose the source when a SyntaxError occurs', 1, function() {
       try {
         _.template('<% if x %>');
       } catch(e) {
         var source = e.source;
       }
-      ok(/__p/.test(source));
+      ok(_.includes(source, '__p'));
+    });
+
+    test('should not include sourceURLs in the source', 1, function() {
+      var options = { 'sourceURL': '/a/b/c' },
+          compiled = _.template('x', options),
+          values = [compiled.source, undefined];
+
+      try {
+        _.template('<% if x %>', options);
+      } catch(e) {
+        values[1] = e.source;
+      }
+      var expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        return _.includes(value, 'sourceURL');
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should work as an iteratee for `_.map`', 1, function() {

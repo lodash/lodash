@@ -1713,6 +1713,47 @@
     }
 
     /**
+     * The base implementation of `binaryIndex` which supports large arrays and
+     * determining the insert index for `NaN` and `undefined`. Unlike `binaryIndex`,
+     * this function does not invoke `iteratee` for `value`.
+     *
+     * @private
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {boolean} [retHighest=false] Specify returning the highest, instead
+     *  of the lowest, index at which a value should be inserted into `array`.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     */
+    function baseBinaryIndex(array, value, iteratee, retHighest) {
+      var low = 0,
+          high = array ? array.length : low,
+          valIsNaN = value !== value,
+          valIsUndef = typeof value == 'undefined';
+
+      while (low < high) {
+        var mid = floor((low + high) / 2),
+            computed = iteratee(array[mid]),
+            isReflexive = computed === computed;
+
+        if (valIsNaN) {
+          var setLow = isReflexive || retHighest;
+        } else if (valIsUndef) {
+          setLow = isReflexive && (retHighest || typeof computed != 'undefined');
+        } else {
+          setLow = retHighest ? (computed <= value) : (computed < value);
+        }
+        if (setLow) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return nativeMin(high, MAX_ARRAY_INDEX);
+    }
+
+    /**
      * The base implementation of `_.bindAll` without support for individual
      * method name arguments.
      *
@@ -2590,40 +2631,6 @@
     }
 
     /**
-     * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` without
-     * support for callback shorthands and `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {boolean} [retHighest=false] Specify returning the highest, instead
-     *  of the lowest, index at which a value should be inserted into `array`.
-     * @returns {number} Returns the index at which `value` should be inserted
-     *  into `array`.
-     */
-    function baseSortedIndex(array, value, iteratee, retHighest) {
-      var low = 0,
-          high = array ? array.length : low;
-
-      value = iteratee(value);
-      if (value !== value || typeof value == 'undefined' || high > (MAX_ARRAY_LENGTH / 2)) {
-        return edgeSortedIndex(array, value, iteratee, retHighest);
-      }
-      while (low < high) {
-        var mid = (low + high) >>> 1,
-            computed = iteratee(array[mid]);
-
-        if (retHighest ? (computed <= value) : (computed < value)) {
-          low = mid + 1;
-        } else {
-          high = mid;
-        }
-      }
-      return high;
-    }
-
-    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -2724,6 +2731,42 @@
         result = object[action.name].apply(object, args);
       }
       return result;
+    }
+
+    /**
+     * Performs a binary search of `array` to determine the index at which `value`
+     * should be inserted into `array` in order to maintain its sort order. The
+     * iteratee function is invoked for `value` and each element of `array` to
+     * compute their sort ranking. The iteratee is invoked with one argument; (value).
+     *
+     * @private
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {boolean} [retHighest=false] Specify returning the highest, instead
+     *  of the lowest, index at which a value should be inserted into `array`.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     */
+    function binaryIndex(array, value, iteratee, retHighest) {
+      var low = 0,
+          high = array ? array.length : low;
+
+      value = iteratee(value);
+      if (value !== value || typeof value == 'undefined' || high > (MAX_ARRAY_LENGTH / 2)) {
+        return baseBinaryIndex(array, value, iteratee, retHighest);
+      }
+      while (low < high) {
+        var mid = (low + high) >>> 1,
+            computed = iteratee(array[mid]);
+
+        if (retHighest ? (computed <= value) : (computed < value)) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return high;
     }
 
     /**
@@ -3173,46 +3216,6 @@
       }
       var setter = data ? baseSetData : setData;
       return setter(result, newData);
-    }
-
-    /**
-     * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` without
-     * support for callback shorthands and `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {boolean} [retHighest=false] Specify returning the highest, instead
-     *  of the lowest, index at which a value should be inserted into `array`.
-     * @returns {number} Returns the index at which `value` should be inserted
-     *  into `array`.
-     */
-    function edgeSortedIndex(array, value, iteratee, retHighest) {
-      var low = 0,
-          high = array ? array.length : low,
-          valIsNaN = value !== value,
-          valIsUndef = typeof value == 'undefined';
-
-      while (low < high) {
-        var mid = floor((low + high) / 2),
-            computed = iteratee(array[mid]),
-            isReflexive = computed === computed;
-
-        if (valIsNaN) {
-          var setLow = isReflexive || retHighest;
-        } else if (valIsUndef) {
-          setLow = isReflexive && (retHighest || typeof computed != 'undefined');
-        } else {
-          setLow = retHighest ? (computed <= value) : (computed < value);
-        }
-        if (setLow) {
-          low = mid + 1;
-        } else {
-          high = mid;
-        }
-      }
-      return nativeMin(high, MAX_ARRAY_INDEX);
     }
 
     /**
@@ -4541,11 +4544,11 @@
     }
 
     /**
-     * Uses a binary search to determine the lowest index at which a value should
-     * be inserted into a given sorted array in order to maintain the sort order
-     * of the array. If an iteratee function is provided it is invoked for `value`
-     * and each element of `array` to compute their sort ranking. The iteratee
-     * is bound to `thisArg` and invoked with one argument; (value).
+     * Uses a binary search to determine the lowest index at which `value` should
+     * be inserted into `array` in order to maintain its sort order. If an iteratee
+     * function is provided it is invoked for `value` and each element of `array`
+     * to compute their sort ranking. The iteratee is bound to `thisArg` and
+     * invoked with one argument; (value).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -4557,7 +4560,7 @@
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to inspect.
+     * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
@@ -4587,18 +4590,18 @@
      */
     function sortedIndex(array, value, iteratee, thisArg) {
       iteratee = iteratee == null ? identity : getCallback(iteratee, thisArg, 1);
-      return baseSortedIndex(array, value, iteratee);
+      return binaryIndex(array, value, iteratee);
     }
 
     /**
      * This method is like `_.sortedIndex` except that it returns the highest
-     * index at which a value should be inserted into a given sorted array in
-     * order to maintain the sort order of the array.
+     * index at which `value` should be inserted into `array` in order to
+     * maintain its sort order.
      *
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to inspect.
+     * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
@@ -4613,7 +4616,7 @@
      */
     function sortedLastIndex(array, value, iteratee, thisArg) {
       iteratee = iteratee == null ? identity : getCallback(iteratee, thisArg, 1);
-      return baseSortedIndex(array, value, iteratee, true);
+      return binaryIndex(array, value, iteratee, true);
     }
 
     /**

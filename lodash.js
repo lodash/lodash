@@ -2266,9 +2266,9 @@
           (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
         return false;
       }
-      var valClass = toString.call(value),
+      var valClass = isArray(value) ? arrayClass : toString.call(value),
           valIsArg = valClass == argsClass,
-          othClass = toString.call(other),
+          othClass = isArray(other) ? arrayClass : toString.call(other),
           othIsArg = othClass == argsClass;
 
       if (valIsArg) {

@@ -1018,7 +1018,7 @@
      * Methods that operate on and return arrays, collections, and functions can
      * be chained together. Methods that return a boolean or single value will
      * automatically end the chain returning the unwrapped value. Explicit chaining
-     * may be enabled by using `_.chain`. The execution of chained methods is lazy,
+     * may be enabled using `_.chain`. The execution of chained methods is lazy,
      * that is, execution is deferred until `_#value` is implicitly or explicitly
      * called.
      *

@@ -968,7 +968,8 @@
 
     /** Used as references for the max length and index of an array. */
     var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-        MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+        MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1,
+        HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
     /** Used as the size, in bytes, of each Float64Array element. */
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
@@ -2753,7 +2754,7 @@
           high = array ? array.length : low;
 
       value = iteratee(value);
-      if (value !== value || typeof value == 'undefined' || high > (MAX_ARRAY_LENGTH / 2)) {
+      if (value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH) {
         return baseBinaryIndex(array, value, iteratee, retHighest);
       }
       while (low < high) {

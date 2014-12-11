@@ -11151,22 +11151,23 @@
       });
     });
 
-    test('`_.' + methodName + '` should support arrays larger than `Math.pow(2, 31) - 1`', 2, function() {
-      var array = [0],
-          length = MAX_ARRAY_LENGTH,
-          steps = 0;
+    test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', 4, function() {
+      _.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length, index) {
+        var array = [],
+            steps = 0;
 
-      array.length = length;
+        array.length = length;
 
-      // Avoid false fails in older Firefox.
-      if (array.length == length) {
-        var actual = func(array, undefined, function() { steps++; });
-        strictEqual(steps, 33);
-        strictEqual(actual, isSortedIndex ? 0 : MAX_ARRAY_INDEX);
-      }
-      else {
-        skipTest(2);
-      }
+        // Avoid false fails in older Firefox.
+        if (array.length == length) {
+          var actual = func(array, undefined, function() { steps++; });
+          strictEqual(steps, isSortedIndex ? 33 : (32 + index));
+          strictEqual(actual, isSortedIndex ? 0 : Math.min(length, MAX_ARRAY_INDEX));
+        }
+        else {
+          skipTest(2);
+        }
+      });
     });
   });
 

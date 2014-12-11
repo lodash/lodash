@@ -629,7 +629,7 @@
     });
 
     test('supports loading ' + basename + ' with the Require.js "shim" configuration option', 1, function() {
-      if (amd && /requirejs/.test(ui.loaderPath)) {
+      if (amd && _.includes(ui.loaderPath, 'requirejs')) {
         strictEqual((shimmedModule || {}).moduleName, 'shimmed');
       } else {
         skipTest();
@@ -3707,7 +3707,7 @@
 
       test('should return `' + expected[1] + '` for empty collections', 1, function() {
         var actual = [],
-            emptyValues = /Index/.test(methodName) ? _.reject(empties, _.isPlainObject) : empties,
+            emptyValues = _.endsWith(methodName, 'Index') ? _.reject(empties, _.isPlainObject) : empties,
             expecting = _.map(emptyValues, function() { return expected[1]; });
 
         _.each(emptyValues, function(value) {
@@ -4812,7 +4812,7 @@
           values = [];
 
       func(array, function(value) { values.push(value); return false; });
-      deepEqual(values, [/Right/.test(methodName) ? 3 : 1]);
+      deepEqual(values, [_.endsWith(methodName, 'Right') ? 3 : 1]);
     });
 
     test('`_.' + methodName + '` can exit early when iterating objects', 1, function() {
@@ -5066,7 +5066,7 @@
 
       test('should work with ' + key + ' and return an unwrapped value when chaining', 1, function() {
         if (!isNpm) {
-          strictEqual(_(collection).contains(3), true);
+          strictEqual(_(collection).includes(3), true);
         }
         else {
           skipTest();
@@ -7380,7 +7380,7 @@
       function(proto, key) {
         _.each([proto, _.create(proto)], function(object, index) {
           var actual = func(proto),
-              isErr = /Error/.test(key),
+              isErr = _.endsWith(key, 'Error'),
               message = 'enumerable properties ' + (index ? 'inherited from' : 'on') + ' `' + key + '.prototype`',
               props = isErr ? ['constructor', 'toString'] : ['constructor'];
 
@@ -13703,7 +13703,7 @@
 
   (function() {
     var allMethods = _.reject(_.functions(_).sort(), function(methodName) {
-      return /^_/.test(methodName);
+      return _.startsWith(methodName, '_');
     });
 
     var returnArrays = [
@@ -13914,7 +13914,7 @@
             message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
 
         if (func) {
-          if (/^reduce/.test(methodName) || methodName == 'transform') {
+          if (_.startsWith(methodName, 'reduce') || methodName == 'transform') {
             func(array, callback, 0, null);
           } else if (_.includes(['assign', 'merge'], methodName)) {
             func(array, array, callback, null);

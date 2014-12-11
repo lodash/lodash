@@ -10040,11 +10040,10 @@
     }
 
     /**
-     * Resolves the value of property `key` on `object`. If `key` is a function
-     * it is invoked with the `this` binding of `object` and its result returned,
-     * else the property value is returned. If `object` is `null` or `undefined`
-     * then `undefined` is returned. If a default value is provided it is returned
-     * if the property value resolves to `undefined`.
+     * Resolves the value of property `key` on `object`. If the value of `key` is
+     * a function it is invoked with the `this` binding of `object` and its result
+     * is returned, else the property value is returned. If the property value is
+     * `undefined` the `defaultValue` is used in its place.
      *
      * @static
      * @memberOf _
@@ -10056,12 +10055,7 @@
      * @returns {*} Returns the resolved value.
      * @example
      *
-     * var object = {
-     *   'user': 'fred',
-     *   'age': function() {
-     *     return 40;
-     *   }
-     * };
+     * var object = { 'user': 'fred', 'age': _.constant(40) };
      *
      * _.result(object, 'user');
      * // => 'fred'
@@ -10071,13 +10065,16 @@
      *
      * _.result(object, 'status', 'busy');
      * // => 'busy'
+     *
+     * _.result(object, 'status', _.constant('busy'));
+     * // => 'busy'
      */
     function result(object, key, defaultValue) {
       var value = object == null ? undefined : object[key];
       if (typeof value == 'undefined') {
-        return defaultValue;
+        value = defaultValue;
       }
-      return isFunction(value) ? object[key]() : value;
+      return isFunction(value) ? value.call(object) : value;
     }
 
     /**

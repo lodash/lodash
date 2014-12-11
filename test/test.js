@@ -10374,7 +10374,7 @@
     });
 
     test('should return the specified default value for undefined properties', 1, function() {
-      var values = empties.concat(true, new Date, _.constant(1), 1, /x/, 'a');
+      var values = empties.concat(true, new Date, 1, /x/, 'a');
 
       var expected = _.transform(values, function(result, value) {
         result.push(value, value);
@@ -10388,6 +10388,11 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should execute default function values', 1, function() {
+      var actual = _.result(object, 'd', object.c);
+      strictEqual(actual, 1);
     });
   }());
 

@@ -1714,9 +1714,9 @@
     }
 
     /**
-     * The base implementation of `binaryIndex` which supports large arrays and
-     * determining the insert index for `NaN` and `undefined`. Unlike `binaryIndex`,
-     * this function does not invoke `iteratee` for `value`.
+     * The base implementation of `binaryIndex`, without support for invoking
+     * `iteratee` for `value`, which supports large arrays and determining the
+     * insert index for `NaN` and `undefined`.
      *
      * @private
      * @param {Array} array The sorted array to inspect.
@@ -4365,9 +4365,8 @@
      *
      * **Notes:**
      *  - Unlike `_.without`, this method mutates `array`.
-     *  - `SameValueZero` comparisons are like strict equality comparisons,
-     *    e.g. `===`, except that `NaN` matches `NaN`. See the
-     *    [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     *  - `SameValueZero` comparisons are like strict equality comparisons, e.g. `===`,
+     *    except that `NaN` matches `NaN`. See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      *    for more details.
      *
      * @static

@@ -287,8 +287,8 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * A specialized version of `_.forEach` for arrays without support for
-   * callback shorthands or `this` binding.
+   * A specialized version of `_.forEach` for arrays without support for callback
+   * shorthands or `this` binding.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -1589,6 +1589,19 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Converts an `arguments` object to a plain `Object` object.
+     *
+     * @private
+     * @param {Object} args The `arguments` object to convert.
+     * @returns {Object} Returns the new converted object.
+     */
+    function argsToObject(args) {
+      var result = {};
+      push.apply(result, args);
+      return result;
+    }
+
+    /**
      * A specialized version of `_.max` for arrays without support for iteratees.
      *
      * @private
@@ -1663,7 +1676,7 @@
 
     /**
      * The base implementation of `_.assign` without support for argument juggling,
-     * multiple sources, and `this` binding.
+     * multiple sources, and `this` binding `customizer` functions.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1840,7 +1853,7 @@
 
     /**
      * The base implementation of `_.clone` without support for argument juggling
-     * and `this` binding.
+     * and `this` binding `customizer` functions.
      *
      * @private
      * @param {*} value The value to clone.
@@ -2237,8 +2250,8 @@
     }
 
     /**
-     * The base implementation of `_.isEqual`, without support for `thisArg`
-     * binding, which allows partial "_.where" style comparisons.
+     * The base implementation of `_.isEqual` without support for `this` binding
+     * `customizer` functions.
      *
      * @private
      * @param {*} value The value to compare to `other`.
@@ -2250,10 +2263,6 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, customizer, isWhere, stackA, stackB) {
-      var result = (customizer && !stackA) ? customizer(value, other) : undefined;
-      if (typeof result != 'undefined') {
-        return !!result;
-      }
       // Exit early for identical values.
       if (value === other) {
         // Treat `+0` vs. `-0` as not equal.
@@ -2263,115 +2272,63 @@
           othType = typeof other;
 
       // Exit early for unlike primitive values.
-      if (!(valType == 'number' && othType == 'number') && (value == null || other == null ||
-          (valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object'))) {
+      if (value === value && other === other &&
+          ((valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object') ||
+          value == null || other == null)) {
         return false;
       }
-      var valClass = isArray(value) ? arrayClass : toString.call(value),
-          valIsArg = valClass == argsClass,
-          othClass = isArray(other) ? arrayClass : toString.call(other),
-          othIsArg = othClass == argsClass;
+      return baseIsEqualDeep(value, other, customizer, isWhere, stackA, stackB);
+    }
 
-      if (valIsArg) {
-        valClass = objectClass;
+    /**
+     * A specialized version of `baseIsEqual`, for arrays and objects only, which
+     * performs a deep comparison between objects and tracks traversed objects
+     * enabling objects with circular references to be compared.
+     *
+     * @private
+     * @param {Array} object The object to compare to `other`.
+     * @param {Array} other The object to compare to `value`.
+     * @param {Function} [customizer] The function to customize comparing objects.
+     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
+     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+     */
+    function baseIsEqualDeep(object, other, customizer, isWhere, stackA, stackB) {
+      var objClass = isArray(object) ? arrayClass : toString.call(object),
+          objIsArg = objClass == argsClass,
+          objIsArr = !objIsArg && arrayLikeClasses[objClass],
+          othClass = isArray(other) ? arrayClass : toString.call(other),
+          othIsArg = othClass == argsClass,
+          othIsArr = !othIsArg && arrayLikeClasses[othClass];
+
+      if (!lodash.support.argsClass) {
+        objIsArg = !objIsArr && typeof object.length == 'number' && isArguments(object);
+        othIsArg = !othIsArr && typeof other.length == 'number' && isArguments(other);
+      }
+      if (objIsArg) {
+        object = argsToObject(object);
+        objClass = objectClass;
       }
       if (othIsArg) {
+        other = argsToObject(other);
         othClass = objectClass;
       }
-      var valIsArr = arrayLikeClasses[valClass],
-          valIsErr = valClass == errorClass,
-          valIsObj = valClass == objectClass && !isHostObject(value),
-          othIsObj = othClass == objectClass && !isHostObject(other);
+      var objIsObj = objClass == objectClass && !isHostObject(object),
+          othIsObj = othClass == objectClass && !isHostObject(other),
+          isSameClass = objClass == othClass;
 
-      var isSameClass = valClass == othClass;
-      if (isSameClass && valIsArr) {
-        var valLength = value.length,
-            othLength = other.length;
-
-        if (valLength != othLength && !(isWhere && othLength > valLength)) {
-          return false;
-        }
+      if (isSameClass && !(objIsArr || objIsObj)) {
+        return equalByClass(object, other, objClass);
       }
-      else {
-        // Unwrap `lodash` wrapped values.
-        var valWrapped = valIsObj && hasOwnProperty.call(value, '__wrapped__'),
-            othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+      var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+          othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
-        if (valWrapped || othWrapped) {
-          return baseIsEqual(valWrapped ? value.value() : value, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
-        }
-        if (!isSameClass) {
-          return false;
-        }
-        if (valIsErr || valIsObj) {
-          if (!lodash.support.argsClass) {
-            valIsArg = isArguments(value);
-            othIsArg = isArguments(other);
-          }
-          // In older versions of Opera, `arguments` objects have `Array` constructors.
-          var valCtor = valIsArg ? Object : value.constructor,
-              othCtor = othIsArg ? Object : other.constructor;
-
-          if (valIsErr) {
-            // Error objects of different types are not equal.
-            if (valCtor.prototype.name != othCtor.prototype.name) {
-              return false;
-            }
-          }
-          else {
-            var valHasCtor = !valIsArg && hasOwnProperty.call(value, 'constructor'),
-                othHasCtor = !othIsArg && hasOwnProperty.call(other, 'constructor');
-
-            if (valHasCtor != othHasCtor) {
-              return false;
-            }
-            if (!valHasCtor) {
-              // Non `Object` object instances with different constructors are not equal.
-              if (valCtor != othCtor && ('constructor' in value && 'constructor' in other) &&
-                  !(typeof valCtor == 'function' && valCtor instanceof valCtor &&
-                    typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-                return false;
-              }
-            }
-          }
-          var valProps = valIsErr ? ['message', 'name'] : keys(value),
-              othProps = valIsErr ? valProps : keys(other);
-
-          if (valIsArg) {
-            valProps.push('length');
-          }
-          if (othIsArg) {
-            othProps.push('length');
-          }
-          valLength = valProps.length;
-          othLength = othProps.length;
-          if (valLength != othLength && !isWhere) {
-            return false;
-          }
-        }
-        else {
-          switch (valClass) {
-            case boolClass:
-            case dateClass:
-              // Coerce dates and booleans to numbers, dates to milliseconds and booleans
-              // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
-              return +value == +other;
-
-            case numberClass:
-              // Treat `NaN` vs. `NaN` as equal.
-              return (value != +value)
-                ? other != +other
-                // But, treat `-0` vs. `+0` as not equal.
-                : (value == 0 ? ((1 / value) == (1 / other)) : value == +other);
-
-            case regexpClass:
-            case stringClass:
-              // Coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
-              // treat strings primitives and string objects as equal.
-              return value == String(other);
-          }
-          return false;
-        }
+      if (valWrapped || othWrapped) {
+        return baseIsEqual(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
+      }
+      if (!isSameClass) {
+        return false;
       }
       // Assume cyclic structures are equal.
       // The algorithm for detecting cyclic structures is adapted from ES 5.1
@@ -2379,63 +2336,28 @@
       stackA || (stackA = []);
       stackB || (stackB = []);
 
-      var index = stackA.length;
-      while (index--) {
-        if (stackA[index] == value) {
-          return stackB[index] == other;
+      var length = stackA.length;
+      while (length--) {
+        if (stackA[length] == object) {
+          return stackB[length] == other;
         }
       }
-      // Add `value` and `other` to the stack of traversed objects.
-      stackA.push(value);
+      // Add `object` and `other` to the stack of traversed objects.
+      stackA.push(object);
       stackB.push(other);
 
       // Recursively compare objects and arrays (susceptible to call stack limits).
-      result = true;
-      if (valIsArr) {
-        // Deep compare the contents, ignoring non-numeric properties.
-        while (result && ++index < valLength) {
-          var valValue = value[index];
-          if (isWhere) {
-            var othIndex = othLength;
-            while (othIndex--) {
-              result = baseIsEqual(valValue, other[othIndex], customizer, isWhere, stackA, stackB);
-              if (result) {
-                break;
-              }
-            }
-          } else {
-            var othValue = other[index];
-            result = customizer ? customizer(valValue, othValue, index) : undefined;
-            if (typeof result == 'undefined') {
-              result = baseIsEqual(valValue, othValue, customizer, isWhere, stackA, stackB);
-            }
-          }
-        }
-      }
-      else {
-        while (result && ++index < valLength) {
-          var key = valProps[index];
-          result = valIsErr || hasOwnProperty.call(other, key);
+      var result = (objIsArr ? equalArrays : equalObjects)(object, other, customizer, isWhere, stackA, stackB);
 
-          if (result) {
-            valValue = value[key];
-            othValue = other[key];
-            result = customizer ? customizer(valValue, othValue, key) : undefined;
-            if (typeof result == 'undefined') {
-              result = baseIsEqual(valValue, othValue, customizer, isWhere, stackA, stackB);
-            }
-          }
-        }
-      }
       stackA.pop();
       stackB.pop();
 
-      return !!result;
+      return result;
     }
 
     /**
      * The base implementation of `_.invoke` which requires additional arguments
-     * be provided as an array of arguments rather than individually.
+     * to be provided as an array of arguments rather than individually.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2477,7 +2399,7 @@
 
     /**
      * The base implementation of `_.merge` without support for argument juggling,
-     * multiple sources, and `this` binding.
+     * multiple sources, and `this` binding `customizer` functions.
      *
      * @private
      * @param {Object} object The destination object.
@@ -3217,6 +3139,151 @@
       }
       var setter = data ? baseSetData : setData;
       return setter(result, newData);
+    }
+
+    /**
+     * A specialized version of `baseIsEqualDeep`, for arrays-only, which allows
+     * partial "_.where" style comparisons.
+     *
+     * @private
+     * @param {Array} array The array to compare to `other`.
+     * @param {Array} other The array to compare to `value`.
+     * @param {Function} [customizer] The function to customize comparing arrays.
+     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
+     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
+     */
+    function equalArrays(array, other, customizer, isWhere, stackA, stackB) {
+      var index = -1,
+          arrLength = array.length,
+          othLength = other.length,
+          result = true;
+
+      if (arrLength != othLength && !(isWhere && othLength > arrLength)) {
+        return false;
+      }
+      // Deep compare the contents, ignoring non-numeric properties.
+      while (result && ++index < arrLength) {
+        var arrValue = array[index];
+        if (isWhere) {
+          var othIndex = othLength;
+          while (othIndex--) {
+            var othValue = other[othIndex];
+            result = (arrValue && arrValue === othValue) || baseIsEqual(arrValue, othValue, customizer, isWhere, stackA, stackB);
+            if (result) {
+              break;
+            }
+          }
+        } else {
+          var othValue = other[index];
+          result = customizer ? customizer(arrValue, othValue, index) : undefined;
+          if (typeof result == 'undefined') {
+            result = (arrValue && arrValue === othValue) || baseIsEqual(arrValue, othValue, customizer, isWhere, stackA, stackB);
+          }
+        }
+      }
+      return result;
+    }
+
+    /**
+     * A specialized version of `baseIsEqualDeep` for comparing objects of
+     * the same `[[Class]]`.
+     *
+     * **Note:** This function only supports comparing values with `[[Class]]`
+     * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+     *
+     * @private
+     * @param {Object} value The object to compare to `other`.
+     * @param {Object} other The object to compare to `object`.
+     * @param {string} className The `[[Class]]` of the objects to compare.
+     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+     */
+    function equalByClass(object, other, className) {
+      switch (className) {
+        case boolClass:
+        case dateClass:
+          // Coerce dates and booleans to numbers, dates to milliseconds and booleans
+          // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
+          return +object == +other;
+
+        case errorClass:
+          return object.name == other.name && object.message == other.message;
+
+        case numberClass:
+          // Treat `NaN` vs. `NaN` as equal.
+          return (object != +object)
+            ? other != +other
+            // But, treat `-0` vs. `+0` as not equal.
+            : (object == 0 ? ((1 / object) == (1 / other)) : object == +other);
+
+        case regexpClass:
+        case stringClass:
+          // Coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
+          // treat strings primitives and string objects as equal.
+          return object == String(other);
+      }
+      return false;
+    }
+
+    /**
+     * A specialized version of `baseIsEqualDeep`, for objects-only, which allows
+     * partial "_.where" style comparisons.
+     *
+     * @private
+     * @param {Object} object The object to compare to `other`.
+     * @param {Object} other The object to compare to `value`.
+     * @param {Function} [customizer] The function to customize comparing values.
+     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
+     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+     */
+    function equalObjects(object, other, customizer, isWhere, stackA, stackB) {
+      var objProps = keys(object),
+          objLength = objProps.length,
+          othProps = keys(other),
+          othLength = othProps.length;
+
+      if (objLength != othLength && !isWhere) {
+        return false;
+      }
+      var objHasCtor,
+          othHasCtor,
+          index = -1;
+
+      while (++index < objLength) {
+        var key = objProps[index],
+            result = hasOwnProperty.call(other, key);
+
+        if (result) {
+          var objValue = object[key],
+              othValue = other[key];
+
+          result = customizer ? customizer(objValue, othValue, key) : undefined;
+          if (typeof result == 'undefined') {
+            result = (objValue && objValue === othValue) || baseIsEqual(objValue, othValue, customizer, isWhere, stackA, stackB);
+          }
+        }
+        if (!result) {
+          return result;
+        }
+        objHasCtor || (objHasCtor = key == 'constructor');
+        othHasCtor || (othHasCtor = key == 'constructor');
+      }
+      if (objHasCtor != othHasCtor) {
+        return false;
+      }
+      // In older versions of Opera, `arguments` objects have `Array` constructors.
+      var objCtor = object.constructor,
+          othCtor = other.constructor;
+
+      // Non `Object` object instances with different constructors are not equal.
+      if (!objHasCtor && objCtor != othCtor && ('constructor' in object && 'constructor' in other) &&
+          !(typeof objCtor == 'function' && objCtor instanceof objCtor && typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+        return false;
+      }
+      return true;
     }
 
     /**
@@ -7585,9 +7652,11 @@
      */
     function isEqual(value, other, customizer, thisArg) {
       customizer = typeof customizer == 'function' && baseCallback(customizer, thisArg, 3);
-      return (!customizer && isStrictComparable(value) && isStrictComparable(other))
-        ? value === other
-        : baseIsEqual(value, other, customizer);
+      if (!customizer && isStrictComparable(value) && isStrictComparable(other)) {
+        return value === other;
+      }
+      var result = customizer ? customizer(value, other) : undefined;
+      return typeof result == 'undefined' ? baseIsEqual(value, other, customizer) : !!result;
     }
 
     /**
@@ -7608,7 +7677,7 @@
      * // => false
      */
     function isError(value) {
-      return (isObjectLike(value) && toString.call(value) == errorClass) || false;
+      return (isObjectLike(value) && typeof value.message == 'string' && toString.call(value) == errorClass) || false;
     }
 
     /**

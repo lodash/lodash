@@ -4260,6 +4260,10 @@
         skipTest(6);
       }
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.concatAll, _.flatten);
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -13777,7 +13781,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 202, function() {
+    test('should accept falsey arguments', 203, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

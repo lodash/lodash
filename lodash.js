@@ -4126,6 +4126,7 @@
      *
      * @static
      * @memberOf _
+     * @alias concatAll
      * @category Array
      * @param {Array} array The array to flatten.
      * @param {boolean} [isDeep=false] Specify a deep flatten.
@@ -10262,6 +10263,7 @@
     // Add aliases.
     lodash.backflow = flowRight;
     lodash.collect = map;
+    lodash.concatAll = flatten;
     lodash.compose = flowRight;
     lodash.each = forEach;
     lodash.eachRight = forEachRight;

@@ -134,7 +134,10 @@
     : (isJava ? root.load : noop);
 
   /** The unit testing framework. */
-  var QUnit = root.QUnit || (root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit);
+  var QUnit = root.QUnit || (root.QUnit = (
+    QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
+    QUnit = QUnit.QUnit || QUnit
+  ));
 
   /** Load and install QUnit Extras and ES6 Set/WeakMap shims. */
   (function() {

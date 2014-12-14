@@ -1596,7 +1596,7 @@
      * @returns {Object} Returns the new converted object.
      */
     function argsToObject(args) {
-      var result = {};
+      var result = { 'length': 0 };
       push.apply(result, args);
       return result;
     }
@@ -2272,10 +2272,10 @@
           othType = typeof other;
 
       // Exit early for unlike primitive values.
-      if (value === value && other === other &&
-          ((valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object') ||
-          value == null || other == null)) {
-        return false;
+      if ((valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object') ||
+          value == null || other == null) {
+        // Return `false` unless both values are `NaN`.
+        return value !== value && other !== other;
       }
       return baseIsEqualDeep(value, other, baseIsEqual, customizer, isWhere, stackA, stackB);
     }

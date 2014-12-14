@@ -2277,7 +2277,7 @@
           value == null || other == null)) {
         return false;
       }
-      return baseIsEqualDeep(value, other, customizer, isWhere, stackA, stackB);
+      return baseIsEqualDeep(value, other, baseIsEqual, customizer, isWhere, stackA, stackB);
     }
 
     /**
@@ -2288,13 +2288,14 @@
      * @private
      * @param {Array} object The object to compare to `other`.
      * @param {Array} other The object to compare to `value`.
+     * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing objects.
      * @param {boolean} [isWhere=false] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function baseIsEqualDeep(object, other, customizer, isWhere, stackA, stackB) {
+    function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
       var objClass = isArray(object) ? arrayClass : toString.call(object),
           objIsArg = objClass == argsClass,
           objIsArr = !objIsArg && arrayLikeClasses[objClass],
@@ -2325,7 +2326,7 @@
           othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
       if (valWrapped || othWrapped) {
-        return baseIsEqual(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
+        return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
       }
       if (!isSameClass) {
         return false;
@@ -2347,7 +2348,7 @@
       stackB.push(other);
 
       // Recursively compare objects and arrays (susceptible to call stack limits).
-      var result = (objIsArr ? equalArrays : equalObjects)(object, other, customizer, isWhere, stackA, stackB);
+      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isWhere, stackA, stackB);
 
       stackA.pop();
       stackB.pop();
@@ -3148,13 +3149,14 @@
      * @private
      * @param {Array} array The array to compare to `other`.
      * @param {Array} other The array to compare to `value`.
+     * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing arrays.
      * @param {boolean} [isWhere=false] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
-    function equalArrays(array, other, customizer, isWhere, stackA, stackB) {
+    function equalArrays(array, other, equalFunc, customizer, isWhere, stackA, stackB) {
       var index = -1,
           arrLength = array.length,
           othLength = other.length,
@@ -3170,7 +3172,7 @@
           var othIndex = othLength;
           while (othIndex--) {
             var othValue = other[othIndex];
-            result = (arrValue && arrValue === othValue) || baseIsEqual(arrValue, othValue, customizer, isWhere, stackA, stackB);
+            result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
             if (result) {
               break;
             }
@@ -3179,7 +3181,7 @@
           var othValue = other[index];
           result = customizer ? customizer(arrValue, othValue, index) : undefined;
           if (typeof result == 'undefined') {
-            result = (arrValue && arrValue === othValue) || baseIsEqual(arrValue, othValue, customizer, isWhere, stackA, stackB);
+            result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
           }
         }
       }
@@ -3233,13 +3235,14 @@
      * @private
      * @param {Object} object The object to compare to `other`.
      * @param {Object} other The object to compare to `value`.
+     * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {boolean} [isWhere=false] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalObjects(object, other, customizer, isWhere, stackA, stackB) {
+    function equalObjects(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
       var objProps = keys(object),
           objLength = objProps.length,
           othProps = keys(other),
@@ -3262,7 +3265,7 @@
 
           result = customizer ? customizer(objValue, othValue, key) : undefined;
           if (typeof result == 'undefined') {
-            result = (objValue && objValue === othValue) || baseIsEqual(objValue, othValue, customizer, isWhere, stackA, stackB);
+            result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isWhere, stackA, stackB);
           }
         }
         if (!result) {

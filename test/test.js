@@ -131,18 +131,10 @@
   /** Use a single "load" function. */
   var load = (typeof require == 'function' && !amd)
     ? require
-    : (isJava && root.load) || noop;
+    : (isJava ? root.load : noop);
 
   /** The unit testing framework. */
-  var QUnit = (function() {
-    return  root.QUnit || (
-      root.addEventListener || (root.addEventListener = noop),
-      root.setTimeout || (root.setTimeout = noop),
-      root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
-      addEventListener === noop && delete root.addEventListener,
-      root.QUnit
-    );
-  }());
+  var QUnit = root.QUnit || (root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit);
 
   /** Load and install QUnit Extras and ES6 Set/WeakMap shims. */
   (function() {
@@ -13953,6 +13945,6 @@
 
   if (!document) {
     QUnit.config.noglobals = true;
-    QUnit.start();
+    QUnit.load();
   }
 }.call(this));

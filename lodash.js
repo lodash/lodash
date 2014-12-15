@@ -3251,8 +3251,7 @@
       if (objLength != othLength && !isWhere) {
         return false;
       }
-      var objHasCtor,
-          othHasCtor,
+      var hasCtor,
           index = -1;
 
       while (++index < objLength) {
@@ -3271,20 +3270,17 @@
         if (!result) {
           return result;
         }
-        objHasCtor || (objHasCtor = key == 'constructor');
-        othHasCtor || (othHasCtor = key == 'constructor');
+        hasCtor || (hasCtor = key == 'constructor');
       }
-      if (objHasCtor != othHasCtor) {
-        return false;
-      }
-      // In older versions of Opera, `arguments` objects have `Array` constructors.
-      var objCtor = object.constructor,
-          othCtor = other.constructor;
+      if (!hasCtor) {
+        var objCtor = object.constructor,
+            othCtor = other.constructor;
 
-      // Non `Object` object instances with different constructors are not equal.
-      if (!objHasCtor && objCtor != othCtor && ('constructor' in object && 'constructor' in other) &&
-          !(typeof objCtor == 'function' && objCtor instanceof objCtor && typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-        return false;
+        // Non `Object` object instances with different constructors are not equal.
+        if (objCtor != othCtor && ('constructor' in object && 'constructor' in other) &&
+            !(typeof objCtor == 'function' && objCtor instanceof objCtor && typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+          return false;
+        }
       }
       return true;
     }

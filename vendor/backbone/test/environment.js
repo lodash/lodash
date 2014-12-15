@@ -9,7 +9,7 @@
   var replaceState = history.replaceState;
 
   QUnit.testStart(function() {
-    var env = this.config.current.testEnvironment;
+    var env = QUnit.config.current.testEnvironment;
 
     // We never want to actually call these during tests.
     history.pushState = history.replaceState = function(){};

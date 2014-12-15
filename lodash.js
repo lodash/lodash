@@ -8571,12 +8571,12 @@
     var merge = createAssigner(baseMerge);
 
     /**
-     * Creates a shallow clone of `object` excluding the specified properties.
-     * Property names may be specified as individual arguments or as arrays of
-     * property names. If `predicate` is provided it is invoked for each property
-     * of `object` omitting the properties `predicate` returns truthy for. The
-     * predicate is bound to `thisArg` and invoked with three arguments;
-     * (value, key, object).
+     * The opposite of `_.pick`; this method creates an object composed of the
+     * own and inherited enumerable properties of `object` that are not omitted.
+     * Property names may be specified as individual arguments or as arrays of property
+     * names. If `predicate` is provided it is invoked for each property of `object`
+     * omitting the properties `predicate` returns truthy for. The predicate is
+     * bound to `thisArg` and invoked with three arguments; (value, key, object).
      *
      * @static
      * @memberOf _
@@ -8589,12 +8589,12 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * _.omit({ 'user': 'fred', 'age': 40 }, 'age');
+     * var object = { 'user': 'fred', 'age': 40 };
+     *
+     * _.omit(object, 'age');
      * // => { 'user': 'fred' }
      *
-     * _.omit({ 'user': 'fred', 'age': 40 }, function(value) {
-     *   return typeof value == 'number';
-     * });
+     * _.omit(object, _.isNumber);
      * // => { 'user': 'fred' }
      */
     function omit(object, predicate, thisArg) {
@@ -8639,12 +8639,11 @@
     }
 
     /**
-     * Creates a shallow clone of `object` composed of the specified properties.
-     * Property names may be specified as individual arguments or as arrays of
-     * property names. If `predicate` is provided it is invoked for each property
-     * of `object` picking the properties `predicate` returns truthy for. The
-     * predicate is bound to `thisArg` and invoked with three arguments;
-     * (value, key, object).
+     * Creates an object composed of the picked `object` properties. Property
+     * names may be specified as individual arguments or as arrays of property
+     * names. If `predicate` is provided it is invoked for each property of `object`
+     * picking the properties `predicate` returns truthy for. The predicate is
+     * bound to `thisArg` and invoked with three arguments; (value, key, object).
      *
      * @static
      * @memberOf _
@@ -8657,12 +8656,12 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * _.pick({ 'user': 'fred', '_userid': 'fred1' }, 'user');
+     * var object = { 'user': 'fred', 'age': 40 };
+     *
+     * _.pick(object, 'user');
      * // => { 'user': 'fred' }
      *
-     * _.pick({ 'user': 'fred', '_userid': 'fred1' }, function(value, key) {
-     *   return key.charAt(0) != '_';
-     * });
+     * _.pick(object, _.isString);
      * // => { 'user': 'fred' }
      */
     function pick(object, predicate, thisArg) {

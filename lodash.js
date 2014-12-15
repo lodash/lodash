@@ -22,8 +22,8 @@
       CURRY_RIGHT_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64,
-      ARY_FLAG = 128,
-      REARG_FLAG = 256;
+      REARG_FLAG = 128,
+      ARY_FLAG = 256;
 
   /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
@@ -2947,11 +2947,11 @@
      * @param {Array} [partialsRight] The arguments to append to those provided to the new function.
      * @param {Array} [holdersRight] The `partialsRight` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
-     * @param {number} [arity] The arity of `func`.
      * @param {number} [ary] The arity cap of `func`.
+     * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary) {
+    function createHybridWrapper(func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity) {
       var isAry = bitmask & ARY_FLAG,
           isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
@@ -2997,7 +2997,7 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, newArity, ary);
+            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity);
             result.placeholder = placeholder;
             return result;
           }
@@ -3091,17 +3091,17 @@
      *    16 - `_.curryRight`
      *    32 - `_.partial`
      *    64 - `_.partialRight`
-     *   128 - `_.ary`
-     *   256 - `_.rearg`
+     *   128 - `_.rearg`
+     *   256 - `_.ary`
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to be partially applied.
      * @param {Array} [holders] The `partials` placeholder indexes.
      * @param {Array} [argPos] The argument positions of the new function.
-     * @param {number} [arity] The arity of `func`.
      * @param {number} [ary] The arity cap of `func`.
+     * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, arity, ary) {
+    function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
       var isBindKey = bitmask & BIND_KEY_FLAG;
       if (!isBindKey && !isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
@@ -3121,14 +3121,14 @@
         partials = holders = null;
       }
       var data = !isBindKey && getData(func),
-          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, arity, ary];
+          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 
       if (data && data !== true) {
         mergeData(newData, data);
       }
-      newData[8] = newData[8] == null
+      newData[9] = newData[9] == null
         ? (isBindKey ? 0 : newData[0].length)
-        : (nativeMax(newData[8] - length, 0) || 0);
+        : (nativeMax(newData[9] - length, 0) || 0);
 
       bitmask = newData[1];
       if (bitmask == BIND_FLAG) {
@@ -3535,11 +3535,11 @@
           argPos = (isRearg ? data : source)[7],
           ary = (isAry ? data : source)[9];
 
-      var isCommon = !(bitmask >= ARY_FLAG && srcBitmask > bindFlags) &&
-        !(bitmask > bindFlags && srcBitmask >= ARY_FLAG);
+      var isCommon = !(bitmask >= REARG_FLAG && srcBitmask > bindFlags) &&
+        !(bitmask > bindFlags && srcBitmask >= REARG_FLAG);
 
       var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
-        (bitmask < ARY_FLAG || ((isRearg || isAry) && argPos[0].length <= ary));
+        (bitmask < REARG_FLAG || ((isRearg || isAry) && argPos[0].length <= ary));
 
       // Exit early if metadata can't be merged.
       if (!(isCommon || isCombo)) {
@@ -3565,22 +3565,18 @@
         data[5] = partials ? composeArgsRight(partials, value, source[6]) : baseSlice(value);
         data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : baseSlice(source[6]);
       }
-      // Append argument positions.
+      // Use source `argPos` if available.
       value = source[7];
       if (value) {
-        argPos = data[7];
-        value = data[7] = baseSlice(value);
-        if (argPos) {
-          push.apply(value, argPos);
-        }
-      }
-      // Use source `arity` if one is not provided.
-      if (data[8] == null) {
-        data[8] = source[8];
+        data[7] = baseSlice(value);
       }
       // Use source `ary` if it's smaller.
       if (srcBitmask & ARY_FLAG) {
-        data[9] = data[9] == null ? source[9] : nativeMin(data[9], source[9]);
+        data[8] = data[8] == null ? source[8] : nativeMin(data[8], source[8]);
+      }
+      // Use source `arity` if one is not provided.
+      if (data[9] == null) {
+        data[9] = source[9];
       }
       // Use source `func` and merge bitmasks.
       data[0] = source[0];
@@ -6462,7 +6458,7 @@
         n = null;
       }
       n = n == null ? func.length : (+n || 0);
-      return createWrapper(func, ARY_FLAG, null, null, null, null, null, n);
+      return createWrapper(func, ARY_FLAG, null, null, null, null, n);
     }
 
     /**
@@ -6681,7 +6677,7 @@
       if (guard && isIterateeCall(func, arity, guard)) {
         arity = null;
       }
-      var result = createWrapper(func, CURRY_FLAG, null, null, null, null, arity);
+      var result = createWrapper(func, CURRY_FLAG, null, null, null, null, null, arity);
       result.placeholder = curry.placeholder;
       return result;
     }
@@ -6727,7 +6723,7 @@
       if (guard && isIterateeCall(func, arity, guard)) {
         arity = null;
       }
-      var result = createWrapper(func, CURRY_RIGHT_FLAG, null, null, null, null, guard ? null : arity);
+      var result = createWrapper(func, CURRY_RIGHT_FLAG, null, null, null, null, null, arity);
       result.placeholder = curryRight.placeholder;
       return result;
     }

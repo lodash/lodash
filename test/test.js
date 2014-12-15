@@ -11147,25 +11147,29 @@
     });
 
     test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', 12, function() {
-      _.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length, index) {
+      _.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length) {
         var array = [],
             values = [MAX_ARRAY_LENGTH, NaN, undefined];
 
         array.length = length;
 
-        // Avoid false fails in older Firefox.
-        if (array.length == length) {
-          _.each(values, function(value) {
-            var steps = 0,
-                actual = func(array, value, function() { steps++; });
+        _.each(values, function(value) {
+          var steps = 0,
+              actual = func(array, value, function(value) { steps++; return value; });
 
-            strictEqual(steps, isSortedIndex ? 33 : (32 + index));
-            strictEqual(actual, isSortedIndex ? 0 : Math.min(length, MAX_ARRAY_INDEX));
-          });
-        }
-        else {
-          skipTest(6);
-        }
+          var expected = (isSortedIndex ? !_.isNaN(value) : _.isFinite(value))
+            ? 0
+            : Math.min(length, MAX_ARRAY_INDEX)
+
+          // Avoid false fails in older Firefox.
+          if (array.length == length) {
+            ok(steps == 32 || steps == 33);
+            strictEqual(actual, expected);
+          }
+          else {
+            skipTest(2);
+          }
+        });
       });
     });
   });

@@ -11146,21 +11146,25 @@
       });
     });
 
-    test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', 4, function() {
+    test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', 12, function() {
       _.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length, index) {
         var array = [],
-            steps = 0;
+            values = [MAX_ARRAY_LENGTH, NaN, undefined];
 
         array.length = length;
 
         // Avoid false fails in older Firefox.
         if (array.length == length) {
-          var actual = func(array, undefined, function() { steps++; });
-          strictEqual(steps, isSortedIndex ? 33 : (32 + index));
-          strictEqual(actual, isSortedIndex ? 0 : Math.min(length, MAX_ARRAY_INDEX));
+          _.each(values, function(value) {
+            var steps = 0,
+                actual = func(array, value, function() { steps++; });
+
+            strictEqual(steps, isSortedIndex ? 33 : (32 + index));
+            strictEqual(actual, isSortedIndex ? 0 : Math.min(length, MAX_ARRAY_INDEX));
+          });
         }
         else {
-          skipTest(2);
+          skipTest(6);
         }
       });
     });

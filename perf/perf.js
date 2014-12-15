@@ -427,22 +427,32 @@
           "string": new String("a")\
         };\
         \
+        var objectOfObjects2 = {\
+          "boolean": new Boolean(true),\
+          "number": new Number(1),\
+          "string": new String("A")\
+        };\
+        \
         var object2 = {},\
+            object3 = {},\
             objects2 = Array(limit),\
+            objects3 = Array(limit),\
             numbers2 = Array(limit),\
+            numbers3 = Array(limit),\
             nestedNumbers2 = [1, [2], [3, [[4]]]],\
-            nestedNumbers3 = [1, [2], [5, [[6]]]],\
-            simpleObject = { "a": 1 },\
-            simpleObject2 = { "a": 2 },\
-            simpleObjects = [simpleObject],\
-            simpleObjects2 = [simpleObject2],\
-            twoNumbers2 = [18, 27];\
+            nestedNumbers3 = [1, [2], [3, [[6]]]];\
         \
         for (index = 0; index < limit; index++) {\
           object2["key" + index] = index;\
+          object3["key" + index] = index;\
           objects2[index] = { "num": index };\
+          objects3[index] = { "num": index };\
           numbers2[index] = index;\
+          numbers3[index] = index;\
         }\
+        object3["key" + (limit - 1)] = -1;\
+        objects3[limit - 1].num = -1;\
+        numbers3[limit - 1] = -1;\
       }\
       if (typeof matches != "undefined") {\
         var source = { "num": 9 };\
@@ -1236,11 +1246,15 @@
   suites.push(
     Benchmark.Suite('`_.isEqual` comparing primitives and their object counterparts (edge case)')
       .add(buildName, {
-        'fn': 'lodash.isEqual(objectOfPrimitives, objectOfObjects)',
+        'fn': '\
+          lodash.isEqual(objectOfPrimitives, objectOfObjects);\
+          lodash.isEqual(objectOfPrimitives, objectOfObjects2)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
-        'fn': '_.isEqual(objectOfPrimitives, objectOfObjects)',
+        'fn': '\
+          _.isEqual(objectOfPrimitives, objectOfObjects);\
+          _.isEqual(objectOfPrimitives, objectOfObjects2)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1250,13 +1264,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(numbers, numbers2);\
-          lodash.isEqual(twoNumbers, twoNumbers2)',
+          lodash.isEqual(numbers2, numbers3)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(numbers, numbers2);\
-          _.isEqual(twoNumbers, twoNumbers2)',
+          _.isEqual(numbers2, numbers3)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1282,13 +1296,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(objects, objects2);\
-          lodash.isEqual(simpleObjects, simpleObjects2)',
+          lodash.isEqual(objects2, objects3)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(objects, objects2);\
-          _.isEqual(simpleObjects, simpleObjects2)',
+          _.isEqual(objects2, objects3)',
         'teardown': 'function isEqual(){}'
       })
   );
@@ -1298,13 +1312,13 @@
       .add(buildName, {
         'fn': '\
           lodash.isEqual(object, object2);\
-          lodash.isEqual(simpleObject, simpleObject2)',
+          lodash.isEqual(object2, object3)',
         'teardown': 'function isEqual(){}'
       })
       .add(otherName, {
         'fn': '\
           _.isEqual(object, object2);\
-          _.isEqual(simpleObject, simpleObject2)',
+          _.isEqual(object2, object3)',
         'teardown': 'function isEqual(){}'
       })
   );

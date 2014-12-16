@@ -11875,7 +11875,7 @@
             dateCount = 0;
 
         var getTime = function() {
-          return ++dateCount < 3 ? +new Date : Infinity;
+          return ++dateCount == 5 ? Infinity : +new Date;
         };
 
         var lodash = _.runInContext(_.assign({}, root, {
@@ -12135,7 +12135,7 @@
             dateCount = 0;
 
         var getTime = function() {
-          return ++dateCount < 2 ? +new Date : +new Date(2012, 3, 23, 23, 27, 18);
+          return ++dateCount === 4 ? +new Date(2012, 3, 23, 23, 27, 18) : +new Date;
         };
 
         var lodash = _.runInContext(_.assign({}, root, {

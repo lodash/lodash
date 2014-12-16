@@ -3007,7 +3007,7 @@
           func = thisBinding[key];
         }
         if (argPos) {
-          args = arrayReduceRight(argPos, reorder, args);
+          args = reorder(args, argPos);
         }
         if (isAry && ary < args.length) {
           args.length = ary;
@@ -3533,13 +3533,13 @@
       var isAry = bitmask & ARY_FLAG && !(srcBitmask & ARY_FLAG),
           isRearg = bitmask & REARG_FLAG && !(srcBitmask & REARG_FLAG),
           argPos = (isRearg ? data : source)[7],
-          ary = (isAry ? data : source)[9];
+          ary = (isAry ? data : source)[8];
 
       var isCommon = !(bitmask >= REARG_FLAG && srcBitmask > bindFlags) &&
         !(bitmask > bindFlags && srcBitmask >= REARG_FLAG);
 
       var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
-        (bitmask < REARG_FLAG || ((isRearg || isAry) && argPos[0].length <= ary));
+        (bitmask < REARG_FLAG || ((isRearg || isAry) && argPos.length <= ary));
 
       // Exit early if metadata can't be merged.
       if (!(isCommon || isCombo)) {
@@ -6919,13 +6919,7 @@
      * _.defer(function(text) { console.log(text); }, 'deferred');
      * // logs 'deferred' after one or more milliseconds
      */
-    function defer(func) {
-      if (!isFunction(func)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      var args = arguments;
-      return setTimeout(function() { func.apply(undefined, slice(args, 1)); }, 1);
-    }
+    var defer = partial(delay, partial.placeholder, 1);
 
     /**
      * Invokes `func` after `wait` milliseconds. Any additional arguments are
@@ -7148,7 +7142,7 @@
      * initialize();
      * // `initialize` invokes `createApplication` once
      */
-    var once = createWrapper(before, PARTIAL_FLAG, null, [2]);
+    var once = partial(before, 2);
 
     /**
      * Creates a function that invokes `func` with `partial` arguments prepended
@@ -7255,9 +7249,7 @@
      */
     function rearg(func) {
       var indexes = baseFlatten(arguments, false, false, 1);
-      return indexes.length
-        ? createWrapper(func, REARG_FLAG, null, null, null, [indexes])
-        : createWrapper(func);
+      return createWrapper(func, REARG_FLAG, null, null, null, indexes);
     }
 
     /**

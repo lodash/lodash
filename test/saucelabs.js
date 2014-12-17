@@ -104,11 +104,11 @@ var browserNameMap = {
 var platforms = [
   ['Linux', 'android', '4.3'],
   ['Linux', 'android', '4.0'],
+  ['Windows 8.1', 'firefox', '34'],
   ['Windows 8.1', 'firefox', '33'],
-  ['Windows 8.1', 'firefox', '32'],
   ['Windows 8.1', 'firefox', '20'],
+  ['Windows 8.1', 'chrome', '39'],
   ['Windows 8.1', 'chrome', '38'],
-  ['Windows 8.1', 'chrome', '37'],
   ['Windows 8.1', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],

@@ -6416,7 +6416,7 @@
 
     /**
      * The opposite of `_.before`; this method creates a function that invokes
-     * `func` only after it is called `n` times.
+     * `func` once it is called `n` or more times.
      *
      * @static
      * @memberOf _

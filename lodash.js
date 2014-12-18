@@ -432,7 +432,6 @@
    */
   function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
     var length = array.length;
-
     if (initFromArray && length) {
       accumulator = array[--length];
     }
@@ -523,7 +522,7 @@
    */
   function baseSlice(array) {
     var index = -1,
-        length = array ? array.length : 0,
+        length = array.length,
         result = Array(length);
 
     while (++index < length) {
@@ -1709,7 +1708,7 @@
      */
     function baseAt(collection, props) {
       var index = -1,
-          length = collection ? collection.length : 0,
+          length = collection.length,
           isArr = isLength(length),
           propsLength = props.length,
           result = Array(propsLength);
@@ -1744,7 +1743,7 @@
       value = iteratee(value);
 
       var low = 0,
-          high = array ? array.length : low,
+          high = array.length,
           valIsNaN = value !== value,
           valIsUndef = typeof value == 'undefined';
 
@@ -2679,7 +2678,7 @@
       var low = 0,
           high = array ? array.length : low;
 
-      if (iteratee || value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH) {
+      if (high && (iteratee || value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH)) {
         return baseBinaryIndex(array, value, iteratee, retHighest);
       }
       while (low < high) {
@@ -5278,7 +5277,8 @@
      * // => ['fred', 'pebbles']
      */
     function at(collection) {
-      if (!collection || isLength(collection.length)) {
+      var length = collection ? collection.length : 0;
+      if (isLength(length)) {
         collection = toIterable(collection);
       }
       return baseAt(collection, baseFlatten(arguments, false, false, 1));
@@ -5318,7 +5318,6 @@
      */
     function includes(collection, target, fromIndex) {
       var length = collection ? collection.length : 0;
-
       if (!isLength(length)) {
         collection = values(collection);
         length = collection.length;
@@ -6358,12 +6357,15 @@
      */
     function toArray(collection) {
       var length = collection ? collection.length : 0;
-      if (isLength(length)) {
-        return (lodash.support.unindexedChars && isString(collection))
-          ? collection.split('')
-          : baseSlice(collection);
+      if (!isLength(length)) {
+        return values(collection);
       }
-      return values(collection);
+      if (!length) {
+        return [];
+      }
+      return (lodash.support.unindexedChars && isString(collection))
+        ? collection.split('')
+        : baseSlice(collection);
     }
 
     /**

@@ -11043,66 +11043,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.sortedIndex');
-
-  (function() {
-    test('should return the correct insert index', 1, function() {
-      var array = [30, 50],
-          values = [30, 40, 50],
-          expected = [0, 1, 1];
-
-      var actual = _.map(values, function(value) {
-        return _.sortedIndex(array, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should work with an array of strings', 1, function() {
-      var array = ['a', 'c'],
-          values = ['a', 'b', 'c'],
-          expected = [0, 1, 1];
-
-      var actual = _.map(values, function(value) {
-        return _.sortedIndex(array, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.sortedLastIndex');
-
-  (function() {
-    test('should return the correct insert index', 1, function() {
-      var array = [30, 50],
-          values = [30, 40, 50],
-          expected = [1, 1, 2];
-
-      var actual = _.map(values, function(value) {
-        return _.sortedLastIndex(array, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should work with an array of strings', 1, function() {
-      var array = ['a', 'c'],
-          values = ['a', 'b', 'c'],
-          expected = [1, 1, 2];
-
-      var actual = _.map(values, function(value) {
-        return _.sortedLastIndex(array, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('sortedIndex methods');
 
   _.each(['sortedIndex', 'sortedLastIndex'], function(methodName, index) {
@@ -11110,6 +11050,40 @@
         func = _[methodName],
         isSortedIndex = !index,
         objects = [{ 'x': 30 }, { 'x': 50 }];
+
+    test('`_.' + methodName + '` should return the correct insert index', 1, function() {
+      var array = [30, 50],
+          values = [30, 40, 50],
+          expected = isSortedIndex ? [0, 1, 1] : [1, 1, 2];
+
+      var actual = _.map(values, function(value) {
+        return func(array, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should work with an array of strings', 1, function() {
+      var array = ['a', 'c'],
+          values = ['a', 'b', 'c'],
+          expected = isSortedIndex ? [0, 1, 1] : [1, 1, 2];
+
+      var actual = _.map(values, function(value) {
+        return func(array, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should accept a falsey `array` argument and a `value`', 1, function() {
+      var expected = _.map(falsey, _.constant([0, 0, 0]));
+
+      var actual = _.map(falsey, function(array) {
+        return [func(array, 1), func(array, undefined), func(array, NaN)];
+      });
+
+      deepEqual(actual, expected);
+    });
 
     test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
       var args;

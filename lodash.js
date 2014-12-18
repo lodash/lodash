@@ -2666,7 +2666,7 @@
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {boolean} [retHighest=false] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
@@ -2676,6 +2676,7 @@
       var low = 0,
           high = array ? array.length : low;
 
+      iteratee = iteratee == null ? identity : iteratee;
       value = iteratee(value);
       if (value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH) {
         return baseBinaryIndex(array, value, iteratee, retHighest);
@@ -4268,7 +4269,7 @@
       if (typeof fromIndex == 'number') {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       } else if (fromIndex) {
-        var index = sortedIndex(array, value),
+        var index = binaryIndex(array, value),
             other = array[index];
 
         return (value === value ? value === other : other !== other) ? index : -1;
@@ -4406,7 +4407,7 @@
       if (typeof fromIndex == 'number') {
         index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
       } else if (fromIndex) {
-        index = sortedLastIndex(array, value) - 1;
+        index = binaryIndex(array, value, null, true) - 1;
         var other = array[index];
         return (value === value ? value === other : other !== other) ? index : -1;
       }
@@ -4651,7 +4652,7 @@
      * // => 1
      */
     function sortedIndex(array, value, iteratee, thisArg) {
-      iteratee = iteratee == null ? identity : getCallback(iteratee, thisArg, 1);
+      iteratee = iteratee == null ? iteratee : getCallback(iteratee, thisArg, 1);
       return binaryIndex(array, value, iteratee);
     }
 
@@ -4677,7 +4678,7 @@
      * // => 4
      */
     function sortedLastIndex(array, value, iteratee, thisArg) {
-      iteratee = iteratee == null ? identity : getCallback(iteratee, thisArg, 1);
+      iteratee = iteratee == null ? iteratee : getCallback(iteratee, thisArg, 1);
       return binaryIndex(array, value, iteratee, true);
     }
 

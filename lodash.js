@@ -1727,20 +1727,22 @@
     }
 
     /**
-     * The base implementation of `binaryIndex`, without support for invoking
-     * `iteratee` for `value`, which supports large arrays and determining the
-     * insert index for `NaN` and `undefined`.
+     * The base implementation of `binaryIndex` which supports large arrays and
+     * determining the insert index for `NaN` and `undefined`.
      *
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The function invoked per iteration.
+     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {boolean} [retHighest=false] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      */
     function baseBinaryIndex(array, value, iteratee, retHighest) {
+      iteratee = iteratee == null ? identity : iteratee;
+      value = iteratee(value);
+
       var low = 0,
           high = array ? array.length : low,
           valIsNaN = value !== value,
@@ -2659,14 +2661,15 @@
 
     /**
      * Performs a binary search of `array` to determine the index at which `value`
-     * should be inserted into `array` in order to maintain its sort order. The
-     * iteratee function is invoked for `value` and each element of `array` to
-     * compute their sort ranking. The iteratee is invoked with one argument; (value).
+     * should be inserted into `array` in order to maintain its sort order. If
+     * `iteratee` is provided it is invoked for `value` and each element of
+     * `array` to compute their sort ranking. The iteratee is invoked with one
+     * argument; (value).
      *
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function} [iteratee] The function invoked per iteration.
      * @param {boolean} [retHighest=false] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
@@ -2676,14 +2679,12 @@
       var low = 0,
           high = array ? array.length : low;
 
-      iteratee = iteratee == null ? identity : iteratee;
-      value = iteratee(value);
-      if (value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH) {
+      if (iteratee || value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH) {
         return baseBinaryIndex(array, value, iteratee, retHighest);
       }
       while (low < high) {
         var mid = (low + high) >>> 1,
-            computed = iteratee(array[mid]);
+            computed = array[mid];
 
         if (retHighest ? (computed <= value) : (computed < value)) {
           low = mid + 1;

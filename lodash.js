@@ -4926,9 +4926,10 @@
         iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
         isSorted = false;
       }
-      if (iteratee != null) {
-        iteratee = getCallback(iteratee, thisArg, 3);
-      }
+      iteratee = iteratee == null
+        ? iteratee
+        : getCallback(iteratee, thisArg, 3);
+
       return (isSorted && getIndexOf() == baseIndexOf)
         ? sortedUniq(array, iteratee)
         : baseUniq(array, iteratee);
@@ -9196,8 +9197,8 @@
         // Firefox < 21 and Opera < 15 follow ES3 for `parseInt` and
         // Chrome fails to trim leading <BOM> whitespace characters.
         // See https://code.google.com/p/v8/issues/detail?id=3109.
-        string = trim(string);
         radix = (guard && isIterateeCall(string, radix, guard)) ? 0 : +radix;
+        string = trim(string);
         return nativeParseInt(string, radix || (reHexPrefix.test(string) ? 16 : 10));
       };
     }
@@ -9517,11 +9518,12 @@
      * // => 'fred'
      */
     function trim(string, chars, guard) {
+      var value = string;
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (guard ? isIterateeCall(string, chars, guard) : chars == null) {
+      if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = String(chars);
@@ -9547,11 +9549,12 @@
      * // => 'fred-_-'
      */
     function trimLeft(string, chars, guard) {
+      var value = string;
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (guard ? isIterateeCall(string, chars, guard) : chars == null) {
+      if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string))
       }
       chars = String(chars);
@@ -9577,11 +9580,12 @@
      * // => '-_-fred'
      */
     function trimRight(string, chars, guard) {
+      var value = string;
       string = string == null ? '' : String(string);
       if (!string) {
         return string;
       }
-      if (guard ? isIterateeCall(string, chars, guard) : chars == null) {
+      if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1)
       }
       chars = String(chars);
@@ -9715,10 +9719,10 @@
      * // => ['fred', 'barney', '&', 'pebbles']
      */
     function words(string, pattern, guard) {
-      string = string != null && String(string);
       if (guard && isIterateeCall(string, pattern, guard)) {
         pattern = null;
       }
+      string = string != null && String(string);
       return (string && string.match(pattern || reWords)) || [];
     }
 

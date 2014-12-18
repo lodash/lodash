@@ -8998,7 +8998,9 @@
     });
 
     test('should work as an iteratee for `_.map`', 2, function() {
-      var actual = _.map(['6', '08', '10'], _.parseInt);
+      var strings = _.map(['6', '08', '10'], Object),
+          actual = _.map(strings, _.parseInt);
+
       deepEqual(actual, [6, 8, 10]);
 
       actual = _.map('123', _.parseInt);
@@ -12540,8 +12542,8 @@
       strictEqual(func(string, ''), string);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
-      var string = whitespace + 'a b c' + whitespace,
+    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 1, function() {
+      var string = Object(whitespace + 'a b c' + whitespace),
           trimmed = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''),
           actual = _.map([string, string, string], func);
 
@@ -12898,7 +12900,9 @@
     });
 
     test('should work as an iteratee for `_.map`', 1, function() {
-      var actual = _.map(['a', 'b', 'c'], _.words);
+      var strings = _.map(['a', 'b', 'c'], Object),
+          actual = _.map(strings, _.words);
+
       deepEqual(actual, [['a'], ['b'], ['c']]);
     });
 

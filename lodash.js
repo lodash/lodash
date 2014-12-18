@@ -5627,10 +5627,10 @@
 
     /**
      * Creates an object composed of keys generated from the results of running
-     * each element of `collection` through `iteratee`. The corresponding
-     * value of each key is an array of the elements responsible for generating
-     * the key. The `iteratee` is bound to `thisArg` and invoked with three
-     * arguments; (value, index|key, collection).
+     * each element of `collection` through `iteratee`. The corresponding value
+     * of each key is an array of the elements responsible for generating the key.
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+     * (value, index|key, collection).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -8585,10 +8585,11 @@
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
      * own and inherited enumerable properties of `object` that are not omitted.
-     * Property names may be specified as individual arguments or as arrays of property
-     * names. If `predicate` is provided it is invoked for each property of `object`
-     * omitting the properties `predicate` returns truthy for. The predicate is
-     * bound to `thisArg` and invoked with three arguments; (value, key, object).
+     * Property names may be specified as individual arguments or as arrays of
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` omitting the properties `predicate` returns truthy for. The
+     * predicate is bound to `thisArg` and invoked with three arguments;
+     * (value, key, object).
      *
      * @static
      * @memberOf _
@@ -8725,11 +8726,11 @@
 
     /**
      * An alternative to `_.reduce`; this method transforms `object` to a new
-     * `accumulator` object which is the result of running each of its own
-     * enumerable properties through `iteratee`, with each invocation potentially
-     * mutating the `accumulator` object. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments; (accumulator, value, key, object). Iterator
-     * functions may exit iteration early by explicitly returning `false`.
+     * `accumulator` object which is the result of running each of its own enumerable
+     * properties through `iteratee`, with each invocation potentially mutating
+     * the `accumulator` object. The `iteratee` is bound to `thisArg` and invoked
+     * with four arguments; (accumulator, value, key, object). Iterator functions
+     * may exit iteration early by explicitly returning `false`.
      *
      * @static
      * @memberOf _

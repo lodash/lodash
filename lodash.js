@@ -2268,6 +2268,30 @@
     }
 
     /**
+     * The base implementation of `_.invoke` which requires additional arguments
+     * to be provided as an array of arguments rather than individually.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|string} methodName The name of the method to invoke or
+     *  the function invoked per iteration.
+     * @param {Array} [args] The arguments to invoke the method with.
+     * @returns {Array} Returns the array of results.
+     */
+    function baseInvoke(collection, methodName, args) {
+      var index = -1,
+          isFunc = typeof methodName == 'function',
+          length = collection ? collection.length : 0,
+          result = isLength(length) ? Array(length) : [];
+
+      baseEach(collection, function(value) {
+        var func = isFunc ? methodName : (value != null && value[methodName]);
+        result[++index] = func ? func.apply(value, args) : undefined;
+      });
+      return result;
+    }
+
+    /**
      * The base implementation of `_.isEqual` without support for `this` binding
      * `customizer` functions.
      *
@@ -2275,9 +2299,9 @@
      * @param {*} value The value to compare to `other`.
      * @param {*} other The value to compare to `value`.
      * @param {Function} [customizer] The function to customize comparing values.
-     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
-     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
-     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {Array} [stackA] Tracks traversed `value` objects.
+     * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, customizer, isWhere, stackA, stackB) {
@@ -2375,27 +2399,52 @@
     }
 
     /**
-     * The base implementation of `_.invoke` which requires additional arguments
-     * to be provided as an array of arguments rather than individually.
+     * The base implementation of `_.isMatch` without support for callback
+     * shorthands or `this` binding.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|string} methodName The name of the method to invoke or
-     *  the function invoked per iteration.
-     * @param {Array} [args] The arguments to invoke the method with.
-     * @returns {Array} Returns the array of results.
+     * @param {Object} source The object to inspect.
+     * @param {Array} props The source property names to match.
+     * @param {Array} values The source values to match.
+     * @param {Function} [customizer] The function to customize comparing objects.
+     * @param {Array} [strictCompareFlags] Strict comparison flags for source values.
+     * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
-    function baseInvoke(collection, methodName, args) {
-      var index = -1,
-          isFunc = typeof methodName == 'function',
-          length = collection ? collection.length : 0,
-          result = isLength(length) ? Array(length) : [];
+    function baseIsMatch(object, props, values, customizer, strictCompareFlags) {
+      var length = props.length,
+          index = length;
 
-      baseEach(collection, function(value) {
-        var func = isFunc ? methodName : (value != null && value[methodName]);
-        result[++index] = func ? func.apply(value, args) : undefined;
-      });
-      return result;
+      if (object == null) {
+        return !index;
+      }
+      strictCompareFlags || (strictCompareFlags = []);
+      while (index--) {
+        if (strictCompareFlags[index]
+              ? values[index] !== object[props[index]]
+              : !hasOwnProperty.call(object, props[index])
+            ) {
+          return false;
+        }
+      }
+      index = length;
+      while (index--) {
+        var key = props[index];
+        if (strictCompareFlags[index]) {
+          var result = hasOwnProperty.call(object, key);
+        } else {
+          var objValue = object[key],
+              srcValue = values[index];
+
+          result = customizer ? customizer(objValue, srcValue, key) : undefined;
+          if (typeof result == 'undefined') {
+            result = baseIsEqual(srcValue, objValue, customizer, true);
+          }
+        }
+        if (!result) {
+          return result;
+        }
+      }
+      return true;
     }
 
     /**
@@ -3161,17 +3210,17 @@
     }
 
     /**
-     * A specialized version of `baseIsEqualDeep`, for arrays-only, which allows
-     * partial "_.where" style comparisons.
+     * A specialized version of `baseIsEqualDeep`, for arrays-only, which supports
+     * partial deep comparisons.
      *
      * @private
      * @param {Array} array The array to compare to `other`.
      * @param {Array} other The array to compare to `value`.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing arrays.
-     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
-     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
-     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {Array} [stackA] Tracks traversed `value` objects.
+     * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
     function equalArrays(array, other, equalFunc, customizer, isWhere, stackA, stackB) {
@@ -3185,20 +3234,26 @@
       }
       // Deep compare the contents, ignoring non-numeric properties.
       while (result && ++index < arrLength) {
-        var arrValue = array[index];
-        if (isWhere) {
-          var othIndex = othLength;
-          while (othIndex--) {
-            var othValue = other[othIndex];
-            result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
-            if (result) {
-              break;
+        var arrValue = array[index],
+            othValue = other[index];
+
+        result = undefined;
+        if (customizer) {
+          result = isWhere
+            ? customizer(othValue, arrValue, index)
+            : customizer(arrValue, othValue, index);
+        }
+        if (typeof result == 'undefined') {
+          if (isWhere) {
+            var othIndex = othLength;
+            while (othIndex--) {
+              othValue = other[othIndex];
+              result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
+              if (result) {
+                break;
+              }
             }
-          }
-        } else {
-          var othValue = other[index];
-          result = customizer ? customizer(arrValue, othValue, index) : undefined;
-          if (typeof result == 'undefined') {
+          } else {
             result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
           }
         }
@@ -3280,7 +3335,12 @@
           var objValue = object[key],
               othValue = other[key];
 
-          result = customizer ? customizer(objValue, othValue, key) : undefined;
+          result = undefined;
+          if (customizer) {
+            result = isWhere
+              ? customizer(othValue, objValue, key)
+              : customizer(objValue, othValue, key);
+          }
           if (typeof result == 'undefined') {
             result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isWhere, stackA, stackB);
           }
@@ -7672,8 +7732,8 @@
      * var words = ['hello', 'goodbye'];
      * var otherWords = ['hi', 'goodbye'];
      *
-     * _.isEqual(words, otherWords, function() {
-     *   return _.every(arguments, _.bind(RegExp.prototype.test, /^h(?:i|ello)$/)) || undefined;
+     * _.isEqual(words, otherWords, function(value, other) {
+     *   return _.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/) || undefined;
      * });
      * // => true
      */
@@ -7799,6 +7859,61 @@
       // See https://code.google.com/p/v8/issues/detail?id=2291.
       var type = typeof value;
       return type == 'function' || (value && type == 'object') || false;
+    }
+
+    /**
+     * Performs a deep comparison between `object` and `source` to determine if
+     * `object` contains equivalent property values. If `customizer` is provided
+     * it is invoked to compare values. If `customizer` returns `undefined`
+     * comparisons are handled by the method instead. The `customizer` is bound
+     * to `thisArg` and invoked with three arguments; (value, other, key).
+     *
+     * **Note:** This method supports comparing properties of arrays, booleans,
+     * `Date` objects, numbers, `Object` objects, regexes, and strings. Functions
+     * and DOM nodes are **not** supported. Provide a customizer function to extend
+     * support for comparing other values.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {Object} source The object to inspect.
+     * @param {Object} source The object of property values to match.
+     * @param {Function} [customizer] The function to customize comparing values.
+     * @param {*} [thisArg] The `this` binding of `customizer`.
+     * @returns {boolean} Returns `true` if `object` is a match, else `false`.
+     * @example
+     *
+     * var object = { 'user': 'fred', 'age': 40 };
+     *
+     * _.isMatch(object, { 'age': 40 });
+     * // => true
+     *
+     * _.isMatch(object, { 'age': 36 });
+     * // => false
+     *
+     * var object = { 'greeting': 'hello' };
+     * var source = { 'greeting': 'hi' };
+     *
+     * _.isMatch(object, source, function(value, other) {
+     *   return _.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/) || undefined;
+     * });
+     * // => true
+     */
+    function isMatch(object, source, customizer, thisArg) {
+      var props = keys(source);
+      if (typeof customizer == 'function') {
+        customizer = baseCallback(customizer, thisArg, 3);
+      }
+      else if (props.length == 1) {
+        var key = props[0],
+            value = source[key];
+
+        if (isStrictComparable(value)) {
+          return object != null && value === object[key] && hasOwnProperty.call(object, key);
+        }
+      }
+      var values = baseValues(source, function() { return props; });
+      return baseIsMatch(object, props, values, customizer);
     }
 
     /**
@@ -9897,40 +10012,18 @@
           };
         }
       }
-      var index = length,
-          values = Array(length),
+      var values = Array(length),
           strictCompareFlags = Array(length);
 
-      while (index--) {
-        value = source[props[index]];
+      while (length--) {
+        value = source[props[length]];
         var isStrict = isStrictComparable(value);
 
-        values[index] = isStrict ? value : baseClone(value, true, clonePassthru);
-        strictCompareFlags[index] = isStrict;
+        values[length] = isStrict ? value : baseClone(value, true, clonePassthru);
+        strictCompareFlags[length] = isStrict;
       }
       return function(object) {
-        index = length;
-        if (object == null) {
-          return !index;
-        }
-        while (index--) {
-          if (strictCompareFlags[index]
-                ? values[index] !== object[props[index]]
-                : !hasOwnProperty.call(object, props[index])
-              ) {
-            return false;
-          }
-        }
-        index = length;
-        while (index--) {
-          if (strictCompareFlags[index]
-                ? !hasOwnProperty.call(object, props[index])
-                : !baseIsEqual(values[index], object[props[index]], null, true)
-              ) {
-            return false;
-          }
-        }
-        return true;
+        return baseIsMatch(object, props, values, null, strictCompareFlags);
       };
     }
 
@@ -10395,6 +10488,7 @@
     lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
+    lodash.isMatch = isMatch;
     lodash.isNaN = isNaN;
     lodash.isNative = isNative;
     lodash.isNull = isNull;

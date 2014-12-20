@@ -10155,7 +10155,6 @@
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;
     lodash.isPlainObject = isPlainObject;
-    lodash.isPresent = isPresent;
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;

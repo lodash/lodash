@@ -6360,13 +6360,13 @@
       function Foo() { this.a = 1; }
       Foo.prototype.constructor = null;
 
-      var otherObject = { 'a': 1 };
-      strictEqual(_.isEqual(new Foo, otherObject), false);
+      var object2 = { 'a': 1 };
+      strictEqual(_.isEqual(new Foo, object2), false);
 
       if (create)  {
-        var object = create(null);
-        object.a = 1;
-        strictEqual(_.isEqual(object, otherObject), true);
+        var object1 = create(null);
+        object1.a = 1;
+        strictEqual(_.isEqual(object1, object2), true);
       }
       else {
         skipTest();
@@ -7926,7 +7926,7 @@
   QUnit.module('lodash.matches');
 
   (function() {
-    test('should create a function that performs a deep comparison between a given object and the `source` object', 6, function() {
+    test('should create a function that performs a deep comparison between a given object and `source`', 6, function() {
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           matches = _.matches({ 'a': 1 });
 
@@ -7948,13 +7948,13 @@
       strictEqual(matches(object), true);
     });
 
-    test('should compare a variety of `source` object values', 2, function() {
-      var object = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
-          otherObject = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },
-          matches = _.matches(object);
+    test('should compare a variety of `source` values', 2, function() {
+      var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
+          object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },
+          matches = _.matches(object1);
 
-      strictEqual(matches(object), true);
-      strictEqual(matches(otherObject), false);
+      strictEqual(matches(object1), true);
+      strictEqual(matches(object2), false);
     });
 
     test('should not change match behavior if `source` is augmented', 9, function() {

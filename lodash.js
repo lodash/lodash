@@ -1062,7 +1062,7 @@
      * `identity`, `includes`, `indexOf`, `isArguments`, `isArray`, `isBoolean`,
      * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`,
      * `isFunction`, `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`,
-     * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`, `kebabCase`,
+     * `isPlainObject`, `isRegExp`, `isPresent`, `isString`, `isUndefined`, `join`, `kebabCase`,
      * `last`, `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`, `padLeft`,
      * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
      * `result`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
@@ -10429,6 +10429,7 @@
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;
     lodash.isPlainObject = isPlainObject;
+    lodash.isPresent = isPresent;
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;

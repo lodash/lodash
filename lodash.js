@@ -9332,7 +9332,7 @@
      * [Lo-Dash's custom builds documentation](https://lodash.com/custom-builds).
      *
      * For more information on Chrome extension sandboxes see
-     * [Chrome's extensions documentation](http://developer.chrome.com/stable/extensions/sandboxingEval.html).
+     * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
      *
      * @static
      * @memberOf _

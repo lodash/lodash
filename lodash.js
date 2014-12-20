@@ -1938,6 +1938,23 @@
     }
 
     /**
+     * The base implementation of `_.delay` and `_.defer` which accepts an index
+     * of where to slice the arguments to provide to `func`.
+     *
+     * @private
+     * @param {Function} func The function to delay.
+     * @param {number} wait The number of milliseconds to delay invocation.
+     * @param {Object} args The `arguments` object to slice and provide to `func`.
+     * @returns {number} Returns the timer id.
+     */
+    function baseDelay(func, wait, args, fromIndex) {
+      if (!isFunction(func)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
+      return setTimeout(function() { func.apply(undefined, slice(args, fromIndex)); }, wait);
+    }
+
+    /**
      * The base implementation of `_.difference` which accepts a single array
      * of values to exclude.
      *
@@ -6942,7 +6959,9 @@
      * _.defer(function(text) { console.log(text); }, 'deferred');
      * // logs 'deferred' after one or more milliseconds
      */
-    var defer = partial(delay, partial.placeholder, 1);
+    function defer(func) {
+      return baseDelay(func, 1, arguments, 1);
+    }
 
     /**
      * Invokes `func` after `wait` milliseconds. Any additional arguments are
@@ -6961,11 +6980,7 @@
      * // => logs 'later' after one second
      */
     function delay(func, wait) {
-      if (!isFunction(func)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      var args = arguments;
-      return setTimeout(function() { func.apply(undefined, slice(args, 2)); }, wait);
+      return baseDelay(func, wait, arguments, 2);
     }
 
     /**
@@ -7165,7 +7180,9 @@
      * initialize();
      * // `initialize` invokes `createApplication` once
      */
-    var once = partial(before, 2);
+    function once(func) {
+      return before(func, 2);
+    }
 
     /**
      * Creates a function that invokes `func` with `partial` arguments prepended

@@ -398,7 +398,7 @@
    * @param {Array} array The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray=false] Specify using the first element of
+   * @param {boolean} [initFromArray] Specify using the first element of
    *  `array` as the initial value.
    * @returns {*} Returns the accumulated value.
    */
@@ -423,7 +423,7 @@
    * @param {Array} array The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray=false] Specify using the last element of
+   * @param {boolean} [initFromArray] Specify using the last element of
    *  `array` as the initial value.
    * @returns {*} Returns the accumulated value.
    */
@@ -676,7 +676,7 @@
    * @private
    * @param {Array} array The array to search.
    * @param {number} [fromIndex] The index to search from.
-   * @param {boolean} [fromRight=false] Specify iterating from right to left.
+   * @param {boolean} [fromRight] Specify iterating from right to left.
    * @returns {number} Returns the index of the matched `NaN`, else `-1`.
    */
   function indexOfNaN(array, fromIndex, fromRight) {
@@ -1111,7 +1111,7 @@
      *
      * @private
      * @param {*} value The value to wrap.
-     * @param {boolean} [chainAll=false] Enable chaining for all wrapper methods.
+     * @param {boolean} [chainAll] Enable chaining for all wrapper methods.
      * @param {Array} [actions=[]] Actions to peform to resolve the unwrapped value.
      */
     function LodashWrapper(value, chainAll, actions) {
@@ -1733,7 +1733,7 @@
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @param {boolean} [retHighest=false] Specify returning the highest, instead
+     * @param {boolean} [retHighest] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
@@ -1858,7 +1858,7 @@
      *
      * @private
      * @param {*} value The value to clone.
-     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
      * @param {Function} [customizer] The function to customize cloning values.
      * @param {string} [key] The key of `value`.
      * @param {Object} [object] The object `value` belongs to.
@@ -2098,7 +2098,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function} predicate The function invoked per iteration.
      * @param {Function} eachFunc The function to iterate over `collection`.
-     * @param {boolean} [retKey=false] Specify returning the key of the found
+     * @param {boolean} [retKey] Specify returning the key of the found
      *  element instead of the element itself.
      * @returns {*} Returns the found element or its key, else `undefined`.
      */
@@ -2120,8 +2120,8 @@
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isDeep=false] Specify a deep flatten.
-     * @param {boolean} [isStrict=false] Restrict flattening to arrays and `arguments` objects.
+     * @param {boolean} [isDeep] Specify a deep flatten.
+     * @param {boolean} [isStrict] Restrict flattening to arrays and `arguments` objects.
      * @param {number} [fromIndex=0] The index to start from.
      * @returns {Array} Returns the new flattened array.
      */
@@ -2332,7 +2332,7 @@
      * @param {Array} other The object to compare to `value`.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing objects.
-     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
+     * @param {boolean} [isWhere] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
@@ -2735,7 +2735,7 @@
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
      * @param {Function} [iteratee] The function invoked per iteration.
-     * @param {boolean} [retHighest=false] Specify returning the highest, instead
+     * @param {boolean} [retHighest] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
@@ -3302,17 +3302,17 @@
     }
 
     /**
-     * A specialized version of `baseIsEqualDeep`, for objects-only, which allows
-     * partial "_.where" style comparisons.
+     * A specialized version of `baseIsEqualDeep`, for objects-only, which supports
+     * partial deep comparisons.
      *
      * @private
      * @param {Object} object The object to compare to `other`.
      * @param {Object} other The object to compare to `value`.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing values.
-     * @param {boolean} [isWhere=false] Specify performing partial comparisons.
-     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
-     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {Array} [stackA] Tracks traversed `value` objects.
+     * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function equalObjects(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
@@ -3437,7 +3437,7 @@
      *
      * @private
      * @param {Array} array The array to clone.
-     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
      * @returns {Array} Returns the initialized array clone.
      */
     function initArrayClone(array, isDeep) {
@@ -3463,7 +3463,7 @@
      *
      * @private
      * @param {Object} object The object to clone.
-     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
      * @returns {null|Object} Returns the initialized object clone if an object
      *  is cloneable, else `null`.
      */
@@ -4268,7 +4268,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isDeep=false] Specify a deep flatten.
+     * @param {boolean} [isDeep] Specify a deep flatten.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the new flattened array.
      * @example
@@ -4969,7 +4969,7 @@
      * @alias unique
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted=false] Specify the array is sorted.
+     * @param {boolean} [isSorted] Specify the array is sorted.
      * @param {Function|Object|string} [iteratee] The function invoked per iteration.
      *  If a property name or object is provided it is used to create a "_.pluck"
      *  or "_.where" style callback respectively.
@@ -7455,7 +7455,7 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to clone.
-     * @param {boolean} [isDeep=false] Specify a deep clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
      * @param {Function} [customizer] The function to customize cloning values.
      * @param {*} [thisArg] The `this` binding of `customizer`.
      * @returns {*} Returns the cloned value.
@@ -8470,7 +8470,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to invert.
-     * @param {boolean} [multiValue=false] Allow multiple values per key.
+     * @param {boolean} [multiValue] Allow multiple values per key.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Object} Returns the new inverted object.
      * @example
@@ -8974,7 +8974,7 @@
      * @category Number
      * @param {number} [min=0] The minimum possible value.
      * @param {number} [max=1] The maximum possible value.
-     * @param {boolean} [floating=false] Specify returning a floating-point number.
+     * @param {boolean} [floating] Specify returning a floating-point number.
      * @returns {number} Returns the random number.
      * @example
      *

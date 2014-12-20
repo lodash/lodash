@@ -7424,6 +7424,51 @@
     }
 
     /**
+     * Checks if a collection is present. A value is considered present if it is
+     * an array-like value with a length greater than `0` or an object with own
+     * enumerable properties.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {Array|Object|string} value The value to inspect.
+     * @returns {boolean} Returns `true` if `value` is present, else `false`.
+     * @example
+     *
+     * _.isPresent(null);
+     * // => false
+     *
+     * _.isPresent(true);
+     * // => false
+     *
+     * _.isPresent(1);
+     * // => false
+     *
+     * _.isPresent([1, 2, 3]);
+     * // => true
+     *
+     * _.isPresent({ 'a': 1 });
+     * // => true
+     *
+     * _.isPresent('hello world');
+     * // => true
+     *
+     * _.isPresent('');
+     * // => false
+     */
+    function isPresent(value) {
+      if (value == null) {
+        return false;
+      }
+      var length = value.length;
+      if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
+          (isObjectLike(value) && isFunction(value.splice)))) {
+        return !!length;
+      }
+      return !!keys(value).length;
+    }
+
+    /**
      * Performs a deep comparison between two values to determine if they are
      * equivalent. If `customizer` is provided it is invoked to compare values.
      * If `customizer` returns `undefined` comparisons are handled by the method
@@ -10155,6 +10200,7 @@
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;
     lodash.isPlainObject = isPlainObject;
+    lodash.isPresent = isPresent;
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
     lodash.isUndefined = isUndefined;

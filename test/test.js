@@ -2023,7 +2023,7 @@
   QUnit.module('lodash.constant');
 
   (function() {
-    test('should create a function that always returns `value`', 1, function() {
+    test('should create a function that returns `value`', 1, function() {
       var object = { 'a': 1 },
           values = Array(2).concat(empties, true, 1, 'a'),
           constant = _.constant(object),
@@ -3461,7 +3461,7 @@
       });
     });
 
-    test('should always return `true` when `target` is an empty string regardless of `position`', 1, function() {
+    test('should return `true` when `target` is an empty string regardless of `position`', 1, function() {
       ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
         return _.endsWith(string, '', position, true);
       }));
@@ -8847,7 +8847,7 @@
   QUnit.module('lodash.noop');
 
   (function() {
-    test('should always return `undefined`', 1, function() {
+    test('should return `undefined`', 1, function() {
       var values = empties.concat(true, new Date, _, 1, /x/, 'a'),
           expected = _.map(values, _.constant());
 
@@ -9562,7 +9562,7 @@
   (function() {
     var array = [1, 0, 1];
 
-    test('should always return two groups of elements', 3, function() {
+    test('should return two groups of elements', 3, function() {
       deepEqual(_.partition([], _.identity), [[], []]);
       deepEqual(_.partition(array, _.constant(true)), [array, []]);
       deepEqual(_.partition(array, _.constant(false)), [[], array]);
@@ -11446,7 +11446,7 @@
       });
     });
 
-    test('should always return `true` when `target` is an empty string regardless of `position`', 1, function() {
+    test('should return `true` when `target` is an empty string regardless of `position`', 1, function() {
       ok(_.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
         return _.startsWith(string, '', position, true);
       }));

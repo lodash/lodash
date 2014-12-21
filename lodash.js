@@ -2411,14 +2411,14 @@
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
     function baseIsMatch(object, props, values, customizer, strictCompareFlags) {
-      var length = props.length,
-          index = length;
+      var index = -1,
+          length = props.length;
 
       if (object == null) {
-        return !index;
+        return !length;
       }
       strictCompareFlags || (strictCompareFlags = []);
-      while (index--) {
+      while (++index < length) {
         if (strictCompareFlags[index]
               ? values[index] !== object[props[index]]
               : !hasOwnProperty.call(object, props[index])
@@ -2426,8 +2426,8 @@
           return false;
         }
       }
-      index = length;
-      while (index--) {
+      index = -1;
+      while (++index < length) {
         var key = props[index];
         if (strictCompareFlags[index]) {
           var result = hasOwnProperty.call(object, key);
@@ -2441,7 +2441,7 @@
           }
         }
         if (!result) {
-          return result;
+          return false;
         }
       }
       return true;
@@ -3258,7 +3258,7 @@
           }
         }
       }
-      return result;
+      return !!result;
     }
 
     /**
@@ -3346,7 +3346,7 @@
           }
         }
         if (!result) {
-          return result;
+          return false;
         }
         hasCtor || (hasCtor = key == 'constructor');
       }

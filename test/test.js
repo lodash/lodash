@@ -6282,17 +6282,9 @@
     });
 
     test('should provide the correct `customizer` arguments', 1, function() {
-      var argsList = [];
-
-      var object1 = {
-        'a': [1, 2],
-        'b': null
-      };
-
-      var object2 = {
-        'a': [1, 2],
-        'b': null
-      };
+      var argsList = [],
+          object1 = { 'a': [1, 2], 'b': null },
+          object2 = { 'a': [1, 2], 'b': null };
 
       object1.b = object2;
       object2.b = object1;
@@ -6325,12 +6317,11 @@
     });
 
     test('should handle comparisons if `customizer` returns `undefined`', 1, function() {
-      var actual = _.isEqual('a', 'a', _.noop);
-      strictEqual(actual, true);
+      strictEqual(_.isEqual('a', 'a', _.noop), true);
     });
 
     test('should return a boolean value even if `customizer` does not', 2, function() {
-      var actual = _.isEqual('a', 'a', function() { return 'a'; });
+      var actual = _.isEqual('a', 'a', _.constant('a'));
       strictEqual(actual, true);
 
       var expected = _.map(falsey, _.constant(false));
@@ -6346,9 +6337,9 @@
     test('should ensure `customizer` is a function', 1, function() {
       var array = [1, 2, 3],
           eq = _.partial(_.isEqual, array),
-          actual = _.every([array, [1, 0, 3]], eq);
+          actual = _.map([array, [1, 0, 3]], eq);
 
-      strictEqual(actual, false);
+      deepEqual(actual, [true, false]);
     });
 
     test('should work as an iteratee for `_.every`', 1, function() {
@@ -6770,7 +6761,7 @@
           expected = _.map(values, _.constant(true)),
           source = {};
 
-      var actual = _.map(values, function(value, index) {
+      var actual = _.map(values, function(value) {
         try {
           return _.isMatch(value, source);
         } catch(e) {}
@@ -6867,6 +6858,72 @@
       });
 
       deepEqual(actual, [false, true]);
+    });
+
+    test('should provide the correct `customizer` arguments', 1, function() {
+      var argsList = [],
+          object1 = { 'a': [1, 2], 'b': null },
+          object2 = { 'a': [1, 2], 'b': null };
+
+      object1.b = object2;
+      object2.b = object1;
+
+      var expected = [
+        [object1.a, object2.a, 'a'],
+        [object1.a[0], object2.a[0], 0],
+        [object1.a[1], object2.a[1], 1],
+        [object1.b, object2.b, 'b'],
+        [object1.b.a, object2.b.a, 'a'],
+        [object1.b.a[0], object2.b.a[0], 0],
+        [object1.b.a[1], object2.b.a[1], 1],
+        [object1.b.b, object2.b.b, 'b'],
+        [object1.b.b.a, object2.b.b.a, 'a'],
+        [object1.b.b.a[0], object2.b.b.a[0], 0],
+        [object1.b.b.a[1], object2.b.b.a[1], 1],
+        [object1.b.b.b, object2.b.b.b, 'b']
+      ];
+
+      _.isMatch(object1, object2, function() {
+        argsList.push(slice.call(arguments));
+      });
+
+      deepEqual(argsList, expected);
+    });
+
+    test('should correctly set the `this` binding', 1, function() {
+      var actual = _.isMatch({ 'a': 1 }, { 'a': 2 }, function(a, b) {
+        return this[a] == this[b];
+      }, { 'a': 1, 'b': 1 });
+
+      strictEqual(actual, true);
+    });
+
+    test('should handle comparisons if `customizer` returns `undefined`', 1, function() {
+      strictEqual(_.isMatch({ 'a': 1 }, { 'a': 1 }, _.noop), true);
+    });
+
+    test('should return a boolean value even if `customizer` does not', 2, function() {
+      var object = { 'a': 1 },
+          actual = _.isMatch(object, { 'a': 1 }, _.constant('a'));
+
+      strictEqual(actual, true);
+
+      var expected = _.map(falsey, _.constant(false));
+
+      actual = [];
+      _.each(falsey, function(value) {
+        actual.push(_.isMatch(object, { 'a': 2 }, _.constant(value)));
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should ensure `customizer` is a function', 1, function() {
+      var object = { 'a': 1 },
+          matches = _.partial(_.isMatch, object),
+          actual = _.map([object, { 'a': 2 }], matches);
+
+      deepEqual(actual, [true, false]);
     });
   }());
 

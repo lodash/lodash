@@ -351,12 +351,12 @@
 						lodashModule = lodash;
 						lodashModule.moduleName = 'lodash';
 
-						if (shimmed && shimmed.noConflict) {
-							shimmedModule = shimmed.noConflict();
+						if (shimmed) {
+							shimmedModule = shimmed.result(shimmed, 'noConflict') || shimmed;
 							shimmedModule.moduleName = 'shimmed';
 						}
-						if (underscore && underscore.noConflict) {
-							underscoreModule = underscore.noConflict();
+						if (underscore) {
+							underscoreModule = underscore.result(underscore, 'noConflict') || underscore;
 							underscoreModule.moduleName = 'underscore';
 						}
 						if (ui.isModularize) {
@@ -378,7 +378,7 @@
 				if (window.requirejs) {
 					addBizarroMethods();
 					require(getConfig(), ['lodash'], function(lodash) {
-						lodashBizarro = lodash.noConflict();
+						lodashBizarro = lodash.result(lodash, 'noConflict') || lodash;
 						delete requirejs.s.contexts._;
 
 						removeBizarroMethods();

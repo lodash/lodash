@@ -8861,6 +8861,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.noConflict');
+
+  (function() {
+    test('should return the `lodash` function', 1, function() {
+      if (!isModularize) {
+        var oldDash = root._;
+        strictEqual(_.noConflict(), _);
+        root._ = oldDash;
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.now');
 
   (function() {

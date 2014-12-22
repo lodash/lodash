@@ -9529,11 +9529,11 @@
         options = otherOptions = null;
       }
       string = String(string == null ? '' : string);
-      options = assign({}, otherOptions || options, settings, assignOwnDefaults);
+      options = baseAssign(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
 
-      var imports = assign({}, options.imports, settings.imports, assignOwnDefaults),
+      var imports = baseAssign(baseAssign({}, options.imports), settings.imports, assignOwnDefaults),
           importsKeys = keys(imports),
-          importsValues = values(imports);
+          importsValues = baseValues(imports, importsKeys);
 
       var isEscaping,
           isEvaluating,

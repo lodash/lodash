@@ -788,24 +788,34 @@
         expected = _.map(values, _.constant(true));
 
     test('creates a new instance when called without the `new` operator', 1, function() {
-      var actual = _.map(values, function(value) {
-        return _(value) instanceof _;
-      });
+      if (!isNpm) {
+        var actual = _.map(values, function(value) {
+          return _(value) instanceof _;
+        });
 
-      deepEqual(actual, expected);
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should return provided `lodash` instances', 1, function() {
-      var actual = _.map(values, function(value) {
-        var wrapped = _(value);
-        return _(wrapped) === wrapped;
-      });
+      if (!isNpm) {
+        var actual = _.map(values, function(value) {
+          var wrapped = _(value);
+          return _(wrapped) === wrapped;
+        });
 
-      deepEqual(actual, expected);
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should convert foreign wrapped values to `lodash` instances', 1, function() {
-      if (lodashBizarro) {
+      if (!isNpm && lodashBizarro) {
         var actual = _.map(values, function(value) {
           var wrapped = _(lodashBizarro(value)),
               unwrapped = getUnwrappedValue(wrapped);
@@ -8651,19 +8661,24 @@
         source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
 
     test('should mixin `source` methods into lodash', 4, function() {
-      _.mixin(source);
+      if (!isNpm) {
+        _.mixin(source);
 
-      strictEqual(_.a(value), 'a');
-      strictEqual(getUnwrappedValue(_(value).a()), 'a');
+        strictEqual(_.a(value), 'a');
+        strictEqual(getUnwrappedValue(_(value).a()), 'a');
 
-      delete _.a;
-      delete _.prototype.a;
+        delete _.a;
+        delete _.prototype.a;
 
-      ok(!('b' in _));
-      ok(!('b' in _.prototype));
+        ok(!('b' in _));
+        ok(!('b' in _.prototype));
 
-      delete _.b;
-      delete _.prototype.b;
+        delete _.b;
+        delete _.prototype.b;
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should use `this` as the default `object` value', 3, function() {

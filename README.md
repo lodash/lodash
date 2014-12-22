@@ -20,7 +20,7 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 Create [custom builds](https://lodash.com/custom-builds) with only the features you need.<br>
-Love modules? We’ve got you covered with [lodash-amd](https://github.com/lodash/lodash-amd/tree/2.4.1), [lodash-node](https://npmjs.org/package/lodash-node), & [npm packages](https://npmjs.org/browse/keyword/lodash-modularized) per method.
+Love modules? We’ve got you covered with [lodash-amd](https://github.com/lodash/lodash-amd/tree/2.4.1), [lodash-node](https://www.npmjs.com/package/lodash-node), & [npm packages](https://www.npmjs.com/browse/keyword/lodash-modularized) per method.
 
 ## Dive in
 
@@ -65,12 +65,12 @@ var keysIn = require('lodash-compat/object/keysIn');
 
 **Note:**
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.
-Install [n_](https://www.npmjs.org/package/n_) for a version of the REPL that includes Lo-Dash by default.
+Install [n_](https://www.npmjs.com/package/n_) for a version of the REPL that includes Lo-Dash by default.
 
 ## Features *not* in Underscore
 
  * ~100% [code coverage](https://coveralls.io/r/lodash)
- * Module bundles for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1), [ES6](https://github.com/lodash/lodash-es6/tree/2.4.1), & [Node.js](https://npmjs.org/package/lodash-node) as well as [npm packages](https://npmjs.org/browse/keyword/lodash-modularized)
+ * Module bundles for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1), [ES6](https://github.com/lodash/lodash-es6/tree/2.4.1), & [Node.js](https://www.npmjs.com/package/lodash-node) as well as [npm packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * Follows [semantic versioning](http://semver.org/) for releases
  * Deferred chaining & [lazy evaluation](http://filimanjaro.com/blog/2014/introducing-lazy-evaluation/)
  * [_(…)](https://lodash.com/docs#_) supports intuitive chaining
@@ -102,7 +102,7 @@ Install [n_](https://www.npmjs.org/package/n_) for a version of the REPL that in
  * [_.random](https://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](https://lodash.com/docs#runInContext) for collisionless mixins & easier mocking
  * [_.slice](https://lodash.com/docs#slice) for creating subsets of array-like values
- * [_.sortBy](https://lodash.com/docs#sortBy) supports sorting by multiple properties
+ * [_.sortByAll](https://lodash.com/docs#sortBy) for sorting by multiple properties
  * [_.support](https://lodash.com/docs#support) for flagging environment features
  * [_.template](https://lodash.com/docs#template) supports [*“imports”*](https://lodash.com/docs#templateSettings_imports) options & [ES6 template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
  * [_.transform](https://lodash.com/docs#transform) as a powerful alternative to [_.reduce](https://lodash.com/docs#reduce) for transforming objects

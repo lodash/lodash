@@ -3807,7 +3807,7 @@
           length = propsLength && object.length,
           support = lodash.support;
 
-      var allowIndexes = typeof length == 'number' && length > 0 &&
+      var allowIndexes = length && isLength(length) &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object)));
 
@@ -8530,8 +8530,7 @@
             length = object.length;
       }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-          (typeof length == 'number' && length > 0) ||
-          (lodash.support.enumPrototypes && typeof object == 'function')) {
+         (typeof object == 'function' ? lodash.support.enumPrototypes : (length && isLength(length)))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -8567,7 +8566,7 @@
       var length = object.length,
           support = lodash.support;
 
-      length = (typeof length == 'number' && length > 0 &&
+      length = (length && isLength(length) &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) || 0;
 

@@ -2672,13 +2672,12 @@
      * returned by `keysFunc`.
      *
      * @private
-     * @param {Object} object The object to inspect.
-     * @param {Function} keysFunc The function to get the keys of `object`.
+     * @param {Object} object The object to query.
+     * @param {Array} props The property names to get values for.
      * @returns {Object} Returns the array of property values.
      */
-    function baseValues(object, keysFunc) {
+    function baseValues(object, props) {
       var index = -1,
-          props = keysFunc(object),
           length = props.length,
           result = Array(length);
 

@@ -10703,6 +10703,22 @@
         skipTest();
       }
     });
+
+    test('should use a zeroed `_.uniqueId` counter', 3, function() {
+      if (!isModularize) {
+        var oldId = (_.uniqueId(), _.uniqueId()),
+            lodash = _.runInContext();
+
+        ok(_.uniqueId() > oldId);
+
+        var id = lodash.uniqueId();
+        strictEqual(id, '1');
+        ok(id < oldId);
+      }
+      else {
+        skipTest(3);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -12973,9 +12989,8 @@
 
   (function() {
     test('should generate unique ids', 1, function() {
-      var actual = [];
-      _.times(1000, function() {
-        actual.push(_.uniqueId());
+      var actual = _.times(1000, function() {
+        return _.uniqueId();
       });
 
       strictEqual(_.uniq(actual).length, actual.length);

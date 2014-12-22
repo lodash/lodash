@@ -7904,7 +7904,7 @@
           return object != null && value === object[key] && hasOwnProperty.call(object, key);
         }
       }
-      var values = baseValues(source, function() { return props; });
+      var values = baseValues(source, props);
       return baseIsMatch(object, props, values, customizer);
     }
 
@@ -8822,7 +8822,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to inspect.
+     * @param {Object} object The object to query.
      * @param {string} key The name of the property to resolve.
      * @param {*} [defaultValue] The value returned if the property value
      *  resolves to `undefined`.
@@ -8910,7 +8910,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to inspect.
+     * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property values.
      * @example
      *
@@ -8925,7 +8925,7 @@
      * // => [2, 1] (iteration order is not guaranteed)
      */
     function values(object) {
-      return baseValues(object, keys);
+      return baseValues(object, keys(object));
     }
 
     /**
@@ -8935,7 +8935,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to inspect.
+     * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property values.
      * @example
      *
@@ -8950,7 +8950,7 @@
      * // => [2, 1, 0] (iteration order is not guaranteed)
      */
     function valuesIn(object) {
-      return baseValues(object, keysIn);
+      return baseValues(object, keysIn(object));
     }
 
     /*------------------------------------------------------------------------*/

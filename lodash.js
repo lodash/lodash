@@ -950,8 +950,7 @@
     }());
 
     /* Native method references for those with the same name as other `lodash` methods. */
-    var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
-        nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
+    var nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
         nativeIsFinite = context.isFinite,
         nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
         nativeMax = Math.max,
@@ -1919,23 +1918,17 @@
      * @param {Object} prototype The object to inherit from.
      * @returns {Object} Returns the new object.
      */
-    function baseCreate(prototype) {
-      return isObject(prototype) ? nativeCreate(prototype) : {};
-    }
-    // Fallback for environments without `Object.create`.
-    if (!nativeCreate) {
-      baseCreate = (function() {
-        function Object() {}
-        return function(prototype) {
-          if (isObject(prototype)) {
-            Object.prototype = prototype;
-            var result = new Object;
-            Object.prototype = null;
-          }
-          return result || context.Object();
-        };
-      }());
-    }
+    var baseCreate = (function() {
+      function Object() {}
+      return function(prototype) {
+        if (isObject(prototype)) {
+          Object.prototype = prototype;
+          var result = new Object;
+          Object.prototype = null;
+        }
+        return result || context.Object();
+      };
+    }());
 
     /**
      * The base implementation of `_.delay` and `_.defer` which accepts an index

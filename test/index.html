@@ -89,9 +89,6 @@
 				setProperty(Date, '_now', Date.now);
 				setProperty(Date, 'now', noop);
 
-				setProperty(Object, '_create', Object.create);
-				setProperty(Object, 'create', noop);
-
 				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
 				setProperty(Object, 'getPrototypeOf', noop);
 
@@ -196,11 +193,6 @@
 					setProperty(Date, 'now', Date._now);
 				} else {
 					delete Date.now;
-				}
-				if (Object._create) {
-					setProperty(Object, 'create', Object._create);
-				} else {
-					delete Object.create;
 				}
 				if (Object._getPrototypeOf) {
 					setProperty(Object, 'getPrototypeOf', Object._getPrototypeOf);

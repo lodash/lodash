@@ -428,9 +428,6 @@
     var _now = Date.now;
     setProperty(Date, 'now', _.noop);
 
-    var _create = create;
-    setProperty(Object, 'create', _.noop);
-
     var _getPrototypeOf = Object.getPrototypeOf;
     setProperty(Object, 'getPrototypeOf', _.noop);
 
@@ -523,7 +520,6 @@
     // Restore native methods.
     setProperty(Array,  'isArray', _isArray);
     setProperty(Date,   'now', _now);
-    setProperty(Object, 'create', _create);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
@@ -672,7 +668,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 14, function() {
+    test('should avoid overwritten native methods', 12, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -697,14 +693,6 @@
           actual = null;
         }
         ok(typeof actual == 'number', message('_.now', 'Date.now'));
-
-        try {
-          actual = [lodashBizarro.create(Foo.prototype, object), lodashBizarro.create()];
-        } catch(e) {
-          actual = null;
-        }
-        ok(actual[0] instanceof Foo, message('_.create', 'Object.create'));
-        deepEqual(actual[1], {}, message('_.create', 'Object.create'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -774,7 +762,7 @@
         }
       }
       else {
-        skipTest(14);
+        skipTest(12);
       }
     });
   }());

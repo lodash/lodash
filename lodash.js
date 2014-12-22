@@ -79,7 +79,7 @@
   /** Used to detect host constructors (Safari > 5). */
   var reHostCtor = /^\[object .+?Constructor\]$/;
 
-  /** Used to match latin-1 supplement letters (excluding mathematical operators). */
+  /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
 
   /** Used to ensure capturing order of template delimiters. */
@@ -332,7 +332,7 @@
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
    * @returns {Array} Returns `true` if all elements pass the predicate check,
-   *  else `false`
+   *  else `false`.
    */
   function arrayEvery(array, predicate) {
     var index = -1,
@@ -636,7 +636,7 @@
   }
 
   /**
-   * Used by `_.deburr` to convert latin-1 to basic latin letters.
+   * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
    *
    * @private
    * @param {string} letter The matched letter to deburr.
@@ -713,11 +713,11 @@
   }());
 
   /**
-   * Checks if `value` is valid array-like index.
+   * Checks if `value` is a valid array-like index.
    *
    * @private
    * @param {*} value The value to check.
-   * @param {number} [length] The upper bound of a valid index.
+   * @param {number} [length] The upper bounds of a valid index.
    * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
    */
   function isIndex(value, length) {
@@ -970,7 +970,7 @@
         MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1,
         HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
-    /** Used as the size, in bytes, of each Float64Array element. */
+    /** Used as the size, in bytes, of each `Float64Array` element. */
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
 
     /**

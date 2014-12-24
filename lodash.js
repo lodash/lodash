@@ -5023,11 +5023,11 @@
      */
     function unzip(array) {
       var index = -1,
-          length = isObject(length = max(array, 'length')) && length.length || 0,
+          length = (array && array.length && arrayMax(arrayMap(array, property('length')))) >>> 0,
           result = Array(length);
 
       while (++index < length) {
-        result[index] = pluck(array, index);
+        result[index] = arrayMap(array, property(index));
       }
       return result;
     }

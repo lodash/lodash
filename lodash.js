@@ -902,6 +902,8 @@
     /** Used to resolve the decompiled source of functions. */
     var fnToString = Function.prototype.toString;
 
+    var getLength = property('length');
+
     /** Used to check objects for own properties. */
     var hasOwnProperty = objectProto.hasOwnProperty;
 
@@ -1847,7 +1849,11 @@
         return identity;
       }
       // Handle "_.pluck" and "_.where" style callback shorthands.
-      return type == 'object' ? matches(func) : property(func);
+      if (type == 'object') {
+        // baseMatches
+        return matches(func);
+      }
+      return (argCount ? baseProperty : property)(func);
     }
 
     /**
@@ -2399,7 +2405,7 @@
      * @param {Array} props The source property names to match.
      * @param {Array} values The source values to match.
      * @param {Function} [customizer] The function to customize comparing objects.
-     * @param {Array} [strictCompareFlags] Strict comparison flags for source values.
+     * @param {Array} [strictCompareFlags=[]] Strict comparison flags for source values.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
     function baseIsMatch(object, props, values, customizer, strictCompareFlags) {
@@ -2518,6 +2524,19 @@
         object[key] = result;
       });
       return object;
+    }
+
+    /**
+     * The base implementation of `_.property` which doesn't coerce `key` to a string.
+     *
+     * @private
+     * @param {string} key The name of the property to retrieve.
+     * @returns {Function} Returns the new function.
+     */
+    function baseProperty(key) {
+      return function(object) {
+        return object == null ? undefined : object[key];
+      };
     }
 
     /**
@@ -5023,7 +5042,7 @@
      */
     function unzip(array) {
       var index = -1,
-          length = (array && array.length && arrayMax(arrayMap(array, property('length')))) >>> 0,
+          length = (array && array.length && arrayMax(arrayMap(array, getLength))) >>> 0,
           result = Array(length);
 
       while (++index < length) {
@@ -10012,6 +10031,10 @@
         values[length] = isStrict ? value : baseClone(value, true, clonePassthru);
         strictCompareFlags[length] = isStrict;
       }
+      return baseMatches(props, values, strictCompareFlags);
+    }
+
+    function baseMatches(source, props, values, strictCompareFlags) {
       return function(object) {
         return baseIsMatch(object, props, values, null, strictCompareFlags);
       };
@@ -10156,10 +10179,7 @@
      * // => ['barney', 'fred']
      */
     function property(key) {
-      key = String(key);
-      return function(object) {
-        return object == null ? undefined : object[key];
-      };
+      return baseProperty(String(key));
     }
 
     /**

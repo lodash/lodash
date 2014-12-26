@@ -902,7 +902,8 @@
     /** Used to resolve the decompiled source of functions. */
     var fnToString = Function.prototype.toString;
 
-    var getLength = property('length');
+    /** Used to the length of n-tuples for `_.unzip`. */
+    var getLength = baseProperty('length');
 
     /** Used to check objects for own properties. */
     var hasOwnProperty = objectProto.hasOwnProperty;
@@ -5107,7 +5108,7 @@
           result = Array(length);
 
       while (++index < length) {
-        result[index] = arrayMap(array, property(index));
+        result[index] = arrayMap(array, baseProperty(index));
       }
       return result;
     }

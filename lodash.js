@@ -1789,71 +1789,35 @@
     }
 
     /**
-     * The base implementation of `_.callback`.
+     * The base implementation of `_.callback` which supports specifying the
+     * number of arguments to provide to `func`.
      *
      * @private
      * @param {*} [func=_.identity] The value to convert to a callback.
-     * @param {*} [thisArg] The `this` binding of the created callback.
-     * @param {number} [argCount] The number of arguments the callback accepts.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {number} [argCount] The number of arguments to provide to `func`.
      * @returns {Function} Returns the new function.
      */
     function baseCallback(func, thisArg, argCount) {
       var type = typeof func;
 
       if (type == 'function') {
-        if (typeof thisArg == 'undefined') {
-          return func;
-        }
-        var data = getData(func);
+        var data = typeof thisArg != 'undefined' && getData(func);
         if (typeof data == 'undefined') {
-          var support = lodash.support;
-          if (support.funcNames) {
-            data = !func.name;
-          }
-          data = data || !support.funcDecomp;
-          if (!data) {
-            var source = fnToString.call(func);
-            if (!support.funcNames) {
-              data = !reFuncName.test(source);
-            }
-            if (!data) {
-              // Check if `func` references the `this` keyword and store the result.
-              data = reThis.test(source) || isNative(func);
-              baseSetData(func, data);
-            }
-          }
+          setCallbackData(func);
         }
-        // Exit early if there are no `this` references or `func` is bound.
-        if (data === false || (data !== true && data[1] & BIND_FLAG)) {
-          return func;
-        }
-        switch (argCount) {
-          case 1: return function(value) {
-            return func.call(thisArg, value);
-          };
-          case 3: return function(value, index, collection) {
-            return func.call(thisArg, value, index, collection);
-          };
-          case 4: return function(accumulator, value, index, collection) {
-            return func.call(thisArg, accumulator, value, index, collection);
-          };
-          case 5: return function(value, other, key, object, source) {
-            return func.call(thisArg, value, other, key, object, source);
-          };
-        }
-        return function() {
-          return func.apply(thisArg, arguments);
-        };
+        // Avoid binding if there are no `this` references or `func` is already bound.
+        return (data === false || (data !== true && data[1] & BIND_FLAG))
+          ? func
+          : bindCallback(func, thisArg, argCount);
       }
       if (func == null) {
         return identity;
       }
       // Handle "_.pluck" and "_.where" style callback shorthands.
-      if (type == 'object') {
-        // baseMatches
-        return matches(func);
-      }
-      return (argCount ? baseProperty : property)(func);
+      return type == 'object'
+        ? baseMatches(func, argCount)
+        : baseProperty(argCount ? String(func) : func);
     }
 
     /**
@@ -2404,11 +2368,11 @@
      * @param {Object} source The object to inspect.
      * @param {Array} props The source property names to match.
      * @param {Array} values The source values to match.
+     * @param {Array} strictCompareFlags Strict comparison flags for source values.
      * @param {Function} [customizer] The function to customize comparing objects.
-     * @param {Array} [strictCompareFlags=[]] Strict comparison flags for source values.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
-    function baseIsMatch(object, props, values, customizer, strictCompareFlags) {
+    function baseIsMatch(object, props, values, strictCompareFlags, customizer) {
       var index = -1,
           length = props.length;
 
@@ -2461,6 +2425,45 @@
         result.push(iteratee(value, key, collection));
       });
       return result;
+    }
+
+    /**
+     * The base implementation of `_.matches` which supports specifying whether
+     * `source` is cloned.
+     *
+     * @private
+     * @param {Object} source The object of property values to match.
+     * @param {boolean} [isCloned] Specify cloning the source object.
+     * @returns {Function} Returns the new function.
+     */
+    function baseMatches(source, isCloned) {
+      var props = keys(source),
+          length = props.length;
+
+      if (length == 1) {
+        var key = props[0],
+            value = source[key];
+
+        if (isStrictComparable(value)) {
+          return function(object) {
+            return object != null && value === object[key] && hasOwnProperty.call(object, key);
+          };
+        }
+      }
+      var notCloned = !isCloned,
+          values = Array(length),
+          strictCompareFlags = Array(length);
+
+      while (length--) {
+        value = source[props[length]];
+        var isStrict = isStrictComparable(value);
+
+        values[length] = (isStrict || notCloned) ? value : baseClone(value, true, clonePassthru);
+        strictCompareFlags[length] = isStrict;
+      }
+      return function(object) {
+        return baseIsMatch(object, props, values, strictCompareFlags);
+      };
     }
 
     /**
@@ -2527,7 +2530,7 @@
     }
 
     /**
-     * The base implementation of `_.property` which doesn't coerce `key` to a string.
+     * The base implementation of `_.property` which does not coerce `key` to a string.
      *
      * @private
      * @param {string} key The name of the property to retrieve.
@@ -2768,6 +2771,36 @@
         }
       }
       return high;
+    }
+
+    /**
+     * A specialized version of `_.bind` for callbacks with support for specifying
+     * the number of arguments to provide to `func`.
+     *
+     * @private
+     * @param {Function} func The function to bind.
+     * @param {*} thisArg The `this` binding of `func`.
+     * @param {number} [argCount] The number of arguments to provide to `func`.
+     * @returns {Function} Returns the new function.
+     */
+    function bindCallback(func, thisArg, argCount) {
+      switch (argCount) {
+        case 1: return function(value) {
+          return func.call(thisArg, value);
+        };
+        case 3: return function(value, index, collection) {
+          return func.call(thisArg, value, index, collection);
+        };
+        case 4: return function(accumulator, value, index, collection) {
+          return func.call(thisArg, accumulator, value, index, collection);
+        };
+        case 5: return function(value, other, key, object, source) {
+          return func.call(thisArg, value, other, key, object, source);
+        };
+      }
+      return function() {
+        return func.apply(thisArg, arguments);
+      };
     }
 
     /**
@@ -3220,7 +3253,7 @@
     }
 
     /**
-     * A specialized version of `baseIsEqualDeep`, for arrays-only, which supports
+     * A specialized version of `baseIsEqualDeep` for arrays with support for
      * partial deep comparisons.
      *
      * @private
@@ -3312,7 +3345,7 @@
     }
 
     /**
-     * A specialized version of `baseIsEqualDeep`, for objects-only, which supports
+     * A specialized version of `baseIsEqualDeep` for objects with support for
      * partial deep comparisons.
      *
      * @private
@@ -3771,6 +3804,34 @@
         return baseSetData(key, value);
       };
     }());
+
+    /**
+     * A specialized version of `setData` for callbacks which sets metadata to
+     * indicate whether `func` is eligible for `this` binding.
+     *
+     * @private
+     * @param {Function} func The function to associate metadata with.
+     * @returns {Function} Returns `func`.
+     */
+    function setCallbackData(func) {
+      var support = lodash.support;
+      if (support.funcNames) {
+        var data = !func.name;
+      }
+      data = data || !support.funcDecomp;
+      if (!data) {
+        var source = fnToString.call(func);
+        if (!support.funcNames) {
+          data = !reFuncName.test(source);
+        }
+        if (!data) {
+          // Check if `func` references the `this` keyword and store the result.
+          data = reThis.test(source) || isNative(func);
+          baseSetData(func, data);
+        }
+      }
+      return func;
+    }
 
     /**
      * A fallback implementation of `_.isPlainObject` which checks if `value`
@@ -6623,7 +6684,7 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to bind.
-     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {*} thisArg The `this` binding of `func`.
      * @param {...*} [args] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
@@ -7910,11 +7971,13 @@
      * // => true
      */
     function isMatch(object, source, customizer, thisArg) {
-      var props = keys(source);
+      var props = keys(source),
+          length = props.length;
+
       if (typeof customizer == 'function') {
         customizer = baseCallback(customizer, thisArg, 3);
       }
-      else if (props.length == 1) {
+      else if (length == 1) {
         var key = props[0],
             value = source[key];
 
@@ -7922,8 +7985,14 @@
           return object != null && value === object[key] && hasOwnProperty.call(object, key);
         }
       }
-      var values = baseValues(source, props);
-      return baseIsMatch(object, props, values, customizer);
+      var values = Array(length),
+          strictCompareFlags = Array(length);
+
+      while (length--) {
+        value = values[length] = source[props[length]];
+        strictCompareFlags[length] = isStrictComparable(value);
+      }
+      return baseIsMatch(object, props, values, strictCompareFlags, customizer);
     }
 
     /**
@@ -9912,7 +9981,7 @@
      * @alias iteratee
      * @category Utility
      * @param {*} [func=_.identity] The value to convert to a callback.
-     * @param {*} [thisArg] The `this` binding of the created callback.
+     * @param {*} [thisArg] The `this` binding of `func`.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Function} Returns the new function.
      * @example
@@ -10008,36 +10077,7 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     function matches(source) {
-      var props = keys(source),
-          length = props.length;
-
-      if (length == 1) {
-        var key = props[0],
-            value = source[key];
-
-        if (isStrictComparable(value)) {
-          return function(object) {
-            return object != null && value === object[key] && hasOwnProperty.call(object, key);
-          };
-        }
-      }
-      var values = Array(length),
-          strictCompareFlags = Array(length);
-
-      while (length--) {
-        value = source[props[length]];
-        var isStrict = isStrictComparable(value);
-
-        values[length] = isStrict ? value : baseClone(value, true, clonePassthru);
-        strictCompareFlags[length] = isStrict;
-      }
-      return baseMatches(props, values, strictCompareFlags);
-    }
-
-    function baseMatches(source, props, values, strictCompareFlags) {
-      return function(object) {
-        return baseIsMatch(object, props, values, null, strictCompareFlags);
-      };
+      return baseMatches(source, true);
     }
 
     /**

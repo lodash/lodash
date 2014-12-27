@@ -7895,9 +7895,8 @@
     if (isFunction(/x/) || (Uint8Array && !isFunction(Uint8Array))) {
       isFunction = function(value) {
         // The use of `Object#toString` avoids issues with the `typeof` operator
-        // in older versions of Chrome and Safari which return 'function' for
-        // regexes and Safari 8 equivalents which return 'object' for typed
-        // array constructors.
+        // in older versions of Chrome and Safari which return 'function' for regexes
+        // and Safari 8 equivalents which return 'object' for typed array constructors.
         return toString.call(value) == funcClass;
       };
     }

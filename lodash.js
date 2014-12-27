@@ -7730,9 +7730,9 @@
     }
 
     /**
-     * Checks if a collection is empty. A value is considered empty unless it is
-     * an array-like value with a length greater than `0` or an object with own
-     * enumerable properties.
+     * Checks if a value is empty. A value is considered empty unless it is an
+     * `arguments` object, array, string, or jQuery-like collection with a length
+     * greater than `0` or an object with own enumerable properties.
      *
      * @static
      * @memberOf _

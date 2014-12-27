@@ -3580,11 +3580,9 @@
      * @returns {boolean} Returns `true` if `func` is eligible, else `false`.
      */
     function isBindable(func) {
-      var support = lodash.support;
-      if (support.funcNames) {
-        var result = !func.name;
-      }
-      result = result || !support.funcDecomp;
+      var support = lodash.support,
+          result = !(support.funcNames ? func.name : support.funcDecomp);
+
       if (!result) {
         var source = fnToString.call(func);
         if (!support.funcNames) {

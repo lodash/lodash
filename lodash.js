@@ -1797,20 +1797,15 @@
      * @param {*} [func=_.identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {number} [argCount] The number of arguments to provide to `func`.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns the callback.
      */
     function baseCallback(func, thisArg, argCount) {
       var type = typeof func;
 
       if (type == 'function') {
-        var data = typeof thisArg != 'undefined' && getData(func);
-        if (typeof data == 'undefined') {
-          setCallbackData(func);
-        }
-        // Avoid binding if there are no `this` references or `func` is already bound.
-        return (data === false || (data !== true && data[1] & BIND_FLAG))
-          ? func
-          : bindCallback(func, thisArg, argCount);
+        return (typeof thisArg != 'undefined' && isBindable(func))
+          ? bindCallback(func, thisArg, argCount)
+          : func;
       }
       if (func == null) {
         return identity;
@@ -2286,9 +2281,9 @@
     }
 
     /**
-     * A specialized version of `baseIsEqual`, for arrays and objects only, which
-     * performs a deep comparison between objects and tracks traversed objects
-     * enabling objects with circular references to be compared.
+     * A specialized version of `baseIsEqual` for arrays and objects which performs
+     * a deep comparison between objects and tracks traversed objects enabling
+     * objects with circular references to be compared.
      *
      * @private
      * @param {Array} object The object to compare to `other`.
@@ -2374,15 +2369,15 @@
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
     function baseIsMatch(object, props, values, strictCompareFlags, customizer) {
-      var index = -1,
-          length = props.length;
-
+      var length = props.length;
       if (object == null) {
         return !length;
       }
-      strictCompareFlags || (strictCompareFlags = []);
+      var index = -1,
+          noCustomizer = !customizer;
+
       while (++index < length) {
-        if (strictCompareFlags[index]
+        if ((noCustomizer && strictCompareFlags[index])
               ? values[index] !== object[props[index]]
               : !hasOwnProperty.call(object, props[index])
             ) {
@@ -2392,7 +2387,7 @@
       index = -1;
       while (++index < length) {
         var key = props[index];
-        if (strictCompareFlags[index]) {
+        if (noCustomizer && strictCompareFlags[index]) {
           var result = hasOwnProperty.call(object, key);
         } else {
           var objValue = object[key],
@@ -2775,16 +2770,22 @@
     }
 
     /**
-     * A specialized version of `_.bind` for callbacks with support for specifying
-     * the number of arguments to provide to `func`.
+     * A specialized version of `baseCallback` which only supports `this` binding
+     * and specifying the number of arguments to provide to `func`.
      *
      * @private
      * @param {Function} func The function to bind.
      * @param {*} thisArg The `this` binding of `func`.
      * @param {number} [argCount] The number of arguments to provide to `func`.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns the callback.
      */
     function bindCallback(func, thisArg, argCount) {
+      if (typeof func != 'function') {
+        return identity;
+      }
+      if (typeof thisArg == 'undefined') {
+        return func;
+      }
       switch (argCount) {
         case 1: return function(value) {
           return func.call(thisArg, value);
@@ -2963,7 +2964,7 @@
         }
         // Juggle arguments.
         if (length > 3 && typeof arguments[length - 2] == 'function') {
-          var customizer = baseCallback(arguments[--length - 1], arguments[length--], 5);
+          var customizer = bindCallback(arguments[--length - 1], arguments[length--], 5);
         } else if (length > 2 && typeof arguments[length - 1] == 'function') {
           customizer = arguments[--length];
         }
@@ -3572,6 +3573,33 @@
     }
 
     /**
+     * Checks if `func` is eligible for `this` binding.
+     *
+     * @private
+     * @param {Function} func The function to check.
+     * @returns {boolean} Returns `true` if `func` is eligible, else `false`.
+     */
+    function isBindable(func) {
+      var support = lodash.support;
+      if (support.funcNames) {
+        var result = !func.name;
+      }
+      result = result || !support.funcDecomp;
+      if (!result) {
+        var source = fnToString.call(func);
+        if (!support.funcNames) {
+          result = !reFuncName.test(source);
+        }
+        if (!result) {
+          // Check if `func` references the `this` keyword and store the result.
+          result = reThis.test(source) || isNative(func);
+          baseSetData(func, result);
+        }
+      }
+      return result;
+    }
+
+    /**
      * Checks if `value` is cloneable.
      *
      * @private
@@ -3805,34 +3833,6 @@
         return baseSetData(key, value);
       };
     }());
-
-    /**
-     * A specialized version of `setData` for callbacks which sets metadata to
-     * indicate whether `func` is eligible for `this` binding.
-     *
-     * @private
-     * @param {Function} func The function to associate metadata with.
-     * @returns {Function} Returns `func`.
-     */
-    function setCallbackData(func) {
-      var support = lodash.support;
-      if (support.funcNames) {
-        var data = !func.name;
-      }
-      data = data || !support.funcDecomp;
-      if (!data) {
-        var source = fnToString.call(func);
-        if (!support.funcNames) {
-          data = !reFuncName.test(source);
-        }
-        if (!data) {
-          // Check if `func` references the `this` keyword and store the result.
-          data = reThis.test(source) || isNative(func);
-          baseSetData(func, data);
-        }
-      }
-      return func;
-    }
 
     /**
      * A fallback implementation of `_.isPlainObject` which checks if `value`
@@ -5748,7 +5748,7 @@
     function forEach(collection, iteratee, thisArg) {
       return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEach(collection, iteratee)
-        : baseEach(collection, baseCallback(iteratee, thisArg, 3));
+        : baseEach(collection, bindCallback(iteratee, thisArg, 3));
     }
 
     /**
@@ -5771,7 +5771,7 @@
     function forEachRight(collection, iteratee, thisArg) {
       return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
         ? arrayEachRight(collection, iteratee)
-        : baseEachRight(collection, baseCallback(iteratee, thisArg, 3));
+        : baseEachRight(collection, bindCallback(iteratee, thisArg, 3));
     }
 
     /**
@@ -7563,7 +7563,7 @@
         customizer = isIterateeCall(value, isDeep, thisArg) ? null : isDeep;
         isDeep = false;
       }
-      customizer = typeof customizer == 'function' && baseCallback(customizer, thisArg, 1);
+      customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 1);
       return baseClone(value, isDeep, customizer);
     }
 
@@ -7611,7 +7611,7 @@
      * // => false
      */
     function cloneDeep(value, customizer, thisArg) {
-      customizer = typeof customizer == 'function' && baseCallback(customizer, thisArg, 1);
+      customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 1);
       return baseClone(value, true, customizer);
     }
 
@@ -7810,7 +7810,7 @@
      * // => true
      */
     function isEqual(value, other, customizer, thisArg) {
-      customizer = typeof customizer == 'function' && baseCallback(customizer, thisArg, 3);
+      customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
       if (!customizer && isStrictComparable(value) && isStrictComparable(other)) {
         return value === other;
       }
@@ -7975,10 +7975,8 @@
       var props = keys(source),
           length = props.length;
 
-      if (typeof customizer == 'function') {
-        customizer = baseCallback(customizer, thisArg, 3);
-      }
-      else if (length == 1) {
+      customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
+      if (!customizer && length == 1) {
         var key = props[0],
             value = source[key];
 
@@ -8418,7 +8416,7 @@
      */
     function forIn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-        iteratee = baseCallback(iteratee, thisArg, 3);
+        iteratee = bindCallback(iteratee, thisArg, 3);
       }
       return baseFor(object, iteratee, keysIn);
     }
@@ -8449,7 +8447,7 @@
      * // => logs 'z', 'y', and 'x' assuming `_.forIn ` logs 'x', 'y', and 'z'
      */
     function forInRight(object, iteratee, thisArg) {
-      iteratee = baseCallback(iteratee, thisArg, 3);
+      iteratee = bindCallback(iteratee, thisArg, 3);
       return baseForRight(object, iteratee, keysIn);
     }
 
@@ -8475,7 +8473,7 @@
      */
     function forOwn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-        iteratee = baseCallback(iteratee, thisArg, 3);
+        iteratee = bindCallback(iteratee, thisArg, 3);
       }
       return baseForOwn(object, iteratee);
     }
@@ -8499,7 +8497,7 @@
      * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
      */
     function forOwnRight(object, iteratee, thisArg) {
-      iteratee = baseCallback(iteratee, thisArg, 3);
+      iteratee = bindCallback(iteratee, thisArg, 3);
       return baseForRight(object, iteratee, keys);
     }
 
@@ -8742,7 +8740,7 @@
     function mapValues(object, iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);
 
-      var result = {}
+      var result = {};
       baseForOwn(object, function(value, key, object) {
         result[key] = iteratee(value, key, object);
       });
@@ -9984,7 +9982,7 @@
      * @param {*} [func=_.identity] The value to convert to a callback.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns the callback.
      * @example
      *
      * var users = [
@@ -10337,11 +10335,10 @@
       if (n < 1 || !nativeIsFinite(n)) {
         return [];
       }
-      iteratee = baseCallback(iteratee, thisArg, 1);
-
       var index = -1,
           result = Array(nativeMin(n, MAX_ARRAY_LENGTH));
 
+      iteratee = bindCallback(iteratee, thisArg, 1);
       while (++index < n) {
         if (index < MAX_ARRAY_LENGTH) {
           result[index] = iteratee(index);

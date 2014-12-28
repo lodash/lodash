@@ -2490,11 +2490,13 @@
             value = object[key];
 
         if (!(isArr || isObj)) {
-          result = customizer ? customizer(value, srcValue, key, object, source) : undefined;
-          if (typeof result == 'undefined') {
+          var result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+              isCommon = typeof result == 'undefined';
+
+          if (isCommon) {
             result = srcValue;
           }
-          if ((isSrcArr || typeof result != 'undefined') && !(customizer && result === value)) {
+          if ((isSrcArr || typeof result != 'undefined') && (isCommon || result !== value)) {
             object[key] = result;
           }
           return;
@@ -2510,10 +2512,10 @@
             return;
           }
         }
-        var result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-            isDeep = typeof result == 'undefined';
+        result = customizer ? customizer(value, srcValue, key, object, source) : undefined;
+        isCommon = typeof result == 'undefined';
 
-        if (isDeep) {
+        if (isCommon) {
           result = isArr
             ? (isArray(value) ? value : [])
             : (isPlainObject(value) ? value : {});
@@ -2524,10 +2526,9 @@
         stackB.push(result);
 
         // Recursively merge objects and arrays (susceptible to call stack limits).
-        if (isDeep) {
-          baseMerge(result, srcValue, customizer, stackA, stackB);
-        }
-        if (!(customizer && result === value)) {
+        if (isCommon) {
+          object[key] = baseMerge(result, srcValue, customizer, stackA, stackB);
+        } else if (result !== value) {
           object[key] = result;
         }
       });

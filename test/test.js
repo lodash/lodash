@@ -8478,15 +8478,19 @@
       deepEqual(actual, { 'a': 1 });
     });
 
-    test('should handle merging if `customizer` returns `undefined`', 1, function() {
+    test('should handle merging if `customizer` returns `undefined`', 2, function() {
       var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });
+
+      actual = _.merge([], [undefined], _.identity);
+      deepEqual(actual, [undefined]);
     });
 
     test('should defer to `customizer` when it returns a value other than `undefined`', 1, function() {
       var actual = _.merge({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {
         return _.isArray(a) ? a.concat(b) : undefined;
       });
+
       deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
     });
   }(1, 2, 3));

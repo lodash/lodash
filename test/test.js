@@ -2130,14 +2130,6 @@
       deepEqual(actual, { '3': 2, '5': 1 });
     });
 
-    test('should work with an object for `collection`', 1, function() {
-      var actual = _.countBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
-        return Math.floor(num);
-      });
-
-      deepEqual(actual, { '4': 1, '6': 2 });
-    });
-
     test('should work with a number for `iteratee`', 2, function() {
       var array = [
         [1, 'a'],
@@ -2147,6 +2139,14 @@
 
       deepEqual(_.countBy(array, 0), { '1': 1, '2': 2 });
       deepEqual(_.countBy(array, 1), { 'a': 2, 'b': 1 });
+    });
+
+    test('should work with an object for `collection`', 1, function() {
+      var actual = _.countBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '4': 1, '6': 2 });
     });
 
     test('should work in a lazy chain sequence', 1, function() {
@@ -2434,6 +2434,378 @@
 
     test('should be aliased', 1, function() {
       strictEqual(_.iteratee, _.callback);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('custom `_.callback` methods');
+
+  (function() {
+    var array = ['one', 'two', 'three'],
+        callback = _.callback,
+        getPropA = _.partial(_.property, 'a'),
+        getPropB = _.partial(_.property, 'b'),
+        getLength = _.partial(_.property, 'length');
+
+    var getSum = function() {
+      return function(result, object) {
+        return result + object.a;
+      };
+    };
+
+    var objects = [
+      { 'a': 0, 'b': 0 },
+      { 'a': 1, 'b': 0 },
+      { 'a': 1, 'b': 1 }
+    ];
+
+    test('`_.countBy` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getLength;
+        deepEqual(_.countBy(array), { '3': 2, '5': 1 });
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.dropRightWhile` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.dropRightWhile(objects), objects.slice(0, 2));
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.dropWhile` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.dropWhile(objects.reverse()).reverse(), objects.reverse().slice(0, 2));
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.every` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        strictEqual(_.every(objects.slice(1)), true);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.filter` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 0 }, { 'a': 1 }];
+
+        _.callback = getPropA;
+        deepEqual(_.filter(objects), [objects[1]]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.find` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        strictEqual(_.find(objects), objects[1]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findIndex` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        strictEqual(_.findIndex(objects), 1);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findLast` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        strictEqual(_.findLast(objects), objects[2]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findLastIndex` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        strictEqual(_.findLastIndex(objects), 2);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findLastKey` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        strictEqual(_.findKey(objects), '2');
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findKey` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        strictEqual(_.findLastKey(objects), '2');
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.groupBy` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getLength;
+        deepEqual(_.groupBy(array), { '3': ['one', 'two'], '5': ['three'] });
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.indexBy` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getLength;
+        deepEqual(_.indexBy(array), { '3': 'two', '5': 'three' });
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.map` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        deepEqual(_.map(objects), [0, 1, 1]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.mapValues` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.mapValues({ 'a': { 'b': 1 } }), { 'a': 1 });
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.max` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.max(objects), objects[2]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.min` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.min(objects), objects[0]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.partition` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }];
+
+        _.callback = getPropA;
+        deepEqual(_.partition(objects), [objects.slice(0, 2), objects.slice(2)]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.reduce` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getSum;
+        strictEqual(_.reduce(objects, undefined, 0), 2);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.reduceRight` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getSum;
+        strictEqual(_.reduceRight(objects, undefined, 0), 2);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.reject` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 0 }, { 'a': 1 }];
+
+        _.callback = getPropA;
+        deepEqual(_.reject(objects), [objects[0]]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.remove` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 0 }, { 'a': 1 }];
+
+        _.callback = getPropA;
+        _.remove(objects);
+        deepEqual(objects, [{ 'a': 0 }]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.some` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        strictEqual(_.some(objects), true);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sortBy` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropA;
+        deepEqual(_.sortBy(objects.slice().reverse()), [objects[0], objects[2], objects[1]]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sortedIndex` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 30 }, { 'a': 50 }];
+
+        _.callback = getPropA;
+        strictEqual(_.sortedIndex(objects, { 'a': 40 }), 1);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sortedLastIndex` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 30 }, { 'a': 50 }];
+
+        _.callback = getPropA;
+        strictEqual(_.sortedLastIndex(objects, { 'a': 40 }), 1);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.takeRightWhile` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.takeRightWhile(objects), objects.slice(2));
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.takeWhile` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.takeWhile(objects.reverse()), objects.reverse().slice(2));
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.transform` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = function() {
+          return function(result, object) {
+            result.sum += object.a;
+          };
+        };
+
+        deepEqual(_.transform(objects, undefined, { 'sum': 0 }), { 'sum': 2 });
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.uniq` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.uniq(objects), [objects[0], objects[2]]);
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
     });
   }());
 
@@ -3549,6 +3921,18 @@
       strictEqual(_.every([undefined, undefined, undefined], _.identity), false);
     });
 
+    test('should work with a "_.pluck" style `predicate`', 2, function() {
+      var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
+      strictEqual(_.every(objects, 'a'), false);
+      strictEqual(_.every(objects, 'b'), true);
+    });
+
+    test('should work with a "_where" style `predicate`', 2, function() {
+      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
+      strictEqual(_.every(objects, { 'a': 0 }), true);
+      strictEqual(_.every(objects, { 'b': 1 }), false);
+    });
+
     test('should use `_.identity` when `predicate` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false));
@@ -3615,27 +3999,6 @@
       });
 
       deepEqual(actual, [1, 3]);
-    });
-
-    test('should not modify wrapped values', 2, function() {
-      if (!isNpm) {
-        var wrapped = _([1, 2, 3, 4]);
-
-        var actual = wrapped.filter(function(num) {
-          return num < 3;
-        });
-
-        deepEqual(actual.value(), [1, 2]);
-
-        actual = wrapped.filter(function(num) {
-          return num > 2;
-        });
-
-        deepEqual(actual.value(), [3, 4]);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should iterate correctly over an object with numeric keys (test in Mobile Safari 8)', 1, function() {
@@ -4934,12 +5297,9 @@
       deepEqual(actual.hasOwnProperty, [6.1, 6.4]);
     });
 
-    test('should work with an object for `collection`', 1, function() {
-      var actual = _.groupBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
-        return Math.floor(num);
-      });
-
-      deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+      var actual = _.groupBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
     });
 
     test('should work with a number for `iteratee`', 2, function() {
@@ -4949,13 +5309,16 @@
         [2, 'b']
       ];
 
-      deepEqual(_.groupBy(array, 0), { '1': [[1 , 'a']], '2': [[2, 'a'], [2, 'b']] });
-      deepEqual(_.groupBy(array, 1), { 'a': [[1 , 'a'], [2, 'a']], 'b': [[2, 'b']] });
+      deepEqual(_.groupBy(array, 0), { '1': [[1, 'a']], '2': [[2, 'a'], [2, 'b']] });
+      deepEqual(_.groupBy(array, 1), { 'a': [[1, 'a'], [2, 'a']], 'b': [[2, 'b']] });
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
-      var actual = _.groupBy(['one', 'two', 'three'], 'length');
-      deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
+    test('should work with an object for `collection`', 1, function() {
+      var actual = _.groupBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
     test('should work in a lazy chain sequence', 1, function() {
@@ -5164,12 +5527,9 @@
       deepEqual(actual.hasOwnProperty, 6.4);
     });
 
-    test('should work with an object for `collection`', 1, function() {
-      var actual = _.indexBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
-        return Math.floor(num);
-      });
-
-      deepEqual(actual, { '4': 4.2, '6': 6.4 });
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+      var actual = _.indexBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': 'two', '5': 'three' });
     });
 
     test('should work with a number for `iteratee`', 2, function() {
@@ -5179,8 +5539,16 @@
         [2, 'b']
       ];
 
-      deepEqual(_.indexBy(array, 0), { '1': [1 , 'a'], '2': [2, 'b'] });
+      deepEqual(_.indexBy(array, 0), { '1': [1, 'a'], '2': [2, 'b'] });
       deepEqual(_.indexBy(array, 1), { 'a': [2, 'a'], 'b': [2, 'b'] });
+    });
+
+    test('should work with an object for `collection`', 1, function() {
+      var actual = _.indexBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '4': 4.2, '6': 6.4 });
     });
 
     test('should work in a lazy chain sequence', 1, function() {
@@ -6835,7 +7203,7 @@
       deepEqual(actual, expected);
 
       source = { 'a': { 'c': undefined } };
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
       actual = _.map(objects, predicate);
 
       deepEqual(actual, expected);
@@ -7873,6 +8241,11 @@
       deepEqual(actual, [3]);
     });
 
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+      var objects = [{ 'a': 'x' }, { 'a': 'y' }];
+      deepEqual(_.map(objects, 'a'), ['x', 'y']);
+    });
+
     test('should iterate over own properties of objects', 1, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
@@ -7963,6 +8336,11 @@
 
       actual = _.mapValues([1], callback, [2]);
       deepEqual(actual, { '0': 3 });
+    });
+
+    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+      var actual = _.mapValues({ 'a': { 'b': 1 } }, 'b');
+      deepEqual(actual, { 'a': 1 });
     });
 
     test('should iterate over own properties of objects', 1, function() {
@@ -8140,7 +8518,7 @@
       deepEqual(actual, expected);
 
       matches = _.matches({ 'a': { 'c': undefined } });
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1 , 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
       actual = _.map(objects, matches);
 
       deepEqual(actual, expected);
@@ -9645,12 +10023,11 @@
       deepEqual(actual, [[1.1, 1.3], [0.2]]);
     });
 
-    test('should work with an object for `collection`', 1, function() {
-      var actual = _.partition({ 'a': 1.1, 'b': 0.2, 'c': 1.3 }, function(num) {
-        return Math.floor(num);
-      });
+    test('should work with a "_.pluck" style `predicate`', 1, function() {
+      var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
+          actual = _.partition(objects, 'a');
 
-      deepEqual(actual, [[1.1, 1.3], [0.2]]);
+      deepEqual(actual, [objects.slice(0, 2), objects.slice(2)]);
     });
 
     test('should work with a number for `predicate`', 2, function() {
@@ -9664,12 +10041,13 @@
       deepEqual(_.partition(array, 1), [[array[1]], [array[0], array[2]]]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
-          actual = _.partition(objects, 'a');
+    test('should work with an object for `collection`', 1, function() {
+      var actual = _.partition({ 'a': 1.1, 'b': 0.2, 'c': 1.3 }, function(num) {
+        return Math.floor(num);
+      });
 
-      deepEqual(actual, [objects.slice(0, 2), objects.slice(2)]);
-    });
+      deepEqual(actual, [[1.1, 1.3], [0.2]]);
+    })
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -10510,6 +10888,37 @@
       deepEqual(actual, [0]);
     });
 
+    test('`_.' + methodName + '` should work with a "_.pluck" style `predicate`', 1, function() {
+      var objects = [{ 'a': 0 }, { 'a': 1 }];
+      deepEqual(func(objects, 'a'), [objects[isFilter ? 1 : 0]]);
+    });
+
+    test('`_.' + methodName + '` should work with a "_where" style `predicate`', 1, function() {
+      var objects = [{ 'a': 0 }, { 'a': 1 }];
+      deepEqual(func(objects, objects[1]), [objects[isFilter ? 1 : 0]]);
+    });
+
+    test('`_.' + methodName + '` should not modify wrapped values', 2, function() {
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3, 4]);
+
+        var actual = wrapped[methodName](function(num) {
+          return num < 3;
+        });
+
+        deepEqual(actual.value(), isFilter ? [1, 2] : [3, 4]);
+
+        actual = wrapped[methodName](function(num) {
+          return num > 2;
+        });
+
+        deepEqual(actual.value(), isFilter ? [3, 4] : [1, 2]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
     test('`_.' + methodName + '` should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = [1, 2, 3],
@@ -10566,6 +10975,18 @@
       }, array);
 
       deepEqual(actual, [1, 2]);
+    });
+
+    test('should work with a "_.pluck" style `predicate`', 1, function() {
+      var objects = [{ 'a': 0 }, { 'a': 1 }];
+      _.remove(objects, 'a');
+      deepEqual(objects, [{ 'a': 0 }]);
+    });
+
+    test('should work with a "_.where" style `predicate`', 1, function() {
+      var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
+      _.remove(objects, { 'a': 1 });
+      deepEqual(objects, [{ 'a': 0, 'b': 1 }]);
     });
 
     test('should preserve holes in arrays', 2, function() {
@@ -11123,6 +11544,18 @@
 
     test('should return `true` as soon as `predicate` returns truthy', 1, function() {
       strictEqual(_.some([null, true, null], _.identity), true);
+    });
+
+    test('should work with a "_.pluck" style `predicate`', 2, function() {
+      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
+      strictEqual(_.some(objects, 'a'), false);
+      strictEqual(_.some(objects, 'b'), true);
+    });
+
+    test('should work with a "_where" style `predicate`', 2, function() {
+      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 1, 'b': 1}];
+      strictEqual(_.some(objects, { 'a': 0 }), true);
+      strictEqual(_.some(objects, { 'b': 2 }), false);
     });
 
     test('should use `_.identity` when `predicate` is nullish', 2, function() {

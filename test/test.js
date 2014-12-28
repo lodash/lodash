@@ -3576,10 +3576,10 @@
     var func = _[methodName];
 
     test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', 1, function() {
-      var object = { 'a': null, 'b': function() {} },
-          pass = !isStrict;
-
       if (freeze) {
+        var object = { 'a': null, 'b': function() {} },
+            pass = !isStrict;
+
         freeze(object);
         try {
           if (methodName == 'bindAll') {
@@ -4771,7 +4771,7 @@
       deepEqual(argsList, expected, 'non-primitive property values');
     });
 
-    test('`_.' + methodName + '`should support the `thisArg` argument', 1, function() {
+    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
       var actual = func({}, { 'a': 0 }, function(a, b) {
         return this[b];
       }, [2]);
@@ -4788,6 +4788,24 @@
 
       actual = func({ 'a': 1 }, callback, { 'c': 3 });
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
+    });
+
+    test('`_.' + methodName + '` should not assign the `customizer` result if it is the same as the destination value', 1, function() {
+      if (defineProperty) {
+        var object = {},
+            pass = true;
+
+        defineProperty(object, 'a', {
+          'get': _.constant({}),
+          'set': function() { pass = false; }
+        });
+
+        func(object, { 'a': object.a }, _.identity);
+        ok(pass);
+      }
+      else {
+        skipTest();
+      }
     });
   });
 

@@ -1691,9 +1691,15 @@
 
       while (++index < length) {
         var key = props[index];
-        object[key] = customizer
-          ? customizer(object[key], source[key], key, object, source)
-          : source[key];
+        if (customizer) {
+          var value = object[key],
+              result = customizer(value, source[key], key, object, source);
+        } else {
+          result = source[key];
+        }
+        if (!(customizer && result === value)) {
+          object[key] = result;
+        }
       }
       return object;
     }
@@ -2487,7 +2493,7 @@
           if (typeof result == 'undefined') {
             result = srcValue;
           }
-          if (isSrcArr || typeof result != 'undefined') {
+          if ((isSrcArr || typeof result != 'undefined') && !(customizer && result === value)) {
             object[key] = result;
           }
           return;
@@ -2520,7 +2526,9 @@
         if (isDeep) {
           baseMerge(result, srcValue, customizer, stackA, stackB);
         }
-        object[key] = result;
+        if (!(customizer && result === value)) {
+          object[key] = result;
+        }
       });
       return object;
     }

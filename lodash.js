@@ -4811,8 +4811,8 @@
      * // => 1
      */
     function sortedIndex(array, value, iteratee, thisArg) {
-      iteratee = iteratee == null ? iteratee : getCallback(iteratee, thisArg, 1);
-      return binaryIndex(array, value, iteratee);
+      iteratee = getCallback(iteratee, thisArg, 1);
+      return binaryIndex(array, value, iteratee === identity ? null : iteratee);
     }
 
     /**
@@ -4837,8 +4837,8 @@
      * // => 4
      */
     function sortedLastIndex(array, value, iteratee, thisArg) {
-      iteratee = iteratee == null ? iteratee : getCallback(iteratee, thisArg, 1);
-      return binaryIndex(array, value, iteratee, true);
+      iteratee = getCallback(iteratee, thisArg, 1);
+      return binaryIndex(array, value, iteratee === identity ? null : iteratee, true);
     }
 
     /**
@@ -5085,10 +5085,10 @@
         iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
         isSorted = false;
       }
-      iteratee = iteratee == null
-        ? iteratee
-        : getCallback(iteratee, thisArg, 3);
-
+      iteratee = getCallback(iteratee, thisArg, 3);
+      if (iteratee === identity) {
+        iteratee = null;
+      }
       return (isSorted && getIndexOf() == baseIndexOf)
         ? sortedUniq(array, iteratee)
         : baseUniq(array, iteratee);
@@ -5989,19 +5989,21 @@
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
-      var noIteratee = iteratee == null,
+      iteratee = getCallback(iteratee, thisArg, 3);
+
+      var noIteratee = iteratee === identity,
           isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
-      if (noIteratee && !isStr) {
-        return arrayMax(isArr ? collection : toIterable(collection));
+      if (noIteratee) {
+        if (isStr) {
+          iteratee = charAtCallback;
+        } else {
+          return arrayMax(isArr ? collection : toIterable(collection));
+        }
       }
       var computed = NEGATIVE_INFINITY,
           result = computed;
-
-      iteratee = (noIteratee && isStr)
-        ? charAtCallback
-        : getCallback(iteratee, thisArg, 3);
 
       baseEach(collection, function(value, index, collection) {
         var current = iteratee(value, index, collection);
@@ -6060,19 +6062,21 @@
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
-      var noIteratee = iteratee == null,
+      iteratee = getCallback(iteratee, thisArg, 3);
+
+      var noIteratee = iteratee === identity,
           isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
-      if (noIteratee && !isStr) {
-        return arrayMin(isArr ? collection : toIterable(collection));
+      if (noIteratee) {
+        if (isStr) {
+          iteratee = charAtCallback;
+        } else {
+          return arrayMin(isArr ? collection : toIterable(collection));
+        }
       }
       var computed = POSITIVE_INFINITY,
           result = computed;
-
-      iteratee = (noIteratee && isStr)
-        ? charAtCallback
-        : getCallback(iteratee, thisArg, 3);
 
       baseEach(collection, function(value, index, collection) {
         var current = iteratee(value, index, collection);
@@ -8744,7 +8748,7 @@
      *
      * // using "_.pluck" callback shorthand
      * _.mapValues(users, 'age');
-     * // => { 'fred': 40, 'pebbles': 1 }
+     * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
     function mapValues(object, iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);

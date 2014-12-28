@@ -1695,7 +1695,8 @@
           var value = object[key],
               result = customizer(value, source[key], key, object, source);
 
-          if (result !== value || (typeof value == 'undefined' && !(key in object))) {
+          if ((result === result ? result !== value : value === value) ||
+              (typeof value == 'undefined' && !(key in object))) {
             object[key] = result;
           }
         } else {
@@ -2496,7 +2497,8 @@
           if (isCommon) {
             result = srcValue;
           }
-          if ((isSrcArr || typeof result != 'undefined') && (isCommon || result !== value)) {
+          if ((isSrcArr || typeof result != 'undefined') &&
+              (isCommon || (result === result ? result !== value : value === value))) {
             object[key] = result;
           }
           return;
@@ -2528,7 +2530,7 @@
         // Recursively merge objects and arrays (susceptible to call stack limits).
         if (isCommon) {
           object[key] = baseMerge(result, srcValue, customizer, stackA, stackB);
-        } else if (result !== value) {
+        } else if (result === result ? result !== value : value === value) {
           object[key] = result;
         }
       });

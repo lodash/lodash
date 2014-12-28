@@ -4796,8 +4796,8 @@
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
 
-    test('`_.' + methodName + '` should not assign the `customizer` result if it is the same as the destination value', 3, function() {
-      _.each(['a', ['a'], { 'a': 1 }], function(value) {
+    test('`_.' + methodName + '` should not assign the `customizer` result if it is the same as the destination value', 4, function() {
+      _.each(['a', ['a'], { 'a': 1 }, NaN], function(value) {
         if (defineProperty) {
           var object = {},
               pass = true;

@@ -6947,13 +6947,13 @@
      * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
      *   'leading': true,
      *   'trailing': false
-     * });
+     * }));
      *
      * // ensure `batchLog` is invoked once after 1 second of debounced calls
      * var source = new EventSource('/stream');
      * jQuery(source).on('message', _.debounce(batchLog, 250, {
      *   'maxWait': 1000
-     * }, false);
+     * }));
      *
      * // cancel a debounced call
      * var todoChanges = _.debounce(batchLog, 1000);

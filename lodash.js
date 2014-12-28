@@ -1694,11 +1694,12 @@
         if (customizer) {
           var value = object[key],
               result = customizer(value, source[key], key, object, source);
+
+          if (result !== value || (typeof value == 'undefined' && !(key in object))) {
+            object[key] = result;
+          }
         } else {
-          result = source[key];
-        }
-        if (!(customizer && result === value)) {
-          object[key] = result;
+          object[key] = source[key];
         }
       }
       return object;

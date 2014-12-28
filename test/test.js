@@ -953,6 +953,11 @@
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
 
+    test('should work with a `customizer` that returns `undefined`', 1, function() {
+      var expected = { 'a': undefined };
+      deepEqual(_.assign({}, expected, _.identity), expected);
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.extend, _.assign);
     });

@@ -1790,8 +1790,9 @@
       _.each(typedArrays, function(type) {
         test('`_.' + methodName + '` should clone ' + type + ' arrays', 10, function() {
           var Ctor = root[type];
-          if (Ctor) {
-            _.times(2, function(index) {
+
+          _.times(2, function(index) {
+            if (Ctor) {
               var buffer = new ArrayBuffer(24),
                   array = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
                   actual = func(array);
@@ -1801,11 +1802,11 @@
               strictEqual(actual.buffer === array.buffer, !isDeep);
               strictEqual(actual.byteOffset, array.byteOffset);
               strictEqual(actual.length, array.length);
-            });
-          }
-          else {
-            skipTest(10);
-          }
+            }
+            else {
+              skipTest(5);
+            }
+          });
         });
       });
 
@@ -4178,10 +4179,10 @@
 
     test('should work with extremely large arrays', 3, function() {
       // Test in modern browsers only to avoid browser hangs.
-      if (freeze) {
-        var expected = Array(5e5);
+      _.times(3, function(index) {
+        if (freeze) {
+          var expected = Array(5e5);
 
-        _.times(3, function(index) {
           try {
             if (index) {
               var actual = actual == 1 ? _.flatten([expected], true) : _.flattenDeep([expected]);
@@ -4192,11 +4193,11 @@
           } catch(e) {
             ok(false, e.message);
           }
-        });
-      }
-      else {
-        skipTest(3);
-      }
+        }
+        else {
+          skipTest();
+        }
+      });
     });
 
     test('should work with empty arrays', 3, function() {
@@ -4790,22 +4791,24 @@
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
 
-    test('`_.' + methodName + '` should not assign the `customizer` result if it is the same as the destination value', 1, function() {
-      if (defineProperty) {
-        var object = {},
-            pass = true;
+    test('`_.' + methodName + '` should not assign the `customizer` result if it is the same as the destination value', 3, function() {
+      _.each(['a', ['a'], { 'a': 1 }], function(value) {
+        if (defineProperty) {
+          var object = {},
+              pass = true;
 
-        defineProperty(object, 'a', {
-          'get': _.constant({}),
-          'set': function() { pass = false; }
-        });
+          defineProperty(object, 'a', {
+            'get': _.constant(value),
+            'set': function() { pass = false; }
+          });
 
-        func(object, { 'a': object.a }, _.identity);
-        ok(pass);
-      }
-      else {
-        skipTest();
-      }
+          func(object, { 'a': value }, _.identity);
+          ok(pass);
+        }
+        else {
+          skipTest();
+        }
+      });
     });
   });
 
@@ -5321,19 +5324,17 @@
     });
 
     test('`_.uniq` should work with a custom `_.indexOf` method', 6, function() {
-      if (!isModularize) {
-        _.indexOf = custom;
-
-        _.each([false, true, _.identity], function(param) {
+      _.each([false, true, _.identity], function(param) {
+        if (!isModularize) {
+          _.indexOf = custom;
           deepEqual(_.uniq(array, param), array.slice(0, 3));
           deepEqual(_.uniq(largeArray, param), [largeArray[0]]);
-        });
-
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(6);
-      }
+          _.indexOf = indexOf;
+        }
+        else {
+          skipTest();
+        }
+      });
     });
   }());
 
@@ -7452,14 +7453,14 @@
     });
 
     test('should not error on host objects (test in IE)', 15, function() {
-      if (xml) {
-        var funcs = [
-          'isArguments', 'isArray', 'isBoolean', 'isDate', 'isElement',
-          'isError', 'isFinite', 'isFunction', 'isNaN', 'isNull', 'isNumber',
-          'isObject', 'isRegExp', 'isString', 'isUndefined'
-        ];
+      var funcs = [
+        'isArguments', 'isArray', 'isBoolean', 'isDate', 'isElement',
+        'isError', 'isFinite', 'isFunction', 'isNaN', 'isNull', 'isNumber',
+        'isObject', 'isRegExp', 'isString', 'isUndefined'
+      ];
 
-        _.each(funcs, function(methodName) {
+      _.each(funcs, function(methodName) {
+        if (xml) {
           var pass = true;
           try {
             _[methodName](xml);
@@ -7467,11 +7468,11 @@
             pass = false;
           }
           ok(pass, '`_.' + methodName + '` should not error');
-        });
-      }
-      else {
-        skipTest(15);
-      }
+        }
+        else {
+          skipTest();
+        }
+      });
     });
   }());
 
@@ -8803,8 +8804,8 @@
     });
 
     test('should not return the existing wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        _.each([_, Wrapper], function(func) {
+      _.each([_, Wrapper], function(func) {
+        if (!isNpm) {
           if (func === _) {
             var wrapped = _(source),
                 actual = wrapped.mixin();
@@ -8820,11 +8821,11 @@
           delete func.prototype.a;
           delete func.b;
           delete func.prototype.b;
-        });
-      }
-      else {
-        skipTest(2);
-      }
+        }
+        else {
+          skipTest();
+        }
+      });
     });
 
     test('should produce methods that work in a lazy chain sequence', 1, function() {
@@ -12224,20 +12225,25 @@
     });
 
     test('should support a `leading` option', 4, function() {
-      if (!(isRhino && isModularize)) {
-        _.each([true, { 'leading': true }], function(options) {
+      _.each([true, { 'leading': true }], function(options) {
+        if (!(isRhino && isModularize)) {
           var withLeading = _.throttle(_.identity, 32, options);
           strictEqual(withLeading('a'), 'a');
-        });
+        }
+        else {
+          skiTest();
+        }
+      });
 
-        _.each([false, { 'leading': false }], function(options) {
+      _.each([false, { 'leading': false }], function(options) {
+        if (!(isRhino && isModularize)) {
           var withoutLeading = _.throttle(_.identity, 32, options);
           strictEqual(withoutLeading('a'), undefined);
-        });
-      }
-      else {
-        skipTest(4);
-      }
+        }
+        else {
+          skipTest();
+        }
+      });
     });
 
     asyncTest('should support a `trailing` option', 6, function() {
@@ -13731,7 +13737,6 @@
 
     _.each(funcs, function(methodName) {
       test('`_(...).' + methodName + '` should return a new wrapper', 2, function() {
-
         if (!isNpm) {
           var array = [1, 2, 3],
               wrapped = _(array),

@@ -8843,7 +8843,7 @@
         var props = arrayMap(baseFlatten(arguments, false, false, 1), String);
         return pickByArray(object, baseDifference(keysIn(object), props));
       }
-      predicate = getCallback(predicate, thisArg, 3);
+      predicate = bindCallback(predicate, thisArg, 3);
       return pickByCallback(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
@@ -8907,7 +8907,7 @@
         return {};
       }
       return typeof predicate == 'function'
-        ? pickByCallback(object, getCallback(predicate, thisArg, 3))
+        ? pickByCallback(object, bindCallback(predicate, thisArg, 3))
         : pickByArray(object, baseFlatten(arguments, false, false, 1));
     }
 

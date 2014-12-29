@@ -5184,7 +5184,7 @@
 
   QUnit.module('exit early');
 
-  _.each(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
+  _.each(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'transform'], function(methodName) {
     var func = _[methodName];
     if (!func) {
       return;
@@ -5193,7 +5193,11 @@
       var array = [1, 2, 3],
           values = [];
 
-      func(array, function(value) { values.push(value); return false; });
+      func(array, function(value, other) {
+        values.push(_.isArray(value) ? other : value);
+        return false;
+      });
+
       deepEqual(values, [_.endsWith(methodName, 'Right') ? 3 : 1]);
     });
 
@@ -5201,7 +5205,11 @@
       var object = { 'a': 1, 'b': 2, 'c': 3 },
           values = [];
 
-      func(object, function(value) { values.push(value); return false; });
+      func(object, function(value, other) {
+        values.push(_.isArray(value) ? other : value);
+        return false;
+      });
+
       strictEqual(values.length, 1);
     });
   });
@@ -13021,13 +13029,13 @@
   QUnit.module('lodash.transform');
 
   (function() {
-    test('should create an object with the same `[[Prototype]]` as `object` when `accumulator` is `null` or `undefined`', 4, function() {
-      function Foo() {
-        this.a = 1;
-        this.b = 2;
-        this.c = 3;
-      }
+    function Foo() {
+      this.a = 1;
+      this.b = 2;
+      this.c = 3;
+    }
 
+    test('should create an object with the same `[[Prototype]]` as `object` when `accumulator` is `null` or `undefined`', 4, function() {
       var accumulators = [, null, undefined],
           expected = _.map(accumulators, _.constant(true)),
           object = new Foo;
@@ -13065,6 +13073,43 @@
       deepEqual(actual, expected);
     });
 
+    test('should support an `accumulator` value', 4, function() {
+      var values = [new Foo, [1, 2, 3], { 'a': 1, 'b': 2, 'c': 3 }],
+          expected = _.map(values, _.constant([0, 1, 4, 9]));
+
+      var actual = _.map(values, function(value) {
+        return _.transform(value, function(result, value) {
+          result.push(value * value);
+        }, [0]);
+      });
+
+      deepEqual(actual, expected);
+
+      var object = { '_': 0, 'a': 1, 'b': 4, 'c': 9 };
+      expected = [object, { '_': 0, '0': 1, '1': 4, '2': 9 }, object];
+      actual = _.map(values, function(value) {
+        return _.transform(value, function(result, value, key) {
+          result[key] = value * value;
+        }, { '_': 0 });
+      });
+
+      deepEqual(actual, expected);
+
+      object = {};
+      expected = _.map(values, _.constant(object));
+      actual = _.map(values, function(value) {
+        return _.transform(value, _.noop, object);
+      });
+
+      deepEqual(actual, expected);
+
+      actual = _.map(values, function(value) {
+        return _.transform(null, null, object);
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should treat sparse arrays as dense', 1, function() {
       var actual = _.transform(Array(1), function(result, value, index) {
         result[index] = String(value);
@@ -13074,7 +13119,6 @@
     });
 
     test('should work without an `iteratee` argument', 1, function() {
-      function Foo() {}
       ok(_.transform(new Foo) instanceof Foo);
     });
 
@@ -13083,8 +13127,8 @@
           values = [true, false, 0, 1, NaN, '', 'a'],
           expected = _.map(values, _.constant({}));
 
-      var results = _.map(values, function(value, index) {
-        return index ? _.transform(value) : _.transform();
+      var results = _.map(values, function(value) {
+        return _.transform(value);
       });
 
       deepEqual(results, expected);

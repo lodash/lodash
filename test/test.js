@@ -5705,7 +5705,7 @@
           _.indexOf = indexOf;
         }
         else {
-          skipTest();
+          skipTest(2);
         }
       });
     });
@@ -12673,7 +12673,7 @@
           strictEqual(withLeading('a'), 'a');
         }
         else {
-          skiTest();
+          skipTest();
         }
       });
 

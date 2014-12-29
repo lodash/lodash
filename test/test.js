@@ -13569,10 +13569,8 @@
         'z': { 'a': 1, 'b': 2 }
       };
 
-      var actual = _.where(object, { 'a': 1 }),
-          expected = [object.x, object.z];
-
-      deepEqual(actual, expected);
+      var actual = _.where(object, { 'a': 1 });
+      deepEqual(actual, [object.x, object.z]);
     });
 
     test('should work in a lazy chain sequence', 1, function() {

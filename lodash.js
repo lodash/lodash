@@ -4811,8 +4811,11 @@
      * // => 1
      */
     function sortedIndex(array, value, iteratee, thisArg) {
-      iteratee = getCallback(iteratee, thisArg, 1);
-      return binaryIndex(array, value, iteratee === identity ? null : iteratee);
+      var func = getCallback(iteratee);
+      if (!(func === baseCallback && iteratee == null)) {
+        iteratee = func(iteratee, thisArg, 1);
+      }
+      return binaryIndex(array, value, iteratee);
     }
 
     /**
@@ -4837,8 +4840,11 @@
      * // => 4
      */
     function sortedLastIndex(array, value, iteratee, thisArg) {
-      iteratee = getCallback(iteratee, thisArg, 1);
-      return binaryIndex(array, value, iteratee === identity ? null : iteratee, true);
+      var func = getCallback();
+      if (!(func === baseCallback && iteratee == null)) {
+        iteratee = func(iteratee, thisArg, 1);
+      }
+      return binaryIndex(array, value, iteratee, true);
     }
 
     /**
@@ -5085,9 +5091,9 @@
         iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
         isSorted = false;
       }
-      iteratee = getCallback(iteratee, thisArg, 3);
-      if (iteratee === identity) {
-        iteratee = null;
+      var func = getCallback();
+      if (!(func === baseCallback && iteratee == null)) {
+        iteratee = func(iteratee, thisArg, 3);
       }
       return (isSorted && getIndexOf() == baseIndexOf)
         ? sortedUniq(array, iteratee)
@@ -5989,12 +5995,15 @@
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
-      iteratee = getCallback(iteratee, thisArg, 3);
-
-      var noIteratee = iteratee === identity,
+      var noIteratee = iteratee == null,
+          func = getCallback(),
           isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
+      if (!(func === baseCallback && noIteratee)) {
+        noIteratee = false;
+        iteratee = func(iteratee, thisArg, 3);
+      }
       if (noIteratee) {
         if (isStr) {
           iteratee = charAtCallback;
@@ -6062,12 +6071,16 @@
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
-      iteratee = getCallback(iteratee, thisArg, 3);
-
-      var noIteratee = iteratee === identity,
+      var noIteratee = iteratee == null,
+          func = getCallback(),
           isArr = noIteratee && isArray(collection),
           isStr = !isArr && isString(collection);
 
+
+      if (!(func === baseCallback && noIteratee)) {
+        noIteratee = false;
+        iteratee = func(iteratee, thisArg, 3);
+      }
       if (noIteratee) {
         if (isStr) {
           iteratee = charAtCallback;

@@ -11884,7 +11884,7 @@
 
     test('should not contain minified properties (test production builds)', 1, function() {
       var props = [
-        'argsClass',
+        'argsTag',
         'argsObject',
         'dom',
         'enumErrorProps',
@@ -11893,7 +11893,7 @@
         'funcDecomp',
         'funcNames',
         'hostObject',
-        'nodeClass',
+        'nodeTag',
         'nonEnumArgs',
         'nonEnumShadows',
         'nonEnumStrings',

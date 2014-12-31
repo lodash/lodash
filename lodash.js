@@ -139,60 +139,60 @@
   var templateCounter = -1;
 
   /** `Object#toString` result references. */
-  var argsClass = '[object Arguments]',
-      arrayClass = '[object Array]',
-      boolClass = '[object Boolean]',
-      dateClass = '[object Date]',
-      errorClass = '[object Error]',
-      funcClass = '[object Function]',
-      mapClass = '[object Map]',
-      numberClass = '[object Number]',
-      objectClass = '[object Object]',
-      regexpClass = '[object RegExp]',
-      setClass = '[object Set]',
-      stringClass = '[object String]',
-      weakMapClass = '[object WeakMap]';
+  var argsTag = '[object Arguments]',
+      arrayTag = '[object Array]',
+      boolTag = '[object Boolean]',
+      dateTag = '[object Date]',
+      errorTag = '[object Error]',
+      funcTag = '[object Function]',
+      mapTag = '[object Map]',
+      numberTag = '[object Number]',
+      objectTag = '[object Object]',
+      regexpTag = '[object RegExp]',
+      setTag = '[object Set]',
+      stringTag = '[object String]',
+      weakMapTag = '[object WeakMap]';
 
-  var arrayBufferClass = '[object ArrayBuffer]',
-      float32Class = '[object Float32Array]',
-      float64Class = '[object Float64Array]',
-      int8Class = '[object Int8Array]',
-      int16Class = '[object Int16Array]',
-      int32Class = '[object Int32Array]',
-      uint8Class = '[object Uint8Array]',
-      uint8ClampedClass = '[object Uint8ClampedArray]',
-      uint16Class = '[object Uint16Array]',
-      uint32Class = '[object Uint32Array]';
+  var arrayBufferTag = '[object ArrayBuffer]',
+      float32Tag = '[object Float32Array]',
+      float64Tag = '[object Float64Array]',
+      int8Tag = '[object Int8Array]',
+      int16Tag = '[object Int16Array]',
+      int32Tag = '[object Int32Array]',
+      uint8Tag = '[object Uint8Array]',
+      uint8ClampedTag = '[object Uint8ClampedArray]',
+      uint16Tag = '[object Uint16Array]',
+      uint32Tag = '[object Uint32Array]';
 
   /** Used to identify object classifications that are treated like arrays. */
-  var arrayLikeClasses = {};
-  arrayLikeClasses[argsClass] =
-  arrayLikeClasses[arrayClass] = arrayLikeClasses[float32Class] =
-  arrayLikeClasses[float64Class] = arrayLikeClasses[int8Class] =
-  arrayLikeClasses[int16Class] = arrayLikeClasses[int32Class] =
-  arrayLikeClasses[uint8Class] = arrayLikeClasses[uint8ClampedClass] =
-  arrayLikeClasses[uint16Class] = arrayLikeClasses[uint32Class] = true;
-  arrayLikeClasses[arrayBufferClass] = arrayLikeClasses[boolClass] =
-  arrayLikeClasses[dateClass] = arrayLikeClasses[errorClass] =
-  arrayLikeClasses[funcClass] = arrayLikeClasses[mapClass] =
-  arrayLikeClasses[numberClass] = arrayLikeClasses[objectClass] =
-  arrayLikeClasses[regexpClass] = arrayLikeClasses[setClass] =
-  arrayLikeClasses[stringClass] = arrayLikeClasses[weakMapClass] = false;
+  var arrayLikeTags = {};
+  arrayLikeTags[argsTag] =
+  arrayLikeTags[arrayTag] = arrayLikeTags[float32Tag] =
+  arrayLikeTags[float64Tag] = arrayLikeTags[int8Tag] =
+  arrayLikeTags[int16Tag] = arrayLikeTags[int32Tag] =
+  arrayLikeTags[uint8Tag] = arrayLikeTags[uint8ClampedTag] =
+  arrayLikeTags[uint16Tag] = arrayLikeTags[uint32Tag] = true;
+  arrayLikeTags[arrayBufferTag] = arrayLikeTags[boolTag] =
+  arrayLikeTags[dateTag] = arrayLikeTags[errorTag] =
+  arrayLikeTags[funcTag] = arrayLikeTags[mapTag] =
+  arrayLikeTags[numberTag] = arrayLikeTags[objectTag] =
+  arrayLikeTags[regexpTag] = arrayLikeTags[setTag] =
+  arrayLikeTags[stringTag] = arrayLikeTags[weakMapTag] = false;
 
   /** Used to identify object classifications that `_.clone` supports. */
-  var cloneableClasses = {};
-  cloneableClasses[argsClass] = cloneableClasses[arrayClass] =
-  cloneableClasses[arrayBufferClass] = cloneableClasses[boolClass] =
-  cloneableClasses[dateClass] = cloneableClasses[float32Class] =
-  cloneableClasses[float64Class] = cloneableClasses[int8Class] =
-  cloneableClasses[int16Class] = cloneableClasses[int32Class] =
-  cloneableClasses[numberClass] = cloneableClasses[objectClass] =
-  cloneableClasses[regexpClass] = cloneableClasses[stringClass] =
-  cloneableClasses[uint8Class] = cloneableClasses[uint8ClampedClass] =
-  cloneableClasses[uint16Class] = cloneableClasses[uint32Class] = true;
-  cloneableClasses[errorClass] =
-  cloneableClasses[funcClass] = cloneableClasses[mapClass] =
-  cloneableClasses[setClass] = cloneableClasses[weakMapClass] = false;
+  var cloneableTags = {};
+  cloneableTags[argsTag] = cloneableTags[arrayTag] =
+  cloneableTags[arrayBufferTag] = cloneableTags[boolTag] =
+  cloneableTags[dateTag] = cloneableTags[float32Tag] =
+  cloneableTags[float64Tag] = cloneableTags[int8Tag] =
+  cloneableTags[int16Tag] = cloneableTags[int32Tag] =
+  cloneableTags[numberTag] = cloneableTags[objectTag] =
+  cloneableTags[regexpTag] = cloneableTags[stringTag] =
+  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
+  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+  cloneableTags[errorTag] =
+  cloneableTags[funcTag] = cloneableTags[mapTag] =
+  cloneableTags[setTag] = cloneableTags[weakMapTag] = false;
 
   /** Used as an internal `_.debounce` options object by `_.throttle`. */
   var debounceOptions = {
@@ -700,7 +700,7 @@
    */
   var isHostObject = (function() {
     try {
-      String({ 'toString': 0 } + '');
+      Object({ 'toString': 0 } + '');
     } catch(e) {
       return function() { return false; };
     }
@@ -911,15 +911,15 @@
     /** Used to generate unique IDs. */
     var idCounter = 0;
 
+    /** Used to resolve the internal tag of values. */
+    var objToString = objectProto.toString;
+
     /** Used to restore the original `_` reference in `_.noConflict`. */
     var oldDash = context._;
 
-    /** Used to resolve the internal `[[Class]]` of values. */
-    var toString = objectProto.toString;
-
     /** Used to detect if a method is native. */
     var reNative = RegExp('^' +
-      escapeRegExp(toString)
+      escapeRegExp(objToString)
       .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
@@ -984,29 +984,29 @@
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
-    /** Used to lookup a built-in constructor by `[[Class]]`. */
-    var ctorByClass = {};
-    ctorByClass[float32Class] = context.Float32Array;
-    ctorByClass[float64Class] = context.Float64Array;
-    ctorByClass[int8Class] = context.Int8Array;
-    ctorByClass[int16Class] = context.Int16Array;
-    ctorByClass[int32Class] = context.Int32Array;
-    ctorByClass[uint8Class] = context.Uint8Array;
-    ctorByClass[uint8ClampedClass] = context.Uint8ClampedArray;
-    ctorByClass[uint16Class] = context.Uint16Array;
-    ctorByClass[uint32Class] = context.Uint32Array;
+    /** Used to lookup a built-in constructor by internal tag. */
+    var ctorByTag = {};
+    ctorByTag[float32Tag] = context.Float32Array;
+    ctorByTag[float64Tag] = context.Float64Array;
+    ctorByTag[int8Tag] = context.Int8Array;
+    ctorByTag[int16Tag] = context.Int16Array;
+    ctorByTag[int32Tag] = context.Int32Array;
+    ctorByTag[uint8Tag] = context.Uint8Array;
+    ctorByTag[uint8ClampedTag] = context.Uint8ClampedArray;
+    ctorByTag[uint16Tag] = context.Uint16Array;
+    ctorByTag[uint32Tag] = context.Uint32Array;
 
     /** Used to avoid iterating over non-enumerable properties in IE < 9. */
     var nonEnumProps = {};
-    nonEnumProps[arrayClass] = nonEnumProps[dateClass] = nonEnumProps[numberClass] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
-    nonEnumProps[boolClass] = nonEnumProps[stringClass] = { 'constructor': true, 'toString': true, 'valueOf': true };
-    nonEnumProps[errorClass] = nonEnumProps[funcClass] = nonEnumProps[regexpClass] = { 'constructor': true, 'toString': true };
-    nonEnumProps[objectClass] = { 'constructor': true };
+    nonEnumProps[arrayTag] = nonEnumProps[dateTag] = nonEnumProps[numberTag] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
+    nonEnumProps[boolTag] = nonEnumProps[stringTag] = { 'constructor': true, 'toString': true, 'valueOf': true };
+    nonEnumProps[errorTag] = nonEnumProps[funcTag] = nonEnumProps[regexpTag] = { 'constructor': true, 'toString': true };
+    nonEnumProps[objectTag] = { 'constructor': true };
 
     arrayEach(shadowProps, function(key) {
-      for (var className in nonEnumProps) {
-        if (hasOwnProperty.call(nonEnumProps, className)) {
-          var props = nonEnumProps[className];
+      for (var tag in nonEnumProps) {
+        if (hasOwnProperty.call(nonEnumProps, tag)) {
+          var props = nonEnumProps[tag];
           props[key] = hasOwnProperty.call(props, key);
         }
       }
@@ -1139,13 +1139,13 @@
       for (var key in new Ctor) { props.push(key); }
 
       /**
-       * Detect if the `[[Class]]` of `arguments` objects is resolvable
+       * Detect if the internal tag of `arguments` objects is resolvable
        * (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
        * @type boolean
        */
-      support.argsClass = toString.call(arguments) == argsClass;
+      support.argsTag = objToString.call(arguments) == argsTag;
 
       /**
        * Detect if `name` or `message` properties of `Error.prototype` are
@@ -1189,12 +1189,12 @@
       support.funcNames = typeof Function.name == 'string';
 
       /**
-       * Detect if the `[[Class]]` of DOM nodes is resolvable (all but IE < 9).
+       * Detect if the internal tag of DOM nodes is resolvable (all but IE < 9).
        *
        * @memberOf _.support
        * @type boolean
        */
-      support.nodeClass = toString.call(document) != objectClass;
+      support.nodeTag = objToString.call(document) != objectTag;
 
       /**
        * Detect if string indexes are non-enumerable
@@ -1778,7 +1778,7 @@
       // Handle "_.pluck" and "_.where" style callback shorthands.
       return type == 'object'
         ? baseMatches(func, argCount)
-        : baseProperty(argCount ? String(func) : func);
+        : baseProperty(argCount ? (func + '') : func);
     }
 
     /**
@@ -1813,7 +1813,7 @@
           isDeep = false;
           result = {};
         } else if (isDeep) {
-          isDeep = toString.call(result) == objectClass;
+          isDeep = objToString.call(result) == objectTag;
         }
       }
       if (!isDeep || result === value) {
@@ -2261,31 +2261,31 @@
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
-      var objClass = isArray(object) ? arrayClass : toString.call(object),
-          objIsArg = objClass == argsClass,
-          objIsArr = !objIsArg && arrayLikeClasses[objClass],
-          othClass = isArray(other) ? arrayClass : toString.call(other),
-          othIsArg = othClass == argsClass,
-          othIsArr = !othIsArg && arrayLikeClasses[othClass];
+      var objTag = isArray(object) ? arrayTag : objToString.call(object),
+          objIsArg = objTag == argsTag,
+          objIsArr = !objIsArg && arrayLikeTags[objTag],
+          othTag = isArray(other) ? arrayTag : objToString.call(other),
+          othIsArg = othTag == argsTag,
+          othIsArr = !othIsArg && arrayLikeTags[othTag];
 
-      if (!lodash.support.argsClass) {
+      if (!lodash.support.argsTag) {
         objIsArg = !objIsArr && typeof object.length == 'number' && isArguments(object);
         othIsArg = !othIsArr && typeof other.length == 'number' && isArguments(other);
       }
       if (objIsArg) {
         object = argsToObject(object);
-        objClass = objectClass;
+        objTag = objectTag;
       }
       if (othIsArg) {
         other = argsToObject(other);
-        othClass = objectClass;
+        othTag = objectTag;
       }
-      var objIsObj = objClass == objectClass && !isHostObject(object),
-          othIsObj = othClass == objectClass && !isHostObject(other),
-          isSameClass = objClass == othClass;
+      var objIsObj = objTag == objectTag && !isHostObject(object),
+          othIsObj = othTag == objectTag && !isHostObject(other),
+          isSameTag = objTag == othTag;
 
-      if (isSameClass && !(objIsArr || objIsObj)) {
-        return equalByClass(object, other, objClass);
+      if (isSameTag && !(objIsArr || objIsObj)) {
+        return equalByTag(object, other, objTag);
       }
       var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
           othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
@@ -2293,7 +2293,7 @@
       if (valWrapped || othWrapped) {
         return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
       }
-      if (!isSameClass) {
+      if (!isSameTag) {
         return false;
       }
       // Assume cyclic structures are equal.
@@ -3188,7 +3188,7 @@
         return '';
       }
       var padLength = length - strLength;
-      chars = chars == null ? ' ' : String(chars);
+      chars = chars == null ? ' ' : (chars + '');
       return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
     }
 
@@ -3348,40 +3348,40 @@
 
     /**
      * A specialized version of `baseIsEqualDeep` for comparing objects of
-     * the same `[[Class]]`.
+     * the same internal tag.
      *
-     * **Note:** This function only supports comparing values with `[[Class]]`
+     * **Note:** This function only supports comparing values with internal tag
      * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
      *
      * @private
      * @param {Object} value The object to compare to `other`.
      * @param {Object} other The object to compare to `object`.
-     * @param {string} className The `[[Class]]` of the objects to compare.
+     * @param {string} tag The tag of the objects to compare.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalByClass(object, other, className) {
-      switch (className) {
-        case boolClass:
-        case dateClass:
+    function equalByTag(object, other, tag) {
+      switch (tag) {
+        case boolTag:
+        case dateTag:
           // Coerce dates and booleans to numbers, dates to milliseconds and booleans
           // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
           return +object == +other;
 
-        case errorClass:
+        case errorTag:
           return object.name == other.name && object.message == other.message;
 
-        case numberClass:
+        case numberTag:
           // Treat `NaN` vs. `NaN` as equal.
           return (object != +object)
             ? other != +other
             // But, treat `-0` vs. `+0` as not equal.
             : (object == 0 ? ((1 / object) == (1 / other)) : object == +other);
 
-        case regexpClass:
-        case stringClass:
+        case regexpTag:
+        case stringTag:
           // Coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
           // treat strings primitives and string objects as equal.
-          return object == String(other);
+          return object == (other + '');
       }
       return false;
     }
@@ -3584,9 +3584,9 @@
         return null;
       }
       var Ctor = object.constructor,
-          className = toString.call(object),
-          isArgs = className == argsClass || (!lodash.support.argsClass && isArguments(object)),
-          isObj = className == objectClass;
+          tag = objToString.call(object),
+          isArgs = tag == argsTag || (!lodash.support.argsTag && isArguments(object)),
+          isObj = tag == objectTag;
 
       if (isObj && !(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
         Ctor = Object;
@@ -3598,29 +3598,29 @@
         }
         return result;
       }
-      switch (className) {
-        case arrayBufferClass:
+      switch (tag) {
+        case arrayBufferTag:
           return bufferClone(object);
 
-        case boolClass:
-        case dateClass:
+        case boolTag:
+        case dateTag:
           return new Ctor(+object);
 
-        case float32Class: case float64Class:
-        case int8Class: case int16Class: case int32Class:
-        case uint8Class: case uint8ClampedClass: case uint16Class: case uint32Class:
+        case float32Tag: case float64Tag:
+        case int8Tag: case int16Tag: case int32Tag:
+        case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
           // Safari 5 mobile incorrectly has `Object` as the constructor of typed arrays.
           if (Ctor instanceof Ctor) {
-            Ctor = ctorByClass[className];
+            Ctor = ctorByTag[tag];
           }
           var buffer = object.buffer;
           return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
 
-        case numberClass:
-        case stringClass:
+        case numberTag:
+        case stringTag:
           return new Ctor(object);
 
-        case regexpClass:
+        case regexpTag:
           result = new Ctor(object.source, reFlags.exec(object));
           result.lastIndex = object.lastIndex;
       }
@@ -3636,7 +3636,7 @@
      */
     function isArrayLike(value) {
       return (isObjectLike(value) && isLength(value.length) &&
-        (arrayLikeClasses[toString.call(value)] || (!lodash.support.argsClass && isArguments(value)))) || false;
+        (arrayLikeTags[objToString.call(value)] || (!lodash.support.argsTag && isArguments(value)))) || false;
     }
 
     /**
@@ -3672,7 +3672,7 @@
      * @returns {boolean} Returns `true` if `value` is cloneable, else `false`.
      */
     function isCloneable(value) {
-      return (value && cloneableClasses[toString.call(value)] && !isHostObject(value)) || false;
+      return (value && cloneableTags[objToString.call(value)] && !isHostObject(value)) || false;
     }
 
     /**
@@ -3913,10 +3913,10 @@
           support = lodash.support;
 
       // Exit early for non `Object` objects.
-      if (!(isObjectLike(value) && toString.call(value) == objectClass && !isHostObject(value)) ||
+      if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value)) ||
           (!hasOwnProperty.call(value, 'constructor') &&
             (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor))) ||
-          (!support.argsClass && isArguments(value))) {
+          (!support.argsTag && isArguments(value))) {
         return false;
       }
       // IE < 9 iterates inherited properties before own properties. If the first
@@ -4010,6 +4010,21 @@
       return isObject(value) ? value : Object(value);
     }
 
+    /**
+     * Converts `value` to a string if it not one. An empty string is returned
+     * for `null` or `undefined` values.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {string} Returns the string.
+     */
+    function toString(value) {
+      if (typeof value == 'string') {
+        return value;
+      }
+      return value == null ? '' : (value + '');
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -4051,7 +4066,7 @@
 
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
-     * `0`, `""`, `undefined`, and `NaN` are all falsey.
+     * `0`, `""`, `undefined`, and `NaN` are falsey.
      *
      * @static
      * @memberOf _
@@ -5452,7 +5467,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return String(this.value());
+      return (this.value() + '');
     }
 
     /**
@@ -7650,10 +7665,10 @@
      */
     function isArguments(value) {
       var length = isObjectLike(value) ? value.length : undefined;
-      return (isLength(length) && toString.call(value) == argsClass) || false;
+      return (isLength(length) && objToString.call(value) == argsTag) || false;
     }
-    // Fallback for environments without a `[[Class]]` for `arguments` objects.
-    if (!support.argsClass) {
+    // Fallback for environments without an internal tag for `arguments` objects.
+    if (!support.argsTag) {
       isArguments = function(value) {
         var length = isObjectLike(value) ? value.length : undefined;
         return (isLength(length) && hasOwnProperty.call(value, 'callee') &&
@@ -7678,7 +7693,7 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return (isObjectLike(value) && isLength(value.length) && toString.call(value) == arrayClass) || false;
+      return (isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag) || false;
     };
 
     /**
@@ -7698,7 +7713,7 @@
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false || isObjectLike(value) && toString.call(value) == boolClass) || false;
+      return (value === true || value === false || isObjectLike(value) && objToString.call(value) == boolTag) || false;
     }
 
     /**
@@ -7718,7 +7733,7 @@
      * // => false
      */
     function isDate(value) {
-      return (isObjectLike(value) && toString.call(value) == dateClass) || false;
+      return (isObjectLike(value) && objToString.call(value) == dateTag) || false;
     }
 
     /**
@@ -7739,7 +7754,7 @@
      */
     function isElement(value) {
       return (value && value.nodeType === 1 && isObjectLike(value) &&
-        (lodash.support.nodeClass ? toString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
+        (lodash.support.nodeTag ? objToString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
@@ -7853,7 +7868,7 @@
      * // => false
      */
     function isError(value) {
-      return (isObjectLike(value) && typeof value.message == 'string' && toString.call(value) == errorClass) || false;
+      return (isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag) || false;
     }
 
     /**
@@ -7916,7 +7931,7 @@
         // The use of `Object#toString` avoids issues with the `typeof` operator
         // in older versions of Chrome and Safari which return 'function' for regexes
         // and Safari 8 equivalents which return 'object' for typed array constructors.
-        return toString.call(value) == funcClass;
+        return objToString.call(value) == funcTag;
       };
     }
 
@@ -8038,7 +8053,7 @@
      */
     function isNaN(value) {
       // `NaN` as a primitive is the only value that is not equal to itself
-      // (perform the `[[Class]]` check first to avoid errors with some host objects in IE).
+      // (perform the tag check first to avoid errors with some host objects in IE).
       return isNumber(value) && value != +value;
     }
 
@@ -8062,7 +8077,7 @@
       if (value == null) {
         return false;
       }
-      if (toString.call(value) == funcClass) {
+      if (objToString.call(value) == funcTag) {
         return reNative.test(fnToString.call(value));
       }
       return (isObjectLike(value) &&
@@ -8112,7 +8127,7 @@
      * // => false
      */
     function isNumber(value) {
-      return typeof value == 'number' || (isObjectLike(value) && toString.call(value) == numberClass) || false;
+      return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag) || false;
     }
 
     /**
@@ -8147,7 +8162,7 @@
      * // => true
      */
     var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
-      if (!(value && toString.call(value) == objectClass) || (!lodash.support.argsClass && isArguments(value))) {
+      if (!(value && objToString.call(value) == objectTag) || (!lodash.support.argsTag && isArguments(value))) {
         return false;
       }
       var valueOf = value.valueOf,
@@ -8175,7 +8190,7 @@
      * // => false
      */
     function isRegExp(value) {
-      return (isObject(value) && toString.call(value) == regexpClass) || false;
+      return (isObject(value) && objToString.call(value) == regexpTag) || false;
     }
 
     /**
@@ -8195,7 +8210,7 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' || (isObjectLike(value) && toString.call(value) == stringClass) || false;
+      return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag) || false;
     }
 
     /**
@@ -8683,7 +8698,7 @@
           skipProto = support.enumPrototypes && typeof object == 'function';
 
       while (++index < length) {
-        result[index] = String(index);
+        result[index] = (index + '');
       }
       // Lo-Dash skips the `constructor` property when it infers it is iterating
       // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
@@ -8698,10 +8713,10 @@
         }
       }
       if (support.nonEnumShadows && object !== objectProto) {
-        var className = object === stringProto ? stringClass : object === errorProto ? errorClass : toString.call(object),
-            nonEnums = nonEnumProps[className] || nonEnumProps[objectClass];
+        var tag = object === stringProto ? stringTag : object === errorProto ? errorTag : objToString.call(object),
+            nonEnums = nonEnumProps[tag] || nonEnumProps[objectTag];
 
-        if (className == objectClass) {
+        if (tag == objectTag) {
           proto = objectProto;
         }
         length = shadowProps.length;
@@ -9113,7 +9128,7 @@
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();
-        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + (String(rand).length - 1)))), max);
+        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand + '').length - 1)))), max);
       }
       return baseRandom(min, max);
     }
@@ -9159,7 +9174,7 @@
      * // => 'Fred'
      */
     function capitalize(string) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return string ? (string.charAt(0).toUpperCase() + string.slice(1)) : string;
     }
 
@@ -9179,7 +9194,7 @@
      * // => 'deja vu'
      */
     function deburr(string) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return string ? string.replace(reLatin1, deburrLetter) : string;
     }
 
@@ -9205,8 +9220,8 @@
      * // => true
      */
     function endsWith(string, target, position) {
-      string = string == null ? '' : String(string);
-      target = String(target);
+      string = toString(string);
+      target = (target + '');
 
       var length = string.length;
       position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
@@ -9247,7 +9262,7 @@
      */
     function escape(string) {
       // Reset `lastIndex` because in IE < 9 `String#replace` does not.
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return (string && reHasUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)
         : string;
@@ -9268,7 +9283,7 @@
      * // => '\[lodash\]\(https://lodash\.com/\)'
      */
     function escapeRegExp(string) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return (string && reHasRegExpChars.test(string))
         ? string.replace(reRegExpChars, '\\$&')
         : string;
@@ -9323,7 +9338,7 @@
      * // => 'abc'
      */
     function pad(string, length, chars) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       length = +length;
 
       var strLength = string.length;
@@ -9362,7 +9377,7 @@
      * // => 'abc'
      */
     function padLeft(string, length, chars) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return string ? (createPad(string, length, chars) + string) : string;
     }
 
@@ -9390,7 +9405,7 @@
      * // => 'abc'
      */
     function padRight(string, length, chars) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return string ? (string + createPad(string, length, chars)) : string;
     }
 
@@ -9459,7 +9474,7 @@
       if (n < 1 || string == null || !nativeIsFinite(n)) {
         return result;
       }
-      string = String(string);
+      string = (string + '');
 
       // Leverage the exponentiation by squaring algorithm for a faster repeat.
       // See http://en.wikipedia.org/wiki/Exponentiation_by_squaring.
@@ -9520,7 +9535,7 @@
      * // => true
      */
     function startsWith(string, target, position) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       position = position == null ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
@@ -9629,7 +9644,7 @@
       if (otherOptions && isIterateeCall(string, options, otherOptions)) {
         options = otherOptions = null;
       }
-      string = String(string == null ? '' : string);
+      string = toString(string);
       options = baseAssign(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
 
       var imports = baseAssign(baseAssign({}, options.imports), settings.imports, assignOwnDefaults),
@@ -9748,14 +9763,14 @@
      */
     function trim(string, chars, guard) {
       var value = string;
-      string = string == null ? '' : String(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
-      chars = String(chars);
+      chars = (chars + '');
       return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
     }
 
@@ -9779,15 +9794,14 @@
      */
     function trimLeft(string, chars, guard) {
       var value = string;
-      string = string == null ? '' : String(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string))
       }
-      chars = String(chars);
-      return string.slice(charsLeftIndex(string, chars));
+      return string.slice(charsLeftIndex(string, (chars + '')));
     }
 
     /**
@@ -9810,15 +9824,14 @@
      */
     function trimRight(string, chars, guard) {
       var value = string;
-      string = string == null ? '' : String(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1)
       }
-      chars = String(chars);
-      return string.slice(0, charsRightIndex(string, chars) + 1);
+      return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
     }
 
     /**
@@ -9863,12 +9876,12 @@
       if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
         length = 'length' in options ? +options.length || 0 : length;
-        omission = 'omission' in options ? String(options.omission) : omission;
+        omission = 'omission' in options ? (options.omission + '') : omission;
       }
       else if (options != null) {
         length = +options || 0;
       }
-      string = string == null ? '' : String(string);
+      string = toString(string);
       if (length >= string.length) {
         return string;
       }
@@ -9923,7 +9936,7 @@
      * // => 'fred, barney, & pebbles'
      */
     function unescape(string) {
-      string = string == null ? '' : String(string);
+      string = toString(string);
       return (string && reHasEscapedHtml.test(string))
         ? string.replace(reEscapedHtml, unescapeHtmlChar)
         : string;
@@ -9951,8 +9964,8 @@
       if (guard && isIterateeCall(string, pattern, guard)) {
         pattern = null;
       }
-      string = string != null && String(string);
-      return (string && string.match(pattern || reWords)) || [];
+      string = toString(string);
+      return string.match(pattern || reWords) || [];
     }
 
     /*------------------------------------------------------------------------*/
@@ -10234,7 +10247,7 @@
      * // => ['barney', 'fred']
      */
     function property(key) {
-      return baseProperty(String(key));
+      return baseProperty(key + '');
     }
 
     /**
@@ -10383,7 +10396,7 @@
      */
     function uniqueId(prefix) {
       var id = ++idCounter;
-      return String(prefix == null ? '' : prefix) + id;
+      return toString(prefix) + id;
     }
 
     /*------------------------------------------------------------------------*/

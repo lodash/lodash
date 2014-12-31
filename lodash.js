@@ -1495,7 +1495,7 @@
      * @private
      * @name get
      * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to retrieve.
+     * @param {string} key The key of the value to get.
      * @returns {*} Returns the cached value.
      */
     function mapGet(key) {
@@ -2498,7 +2498,7 @@
      * The base implementation of `_.property` which does not coerce `key` to a string.
      *
      * @private
-     * @param {string} key The name of the property to retrieve.
+     * @param {string} key The name of the property to get.
      * @returns {Function} Returns the new function.
      */
     function baseProperty(key) {
@@ -2920,9 +2920,8 @@
     /**
      * Creates a function that aggregates a collection, creating an accumulator
      * object composed from the results of running each element in the collection
-     * through `iteratee`. The given setter function sets the keys and values of
-     * the accumulator object. If `initializer` is provided it is used to initialize
-     * the accumulator object.
+     * through an iteratee. The `setter` sets the keys and values of the accumulator
+     * object. If `initializer` is provided initializes the accumulator object.
      *
      * @private
      * @param {Function} setter The function to set keys and values of the accumulator object.
@@ -2956,7 +2955,7 @@
      * destination object.
      *
      * @private
-     * @param {Function} assigner The function to handle assigning values.
+     * @param {Function} assigner The function to assign values.
      * @returns {Function} Returns the new assigner function.
      */
     function createAssigner(assigner) {
@@ -3018,7 +3017,7 @@
      * given string.
      *
      * @private
-     * @param {Function} callback The function invoked to combine each word.
+     * @param {Function} callback The function to combine each word.
      * @returns {Function} Returns the new compounder function.
      */
     function createCompounder(callback) {
@@ -3450,8 +3449,8 @@
     }
 
     /**
-     * Retrieves the extremum value of `collection` invoking `iteratee` for each
-     * value in `collection` to generate the criterion by which the value is ranked.
+     * Gets the extremum value of `collection` invoking `iteratee` for each value
+     * in `collection` to generate the criterion by which the value is ranked.
      * The `iteratee` is invoked with three arguments; (value, index, collection).
      *
      * @private
@@ -6003,11 +6002,11 @@
     }
 
     /**
-     * Retrieves the maximum value of `collection`. If `collection` is empty or
-     * falsey `-Infinity` is returned. If an iteratee function is provided it is
-     * invoked for each value in `collection` to generate the criterion by which
-     * the value is ranked. The `iteratee` is bound to `thisArg` and invoked with
-     * three arguments; (value, index, collection).
+     * Gets the maximum value of `collection`. If `collection` is empty or falsey
+     * `-Infinity` is returned. If an iteratee function is provided it is invoked
+     * for each value in `collection` to generate the criterion by which the value
+     * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, collection).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -6048,11 +6047,11 @@
     var max = createExtremum(arrayMax);
 
     /**
-     * Retrieves the minimum value of `collection`. If `collection` is empty or
-     * falsey `Infinity` is returned. If an iteratee function is provided it is
-     * invoked for each value in `collection` to generate the criterion by which
-     * the value is ranked. The `iteratee` is bound to `thisArg` and invoked with
-     * three arguments; (value, index, collection).
+     * Gets the minimum value of `collection`. If `collection` is empty or falsey
+     * `Infinity` is returned. If an iteratee function is provided it is invoked
+     * for each value in `collection` to generate the criterion by which the value
+     * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, collection).
      *
      * If a property name is provided for `iteratee` the created "_.pluck" style
      * callback returns the property value of the given element.
@@ -6141,7 +6140,7 @@
     }, function() { return [[], []]; });
 
     /**
-     * Retrieves the value of a specified property from all elements in `collection`.
+     * Gets the value of a specified property from all elements in `collection`.
      *
      * @static
      * @memberOf _
@@ -6272,7 +6271,7 @@
     }
 
     /**
-     * Retrieves a random element or `n` random elements from a collection.
+     * Gets a random element or `n` random elements from a collection.
      *
      * @static
      * @memberOf _
@@ -10217,7 +10216,7 @@
      * @static
      * @memberOf _
      * @category Utility
-     * @param {string} key The name of the property to retrieve.
+     * @param {string} key The name of the property to get.
      * @returns {Function} Returns the new function.
      * @example
      *

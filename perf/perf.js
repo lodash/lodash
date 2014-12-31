@@ -289,7 +289,7 @@
           belt = this.name == buildName ? lodash : _;\
       \
       var date = new Date,\
-          limit = 20,\
+          limit = 50,\
           regexp = /x/,\
           object = {},\
           objects = Array(limit),\
@@ -761,18 +761,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.difference` iterating 200 elements')
-      .add(buildName, {
-        'fn': 'lodash.difference(twoHundredValues, twoHundredValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.difference(twoHundredValues, twoHundredValues2)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
     Benchmark.Suite('`_.difference` iterating 20 and 40 elements')
       .add(buildName, {
         'fn': 'lodash.difference(twentyValues, fortyValues)',
@@ -780,6 +768,18 @@
       })
       .add(otherName, {
         'fn': '_.difference(twentyValues, fortyValues)',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.difference` iterating 200 elements')
+      .add(buildName, {
+        'fn': 'lodash.difference(twoHundredValues, twoHundredValues2)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.difference(twoHundredValues, twoHundredValues2)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1834,6 +1834,16 @@
   );
 
   /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.sortedIndex`')
+      .add(buildName, '\
+        lodash.sortedIndex(numbers, limit)'
+      )
+      .add(otherName, '\
+        _.sortedIndex(numbers, limit)'
+      )
+  );
 
   suites.push(
     Benchmark.Suite('`_.sortedIndex` with `callback`')

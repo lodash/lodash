@@ -6984,7 +6984,7 @@
 
   (function() {
     var args = arguments,
-        funcClass = '[object Function]';
+        funcTag = '[object Function]';
 
     test('should return `true` for functions', 2, function() {
       strictEqual(_.isFunction(_), true);
@@ -6993,7 +6993,7 @@
 
     test('should return `true` for typed array constructors', 1, function() {
       var expected = _.map(typedArrays, function(type) {
-        return toString.call(root[type]) == funcClass;
+        return toString.call(root[type]) == funcTag;
       });
 
       var actual = _.map(typedArrays, function(type) {
@@ -7027,7 +7027,7 @@
 
     test('should work using its fallback', 3, function() {
       if (!isModularize) {
-        // Simulate native `Uint8Array` constructor with a `[[Class]]`
+        // Simulate native `Uint8Array` constructor with a `toStringTag`
         // of 'Function' and a `typeof` result of 'object'.
         var lodash = _.runInContext({
           'Function': {
@@ -7042,7 +7042,7 @@
           }, {
             'prototype': {
               'toString': _.assign(function() {
-                return _.has(this, '[[Class]]') ? this['[[Class]]'] : toString.call(this);
+                return _.has(this, '@@toStringTag') ? this['@@toStringTag'] : toString.call(this);
               }, {
                 'toString': function() {
                   return String(toString);
@@ -7051,7 +7051,7 @@
             }
           }),
           'Uint8Array': {
-            '[[Class]]': funcClass,
+            '@@toStringTag': funcTag,
             'toString': function() {
               return String(Uint8Array || Array);
             }
@@ -7060,7 +7060,7 @@
 
         strictEqual(lodash.isFunction(slice), true);
         strictEqual(lodash.isFunction(/x/), false);
-        strictEqual(lodash.isFunction(Uint8Array), toString.call(Uint8Array) == funcClass);
+        strictEqual(lodash.isFunction(Uint8Array), toString.call(Uint8Array) == funcTag);
       }
       else {
         skipTest(3);
@@ -7644,7 +7644,7 @@
       }
     });
 
-    test('should return `false` for Object objects without a `[[Class]]` of "Object"', 3, function() {
+    test('should return `false` for Object objects without a `toStringTag` of "Object"', 3, function() {
       strictEqual(_.isPlainObject(arguments), false);
       strictEqual(_.isPlainObject(Error), false);
       strictEqual(_.isPlainObject(Math), false);
@@ -14374,7 +14374,7 @@
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
 
-      if (_.support.argsClass && _.support.argsObject && !_.support.nonEnumArgs) {
+      if (_.support.argsTag && _.support.argsObject && !_.support.nonEnumArgs) {
         _.pull(args, null);
         deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
 

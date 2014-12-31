@@ -62,7 +62,7 @@
 
   /**
    * Used to match ES6 template delimiters.
-   * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
+   * See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
    * for more details.
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
@@ -911,7 +911,11 @@
     /** Used to generate unique IDs. */
     var idCounter = 0;
 
-    /** Used to resolve the internal tag of values. */
+    /**
+     * Used to resolve the `toStringTag` of values.
+     * See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+     * for more details.
+     */
     var objToString = objectProto.toString;
 
     /** Used to restore the original `_` reference in `_.noConflict`. */
@@ -976,7 +980,7 @@
 
     /**
      * Used as the maximum length of an array-like value.
-     * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+     * See the [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
      * for more details.
      */
     var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
@@ -984,7 +988,7 @@
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
-    /** Used to lookup a built-in constructor by internal tag. */
+    /** Used to lookup a built-in constructor by `toStringTag`. */
     var ctorByTag = {};
     ctorByTag[float32Tag] = context.Float32Array;
     ctorByTag[float64Tag] = context.Float64Array;
@@ -1139,7 +1143,7 @@
       for (var key in new Ctor) { props.push(key); }
 
       /**
-       * Detect if the internal tag of `arguments` objects is resolvable
+       * Detect if the `toStringTag` of `arguments` objects is resolvable
        * (all but Firefox < 4, IE < 9).
        *
        * @memberOf _.support
@@ -1189,7 +1193,7 @@
       support.funcNames = typeof Function.name == 'string';
 
       /**
-       * Detect if the internal tag of DOM nodes is resolvable (all but IE < 9).
+       * Detect if the `toStringTag` of DOM nodes is resolvable (all but IE < 9).
        *
        * @memberOf _.support
        * @type boolean
@@ -3348,15 +3352,15 @@
 
     /**
      * A specialized version of `baseIsEqualDeep` for comparing objects of
-     * the same internal tag.
+     * the same `toStringTag`.
      *
-     * **Note:** This function only supports comparing values with internal tag
+     * **Note:** This function only supports comparing values with `toStringTag`
      * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
      *
      * @private
      * @param {Object} value The object to compare to `other`.
      * @param {Object} other The object to compare to `object`.
-     * @param {string} tag The tag of the objects to compare.
+     * @param {string} tag The `toStringTag` of the objects to compare.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function equalByTag(object, other, tag) {
@@ -7667,7 +7671,7 @@
       var length = isObjectLike(value) ? value.length : undefined;
       return (isLength(length) && objToString.call(value) == argsTag) || false;
     }
-    // Fallback for environments without an internal tag for `arguments` objects.
+    // Fallback for environments without a `toStringTag` for `arguments` objects.
     if (!support.argsTag) {
       isArguments = function(value) {
         var length = isObjectLike(value) ? value.length : undefined;
@@ -7875,7 +7879,7 @@
      * Checks if `value` is a finite primitive number.
      *
      * **Note:** This method is based on ES6 `Number.isFinite`. See the
-     * [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
      * for more details.
      *
      * @static
@@ -8052,8 +8056,8 @@
      * // => false
      */
     function isNaN(value) {
-      // `NaN` as a primitive is the only value that is not equal to itself
-      // (perform the tag check first to avoid errors with some host objects in IE).
+      // An `NaN` primitive is the only value that is not equal to itself.
+      // Perform the `toStringTag` check first to avoid errors with some host objects in IE.
       return isNumber(value) && value != +value;
     }
 

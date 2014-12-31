@@ -9521,7 +9521,7 @@
      */
     function startsWith(string, target, position) {
       string = string == null ? '' : String(string);
-      position = typeof position == 'undefined' ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+      position = position == null ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
 

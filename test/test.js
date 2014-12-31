@@ -3967,7 +3967,7 @@
 
     test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', 1, function() {
       if (freeze) {
-        var object = { 'a': null, 'b': function() {} },
+        var object = { 'a': undefined, 'b': function() {} },
             pass = !isStrict;
 
         freeze(object);

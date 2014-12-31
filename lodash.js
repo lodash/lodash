@@ -3059,6 +3059,41 @@
     }
 
     /**
+     * Creates a function that retrieves the extremum value of a collection.
+     *
+     * @private
+     * @param {Function} exFunc The function to retrieve the extremum value.
+     * @param {boolean} [isMin] Specify returning the minimum, instead of the
+     *  maximum, extremum value.
+     * @returns {Function} Returns the new extremum function.
+     */
+    function createExtremum(exFunc, isMin) {
+      return function(collection, iteratee, thisArg) {
+        if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
+          iteratee = null;
+        }
+        var func = getCallback(),
+            noIteratee = iteratee == null;
+
+        if (!(func === baseCallback && noIteratee)) {
+          noIteratee = false;
+          iteratee = func(iteratee, thisArg, 3);
+        }
+        var isArr = noIteratee && isArray(collection),
+            isStr = !isArr && isString(collection);
+
+        if (noIteratee) {
+          if (isStr) {
+            iteratee = charAtCallback;
+          } else {
+            return exFunc(isArr ? collection : toIterable(collection));
+          }
+        }
+        return extremumBy(collection, iteratee, isMin);
+      };
+    }
+
+    /**
      * Creates a function that wraps `func` and invokes it with optional `this`
      * binding of, partial application, and currying.
      *
@@ -3418,6 +3453,33 @@
         }
       }
       return true;
+    }
+
+    /**
+     * Retrieves the extremum value of `collection` invoking `iteratee` for each
+     * value in `collection` to generate the criterion by which the value is ranked.
+     * The `iteratee` is invoked with three arguments; (value, index, collection).
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {boolean} [isMin] Specify returning the minimum, instead of the
+     *  maximum, extremum value.
+     * @returns {*} Returns the extremum value.
+     */
+    function extremumBy(collection, iteratee, isMin) {
+      var exValue = isMin ? POSITIVE_INFINITY : NEGATIVE_INFINITY,
+          computed = exValue,
+          result = computed;
+
+      baseEach(collection, function(value, index, collection) {
+        var current = iteratee(value, index, collection);
+        if ((isMin ? current < computed : current > computed) || (current === exValue && current === result)) {
+          computed = current;
+          result = value;
+        }
+      });
+      return result;
     }
 
     /**
@@ -5991,38 +6053,7 @@
      * _.max(users, 'age');
      * // => { 'user': 'fred', 'age': 40 };
      */
-    function max(collection, iteratee, thisArg) {
-      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = null;
-      }
-      var noIteratee = iteratee == null,
-          func = getCallback(),
-          isArr = noIteratee && isArray(collection),
-          isStr = !isArr && isString(collection);
-
-      if (!(func === baseCallback && noIteratee)) {
-        noIteratee = false;
-        iteratee = func(iteratee, thisArg, 3);
-      }
-      if (noIteratee) {
-        if (isStr) {
-          iteratee = charAtCallback;
-        } else {
-          return arrayMax(isArr ? collection : toIterable(collection));
-        }
-      }
-      var computed = NEGATIVE_INFINITY,
-          result = computed;
-
-      baseEach(collection, function(value, index, collection) {
-        var current = iteratee(value, index, collection);
-        if (current > computed || (current === NEGATIVE_INFINITY && current === result)) {
-          computed = current;
-          result = value;
-        }
-      });
-      return result;
-    }
+    var max = createExtremum(arrayMax);
 
     /**
      * Retrieves the minimum value of `collection`. If `collection` is empty or
@@ -6067,39 +6098,7 @@
      * _.min(users, 'age');
      * // => { 'user': 'barney', 'age': 36 };
      */
-    function min(collection, iteratee, thisArg) {
-      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = null;
-      }
-      var noIteratee = iteratee == null,
-          func = getCallback(),
-          isArr = noIteratee && isArray(collection),
-          isStr = !isArr && isString(collection);
-
-
-      if (!(func === baseCallback && noIteratee)) {
-        noIteratee = false;
-        iteratee = func(iteratee, thisArg, 3);
-      }
-      if (noIteratee) {
-        if (isStr) {
-          iteratee = charAtCallback;
-        } else {
-          return arrayMin(isArr ? collection : toIterable(collection));
-        }
-      }
-      var computed = POSITIVE_INFINITY,
-          result = computed;
-
-      baseEach(collection, function(value, index, collection) {
-        var current = iteratee(value, index, collection);
-        if (current < computed || (current === POSITIVE_INFINITY && current === result)) {
-          computed = current;
-          result = value;
-        }
-      });
-      return result;
-    }
+    var min = createExtremum(arrayMin, true);
 
     /**
      * Creates an array of elements split into two groups, the first of which

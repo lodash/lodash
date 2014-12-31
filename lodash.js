@@ -1735,49 +1735,6 @@
     }
 
     /**
-     * The base implementation of `binaryIndex` which supports large arrays and
-     * determining the insert index for `NaN` and `undefined`.
-     *
-     * @private
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @param {boolean} [retHighest] Specify returning the highest, instead
-     *  of the lowest, index at which a value should be inserted into `array`.
-     * @returns {number} Returns the index at which `value` should be inserted
-     *  into `array`.
-     */
-    function baseBinaryIndex(array, value, iteratee, retHighest) {
-      iteratee = iteratee == null ? identity : iteratee;
-      value = iteratee(value);
-
-      var low = 0,
-          high = array.length,
-          valIsNaN = value !== value,
-          valIsUndef = typeof value == 'undefined';
-
-      while (low < high) {
-        var mid = floor((low + high) / 2),
-            computed = iteratee(array[mid]),
-            isReflexive = computed === computed;
-
-        if (valIsNaN) {
-          var setLow = isReflexive || retHighest;
-        } else if (valIsUndef) {
-          setLow = isReflexive && (retHighest || typeof computed != 'undefined');
-        } else {
-          setLow = retHighest ? (computed <= value) : (computed < value);
-        }
-        if (setLow) {
-          low = mid + 1;
-        } else {
-          high = mid;
-        }
-      }
-      return nativeMin(high, MAX_ARRAY_INDEX);
-    }
-
-    /**
      * The base implementation of `_.bindAll` without support for individual
      * method name arguments.
      *
@@ -2747,38 +2704,77 @@
 
     /**
      * Performs a binary search of `array` to determine the index at which `value`
-     * should be inserted into `array` in order to maintain its sort order. If
-     * `iteratee` is provided it is invoked for `value` and each element of
-     * `array` to compute their sort ranking. The iteratee is invoked with one
-     * argument; (value).
+     * should be inserted into `array` in order to maintain its sort order.
      *
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} [iteratee] The function invoked per iteration.
      * @param {boolean} [retHighest] Specify returning the highest, instead
      *  of the lowest, index at which a value should be inserted into `array`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      */
-    function binaryIndex(array, value, iteratee, retHighest) {
+    function binaryIndex(array, value, retHighest) {
       var low = 0,
           high = array ? array.length : low;
 
-      if (high && (iteratee || value !== value || typeof value == 'undefined' || high > HALF_MAX_ARRAY_LENGTH)) {
-        return baseBinaryIndex(array, value, iteratee, retHighest);
-      }
-      while (low < high) {
-        var mid = (low + high) >>> 1,
-            computed = array[mid];
+      if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+        while (low < high) {
+          var mid = (low + high) >>> 1,
+              computed = array[mid];
 
-        if (retHighest ? (computed <= value) : (computed < value)) {
+          if (retHighest ? (computed <= value) : (computed < value)) {
+            low = mid + 1;
+          } else {
+            high = mid;
+          }
+        }
+        return high;
+      }
+      return binaryIndexBy(array, value, identity, retHighest);
+    }
+
+    /**
+     * This function is like `binaryIndex` except that it invokes `iteratee` for
+     * `value` and each element of `array` to compute their sort ranking. The
+     * iteratee is invoked with one argument; (value).
+     *
+     * @private
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {boolean} [retHighest] Specify returning the highest, instead
+     *  of the lowest, index at which a value should be inserted into `array`.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     */
+    function binaryIndexBy(array, value, iteratee, retHighest) {
+      value = iteratee(value);
+
+      var low = 0,
+          high = array ? array.length : 0,
+          valIsNaN = value !== value,
+          valIsUndef = typeof value == 'undefined';
+
+      while (low < high) {
+        var mid = floor((low + high) / 2),
+            computed = iteratee(array[mid]),
+            isReflexive = computed === computed;
+
+        if (valIsNaN) {
+          var setLow = isReflexive || retHighest;
+        } else if (valIsUndef) {
+          setLow = isReflexive && (retHighest || typeof computed != 'undefined');
+        } else {
+          setLow = retHighest ? (computed <= value) : (computed < value);
+        }
+        if (setLow) {
           low = mid + 1;
         } else {
           high = mid;
         }
       }
-      return high;
+      return nativeMin(high, MAX_ARRAY_INDEX);
     }
 
     /**
@@ -4628,7 +4624,7 @@
       if (typeof fromIndex == 'number') {
         index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
       } else if (fromIndex) {
-        index = binaryIndex(array, value, null, true) - 1;
+        index = binaryIndex(array, value, true) - 1;
         var other = array[index];
         return (value === value ? value === other : other !== other) ? index : -1;
       }
@@ -4874,10 +4870,9 @@
      */
     function sortedIndex(array, value, iteratee, thisArg) {
       var func = getCallback(iteratee);
-      if (!(func === baseCallback && iteratee == null)) {
-        iteratee = func(iteratee, thisArg, 1);
-      }
-      return binaryIndex(array, value, iteratee);
+      return (func === baseCallback && iteratee == null)
+        ? binaryIndex(array, value)
+        : binaryIndexBy(array, value, func(iteratee, thisArg, 1));
     }
 
     /**
@@ -4902,11 +4897,10 @@
      * // => 4
      */
     function sortedLastIndex(array, value, iteratee, thisArg) {
-      var func = getCallback();
-      if (!(func === baseCallback && iteratee == null)) {
-        iteratee = func(iteratee, thisArg, 1);
-      }
-      return binaryIndex(array, value, iteratee, true);
+      var func = getCallback(iteratee);
+      return (func === baseCallback && iteratee == null)
+        ? binaryIndex(array, value, true)
+        : binaryIndexBy(array, value, func(iteratee, thisArg, 1), true);
     }
 
     /**

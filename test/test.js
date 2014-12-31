@@ -4931,22 +4931,19 @@
     _.each(collectionMethods, function(methodName) {
       var func = _[methodName];
 
-      test('`_.' + methodName + '` should treat objects with lengths of `0` as array-like', 1, function() {
-        var pass = true;
-        func({ 'length': 0 }, function() { pass = false; }, 0);
-        ok(pass);
-      });
+      test('`_.' + methodName + '` should use `isLength` to determine whether a value is array-like', 2, function() {
+        function isIteratedAsObject(length) {
+          var result = false;
+          func({ 'length': length }, function() { result = true; }, 0);
+          return result;
+        }
 
-      test('`_.' + methodName + '` should not treat objects with negative lengths as array-like', 1, function() {
-        var pass = false;
-        func({ 'length': -1 }, function() { pass = true; }, 0);
-        ok(pass);
-      });
+        var values = [-1, '1', 1.1, Object(1), MAX_SAFE_INTEGER + 1],
+            expected = _.map(values, _.constant(true)),
+            actual = _.map(values, isIteratedAsObject);
 
-      test('`_.' + methodName + '` should not treat objects with non-number lengths as array-like', 1, function() {
-        var pass = false;
-        func({ 'length': '0' }, function() { pass = true; }, 0);
-        ok(pass);
+        deepEqual(actual, expected);
+        ok(!isIteratedAsObject(0));
       });
     });
 

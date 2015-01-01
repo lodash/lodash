@@ -4015,8 +4015,8 @@
     }
 
     /**
-     * Converts `value` to a string if it not one. An empty string is returned
-     * for `null` or `undefined` values.
+     * Converts `value` to a string if it is not one. An empty string is
+     * returned for `null` or `undefined` values.
      *
      * @private
      * @param {*} value The value to process.

@@ -1,4 +1,3 @@
-.coveralls.yml
 .DS_Store
 *.custom.*
 *.template.*
@@ -6,5 +5,4 @@
 *.map
 /*.min.*
 coverage
-modularize
 node_modules

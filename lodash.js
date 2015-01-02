@@ -10146,30 +10146,31 @@
      * // => ['e']
      */
     function mixin(object, source, options) {
-      var chain = true,
-          isObj = isObject(source),
-          noOpts = options == null,
-          props = noOpts && isObj && keys(source),
-          methodNames = props && baseFunctions(source, props);
+      if (options == null) {
+        var isObj = isObject(source),
+            props = isObj && keys(source),
+            methodNames = props && props.length && baseFunctions(source, props);
 
-      if ((props && props.length && !methodNames.length) || (noOpts && !isObj)) {
-        if (noOpts) {
+        if (!(methodNames ? methodNames.length : isObj)) {
+          methodNames = false;
           options = source;
+          source = object;
+          object = this;
         }
-        methodNames = false;
-        source = object;
-        object = this;
       }
-      methodNames || (methodNames = baseFunctions(source, keys(source)));
+      if (!methodNames) {
+        methodNames = baseFunctions(source, keys(source));
+      }
+      var chain = true,
+          index = -1,
+          isFunc = isFunction(object),
+          length = methodNames.length;
+
       if (options === false) {
         chain = false;
       } else if (isObject(options) && 'chain' in options) {
         chain = options.chain;
       }
-      var index = -1,
-          isFunc = isFunction(object),
-          length = methodNames.length;
-
       while (++index < length) {
         var methodName = methodNames[index];
         object[methodName] = source[methodName];

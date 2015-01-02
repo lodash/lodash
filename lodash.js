@@ -7263,14 +7263,6 @@
      * @returns {Function} Returns the new memoizing function.
      * @example
      *
-     * var fibonacci = _.memoize(function(n) {
-     *   return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-     * });
-     *
-     * fibonacci(9)
-     * // => 34
-     *
-     * // modifying the result cache
      * var upperCase = _.memoize(function(string) {
      *   return string.toUpperCase();
      * });
@@ -7278,9 +7270,28 @@
      * upperCase('fred');
      * // => 'FRED'
      *
+     * // modifying the result cache
      * upperCase.cache.set('fred, 'BARNEY');
      * upperCase('fred');
      * // => 'BARNEY'
+     *
+     * // replacing `_.memoize.Cache`
+     * var object = { 'user': 'fred' };
+     * var other = { 'user': 'barney' };
+     * var identity = _.memoize(_.identity);
+     *
+     * identity(object);
+     * // => { 'user': 'fred' }
+     * identity(other);
+     * // => { 'user': 'fred' }
+     *
+     * _.memoize.Cache = WeakMap;
+     * var identity = _.memoize(_.identity);
+     *
+     * identity(object);
+     * // => { 'user': 'fred' }
+     * identity(other);
+     * // => { 'user': 'barney' }
      */
     function memoize(func, resolver) {
       if (!isFunction(func) || (resolver && !isFunction(resolver))) {

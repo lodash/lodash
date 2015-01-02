@@ -9458,6 +9458,9 @@
      *
      * _.parseInt('08');
      * // => 8
+     *
+     * _.map(['6', '08', '10'], _.parseInt);
+     * // => [6, 8, 10]
      */
     function parseInt(string, radix, guard) {
       if (guard && isIterateeCall(string, radix, guard)) {

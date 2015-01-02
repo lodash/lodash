@@ -9876,13 +9876,14 @@
       var length = DEFAULT_TRUNC_LENGTH,
           omission = DEFAULT_TRUNC_OMISSION;
 
-      if (isObject(options)) {
-        var separator = 'separator' in options ? options.separator : separator;
-        length = 'length' in options ? +options.length || 0 : length;
-        omission = 'omission' in options ? (options.omission + '') : omission;
-      }
-      else if (options != null) {
-        length = +options || 0;
+      if (options != null) {
+        if (isObject(options)) {
+          var separator = 'separator' in options ? options.separator : separator;
+          length = 'length' in options ? +options.length || 0 : length;
+          omission = 'omission' in options ? (options.omission + '') : omission;
+        } else {
+          length = +options || 0;
+        }
       }
       string = toString(string);
       if (length >= string.length) {

@@ -9707,7 +9707,7 @@
       var sourceURL = '//# sourceURL=' +
         ('sourceURL' in options
           ? options.sourceURL
-          : ('/lodash/template/source[' + (++templateCounter) + ']')
+          : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
       string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {

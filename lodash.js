@@ -5304,7 +5304,7 @@
           length = props ? props.length : 0,
           result = {};
 
-      if (!values && length && !isArray(props[0])) {
+      if (length && !values && !isArray(props[0])) {
         values = [];
       }
       while (++index < length) {

@@ -43,6 +43,7 @@ require(['lodash'], function(_) {/*…*/});
 Using npm:
 
 ```bash
+$ {sudo -H} npm install -g npm
 $ npm i --save lodash
 
 $ {sudo -H} npm i -g lodash
@@ -58,9 +59,10 @@ var _ = require('lodash');
 // or the compat build
 var _ = require('lodash-compat');
 
-// or a specific method
+// or specific methods
 var clone = require('lodash/lang/clone');
 var keysIn = require('lodash-compat/object/keysIn');
+var transform = require('lodash.transform');
 ```
 
 **Note:**
@@ -70,7 +72,7 @@ Install [n_](https://www.npmjs.com/package/n_) for a version of the REPL that in
 ## Features *not* in Underscore
 
  * ~100% [code coverage](https://coveralls.io/r/lodash)
- * Module bundles for [AMD](https://github.com/lodash/lodash-amd/tree/2.4.1), [ES6](https://github.com/lodash/lodash-es6/tree/2.4.1), & [Node.js](https://www.npmjs.com/package/lodash-node) as well as [npm packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
+ * Module bundles for [AMD](https://github.com/lodash/lodash-amd/tree/3.0.0), [ES6](https://github.com/lodash/lodash-es6/tree/3.0.0), & [Node.js](https://www.npmjs.com/package/lodash-node) as well as [npm packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * Follows [semantic versioning](http://semver.org/) for releases
  * Deferred chaining & [lazy evaluation](http://filimanjaro.com/blog/2014/introducing-lazy-evaluation/)
  * [_(…)](https://lodash.com/docs#_) supports intuitive chaining
@@ -97,7 +99,7 @@ Install [n_](https://www.npmjs.com/package/n_) for a version of the REPL that in
  * [_.keysIn](https://lodash.com/docs#keysIn) & [_.valuesIn](https://lodash.com/docs#valuesIn) for getting keys & values of all enumerable properties
  * [_.mapValues](https://lodash.com/docs#mapValues) for [mapping](https://lodash.com/docs#map) values to an object
  * [_.merge](https://lodash.com/docs#merge) for a deep [_.extend](https://lodash.com/docs#extend)
- * [_.parseInt](https://lodash.com/docs#parseInt) for consistent behavior
+ * [_.parseInt](https://lodash.com/docs#parseInt) for consistent cross-environment behavior
  * [_.pull](https://lodash.com/docs#pull), [_.pullAt](https://lodash.com/docs#pullAt), & [_.remove](https://lodash.com/docs#remove) for mutating arrays
  * [_.random](https://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](https://lodash.com/docs#runInContext) for collisionless mixins & easier mocking
@@ -110,7 +112,7 @@ Install [n_](https://www.npmjs.com/package/n_) for a version of the REPL that in
  * [_.where](https://lodash.com/docs#where) supports deep object comparisons
  * [_.xor](https://lodash.com/docs#xor) to complement [_.difference](https://lodash.com/docs#difference), [_.intersection](https://lodash.com/docs#intersection), & [_.union](https://lodash.com/docs#union)
  * [_.bind](https://lodash.com/docs#bind), [_.curry](https://lodash.com/docs#curry), [_.partial](https://lodash.com/docs#partial), &
-   [more](https://lodash.com/docs  "_.bindKey, _.curryRight, _.partialRight") support argument placeholders
+   [more](https://lodash.com/docs  "_.bindKey, _.curryRight, _.partialRight") support customizable argument placeholders
  * [_.capitalize](https://lodash.com/docs#capitalize), [_.trim](https://lodash.com/docs#trim), &
    [more](https://lodash.com/docs "_.camelCase, _.deburr, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc, _.words") string methods
  * [_.clone](https://lodash.com/docs#clone), [_.isEqual](https://lodash.com/docs#isEqual), &
@@ -124,7 +126,7 @@ Install [n_](https://www.npmjs.com/package/n_) for a version of the REPL that in
 
 ## Support
 
-Tested in Chrome (19, 38-39), Firefox (3, 20, 33-34), IE 6-11, Opera 25-26, Safari 5-8, Node.js 0.8.26~0.10.33, PhantomJS 1.9.7, RingoJS 0.11, & Rhino 1.7RC5.
+Tested in Chrome (19, 38-39), Firefox (3, 20, 33-34), IE 6-11, Opera 25-26, Safari 5-8, Node.js 0.8.26~0.10.35, PhantomJS 1.9.7, RingoJS 0.11, & Rhino 1.7RC5.
 
 Automated browser test runs [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.
 

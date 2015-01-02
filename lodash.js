@@ -3267,9 +3267,7 @@
         bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
         partials = holders = null;
       }
-      holders = (partials && !holders) ? [] : holders;
       length -= (holders ? holders.length : 0);
-
       if (bitmask & PARTIAL_RIGHT_FLAG) {
         var partialsRight = partials,
             holdersRight = holders;
@@ -3281,12 +3279,13 @@
 
       if (data && data !== true) {
         mergeData(newData, data);
+        bitmask = newData[1];
+        arity = newData[9];
       }
-      newData[9] = newData[9] == null
-        ? (isBindKey ? 0 : newData[0].length)
-        : (nativeMax(newData[9] - length, 0) || 0);
+      newData[9] = arity == null
+        ? (isBindKey ? 0 : func.length)
+        : (nativeMax(arity - length, 0) || 0);
 
-      bitmask = newData[1];
       if (bitmask == BIND_FLAG) {
         var result = createBindWrapper(newData[0], newData[2]);
       } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
@@ -7540,7 +7539,7 @@
      */
     function wrap(value, wrapper) {
       wrapper = wrapper == null ? identity : wrapper;
-      return createWrapper(wrapper, PARTIAL_FLAG, null, [value]);
+      return createWrapper(wrapper, PARTIAL_FLAG, null, [value], []);
     }
 
     /*------------------------------------------------------------------------*/

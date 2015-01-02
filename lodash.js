@@ -8639,6 +8639,10 @@
     /**
      * Creates an array of the own enumerable property names of `object`.
      *
+     * **Note:** Non-object values are coerced to objects. See the
+     * [ES6 spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.keys)
+     * for more details.
+     *
      * @static
      * @memberOf _
      * @category Object
@@ -8655,6 +8659,9 @@
      *
      * _.keys(new Shape);
      * // => ['x', 'y'] (iteration order is not guaranteed)
+     *
+     * _.keys('hi');
+     * // => ['0', '1']
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
       if (object) {
@@ -8670,6 +8677,8 @@
 
     /**
      * Creates an array of the own and inherited enumerable property names of `object`.
+     *
+     * **Note:** Non-object values are coerced to objects.
      *
      * @static
      * @memberOf _
@@ -9037,6 +9046,8 @@
     /**
      * Creates an array of the own enumerable property values of `object`.
      *
+     * **Note:** Non-object values are coerced to objects.
+     *
      * @static
      * @memberOf _
      * @category Object
@@ -9053,6 +9064,9 @@
      *
      * _.values(new Shape(2, 1));
      * // => [2, 1] (iteration order is not guaranteed)
+     *
+     * _.values('hi');
+     * // => ['h', 'i']
      */
     function values(object) {
       return baseValues(object, keys(object));
@@ -9061,6 +9075,8 @@
     /**
      * Creates an array of the own and inherited enumerable property values
      * of `object`.
+     *
+     * **Note:** Non-object values are coerced to objects.
      *
      * @static
      * @memberOf _

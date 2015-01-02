@@ -7560,7 +7560,7 @@
      * otherwise they are assigned by reference. If `customizer` is provided it is
      * invoked to produce the cloned values. If `customizer` returns `undefined`
      * cloning is handled by the method instead. The `customizer` is bound to
-     * `thisArg` and invoked with two argument; (value, index|key).
+     * `thisArg` and invoked with two argument; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the structured clone algorithm.
      * The enumerable properties of `arguments` objects and objects created by
@@ -7617,7 +7617,7 @@
      * Creates a deep clone of `value`. If `customizer` is provided it is invoked
      * to produce the cloned values. If `customizer` returns `undefined` cloning
      * is handled by the method instead. The `customizer` is bound to `thisArg`
-     * and invoked with two argument; (value, index|key).
+     * and invoked with two argument; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the structured clone algorithm.
      * The enumerable properties of `arguments` objects and objects created by
@@ -7821,7 +7821,7 @@
      * equivalent. If `customizer` is provided it is invoked to compare values.
      * If `customizer` returns `undefined` comparisons are handled by the method
      * instead. The `customizer` is bound to `thisArg` and invoked with three
-     * arguments; (value, other, key).
+     * arguments; (value, other [, index|key]).
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
@@ -7983,7 +7983,7 @@
      * `object` contains equivalent property values. If `customizer` is provided
      * it is invoked to compare values. If `customizer` returns `undefined`
      * comparisons are handled by the method instead. The `customizer` is bound
-     * to `thisArg` and invoked with three arguments; (value, other, key).
+     * to `thisArg` and invoked with three arguments; (value, other, index|key).
      *
      * **Note:** This method supports comparing properties of arrays, booleans,
      * `Date` objects, numbers, `Object` objects, regexes, and strings. Functions

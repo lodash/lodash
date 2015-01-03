@@ -9176,14 +9176,14 @@
      * @returns {string} Returns the camel cased string.
      * @example
      *
-     * _.camelCase('Hello world');
-     * // => 'helloWorld'
+     * _.camelCase('Foo Bar');
+     * // => 'fooBar'
      *
-     * _.camelCase('--hello-world');
-     * // => 'helloWorld'
+     * _.camelCase('--foo-bar');
+     * // => 'fooBar'
      *
-     * _.camelCase('__hello_world__');
-     * // => 'helloWorld'
+     * _.camelCase('__foo_bar__');
+     * // => 'fooBar'
      */
     var camelCase = createCompounder(function(result, word, index) {
       word = word.toLowerCase();
@@ -9331,14 +9331,14 @@
      * @returns {string} Returns the kebab cased string.
      * @example
      *
-     * _.kebabCase('Hello world');
-     * // => 'hello-world'
+     * _.kebabCase('Foo Bar');
+     * // => 'foo-bar'
      *
-     * _.kebabCase('helloWorld');
-     * // => 'hello-world'
+     * _.kebabCase('fooBar');
+     * // => 'foo-bar'
      *
-     * _.kebabCase('__hello_world__');
-     * // => 'hello-world'
+     * _.kebabCase('__foo_bar__');
+     * // => 'foo-bar'
      */
     var kebabCase = createCompounder(function(result, word, index) {
       return result + (index ? '-' : '') + word.toLowerCase();
@@ -9537,14 +9537,14 @@
      * @returns {string} Returns the snake cased string.
      * @example
      *
-     * _.snakeCase('Hello world');
-     * // => 'hello_world'
+     * _.snakeCase('Foo Bar');
+     * // => 'foo_bar'
      *
-     * _.snakeCase('--hello-world');
-     * // => 'hello_world'
+     * _.snakeCase('--foo-bar');
+     * // => 'foo_bar'
      *
-     * _.snakeCase('helloWorld');
-     * // => 'hello_world'
+     * _.snakeCase('fooBar');
+     * // => 'foo_bar'
      */
     var snakeCase = createCompounder(function(result, word, index) {
       return result + (index ? '_' : '') + word.toLowerCase();
@@ -9792,11 +9792,14 @@
      * @returns {string} Returns the trimmed string.
      * @example
      *
-     * _.trim('  fred  ');
-     * // => 'fred'
+     * _.trim('  abc  ');
+     * // => 'abc'
      *
-     * _.trim('-_-fred-_-', '_-');
-     * // => 'fred'
+     * _.trim('-_-abc-_-', '_-');
+     * // => 'abc'
+     *
+     * _.map(['  foo  ', '  bar  '], _.trim);
+     * // => ['foo', 'bar]
      */
     function trim(string, chars, guard) {
       var value = string;
@@ -9823,11 +9826,11 @@
      * @returns {string} Returns the trimmed string.
      * @example
      *
-     * _.trimLeft('  fred  ');
-     * // => 'fred  '
+     * _.trimLeft('  abc  ');
+     * // => 'abc  '
      *
-     * _.trimLeft('-_-fred-_-', '_-');
-     * // => 'fred-_-'
+     * _.trimLeft('-_-abc-_-', '_-');
+     * // => 'abc-_-'
      */
     function trimLeft(string, chars, guard) {
       var value = string;
@@ -9853,11 +9856,11 @@
      * @returns {string} Returns the trimmed string.
      * @example
      *
-     * _.trimRight('  fred  ');
-     * // => '  fred'
+     * _.trimRight('  abc  ');
+     * // => '  abc'
      *
-     * _.trimRight('-_-fred-_-', '_-');
-     * // => '-_-fred'
+     * _.trimRight('-_-abc-_-', '_-');
+     * // => '-_-abc'
      */
     function trimRight(string, chars, guard) {
       var value = string;

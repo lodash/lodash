@@ -16,7 +16,6 @@
     "package.json",
     "coverage",
     "doc",
-    "modularize",
     "node_modules",
     "perf",
     "test",

@@ -1432,15 +1432,15 @@
         func = _[methodName];
 
     var strings = [
-      'hello world', 'Hello world', 'HELLO WORLD',
-      'helloWorld', '--hello-world', '__hello_world__'
+      'foo bar', 'Foo bar', 'foo Bar', 'Foo Bar',
+      'FOO BAR', 'fooBar', '--foo-bar', '__foo_bar__'
     ];
 
     var expected = (function() {
       switch (caseName) {
-        case 'camel': return 'helloWorld';
-        case 'kebab': return 'hello-world';
-        case 'snake': return 'hello_world';
+        case 'camel': return 'fooBar';
+        case 'kebab': return 'foo-bar';
+        case 'snake': return 'foo_bar';
       }
     }());
 
@@ -1474,14 +1474,14 @@
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
-      var string = 'Hello world';
+      var string = 'Foo Bar';
       strictEqual(func(Object(string)), expected);
       strictEqual(func({ 'toString': _.constant(string) }), expected);
     });
 
     test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
-        strictEqual(_('hello world')[methodName](), expected);
+        strictEqual(_('foo bar')[methodName](), expected);
       }
       else {
         skipTest();

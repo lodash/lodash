@@ -4142,7 +4142,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.drop([1, 2, 3], 1);
+     * _.drop([1, 2, 3]);
      * // => [2, 3]
      *
      * _.drop([1, 2, 3], 2);
@@ -4174,7 +4174,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.dropRight([1, 2, 3], 1);
+     * _.dropRight([1, 2, 3]);
      * // => [1, 2]
      *
      * _.dropRight([1, 2, 3], 2);
@@ -4931,7 +4931,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.take([1, 2, 3], 1);
+     * _.take([1, 2, 3]);
      * // => [1]
      *
      * _.take([1, 2, 3], 2);
@@ -4963,7 +4963,7 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
-     * _.takeRight([1, 2, 3], 1);
+     * _.takeRight([1, 2, 3]);
      * // => [3]
      *
      * _.takeRight([1, 2, 3], 2);

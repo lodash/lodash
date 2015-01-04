@@ -294,11 +294,10 @@
 
     while (++index < length) {
       var args = [result],
-          action = actions[index],
-          object = action.object;
+          action = actions[index];
 
       push.apply(args, action.args);
-      result = object[action.name].apply(object, args);
+      result = action.func.apply(action.thisArg, args);
     }
     return result;
   }
@@ -806,7 +805,7 @@
       if (!isNpm && lodashBizarro) {
         var actual = _.map(values, function(value) {
           var wrapped = _(lodashBizarro(value)),
-              unwrapped = getUnwrappedValue(wrapped);
+              unwrapped = wrapped.value();
 
           return wrapped instanceof _ &&
             (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
@@ -9056,15 +9055,15 @@
       return getUnwrappedValue(this);
     };
 
-    var value = ['a'],
+    var array = ['a'],
         source = { 'a': function(array) { return array[0]; }, 'b': 'B' };
 
     test('should mixin `source` methods into lodash', 4, function() {
       if (!isNpm) {
         _.mixin(source);
 
-        strictEqual(_.a(value), 'a');
-        strictEqual(getUnwrappedValue(_(value).a()), 'a');
+        strictEqual(_.a(array), 'a');
+        strictEqual(_(array).a().value(), 'a');
 
         delete _.a;
         delete _.prototype.a;
@@ -9080,11 +9079,27 @@
       }
     });
 
+    test('should mixin chaining methods by reference', 2, function() {
+      if (!isNpm) {
+        _.mixin(source);
+        _.a = _.constant('b');
+
+        strictEqual(_.a(array), 'b');
+        strictEqual(_(array).a().value(), 'a');
+
+        delete _.a;
+        delete _.prototype.a;
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
     test('should use `this` as the default `object` value', 3, function() {
       var object = _.create(_);
       object.mixin(source);
 
-      strictEqual(object.a(value), 'a');
+      strictEqual(object.a(array), 'a');
 
       ok(!('a' in _));
       ok(!('a' in _.prototype));
@@ -9098,7 +9113,7 @@
     test('should accept an `object` argument', 1, function() {
       var object = {};
       _.mixin(object, source);
-      strictEqual(object.a(value), 'a');
+      strictEqual(object.a(array), 'a');
     });
 
     test('should return `object`', 2, function() {
@@ -9110,7 +9125,7 @@
     test('should work with a function for `object`', 2, function() {
       _.mixin(Wrapper, source);
 
-      var wrapped = Wrapper(value),
+      var wrapped = Wrapper(array),
           actual = wrapped.a();
 
       strictEqual(actual.value(), 'a');
@@ -9142,7 +9157,7 @@
             } else {
               _.mixin(func, source, options);
             }
-            var wrapped = func(value),
+            var wrapped = func(array),
                 actual = wrapped.a();
 
             if (options === true || (options && options.chain)) {
@@ -9222,12 +9237,10 @@
 
     test('should produce methods that work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
-        var array = [1, 2, 1, 3],
-            predicate = function(value) { return value > 1; };
-
+        var predicate = function(value) { return value > 1; };
         _.mixin({ 'a': _.countBy, 'b': _.filter });
 
-        var actual = _(array).a(_.identity).map(String).b(predicate).take().value();
+        var actual = _([1, 2, 1, 3]).a(_.identity).map(String).b(predicate).take().value();
         deepEqual(actual, ['2']);
 
         delete _.a;
@@ -11281,6 +11294,21 @@
       }
       else {
         skipTest();
+      }
+    });
+
+    test('should use a stored reference to `_.sample` when chaining', 2, function() {
+      if (!isNpm) {
+        var sample = _.sample;
+        _.sample = _.noop;
+
+        var wrapped = _(array);
+        notStrictEqual(wrapped.sample(), undefined);
+        notStrictEqual(wrapped.sample(2).value(), undefined);
+        _.sample = sample;
+      }
+      else {
+        skipTest(2);
       }
     });
 

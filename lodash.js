@@ -2697,11 +2697,10 @@
 
       while (++index < length) {
         var args = [result],
-            action = actions[index],
-            object = action.object;
+            action = actions[index];
 
         push.apply(args, action.args);
-        result = object[action.name].apply(object, args);
+        result = action.func.apply(action.thisArg, args);
       }
       return result;
     }
@@ -10209,23 +10208,25 @@
         chain = options.chain;
       }
       while (++index < length) {
-        var methodName = methodNames[index];
-        object[methodName] = source[methodName];
+        var methodName = methodNames[index],
+            func = source[methodName];
+
+        object[methodName] = func;
         if (isFunc) {
-          object.prototype[methodName] = (function(methodName) {
+          object.prototype[methodName] = (function(func) {
             return function() {
               var chainAll = this.__chain__;
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
-                (result.__actions__ = baseSlice(this.__actions__)).push({ 'args': arguments, 'object': object, 'name': methodName });
+                (result.__actions__ = baseSlice(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
                 result.__chain__ = chainAll;
                 return result;
               }
               var args = [this.value()];
               push.apply(args, arguments);
-              return object[methodName].apply(object, args);
+              return func.apply(object, args);
             };
-          }(methodName));
+          }(func));
         }
       }
       return object;
@@ -10678,10 +10679,10 @@
 
     lodash.prototype.sample = function(n) {
       if (!this.__chain__ && n == null) {
-        return lodash.sample(this.value());
+        return sample(this.value());
       }
       return this.thru(function(value) {
-        return lodash.sample(value, n);
+        return sample(value, n);
       });
     };
 
@@ -10835,7 +10836,7 @@
 
           if (!retUnwrapped && (isHybrid || result.actions)) {
             var actions = result.actions || (result.actions = []);
-            actions.push({ 'args': [interceptor], 'object': lodash, 'name': 'thru' });
+            actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
           }
           return new LodashWrapper(result, chainAll);
         }

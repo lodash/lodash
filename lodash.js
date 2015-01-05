@@ -331,7 +331,7 @@
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {Array} Returns `true` if all elements pass the predicate check,
+   * @returns {boolean} Returns `true` if all elements pass the predicate check,
    *  else `false`.
    */
   function arrayEvery(array, predicate) {
@@ -1983,7 +1983,7 @@
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns `true` if all elements pass the predicate check,
+     * @returns {boolean} Returns `true` if all elements pass the predicate check,
      *  else `false`
      */
     function baseEvery(collection, predicate) {

@@ -1779,7 +1779,7 @@
       if (func == null) {
         return identity;
       }
-      // Handle "_.pluck" and "_.where" style callback shorthands.
+      // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
         ? baseMatches(func, argCount)
         : baseProperty(argCount ? (func + '') : func);
@@ -4198,12 +4198,12 @@
      * Elements are dropped until `predicate` returns falsey. The predicate is
      * bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -4225,11 +4225,11 @@
      *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.dropRightWhile(users, 'active'), 'user');
      * // => ['barney']
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.pluck(_.dropRightWhile(users, { 'status': 'away' }), 'user');
      * // => ['barney', 'fred']
      */
@@ -4246,12 +4246,12 @@
      * Elements are dropped until `predicate` returns falsey. The predicate is
      * bound to `thisArg` and invoked with three arguments; (value, index, array).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -4273,11 +4273,11 @@
      *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.dropWhile(users, 'active'), 'user');
      * // => ['fred', 'pebbles']
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.pluck(_.dropWhile(users, { 'status': 'busy' }), 'user');
      * // => ['pebbles']
      */
@@ -4294,12 +4294,12 @@
      * This method is like `_.find` except that it returns the index of the first
      * element `predicate` returns truthy for, instead of the element itself.
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -4307,7 +4307,7 @@
      * @param {Array} array The array to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
@@ -4321,11 +4321,11 @@
      * _.findIndex(users, function(chr) { return chr.age < 40; });
      * // => 0
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.findIndex(users, { 'age': 1 });
      * // => 2
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.findIndex(users, 'active');
      * // => 1
      */
@@ -4346,12 +4346,12 @@
      * This method is like `_.findIndex` except that it iterates over elements
      * of `collection` from right to left.
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -4359,7 +4359,7 @@
      * @param {Array} array The array to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
@@ -4373,11 +4373,11 @@
      * _.findLastIndex(users, function(chr) { return chr.age < 40; });
      * // => 2
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.findLastIndex(users, { 'age': 40 });
      * // => 1
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.findLastIndex(users, 'active');
      * // => 0
      */
@@ -4730,12 +4730,12 @@
      * and returns an array of the removed elements. The predicate is bound to
      * `thisArg` and invoked with three arguments; (value, index, array).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * **Note:** Unlike `_.filter`, this method mutates `array`.
      *
@@ -4745,7 +4745,7 @@
      * @param {Array} array The array to modify.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the new array of removed elements.
      * @example
@@ -4844,12 +4844,12 @@
      * to compute their sort ranking. The iteratee is bound to `thisArg` and
      * invoked with one argument; (value).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -4858,7 +4858,7 @@
      * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
@@ -4878,7 +4878,7 @@
      * }, dict);
      * // => 1
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
      * // => 1
      */
@@ -4901,7 +4901,7 @@
      * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
@@ -4987,12 +4987,12 @@
      * taken until `predicate` returns falsey. The predicate is bound to `thisArg`
      * and invoked with three arguments; (value, index, array).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5014,11 +5014,11 @@
      *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.takeRightWhile(users, 'active'), 'user');
      * // => ['fred', 'pebbles']
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.pluck(_.takeRightWhile(users, { 'status': 'away' }), 'user');
      * // => ['pebbles']
      */
@@ -5035,12 +5035,12 @@
      * are taken until `predicate` returns falsey. The predicate is bound to
      * `thisArg` and invoked with three arguments; (value, index, array).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5062,11 +5062,11 @@
      *   { 'user': 'pebbles', 'status': 'away', 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.takeWhile(users, 'active'), 'user');
      * // => ['barney']
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.pluck(_.takeWhile(users, { 'status': 'busy' }), 'user');
      * // => ['barney', 'fred']
      */
@@ -5110,12 +5110,12 @@
      * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
      * with three arguments; (value, index, array).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
      * e.g. `===`, except that `NaN` matches `NaN`. See the
@@ -5129,8 +5129,8 @@
      * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted] Specify the array is sorted.
      * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-     *  If a property name or object is provided it is used to create a "_.pluck"
-     *  or "_.where" style callback respectively.
+     *  If a property name or object is provided it is used to create a "_.property"
+     *  or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new duplicate-value-free array.
      * @example
@@ -5146,7 +5146,7 @@
      * _.uniq([1, 2.5, 1.5, 2], function(n) { return this.floor(n); }, Math);
      * // => [1, 2.5]
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
@@ -5577,12 +5577,12 @@
      * The `iteratee` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5590,7 +5590,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -5613,12 +5613,12 @@
      * The predicate is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5627,7 +5627,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {boolean} Returns `true` if all elements pass the predicate check,
      *  else `false`.
@@ -5641,11 +5641,11 @@
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.every(users, 'age');
      * // => true
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.every(users, { 'age': 36 });
      * // => false
      */
@@ -5662,12 +5662,12 @@
      * `predicate` returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5676,7 +5676,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -5689,11 +5689,11 @@
      *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.filter(users, 'active'), 'user');
      * // => ['fred']
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.pluck(_.filter(users, { 'age': 36 }), 'user');
      * // => ['barney']
      */
@@ -5709,12 +5709,12 @@
      * `predicate` returns truthy for. The predicate is bound to `thisArg` and
      * invoked with three arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5723,7 +5723,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
@@ -5737,11 +5737,11 @@
      * _.result(_.find(users, function(chr) { return chr.age < 40; }), 'user');
      * // => 'barney'
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.result(_.find(users, { 'age': 1 }), 'user');
      * // => 'pebbles'
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.result(_.find(users, 'active'), 'user');
      * // => 'fred'
      */
@@ -5764,7 +5764,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
@@ -5867,12 +5867,12 @@
      * The `iteratee` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5880,7 +5880,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -5891,7 +5891,7 @@
      * _.groupBy([4.2, 6.1, 6.4], function(n) { return this.floor(n); }, Math);
      * // => { '4': [4.2], '6': [6.1, 6.4] }
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.groupBy(['one', 'two', 'three'], 'length');
      * // => { '3': ['one', 'two'], '5': ['three'] }
      */
@@ -5910,12 +5910,12 @@
      * iteratee function is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5923,7 +5923,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -5977,12 +5977,12 @@
      * `iteratee`. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -5991,7 +5991,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new mapped array.
      * @example
@@ -6007,7 +6007,7 @@
      *   { 'user': 'fred' }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.map(users, 'user');
      * // => ['barney', 'fred']
      */
@@ -6025,20 +6025,20 @@
      * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments; (value, index, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-     *  If a property name or object is provided it is used to create a "_.pluck"
-     *  or "_.where" style callback respectively.
+     *  If a property name or object is provided it is used to create a "_.property"
+     *  or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the maximum value.
      * @example
@@ -6057,7 +6057,7 @@
      * _.max(users, function(chr) { return chr.age; });
      * // => { 'user': 'fred', 'age': 40 };
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.max(users, 'age');
      * // => { 'user': 'fred', 'age': 40 };
      */
@@ -6070,20 +6070,20 @@
      * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments; (value, index, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-     *  If a property name or object is provided it is used to create a "_.pluck"
-     *  or "_.where" style callback respectively.
+     *  If a property name or object is provided it is used to create a "_.property"
+     *  or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {*} Returns the minimum value.
      * @example
@@ -6102,7 +6102,7 @@
      * _.min(users, function(chr) { return chr.age; });
      * // => { 'user': 'barney', 'age': 36 };
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.min(users, 'age');
      * // => { 'user': 'barney', 'age': 36 };
      */
@@ -6114,12 +6114,12 @@
      * contains elements `predicate` returns falsey for. The predicate is bound
      * to `thisArg` and invoked with three arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -6127,7 +6127,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the array of grouped elements.
      * @example
@@ -6144,11 +6144,11 @@
      *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.map(_.partition(users, { 'age': 1 }), function(array) { return _.pluck(array, 'user'); });
      * // => [['pebbles'], ['barney', 'fred']]
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.map(_.partition(users, 'active'), function(array) { return _.pluck(array, 'user'); });
      * // => [['fred'], ['barney', 'pebbles']]
      */
@@ -6244,12 +6244,12 @@
      * The opposite of `_.filter`; this method returns the elements of `collection`
      * that `predicate` does **not** return truthy for.
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -6257,7 +6257,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -6270,11 +6270,11 @@
      *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.reject(users, 'active'), 'user');
      * // => ['barney']
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.pluck(_.reject(users, { 'age': 36 }), 'user');
      * // => ['fred']
      */
@@ -6379,12 +6379,12 @@
      * over the entire collection. The predicate is bound to `thisArg` and invoked
      * with three arguments; (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -6393,7 +6393,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {boolean} Returns `true` if any element passes the predicate check,
      *  else `false`.
@@ -6407,11 +6407,11 @@
      *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.some(users, 'active');
      * // => true
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.some(users, { 'age': 1 });
      * // => false
      */
@@ -6430,12 +6430,12 @@
      * The `iteratee` is bound to `thisArg` and invoked with three arguments;
      * (value, index|key, collection).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -6443,7 +6443,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Array|Function|Object|string} [iteratee=_.identity] The function
      *  invoked per iteration. If a property name or an object is provided it is
-     *  used to create a "_.pluck" or "_.where" style callback respectively.
+     *  used to create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns the new sorted array.
      * @example
@@ -6460,7 +6460,7 @@
      *   { 'user': 'barney' }
      * ];
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.pluck(_.sortBy(users, 'user'), 'user');
      * // => ['barney', 'fred', 'pebbles']
      */
@@ -7591,14 +7591,16 @@
      * deep[0] === users[0];
      * // => false
      *
-     * _.mixin({
-     *   'clone': _.partialRight(_.clone, function(value) {
-     *     return _.isElement(value) ? value.cloneNode(false) : undefined;
-     *   })
+     * // using a customizer callback
+     * var body = _.clone(document.body, function(value) {
+     *   return _.isElement(value) ? value.cloneNode(false) : undefined;
      * });
      *
-     * var clone = _.clone(document.body);
-     * clone.childNodes.length;
+     * body === document.body
+     * // => false
+     * body.nodeName
+     * // => BODY
+     * body.childNodes.length;
      * // => 0
      */
     function clone(value, isDeep, customizer, thisArg) {
@@ -7643,17 +7645,17 @@
      * deep[0] === users[0];
      * // => false
      *
-     * var view = {
-     *   'label': 'docs',
-     *   'node': element
-     * };
-     *
-     * var clone = _.cloneDeep(view, function(value) {
+     * // using a customizer callback
+     * var el = _.cloneDeep(document.body, function(value) {
      *   return _.isElement(value) ? value.cloneNode(true) : undefined;
      * });
      *
-     * clone.node == view.node;
+     * body === document.body
      * // => false
+     * body.nodeName
+     * // => BODY
+     * body.childNodes.length;
+     * // => 20
      */
     function cloneDeep(value, customizer, thisArg) {
       customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 1);
@@ -7846,10 +7848,11 @@
      * _.isEqual(object, other);
      * // => true
      *
-     * var words = ['hello', 'goodbye'];
-     * var otherWords = ['hi', 'goodbye'];
+     * // using a customizer callback
+     * var array = ['hello', 'goodbye'];
+     * var other = ['hi', 'goodbye'];
      *
-     * _.isEqual(words, otherWords, function(value, other) {
+     * _.isEqual(array, other, function(value, other) {
      *   return _.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/) || undefined;
      * });
      * // => true
@@ -8007,6 +8010,7 @@
      * _.isMatch(object, { 'age': 36 });
      * // => false
      *
+     * // using a customizer callback
      * var object = { 'greeting': 'hello' };
      * var source = { 'greeting': 'hi' };
      *
@@ -8269,6 +8273,7 @@
      * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred', 'status': 'busy' });
      * // => { 'user': 'fred', 'age': 40, 'status': 'busy' }
      *
+     * // using a customizer callback
      * var defaults = _.partialRight(_.assign, function(value, other) {
      *   return typeof value == 'undefined' ? other : value;
      * });
@@ -8347,12 +8352,12 @@
      * This method is like `_.findIndex` except that it returns the key of the
      * first element `predicate` returns truthy for, instead of the element itself.
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -8360,7 +8365,7 @@
      * @param {Object} object The object to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
      * @example
@@ -8374,11 +8379,11 @@
      * _.findKey(users, function(chr) { return chr.age < 40; });
      * // => 'barney' (iteration order is not guaranteed)
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.findKey(users, { 'age': 1 });
      * // => 'pebbles'
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.findKey(users, 'active');
      * // => 'barney'
      */
@@ -8391,12 +8396,12 @@
      * This method is like `_.findKey` except that it iterates over elements of
      * a collection in the opposite order.
      *
-     * If a property name is provided for `predicate` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `predicate` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `predicate` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `predicate` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -8404,7 +8409,7 @@
      * @param {Object} object The object to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `predicate`.
      * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
      * @example
@@ -8418,11 +8423,11 @@
      * _.findLastKey(users, function(chr) { return chr.age < 40; });
      * // => returns `pebbles` assuming `_.findKey` returns `barney`
      *
-     * // using "_.where" callback shorthand
+     * // using the "_.matches" callback shorthand
      * _.findLastKey(users, { 'age': 40 });
      * // => 'fred'
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
@@ -8760,12 +8765,12 @@
      * iteratee function is bound to `thisArg` and invoked with three arguments;
      * (value, key, object).
      *
-     * If a property name is provided for `iteratee` the created "_.pluck" style
-     * callback returns the property value of the given element.
+     * If a property name is provided for `iteratee` the created "_.property"
+     * style callback returns the property value of the given element.
      *
-     * If an object is provided for `iteratee` the created "_.where" style callback
-     * returns `true` for elements that have the properties of the given object,
-     * else `false`.
+     * If an object is provided for `iteratee` the created "_.matches" style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -8773,7 +8778,7 @@
      * @param {Object} object The object to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked
      *  per iteration. If a property name or object is provided it is used to
-     *  create a "_.pluck" or "_.where" style callback respectively.
+     *  create a "_.property" or "_.matches" style callback respectively.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Object} Returns the new mapped object.
      * @example
@@ -8786,7 +8791,7 @@
      *   'pebbles': { 'user': 'pebbles', 'age': 1 }
      * };
      *
-     * // using "_.pluck" callback shorthand
+     * // using the "_.property" callback shorthand
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
@@ -8830,17 +8835,18 @@
      * _.merge(users, ages);
      * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
      *
-     * var food = {
+     * // using a customizer callback
+     * var object = {
      *   'fruits': ['apple'],
      *   'vegetables': ['beet']
      * };
      *
-     * var otherFood = {
+     * var other = {
      *   'fruits': ['banana'],
      *   'vegetables': ['carrot']
      * };
      *
-     * _.merge(food, otherFood, function(a, b) {
+     * _.merge(object, other, function(a, b) {
      *   return _.isArray(a) ? a.concat(b) : undefined;
      * });
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
@@ -10120,7 +10126,7 @@
     }
 
     /**
-     * Creates a "_.where" style predicate function which performs a deep comparison
+     * Creates a "_.matches" style predicate function which performs a deep comparison
      * between a given object and `source`, returning `true` if the given object
      * has equivalent property values, else `false`.
      *
@@ -10266,7 +10272,7 @@
     }
 
     /**
-     * Creates a "_.pluck" style function which returns the property value
+     * Creates a "_.property" style function which returns the property value
      * of `key` on a given object.
      *
      * @static

@@ -6356,7 +6356,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to inspect.
-     * @returns {number} Returns `collection.length` or number of own enumerable properties.
+     * @returns {number} Returns the size of `collection`.
      * @example
      *
      * _.size([1, 2]);
@@ -8267,7 +8267,7 @@
      * @param {...Object} [sources] The source objects.
      * @param {Function} [customizer] The function to customize assigning values.
      * @param {*} [thisArg] The `this` binding of `customizer`.
-     * @returns {Object} Returns the destination object.
+     * @returns {Object} Returns `object`.
      * @example
      *
      * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred', 'status': 'busy' });
@@ -8333,7 +8333,7 @@
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns the destination object.
+     * @returns {Object} Returns `object`.
      * @example
      *
      * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
@@ -8821,7 +8821,7 @@
      * @param {...Object} [sources] The source objects.
      * @param {Function} [customizer] The function to customize merging properties.
      * @param {*} [thisArg] The `this` binding of `customizer`.
-     * @returns {Object} Returns the destination object.
+     * @returns {Object} Returns `object`.
      * @example
      *
      * var users = {

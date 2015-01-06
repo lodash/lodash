@@ -1864,6 +1864,7 @@
       test('`_.' + methodName + '` should not error on DOM elements', 1, function() {
         if (document) {
           var element = document.createElement('div');
+
           try {
             deepEqual(func(element), {});
           } catch(e) {
@@ -2291,6 +2292,7 @@
 
     test('should not error when `func` is nullish and a `thisArg` is provided', 2, function() {
       var object = {};
+
       _.each([null, undefined], function(value) {
         try {
           var callback = _.callback(value, {});
@@ -7858,6 +7860,7 @@
       _.each(funcs, function(methodName) {
         if (xml) {
           var pass = true;
+
           try {
             _[methodName](xml);
           } catch(e) {
@@ -8654,7 +8657,7 @@
       raises(function() { _.memoize(_.noop, {}); }, TypeError);
     });
 
-    test('should not throw a TypeError if `resolve` is falsey', function() {
+    test('should not error if `resolve` is falsey', function() {
       var expected = _.map(falsey, _.constant(true));
 
       var actual = _.map(falsey, function(value, index) {
@@ -9595,7 +9598,7 @@
   QUnit.module('lodash.pairs');
 
   (function() {
-    test('should create a two dimensional array of an object\'s key-value pairs', 1, function() {
+    test('should create a two dimensional array of key-value pairs', 1, function() {
       var object = { 'a': 1, 'b': 2 };
       deepEqual(_.pairs(object), [['a', 1], ['b', 2]]);
     });
@@ -11792,7 +11795,10 @@
     });
 
     test('should not error on nullish elements', 1, function() {
-      var actual = _.sortByAll(objects.concat(undefined), ['a', 'b']);
+      try {
+        var actual = _.sortByAll(objects.concat(undefined), ['a', 'b']);
+      } catch(e) {}
+
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
     });
 
@@ -14629,13 +14635,14 @@
       });
     });
 
-    test('should throw a TypeError for falsey arguments', 22, function() {
+    test('should throw an error for falsey arguments', 22, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
 
         var actual = _.map(falsey, function(value, index) {
           var pass = !index && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
+
           try {
             index ? func(value) : func();
           } catch(e) {

@@ -1065,7 +1065,7 @@
      * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
      * `identity`, `includes`, `indexOf`, `isArguments`, `isArray`, `isBoolean`,
-     * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`,
+     * `isDate`, `isInvalidDate`, `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`,
      * `isFunction`, `isMatch` , `isNative`, `isNaN`, `isNull`, `isNumber`,
      * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `join`,
      * `kebabCase`, `last`, `lastIndexOf`, `max`, `min`, `noConflict`, `now`, `pad`,
@@ -7732,6 +7732,26 @@
     }
 
     /**
+     * Checks if `value` is an Invalid  `Date` object.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+     * @example
+     *
+     * _.isInvalidDate(new Date('abc'));
+     * // => true
+     *
+     * _.isInvalidDate(new Date);
+     * // => false
+     */
+    function isInvalidDate(value) {
+      return (isObjectLike(value) && objToString.call(value) == dateTag && isNaN(value.getTime())) || false;
+    }
+
+    /**
      * Checks if `value` is classified as a `Date` object.
      *
      * @static
@@ -7750,7 +7770,7 @@
     function isDate(value) {
       return (isObjectLike(value) && objToString.call(value) == dateTag) || false;
     }
-
+    
     /**
      * Checks if `value` is a DOM element.
      *
@@ -10608,6 +10628,7 @@
     lodash.isArray = isArray;
     lodash.isBoolean = isBoolean;
     lodash.isDate = isDate;
+    lodash.isInvalidDate = isInvalidDate;
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;

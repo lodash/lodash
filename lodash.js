@@ -9210,7 +9210,7 @@
      */
     function capitalize(string) {
       string = toString(string);
-      return string ? (string.charAt(0).toUpperCase() + string.slice(1)) : string;
+      return string && (string.charAt(0).toUpperCase() + string.slice(1));
     }
 
     /**
@@ -9230,7 +9230,7 @@
      */
     function deburr(string) {
       string = toString(string);
-      return string ? string.replace(reLatin1, deburrLetter) : string;
+      return string && string.replace(reLatin1, deburrLetter);
     }
 
     /**
@@ -9413,7 +9413,7 @@
      */
     function padLeft(string, length, chars) {
       string = toString(string);
-      return string ? (createPad(string, length, chars) + string) : string;
+      return string && (createPad(string, length, chars) + string);
     }
 
     /**
@@ -9441,7 +9441,7 @@
      */
     function padRight(string, length, chars) {
       string = toString(string);
-      return string ? (string + createPad(string, length, chars)) : string;
+      return string && (string + createPad(string, length, chars));
     }
 
     /**

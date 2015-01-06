@@ -5910,9 +5910,28 @@
       deepEqual(_.invoke(1), []);
     });
 
-    test('should work with nullish elements', 1, function() {
+    test('should not error on nullish elements', 1, function() {
       var array = ['a', null, undefined, 'd'];
+
+      try {
+        var actual = _.invoke(array, 'toUpperCase');
+      } catch(e) {}
+
       deepEqual(_.invoke(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
+    });
+
+    test('should not error on elements with missing properties', 1, function() {
+      var objects = _.map(falsey.concat(_.constant(1)), function(value) {
+        return { 'a': value };
+      });
+
+      var expected = _.times(objects.length - 1, _.constant(undefined)).concat(1);
+
+      try {
+        var actual = _.invoke(objects, 'a');
+      } catch(e) {}
+
+      deepEqual(actual, expected);
     });
   }());
 

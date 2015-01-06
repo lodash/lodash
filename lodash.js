@@ -854,22 +854,30 @@
    * @returns {Function} Returns a new `lodash` function.
    * @example
    *
-   * _.mixin({ 'add': function(a, b) { return a + b; } }, false);
+   * _.mixin({ 'add': function(a, b) { return a + b; } });
    *
    * var lodash = _.runInContext();
-   * lodash.mixin({ 'sub': function(a, b) { return a - b; } }, false);
+   * lodash.mixin({ 'sub': function(a, b) { return a - b; } });
    *
    * _.isFunction(_.add);
    * // => true
-   *
    * _.isFunction(_.sub);
    * // => false
    *
    * lodash.isFunction(lodash.add);
    * // => false
-   *
    * lodash.isFunction(lodash.sub);
    * // => true
+   *
+   * // using `context` to mock `Date#getTime` use in `_.now`
+   * var mock = _.runInContext({
+   *   'Date': function() {
+   *     return { 'getTime': getTimeMock };
+   *   }
+   * });
+   *
+   * // or creating a suped-up `defer` in Node.js
+   * var defer = _.runInContext({ 'setTimeout': setImmediate }).defer;
    */
   function runInContext(context) {
     // Avoid issues with some ES3 environments that attempt to use values, named

@@ -12605,7 +12605,7 @@
 
         var lodash = _.runInContext(_.assign({}, root, {
           'Date': function() {
-            return { 'getTime': getTime, 'valueOf': getTime };
+            return { 'getTime': getTime };
           }
         }));
 

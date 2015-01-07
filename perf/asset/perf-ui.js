@@ -116,11 +116,11 @@
   ui.buildPath = (function() {
     var result;
     switch (build) {
-      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
+      case 'lodash-compat':     result = 'lodash.compat.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
-      case null:                build = 'lodash-modern';
-      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      case null:                build  = 'lodash-modern';
+      case 'lodash-modern':     result = 'lodash.min.js'; break;
       default:                  return build;
     }
     return basePath + result;
@@ -130,12 +130,12 @@
   ui.otherPath = (function() {
     var result;
     switch (other) {
-      case 'lodash-compat':     result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-modern':     result = 'dist/lodash.min.js'; break;
+      case 'lodash-compat':     result = 'lodash.compat.min.js'; break;
+      case 'lodash-modern':     result = 'lodash.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
-      case null:                other = 'underscore';
+      case null:                other  = 'underscore';
       case 'underscore':        result = 'vendor/underscore/underscore-min.js'; break;
       default:                  return other;
     }

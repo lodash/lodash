@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "3.0.0-pre",
-  "main": "lodash.js",
+  "main": "lodash.compat.js",
   "private": true,
   "devDependencies": {
     "curl-amd": "0.8.12",
@@ -17,18 +17,15 @@
     "ignore": [
       ".*",
       "*.custom.*",
-      "*.min.*",
       "*.template.*",
       "*.log",
       "*.map",
       "*.md",
-      "lodash.js",
       "index.js",
       "bower.json",
       "component.json",
-      "doc",
       "coverage",
-      "modularize",
+      "doc",
       "node_modules",
       "perf",
       "test",

@@ -1,1 +1,1 @@
-module.exports = require('./dist/lodash.compat.js');
+module.exports = require('./lodash.compat.js');

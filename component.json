@@ -4,7 +4,7 @@
   "version": "3.0.0-pre",
   "description": "A utility library delivering consistency, customization, performance, & extras.",
   "license": "MIT",
-  "main": "dist/lodash.compat.js",
+  "main": "lodash.compat.js",
   "keywords": ["amd", "browser", "client", "functional", "server", "util"],
-  "scripts": ["dist/lodash.compat.js"]
+  "scripts": ["lodash.compat.js"]
 }

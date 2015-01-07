@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "3.0.0-pre",
-  "main": "dist/lodash.compat.js",
+  "main": "lodash.js",
   "ignore": [
     ".*",
     "*.custom.*",
@@ -9,8 +9,6 @@
     "*.log",
     "*.map",
     "*.md",
-    "/*.min.*",
-    "/lodash.js",
     "index.js",
     "component.json",
     "package.json",

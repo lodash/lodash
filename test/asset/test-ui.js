@@ -64,13 +64,13 @@
 
       buildList.selectedIndex = (function() {
         switch (build) {
-          case 'lodash-compat':         return 1;
-          case 'lodash-modern-dev':     return 2;
-          case 'lodash-modern':         return 3;
-          case 'lodash-custom-dev':     return 4;
-          case 'lodash-custom':         return 5;
+          case 'lodash-compat':     return 1;
+          case 'lodash-modern-dev': return 2;
+          case 'lodash-modern':     return 3;
+          case 'lodash-custom-dev': return 4;
+          case 'lodash-custom':     return 5;
           case 'lodash-compat-dev':
-          case null:                    return 0;
+          case null:                return 0;
         }
         return -1;
       }());
@@ -140,14 +140,14 @@
   ui.buildPath = (function() {
     var result;
     switch (build) {
-      case 'lodash-compat':         result = 'dist/lodash.compat.min.js'; break;
-      case 'lodash-modern-dev':     result = 'dist/lodash.js'; break;
-      case 'lodash-modern':         result = 'dist/lodash.min.js'; break;
-      case 'lodash-custom-dev':     result = 'lodash.custom.js'; break;
-      case 'lodash-custom':         result = 'lodash.custom.min.js'; break;
-      case null:                    build  = 'lodash-compat-dev';
-      case 'lodash-compat-dev':     result = 'lodash.js'; break;
-      default:                      return build;
+      case 'lodash-compat':     result = 'lodash.compat.min.js'; break;
+      case 'lodash-modern-dev': result = 'lodash.js'; break;
+      case 'lodash-modern':     result = 'lodash.min.js'; break;
+      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
+      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case null:                build  = 'lodash-compat-dev';
+      case 'lodash-compat-dev': result = 'lodash.js'; break;
+      default:                  return build;
     }
     return basePath + result;
   }());

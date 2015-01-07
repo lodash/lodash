@@ -3,6 +3,5 @@
 *.template.*
 *.log
 *.map
-/*.min.*
 coverage
 node_modules

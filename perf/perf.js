@@ -1054,7 +1054,7 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.include` iterating an array')
+    Benchmark.Suite('`_.includes` searching an array')
       .add(buildName, '\
         lodash.include(numbers, limit - 1)'
       )
@@ -1064,7 +1064,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.include` iterating an object')
+    Benchmark.Suite('`_.includes` searching an object')
       .add(buildName, '\
         lodash.include(object, limit - 1)'
       )
@@ -1075,7 +1075,7 @@
 
   if (lodash.include('ab', 'ab') && _.include('ab', 'ab')) {
     suites.push(
-      Benchmark.Suite('`_.include` iterating a string')
+      Benchmark.Suite('`_.includes` searching a string')
         .add(buildName, '\
           lodash.include(strNumbers, "," + (limit - 1))'
         )

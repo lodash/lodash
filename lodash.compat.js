@@ -509,25 +509,6 @@
   }
 
   /**
-   * The base implementation of `_.slice` without support for `start` and `end`
-   * arguments.
-   *
-   * @private
-   * @param {Array} array The array to slice.
-   * @returns {Array} Returns the slice of `array`.
-   */
-  function baseSlice(array) {
-    var index = -1,
-        length = array.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = array[index];
-    }
-    return result;
-  }
-
-  /**
    * The base implementation of `_.sortBy` and `_.sortByAll` which uses `comparer`
    * to define the sort order of `array` and replaces criteria objects with their
    * corresponding values.
@@ -1113,7 +1094,7 @@
           return value;
         }
         if (hasOwnProperty.call(value, '__wrapped__')) {
-          return new LodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__actions__));
+          return new LodashWrapper(value.__wrapped__, value.__chain__, arrayCopy(value.__actions__));
         }
       }
       return new LodashWrapper(value);
@@ -1388,13 +1369,13 @@
           views = this.views,
           result = new LazyWrapper(this.wrapped);
 
-      result.actions = actions ? baseSlice(actions) : null;
+      result.actions = actions ? arrayCopy(actions) : null;
       result.dir = this.dir;
       result.dropCount = this.dropCount;
       result.filtered = this.filtered;
-      result.iteratees = iteratees ? baseSlice(iteratees) : null;
+      result.iteratees = iteratees ? arrayCopy(iteratees) : null;
       result.takeCount = this.takeCount;
-      result.views = views ? baseSlice(views) : null;
+      result.views = views ? arrayCopy(views) : null;
       return result;
     }
 
@@ -1610,6 +1591,25 @@
     function argsToObject(args) {
       var result = { 'length': 0 };
       push.apply(result, args);
+      return result;
+    }
+
+    /**
+     * Copies the values of `array` to `other`.
+     *
+     * @private
+     * @param {Array} array The array to copy.
+     * @param {Array} [other=[]] The array to copy values to.
+     * @returns {Array} Returns `other`.
+     */
+    function arrayCopy(array, other) {
+      var index = -1,
+          length = array.length,
+          result = other || Array(length);
+
+      while (++index < length) {
+        result[index] = array[index];
+      }
       return result;
     }
 
@@ -1886,7 +1886,7 @@
       if (!isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      return setTimeout(function() { func.apply(undefined, slice(args, fromIndex)); }, wait);
+      return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);
     }
 
     /**
@@ -2231,8 +2231,8 @@
      * `customizer` functions.
      *
      * @private
-     * @param {*} value The value to compare to `other`.
-     * @param {*} other The value to compare to `value`.
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
@@ -2263,8 +2263,8 @@
      * objects with circular references to be compared.
      *
      * @private
-     * @param {Array} object The object to compare to `other`.
-     * @param {Array} other The object to compare to `value`.
+     * @param {Array} object The object to compare.
+     * @param {Array} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing objects.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
@@ -2591,6 +2591,36 @@
       metaMap.set(func, data);
       return func;
     };
+
+    /**
+     * The base implementation of `_.slice` without an iteratee call guard.
+     *
+     * @private
+     * @param {Array} array The array to slice.
+     * @param {number} [start=0] The start position.
+     * @param {number} [end=array.length] The end position.
+     * @returns {Array} Returns the slice of `array`.
+     */
+    function baseSlice(array, start, end) {
+      var index = -1,
+          length = array.length;
+
+      start = start == null ? 0 : (+start || 0);
+      if (start < 0) {
+        start = -start > length ? 0 : (length + start);
+      }
+      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      if (end < 0) {
+        end += length;
+      }
+      length = start > end ? 0 : (end - start);
+
+      var result = Array(length);
+      while (++index < length) {
+        result[index] = array[index + start];
+      }
+      return result;
+    }
 
     /**
      * The base implementation of `_.some` without support for callback shorthands
@@ -3147,7 +3177,7 @@
 
           length -= argsHolders.length;
           if (length < arity) {
-            var newArgPos = argPos ? baseSlice(argPos) : null,
+            var newArgPos = argPos ? arrayCopy(argPos) : null,
                 newArity = nativeMax(arity - length, 0),
                 newsHolders = isCurry ? argsHolders : null,
                 newHoldersRight = isCurry ? null : argsHolders,
@@ -3309,8 +3339,8 @@
      * partial deep comparisons.
      *
      * @private
-     * @param {Array} array The array to compare to `other`.
-     * @param {Array} other The array to compare to `value`.
+     * @param {Array} array The array to compare.
+     * @param {Array} other The other array to compare.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing arrays.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
@@ -3364,8 +3394,8 @@
      * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
      *
      * @private
-     * @param {Object} value The object to compare to `other`.
-     * @param {Object} other The object to compare to `object`.
+     * @param {Object} value The object to compare.
+     * @param {Object} other The other object to compare.
      * @param {string} tag The `toStringTag` of the objects to compare.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
@@ -3401,8 +3431,8 @@
      * partial deep comparisons.
      *
      * @private
-     * @param {Object} object The object to compare to `other`.
-     * @param {Object} other The object to compare to `value`.
+     * @param {Object} object The object to compare.
+     * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
@@ -3563,19 +3593,18 @@
      * @returns {Array} Returns the initialized array clone.
      */
     function initArrayClone(array, isDeep) {
-      var index = -1,
-          length = array.length,
+      var length = array.length,
           result = new array.constructor(length);
 
-      if (!isDeep) {
-        while (++index < length) {
-          result[index] = array[index];
+      if (length) {
+        if (!isDeep) {
+          arrayCopy(array, result);
         }
-      }
-      // Add array properties assigned by `RegExp#exec`.
-      if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
-        result.index = array.index;
-        result.input = array.input;
+        // Add array properties assigned by `RegExp#exec`.
+        if (typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+          result.index = array.index;
+          result.input = array.input;
+        }
       }
       return result;
     }
@@ -3780,20 +3809,20 @@
       var value = source[3];
       if (value) {
         var partials = data[3];
-        data[3] = partials ? composeArgs(partials, value, source[4]) : baseSlice(value);
-        data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : baseSlice(source[4]);
+        data[3] = partials ? composeArgs(partials, value, source[4]) : arrayCopy(value);
+        data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : arrayCopy(source[4]);
       }
       // Compose partial right arguments.
       value = source[5];
       if (value) {
         partials = data[5];
-        data[5] = partials ? composeArgsRight(partials, value, source[6]) : baseSlice(value);
-        data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : baseSlice(source[6]);
+        data[5] = partials ? composeArgsRight(partials, value, source[6]) : arrayCopy(value);
+        data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : arrayCopy(source[6]);
       }
       // Use source `argPos` if available.
       value = source[7];
       if (value) {
-        data[7] = baseSlice(value);
+        data[7] = arrayCopy(value);
       }
       // Use source `ary` if it's smaller.
       if (srcBitmask & ARY_FLAG) {
@@ -3868,7 +3897,7 @@
     function reorder(array, indexes) {
       var arrLength = array.length,
           length = nativeMin(indexes.length, arrLength),
-          oldArray = baseSlice(array);
+          oldArray = arrayCopy(array);
 
       while (length--) {
         var index = indexes[length];
@@ -4069,7 +4098,7 @@
           result = Array(ceil(length / size));
 
       while (index < length) {
-        result[++resIndex] = slice(array, index, (index += size));
+        result[++resIndex] = baseSlice(array, index, (index += size));
       }
       return result;
     }
@@ -4162,10 +4191,14 @@
      * // => [1, 2, 3]
      */
     function drop(array, n, guard) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      return slice(array, n < 0 ? 0 : n);
+      return baseSlice(array, n < 0 ? 0 : n);
     }
 
     /**
@@ -4194,11 +4227,15 @@
      * // => [1, 2, 3]
      */
     function dropRight(array, n, guard) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      n = array ? (array.length - (+n || 0)) : 0;
-      return slice(array, 0, n < 0 ? 0 : n);
+      n = length - (+n || 0);
+      return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
@@ -4243,10 +4280,12 @@
      */
     function dropRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
-
+      if (!length) {
+        return [];
+      }
       predicate = getCallback(predicate, thisArg, 3);
       while (length-- && predicate(array[length], length, array)) {}
-      return slice(array, 0, length + 1);
+      return baseSlice(array, 0, length + 1);
     }
 
     /**
@@ -4290,12 +4329,14 @@
      * // => ['pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
-      var index = -1,
-          length = array ? array.length : 0;
-
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      var index = -1;
       predicate = getCallback(predicate, thisArg, 3);
       while (++index < length && predicate(array[index], index, array)) {}
-      return slice(array, index);
+      return baseSlice(array, index);
     }
 
     /**
@@ -4817,32 +4858,15 @@
      * @returns {Array} Returns the slice of `array`.
      */
     function slice(array, start, end) {
-      var index = -1,
-          length = array ? array.length : 0,
-          endType = typeof end;
-
-      if (end && endType != 'number' && isIterateeCall(array, start, end)) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      if (end && typeof end != 'number' && isIterateeCall(array, start, end)) {
         start = 0;
         end = length;
       }
-      start = start == null ? 0 : (+start || 0);
-      if (start < 0) {
-        start = -start > length ? 0 : (length + start);
-      }
-      end = (endType == 'undefined' || end > length) ? length : (+end || 0);
-      if (end < 0) {
-        end += length;
-      }
-      if (end && end == length && !start) {
-        return baseSlice(array);
-      }
-      length = start > end ? 0 : (end - start);
-
-      var result = Array(length);
-      while (++index < length) {
-        result[index] = array[index + start];
-      }
-      return result;
+      return baseSlice(array, start, end);
     }
 
     /**
@@ -4951,10 +4975,14 @@
      * // => []
      */
     function take(array, n, guard) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      return slice(array, 0, n < 0 ? 0 : n);
+      return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
@@ -4983,11 +5011,15 @@
      * // => []
      */
     function takeRight(array, n, guard) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      n = array ? (array.length - (+n || 0)) : 0;
-      return slice(array, n < 0 ? 0 : n);
+      n = length - (+n || 0);
+      return baseSlice(array, n < 0 ? 0 : n);
     }
 
     /**
@@ -5032,10 +5064,12 @@
      */
     function takeRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
-
+      if (!length) {
+        return [];
+      }
       predicate = getCallback(predicate, thisArg, 3);
       while (length-- && predicate(array[length], length, array)) {}
-      return slice(array, length + 1);
+      return baseSlice(array, length + 1);
     }
 
     /**
@@ -5079,12 +5113,14 @@
      * // => ['barney', 'fred']
      */
     function takeWhile(array, predicate, thisArg) {
-      var index = -1,
-          length = array ? array.length : 0;
-
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      var index = -1;
       predicate = getCallback(predicate, thisArg, 3);
       while (++index < length && predicate(array[index], index, array)) {}
-      return slice(array, 0, index);
+      return baseSlice(array, 0, index);
     }
 
     /**
@@ -5228,7 +5264,7 @@
      * // => [2, 3, 4]
      */
     function without(array) {
-      return baseDifference(array, slice(arguments, 1));
+      return baseDifference(array, baseSlice(arguments, 1));
     }
 
     /**
@@ -5977,7 +6013,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      return baseInvoke(collection, methodName, slice(arguments, 2));
+      return baseInvoke(collection, methodName, baseSlice(arguments, 2));
     }
 
     /**
@@ -6556,7 +6592,7 @@
       }
       return (lodash.support.unindexedChars && isString(collection))
         ? collection.split('')
-        : baseSlice(collection);
+        : arrayCopy(collection);
     }
 
     /**
@@ -6750,7 +6786,7 @@
     function bind(func, thisArg) {
       var bitmask = BIND_FLAG;
       if (arguments.length > 2) {
-        var partials = slice(arguments, 2),
+        var partials = baseSlice(arguments, 2),
             holders = replaceHolders(partials, bind.placeholder);
 
         bitmask |= PARTIAL_FLAG;
@@ -6839,7 +6875,7 @@
     function bindKey(object, key) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (arguments.length > 2) {
-        var partials = slice(arguments, 2),
+        var partials = baseSlice(arguments, 2),
             holders = replaceHolders(partials, bindKey.placeholder);
 
         bitmask |= PARTIAL_FLAG;
@@ -7402,7 +7438,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      var partials = slice(arguments, 1),
+      var partials = baseSlice(arguments, 1),
           holders = replaceHolders(partials, partial.placeholder);
 
       return createWrapper(func, PARTIAL_FLAG, null, partials, holders);
@@ -7440,7 +7476,7 @@
      * // => 'hello fred'
      */
     function partialRight(func) {
-      var partials = slice(arguments, 1),
+      var partials = baseSlice(arguments, 1),
           holders = replaceHolders(partials, partialRight.placeholder);
 
       return createWrapper(func, PARTIAL_RIGHT_FLAG, null, partials, holders);
@@ -7840,8 +7876,8 @@
      * @static
      * @memberOf _
      * @category Lang
-     * @param {*} value The value to compare to `other`.
-     * @param {*} other The value to compare to `value`.
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {*} [thisArg] The `this` binding of `customizer`.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
@@ -8351,7 +8387,7 @@
       if (object == null) {
         return object;
       }
-      var args = baseSlice(arguments);
+      var args = arrayCopy(arguments);
       args.push(assignDefaults);
       return assign.apply(undefined, args);
     }
@@ -10232,7 +10268,7 @@
               var chainAll = this.__chain__;
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
-                (result.__actions__ = baseSlice(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
+                (result.__actions__ = arrayCopy(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
                 result.__chain__ = chainAll;
                 return result;
               }

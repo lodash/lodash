@@ -284,183 +284,6 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * A specialized version of `_.forEach` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @returns {Array} Returns `array`.
-   */
-  function arrayEach(array, iteratee) {
-    var index = -1,
-        length = array.length;
-
-    while (++index < length) {
-      if (iteratee(array[index], index, array) === false) {
-        break;
-      }
-    }
-    return array;
-  }
-
-  /**
-   * A specialized version of `_.forEachRight` for arrays without support for
-   * callback shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @returns {Array} Returns `array`.
-   */
-  function arrayEachRight(array, iteratee) {
-    var length = array.length;
-
-    while (length--) {
-      if (iteratee(array[length], length, array) === false) {
-        break;
-      }
-    }
-    return array;
-  }
-
-  /**
-   * A specialized version of `_.every` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if all elements pass the predicate check,
-   *  else `false`.
-   */
-  function arrayEvery(array, predicate) {
-    var index = -1,
-        length = array.length;
-
-    while (++index < length) {
-      if (!predicate(array[index], index, array)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * A specialized version of `_.filter` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} predicate The function invoked per iteration.
-   * @returns {Array} Returns the new filtered array.
-   */
-  function arrayFilter(array, predicate) {
-    var index = -1,
-        length = array.length,
-        resIndex = -1,
-        result = [];
-
-    while (++index < length) {
-      var value = array[index];
-      if (predicate(value, index, array)) {
-        result[++resIndex] = value;
-      }
-    }
-    return result;
-  }
-
-  /**
-   * A specialized version of `_.map` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @returns {Array} Returns the new mapped array.
-   */
-  function arrayMap(array, iteratee) {
-    var index = -1,
-        length = array.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = iteratee(array[index], index, array);
-    }
-    return result;
-  }
-
-  /**
-   * A specialized version of `_.reduce` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray] Specify using the first element of
-   *  `array` as the initial value.
-   * @returns {*} Returns the accumulated value.
-   */
-  function arrayReduce(array, iteratee, accumulator, initFromArray) {
-    var index = -1,
-        length = array.length;
-
-    if (initFromArray && length) {
-      accumulator = array[++index];
-    }
-    while (++index < length) {
-      accumulator = iteratee(accumulator, array[index], index, array);
-    }
-    return accumulator;
-  }
-
-  /**
-   * A specialized version of `_.reduceRight` for arrays without support for
-   * callback shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray] Specify using the last element of
-   *  `array` as the initial value.
-   * @returns {*} Returns the accumulated value.
-   */
-  function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
-    var length = array.length;
-    if (initFromArray && length) {
-      accumulator = array[--length];
-    }
-    while (length--) {
-      accumulator = iteratee(accumulator, array[length], length, array);
-    }
-    return accumulator;
-  }
-
-  /**
-   * A specialized version of `_.some` for arrays without support for callback
-   * shorthands or `this` binding.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if any element passes the predicate check,
-   *  else `false`.
-   */
-  function arraySome(array, predicate) {
-    var index = -1,
-        length = array.length;
-
-    while (++index < length) {
-      if (predicate(array[index], index, array)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * The base implementation of `compareAscending` which compares values and
    * sorts them in ascending order without guaranteeing a stable sort.
    *
@@ -1027,7 +850,7 @@
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * The wrapper functons that support shortcut fusion are:
+     * The wrapper functions that support shortcut fusion are:
      * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `first`,
      * `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`, `slice`,
      * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `where`
@@ -1614,6 +1437,113 @@
     }
 
     /**
+     * A specialized version of `_.forEach` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayEach(array, iteratee) {
+      var index = -1,
+          length = array.length;
+
+      while (++index < length) {
+        if (iteratee(array[index], index, array) === false) {
+          break;
+        }
+      }
+      return array;
+    }
+
+    /**
+     * A specialized version of `_.forEachRight` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayEachRight(array, iteratee) {
+      var length = array.length;
+
+      while (length--) {
+        if (iteratee(array[length], length, array) === false) {
+          break;
+        }
+      }
+      return array;
+    }
+
+    /**
+     * A specialized version of `_.every` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} predicate The function invoked per iteration.
+     * @returns {boolean} Returns `true` if all elements pass the predicate check,
+     *  else `false`.
+     */
+    function arrayEvery(array, predicate) {
+      var index = -1,
+          length = array.length;
+
+      while (++index < length) {
+        if (!predicate(array[index], index, array)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    /**
+     * A specialized version of `_.filter` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} predicate The function invoked per iteration.
+     * @returns {Array} Returns the new filtered array.
+     */
+    function arrayFilter(array, predicate) {
+      var index = -1,
+          length = array.length,
+          resIndex = -1,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index];
+        if (predicate(value, index, array)) {
+          result[++resIndex] = value;
+        }
+      }
+      return result;
+    }
+
+    /**
+     * A specialized version of `_.map` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {Array} Returns the new mapped array.
+     */
+    function arrayMap(array, iteratee) {
+      var index = -1,
+          length = array.length,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = iteratee(array[index], index, array);
+      }
+      return result;
+    }
+
+    /**
      * A specialized version of `_.max` for arrays without support for iteratees.
      *
      * @private
@@ -1653,6 +1583,76 @@
         }
       }
       return result;
+    }
+
+    /**
+     * A specialized version of `_.reduce` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {*} [accumulator] The initial value.
+     * @param {boolean} [initFromArray] Specify using the first element of
+     *  `array` as the initial value.
+     * @returns {*} Returns the accumulated value.
+     */
+    function arrayReduce(array, iteratee, accumulator, initFromArray) {
+      var index = -1,
+          length = array.length;
+
+      if (initFromArray && length) {
+        accumulator = array[++index];
+      }
+      while (++index < length) {
+        accumulator = iteratee(accumulator, array[index], index, array);
+      }
+      return accumulator;
+    }
+
+    /**
+     * A specialized version of `_.reduceRight` for arrays without support for
+     * callback shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {*} [accumulator] The initial value.
+     * @param {boolean} [initFromArray] Specify using the last element of
+     *  `array` as the initial value.
+     * @returns {*} Returns the accumulated value.
+     */
+    function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
+      var length = array.length;
+      if (initFromArray && length) {
+        accumulator = array[--length];
+      }
+      while (length--) {
+        accumulator = iteratee(accumulator, array[length], length, array);
+      }
+      return accumulator;
+    }
+
+    /**
+     * A specialized version of `_.some` for arrays without support for callback
+     * shorthands or `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} predicate The function invoked per iteration.
+     * @returns {boolean} Returns `true` if any element passes the predicate check,
+     *  else `false`.
+     */
+    function arraySome(array, predicate) {
+      var index = -1,
+          length = array.length;
+
+      while (++index < length) {
+        if (predicate(array[index], index, array)) {
+          return true;
+        }
+      }
+      return false;
     }
 
     /**

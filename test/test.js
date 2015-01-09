@@ -1756,7 +1756,7 @@
           notStrictEqual(actual, object);
           deepEqual(actual, object);
 
-          var expected = typeof value == 'function' ? { 'foo': Klass.foo } : {};
+          var expected = typeof value == 'function' ? { 'foo': Klass.foo } : (value && {});
           deepEqual(func(value), expected);
         });
 

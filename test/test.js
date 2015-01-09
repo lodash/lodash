@@ -1670,6 +1670,7 @@
   (function() {
     function Klass() { this.a = 1; }
     Klass.prototype = { 'b': 1 };
+    Klass.foo = function() {};
 
     var objects = {
       '`arguments` objects': arguments,
@@ -1692,13 +1693,13 @@
 
     objects['arrays'].length = 3;
 
-    var nonCloneable = {
+    var uncloneable = {
       'DOM elements': body,
       'functions': Klass
     };
 
     _.each(errors, function(error) {
-      nonCloneable[error.name + 's'] = error;
+      uncloneable[error.name + 's'] = error;
     });
 
     test('`_.clone` should perform a shallow clone', 2, function() {
@@ -1747,18 +1748,16 @@
         });
       });
 
-      _.forOwn(nonCloneable, function(value, key) {
-        test('`_.' + methodName + '` should not clone ' + key, 2, function() {
+      _.forOwn(uncloneable, function(value, key) {
+        test('`_.' + methodName + '` should not clone ' + key, 3, function() {
           var object = { 'a': value, 'b': { 'c': value } },
-              expected = value && {};
+              actual = func(object);
 
+          notStrictEqual(actual, object);
+          deepEqual(actual, object);
+
+          var expected = typeof value == 'function' ? { 'foo': Klass.foo } : {};
           deepEqual(func(value), expected);
-
-          expected = isDeep
-            ? { 'a': expected, 'b': { 'c': expected } }
-            : { 'a': value,    'b': { 'c': value } }
-
-          deepEqual(func(object), expected);
         });
 
         test('`_.' + methodName + '` should work with a `customizer` callback and ' + key, 4, function() {

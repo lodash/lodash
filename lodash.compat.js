@@ -1815,21 +1815,35 @@
       if (typeof result != 'undefined') {
         return result;
       }
-      var isArr = isArray(value);
-      result = value;
-      if (isArr) {
-        result = initArrayClone(value, isDeep);
-      } else if (isObject(value)) {
-        result = initObjectClone(value, isDeep);
-        if (result === null) {
-          isDeep = false;
-          result = {};
-        } else if (isDeep) {
-          isDeep = objToString.call(result) == objectTag;
-        }
+      if (!isObject(value)) {
+        return value;
       }
-      if (!isDeep || result === value) {
-        return result;
+      var isArr = isArray(value);
+      if (isArr) {
+        result = initCloneArray(value);
+        if (!isDeep) {
+          return arrayCopy(value, result);
+        }
+      } else {
+        var tag = objToString.call(value),
+            isFunc = tag == funcTag;
+
+        if (!lodash.support.argsTag && isArguments(value)) {
+          tag = argsTag;
+        }
+        if (tag == objectTag || (isFunc && !object)) {
+          if (isHostObject(value)) {
+            return object ? value : {};
+          }
+          result = initCloneObject(isFunc ? {} : value);
+          if (!isDeep) {
+            return baseAssign(result, value);
+          }
+        } else {
+          return cloneableTags[tag]
+            ? initCloneByTag(value, tag, isDeep)
+            : (object ? value : {});
+        }
       }
       // Check for circular references and return corresponding clone.
       stackA || (stackA = []);
@@ -3589,22 +3603,16 @@
      *
      * @private
      * @param {Array} array The array to clone.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {Array} Returns the initialized array clone.
+     * @returns {Array} Returns the initialized clone.
      */
-    function initArrayClone(array, isDeep) {
+    function initCloneArray(array) {
       var length = array.length,
           result = new array.constructor(length);
 
-      if (length) {
-        if (!isDeep) {
-          arrayCopy(array, result);
-        }
-        // Add array properties assigned by `RegExp#exec`.
-        if (typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
-          result.index = array.index;
-          result.input = array.input;
-        }
+      // Add array properties assigned by `RegExp#exec`.
+      if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+        result.index = array.index;
+        result.input = array.input;
       }
       return result;
     }
@@ -3614,30 +3622,37 @@
      *
      * @private
      * @param {Object} object The object to clone.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {null|Object} Returns the initialized object clone if an object
-     *  is cloneable, else `null`.
+     * @returns {Object} Returns the initialized clone.
      */
-    function initObjectClone(object, isDeep) {
-      if (!isCloneable(object)) {
-        return null;
-      }
-      var Ctor = object.constructor,
-          tag = objToString.call(object),
-          isArgs = tag == argsTag || (!lodash.support.argsTag && isArguments(object)),
-          isObj = tag == objectTag;
-
-      if (isObj && !(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
+    function initCloneObject(object) {
+      var Ctor = object.constructor;
+      if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
         Ctor = Object;
       }
-      if (isArgs || isObj) {
-        var result = isDeep ? new Ctor : baseAssign(new Ctor, object);
-        if (isArgs) {
-          result.length = object.length;
-        }
-        return result;
-      }
+      return new Ctor;
+    }
+
+    /**
+     * Initializes an object clone based on its `toStringTag`.
+     *
+     * **Note:** This function only supports cloning values with `toStringTag`
+     * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+     *
+     *
+     * @private
+     * @param {Object} object The object to clone.
+     * @param {string} tag The `toStringTag` of the object to clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
+     * @returns {Object} Returns the initialized clone.
+     */
+    function initCloneByTag(object, tag, isDeep) {
+      var Ctor = object.constructor;
       switch (tag) {
+        case argsTag:
+          var result = new Ctor;
+          result.length = object.length;
+          return arrayCopy(object, result);
+
         case arrayBufferTag:
           return bufferClone(object);
 

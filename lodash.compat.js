@@ -1789,7 +1789,7 @@
       }
       // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
-        ? baseMatches(func, argCount)
+        ? baseMatches(func, !argCount)
         : baseProperty(argCount ? (func + '') : func);
     }
 
@@ -2416,7 +2416,7 @@
 
     /**
      * The base implementation of `_.matches` which supports specifying whether
-     * `source` is cloned.
+     * `source` should be cloned.
      *
      * @private
      * @param {Object} source The object of property values to match.
@@ -2437,16 +2437,16 @@
           };
         }
       }
-      var notCloned = !isCloned,
-          values = Array(length),
+      if (isCloned) {
+        source = baseClone(source, true);
+      }
+      var values = Array(length),
           strictCompareFlags = Array(length);
 
       while (length--) {
         value = source[props[length]];
-        var isStrict = isStrictComparable(value);
-
-        values[length] = (isStrict || notCloned) ? value : baseClone(value, true, clonePassthru);
-        strictCompareFlags[length] = isStrict;
+        values[length] = value;
+        strictCompareFlags[length] = isStrictComparable(value);
       }
       return function(object) {
         return baseIsMatch(object, props, values, strictCompareFlags);
@@ -2896,18 +2896,6 @@
         }
         return result;
       };
-    }
-
-    /**
-     * Used by `_.matches` to clone `source` values, letting uncloneable values
-     * passthu instead of returning empty objects.
-     *
-     * @private
-     * @param {*} value The value to clone.
-     * @returns {*} Returns the cloned value.
-     */
-    function clonePassthru(value) {
-      return isCloneable(value) ? undefined : value;
     }
 
     /**
@@ -3716,17 +3704,6 @@
         }
       }
       return result;
-    }
-
-    /**
-     * Checks if `value` is cloneable.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is cloneable, else `false`.
-     */
-    function isCloneable(value) {
-      return (value && cloneableTags[objToString.call(value)] && !isHostObject(value)) || false;
     }
 
     /**

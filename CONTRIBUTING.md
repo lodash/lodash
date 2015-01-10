@@ -1,12 +1,12 @@
 # Contributing to Lo-Dash
 
-If you’d like to contribute a feature or bug fix, you can [fork](https://help.github.com/articles/fork-a-repo) Lo-Dash, commit your changes, and [send a pull request](https://help.github.com/articles/using-pull-requests).
+If you’d like to contribute a feature or bug fix, you can [fork](https://help.github.com/articles/fork-a-repo/) Lo-Dash, commit your changes, and [send a pull request](https://help.github.com/articles/using-pull-requests/).
 Please make sure to [search the issue tracker](https://github.com/lodash/lodash/issues) first; your issue may have already been discussed or fixed in `master`.
 
 ## Tests
 
 Include updated unit tests in the `test` directory as part of your pull request.
-Don’t worry about regenerating the documentation or distribution files.
+Don’t worry about regenerating the documentation, lodash.js, or lodash.min.js.
 
 You can run the tests from the command line via `node test/test`, or open `test/index.html` in a web browser.
 The `test/run-test.sh` script attempts to run the tests in [Rhino](https://developer.mozilla.org/en-US/docs/Rhino), [RingoJS](http://ringojs.org/), [PhantomJS](http://phantomjs.org/), and [Node](http://nodejs.org/), before running them in your default browser.

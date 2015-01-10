@@ -1,7 +1,7 @@
 cd "$(dirname "$0")"
 
 echo "Testing in node..."
-node test.js ../lodash.js && node test.js ../lodash.min.js
+node test.js ../lodash.src.js
 
 for cmd in rhino "rhino -require" ringo phantomjs; do
   echo ""

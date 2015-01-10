@@ -146,7 +146,7 @@
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case null:                build  = 'lodash-compat-dev';
-      case 'lodash-compat-dev': result = 'lodash.compat.js'; break;
+      case 'lodash-compat-dev': result = 'lodash.src.js'; break;
       default:                  return build;
     }
     return basePath + result;

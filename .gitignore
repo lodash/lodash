@@ -1,7 +1,6 @@
 .DS_Store
 *.custom.*
-*.template.*
 *.log
 *.map
-coverage
+lodash.compat.js
 node_modules

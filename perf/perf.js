@@ -38,7 +38,7 @@
       result = params;
     }
     var last = result[result.length - 1];
-    result = (result.length > min && !/perf(?:\.js)?$/.test(last)) ? last : '../lodash.compat.js';
+    result = (result.length > min && !/perf(?:\.js)?$/.test(last)) ? last : '../lodash.src.js';
 
     if (!amd) {
       try {

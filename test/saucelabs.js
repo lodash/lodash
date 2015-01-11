@@ -126,9 +126,9 @@ var platforms = [
 ];
 
 /** Used to tailor the `platforms` array. */
-var runnerQuery = url.parse(runner, true).query,
-    isBackbone = /\bbackbone\b/i.test(runner),
-    isModern = /\bmodern\b/i.test(runnerQuery.build);
+var isAMD = _.includes(tags, 'amd'),
+    isBackbone = _.includes(tags, 'backbone'),
+    isModern = _.includes(tags, 'modern');
 
 // The platforms to test IE compatibility modes.
 if (compatMode) {
@@ -140,7 +140,7 @@ if (compatMode) {
   ];
 }
 // The platforms for AMD tests.
-if (_.includes(tags, 'amd')) {
+if (isAMD) {
   platforms = _.filter(platforms, function(platform) {
     var browser = browserName(platform[1]),
         version = +platform[2];

@@ -9,8 +9,8 @@ Include updated unit tests in the `test` directory as part of your pull request.
 Don’t worry about regenerating the documentation, lodash.js, or lodash.min.js.
 
 You can run the tests from the command line via `node test/test`, or open `test/index.html` in a web browser.
-The `test/run-test.sh` script attempts to run the tests in [Rhino](https://developer.mozilla.org/en-US/docs/Rhino), [RingoJS](http://ringojs.org/), [PhantomJS](http://phantomjs.org/), and [Node](http://nodejs.org/), before running them in your default browser.
-The [Backbone](http://backbonejs.org/) and [Underscore](http://http://underscorejs.org/) test suites are included as well.
+The `test/run-test.sh` script attempts to run the tests in [Rhino](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino), [RingoJS](http://ringojs.org/), [PhantomJS](http://phantomjs.org/), and [Node](http://nodejs.org/), before running them in your default browser.
+The [Backbone](http://backbonejs.org/) and [Underscore](http://underscorejs.org/) test suites are included as well.
 
 ## Contributor License Agreement
 

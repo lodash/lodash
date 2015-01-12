@@ -5,6 +5,6 @@
   "description": "A utility library delivering consistency, customization, performance, & extras.",
   "license": "MIT",
   "main": "lodash.js",
-  "keywords": ["amd", "browser", "client", "functional", "server", "util"],
+  "keywords": ["functional", "util"],
   "scripts": ["lodash.js"]
 }

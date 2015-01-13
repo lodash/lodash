@@ -6541,7 +6541,7 @@
      */
     function sortByAll(collection) {
       var args = arguments;
-      if (args.length == 4 && isIterateeCall(args[1], args[2], args[3])) {
+      if (args.length > 3 && isIterateeCall(args[1], args[2], args[3])) {
         args = [collection, args[1]];
       }
       var index = -1,

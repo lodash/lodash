@@ -11809,8 +11809,14 @@
         { 'a': 'y', '0': 2 }
       ];
 
-      var actual = _.reduce([['a']], _.sortByAll, objects);
-      deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
+      var funcs = [_.sortByAll, _.partialRight(_.sortByAll, 'bogus')],
+          expected = _.map(funcs, _.constant([objects[0], objects[2], objects[1], objects[3]]));
+
+      var actual = _.map(funcs, function(func) {
+        return _.reduce([['a']], func, objects);
+      });
+
+      deepEqual(actual, expected);
     });
   }());
 

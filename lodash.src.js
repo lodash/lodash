@@ -8306,16 +8306,16 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred', 'status': 'busy' });
-     * // => { 'user': 'fred', 'age': 40, 'status': 'busy' }
+     * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
+     * // => { 'user': 'fred', 'age': 40 }
      *
      * // using a customizer callback
      * var defaults = _.partialRight(_.assign, function(value, other) {
      *   return typeof value == 'undefined' ? other : value;
      * });
      *
-     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
-     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+     * // => { 'user': 'barney', 'age': 36 }
      */
     var assign = createAssigner(baseAssign);
 
@@ -8372,8 +8372,8 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'status': 'busy' });
-     * // => { 'user': 'barney', 'age': 36, 'status': 'busy' }
+     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+     * // => { 'user': 'barney', 'age': 36 }
      */
     function defaults(object) {
       if (object == null) {

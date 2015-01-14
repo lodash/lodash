@@ -3,27 +3,26 @@ node_js:
   - "0.10"
 env:
   global:
-    - BIN="node" BUILD="compat" ISTANBUL=false OPTION="" NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
+    - BIN="node" BUILD="compat" ISTANBUL=false OPTION=""
+    - IOJS_VERSION="v1.0.1" NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
   matrix:
     - BUILD="compat"
     - BUILD="modern"
+    - BUILD="modern"
+    - BUILD="modern" ISTANBUL=true
+    - BIN="iojs" BUILD="compat"
+    - BIN="iojs" BUILD="modern"
+    - BIN="phantomjs"
+    - BIN="rhino"
+    - BIN="rhino" OPTION="-require"
+    - BIN="ringo"
 matrix:
   include:
     - node_js: "0.8"
       env: NPM_VERSION="~1.4.0"
     - node_js: "0.8"
       env: BUILD="modern" NPM_VERSION="~1.4.0"
-    - node_js: "0.10"
-      env: BUILD="modern" ISTANBUL=true 
-    - node_js: "0.10"
-      env: BIN="phantomjs"
-    - node_js: "0.10"
-      env: BIN="rhino"
-    - node_js: "0.10"
-      env: BIN="rhino" OPTION="-require"
-    - node_js: "0.10"
-      env: BIN="ringo"     
     - node_js: "0.10"
       env: SAUCE_LABS=true
     - node_js: "0.10"
@@ -39,6 +38,8 @@ before_install:
   - "npm i -g npm@\"$NPM_VERSION\""
   - "[ $SAUCE_LABS == false ] || npm i chalk@\"0.5.1\" ecstatic@\"0.5.6\" request@\"^2.0.0\" sauce-tunnel@\"^2.0.0\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.0.0\" && npm i istanbul@\"0.3.2\")"
+  - "[ $BIN != 'iojs'  ] || (wget https://iojs.org/dist/${IOJS_VERSION}/iojs-${IOJS_VERSION}-linux-x64.tar.xz && sudo tar xJf iojs-${IOJS_VERSION}-linux-x64.tar.xz -C /opt && rm iojs-${IOJS_VERSION}-linux-x64.tar.xz)"
+  - "[ $BIN != 'iojs'  ] || (sudo ln -s /opt/iojs-${IOJS_VERSION}-linux-x64/bin/iojs /usr/local/bin/iojs && sudo chmod +x /usr/local/bin/iojs)"
   - "[ $BIN != 'rhino' ] || (sudo mkdir /opt/rhino-1.7R5 && sudo wget --no-check-certificate -O /opt/rhino-1.7R5/js.jar https://lodash.com/_travis/rhino-1.7R5.jar)"
   - "[ $BIN != 'rhino' ] || (echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7R5/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino)"
   - "[ $BIN != 'ringo' ] || (wget --no-check-certificate https://lodash.com/_travis/ringojs-0.11.zip && sudo unzip ringojs-0.11 -d /opt && rm ringojs-0.11.zip)"

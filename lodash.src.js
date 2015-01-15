@@ -2280,13 +2280,13 @@
 
     /**
      * A specialized version of `baseIsEqual` for arrays and objects which performs
-     * a deep comparison between objects and tracks traversed objects enabling
-     * objects with circular references to be compared.
+     * deep comparisons and tracks traversed objects enabling objects with circular
+     * references to be compared.
      *
      * @private
-     * @param {Array} object The object to compare.
-     * @param {Array} other The other object to compare.
-     * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
+     * @param {Object} object The object to compare.
+     * @param {Object} other The other object to compare.
+     * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparing objects.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
@@ -3357,7 +3357,7 @@
      * @private
      * @param {Array} array The array to compare.
      * @param {Array} other The other array to compare.
-     * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
+     * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparing arrays.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
@@ -3450,7 +3450,7 @@
      * @private
      * @param {Object} object The object to compare.
      * @param {Object} other The other object to compare.
-     * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
+     * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.

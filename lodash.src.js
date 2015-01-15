@@ -2020,7 +2020,6 @@
      */
     function baseEvery(collection, predicate) {
       var result = true;
-
       baseEach(collection, function(value, index, collection) {
         result = !!predicate(value, index, collection);
         return result;
@@ -2039,7 +2038,6 @@
      */
     function baseFilter(collection, predicate) {
       var result = [];
-
       baseEach(collection, function(value, index, collection) {
         if (predicate(value, index, collection)) {
           result.push(value);
@@ -2063,7 +2061,6 @@
      */
     function baseFind(collection, predicate, eachFunc, retKey) {
       var result;
-
       eachFunc(collection, function(value, key, collection) {
         if (predicate(value, key, collection)) {
           result = retKey ? key : value;
@@ -2094,8 +2091,8 @@
         var value = array[index];
 
         if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
-          // Recursively flatten arrays (susceptible to call stack limits).
           if (isDeep) {
+            // Recursively flatten arrays (susceptible to call stack limits).
             value = baseFlatten(value, isDeep, isStrict);
           }
           var valIndex = -1,
@@ -2356,7 +2353,6 @@
       stackA.push(object);
       stackB.push(other);
 
-      // Recursively compare objects and arrays (susceptible to call stack limits).
       var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isWhere, stackA, stackB);
 
       stackA.pop();
@@ -2425,7 +2421,6 @@
      */
     function baseMap(collection, iteratee) {
       var result = [];
-
       baseEach(collection, function(value, key, collection) {
         result.push(iteratee(value, key, collection));
       });
@@ -2992,9 +2987,9 @@
      */
     function createAggregator(setter, initializer) {
       return function(collection, iteratee, thisArg) {
+        var result = initializer ? initializer() : {};
         iteratee = getCallback(iteratee, thisArg, 3);
 
-        var result = initializer ? initializer() : {};
         if (isArray(collection)) {
           var index = -1,
               length = collection.length;
@@ -3390,6 +3385,7 @@
             : customizer(arrValue, othValue, index);
         }
         if (typeof result == 'undefined') {
+          // Recursively compare arrays (susceptible to call stack limits).
           if (isWhere) {
             var othIndex = othLength;
             while (othIndex--) {
@@ -3488,6 +3484,7 @@
               : customizer(objValue, othValue, key);
           }
           if (typeof result == 'undefined') {
+            // Recursively compare objects (susceptible to call stack limits).
             result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isWhere, stackA, stackB);
           }
         }
@@ -3874,7 +3871,6 @@
      */
     function pickByCallback(object, predicate) {
       var result = {};
-
       baseForIn(object, function(value, key, object) {
         if (predicate(value, key, object)) {
           result[key] = value;
@@ -4444,7 +4440,6 @@
      */
     function findLastIndex(array, predicate, thisArg) {
       var length = array ? array.length : 0;
-
       predicate = getCallback(predicate, thisArg, 3);
       while (length--) {
         if (predicate(array[length], length, array)) {
@@ -5755,7 +5750,6 @@
      */
     function filter(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-
       predicate = getCallback(predicate, thisArg, 3);
       return func(collection, predicate);
     }
@@ -6068,9 +6062,8 @@
      * // => ['barney', 'fred']
      */
     function map(collection, iteratee, thisArg) {
-      iteratee = getCallback(iteratee, thisArg, 3);
-
       var func = isArray(collection) ? arrayMap : baseMap;
+      iteratee = getCallback(iteratee, thisArg, 3);
       return func(collection, iteratee);
     }
 
@@ -6336,7 +6329,6 @@
      */
     function reject(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-
       predicate = getCallback(predicate, thisArg, 3);
       return func(collection, function(value, index, collection) {
         return !predicate(value, index, collection);
@@ -6521,15 +6513,14 @@
      * // => ['barney', 'fred', 'pebbles']
      */
     function sortBy(collection, iteratee, thisArg) {
-      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = null;
-      }
-      iteratee = getCallback(iteratee, thisArg, 3);
-
       var index = -1,
           length = collection ? collection.length : 0,
           result = isLength(length) ? Array(length) : [];
 
+      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
+        iteratee = null;
+      }
+      iteratee = getCallback(iteratee, thisArg, 3);
       baseEach(collection, function(value, key, collection) {
         result[++index] = { 'criteria': iteratee(value, key, collection), 'index': index, 'value': value };
       });
@@ -8887,9 +8878,9 @@
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
     function mapValues(object, iteratee, thisArg) {
+      var result = {};
       iteratee = getCallback(iteratee, thisArg, 3);
 
-      var result = {};
       baseForOwn(object, function(value, key, object) {
         result[key] = iteratee(value, key, object);
       });
@@ -9118,9 +9109,9 @@
      * // => { 'a': 3, 'b': 6, 'c': 9 }
      */
     function transform(object, iteratee, accumulator, thisArg) {
+      var isArr = isArray(object) || isTypedArray(object);
       iteratee = getCallback(iteratee, thisArg, 4);
 
-      var isArr = isArray(object) || isTypedArray(object);
       if (accumulator == null) {
         if (isArr || isObject(object)) {
           var Ctor = object.constructor;
@@ -10806,14 +10797,12 @@
       var isFilter = index == LAZY_FILTER_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
-        iteratee = getCallback(iteratee, thisArg, 3);
-
         var result = this.clone(),
             filtered = result.filtered,
             iteratees = result.iteratees || (result.iteratees = []);
 
         result.filtered = filtered || isFilter || (index == LAZY_WHILE_FLAG && result.dir < 0);
-        iteratees.push({ 'iteratee': iteratee, 'type': index });
+        iteratees.push({ 'iteratee': getCallback(iteratee, thisArg, 3), 'type': index });
         return result;
       };
     });
@@ -10875,12 +10864,11 @@
     });
 
     LazyWrapper.prototype.dropWhile = function(iteratee, thisArg) {
-      iteratee = getCallback(iteratee, thisArg, 3);
-
       var done,
           lastIndex,
           isRight = this.dir < 0;
 
+      iteratee = getCallback(iteratee, thisArg, 3);
       return this.filter(function(value, index, array) {
         done = done && (isRight ? index < lastIndex : index > lastIndex);
         lastIndex = index;
@@ -10890,7 +10878,6 @@
 
     LazyWrapper.prototype.reject = function(iteratee, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 3);
-
       return this.filter(function(value, index, array) {
         return !iteratee(value, index, array);
       });

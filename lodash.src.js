@@ -164,22 +164,22 @@
       uint16Tag = '[object Uint16Array]',
       uint32Tag = '[object Uint32Array]';
 
-  /** Used to identify object classifications that are treated like arrays. */
-  var arrayLikeTags = {};
-  arrayLikeTags[argsTag] =
-  arrayLikeTags[arrayTag] = arrayLikeTags[float32Tag] =
-  arrayLikeTags[float64Tag] = arrayLikeTags[int8Tag] =
-  arrayLikeTags[int16Tag] = arrayLikeTags[int32Tag] =
-  arrayLikeTags[uint8Tag] = arrayLikeTags[uint8ClampedTag] =
-  arrayLikeTags[uint16Tag] = arrayLikeTags[uint32Tag] = true;
-  arrayLikeTags[arrayBufferTag] = arrayLikeTags[boolTag] =
-  arrayLikeTags[dateTag] = arrayLikeTags[errorTag] =
-  arrayLikeTags[funcTag] = arrayLikeTags[mapTag] =
-  arrayLikeTags[numberTag] = arrayLikeTags[objectTag] =
-  arrayLikeTags[regexpTag] = arrayLikeTags[setTag] =
-  arrayLikeTags[stringTag] = arrayLikeTags[weakMapTag] = false;
+  /** Used to identify `toStringTag` values of typed arrays. */
+  var typedArrayTags = {};
+  typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+  typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+  typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+  typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+  typedArrayTags[uint32Tag] = true;
+  typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+  typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+  typedArrayTags[dateTag] = typedArrayTags[errorTag] =
+  typedArrayTags[funcTag] = typedArrayTags[mapTag] =
+  typedArrayTags[numberTag] = typedArrayTags[objectTag] =
+  typedArrayTags[regexpTag] = typedArrayTags[setTag] =
+  typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
 
-  /** Used to identify object classifications that `_.clone` supports. */
+  /** Used to identify `toStringTag` values supported by `_.clone`. */
   var cloneableTags = {};
   cloneableTags[argsTag] = cloneableTags[arrayTag] =
   cloneableTags[arrayBufferTag] = cloneableTags[boolTag] =
@@ -190,9 +190,9 @@
   cloneableTags[regexpTag] = cloneableTags[stringTag] =
   cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
   cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
-  cloneableTags[errorTag] =
-  cloneableTags[funcTag] = cloneableTags[mapTag] =
-  cloneableTags[setTag] = cloneableTags[weakMapTag] = false;
+  cloneableTags[errorTag] = cloneableTags[funcTag] =
+  cloneableTags[mapTag] = cloneableTags[setTag] =
+  cloneableTags[weakMapTag] = false;
 
   /** Used as an internal `_.debounce` options object by `_.throttle`. */
   var debounceOptions = {
@@ -800,7 +800,7 @@
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
-    /** Used to lookup a built-in constructor by `toStringTag`. */
+    /** Used to lookup a type array constructors by `toStringTag`. */
     var ctorByTag = {};
     ctorByTag[float32Tag] = context.Float32Array;
     ctorByTag[float64Tag] = context.Float64Array;
@@ -8267,6 +8267,26 @@
     }
 
     /**
+     * Checks if `value` is classified as typed array.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+     * @example
+     *
+     * _.isString('abc');
+     * // => true
+     *
+     * _.isString(1);
+     * // => false
+     */
+    function isTypedArray(value) {
+      return (isObjectLike(value) && isLength(value.length) && typedArrayTags[objToString.call(value)]) || false;
+    }
+
+    /**
      * Checks if `value` is `undefined`.
      *
      * @static
@@ -9065,7 +9085,7 @@
     function transform(object, iteratee, accumulator, thisArg) {
       iteratee = getCallback(iteratee, thisArg, 4);
 
-      var isArr = isArrayLike(object);
+      var isArr = isArray(object) || isTypedArray(object);
       if (accumulator == null) {
         if (isArr || isObject(object)) {
           var Ctor = object.constructor;
@@ -10659,6 +10679,7 @@
     lodash.isPlainObject = isPlainObject;
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;
+    lodash.isTypedArray = isTypedArray;
     lodash.isUndefined = isUndefined;
     lodash.kebabCase = kebabCase;
     lodash.last = last;

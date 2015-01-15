@@ -4025,15 +4025,15 @@
     }
 
     /**
-     * Converts `collection` to an array-like object.
+     * Converts `array` to a plain array-like object.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to convert.
-     * @returns {Object} Returns the converted array-like object.
+     * @param {Array} array The array to convert.
+     * @returns {Object} Returns the converted object.
      */
-    function arrayToObject(collection) {
+    function arrayToObject(array) {
       var result = { 'length': 0 };
-      push.apply(result, toObject(collection));
+      push.apply(result, array);
       return result;
     }
 

@@ -1405,19 +1405,6 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Converts an `arguments` object to a plain `Object` object.
-     *
-     * @private
-     * @param {Object} args The `arguments` object to convert.
-     * @returns {Object} Returns the new converted object.
-     */
-    function argsToObject(args) {
-      var result = { 'length': 0 };
-      push.apply(result, args);
-      return result;
-    }
-
-    /**
      * Copies the values of `array` to `other`.
      *
      * @private
@@ -1427,13 +1414,13 @@
      */
     function arrayCopy(array, other) {
       var index = -1,
-          length = array.length,
-          result = other || Array(length);
+          length = array.length;
 
+      other || (other = Array(length));
       while (++index < length) {
-        result[index] = array[index];
+        other[index] = array[index];
       }
-      return result;
+      return other;
     }
 
     /**
@@ -4005,6 +3992,19 @@
           result.push(key);
         }
       }
+      return result;
+    }
+
+    /**
+     * Converts `collection` to an array-like object.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to convert.
+     * @returns {Object} Returns the converted array-like object.
+     */
+    function arrayToObject(collection) {
+      var result = { 'length': 0 };
+      push.apply(result, toObject(collection));
       return result;
     }
 

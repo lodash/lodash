@@ -8273,7 +8273,7 @@
     }
 
     /**
-     * Checks if `value` is classified as typed array.
+     * Checks if `value` is classified as a typed array.
      *
      * @static
      * @memberOf _
@@ -8282,10 +8282,10 @@
      * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
-     * _.isString('abc');
+     * _.isTypedArray(new Uint8Array);
      * // => true
      *
-     * _.isString(1);
+     * _.isTypedArray([]);
      * // => false
      */
     function isTypedArray(value) {

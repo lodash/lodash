@@ -2461,10 +2461,10 @@
      * @returns {Object} Returns the destination object.
      */
     function baseMerge(object, source, customizer, stackA, stackB) {
-      var isSrcArr = isArrayLike(source);
+      var isSrcArr = isArray(source) || isTypedArray(source);
 
       (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
-        var isArr = isArrayLike(srcValue),
+        var isArr = isArray(srcValue) || isTypedArray(srcValue),
             isObj = isPlainObject(srcValue),
             value = object[key];
 
@@ -3662,18 +3662,6 @@
           result.lastIndex = object.lastIndex;
       }
       return result;
-    }
-
-    /**
-     * Checks if `value` is an array-like object.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
-     */
-    function isArrayLike(value) {
-      return (isObjectLike(value) && isLength(value.length) &&
-        (arrayLikeTags[objToString.call(value)] || (!lodash.support.argsTag && isArguments(value)))) || false;
     }
 
     /**

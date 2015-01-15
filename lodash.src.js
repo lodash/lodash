@@ -3400,8 +3400,8 @@
      * A specialized version of `baseIsEqualDeep` for comparing objects of
      * the same `toStringTag`.
      *
-     * **Note:** This function only supports comparing values with `toStringTag`
-     * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+     * **Note:** This function only supports comparing values with tags of
+     * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
      *
      * @private
      * @param {Object} value The object to compare.
@@ -3631,8 +3631,8 @@
     /**
      * Initializes an object clone based on its `toStringTag`.
      *
-     * **Note:** This function only supports cloning values with `toStringTag`
-     * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+     * **Note:** This function only supports cloning values with tags of
+     * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
      *
      *
      * @private
@@ -6576,7 +6576,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to convert.
-     * @returns {Array} Returns the new converted array.
+     * @returns {Array} Returns the converted array.
      * @example
      *
      * (function() { return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
@@ -9241,7 +9241,7 @@
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to camel case.
+     * @param {string} [string=''] The string to convert.
      * @returns {string} Returns the camel cased string.
      * @example
      *
@@ -9396,7 +9396,7 @@
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to kebab case.
+     * @param {string} [string=''] The string to convert.
      * @returns {string} Returns the kebab cased string.
      * @example
      *
@@ -9519,7 +9519,7 @@
      * @static
      * @memberOf _
      * @category String
-     * @param {string} string The string to parse.
+     * @param {string} string The string to convert.
      * @param {number} [radix] The radix to interpret `value` by.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {number} Returns the converted integer.
@@ -9602,7 +9602,7 @@
      * @static
      * @memberOf _
      * @category String
-     * @param {string} [string=''] The string to snake case.
+     * @param {string} [string=''] The string to convert.
      * @returns {string} Returns the snake cased string.
      * @example
      *

@@ -2479,59 +2479,77 @@
      * @returns {Object} Returns the destination object.
      */
     function baseMerge(object, source, customizer, stackA, stackB) {
-      var isSrcArr = isArray(source) || isTypedArray(source);
+      var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
 
       (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
-        var value = object[key];
-
-        if (!isObjectLike(srcValue)) {
-          var result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-              isCommon = typeof result == 'undefined';
-
-          if (isCommon) {
-            result = srcValue;
-          }
-          if ((isSrcArr || typeof result != 'undefined') &&
-              (isCommon || (result === result ? result !== value : value === value))) {
-            object[key] = result;
-          }
-          return;
+        if (isObjectLike(srcValue)) {
+          stackA || (stackA = []);
+          stackB || (stackB = []);
+          return baseMergeDeep(object, source, baseMerge, key, customizer, stackA, stackB);
         }
-        // Avoid merging previously merged cyclic sources.
-        stackA || (stackA = []);
-        stackB || (stackB = []);
-
-        var length = stackA.length;
-        while (length--) {
-          if (stackA[length] == srcValue) {
-            object[key] = stackB[length];
-            return;
-          }
-        }
-        result = customizer ? customizer(value, srcValue, key, object, source) : undefined;
-        isCommon = typeof result == 'undefined';
+        var value = object[key],
+            result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+            isCommon = typeof result == 'undefined';
 
         if (isCommon) {
           result = srcValue;
-          if (isArray(srcValue) || isTypedArray(srcValue)) {
-            result = isArray(value) ? value : [];
-          } else if (isPlainObject(srcValue)) {
-            result = isPlainObject(value) ? value : {};
-          }
         }
-        // Add the source value to the stack of traversed objects and associate
-        // it with its merged value.
-        stackA.push(srcValue);
-        stackB.push(result);
-
-        // Recursively merge objects and arrays (susceptible to call stack limits).
-        if (isCommon) {
-          object[key] = baseMerge(result, srcValue, customizer, stackA, stackB);
-        } else if (result === result ? result !== value : value === value) {
+        if ((isSrcArr || typeof result != 'undefined') &&
+            (isCommon || (result === result ? result !== value : value === value))) {
           object[key] = result;
         }
       });
       return object;
+    }
+
+    /**
+     * A specialized version of `baseMerge` for arrays and objects which performs
+     * deep merges and tracks traversed objects enabling objects with circular
+     * references to be merged.
+     *
+     * @private
+     * @param {Object} object The destination object.
+     * @param {Object} source The source object.
+     * @param {Function} mergeFunc The function to merge values.
+     * @param {string} key The key of the property value to merge.
+     * @param {Function} [customizer] The function to customize merging properties.
+     * @param {Array} [stackA=[]] Tracks traversed source objects.
+     * @param {Array} [stackB=[]] Associates values with source counterparts.
+     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+     */
+    function baseMergeDeep(object, source, mergeFunc, key, customizer, stackA, stackB) {
+      var length = stackA.length,
+          srcValue = source[key];
+
+      while (length--) {
+        if (stackA[length] == srcValue) {
+          object[key] = stackB[length];
+          return;
+        }
+      }
+      var value = object[key],
+          result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+          isCommon = typeof result == 'undefined';
+
+      if (isCommon) {
+        result = srcValue;
+        if (isArray(srcValue) || isTypedArray(srcValue)) {
+          result = isArray(value) ? value : [];
+        } else if (isPlainObject(srcValue)) {
+          result = isPlainObject(value) ? value : {};
+        }
+      }
+      // Add the source value to the stack of traversed objects and associate
+      // it with its merged value.
+      stackA.push(srcValue);
+      stackB.push(result);
+
+      if (isCommon) {
+        // Recursively merge objects and arrays (susceptible to call stack limits).
+        object[key] = mergeFunc(result, srcValue, customizer, stackA, stackB);
+      } else if (result === result ? result !== value : value === value) {
+        object[key] = result;
+      }
     }
 
     /**
@@ -3034,7 +3052,10 @@
         }
         var index = 0;
         while (++index < length) {
-          assigner(object, arguments[index], customizer);
+          var source = arguments[index];
+          if (source) {
+            assigner(object, source, customizer);
+          }
         }
         return object;
       };

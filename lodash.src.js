@@ -2287,24 +2287,32 @@
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
-      var objTag = isArray(object) ? arrayTag : objToString.call(object),
-          objIsArg = objTag == argsTag,
-          objIsArr = !objIsArg && arrayLikeTags[objTag],
-          othTag = isArray(other) ? arrayTag : objToString.call(other),
-          othIsArg = othTag == argsTag,
-          othIsArr = !othIsArg && arrayLikeTags[othTag];
+      var objIsArr = isArray(object),
+          othIsArr = isArray(other),
+          objTag = arrayTag,
+          othTag = arrayTag;
 
-      if (!lodash.support.argsTag) {
-        objIsArg = !objIsArr && typeof object.length == 'number' && isArguments(object);
-        othIsArg = !othIsArr && typeof other.length == 'number' && isArguments(other);
+      if (!objIsArr) {
+        objTag = objToString.call(object);
+        if (typeof object.length == 'number') {
+          if (isArguments(object)) {
+            object = arrayToObject(object);
+            objTag = objectTag;
+          } else if (objTag != objectTag) {
+            objIsArr = isTypedArray(object);
+          }
+        }
       }
-      if (objIsArg) {
-        object = argsToObject(object);
-        objTag = objectTag;
-      }
-      if (othIsArg) {
-        other = argsToObject(other);
-        othTag = objectTag;
+      if (!othIsArr) {
+        othTag = objToString.call(other);
+        if (typeof other.length == 'number') {
+          if (isArguments(other)) {
+            other = arrayToObject(other);
+            othTag = objectTag;
+          } else if (othTag != objectTag) {
+            othIsArr = isTypedArray(other);
+          }
+        }
       }
       var objIsObj = objTag == objectTag && !isHostObject(object),
           othIsObj = othTag == objectTag && !isHostObject(other),

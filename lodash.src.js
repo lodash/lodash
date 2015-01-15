@@ -2487,11 +2487,9 @@
       var isSrcArr = isArray(source) || isTypedArray(source);
 
       (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
-        var isArr = isArray(srcValue) || isTypedArray(srcValue),
-            isObj = isPlainObject(srcValue),
-            value = object[key];
+        var value = object[key];
 
-        if (!(isArr || isObj)) {
+        if (!isObjectLike(srcValue)) {
           var result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
               isCommon = typeof result == 'undefined';
 
@@ -2519,9 +2517,12 @@
         isCommon = typeof result == 'undefined';
 
         if (isCommon) {
-          result = isArr
-            ? (isArray(value) ? value : [])
-            : (isPlainObject(value) ? value : {});
+          result = srcValue;
+          if (isArray(srcValue) || isTypedArray(srcValue)) {
+            result = isArray(value) ? value : [];
+          } else if (isPlainObject(srcValue)) {
+            result = isPlainObject(value) ? value : {};
+          }
         }
         // Add the source value to the stack of traversed objects and associate
         // it with its merged value.

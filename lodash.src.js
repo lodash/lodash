@@ -8204,12 +8204,11 @@
      * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
      * @example
      *
-     * function Shape() {
-     *   this.x = 0;
-     *   this.y = 0;
+     * function Foo() {
+     *   this.a = 1;
      * }
      *
-     * _.isPlainObject(new Shape);
+     * _.isPlainObject(new Foo);
      * // => false
      *
      * _.isPlainObject([1, 2, 3]);
@@ -8323,8 +8322,8 @@
      * @returns {Array} Returns the converted array.
      * @example
      *
-     * (function() { return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
-     * // => [2, 3, 4]
+     * (function() { return _.toArray(arguments).slice(1); })(1, 2, 3);
+     * // => [2, 3]
      */
     function toArray(value) {
       var length = value ? value.length : 0;
@@ -8555,17 +8554,17 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function Shape() {
-     *   this.x = 0;
-     *   this.y = 0;
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
      * }
      *
-     * Shape.prototype.z = 0;
+     * Foo.prototype.c = 3;
      *
-     * _.forIn(new Shape, function(value, key) {
+     * _.forIn(new Foo, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'x', 'y', and 'z' (iteration order is not guaranteed)
+     * // => logs 'a', 'b', and 'c' (iteration order is not guaranteed)
      */
     function forIn(object, iteratee, thisArg) {
       if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
@@ -8587,17 +8586,17 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function Shape() {
-     *   this.x = 0;
-     *   this.y = 0;
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
      * }
      *
-     * Shape.prototype.z = 0;
+     * Foo.prototype.c = 3;
      *
-     * _.forInRight(new Shape, function(value, key) {
+     * _.forInRight(new Foo, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'z', 'y', and 'x' assuming `_.forIn ` logs 'x', 'y', and 'z'
+     * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
      */
     function forInRight(object, iteratee, thisArg) {
       iteratee = bindCallback(iteratee, thisArg, 3);
@@ -8758,15 +8757,15 @@
      * @returns {Array} Returns the array of property names.
      * @example
      *
-     * function Shape() {
-     *   this.x = 0;
-     *   this.y = 0;
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
      * }
      *
-     * Shape.prototype.z = 0;
+     * Foo.prototype.c = 3;
      *
-     * _.keys(new Shape);
-     * // => ['x', 'y'] (iteration order is not guaranteed)
+     * _.keys(new Foo);
+     * // => ['a', 'b'] (iteration order is not guaranteed)
      *
      * _.keys('hi');
      * // => ['0', '1']
@@ -8795,15 +8794,15 @@
      * @returns {Array} Returns the array of property names.
      * @example
      *
-     * function Shape() {
-     *   this.x = 0;
-     *   this.y = 0;
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
      * }
      *
-     * Shape.prototype.z = 0;
+     * Foo.prototype.c = 3;
      *
-     * _.keysIn(new Shape);
-     * // => ['x', 'y', 'z'] (iteration order is not guaranteed)
+     * _.keysIn(new Foo);
+     * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
       if (object == null) {
@@ -9164,15 +9163,15 @@
      * @returns {Array} Returns the array of property values.
      * @example
      *
-     * function Shape(x, y) {
-     *   this.x = x;
-     *   this.y = y;
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
      * }
      *
-     * Shape.prototype.z = 0;
+     * Foo.prototype.c = 3;
      *
-     * _.values(new Shape(2, 1));
-     * // => [2, 1] (iteration order is not guaranteed)
+     * _.values(new Foo);
+     * // => [1, 2] (iteration order is not guaranteed)
      *
      * _.values('hi');
      * // => ['h', 'i']
@@ -9194,15 +9193,15 @@
      * @returns {Array} Returns the array of property values.
      * @example
      *
-     * function Shape(x, y) {
-     *   this.x = x;
-     *   this.y = y;
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
      * }
      *
-     * Shape.prototype.z = 0;
+     * Foo.prototype.c = 3;
      *
-     * _.valuesIn(new Shape(2, 1));
-     * // => [2, 1, 0] (iteration order is not guaranteed)
+     * _.valuesIn(new Foo);
+     * // => [1, 2, 3] (iteration order is not guaranteed)
      */
     function valuesIn(object) {
       return baseValues(object, keysIn(object));

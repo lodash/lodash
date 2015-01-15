@@ -6607,6 +6607,21 @@
     }
 
     /**
+     * Converts `value` to a plain object.
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {*} value The value to convert.
+     * @returns {Object} Returns the converted object.
+     */
+    function toPlainObject(value) {
+      return (isArray(value) || isArguments(value) || isTypedArray(value))
+        ? arrayToObject(value)
+        : baseCopy(value, keysIn(value));
+    }
+
+    /**
      * Performs a deep comparison between each element in `collection` and the
      * source object, returning an array of all elements that have equivalent
      * property values.
@@ -10624,6 +10639,7 @@
     lodash.thru = thru;
     lodash.times = times;
     lodash.toArray = toArray;
+    lodash.toPlainObject = toPlainObject;
     lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;

@@ -1408,7 +1408,7 @@
      * Copies the values of `array` to `other`.
      *
      * @private
-     * @param {Array} array The array to copy.
+     * @param {Array} array The array to copy values from.
      * @param {Array} [other=[]] The array to copy values to.
      * @returns {Array} Returns `other`.
      */
@@ -1684,22 +1684,21 @@
      * @returns {Object} Returns the destination object.
      */
     function baseAssign(object, source, customizer) {
+      var props = keys(source);
+      if (!customizer) {
+        return baseCopy(source, object, props);
+      }
       var index = -1,
-          props = keys(source),
-          length = props.length;
+          length = props.length
 
       while (++index < length) {
-        var key = props[index];
-        if (customizer) {
-          var value = object[key],
-              result = customizer(value, source[key], key, object, source);
+        var key = props[index],
+            value = object[key],
+            result = customizer(value, source[key], key, object, source);
 
-          if ((result === result ? result !== value : value === value) ||
-              (typeof value == 'undefined' && !(key in object))) {
-            object[key] = result;
-          }
-        } else {
-          object[key] = source[key];
+        if ((result === result ? result !== value : value === value) ||
+            (typeof value == 'undefined' && !(key in object))) {
+          object[key] = result;
         }
       }
       return object;
@@ -1731,6 +1730,30 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Copies the properties of `object` to `other`.
+     *
+     * @private
+     * @param {Object} object The object to copy properties from.
+     * @param {Object} [other={}] The object to copy properties to.
+     * @param {Array} props The property names to copy.
+     * @returns {Object} Returns `other`.
+     */
+    function baseCopy(object, other, props) {
+      if (!props) {
+        props = other;
+        other = {};
+      }
+      var index = -1,
+          length = props.length;
+
+      while (++index < length) {
+        var key = props[index];
+        other[key] = object[key];
+      }
+      return other;
     }
 
     /**

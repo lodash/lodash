@@ -6594,47 +6594,6 @@
     }
 
     /**
-     * Converts `collection` to an array.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to convert.
-     * @returns {Array} Returns the converted array.
-     * @example
-     *
-     * (function() { return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
-     * // => [2, 3, 4]
-     */
-    function toArray(collection) {
-      var length = collection ? collection.length : 0;
-      if (!isLength(length)) {
-        return values(collection);
-      }
-      if (!length) {
-        return [];
-      }
-      return (lodash.support.unindexedChars && isString(collection))
-        ? collection.split('')
-        : arrayCopy(collection);
-    }
-
-    /**
-     * Converts `value` to a plain object.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {*} value The value to convert.
-     * @returns {Object} Returns the converted object.
-     */
-    function toPlainObject(value) {
-      return (isArray(value) || isArguments(value) || isTypedArray(value))
-        ? arrayToObject(value)
-        : baseCopy(value, keysIn(value));
-    }
-
-    /**
      * Performs a deep comparison between each element in `collection` and the
      * source object, returning an array of all elements that have equivalent
      * property values.
@@ -8351,6 +8310,47 @@
      */
     function isUndefined(value) {
       return typeof value == 'undefined';
+    }
+
+    /**
+     * Converts `value` to an array.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {Array} Returns the converted array.
+     * @example
+     *
+     * (function() { return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
+     * // => [2, 3, 4]
+     */
+    function toArray(value) {
+      var length = value ? value.length : 0;
+      if (!isLength(length)) {
+        return values(value);
+      }
+      if (!length) {
+        return [];
+      }
+      return (lodash.support.unindexedChars && isString(value))
+        ? value.split('')
+        : arrayCopy(value);
+    }
+
+    /**
+     * Converts `value` to a plain object.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {Object} Returns the converted object.
+     */
+    function toPlainObject(value) {
+      return (isArray(value) || isArguments(value) || isTypedArray(value))
+        ? arrayToObject(value)
+        : baseCopy(value, keysIn(value));
     }
 
     /*------------------------------------------------------------------------*/

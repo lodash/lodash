@@ -7794,7 +7794,7 @@
 
     test('should return `true` for typed arrays', 1, function() {
       var expected = _.map(typedArrays, function(type) {
-        return toString.call(root[type]) == funcTag;
+        return type in root;
       });
 
       var actual = _.map(typedArrays, function(type) {
@@ -7831,7 +7831,7 @@
     test('should work with typed arrays from another realm', 1, function() {
       if (_._object) {
         var expected = _.map(typedArrays, function(type) {
-          return toString.call(root[type]) == funcTag;
+          return type in root;
         });
 
         var actual = _.map(typedArrays, function(type) {
@@ -8920,17 +8920,58 @@
       deepEqual(actual, expected);
     });
 
-    test('should not treat `arguments` objects as plain objects', 1, function() {
-      var object = {
-        'args': args
-      };
+    test('should merge `arguments` objects', 3, function() {
+      var object1 = { 'value': args },
+          object2 = { 'value': { '3': 4 } },
+          expected = { '0': 1, '1': 2, '2': 3, '3': 4, 'length': 3 },
+          actual = _.merge(object1, object2);
 
-      var source = {
-        'args': { '3': 4 }
-      };
+      ok(!_.isArguments(actual.value));
+      deepEqual(actual.value, expected);
+      delete object1.value[3];
 
-      var actual = _.merge(object, source);
-      strictEqual(_.isArguments(actual.args), false);
+      actual = _.merge(object2, object1);
+      deepEqual(actual.value, expected);
+    });
+
+    test('should merge typed arrays', 4, function() {
+      var array1 = [0, 0, 0]
+          array2 = _.range(0, 6, 0)
+          array3 = _.range(0, 12, 0),
+          array4 = _.range(0, 24, 0);
+
+      var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2];
+
+      var expected = _.map(typedArrays, function(type, index) {
+        var array = arrays[index].slice();
+        array[0] = 1;
+        return root[type] ? { 'value': array } : false;
+      });
+
+      var actual = _.map(typedArrays, function(type) {
+        var Ctor = root[type];
+        return Ctor ? _.merge({ 'value': new Ctor(new ArrayBuffer(24)) }, { 'value': [1] }) : false;
+      });
+
+      ok(_.isArray(actual));
+      deepEqual(actual, expected);
+
+      expected = _.map(typedArrays, function(type, index) {
+        var array = arrays[index].slice();
+        array.push(1);
+        return root[type] ? { 'value': array } : false;
+      });
+
+      actual = _.map(typedArrays, function(type, index) {
+        var Ctor = root[type],
+            array = _.range(arrays[index].length);
+
+        array.push(1);
+        return Ctor ? _.merge({ 'value': array }, { 'value': new Ctor(new ArrayBuffer(24)) }) : false;
+      });
+
+      ok(_.isArray(actual));
+      deepEqual(actual, expected);
     });
 
     test('should work with four arguments', 1, function() {
@@ -13184,7 +13225,7 @@
       var objects = [object2, object1, object4, object3, object2, object4, object4, object3, object2];
 
       var expected = _.map(typedArrays, function(type, index) {
-        return toString.call(root[type]) == funcTag && objects[index];
+        return root[type] ? objects[index] : false;
       });
 
       var actual = _.map(typedArrays, function(type) {

@@ -7787,6 +7787,68 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isTypedArray');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for typed arrays', 1, function() {
+      var expected = _.map(typedArrays, function(type) {
+        return toString.call(root[type]) == funcTag;
+      });
+
+      var actual = _.map(typedArrays, function(type) {
+        var Ctor = root[type];
+        return Ctor ? _.isTypedArray(new Ctor) : false;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `false` for non typed arrays', 13, function() {
+      var expected = _.map(falsey, _.constant(false));
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isTypedArray(value) : _.isTypedArray();
+      });
+
+      deepEqual(actual, expected);
+
+      strictEqual(_.isTypedArray(args), false);
+      strictEqual(_.isTypedArray([1, 2, 3]), false);
+      strictEqual(_.isTypedArray(true), false);
+      strictEqual(_.isTypedArray(new Date), false);
+      strictEqual(_.isTypedArray(new Error), false);
+      strictEqual(_.isTypedArray(_), false);
+      strictEqual(_.isTypedArray(slice), false);
+      strictEqual(_.isTypedArray({ 'a': 1 }), false);
+      strictEqual(_.isTypedArray(1), false);
+      strictEqual(_.isTypedArray(NaN), false);
+      strictEqual(_.isTypedArray(/x/), false);
+      strictEqual(_.isTypedArray('a'), false);
+    });
+
+    test('should work with typed arrays from another realm', 1, function() {
+      if (_._object) {
+        var expected = _.map(typedArrays, function(type) {
+          return toString.call(root[type]) == funcTag;
+        });
+
+        var actual = _.map(typedArrays, function(type) {
+          var value = _['_' + type.toLowerCase()];
+          return value ? _.isTypedArray(value) : false;
+        });
+
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isUndefined');
 
   (function() {

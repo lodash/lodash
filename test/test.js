@@ -7799,7 +7799,7 @@
 
       var actual = _.map(typedArrays, function(type) {
         var Ctor = root[type];
-        return Ctor ? _.isTypedArray(new Ctor) : false;
+        return Ctor ? _.isTypedArray(new Ctor(new ArrayBuffer(8))) : false;
       });
 
       deepEqual(actual, expected);
@@ -8939,13 +8939,18 @@
     });
 
     test('should merge typed arrays', 4, function() {
-      var array1 = [0, 0, 0],
-          array2 = _.range(0, 6, 0),
-          array3 = _.range(0, 12, 0),
-          array4 = _.range(0, 24, 0);
+      var array1 = [0],
+          array2 = [0, 0],
+          array3 = [0, 0, 0, 0],
+          array4 = _.range(0, 8, 0);
 
-      var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2];
+      var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
+          buffer = ArrayBuffer && new ArrayBuffer(8);
 
+      if (root.Float64Array) {
+        // juggle for `Float64Array` shim
+        arrays[1] = _.size(new Float64Array(buffer)) > 1 ? array4 : array1;
+      }
       var expected = _.map(typedArrays, function(type, index) {
         var array = arrays[index].slice();
         array[0] = 1;
@@ -8954,7 +8959,7 @@
 
       var actual = _.map(typedArrays, function(type) {
         var Ctor = root[type];
-        return Ctor ? _.merge({ 'value': new Ctor(new ArrayBuffer(24)) }, { 'value': [1] }) : false;
+        return Ctor ? _.merge({ 'value': new Ctor(buffer) }, { 'value': [1] }) : false;
       });
 
       ok(_.isArray(actual));
@@ -8971,7 +8976,7 @@
             array = _.range(arrays[index].length);
 
         array.push(1);
-        return Ctor ? _.merge({ 'value': array }, { 'value': new Ctor(new ArrayBuffer(24)) }) : false;
+        return Ctor ? _.merge({ 'value': array }, { 'value': new Ctor(buffer) }) : false;
       });
 
       ok(_.isArray(actual));
@@ -13221,20 +13226,25 @@
     });
 
     test('should convert typed arrays to plain objects', 1, function() {
-      var object1 = { '0': 0, '1': 0, '2': 0, 'length': 3 },
-          object2 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, 'length': 6 },
-          object3 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, 'length': 12 },
-          object4 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0, 'length': 24 };
+      var object1 = { '0': 0, 'length': 1 },
+          object2 = { '0': 0, '1': 0, 'length': 2 },
+          object3 = { '0': 0, '1': 0, '2': 0, '3': 0, 'length': 4 },
+          object4 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, 'length': 8 };
 
-      var objects = [object2, object1, object4, object3, object2, object4, object4, object3, object2];
+      var objects = [object2, object1, object4, object3, object2, object4, object4, object3, object2],
+          buffer = ArrayBuffer && new ArrayBuffer(8);
 
+      if (root.Float64Array) {
+        // juggle for `Float64Array` shim
+        objects[1] = _.size(new Float64Array(buffer)) > 1 ? object4 : object1;
+      }
       var expected = _.map(typedArrays, function(type, index) {
         return root[type] ? objects[index] : false;
       });
 
       var actual = _.map(typedArrays, function(type) {
         var Ctor = root[type];
-        return Ctor ? _.toPlainObject(new Ctor(new ArrayBuffer(24))) : false;
+        return Ctor ? _.toPlainObject(new Ctor(buffer)) : false;
       });
 
       deepEqual(actual, expected);

@@ -4039,9 +4039,7 @@
      * @returns {Object} Returns the converted object.
      */
     function arrayToObject(array) {
-      var result = { 'length': 0 };
-      push.apply(result, array);
-      return result;
+      return arrayCopy(array, { 'length': array.length });
     }
 
     /**

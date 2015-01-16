@@ -47,11 +47,11 @@
       hasOwnProperty = objectProto.hasOwnProperty,
       JSON = root.JSON,
       noop = function() {},
+      objToString = objectProto.toString,
       params = root.arguments,
       push = arrayProto.push,
       slice = arrayProto.slice,
       system = root.system,
-      toString = objectProto.toString,
       Uint8Array = root.Uint8Array;
 
   /** Used to set property descriptors. */
@@ -7008,7 +7008,7 @@
 
     test('should return `true` for typed array constructors', 1, function() {
       var expected = _.map(typedArrays, function(type) {
-        return toString.call(root[type]) == funcTag;
+        return objToString.call(root[type]) == funcTag;
       });
 
       var actual = _.map(typedArrays, function(type) {
@@ -7056,7 +7056,7 @@
           }, {
             'prototype': {
               'toString': _.assign(function() {
-                return _.has(this, '@@toStringTag') ? this['@@toStringTag'] : toString.call(this);
+                return _.has(this, '@@toStringTag') ? this['@@toStringTag'] : objToString.call(this);
               }, {
                 'toString': function() {
                   return String(toString);
@@ -7074,7 +7074,7 @@
 
         strictEqual(lodash.isFunction(slice), true);
         strictEqual(lodash.isFunction(/x/), false);
-        strictEqual(lodash.isFunction(Uint8Array), toString.call(Uint8Array) == funcTag);
+        strictEqual(lodash.isFunction(Uint8Array), objToString.call(Uint8Array) == funcTag);
       }
       else {
         skipTest(3);
@@ -7902,7 +7902,7 @@
         Foo.prototype = root[methodName.slice(2)].prototype;
 
         var object = new Foo;
-        if (toString.call(object) == objectTag) {
+        if (objToString.call(object) == objectTag) {
           strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
         } else {
           skipTest();

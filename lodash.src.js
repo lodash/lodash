@@ -8542,8 +8542,8 @@
      * // => returns `pebbles` assuming `_.findKey` returns `barney`
      *
      * // using the "_.matches" callback shorthand
-     * _.findLastKey(users, { 'age': 40 });
-     * // => 'fred'
+     * _.findLastKey(users, { 'age': 36 });
+     * // => 'barney'
      *
      * // using the "_.property" callback shorthand
      * _.findLastKey(users, 'active');

@@ -2522,9 +2522,11 @@
       if (isCommon) {
         result = srcValue;
         if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
-          result = isArray(value) ? value : [];
-        } else if (isPlainObject(srcValue)) {
-          result = isPlainObject(value) ? value : {};
+          result = isArray(value) ? value : arrayCopy(value);
+        } else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+          result = isArguments(value)
+            ? arrayToObject(value)
+            : (isPlainObject(value) ? value : {});
         }
       }
       // Add the source value to the stack of traversed objects and associate

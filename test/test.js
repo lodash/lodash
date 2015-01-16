@@ -13214,35 +13214,6 @@
 
       deepEqual(actual, expected);
     });
-
-    test('should convert typed arrays to plain objects', 1, function() {
-      var object1 = { '0': 0 },
-          object2 = { '0': 0, '1': 0 },
-          object3 = { '0': 0, '1': 0, '2': 0, '3': 0 },
-          object4 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0 };
-
-      var objects = [object2, object1, object4, object3, object2, object4, object4, object3, object2],
-          buffer = ArrayBuffer && new ArrayBuffer(8);
-
-      // juggle for `Float64Array` shim
-      if (root.Float64Array && (new Float64Array(buffer)).length == 8) {
-        objects[1] = object4;
-      }
-      var expected = _.map(typedArrays, function(type, index) {
-        return root[type] ? objects[index] : false;
-      });
-
-      var actual = _.map(typedArrays, function(type) {
-        var Ctor = root[type],
-            result = Ctor ? _.toPlainObject(new Ctor(buffer)) : false;
-
-        return _.isPlainObject(result)
-          ? _.omit(result, 'BYTES_PER_ELEMENT', 'byteLength', 'byteOffset', 'buffer', 'get', 'length', 'subarray', 'set', 'slice')
-          : result;
-      });
-
-      deepEqual(actual, expected);
-    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

@@ -2522,8 +2522,11 @@
       if (isCommon) {
         result = srcValue;
         if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
-          result = isArray(value) ? value : arrayCopy(value);
-        } else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+          result = isArray(value)
+            ? value
+            : (value ? arrayCopy(value) : []);
+        }
+        else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
             ? arrayToObject(value)
             : (isPlainObject(value) ? value : {});

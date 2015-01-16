@@ -1786,9 +1786,10 @@
       });
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
-        var buffer = ArrayBuffer && new ArrayBuffer(10);
-        if (buffer) {
-          var actual = func(buffer);
+        if (ArrayBuffer) {
+          var buffer = new ArrayBuffer(10),
+              actual = func(buffer);
+
           strictEqual(actual.byteLength, buffer.byteLength);
           notStrictEqual(actual, buffer);
         }
@@ -6585,7 +6586,7 @@
 
     test('should treat `arguments` objects like `Object` objects', 4, function() {
       var args = (function() { return arguments; }(1, 2, 3)),
-          object = { '0': 1, '1': 2, '2': 3, 'length': 3 };
+          object = { '0': 1, '1': 2, '2': 3 };
 
       function Foo() {}
       Foo.prototype = object;
@@ -8927,7 +8928,7 @@
     test('should merge `arguments` objects', 3, function() {
       var object1 = { 'value': args },
           object2 = { 'value': { '3': 4 } },
-          expected = { '0': 1, '1': 2, '2': 3, '3': 4, 'length': 3 },
+          expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
           actual = _.merge(object1, object2);
 
       ok(!_.isArguments(actual.value));
@@ -8947,9 +8948,9 @@
       var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
           buffer = ArrayBuffer && new ArrayBuffer(8);
 
-      if (root.Float64Array) {
-        // juggle for `Float64Array` shim
-        arrays[1] = _.size(new Float64Array(buffer)) > 1 ? array4 : array1;
+      // juggle for `Float64Array` shim
+      if (root.Float64Array && (new Float64Array(buffer)).length == 8) {
+        arrays[1] = array4;
       }
       var expected = _.map(typedArrays, function(type, index) {
         var array = arrays[index].slice();
@@ -13213,30 +13214,30 @@
 
     test('should convert `arguments` objects to plain objects', 1, function() {
       var actual = _.toPlainObject(args),
-          expected = { '0': 1, '1': 2, '2': 3, 'length': 3 };
+          expected = { '0': 1, '1': 2, '2': 3 };
 
       deepEqual(actual, expected);
     });
 
     test('should convert arrays to plain objects', 1, function() {
       var actual = _.toPlainObject(['a', 'b', 'c']),
-          expected = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
+          expected = { '0': 'a', '1': 'b', '2': 'c' };
 
       deepEqual(actual, expected);
     });
 
     test('should convert typed arrays to plain objects', 1, function() {
-      var object1 = { '0': 0, 'length': 1 },
-          object2 = { '0': 0, '1': 0, 'length': 2 },
-          object3 = { '0': 0, '1': 0, '2': 0, '3': 0, 'length': 4 },
-          object4 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, 'length': 8 };
+      var object1 = { '0': 0 },
+          object2 = { '0': 0, '1': 0 },
+          object3 = { '0': 0, '1': 0, '2': 0, '3': 0 },
+          object4 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0 };
 
       var objects = [object2, object1, object4, object3, object2, object4, object4, object3, object2],
           buffer = ArrayBuffer && new ArrayBuffer(8);
 
-      if (root.Float64Array) {
-        // juggle for `Float64Array` shim
-        objects[1] = _.size(new Float64Array(buffer)) > 1 ? object4 : object1;
+      // juggle for `Float64Array` shim
+      if (root.Float64Array && (new Float64Array(buffer)).length == 8) {
+        objects[1] = object4;
       }
       var expected = _.map(typedArrays, function(type, index) {
         return root[type] ? objects[index] : false;

@@ -1826,10 +1826,7 @@
         var tag = objToString.call(value),
             isFunc = tag == funcTag;
 
-        if (!lodash.support.argsTag && isArguments(value)) {
-          tag = argsTag;
-        }
-        if (tag == objectTag || (isFunc && !object)) {
+        if (tag == argsTag || tag == objectTag || (isFunc && !object)) {
           if (isHostObject(value)) {
             return object ? value : {};
           }
@@ -2289,24 +2286,18 @@
 
       if (!objIsArr) {
         objTag = objToString.call(object);
-        if (isLength(object.length)) {
-          if (isArguments(object)) {
-            object = arrayToObject(object);
-            objTag = objectTag;
-          } else if (objTag != objectTag) {
-            objIsArr = isTypedArray(object);
-          }
+        if (objTag == argsTag) {
+          objTag = objectTag;
+        } else if (objTag != objectTag) {
+          objIsArr = isTypedArray(object);
         }
       }
       if (!othIsArr) {
         othTag = objToString.call(other);
-        if (isLength(other.length)) {
-          if (isArguments(other)) {
-            other = arrayToObject(other);
-            othTag = objectTag;
-          } else if (othTag != objectTag) {
-            othIsArr = isTypedArray(other);
-          }
+        if (othTag == argsTag) {
+          othTag = objectTag;
+        } else if (othTag != objectTag) {
+          othIsArr = isTypedArray(other);
         }
       }
       var objIsObj = objTag == objectTag && !isHostObject(object),
@@ -2528,7 +2519,7 @@
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
-            ? arrayToObject(value)
+            ? toPlainObject(value)
             : (isPlainObject(value) ? value : {});
         }
       }
@@ -3666,11 +3657,6 @@
     function initCloneByTag(object, tag, isDeep) {
       var Ctor = object.constructor;
       switch (tag) {
-        case argsTag:
-          var result = new Ctor;
-          result.length = object.length;
-          return arrayCopy(object, result);
-
         case arrayBufferTag:
           return bufferClone(object);
 
@@ -3693,7 +3679,7 @@
           return new Ctor(object);
 
         case regexpTag:
-          result = new Ctor(object.source, reFlags.exec(object));
+          var result = new Ctor(object.source, reFlags.exec(object));
           result.lastIndex = object.lastIndex;
       }
       return result;
@@ -4029,17 +4015,6 @@
         }
       }
       return result;
-    }
-
-    /**
-     * Converts `array` to a plain array-like object.
-     *
-     * @private
-     * @param {Array} array The array to convert.
-     * @returns {Object} Returns the converted object.
-     */
-    function arrayToObject(array) {
-      return arrayCopy(array, { 'length': array.length });
     }
 
     /**
@@ -8366,9 +8341,7 @@
      * // => { 'a': 1, 'b': 2, 'c': 3 }
      */
     function toPlainObject(value) {
-      return (isArray(value) || isArguments(value) || isTypedArray(value))
-        ? arrayToObject(value)
-        : baseCopy(value, keysIn(value));
+      return baseCopy(value, keysIn(value));
     }
 
     /*------------------------------------------------------------------------*/

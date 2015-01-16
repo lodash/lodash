@@ -1312,7 +1312,7 @@
      * @private
      * @name has
      * @memberOf _.memoize.Cache
-     * @param {string} key The name of the entry to check.
+     * @param {string} key The key of the entry to check.
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
     function mapHas(key) {
@@ -2489,7 +2489,7 @@
      * @private
      * @param {Object} object The destination object.
      * @param {Object} source The source object.
-     * @param {string} key The key of the property value to merge.
+     * @param {string} key The key of the value to merge.
      * @param {Function} mergeFunc The function to merge values.
      * @param {Function} [customizer] The function to customize merging properties.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
@@ -2540,7 +2540,7 @@
      * The base implementation of `_.property` which does not coerce `key` to a string.
      *
      * @private
-     * @param {string} key The name of the property to get.
+     * @param {string} key The key of the property to get.
      * @returns {Function} Returns the new function.
      */
     function baseProperty(key) {
@@ -3850,8 +3850,8 @@
     }
 
     /**
-     * A specialized version of `_.pick` that picks `object` properties
-     * specified by the `props` array.
+     * A specialized version of `_.pick` that picks `object` properties specified
+     * by the `props` array.
      *
      * @private
      * @param {Object} object The source object.
@@ -4754,9 +4754,9 @@
     }
 
     /**
-     * Removes elements from `array` corresponding to the specified indexes and
-     * returns an array of the removed elements. Indexes may be specified as an
-     * array of indexes or as individual arguments.
+     * Removes elements from `array` corresponding to the given indexes and returns
+     * an array of the removed elements. Indexes may be specified as an array of
+     * indexes or as individual arguments.
      *
      * **Note:** Unlike `_.at`, this method mutates `array`.
      *
@@ -5544,7 +5544,7 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates an array of elements corresponding to the specified keys, or indexes,
+     * Creates an array of elements corresponding to the given keys, or indexes,
      * of `collection`. Keys may be specified as individual arguments or as arrays
      * of keys.
      *
@@ -6207,13 +6207,13 @@
     }, function() { return [[], []]; });
 
     /**
-     * Gets the value of a specified property from all elements in `collection`.
+     * Gets the value of `key` from all elements in `collection`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string} key The name of the property to pluck.
+     * @param {string} key The key of the property to pluck.
      * @returns {Array} Returns the property values.
      * @example
      *
@@ -6865,7 +6865,7 @@
      * Creates a function that accepts one or more arguments of `func` that when
      * called either invokes `func` returning its result, if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
-     * remaining `func` arguments, and so on. The arity of `func` can be specified
+     * remaining `func` arguments, and so on. The arity of `func` may be specified
      * if `func.length` is not sufficient.
      *
      * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
@@ -8664,14 +8664,14 @@
     }
 
     /**
-     * Checks if the specified property name exists as a direct property of `object`,
-     * instead of an inherited property.
+     * Checks if `key` exists as a direct property of `object` instead of an
+     * inherited property.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {Object} object The object to inspect.
-     * @param {string} key The name of the property to check.
+     * @param {string} key The key to check.
      * @returns {boolean} Returns `true` if `key` is a direct property, else `false`.
      * @example
      *
@@ -9061,7 +9061,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to query.
-     * @param {string} key The name of the property to resolve.
+     * @param {string} key The key of the property to resolve.
      * @param {*} [defaultValue] The value returned if the property value
      *  resolves to `undefined`.
      * @returns {*} Returns the resolved value.
@@ -9836,7 +9836,7 @@
 
       source += "';\n";
 
-      // If `variable` is not specified, wrap a with-statement around the generated
+      // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
       var variable = options.variable;
       if (!variable) {
@@ -10220,9 +10220,9 @@
     }
 
     /**
-     * Creates a "_.matches" style predicate function which performs a deep comparison
-     * between a given object and `source`, returning `true` if the given object
-     * has equivalent property values, else `false`.
+     * Creates a function which performs a deep comparison between a given object
+     * and `source`, returning `true` if the given object has equivalent property
+     * values, else `false`.
      *
      * @static
      * @memberOf _
@@ -10366,13 +10366,12 @@
     }
 
     /**
-     * Creates a "_.property" style function which returns the property value
-     * of `key` on a given object.
+     * Creates a function which returns the property value of `key` on a given object.
      *
      * @static
      * @memberOf _
      * @category Utility
-     * @param {string} key The name of the property to get.
+     * @param {string} key The key of the property to get.
      * @returns {Function} Returns the new function.
      * @example
      *

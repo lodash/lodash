@@ -520,12 +520,13 @@
    *
    * @private
    * @param {*} value The value to check.
-   * @param {number} [length] The upper bounds of a valid index.
+   * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
    * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
    */
   function isIndex(value, length) {
     value = +value;
-    return value > -1 && value % 1 == 0 && (length == null || value < length);
+    length = length == null ? MAX_SAFE_INTEGER : length;
+    return value > -1 && value % 1 == 0 && value < length;
   }
 
   /**
@@ -3750,7 +3751,7 @@
         var length = object.length,
             prereq = isLength(length) && isIndex(index, length);
       } else {
-        prereq = type == 'string';
+        prereq = type == 'string' && index in value;
       }
       return prereq && object[index] === value;
     }

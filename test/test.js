@@ -6653,7 +6653,7 @@
 
     test('should perform comparisons between typed arrays', 1, function() {
       var pairs = _.map(typedArrays, function(type, index) {
-        var otherType = typedArrays[++index % typedArrays.length],
+        var otherType = typedArrays[(index + 1) % typedArrays.length],
             CtorA = root[type] || function(n) { this.n = n; },
             CtorB = root[otherType] || function(n) { this.n = n; },
             bufferA = root[type] ? new ArrayBuffer(8) : 8,

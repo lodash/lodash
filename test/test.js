@@ -6575,13 +6575,7 @@
           args3 = (function() { return arguments; }(1, 2));
 
       strictEqual(_.isEqual(args1, args2), true);
-
-      if (!isPhantom) {
-        strictEqual(_.isEqual(args1, args3), false);
-      }
-      else {
-        skipTest();
-      }
+      strictEqual(_.isEqual(args1, args3), false);
     });
 
     test('should treat `arguments` objects like `Object` objects', 4, function() {
@@ -6594,13 +6588,8 @@
       strictEqual(_.isEqual(args, object), true);
       strictEqual(_.isEqual(object, args), true);
 
-      if (!isPhantom) {
-        strictEqual(_.isEqual(args, new Foo), false);
-        strictEqual(_.isEqual(new Foo, args), false);
-      }
-      else {
-        skipTest(2);
-      }
+      strictEqual(_.isEqual(args, new Foo), false);
+      strictEqual(_.isEqual(new Foo, args), false);
     });
 
     test('should perform comparisons between date objects', 4, function() {
@@ -13244,8 +13233,12 @@
       });
 
       var actual = _.map(typedArrays, function(type) {
-        var Ctor = root[type];
-        return Ctor ? _.toPlainObject(new Ctor(buffer)) : false;
+        var Ctor = root[type],
+            result = Ctor ? _.toPlainObject(new Ctor(buffer)) : false;
+
+        return _.isPlainObject(result)
+          ? _.omit(result, 'BYTES_PER_ELEMENT', 'byteLength', 'byteOffset', 'buffer', 'get', 'length', 'subarray', 'set', 'slice')
+          : result;
       });
 
       deepEqual(actual, expected);

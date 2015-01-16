@@ -2521,7 +2521,7 @@
 
       if (isCommon) {
         result = srcValue;
-        if (isLength(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
+        if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
           result = isArray(value) ? value : [];
         } else if (isPlainObject(srcValue)) {
           result = isPlainObject(value) ? value : {};

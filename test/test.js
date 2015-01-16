@@ -7830,12 +7830,16 @@
 
     test('should work with typed arrays from another realm', 1, function() {
       if (_._object) {
-        var expected = _.map(typedArrays, function(type) {
-          return type in root;
+        var props = _.map(typedArrays, function(type) {
+          return '_' + type.toLowerCase();
         });
 
-        var actual = _.map(typedArrays, function(type) {
-          var value = _['_' + type.toLowerCase()];
+        var expected = _.map(props, function(key) {
+          return key in _;
+        });
+
+        var actual = _.map(props, function(key) {
+          var value = _[key];
           return value ? _.isTypedArray(value) : false;
         });
 
@@ -8935,8 +8939,8 @@
     });
 
     test('should merge typed arrays', 4, function() {
-      var array1 = [0, 0, 0]
-          array2 = _.range(0, 6, 0)
+      var array1 = [0, 0, 0],
+          array2 = _.range(0, 6, 0),
           array3 = _.range(0, 12, 0),
           array4 = _.range(0, 24, 0);
 

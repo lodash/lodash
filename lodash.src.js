@@ -2302,7 +2302,7 @@
 
       if (!objIsArr) {
         objTag = objToString.call(object);
-        if (typeof object.length == 'number') {
+        if (isLength(object.length)) {
           if (isArguments(object)) {
             object = arrayToObject(object);
             objTag = objectTag;
@@ -2313,7 +2313,7 @@
       }
       if (!othIsArr) {
         othTag = objToString.call(other);
-        if (typeof other.length == 'number') {
+        if (isLength(other.length)) {
           if (isArguments(other)) {
             other = arrayToObject(other);
             othTag = objectTag;

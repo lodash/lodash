@@ -6212,7 +6212,7 @@
       strictEqual(_.isEmpty(), true);
     });
 
-    test('should return `false` for non-empty values', 3, function() {
+    test('should return `false` for non empty values', 3, function() {
       strictEqual(_.isEmpty([0]), false);
       strictEqual(_.isEmpty({ 'a': 0 }), false);
       strictEqual(_.isEmpty('a'), false);
@@ -6905,7 +6905,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-error objects', 12, function() {
+    test('should return `false` for non error objects', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6961,7 +6961,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-finite values', 9, function() {
+    test('should return `false` for non finite values', 9, function() {
       var values = [NaN, Infinity, -Infinity, Object(1)],
           expected = _.map(values, _.constant(false));
 
@@ -6981,7 +6981,7 @@
       strictEqual(_.isFinite('a'), false);
     });
 
-    test('should return `false` for non-numeric values', 1, function() {
+    test('should return `false` for non numeric values', 1, function() {
       var values = [undefined, [], true, new Date, new Error, '', ' ', '2px'],
           expected = _.map(values, _.constant(false));
 

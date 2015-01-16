@@ -16,6 +16,11 @@
   /** Used as the maximum length an array-like object. */
   var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
+  /** `Object#toString` result references. */
+  var funcTag = '[object Function]',
+      numberTag = '[object Number]',
+      objectTag = '[object Object]';
+
   /** Used as a reference to the global object. */
   var root = (typeof global == 'object' && global) || this;
 
@@ -404,10 +409,12 @@
 
     // Expose `baseEach` for better code coverage.
     if (isModularize && !isNpm) {
-      var path = require('path'),
-          baseEach = require(path.join(path.dirname(filePath), 'internal', 'baseEach.js'));
+      _.each(['baseEach', 'isIndex', 'isIterateeCall', 'isLength'], function(funcName) {
+        var path = require('path'),
+            func = require(path.join(path.dirname(filePath), 'internal', 'baseEach.js'));
 
-      _._baseEach = baseEach.baseEach || baseEach['default'] || baseEach;
+        _['_' + funcName] = func[funcName] || func['default'] || func;
+      });
     }
     // Allow bypassing native checks.
     setProperty(funcProto, 'toString', function wrapper() {
@@ -7002,8 +7009,7 @@
   QUnit.module('lodash.isFunction');
 
   (function() {
-    var args = arguments,
-        funcTag = '[object Function]';
+    var args = arguments;
 
     test('should return `true` for functions', 2, function() {
       strictEqual(_.isFunction(_), true);
@@ -7016,8 +7022,7 @@
       });
 
       var actual = _.map(typedArrays, function(type) {
-        var Ctor = root[type];
-        return Ctor ? _.isFunction(Ctor) : false;
+        return _.isFunction(root[type]);
       });
 
       deepEqual(actual, expected);
@@ -7841,7 +7846,7 @@
         Foo.prototype = root[methodName.slice(2)].prototype;
 
         var object = new Foo;
-        if (toString.call(object) == '[object Object]') {
+        if (toString.call(object) == objectTag) {
           strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
         } else {
           skipTest();
@@ -12181,7 +12186,7 @@
         '<%= a & b %>': '0',
         '<%= a ^ b %>': '3',
         '<%= a | b %>': '3',
-        '<%= {}.toString.call(0) %>': '[object Number]',
+        '<%= {}.toString.call(0) %>': numberTag,
         '<%= a.toFixed(2) %>': '1.00',
         '<%= obj["a"] %>': '1',
         '<%= delete a %>': 'true',
@@ -12947,71 +12952,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.toArray');
-
-  (function() {
-    test('should return the values of objects', 1, function() {
-      var array = [1, 2, 3],
-          object = { 'a': 1, 'b': 2, 'c': 3 };
-
-      deepEqual(_.toArray(object), array);
-    });
-
-    test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
-      deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
-      deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.slice and lodash.toArray');
-
-  _.each(['slice', 'toArray'], function(methodName) {
-    var args = (function() { return arguments; }(1, 2, 3)),
-        array = [1, 2, 3],
-        func = _[methodName];
-
-    test('should return a dense array', 3, function() {
-      var sparse = Array(3);
-      sparse[1] = 2;
-
-      var actual = func(sparse);
-
-      ok('0' in actual);
-      ok('2' in actual);
-      deepEqual(actual, sparse);
-    });
-
-    test('should treat array-like objects like arrays', 2, function() {
-      var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
-      deepEqual(func(object), ['a', 'b', 'c']);
-      deepEqual(func(args), array);
-    });
-
-    test('should return a shallow clone of arrays', 2, function() {
-      var actual = func(array);
-      notStrictEqual(actual, array);
-      deepEqual(func(array), array);
-    });
-
-    test('should work with a node list for `collection` (test in IE < 9)', 1, function() {
-      if (document) {
-        try {
-          var nodeList = document.getElementsByTagName('body'),
-              actual = func(nodeList);
-        } catch(e) {}
-
-        deepEqual(actual, [body]);
-      }
-      else {
-        skipTest();
-      }
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.times');
 
   (function() {
@@ -13078,6 +13018,121 @@
       }
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toArray');
+
+  (function() {
+    test('should return the values of objects', 1, function() {
+      var array = [1, 2, 3],
+          object = { 'a': 1, 'b': 2, 'c': 3 };
+
+      deepEqual(_.toArray(object), array);
+    });
+
+    test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
+      deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
+      deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.slice and lodash.toArray');
+
+  _.each(['slice', 'toArray'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        array = [1, 2, 3],
+        func = _[methodName];
+
+    test('should return a dense array', 3, function() {
+      var sparse = Array(3);
+      sparse[1] = 2;
+
+      var actual = func(sparse);
+
+      ok('0' in actual);
+      ok('2' in actual);
+      deepEqual(actual, sparse);
+    });
+
+    test('should treat array-like objects like arrays', 2, function() {
+      var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
+      deepEqual(func(object), ['a', 'b', 'c']);
+      deepEqual(func(args), array);
+    });
+
+    test('should return a shallow clone of arrays', 2, function() {
+      var actual = func(array);
+      notStrictEqual(actual, array);
+      deepEqual(func(array), array);
+    });
+
+    test('should work with a node list for `collection` (test in IE < 9)', 1, function() {
+      if (document) {
+        try {
+          var nodeList = document.getElementsByTagName('body'),
+              actual = func(nodeList);
+        } catch(e) {}
+
+        deepEqual(actual, [body]);
+      }
+      else {
+        skipTest();
+      }
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toPlainObject');
+
+  (function() {
+    var args = arguments;
+
+    test('should flatten inherited properties', 1, function() {
+      function Foo() { this.b = 2; }
+      Foo.prototype.c = 3;
+
+      var actual = _.assign({ 'a': 1 }, _.toPlainObject(new Foo));
+      deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
+    });
+
+    test('should convert `arguments` objects to plain objects', 1, function() {
+      var actual = _.toPlainObject(args),
+          expected = { '0': 1, '1': 2, '2': 3, 'length': 3 };
+
+      deepEqual(actual, expected);
+    });
+
+    test('should convert arrays to plain objects', 1, function() {
+      var actual = _.toPlainObject(['a', 'b', 'c']),
+          expected = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
+
+      deepEqual(actual, expected);
+    });
+
+    test('should convert typed arrays to plain objects', 1, function() {
+      var object1 = { '0': 0, '1': 0, '2': 0, 'length': 3 },
+          object2 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, 'length': 6 },
+          object3 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, 'length': 12 },
+          object4 = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0, '10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 0, '21': 0, '22': 0, '23': 0, 'length': 24 };
+
+      var objects = [object2, object1, object4, object3, object2, object4, object4, object3, object2];
+
+      var expected = _.map(typedArrays, function(type, index) {
+        return toString.call(root[type]) == funcTag && objects[index];
+      });
+
+      var actual = _.map(typedArrays, function(type) {
+        var Ctor = root[type];
+        return Ctor ? _.toPlainObject(new Ctor(new ArrayBuffer(24))) : false;
+      });
+
+      deepEqual(actual, expected);
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -13255,8 +13310,7 @@
         if (result === object) {
           return false;
         }
-        if (typeof object.length == 'number' &&
-            !_.isArray(object) && !_.isFunction(object) && !_.isString(object)) {
+        if (_.isTypedArray(object)) {
           return result instanceof Array;
         }
         return result instanceof Ctor || !(new Ctor instanceof Ctor);

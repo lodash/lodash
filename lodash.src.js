@@ -1826,7 +1826,7 @@
         var tag = objToString.call(value),
             isFunc = tag == funcTag;
 
-        if (tag == argsTag || tag == objectTag || (isFunc && !object)) {
+        if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
           if (isHostObject(value)) {
             return object ? value : {};
           }

@@ -1393,22 +1393,22 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Copies the values of `array` to `other`.
+     * Copies the values of `source` to `array`.
      *
      * @private
-     * @param {Array} array The array to copy values from.
-     * @param {Array} [other=[]] The array to copy values to.
-     * @returns {Array} Returns `other`.
+     * @param {Array} source The array to copy values from.
+     * @param {Array} [array=[]] The array to copy values to.
+     * @returns {Array} Returns `array`.
      */
-    function arrayCopy(array, other) {
+    function arrayCopy(source, array) {
       var index = -1,
-          length = array.length;
+          length = source.length;
 
-      other || (other = Array(length));
+      array || (array = Array(length));
       while (++index < length) {
-        other[index] = array[index];
+        array[index] = source[index];
       }
-      return other;
+      return array;
     }
 
     /**
@@ -1721,27 +1721,27 @@
     }
 
     /**
-     * Copies the properties of `object` to `other`.
+     * Copies the properties of `source` to `object`.
      *
      * @private
-     * @param {Object} object The object to copy properties from.
-     * @param {Object} [other={}] The object to copy properties to.
+     * @param {Object} source The object to copy properties from.
+     * @param {Object} [object={}] The object to copy properties to.
      * @param {Array} props The property names to copy.
-     * @returns {Object} Returns `other`.
+     * @returns {Object} Returns `object`.
      */
-    function baseCopy(object, other, props) {
+    function baseCopy(source, object, props) {
       if (!props) {
-        props = other;
-        other = {};
+        props = object;
+        object = {};
       }
       var index = -1,
           length = props.length;
 
       while (++index < length) {
         var key = props[index];
-        other[key] = object[key];
+        object[key] = source[key];
       }
-      return other;
+      return object;
     }
 
     /**

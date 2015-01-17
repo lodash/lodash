@@ -43,7 +43,7 @@ require(['lodash'], function(_) {/*…*/});
 Using npm:
 
 ```bash
-$ {sudo -H} npm install -g npm
+$ {sudo -H} npm i -g npm
 $ npm i --save lodash
 
 $ {sudo -H} npm i -g lodash

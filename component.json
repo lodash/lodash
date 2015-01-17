@@ -2,7 +2,7 @@
   "name": "lodash",
   "repo": "lodash/lodash",
   "version": "3.0.0-pre",
-  "description": "A utility library delivering consistency, customization, performance, & extras.",
+  "description": "A utility library delivering consistency, modularity, performance, & extras.",
   "license": "MIT",
   "main": "lodash.js",
   "keywords": ["functional", "util"],

@@ -1,6 +1,6 @@
 # Lo-Dash v3.0.0-pre
 
-A utility library delivering consistency, [customization](https://lodash.com/custom-builds), [performance](https://lodash.com/benchmarks), & [extras](https://lodash.com/#features).
+A utility library delivering consistency, [modularity](https://www.npmjs.com/browse/keyword/lodash-modularized), [performance](https://lodash.com/benchmarks), & [extras](https://lodash.com/#features).
 
 ## Documentation
 

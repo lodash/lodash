@@ -126,6 +126,6 @@ Install [n_](https://www.npmjs.com/package/n_) for a version of the REPL that in
 
 ## Support
 
-Tested in Chrome (19, 38-39), Firefox (3, 20, 33-34), IE 6-11, Opera 25-26, Safari 5-8, Node.js 0.8.26~0.10.35, PhantomJS 1.9.7, RingoJS 0.11, & Rhino 1.7RC5.
+Tested in Chrome (19, 38-39), Firefox (3, 20, 34-35), IE 6-11, Opera 25-26, Safari 5-8, Node.js 0.8.26~0.10.35, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
 
 Automated browser test runs [are available](https://saucelabs.com/u/lodash) as well as CI runs for [lodash](https://travis-ci.org/lodash/lodash/), [lodash-cli](https://travis-ci.org/lodash/lodash-cli/), [lodash-amd](https://travis-ci.org/lodash/lodash-amd/), [lodash-node](https://travis-ci.org/lodash/lodash-node/), & [grunt-lodash](https://travis-ci.org/lodash/grunt-lodash). Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.

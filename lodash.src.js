@@ -756,6 +756,7 @@
 
     /* Native method references for those with the same name as other `lodash` methods. */
     var nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray,
+        nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate,
         nativeIsFinite = context.isFinite,
         nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys,
         nativeMax = Math.max,
@@ -1348,7 +1349,7 @@
     function SetCache(values) {
       var length = values ? values.length : 0;
 
-      this.data = { 'number': {}, 'set': new Set };
+      this.data = { 'hash': nativeCreate(null), 'set': new Set };
       while (length--) {
         this.push(values[length]);
       }
@@ -1364,9 +1365,8 @@
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
     function cacheIndexOf(cache, value) {
-      var type = typeof value,
-          data = cache.data,
-          result = type == 'number' ? data[type][value] : data.set.has(value);
+      var data = cache.data,
+          result = (typeof value == 'string' || isObject(value)) ? data.set.has(value) : data.hash[value];
 
       return result ? 0 : -1;
     }
@@ -1380,13 +1380,11 @@
      * @param {*} value The value to cache.
      */
     function cachePush(value) {
-      var data = this.data,
-          type = typeof value;
-
-      if (type == 'number') {
-        data[type][value] = true;
-      } else {
+      var data = this.data;
+      if (typeof value == 'string' || isObject(value)) {
         data.set.add(value);
+      } else {
+        data.hash[value] = true;
       }
     }
 
@@ -3070,7 +3068,7 @@
      * @param {Array} [values] The values to cache.
      * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
      */
-    var createCache = !Set ? constant(null) : function(values) {
+    var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
       return new SetCache(values);
     };
 

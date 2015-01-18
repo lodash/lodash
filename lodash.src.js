@@ -2671,6 +2671,21 @@
     }
 
     /**
+     * Converts `value` to a string if it is not one. An empty string is returned
+     * for `null` or `undefined` values.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {string} Returns the string.
+     */
+    function baseToString(value) {
+      if (typeof value == 'string') {
+        return value;
+      }
+      return value == null ? '' : (value + '');
+    }
+
+    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -4054,21 +4069,6 @@
         return result;
       }
       return isObject(value) ? value : Object(value);
-    }
-
-    /**
-     * Converts `value` to a string if it is not one. An empty string is
-     * returned for `null` or `undefined` values.
-     *
-     * @private
-     * @param {*} value The value to process.
-     * @returns {string} Returns the string.
-     */
-    function toString(value) {
-      if (typeof value == 'string') {
-        return value;
-      }
-      return value == null ? '' : (value + '');
     }
 
     /*------------------------------------------------------------------------*/
@@ -9301,7 +9301,7 @@
      * // => 'Fred'
      */
     function capitalize(string) {
-      string = toString(string);
+      string = baseToString(string);
       return string && (string.charAt(0).toUpperCase() + string.slice(1));
     }
 
@@ -9321,7 +9321,7 @@
      * // => 'deja vu'
      */
     function deburr(string) {
-      string = toString(string);
+      string = baseToString(string);
       return string && string.replace(reLatin1, deburrLetter);
     }
 
@@ -9347,7 +9347,7 @@
      * // => true
      */
     function endsWith(string, target, position) {
-      string = toString(string);
+      string = baseToString(string);
       target = (target + '');
 
       var length = string.length;
@@ -9389,7 +9389,7 @@
      */
     function escape(string) {
       // Reset `lastIndex` because in IE < 9 `String#replace` does not.
-      string = toString(string);
+      string = baseToString(string);
       return (string && reHasUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)
         : string;
@@ -9410,7 +9410,7 @@
      * // => '\[lodash\]\(https://lodash\.com/\)'
      */
     function escapeRegExp(string) {
-      string = toString(string);
+      string = baseToString(string);
       return (string && reHasRegExpChars.test(string))
         ? string.replace(reRegExpChars, '\\$&')
         : string;
@@ -9465,7 +9465,7 @@
      * // => 'abc'
      */
     function pad(string, length, chars) {
-      string = toString(string);
+      string = baseToString(string);
       length = +length;
 
       var strLength = string.length;
@@ -9504,7 +9504,7 @@
      * // => 'abc'
      */
     function padLeft(string, length, chars) {
-      string = toString(string);
+      string = baseToString(string);
       return string && (createPad(string, length, chars) + string);
     }
 
@@ -9532,7 +9532,7 @@
      * // => 'abc'
      */
     function padRight(string, length, chars) {
-      string = toString(string);
+      string = baseToString(string);
       return string && (string + createPad(string, length, chars));
     }
 
@@ -9669,7 +9669,7 @@
      * // => true
      */
     function startsWith(string, target, position) {
-      string = toString(string);
+      string = baseToString(string);
       position = position == null ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
@@ -9778,7 +9778,7 @@
       if (otherOptions && isIterateeCall(string, options, otherOptions)) {
         options = otherOptions = null;
       }
-      string = toString(string);
+      string = baseToString(string);
       options = baseAssign(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
 
       var imports = baseAssign(baseAssign({}, options.imports), settings.imports, assignOwnDefaults),
@@ -9900,7 +9900,7 @@
      */
     function trim(string, chars, guard) {
       var value = string;
-      string = toString(string);
+      string = baseToString(string);
       if (!string) {
         return string;
       }
@@ -9931,7 +9931,7 @@
      */
     function trimLeft(string, chars, guard) {
       var value = string;
-      string = toString(string);
+      string = baseToString(string);
       if (!string) {
         return string;
       }
@@ -9961,7 +9961,7 @@
      */
     function trimRight(string, chars, guard) {
       var value = string;
-      string = toString(string);
+      string = baseToString(string);
       if (!string) {
         return string;
       }
@@ -10019,7 +10019,7 @@
           length = +options || 0;
         }
       }
-      string = toString(string);
+      string = baseToString(string);
       if (length >= string.length) {
         return string;
       }
@@ -10074,7 +10074,7 @@
      * // => 'fred, barney, & pebbles'
      */
     function unescape(string) {
-      string = toString(string);
+      string = baseToString(string);
       return (string && reHasEscapedHtml.test(string))
         ? string.replace(reEscapedHtml, unescapeHtmlChar)
         : string;
@@ -10102,7 +10102,7 @@
       if (guard && isIterateeCall(string, pattern, guard)) {
         pattern = null;
       }
-      string = toString(string);
+      string = baseToString(string);
       return string.match(pattern || reWords) || [];
     }
 
@@ -10536,7 +10536,7 @@
      */
     function uniqueId(prefix) {
       var id = ++idCounter;
-      return toString(prefix) + id;
+      return baseToString(prefix) + id;
     }
 
     /*------------------------------------------------------------------------*/

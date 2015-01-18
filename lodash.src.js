@@ -9603,13 +9603,11 @@
      */
     function repeat(string, n) {
       var result = '';
+      string = baseToString(string);
       n = +n;
-
-      if (n < 1 || string == null || !nativeIsFinite(n)) {
+      if (n < 1 || !string || !nativeIsFinite(n)) {
         return result;
       }
-      string = (string + '');
-
       // Leverage the exponentiation by squaring algorithm for a faster repeat.
       // See http://en.wikipedia.org/wiki/Exponentiation_by_squaring.
       do {

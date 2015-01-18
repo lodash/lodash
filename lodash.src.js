@@ -352,6 +352,21 @@
   }
 
   /**
+   * Converts `value` to a string if it is not one. An empty string is returned
+   * for `null` or `undefined` values.
+   *
+   * @private
+   * @param {*} value The value to process.
+   * @returns {string} Returns the string.
+   */
+  function baseToString(value) {
+    if (typeof value == 'string') {
+      return value;
+    }
+    return value == null ? '' : (value + '');
+  }
+
+  /**
    * Used by `_.max` and `_.min` as the default callback for string values.
    *
    * @private
@@ -504,7 +519,7 @@
    */
   var isHostObject = (function() {
     try {
-      Object({ 'toString': 0 } + '');
+      baseToString({ 'toString': 0 });
     } catch(e) {
       return function() { return false; };
     }
@@ -1774,7 +1789,6 @@
      */
     function baseCallback(func, thisArg, argCount) {
       var type = typeof func;
-
       if (type == 'function') {
         return (typeof thisArg != 'undefined' && isBindable(func))
           ? bindCallback(func, thisArg, argCount)
@@ -1786,7 +1800,7 @@
       // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
         ? baseMatches(func, !argCount)
-        : baseProperty(argCount ? (func + '') : func);
+        : baseProperty(argCount ? baseToString(func) : func);
     }
 
     /**
@@ -2671,21 +2685,6 @@
     }
 
     /**
-     * Converts `value` to a string if it is not one. An empty string is returned
-     * for `null` or `undefined` values.
-     *
-     * @private
-     * @param {*} value The value to process.
-     * @returns {string} Returns the string.
-     */
-    function baseToString(value) {
-      if (typeof value == 'string') {
-        return value;
-      }
-      return value == null ? '' : (value + '');
-    }
-
-    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -3263,7 +3262,7 @@
         return '';
       }
       var padLength = length - strLength;
-      chars = chars == null ? ' ' : (chars + '');
+      chars = chars == null ? ' ' : baseToString(chars);
       return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
     }
 
@@ -3456,7 +3455,7 @@
         case stringTag:
           // Coerce regexes to strings (http://es5.github.io/#x15.10.6.4) and
           // treat strings primitives and string objects as equal.
-          return object == (other + '');
+          return object == baseToString(other);
       }
       return false;
     }
@@ -9905,7 +9904,7 @@
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
-      chars = (chars + '');
+      chars = baseToString(chars);
       return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
     }
 
@@ -9936,7 +9935,7 @@
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string))
       }
-      return string.slice(charsLeftIndex(string, (chars + '')));
+      return string.slice(charsLeftIndex(string, baseToString(chars)));
     }
 
     /**
@@ -9966,7 +9965,7 @@
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1)
       }
-      return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
+      return string.slice(0, charsRightIndex(string, baseToString(chars)) + 1);
     }
 
     /**
@@ -10012,7 +10011,7 @@
         if (isObject(options)) {
           var separator = 'separator' in options ? options.separator : separator;
           length = 'length' in options ? +options.length || 0 : length;
-          omission = 'omission' in options ? (options.omission + '') : omission;
+          omission = 'omission' in options ? baseToString(options.omission) : omission;
         } else {
           length = +options || 0;
         }

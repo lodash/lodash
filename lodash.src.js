@@ -1581,8 +1581,8 @@
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the first element of
-     *  `array` as the initial value.
+     * @param {boolean} [initFromArray] Specify using the first element of `array`
+     *  as the initial value.
      * @returns {*} Returns the accumulated value.
      */
     function arrayReduce(array, iteratee, accumulator, initFromArray) {
@@ -1606,8 +1606,8 @@
      * @param {Array} array The array to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the last element of
-     *  `array` as the initial value.
+     * @param {boolean} [initFromArray] Specify using the last element of `array`
+     *  as the initial value.
      * @returns {*} Returns the accumulated value.
      */
     function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
@@ -2052,8 +2052,8 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function} predicate The function invoked per iteration.
      * @param {Function} eachFunc The function to iterate over `collection`.
-     * @param {boolean} [retKey] Specify returning the key of the found
-     *  element instead of the element itself.
+     * @param {boolean} [retKey] Specify returning the key of the found element
+     *  instead of the element itself.
      * @returns {*} Returns the found element or its key, else `undefined`.
      */
     function baseFind(collection, predicate, eachFunc, retKey) {

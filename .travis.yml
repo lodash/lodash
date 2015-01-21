@@ -4,7 +4,7 @@ node_js:
 env:
   global:
     - BIN="node" BUILD="compat" ISTANBUL=false NODE_BIN=$BIN OPTION=""
-    - IOJS_VERSION="v1.0.2" NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
+    - IOJS_VERSION="v1.0.4" NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
   matrix:
     - BUILD="compat"

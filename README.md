@@ -15,8 +15,6 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
   For new environments like Chrome, Firefox, IE ≥ 9, & Safari ≥ 5.1
 * [Compatibility build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.compat.min.js))<br>
   For new & old environments like IE ≤ 8 & PhantomJS
-* [Underscore build](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.js) ([minified](https://raw.github.com/lodash/lodash/2.4.1/dist/lodash.underscore.min.js))<br>
-  A drop-in replacement for [Underscore v1.6.0](http://underscorejs.org/#1.6.0)
 
 CDN copies are available on [cdnjs](http://cdnjs.com/libraries/lodash.js/) & [jsDelivr](http://www.jsdelivr.com/#!lodash).<br>
 Create [custom builds](https://lodash.com/custom-builds) with only the features you need.<br>

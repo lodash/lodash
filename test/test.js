@@ -99,8 +99,8 @@
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
-    'isModularize': /\b(?:amd|commonjs|es6|node|npm|(index|main)\.js)\b/.test(filePath),
-    'isStrict': /\bes6\b/.test(filePath),
+    'isModularize': /\b(?:amd|commonjs|es6?|node|npm|(index|main)\.js)\b/.test(filePath),
+    'isStrict': /\bes6?\b/.test(filePath),
     'urlParams': {}
   });
 

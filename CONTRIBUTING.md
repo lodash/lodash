@@ -1,6 +1,6 @@
-# Contributing to Lo-Dash
+# Contributing to lodash
 
-If you’d like to contribute a feature or bug fix, you can [fork](https://help.github.com/articles/fork-a-repo/) Lo-Dash, commit your changes, & [send a pull request](https://help.github.com/articles/using-pull-requests/).
+If you’d like to contribute a feature or bug fix, you can [fork](https://help.github.com/articles/fork-a-repo/) lodash, commit your changes, & [send a pull request](https://help.github.com/articles/using-pull-requests/).
 Please make sure to [search the issue tracker](https://github.com/lodash/lodash/issues) first; your issue may have already been discussed or fixed in `master`.
 
 ## Tests
@@ -14,7 +14,7 @@ The [Backbone](http://backbonejs.org/) & [Underscore](http://underscorejs.org/) 
 
 ## Contributor License Agreement
 
-Lo-Dash is a member of the [Dojo Foundation](http://dojofoundation.org/).
+lodash is a member of the [Dojo Foundation](http://dojofoundation.org/).
 As such, we request that all contributors sign the Dojo Foundation [contributor license agreement](http://dojofoundation.org/about/claForm).
 
 For more information about CLAs, please check out Alex Russell’s excellent post, [“Why Do I Need to Sign This?”](http://infrequently.org/2008/06/why-do-i-need-to-sign-this/).

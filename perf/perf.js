@@ -21,7 +21,7 @@
   /** Add `console.log()` support for Narwhal, Rhino, and RingoJS. */
   var console = root.console || (root.console = { 'log': root.print });
 
-  /** The file path of the Lo-Dash file to test. */
+  /** The file path of the lodash file to test. */
   var filePath = (function() {
     var min = 0,
         result = [];
@@ -67,7 +67,7 @@
     'otherPath': 'underscore'
   });
 
-  /** The Lo-Dash build basename. */
+  /** The lodash build basename. */
   var buildName = root.buildName = basename(ui.buildPath, '.js');
 
   /** The other library basename. */
@@ -96,7 +96,7 @@
     ? require
     : (isJava && root.load) || noop;
 
-  /** Load Lo-Dash. */
+  /** Load lodash. */
   var lodash = root.lodash || (root.lodash = (
     lodash = load(filePath) || root._,
     lodash = lodash._ || lodash,

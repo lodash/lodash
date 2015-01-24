@@ -1,6 +1,6 @@
 /**
  * @license
- * Lo-Dash 3.0.0-pre <https://lodash.com/>
+ * lodash 3.0.0-pre <https://lodash.com/>
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -849,7 +849,7 @@
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.
      *
-     * In addition to Lo-Dash methods, wrappers also have the following `Array` methods:
+     * In addition to lodash methods, wrappers also have the following `Array` methods:
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
@@ -1103,7 +1103,7 @@
     }(0, 0));
 
     /**
-     * By default, the template delimiters used by Lo-Dash are like those in
+     * By default, the template delimiters used by lodash are like those in
      * embedded Ruby (ERB). Change the following template settings to use
      * alternative delimiters.
      *
@@ -8818,7 +8818,7 @@
       while (++index < length) {
         result[index] = (index + '');
       }
-      // Lo-Dash skips the `constructor` property when it infers it is iterating
+      // lodash skips the `constructor` property when it infers it is iterating
       // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
       // attribute of an existing property and the `constructor` property of a
       // prototype defaults to non-enumerable.
@@ -9683,7 +9683,7 @@
      * for more details.
      *
      * For more information on precompiling templates see
-     * [Lo-Dash's custom builds documentation](https://lodash.com/custom-builds).
+     * [lodash's custom builds documentation](https://lodash.com/custom-builds).
      *
      * For more information on Chrome extension sandboxes see
      * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
@@ -10986,13 +10986,13 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Export Lo-Dash.
+  // Export lodash.
   var _ = runInContext();
 
   // Some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // Expose Lo-Dash to the global object when an AMD loader is present to avoid
-    // errors in cases where Lo-Dash is loaded by a script tag and not intended
+    // Expose lodash to the global object when an AMD loader is present to avoid
+    // errors in cases where lodash is loaded by a script tag and not intended
     // as an AMD module. See http://requirejs.org/docs/errors.html#mismatch.
     root._ = _;
 

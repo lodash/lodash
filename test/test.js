@@ -11783,7 +11783,7 @@
       deepEqual(actual, [1, 2, 3, 4]);
     });
 
-    test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
+    test('should perform a stable sort (test in V8)', 1, function() {
       var actual = _.sortBy(stableOrder, function(pair) {
         return pair.a;
       });

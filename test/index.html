@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Lo-Dash Test Suite</title>
+		<title>lodash Test Suite</title>
 		<link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
 		<style>
 			#exports {
@@ -247,14 +247,14 @@
 				delete objectProto._propertyIsEnumerable;
 			}
 
-			// load Lo-Dash and expose it to the bad extensions/shims
+			// load lodash and expose it to the bad extensions/shims
 			if (!ui.isModularize) {
 				addBizarroMethods();
 				document.write('<script src="' + ui.buildPath + '"><\/script>');
 			}
 		</script>
 		<script>
-			// store Lo-Dash to test for bad extensions/shims
+			// store lodash to test for bad extensions/shims
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;
 				window._ = undefined;

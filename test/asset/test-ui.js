@@ -1,10 +1,10 @@
 ;(function(window) {
   'use strict';
 
-  /** The base path of the Lo-Dash builds. */
+  /** The base path of the lodash builds. */
   var basePath = '../';
 
-  /** The Lo-Dash build to load. */
+  /** The lodash build to load. */
   var build = (build = /build=([^&]+)/.exec(location.search)) && decodeURIComponent(build[1]);
 
   /** The module loader to use. */
@@ -95,12 +95,12 @@
     span1.innerHTML =
       '<label for="qunit-build">Build: </label>' +
       '<select id="qunit-build">' +
-      '<option value="lodash-compat-dev">Lo-Dash (compat development)</option>' +
-      '<option value="lodash-compat">Lo-Dash (compat production)</option>' +
-      '<option value="lodash-modern-dev">Lo-Dash (modern development)</option>' +
-      '<option value="lodash-modern">Lo-Dash (modern production)</option>' +
-      '<option value="lodash-custom-dev">Lo-Dash (custom development)</option>' +
-      '<option value="lodash-custom">Lo-Dash (custom production)</option>' +
+      '<option value="lodash-compat-dev">lodash (compat development)</option>' +
+      '<option value="lodash-compat">lodash (compat production)</option>' +
+      '<option value="lodash-modern-dev">lodash (modern development)</option>' +
+      '<option value="lodash-modern">lodash (modern production)</option>' +
+      '<option value="lodash-custom-dev">lodash (custom development)</option>' +
+      '<option value="lodash-custom">lodash (custom production)</option>' +
       '</select>';
 
     var span2 = document.createElement('span');
@@ -133,10 +133,10 @@
   // Used to indicate testing in Sauce Labs' automated test cloud.
   ui.isSauceLabs = location.port == '9001';
 
-  // Used to indicate that Lo-Dash is in strict mode.
+  // Used to indicate that lodash is in strict mode.
   ui.isStrict = /\bes6?\b/.test([location.pathname, location.search]);
 
-  // The Lo-Dash build file path.
+  // The lodash build file path.
   ui.buildPath = (function() {
     var result;
     switch (build) {

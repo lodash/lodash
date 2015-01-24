@@ -71,11 +71,11 @@
    * http://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm
    */
   var tTable = {
-    '1':  12.706,'2':  4.303, '3':  3.182, '4':  2.776, '5':  2.571, '6':  2.447,
-    '7':  2.365, '8':  2.306, '9':  2.262, '10': 2.228, '11': 2.201, '12': 2.179,
-    '13': 2.16,  '14': 2.145, '15': 2.131, '16': 2.12,  '17': 2.11,  '18': 2.101,
-    '19': 2.093, '20': 2.086, '21': 2.08,  '22': 2.074, '23': 2.069, '24': 2.064,
-    '25': 2.06,  '26': 2.056, '27': 2.052, '28': 2.048, '29': 2.045, '30': 2.042,
+    '1':  12.706, '2':  4.303, '3':  3.182, '4':  2.776, '5':  2.571, '6':  2.447,
+    '7':  2.365,  '8':  2.306, '9':  2.262, '10': 2.228, '11': 2.201, '12': 2.179,
+    '13': 2.16,   '14': 2.145, '15': 2.131, '16': 2.12,  '17': 2.11,  '18': 2.101,
+    '19': 2.093,  '20': 2.086, '21': 2.08,  '22': 2.074, '23': 2.069, '24': 2.064,
+    '25': 2.06,   '26': 2.056, '27': 2.052, '28': 2.048, '29': 2.045, '30': 2.042,
     'infinity': 1.96
   };
 
@@ -123,7 +123,7 @@
    * @returns {Function} Returns a new `Benchmark` function.
    */
   function runInContext(context) {
-    // exit early if unable to acquire Lo-Dash
+    // exit early if unable to acquire lodash
     var _ = context && context._ || req('lodash') || root._;
     if (!_) {
       Benchmark.runInContext = runInContext;
@@ -257,31 +257,31 @@
      */
     var timer = {
 
-     /**
-      * The timer namespace object or constructor.
-      *
-      * @private
-      * @memberOf timer
-      * @type {Function|Object}
-      */
+      /**
+       * The timer namespace object or constructor.
+       *
+       * @private
+       * @memberOf timer
+       * @type {Function|Object}
+       */
       'ns': Date,
 
-     /**
-      * Starts the deferred timer.
-      *
-      * @private
-      * @memberOf timer
-      * @param {Object} deferred The deferred instance.
-      */
+      /**
+       * Starts the deferred timer.
+       *
+       * @private
+       * @memberOf timer
+       * @param {Object} deferred The deferred instance.
+       */
       'start': null, // lazy defined in `clock()`
 
-     /**
-      * Stops the deferred timer.
-      *
-      * @private
-      * @memberOf timer
-      * @param {Object} deferred The deferred instance.
-      */
+      /**
+       * Stops the deferred timer.
+       *
+       * @private
+       * @memberOf timer
+       * @param {Object} deferred The deferred instance.
+       */
       'stop': null // lazy defined in `clock()`
     };
 
@@ -290,8 +290,8 @@
     /**
      * The Benchmark constructor.
      *
-     * Note: The Benchmark constructor exposes a handful of Lo-Dash methods to
-     * make working with arrays, collections, and objects easier. The Lo-Dash
+     * Note: The Benchmark constructor exposes a handful of lodash methods to
+     * make working with arrays, collections, and objects easier. The lodash
      * methods are:
      * [`each/forEach`](https://lodash.com/docs#forEach), [`forOwn`](https://lodash.com/docs#forOwn),
      * [`has`](https://lodash.com/docs#has), [`indexOf`](https://lodash.com/docs#indexOf),
@@ -441,8 +441,8 @@
     /**
      * The Suite constructor.
      *
-     * Note: Each Suite instance has a handful of wrapped Lo-Dash methods to
-     * make working with Suites easier. The wrapped Lo-Dash methods are:
+     * Note: Each Suite instance has a handful of wrapped lodash methods to
+     * make working with Suites easier. The wrapped lodash methods are:
      * [`each/forEach`](https://lodash.com/docs#forEach), [`indexOf`](https://lodash.com/docs#indexOf),
      * [`map`](https://lodash.com/docs#map), [`pluck`](https://lodash.com/docs#pluck),
      * and [`reduce`](https://lodash.com/docs#reduce)
@@ -2354,7 +2354,7 @@
       'support': support
     });
 
-    // Add Lo-Dash methods to Benchmark
+    // Add lodash methods to Benchmark
     _.each(['each', 'forEach', 'forOwn', 'has', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
       Benchmark[methodName] = _[methodName];
     });
@@ -2802,7 +2802,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // add Lo-Dash methods as Suite methods
+    // add lodash methods as Suite methods
     _.each(['each', 'forEach', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
       var func = _[methodName];
       Suite.prototype[methodName] = function() {

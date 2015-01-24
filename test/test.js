@@ -24,7 +24,7 @@
   /** Used as a reference to the global object. */
   var root = (typeof global == 'object' && global) || this;
 
-  /** Used to store Lo-Dash to test for bad extensions/shims. */
+  /** Used to store lodash to test for bad extensions/shims. */
   var lodashBizarro = root.lodashBizarro;
 
   /** Used for native method references. */
@@ -64,7 +64,7 @@
     return result;
   }());
 
-  /** The file path of the Lo-Dash file to test. */
+  /** The file path of the lodash file to test. */
   var filePath = (function() {
     var min = 0,
         result = [];
@@ -104,7 +104,7 @@
     'urlParams': {}
   });
 
-  /** The basename of the Lo-Dash file to test. */
+  /** The basename of the lodash file to test. */
   var basename = /[\w.-]+$/.exec(filePath)[0];
 
   /** Detect if in a Java environment. */
@@ -122,7 +122,7 @@
   /** Detect if running in Rhino. */
   var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
 
-  /** Detect if Lo-Dash is in strict mode. */
+  /** Detect if lodash is in strict mode. */
   var isStrict = ui.isStrict;
 
   /** Used to test Web Workers. */
@@ -517,10 +517,10 @@
     // Fake `WinRTError`.
     setProperty(root, 'WinRTError', Error);
 
-    // Clear cache so Lo-Dash can be reloaded.
+    // Clear cache so lodash can be reloaded.
     emptyObject(require.cache);
 
-    // Load Lo-Dash and expose it to the bad extensions/shims.
+    // Load lodash and expose it to the bad extensions/shims.
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
 
     // Restore native methods.

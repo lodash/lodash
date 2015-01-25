@@ -11880,13 +11880,41 @@
       new Pair(1, 1, 1), new Pair(1, 2, 1),
       new Pair(1, 1, 1), new Pair(1, 2, 1),
       new Pair(1, 3, 1), new Pair(1, 4, 1),
-      new Pair(1, 5, 1), new Pair(1, 6, 1),
+      new Pair(1, 5, 1), new Pair(1, 6, 1),  new Pair(1, 1, 2),
       new Pair(2, 1, 2), new Pair(2, 2, 2),
       new Pair(2, 3, 2), new Pair(2, 4, 2),
       new Pair(2, 5, 2), new Pair(2, 6, 2),
       new Pair(undefined, 1, 1), new Pair(undefined, 2, 1),
       new Pair(undefined, 3, 1), new Pair(undefined, 4, 1),
       new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
+    ];
+
+    var stableOrderDesc = [
+      new Pair(1, 6, 1), new Pair(1, 5, 1),
+      new Pair(1, 4, 1), new Pair(1, 3, 1),
+      new Pair(1, 2, 1), new Pair(1, 2, 1),
+      new Pair(1, 1, 2), new Pair(1, 1, 1),
+      new Pair(1, 1, 1), new Pair(2, 6, 2),
+      new Pair(2, 5, 2), new Pair(2, 4, 2),
+      new Pair(2, 3, 2), new Pair(2, 2, 2),
+      new Pair(2, 1, 2), new Pair(undefined, 6, 1),
+      new Pair(undefined, 5, 1), new Pair(undefined, 4, 1),
+      new Pair(undefined, 3, 1), new Pair(undefined, 2, 1),
+      new Pair(undefined, 1, 1),
+    ];
+
+    var stableOrderDesc2 = [
+      new Pair(undefined, 1, 1), new Pair(undefined, 2, 1),
+      new Pair(undefined, 3, 1), new Pair(undefined, 4, 1),
+      new Pair(undefined, 5, 1), new Pair(undefined, 6, 1),
+      new Pair(2, 1, 2), new Pair(2, 2, 2),
+      new Pair(2, 3, 2), new Pair(2, 4, 2),
+      new Pair(2, 5, 2), new Pair(2, 6, 2),
+      new Pair(1, 1, 1), new Pair(1, 1, 1),
+      new Pair(1, 1, 2), new Pair(1, 2, 1),
+      new Pair(1, 2, 1), new Pair(1, 3, 1),
+      new Pair(1, 4, 1), new Pair(1, 5, 1),
+      new Pair(1, 6, 1),
     ];
 
     test('should sort mutliple properties in ascending order', 1, function() {
@@ -11897,6 +11925,16 @@
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
       var actual = _.sortByAll(stableOrder, ['a', 'c']);
       deepEqual(actual, stableOrder);
+    });
+
+    test('should sort mutliple properties in a asc b desc', 1, function() {
+      var actual = _.sortByAll(stableOrder, ['a', '-b']);
+      deepEqual(actual, stableOrderDesc);
+    });
+
+    test('should sort mutliple properties in a desc b asc', 1, function() {
+      var actual = _.sortByAll(stableOrder, ['-a', 'b']);
+      deepEqual(actual, stableOrderDesc2);
     });
 
     test('should not error on nullish elements', 1, function() {

@@ -1,6 +1,6 @@
 ;(function() {
 
-  /** Used as a safe reference for `undefined` in pre ES5 environments. */
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /** Used to detect when a function becomes hot. */
@@ -407,7 +407,7 @@
       return _.constant(nativeString.replace(reToString, funcName));
     }
 
-    // Expose `baseEach` for better code coverage.
+    // Expose internal modules for better code coverage.
     if (isModularize && !isNpm) {
       _.each(['baseEach', 'isIndex', 'isIterateeCall', 'isLength'], function(funcName) {
         var path = require('path'),
@@ -424,7 +424,7 @@
       return result;
     });
 
-    // Add extensions.
+    // Add built-in prototype extensions.
     funcProto._method = _.noop;
 
     // Set bad shims.
@@ -507,7 +507,7 @@
     var _WeakMap = root.WeakMap;
     setProperty(root, 'WeakMap', _.noop);
 
-    // Fake the DOM
+    // Fake the DOM.
     setProperty(root, 'window', {});
     setProperty(root.window, 'document', {});
     setProperty(root.window.document, 'createDocumentFragment', function() {
@@ -523,7 +523,7 @@
     // Load lodash and expose it to the bad extensions/shims.
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
 
-    // Restore native methods.
+    // Restore built-in methods.
     setProperty(Array,  'isArray', _isArray);
     setProperty(Date,   'now', _now);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
@@ -611,12 +611,10 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Explicitly call `QUnit.module()` instead of `module()` in case we are
-  // in a CLI environment.
   QUnit.module(basename);
 
   (function() {
-    test('supports loading ' + basename + ' as the "lodash" module', 1, function() {
+    test('should support loading ' + basename + ' as the "lodash" module', 1, function() {
       if (amd) {
         strictEqual((lodashModule || {}).moduleName, 'lodash');
       }
@@ -625,7 +623,7 @@
       }
     });
 
-    test('supports loading ' + basename + ' with the Require.js "shim" configuration option', 1, function() {
+    test('should support loading ' + basename + ' with the Require.js "shim" configuration option', 1, function() {
       if (amd && _.includes(ui.loaderPath, 'requirejs')) {
         strictEqual((shimmedModule || {}).moduleName, 'shimmed');
       } else {
@@ -633,7 +631,7 @@
       }
     });
 
-    test('supports loading ' + basename + ' as the "underscore" module', 1, function() {
+    test('should support loading ' + basename + ' as the "underscore" module', 1, function() {
       if (amd) {
         strictEqual((underscoreModule || {}).moduleName, 'underscore');
       }
@@ -642,7 +640,7 @@
       }
     });
 
-    asyncTest('supports loading ' + basename + ' in a web worker', 1, function() {
+    asyncTest('should support loading ' + basename + ' in a web worker', 1, function() {
       if (Worker) {
         var limit = 30000 / QUnit.config.asyncRetries,
             start = +new Date;
@@ -1675,9 +1673,9 @@
   QUnit.module('clone methods');
 
   (function() {
-    function Klass() { this.a = 1; }
-    Klass.prototype = { 'b': 1 };
-    Klass.foo = function() {};
+    function Foo() { this.a = 1; }
+    Foo.prototype = { 'b': 1 };
+    Foo.c = function() {};
 
     var objects = {
       '`arguments` objects': arguments,
@@ -1685,7 +1683,7 @@
       'array-like-objects': { '0': 'a', '1': '', 'length': 3 },
       'booleans': false,
       'boolean objects': Object(false),
-      'Klass instances': new Klass,
+      'Foo instances': new Foo,
       'objects': { 'a': 0, 'b': 1, 'c': 3 },
       'objects with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
       'objects from another document': _._object || {},
@@ -1702,7 +1700,7 @@
 
     var uncloneable = {
       'DOM elements': body,
-      'functions': Klass
+      'functions': Foo
     };
 
     _.each(errors, function(error) {
@@ -1763,7 +1761,7 @@
           notStrictEqual(actual, object);
           deepEqual(actual, object);
 
-          var expected = typeof value == 'function' ? { 'foo': Klass.foo } : (value && {});
+          var expected = typeof value == 'function' ? { 'c': Foo.c } : (value && {});
           deepEqual(func(value), expected);
         });
 
@@ -1829,13 +1827,13 @@
 
       test('`_.' + methodName + '` should provide the correct `customizer` arguments', 1, function() {
         var argsList = [],
-            klass = new Klass;
+            foo = new Foo;
 
-        func(klass, function() {
+        func(foo, function() {
           argsList.push(slice.call(arguments));
         });
 
-        deepEqual(argsList, isDeep ? [[klass], [1, 'a', klass]] : [[klass]]);
+        deepEqual(argsList, isDeep ? [[foo], [1, 'a', foo]] : [[foo]]);
       });
 
       test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
@@ -2175,16 +2173,16 @@
   QUnit.module('lodash.create');
 
   (function() {
+    function Shape() {
+      this.x = 0;
+      this.y = 0;
+    }
+
+    function Circle() {
+      Shape.call(this);
+    }
+
     test('should create an object that inherits from the given `prototype` object', 3, function() {
-      function Shape() {
-        this.x = 0;
-        this.y = 0;
-      }
-
-      function Circle() {
-        Shape.call(this);
-      }
-
       Circle.prototype = _.create(Shape.prototype);
       Circle.prototype.constructor = Circle;
 
@@ -2196,15 +2194,6 @@
     });
 
     test('should assign `properties` to the created object', 3, function() {
-      function Shape() {
-        this.x = 0;
-        this.y = 0;
-      }
-
-      function Circle() {
-        Shape.call(this);
-      }
-
       var expected = { 'constructor': Circle, 'radius': 0 };
       Circle.prototype = _.create(Shape.prototype, expected);
 
@@ -5023,11 +5012,10 @@
     test('`_.' + methodName + '` should assign own source properties', 1, function() {
       function Foo() {
         this.a = 1;
-        this.c = 3;
       }
       Foo.prototype.b = 2;
 
-      deepEqual(func({}, new Foo), { 'a': 1, 'c': 3 });
+      deepEqual(func({}, new Foo), { 'a': 1 });
     });
 
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
@@ -5054,13 +5042,12 @@
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
       Foo.a = 1;
-      Foo.b = 2;
-      Foo.prototype.c = 3;
+      Foo.prototype.b = 2;
 
-      var expected = { 'a': 1, 'b': 2 };
+      var expected = { 'a': 1 };
       deepEqual(func({}, Foo), expected);
 
-      Foo.prototype = { 'c': 3 };
+      Foo.prototype = { 'b': 2 };
       deepEqual(func({}, Foo), expected);
     });
 
@@ -6595,7 +6582,7 @@
     test('should perform comparisons between date objects', 4, function() {
       strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
       strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
-      strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': function() { return 1337756400000; } }), false);
+      strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': _.constant(1337756400000) }), false);
       strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
     });
 
@@ -7041,8 +7028,8 @@
 
     test('should work using its fallback', 3, function() {
       if (!isModularize) {
-        // Simulate native `Uint8Array` constructor with a `toStringTag`
-        // of 'Function' and a `typeof` result of 'object'.
+        // Simulate native `Uint8Array` constructor with a `toStringTag` of
+        // 'Function' and a `typeof` result of 'object'.
         var lodash = _.runInContext({
           'Function': {
             'prototype': {
@@ -7596,7 +7583,7 @@
 
     test('should avoid V8 bug #2291 (test in Chrome 19-20)', 1, function() {
       // Trigger a V8 JIT bug.
-      // See http://code.google.com/p/v8/issues/detail?id=2291.
+      // See https://code.google.com/p/v8/issues/detail?id=2291.
       var object = {};
 
       // 1: Useless comparison statement, this is half the trigger.
@@ -8101,13 +8088,12 @@
     test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
       Foo.a = 1;
-      Foo.b = 2;
-      Foo.prototype.c = 3;
+      Foo.prototype.b = 2;
 
-      var expected = ['a', 'b'];
+      var expected = ['a'];
       deepEqual(func(Foo).sort(), expected);
 
-      Foo.prototype = { 'c': 3 };
+      Foo.prototype = { 'b': 2 };
       deepEqual(func(Foo).sort(), expected);
     });
 
@@ -8116,10 +8102,10 @@
       Foo.prototype.a = 1;
 
       var expected = ['a'];
-      deepEqual(func(Foo.prototype), ['a']);
+      deepEqual(func(Foo.prototype), expected);
 
       Foo.prototype = { 'constructor': Foo, 'a': 1 };
-      deepEqual(func(Foo.prototype), ['a']);
+      deepEqual(func(Foo.prototype), expected);
 
       var Fake = { 'prototype': {} };
       Fake.prototype.constructor = Fake;
@@ -8656,7 +8642,7 @@
     });
 
     test('should return `-Infinity` for empty collections', 1, function() {
-      var expected = _.map(empties, function() { return -Infinity; });
+      var expected = _.map(empties, _.constant(-Infinity));
 
       var actual = _.map(empties, function(value) {
         try {
@@ -8669,7 +8655,7 @@
 
     test('should return `-Infinity` for non-numeric collection values', 1, function() {
       var collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
-          expected = _.map(collections, function() { return -Infinity; });
+          expected = _.map(collections, _.constant(-Infinity));
 
       var actual = _.map(collections, function(value) {
         try {
@@ -9015,7 +9001,7 @@
     });
 
     test('should return `Infinity` for empty collections', 1, function() {
-      var expected = _.map(empties, function() { return Infinity; });
+      var expected = _.map(empties, _.constant(Infinity));
 
       var actual = _.map(empties, function(value) {
         try {
@@ -9028,7 +9014,7 @@
 
     test('should return `Infinity` for non-numeric collection values', 1, function() {
       var collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
-          expected = _.map(collections, function() { return Infinity; });
+          expected = _.map(collections, _.constant(Infinity));
 
       var actual = _.map(collections, function(value) {
         try {
@@ -9783,7 +9769,7 @@
     });
 
     test('should coerce `radix` to a number', 2, function() {
-      var object = { 'valueOf': function() { return 0; } };
+      var object = { 'valueOf': _.constant(0) };
       strictEqual(_.parseInt('08', object), 8);
       strictEqual(_.parseInt('0x20', object), 32);
     });
@@ -10586,13 +10572,13 @@
       deepEqual(_.uniq(actual).sort(), [0, 1]);
     });
 
-    test('supports not providing a `max` argument', 1, function() {
+    test('should support not providing a `max` argument', 1, function() {
       ok(_.some(array, function() {
         return _.random(5) !== 5;
       }));
     });
 
-    test('supports large integer values', 2, function() {
+    test('should support large integer values', 2, function() {
       var min = Math.pow(2, 31),
           max = Math.pow(2, 62);
 
@@ -10618,7 +10604,7 @@
       ok(actual >= min && actual <= max);
     });
 
-    test('supports providing a `floating` argument', 3, function() {
+    test('should support providing a `floating` argument', 3, function() {
       var actual = _.random(true);
       ok(actual % 1 && actual >= 0 && actual <= 1);
 
@@ -12524,7 +12510,7 @@
     });
 
     test('should coerce `text` argument to a string', 1, function() {
-      var object = { 'toString': function() { return '<%= a %>'; } },
+      var object = { 'toString': _.constant('<%= a %>') },
           data = { 'a': 1 };
 
       strictEqual(_.template(object)(data), '1');
@@ -13434,7 +13420,7 @@
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 1, function() {
-      var object = { 'toString': function() { return whitespace + 'a b c' + whitespace; } },
+      var object = { 'toString': _.constant(whitespace + 'a b c' + whitespace) },
           expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
       strictEqual(func(object), expected);
@@ -13448,7 +13434,7 @@
     });
 
     test('`_.' + methodName + '` should coerce `chars` to a string', 1, function() {
-      var object = { 'toString': function() { return '_-'; } },
+      var object = { 'toString': _.constant('_-') },
           string = '-_-a-b-c-_-',
           expected = (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : '');
 
@@ -14195,7 +14181,7 @@
       if (!isNpm) {
         var spy = {
           'toString': function() {
-            throw new Error('Spy was revealed');
+            throw new Error('spy was revealed');
           }
         };
 

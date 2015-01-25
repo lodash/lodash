@@ -6683,7 +6683,7 @@
       if (guard && isIterateeCall(func, n, guard)) {
         n = null;
       }
-      n = n == null ? func.length : (+n || 0);
+      n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
       return createWrapper(func, ARY_FLAG, null, null, null, null, n);
     }
 

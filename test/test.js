@@ -9,6 +9,9 @@
   /** Used as the size to cover large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
 
+  /** Used as the `TypeError` message for "Functions" methods. */
+  var FUNC_ERROR_TEXT = 'Expected a function';
+
   /** Used as references for the max length and index of an array. */
   var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
       MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
@@ -14651,6 +14654,34 @@
       return _.startsWith(methodName, '_');
     });
 
+    var checkFuncs = [
+      'after',
+      'ary',
+      'before',
+      'bind',
+      'curry',
+      'curryRight',
+      'debounce',
+      'defer',
+      'delay',
+      'memoize',
+      'negate',
+      'once',
+      'partial',
+      'partialRight',
+      'rearg',
+      'throttle'
+    ];
+
+    var rejectFalsey = [
+      'backflow',
+      'compose',
+      'flow',
+      'flowRight',
+      'tap',
+      'thru'
+    ].concat(checkFuncs);
+
     var returnArrays = [
       'at',
       'chunk',
@@ -14687,31 +14718,6 @@
       'without',
       'xor',
       'zip'
-    ];
-
-    var rejectFalsey = [
-      'after',
-      'ary',
-      'backflow',
-      'before',
-      'bind',
-      'compose',
-      'curry',
-      'curryRight',
-      'debounce',
-      'defer',
-      'delay',
-      'flow',
-      'flowRight',
-      'memoize',
-      'negate',
-      'once',
-      'partial',
-      'partialRight',
-      'rearg',
-      'tap',
-      'throttle',
-      'thru'
     ];
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
@@ -14793,7 +14799,9 @@
           try {
             index ? func(value) : func();
           } catch(e) {
-            pass = !pass;
+            pass = _.includes(checkFuncs, methodName)
+              ? e.message == FUNC_ERROR_TEXT
+              : !pass;
           }
           return pass;
         });

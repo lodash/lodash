@@ -896,6 +896,16 @@
       deepEqual(capped('a', 'b', 'c', 'd'), ['a', 'b', 'c']);
     });
 
+    test('should treat a negative `n` as `0`', 1, function() {
+      var capped = _.ary(fn, -1);
+
+      try {
+        var actual = capped('a');
+      } catch(e) {}
+
+      deepEqual(actual, []);
+    });
+
     test('should work when provided less than the capped numer of arguments', 1, function() {
       var capped = _.ary(fn, 3);
       deepEqual(capped('a'), ['a']);

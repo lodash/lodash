@@ -9052,7 +9052,7 @@
       strictEqual(func([curr, past]), isMax ? curr : past);
     });
 
-    test('`_.' + methodName + '` should work with a `iteratee` argument', 1, function() {
+    test('`_.' + methodName + '` should work with an `iteratee` argument', 1, function() {
       var actual = func(array, function(num) {
         return -num;
       });
@@ -13578,7 +13578,7 @@
       deepEqual(_.uniq([1, 2, 3, 3, 3, 3, 3], true), expected);
     });
 
-    test('should work with `iteratee`', 2, function() {
+    test('should work with an `iteratee` argument', 2, function() {
       _.each([objects, _.sortBy(objects, 'a')], function(array, index) {
         var isSorted = !!index,
             expected = isSorted ? [objects[2], objects[0], objects[1]] : objects.slice(0, 3);
@@ -13589,6 +13589,16 @@
 
         deepEqual(actual, expected);
       });
+    });
+
+    test('should provide the correct `iteratee` arguments', 1, function() {
+      var args;
+
+      _.uniq(objects, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [objects[0], 0, objects]);
     });
 
     test('should work with `iteratee` without specifying `isSorted`', 1, function() {

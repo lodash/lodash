@@ -425,33 +425,36 @@
 
   /**
    * Used by `_.sortByAll` to compare multiple properties of each element
-   * in a collection and stable sort them in ascending order.
+   * in a collection and stable sort them in ascending or descending order.
    *
    * @private
    * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
    * @returns {number} Returns the sort order indicator for `object`.
    */
-  function compareMultipleAscending(object, other) {
+  function compareMultiple(object, other) {
     var index = -1,
         objCriteria = object.criteria,
         othCriteria = other.criteria,
-        length = objCriteria.length;
+        reverseSameKeys = object.reverseSameKeys,
+        reverse = object.reverse,
+        length = objCriteria.length,
+        result;
 
     while (++index < length) {
-      var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
+      result = baseCompareAscending(objCriteria[index], othCriteria[index]);
       if (result) {
-        return result;
+        return reverse[index] ? -result : result;
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
-    // that causes it, under certain circumstances, to provide the same value for
-    // `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247
-    // for more details.
+    // that causes it, under certain circumstances, to provide the same value
+    // for `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247.
     //
     // This also ensures a stable sort in V8 and other engines.
-    // See https://code.google.com/p/v8/issues/detail?id=90 for more details.
-    return object.index - other.index;
+    // See https://code.google.com/p/v8/issues/detail?id=90.
+    result = object.index - other.index;
+    return reverseSameKeys ? -result : result ;
   }
 
   /**
@@ -6528,7 +6531,7 @@
 
     /**
      * This method is like `_.sortBy` except that it sorts by property names
-     * instead of an iteratee function.
+     * instead of an iteratee function and the sort order can be set
      *
      * @static
      * @memberOf _
@@ -6536,6 +6539,7 @@
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {...(string|string[])} props The property names to sort by,
      *  specified as individual property names or arrays of property names.
+     *  The order can be specified by adding '+' or '-'.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
@@ -6548,6 +6552,10 @@
      *
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
+     *
+     *
+     * _.map(_.sortByAll(users, ['user', '-age']), _.values);
+     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
      */
     function sortByAll(collection) {
       var args = arguments;
@@ -6555,9 +6563,26 @@
         args = [collection, args[1]];
       }
       var index = -1,
+          reverseHex = "",
           length = collection ? collection.length : 0,
+          result = isLength(length) ? Array(length) : [],
           props = baseFlatten(args, false, false, 1),
-          result = isLength(length) ? Array(length) : [];
+          length = props ? props.length : 0,
+          reverse = isLength(length) ? Array(length) : [];
+
+      while(length--) {
+          var regex = /^(\+|-|)(.*)?$/gi.exec(props[length]),
+          isReversed = regex[1] === '-' ? true : false,
+          hex = isReversed ? "1" : "0",
+          prop = regex[2];
+        props[length] = prop;
+        reverse[length] = isReversed;
+        reverseHex = hex.concat(reverseHex);
+      }
+
+      // We have to do same sort as sortBy().reverse() for the same array
+      // Detect when same values need to be reversed
+      reverseHex = parseInt(reverseHex, 2) % 2;
 
       baseEach(collection, function(value, key, collection) {
         var length = props.length,
@@ -6566,9 +6591,9 @@
         while (length--) {
           criteria[length] = value == null ? undefined : value[props[length]];
         }
-        result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
+        result[++index] = {'criteria': criteria, 'reverse': reverse, 'reverseSameKeys': reverseHex, 'index': index, 'value': value};
       });
-      return baseSortBy(result, compareMultipleAscending);
+      return baseSortBy(result, compareMultiple);
     }
 
     /**

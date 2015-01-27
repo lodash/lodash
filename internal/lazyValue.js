@@ -22,12 +22,12 @@ define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrap
     }
     var dir = this.dir,
         isRight = dir < 0,
-        length = array.length,
-        view = getView(0, length, this.views),
+        view = getView(0, array.length, this.views),
         start = view.start,
         end = view.end,
+        length = end - start,
         dropCount = this.dropCount,
-        takeCount = nativeMin(end - start, this.takeCount - dropCount),
+        takeCount = nativeMin(length, this.takeCount - dropCount),
         index = isRight ? end : start - 1,
         iteratees = this.iteratees,
         iterLength = iteratees ? iteratees.length : 0,
@@ -63,7 +63,7 @@ define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrap
         result[resIndex++] = value;
       }
     }
-    return isRight ? result.reverse() : result;
+    return result;
   }
 
   return lazyValue;

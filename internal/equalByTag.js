@@ -1,4 +1,4 @@
-define(['./baseToString'], function(baseToString) {
+define([], function() {
 
   /** `Object#toString` result references. */
   var boolTag = '[object Boolean]',
@@ -43,7 +43,7 @@ define(['./baseToString'], function(baseToString) {
       case stringTag:
         // Coerce regexes to strings and treat strings primitives and string
         // objects as equal. See https://es5.github.io/#x15.10.6.4 for more details.
-        return object == baseToString(other);
+        return object == (other + '');
     }
     return false;
   }

@@ -1,4 +1,4 @@
-define(['./baseToString', '../string/repeat', './root'], function(baseToString, repeat, root) {
+define(['../string/repeat', './root'], function(repeat, root) {
 
   /** Native method references. */
   var ceil = Math.ceil;
@@ -25,7 +25,7 @@ define(['./baseToString', '../string/repeat', './root'], function(baseToString, 
       return '';
     }
     var padLength = length - strLength;
-    chars = chars == null ? ' ' : baseToString(chars);
+    chars = chars == null ? ' ' : (chars + '');
     return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
   }
 

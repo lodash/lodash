@@ -34,7 +34,7 @@ define(['../internal/MapCache', '../lang/isFunction'], function(MapCache, isFunc
    * // => 'FRED'
    *
    * // modifying the result cache
-   * upperCase.cache.set('fred, 'BARNEY');
+   * upperCase.cache.set('fred', 'BARNEY');
    * upperCase('fred');
    * // => 'BARNEY'
    *

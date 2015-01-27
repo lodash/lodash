@@ -1353,6 +1353,19 @@
       return this;
     }
 
+    /**
+     * Removes every item from the cache.
+     *
+     * @private
+     * @name clear
+     * @memberOf _.memoize.Cache
+     * @returns {Object} Returns the cache object.
+     */
+    function mapClear() {
+      this.__data__ = {};
+      return this;
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -10546,6 +10559,7 @@
     MapCache.prototype.get = mapGet;
     MapCache.prototype.has = mapHas;
     MapCache.prototype.set = mapSet;
+    MapCache.prototype.clear = mapClear;
 
     // Add functions to the `Set` cache.
     SetCache.prototype.push = cachePush;

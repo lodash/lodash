@@ -9418,7 +9418,7 @@
 
     /**
      * Converts `string` to kebab case (a.k.a. spinal case).
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Computers) for
+     * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) for
      * more details.
      *
      * @static

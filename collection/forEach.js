@@ -23,7 +23,7 @@ var arrayEach = require('../internal/arrayEach'),
  * @returns {Array|Object|string} Returns `collection`.
  * @example
  *
- * _([1, 2, 3]).forEach(function(n) { console.log(n); });
+ * _([1, 2, 3]).forEach(function(n) { console.log(n); }).value();
  * // => logs each value from left to right and returns the array
  *
  * _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });

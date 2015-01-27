@@ -1,5 +1,4 @@
-var baseToString = require('./baseToString'),
-    repeat = require('../string/repeat');
+var repeat = require('../string/repeat');
 
 /** Native method references. */
 var ceil = Math.ceil;
@@ -26,7 +25,7 @@ function createPad(string, length, chars) {
     return '';
   }
   var padLength = length - strLength;
-  chars = chars == null ? ' ' : baseToString(chars);
+  chars = chars == null ? ' ' : (chars + '');
   return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
 }
 

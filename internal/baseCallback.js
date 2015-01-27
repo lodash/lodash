@@ -1,6 +1,5 @@
 var baseMatches = require('./baseMatches'),
     baseProperty = require('./baseProperty'),
-    baseToString = require('./baseToString'),
     bindCallback = require('./bindCallback'),
     identity = require('../utility/identity'),
     isBindable = require('./isBindable');
@@ -28,7 +27,7 @@ function baseCallback(func, thisArg, argCount) {
   // Handle "_.property" and "_.matches" style callback shorthands.
   return type == 'object'
     ? baseMatches(func, !argCount)
-    : baseProperty(argCount ? baseToString(func) : func);
+    : baseProperty(func + '');
 }
 
 module.exports = baseCallback;

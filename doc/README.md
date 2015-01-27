@@ -4,7 +4,7 @@
 
 <!-- div -->
 
-## <a id="array"></a>`Array`
+## `Array`
 * <a href="#_chunkarray-size1">`_.chunk`</a>
 * <a href="#_compactarray">`_.compact`</a>
 * <a href="#_differencearray-values">`_.difference`</a>
@@ -49,7 +49,7 @@
 
 <!-- div -->
 
-## <a id="chain"></a>`Chain`
+## `Chain`
 * <a href="#_value">`_`</a>
 * <a href="#_chainvalue">`_.chain`</a>
 * <a href="#_tapvalue-interceptor-thisarg">`_.tap`</a>
@@ -65,7 +65,7 @@
 
 <!-- div -->
 
-## <a id="collection"></a>`Collection`
+## `Collection`
 * <a href="#_everycollection-predicate_identity-thisarg" class="alias">`_.all` -> `every`</a>
 * <a href="#_somecollection-predicate_identity-thisarg" class="alias">`_.any` -> `some`</a>
 * <a href="#_atcollection-props">`_.at`</a>
@@ -111,14 +111,14 @@
 
 <!-- div -->
 
-## <a id="date"></a>`Date`
+## `Date`
 * <a href="#_now">`_.now`</a>
 
 <!-- /div -->
 
 <!-- div -->
 
-## <a id="function"></a>`Function`
+## `Function`
 * <a href="#_aftern-func">`_.after`</a>
 * <a href="#_aryfunc">`_.ary`</a>
 * <a href="#_flowrightfuncs" class="alias">`_.backflow` -> `flowRight`</a>
@@ -147,7 +147,7 @@
 
 <!-- div -->
 
-## <a id="lang"></a>`Lang`
+## `Lang`
 * <a href="#_clonevalue-isdeep-customizer-thisarg">`_.clone`</a>
 * <a href="#_clonedeepvalue-customizer-thisarg">`_.cloneDeep`</a>
 * <a href="#_isargumentsvalue">`_.isArguments`</a>
@@ -178,14 +178,14 @@
 
 <!-- div -->
 
-## <a id="number"></a>`Number`
+## `Number`
 * <a href="#_randommin0-max1-floating">`_.random`</a>
 
 <!-- /div -->
 
 <!-- div -->
 
-## <a id="object"></a>`Object`
+## `Object`
 * <a href="#_assignobject-sources-customizer-thisarg">`_.assign`</a>
 * <a href="#_createprototype-properties">`_.create`</a>
 * <a href="#_defaultsobject-sources">`_.defaults`</a>
@@ -216,7 +216,7 @@
 
 <!-- div -->
 
-## <a id="string"></a>`String`
+## `String`
 * <a href="#_camelcasestring">`_.camelCase`</a>
 * <a href="#_capitalizestring">`_.capitalize`</a>
 * <a href="#_deburrstring">`_.deburr`</a>
@@ -243,7 +243,7 @@
 
 <!-- div -->
 
-## <a id="utility"></a>`Utility`
+## `Utility`
 * <a href="#_attemptfunc">`_.attempt`</a>
 * <a href="#_callbackfunc_identity-thisarg">`_.callback`</a>
 * <a href="#_constantvalue">`_.constant`</a>
@@ -264,14 +264,14 @@
 
 <!-- div -->
 
-## <a id="methods"></a>`Methods`
+## `Methods`
 * <a href="#_templatesettingsimports_">`_.templateSettings.imports._`</a>
 
 <!-- /div -->
 
 <!-- div -->
 
-## <a id="properties"></a>`Properties`
+## `Properties`
 * <a href="#_version">`_.VERSION`</a>
 * <a href="#_support">`_.support`</a>
 * <a href="#_supportargstag">`_.support.argsTag`</a>
@@ -360,7 +360,9 @@ _.compact([0, 1, false, 2, '', 3]);
 
 Creates an array excluding all values of the provided arrays using
 `SameValueZero` for equality comparisons.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -453,10 +455,12 @@ _.dropRight([1, 2, 3], 0);
 Creates a slice of `array` excluding elements dropped from the end.
 Elements are dropped until `predicate` returns falsey. The predicate is
 bound to `thisArg` and invoked with three arguments; (value, index, array).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -500,10 +504,12 @@ _.pluck(_.dropRightWhile(users, { 'status': 'away' }), 'user');
 Creates a slice of `array` excluding elements dropped from the beginning.
 Elements are dropped until `predicate` returns falsey. The predicate is
 bound to `thisArg` and invoked with three arguments; (value, index, array).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -546,10 +552,12 @@ _.pluck(_.dropWhile(users, { 'status': 'busy' }), 'user');
 
 This method is like `_.find` except that it returns the index of the first
 element `predicate` returns truthy for, instead of the element itself.
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -592,10 +600,12 @@ _.findIndex(users, 'active');
 
 This method is like `_.findIndex` except that it iterates over elements
 of `collection` from right to left.
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -715,7 +725,9 @@ Gets the index at which the first occurrence of `value` is found in `array`
 using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
 it is used as the offset from the end of `array`. If `array` is sorted
 providing `true` for `fromIndex` performs a faster binary search.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -774,7 +786,9 @@ _.initial([1, 2, 3]);
 
 Creates an array of unique values in all provided arrays using `SameValueZero`
 for equality comparisons.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -856,9 +870,13 @@ _.lastIndexOf([4, 4, 5, 5, 6, 6], 5, true);
 
 Removes all provided values from `array` using `SameValueZero` for equality
 comparisons.
- *Notes:**
-- Unlike `_.without`, this method mutates `array`.
-- `SameValueZero` comparisons are like strict equality comparisons, e.g. `===`,
+<br>
+<br>
+**Notes:**
+<br>
+* Unlike `_.without`, this method mutates `array`.
+<br>
+* `SameValueZero` comparisons are like strict equality comparisons, e.g. `===`,
 except that `NaN` matches `NaN`. See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
 
@@ -888,7 +906,9 @@ console.log(array);
 Removes elements from `array` corresponding to the given indexes and returns
 an array of the removed elements. Indexes may be specified as an array of
 indexes or as individual arguments.
- *Note:** Unlike `_.at`, this method mutates `array`.
+<br>
+<br>
+**Note:** Unlike `_.at`, this method mutates `array`.
 
 #### Arguments
 1. `array` *(Array)*: The array to modify.
@@ -920,14 +940,18 @@ console.log(evens);
 Removes all elements from `array` that `predicate` returns truthy for
 and returns an array of the removed elements. The predicate is bound to
 `thisArg` and invoked with three arguments; (value, index, array).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
- *Note:** Unlike `_.filter`, this method mutates `array`.
+<br>
+<br>
+**Note:** Unlike `_.filter`, this method mutates `array`.
 
 #### Arguments
 1. `array` *(Array)*: The array to modify.
@@ -980,7 +1004,9 @@ _.rest([1, 2, 3]);
 <a href="#_slicearray-start0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L4866 "View in source") [&#x24C9;][1]
 
 Creates a slice of `array` from `start` up to, but not including, `end`.
- *Note:** This function is used instead of `Array#slice` to support node
+<br>
+<br>
+**Note:** This function is used instead of `Array#slice` to support node
 lists in IE < 9 and to ensure dense arrays are returned.
 
 #### Arguments
@@ -1005,10 +1031,12 @@ be inserted into `array` in order to maintain its sort order. If an iteratee
 function is provided it is invoked for `value` and each element of `array`
 to compute their sort ranking. The iteratee is bound to `thisArg` and
 invoked with one argument; (value).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -1147,10 +1175,12 @@ _.takeRight([1, 2, 3], 0);
 Creates a slice of `array` with elements taken from the end. Elements are
 taken until `predicate` returns falsey. The predicate is bound to `thisArg`
 and invoked with three arguments; (value, index, array).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -1194,10 +1224,12 @@ _.pluck(_.takeRightWhile(users, { 'status': 'away' }), 'user');
 Creates a slice of `array` with elements taken from the beginning. Elements
 are taken until `predicate` returns falsey. The predicate is bound to
 `thisArg` and invoked with three arguments; (value, index, array).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -1240,7 +1272,9 @@ _.pluck(_.takeWhile(users, { 'status': 'busy' }), 'user');
 
 Creates an array of unique values, in order, of the provided arrays using
 `SameValueZero` for equality comparisons.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -1271,14 +1305,18 @@ search algorithm for sorted arrays. If an iteratee function is provided it
 is invoked for each value in the array to generate the criterion by which
 uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
 with three arguments; (value, index, array).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -1347,7 +1385,9 @@ _.unzip(zipped);
 
 Creates an array excluding all provided values using `SameValueZero` for
 equality comparisons.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -1462,24 +1502,29 @@ automatically end the chain returning the unwrapped value. Explicit chaining
 may be enabled using `_.chain`. The execution of chained methods is lazy,
 that is, execution is deferred until `_#value` is implicitly or explicitly
 called.
-
+<br>
+<br>
 Lazy evaluation allows several methods to support shortcut fusion. Shortcut
 fusion is an optimization that merges iteratees to avoid creating intermediate
 arrays and reduce the number of iteratee executions.
-
+<br>
+<br>
 Chaining is supported in custom builds as long as the `_#value` method is
 directly or indirectly included in the build.
-
-In addition to lodash methods, wrappers also have the following `Array` methods:
+<br>
+<br>
+In addition to lodash methods, wrappers also have the following `Array` methods:<br>
 `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
 and `unshift`
-
-The wrapper functions that support shortcut fusion are:
+<br>
+<br>
+The wrapper functions that support shortcut fusion are:<br>
 `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `first`,
 `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`, `slice`,
 `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `where`
-
-The chainable wrapper functions are:
+<br>
+<br>
+The chainable wrapper functions are:<br>
 `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
 `callback`, `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`,
 `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
@@ -1495,8 +1540,9 @@ The chainable wrapper functions are:
 `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`,
 `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`,
 `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
-
-The wrapper functions that are **not** chainable by default are:
+<br>
+<br>
+The wrapper functions that are **not** chainable by default are:<br>
 `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
 `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
 `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
@@ -1510,7 +1556,8 @@ The wrapper functions that are **not** chainable by default are:
 `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
 `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
 `unescape`, `uniqueId`, `value`, and `words`
-
+<br>
+<br>
 The wrapper function `sample` will return a wrapped value when `n` is provided,
 otherwise an unwrapped value is returned.
 
@@ -1670,7 +1717,9 @@ _(users).chain()
 
 Reverses the wrapped array so the first element becomes the last, the
 second element becomes the second to last, and so on.
- *Note:** This method mutates the wrapped array.
+<br>
+<br>
+**Note:** This method mutates the wrapped array.
 
 #### Returns
 *(Object)*:  Returns the new reversed `lodash` object.
@@ -1771,10 +1820,12 @@ each element of `collection` through `iteratee`. The corresponding value
 of each key is the number of times the key was returned by `iteratee`.
 The `iteratee` is bound to `thisArg` and invoked with three arguments;
 (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -1810,10 +1861,12 @@ _.countBy(['one', 'two', 'three'], 'length');
 Checks if `predicate` returns truthy for **all** elements of `collection`.
 The predicate is bound to `thisArg` and invoked with three arguments;
 (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -1857,10 +1910,12 @@ _.every(users, { 'age': 36 });
 Iterates over elements of `collection`, returning an array of all elements
 `predicate` returns truthy for. The predicate is bound to `thisArg` and
 invoked with three arguments; (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -1903,10 +1958,12 @@ _.pluck(_.filter(users, { 'age': 36 }), 'user');
 Iterates over elements of `collection`, returning the first element
 `predicate` returns truthy for. The predicate is bound to `thisArg` and
 invoked with three arguments; (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2009,7 +2066,9 @@ Iterates over elements of `collection` invoking `iteratee` for each element.
 The `iteratee` is bound to `thisArg` and invoked with three arguments;
 (value, index|key, collection). Iterator functions may exit iteration early
 by explicitly returning `false`.
- *Note:** As with other "Collections" methods, objects with a `length` property
+<br>
+<br>
+**Note:** As with other "Collections" methods, objects with a `length` property
 are iterated like arrays. To avoid this behavior `_.forIn` or `_.forOwn`
 may be used for object iteration.
 
@@ -2023,7 +2082,7 @@ may be used for object iteration.
 
 #### Example
 ```js
-_([1, 2, 3]).forEach(function(n) { console.log(n); });
+_([1, 2, 3]).forEach(function(n) { console.log(n); }).value();
 // => logs each value from left to right and returns the array
 
 _.forEach({ 'one': 1, 'two': 2, 'three': 3 }, function(n, key) { console.log(n, key); });
@@ -2068,10 +2127,12 @@ each element of `collection` through `iteratee`. The corresponding value
 of each key is an array of the elements responsible for generating the key.
 The `iteratee` is bound to `thisArg` and invoked with three arguments;
 (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2108,7 +2169,9 @@ _.groupBy(['one', 'two', 'three'], 'length');
 Checks if `value` is in `collection` using `SameValueZero` for equality
 comparisons. If `fromIndex` is negative, it is used as the offset from
 the end of `collection`.
- *Note:** `SameValueZero` comparisons are like strict equality comparisons,
+<br>
+<br>
+**Note:** `SameValueZero` comparisons are like strict equality comparisons,
 e.g. `===`, except that `NaN` matches `NaN`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
 for more details.
@@ -2149,10 +2212,12 @@ each element of `collection` through `iteratee`. The corresponding value
 of each key is the last element responsible for generating the key. The
 iteratee function is bound to `thisArg` and invoked with three arguments;
 (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2223,10 +2288,12 @@ _.invoke([123, 456], String.prototype.split, '');
 Creates an array of values by running each element in `collection` through
 `iteratee`. The `iteratee` is bound to `thisArg` and invoked with three
 arguments; (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2270,10 +2337,12 @@ Gets the maximum value of `collection`. If `collection` is empty or falsey
 for each value in `collection` to generate the criterion by which the value
 is ranked. The `iteratee` is bound to `thisArg` and invoked with three
 arguments; (value, index, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2320,10 +2389,12 @@ Gets the minimum value of `collection`. If `collection` is empty or falsey
 for each value in `collection` to generate the criterion by which the value
 is ranked. The `iteratee` is bound to `thisArg` and invoked with three
 arguments; (value, index, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2369,10 +2440,12 @@ Creates an array of elements split into two groups, the first of which
 contains elements `predicate` returns truthy for, while the second of which
 contains elements `predicate` returns falsey for. The predicate is bound
 to `thisArg` and invoked with three arguments; (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2513,10 +2586,12 @@ _.reduceRight(array, function(flattened, other) { return flattened.concat(other)
 
 The opposite of `_.filter`; this method returns the elements of `collection`
 that `predicate` does **not** return truthy for.
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2639,10 +2714,12 @@ Checks if `predicate` returns truthy for **any** element of `collection`.
 The function returns as soon as it finds a passing value and does not iterate
 over the entire collection. The predicate is bound to `thisArg` and invoked
 with three arguments; (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2688,10 +2765,12 @@ running each element in a collection through `iteratee`. This method performs
 a stable sort, that is, it preserves the original sort order of equal elements.
 The `iteratee` is bound to `thisArg` and invoked with three arguments;
 (value, index|key, collection).
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -2911,10 +2990,13 @@ jQuery('#add').on('click', _.before(5, addContactToList));
 Creates a function that invokes `func` with the `this` binding of `thisArg`
 and prepends any additional `_.bind` arguments to those provided to the
 bound function.
-
+<br>
+<br>
 The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
 may be used as a placeholder for partially applied arguments.
- *Note:** Unlike native `Function#bind` this method does not set the `length`
+<br>
+<br>
+**Note:** Unlike native `Function#bind` this method does not set the `length`
 property of bound functions.
 
 #### Arguments
@@ -2955,7 +3037,9 @@ Binds methods of an object to the object itself, overwriting the existing
 method. Method names may be specified as individual arguments or as arrays
 of method names. If no method names are provided all enumerable function
 properties, own and inherited, of `object` are bound.
- *Note:** This method does not set the `length` property of bound functions.
+<br>
+<br>
+**Note:** This method does not set the `length` property of bound functions.
 
 #### Arguments
 1. `object` *(Object)*: The object to bind and assign the bound methods to.
@@ -2986,12 +3070,14 @@ jQuery('#docs').on('click', view.onClick);
 
 Creates a function that invokes the method at `object[key]` and prepends
 any additional `_.bindKey` arguments to those provided to the bound function.
-
+<br>
+<br>
 This method differs from `_.bind` by allowing bound functions to reference
 methods that may be redefined or don't yet exist.
 See [Peter Michaux's article](http://michaux.ca/articles/lazy-function-definition-pattern)
 for more details.
-
+<br>
+<br>
 The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
 builds, may be used as a placeholder for partially applied arguments.
 
@@ -3042,10 +3128,13 @@ called either invokes `func` returning its result, if all `func` arguments
 have been provided, or returns a function that accepts one or more of the
 remaining `func` arguments, and so on. The arity of `func` may be specified
 if `func.length` is not sufficient.
-
+<br>
+<br>
 The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
 may be used as a placeholder for provided arguments.
- *Note:** This method does not set the `length` property of curried functions.
+<br>
+<br>
+**Note:** This method does not set the `length` property of curried functions.
 
 #### Arguments
 1. `func` *(Function)*: The function to curry.
@@ -3086,10 +3175,13 @@ curried(1)(_, 3)(2);
 
 This method is like `_.curry` except that arguments are applied to `func`
 in the manner of `_.partialRight` instead of `_.partial`.
-
+<br>
+<br>
 The `_.curryRight.placeholder` value, which defaults to `_` in monolithic
 builds, may be used as a placeholder for provided arguments.
- *Note:** This method does not set the `length` property of curried functions.
+<br>
+<br>
+**Note:** This method does not set the `length` property of curried functions.
 
 #### Arguments
 1. `func` *(Function)*: The function to curry.
@@ -3134,10 +3226,13 @@ with a `cancel` method to cancel delayed invocations. Provide an options
 object to indicate that `func` should be invoked on the leading and/or
 trailing edge of the `wait` timeout. Subsequent calls to the debounced
 function return the result of the last `func` invocation.
- *Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+<br>
+<br>
+**Note:** If `leading` and `trailing` options are `true`, `func` is invoked
 on the trailing edge of the timeout only if the the debounced function is
 invoked more than once during the `wait` timeout.
-
+<br>
+<br>
 See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
 for details over the differences between `_.debounce` and `_.throttle`.
 
@@ -3315,7 +3410,9 @@ arguments provided to the memoized function. By default, the first argument
 provided to the memoized function is coerced to a string and used as the
 cache key. The `func` is invoked with the `this` binding of the memoized
 function.
- *Note:** The cache is exposed as the `cache` property on the memoized
+<br>
+<br>
+**Note:** The cache is exposed as the `cache` property on the memoized
 function. Its creation may be customized by replacing the `_.memoize.Cache`
 constructor with one whose instances implement the ES `Map` method interface
 of `get`, `has`, and `set`. See the
@@ -3339,7 +3436,7 @@ upperCase('fred');
 // => 'FRED'
 
 // modifying the result cache
-upperCase.cache.set('fred, 'BARNEY');
+upperCase.cache.set('fred', 'BARNEY');
 upperCase('fred');
 // => 'BARNEY'
 
@@ -3427,10 +3524,13 @@ initialize();
 Creates a function that invokes `func` with `partial` arguments prepended
 to those provided to the new function. This method is like `_.bind` except
 it does **not** alter the `this` binding.
-
+<br>
+<br>
 The `_.partial.placeholder` value, which defaults to `_` in monolithic
 builds, may be used as a placeholder for partially applied arguments.
- *Note:** This method does not set the `length` property of partially
+<br>
+<br>
+**Note:** This method does not set the `length` property of partially
 applied functions.
 
 #### Arguments
@@ -3466,10 +3566,13 @@ greetFred('hi');
 
 This method is like `_.partial` except that partially applied arguments
 are appended to those provided to the new function.
-
+<br>
+<br>
 The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
 builds, may be used as a placeholder for partially applied arguments.
- *Note:** This method does not set the `length` property of partially
+<br>
+<br>
+**Note:** This method does not set the `length` property of partially
 applied functions.
 
 #### Arguments
@@ -3543,10 +3646,13 @@ delayed invocations. Provide an options object to indicate that `func`
 should be invoked on the leading and/or trailing edge of the `wait` timeout.
 Subsequent calls to the throttled function return the result of the last
 `func` call.
- *Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+<br>
+<br>
+**Note:** If `leading` and `trailing` options are `true`, `func` is invoked
 on the trailing edge of the timeout only if the the throttled function is
 invoked more than once during the `wait` timeout.
-
+<br>
+<br>
 See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
 for details over the differences between `_.throttle` and `_.debounce`.
 
@@ -3622,7 +3728,9 @@ otherwise they are assigned by reference. If `customizer` is provided it is
 invoked to produce the cloned values. If `customizer` returns `undefined`
 cloning is handled by the method instead. The `customizer` is bound to
 `thisArg` and invoked with two argument; (value [, index|key, object]).
- *Note:** This method is loosely based on the structured clone algorithm.
+<br>
+<br>
+**Note:** This method is loosely based on the structured clone algorithm.
 The enumerable properties of `arguments` objects and objects created by
 constructors other than `Object` are cloned to plain `Object` objects. An
 empty object is returned for uncloneable values such as functions, DOM nodes,
@@ -3678,7 +3786,9 @@ Creates a deep clone of `value`. If `customizer` is provided it is invoked
 to produce the cloned values. If `customizer` returns `undefined` cloning
 is handled by the method instead. The `customizer` is bound to `thisArg`
 and invoked with two argument; (value [, index|key, object]).
- *Note:** This method is loosely based on the structured clone algorithm.
+<br>
+<br>
+**Note:** This method is loosely based on the structured clone algorithm.
 The enumerable properties of `arguments` objects and objects created by
 constructors other than `Object` are cloned to plain `Object` objects. An
 empty object is returned for uncloneable values such as functions, DOM nodes,
@@ -3891,7 +4001,9 @@ equivalent. If `customizer` is provided it is invoked to compare values.
 If `customizer` returns `undefined` comparisons are handled by the method
 instead. The `customizer` is bound to `thisArg` and invoked with three
 arguments; (value, other [, index|key]).
- *Note:** This method supports comparing arrays, booleans, `Date` objects,
+<br>
+<br>
+**Note:** This method supports comparing arrays, booleans, `Date` objects,
 numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
 are **not** supported. Provide a customizer function to extend support
 for comparing other values.
@@ -3961,7 +4073,9 @@ _.isError(Error);
 <a href="#_isfinitevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L7939 "View in source") [&#x24C9;][1]
 
 Checks if `value` is a finite primitive number.
- *Note:** This method is based on ES `Number.isFinite`. See the
+<br>
+<br>
+**Note:** This method is based on ES `Number.isFinite`. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
 for more details.
 
@@ -4027,7 +4141,9 @@ Performs a deep comparison between `object` and `source` to determine if
 it is invoked to compare values. If `customizer` returns `undefined`
 comparisons are handled by the method instead. The `customizer` is bound
 to `thisArg` and invoked with three arguments; (value, other, index|key).
- *Note:** This method supports comparing properties of arrays, booleans,
+<br>
+<br>
+**Note:** This method supports comparing properties of arrays, booleans,
 `Date` objects, numbers, `Object` objects, regexes, and strings. Functions
 and DOM nodes are **not** supported. Provide a customizer function to extend
 support for comparing other values.
@@ -4070,7 +4186,9 @@ _.isMatch(object, source, function(value, other) {
 <a href="#_isnanvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L8091 "View in source") [&#x24C9;][1]
 
 Checks if `value` is `NaN`.
- *Note:** This method is not the same as native `isNaN` which returns `true`
+<br>
+<br>
+**Note:** This method is not the same as native `isNaN` which returns `true`
 for `undefined` and other non-numeric values. See the [ES5 spec](https://es5.github.io/#x15.1.2.4)
 for more details.
 
@@ -4154,7 +4272,9 @@ _.isNull(void 0);
 <a href="#_isnumbervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L8166 "View in source") [&#x24C9;][1]
 
 Checks if `value` is classified as a `Number` primitive or object.
- *Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+<br>
+<br>
+**Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
 as numbers, use the `_.isFinite` method.
 
 #### Arguments
@@ -4185,7 +4305,9 @@ _.isNumber('8.4');
 
 Checks if `value` is the language type of `Object`.
 (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
+<br>
+<br>
+**Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
 
 #### Arguments
 1. `value` *(&#42;)*: The value to check.
@@ -4215,7 +4337,9 @@ _.isObject(1);
 
 Checks if `value` is a plain object, that is, an object created by the
 `Object` constructor or one with a `[[Prototype]]` of `null`.
- *Note:** This method assumes objects created by the `Object` constructor
+<br>
+<br>
+**Note:** This method assumes objects created by the `Object` constructor
 have no inherited enumerable properties.
 
 #### Arguments
@@ -4557,10 +4681,12 @@ _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
 
 This method is like `_.findIndex` except that it returns the key of the
 first element `predicate` returns truthy for, instead of the element itself.
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -4603,10 +4729,12 @@ _.findKey(users, 'active');
 
 This method is like `_.findKey` except that it iterates over elements of
 a collection in the opposite order.
-
+<br>
+<br>
 If a property name is provided for `predicate` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `predicate` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -4854,7 +4982,9 @@ _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
 <a href="#_keysobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L8762 "View in source") [&#x24C9;][1]
 
 Creates an array of the own enumerable property names of `object`.
- *Note:** Non-object values are coerced to objects. See the
+<br>
+<br>
+**Note:** Non-object values are coerced to objects. See the
 [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.keys)
 for more details.
 
@@ -4889,7 +5019,9 @@ _.keys('hi');
 <a href="#_keysinobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L8796 "View in source") [&#x24C9;][1]
 
 Creates an array of the own and inherited enumerable property names of `object`.
- *Note:** Non-object values are coerced to objects.
+<br>
+<br>
+**Note:** Non-object values are coerced to objects.
 
 #### Arguments
 1. `object` *(Object)*: The object to inspect.
@@ -4922,10 +5054,12 @@ Creates an object with the same keys as `object` and values generated by
 running each own enumerable property of `object` through `iteratee`. The
 iteratee function is bound to `thisArg` and invoked with three arguments;
 (value, key, object).
-
+<br>
+<br>
 If a property name is provided for `iteratee` the created "_.property"
 style callback returns the property value of the given element.
-
+<br>
+<br>
 If an object is provided for `iteratee` the created "_.matches" style
 callback returns `true` for elements that have the properties of the given
 object, else `false`.
@@ -5186,7 +5320,9 @@ var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, n, key) {
 <a href="#_valuesobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L9168 "View in source") [&#x24C9;][1]
 
 Creates an array of the own enumerable property values of `object`.
- *Note:** Non-object values are coerced to objects.
+<br>
+<br>
+**Note:** Non-object values are coerced to objects.
 
 #### Arguments
 1. `object` *(Object)*: The object to query.
@@ -5220,7 +5356,9 @@ _.values('hi');
 
 Creates an array of the own and inherited enumerable property values
 of `object`.
- *Note:** Non-object values are coerced to objects.
+<br>
+<br>
+**Note:** Non-object values are coerced to objects.
 
 #### Arguments
 1. `object` *(Object)*: The object to query.
@@ -5362,20 +5500,25 @@ _.endsWith('abc', 'b', 2);
 
 Converts the characters "&", "<", ">", '"', "'", and '`', in `string` to
 their corresponding HTML entities.
- *Note:** No other characters are escaped. To escape additional characters
+<br>
+<br>
+**Note:** No other characters are escaped. To escape additional characters
 use a third-party library like [_he_](https://mths.be/he).
-
+<br>
+<br>
 Though the ">" character is escaped for symmetry, characters like
 ">" and "/" don't require escaping in HTML and have no special meaning
 unless they're part of a tag or unquoted attribute value.
 See [Mathias Bynens's article](https://mathiasbynens.be/notes/ambiguous-ampersands)
 (under "semi-related fun fact") for more details.
-
+<br>
+<br>
 Backticks are escaped because in Internet Explorer < 9, they can break out
 of attribute values or HTML comments. See [#102](https://html5sec.org/#102),
 [#108](https://html5sec.org/#108), and [#133](https://html5sec.org/#133) of
 the [HTML5 Security Cheatsheet](https://html5sec.org/) for more details.
-
+<br>
+<br>
 When working with HTML you should always quote attribute values to reduce
 XSS vectors. See [Ryan Grove's article](http://wonko.com/post/html-escaping)
 for more details.
@@ -5552,7 +5695,9 @@ _.padRight('abc', 3);
 Converts `string` to an integer of the specified radix. If `radix` is
 `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
 in which case a `radix` of `16` is used.
- *Note:** This method aligns with the ES5 implementation of `parseInt`.
+<br>
+<br>
+**Note:** This method aligns with the ES5 implementation of `parseInt`.
 See the [ES5 spec](https://es5.github.io/#E) for more details.
 
 #### Arguments
@@ -5672,13 +5817,17 @@ in "interpolate" delimiters, HTML-escape interpolated data properties in
 "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
 properties may be accessed as free variables in the template. If a setting
 object is provided it takes precedence over `_.templateSettings` values.
- *Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
+<br>
+<br>
+**Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
 See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
 for more details.
-
+<br>
+<br>
 For more information on precompiling templates see
 [lodash's custom builds documentation](https://lodash.com/custom-builds).
-
+<br>
+<br>
 For more information on Chrome extension sandboxes see
 [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
 
@@ -5894,7 +6043,9 @@ _.trunc('hi-diddly-ho there, neighborino', { 'omission': ' [...]' });
 The inverse of `_.escape`; this method converts the HTML entities
 `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to their
 corresponding characters.
- *Note:** No other HTML entities are unescaped. To unescape additional HTML
+<br>
+<br>
+**Note:** No other HTML entities are unescaped. To unescape additional HTML
 entities use a third-party library like [_he_](https://mths.be/he).
 
 #### Arguments
@@ -6450,7 +6601,8 @@ enumerable by default (IE < 9, Safari < 5.1).
 <a href="#_supportenumprototypes">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L992 "View in source") [&#x24C9;][1]
 
 (boolean): Detect if `prototype` properties are enumerable by default.
-
+<br>
+<br>
 Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
 (if the prototype or a property on the prototype has been set)
 incorrectly set the `[[Enumerable]]` value of a function's `prototype`
@@ -6502,7 +6654,8 @@ the PlayStation 3; forced `false` for Windows 8 apps).
 
 (boolean): Detect if properties shadowing those on `Object.prototype` are
 non-enumerable.
-
+<br>
+<br>
 In IE < 9 an object's own properties, shadowing non-enumerable ones,
 are made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
 
@@ -6540,7 +6693,8 @@ are made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
 
 (boolean): Detect if `Array#shift` and `Array#splice` augment array-like objects
 correctly.
-
+<br>
+<br>
 Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array `shift()`
 and `splice()` functions that fail to remove the last element, `value[0]`,
 of array-like objects even though the `length` property is set to `0`.
@@ -6557,7 +6711,8 @@ is buggy regardless of mode in IE < 9.
 <a href="#_supportunindexedchars">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L1073 "View in source") [&#x24C9;][1]
 
 (boolean): Detect lack of support for accessing string characters by index.
-
+<br>
+<br>
 IE < 8 can't access characters by index. IE 8 can only access characters
 by index on string literals, not string objects.
 

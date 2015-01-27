@@ -5424,7 +5424,7 @@ _.escapeRegExp('[lodash](https://lodash.com/)');
 <a href="#_kebabcasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.0.0/lodash.src.js#L9440 "View in source") [&#x24C9;][1]
 
 Converts `string` to kebab case (a.k.a. spinal case).
-See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Computers) for
+See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) for
 more details.
 
 #### Arguments

@@ -14,7 +14,7 @@ $ npm i --save lodash.find
 In Node.js/io.js:
 
 ```js
-var find = require('lodash.find');
+var _find = require('lodash.find');
 ```
 
 See the [documentation](https://lodash.com/docs#find) or [package source](https://github.com/lodash/lodash/blob/3.0.0-npm-packages/lodash.find) for more details.

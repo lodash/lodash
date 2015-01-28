@@ -1801,7 +1801,7 @@
       // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
         ? baseMatches(func, !argCount)
-        : baseProperty(argCount ? baseToString(func) : func);
+        : baseProperty(func + '');
     }
 
     /**

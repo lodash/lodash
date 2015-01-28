@@ -5768,6 +5768,25 @@
         skipTest(2);
       }
     });
+
+    test('should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            values = [];
+
+        var actual = _(array).initial().filter(function(value) {
+          values.push(value);
+          return false;
+        })
+        .value();
+
+        deepEqual(actual, []);
+        deepEqual(values, [1, 2]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -11271,6 +11290,25 @@
       }
     });
 
+    test('should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            values = [];
+
+        var actual = _(array).rest().filter(function(value) {
+          values.push(value);
+          return false;
+        })
+        .value();
+
+        deepEqual(actual, []);
+        deepEqual(values, [2, 3]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.tail, _.rest);
     });
@@ -14200,6 +14238,16 @@
       }
     });
 
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var actual = _([1, 2, 3, null]).map(_.identity).reverse().value();
+        deepEqual(actual, [null, 3, 2, 1]);
+      }
+      else {
+        skipTest();
+      }
+    });
+
     test('should be lazy when in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var spy = {
@@ -14215,6 +14263,21 @@
 
         ok(wrapped instanceof _);
         strictEqual(actual, 'a');
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should would in a hybrid chain sequence', 2, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3, null],
+            actual = _(array).map(_.identity).compact().reverse().value();
+
+        deepEqual(actual, [3, 2, 1]);
+
+        actual = _([1, 2, 3, null]).map(_.identity).compact().pull(1).push(4).reverse().value()
+        deepEqual(actual, [4, 3, 2]);
       }
       else {
         skipTest(2);

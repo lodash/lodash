@@ -1216,11 +1216,14 @@
      * @returns {Object} Returns the new reversed `LazyWrapper` object.
      */
     function lazyReverse() {
-      var filtered = this.filtered,
-          result = filtered ? new LazyWrapper(this) : this.clone();
-
-      result.dir = this.dir * -1;
-      result.filtered = filtered;
+      if (this.filtered) {
+        var result = new LazyWrapper(this);
+        result.dir = -1;
+        result.filtered = true;
+      } else {
+        result = this.clone();
+        result.dir *= -1;
+      }
       return result;
     }
 
@@ -1239,12 +1242,12 @@
       }
       var dir = this.dir,
           isRight = dir < 0,
-          length = array.length,
-          view = getView(0, length, this.views),
+          view = getView(0, array.length, this.views),
           start = view.start,
           end = view.end,
+          length = end - start,
           dropCount = this.dropCount,
-          takeCount = nativeMin(end - start, this.takeCount - dropCount),
+          takeCount = nativeMin(length, this.takeCount - dropCount),
           index = isRight ? end : start - 1,
           iteratees = this.iteratees,
           iterLength = iteratees ? iteratees.length : 0,
@@ -1280,7 +1283,7 @@
           result[resIndex++] = value;
         }
       }
-      return isRight ? result.reverse() : result;
+      return result;
     }
 
     /*------------------------------------------------------------------------*/
@@ -5499,6 +5502,9 @@
     function wrapperReverse() {
       var value = this.__wrapped__;
       if (value instanceof LazyWrapper) {
+        if (this.__actions__.length) {
+          value = new LazyWrapper(this);
+        }
         return new LodashWrapper(value.reverse());
       }
       return this.thru(function(value) {
@@ -10902,7 +10908,8 @@
 
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var retUnwrapped = /^(?:first|last)$/.test(methodName);
+      var lodashFunc = lodash[methodName],
+          retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var value = this.__wrapped__,
@@ -10915,12 +10922,12 @@
         if (retUnwrapped && !chainAll) {
           return onlyLazy
             ? func.call(value)
-            : lodash[methodName](this.value());
+            : lodashFunc.call(lodash, this.value());
         }
         var interceptor = function(value) {
           var otherArgs = [value];
           push.apply(otherArgs, args);
-          return lodash[methodName].apply(lodash, otherArgs);
+          return lodashFunc.apply(lodash, otherArgs);
         };
         if (isLazy || isArray(value)) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),

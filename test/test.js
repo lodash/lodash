@@ -9015,6 +9015,21 @@
       deepEqual(actual, { 'a': 1 });
     });
 
+    test('should not not error on DOM elements', 1, function() {
+      var object1 = { 'el': document && document.createElement('div') },
+          object2 = { 'el': document && document.createElement('div') },
+          pairs = [[{}, object1], [object2, object1]],
+          expected = _.map(pairs, _.constant(true));
+
+      var actual = _.map(pairs, function(pair) {
+        try {
+          return _.merge(pair[0], pair[1]).el === pair[1].el;
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should handle merging if `customizer` returns `undefined`', 2, function() {
       var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });

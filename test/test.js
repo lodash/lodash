@@ -11690,8 +11690,8 @@
     });
 
     test('should coerce `start` and `end` to finite numbers', 1, function() {
-      var actual = [_.slice(array, '0', 1), _.slice(array, 0, '1'), _.slice(array, '1'), _.slice(array, NaN, 1), _.slice(array, 1, NaN)];
-      deepEqual(actual, [[1], [1], [2, 3], [1], []]);
+      var actual = [_.slice(array, 0.1, 1.1), _.slice(array, '0', 1), _.slice(array, 0, '1'), _.slice(array, '1'), _.slice(array, NaN, 1), _.slice(array, 1, NaN)];
+      deepEqual(actual, [[1], [1], [1], [2, 3], [1], []]);
     });
 
     test('should work as an iteratee for `_.map`', 2, function() {

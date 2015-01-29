@@ -5153,6 +5153,14 @@
       deepEqual(actual, { 'a': 2 });
     });
 
+    test('`_.' + methodName + '` should not treat `object` as `source`', 1, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      var actual = func(new Foo, { 'b': 2 });
+      ok(!_.has(actual, 'a'));
+    });
+
     test('`_.' + methodName + '` should not treat the second argument as a `customizer` callback', 2, function() {
       function callback() {}
       callback.b = 2;
@@ -5368,6 +5376,7 @@
     test('should not check for inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype.a = 1;
+
       strictEqual(_.has(new Foo, 'a'), false);
     });
 

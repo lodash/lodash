@@ -10604,9 +10604,23 @@
       deepEqual(_.uniq(actual).sort(), [0, 1]);
     });
 
-    test('should support not providing a `max` argument', 1, function() {
+    test('should support a `min` and `max` argument', 1, function() {
+      var min = 5,
+          max = 10;
+
       ok(_.some(array, function() {
-        return _.random(5) !== 5;
+        var result = _.random(min, max);
+        return result >= min && result <= max;
+      }));
+    });
+
+    test('should support not providing a `max` argument', 1, function() {
+      var min = 0,
+          max = 5;
+
+      ok(_.some(array, function() {
+        var result = _.random(max);
+        return result >= min && result <= max;
       }));
     });
 
@@ -10615,7 +10629,8 @@
           max = Math.pow(2, 62);
 
       ok(_.every(array, function() {
-        return _.random(min, max) >= min;
+        var result = _.random(min, max);
+        return result >= min && result <= max;
       }));
 
       ok(_.some(array, function() {

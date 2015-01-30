@@ -35,7 +35,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * // => 'FRED'
  *
  * // modifying the result cache
- * upperCase.cache.set('fred, 'BARNEY');
+ * upperCase.cache.set('fred', 'BARNEY');
  * upperCase('fred');
  * // => 'BARNEY'
  *

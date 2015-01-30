@@ -1,6 +1,5 @@
 import baseMatches from './baseMatches';
 import baseProperty from './baseProperty';
-import baseToString from './baseToString';
 import bindCallback from './bindCallback';
 import identity from '../utility/identity';
 import isBindable from './isBindable';
@@ -28,7 +27,7 @@ function baseCallback(func, thisArg, argCount) {
   // Handle "_.property" and "_.matches" style callback shorthands.
   return type == 'object'
     ? baseMatches(func, !argCount)
-    : baseProperty(argCount ? baseToString(func) : func);
+    : baseProperty(func + '');
 }
 
 export default baseCallback;

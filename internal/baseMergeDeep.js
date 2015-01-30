@@ -47,6 +47,9 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
         ? toPlainObject(value)
         : (isPlainObject(value) ? value : {});
     }
+    else {
+      isCommon = false;
+    }
   }
   // Add the source value to the stack of traversed objects and associate
   // it with its merged value.

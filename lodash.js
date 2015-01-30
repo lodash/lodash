@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -37,7 +37,7 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.0.0';
+var VERSION = '3.0.1';
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_FILTER_FLAG = 0,
@@ -416,7 +416,8 @@ LazyWrapper.prototype.slice = function(start, end) {
 
 // Add `LazyWrapper` methods to `lodash.prototype`.
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-  var retUnwrapped = /^(?:first|last)$/.test(methodName);
+  var lodashFunc = lodash[methodName],
+      retUnwrapped = /^(?:first|last)$/.test(methodName);
 
   lodash.prototype[methodName] = function() {
     var value = this.__wrapped__,
@@ -429,12 +430,12 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
     if (retUnwrapped && !chainAll) {
       return onlyLazy
         ? func.call(value)
-        : lodash[methodName](this.value());
+        : lodashFunc.call(lodash, this.value());
     }
     var interceptor = function(value) {
       var otherArgs = [value];
       push.apply(otherArgs, args);
-      return lodash[methodName].apply(lodash, otherArgs);
+      return lodashFunc.apply(lodash, otherArgs);
     };
     if (isLazy || isArray(value)) {
       var wrapper = onlyLazy ? value : new LazyWrapper(this),

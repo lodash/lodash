@@ -1,4 +1,3 @@
-import baseToString from './baseToString';
 import repeat from '../string/repeat';
 import root from './root';
 
@@ -27,7 +26,7 @@ function createPad(string, length, chars) {
     return '';
   }
   var padLength = length - strLength;
-  chars = chars == null ? ' ' : baseToString(chars);
+  chars = chars == null ? ' ' : (chars + '');
   return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
 }
 

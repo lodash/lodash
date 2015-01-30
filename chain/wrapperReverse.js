@@ -25,6 +25,9 @@ import thru from './thru';
 function wrapperReverse() {
   var value = this.__wrapped__;
   if (value instanceof LazyWrapper) {
+    if (this.__actions__.length) {
+      value = new LazyWrapper(this);
+    }
     return new LodashWrapper(value.reverse());
   }
   return this.thru(function(value) {

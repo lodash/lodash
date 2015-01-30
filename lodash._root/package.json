@@ -1,6 +1,6 @@
 {
   "name": "lodash._root",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "The internal lodash function `root` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

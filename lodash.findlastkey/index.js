@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -22,6 +22,20 @@ var baseCallback = require('lodash._basecallback'),
  */
 function baseForOwnRight(object, iteratee) {
   return baseForRight(object, iteratee, keys);
+}
+
+/**
+ * Creates a `_.findKey` or `_.findLastKey` function.
+ *
+ * @private
+ * @param {Function} objectFunc The function to iterate over an object.
+ * @returns {Function} Returns the new find function.
+ */
+function createFindKey(objectFunc) {
+  return function(object, predicate, thisArg) {
+    predicate = baseCallback(predicate, thisArg, 3);
+    return baseFind(object, predicate, objectFunc, true);
+  };
 }
 
 /**
@@ -72,9 +86,6 @@ function baseForOwnRight(object, iteratee) {
  * _.findLastKey(users, 'active');
  * // => 'pebbles'
  */
-function findLastKey(object, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(object, predicate, baseForOwnRight, true);
-}
+var findLastKey = createFindKey(baseForOwnRight);
 
 module.exports = findLastKey;

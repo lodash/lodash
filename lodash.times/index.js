@@ -1,12 +1,15 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var bindCallback = require('lodash._bindcallback');
+
+/** Native method references. */
+var floor = Math.floor;
 
 /* Native method references for those with the same name as other `lodash` methods. */
 var nativeIsFinite = global.isFinite,
@@ -35,7 +38,7 @@ var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
  * _.times(3, function(n) {
  *   mage.castSpell(n);
  * });
- * // => invokes `mage.castSpell(n)` three times with `n` of `0`, `1`, and `2` respectively
+ * // => invokes `mage.castSpell(n)` three times with `n` of `0`, `1`, and `2`
  *
  * _.times(3, function(n) {
  *   this.cast(n);
@@ -43,7 +46,7 @@ var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
  * // => also invokes `mage.castSpell(n)` three times
  */
 function times(n, iteratee, thisArg) {
-  n = +n;
+  n = floor(n);
 
   // Exit early to avoid a JSC JIT bug in Safari 8
   // where `Array(0)` is treated as `Array(1)`.

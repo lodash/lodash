@@ -1,12 +1,17 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseToString = require('lodash._basetostring');
+
+/**
+ * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
+ */
+var reComboMarks = /[\u0300-\u036f\ufe20-\ufe23]/g;
 
 /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
 var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
@@ -44,9 +49,8 @@ function deburrLetter(letter) {
 }
 
 /**
- * Deburrs `string` by converting latin-1 supplementary letters to basic latin letters.
- * See [Wikipedia](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
- * for more details.
+ * Deburrs `string` by converting [latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+ * to basic latin letters and removing [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
  *
  * @static
  * @memberOf _
@@ -60,7 +64,7 @@ function deburrLetter(letter) {
  */
 function deburr(string) {
   string = baseToString(string);
-  return string && string.replace(reLatin1, deburrLetter);
+  return string && string.replace(reLatin1, deburrLetter).replace(reComboMarks, '');
 }
 
 module.exports = deburr;

@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -8,8 +8,7 @@
  */
 var arrayCopy = require('lodash._arraycopy'),
     baseCreate = require('lodash._basecreate'),
-    replaceHolders = require('lodash._replaceholders'),
-    isFunction = require('lodash.isfunction');
+    replaceHolders = require('lodash._replaceholders');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -280,7 +279,7 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
  */
 function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
   var isBindKey = bitmask & BIND_KEY_FLAG;
-  if (!isBindKey && !isFunction(func)) {
+  if (!isBindKey && typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   var length = partials ? partials.length : 0;
@@ -304,9 +303,9 @@ function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, a
   if (bitmask == BIND_FLAG) {
     var result = createBindWrapper(newData[0], newData[2]);
   } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
-    result = createPartialWrapper.apply(null, newData);
+    result = createPartialWrapper.apply(undefined, newData);
   } else {
-    result = createHybridWrapper.apply(null, newData);
+    result = createHybridWrapper.apply(undefined, newData);
   }
   return result;
 }

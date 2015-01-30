@@ -1,14 +1,29 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
     binaryIndex = require('lodash._binaryindex'),
     binaryIndexBy = require('lodash._binaryindexby');
+
+/**
+ * Creates a `_.sortedIndex` or `_.sortedLastIndex` function.
+ *
+ * @private
+ * @param {boolean} [retHighest] Specify returning the highest qualified index.
+ * @returns {Function} Returns the new index function.
+ */
+function createSortedIndex(retHighest) {
+  return function(array, value, iteratee, thisArg) {
+    return iteratee == null
+      ? binaryIndex(array, value, retHighest)
+      : binaryIndexBy(array, value, baseCallback(iteratee, thisArg, 1), retHighest);
+  };
+}
 
 /**
  * This method is like `_.sortedIndex` except that it returns the highest
@@ -30,10 +45,6 @@ var baseCallback = require('lodash._basecallback'),
  * _.sortedLastIndex([4, 4, 5, 5], 5);
  * // => 4
  */
-function sortedLastIndex(array, value, iteratee, thisArg) {
-  return iteratee == null
-    ? binaryIndex(array, value, true)
-    : binaryIndexBy(array, value, baseCallback(iteratee, thisArg, 1), true);
-}
+var sortedLastIndex = createSortedIndex(true);
 
 module.exports = sortedLastIndex;

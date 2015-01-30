@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -10,7 +10,7 @@ var isIterateeCall = require('lodash._isiterateecall'),
     trim = require('lodash.trim');
 
 /** Used to detect hexadecimal string values. */
-var reHexPrefix = /^0[xX]/;
+var reHasHexPrefix = /^0[xX]/;
 
 /** Used to detect and test for whitespace. */
 var whitespace = (
@@ -68,7 +68,7 @@ if (nativeParseInt(whitespace + '08') != 8) {
       radix = +radix;
     }
     string = trim(string);
-    return nativeParseInt(string, radix || (reHexPrefix.test(string) ? 16 : 10));
+    return nativeParseInt(string, radix || (reHasHexPrefix.test(string) ? 16 : 10));
   };
 }
 

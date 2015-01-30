@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -44,23 +44,22 @@ function sortedUniq(array, iteratee) {
  * search algorithm for sorted arrays. If an iteratee function is provided it
  * is invoked for each value in the array to generate the criterion by which
  * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
- * with three arguments; (value, index, array).
+ * with three arguments: (value, index, array).
  *
- * If a property name is provided for `predicate` the created `_.property`
+ * If a property name is provided for `iteratee` the created `_.property`
  * style callback returns the property value of the given element.
  *
  * If a value is also provided for `thisArg` the created `_.matchesProperty`
  * style callback returns `true` for elements that have a matching property
  * value, else `false`.
  *
- * If an object is provided for `predicate` the created `_.matches` style
+ * If an object is provided for `iteratee` the created `_.matches` style
  * callback returns `true` for elements that have the properties of the given
  * object, else `false`.
  *
- * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
- * e.g. `===`, except that `NaN` matches `NaN`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for more details.
+ * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * comparisons are like strict equality comparisons, e.g. `===`, except that
+ * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _
@@ -81,7 +80,9 @@ function sortedUniq(array, iteratee) {
  * // => [1, 2]
  *
  * // using an iteratee function
- * _.uniq([1, 2.5, 1.5, 2], function(n) { return this.floor(n); }, Math);
+ * _.uniq([1, 2.5, 1.5, 2], function(n) {
+ *   return this.floor(n);
+ * }, Math);
  * // => [1, 2.5]
  *
  * // using the `_.property` callback shorthand
@@ -93,8 +94,7 @@ function uniq(array, isSorted, iteratee, thisArg) {
   if (!length) {
     return [];
   }
-  // Juggle arguments.
-  if (typeof isSorted != 'boolean' && isSorted != null) {
+  if (isSorted != null && typeof isSorted != 'boolean') {
     thisArg = iteratee;
     iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
     isSorted = false;

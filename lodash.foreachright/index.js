@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -12,7 +12,7 @@ var baseEachRight = require('lodash._baseeachright'),
 
 /**
  * A specialized version of `_.forEachRight` for arrays without support for
- * callback shorthands or `this` binding.
+ * callback shorthands and `this` binding.
  *
  * @private
  * @param {Array} array The array to iterate over.
@@ -31,6 +31,22 @@ function arrayEachRight(array, iteratee) {
 }
 
 /**
+ * Creates a function for `_.forEach` or `_.forEachRight`.
+ *
+ * @private
+ * @param {Function} arrayFunc The function to iterate over an array.
+ * @param {Function} eachFunc The function to iterate over a collection.
+ * @returns {Function} Returns the new each function.
+ */
+function createForEach(arrayFunc, eachFunc) {
+  return function(collection, iteratee, thisArg) {
+    return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+      ? arrayFunc(collection, iteratee)
+      : eachFunc(collection, bindCallback(iteratee, thisArg, 3));
+  };
+}
+
+/**
  * This method is like `_.forEach` except that it iterates over elements of
  * `collection` from right to left.
  *
@@ -46,13 +62,9 @@ function arrayEachRight(array, iteratee) {
  *
  * _([1, 2]).forEachRight(function(n) {
  *   console.log(n);
- * }).join(',');
+ * }).value();
  * // => logs each value from right to left and returns the array
  */
-function forEachRight(collection, iteratee, thisArg) {
-  return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-    ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, bindCallback(iteratee, thisArg, 3));
-}
+var forEachRight = createForEach(arrayEachRight, baseEachRight);
 
 module.exports = forEachRight;

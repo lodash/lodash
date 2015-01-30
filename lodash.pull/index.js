@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -15,14 +15,11 @@ var arrayProto = Array.prototype;
 var splice = arrayProto.splice;
 
 /**
- * Removes all provided values from `array` using `SameValueZero` for equality
- * comparisons.
+ * Removes all provided values from `array` using
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * for equality comparisons.
  *
- * **Notes:**
- *  - Unlike `_.without`, this method mutates `array`.
- *  - `SameValueZero` comparisons are like strict equality comparisons, e.g. `===`,
- *    except that `NaN` matches `NaN`. See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- *    for more details.
+ * **Note:** Unlike `_.without`, this method mutates `array`.
  *
  * @static
  * @memberOf _
@@ -39,17 +36,19 @@ var splice = arrayProto.splice;
  * // => [1, 1]
  */
 function pull() {
-  var array = arguments[0];
+  var args = arguments,
+      array = args[0];
+
   if (!(array && array.length)) {
     return array;
   }
   var index = 0,
       indexOf = baseIndexOf,
-      length = arguments.length;
+      length = args.length;
 
   while (++index < length) {
     var fromIndex = 0,
-        value = arguments[index];
+        value = args[index];
 
     while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
       splice.call(array, fromIndex, 1);

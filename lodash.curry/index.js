@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -11,6 +11,25 @@ var createWrapper = require('lodash._createwrapper'),
 
 /** Used to compose bitmasks for wrapper metadata. */
 var CURRY_FLAG = 8;
+
+/**
+ * Creates a `_.curry` or `_.curryRight` function.
+ *
+ * @private
+ * @param {boolean} flag The curry bit flag.
+ * @returns {Function} Returns the new curry function.
+ */
+function createCurry(flag) {
+  function curryFunc(func, arity, guard) {
+    if (guard && isIterateeCall(func, arity, guard)) {
+      arity = null;
+    }
+    var result = createWrapper(func, flag, null, null, null, null, null, arity);
+    result.placeholder = curryFunc.placeholder;
+    return result;
+  }
+  return curryFunc;
+}
 
 /**
  * Creates a function that accepts one or more arguments of `func` that when
@@ -22,7 +41,7 @@ var CURRY_FLAG = 8;
  * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
  * may be used as a placeholder for provided arguments.
  *
- * **Note:** This method does not set the `length` property of curried functions.
+ * **Note:** This method does not set the "length" property of curried functions.
  *
  * @static
  * @memberOf _
@@ -52,14 +71,7 @@ var CURRY_FLAG = 8;
  * curried(1)(_, 3)(2);
  * // => [1, 2, 3]
  */
-function curry(func, arity, guard) {
-  if (guard && isIterateeCall(func, arity, guard)) {
-    arity = null;
-  }
-  var result = createWrapper(func, CURRY_FLAG, null, null, null, null, null, arity);
-  result.placeholder = curry.placeholder;
-  return result;
-}
+var curry = createCurry(CURRY_FLAG);
 
 // Assign default placeholders.
 curry.placeholder = {};

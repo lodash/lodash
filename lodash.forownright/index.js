@@ -1,14 +1,43 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseForRight = require('lodash._baseforright'),
     bindCallback = require('lodash._bindcallback'),
     keys = require('lodash.keys');
+
+/**
+ * The base implementation of `_.forOwnRight` without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForOwnRight(object, iteratee) {
+  return baseForRight(object, iteratee, keys);
+}
+
+/**
+ * Creates a function for `_.forOwn` or `_.forOwnRight`.
+ *
+ * @private
+ * @param {Function} objectFunc The function to iterate over an object.
+ * @returns {Function} Returns the new each function.
+ */
+function createForOwn(objectFunc) {
+  return function(object, iteratee, thisArg) {
+    if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+      iteratee = bindCallback(iteratee, thisArg, 3);
+    }
+    return objectFunc(object, iteratee);
+  };
+}
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of
@@ -35,9 +64,6 @@ var baseForRight = require('lodash._baseforright'),
  * });
  * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
  */
-function forOwnRight(object, iteratee, thisArg) {
-  iteratee = bindCallback(iteratee, thisArg, 3);
-  return baseForRight(object, iteratee, keys);
-}
+var forOwnRight = createForOwn(baseForOwnRight);
 
 module.exports = forOwnRight;

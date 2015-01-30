@@ -1,22 +1,20 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var isIterateeCall = require('lodash._isiterateecall');
 
-/** Native method references. */
-var ceil = Math.ceil;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+var nativeCeil = Math.ceil,
+    nativeMax = Math.max;
 
 /**
  * Creates an array of numbers (positive and/or negative) progressing from
- * `start` up to, but not including, `end`. If `end` is not specified it is
+ * `start` up to, but not including, `end`. If `end` is not specified it's
  * set to `start` with `start` then set to `0`. If `end` is less than `start`
  * a zero-length range is created unless a negative `step` is specified.
  *
@@ -49,7 +47,7 @@ var nativeMax = Math.max;
  */
 function range(start, end, step) {
   if (step && isIterateeCall(start, end, step)) {
-    end = step = null;
+    end = step = undefined;
   }
   start = +start || 0;
   step = step == null ? 1 : (+step || 0);
@@ -63,7 +61,7 @@ function range(start, end, step) {
   // Use `Array(length)` so engines like Chakra and V8 avoid slower modes.
   // See https://youtu.be/XAqIpGU8ZZk#t=17m25s for more details.
   var index = -1,
-      length = nativeMax(ceil((end - start) / (step || 1)), 0),
+      length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
       result = Array(length);
 
   while (++index < length) {

@@ -1,12 +1,4 @@
-/**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
- */
-var isFunction = require('lodash.isfunction');
+/** Used as the `TypeError` message for "Functions" methods. */
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -16,7 +8,7 @@ var nativeIsFinite = global.isFinite;
 
 /**
  * The opposite of `_.before`; this method creates a function that invokes
- * `func` once it is called `n` or more times.
+ * `func` once it's called `n` or more times.
  *
  * @static
  * @memberOf _
@@ -38,8 +30,8 @@ var nativeIsFinite = global.isFinite;
  * // => logs 'done saving!' after the two async saves have completed
  */
 function after(n, func) {
-  if (!isFunction(func)) {
-    if (isFunction(n)) {
+  if (typeof func != 'function') {
+    if (typeof n == 'function') {
       var temp = n;
       n = func;
       func = temp;

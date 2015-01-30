@@ -1,6 +1,6 @@
 {
   "name": "lodash.templatesettings",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "The modern build of lodash’s `_.templateSettings` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -17,9 +17,9 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash.escape": "^3.0.0",
-    "lodash.reescape": "^3.0.0",
-    "lodash.reevaluate": "^3.0.0",
-    "lodash.reinterpolate": "^3.0.0"
+    "lodash._reescape": "^3.0.0",
+    "lodash._reevaluate": "^3.0.0",
+    "lodash._reinterpolate": "^3.0.0",
+    "lodash.escape": "^3.0.0"
   }
 }

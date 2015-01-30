@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -24,9 +24,25 @@ function baseForOwn(object, iteratee) {
 }
 
 /**
+ * Creates a function for `_.forOwn` or `_.forOwnRight`.
+ *
+ * @private
+ * @param {Function} objectFunc The function to iterate over an object.
+ * @returns {Function} Returns the new each function.
+ */
+function createForOwn(objectFunc) {
+  return function(object, iteratee, thisArg) {
+    if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+      iteratee = bindCallback(iteratee, thisArg, 3);
+    }
+    return objectFunc(object, iteratee);
+  };
+}
+
+/**
  * Iterates over own enumerable properties of an object invoking `iteratee`
  * for each property. The `iteratee` is bound to `thisArg` and invoked with
- * three arguments; (value, key, object). Iterator functions may exit iteration
+ * three arguments: (value, key, object). Iterator functions may exit iteration
  * early by explicitly returning `false`.
  *
  * @static
@@ -50,11 +66,6 @@ function baseForOwn(object, iteratee) {
  * });
  * // => logs 'a' and 'b' (iteration order is not guaranteed)
  */
-function forOwn(object, iteratee, thisArg) {
-  if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-    iteratee = bindCallback(iteratee, thisArg, 3);
-  }
-  return baseForOwn(object, iteratee);
-}
+var forOwn = createForOwn(baseForOwn);
 
 module.exports = forOwn;

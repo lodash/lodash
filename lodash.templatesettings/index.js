@@ -1,15 +1,15 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var escape = require('lodash.escape'),
-    reEscape = require('lodash.reescape'),
-    reEvaluate = require('lodash.reevaluate'),
-    reInterpolate = require('lodash.reinterpolate');
+var reEscape = require('lodash._reescape'),
+    reEvaluate = require('lodash._reevaluate'),
+    reInterpolate = require('lodash._reinterpolate'),
+    escape = require('lodash.escape');
 
 /**
  * By default, the template delimiters used by lodash are like those in

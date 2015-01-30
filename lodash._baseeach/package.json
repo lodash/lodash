@@ -1,6 +1,6 @@
 {
   "name": "lodash._baseeach",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "The modern build of lodash’s internal `baseEach` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -16,7 +16,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._basefor": "^3.0.0",
     "lodash.keys": "^3.0.0"
   }
 }

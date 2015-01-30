@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -11,21 +11,6 @@ var baseClone = require('lodash._baseclone'),
     baseProperty = require('lodash._baseproperty'),
     bindCallback = require('lodash._bindcallback'),
     keys = require('lodash.keys');
-
-/**
- * Converts `value` to a string if it is not one. An empty string is returned
- * for `null` or `undefined` values.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {string} Returns the string.
- */
-function baseToString(value) {
-  if (typeof value == 'string') {
-    return value;
-  }
-  return value == null ? '' : (value + '');
-}
 
 /** Used for native method references. */
 var objectProto = Object.prototype;
@@ -56,7 +41,7 @@ function baseCallback(func, thisArg, argCount) {
   // Handle "_.property" and "_.matches" style callback shorthands.
   return type == 'object'
     ? baseMatches(func, !argCount)
-    : baseProperty(argCount ? baseToString(func) : func);
+    : baseProperty(func + '');
 }
 
 /**

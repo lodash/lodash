@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -11,6 +11,7 @@ var arrayEach = require('lodash._arrayeach'),
     baseCreate = require('lodash._basecreate'),
     baseFor = require('lodash._basefor'),
     isArray = require('lodash.isarray'),
+    isFunction = require('lodash.isfunction'),
     isTypedArray = require('lodash.istypedarray'),
     keys = require('lodash.keys');
 
@@ -74,18 +75,16 @@ function isObject(value) {
  * @returns {*} Returns the accumulated value.
  * @example
  *
- * var squares = _.transform([1, 2, 3, 4, 5, 6], function(result, n) {
- *   n *= n;
- *   if (n % 2) {
- *     return result.push(n) < 3;
- *   }
+ * _.transform([2, 3, 4], function(result, n) {
+ *   result.push(n *= n);
+ *   return n % 2 == 0;
  * });
- * // => [1, 9, 25]
+ * // => [4, 9]
  *
- * var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, n, key) {
+ * _.transform({ 'a': 1, 'b': 2 }, function(result, n, key) {
  *   result[key] = n * 3;
  * });
- * // => { 'a': 3, 'b': 6, 'c': 9 }
+ * // => { 'a': 3, 'b': 6 }
  */
 function transform(object, iteratee, accumulator, thisArg) {
   var isArr = isArray(object) || isTypedArray(object);
@@ -97,7 +96,7 @@ function transform(object, iteratee, accumulator, thisArg) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+        accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
       }
     } else {
       accumulator = {};

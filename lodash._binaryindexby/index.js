@@ -1,13 +1,11 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-
-/** Native method references. */
 
 /** Native method references. */
 var floor = Math.floor;
@@ -17,7 +15,7 @@ var nativeMin = Math.min;
 
 /** Used as references for the maximum length and index of an array. */
 var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-    MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+    MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1;
 
 /**
  * This function is like `binaryIndex` except that it invokes `iteratee` for
@@ -38,7 +36,7 @@ function binaryIndexBy(array, value, iteratee, retHighest) {
   var low = 0,
       high = array ? array.length : 0,
       valIsNaN = value !== value,
-      valIsUndef = typeof value == 'undefined';
+      valIsUndef = value === undefined;
 
   while (low < high) {
     var mid = floor((low + high) / 2),
@@ -48,7 +46,7 @@ function binaryIndexBy(array, value, iteratee, retHighest) {
     if (valIsNaN) {
       var setLow = isReflexive || retHighest;
     } else if (valIsUndef) {
-      setLow = isReflexive && (retHighest || typeof computed != 'undefined');
+      setLow = isReflexive && (retHighest || computed !== undefined);
     } else {
       setLow = retHighest ? (computed <= value) : (computed < value);
     }

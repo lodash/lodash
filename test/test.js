@@ -1444,7 +1444,7 @@
 
   QUnit.module('case methods');
 
-  _.each(['camel', 'kebab', 'snake'], function(caseName) {
+  _.each(['camel', 'kebab', 'snake', 'start'], function(caseName) {
     var methodName = caseName + 'Case',
         func = _[methodName];
 
@@ -1458,12 +1458,17 @@
         case 'camel': return 'fooBar';
         case 'kebab': return 'foo-bar';
         case 'snake': return 'foo_bar';
+        case 'start': return 'Foo Bar';
       }
     }());
 
     test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 1, function() {
       var actual = _.map(strings, function(string) {
-        return func(string) === expected;
+        if (caseName === 'start' && string === 'FOO BAR') {
+          return func(string) === 'FOO BAR';
+        } else {
+          return func(string) === expected;
+        }
       });
 
       deepEqual(actual, _.map(strings, _.constant(true)));
@@ -1471,7 +1476,11 @@
 
     test('`_.' + methodName + '` should handle double-converting strings', 1, function() {
       var actual = _.map(strings, function(string) {
-        return func(func(string)) === expected;
+        if (caseName === 'start' && string === 'FOO BAR') {
+          return func(func(string)) === 'FOO BAR';
+        } else {
+          return func(func(string)) === expected;
+        }
       });
 
       deepEqual(actual, _.map(strings, _.constant(true)));
@@ -1479,7 +1488,9 @@
 
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
-        return func(burred) === deburredLetters[index].toLowerCase();
+        var letter = deburredLetters[index].toLowerCase();
+        letter = caseName === 'start' ? _.capitalize(letter) : letter;
+        return func(burred) === letter;
       });
 
       deepEqual(actual, _.map(burredLetters, _.constant(true)));
@@ -14870,7 +14881,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 205, function() {
+    test('should accept falsey arguments', 206, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

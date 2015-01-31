@@ -3580,25 +3580,30 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 4, function() {
+    test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4, 5, 6, 7, 8],
-            predicate = function(value) { return value > 1; },
+        var array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            values = [],
+            predicate = function(value) { values.push(value); return value > 2; },
             actual = _(array).drop(2).drop().value();
 
-        deepEqual(actual, [4, 5, 6, 7, 8]);
+        deepEqual(actual, [4, 5, 6, 7, 8, 9, 10]);
 
         actual = _(array).filter(predicate).drop(2).drop().value();
-        deepEqual(actual, [5, 6, 7, 8]);
+        deepEqual(actual, [6, 7, 8, 9, 10]);
+        deepEqual(values, array);
 
         actual = _(array).drop(2).dropRight().drop().dropRight(2).value();
-        deepEqual(actual, [4, 5]);
+        deepEqual(actual, [4, 5, 6, 7]);
 
-        actual = _(array).filter(predicate).drop(2).dropRight().drop().dropRight(2).value();
-        deepEqual(actual, [5]);
+        values = [];
+
+        actual = _(array).drop().filter(predicate).drop(2).dropRight().drop().dropRight(2).value();
+        deepEqual(actual, [6, 7]);
+        deepEqual(values, array.slice(1));
       }
       else {
-        skipTest(4);
+        skipTest(6);
       }
     });
   }());
@@ -3656,25 +3661,30 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 4, function() {
+    test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4, 5, 6, 7, 8],
-            predicate = function(value) { return value < 8; },
+        var array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            values = [],
+            predicate = function(value) { values.push(value); return value < 9; },
             actual = _(array).dropRight(2).dropRight().value();
 
-        deepEqual(actual, [1, 2, 3, 4, 5]);
+        deepEqual(actual, [1, 2, 3, 4, 5, 6, 7]);
 
         actual = _(array).filter(predicate).dropRight(2).dropRight().value();
-        deepEqual(actual, [1, 2, 3, 4]);
+        deepEqual(actual, [1, 2, 3, 4, 5]);
+        deepEqual(values, array);
 
         actual = _(array).dropRight(2).drop().dropRight().drop(2).value();
-        deepEqual(actual, [4, 5]);
+        deepEqual(actual, [4, 5, 6, 7]);
 
-        actual = _(array).filter(predicate).dropRight(2).drop().dropRight().drop(2).value();
-        deepEqual(actual, [4]);
+        values = [];
+
+        actual = _(array).dropRight().filter(predicate).dropRight(2).drop().dropRight().drop(2).value();
+        deepEqual(actual, [4, 5]);
+        deepEqual(values, array.slice(0, -1));
       }
       else {
-        skipTest(4);
+        skipTest(6);
       }
     });
   }());
@@ -4282,25 +4292,30 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 4, function() {
+    test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4, 5, 6, 7, 8],
-            predicate = function(value) { return value > 1; },
+        var array = [1, 2, 3, 4, 5, 6, 7, 8, 9 , 10],
+            values = [],
+            predicate = function(value) { values.push(value); return value > 2; },
             actual = _(array).take(2).take().value();
 
         deepEqual(actual, [1]);
 
         actual = _(array).filter(predicate).take(2).take().value();
-        deepEqual(actual, [2]);
+        deepEqual(actual, [3]);
+        deepEqual(values, array.slice(0, 3));
 
         actual = _(array).take(6).takeRight(4).take(2).takeRight().value();
         deepEqual(actual, [4]);
 
-        actual = _(array).filter(predicate).take(6).takeRight(4).take(2).takeRight().value();
-        deepEqual(actual, [5]);
+        values = [];
+
+        actual = _(array).take(array.length - 1).filter(predicate).take(6).takeRight(4).take(2).takeRight().value();
+        deepEqual(actual, [6]);
+        deepEqual(values, array.slice(0, -2));
       }
       else {
-        skipTest(4);
+        skipTest(6);
       }
     });
   }());
@@ -4358,25 +4373,30 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 4, function() {
+    test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, 4, 5, 6, 7, 8],
-            predicate = function(value) { return value < 8; },
+        var array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            values = [],
+            predicate = function(value) { values.push(value); return value < 9; },
             actual = _(array).takeRight(2).takeRight().value();
 
-        deepEqual(actual, [8]);
+        deepEqual(actual, [10]);
 
         actual = _(array).filter(predicate).takeRight(2).takeRight().value();
-        deepEqual(actual, [7]);
+        deepEqual(actual, [8]);
+        deepEqual(values, array);
 
         actual = _(array).takeRight(6).take(4).takeRight(2).take().value();
-        deepEqual(actual, [5]);
+        deepEqual(actual, [7]);
+
+        values = [];
 
         actual = _(array).filter(predicate).takeRight(6).take(4).takeRight(2).take().value();
-        deepEqual(actual, [4]);
+        deepEqual(actual, [5]);
+        deepEqual(values, array);
       }
       else {
-        skipTest(4);
+        skipTest(6);
       }
     });
   }());
@@ -5778,7 +5798,7 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 2, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
         var array = [1, 2, 3],
             values = [];
@@ -5791,9 +5811,21 @@
 
         deepEqual(actual, []);
         deepEqual(values, [1, 2]);
+
+        values = [];
+
+        actual = _(array).filter(function(value) {
+          values.push(value);
+          return value < 3;
+        })
+        .initial()
+        .value();
+
+        deepEqual(actual, [1]);
+        deepEqual(values, array);
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
   }());
@@ -9018,7 +9050,7 @@
     test('should not not error on DOM elements', 1, function() {
       var object1 = { 'el': document && document.createElement('div') },
           object2 = { 'el': document && document.createElement('div') },
-          pairs = [[{}, object1], [object2, object1]],
+          pairs = [[{}, object1], [object1, object2]],
           expected = _.map(pairs, _.constant(true));
 
       var actual = _.map(pairs, function(pair) {
@@ -11329,7 +11361,7 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 2, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
         var array = [1, 2, 3],
             values = [];
@@ -11342,9 +11374,21 @@
 
         deepEqual(actual, []);
         deepEqual(values, [2, 3]);
+
+        values = [];
+
+        actual = _(array).filter(function(value) {
+          values.push(value);
+          return value > 1;
+        })
+        .rest()
+        .value();
+
+        deepEqual(actual, [3]);
+        deepEqual(values, array);
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
 
@@ -14308,18 +14352,20 @@
       }
     });
 
-    test('should would in a hybrid chain sequence', 2, function() {
+    test('should work in a hybrid chain sequence', 4, function() {
       if (!isNpm) {
-        var array = [1, 2, 3, null],
-            actual = _(array).map(_.identity).compact().reverse().value();
+        var array = [1, 2, 3, null];
 
-        deepEqual(actual, [3, 2, 1]);
+        _.each(['map', 'filter'], function(methodName) {
+          var actual = _(array)[methodName](_.identity).compact().reverse().value();
+          deepEqual(actual, [3, 2, 1]);
 
-        actual = _([1, 2, 3, null]).map(_.identity).compact().pull(1).push(4).reverse().value()
-        deepEqual(actual, [4, 3, 2]);
+          actual = _(array.slice()).pull(2)[methodName](_.identity).compact().pull(1).push(4).reverse().value();
+          deepEqual(actual, [4, 3]);
+        });
       }
       else {
-        skipTest(2);
+        skipTest(4);
       }
     });
   }());

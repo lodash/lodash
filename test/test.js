@@ -11762,7 +11762,7 @@
       });
     });
 
-    test('should coerce `start` and `end` to finite numbers', 1, function() {
+    test('should coerce `start` and `end` to integers', 1, function() {
       var actual = [_.slice(array, 0.1, 1.1), _.slice(array, '0', 1), _.slice(array, 0, '1'), _.slice(array, '1'), _.slice(array, NaN, 1), _.slice(array, 1, NaN)];
       deepEqual(actual, [[1], [1], [1], [2, 3], [1], []]);
     });
@@ -12784,9 +12784,9 @@
       });
     });
 
-    test('should coerce `length` to a number', 4, function() {
-      _.each(['', '4'], function(length, index) {
-        var actual = index ? 'h...' : '...';
+    test('should coerce `length` to an integer', 8, function() {
+      _.each(['', NaN, 4.5, '4'], function(length, index) {
+        var actual = index > 1 ? 'h...' : '...';
         strictEqual(_.trunc(string, length), actual);
         strictEqual(_.trunc(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
       });

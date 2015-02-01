@@ -1453,7 +1453,7 @@
       'FOO BAR', 'fooBar', '--foo-bar', '__foo_bar__'
     ];
 
-    var expected = (function() {
+    var converted = (function() {
       switch (caseName) {
         case 'camel': return 'fooBar';
         case 'kebab': return 'foo-bar';
@@ -1464,11 +1464,8 @@
 
     test('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', 1, function() {
       var actual = _.map(strings, function(string) {
-        if (caseName === 'start' && string === 'FOO BAR') {
-          return func(string) === 'FOO BAR';
-        } else {
-          return func(string) === expected;
-        }
+        var expected = (caseName === 'start' && string === 'FOO BAR') ? string : converted;
+        return func(string) === expected;
       });
 
       deepEqual(actual, _.map(strings, _.constant(true)));
@@ -1476,11 +1473,8 @@
 
     test('`_.' + methodName + '` should handle double-converting strings', 1, function() {
       var actual = _.map(strings, function(string) {
-        if (caseName === 'start' && string === 'FOO BAR') {
-          return func(func(string)) === 'FOO BAR';
-        } else {
-          return func(func(string)) === expected;
-        }
+        var expected = (caseName === 'start' && string === 'FOO BAR') ? string : converted;
+        return func(func(string)) === expected;
       });
 
       deepEqual(actual, _.map(strings, _.constant(true)));
@@ -1488,8 +1482,8 @@
 
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
-        var letter = deburredLetters[index].toLowerCase();
-        letter = caseName === 'start' ? _.capitalize(letter) : letter;
+        var letter = deburredLetters[index];
+        letter = caseName == 'start' ? _.capitalize(letter) : letter.toLowerCase();
         return func(burred) === letter;
       });
 
@@ -1502,14 +1496,14 @@
     });
 
     test('`_.' + methodName + '` should coerce `string` to a string', 2, function() {
-      var string = 'Foo Bar';
-      strictEqual(func(Object(string)), expected);
-      strictEqual(func({ 'toString': _.constant(string) }), expected);
+      var string = 'foo bar';
+      strictEqual(func(Object(string)), converted);
+      strictEqual(func({ 'toString': _.constant(string) }), converted);
     });
 
     test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
       if (!isNpm) {
-        strictEqual(_('foo bar')[methodName](), expected);
+        strictEqual(_('foo bar')[methodName](), converted);
       }
       else {
         skipTest();

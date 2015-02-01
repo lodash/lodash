@@ -8088,7 +8088,7 @@
      * _.isNaN(new Number(NaN));
      * // => true
      *
-     * isNaN(undefined);
+     * _.isNaN(undefined);
      * // => true
      *
      * _.isNaN(undefined);

@@ -9294,7 +9294,7 @@
      */
     var camelCase = createCompounder(function(result, word, index) {
       word = word.toLowerCase();
-      return index ? (result + word.charAt(0).toUpperCase() + word.slice(1)) : word;
+      return result + (index ? (word.charAt(0).toUpperCase() + word.slice(1)) : word);
     });
 
     /**
@@ -9463,7 +9463,7 @@
      * @returns {string} Returns the start cased string.
      * @example
      *
-     * _.startCase('Foo Bar');
+     * _.startCase('--foo-bar');
      * // => 'Foo Bar'
      *
      * _.startCase('fooBar');
@@ -9473,7 +9473,7 @@
      * // => 'Foo Bar'
      */
     var startCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + capitalize(word);
+      return result + (index ? ' ' : '') + (word.charAt(0).toUpperCase() + word.slice(1));
     });
 
     /**
@@ -9670,10 +9670,10 @@
      * _.snakeCase('Foo Bar');
      * // => 'foo_bar'
      *
-     * _.snakeCase('--foo-bar');
+     * _.snakeCase('fooBar');
      * // => 'foo_bar'
      *
-     * _.snakeCase('fooBar');
+     * _.snakeCase('--foo-bar');
      * // => 'foo_bar'
      */
     var snakeCase = createCompounder(function(result, word, index) {
@@ -9939,7 +9939,7 @@
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
-      chars = baseToString(chars);
+      chars = (chars + '');
       return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
     }
 
@@ -9970,7 +9970,7 @@
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(trimmedLeftIndex(string))
       }
-      return string.slice(charsLeftIndex(string, baseToString(chars)));
+      return string.slice(charsLeftIndex(string, (chars + '')));
     }
 
     /**
@@ -10000,7 +10000,7 @@
       if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1)
       }
-      return string.slice(0, charsRightIndex(string, baseToString(chars)) + 1);
+      return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
     }
 
     /**

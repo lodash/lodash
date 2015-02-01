@@ -1803,7 +1803,7 @@
       }
       // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
-        ? baseMatches(func, !argCount)
+        ? baseMatches(func)
         : baseProperty(func + '');
     }
 
@@ -2427,10 +2427,9 @@
      *
      * @private
      * @param {Object} source The object of property values to match.
-     * @param {boolean} [isCloned] Specify cloning the source object.
      * @returns {Function} Returns the new function.
      */
-    function baseMatches(source, isCloned) {
+    function baseMatches(source) {
       var props = keys(source),
           length = props.length;
 
@@ -2443,9 +2442,6 @@
             return object != null && value === object[key] && hasOwnProperty.call(object, key);
           };
         }
-      }
-      if (isCloned) {
-        source = baseClone(source, true);
       }
       var values = Array(length),
           strictCompareFlags = Array(length);
@@ -5861,7 +5857,7 @@
      * // => 'fred'
      */
     function findWhere(collection, source) {
-      return find(collection, matches(source));
+      return find(collection, baseMatches(source));
     }
 
     /**
@@ -6609,7 +6605,7 @@
      * // => ['barney', 'fred']
      */
     function where(collection, source) {
-      return filter(collection, matches(source));
+      return filter(collection, baseMatches(source));
     }
 
     /*------------------------------------------------------------------------*/
@@ -10207,7 +10203,9 @@
       if (guard && isIterateeCall(func, thisArg, guard)) {
         thisArg = null;
       }
-      return baseCallback(func, thisArg);
+      return isObjectLike(func)
+        ? matches(func)
+        : baseCallback(func, thisArg);
     }
 
     /**
@@ -10275,7 +10273,7 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     function matches(source) {
-      return baseMatches(source, true);
+      return baseMatches(baseClone(source, true));
     }
 
     /**
@@ -10898,7 +10896,7 @@
     // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
     arrayEach(['pluck', 'where'], function(methodName, index) {
       var operationName = index ? 'filter' : 'map',
-          createCallback = index ? matches : property;
+          createCallback = index ? baseMatches : property;
 
       LazyWrapper.prototype[methodName] = function(value) {
         return this[operationName](createCallback(value));

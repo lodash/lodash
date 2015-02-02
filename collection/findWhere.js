@@ -1,4 +1,4 @@
-define(['./find', '../utility/matches'], function(find, matches) {
+define(['../internal/baseMatches', './find'], function(baseMatches, find) {
 
   /**
    * Performs a deep comparison between each element in `collection` and the
@@ -25,7 +25,7 @@ define(['./find', '../utility/matches'], function(find, matches) {
    * // => 'fred'
    */
   function findWhere(collection, source) {
-    return find(collection, matches(source));
+    return find(collection, baseMatches(source));
   }
 
   return findWhere;

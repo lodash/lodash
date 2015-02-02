@@ -1,4 +1,4 @@
-define(['./filter', '../utility/matches'], function(filter, matches) {
+define(['../internal/baseMatches', './filter'], function(baseMatches, filter) {
 
   /**
    * Performs a deep comparison between each element in `collection` and the
@@ -28,7 +28,7 @@ define(['./filter', '../utility/matches'], function(filter, matches) {
    * // => ['barney', 'fred']
    */
   function where(collection, source) {
-    return filter(collection, matches(source));
+    return filter(collection, baseMatches(source));
   }
 
   return where;

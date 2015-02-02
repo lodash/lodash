@@ -22,7 +22,7 @@ define(['./baseMatches', './baseProperty', './bindCallback', '../utility/identit
     }
     // Handle "_.property" and "_.matches" style callback shorthands.
     return type == 'object'
-      ? baseMatches(func, !argCount)
+      ? baseMatches(func)
       : baseProperty(func + '');
   }
 

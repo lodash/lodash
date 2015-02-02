@@ -1,4 +1,4 @@
-define(['./map', '../utility/property'], function(map, property) {
+define(['../internal/baseProperty', './map'], function(baseProperty, map) {
 
   /**
    * Gets the value of `key` from all elements in `collection`.
@@ -24,7 +24,7 @@ define(['./map', '../utility/property'], function(map, property) {
    * // => [36, 40] (iteration order is not guaranteed)
    */
   function pluck(collection, key) {
-    return map(collection, property(key));
+    return map(collection, baseProperty(key + ''));
   }
 
   return pluck;

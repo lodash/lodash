@@ -30,7 +30,7 @@ define(['../internal/baseToString', '../internal/charsLeftIndex', '../internal/c
     if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
       return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
     }
-    chars = baseToString(chars);
+    chars = (chars + '');
     return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
   }
 

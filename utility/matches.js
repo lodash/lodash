@@ -1,4 +1,4 @@
-define(['../internal/baseMatches'], function(baseMatches) {
+define(['../internal/baseClone', '../internal/baseMatches'], function(baseClone, baseMatches) {
 
   /**
    * Creates a function which performs a deep comparison between a given object
@@ -26,7 +26,7 @@ define(['../internal/baseMatches'], function(baseMatches) {
    * // => { 'user': 'barney', 'age': 36 }
    */
   function matches(source) {
-    return baseMatches(source, true);
+    return baseMatches(baseClone(source, true));
   }
 
   return matches;

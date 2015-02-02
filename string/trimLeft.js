@@ -27,7 +27,7 @@ define(['../internal/baseToString', '../internal/charsLeftIndex', '../internal/i
     if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
       return string.slice(trimmedLeftIndex(string))
     }
-    return string.slice(charsLeftIndex(string, baseToString(chars)));
+    return string.slice(charsLeftIndex(string, (chars + '')));
   }
 
   return trimLeft;

@@ -1,4 +1,4 @@
-define(['../internal/baseCallback', '../internal/isIterateeCall'], function(baseCallback, isIterateeCall) {
+define(['../internal/baseCallback', '../internal/isIterateeCall', '../internal/isObjectLike', './matches'], function(baseCallback, isIterateeCall, isObjectLike, matches) {
 
   /**
    * Creates a function bound to an optional `thisArg`. If `func` is a property
@@ -39,7 +39,9 @@ define(['../internal/baseCallback', '../internal/isIterateeCall'], function(base
     if (guard && isIterateeCall(func, thisArg, guard)) {
       thisArg = null;
     }
-    return baseCallback(func, thisArg);
+    return isObjectLike(func)
+      ? matches(func)
+      : baseCallback(func, thisArg);
   }
 
   return callback;

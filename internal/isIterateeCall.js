@@ -18,7 +18,7 @@ define(['./isIndex', './isLength', '../lang/isObject'], function(isIndex, isLeng
       var length = object.length,
           prereq = isLength(length) && isIndex(index, length);
     } else {
-      prereq = type == 'string' && index in value;
+      prereq = type == 'string' && index in object;
     }
     return prereq && object[index] === value;
   }

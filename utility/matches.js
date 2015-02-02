@@ -1,3 +1,4 @@
+import baseClone from '../internal/baseClone';
 import baseMatches from '../internal/baseMatches';
 
 /**
@@ -26,7 +27,7 @@ import baseMatches from '../internal/baseMatches';
  * // => { 'user': 'barney', 'age': 36 }
  */
 function matches(source) {
-  return baseMatches(source, true);
+  return baseMatches(baseClone(source, true));
 }
 
 export default matches;

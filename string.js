@@ -11,6 +11,7 @@ import padRight from './string/padRight';
 import parseInt from './string/parseInt';
 import repeat from './string/repeat';
 import snakeCase from './string/snakeCase';
+import startCase from './string/startCase';
 import startsWith from './string/startsWith';
 import template from './string/template';
 import templateSettings from './string/templateSettings';
@@ -35,6 +36,7 @@ export default {
   'parseInt': parseInt,
   'repeat': repeat,
   'snakeCase': snakeCase,
+  'startCase': startCase,
   'startsWith': startsWith,
   'template': template,
   'templateSettings': templateSettings,

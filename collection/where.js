@@ -1,5 +1,5 @@
+import baseMatches from '../internal/baseMatches';
 import filter from './filter';
-import matches from '../utility/matches';
 
 /**
  * Performs a deep comparison between each element in `collection` and the
@@ -29,7 +29,7 @@ import matches from '../utility/matches';
  * // => ['barney', 'fred']
  */
 function where(collection, source) {
-  return filter(collection, matches(source));
+  return filter(collection, baseMatches(source));
 }
 
 export default where;

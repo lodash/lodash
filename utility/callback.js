@@ -1,5 +1,7 @@
 import baseCallback from '../internal/baseCallback';
 import isIterateeCall from '../internal/isIterateeCall';
+import isObjectLike from '../internal/isObjectLike';
+import matches from './matches';
 
 /**
  * Creates a function bound to an optional `thisArg`. If `func` is a property
@@ -40,7 +42,9 @@ function callback(func, thisArg, guard) {
   if (guard && isIterateeCall(func, thisArg, guard)) {
     thisArg = null;
   }
-  return baseCallback(func, thisArg);
+  return isObjectLike(func)
+    ? matches(func)
+    : baseCallback(func, thisArg);
 }
 
 export default callback;

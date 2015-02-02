@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -23,6 +23,8 @@ import arrayEach from './internal/arrayEach';
 import baseCallback from './internal/baseCallback';
 import baseForOwn from './internal/baseForOwn';
 import baseFunctions from './internal/baseFunctions';
+import baseMatches from './internal/baseMatches';
+import baseProperty from './internal/baseProperty';
 import isArray from './lang/isArray';
 import isObject from './lang/isObject';
 import keys from './object/keys';
@@ -30,14 +32,12 @@ import lazyClone from './internal/lazyClone';
 import lazyReverse from './internal/lazyReverse';
 import lazyValue from './internal/lazyValue';
 import lodash from './chain/lodash';
-import matches from './utility/matches';
 import _mixin from './utility/mixin';
-import property from './utility/property';
 import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.0.1';
+var VERSION = '3.1.0';
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_FILTER_FLAG = 0,
@@ -121,7 +121,7 @@ lodash.keys = keys;
 lodash.keysIn = object.keysIn;
 lodash.map = collection.map;
 lodash.mapValues = object.mapValues;
-lodash.matches = matches;
+lodash.matches = utility.matches;
 lodash.memoize = func.memoize;
 lodash.merge = object.merge;
 lodash.mixin = mixin;
@@ -134,7 +134,7 @@ lodash.partialRight = func.partialRight;
 lodash.partition = collection.partition;
 lodash.pick = object.pick;
 lodash.pluck = collection.pluck;
-lodash.property = property;
+lodash.property = utility.property;
 lodash.propertyOf = utility.propertyOf;
 lodash.pull = array.pull;
 lodash.pullAt = array.pullAt;
@@ -252,6 +252,7 @@ lodash.snakeCase = string.snakeCase;
 lodash.some = collection.some;
 lodash.sortedIndex = array.sortedIndex;
 lodash.sortedLastIndex = array.sortedLastIndex;
+lodash.startCase = string.startCase;
 lodash.startsWith = string.startsWith;
 lodash.template = string.template;
 lodash.trim = string.trim;
@@ -376,10 +377,10 @@ arrayEach(['initial', 'rest'], function(methodName, index) {
 // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
 arrayEach(['pluck', 'where'], function(methodName, index) {
   var operationName = index ? 'filter' : 'map',
-      createCallback = index ? matches : property;
+      createCallback = index ? baseMatches : baseProperty;
 
   LazyWrapper.prototype[methodName] = function(value) {
-    return this[operationName](createCallback(value));
+    return this[operationName](createCallback(index ? value : (value + '')));
   };
 });
 

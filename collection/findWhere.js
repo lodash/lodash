@@ -1,5 +1,5 @@
+import baseMatches from '../internal/baseMatches';
 import find from './find';
-import matches from '../utility/matches';
 
 /**
  * Performs a deep comparison between each element in `collection` and the
@@ -26,7 +26,7 @@ import matches from '../utility/matches';
  * // => 'fred'
  */
 function findWhere(collection, source) {
-  return find(collection, matches(source));
+  return find(collection, baseMatches(source));
 }
 
 export default findWhere;

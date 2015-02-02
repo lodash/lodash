@@ -1,5 +1,5 @@
+import baseProperty from '../internal/baseProperty';
 import map from './map';
-import property from '../utility/property';
 
 /**
  * Gets the value of `key` from all elements in `collection`.
@@ -25,7 +25,7 @@ import property from '../utility/property';
  * // => [36, 40] (iteration order is not guaranteed)
  */
 function pluck(collection, key) {
-  return map(collection, property(key));
+  return map(collection, baseProperty(key + ''));
 }
 
 export default pluck;

@@ -127,8 +127,8 @@
 
   /** Used to match words to create compound words. */
   var reWords = (function() {
-    var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
-        lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+';
+    var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde\\u0401\\u0410-\\u042F]',
+        lower = '[a-z\\xdf-\\xf6\\xf8-\\xff\\u0451\\u0430-\\u044F]+';
 
     return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());

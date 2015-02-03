@@ -1,6 +1,6 @@
 {
   "name": "lodash.flowright",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "The modern build of lodash’s `_.flowRight` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -17,7 +17,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arrayevery": "^3.0.0",
-    "lodash.isfunction": "^3.0.0"
+    "lodash._arrayevery": "^3.0.0"
   }
 }

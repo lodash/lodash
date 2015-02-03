@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -18,10 +18,8 @@ var arrayProto = Array.prototype;
 var push = arrayProto.push;
 
 /**
- * Checks if `value` is the language type of `Object`.
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * **Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
  *
  * @static
  * @memberOf _
@@ -43,7 +41,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (value && type == 'object') || false;
+  return type == 'function' || (!!value && type == 'object');
 }
 
 /**
@@ -51,10 +49,13 @@ function isObject(value) {
  * destination object. If `object` is a function then methods are added to
  * its prototype as well.
  *
+ * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
+ * avoid conflicts caused by modifying the original.
+ *
  * @static
  * @memberOf _
  * @category Utility
- * @param {Function|Object} [object=this] object The destination object.
+ * @param {Function|Object} [object=lodash] The destination object.
  * @param {Object} source The object of functions to add.
  * @param {Object} [options] The options object.
  * @param {boolean} [options.chain=true] Specify whether the functions added
@@ -68,7 +69,7 @@ function isObject(value) {
  *   });
  * }
  *
- * // use `_.runInContext` to avoid potential conflicts (esp. in Node.js)
+ * // use `_.runInContext` to avoid conflicts (esp. in Node.js)
  * var _ = require('lodash').runInContext();
  *
  * _.mixin({ 'vowels': vowels });
@@ -105,12 +106,10 @@ function mixin(object, source, options) {
         return function() {
           var chainAll = this.__chain__;
           if (chain || chainAll) {
-            var result = object(this.__wrapped__);
-            (result.__actions__ = arrayCopy(this.__actions__)).push({
-              'func': func,
-              'args': arguments,
-              'thisArg': object
-            });
+            var result = object(this.__wrapped__),
+                actions = result.__actions__ = arrayCopy(this.__actions__);
+
+            actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
             result.__chain__ = chainAll;
             return result;
           }

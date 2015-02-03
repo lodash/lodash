@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -11,7 +11,7 @@ var baseFlatten = require('lodash._baseflatten'),
 
 /**
  * Flattens a nested array. If `isDeep` is `true` the array is recursively
- * flattened, otherwise it is only flattened a single level.
+ * flattened, otherwise it's only flattened a single level.
  *
  * @static
  * @memberOf _
@@ -23,18 +23,18 @@ var baseFlatten = require('lodash._baseflatten'),
  * @example
  *
  * _.flatten([1, [2, 3, [4]]]);
- * // => [1, 2, 3, [4]];
+ * // => [1, 2, 3, [4]]
  *
  * // using `isDeep`
  * _.flatten([1, [2, 3, [4]]], true);
- * // => [1, 2, 3, 4];
+ * // => [1, 2, 3, 4]
  */
 function flatten(array, isDeep, guard) {
   var length = array ? array.length : 0;
   if (guard && isIterateeCall(array, isDeep, guard)) {
     isDeep = false;
   }
-  return length ? baseFlatten(array, isDeep, false, 0) : [];
+  return length ? baseFlatten(array, isDeep) : [];
 }
 
 module.exports = flatten;

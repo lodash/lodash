@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -22,9 +22,9 @@ var CURRY_RIGHT_FLAG = 16;
 function createCurry(flag) {
   function curryFunc(func, arity, guard) {
     if (guard && isIterateeCall(func, arity, guard)) {
-      arity = null;
+      arity = undefined;
     }
-    var result = createWrapper(func, flag, null, null, null, null, null, arity);
+    var result = createWrapper(func, flag, undefined, undefined, undefined, undefined, undefined, arity);
     result.placeholder = curryFunc.placeholder;
     return result;
   }

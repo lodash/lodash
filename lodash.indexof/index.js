@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -14,14 +14,10 @@ var nativeMax = Math.max;
 
 /**
  * Gets the index at which the first occurrence of `value` is found in `array`
- * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
- * it is used as the offset from the end of `array`. If `array` is sorted
- * providing `true` for `fromIndex` performs a faster binary search.
- *
- * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
- * e.g. `===`, except that `NaN` matches `NaN`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for more details.
+ * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * for equality comparisons. If `fromIndex` is negative, it is used as the offset
+ * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
+ * performs a faster binary search.
  *
  * @static
  * @memberOf _
@@ -55,7 +51,10 @@ function indexOf(array, value, fromIndex) {
     var index = binaryIndex(array, value),
         other = array[index];
 
-    return (value === value ? value === other : other !== other) ? index : -1;
+    if (value === value ? (value === other) : (other !== other)) {
+      return index;
+    }
+    return -1;
   }
   return baseIndexOf(array, value, fromIndex || 0);
 }

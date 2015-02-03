@@ -1,4 +1,4 @@
-# lodash.isnan v3.0.1
+# lodash.isnan v3.0.2
 
 The [lodash](https://lodash.com/) method `_.isNaN` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isNaN = require('lodash.isnan');
 ```
 
-See the [documentation](https://lodash.com/docs#isNaN) or [package source](https://github.com/lodash/lodash/blob/3.0.1-npm-packages/lodash.isnan) for more details.
+See the [documentation](https://lodash.com/docs#isNaN) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.isnan) for more details.

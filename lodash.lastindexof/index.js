@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -10,7 +10,6 @@ var binaryIndex = require('lodash._binaryindex');
 
 /**
  * Gets the index at which the first occurrence of `NaN` is found in `array`.
- * If `fromRight` is provided elements of `array` are iterated from right to left.
  *
  * @private
  * @param {Array} array The array to search.
@@ -71,7 +70,10 @@ function lastIndexOf(array, value, fromIndex) {
   } else if (fromIndex) {
     index = binaryIndex(array, value, true) - 1;
     var other = array[index];
-    return (value === value ? value === other : other !== other) ? index : -1;
+    if (value === value ? (value === other) : (other !== other)) {
+      return index;
+    }
+    return -1;
   }
   if (value !== value) {
     return indexOfNaN(array, index, true);

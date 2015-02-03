@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -19,7 +19,7 @@ var baseFor = require('lodash._basefor'),
  */
 function createForIn(objectFunc) {
   return function(object, iteratee, thisArg) {
-    if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+    if (typeof iteratee != 'function' || thisArg !== undefined) {
       iteratee = bindCallback(iteratee, thisArg, 3);
     }
     return objectFunc(object, iteratee, keysIn);
@@ -29,7 +29,7 @@ function createForIn(objectFunc) {
 /**
  * Iterates over own and inherited enumerable properties of an object invoking
  * `iteratee` for each property. The `iteratee` is bound to `thisArg` and invoked
- * with three arguments: (value, key, object). Iterator functions may exit
+ * with three arguments: (value, key, object). Iteratee functions may exit
  * iteration early by explicitly returning `false`.
  *
  * @static

@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -19,11 +19,11 @@ var baseFlatten = require('lodash._baseflatten');
  * @example
  *
  * _.flattenDeep([1, [2, 3, [4]]]);
- * // => [1, 2, 3, 4];
+ * // => [1, 2, 3, 4]
  */
 function flattenDeep(array) {
   var length = array ? array.length : 0;
-  return length ? baseFlatten(array, true, false, 0) : [];
+  return length ? baseFlatten(array, true) : [];
 }
 
 module.exports = flattenDeep;

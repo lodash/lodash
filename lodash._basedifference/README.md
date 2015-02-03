@@ -1,4 +1,4 @@
-# lodash._basedifference v3.0.1
+# lodash._basedifference v3.0.2
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `baseDifference` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var baseDifference = require('lodash._basedifference');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.0.1-npm-packages/lodash._basedifference) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash._basedifference) for more details.

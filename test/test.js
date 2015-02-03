@@ -1754,9 +1754,9 @@
       ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.c.d && clone !== object);
     });
 
-    _.each(['clone', 'cloneDeep'], function(methodName, index) {
+    _.each(['clone', 'cloneDeep'], function(methodName) {
       var func = _[methodName],
-          isDeep = !!index;
+          isDeep = methodName == 'cloneDeep';
 
       _.forOwn(objects, function(object, key) {
         test('`_.' + methodName + '` should clone ' + key, 2, function() {
@@ -1998,9 +1998,9 @@
 
   QUnit.module('flow methods');
 
-  _.each(['flow', 'flowRight'], function(methodName, index) {
+  _.each(['flow', 'flowRight'], function(methodName) {
     var func = _[methodName],
-        isFlow = !index;
+        isFlow = methodName == 'flow';
 
     test('`_.' + methodName + '` should supply each function with the return value of the previous', 1, function() {
       function add(x, y) {
@@ -2370,13 +2370,12 @@
     });
 
     test('should support binding built-in methods', 2, function() {
-      var object = { 'a': 1 },
+      var fn = function() {},
+          object = { 'a': 1 },
+          bound = fn.bind && fn.bind(object),
           callback = _.callback(hasOwnProperty, object);
 
       strictEqual(callback('a'), true);
-
-      var fn = function() {},
-          bound = fn.bind && fn.bind(object);
 
       if (bound) {
         callback = _.callback(bound, object);
@@ -2437,8 +2436,8 @@
     test('should work as an iteratee for `_.map`', 1, function() {
       var fn = function() { return this instanceof Number; },
           array = [fn, fn, fn],
-          expected = _.map(array, _.constant(false)),
-          callbacks = _.map(array, _.callback);
+          callbacks = _.map(array, _.callback),
+          expected = _.map(array, _.constant(false));
 
       var actual = _.map(callbacks, function(callback) {
         return callback();
@@ -3046,17 +3045,24 @@
   QUnit.module('curry methods');
 
   _.each(['curry', 'curryRight'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        fn = function(a, b) { return slice.call(arguments); },
+        isCurry = methodName == 'curry';
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 1, function() {
-      var array = [_.identity, _.identity, _.identity],
-          curries = _.map(array, func);
+    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 2, function() {
+      var array = [fn, fn, fn],
+          object = { 'a': fn, 'b': fn, 'c': fn };
 
-      var actual = _.map(curries, function(curried, index) {
-        return curried(index);
+      _.each([array, object], function(collection) {
+        var curries = _.map(collection, func),
+            expected = _.map(collection, _.constant(isCurry ? ['a', 'b'] : ['b', 'a']));
+
+        var actual = _.map(curries, function(curried) {
+          return curried('a')('b');
+        });
+
+        deepEqual(actual, expected);
       });
-
-      deepEqual(actual, [0, 1, 2]);
     });
   });
 
@@ -4835,11 +4841,9 @@
       });
 
       test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
-        var actual;
+        var actual,
+            callback = function(num, index) { actual = this[index]; };
 
-        function callback(num, index) {
-          actual = this[index];
-        }
         func([1], callback, [2]);
         strictEqual(actual, 2);
 
@@ -5127,9 +5131,9 @@
     });
   });
 
-  _.each(['assign', 'merge'], function(methodName, index) {
+  _.each(['assign', 'merge'], function(methodName) {
     var func = _[methodName],
-        isMerge = !!index;
+        isMerge = methodName == 'merge';
 
     test('`_.' + methodName + '` should provide the correct `customizer` arguments', 3, function() {
       var args,
@@ -5926,12 +5930,18 @@
       ok(_.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
-      var inverted = { '1': 'c', '2': 'b' },
-          object = { 'a': 1, 'b': 2, 'c': 1 },
-          actual = _.map([object, object, object], _.invert);
+    test('should work as an iteratee for `_.map`', 2, function() {
+      var regular = { 'a': 1, 'b': 2, 'c': 1 },
+          inverted = { '1': 'c', '2': 'b' };
 
-      deepEqual(actual, [inverted, inverted, inverted]);
+      var array = [regular, regular, regular],
+          object = { 'a': regular, 'b': regular, 'c': regular },
+          expected = _.map(array, _.constant(inverted));
+
+      _.each([array, object], function(collection) {
+        var actual = _.map(collection, _.invert);
+        deepEqual(actual, expected);
+      });
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -8004,10 +8014,10 @@
 
   QUnit.module('keys methods');
 
-  _.each(['keys', 'keysIn'], function(methodName, index) {
+  _.each(['keys', 'keysIn'], function(methodName) {
     var args = arguments,
         func = _[methodName],
-        isKeys = !index;
+        isKeys = methodName == 'keys';
 
     test('`_.' + methodName + '` should return the keys of an object', 1, function() {
       deepEqual(func({ 'a': 1, 'b': 1 }).sort(), ['a', 'b']);
@@ -8380,11 +8390,9 @@
     });
 
     test('should support the `thisArg` argument', 2, function() {
-      function callback(num, index) {
-        return this[index] + num;
-      }
+      var callback = function(num, index) { return this[index] + num; },
+          actual = _.map([1], callback, [2]);
 
-      var actual = _.map([1], callback, [2]);
       deepEqual(actual, [3]);
 
       actual = _.map({ 'a': 1 }, callback, { 'a': 2 });
@@ -9123,10 +9131,10 @@
 
   QUnit.module('lodash.max and lodash.min');
 
-  _.each(['max', 'min'], function(methodName, index) {
+  _.each(['max', 'min'], function(methodName) {
     var array = [1, 2, 3],
         func = _[methodName],
-        isMax = !index;
+        isMax = methodName == 'max';
 
     test('`_.' + methodName + '` should work with Date objects', 1, function() {
       var curr = new Date,
@@ -9882,9 +9890,9 @@
 
   QUnit.module('partial methods');
 
-  _.each(['partial', 'partialRight'], function(methodName, index) {
+  _.each(['partial', 'partialRight'], function(methodName) {
     var func = _[methodName],
-        isPartial = !index,
+        isPartial = methodName == 'partial',
         ph = func.placeholder;
 
     test('`_.' + methodName + '` partially applies arguments', 1, function() {
@@ -9893,9 +9901,9 @@
     });
 
     test('`_.' + methodName + '` creates a function that can be invoked with additional arguments', 1, function() {
-      var expected = ['a', 'b'],
-          fn = function(a, b) { return [a, b]; },
-          par = func(fn, 'a');
+      var fn = function(a, b) { return [a, b]; },
+          par = func(fn, 'a'),
+          expected = ['a', 'b'];
 
       deepEqual(par('b'), isPartial ? expected : expected.reverse());
     });
@@ -10129,11 +10137,11 @@
 
     test('should work when hot', 12, function() {
       _.times(2, function(index) {
-        function fn() {
+        var fn = function() {
           var result = [this];
           push.apply(result, arguments);
           return result;
-        }
+        };
 
         var object = {},
             bound1 = index ? _.bind(fn, object, 1) : _.bind(fn, object),
@@ -10157,11 +10165,8 @@
       });
 
       _.each(['curry', 'curryRight'], function(methodName, index) {
-        function fn(a, b, c) {
-          return [a, b, c];
-        }
-
-        var curried = _[methodName](fn),
+        var fn = function(a, b, c) { return [a, b, c]; },
+            curried = _[methodName](fn),
             expected = index ? [3, 2, 1] :  [1, 2, 3];
 
         var actual = _.last(_.times(HOT_COUNT, function() {
@@ -10179,11 +10184,8 @@
       });
 
       _.each(['partial', 'partialRight'], function(methodName, index) {
-        function fn() {
-          return slice.call(arguments);
-        }
-
         var func = _[methodName],
+            fn = function() { return slice.call(arguments); },
             par1 = func(fn, 1),
             expected = index ? [3, 2, 1] : [1, 2, 3];
 
@@ -10782,9 +10784,15 @@
       deepEqual(actual, [[0], [0], [0], [], []]);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
-      var actual = _.map([1, 2, 3], _.range);
-      deepEqual(actual, [[0], [0, 1], [0, 1, 2]]);
+    test('should work as an iteratee for `_.map`', 2, function() {
+      var array = [1, 2, 3],
+          object = { 'a': 1, 'b': 2, 'c': 3 },
+          expected = [[0], [0, 1], [0, 1, 2]];
+
+      _.each([array, object], function(collection) {
+        var actual = _.map(collection, _.range);
+        deepEqual(actual, expected);
+      });
     });
   }());
 
@@ -11019,16 +11027,17 @@
 
   QUnit.module('reduce methods');
 
-  _.each(['reduce', 'reduceRight'], function(methodName, index) {
-    var array = [1, 2, 3],
-        func = _[methodName];
+  _.each(['reduce', 'reduceRight'], function(methodName) {
+    var func = _[methodName],
+        array = [1, 2, 3],
+        isReduce = methodName == 'reduce';
 
     test('`_.' + methodName + '` should reduce a collection to a single value', 1, function() {
       var actual = func(['a', 'b', 'c'], function(accumulator, value) {
         return accumulator + value;
       }, '');
 
-      strictEqual(actual, index ? 'cba' : 'abc');
+      strictEqual(actual, isReduce ? 'abc' : 'cba');
     });
 
     test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
@@ -11115,9 +11124,9 @@
 
   QUnit.module('filter methods');
 
-  _.each(['filter', 'reject'], function(methodName, index) {
+  _.each(['filter', 'reject'], function(methodName) {
     var func = _[methodName],
-        isFilter = !index;
+        isFilter = methodName == 'filter';
 
     test('`_.' + methodName + '` should not modify the resulting value from within `predicate`', 1, function() {
       var actual = func([0], function(num, index, array) {
@@ -11517,7 +11526,10 @@
     });
 
     test('should work as an iteratee for `_.map`', 2, function() {
-      _.each([[[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['abc', 'def', 'ghi']], function(values) {
+      var array1 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          array2 = ['abc', 'def', 'ghi'];
+
+      _.each([array1, array2], function(values) {
         var a = values[0],
             b = values[1],
             c = values[2],
@@ -12056,10 +12068,10 @@
 
   QUnit.module('sortedIndex methods');
 
-  _.each(['sortedIndex', 'sortedLastIndex'], function(methodName, index) {
+  _.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
     var array = [30, 50],
         func = _[methodName],
-        isSortedIndex = !index,
+        isSortedIndex = methodName == 'sortedIndex',
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
     test('`_.' + methodName + '` should return the correct insert index', 1, function() {
@@ -12249,9 +12261,9 @@
 
   QUnit.module('lodash.startsWith and lodash.endsWith');
 
-  _.each(['startsWith', 'endsWith'], function(methodName, index) {
+  _.each(['startsWith', 'endsWith'], function(methodName) {
     var func = _[methodName],
-        isStartsWith = !index;
+        isStartsWith = methodName == 'startsWith';
 
     var string = 'abc',
         chr = isStartsWith ? 'a' : 'c';
@@ -13048,9 +13060,9 @@
 
   QUnit.module('lodash.debounce and lodash.throttle');
 
-  _.each(['debounce', 'throttle'], function(methodName, index) {
+  _.each(['debounce', 'throttle'], function(methodName) {
     var func = _[methodName],
-        isDebounce = !index;
+        isDebounce = methodName == 'debounce';
 
     test('_.' + methodName + ' should not error for non-object `options` values', 1, function() {
       var pass = true;

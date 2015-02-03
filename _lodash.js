@@ -1,6 +1,7 @@
 /**
  * @license
- * Lo-Dash 3.0.0-pre <https://lodash.com/>
+ * Lo-Dash 3.0.0-pre (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern -o ./lodash.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -127,12 +128,6 @@
     'isFinite', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
     'window', 'WinRTError'
-  ];
-
-  /** Used to fix the JScript `[[DontEnum]]` bug. */
-  var shadowProps = [
-    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
-    'toLocaleString', 'toString', 'valueOf'
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -284,6 +279,183 @@
   /*--------------------------------------------------------------------------*/
 
   /**
+   * A specialized version of `_.forEach` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEach(array, iteratee) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (iteratee(array[index], index, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.forEachRight` for arrays without support for
+   * callback shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEachRight(array, iteratee) {
+    var length = array.length;
+
+    while (length--) {
+      if (iteratee(array[length], length, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.every` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {boolean} Returns `true` if all elements pass the predicate check,
+   *  else `false`.
+   */
+  function arrayEvery(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (!predicate(array[index], index, array)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * A specialized version of `_.filter` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {Array} Returns the new filtered array.
+   */
+  function arrayFilter(array, predicate) {
+    var index = -1,
+        length = array.length,
+        resIndex = -1,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if (predicate(value, index, array)) {
+        result[++resIndex] = value;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.map` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns the new mapped array.
+   */
+  function arrayMap(array, iteratee) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = iteratee(array[index], index, array);
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.reduce` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} [accumulator] The initial value.
+   * @param {boolean} [initFromArray] Specify using the first element of
+   *  `array` as the initial value.
+   * @returns {*} Returns the accumulated value.
+   */
+  function arrayReduce(array, iteratee, accumulator, initFromArray) {
+    var index = -1,
+        length = array.length;
+
+    if (initFromArray && length) {
+      accumulator = array[++index];
+    }
+    while (++index < length) {
+      accumulator = iteratee(accumulator, array[index], index, array);
+    }
+    return accumulator;
+  }
+
+  /**
+   * A specialized version of `_.reduceRight` for arrays without support for
+   * callback shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} [accumulator] The initial value.
+   * @param {boolean} [initFromArray] Specify using the last element of
+   *  `array` as the initial value.
+   * @returns {*} Returns the accumulated value.
+   */
+  function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
+    var length = array.length;
+    if (initFromArray && length) {
+      accumulator = array[--length];
+    }
+    while (length--) {
+      accumulator = iteratee(accumulator, array[length], length, array);
+    }
+    return accumulator;
+  }
+
+  /**
+   * A specialized version of `_.some` for arrays without support for callback
+   * shorthands or `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {boolean} Returns `true` if any element passes the predicate check,
+   *  else `false`.
+   */
+  function arraySome(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * The base implementation of `compareAscending` which compares values and
    * sorts them in ascending order without guaranteeing a stable sort.
    *
@@ -329,6 +501,25 @@
       }
     }
     return -1;
+  }
+
+  /**
+   * The base implementation of `_.slice` without support for `start` and `end`
+   * arguments.
+   *
+   * @private
+   * @param {Array} array The array to slice.
+   * @returns {Array} Returns the slice of `array`.
+   */
+  function baseSlice(array) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = array[index];
+    }
+    return result;
   }
 
   /**
@@ -494,26 +685,6 @@
     }
     return -1;
   }
-
-  /**
-   * Checks if `value` is a host object in IE < 9.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
-   */
-  var isHostObject = (function() {
-    try {
-      Object({ 'toString': 0 } + '');
-    } catch(e) {
-      return function() { return false; };
-    }
-    return function(value) {
-      // IE < 9 presents many host objects as `Object` objects that can coerce
-      // to strings despite having improperly defined `toString` methods.
-      return typeof value.toString != 'function' && typeof (value + '') == 'string';
-    };
-  }());
 
   /**
    * Checks if `value` is a valid array-like index.
@@ -704,9 +875,7 @@
 
     /** Used for native method references. */
     var arrayProto = Array.prototype,
-        errorProto = Error.prototype,
-        objectProto = Object.prototype,
-        stringProto = String.prototype;
+        objectProto = Object.prototype;
 
     /** Used to detect DOM support. */
     var document = (document = context.window) && document.document;
@@ -800,34 +969,6 @@
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
-    /** Used to lookup a built-in constructor by `toStringTag`. */
-    var ctorByTag = {};
-    ctorByTag[float32Tag] = context.Float32Array;
-    ctorByTag[float64Tag] = context.Float64Array;
-    ctorByTag[int8Tag] = context.Int8Array;
-    ctorByTag[int16Tag] = context.Int16Array;
-    ctorByTag[int32Tag] = context.Int32Array;
-    ctorByTag[uint8Tag] = context.Uint8Array;
-    ctorByTag[uint8ClampedTag] = context.Uint8ClampedArray;
-    ctorByTag[uint16Tag] = context.Uint16Array;
-    ctorByTag[uint32Tag] = context.Uint32Array;
-
-    /** Used to avoid iterating over non-enumerable properties in IE < 9. */
-    var nonEnumProps = {};
-    nonEnumProps[arrayTag] = nonEnumProps[dateTag] = nonEnumProps[numberTag] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
-    nonEnumProps[boolTag] = nonEnumProps[stringTag] = { 'constructor': true, 'toString': true, 'valueOf': true };
-    nonEnumProps[errorTag] = nonEnumProps[funcTag] = nonEnumProps[regexpTag] = { 'constructor': true, 'toString': true };
-    nonEnumProps[objectTag] = { 'constructor': true };
-
-    arrayEach(shadowProps, function(key) {
-      for (var tag in nonEnumProps) {
-        if (hasOwnProperty.call(nonEnumProps, tag)) {
-          var props = nonEnumProps[tag];
-          props[key] = hasOwnProperty.call(props, key);
-        }
-      }
-    });
-
     /*------------------------------------------------------------------------*/
 
     /**
@@ -850,7 +991,7 @@
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
-     * The wrapper functions that support shortcut fusion are:
+     * The wrapper functons that support shortcut fusion are:
      * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `first`,
      * `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`, `slice`,
      * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `where`
@@ -917,7 +1058,7 @@
           return value;
         }
         if (hasOwnProperty.call(value, '__wrapped__')) {
-          return new LodashWrapper(value.__wrapped__, value.__chain__, arrayCopy(value.__actions__));
+          return new LodashWrapper(value.__wrapped__, value.__chain__, baseSlice(value.__actions__));
         }
       }
       return new LodashWrapper(value);
@@ -947,44 +1088,6 @@
     var support = lodash.support = {};
 
     (function(x) {
-      var Ctor = function() { this.x = 1; },
-          object = { '0': 1, 'length': 1 },
-          props = [];
-
-      Ctor.prototype = { 'valueOf': 1, 'y': 1 };
-      for (var key in new Ctor) { props.push(key); }
-
-      /**
-       * Detect if the `toStringTag` of `arguments` objects is resolvable
-       * (all but Firefox < 4, IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.argsTag = objToString.call(arguments) == argsTag;
-
-      /**
-       * Detect if `name` or `message` properties of `Error.prototype` are
-       * enumerable by default (IE < 9, Safari < 5.1).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') ||
-        propertyIsEnumerable.call(errorProto, 'name');
-
-      /**
-       * Detect if `prototype` properties are enumerable by default.
-       *
-       * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-       * (if the prototype or a property on the prototype has been set)
-       * incorrectly set the `[[Enumerable]]` value of a function's `prototype`
-       * property to `true`.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.enumPrototypes = propertyIsEnumerable.call(Ctor, 'prototype');
 
       /**
        * Detect if functions can be decompiled by `Function#toString`
@@ -1003,69 +1106,6 @@
        * @type boolean
        */
       support.funcNames = typeof Function.name == 'string';
-
-      /**
-       * Detect if the `toStringTag` of DOM nodes is resolvable (all but IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nodeTag = objToString.call(document) != objectTag;
-
-      /**
-       * Detect if string indexes are non-enumerable
-       * (IE < 9, RingoJS, Rhino, Narwhal).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumStrings = !propertyIsEnumerable.call('x', 0);
-
-      /**
-       * Detect if properties shadowing those on `Object.prototype` are
-       * non-enumerable.
-       *
-       * In IE < 9 an object's own properties, shadowing non-enumerable ones,
-       * are made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumShadows = !/valueOf/.test(props);
-
-      /**
-       * Detect if own properties are iterated after inherited properties (IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.ownLast = props[0] != 'x';
-
-      /**
-       * Detect if `Array#shift` and `Array#splice` augment array-like objects
-       * correctly.
-       *
-       * Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array `shift()`
-       * and `splice()` functions that fail to remove the last element, `value[0]`,
-       * of array-like objects even though the `length` property is set to `0`.
-       * The `shift()` method is buggy in compatibility modes of IE 8, while `splice()`
-       * is buggy regardless of mode in IE < 9.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.spliceObjects = (splice.call(object, 0, 1), !object[0]);
-
-      /**
-       * Detect lack of support for accessing string characters by index.
-       *
-       * IE < 8 can't access characters by index. IE 8 can only access characters
-       * by index on string literals, not string objects.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.unindexedChars = ('x'[0] + Object('x')[0]) != 'xx';
 
       /**
        * Detect if the DOM is supported.
@@ -1192,13 +1232,13 @@
           views = this.views,
           result = new LazyWrapper(this.wrapped);
 
-      result.actions = actions ? arrayCopy(actions) : null;
+      result.actions = actions ? baseSlice(actions) : null;
       result.dir = this.dir;
       result.dropCount = this.dropCount;
       result.filtered = this.filtered;
-      result.iteratees = iteratees ? arrayCopy(iteratees) : null;
+      result.iteratees = iteratees ? baseSlice(iteratees) : null;
       result.takeCount = this.takeCount;
-      result.views = views ? arrayCopy(views) : null;
+      result.views = views ? baseSlice(views) : null;
       return result;
     }
 
@@ -1418,132 +1458,6 @@
     }
 
     /**
-     * Copies the values of `array` to `other`.
-     *
-     * @private
-     * @param {Array} array The array to copy.
-     * @param {Array} [other=[]] The array to copy values to.
-     * @returns {Array} Returns `other`.
-     */
-    function arrayCopy(array, other) {
-      var index = -1,
-          length = array.length,
-          result = other || Array(length);
-
-      while (++index < length) {
-        result[index] = array[index];
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.forEach` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayEach(array, iteratee) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (iteratee(array[index], index, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.forEachRight` for arrays without support for
-     * callback shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayEachRight(array, iteratee) {
-      var length = array.length;
-
-      while (length--) {
-        if (iteratee(array[length], length, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.every` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if all elements pass the predicate check,
-     *  else `false`.
-     */
-    function arrayEvery(array, predicate) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (!predicate(array[index], index, array)) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    /**
-     * A specialized version of `_.filter` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns the new filtered array.
-     */
-    function arrayFilter(array, predicate) {
-      var index = -1,
-          length = array.length,
-          resIndex = -1,
-          result = [];
-
-      while (++index < length) {
-        var value = array[index];
-        if (predicate(value, index, array)) {
-          result[++resIndex] = value;
-        }
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.map` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns the new mapped array.
-     */
-    function arrayMap(array, iteratee) {
-      var index = -1,
-          length = array.length,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = iteratee(array[index], index, array);
-      }
-      return result;
-    }
-
-    /**
      * A specialized version of `_.max` for arrays without support for iteratees.
      *
      * @private
@@ -1583,76 +1497,6 @@
         }
       }
       return result;
-    }
-
-    /**
-     * A specialized version of `_.reduce` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the first element of
-     *  `array` as the initial value.
-     * @returns {*} Returns the accumulated value.
-     */
-    function arrayReduce(array, iteratee, accumulator, initFromArray) {
-      var index = -1,
-          length = array.length;
-
-      if (initFromArray && length) {
-        accumulator = array[++index];
-      }
-      while (++index < length) {
-        accumulator = iteratee(accumulator, array[index], index, array);
-      }
-      return accumulator;
-    }
-
-    /**
-     * A specialized version of `_.reduceRight` for arrays without support for
-     * callback shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the last element of
-     *  `array` as the initial value.
-     * @returns {*} Returns the accumulated value.
-     */
-    function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
-      var length = array.length;
-      if (initFromArray && length) {
-        accumulator = array[--length];
-      }
-      while (length--) {
-        accumulator = iteratee(accumulator, array[length], length, array);
-      }
-      return accumulator;
-    }
-
-    /**
-     * A specialized version of `_.some` for arrays without support for callback
-     * shorthands or `this` binding.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if any element passes the predicate check,
-     *  else `false`.
-     */
-    function arraySome(array, predicate) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (predicate(array[index], index, array)) {
-          return true;
-        }
-      }
-      return false;
     }
 
     /**
@@ -1789,7 +1633,7 @@
       }
       // Handle "_.property" and "_.matches" style callback shorthands.
       return type == 'object'
-        ? baseMatches(func, !argCount)
+        ? baseMatches(func, argCount)
         : baseProperty(argCount ? (func + '') : func);
     }
 
@@ -1815,35 +1659,21 @@
       if (typeof result != 'undefined') {
         return result;
       }
-      if (!isObject(value)) {
-        return value;
-      }
       var isArr = isArray(value);
+      result = value;
       if (isArr) {
-        result = initCloneArray(value);
-        if (!isDeep) {
-          return arrayCopy(value, result);
+        result = initArrayClone(value, isDeep);
+      } else if (isObject(value)) {
+        result = initObjectClone(value, isDeep);
+        if (result === null) {
+          isDeep = false;
+          result = {};
+        } else if (isDeep) {
+          isDeep = objToString.call(result) == objectTag;
         }
-      } else {
-        var tag = objToString.call(value),
-            isFunc = tag == funcTag;
-
-        if (!lodash.support.argsTag && isArguments(value)) {
-          tag = argsTag;
-        }
-        if (tag == objectTag || (isFunc && !object)) {
-          if (isHostObject(value)) {
-            return object ? value : {};
-          }
-          result = initCloneObject(isFunc ? {} : value);
-          if (!isDeep) {
-            return baseAssign(result, value);
-          }
-        } else {
-          return cloneableTags[tag]
-            ? initCloneByTag(value, tag, isDeep)
-            : (object ? value : {});
-        }
+      }
+      if (!isDeep || result === value) {
+        return result;
       }
       // Check for circular references and return corresponding clone.
       stackA || (stackA = []);
@@ -1900,7 +1730,7 @@
       if (!isFunction(func)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);
+      return setTimeout(function() { func.apply(undefined, slice(args, fromIndex)); }, wait);
     }
 
     /**
@@ -2245,8 +2075,8 @@
      * `customizer` functions.
      *
      * @private
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
+     * @param {*} value The value to compare to `other`.
+     * @param {*} other The value to compare to `value`.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
@@ -2277,8 +2107,8 @@
      * objects with circular references to be compared.
      *
      * @private
-     * @param {Array} object The object to compare.
-     * @param {Array} other The other object to compare.
+     * @param {Array} object The object to compare to `other`.
+     * @param {Array} other The object to compare to `value`.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing objects.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
@@ -2294,10 +2124,6 @@
           othIsArg = othTag == argsTag,
           othIsArr = !othIsArg && arrayLikeTags[othTag];
 
-      if (!lodash.support.argsTag) {
-        objIsArg = !objIsArr && typeof object.length == 'number' && isArguments(object);
-        othIsArg = !othIsArr && typeof other.length == 'number' && isArguments(other);
-      }
       if (objIsArg) {
         object = argsToObject(object);
         objTag = objectTag;
@@ -2306,8 +2132,8 @@
         other = argsToObject(other);
         othTag = objectTag;
       }
-      var objIsObj = objTag == objectTag && !isHostObject(object),
-          othIsObj = othTag == objectTag && !isHostObject(other),
+      var objIsObj = objTag == objectTag,
+          othIsObj = othTag == objectTag,
           isSameTag = objTag == othTag;
 
       if (isSameTag && !(objIsArr || objIsObj)) {
@@ -2416,7 +2242,7 @@
 
     /**
      * The base implementation of `_.matches` which supports specifying whether
-     * `source` should be cloned.
+     * `source` is cloned.
      *
      * @private
      * @param {Object} source The object of property values to match.
@@ -2437,16 +2263,16 @@
           };
         }
       }
-      if (isCloned) {
-        source = baseClone(source, true);
-      }
-      var values = Array(length),
+      var notCloned = !isCloned,
+          values = Array(length),
           strictCompareFlags = Array(length);
 
       while (length--) {
         value = source[props[length]];
-        values[length] = value;
-        strictCompareFlags[length] = isStrictComparable(value);
+        var isStrict = isStrictComparable(value);
+
+        values[length] = (isStrict || notCloned) ? value : baseClone(value, true, clonePassthru);
+        strictCompareFlags[length] = isStrict;
       }
       return function(object) {
         return baseIsMatch(object, props, values, strictCompareFlags);
@@ -2605,36 +2431,6 @@
       metaMap.set(func, data);
       return func;
     };
-
-    /**
-     * The base implementation of `_.slice` without an iteratee call guard.
-     *
-     * @private
-     * @param {Array} array The array to slice.
-     * @param {number} [start=0] The start position.
-     * @param {number} [end=array.length] The end position.
-     * @returns {Array} Returns the slice of `array`.
-     */
-    function baseSlice(array, start, end) {
-      var index = -1,
-          length = array.length;
-
-      start = start == null ? 0 : (+start || 0);
-      if (start < 0) {
-        start = -start > length ? 0 : (length + start);
-      }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
-      if (end < 0) {
-        end += length;
-      }
-      length = start > end ? 0 : (end - start);
-
-      var result = Array(length);
-      while (++index < length) {
-        result[index] = array[index + start];
-      }
-      return result;
-    }
 
     /**
      * The base implementation of `_.some` without support for callback shorthands
@@ -2896,6 +2692,18 @@
         }
         return result;
       };
+    }
+
+    /**
+     * Used by `_.matches` to clone `source` values, letting uncloneable values
+     * passthu instead of returning empty objects.
+     *
+     * @private
+     * @param {*} value The value to clone.
+     * @returns {*} Returns the cloned value.
+     */
+    function clonePassthru(value) {
+      return isCloneable(value) ? undefined : value;
     }
 
     /**
@@ -3179,7 +2987,7 @@
 
           length -= argsHolders.length;
           if (length < arity) {
-            var newArgPos = argPos ? arrayCopy(argPos) : null,
+            var newArgPos = argPos ? baseSlice(argPos) : null,
                 newArity = nativeMax(arity - length, 0),
                 newsHolders = isCurry ? argsHolders : null,
                 newHoldersRight = isCurry ? null : argsHolders,
@@ -3341,8 +3149,8 @@
      * partial deep comparisons.
      *
      * @private
-     * @param {Array} array The array to compare.
-     * @param {Array} other The other array to compare.
+     * @param {Array} array The array to compare to `other`.
+     * @param {Array} other The array to compare to `value`.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing arrays.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
@@ -3396,8 +3204,8 @@
      * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
      *
      * @private
-     * @param {Object} value The object to compare.
-     * @param {Object} other The other object to compare.
+     * @param {Object} value The object to compare to `other`.
+     * @param {Object} other The object to compare to `object`.
      * @param {string} tag The `toStringTag` of the objects to compare.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
@@ -3433,8 +3241,8 @@
      * partial deep comparisons.
      *
      * @private
-     * @param {Object} object The object to compare.
-     * @param {Object} other The other object to compare.
+     * @param {Object} object The object to compare to `other`.
+     * @param {Object} other The object to compare to `value`.
      * @param {Function} equalFunc The function to determine equivalents of arbitrary values.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {boolean} [isWhere] Specify performing partial comparisons.
@@ -3591,12 +3399,19 @@
      *
      * @private
      * @param {Array} array The array to clone.
-     * @returns {Array} Returns the initialized clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
+     * @returns {Array} Returns the initialized array clone.
      */
-    function initCloneArray(array) {
-      var length = array.length,
+    function initArrayClone(array, isDeep) {
+      var index = -1,
+          length = array.length,
           result = new array.constructor(length);
 
+      if (!isDeep) {
+        while (++index < length) {
+          result[index] = array[index];
+        }
+      }
       // Add array properties assigned by `RegExp#exec`.
       if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
         result.index = array.index;
@@ -3610,37 +3425,30 @@
      *
      * @private
      * @param {Object} object The object to clone.
-     * @returns {Object} Returns the initialized clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
+     * @returns {null|Object} Returns the initialized object clone if an object
+     *  is cloneable, else `null`.
      */
-    function initCloneObject(object) {
-      var Ctor = object.constructor;
-      if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
+    function initObjectClone(object, isDeep) {
+      if (!isCloneable(object)) {
+        return null;
+      }
+      var Ctor = object.constructor,
+          tag = objToString.call(object),
+          isArgs = tag == argsTag,
+          isObj = tag == objectTag;
+
+      if (isObj && !(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
         Ctor = Object;
       }
-      return new Ctor;
-    }
-
-    /**
-     * Initializes an object clone based on its `toStringTag`.
-     *
-     * **Note:** This function only supports cloning values with `toStringTag`
-     * values of `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
-     *
-     *
-     * @private
-     * @param {Object} object The object to clone.
-     * @param {string} tag The `toStringTag` of the object to clone.
-     * @param {boolean} [isDeep] Specify a deep clone.
-     * @returns {Object} Returns the initialized clone.
-     */
-    function initCloneByTag(object, tag, isDeep) {
-      var Ctor = object.constructor;
-      switch (tag) {
-        case argsTag:
-          var result = new Ctor;
+      if (isArgs || isObj) {
+        var result = isDeep ? new Ctor : baseAssign(new Ctor, object);
+        if (isArgs) {
           result.length = object.length;
-          return arrayCopy(object, result);
-
+        }
+        return result;
+      }
+      switch (tag) {
         case arrayBufferTag:
           return bufferClone(object);
 
@@ -3651,10 +3459,6 @@
         case float32Tag: case float64Tag:
         case int8Tag: case int16Tag: case int32Tag:
         case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
-          // Safari 5 mobile incorrectly has `Object` as the constructor of typed arrays.
-          if (Ctor instanceof Ctor) {
-            Ctor = ctorByTag[tag];
-          }
           var buffer = object.buffer;
           return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
 
@@ -3678,7 +3482,7 @@
      */
     function isArrayLike(value) {
       return (isObjectLike(value) && isLength(value.length) &&
-        (arrayLikeTags[objToString.call(value)] || (!lodash.support.argsTag && isArguments(value)))) || false;
+        (arrayLikeTags[objToString.call(value)])) || false;
     }
 
     /**
@@ -3704,6 +3508,17 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Checks if `value` is cloneable.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is cloneable, else `false`.
+     */
+    function isCloneable(value) {
+      return (value && cloneableTags[objToString.call(value)]) || false;
     }
 
     /**
@@ -3801,20 +3616,20 @@
       var value = source[3];
       if (value) {
         var partials = data[3];
-        data[3] = partials ? composeArgs(partials, value, source[4]) : arrayCopy(value);
-        data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : arrayCopy(source[4]);
+        data[3] = partials ? composeArgs(partials, value, source[4]) : baseSlice(value);
+        data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : baseSlice(source[4]);
       }
       // Compose partial right arguments.
       value = source[5];
       if (value) {
         partials = data[5];
-        data[5] = partials ? composeArgsRight(partials, value, source[6]) : arrayCopy(value);
-        data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : arrayCopy(source[6]);
+        data[5] = partials ? composeArgsRight(partials, value, source[6]) : baseSlice(value);
+        data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : baseSlice(source[6]);
       }
       // Use source `argPos` if available.
       value = source[7];
       if (value) {
-        data[7] = arrayCopy(value);
+        data[7] = baseSlice(value);
       }
       // Use source `ary` if it's smaller.
       if (srcBitmask & ARY_FLAG) {
@@ -3889,7 +3704,7 @@
     function reorder(array, indexes) {
       var arrLength = array.length,
           length = nativeMin(indexes.length, arrLength),
-          oldArray = arrayCopy(array);
+          oldArray = baseSlice(array);
 
       while (length--) {
         var index = indexes[length];
@@ -3944,23 +3759,15 @@
           support = lodash.support;
 
       // Exit early for non `Object` objects.
-      if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value)) ||
+      if (!(isObjectLike(value) && objToString.call(value) == objectTag) ||
           (!hasOwnProperty.call(value, 'constructor') &&
-            (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor))) ||
-          (!support.argsTag && isArguments(value))) {
+            (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
         return false;
       }
       // IE < 9 iterates inherited properties before own properties. If the first
       // iterated property is an object's own property then there are no inherited
       // enumerable properties.
       var result;
-      if (support.ownLast) {
-        baseForIn(value, function(subValue, key, object) {
-          result = hasOwnProperty.call(object, key);
-          return false;
-        });
-        return result !== false;
-      }
       // In most environments an object's own properties are iterated before
       // its inherited properties. If the last iterated property is an object's
       // own property then there are no inherited enumerable properties.
@@ -3985,8 +3792,7 @@
           support = lodash.support;
 
       var allowIndexes = length && isLength(length) &&
-        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
-          (support.nonEnumArgs && isArguments(object)));
+        (isArray(object) || (support.nonEnumArgs && isArguments(object)));
 
       var index = -1,
           result = [];
@@ -4014,9 +3820,6 @@
       if (!isLength(value.length)) {
         return values(value);
       }
-      if (lodash.support.unindexedChars && isString(value)) {
-        return value.split('');
-      }
       return isObject(value) ? value : Object(value);
     }
 
@@ -4028,16 +3831,6 @@
      * @returns {Object} Returns the object.
      */
     function toObject(value) {
-      if (lodash.support.unindexedChars && isString(value)) {
-        var index = -1,
-            length = value.length,
-            result = Object(value);
-
-        while (++index < length) {
-          result[index] = value.charAt(index);
-        }
-        return result;
-      }
       return isObject(value) ? value : Object(value);
     }
 
@@ -4090,7 +3883,7 @@
           result = Array(ceil(length / size));
 
       while (index < length) {
-        result[++resIndex] = baseSlice(array, index, (index += size));
+        result[++resIndex] = slice(array, index, (index += size));
       }
       return result;
     }
@@ -4183,14 +3976,10 @@
      * // => [1, 2, 3]
      */
     function drop(array, n, guard) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      return baseSlice(array, n < 0 ? 0 : n);
+      return slice(array, n < 0 ? 0 : n);
     }
 
     /**
@@ -4219,15 +4008,11 @@
      * // => [1, 2, 3]
      */
     function dropRight(array, n, guard) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      n = length - (+n || 0);
-      return baseSlice(array, 0, n < 0 ? 0 : n);
+      n = array ? (array.length - (+n || 0)) : 0;
+      return slice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
@@ -4272,12 +4057,10 @@
      */
     function dropRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
+
       predicate = getCallback(predicate, thisArg, 3);
       while (length-- && predicate(array[length], length, array)) {}
-      return baseSlice(array, 0, length + 1);
+      return slice(array, 0, length + 1);
     }
 
     /**
@@ -4321,14 +4104,12 @@
      * // => ['pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      var index = -1;
+      var index = -1,
+          length = array ? array.length : 0;
+
       predicate = getCallback(predicate, thisArg, 3);
       while (++index < length && predicate(array[index], index, array)) {}
-      return baseSlice(array, index);
+      return slice(array, index);
     }
 
     /**
@@ -4850,15 +4631,32 @@
      * @returns {Array} Returns the slice of `array`.
      */
     function slice(array, start, end) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      if (end && typeof end != 'number' && isIterateeCall(array, start, end)) {
+      var index = -1,
+          length = array ? array.length : 0,
+          endType = typeof end;
+
+      if (end && endType != 'number' && isIterateeCall(array, start, end)) {
         start = 0;
         end = length;
       }
-      return baseSlice(array, start, end);
+      start = start == null ? 0 : (+start || 0);
+      if (start < 0) {
+        start = -start > length ? 0 : (length + start);
+      }
+      end = (endType == 'undefined' || end > length) ? length : (+end || 0);
+      if (end < 0) {
+        end += length;
+      }
+      if (end && end == length && !start) {
+        return baseSlice(array);
+      }
+      length = start > end ? 0 : (end - start);
+
+      var result = Array(length);
+      while (++index < length) {
+        result[index] = array[index + start];
+      }
+      return result;
     }
 
     /**
@@ -4967,14 +4765,10 @@
      * // => []
      */
     function take(array, n, guard) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      return baseSlice(array, 0, n < 0 ? 0 : n);
+      return slice(array, 0, n < 0 ? 0 : n);
     }
 
     /**
@@ -5003,15 +4797,11 @@
      * // => []
      */
     function takeRight(array, n, guard) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      n = length - (+n || 0);
-      return baseSlice(array, n < 0 ? 0 : n);
+      n = array ? (array.length - (+n || 0)) : 0;
+      return slice(array, n < 0 ? 0 : n);
     }
 
     /**
@@ -5056,12 +4846,10 @@
      */
     function takeRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
+
       predicate = getCallback(predicate, thisArg, 3);
       while (length-- && predicate(array[length], length, array)) {}
-      return baseSlice(array, length + 1);
+      return slice(array, length + 1);
     }
 
     /**
@@ -5105,14 +4893,12 @@
      * // => ['barney', 'fred']
      */
     function takeWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      var index = -1;
+      var index = -1,
+          length = array ? array.length : 0;
+
       predicate = getCallback(predicate, thisArg, 3);
       while (++index < length && predicate(array[index], index, array)) {}
-      return baseSlice(array, 0, index);
+      return slice(array, 0, index);
     }
 
     /**
@@ -5256,7 +5042,7 @@
      * // => [2, 3, 4]
      */
     function without(array) {
-      return baseDifference(array, baseSlice(arguments, 1));
+      return baseDifference(array, slice(arguments, 1));
     }
 
     /**
@@ -6005,7 +5791,7 @@
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
     function invoke(collection, methodName) {
-      return baseInvoke(collection, methodName, baseSlice(arguments, 2));
+      return baseInvoke(collection, methodName, slice(arguments, 2));
     }
 
     /**
@@ -6582,9 +6368,7 @@
       if (!length) {
         return [];
       }
-      return (lodash.support.unindexedChars && isString(collection))
-        ? collection.split('')
-        : arrayCopy(collection);
+      return baseSlice(collection);
     }
 
     /**
@@ -6778,7 +6562,7 @@
     function bind(func, thisArg) {
       var bitmask = BIND_FLAG;
       if (arguments.length > 2) {
-        var partials = baseSlice(arguments, 2),
+        var partials = slice(arguments, 2),
             holders = replaceHolders(partials, bind.placeholder);
 
         bitmask |= PARTIAL_FLAG;
@@ -6867,7 +6651,7 @@
     function bindKey(object, key) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (arguments.length > 2) {
-        var partials = baseSlice(arguments, 2),
+        var partials = slice(arguments, 2),
             holders = replaceHolders(partials, bindKey.placeholder);
 
         bitmask |= PARTIAL_FLAG;
@@ -7430,7 +7214,7 @@
      * // => 'hi fred'
      */
     function partial(func) {
-      var partials = baseSlice(arguments, 1),
+      var partials = slice(arguments, 1),
           holders = replaceHolders(partials, partial.placeholder);
 
       return createWrapper(func, PARTIAL_FLAG, null, partials, holders);
@@ -7468,7 +7252,7 @@
      * // => 'hello fred'
      */
     function partialRight(func) {
-      var partials = baseSlice(arguments, 1),
+      var partials = slice(arguments, 1),
           holders = replaceHolders(partials, partialRight.placeholder);
 
       return createWrapper(func, PARTIAL_RIGHT_FLAG, null, partials, holders);
@@ -7718,14 +7502,6 @@
       var length = isObjectLike(value) ? value.length : undefined;
       return (isLength(length) && objToString.call(value) == argsTag) || false;
     }
-    // Fallback for environments without a `toStringTag` for `arguments` objects.
-    if (!support.argsTag) {
-      isArguments = function(value) {
-        var length = isObjectLike(value) ? value.length : undefined;
-        return (isLength(length) && hasOwnProperty.call(value, 'callee') &&
-          !propertyIsEnumerable.call(value, 'callee')) || false;
-      };
-    }
 
     /**
      * Checks if `value` is classified as an `Array` object.
@@ -7805,7 +7581,7 @@
      */
     function isElement(value) {
       return (value && value.nodeType === 1 && isObjectLike(value) &&
-        (lodash.support.nodeTag ? objToString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
+        objToString.call(value).indexOf('Element') > -1) || false;
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
@@ -7868,8 +7644,8 @@
      * @static
      * @memberOf _
      * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
+     * @param {*} value The value to compare to `other`.
+     * @param {*} other The value to compare to `value`.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {*} [thisArg] The `this` binding of `customizer`.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
@@ -8133,8 +7909,7 @@
       if (objToString.call(value) == funcTag) {
         return reNative.test(fnToString.call(value));
       }
-      return (isObjectLike(value) &&
-        (isHostObject(value) ? reNative : reHostCtor).test(value)) || false;
+      return (isObjectLike(value) && reHostCtor.test(value)) || false;
     }
 
     /**
@@ -8215,7 +7990,7 @@
      * // => true
      */
     var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
-      if (!(value && objToString.call(value) == objectTag) || (!lodash.support.argsTag && isArguments(value))) {
+      if (!(value && objToString.call(value) == objectTag)) {
         return false;
       }
       var valueOf = value.valueOf,
@@ -8243,7 +8018,7 @@
      * // => false
      */
     function isRegExp(value) {
-      return (isObject(value) && objToString.call(value) == regexpTag) || false;
+      return (isObjectLike(value) && objToString.call(value) == regexpTag) || false;
     }
 
     /**
@@ -8379,7 +8154,7 @@
       if (object == null) {
         return object;
       }
-      var args = arrayCopy(arguments);
+      var args = baseSlice(arguments);
       args.push(assignDefaults);
       return assign.apply(undefined, args);
     }
@@ -8709,7 +8484,7 @@
             length = object.length;
       }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-         (typeof object == 'function' ? lodash.support.enumPrototypes : (length && isLength(length)))) {
+         (typeof object != 'function' && (length && isLength(length)))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -8744,52 +8519,23 @@
       if (!isObject(object)) {
         object = Object(object);
       }
-      var length = object.length,
-          support = lodash.support;
-
+      var length = object.length;
       length = (length && isLength(length) &&
-        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
-          (support.nonEnumArgs && isArguments(object))) && length) || 0;
+        (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) || 0;
 
       var Ctor = object.constructor,
           index = -1,
-          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto,
-          isProto = proto === object,
+          isProto = typeof Ctor == 'function' && Ctor.prototype == object,
           result = Array(length),
-          skipIndexes = length > 0,
-          skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
-          skipProto = support.enumPrototypes && typeof object == 'function';
+          skipIndexes = length > 0;
 
       while (++index < length) {
-        result[index] = (index + '');
+        result[index] = String(index);
       }
-      // Lo-Dash skips the `constructor` property when it infers it is iterating
-      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
-      // attribute of an existing property and the `constructor` property of a
-      // prototype defaults to non-enumerable.
       for (var key in object) {
-        if (!(skipProto && key == 'prototype') &&
-            !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && isIndex(key, length)) &&
+        if (!(skipIndexes && isIndex(key, length)) &&
             !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
-        }
-      }
-      if (support.nonEnumShadows && object !== objectProto) {
-        var tag = object === stringProto ? stringTag : object === errorProto ? errorTag : objToString.call(object),
-            nonEnums = nonEnumProps[tag] || nonEnumProps[objectTag];
-
-        if (tag == objectTag) {
-          proto = objectProto;
-        }
-        length = shadowProps.length;
-        while (length--) {
-          key = shadowProps[length];
-          var nonEnum = nonEnums[key];
-          if (!(isProto && nonEnum) &&
-              (nonEnum ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
-            result.push(key);
-          }
         }
       }
       return result;
@@ -10260,7 +10006,7 @@
               var chainAll = this.__chain__;
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
-                (result.__actions__ = arrayCopy(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
+                (result.__actions__ = baseSlice(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
                 result.__chain__ = chainAll;
                 return result;
               }
@@ -10888,20 +10634,9 @@
 
     // Add `Array.prototype` functions to `lodash.prototype`.
     arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var arrayFunc = arrayProto[methodName],
+      var func = arrayProto[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-          fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
           retUnwrapped = /^(?:join|pop|shift)$/.test(methodName);
-
-      // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
-      // IE < 9, Firefox < 10, Narwhal, and RingoJS.
-      var func = !fixObjects ? arrayFunc : function() {
-        var result = arrayFunc.apply(this, arguments);
-        if (this.length === 0) {
-          delete this[0];
-        }
-        return result;
-      };
 
       lodash.prototype[methodName] = function() {
         var args = arguments;

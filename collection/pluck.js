@@ -1,5 +1,5 @@
-var map = require('./map'),
-    property = require('../utility/property');
+var baseProperty = require('../internal/baseProperty'),
+    map = require('./map');
 
 /**
  * Gets the value of `key` from all elements in `collection`.
@@ -25,7 +25,7 @@ var map = require('./map'),
  * // => [36, 40] (iteration order is not guaranteed)
  */
 function pluck(collection, key) {
-  return map(collection, property(key));
+  return map(collection, baseProperty(key + ''));
 }
 
 module.exports = pluck;

@@ -1,4 +1,5 @@
-var baseMatches = require('../internal/baseMatches');
+var baseClone = require('../internal/baseClone'),
+    baseMatches = require('../internal/baseMatches');
 
 /**
  * Creates a function which performs a deep comparison between a given object
@@ -26,7 +27,7 @@ var baseMatches = require('../internal/baseMatches');
  * // => { 'user': 'barney', 'age': 36 }
  */
 function matches(source) {
-  return baseMatches(source, true);
+  return baseMatches(baseClone(source, true));
 }
 
 module.exports = matches;

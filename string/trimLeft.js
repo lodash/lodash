@@ -30,7 +30,7 @@ function trimLeft(string, chars, guard) {
   if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
     return string.slice(trimmedLeftIndex(string))
   }
-  return string.slice(charsLeftIndex(string, baseToString(chars)));
+  return string.slice(charsLeftIndex(string, (chars + '')));
 }
 
 module.exports = trimLeft;

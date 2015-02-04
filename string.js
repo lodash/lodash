@@ -12,6 +12,7 @@ module.exports = {
   'parseInt': require('./string/parseInt'),
   'repeat': require('./string/repeat'),
   'snakeCase': require('./string/snakeCase'),
+  'startCase': require('./string/startCase'),
   'startsWith': require('./string/startsWith'),
   'template': require('./string/template'),
   'templateSettings': require('./string/templateSettings'),

@@ -1,5 +1,5 @@
-var find = require('./find'),
-    matches = require('../utility/matches');
+var baseMatches = require('../internal/baseMatches'),
+    find = require('./find');
 
 /**
  * Performs a deep comparison between each element in `collection` and the
@@ -26,7 +26,7 @@ var find = require('./find'),
  * // => 'fred'
  */
 function findWhere(collection, source) {
-  return find(collection, matches(source));
+  return find(collection, baseMatches(source));
 }
 
 module.exports = findWhere;

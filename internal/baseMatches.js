@@ -1,5 +1,4 @@
-var baseClone = require('./baseClone'),
-    baseIsMatch = require('./baseIsMatch'),
+var baseIsMatch = require('./baseIsMatch'),
     isStrictComparable = require('./isStrictComparable'),
     keys = require('../object/keys');
 
@@ -15,10 +14,9 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  *
  * @private
  * @param {Object} source The object of property values to match.
- * @param {boolean} [isCloned] Specify cloning the source object.
  * @returns {Function} Returns the new function.
  */
-function baseMatches(source, isCloned) {
+function baseMatches(source) {
   var props = keys(source),
       length = props.length;
 
@@ -31,9 +29,6 @@ function baseMatches(source, isCloned) {
         return object != null && value === object[key] && hasOwnProperty.call(object, key);
       };
     }
-  }
-  if (isCloned) {
-    source = baseClone(source, true);
   }
   var values = Array(length),
       strictCompareFlags = Array(length);

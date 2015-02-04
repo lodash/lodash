@@ -26,7 +26,7 @@ function baseCallback(func, thisArg, argCount) {
   }
   // Handle "_.property" and "_.matches" style callback shorthands.
   return type == 'object'
-    ? baseMatches(func, !argCount)
+    ? baseMatches(func)
     : baseProperty(func + '');
 }
 

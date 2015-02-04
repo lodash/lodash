@@ -1,5 +1,5 @@
-var filter = require('./filter'),
-    matches = require('../utility/matches');
+var baseMatches = require('../internal/baseMatches'),
+    filter = require('./filter');
 
 /**
  * Performs a deep comparison between each element in `collection` and the
@@ -29,7 +29,7 @@ var filter = require('./filter'),
  * // => ['barney', 'fred']
  */
 function where(collection, source) {
-  return filter(collection, matches(source));
+  return filter(collection, baseMatches(source));
 }
 
 module.exports = where;

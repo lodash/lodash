@@ -14,10 +14,10 @@ var createCompounder = require('../internal/createCompounder');
  * _.snakeCase('Foo Bar');
  * // => 'foo_bar'
  *
- * _.snakeCase('--foo-bar');
+ * _.snakeCase('fooBar');
  * // => 'foo_bar'
  *
- * _.snakeCase('fooBar');
+ * _.snakeCase('--foo-bar');
  * // => 'foo_bar'
  */
 var snakeCase = createCompounder(function(result, word, index) {

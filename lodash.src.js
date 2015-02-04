@@ -2360,7 +2360,7 @@
      * shorthands or `this` binding.
      *
      * @private
-     * @param {Object} source The object to inspect.
+     * @param {Object} object The object to inspect.
      * @param {Array} props The source property names to match.
      * @param {Array} values The source values to match.
      * @param {Array} strictCompareFlags Strict comparison flags for source values.
@@ -4089,7 +4089,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to process.
-     * @param {numer} [size=1] The length of each chunk.
+     * @param {number} [size=1] The length of each chunk.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Array} Returns the new array containing chunks.
      * @example
@@ -8025,7 +8025,7 @@
      * @static
      * @memberOf _
      * @category Lang
-     * @param {Object} source The object to inspect.
+     * @param {Object} object The object to inspect.
      * @param {Object} source The object of property values to match.
      * @param {Function} [customizer] The function to customize comparing values.
      * @param {*} [thisArg] The `this` binding of `customizer`.

@@ -36,7 +36,7 @@ before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm config set loglevel error"
   - "npm i -g npm@\"$NPM_VERSION\""
-  - "[ $SAUCE_LABS == false ] || npm i chalk@\"0.5.1\" ecstatic@\"0.5.8\" request@\"^2.0.0\" sauce-tunnel@\"^2.0.0\""
+  - "[ $SAUCE_LABS == false ] || npm i chalk@\"0.5.1\" ecstatic@\"0.5.8\" request@\"^2.0.0\" sauce-tunnel@\"2.1.1\""
   - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.0.0\" && npm i istanbul@\"0.3.5\")"
   - "[ $BIN != 'iojs'  ] || (wget https://iojs.org/dist/${IOJS_VERSION}/iojs-${IOJS_VERSION}-linux-x64.tar.xz && sudo tar xJf iojs-${IOJS_VERSION}-linux-x64.tar.xz -C /opt && rm iojs-${IOJS_VERSION}-linux-x64.tar.xz)"
   - "[ $BIN != 'iojs'  ] || (sudo ln -s /opt/iojs-${IOJS_VERSION}-linux-x64/bin/iojs /usr/local/bin/iojs && sudo chmod +x $_)"

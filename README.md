@@ -1,5 +1,7 @@
 # lodash v3.1.0
 
+[![Build Status](https://travis-ci.org/lodash/lodash.svg?branch=master)](https://travis-ci.org/lodash/lodash) [![npm version](https://badge.fury.io/js/lodash.svg)](http://badge.fury.io/js/lodash)
+
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) with packages for [Bower](http://bower.io/), [Component](http://component.github.io/), & [Volo](http://volojs.org/).
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):

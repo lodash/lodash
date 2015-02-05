@@ -1,6 +1,6 @@
 {
   "name": "lodash.trim",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "The lodash method `_.trim` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,7 +15,11 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._charsendindex": "^3.0.0",
-    "lodash._charsstartindex": "^3.0.0"
+    "lodash._basetostring": "^3.0.0",
+    "lodash._charsleftindex": "^3.0.0",
+    "lodash._charsrightindex": "^3.0.0",
+    "lodash._isiterateecall": "^3.0.0",
+    "lodash._trimmedleftindex": "^3.0.0",
+    "lodash._trimmedrightindex": "^3.0.0"
   }
 }

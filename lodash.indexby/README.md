@@ -1,4 +1,4 @@
-# lodash.indexby v3.1.0
+# lodash.indexby v3.1.1
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.indexBy` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var indexBy = require('lodash.indexby');
 ```
 
-See the [documentation](https://lodash.com/docs#indexBy) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.indexby) for more details.
+See the [documentation](https://lodash.com/docs#indexBy) or [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash.indexby) for more details.

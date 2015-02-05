@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@ var baseDifference = require('lodash._basedifference'),
  * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
  * of an array-like value.
  */
-var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+var MAX_SAFE_INTEGER = 9007199254740991;
 
 /**
  * The base implementation of `_.property` without support for deep paths.
@@ -65,7 +65,7 @@ function isLength(value) {
 }
 
 /**
- * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+ * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
  * of the provided arrays.
  *
  * @static

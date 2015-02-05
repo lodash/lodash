@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -47,7 +47,7 @@ var baseAssign = require('lodash._baseassign'),
 function create(prototype, properties, guard) {
   var result = baseCreate(prototype);
   if (guard && isIterateeCall(prototype, properties, guard)) {
-    properties = null;
+    properties = undefined;
   }
   return properties ? baseAssign(result, properties) : result;
 }

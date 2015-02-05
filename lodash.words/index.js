@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -15,6 +15,8 @@ var symbolTag = '[object Symbol]';
 
 /** Used to compose unicode character classes. */
 var rsAstralRange = '\\ud800-\\udfff',
+    rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+    rsComboSymbolsRange = '\\u20d0-\\u20f0',
     rsDingbatRange = '\\u2700-\\u27bf',
     rsLowerRange = 'a-z\\xdf-\\xf6\\xf8-\\xff',
     rsMathOpRange = '\\xac\\xb1\\xd7\\xf7',
@@ -27,11 +29,13 @@ var rsAstralRange = '\\ud800-\\udfff',
 
 /** Used to compose unicode capture groups. */
 var rsBreak = '[' + rsBreakRange + ']',
+    rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']',
     rsDigits = '\\d+',
     rsDingbat = '[' + rsDingbatRange + ']',
     rsLower = '[' + rsLowerRange + ']',
     rsMisc = '[^' + rsAstralRange + rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange + ']',
-    rsModifier = '(?:\\ud83c[\\udffb-\\udfff])',
+    rsFitz = '\\ud83c[\\udffb-\\udfff]',
+    rsModifier = '(?:' + rsCombo + '|' + rsFitz + ')',
     rsNonAstral = '[^' + rsAstralRange + ']',
     rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
     rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
@@ -55,7 +59,8 @@ var reComplexWord = RegExp([
   rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
   rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
   rsUpper + '?' + rsLowerMisc + '+',
-  rsDigits + '(?:' + rsLowerMisc + '+)?',
+  rsUpper + '+',
+  rsDigits,
   rsEmoji
 ].join('|'), 'g');
 
@@ -72,11 +77,11 @@ var objectProto = global.Object.prototype;
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
-var _Symbol = global.Symbol;
+var Symbol = global.Symbol;
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-    symbolToString = _Symbol ? symbolProto.toString : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = Symbol ? symbolProto.toString : undefined;
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -155,7 +160,7 @@ function toString(value) {
     return '';
   }
   if (isSymbol(value)) {
-    return _Symbol ? symbolToString.call(value) : '';
+    return Symbol ? symbolToString.call(value) : '';
   }
   var result = (value + '');
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;

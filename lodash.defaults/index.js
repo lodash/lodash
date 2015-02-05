@@ -1,8 +1,8 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -18,13 +18,15 @@ var assign = require('lodash.assign'),
  * @returns {*} Returns the value to assign to the destination object.
  */
 function assignDefaults(objectValue, sourceValue) {
-  return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+  return objectValue === undefined ? sourceValue : objectValue;
 }
 
 /**
  * Assigns own enumerable properties of source object(s) to the destination
  * object for all destination properties that resolve to `undefined`. Once a
  * property is set, additional values of the same property are ignored.
+ *
+ * **Note:** This method mutates `object`.
  *
  * @static
  * @memberOf _

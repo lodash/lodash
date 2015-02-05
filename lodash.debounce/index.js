@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -58,7 +58,7 @@ var now = nativeNow || function() {
  * @param {boolean} [options.leading=false] Specify invoking on the leading
  *  edge of the timeout.
  * @param {number} [options.maxWait] The maximum time `func` is allowed to be
- *  delayed before it is invoked.
+ *  delayed before it's invoked.
  * @param {boolean} [options.trailing=true] Specify invoking on the trailing
  *  edge of the timeout.
  * @returns {Function} Returns the new debounced function.
@@ -116,9 +116,9 @@ function debounce(func, wait, options) {
     var leading = true;
     trailing = false;
   } else if (isObject(options)) {
-    leading = options.leading;
+    leading = !!options.leading;
     maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
-    trailing = 'trailing' in options ? options.trailing : trailing;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
   }
 
   function cancel() {
@@ -128,41 +128,35 @@ function debounce(func, wait, options) {
     if (maxTimeoutId) {
       clearTimeout(maxTimeoutId);
     }
+    lastCalled = 0;
     maxTimeoutId = timeoutId = trailingCall = undefined;
+  }
+
+  function complete(isCalled, id) {
+    if (id) {
+      clearTimeout(id);
+    }
+    maxTimeoutId = timeoutId = trailingCall = undefined;
+    if (isCalled) {
+      lastCalled = now();
+      result = func.apply(thisArg, args);
+      if (!timeoutId && !maxTimeoutId) {
+        args = thisArg = undefined;
+      }
+    }
   }
 
   function delayed() {
     var remaining = wait - (now() - stamp);
     if (remaining <= 0 || remaining > wait) {
-      if (maxTimeoutId) {
-        clearTimeout(maxTimeoutId);
-      }
-      var isCalled = trailingCall;
-      maxTimeoutId = timeoutId = trailingCall = undefined;
-      if (isCalled) {
-        lastCalled = now();
-        result = func.apply(thisArg, args);
-        if (!timeoutId && !maxTimeoutId) {
-          args = thisArg = null;
-        }
-      }
+      complete(trailingCall, maxTimeoutId);
     } else {
       timeoutId = setTimeout(delayed, remaining);
     }
   }
 
   function maxDelayed() {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    maxTimeoutId = timeoutId = trailingCall = undefined;
-    if (trailing || (maxWait !== wait)) {
-      lastCalled = now();
-      result = func.apply(thisArg, args);
-      if (!timeoutId && !maxTimeoutId) {
-        args = thisArg = null;
-      }
-    }
+    complete(trailing, timeoutId);
   }
 
   function debounced() {
@@ -202,7 +196,7 @@ function debounce(func, wait, options) {
       result = func.apply(thisArg, args);
     }
     if (isCalled && !timeoutId && !maxTimeoutId) {
-      args = thisArg = null;
+      args = thisArg = undefined;
     }
     return result;
   }

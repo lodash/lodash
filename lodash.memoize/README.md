@@ -1,4 +1,4 @@
-# lodash.memoize v3.1.0
+# lodash.memoize v3.1.1
 
 The [lodash](https://lodash.com/) method `_.memoize` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var memoize = require('lodash.memoize');
 ```
 
-See the [documentation](https://lodash.com/docs#memoize) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.memoize) for more details.
+See the [documentation](https://lodash.com/docs#memoize) or [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash.memoize) for more details.

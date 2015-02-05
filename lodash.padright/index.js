@@ -1,8 +1,8 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -19,12 +19,12 @@ var baseToString = require('lodash._basetostring'),
 function createPadDir(fromRight) {
   return function(string, length, chars) {
     string = baseToString(string);
-    return string && ((fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string));
+    return (fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string);
   };
 }
 
 /**
- * Pads `string` on the right side if it is shorter than `length`. Padding
+ * Pads `string` on the right side if it's shorter than `length`. Padding
  * characters are truncated if they exceed `length`.
  *
  * @static

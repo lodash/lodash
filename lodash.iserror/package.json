@@ -1,6 +1,6 @@
 {
   "name": "lodash.iserror",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "The lodash method `_.isError` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

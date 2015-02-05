@@ -1,4 +1,4 @@
-# lodash._createcache v3.1.0
+# lodash._createcache v3.1.1
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `createCache` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var createCache = require('lodash._createcache');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash._createcache) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash._createcache) for more details.

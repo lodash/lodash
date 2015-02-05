@@ -1,8 +1,8 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -48,7 +48,7 @@ function arrayReduce(array, iteratee, accumulator, initFromArray) {
 function createReduce(arrayFunc, eachFunc) {
   return function(collection, iteratee, accumulator, thisArg) {
     var initFromArray = arguments.length < 3;
-    return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+    return (typeof iteratee == 'function' && thisArg === undefined && isArray(collection))
       ? arrayFunc(collection, iteratee, accumulator, initFromArray)
       : baseReduce(collection, baseCallback(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
   };
@@ -62,7 +62,7 @@ function createReduce(arrayFunc, eachFunc) {
  * value. The `iteratee` is bound to `thisArg` and invoked with four arguments:
  * (accumulator, value, index|key, collection).
  *
- * Many lodash methods are guarded to work as interatees for methods like
+ * Many lodash methods are guarded to work as iteratees for methods like
  * `_.reduce`, `_.reduceRight`, and `_.transform`.
  *
  * The guarded methods are:
@@ -79,8 +79,8 @@ function createReduce(arrayFunc, eachFunc) {
  * @returns {*} Returns the accumulated value.
  * @example
  *
- * _.reduce([1, 2], function(sum, n) {
- *   return sum + n;
+ * _.reduce([1, 2], function(total, n) {
+ *   return total + n;
  * });
  * // => 3
  *

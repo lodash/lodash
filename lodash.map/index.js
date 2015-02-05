@@ -1,8 +1,8 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -11,6 +11,12 @@ var arrayMap = require('lodash._arraymap'),
     baseEach = require('lodash._baseeach'),
     isArray = require('lodash.isarray'),
     keys = require('lodash.keys');
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
 /**
  * The base implementation of `_.map` without support for callback shorthands
@@ -22,11 +28,52 @@ var arrayMap = require('lodash._arraymap'),
  * @returns {Array} Returns the new mapped array.
  */
 function baseMap(collection, iteratee) {
-  var result = [];
+  var index = -1,
+      length = getLength(collection),
+      result = isLength(length) ? Array(length) : [];
+
   baseEach(collection, function(value, key, collection) {
-    result.push(iteratee(value, key, collection));
+    result[++index] = iteratee(value, key, collection);
   });
   return result;
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * in Safari on iOS 8.1 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
 }
 
 /**
@@ -61,7 +108,6 @@ function baseMap(collection, iteratee) {
  * @param {Array|Object|string} collection The collection to iterate over.
  * @param {Function|Object|string} [iteratee=_.identity] The function invoked
  *  per iteration.
- *  create a `_.property` or `_.matches` style callback respectively.
  * @param {*} [thisArg] The `this` binding of `iteratee`.
  * @returns {Array} Returns the new mapped array.
  * @example

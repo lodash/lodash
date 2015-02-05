@@ -1,8 +1,8 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -22,6 +22,27 @@ var splice = arrayProto.splice;
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+
+/**
+ * The base implementation of `_.pullAt` without support for individual
+ * index arguments and capturing the removed elements.
+ *
+ * @private
+ * @param {Array} array The array to modify.
+ * @param {number[]} indexes The indexes of elements to remove.
+ * @returns {Array} Returns `array`.
+ */
+function basePullAt(array, indexes) {
+  var length = indexes.length;
+  while (length--) {
+    var index = parseFloat(indexes[length]);
+    if (index != previous && isIndex(index)) {
+      var previous = index;
+      splice.call(array, index, 1);
+    }
+  }
+  return array;
+}
 
 /**
  * Checks if `value` is a valid array-like index.
@@ -66,17 +87,8 @@ var pullAt = restParam(function(array, indexes) {
   array || (array = []);
   indexes = baseFlatten(indexes);
 
-  var length = indexes.length,
-      result = baseAt(array, indexes);
-
-  indexes.sort(baseCompareAscending);
-  while (length--) {
-    var index = parseFloat(indexes[length]);
-    if (index != previous && isIndex(index)) {
-      var previous = index;
-      splice.call(array, index, 1);
-    }
-  }
+  var result = baseAt(array, indexes);
+  basePullAt(array, indexes.sort(baseCompareAscending));
   return result;
 });
 

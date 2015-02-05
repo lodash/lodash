@@ -1,8 +1,8 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -23,7 +23,7 @@ var PARTIAL_RIGHT_FLAG = 64;
 function createPartial(flag) {
   var partialFunc = restParam(function(func, partials) {
     var holders = replaceHolders(partials, partialFunc.placeholder);
-    return createWrapper(func, flag, null, partials, holders);
+    return createWrapper(func, flag, undefined, partials, holders);
   });
   return partialFunc;
 }

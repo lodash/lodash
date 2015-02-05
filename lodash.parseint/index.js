@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -29,14 +29,14 @@ var objectProto = global.Object.prototype;
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
-var _Symbol = global.Symbol;
+var Symbol = global.Symbol;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeParseInt = global.parseInt;
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-    symbolToString = _Symbol ? symbolProto.toString : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = Symbol ? symbolProto.toString : undefined;
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -115,7 +115,7 @@ function toString(value) {
     return '';
   }
   if (isSymbol(value)) {
-    return _Symbol ? symbolToString.call(value) : '';
+    return Symbol ? symbolToString.call(value) : '';
   }
   var result = (value + '');
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
@@ -126,7 +126,7 @@ function toString(value) {
  * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
  * in which case a `radix` of `16` is used.
  *
- * **Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#E)
+ * **Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#x15.1.2.2)
  * of `parseInt`.
  *
  * @static

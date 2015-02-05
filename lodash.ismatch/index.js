@@ -1,20 +1,14 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseIsMatch = require('lodash._baseismatch'),
     bindCallback = require('lodash._bindcallback'),
     keys = require('lodash.keys');
-
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -29,10 +23,19 @@ function isStrictComparable(value) {
 }
 
 /**
- * Checks if `value` is the language type of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ * Converts `value` to an object if it is not one.
  *
- * **Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
  * @memberOf _
@@ -54,7 +57,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (value && type == 'object') || false;
+  return type == 'function' || (!!value && type == 'object');
 }
 
 /**
@@ -62,7 +65,7 @@ function isObject(value) {
  * `object` contains equivalent property values. If `customizer` is provided
  * it is invoked to compare values. If `customizer` returns `undefined`
  * comparisons are handled by the method instead. The `customizer` is bound
- * to `thisArg` and invoked with three arguments; (value, other, index|key).
+ * to `thisArg` and invoked with three arguments: (value, other, index|key).
  *
  * **Note:** This method supports comparing properties of arrays, booleans,
  * `Date` objects, numbers, `Object` objects, regexes, and strings. Functions
@@ -100,13 +103,19 @@ function isMatch(object, source, customizer, thisArg) {
   var props = keys(source),
       length = props.length;
 
+  if (!length) {
+    return true;
+  }
+  if (object == null) {
+    return false;
+  }
   customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
   if (!customizer && length == 1) {
     var key = props[0],
         value = source[key];
 
     if (isStrictComparable(value)) {
-      return object != null && value === object[key] && hasOwnProperty.call(object, key);
+      return value === object[key] && (typeof value != 'undefined' || (key in toObject(object)));
     }
   }
   var values = Array(length),
@@ -116,7 +125,7 @@ function isMatch(object, source, customizer, thisArg) {
     value = values[length] = source[props[length]];
     strictCompareFlags[length] = isStrictComparable(value);
   }
-  return baseIsMatch(object, props, values, strictCompareFlags, customizer);
+  return baseIsMatch(toObject(object), props, values, strictCompareFlags, customizer);
 }
 
 module.exports = isMatch;

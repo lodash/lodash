@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,12 +17,16 @@ var symbolTag = '[object Symbol]';
 var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
 
 /** Used to compose unicode character classes. */
-var rsComboRange = '\\u0300-\\u036f\\ufe20-\\ufe23';
+var rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+    rsComboSymbolsRange = '\\u20d0-\\u20f0';
 
 /** Used to compose unicode capture groups. */
-var rsCombo = '[' + rsComboRange + ']';
+var rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']';
 
-/** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
+/**
+ * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks) and
+ * [combining diacritical marks for symbols](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks_for_Symbols).
+ */
 var reComboMark = RegExp(rsCombo, 'g');
 
 /** Used to map latin-1 supplementary letters to basic latin letters. */
@@ -67,11 +71,11 @@ var objectProto = global.Object.prototype;
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
-var _Symbol = global.Symbol;
+var Symbol = global.Symbol;
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-    symbolToString = _Symbol ? symbolProto.toString : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = Symbol ? symbolProto.toString : undefined;
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -150,7 +154,7 @@ function toString(value) {
     return '';
   }
   if (isSymbol(value)) {
-    return _Symbol ? symbolToString.call(value) : '';
+    return Symbol ? symbolToString.call(value) : '';
   }
   var result = (value + '');
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;

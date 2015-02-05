@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -11,24 +11,7 @@ var baseCopy = require('lodash._basecopy'),
     keys = require('lodash.keys');
 
 /** Native method references. */
-var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
-    preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions;
-
-/** Used as `baseAssign`. */
-var nativeAssign = (function() {
-  // Avoid `Object.assign` in Firefox 34-37 which have an early implementation
-  // with a now defunct try/catch behavior. See https://bugzilla.mozilla.org/show_bug.cgi?id=1103344
-  // for more details.
-  //
-  // Use `Object.preventExtensions` on a plain object instead of simply using
-  // `Object('x')` because Chrome and IE fail to throw an error when attempting
-  // to assign values to readonly indexes of strings in strict mode.
-  var object = { '1': 0 },
-      func = preventExtensions && isNative(func = Object.assign) && func;
-
-  try { func(preventExtensions(object), 'xo'); } catch(e) {}
-  return !object[1] && func;
-}());
+var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols;
 
 /**
  * The base implementation of `_.assign` without support for argument juggling,
@@ -39,7 +22,7 @@ var nativeAssign = (function() {
  * @param {Object} source The source object.
  * @returns {Object} Returns `object`.
  */
-var baseAssign = nativeAssign || function(object, source) {
+var baseAssign = function(object, source) {
   return source == null
     ? object
     : baseCopy(source, getSymbols(source), baseCopy(source, keys(source), object));

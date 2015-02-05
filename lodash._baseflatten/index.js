@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -17,13 +17,12 @@ var isArguments = require('lodash.isarguments'),
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  */
 function isObjectLike(value) {
-  return (value && typeof value == 'object') || false;
+  return !!value && typeof value == 'object';
 }
 
 /**
- * Used as the maximum length of an array-like value.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
- * for more details.
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
@@ -35,11 +34,10 @@ var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
  * @param {Array} array The array to flatten.
  * @param {boolean} isDeep Specify a deep flatten.
  * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
- * @param {number} fromIndex The index to start from.
  * @returns {Array} Returns the new flattened array.
  */
-function baseFlatten(array, isDeep, isStrict, fromIndex) {
-  var index = fromIndex - 1,
+function baseFlatten(array, isDeep, isStrict) {
+  var index = -1,
       length = array.length,
       resIndex = -1,
       result = [];
@@ -50,7 +48,7 @@ function baseFlatten(array, isDeep, isStrict, fromIndex) {
     if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
       if (isDeep) {
         // Recursively flatten arrays (susceptible to call stack limits).
-        value = baseFlatten(value, isDeep, isStrict, 0);
+        value = baseFlatten(value, isDeep, isStrict);
       }
       var valIndex = -1,
           valLength = value.length;
@@ -69,9 +67,7 @@ function baseFlatten(array, isDeep, isStrict, fromIndex) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on ES `ToLength`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
- * for more details.
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.

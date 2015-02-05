@@ -1,6 +1,6 @@
 {
   "name": "lodash.takewhile",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "The modern build of lodash’s `_.takeWhile` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

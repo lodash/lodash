@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -49,8 +49,40 @@ var reIsOctal = /^0o[0-7]+$/i;
 /** Used to detect unsigned integer values. */
 var reIsUint = /^(?:0|[1-9]\d*)$/;
 
-/** Built-in method references without a dependency on `global`. */
+/** Used to determine if values are of the language type `Object`. */
+var objectTypes = {
+  'function': true,
+  'object': true
+};
+
+/** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
+
+/** Detect free variable `exports`. */
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
+
+/** Detect free variable `module`. */
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType) ? module : null;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+
+/** Detect free variable `self`. */
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+
+/** Detect free variable `window`. */
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+
+/**
+ * Used as a reference to the global object.
+ *
+ * The `this` value is used if it's the global object to avoid Greasemonkey's
+ * restricted `window` object, otherwise the `window` object is used.
+ */
+var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal || Function('return this')();
 
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
@@ -59,11 +91,11 @@ var freeParseInt = parseInt;
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} [args] The arguments to invoke `func` with.
+ * @param {...*} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
-  var length = args ? args.length : 0;
+  var length = args.length;
   switch (length) {
     case 0: return func.call(thisArg);
     case 1: return func.call(thisArg, args[0]);
@@ -71,6 +103,17 @@ function apply(func, thisArg, args) {
     case 3: return func.call(thisArg, args[0], args[1], args[2]);
   }
   return func.apply(thisArg, args);
+}
+
+/**
+ * Checks if `value` is a global object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+ */
+function checkGlobal(value) {
+  return (value && value.Object === Object) ? value : null;
 }
 
 /**
@@ -112,7 +155,7 @@ function replaceHolders(array, placeholder) {
 }
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
@@ -240,7 +283,7 @@ function createBaseWrapper(func, bitmask, thisArg) {
       Ctor = createCtorWrapper(func);
 
   function wrapper() {
-    var fn = (this && this !== global && this instanceof wrapper) ? Ctor : func;
+    var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
     return fn.apply(isBind ? thisArg : this, arguments);
   }
   return wrapper;
@@ -295,7 +338,7 @@ function createCurryWrapper(func, bitmask, arity) {
     var length = arguments.length,
         index = length,
         args = Array(length),
-        fn = (this && this !== global && this instanceof wrapper) ? Ctor : func,
+        fn = (this && this !== root && this instanceof wrapper) ? Ctor : func,
         placeholder = wrapper.placeholder;
 
     while (index--) {
@@ -373,7 +416,7 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
     if (isAry && ary < args.length) {
       args.length = ary;
     }
-    if (this && this !== global && this instanceof wrapper) {
+    if (this && this !== root && this instanceof wrapper) {
       fn = Ctor || createCtorWrapper(fn);
     }
     return fn.apply(thisBinding, args);
@@ -403,7 +446,7 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
         leftIndex = -1,
         leftLength = partials.length,
         args = Array(leftLength + argsLength),
-        fn = (this && this !== global && this instanceof wrapper) ? Ctor : func;
+        fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
 
     while (++leftIndex < leftLength) {
       args[leftIndex] = partials[leftIndex];

@@ -1,15 +1,14 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
     binaryIndex = require('lodash._binaryindex'),
-    binaryIndexBy = require('lodash._binaryindexby'),
-    isArray = require('lodash.isarray');
+    binaryIndexBy = require('lodash._binaryindexby');
 
 /**
  * Creates a `_.sortedIndex` or `_.sortedLastIndex` function.
@@ -29,7 +28,7 @@ function createSortedIndex(retHighest) {
 /**
  * Uses a binary search to determine the lowest index at which `value` should
  * be inserted into `array` in order to maintain its sort order. If an iteratee
- * function is provided it is invoked for `value` and each element of `array`
+ * function is provided it's invoked for `value` and each element of `array`
  * to compute their sort ranking. The iteratee is bound to `thisArg` and
  * invoked with one argument; (value).
  *

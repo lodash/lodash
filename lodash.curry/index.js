@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -57,5 +57,8 @@ function curry(func, arity, guard) {
   result.placeholder = curry.placeholder;
   return result;
 }
+
+// Assign default placeholders.
+curry.placeholder = {};
 
 module.exports = curry;

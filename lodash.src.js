@@ -10302,6 +10302,9 @@
      *   });
      * }
      *
+     * // use `_.runInContext` to avoid potential conflicts (esp. in Node.js)
+     * var _ = require('lodash').runInContext();
+     *
      * _.mixin({ 'vowels': vowels });
      * _.vowels('fred');
      * // => ['e']

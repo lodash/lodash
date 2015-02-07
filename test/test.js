@@ -2023,15 +2023,15 @@
       notStrictEqual(func(_.noop), _.noop);
     });
 
-    test('`_.' + methodName + '` should return a noop function when no arguments are provided', 2, function() {
+    test('`_.' + methodName + '` should return an identity function when no arguments are provided', 2, function() {
       var combined = func();
 
       try {
-        strictEqual(combined(), undefined);
+        strictEqual(combined('a'), 'a');
       } catch(e) {
         ok(false, e.message);
       }
-      notStrictEqual(combined, _.noop);
+      notStrictEqual(combined, _.identity);
     });
 
     test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {

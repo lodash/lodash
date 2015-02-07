@@ -24,6 +24,7 @@ matrix:
     - node_js: "0.8"
       env: BUILD="modern" NPM_VERSION="~1.4.0"
     - node_js: "0.10"
+      env:
     - node_js: "0.10"
       env: BUILD="modern"
     - node_js: "0.12"

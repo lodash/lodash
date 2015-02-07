@@ -1076,6 +1076,11 @@
       strictEqual(_.attempt(_.constant('x')), 'x');
     });
 
+    test('should provide additional arguments to `func`', 1, function() {
+      var actual = _.attempt(function() { return slice.call(arguments); }, 1, 2);
+      deepEqual(actual, [1, 2]);
+    });
+
     test('should return the caught error', 1, function() {
       var expected = _.map(errors, _.constant(true));
 
@@ -3378,16 +3383,16 @@
       }
     });
 
-    asyncTest('should accept additional arguments', 1, function() {
+    asyncTest('should provide additional arguments to `func`', 1, function() {
       if (!(isRhino && isModularize)) {
         var args;
 
         _.defer(function() {
           args = slice.call(arguments);
-        }, 1, 2, 3);
+        }, 1, 2);
 
         setTimeout(function() {
-          deepEqual(args, [1, 2, 3]);
+          deepEqual(args, [1, 2]);
           QUnit.start();
         }, 128);
       }
@@ -3444,16 +3449,16 @@
       }
     });
 
-    asyncTest('should accept additional arguments', 1, function() {
+    asyncTest('should provide additional arguments to `func`', 1, function() {
       if (!(isRhino && isModularize)) {
         var args;
 
         _.delay(function() {
           args = slice.call(arguments);
-        }, 32, 1, 2, 3);
+        }, 32, 1, 2);
 
         setTimeout(function() {
-          deepEqual(args, [1, 2, 3]);
+          deepEqual(args, [1, 2]);
           QUnit.start();
         }, 128);
       }

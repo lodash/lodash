@@ -10140,8 +10140,8 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Attempts to invoke `func`, returning either the result or the caught
-     * error object.
+     * Attempts to invoke `func`, returning either the result or the caught error
+     * object. Any additional arguments are provided to `func` when it is invoked.
      *
      * @static
      * @memberOf _
@@ -10151,9 +10151,9 @@
      * @example
      *
      * // avoid throwing errors for invalid selectors
-     * var elements = _.attempt(function() {
+     * var elements = _.attempt(function(selector) {
      *   return document.querySelectorAll(selector);
-     * });
+     * }, '>_>');
      *
      * if (_.isError(elements)) {
      *   elements = [];
@@ -10161,7 +10161,7 @@
      */
     function attempt(func) {
       try {
-        return func();
+        return func.apply(undefined, baseSlice(arguments, 1));
       } catch(e) {
         return isError(e) ? e : Error(e);
       }

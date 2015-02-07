@@ -7499,6 +7499,35 @@
     }
 
     /**
+     * Creates a function accepting an array as argument, that invokes `func`
+     * with arguments taken from this array, like `Function#apply`.
+     * This works obviously well with `Promise.all`.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} The function to alter.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @returns {*} Returns the new function.
+     * @example
+     *
+     * var spread = _.spread(function (who, what) {
+     *   return who + ' says ' + what;
+     * });
+     *
+     * spread(['John', 'hello']) // => 'John says hello'
+     */
+    function spread (func, thisArg) {
+      if (!isFunction(func)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
+
+      return function(array) {
+        return func.apply(thisArg, array);
+      };
+    }
+
+    /**
      * Creates a function that only invokes `func` at most once per every `wait`
      * milliseconds. The created function comes with a `cancel` method to cancel
      * delayed invocations. Provide an options object to indicate that `func`
@@ -10667,6 +10696,7 @@
     lodash.slice = slice;
     lodash.sortBy = sortBy;
     lodash.sortByAll = sortByAll;
+    lodash.spread = spread;
     lodash.take = take;
     lodash.takeRight = takeRight;
     lodash.takeRightWhile = takeRightWhile;

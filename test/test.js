@@ -12180,6 +12180,53 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.spread');
+
+  (function() {
+    function Pair(x, y) {
+      this.x = x;
+      this.y = y;
+
+      return 42;
+    }
+
+    function divide(n, d) {
+      return n / d;
+    }
+
+    test('should pass arguments to `func`', 1, function() {
+      var spread = _.spread(divide);
+      strictEqual(spread([4, 2]), 2);
+    });
+
+    test('should fail when receiving non-array argument', 1, function() {
+      var spread = _.spread(divide);
+      var err;
+      try {
+        spread(4, 2);
+      } catch (e) {
+        err = e;
+      }
+      strictEqual(_.isError(err), true);
+    });
+
+    test('should dynamically `func` to `thisArg`', 2, function() {
+      var self = {z: 3};
+      var spread = _.spread(Pair, self);
+      var result = spread([1, 2]);
+      strictEqual(result, 42);
+      deepEqual(self, {x: 1, y: 2, z: 3});
+    });
+
+    test('should use `undefined` for extra values', 1, function() {
+      var self = {};
+      _.spread(Pair, self)([1]);
+      deepEqual(self, {x: 1, y: undefined});
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.support');
 
   (function() {
@@ -14840,6 +14887,7 @@
       'partial',
       'partialRight',
       'rearg',
+      'spread',
       'throttle'
     ];
 
@@ -14958,7 +15006,7 @@
       });
     });
 
-    test('should throw an error for falsey arguments', 22, function() {
+    test('should throw an error for falsey arguments', 23, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

@@ -7528,7 +7528,7 @@
      * numbers.then(function (nums) { return nums[0] + nums[1] })
      */
     function spread (func, thisArg) {
-      if (!isFunction(func)) {
+      if (typeof func !== 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
 

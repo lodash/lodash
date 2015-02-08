@@ -53,7 +53,7 @@ before_install:
   - "node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./lodash.$BUILD.js"
 script:
   - "[ $ISTANBUL == false ]   || (cp ./lodash.$BUILD.js ./lodash.js && node ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js)"
-  - "([ $ISTANBUL == true ]   && [ $TRAVIS_SECURE_ENV_VARS == true ] && cat ./coverage/lcov.info | coveralls) || true"
+  - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls)"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.$BUILD.js"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.$BUILD.min.js"

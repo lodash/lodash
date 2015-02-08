@@ -3754,7 +3754,6 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
-
         var wrapped = _(array).dropRightWhile(function(num) {
           return num > 2;
         });
@@ -3764,6 +3763,21 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var args;
+
+        _(array).map(function(n) { return n * n; }).dropRightWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [16, 3, array]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -3826,6 +3840,21 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var args;
+
+        _(array).map(function(n) { return n * n; }).dropWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -4478,6 +4507,21 @@
         skipTest(2);
       }
     });
+
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var args;
+
+        _(array).map(function(n) { return n * n; }).takeRightWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [16, 3, array]);
+      }
+      else {
+        skipTest(1);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -4538,6 +4582,21 @@
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var args;
+
+        _(array).map(function(n) { return n * n; }).takeWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());
@@ -14310,13 +14369,13 @@
   (function() {
     test('should clone the chained sequence planting `value` as the wrapped value', 2, function() {
       if (!isNpm) {
-        var array1 = [1, 2],
-            array2 = [3, 4],
-            wrapper1 = _(array1).map(_.partial(Math.pow, _, 2)),
+        var array1 = [5, null, 3, null, 1],
+            array2 = [10, null, 8, null, 6],
+            wrapper1 = _(array1).compact().map(_.partial(Math.pow, _, 2)).takeRight(2).sort(),
             wrapper2 = wrapper1.plant(array2);
 
-        deepEqual(wrapper2.value(), [9, 16]);
-        deepEqual(wrapper1.value(), [1, 4]);
+        deepEqual(wrapper2.value(), [36, 64]);
+        deepEqual(wrapper1.value(), [1, 9]);
       }
       else {
         skipTest(2);

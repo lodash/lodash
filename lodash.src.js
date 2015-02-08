@@ -7516,6 +7516,16 @@
      * });
      *
      * spread(['John', 'hello']) // => 'John says hello'
+     *
+     * // With Promise
+     * var numbers = Promise.all([
+     *   Promise.resolve(42),
+     *   Promise.resolve(33)
+     * ])
+     *
+     * numbers.then(_.spread(function (a, b) { return a + b })) // Promise of 75
+     * // instead of...
+     * numbers.then(function (nums) { return nums[0] + nums[1] })
      */
     function spread (func, thisArg) {
       if (!isFunction(func)) {

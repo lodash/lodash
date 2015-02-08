@@ -12278,41 +12278,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.support');
-
-  (function() {
-    test('should contain properties with boolean values', 1, function() {
-      ok(_.every(_.values(_.support), function(value) {
-        return value === true || value === false;
-      }));
-    });
-
-    test('should not contain minified properties (test production builds)', 1, function() {
-      var props = [
-        'argsTag',
-        'argsObject',
-        'dom',
-        'enumErrorProps',
-        'enumPrototypes',
-        'fastBind',
-        'funcDecomp',
-        'funcNames',
-        'hostObject',
-        'nodeTag',
-        'nonEnumArgs',
-        'nonEnumShadows',
-        'nonEnumStrings',
-        'ownLast',
-        'spliceObjects',
-        'unindexedChars'
-      ];
-
-      ok(_.isEmpty(_.difference(_.keys(_.support), props)));
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.startsWith');
 
   (function() {
@@ -12387,6 +12352,41 @@
       strictEqual(func(string, 'b', { 'toString': _.constant(String(position)) }), true);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.support');
+
+  (function() {
+    test('should contain properties with boolean values', 1, function() {
+      ok(_.every(_.values(_.support), function(value) {
+        return value === true || value === false;
+      }));
+    });
+
+    test('should not contain minified properties (test production builds)', 1, function() {
+      var props = [
+        'argsTag',
+        'argsObject',
+        'dom',
+        'enumErrorProps',
+        'enumPrototypes',
+        'fastBind',
+        'funcDecomp',
+        'funcNames',
+        'hostObject',
+        'nodeTag',
+        'nonEnumArgs',
+        'nonEnumShadows',
+        'nonEnumStrings',
+        'ownLast',
+        'spliceObjects',
+        'unindexedChars'
+      ];
+
+      ok(_.isEmpty(_.difference(_.keys(_.support), props)));
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

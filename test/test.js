@@ -1449,7 +1449,7 @@
 
   QUnit.module('case methods');
 
-  _.each(['camel', 'kebab', 'snake', 'start'], function(caseName) {
+  _.each(['camel', 'kebab', 'pascal', 'snake', 'start'], function(caseName) {
     var methodName = caseName + 'Case',
         func = _[methodName];
 
@@ -1462,6 +1462,7 @@
       switch (caseName) {
         case 'camel': return 'fooBar';
         case 'kebab': return 'foo-bar';
+        case 'pascal': return 'FooBar';
         case 'snake': return 'foo_bar';
         case 'start': return 'Foo Bar';
       }
@@ -1488,7 +1489,7 @@
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
         var letter = deburredLetters[index];
-        letter = caseName == 'start' ? _.capitalize(letter) : letter.toLowerCase();
+        letter = caseName == 'start' || caseName == 'pascal' ? _.capitalize(letter) : letter.toLowerCase();
         return func(burred) === letter;
       });
 
@@ -14892,7 +14893,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 206, function() {
+    test('should accept falsey arguments', 207, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

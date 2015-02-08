@@ -9591,6 +9591,30 @@
     }
 
     /**
+     * Converts `string` to pascal case.
+     * See [Wikipedia](https://en.wikipedia.org/wiki/CamelCase) for more details.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the pascal cased string.
+     * @example
+     *
+     * _.pascalCase('Foo Bar');
+     * // => 'FooBar'
+     *
+     * _.pascalCase('--foo-bar');
+     * // => 'FooBar'
+     *
+     * _.pascalCase('__foo_bar__');
+     * // => 'FooBar'
+     */
+    function pascalCase(string) {
+      return capitalize(camelCase(string));
+    }
+
+    /**
      * Repeats the given string `n` times.
      *
      * @static
@@ -10765,6 +10789,7 @@
     lodash.padLeft = padLeft;
     lodash.padRight = padRight;
     lodash.parseInt = parseInt;
+    lodash.pascalCase = pascalCase;
     lodash.random = random;
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;

@@ -3710,7 +3710,7 @@
   QUnit.module('lodash.dropRightWhile');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3, 4];
 
     var objects = [
       { 'a': 0, 'b': 0 },
@@ -3720,10 +3720,10 @@
 
     test('should drop elements while `predicate` returns truthy', 1, function() {
       var actual = _.dropRightWhile(array, function(num) {
-        return num > 1;
+        return num > 2;
       });
 
-      deepEqual(actual, [1]);
+      deepEqual(actual, [1, 2]);
     });
 
     test('should provide the correct `predicate` arguments', 1, function() {
@@ -3733,15 +3733,15 @@
         args = slice.call(arguments);
       });
 
-      deepEqual(args, [3, 2, array]);
+      deepEqual(args, [4, 3, array]);
     });
 
     test('should support the `thisArg` argument', 1, function() {
       var actual = _.dropRightWhile(array, function(num, index) {
-        return this[index] > 1;
+        return this[index] > 2;
       }, array);
 
-      deepEqual(actual, [1]);
+      deepEqual(actual, [1, 2]);
     });
 
     test('should work with a "_.pluck" style `predicate`', 1, function() {
@@ -3754,12 +3754,13 @@
 
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
+
         var wrapped = _(array).dropRightWhile(function(num) {
-          return num > 1;
+          return num > 2;
         });
 
         ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [1]);
+        deepEqual(wrapped.value(), [1, 2]);
       }
       else {
         skipTest(2);
@@ -3772,7 +3773,7 @@
   QUnit.module('lodash.dropWhile');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3, 4];
 
     var objects = [
       { 'a': 2, 'b': 2 },
@@ -3785,7 +3786,7 @@
         return num < 3;
       });
 
-      deepEqual(actual, [3]);
+      deepEqual(actual, [3, 4]);
     });
 
     test('should provide the correct `predicate` arguments', 1, function() {
@@ -3803,7 +3804,7 @@
         return this[index] < 3;
       }, array);
 
-      deepEqual(actual, [3]);
+      deepEqual(actual, [3, 4]);
     });
 
     test('should work with a "_.pluck" style `predicate`', 1, function() {
@@ -3821,7 +3822,7 @@
         });
 
         ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [3]);
+        deepEqual(wrapped.value(), [3, 4]);
       }
       else {
         skipTest(2);
@@ -4422,7 +4423,7 @@
   QUnit.module('lodash.takeRightWhile');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3, 4];
 
     var objects = [
       { 'a': 0, 'b': 0 },
@@ -4432,10 +4433,10 @@
 
     test('should take elements while `predicate` returns truthy', 1, function() {
       var actual = _.takeRightWhile(array, function(num) {
-        return num > 1;
+        return num > 2;
       });
 
-      deepEqual(actual, [2, 3]);
+      deepEqual(actual, [3, 4]);
     });
 
     test('should provide the correct `predicate` arguments', 1, function() {
@@ -4445,15 +4446,15 @@
         args = slice.call(arguments);
       });
 
-      deepEqual(args, [3, 2, array]);
+      deepEqual(args, [4, 3, array]);
     });
 
     test('should support the `thisArg` argument', 1, function() {
       var actual = _.takeRightWhile(array, function(num, index) {
-        return this[index] > 1;
+        return this[index] > 2;
       }, array);
 
-      deepEqual(actual, [2, 3]);
+      deepEqual(actual, [3, 4]);
     });
 
     test('should work with a "_.pluck" style `predicate`', 1, function() {
@@ -4467,11 +4468,11 @@
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var wrapped = _(array).takeRightWhile(function(num) {
-          return num > 1;
+          return num > 2;
         });
 
         ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [2, 3]);
+        deepEqual(wrapped.value(), [3, 4]);
       }
       else {
         skipTest(2);
@@ -4484,7 +4485,7 @@
   QUnit.module('lodash.takeWhile');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3, 4];
 
     var objects = [
       { 'a': 2, 'b': 2 },

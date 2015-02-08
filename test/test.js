@@ -14240,6 +14240,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).commit');
+
+  (function() {
+    test('should execute the chained sequence and returns the wrapped result', 4, function() {
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _(array).push(2).push(3);
+
+        deepEqual(array, [1]);
+
+        var otherWrapper = wrapped.commit();
+        ok(otherWrapper instanceof _);
+        deepEqual(otherWrapper.value(), [1, 2, 3]);
+        deepEqual(wrapped.value(), [1, 2, 3, 2, 3]);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).concat');
 
   (function() {
@@ -14272,6 +14295,27 @@
 
         strictEqual(actual, '1.2.3');
         strictEqual(wrapped.value(), array);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).plant');
+
+  (function() {
+    test('should clone the chained sequence planting `value` as the wrapped value', 2, function() {
+      if (!isNpm) {
+        var array1 = [1, 2],
+            array2 = [3, 4],
+            wrapper1 = _(array1).map(_.partial(Math.pow, _, 2)),
+            wrapper2 = wrapper1.plant(array2);
+
+        deepEqual(wrapper2.value(), [9, 16]);
+        deepEqual(wrapper1.value(), [1, 4]);
       }
       else {
         skipTest(2);
@@ -14542,9 +14586,24 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...).valueOf');
+  QUnit.module('lodash(...).value');
 
   (function() {
+    test('should execute the chained sequence and extract the unwrapped value', 4, function() {
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _(array).push(2).push(3);
+
+        deepEqual(array, [1]);
+        deepEqual(wrapped.value(), [1, 2, 3]);
+        deepEqual(wrapped.value(), [1, 2, 3, 2, 3]);
+        deepEqual(array, [1, 2, 3, 2, 3]);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
     test('should return the `valueOf` result of the wrapped value', 1, function() {
       if (!isNpm) {
         var wrapped = _(123);
@@ -14565,14 +14624,15 @@
       }
     });
 
-    test('should be aliased', 2, function() {
+    test('should be aliased', 3, function() {
       if (!isNpm) {
-        var expected = _.prototype.valueOf;
+        var expected = _.prototype.value;
+        strictEqual(_.prototype.run, expected);
         strictEqual(_.prototype.toJSON, expected);
-        strictEqual(_.prototype.value, expected);
+        strictEqual(_.prototype.valueOf, expected);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
   }());

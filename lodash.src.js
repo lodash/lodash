@@ -7580,39 +7580,42 @@
     }
 
     /**
-     * Creates a function accepting an array as argument, that invokes `func`
-     * with arguments taken from this array, like `Function#apply`.
-     * This works obviously well with `Promise.all`.
+     * Creates a function that invokes `func` with the `this` binding of `thisArg`
+     * and the array of arguments provided to the created function much like
+     * [Function#apply](http://es5.github.io/#x15.3.4.3).
      *
      * @static
      * @memberOf _
      * @category Function
-     * @param {Function} The function to alter.
+     * @param {Function} The function to spread arguments over.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {*} Returns the new function.
      * @example
      *
-     * var spread = _.spread(function (who, what) {
+     * var spread = _.spread(function(who, what) {
      *   return who + ' says ' + what;
      * });
      *
-     * spread(['John', 'hello']) // => 'John says hello'
+     * spread(['Fred', 'hello']);
+     * // => 'Fred says hello'
      *
-     * // With Promise
+     * // with a Promise
      * var numbers = Promise.all([
-     *   Promise.resolve(42),
-     *   Promise.resolve(33)
-     * ])
+     *   Promise.resolve(40),
+     *   Promise.resolve(36)
+     * ]);
      *
-     * numbers.then(_.spread(function (a, b) { return a + b })) // Promise of 75
-     * // instead of...
-     * numbers.then(function (nums) { return nums[0] + nums[1] })
+     * var add = function(x, y) {
+     *   return x + y;
+     * };
+     *
+     * numbers.then(_.spread(add));
+     * // => a Promise of 76
      */
-    function spread (func, thisArg) {
-      if (typeof func !== 'function') {
+    function spread(func, thisArg) {
+      if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-
       return function(array) {
         return func.apply(thisArg, array);
       };

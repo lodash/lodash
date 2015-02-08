@@ -12243,45 +12243,36 @@
   QUnit.module('lodash.spread');
 
   (function() {
-    function Pair(x, y) {
-      this.x = x;
-      this.y = y;
-
-      return 42;
+    function add(x, y) {
+      return x + y;
     }
 
-    function divide(n, d) {
-      return n / d;
-    }
-
-    test('should pass arguments to `func`', 1, function() {
-      var spread = _.spread(divide);
-      strictEqual(spread([4, 2]), 2);
+    test('should spread arguments to `func`', 1, function() {
+      var spread = _.spread(add);
+      strictEqual(spread([4, 2]), 6);
     });
 
-    test('should fail when receiving non-array argument', 1, function() {
-      var spread = _.spread(divide);
-      var err;
-      try {
-        spread(4, 2);
-      } catch (e) {
-        err = e;
-      }
-      strictEqual(_.isError(err), true);
+    test('should throw a TypeError when receiving a non-array `array` argument', 1, function() {
+      raises(function() { _.spread(4, 2); }, TypeError);
     });
 
-    test('should dynamically `func` to `thisArg`', 2, function() {
-      var self = {z: 3};
-      var spread = _.spread(Pair, self);
-      var result = spread([1, 2]);
-      strictEqual(result, 42);
-      deepEqual(self, {x: 1, y: 2, z: 3});
+    test('should provide the correct `func` arguments', 1, function() {
+      var args;
+
+      var spread = _.spread(function() {
+        args = slice.call(arguments);
+      });
+
+      spread([4, 2], 'ignored');
+      deepEqual(args, [4, 2]);
     });
 
-    test('should use `undefined` for extra values', 1, function() {
-      var self = {};
-      _.spread(Pair, self)([1]);
-      deepEqual(self, {x: 1, y: undefined});
+    test('should support the `thisArg` argument', 1, function() {
+      var spread = _.spread(function(x, y) {
+        return this[x] + this[y];
+      }, [4, 2]);
+
+      strictEqual(spread([0, 1]), 6);
     });
   }());
 

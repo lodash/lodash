@@ -4056,6 +4056,124 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.fill');
+
+  (function() {
+    test('should work with a positive `start`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.fill(array, 'a', 1), [1, 'a', 'a']);
+    });
+
+    test('should work with a `start` >= `array.length`', 4, function() {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(start) {
+        var array = [1, 2, 3];
+        deepEqual(_.fill(array, 'a', start), [1, 2, 3]);
+      });
+    });
+
+    test('should treat falsey `start` values as `0`', 1, function() {
+      var expected = _.map(falsey, _.constant(['a', 'a', 'a']));
+
+      var actual = _.map(falsey, function(start) {
+        var array = [1, 2, 3];
+        return _.fill(array, 'a', start);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with a negative `start`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.fill(array, 'a', -1), [1, 2, 'a']);
+    });
+
+    test('should work with a negative `start` <= negative `array.length`', 3, function() {
+      _.each([-3, -4, -Infinity], function(start) {
+        var array = [1, 2, 3];
+        deepEqual(_.fill(array, 'a', start), ['a', 'a', 'a']);
+      });
+    });
+
+    test('should work with `start` >= `end`', 2, function() {
+      _.each([2, 3], function(start) {
+        var array = [1, 2, 3];
+        deepEqual(_.fill(array, 'a', start, 2), [1, 2, 3]);
+      });
+    });
+
+    test('should work with a positive `end`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.fill(array, 'a', 0, 1), ['a', 2, 3]);
+    });
+
+    test('should work with a `end` >= `array.length`', 4, function() {
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(end) {
+        var array = [1, 2, 3];
+        deepEqual(_.fill(array, 'a', 0, end), ['a', 'a', 'a']);
+      });
+    });
+
+    test('should treat falsey `end` values, except `undefined`, as `0`', 1, function() {
+      var expected = _.map(falsey, function(value) {
+        return value === undefined ? ['a', 'a', 'a'] : [1, 2, 3];
+      });
+
+      var actual = _.map(falsey, function(end) {
+        var array = [1, 2, 3];
+        return _.fill(array, 'a', 0, end);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with a negative `end`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.fill(array, 'a', 0, -1), ['a', 'a', 3]);
+    });
+
+    test('should work with a negative `end` <= negative `array.length`', 3, function() {
+      _.each([-3, -4, -Infinity], function(end) {
+        var array = [1, 2, 3];
+        deepEqual(_.fill(array, 'a', 0, end), [1, 2, 3]);
+      });
+    });
+
+    test('should coerce `start` and `end` to integers', 1, function() {
+      var positions = [[0.1, 1.1], ['0', 1], [0, '1'], ['1'], [NaN, 1], [1, NaN]];
+
+      var actual = _.map(positions, function(pos) {
+        var array = [1, 2, 3];
+        return _.fill.apply(_, [array, 'a'].concat(pos));
+      });
+
+      deepEqual(actual, [['a', 2, 3], ['a', 2, 3], ['a', 2, 3], [1, 'a', 'a'], ['a', 2, 3], [1, 2, 3]]);
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var array = [[1, 2], [3, 4]],
+          actual = _.map(array, _.fill);
+
+      deepEqual(actual, [[0, 0], [1, 1]]);
+    });
+
+    test('should return a wrapped value when chaining', 3, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            wrapped = _(array).fill('a'),
+            actual = wrapped.value();
+
+        ok(wrapped instanceof _);
+        deepEqual(actual, ['a', 'a', 'a']);
+        strictEqual(actual, array);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.filter');
 
   (function() {
@@ -11881,7 +11999,12 @@
     });
 
     test('should coerce `start` and `end` to integers', 1, function() {
-      var actual = [_.slice(array, 0.1, 1.1), _.slice(array, '0', 1), _.slice(array, 0, '1'), _.slice(array, '1'), _.slice(array, NaN, 1), _.slice(array, 1, NaN)];
+      var positions = [[0.1, 1.1], ['0', 1], [0, '1'], ['1'], [NaN, 1], [1, NaN]];
+
+      var actual = _.map(positions, function(pos) {
+        return _.slice.apply(_, [array].concat(pos));
+      });
+
       deepEqual(actual, [[1], [1], [1], [2, 3], [1], []]);
     });
 
@@ -15092,7 +15215,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 206, function() {
+    test('should accept falsey arguments', 207, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

@@ -11765,10 +11765,10 @@
 
     test('should return a wrapped value when chaining and `n` is provided', 2, function() {
       if (!isNpm) {
-        var wrapped = _(array).sample(2);
-        ok(wrapped instanceof _);
+        var wrapped = _(array).sample(2),
+            actual = wrapped.value();
 
-        var actual = wrapped.value();
+        ok(wrapped instanceof _);
         ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
       }
       else {
@@ -14600,8 +14600,8 @@
         strictEqual(wrapped.pop(), 1);
 
         var actual = wrapped.value();
-        strictEqual(actual, array);
         deepEqual(actual, []);
+        strictEqual(actual, array);
       }
       else {
         skipTest(5);
@@ -14713,8 +14713,8 @@
         strictEqual(wrapped.shift(), 2);
 
         var actual = wrapped.value();
-        strictEqual(actual, array);
         deepEqual(actual, []);
+        strictEqual(actual, array);
       }
       else {
         skipTest(5);
@@ -14775,12 +14775,11 @@
 
         deepEqual(wrapped.splice(1, 1, 3).value(), [2]);
         deepEqual(wrapped.value(), [1, 3]);
-
         deepEqual(wrapped.splice(0, 2).value(), [1, 3]);
 
         var actual = wrapped.value();
-        strictEqual(actual, array);
         deepEqual(actual, []);
+        strictEqual(actual, array);
       }
       else {
         skipTest(5);

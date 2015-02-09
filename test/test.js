@@ -9329,14 +9329,14 @@
       strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 2, function() {
-      var array = [[2, 3, 1], [5, 6, 4], [8, 9, 7]],
-          actual = _.map(array, func);
+    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 3, function() {
+      var arrays = [[2, 1], [5, 4], [7, 8]],
+          objects = [{ 'a': 2, 'b': 1 }, { 'a': 5, 'b': 4 }, { 'a': 7, 'b': 8 }],
+          expected = isMax ? [2, 5, 8] : [1, 4, 7];
 
-      deepEqual(actual, isMax ? [3, 6, 9] : [1, 4, 7]);
-
-      actual = _.map('abc', func);
-      deepEqual(actual, ['a', 'b', 'c']);
+      deepEqual(_.map(arrays, func), expected);
+      deepEqual(_.map(objects, func), expected);
+      deepEqual(_.map('abc', func), ['a', 'b', 'c']);
     });
 
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {

@@ -1781,8 +1781,8 @@
           var object = { 'a': value, 'b': { 'c': value } },
               actual = func(object);
 
-          notStrictEqual(actual, object);
           deepEqual(actual, object);
+          notStrictEqual(actual, object);
 
           var expected = typeof value == 'function' ? { 'c': Foo.c } : (value && {});
           deepEqual(func(value), expected);
@@ -4059,8 +4059,10 @@
   QUnit.module('lodash.filter');
 
   (function() {
+    var array = [1, 2, 3];
+
     test('should return elements `predicate` returns truthy for', 1, function() {
-      var actual = _.filter([1, 2, 3], function(num) {
+      var actual = _.filter(array, function(num) {
         return num % 2;
       });
 
@@ -4134,13 +4136,12 @@
       });
 
       test('should return `' + expected[1] + '` for empty collections', 1, function() {
-        var actual = [],
-            emptyValues = _.endsWith(methodName, 'Index') ? _.reject(empties, _.isPlainObject) : empties,
-            expecting = _.map(emptyValues, function() { return expected[1]; });
+        var emptyValues = _.endsWith(methodName, 'Index') ? _.reject(empties, _.isPlainObject) : empties,
+            expecting = _.map(emptyValues, _.constant(expected[1]));
 
-        _.each(emptyValues, function(value) {
+        var actual = _.map(emptyValues, function(value) {
           try {
-            actual.push(func(value, { 'a': 3 }));
+            return func(value, { 'a': 3 });
           } catch(e) {}
         });
 
@@ -4806,9 +4807,12 @@
       'groupBy',
       'indexBy',
       'map',
+      'mapValues',
       'max',
       'min',
+      'omit',
       'partition',
+      'pick',
       'reject',
       'some'
     ];
@@ -4840,7 +4844,9 @@
 
     var forInMethods = [
       'forIn',
-      'forInRight'
+      'forInRight',
+      'omit',
+      'pick'
     ];
 
     var iterationMethods = [
@@ -4858,7 +4864,10 @@
       'forIn',
       'forInRight',
       'forOwn',
-      'forOwnRight'
+      'forOwnRight',
+      'mapValues',
+      'omit',
+      'pick'
     ];
 
     var rightMethods = [
@@ -5601,6 +5610,10 @@
 
     test('should match `NaN`', 1, function() {
       strictEqual(_.includes([1, NaN, 3], NaN), true);
+    });
+
+    test('should match `-0` as `0`', 1, function() {
+      strictEqual(_.includes([-0], 0), true);
     });
 
     test('should be aliased', 2, function() {
@@ -8435,6 +8448,10 @@
       strictEqual(func([1, NaN, 3], NaN), 1);
       strictEqual(func([1, 3, NaN], NaN, true), 2);
     });
+
+    test('`_.' + methodName + '` should match `-0` as `0`', 1, function() {
+      strictEqual(func([-0], 0), 0);
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -8443,6 +8460,14 @@
 
   (function() {
     var array = [1, 2, 3];
+
+    test('should map values in `collection` to a new array', 2, function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          expected = ['1', '2', '3'];
+
+      deepEqual(_.map(array, String), expected);
+      deepEqual(_.map(object, String), expected);
+    });
 
     test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
@@ -8537,16 +8562,29 @@
   QUnit.module('lodash.mapValues');
 
   (function() {
-    var object = { 'a': 1, 'b': 2, 'c': 3 };
+    var array = [1, 2],
+        object = { 'a': 1, 'b': 2, 'c': 3 };
 
-    test('should provide the correct `iteratee` arguments', 1, function() {
-      var args;
+    test('should map values in `object` to a new object', 1, function() {
+      var actual = _.mapValues(object, String);
+      deepEqual(actual, { 'a': '1', 'b': '2', 'c': '3' });
+    });
 
-      _.mapValues(object, function() {
-        args || (args = slice.call(arguments));
+    test('should treat arrays like objects', 1, function() {
+      var actual = _.mapValues(array, String);
+      deepEqual(actual, { '0': '1', '1': '2' });
+    });
+
+    test('should provide the correct `iteratee` arguments', 2, function() {
+      _.each([object, array], function(value, index) {
+        var args;
+
+        _.mapValues(value, function() {
+          args || (args = slice.call(arguments));
+        });
+
+        deepEqual(args, [1, index ? '0' : 'a', value]);
       });
-
-      deepEqual(args, [1, 'a', object]);
     });
 
     test('should support the `thisArg` argument', 2, function() {
@@ -8574,9 +8612,10 @@
       deepEqual(actual, { 'a': 'a' });
     });
 
-    test('should work on an object with no `iteratee`', 1, function() {
+    test('should work on an object with no `iteratee`', 2, function() {
       var actual = _.mapValues({ 'a': 1, 'b': 2, 'c': 3 });
       deepEqual(actual, object);
+      notStrictEqual(actual, object);
     });
 
     test('should accept a falsey `object` argument', 1, function() {
@@ -11176,8 +11215,10 @@
   QUnit.module('lodash.reject');
 
   (function() {
+    var array = [1, 2, 3];
+
     test('should return elements the `predicate` returns falsey for', 1, function() {
-      var actual = _.reject([1, 2, 3], function(num) {
+      var actual = _.reject(array, function(num) {
         return num % 2;
       });
 
@@ -13407,8 +13448,8 @@
 
     test('should return a shallow clone of arrays', 2, function() {
       var actual = func(array);
+      deepEqual(actual, array);
       notStrictEqual(actual, array);
-      deepEqual(func(array), array);
     });
 
     test('should work with a node list for `collection` (test in IE < 9)', 1, function() {
@@ -13611,8 +13652,8 @@
           result[key] = this[key];
         }, null, object);
 
-        notStrictEqual(actual, object);
         deepEqual(actual, object);
+        notStrictEqual(actual, object);
       });
     });
 
@@ -14370,9 +14411,9 @@
             wrapped = _(array).concat([2, 3]),
             actual = wrapped.value();
 
-        notStrictEqual(actual, array);
-        deepEqual(actual, [1, 2, 3]);
         deepEqual(array, [1]);
+        deepEqual(actual, [1, 2, 3]);
+        notStrictEqual(actual, array);
       }
       else {
         skipTest(3);
@@ -14569,9 +14610,9 @@
             wrapped = _(array).slice(0, 2),
             actual = wrapped.value();
 
-        notStrictEqual(actual, array);
-        deepEqual(actual, [1, 2]);
         deepEqual(array, [1, 2, 3]);
+        deepEqual(actual, [1, 2]);
+        notStrictEqual(actual, array);
       }
       else {
         skipTest(3);

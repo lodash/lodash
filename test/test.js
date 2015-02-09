@@ -4059,6 +4059,19 @@
   QUnit.module('lodash.fill');
 
   (function() {
+    test('should use a default `start` of `0` and a default `end` of `array.length`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.fill(array, 'a'), ['a', 'a', 'a']);
+    });
+
+    test('should use `undefined` for `value` if not provided', 2, function() {
+      var array = [1, 2, 3],
+          actual = _.fill(array);
+
+      deepEqual(actual, [undefined, undefined, undefined]);
+      ok(_.every(actual, function(value, index) { return index in actual; }));
+    });
+
     test('should work with a positive `start`', 1, function() {
       var array = [1, 2, 3];
       deepEqual(_.fill(array, 'a', 1), [1, 'a', 'a']);
@@ -11930,6 +11943,12 @@
   (function() {
     var array = [1, 2, 3];
 
+    test('should use a default `start` of `0` and a default `end` of `array.length`', 2, function() {
+      var actual = _.slice(array);
+      deepEqual(actual, array);
+      notStrictEqual(actual, array);
+    });
+
     test('should work with a positive `start`', 1, function() {
       deepEqual(_.slice(array, 1), [2, 3]);
     });
@@ -12013,7 +12032,7 @@
           actual = _.map(array, _.slice);
 
       deepEqual(actual, array);
-      notStrictEqual(actual, array)
+      notStrictEqual(actual, array);
     });
 
     test('should work in a lazy chain sequence', 12, function() {

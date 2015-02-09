@@ -18,7 +18,7 @@ env:
 matrix:
   include:
     - node_js: "io.js"
-      env: BUILD="compat"
+      env:
     - node_js: "io.js"
       env: BUILD="modern"
     - node_js: "0.8"

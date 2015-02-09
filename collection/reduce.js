@@ -12,6 +12,12 @@ var arrayReduce = require('../internal/arrayReduce'),
  * value. The `iteratee` is bound to `thisArg`and invoked with four arguments;
  * (accumulator, value, index|key, collection).
  *
+ * Many lodash methods are guarded to work as interatees for methods like
+ * `_.reduce`, `_.reduceRight`, and `_.transform`.
+ *
+ * The guarded methods are:
+ * `assign`, `defaults`, `merge`, and `sortAllBy`
+ *
  * @static
  * @memberOf _
  * @alias foldl, inject

@@ -5,8 +5,7 @@ var baseCallback = require('./baseCallback'),
 /**
  * Creates a function that aggregates a collection, creating an accumulator
  * object composed from the results of running each element in the collection
- * through an iteratee. The `setter` sets the keys and values of the accumulator
- * object. If `initializer` is provided initializes the accumulator object.
+ * through an iteratee.
  *
  * @private
  * @param {Function} setter The function to set keys and values of the accumulator object.

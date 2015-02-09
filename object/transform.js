@@ -3,6 +3,7 @@ var arrayEach = require('../internal/arrayEach'),
     baseCreate = require('../internal/baseCreate'),
     baseForOwn = require('../internal/baseForOwn'),
     isArray = require('../lang/isArray'),
+    isFunction = require('../lang/isFunction'),
     isObject = require('../lang/isObject'),
     isTypedArray = require('../lang/isTypedArray');
 
@@ -47,7 +48,7 @@ function transform(object, iteratee, accumulator, thisArg) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+        accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
       }
     } else {
       accumulator = {};

@@ -7,9 +7,9 @@
  * @param {Array} [actions=[]] Actions to peform to resolve the unwrapped value.
  */
 function LodashWrapper(value, chainAll, actions) {
+  this.__wrapped__ = value;
   this.__actions__ = actions || [];
   this.__chain__ = !!chainAll;
-  this.__wrapped__ = value;
 }
 
 module.exports = LodashWrapper;

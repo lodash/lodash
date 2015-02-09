@@ -6,6 +6,11 @@ var baseClone = require('../internal/baseClone'),
  * and `source`, returning `true` if the given object has equivalent property
  * values, else `false`.
  *
+ * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+ * numbers, `Object` objects, regexes, and strings. Objects are compared by
+ * their own, not inherited, enumerable properties. For comparing a single
+ * own or inherited property value see `_.matchesProperty`.
+ *
  * @static
  * @memberOf _
  * @category Utility
@@ -14,17 +19,12 @@ var baseClone = require('../internal/baseClone'),
  * @example
  *
  * var users = [
- *   { 'user': 'fred',   'age': 40 },
- *   { 'user': 'barney', 'age': 36 }
+ *   { 'user': 'barney', 'age': 36, 'active': true },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
  * ];
  *
- * var matchesAge = _.matches({ 'age': 36 });
- *
- * _.filter(users, matchesAge);
- * // => [{ 'user': 'barney', 'age': 36 }]
- *
- * _.find(users, matchesAge);
- * // => { 'user': 'barney', 'age': 36 }
+ * _.filter(users, _.matches({ 'age': 40, 'active': false }));
+ * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
  */
 function matches(source) {
   return baseMatches(baseClone(source, true));

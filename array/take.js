@@ -6,7 +6,6 @@ var baseSlice = require('../internal/baseSlice'),
  *
  * @static
  * @memberOf _
- * @type Function
  * @category Array
  * @param {Array} array The array to query.
  * @param {number} [n=1] The number of elements to take.

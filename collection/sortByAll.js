@@ -38,7 +38,7 @@ function sortByAll(collection) {
       props = baseFlatten(args, false, false, 1),
       result = isLength(length) ? Array(length) : [];
 
-  baseEach(collection, function(value, key, collection) {
+  baseEach(collection, function(value) {
     var length = props.length,
         criteria = Array(length);
 

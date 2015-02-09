@@ -1,5 +1,3 @@
-var isFunction = require('../lang/isFunction');
-
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -21,8 +19,8 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  */
 function before(n, func) {
   var result;
-  if (!isFunction(func)) {
-    if (isFunction(n)) {
+  if (typeof func != 'function') {
+    if (typeof n == 'function') {
       var temp = n;
       n = func;
       func = temp;

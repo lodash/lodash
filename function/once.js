@@ -7,7 +7,6 @@ var before = require('./before');
  *
  * @static
  * @memberOf _
- * @type Function
  * @category Function
  * @param {Function} func The function to restrict.
  * @returns {Function} Returns the new restricted function.

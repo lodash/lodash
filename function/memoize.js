@@ -1,5 +1,4 @@
-var MapCache = require('../internal/MapCache'),
-    isFunction = require('../lang/isFunction');
+var MapCache = require('../internal/MapCache');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -58,7 +57,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * // => { 'user': 'barney' }
  */
 function memoize(func, resolver) {
-  if (!isFunction(func) || (resolver && !isFunction(resolver))) {
+  if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   var memoized = function() {

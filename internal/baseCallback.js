@@ -1,4 +1,5 @@
 var baseMatches = require('./baseMatches'),
+    baseMatchesProperty = require('./baseMatchesProperty'),
     baseProperty = require('./baseProperty'),
     bindCallback = require('./bindCallback'),
     identity = require('../utility/identity'),
@@ -24,10 +25,12 @@ function baseCallback(func, thisArg, argCount) {
   if (func == null) {
     return identity;
   }
-  // Handle "_.property" and "_.matches" style callback shorthands.
-  return type == 'object'
-    ? baseMatches(func)
-    : baseProperty(func + '');
+  if (type == 'object') {
+    return baseMatches(func);
+  }
+  return typeof thisArg == 'undefined'
+    ? baseProperty(func + '')
+    : baseMatchesProperty(func + '', thisArg);
 }
 
 module.exports = baseCallback;

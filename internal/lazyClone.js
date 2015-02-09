@@ -10,18 +10,18 @@ var LazyWrapper = require('./LazyWrapper'),
  * @returns {Object} Returns the cloned `LazyWrapper` object.
  */
 function lazyClone() {
-  var actions = this.actions,
-      iteratees = this.iteratees,
-      views = this.views,
-      result = new LazyWrapper(this.wrapped);
+  var actions = this.__actions__,
+      iteratees = this.__iteratees__,
+      views = this.__views__,
+      result = new LazyWrapper(this.__wrapped__);
 
-  result.actions = actions ? arrayCopy(actions) : null;
-  result.dir = this.dir;
-  result.dropCount = this.dropCount;
-  result.filtered = this.filtered;
-  result.iteratees = iteratees ? arrayCopy(iteratees) : null;
-  result.takeCount = this.takeCount;
-  result.views = views ? arrayCopy(views) : null;
+  result.__actions__ = actions ? arrayCopy(actions) : null;
+  result.__dir__ = this.__dir__;
+  result.__dropCount__ = this.__dropCount__;
+  result.__filtered__ = this.__filtered__;
+  result.__iteratees__ = iteratees ? arrayCopy(iteratees) : null;
+  result.__takeCount__ = this.__takeCount__;
+  result.__views__ = views ? arrayCopy(views) : null;
   return result;
 }
 

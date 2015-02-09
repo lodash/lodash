@@ -11,7 +11,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * shorthands or `this` binding.
  *
  * @private
- * @param {Object} source The object to inspect.
+ * @param {Object} object The object to inspect.
  * @param {Array} props The source property names to match.
  * @param {Array} values The source values to match.
  * @param {Array} strictCompareFlags Strict comparison flags for source values.

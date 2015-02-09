@@ -1,5 +1,4 @@
-var baseSlice = require('./baseSlice'),
-    isFunction = require('../lang/isFunction');
+var baseSlice = require('./baseSlice');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -15,7 +14,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @returns {number} Returns the timer id.
  */
 function baseDelay(func, wait, args, fromIndex) {
-  if (!isFunction(func)) {
+  if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);

@@ -3,7 +3,6 @@ var baseSetData = require('./baseSetData'),
     createHybridWrapper = require('./createHybridWrapper'),
     createPartialWrapper = require('./createPartialWrapper'),
     getData = require('./getData'),
-    isFunction = require('../lang/isFunction'),
     mergeData = require('./mergeData'),
     setData = require('./setData');
 
@@ -46,7 +45,7 @@ var nativeMax = Math.max;
  */
 function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
   var isBindKey = bitmask & BIND_KEY_FLAG;
-  if (!isBindKey && !isFunction(func)) {
+  if (!isBindKey && typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   var length = partials ? partials.length : 0;
@@ -76,9 +75,9 @@ function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, a
   if (bitmask == BIND_FLAG) {
     var result = createBindWrapper(newData[0], newData[2]);
   } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
-    result = createPartialWrapper.apply(null, newData);
+    result = createPartialWrapper.apply(undefined, newData);
   } else {
-    result = createHybridWrapper.apply(null, newData);
+    result = createHybridWrapper.apply(undefined, newData);
   }
   var setter = data ? baseSetData : setData;
   return setter(result, newData);

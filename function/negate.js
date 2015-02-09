@@ -1,5 +1,3 @@
-var isFunction = require('../lang/isFunction');
-
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -23,7 +21,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * // => [1, 3, 5]
  */
 function negate(predicate) {
-  if (!isFunction(predicate)) {
+  if (typeof predicate != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   return function() {

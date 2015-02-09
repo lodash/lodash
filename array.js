@@ -6,6 +6,7 @@ module.exports = {
   'dropRight': require('./array/dropRight'),
   'dropRightWhile': require('./array/dropRightWhile'),
   'dropWhile': require('./array/dropWhile'),
+  'fill': require('./array/fill'),
   'findIndex': require('./array/findIndex'),
   'findLastIndex': require('./array/findLastIndex'),
   'first': require('./array/first'),

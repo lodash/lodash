@@ -11,7 +11,7 @@ var LazyWrapper = require('../internal/LazyWrapper'),
  * @name reverse
  * @memberOf _
  * @category Chain
- * @returns {Object} Returns the new reversed `lodash` object.
+ * @returns {Object} Returns the new reversed `lodash` wrapper instance.
  * @example
  *
  * var array = [1, 2, 3];
@@ -28,7 +28,7 @@ function wrapperReverse() {
     if (this.__actions__.length) {
       value = new LazyWrapper(this);
     }
-    return new LodashWrapper(value.reverse());
+    return new LodashWrapper(value.reverse(), this.__chain__);
   }
   return this.thru(function(value) {
     return value.reverse();

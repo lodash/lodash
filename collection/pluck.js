@@ -25,7 +25,7 @@ var baseProperty = require('../internal/baseProperty'),
  * // => [36, 40] (iteration order is not guaranteed)
  */
 function pluck(collection, key) {
-  return map(collection, baseProperty(key + ''));
+  return map(collection, baseProperty(key));
 }
 
 module.exports = pluck;

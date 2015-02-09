@@ -1,5 +1,4 @@
-var isFunction = require('../lang/isFunction'),
-    isObject = require('../lang/isObject'),
+var isObject = require('../lang/isObject'),
     now = require('../date/now');
 
 /** Used as the `TypeError` message for "Functions" methods. */
@@ -82,7 +81,7 @@ function debounce(func, wait, options) {
       maxWait = false,
       trailing = true;
 
-  if (!isFunction(func)) {
+  if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   wait = wait < 0 ? 0 : wait;

@@ -5,6 +5,7 @@ module.exports = {
   'identity': require('./utility/identity'),
   'iteratee': require('./utility/iteratee'),
   'matches': require('./utility/matches'),
+  'matchesProperty': require('./utility/matchesProperty'),
   'mixin': require('./utility/mixin'),
   'noop': require('./utility/noop'),
   'property': require('./utility/property'),

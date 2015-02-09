@@ -1,5 +1,4 @@
 var debounce = require('./debounce'),
-    isFunction = require('../lang/isFunction'),
     isObject = require('../lang/isObject');
 
 /** Used as the `TypeError` message for "Functions" methods. */
@@ -54,7 +53,7 @@ function throttle(func, wait, options) {
   var leading = true,
       trailing = true;
 
-  if (!isFunction(func)) {
+  if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   if (options === false) {

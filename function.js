@@ -20,6 +20,7 @@ module.exports = {
   'partial': require('./function/partial'),
   'partialRight': require('./function/partialRight'),
   'rearg': require('./function/rearg'),
+  'spread': require('./function/spread'),
   'throttle': require('./function/throttle'),
   'wrap': require('./function/wrap')
 };

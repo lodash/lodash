@@ -4396,6 +4396,8 @@
      * Fills elements of `array` with `value` from `start` up to, but not
      * including, `end`.
      *
+     * **Note:** This method mutates `array`.
+     *
      * @private
      * @param {Array} array The array to fill.
      * @param {*} value The value to fill `array` with.

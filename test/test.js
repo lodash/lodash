@@ -1920,8 +1920,11 @@
       });
 
       test('`_.' + methodName + '` should create an object from the same realm as `value`', 1, function() {
+        var props = [];
+
         var objects = _.transform(_, function(result, value, key) {
           if (_.startsWith(key, '_') && _.isObject(value) && !_.isArguments(value) && !_.isElement(value) && !_.isFunction(value)) {
+            props.push(_.capitalize(_.camelCase(key)));
             result.push(value);
           }
         }, []);
@@ -1935,7 +1938,7 @@
           return result !== object && (result instanceof Ctor || !(new Ctor instanceof Ctor));
         });
 
-        deepEqual(actual, expected);
+        deepEqual(actual, expected, props.join(', '));
       });
 
       test('`_.' + methodName + '` should return a unwrapped value when chaining', 2, function() {

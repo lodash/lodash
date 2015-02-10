@@ -3626,6 +3626,62 @@
     }
 
     /**
+     * Gets an iteratee for the lazy version of `_.uniq`.
+     * @private
+     * @returns {Function}
+     */
+    function getLazyBaseUniqIteratee(iteratee, isLarge) {
+      var indexOf = getIndexOf(),
+          isCommon = indexOf == baseIndexOf,
+          seen = isLarge && createCache();
+
+      if (seen) {
+        indexOf = cacheIndexOf;
+        isCommon = false;
+      } else {
+        isLarge = false;
+        seen = [];
+      }
+
+      return function(value, index, array) {
+        var computed = iteratee ? iteratee(value, index, array) : value;
+        if (isCommon && value === value) {
+          var seenIndex = seen.length;
+          while (seenIndex--) {
+            if (seen[seenIndex] === computed) {
+              return false;
+            }
+          }
+          seen.push(computed);
+          return true;
+        }
+        if (indexOf(seen, computed) >= 0) {
+          return false;
+        }
+        seen.push(computed);
+        return true;
+      };
+    }
+
+    /**
+     * Gets an iteratee for the lazy version of `_.uniq` for sorted array.
+     * @private
+     * @returns {Function}
+     */
+    function getLazySortedUniqIteratee(iteratee) {
+      var seen;
+
+      return function(value, index, array) {
+        var computed = iteratee ? iteratee(value, index, array) : value;
+        if (!index || seen !== computed) {
+          seen = computed;
+          return true;
+        }
+        return false;
+      };
+    }
+
+    /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.
      *
      * @private
@@ -11046,6 +11102,35 @@
         return result;
       };
     });
+
+    // Add `LazyWrapper` methods for `_.uniq`.
+    LazyWrapper.prototype.uniq = function(isSorted, iteratee, thisArg) {
+      // Juggle arguments.
+      if (typeof isSorted != 'boolean' && isSorted != null) {
+        thisArg = iteratee;
+        iteratee = isSorted;
+        isSorted = false;
+      }
+      var func = getCallback();
+      if (!(func === baseCallback && iteratee == null)) {
+        iteratee = func(iteratee, thisArg, 3);
+      }
+      var result = this.clone(),
+          iteratees = result.__iteratees__ || (result.__iteratees__ = []);
+
+      result.__filtered__ = true;
+
+      if (!isSorted) {
+        var value = this.__wrapped__.__wrapped__;
+        var isLarge = (value && value.length >= 200) || false;
+      }
+      iteratees.push({
+        'iteratee': isSorted ? getLazySortedUniqIteratee(iteratee) : getLazyBaseUniqIteratee(iteratee, isLarge),
+        'type': LAZY_FILTER_FLAG
+      });
+      return result;
+    };
+    LazyWrapper.prototype.unique = LazyWrapper.prototype.uniq;
 
     // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
     arrayEach(['drop', 'take'], function(methodName, index) {

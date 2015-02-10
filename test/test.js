@@ -148,7 +148,7 @@
   /** The unit testing framework. */
   var QUnit = root.QUnit || (root.QUnit = (
     QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
-    QUnit = QUnit.QUnit || QUnit
+    QUnit = QUnit.QUnit
   ));
 
   /** Load and install QUnit Extras and ES6 Set/WeakMap shims. */
@@ -15437,15 +15437,9 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.config.asyncRetries = 10;
+  QUnit.config.hidepassed = true;
 
-  if (document) {
-    QUnit.begin(function() {
-      QUnit.config.hidepassed = true;
-      document.getElementById('qunit-tests').className += ' hidepass';
-      document.getElementById('qunit-urlconfig-hidepassed').checked = true;
-    });
-  } else {
-    QUnit.config.hidepassed = true;
+  if (!document) {
     QUnit.config.noglobals = true;
     QUnit.load();
   }

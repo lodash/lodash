@@ -49,13 +49,17 @@
       freeze = Object.freeze,
       hasOwnProperty = objectProto.hasOwnProperty,
       JSON = root.JSON,
-      noop = function() {},
       objToString = objectProto.toString,
+      noop = function() {},
       params = root.arguments,
       push = arrayProto.push,
       slice = arrayProto.slice,
       system = root.system,
       Uint8Array = root.Uint8Array;
+
+  /** Math helpers. */
+  var add = function(x, y) { return x + y; },
+      square = function(n) { return n * n; };
 
   /** Used to set property descriptors. */
   var defineProperty = (function() {
@@ -1979,14 +1983,26 @@
 
     test('should work when in between lazy operators', 2, function() {
       if (!isNpm) {
-        var actual = _(falsey).slice().compact().slice().value();
+        var actual = _(falsey).thru(_.slice).compact().thru(_.slice).value();
         deepEqual(actual, []);
 
-        actual = _(falsey).slice().push(true, 1).compact().push('a').slice().value();
+        actual = _(falsey).thru(_.slice).push(true, 1).compact().push('a').value();
         deepEqual(actual, [true, 1, 'a']);
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = [1, null, 3],
+            actual = _(array).map(square).compact().reverse().take().value();
+
+        deepEqual(actual, [9]);
+      }
+      else {
+        skipTest();
       }
     });
   }());
@@ -2011,19 +2027,9 @@
         isFlow = methodName == 'flow';
 
     test('`_.' + methodName + '` should supply each function with the return value of the previous', 1, function() {
-      function add(x, y) {
-        return x + y;
-      }
+      var fixed = function(n) { return n.toFixed(1); },
+          combined = isFlow ? func(add, square, fixed) : func(fixed, square, add);
 
-      function square(n) {
-        return n * n;
-      }
-
-      function fixed(n) {
-        return n.toFixed(1);
-      }
-
-      var combined = isFlow ? func(add, square, fixed) : func(fixed, square, add);
       strictEqual(combined(1, 2), '9.0');
     });
 
@@ -2183,10 +2189,10 @@
     test('should work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
         var array = [1, 2, 1, 3],
-            predicate = function(value) { return value > 1; },
-            actual = _(array).countBy(_.identity).map(String).filter(predicate).take().value();
+            predicate = function(value) { return value > 2; },
+            actual = _(array).countBy(_.identity).map(square).filter(predicate).take().value();
 
-        deepEqual(actual, ['2']);
+        deepEqual(actual, [4]);
       }
       else {
         skipTest();
@@ -5817,10 +5823,10 @@
     test('should work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
         var array = [1, 2, 1, 3],
-            predicate = function(value) { return value > 1; },
-            actual = _(array).indexBy(_.identity).map(String).filter(predicate).take().value();
+            predicate = function(value) { return value > 2; },
+            actual = _(array).indexBy(_.identity).map(square).filter(predicate).take().value();
 
-        deepEqual(actual, ['2']);
+        deepEqual(actual, [4]);
       }
       else {
         skipTest();
@@ -9690,11 +9696,11 @@
 
     test('should produce methods that work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
-        var predicate = function(value) { return value > 1; };
+        var predicate = function(value) { return value > 2; };
         _.mixin({ 'a': _.countBy, 'b': _.filter });
 
-        var actual = _([1, 2, 1, 3]).a(_.identity).map(String).b(predicate).take().value();
-        deepEqual(actual, ['2']);
+        var actual = _([1, 2, 1, 3]).a(_.identity).map(square).b(predicate).take().value();
+        deepEqual(actual, [4]);
 
         delete _.a;
         delete _.prototype.a;
@@ -13553,15 +13559,28 @@
 
   (function() {
     test('should return the values of objects', 1, function() {
-      var array = [1, 2, 3],
-          object = { 'a': 1, 'b': 2, 'c': 3 };
+      var array = [1, 2],
+          object = { 'a': 1, 'b': 2 };
 
       deepEqual(_.toArray(object), array);
     });
 
     test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
-      deepEqual(_.toArray('abc'), ['a', 'b', 'c']);
-      deepEqual(_.toArray(Object('abc')), ['a', 'b', 'c']);
+      deepEqual(_.toArray('ab'), ['a', 'b']);
+      deepEqual(_.toArray(Object('ab')), ['a', 'b']);
+    });
+
+    test('should work in a lazy chain sequence', 2, function() {
+      if (!isNpm) {
+        var actual = _([1, 2]).map(String).toArray().value();
+        deepEqual(actual, ['1', '2']);
+
+        actual = _({ 'a': 1, 'b': 2 }).toArray().map(String).value();
+        deepEqual(actual, ['1', '2']);
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -14507,10 +14526,10 @@
     test('should work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
         var array = [['a', 1], ['b', 2]],
-            predicate = function(value) { return value > 1; },
-            actual = _(array).zipObject().map(String).filter(predicate).take().value();
+            predicate = function(value) { return value > 2; },
+            actual = _(array).zipObject().map(square).filter(predicate).take().value();
 
-        deepEqual(actual, ['2']);
+        deepEqual(actual, [4]);
       }
       else {
         skipTest();
@@ -14595,7 +14614,7 @@
       if (!isNpm) {
         var array1 = [5, null, 3, null, 1],
             array2 = [10, null, 8, null, 6],
-            wrapper1 = _(array1).compact().map(_.partial(Math.pow, _, 2)).takeRight(2).sort(),
+            wrapper1 = _(array1).thru(_.compact).map(square).takeRight(2).sort(),
             wrapper2 = wrapper1.plant(array2);
 
         deepEqual(wrapper2.value(), [36, 64]);
@@ -14707,11 +14726,11 @@
         var array = [1, 2, 3, null];
 
         _.each(['map', 'filter'], function(methodName) {
-          var actual = _(array)[methodName](_.identity).compact().reverse().value();
+          var actual = _(array)[methodName](_.identity).thru(_.compact).reverse().value();
           deepEqual(actual, [3, 2, 1]);
 
-          actual = _(array.slice()).pull(2)[methodName](_.identity).compact().pull(1).push(4).reverse().value();
-          deepEqual(actual, [4, 3]);
+          actual = _(array).thru(_.compact)[methodName](_.identity).pull(1).push(4).reverse().value();
+          deepEqual(actual, [4, 3, 2]);
         });
       }
       else {

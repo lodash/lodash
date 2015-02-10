@@ -11087,6 +11087,10 @@
       };
     });
 
+    LazyWrapper.prototype.compact = function() {
+      return this.filter(identity);
+    };
+
     LazyWrapper.prototype.dropWhile = function(iteratee, thisArg) {
       var done;
       iteratee = getCallback(iteratee, thisArg, 3);
@@ -11111,6 +11115,10 @@
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
       }
       return result;
+    };
+
+    LazyWrapper.prototype.toArray = function() {
+      return this.drop(0);
     };
 
     // Add `LazyWrapper` methods to `lodash.prototype`.

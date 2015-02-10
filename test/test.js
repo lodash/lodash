@@ -14141,6 +14141,55 @@
       });
     });
 
+    test('should work in a lazy chain sequence', 5, function() {
+      if (!isNpm) {
+        var array = [4, 1, 2, 3, 4, 2, 3, 1];
+        var actual = _(array).uniq().slice(0, 2).value();
+        deepEqual(actual, [4, 1]);
+
+        actual = _(array).map(function(value) {
+          return value + 1;
+        }).uniq().take(3).value();
+        deepEqual(actual, [5, 2, 3]);
+
+        actual = _(array).take(5).uniq(function(value) {
+          return value % 3;
+        }).takeRight(2).value();
+        deepEqual(actual, [2, 3]);
+
+        array = [1, 2, 2, 3, 3, 3, 4, 5];
+
+        actual = _(array).uniq(true).slice(1, 4).value();
+        deepEqual(actual, [2, 3, 4]);
+
+        actual = _(array).filter(function(value) {
+          return value % 2;
+        }).uniq(true, function(value) {
+           return value + 1;
+        }).slice(1).value();
+        deepEqual(actual, [3, 5]);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var args;
+
+        var array = [1, 2];
+        _(array).map(function(n) { return n * n; }).uniq(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [4, 1, array]);
+      }
+      else {
+        skipTest(1);
+      }
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.unique, _.uniq);
     });

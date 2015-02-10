@@ -11037,7 +11037,7 @@
           whileName = methodName + 'While';
 
       LazyWrapper.prototype[methodName] = function(n) {
-        n = n == null ? 1 : nativeMax(+n || 0, 0);
+        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
 
         var result = this.clone();
         if (result.__filtered__) {

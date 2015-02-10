@@ -12044,7 +12044,7 @@
       notStrictEqual(actual, array);
     });
 
-    test('should work in a lazy chain sequence', 12, function() {
+    test('should work in a lazy chain sequence', 18, function() {
       if (!isNpm) {
         var wrapped = _(array);
 
@@ -12063,9 +12063,16 @@
 
         deepEqual(wrapped.slice(0, 1).value(), [1]);
         deepEqual(wrapped.slice(NaN, '1').value(), [1]);
+
+        deepEqual(wrapped.slice(0.1, 1.1).value(), [1]);
+        deepEqual(wrapped.slice('0', 1).value(), [1]);
+        deepEqual(wrapped.slice(0, '1').value(), [1]);
+        deepEqual(wrapped.slice('1').value(), [2, 3]);
+        deepEqual(wrapped.slice(NaN, 1).value(), [1]);
+        deepEqual(wrapped.slice(1, NaN).value(), []);
       }
       else {
-        skipTest(12);
+        skipTest(18);
       }
     });
   }());

@@ -42,12 +42,7 @@
 			}());
 
 			QUnit.config.asyncRetries = 10;
-
-			QUnit.begin(function() {
-				QUnit.config.hidepassed = true;
-				document.getElementById('qunit-tests').className += ' hidepass';
-				document.getElementById('qunit-urlconfig-hidepassed').checked = true;
-			});
+			QUnit.config.hidepassed = true;
 
 			// load lodash
 			if (!ui.isModularize) {

@@ -37,12 +37,7 @@
 		<script src="./asset/test-ui.js"></script>
 		<script>
 			QUnit.config.asyncRetries = 10;
-
-			QUnit.begin(function() {
-				QUnit.config.hidepassed = true;
-				$('#qunit-tests').addClass('hidepass');
-				$('#qunit-urlconfig-hidepassed').prop('checked', true);
-			});
+			QUnit.config.hidepassed = true;
 
 			// excuse tests we intentionally fail or those with problems
 			QUnit.config.excused = {

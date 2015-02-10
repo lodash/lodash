@@ -15437,15 +15437,9 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.config.asyncRetries = 10;
+  QUnit.config.hidepassed = true;
 
-  if (document) {
-    QUnit.begin(function() {
-      QUnit.config.hidepassed = true;
-      document.getElementById('qunit-tests').className += ' hidepass';
-      document.getElementById('qunit-urlconfig-hidepassed').checked = true;
-    });
-  } else {
-    QUnit.config.hidepassed = true;
+  if (!document) {
     QUnit.config.noglobals = true;
     QUnit.load();
   }

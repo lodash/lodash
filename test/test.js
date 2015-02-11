@@ -14227,15 +14227,21 @@
       deepEqual(actual, [object.x, object.z]);
     });
 
-    test('should work in a lazy chain sequence', 1, function() {
+    test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = [
           { 'a': 1 },
           { 'a': 3 },
           { 'a': 1, 'b': 2 }
         ];
+        
+        function spec() {}
+        spec.a = 1;
 
         var actual = _(array).where({ 'a': 1 }).value();
+        deepEqual(actual, [array[0], array[2]]);
+        
+        actual = _(array).where(spec).value();
         deepEqual(actual, [array[0], array[2]]);
       }
       else {

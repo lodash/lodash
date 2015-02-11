@@ -11958,8 +11958,9 @@
       notStrictEqual(actual, array);
     });
 
-    test('should work with a positive `start`', 1, function() {
+    test('should work with a positive `start`', 2, function() {
       deepEqual(_.slice(array, 1), [2, 3]);
+      deepEqual(_.slice(array, 1, 3), [2, 3]);
     });
 
     test('should work with a `start` >= `array.length`', 4, function() {

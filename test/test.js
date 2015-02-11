@@ -6559,7 +6559,7 @@
       strictEqual(_.isEmpty(Foo), true);
     });
 
-    test('should return an unwrapped value when intuitively chaining', 1, function() {
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_({}).isEmpty(), true);
       }
@@ -7152,7 +7152,7 @@
       }
     });
 
-    test('should return an unwrapped value when intuitively chaining', 1, function() {
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_('a').isEqual('a'), true);
       }
@@ -15070,7 +15070,7 @@
     ];
 
     _.each(funcs, function(methodName) {
-      test('`_(...).' + methodName + '` should return an unwrapped value when intuitively chaining', 1, function() {
+      test('`_(...).' + methodName + '` should return an unwrapped value when implicitly chaining', 1, function() {
         if (!isNpm) {
           var array = [1, 2, 3],
               actual = _(array)[methodName]();

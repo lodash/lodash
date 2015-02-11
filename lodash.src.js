@@ -7643,15 +7643,14 @@
     }
 
     /**
-     * Creates a function that invokes `func` with the `this` binding of `thisArg`
-     * and the array of arguments provided to the created function much like
-     * [Function#apply](http://es5.github.io/#x15.3.4.3).
+     * Creates a function that invokes `func` with the `this` binding of the
+     * created function and the array of arguments provided to the created
+     * function much like [Function#apply](http://es5.github.io/#x15.3.4.3).
      *
      * @static
      * @memberOf _
      * @category Function
      * @param {Function} The function to spread arguments over.
-     * @param {*} [thisArg] The `this` binding of `func`.
      * @returns {*} Returns the new function.
      * @example
      *
@@ -7680,7 +7679,7 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       return function(array) {
-        return func.apply(thisArg, array);
+        return func.apply(this, array);
       };
     }
 

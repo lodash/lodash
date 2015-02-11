@@ -12446,10 +12446,6 @@
   QUnit.module('lodash.spread');
 
   (function() {
-    function add(x, y) {
-      return x + y;
-    }
-
     test('should spread arguments to `func`', 1, function() {
       var spread = _.spread(add);
       strictEqual(spread([4, 2]), 6);
@@ -12470,12 +12466,13 @@
       deepEqual(args, [4, 2]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
+    test('should not set a `this` binding', 1, function() {
       var spread = _.spread(function(x, y) {
         return this[x] + this[y];
-      }, [4, 2]);
+      });
 
-      strictEqual(spread([0, 1]), 6);
+      var object = { 'spread': spread, 'x': 4, 'y': 2 };
+      strictEqual(object.spread(['x', 'y']), 6);
     });
   }());
 

@@ -5570,7 +5570,7 @@
      * // => [1, 2, 3]
      */
     function wrapperCommit() {
-      return new LodashWrapper(this.value());
+      return new LodashWrapper(this.value(), this.__chain__);
     }
 
     /**
@@ -5638,7 +5638,7 @@
         if (this.__actions__.length) {
           value = new LazyWrapper(this);
         }
-        return new LodashWrapper(value.reverse());
+        return new LodashWrapper(value.reverse(), this.__chain__);
       }
       return this.thru(function(value) {
         return value.reverse();

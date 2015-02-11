@@ -1248,7 +1248,7 @@
           end = view.end,
           length = end - start,
           dropCount = this.__dropCount__,
-          takeCount = nativeMin(length, this.__takeCount__ - dropCount),
+          takeCount = nativeMin(length, this.__takeCount__),
           index = isRight ? end : start - 1,
           iteratees = this.__iteratees__,
           iterLength = iteratees ? iteratees.length : 0,

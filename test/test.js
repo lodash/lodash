@@ -12044,35 +12044,38 @@
       notStrictEqual(actual, array);
     });
 
-    test('should work in a lazy chain sequence', 18, function() {
+    test('should work in a lazy chain sequence', 38, function() {
       if (!isNpm) {
         var wrapped = _(array);
 
-        deepEqual(wrapped.slice(0, -1).value(), [1, 2]);
-        deepEqual(wrapped.slice(1).value(), [2, 3]);
-        deepEqual(wrapped.slice(-1).value(), [3]);
+        _.each(['map', 'filter'], function(methodName) {
+          deepEqual(wrapped[methodName]().slice(0, -1).value(), [1, 2]);
+          deepEqual(wrapped[methodName]().slice(1).value(), [2, 3]);
+          deepEqual(wrapped[methodName]().slice(1, 3).value(), [2, 3]);
+          deepEqual(wrapped[methodName]().slice(-1).value(), [3]);
 
-        deepEqual(wrapped.slice(4).value(), []);
-        deepEqual(wrapped.slice(3, 2).value(), []);
-        deepEqual(wrapped.slice(0, -4).value(), []);
-        deepEqual(wrapped.slice(0, null).value(), []);
+          deepEqual(wrapped[methodName]().slice(4).value(), []);
+          deepEqual(wrapped[methodName]().slice(3, 2).value(), []);
+          deepEqual(wrapped[methodName]().slice(0, -4).value(), []);
+          deepEqual(wrapped[methodName]().slice(0, null).value(), []);
 
-        deepEqual(wrapped.slice(0, 4).value(), array);
-        deepEqual(wrapped.slice(-4).value(), array);
-        deepEqual(wrapped.slice(null).value(), array);
+          deepEqual(wrapped[methodName]().slice(0, 4).value(), array);
+          deepEqual(wrapped[methodName]().slice(-4).value(), array);
+          deepEqual(wrapped[methodName]().slice(null).value(), array);
 
-        deepEqual(wrapped.slice(0, 1).value(), [1]);
-        deepEqual(wrapped.slice(NaN, '1').value(), [1]);
+          deepEqual(wrapped[methodName]().slice(0, 1).value(), [1]);
+          deepEqual(wrapped[methodName]().slice(NaN, '1').value(), [1]);
 
-        deepEqual(wrapped.slice(0.1, 1.1).value(), [1]);
-        deepEqual(wrapped.slice('0', 1).value(), [1]);
-        deepEqual(wrapped.slice(0, '1').value(), [1]);
-        deepEqual(wrapped.slice('1').value(), [2, 3]);
-        deepEqual(wrapped.slice(NaN, 1).value(), [1]);
-        deepEqual(wrapped.slice(1, NaN).value(), []);
+          deepEqual(wrapped[methodName]().slice(0.1, 1.1).value(), [1]);
+          deepEqual(wrapped[methodName]().slice('0', 1).value(), [1]);
+          deepEqual(wrapped[methodName]().slice(0, '1').value(), [1]);
+          deepEqual(wrapped[methodName]().slice('1').value(), [2, 3]);
+          deepEqual(wrapped[methodName]().slice(NaN, 1).value(), [1]);
+          deepEqual(wrapped[methodName]().slice(1, NaN).value(), []);
+        });
       }
       else {
-        skipTest(18);
+        skipTest(38);
       }
     });
   }());

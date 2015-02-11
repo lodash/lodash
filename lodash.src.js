@@ -11094,10 +11094,10 @@
     // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
     arrayEach(['pluck', 'where'], function(methodName, index) {
       var operationName = index ? 'filter' : 'map',
-          createCallback = index ? baseMatches : baseProperty;
+          createCallback = index ? baseMatches : property;
 
       LazyWrapper.prototype[methodName] = function(value) {
-        return this[operationName](createCallback(index ? value : (value + '')));
+        return this[operationName](createCallback(value));
       };
     });
 

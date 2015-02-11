@@ -151,7 +151,7 @@
     QUnit = QUnit.QUnit || QUnit
   ));
 
-  /** Load and install QUnit Extras and ES6 Set/WeakMap shims. */
+  /** Load QUnit Extras and ES6 Set/WeakMap shims. */
   (function() {
     var paths = [
       './asset/set.js',

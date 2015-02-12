@@ -4322,8 +4322,12 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
-     * callback returns `true` for elements that have the properties of the given
+     * callback returns `true` for elements that match the properties of the given
      * object, else `false`.
      *
      * @static
@@ -4340,18 +4344,22 @@
      * // => [1]
      *
      * var users = [
-     *   { 'user': 'barney',  'status': 'busy', 'active': false },
-     *   { 'user': 'fred',    'status': 'busy', 'active': true },
-     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
+     *   { 'user': 'barney',  'age': 36, 'active': true },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
+     *
+     * // using the "_.matches" callback shorthand
+     * _.pluck(_.dropRightWhile(users, { 'age': 1, 'active': false }), 'user');
+     * // => ['barney', 'fred']
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.pluck(_.dropRightWhile(users, 'active', false), 'user');
+     * // => ['barney']
      *
      * // using the "_.property" callback shorthand
      * _.pluck(_.dropRightWhile(users, 'active'), 'user');
-     * // => ['barney']
-     *
-     * // using the "_.matches" callback shorthand
-     * _.pluck(_.dropRightWhile(users, { 'status': 'away' }), 'user');
-     * // => ['barney', 'fred']
+     * // => ['barney', 'fred', 'pebbles']
      */
     function dropRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
@@ -4371,6 +4379,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -4389,18 +4401,22 @@
      * // => [3]
      *
      * var users = [
-     *   { 'user': 'barney',  'status': 'busy', 'active': true },
-     *   { 'user': 'fred',    'status': 'busy', 'active': false },
-     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': true }
      * ];
+     *
+     * // using the "_.matches" callback shorthand
+     * _.pluck(_.dropWhile(users, { 'age': 36, 'active': false }), 'user');
+     * // => ['fred', 'pebbles']
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.pluck(_.dropWhile(users, 'active', false), 'user');
+     * // => ['pebbles']
      *
      * // using the "_.property" callback shorthand
      * _.pluck(_.dropWhile(users, 'active'), 'user');
-     * // => ['fred', 'pebbles']
-     *
-     * // using the "_.matches" callback shorthand
-     * _.pluck(_.dropWhile(users, { 'status': 'busy' }), 'user');
-     * // => ['pebbles']
+     * // => ['barney', 'fred', 'pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
@@ -4445,6 +4461,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -4470,7 +4490,11 @@
      * // => 0
      *
      * // using the "_.matches" callback shorthand
-     * _.findIndex(users, { 'age': 1 });
+     * _.findIndex(users, { 'age': 40, 'active': true });
+     * // => 1
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.findIndex(users, 'age', 1);
      * // => 2
      *
      * // using the "_.property" callback shorthand
@@ -4497,6 +4521,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -4522,7 +4550,11 @@
      * // => 2
      *
      * // using the "_.matches" callback shorthand
-     * _.findLastIndex(users, { 'age': 40 });
+     * _.findLastIndex(users, { 'age': 36, 'active': true });
+     * // => 0
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.findLastIndex(users, 'age', 40);
      * // => 1
      *
      * // using the "_.property" callback shorthand
@@ -4880,6 +4912,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -4976,6 +5012,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -5126,6 +5166,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -5144,18 +5188,22 @@
      * // => [2, 3]
      *
      * var users = [
-     *   { 'user': 'barney',  'status': 'busy', 'active': false },
-     *   { 'user': 'fred',    'status': 'busy', 'active': true },
-     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
+     *   { 'user': 'barney',  'age': 36, 'active': true },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
+     *
+     * // using the "_.matches" callback shorthand
+     * _.pluck(_.takeRightWhile(users, { 'age': 1, 'active': true }), 'user');
+     * // => ['pebbles']
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.pluck(_.takeRightWhile(users, 'active', false), 'user');
+     * // => ['fred', 'pebbles']
      *
      * // using the "_.property" callback shorthand
      * _.pluck(_.takeRightWhile(users, 'active'), 'user');
-     * // => ['fred', 'pebbles']
-     *
-     * // using the "_.matches" callback shorthand
-     * _.pluck(_.takeRightWhile(users, { 'status': 'away' }), 'user');
-     * // => ['pebbles']
+     * // => []
      */
     function takeRightWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
@@ -5175,6 +5223,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -5193,18 +5245,22 @@
      * // => [1, 2]
      *
      * var users = [
-     *   { 'user': 'barney',  'status': 'busy', 'active': true },
-     *   { 'user': 'fred',    'status': 'busy', 'active': false },
-     *   { 'user': 'pebbles', 'status': 'away', 'active': true }
+     *   { 'user': 'barney',  'age': 36, 'active': false },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': true }
      * ];
+     *
+     * // using the "_.matches" callback shorthand
+     * _.pluck(_.takeWhile(users, { 'age': 36, 'active': true }), 'user');
+     * // => ['barney']
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.pluck(_.takeWhile(users, 'active', false), 'user');
+     * // => ['barney', 'fred']
      *
      * // using the "_.property" callback shorthand
      * _.pluck(_.takeWhile(users, 'active'), 'user');
-     * // => ['barney']
-     *
-     * // using the "_.matches" callback shorthand
-     * _.pluck(_.takeWhile(users, { 'status': 'busy' }), 'user');
-     * // => ['barney', 'fred']
+     * // => []
      */
     function takeWhile(array, predicate, thisArg) {
       var length = array ? array.length : 0;
@@ -5250,6 +5306,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -5789,6 +5849,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -5825,6 +5889,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -5846,16 +5914,20 @@
      * // => false
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
+     *   { 'user': 'barney', 'age': 36, 'active': false },
+     *   { 'user': 'fred',   'age': 40, 'active': false }
      * ];
      *
-     * // using the "_.property" callback shorthand
-     * _.every(users, 'age');
+     * // using the "_.matches" callback shorthand
+     * _.every(users, { 'age': 36, 'active': false });
+     * // => false
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.every(users, 'active', false);
      * // => true
      *
-     * // using the "_.matches" callback shorthand
-     * _.every(users, { 'age': 36 });
+     * // using the "_.property" callback shorthand
+     * _.every(users, 'active');
      * // => false
      */
     function every(collection, predicate, thisArg) {
@@ -5873,6 +5945,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -5894,16 +5970,20 @@
      * // => [2, 4]
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': false },
-     *   { 'user': 'fred',   'age': 40, 'active': true }
+     *   { 'user': 'barney', 'age': 36, 'active': true },
+     *   { 'user': 'fred',   'age': 40, 'active': false }
      * ];
+     *
+     * // using the "_.matches" callback shorthand
+     * _.pluck(_.filter(users, { 'age': 36, 'active': true }), 'user');
+     * // => ['barney']
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.pluck(_.filter(users, 'active', false), 'user');
+     * // => ['fred']
      *
      * // using the "_.property" callback shorthand
      * _.pluck(_.filter(users, 'active'), 'user');
-     * // => ['fred']
-     *
-     * // using the "_.matches" callback shorthand
-     * _.pluck(_.filter(users, { 'age': 36 }), 'user');
      * // => ['barney']
      */
     function filter(collection, predicate, thisArg) {
@@ -5919,6 +5999,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -5937,21 +6021,25 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney',  'age': 36, 'active': false },
-     *   { 'user': 'fred',    'age': 40, 'active': true },
-     *   { 'user': 'pebbles', 'age': 1,  'active': false }
+     *   { 'user': 'barney',  'age': 36, 'active': true },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': true }
      * ];
      *
      * _.result(_.find(users, function(chr) { return chr.age < 40; }), 'user');
      * // => 'barney'
      *
      * // using the "_.matches" callback shorthand
-     * _.result(_.find(users, { 'age': 1 }), 'user');
+     * _.result(_.find(users, { 'age': 1, 'active': true }), 'user');
      * // => 'pebbles'
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.result(_.find(users, 'active', false), 'user');
+     * // => 'fred'
      *
      * // using the "_.property" callback shorthand
      * _.result(_.find(users, 'active'), 'user');
-     * // => 'fred'
+     * // => 'barney'
      */
     function find(collection, predicate, thisArg) {
       if (isArray(collection)) {
@@ -5990,6 +6078,11 @@
      * source object, returning the first element that has equivalent property
      * values.
      *
+     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+     * numbers, `Object` objects, regexes, and strings. Objects are compared by
+     * their own, not inherited, enumerable properties. For comparing a single
+     * own or inherited property value see `_.matchesProperty`.
+     *
      * @static
      * @memberOf _
      * @category Collection
@@ -5999,14 +6092,14 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'status': 'busy' },
-     *   { 'user': 'fred',   'age': 40, 'status': 'busy' }
+     *   { 'user': 'barney', 'age': 36, 'active': true },
+     *   { 'user': 'fred',   'age': 40, 'active': false }
      * ];
      *
-     * _.result(_.findWhere(users, { 'status': 'busy' }), 'user');
+     * _.result(_.findWhere(users, { 'age': 36, 'active': true }), 'user');
      * // => 'barney'
      *
-     * _.result(_.findWhere(users, { 'age': 40 }), 'user');
+     * _.result(_.findWhere(users, { 'age': 40, 'active': false }), 'user');
      * // => 'fred'
      */
     function findWhere(collection, source) {
@@ -6078,6 +6171,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6120,6 +6217,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -6188,6 +6289,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6244,6 +6349,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6289,6 +6398,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6333,6 +6446,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6360,12 +6477,18 @@
      *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
      *
+     * var mapper = function(array) { return _.pluck(array, 'user'); };
+     *
      * // using the "_.matches" callback shorthand
-     * _.map(_.partition(users, { 'age': 1 }), function(array) { return _.pluck(array, 'user'); });
+     * _.map(_.partition(users, { 'age': 1, 'active': false }), mapper);
      * // => [['pebbles'], ['barney', 'fred']]
      *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.map(_.partition(users, 'active', false), mapper);
+     * // => [['barney', 'pebbles'], ['fred']]
+     *
      * // using the "_.property" callback shorthand
-     * _.map(_.partition(users, 'active'), function(array) { return _.pluck(array, 'user'); });
+     * _.map(_.partition(users, 'active'), mapper);
      * // => [['fred'], ['barney', 'pebbles']]
      */
     var partition = createAggregator(function(result, value, key) {
@@ -6469,6 +6592,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6492,13 +6619,17 @@
      *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
+     * // using the "_.matches" callback shorthand
+     * _.pluck(_.reject(users, { 'age': 40, 'active': true }), 'user');
+     * // => ['barney']
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.pluck(_.reject(users, 'active', false), 'user');
+     * // => ['fred']
+     *
      * // using the "_.property" callback shorthand
      * _.pluck(_.reject(users, 'active'), 'user');
      * // => ['barney']
-     *
-     * // using the "_.matches" callback shorthand
-     * _.pluck(_.reject(users, { 'age': 36 }), 'user');
-     * // => ['fred']
      */
     function reject(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -6603,6 +6734,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -6628,13 +6763,17 @@
      *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
      *
+     * // using the "_.matches" callback shorthand
+     * _.some(users, { 'age': 1, 'active': true });
+     * // => false
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.some(users, 'active', false);
+     * // => true
+     *
      * // using the "_.property" callback shorthand
      * _.some(users, 'active');
      * // => true
-     *
-     * // using the "_.matches" callback shorthand
-     * _.some(users, { 'age': 1 });
-     * // => false
      */
     function some(collection, predicate, thisArg) {
       var func = isArray(collection) ? arraySome : baseSome;
@@ -6653,6 +6792,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -6750,6 +6893,11 @@
      * source object, returning an array of all elements that have equivalent
      * property values.
      *
+     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+     * numbers, `Object` objects, regexes, and strings. Objects are compared by
+     * their own, not inherited, enumerable properties. For comparing a single
+     * own or inherited property value see `_.matchesProperty`.
+     *
      * @static
      * @memberOf _
      * @category Collection
@@ -6759,18 +6907,15 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'status': 'busy', 'pets': ['hoppy'] },
-     *   { 'user': 'fred',   'age': 40, 'status': 'busy', 'pets': ['baby puss', 'dino'] }
+     *   { 'user': 'barney', 'age': 36, 'active': false, 'pets': ['hoppy'] },
+     *   { 'user': 'fred',   'age': 40, 'active': true, 'pets': ['baby puss', 'dino'] }
      * ];
      *
-     * _.pluck(_.where(users, { 'age': 36 }), 'user');
+     * _.pluck(_.where(users, { 'age': 36, 'active': false }), 'user');
      * // => ['barney']
      *
      * _.pluck(_.where(users, { 'pets': ['dino'] }), 'user');
      * // => ['fred']
-     *
-     * _.pluck(_.where(users, { 'status': 'busy' }), 'user');
-     * // => ['barney', 'fred']
      */
     function where(collection, source) {
       return filter(collection, baseMatches(source));
@@ -8059,7 +8204,8 @@
      * arguments; (value, other [, index|key]).
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
-     * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
+     * numbers, `Object` objects, regexes, and strings. Objects are compared by
+     * their own, not inherited, enumerable properties. Functions and DOM nodes
      * are **not** supported. Provide a customizer function to extend support
      * for comparing other values.
      *
@@ -8661,6 +8807,10 @@
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
      *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
@@ -8686,8 +8836,12 @@
      * // => 'barney' (iteration order is not guaranteed)
      *
      * // using the "_.matches" callback shorthand
-     * _.findKey(users, { 'age': 1 });
+     * _.findKey(users, { 'age': 1, 'active': true });
      * // => 'pebbles'
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.findKey(users, 'active', false);
+     * // => 'fred'
      *
      * // using the "_.property" callback shorthand
      * _.findKey(users, 'active');
@@ -8704,6 +8858,10 @@
      *
      * If a property name is provided for `predicate` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `predicate` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -8730,8 +8888,12 @@
      * // => returns `pebbles` assuming `_.findKey` returns `barney`
      *
      * // using the "_.matches" callback shorthand
-     * _.findLastKey(users, { 'age': 36 });
+     * _.findLastKey(users, { 'age': 36, 'active': true });
      * // => 'barney'
+     *
+     * // using the "_.matchesProperty" callback shorthand
+     * _.findLastKey(users, 'active', false);
+     * // => 'fred'
      *
      * // using the "_.property" callback shorthand
      * _.findLastKey(users, 'active');
@@ -9073,6 +9235,10 @@
      *
      * If a property name is provided for `iteratee` the created "_.property"
      * style callback returns the property value of the given element.
+     *
+     * If value is also provided for `thisArg` the created "_.matchesProperty"
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
      *
      * If an object is provided for `iteratee` the created "_.matches" style
      * callback returns `true` for elements that have the properties of the given
@@ -10461,6 +10627,11 @@
      * and `source`, returning `true` if the given object has equivalent property
      * values, else `false`.
      *
+     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+     * numbers, `Object` objects, regexes, and strings. Objects are compared by
+     * their own, not inherited, enumerable properties. For comparing a single
+     * own or inherited property value see `_.matchesProperty`.
+     *
      * @static
      * @memberOf _
      * @category Utility
@@ -10469,17 +10640,12 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'fred',   'age': 40 },
-     *   { 'user': 'barney', 'age': 36 }
+     *   { 'user': 'barney', 'age': 36, 'active': true },
+     *   { 'user': 'fred',   'age': 40, 'active': false }
      * ];
      *
-     * var matchesAge = _.matches({ 'age': 36 });
-     *
-     * _.filter(users, matchesAge);
-     * // => [{ 'user': 'barney', 'age': 36 }]
-     *
-     * _.find(users, matchesAge);
-     * // => { 'user': 'barney', 'age': 36 }
+     * _.filter(users, _.matches({ 'age': 40, 'active': false }));
+     * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
      */
     function matches(source) {
       return baseMatches(baseClone(source, true));
@@ -10488,6 +10654,10 @@
     /**
      * Creates a function which compares the property value of `key` on a given
      * object to `value`.
+     *
+     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+     * numbers, `Object` objects, regexes, and strings. Objects are compared by
+     * their own, not inherited, enumerable properties.
      *
      * @static
      * @memberOf _

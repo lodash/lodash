@@ -5665,7 +5665,9 @@
      * @example
      *
      * var array = [1, 2];
-     * var wrapper = _(array).map(_.partial(Math.pow, _, 2));
+     * var wrapper = _(array).map(function(value) {
+     *   return Math.pow(value, 2);
+     * });
      *
      * var other = [3, 4];
      * var otherWrapper = wrapper.plant(other);
@@ -7834,11 +7836,9 @@
      *   Promise.resolve(36)
      * ]);
      *
-     * var add = function(x, y) {
+     * numbers.then(_.spread(function(x, y) {
      *   return x + y;
-     * };
-     *
-     * numbers.then(_.spread(add));
+     * }));
      * // => a Promise of 76
      */
     function spread(func) {

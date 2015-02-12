@@ -18,20 +18,20 @@ var nativeMin = Math.min;
  * @returns {*} Returns the unwrapped value.
  */
 function lazyValue() {
-  var array = this.wrapped.value();
+  var array = this.__wrapped__.value();
   if (!isArray(array)) {
-    return baseWrapperValue(array, this.actions);
+    return baseWrapperValue(array, this.__actions__);
   }
-  var dir = this.dir,
+  var dir = this.__dir__,
       isRight = dir < 0,
-      view = getView(0, array.length, this.views),
+      view = getView(0, array.length, this.__views__),
       start = view.start,
       end = view.end,
       length = end - start,
-      dropCount = this.dropCount,
-      takeCount = nativeMin(length, this.takeCount - dropCount),
+      dropCount = this.__dropCount__,
+      takeCount = nativeMin(length, this.__takeCount__),
       index = isRight ? end : start - 1,
-      iteratees = this.iteratees,
+      iteratees = this.__iteratees__,
       iterLength = iteratees ? iteratees.length : 0,
       resIndex = 0,
       result = [];

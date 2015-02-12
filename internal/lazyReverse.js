@@ -9,13 +9,13 @@ import LazyWrapper from './LazyWrapper';
  * @returns {Object} Returns the new reversed `LazyWrapper` object.
  */
 function lazyReverse() {
-  if (this.filtered) {
+  if (this.__filtered__) {
     var result = new LazyWrapper(this);
-    result.dir = -1;
-    result.filtered = true;
+    result.__dir__ = -1;
+    result.__filtered__ = true;
   } else {
     result = this.clone();
-    result.dir *= -1;
+    result.__dir__ *= -1;
   }
   return result;
 }

@@ -3,6 +3,7 @@ import baseCallback from '../internal/baseCallback';
 import baseCreate from '../internal/baseCreate';
 import baseForOwn from '../internal/baseForOwn';
 import isArray from '../lang/isArray';
+import isFunction from '../lang/isFunction';
 import isObject from '../lang/isObject';
 import isTypedArray from '../lang/isTypedArray';
 
@@ -47,7 +48,7 @@ function transform(object, iteratee, accumulator, thisArg) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+        accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
       }
     } else {
       accumulator = {};

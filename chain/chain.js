@@ -8,7 +8,7 @@ import lodash from './lodash';
  * @memberOf _
  * @category Chain
  * @param {*} value The value to wrap.
- * @returns {Object} Returns the new `lodash` object.
+ * @returns {Object} Returns the new `lodash` wrapper instance.
  * @example
  *
  * var users = [

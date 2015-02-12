@@ -19,6 +19,7 @@ import once from './function/once';
 import partial from './function/partial';
 import partialRight from './function/partialRight';
 import rearg from './function/rearg';
+import spread from './function/spread';
 import throttle from './function/throttle';
 import wrap from './function/wrap';
 
@@ -44,6 +45,7 @@ export default {
   'partial': partial,
   'partialRight': partialRight,
   'rearg': rearg,
+  'spread': spread,
   'throttle': throttle,
   'wrap': wrap
 };

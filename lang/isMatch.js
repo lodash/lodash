@@ -24,7 +24,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @static
  * @memberOf _
  * @category Lang
- * @param {Object} source The object to inspect.
+ * @param {Object} object The object to inspect.
  * @param {Object} source The object of property values to match.
  * @param {Function} [customizer] The function to customize comparing values.
  * @param {*} [thisArg] The `this` binding of `customizer`.

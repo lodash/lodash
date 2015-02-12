@@ -1,6 +1,9 @@
 import chain from './chain/chain';
+import commit from './chain/commit';
 import lodash from './chain/lodash';
+import plant from './chain/plant';
 import reverse from './chain/reverse';
+import run from './chain/run';
 import tap from './chain/tap';
 import thru from './chain/thru';
 import toJSON from './chain/toJSON';
@@ -11,8 +14,11 @@ import wrapperChain from './chain/wrapperChain';
 
 export default {
   'chain': chain,
+  'commit': commit,
   'lodash': lodash,
+  'plant': plant,
   'reverse': reverse,
+  'run': run,
   'tap': tap,
   'thru': thru,
   'toJSON': toJSON,

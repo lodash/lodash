@@ -33,7 +33,7 @@ function flowRight() {
       fromIndex = funcs.length - 1;
 
   if (fromIndex < 0) {
-    return function() {};
+    return function() { return arguments[0]; };
   }
   if (!arrayEvery(funcs, isFunction)) {
     throw new TypeError(FUNC_ERROR_TEXT);

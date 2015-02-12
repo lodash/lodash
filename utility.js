@@ -4,6 +4,7 @@ import constant from './utility/constant';
 import identity from './utility/identity';
 import iteratee from './utility/iteratee';
 import matches from './utility/matches';
+import matchesProperty from './utility/matchesProperty';
 import mixin from './utility/mixin';
 import noop from './utility/noop';
 import property from './utility/property';
@@ -19,6 +20,7 @@ export default {
   'identity': identity,
   'iteratee': iteratee,
   'matches': matches,
+  'matchesProperty': matchesProperty,
   'mixin': mixin,
   'noop': noop,
   'property': property,

@@ -5,6 +5,7 @@ import drop from './array/drop';
 import dropRight from './array/dropRight';
 import dropRightWhile from './array/dropRightWhile';
 import dropWhile from './array/dropWhile';
+import fill from './array/fill';
 import findIndex from './array/findIndex';
 import findLastIndex from './array/findLastIndex';
 import first from './array/first';
@@ -46,6 +47,7 @@ export default {
   'dropRight': dropRight,
   'dropRightWhile': dropRightWhile,
   'dropWhile': dropWhile,
+  'fill': fill,
   'findIndex': findIndex,
   'findLastIndex': findLastIndex,
   'first': first,

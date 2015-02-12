@@ -9,8 +9,7 @@ var objectProto = Object.prototype;
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * The base implementation of `_.matches` which supports specifying whether
- * `source` should be cloned.
+ * The base implementation of `_.matches` which does not clone `source`.
  *
  * @private
  * @param {Object} source The object of property values to match.
@@ -26,7 +25,7 @@ function baseMatches(source) {
 
     if (isStrictComparable(value)) {
       return function(object) {
-        return object != null && value === object[key] && hasOwnProperty.call(object, key);
+        return object != null && object[key] === value && hasOwnProperty.call(object, key);
       };
     }
   }

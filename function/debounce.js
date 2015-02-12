@@ -1,4 +1,3 @@
-import isFunction from '../lang/isFunction';
 import isObject from '../lang/isObject';
 import now from '../date/now';
 
@@ -82,7 +81,7 @@ function debounce(func, wait, options) {
       maxWait = false,
       trailing = true;
 
-  if (!isFunction(func)) {
+  if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   wait = wait < 0 ? 0 : wait;

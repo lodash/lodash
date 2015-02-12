@@ -33,7 +33,7 @@ function flow() {
       length = funcs.length;
 
   if (!length) {
-    return function() {};
+    return function() { return arguments[0]; };
   }
   if (!arrayEvery(funcs, isFunction)) {
     throw new TypeError(FUNC_ERROR_TEXT);

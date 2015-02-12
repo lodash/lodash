@@ -16,7 +16,7 @@ var nativeMax = Math.max;
  * @memberOf _
  * @category Array
  * @param {Array} array The array to process.
- * @param {numer} [size=1] The length of each chunk.
+ * @param {number} [size=1] The length of each chunk.
  * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
  * @returns {Array} Returns the new array containing chunks.
  * @example

@@ -4435,7 +4435,9 @@
      *
      * **Note:** This method mutates `array`.
      *
-     * @private
+     * @static
+     * @memberOf _
+     * @category Array
      * @param {Array} array The array to fill.
      * @param {*} value The value to fill `array` with.
      * @param {number} [start=0] The start position.

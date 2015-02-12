@@ -7815,7 +7815,7 @@
      * @static
      * @memberOf _
      * @category Function
-     * @param {Function} The function to spread arguments over.
+     * @param {Function} func The function to spread arguments over.
      * @returns {*} Returns the new function.
      * @example
      *
@@ -7839,7 +7839,7 @@
      * numbers.then(_.spread(add));
      * // => a Promise of 76
      */
-    function spread(func, thisArg) {
+    function spread(func) {
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }

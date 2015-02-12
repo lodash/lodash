@@ -2356,6 +2356,19 @@
       strictEqual(callback({}), false);
     });
 
+    test('should return a callback created by `_.matchesProperty` when `func` is a number or string and `thisArg` is not `undefined`', 3, function() {
+      var array = ['a'],
+          callback = _.callback(0, 'a');
+
+      strictEqual(callback(array), true);
+
+      callback = _.callback('0', 'a');
+      strictEqual(callback(array), true);
+
+      callback = _.callback(1, undefined);
+      strictEqual(callback(array), undefined);
+    });
+
     test('should return a callback created by `_.property` when `func` is a number or string', 2, function() {
       var array = ['a'],
           callback = _.callback(0);
@@ -8956,6 +8969,165 @@
     test('should match problem JScript properties (test in IE < 9)', 1, function() {
       var matches = _.matches(shadowObject),
           objects = [{}, shadowObject],
+          actual = _.map(objects, matches);
+
+      deepEqual(actual, [false, true]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.matchesProperty');
+
+  (function() {
+    test('should create a function that performs a deep comparison between a property value and `value`', 6, function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          matches = _.matchesProperty('a', 1);
+
+      strictEqual(matches.length, 1);
+      strictEqual(matches(object), true);
+
+      matches = _.matchesProperty('b', 3);
+      strictEqual(matches(object), false);
+
+      matches = _.matchesProperty('a', { 'a': 1, 'c': 3 });
+      strictEqual(matches({ 'a': object }), true);
+
+      matches = _.matchesProperty('a', { 'c': 3, 'd': 4 });
+      strictEqual(matches(object), false);
+
+      object = { 'a': { 'b': { 'c': 1, 'd': 2 }, 'e': 3 }, 'f': 4 };
+      matches = _.matchesProperty('a', { 'b': { 'c': 1 } });
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should compare a variety of values', 2, function() {
+      var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
+          object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },
+          matches = _.matchesProperty('a', object1);
+
+      strictEqual(matches({ 'a': object1 }), true);
+      strictEqual(matches({ 'a': object2 }), false);
+    });
+
+    test('should not change match behavior if `value` is augmented', 9, function() {
+      _.each([{ 'a': { 'b': 2, 'c': 3 } }, { 'a': 1, 'b': 2 }, { 'a': 1 }], function(source, index) {
+        var object = _.cloneDeep(source),
+            matches = _.matchesProperty('a', source);
+
+        strictEqual(matches({ 'a': object }), true);
+
+        if (index) {
+          source.a = 2;
+          source.b = 1;
+          source.c = 3;
+        } else {
+          source.a.b = 1;
+          source.a.c = 2;
+          source.a.d = 3;
+        }
+        strictEqual(matches({ 'a': object }), true);
+        strictEqual(matches({ 'a': source }), false);
+      });
+    });
+
+    test('should return `true` when comparing a `value` of empty arrays and objects', 1, function() {
+      var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
+          matches = _.matchesProperty('a', { 'a': [], 'b': {} });
+
+      var actual = _.filter(objects, function(object) {
+        return matches({ 'a': object });
+      });
+
+      deepEqual(actual, objects);
+    });
+
+    test('should not error for falsey `object` values', 1, function() {
+      var expected = _.map(falsey, _.constant(false)),
+          matches = _.matchesProperty('a', 1);
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return index ? matches(value) : matches();
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should search arrays of `value` for values', 3, function() {
+      var objects = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
+          matches = _.matchesProperty('a', ['d']),
+          actual = _.filter(objects, matches);
+
+      deepEqual(actual, [objects[1]]);
+
+      matches = _.matchesProperty('a', ['b', 'd']);
+      actual = _.filter(objects, matches);
+      deepEqual(actual, []);
+
+      matches = _.matchesProperty('a', ['d', 'b']);
+      actual = _.filter(objects, matches);
+      deepEqual(actual, []);
+    });
+
+    test('should perform a partial comparison of all objects within arrays of `value`', 1, function() {
+      var objects = [
+        { 'a': [{ 'a': 1, 'b': 2 }, { 'a': 4, 'b': 5, 'c': 6 }] },
+        { 'a': [{ 'a': 1, 'b': 2 }, { 'a': 4, 'b': 6, 'c': 7 }] }
+      ];
+
+      var matches = _.matchesProperty('a', [{ 'a': 1 }, { 'a': 4, 'b': 5 }]),
+          actual = _.filter(objects, matches);
+
+      deepEqual(actual, [objects[0]]);
+    });
+
+    test('should handle a `value` with `undefined` values', 2, function() {
+      var matches = _.matchesProperty('b', undefined),
+          objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+          actual = _.map(objects, matches);
+
+      deepEqual(actual, [true, false, true]);
+
+      matches = _.matchesProperty('a', { 'b': undefined });
+      objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 1 } }, { 'a': { 'a': 1, 'b': undefined } }];
+      actual = _.map(objects, matches);
+
+      deepEqual(actual, [false, false, true]);
+    });
+
+    test('should not match by inherited `value` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 2 } }],
+          source = new Foo,
+          matches = _.matchesProperty('a', source),
+          actual = _.map(objects, matches),
+          expected = _.map(objects, _.constant(true));
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with a function for `value`', 1, function() {
+      function source() {}
+
+      source.a = 1;
+      source.b = function() {};
+      source.c = 3;
+
+      var matches = _.matchesProperty('a', source),
+          objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': source.b, 'c': 3 } }],
+          actual = _.map(objects, matches);
+
+      deepEqual(actual, [false, true]);
+    });
+
+    test('should match problem JScript properties (test in IE < 9)', 1, function() {
+      var matches = _.matchesProperty('a', shadowObject),
+          objects = [{ 'a': {} }, { 'a': shadowObject }],
           actual = _.map(objects, matches);
 
       deepEqual(actual, [false, true]);

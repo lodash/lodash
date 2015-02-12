@@ -2162,7 +2162,7 @@
       deepEqual(actual.hasOwnProperty, 2);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.countBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': 2, '5': 1 });
     });
@@ -3766,12 +3766,16 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, 'b'), objects.slice(0, 1));
+    test('should work with a "_.matches" style `predicate`', 1, function() {
+      deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
     });
 
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
+    test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
+      deepEqual(_.dropRightWhile(objects, 'b', 2), objects.slice(0, 2));
+    });
+
+    test('should work with a "_.property" style `predicate`', 1, function() {
+      deepEqual(_.dropRightWhile(objects, 'b'), objects.slice(0, 1));
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -3843,12 +3847,16 @@
       deepEqual(actual, [3, 4]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
+    test('should work with a "_.matches" style `predicate`', 1, function() {
+      deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
     });
 
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
+    test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
+      deepEqual(_.dropWhile(objects, 'b', 2), objects.slice(1));
+    });
+
+    test('should work with a "_.property" style `predicate`', 1, function() {
+      deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -4009,7 +4017,7 @@
       strictEqual(_.every([undefined, undefined, undefined], _.identity), false);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 2, function() {
+    test('should work with a "_.property" style `predicate`', 2, function() {
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
       strictEqual(_.every(objects, 'a'), false);
       strictEqual(_.every(objects, 'b'), true);
@@ -4280,12 +4288,16 @@
         strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
       });
 
-      test('should work with a "_.pluck" style `predicate`', 1, function() {
-        strictEqual(func(objects, 'b'), expected[3]);
+      test('should work with a "_.matches" style `predicate`', 1, function() {
+        strictEqual(func(objects, { 'b': 2 }), expected[2]);
       });
 
-      test('should work with a "_.where" style `predicate`', 1, function() {
-        strictEqual(func(objects, { 'b': 2 }), expected[2]);
+      test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
+        strictEqual(func(objects, 'b', 2), expected[2]);
+      });
+
+      test('should work with a "_.property" style `predicate`', 1, function() {
+        strictEqual(func(objects, 'b'), expected[3]);
       });
 
       test('should return `' + expected[1] + '` for empty collections', 1, function() {
@@ -4640,12 +4652,16 @@
       deepEqual(actual, [3, 4]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
+    test('should work with a "_.matches" style `predicate`', 1, function() {
+      deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
     });
 
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
+    test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
+      deepEqual(_.takeRightWhile(objects, 'b', 2), objects.slice(2));
+    });
+
+    test('should work with a "_.property" style `predicate`', 1, function() {
+      deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -4717,12 +4733,15 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
+    test('should work with a "_.matches" style `predicate`', 1, function() {
+      deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
     });
 
-    test('should work with a "_.where" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
+    test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
+      deepEqual(_.takeWhile(objects, 'b', 2), objects.slice(0, 1));
+    });
+    test('should work with a "_.property" style `predicate`', 1, function() {
+      deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -5574,7 +5593,7 @@
       deepEqual(actual.hasOwnProperty, [6.1, 6.4]);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.groupBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
     });
@@ -5809,7 +5828,7 @@
       deepEqual(actual.hasOwnProperty, 6.4);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.indexBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': 'two', '5': 'three' });
     });
@@ -8642,7 +8661,7 @@
       deepEqual(actual, [3]);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('should work with a "_.property" style `iteratee`', 1, function() {
       var objects = [{ 'a': 'x' }, { 'a': 'y' }];
       deepEqual(_.map(objects, 'a'), ['x', 'y']);
     });
@@ -8752,7 +8771,7 @@
       deepEqual(actual, { '0': 3 });
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.mapValues({ 'a': { 'b': 1 } }, 'b');
       deepEqual(actual, { 'a': 1 });
     });
@@ -9601,7 +9620,7 @@
       strictEqual(actual, isMax ? 1 : 3);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 2, function() {
+    test('should work with a "_.property" style `iteratee`', 2, function() {
       var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
           actual = func(objects, 'a');
 
@@ -10666,7 +10685,7 @@
       deepEqual(actual, [[1.1, 1.3], [0.2]]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
+    test('should work with a "_.property" style `predicate`', 1, function() {
       var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
           actual = _.partition(objects, 'a');
 
@@ -11555,7 +11574,7 @@
       deepEqual(actual, [0]);
     });
 
-    test('`_.' + methodName + '` should work with a "_.pluck" style `predicate`', 1, function() {
+    test('`_.' + methodName + '` should work with a "_.property" style `predicate`', 1, function() {
       var objects = [{ 'a': 0 }, { 'a': 1 }];
       deepEqual(func(objects, 'a'), [objects[isFilter ? 1 : 0]]);
     });
@@ -11644,16 +11663,22 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 1, function() {
-      var objects = [{ 'a': 0 }, { 'a': 1 }];
-      _.remove(objects, 'a');
-      deepEqual(objects, [{ 'a': 0 }]);
-    });
-
-    test('should work with a "_.where" style `predicate`', 1, function() {
+    test('should work with a "_.matches" style `predicate`', 1, function() {
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
       _.remove(objects, { 'a': 1 });
       deepEqual(objects, [{ 'a': 0, 'b': 1 }]);
+    });
+
+    test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
+      var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
+      _.remove(objects, 'a', 1);
+      deepEqual(objects, [{ 'a': 0, 'b': 1 }]);
+    });
+
+    test('should work with a "_.property" style `predicate`', 1, function() {
+      var objects = [{ 'a': 0 }, { 'a': 1 }];
+      _.remove(objects, 'a');
+      deepEqual(objects, [{ 'a': 0 }]);
     });
 
     test('should preserve holes in arrays', 2, function() {
@@ -12284,7 +12309,7 @@
       strictEqual(_.some([null, true, null], _.identity), true);
     });
 
-    test('should work with a "_.pluck" style `predicate`', 2, function() {
+    test('should work with a "_.property" style `predicate`', 2, function() {
       var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
       strictEqual(_.some(objects, 'a'), false);
       strictEqual(_.some(objects, 'b'), true);
@@ -12403,7 +12428,7 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.pluck(_.sortBy(objects.concat(undefined), 'b'), 'b');
       deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
@@ -12566,7 +12591,7 @@
       strictEqual(actual, 1);
     });
 
-    test('`_.' + methodName + '` should work with a "_.pluck" style `iteratee`', 1, function() {
+    test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', 1, function() {
       var actual = func(objects, { 'x': 40 }, 'x');
       strictEqual(actual, 1);
     });
@@ -14246,7 +14271,7 @@
       deepEqual(actual, [1, 2, 3]);
     });
 
-    test('should work with a "_.pluck" style `iteratee`', 2, function() {
+    test('should work with a "_.property" style `iteratee`', 2, function() {
       var actual = _.uniq(objects, 'a');
 
       deepEqual(actual, objects.slice(0, 3));

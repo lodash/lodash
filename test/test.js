@@ -6091,6 +6091,50 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.inRange');
+
+  (function() {
+    test('should work with an `end` argument', 3, function() {
+      strictEqual(_.inRange(3, 5), true);
+      strictEqual(_.inRange(5, 5), false);
+      strictEqual(_.inRange(6, 5), false);
+    });
+
+    test('should work with `start` and `end` arguments', 4, function() {
+      strictEqual(_.inRange(1, 1, 5), true);
+      strictEqual(_.inRange(3, 1, 5), true);
+      strictEqual(_.inRange(0, 1, 5), false);
+      strictEqual(_.inRange(5, 1, 5), false);
+    });
+
+    test('should treat falsey `start` arguments as `0`', 13, function() {
+      _.each(falsey, function(value, index) {
+        if (index) {
+          strictEqual(_.inRange(0, value), false);
+          strictEqual(_.inRange(0, value, 1), true);
+        } else {
+          strictEqual(_.inRange(0), false);
+        }
+      });
+    });
+
+    test('should work with a floating point `n` value', 4, function() {
+      strictEqual(_.inRange(0.5, 5), true);
+      strictEqual(_.inRange(1.2, 1, 5), true);
+      strictEqual(_.inRange(5.2, 5), false);
+      strictEqual(_.inRange(0.5, 1, 5), false);
+    });
+
+    test('should coerce arguments to finite numbers', 1, function() {
+      var actual = [_.inRange(0, '0', 1), _.inRange(0, '1'), _.inRange(0, 0, '1'), _.inRange(0, NaN, 1), _.inRange(-1, -1, NaN)],
+          expected = _.map(actual, _.constant(true));
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.intersection');
 
   (function() {
@@ -11178,7 +11222,7 @@
   QUnit.module('lodash.range');
 
   (function() {
-    test('should work with a single `end` argument', 1, function() {
+    test('should work with an `end` argument', 1, function() {
       deepEqual(_.range(4), [0, 1, 2, 3]);
     });
 
@@ -15482,7 +15526,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 208, function() {
+    test('should accept falsey arguments', 209, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

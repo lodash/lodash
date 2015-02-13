@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -22,6 +22,25 @@ function assignDefaults(objectValue, sourceValue) {
 }
 
 /**
+ * Creates a `_.defaults` or `_.defaultsDeep` function.
+ *
+ * @private
+ * @param {Function} assigner The function to assign values.
+ * @param {Function} customizer The function to customize assigned values.
+ * @returns {Function} Returns the new defaults function.
+ */
+function createDefaults(assigner, customizer) {
+  return restParam(function(args) {
+    var object = args[0];
+    if (object == null) {
+      return object;
+    }
+    args.push(customizer);
+    return assigner.apply(undefined, args);
+  });
+}
+
+/**
  * Assigns own enumerable properties of source object(s) to the destination
  * object for all destination properties that resolve to `undefined`. Once a
  * property is set, additional values of the same property are ignored.
@@ -39,13 +58,6 @@ function assignDefaults(objectValue, sourceValue) {
  * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
  * // => { 'user': 'barney', 'age': 36 }
  */
-var defaults = restParam(function(args) {
-  var object = args[0];
-  if (object == null) {
-    return object;
-  }
-  args.push(assignDefaults);
-  return assign.apply(undefined, args);
-});
+var defaults = createDefaults(assign, assignDefaults);
 
 module.exports = defaults;

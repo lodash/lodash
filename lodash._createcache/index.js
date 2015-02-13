@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -54,9 +54,9 @@ function cachePush(value) {
  * @param {Array} [values] The values to cache.
  * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
  */
-var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
-  return new SetCache(values);
-};
+function createCache(values) {
+  return (nativeCreate && Set) ? new SetCache(values) : null;
+}
 
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
@@ -83,28 +83,6 @@ function isObject(value) {
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
-}
-
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
- *
- * getter() === object;
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
 }
 
 // Add functions to the `Set` cache.

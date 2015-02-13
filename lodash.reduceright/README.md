@@ -1,4 +1,4 @@
-# lodash.reduceright v3.1.1
+# lodash.reduceright v3.1.2
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.reduceRight` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var reduceRight = require('lodash.reduceright');
 ```
 
-See the [documentation](https://lodash.com/docs#reduceRight) or [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash.reduceright) for more details.
+See the [documentation](https://lodash.com/docs#reduceRight) or [package source](https://github.com/lodash/lodash/blob/3.1.2-npm-packages/lodash.reduceright) for more details.

@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -36,10 +36,12 @@ function baseCallback(func, thisArg, argCount) {
   if (func == null) {
     return identity;
   }
-  // Handle "_.property" and "_.matches" style callback shorthands.
-  return type == 'object'
-    ? baseMatches(func)
-    : baseProperty(func + '');
+  if (type == 'object') {
+    return baseMatches(func);
+  }
+  return typeof thisArg == 'undefined'
+    ? baseProperty(func + '')
+    : baseMatchesProperty(func + '', thisArg);
 }
 
 /**
@@ -47,7 +49,7 @@ function baseCallback(func, thisArg, argCount) {
  * shorthands or `this` binding.
  *
  * @private
- * @param {Object} source The object to inspect.
+ * @param {Object} object The object to inspect.
  * @param {Array} props The source property names to match.
  * @param {Array} values The source values to match.
  * @param {Array} strictCompareFlags Strict comparison flags for source values.
@@ -92,8 +94,7 @@ function baseIsMatch(object, props, values, strictCompareFlags, customizer) {
 }
 
 /**
- * The base implementation of `_.matches` which supports specifying whether
- * `source` should be cloned.
+ * The base implementation of `_.matches` which does not clone `source`.
  *
  * @private
  * @param {Object} source The object of property values to match.
@@ -109,7 +110,7 @@ function baseMatches(source) {
 
     if (isStrictComparable(value)) {
       return function(object) {
-        return object != null && value === object[key] && hasOwnProperty.call(object, key);
+        return object != null && object[key] === value && hasOwnProperty.call(object, key);
       };
     }
   }
@@ -123,6 +124,26 @@ function baseMatches(source) {
   }
   return function(object) {
     return baseIsMatch(object, props, values, strictCompareFlags);
+  };
+}
+
+/**
+ * The base implementation of `_.matchesProperty` which does not coerce `key`
+ * to a string.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @param {*} value The value to compare.
+ * @returns {Function} Returns the new function.
+ */
+function baseMatchesProperty(key, value) {
+  if (isStrictComparable(value)) {
+    return function(object) {
+      return object != null && object[key] === value;
+    };
+  }
+  return function(object) {
+    return object != null && baseIsEqual(value, object[key], null, true);
   };
 }
 
@@ -191,6 +212,7 @@ function isObject(value) {
  * @example
  *
  * var object = { 'user': 'fred' };
+ *
  * _.identity(object) === object;
  * // => true
  */

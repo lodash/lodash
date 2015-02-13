@@ -1,6 +1,10 @@
-# lodash.padright v3.1.1
+# lodash.padright v3.1.2
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.padRight` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [lodash](https://lodash.com/) method `_.padRight` exported as a [Node.js](https://nodejs.org/) module.
+
+## Discontinued
+
+This package has been discontinued in favor of [lodash.padend](https://www.npmjs.com/package/lodash.padend).
 
 ## Installation
 
@@ -17,4 +21,4 @@ In Node.js/io.js:
 var padRight = require('lodash.padright');
 ```
 
-See the [documentation](https://lodash.com/docs#padRight) or [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash.padright) for more details.
+See the [documentation](https://lodash.com/docs#padRight) or [package source](https://github.com/lodash/lodash/blob/3.1.2-npm-packages/lodash.padright) for more details.

@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -16,8 +16,7 @@ var objectProto = Object.prototype;
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * The base implementation of `_.matches` which supports specifying whether
- * `source` should be cloned.
+ * The base implementation of `_.matches` which does not clone `source`.
  *
  * @private
  * @param {Object} source The object of property values to match.
@@ -33,7 +32,7 @@ function baseMatches(source) {
 
     if (isStrictComparable(value)) {
       return function(object) {
-        return object != null && value === object[key] && hasOwnProperty.call(object, key);
+        return object != null && object[key] === value && hasOwnProperty.call(object, key);
       };
     }
   }

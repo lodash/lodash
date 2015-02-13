@@ -1,4 +1,4 @@
-# lodash.property v3.1.1
+# lodash.property v3.1.2
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.property` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var property = require('lodash.property');
 ```
 
-See the [documentation](https://lodash.com/docs#property) or [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash.property) for more details.
+See the [documentation](https://lodash.com/docs#property) or [package source](https://github.com/lodash/lodash/blob/3.1.2-npm-packages/lodash.property) for more details.

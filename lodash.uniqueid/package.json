@@ -1,11 +1,11 @@
 {
   "name": "lodash.uniqueid",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "The lodash method `_.uniqueId` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
-  "keywords": "lodash, lodash-modularized, stdlib, util, uniqueid",
+  "keywords": "lodash-modularized, uniqueid",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",

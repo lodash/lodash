@@ -4,3 +4,5 @@
 *.map
 lodash.compat.min.js
 node_modules
+
+.idea

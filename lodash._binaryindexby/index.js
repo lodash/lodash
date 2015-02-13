@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,11 +7,9 @@
  * Available under MIT license <https://lodash.com/license>
  */
 
-/** Native method references. */
-var floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeMin = Math.min;
+var nativeFloor = Math.floor,
+    nativeMin = Math.min;
 
 /** Used as references for the maximum length and index of an array. */
 var MAX_ARRAY_LENGTH = 4294967295,
@@ -40,7 +38,7 @@ function binaryIndexBy(array, value, iteratee, retHighest) {
       valIsUndef = value === undefined;
 
   while (low < high) {
-    var mid = floor((low + high) / 2),
+    var mid = nativeFloor((low + high) / 2),
         computed = iteratee(array[mid]),
         isDef = computed !== undefined,
         isReflexive = computed === computed;

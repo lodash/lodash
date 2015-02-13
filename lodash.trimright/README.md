@@ -1,6 +1,10 @@
-# lodash.trimright v3.0.2
+# lodash.trimright v3.0.3
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.trimRight` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [lodash](https://lodash.com/) method `_.trimRight` exported as a [Node.js](https://nodejs.org/) module.
+
+## Discontinued
+
+This package has been discontinued in favor of [lodash.trimend](https://www.npmjs.com/package/lodash.trimend).
 
 ## Installation
 
@@ -17,4 +21,4 @@ In Node.js/io.js:
 var trimRight = require('lodash.trimright');
 ```
 
-See the [documentation](https://lodash.com/docs#trimRight) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.trimright) for more details.
+See the [documentation](https://lodash.com/docs#trimRight) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.trimright) for more details.

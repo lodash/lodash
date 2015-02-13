@@ -1,4 +1,4 @@
-# lodash._basecreate v3.0.2
+# lodash._basecreate v3.0.3
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `baseCreate` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var baseCreate = require('lodash._basecreate');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash._basecreate) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash._basecreate) for more details.

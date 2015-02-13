@@ -1,6 +1,10 @@
-# lodash.trimleft v3.0.2
+# lodash.trimleft v3.0.3
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.trimLeft` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [lodash](https://lodash.com/) method `_.trimLeft` exported as a [Node.js](https://nodejs.org/) module.
+
+## Discontinued
+
+This package has been discontinued in favor of [lodash.trimstart](https://www.npmjs.com/package/lodash.trimstart).
 
 ## Installation
 
@@ -17,4 +21,4 @@ In Node.js/io.js:
 var trimLeft = require('lodash.trimleft');
 ```
 
-See the [documentation](https://lodash.com/docs#trimLeft) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.trimleft) for more details.
+See the [documentation](https://lodash.com/docs#trimLeft) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.trimleft) for more details.

@@ -1,18 +1,11 @@
-/**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
- */
+/** Used as the `TypeError` message for "Functions" methods. */
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * Creates a function that invokes `func`, with the `this` binding and arguments
- * of the created function, while it is called less than `n` times. Subsequent
+ * of the created function, while it's called less than `n` times. Subsequent
  * calls to the created function return the result of the last `func` invocation.
  *
  * @static
@@ -42,7 +35,7 @@ function before(n, func) {
       result = func.apply(this, arguments);
     }
     if (n <= 1) {
-      func = null;
+      func = undefined;
     }
     return result;
   };

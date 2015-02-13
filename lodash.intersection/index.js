@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -35,7 +35,8 @@ function intersection() {
       argsLength = arguments.length,
       caches = [],
       indexOf = baseIndexOf,
-      isCommon = true;
+      isCommon = true,
+      result = [];
 
   while (++argsIndex < argsLength) {
     var value = arguments[argsIndex];
@@ -45,10 +46,12 @@ function intersection() {
     }
   }
   argsLength = args.length;
+  if (argsLength < 2) {
+    return result;
+  }
   var array = args[0],
       index = -1,
       length = array ? array.length : 0,
-      result = [],
       seen = caches[0];
 
   outer:

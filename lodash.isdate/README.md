@@ -1,4 +1,4 @@
-# lodash.isdate v3.0.2
+# lodash.isdate v3.0.3
 
 The [lodash](https://lodash.com/) method `_.isDate` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isDate = require('lodash.isdate');
 ```
 
-See the [documentation](https://lodash.com/docs#isDate) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.isdate) for more details.
+See the [documentation](https://lodash.com/docs#isDate) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.isdate) for more details.

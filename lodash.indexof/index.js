@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -14,8 +14,8 @@ var nativeMax = Math.max;
 
 /**
  * Gets the index at which the first occurrence of `value` is found in `array`
- * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for equality comparisons. If `fromIndex` is negative, it is used as the offset
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * for equality comparisons. If `fromIndex` is negative, it's used as the offset
  * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
  * performs a faster binary search.
  *
@@ -48,10 +48,9 @@ function indexOf(array, value, fromIndex) {
   if (typeof fromIndex == 'number') {
     fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
   } else if (fromIndex) {
-    var index = binaryIndex(array, value),
-        other = array[index];
-
-    if (value === value ? (value === other) : (other !== other)) {
+    var index = binaryIndex(array, value);
+    if (index < length &&
+        (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
       return index;
     }
     return -1;

@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -52,7 +52,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
+  return !!value && (type == 'object' || type == 'function');
 }
 
 /**
@@ -94,7 +94,7 @@ function transform(object, iteratee, accumulator, thisArg) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
+        accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : null);
       }
     } else {
       accumulator = {};

@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -68,7 +68,7 @@ function mapHas(key) {
 }
 
 /**
- * Adds `value` to `key` of the cache.
+ * Sets `value` to `key` of the cache.
  *
  * @private
  * @name set
@@ -94,10 +94,8 @@ function mapSet(key, value) {
  *
  * **Note:** The cache is exposed as the `cache` property on the memoized
  * function. Its creation may be customized by replacing the `_.memoize.Cache`
- * constructor with one whose instances implement the ES `Map` method interface
- * of `get`, `has`, and `set`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
- * for more details.
+ * constructor with one whose instances implement the [`Map`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
+ * method interface of `get`, `has`, and `set`.
  *
  * @static
  * @memberOf _
@@ -142,13 +140,14 @@ function memoize(func, resolver) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   var memoized = function() {
-    var cache = memoized.cache,
-        key = resolver ? resolver.apply(this, arguments) : arguments[0];
+    var args = arguments,
+        cache = memoized.cache,
+        key = resolver ? resolver.apply(this, args) : args[0];
 
     if (cache.has(key)) {
       return cache.get(key);
     }
-    var result = func.apply(this, arguments);
+    var result = func.apply(this, args);
     cache.set(key, result);
     return result;
   };

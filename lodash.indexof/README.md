@@ -1,4 +1,4 @@
-# lodash.indexof v3.0.2
+# lodash.indexof v3.0.3
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.indexOf` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var indexOf = require('lodash.indexof');
 ```
 
-See the [documentation](https://lodash.com/docs#indexOf) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.indexof) for more details.
+See the [documentation](https://lodash.com/docs#indexOf) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.indexof) for more details.

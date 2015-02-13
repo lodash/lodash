@@ -1,6 +1,6 @@
 {
   "name": "lodash._binaryindexby",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "The modern build of lodash’s internal `binaryIndexBy` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

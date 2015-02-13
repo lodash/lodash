@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,11 +8,9 @@
  */
 var bindCallback = require('lodash._bindcallback');
 
-/** Native method references. */
-var floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeIsFinite = global.isFinite,
+var nativeFloor = Math.floor,
+    nativeIsFinite = global.isFinite,
     nativeMin = Math.min;
 
 /** Used as references for the maximum length and index of an array. */
@@ -46,7 +44,7 @@ var MAX_ARRAY_LENGTH = 4294967295;
  * // => also invokes `mage.castSpell(n)` three times
  */
 function times(n, iteratee, thisArg) {
-  n = floor(n);
+  n = nativeFloor(n);
 
   // Exit early to avoid a JSC JIT bug in Safari 8
   // where `Array(0)` is treated as `Array(1)`.

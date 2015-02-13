@@ -11326,18 +11326,18 @@
       return this.filter(identity);
     };
 
-    LazyWrapper.prototype.dropWhile = function(iteratee, thisArg) {
+    LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
       var done;
-      iteratee = getCallback(iteratee, thisArg, 3);
+      predicate = getCallback(predicate, thisArg, 3);
       return this.filter(function(value, index, array) {
-        return done || (done = !iteratee(value, index, array));
+        return done || (done = !predicate(value, index, array));
       });
     };
 
-    LazyWrapper.prototype.reject = function(iteratee, thisArg) {
-      iteratee = getCallback(iteratee, thisArg, 3);
+    LazyWrapper.prototype.reject = function(predicate, thisArg) {
+      predicate = getCallback(predicate, thisArg, 3);
       return this.filter(function(value, index, array) {
-        return !iteratee(value, index, array);
+        return !predicate(value, index, array);
       });
     };
 

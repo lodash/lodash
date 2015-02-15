@@ -10404,15 +10404,6 @@
       return baseMatches(baseClone(source, true));
     }
 
-    function inRange(lower, upper, value) {
-      parsed = parseInt(value);
-      return(parsed >= lower && parsed <= upper);
-    }
-
-    function inStrictRange(lower, upper, value) {
-      parsed = parseInt(value);
-      return(parsed > lower && parsed < upper);
-    }
     /**
      * Creates a function which compares the property value of `key` on a given
      * object to `value`.
@@ -10802,8 +10793,6 @@
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
     lodash.initial = initial;
-    lodash.inRange = inRange;
-    lodash.inStrictRange = inStrictRange;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;

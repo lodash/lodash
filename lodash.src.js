@@ -9624,6 +9624,74 @@
       return baseRandom(min, max);
     }
 
+    /**
+     * Returns `true` if the number determined by `value` is inside the loose range (using >= and <=) specified by
+     * `lower` and `upper` or returns `false` if the number determined by `value` is not in the specified range.
+     * Can be used with integer and floating point `value`.
+     *
+     * @static
+     * @memberOf _
+     * @category Number
+     * @param {number} lower Lower bounds for the range.
+     * @param {number} upper Upper bounds for the range.
+     * @param {boolean} value Value that is being tested.
+     * @returns {boolean} Returns boolean.
+     * @example
+     *
+     * _.inRange(0, 5, 3);
+     * // => true
+     *
+     * _.inRange(0, 5, 3.15);
+     * // => true
+     *
+     * _.inRange(0, 5, 6);
+     * // => false
+     *
+     * ->inRange(0, 5, 6.15);
+     * // => false
+     *
+     * _.inRange(0, 5, 5);
+     * // => true
+     */
+    function inRange(lower, upper, value) {
+      value % 1 === 0 ? value = parseInt(value) : value = parseFloat(value);
+      return(value >= lower && value <= upper);
+    }
+
+    /**
+     * Returns `true` if the number determined by `value` is inside the strict range (using > and <) specified by
+     * `lower` and `upper` or returns `false` if the number determined by `value` is not in the specified range.
+     * Can be used with integer and floating point `value`.
+     *
+     * @static
+     * @memberOf _
+     * @category Number
+     * @param {number} lower Lower bounds for the range.
+     * @param {number} upper Upper bounds for the range.
+     * @param {boolean} value Value that is being tested.
+     * @returns {boolean} Returns boolean.
+     * @example
+     *
+     * _.inStrictRange(0, 5, 3);
+     * // => true
+     *
+     * _.inRange(0, 5, 3.15);
+     * // => true
+     *
+     * _.inStrictRange(0, 5, 6);
+     * // => false
+     *
+     * _.inRange(0, 5, 6.15);
+     * // => false
+     *
+     * _.inStrictRange(0, 5, 5);
+     * // => false
+     */
+    function inStrictRange(lower, upper, value) {
+      value % 1 === 0 ? value = parseInt(value) : value = parseFloat(value);
+      return(value > lower && value < upper);
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -11024,6 +11092,8 @@
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
     lodash.initial = initial;
+    lodash.inRange = inRange;
+    lodash.inStrictRange = inStrictRange;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;

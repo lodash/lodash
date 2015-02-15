@@ -6105,69 +6105,36 @@
     var valueFloatOutOfRange = 6.15;
     var valueFloatInRangeBorder = 5;
 
+    test('should return true for integer value in range without upper limit', 1, function() {
+      deepEqual(_.inRange(valueIntInRange, upper), true);
+    });
+
+    test('should return false for integer value out of range without upper limit', 1, function() {
+      deepEqual(_.inRange(valueIntInRange, lower), false);
+    });
+
     test('should return true for integer value in range', 1, function() {
-      deepEqual(_.inRange(lower, upper, valueIntInRange), true);
+      deepEqual(_.inRange(valueIntInRange, lower, upper), true);
     });
 
     test('should return false for integer value out of range', 1, function() {
-      deepEqual(_.inRange(lower, upper, valueIntOutOfRange), false);
+      deepEqual(_.inRange(valueIntOutOfRange, lower, upper), false);
     });
 
     test('should return true for integer value in border of range', 1, function() {
-      deepEqual(_.inRange(lower, upper, valueIntInRangeBorder), true);
+      deepEqual(_.inRange(valueIntInRangeBorder, lower, upper), true);
     });
 
     test('should return true for float value in range', 1, function() {
-      deepEqual(_.inRange(lower, upper, valueFloatInRange), true);
+      deepEqual(_.inRange(valueFloatInRange, lower, upper), true);
     });
 
     test('should return false for float value out of range', 1, function() {
-      deepEqual(_.inRange(lower, upper, valueFloatOutOfRange), false);
+      deepEqual(_.inRange(valueFloatOutOfRange, lower, upper), false);
     });
 
     test('should return true for float value in border of range', 1, function() {
-      deepEqual(_.inRange(lower, upper, valueFloatInRangeBorder), true);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.inStrictRange');
-
-  (function() {
-    var lower = 0;
-    var upper = 5;
-
-    var valueIntInRange = 3;
-    var valueIntInRangeBorder = 5;
-    var valueIntOutOfRange = 6;
-
-    var valueFloatInRange = 3.15;
-    var valueFloatOutOfRange = 6.15;
-    var valueFloatInRangeBorder = 5;
-
-    test('should return true for integer value in range', 1, function() {
-      deepEqual(_.inStrictRange(lower, upper, valueIntInRange), true);
-    });
-
-    test('should return false for integer value out of range', 1, function() {
-      deepEqual(_.inStrictRange(lower, upper, valueIntOutOfRange), false);
-    });
-
-    test('should return false for integer value in border of range', 1, function() {
-      deepEqual(_.inStrictRange(lower, upper, valueIntInRangeBorder), false);
-    });
-
-    test('should return true for float value in range', 1, function() {
-      deepEqual(_.inStrictRange(lower, upper, valueFloatInRange), true);
-    });
-
-    test('should return false for float value out of range', 1, function() {
-      deepEqual(_.inStrictRange(lower, upper, valueFloatOutOfRange), false);
-    });
-
-    test('should return false for float value in border of range', 1, function() {
-      deepEqual(_.inStrictRange(lower, upper, valueFloatInRangeBorder), false);
+      deepEqual(_.inRange(valueFloatInRangeBorder, lower, upper), true);
     });
   }());
 
@@ -15564,7 +15531,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 210, function() {
+    test('should accept falsey arguments', 209, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

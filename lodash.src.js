@@ -9626,20 +9626,27 @@
 
     /**
      * Returns `true` if the number determined by `value` is inside the loose range (using >= and <=) specified by
-     * `lower` and `upper` or returns `false` if the number determined by `value` is not in the specified range.
-     * Can be used with integer and floating point `value`.
+     * `start` and `end` or returns `false` if the number determined by `value` is not in the specified range.
+     * Can be used with integer and floating point `value`. If `end` isn't specified, `start` defaults to `end` and
+     * real `start` becomes zero.
      *
      * @static
      * @memberOf _
      * @category Number
-     * @param {number} lower Lower bounds for the range.
-     * @param {number} upper Upper bounds for the range.
-     * @param {boolean} value Value that is being tested.
+     * @param {number} value Value that is being tested.
+     * @param {number} [start=0] Lower bounds for the range.
+     * @param {number} end Upper bounds for the range.
      * @returns {boolean} Returns boolean.
      * @example
      *
      * _.inRange(0, 5, 3);
      * // => true
+     *
+     * _.inRange(5, 9);
+     * // => true
+     *
+     * _.inRange(5, 3);
+     * // => false
      *
      * _.inRange(0, 5, 3.15);
      * // => true
@@ -9653,43 +9660,13 @@
      * _.inRange(0, 5, 5);
      * // => true
      */
-    function inRange(lower, upper, value) {
+    function inRange(value, start, end) {
+      if(typeof end === "undefined") {
+        end = start;
+        start = 0;
+      }
       value % 1 === 0 ? value = parseInt(value) : value = parseFloat(value);
-      return(value >= lower && value <= upper);
-    }
-
-    /**
-     * Returns `true` if the number determined by `value` is inside the strict range (using > and <) specified by
-     * `lower` and `upper` or returns `false` if the number determined by `value` is not in the specified range.
-     * Can be used with integer and floating point `value`.
-     *
-     * @static
-     * @memberOf _
-     * @category Number
-     * @param {number} lower Lower bounds for the range.
-     * @param {number} upper Upper bounds for the range.
-     * @param {boolean} value Value that is being tested.
-     * @returns {boolean} Returns boolean.
-     * @example
-     *
-     * _.inStrictRange(0, 5, 3);
-     * // => true
-     *
-     * _.inRange(0, 5, 3.15);
-     * // => true
-     *
-     * _.inStrictRange(0, 5, 6);
-     * // => false
-     *
-     * _.inRange(0, 5, 6.15);
-     * // => false
-     *
-     * _.inStrictRange(0, 5, 5);
-     * // => false
-     */
-    function inStrictRange(lower, upper, value) {
-      value % 1 === 0 ? value = parseInt(value) : value = parseFloat(value);
-      return(value > lower && value < upper);
+      return(value >= start && value <= end);
     }
 
     /*------------------------------------------------------------------------*/
@@ -11093,7 +11070,6 @@
     lodash.indexBy = indexBy;
     lodash.initial = initial;
     lodash.inRange = inRange;
-    lodash.inStrictRange = inStrictRange;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;

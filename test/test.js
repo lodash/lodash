@@ -3561,7 +3561,7 @@
       var array = [0, 1, null, 3];
       deepEqual(_.difference(array, 3, null, { '0': 1 }), array);
       deepEqual(_.difference(null, array, null, [2, 1]), [0, null, 3]);
-      deepEqual(_.difference(null, array, null, args), [0, null]);
+      deepEqual(_.difference(array, null, args, null), [0, null]);
     });
   }(1, 2, 3));
 
@@ -6135,7 +6135,7 @@
       var array = [0, 1, null, 3];
       deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
       deepEqual(_.intersection(null, array, null, [2, 1]), [1]);
-      deepEqual(_.intersection(null, array, null, args), [1, 3]);
+      deepEqual(_.intersection(array, null, args, null), [1, 3]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {
@@ -14196,7 +14196,7 @@
       var array = [0];
       deepEqual(_.union(array, 3, null, { '0': 1 }), array);
       deepEqual(_.union(null, array, null, [2, 1]), [0, 2, 1]);
-      deepEqual(_.union(null, array, null, args), [0, 1, 2, 3]);
+      deepEqual(_.union(array, null, args, null), [0, 1, 2, 3]);
     });
   }(1, 2, 3));
 
@@ -14584,7 +14584,7 @@
       var array = [1, 2];
       deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
       deepEqual(_.xor(null, array, null, [2, 3]), [1, 3]);
-      deepEqual(_.xor(null, array, null, args), [3]);
+      deepEqual(_.xor(array, null, args, null), [3]);
     });
 
     test('should return a wrapped value when chaining', 2, function() {

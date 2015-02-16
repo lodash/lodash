@@ -11472,7 +11472,7 @@
     LazyWrapper.prototype.reverse = lazyReverse;
     LazyWrapper.prototype.value = lazyValue;
 
-    // Add chaining functions to the lodash wrapper.
+    // Add chaining functions to the `lodash` wrapper.
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
     lodash.prototype.plant = wrapperPlant;
@@ -11480,7 +11480,7 @@
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.run = lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 
-    // Add function aliases to the lodash wrapper.
+    // Add function aliases to the `lodash` wrapper.
     lodash.prototype.collect = lodash.prototype.map;
     lodash.prototype.head = lodash.prototype.first;
     lodash.prototype.select = lodash.prototype.filter;

@@ -944,6 +944,16 @@
     }
 
     /**
+     * A no-operation function used to setup inheritance for `lodash`,
+     * `LodashWrapper`, and `LazyWrapper` .
+     *
+     * @private
+     */
+    function baseLodash() {
+      // No operation performed.
+    }
+
+    /**
      * The base constructor for creating `lodash` wrapper objects.
      *
      * @private
@@ -5689,7 +5699,7 @@
       var result,
           parent = this;
 
-      while (parent instanceof LodashWrapper) {
+      while (parent instanceof baseLodash) {
         var clone = wrapperClone(parent);
         if (result) {
           previous.__wrapped__ = clone;
@@ -11012,11 +11022,13 @@
 
     /*------------------------------------------------------------------------*/
 
-    // Ensure `new LodashWrapper` is an instance of `lodash`.
-    LodashWrapper.prototype = baseCreate(lodash.prototype);
+    // Ensure wrappers are instances of `baseLodash`.
+    lodash.prototype = baseLodash.prototype;
 
-    // Ensure `new LazyWraper` is an instance of `LodashWrapper`
-    LazyWrapper.prototype = baseCreate(LodashWrapper.prototype);
+    LodashWrapper.prototype = baseCreate(baseLodash.prototype);
+    LodashWrapper.prototype.constructor = LodashWrapper;
+
+    LazyWrapper.prototype = baseCreate(baseLodash.prototype);
     LazyWrapper.prototype.constructor = LazyWrapper;
 
     // Add functions to the `Map` cache.

@@ -944,8 +944,7 @@
     }
 
     /**
-     * A no-operation function used to setup inheritance for `lodash`,
-     * `LodashWrapper`, and `LazyWrapper` .
+     * The function whose prototype all chaining wrappers inherit from.
      *
      * @private
      */

@@ -6587,7 +6587,7 @@
       strictEqual(_.isArray([1, 2, 3]), true);
     });
 
-    test('should return `false` for non arrays', 12, function() {
+    test('should return `false` for non-arrays', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6633,7 +6633,7 @@
       strictEqual(_.isBoolean(Object(false)), true);
     });
 
-    test('should return `false` for non booleans', 12, function() {
+    test('should return `false` for non-booleans', 12, function() {
       var expected = _.map(falsey, function(value) { return value === false; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -6676,7 +6676,7 @@
       strictEqual(_.isDate(new Date), true);
     });
 
-    test('should return `false` for non dates', 12, function() {
+    test('should return `false` for non-dates', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -6802,7 +6802,7 @@
       strictEqual(_.isEmpty(), true);
     });
 
-    test('should return `false` for non empty values', 3, function() {
+    test('should return `false` for non-empty values', 3, function() {
       strictEqual(_.isEmpty([0]), false);
       strictEqual(_.isEmpty({ 'a': 0 }), false);
       strictEqual(_.isEmpty('a'), false);
@@ -7540,7 +7540,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non finite values', 9, function() {
+    test('should return `false` for non-finite values', 9, function() {
       var values = [NaN, Infinity, -Infinity, Object(1)],
           expected = _.map(values, _.constant(false));
 
@@ -7560,7 +7560,7 @@
       strictEqual(_.isFinite('a'), false);
     });
 
-    test('should return `false` for non numeric values', 1, function() {
+    test('should return `false` for non-numeric values', 1, function() {
       var values = [undefined, [], true, new Date, new Error, '', ' ', '2px'],
           expected = _.map(values, _.constant(false));
 
@@ -7607,7 +7607,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non functions', 11, function() {
+    test('should return `false` for non-functions', 11, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -7937,7 +7937,7 @@
       strictEqual(_.isNaN(Object(NaN)), true);
     });
 
-    test('should return `false` for non NaNs', 12, function() {
+    test('should return `false` for non-NaNs', 12, function() {
       var expected = _.map(falsey, function(value) { return value !== value; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -7994,7 +7994,7 @@
       }
     });
 
-    test('should return `false` for non native methods', 12, function() {
+    test('should return `false` for non-native methods', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -8043,7 +8043,7 @@
       strictEqual(_.isNull(null), true);
     });
 
-    test('should return `false` for non nulls', 13, function() {
+    test('should return `false` for non-nulls', 13, function() {
       var expected = _.map(falsey, function(value) { return value === null; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -8089,7 +8089,7 @@
       strictEqual(_.isNumber(NaN), true);
     });
 
-    test('should return `false` for non numbers', 11, function() {
+    test('should return `false` for non-numbers', 11, function() {
       var expected = _.map(falsey, function(value) { return typeof value == 'number'; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -8151,7 +8151,7 @@
       }
     });
 
-    test('should return `false` for non objects', 1, function() {
+    test('should return `false` for non-objects', 1, function() {
       var values = falsey.concat(true, 1, 'a'),
           expected = _.map(values, _.constant(false));
 
@@ -8253,7 +8253,7 @@
       strictEqual(_.isPlainObject(Math), false);
     });
 
-    test('should return `false` for non objects', 3, function() {
+    test('should return `false` for non-objects', 3, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -8288,7 +8288,7 @@
       strictEqual(_.isRegExp(RegExp('x')), true);
     });
 
-    test('should return `false` for non regexes', 12, function() {
+    test('should return `false` for non-regexes', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -8332,7 +8332,7 @@
       strictEqual(_.isString(Object('a')), true);
     });
 
-    test('should return `false` for non strings', 12, function() {
+    test('should return `false` for non-strings', 12, function() {
       var expected = _.map(falsey, function(value) { return value === ''; });
 
       var actual = _.map(falsey, function(value, index) {

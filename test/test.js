@@ -418,7 +418,7 @@
     if (isModularize && !isNpm) {
       _.each(['baseEach', 'isIndex', 'isIterateeCall', 'isLength'], function(funcName) {
         var path = require('path'),
-            func = require(path.join(path.dirname(filePath), 'internal', 'baseEach.js'));
+            func = require(path.join(path.dirname(filePath), 'internal', funcName + '.js'));
 
         _['_' + funcName] = func[funcName] || func['default'] || func;
       });
@@ -774,6 +774,115 @@
       }
       else {
         skipTest(12);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('isIndex');
+
+  (function() {
+    var func = _._isIndex;
+
+    test('should return `true` for indexes', 4, function() {
+      if (func) {
+        strictEqual(func(0), true);
+        strictEqual(func('1'), true);
+        strictEqual(func(3, 4), true);
+        strictEqual(func(MAX_SAFE_INTEGER - 1), true);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
+    test('should return `false` for non-indexes', 4, function() {
+      if (func) {
+        strictEqual(func(-1), false);
+        strictEqual(func(3, 3), false);
+        strictEqual(func(1.1), false);
+        strictEqual(func(MAX_SAFE_INTEGER), false);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('isIterateeCall');
+
+  (function() {
+    var array = [1],
+        func = _._isIterateeCall,
+        object =  { 'a': 1 };
+
+    test('should return `true` for iteratee calls', 3, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      if (func) {
+        strictEqual(func(1, 0, array), true);
+        strictEqual(func(1, 'a', object), true);
+        strictEqual(func(1, 'a', new Foo), true);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+
+    test('should work with `NaN` values', 2, function() {
+      if (func) {
+        strictEqual(func(NaN, 0, [NaN]), true);
+        strictEqual(func(NaN, 'a', { 'a': NaN }), true);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('should return `false` for non-iteratee calls', 4, function() {
+      if (func) {
+        strictEqual(func(2, 0, array), false);
+        strictEqual(func(1, 1.1, array), false);
+        strictEqual(func(1, 0, { 'length': MAX_SAFE_INTEGER + 1 }), false);
+        strictEqual(func(1, 'b', object), false);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('isLength');
+
+  (function() {
+    var func = _._isLength;
+
+    test('should return `true` for lengths', 3, function() {
+      if (func) {
+        strictEqual(func(0), true);
+        strictEqual(func(3), true);
+        strictEqual(func(MAX_SAFE_INTEGER), true);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+
+    test('should return `false` for non-lengths', 4, function() {
+      if (func) {
+        strictEqual(func(-1), false);
+        strictEqual(func('1'), false);
+        strictEqual(func(1.1), false);
+        strictEqual(func(MAX_SAFE_INTEGER + 1), false);
+      }
+      else {
+        skipTest(4);
       }
     });
   }());

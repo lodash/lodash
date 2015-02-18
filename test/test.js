@@ -4962,6 +4962,7 @@
 
   (function() {
     var methods = [
+      '_baseEach',
       'countBy',
       'every',
       'filter',
@@ -4971,6 +4972,7 @@
       'findLast',
       'findLastIndex',
       'findLastKey',
+      'forEach',
       'forEachRight',
       'forIn',
       'forInRight',
@@ -4995,6 +4997,7 @@
     ];
 
     var collectionMethods = [
+      '_baseEach',
       'countBy',
       'every',
       'filter',
@@ -5022,6 +5025,7 @@
     ];
 
     var iterationMethods = [
+      '_baseEach',
       'forEach',
       'forEachRight',
       'forIn',
@@ -5066,35 +5070,75 @@
 
     _.each(methods, function(methodName) {
       var array = [1, 2, 3],
-          func = _[methodName];
+          func = _[methodName],
+          isFind = /^find/.test(methodName),
+          isSome = methodName == 'some';
 
       test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
-        var args,
-            expected = [1, 0, array];
+        if (func) {
+          var args,
+              expected = [1, 0, array];
 
-        func(array, function() {
-          args || (args = slice.call(arguments));
-        });
+          func(array, function() {
+            args || (args = slice.call(arguments));
+          });
 
-        if (_.includes(rightMethods, methodName)) {
-          expected[0] = 3;
-          expected[1] = 2;
+          if (_.includes(rightMethods, methodName)) {
+            expected[0] = 3;
+            expected[1] = 2;
+          }
+          if (_.includes(objectMethods, methodName)) {
+            expected[1] += '';
+          }
+          deepEqual(args, expected);
         }
-        if (_.includes(objectMethods, methodName)) {
-          expected[1] += '';
+        else {
+          skipTest();
         }
-        deepEqual(args, expected);
       });
 
       test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
-        var actual,
-            callback = function(num, index) { actual = this[index]; };
+        if (methodName != '_baseEach') {
+          var actual,
+              callback = function(num, index) { actual = this[index]; };
 
-        func([1], callback, [2]);
-        strictEqual(actual, 2);
+          func([1], callback, [2]);
+          strictEqual(actual, 2);
 
-        func({ 'a': 1 }, callback, { 'a': 2 });
-        strictEqual(actual, 2);
+          func({ 'a': 1 }, callback, { 'a': 2 });
+          strictEqual(actual, 2);
+        }
+        else {
+          skipTest(2);
+        }
+      });
+
+      test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
+        if (func) {
+          var array = [1];
+          array[2] = 3;
+
+          var expected = [[1, 0, array], [undefined, 1, array], [3, 2, array]];
+          if (_.includes(objectMethods, methodName)) {
+            expected = _.map(expected, function(args) {
+              args[1] += '';
+              return args;
+            });
+          }
+          if (_.includes(rightMethods, methodName)) {
+            expected.reverse();
+          }
+          var actual = [];
+          func(array, function(value, key, array) {
+            actual.push([value, key, array]);
+            return !(isFind || isSome);
+          });
+
+          deepEqual(actual, expected);
+        }
+        else {
+          skipTest();
+        }
       });
     });
 
@@ -5106,22 +5150,28 @@
       array.a = 1;
 
       test('`_.' + methodName + '` should not iterate custom properties on arrays', 1, function() {
-        var keys = [];
-        func(array, function(value, key) {
-          keys.push(key);
-          return isEvery;
-        });
+        if (func) {
+          var keys = [];
+          func(array, function(value, key) {
+            keys.push(key);
+            return isEvery;
+          });
 
-        ok(!_.includes(keys, 'a'));
+          ok(!_.includes(keys, 'a'));
+        }
+        else {
+          skipTest();
+        }
       });
     });
 
     _.each(_.difference(methods, unwrappedMethods), function(methodName) {
       var array = [1, 2, 3],
-          func = _[methodName];
+          func = _[methodName],
+          isBaseEach = methodName == '_baseEach';
 
       test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
-        if (!isNpm) {
+        if (!(isBaseEach || isNpm)) {
           var wrapped = _(array)[methodName](_.noop);
           ok(wrapped instanceof _);
         }
@@ -5154,24 +5204,35 @@
         function Foo() { this.a = 1; }
         Foo.prototype.b = 2;
 
-        var keys = [];
-        func(new Foo, function(value, key) { keys.push(key); });
-        deepEqual(keys, ['a']);
+        if (func) {
+          var keys = [];
+          func(new Foo, function(value, key) { keys.push(key); });
+          deepEqual(keys, ['a']);
+        }
+        else {
+          skipTest();
+        }
       });
     });
 
     _.each(iterationMethods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName],
-          isEach = !_.includes(objectMethods, methodName),
+          isBaseEach = methodName == '_baseEach',
+          isObject = _.includes(objectMethods, methodName),
           isRight = _.includes(rightMethods, methodName);
 
       test('`_.' + methodName + '` should return the collection', 1, function() {
-        strictEqual(func(array, Boolean), array);
+        if (func) {
+          strictEqual(func(array, Boolean), array);
+        }
+        else {
+          skipTest();
+        }
       });
 
       test('`_.' + methodName + '` should not return the existing wrapped value when chaining', 1, function() {
-        if (!isNpm) {
+        if (!(isBaseEach || isNpm)) {
           var wrapped = _(array);
           notStrictEqual(wrapped[methodName](_.noop), wrapped);
         }
@@ -5186,29 +5247,34 @@
       },
       function(collection, key) {
         test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 6, function() {
-          var args,
-              values = [],
-              expectedChars = ['a', 'b', 'c'];
+          if (func) {
+            var args,
+                values = [],
+                expectedChars = ['a', 'b', 'c'];
 
-          var expectedArgs = isEach
-            ? (isRight ? ['c',  2,  collection] : ['a',  0,  collection])
-            : (isRight ? ['c', '2', collection] : ['a', '0', collection])
+            var expectedArgs = isObject
+              ? (isRight ? ['c', '2', collection] : ['a', '0', collection])
+              : (isRight ? ['c',  2,  collection] : ['a',  0,  collection]);
 
-          var actual = func(collection, function(value) {
-            args || (args = slice.call(arguments));
-            values.push(value);
-          });
+            var actual = func(collection, function(value) {
+              args || (args = slice.call(arguments));
+              values.push(value);
+            });
 
-          var stringObject = args[2];
+            var stringObject = args[2];
 
-          ok(_.isString(stringObject));
-          ok(_.isObject(stringObject));
+            ok(_.isString(stringObject));
+            ok(_.isObject(stringObject));
 
-          deepEqual([stringObject[0], stringObject[1], stringObject[2]], expectedChars);
-          deepEqual(args, expectedArgs);
-          deepEqual(values, isRight ? ['c', 'b', 'a'] : expectedChars);
+            deepEqual([stringObject[0], stringObject[1], stringObject[2]], expectedChars);
+            deepEqual(args, expectedArgs);
+            deepEqual(values, isRight ? ['c', 'b', 'a'] : expectedChars);
 
-          strictEqual(actual, collection);
+            strictEqual(actual, collection);
+          }
+          else {
+            skipTest(6);
+          }
         });
       });
     });
@@ -5217,37 +5283,74 @@
       var func = _[methodName];
 
       test('`_.' + methodName + '` should use `isLength` to determine whether a value is array-like', 2, function() {
-        function isIteratedAsObject(length) {
-          var result = false;
-          func({ 'length': length }, function() { result = true; }, 0);
-          return result;
+        if (func) {
+          var isIteratedAsObject = function(length) {
+            var result = false;
+            func({ 'length': length }, function() { result = true; }, 0);
+            return result;
+          };
+
+          var values = [-1, '1', 1.1, Object(1), MAX_SAFE_INTEGER + 1],
+              expected = _.map(values, _.constant(true)),
+              actual = _.map(values, isIteratedAsObject);
+
+          deepEqual(actual, expected);
+          ok(!isIteratedAsObject(0));
         }
-
-        var values = [-1, '1', 1.1, Object(1), MAX_SAFE_INTEGER + 1],
-            expected = _.map(values, _.constant(true)),
-            actual = _.map(values, isIteratedAsObject);
-
-        deepEqual(actual, expected);
-        ok(!isIteratedAsObject(0));
+        else {
+          skipTest(2);
+        }
       });
     });
 
-    _.each(collectionMethods.concat(objectMethods), function(methodName) {
-      var func = _[methodName];
+    _.each(methods, function(methodName) {
+      var array = [1, 2, 3],
+          func = _[methodName],
+          isFind = /^find/.test(methodName),
+          isSome = methodName == 'some';
 
-      test('`_.' + methodName + '` should compute length before iteration', 2, function() {
-        _.each([[0], { 'a': 0 }], function(collection) {
-          var count = 0;
+      test('`_.' + methodName + '` should ignore changes to `array.length`', 1, function() {
+        if (func) {
+          var count = 0,
+              array = [1];
 
-          func(collection, function() {
-            collection[++count] = count;
-            if (count > 1) {
-              return false;
+          func(array, function() {
+            if (++count == 1) {
+              array.push(2);
             }
-          }, 0);
+            return !(isFind || isSome);
+          }, array);
 
           strictEqual(count, 1);
-        });
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+
+    _.each(_.difference(_.union(methods, collectionMethods), arrayMethods), function(methodName) {
+      var func = _[methodName],
+          isFind = /^find/.test(methodName),
+          isSome = methodName == 'some';
+
+      test('`_.' + methodName + '` should ignore added `object` properties', 1, function() {
+        if (func) {
+          var count = 0,
+              object = { 'a': 1 };
+
+          func(object, function() {
+            if (++count == 1) {
+              object.b = 2;
+            }
+            return !(isFind || isSome);
+          }, object);
+
+          strictEqual(count, 1);
+        }
+        else {
+          skipTest();
+        }
       });
     });
   }());
@@ -5474,31 +5577,39 @@
 
   _.each(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'transform'], function(methodName) {
     var func = _[methodName];
-    if (!func) {
-      return;
-    }
+
     test('`_.' + methodName + '` can exit early when iterating arrays', 1, function() {
-      var array = [1, 2, 3],
-          values = [];
+      if (func) {
+        var array = [1, 2, 3],
+            values = [];
 
-      func(array, function(value, other) {
-        values.push(_.isArray(value) ? other : value);
-        return false;
-      });
+        func(array, function(value, other) {
+          values.push(_.isArray(value) ? other : value);
+          return false;
+        });
 
-      deepEqual(values, [_.endsWith(methodName, 'Right') ? 3 : 1]);
+        deepEqual(values, [_.endsWith(methodName, 'Right') ? 3 : 1]);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('`_.' + methodName + '` can exit early when iterating objects', 1, function() {
-      var object = { 'a': 1, 'b': 2, 'c': 3 },
-          values = [];
+      if (func) {
+        var object = { 'a': 1, 'b': 2, 'c': 3 },
+            values = [];
 
-      func(object, function(value, other) {
-        values.push(_.isArray(value) ? other : value);
-        return false;
-      });
+        func(object, function(value, other) {
+          values.push(_.isArray(value) ? other : value);
+          return false;
+        });
 
-      strictEqual(values.length, 1);
+        strictEqual(values.length, 1);
+      }
+      else {
+        skipTest();
+      }
     });
   });
 

@@ -9774,6 +9774,20 @@
       deepEqual(actual, expected);
     });
 
+    test('should assign non array/plain-object values directly', 1, function() {
+      function Foo() {}
+
+      var values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp],
+          expected = _.map(values, _.constant(true));
+
+      var actual = _.map(values, function(value) {
+        var object = _.merge({}, { 'a': value });
+        return object.a === value;
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should handle merging if `customizer` returns `undefined`', 2, function() {
       var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });

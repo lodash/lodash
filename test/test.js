@@ -10802,7 +10802,7 @@
 
       deepEqual(c(3, 5), expected);
 
-      a = _.partial(fn, ph3, 2)
+      a = _.partial(fn, ph3, 2);
       b = _.bind(a, object, 1, ph1, 4);
       c = _.partialRight(b, ph4, 6);
 
@@ -10829,7 +10829,7 @@
 
       deepEqual(c(1), expected);
 
-      a = _.partial(fn, ph3, 2)
+      a = _.partial(fn, ph3, 2);
       b = _.bind(a, object, ph1, 3);
       c = _.partialRight(b, ph4, 4);
 
@@ -10987,7 +10987,7 @@
       });
 
       deepEqual(actual, [[1.1, 1.3], [0.2]]);
-    })
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -12901,7 +12901,7 @@
 
           var expected = (isSortedIndex ? !_.isNaN(value) : _.isFinite(value))
             ? 0
-            : Math.min(length, MAX_ARRAY_INDEX)
+            : Math.min(length, MAX_ARRAY_INDEX);
 
           // Avoid false fails in older Firefox.
           if (array.length == length) {
@@ -13345,7 +13345,7 @@
       strictEqual(compiled(), "'\n\r\t\u2028\u2029\\");
 
       var data = { 'a': 'A' };
-      compiled = _.template('\'\n\r\t<%= a %>\u2028\u2029\\"')
+      compiled = _.template('\'\n\r\t<%= a %>\u2028\u2029\\"');
       strictEqual(compiled(data), '\'\n\r\tA\u2028\u2029\\"');
     });
 

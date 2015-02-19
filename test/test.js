@@ -1851,12 +1851,15 @@
       ok(actual !== expected && actual[0] === expected[0]);
     });
 
-    test('`_.clone` should work with `isDeep`', 2, function() {
-      var expected = [{ 'a': 0 }, { 'b': 1 }],
-          actual = _.clone(expected, true);
+    test('`_.clone` should work with `isDeep`', 8, function() {
+      var array = [{ 'a': 0 }, { 'b': 1 }],
+          values = [true, 1, {}, '1'];
 
-      deepEqual(actual, expected);
-      ok(actual !== expected && actual[0] !== expected[0]);
+      _.each(values, function(isDeep) {
+        var actual = _.clone(array, isDeep);
+        deepEqual(actual, array);
+        ok(actual !== array && actual[0] !== array[0]);
+      });
     });
 
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {

@@ -1844,11 +1844,11 @@
     });
 
     test('`_.clone` should perform a shallow clone', 2, function() {
-      var expected = [{ 'a': 0 }, { 'b': 1 }],
-          actual = _.clone(expected);
+      var array = [{ 'a': 0 }, { 'b': 1 }],
+          actual = _.clone(array);
 
-      deepEqual(actual, expected);
-      ok(actual !== expected && actual[0] === expected[0]);
+      deepEqual(actual, array);
+      ok(actual !== array && actual[0] === array[0]);
     });
 
     test('`_.clone` should work with `isDeep`', 8, function() {
@@ -1871,8 +1871,8 @@
       object.foo.b.c.d = object;
       object.bar.b = object.foo.b;
 
-      var clone = _.cloneDeep(object);
-      ok(clone.bar.b === clone.foo.b && clone === clone.foo.b.c.d && clone !== object);
+      var actual = _.cloneDeep(object);
+      ok(actual.bar.b === actual.foo.b && actual === actual.foo.b.c.d && actual !== object);
     });
 
     _.each(['clone', 'cloneDeep'], function(methodName) {

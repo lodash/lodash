@@ -5237,13 +5237,13 @@
           if (_.includes(rightMethods, methodName)) {
             expected.reverse();
           }
-          var actual = [];
-          func(array, function(value, key, array) {
-            actual.push([value, key, array]);
+          var argsList = [];
+          func(array, function() {
+            argsList.push(slice.call(arguments));
             return !(isFind || isSome);
           });
 
-          deepEqual(actual, expected);
+          deepEqual(argsList, expected);
         }
         else {
           skipTest();

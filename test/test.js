@@ -9791,6 +9791,37 @@
       deepEqual(actual, expected);
     });
 
+    test('should work with a function `object` value', 2, function() {
+      function Foo() {}
+
+      var source = { 'a': 1 },
+          actual = _.merge(Foo, source);
+
+      strictEqual(actual, Foo);
+      strictEqual(Foo.a, 1);
+    });
+
+    test('should work with a non-plain `object` value', 2, function() {
+      function Foo() {}
+
+      var object = new Foo,
+          source = { 'a': 1 },
+          actual = _.merge(object, source);
+
+      strictEqual(actual, object);
+      strictEqual(object.a, 1);
+    });
+
+    test('should pass thru primitive `object` values', 1, function() {
+      var values = [true, 1, '1'];
+
+      var actual = _.map(values, function(value) {
+        return _.merge(value, { 'a': 1 });
+      });
+
+      deepEqual(actual, values);
+    });
+
     test('should handle merging if `customizer` returns `undefined`', 2, function() {
       var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });

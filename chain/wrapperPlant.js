@@ -1,4 +1,4 @@
-import LodashWrapper from '../internal/LodashWrapper';
+import baseLodash from '../internal/baseLodash';
 import wrapperClone from '../internal/wrapperClone';
 
 /**
@@ -28,7 +28,7 @@ function wrapperPlant(value) {
   var result,
       parent = this;
 
-  while (parent instanceof LodashWrapper) {
+  while (parent instanceof baseLodash) {
     var clone = wrapperClone(parent);
     if (result) {
       previous.__wrapped__ = clone;

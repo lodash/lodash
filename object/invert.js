@@ -21,16 +21,14 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {Object} Returns the new inverted object.
  * @example
  *
- * _.invert({ 'first': 'fred', 'second': 'barney' });
- * // => { 'fred': 'first', 'barney': 'second' }
+ * var object = { 'a': 1, 'b': 2, 'c': 1 };
  *
- * // without `multiValue`
- * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' });
- * // => { 'fred': 'third', 'barney': 'second' }
+ * _.invert(object);
+ * // => { '1': 'c', '2': 'b' }
  *
  * // with `multiValue`
- * _.invert({ 'first': 'fred', 'second': 'barney', 'third': 'fred' }, true);
- * // => { 'fred': ['first', 'third'], 'barney': ['second'] }
+ * _.invert(object, true);
+ * // => { '1': ['a', 'c'], '2': ['b'] }
  */
 function invert(object, multiValue, guard) {
   if (guard && isIterateeCall(object, multiValue, guard)) {

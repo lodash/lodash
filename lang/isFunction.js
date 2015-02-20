@@ -1,3 +1,4 @@
+import baseIsFunction from '../internal/baseIsFunction';
 import isNative from './isNative';
 import root from '../internal/root';
 
@@ -33,19 +34,11 @@ var Uint8Array = isNative(Uint8Array = root.Uint8Array) && Uint8Array;
  * _.isFunction(/abc/);
  * // => false
  */
-function isFunction(value) {
-  // Avoid a Chakra JIT bug in compatibility modes of IE 11.
-  // See https://github.com/jashkenas/underscore/issues/1621 for more details.
-  return typeof value == 'function' || false;
-}
-// Fallback for environments that return incorrect `typeof` operator results.
-if (isFunction(/x/) || (Uint8Array && !isFunction(Uint8Array))) {
-  isFunction = function(value) {
-    // The use of `Object#toString` avoids issues with the `typeof` operator
-    // in older versions of Chrome and Safari which return 'function' for regexes
-    // and Safari 8 equivalents which return 'object' for typed array constructors.
-    return objToString.call(value) == funcTag;
-  };
-}
+var isFunction = !(baseIsFunction(/x/) || (Uint8Array && !baseIsFunction(Uint8Array))) ? baseIsFunction : function(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in older versions of Chrome and Safari which return 'function' for regexes
+  // and Safari 8 equivalents which return 'object' for typed array constructors.
+  return objToString.call(value) == funcTag;
+};
 
 export default isFunction;

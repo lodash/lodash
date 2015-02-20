@@ -37,7 +37,9 @@ import isArray from '../lang/isArray';
  *   { 'user': 'pebbles', 'age': 1,  'active': true }
  * ];
  *
- * _.result(_.find(users, function(chr) { return chr.age < 40; }), 'user');
+ * _.result(_.find(users, function(chr) {
+ *   return chr.age < 40;
+ * }), 'user');
  * // => 'barney'
  *
  * // using the `_.matches` callback shorthand

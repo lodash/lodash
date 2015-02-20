@@ -1,3 +1,6 @@
+import baseCreate from './baseCreate';
+import baseLodash from './baseLodash';
+
 /** Used as references for `-Infinity` and `Infinity`. */
 var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
 
@@ -17,5 +20,8 @@ function LazyWrapper(value) {
   this.__takeCount__ = POSITIVE_INFINITY;
   this.__views__ = null;
 }
+
+LazyWrapper.prototype = baseCreate(baseLodash.prototype);
+LazyWrapper.prototype.constructor = LazyWrapper;
 
 export default LazyWrapper;

@@ -19,15 +19,15 @@ var nativeMax = Math.max,
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2);
- * // => 4
+ * _.lastIndexOf([1, 2, 1, 2], 2);
+ * // => 3
  *
  * // using `fromIndex`
- * _.lastIndexOf([1, 2, 3, 1, 2, 3], 2, 3);
+ * _.lastIndexOf([1, 2, 1, 2], 2, 2);
  * // => 1
  *
  * // performing a binary search
- * _.lastIndexOf([4, 4, 5, 5, 6, 6], 5, true);
+ * _.lastIndexOf([1, 1, 2, 2], 2, true);
  * // => 3
  */
 function lastIndexOf(array, value, fromIndex) {

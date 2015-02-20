@@ -9,11 +9,11 @@
  * @returns {Function} Returns the new function.
  * @example
  *
- * var object = { 'user': 'fred', 'age': 40, 'active': true };
- * _.map(['active', 'user'], _.propertyOf(object));
- * // => [true, 'fred']
- *
  * var object = { 'a': 3, 'b': 1, 'c': 2 };
+ *
+ * _.map(['a', 'c'], _.propertyOf(object));
+ * // => [3, 2]
+ *
  * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
  * // => ['b', 'c', 'a']
  */

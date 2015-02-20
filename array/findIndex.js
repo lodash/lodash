@@ -31,7 +31,9 @@ import baseCallback from '../internal/baseCallback';
  *   { 'user': 'pebbles', 'active': true }
  * ];
  *
- * _.findIndex(users, function(chr) { return chr.user == 'barney'; });
+ * _.findIndex(users, function(chr) {
+ *   return chr.user == 'barney';
+ * });
  * // => 0
  *
  * // using the `_.matches` callback shorthand

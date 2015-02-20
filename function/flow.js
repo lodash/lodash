@@ -1,5 +1,5 @@
 import arrayEvery from '../internal/arrayEvery';
-import isFunction from '../lang/isFunction';
+import baseIsFunction from '../internal/baseIsFunction';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -35,7 +35,7 @@ function flow() {
   if (!length) {
     return function() { return arguments[0]; };
   }
-  if (!arrayEvery(funcs, isFunction)) {
+  if (!arrayEvery(funcs, baseIsFunction)) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   return function() {

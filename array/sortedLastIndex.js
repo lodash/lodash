@@ -19,7 +19,7 @@ import binaryIndexBy from '../internal/binaryIndexBy';
  *  into `array`.
  * @example
  *
- * _.sortedLastIndex([4, 4, 5, 5, 6, 6], 5);
+ * _.sortedLastIndex([4, 4, 5, 5], 5);
  * // => 4
  */
 function sortedLastIndex(array, value, iteratee, thisArg) {

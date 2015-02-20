@@ -32,7 +32,9 @@ import matches from './matches';
  *     return callback(func, thisArg);
  *   }
  *   return function(object) {
- *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
+ *     return match[2] == 'gt'
+ *       ? object[match[1]] > match[3]
+ *       : object[match[1]] < match[3];
  *   };
  * });
  *

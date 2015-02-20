@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -21,7 +21,6 @@ import LazyWrapper from './internal/LazyWrapper';
 import LodashWrapper from './internal/LodashWrapper';
 import arrayEach from './internal/arrayEach';
 import baseCallback from './internal/baseCallback';
-import baseCreate from './internal/baseCreate';
 import baseForOwn from './internal/baseForOwn';
 import baseFunctions from './internal/baseFunctions';
 import baseMatches from './internal/baseMatches';
@@ -39,7 +38,7 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.2.0';
+var VERSION = '3.3.0';
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_FILTER_FLAG = 0,
@@ -55,13 +54,6 @@ var floor = Math.floor,
 /* Native method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
     nativeMin = Math.min;
-
-// Ensure `new LodashWrapper` is an instance of `lodash`.
-LodashWrapper.prototype = baseCreate(lodash.prototype);
-
-// Ensure `new LazyWraper` is an instance of `LodashWrapper`
-LazyWrapper.prototype = baseCreate(LodashWrapper.prototype);
-LazyWrapper.prototype.constructor = LazyWrapper;
 
 // wrap `_.mixin` so it works when provided only one argument
 var mixin = (function(func) {
@@ -222,6 +214,7 @@ lodash.has = object.has;
 lodash.identity = identity;
 lodash.includes = collection.includes;
 lodash.indexOf = array.indexOf;
+lodash.inRange = number.inRange;
 lodash.isArguments = lang.isArguments;
 lodash.isArray = isArray;
 lodash.isBoolean = lang.isBoolean;
@@ -490,7 +483,7 @@ LazyWrapper.prototype.clone = lazyClone;
 LazyWrapper.prototype.reverse = lazyReverse;
 LazyWrapper.prototype.value = lazyValue;
 
-// Add chaining functions to the lodash wrapper.
+// Add chaining functions to the `lodash` wrapper.
 lodash.prototype.chain = chain.wrapperChain;
 lodash.prototype.commit = chain.commit;
 lodash.prototype.plant = chain.plant;
@@ -498,7 +491,7 @@ lodash.prototype.reverse = chain.reverse;
 lodash.prototype.toString = chain.toString;
 lodash.prototype.run = lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = chain.value;
 
-// Add function aliases to the lodash wrapper.
+// Add function aliases to the `lodash` wrapper.
 lodash.prototype.collect = lodash.prototype.map;
 lodash.prototype.head = lodash.prototype.first;
 lodash.prototype.select = lodash.prototype.filter;

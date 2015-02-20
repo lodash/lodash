@@ -17,8 +17,8 @@ import toIterable from '../internal/toIterable';
  * @returns {Array} Returns the new array of picked elements.
  * @example
  *
- * _.at(['a', 'b', 'c', 'd', 'e'], [0, 2, 4]);
- * // => ['a', 'c', 'e']
+ * _.at(['a', 'b', 'c'], [0, 2]);
+ * // => ['a', 'c']
  *
  * _.at(['fred', 'barney', 'pebbles'], 0, 2);
  * // => ['fred', 'pebbles']

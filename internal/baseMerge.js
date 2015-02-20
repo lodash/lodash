@@ -3,6 +3,7 @@ import baseForOwn from './baseForOwn';
 import baseMergeDeep from './baseMergeDeep';
 import isArray from '../lang/isArray';
 import isLength from './isLength';
+import isObject from '../lang/isObject';
 import isObjectLike from './isObjectLike';
 import isTypedArray from '../lang/isTypedArray';
 
@@ -19,8 +20,10 @@ import isTypedArray from '../lang/isTypedArray';
  * @returns {Object} Returns the destination object.
  */
 function baseMerge(object, source, customizer, stackA, stackB) {
+  if (!isObject(object)) {
+    return object;
+  }
   var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
-
   (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
     if (isObjectLike(srcValue)) {
       stackA || (stackA = []);

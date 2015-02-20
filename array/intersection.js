@@ -19,9 +19,8 @@ var baseIndexOf = require('../internal/baseIndexOf'),
  * @param {...Array} [arrays] The arrays to inspect.
  * @returns {Array} Returns the new array of shared values.
  * @example
- *
- * _.intersection([1, 2, 3], [5, 2, 1, 4], [2, 1]);
- * // => [1, 2]
+ * _.intersection([1, 2], [4, 2], [2, 1]);
+ * // => [2]
  */
 function intersection() {
   var args = [],

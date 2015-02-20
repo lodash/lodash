@@ -32,7 +32,9 @@ var baseCallback = require('../internal/baseCallback'),
  *     return callback(func, thisArg);
  *   }
  *   return function(object) {
- *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
+ *     return match[2] == 'gt'
+ *       ? object[match[1]] > match[3]
+ *       : object[match[1]] < match[3];
  *   };
  * });
  *

@@ -1,3 +1,6 @@
+var baseCreate = require('./baseCreate'),
+    baseLodash = require('./baseLodash');
+
 /**
  * The base constructor for creating `lodash` wrapper objects.
  *
@@ -11,5 +14,8 @@ function LodashWrapper(value, chainAll, actions) {
   this.__actions__ = actions || [];
   this.__chain__ = !!chainAll;
 }
+
+LodashWrapper.prototype = baseCreate(baseLodash.prototype);
+LodashWrapper.prototype.constructor = LodashWrapper;
 
 module.exports = LodashWrapper;

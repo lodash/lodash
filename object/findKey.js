@@ -33,7 +33,9 @@ var baseCallback = require('../internal/baseCallback'),
  *   'pebbles': { 'age': 1,  'active': true }
  * };
  *
- * _.findKey(users, function(chr) { return chr.age < 40; });
+ * _.findKey(users, function(chr) {
+ *   return chr.age < 40;
+ * });
  * // => 'barney' (iteration order is not guaranteed)
  *
  * // using the `_.matches` callback shorthand

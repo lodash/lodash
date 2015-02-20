@@ -21,7 +21,9 @@ var baseBindAll = require('../internal/baseBindAll'),
  *
  * var view = {
  *   'label': 'docs',
- *   'onClick': function() { console.log('clicked ' + this.label); }
+ *   'onClick': function() {
+ *     console.log('clicked ' + this.label);
+ *   }
  * };
  *
  * _.bindAll(view);

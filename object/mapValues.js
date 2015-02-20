@@ -28,8 +28,10 @@ var baseCallback = require('../internal/baseCallback'),
  * @returns {Object} Returns the new mapped object.
  * @example
  *
- * _.mapValues({ 'a': 1, 'b': 2, 'c': 3} , function(n) { return n * 3; });
- * // => { 'a': 3, 'b': 6, 'c': 9 }
+ * _.mapValues({ 'a': 1, 'b': 2 }, function(n) {
+ *   return n * 3;
+ * });
+ * // => { 'a': 3, 'b': 6 }
  *
  * var users = {
  *   'fred':    { 'user': 'fred',    'age': 40 },

@@ -39,7 +39,9 @@ var baseIsEqual = require('../internal/baseIsEqual'),
  * var other = ['hi', 'goodbye'];
  *
  * _.isEqual(array, other, function(value, other) {
- *   return _.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/) || undefined;
+ *   if (_.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/)) {
+ *     return true;
+ *   }
  * });
  * // => true
  */

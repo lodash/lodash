@@ -12,7 +12,9 @@ var baseDelay = require('../internal/baseDelay');
  * @returns {number} Returns the timer id.
  * @example
  *
- * _.defer(function(text) { console.log(text); }, 'deferred');
+ * _.defer(function(text) {
+ *   console.log(text);
+ * }, 'deferred');
  * // logs 'deferred' after one or more milliseconds
  */
 function defer(func) {

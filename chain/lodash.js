@@ -1,5 +1,6 @@
 var LazyWrapper = require('../internal/LazyWrapper'),
     LodashWrapper = require('../internal/LodashWrapper'),
+    baseLodash = require('../internal/baseLodash'),
     isArray = require('../lang/isArray'),
     isObjectLike = require('../internal/isObjectLike'),
     wrapperClone = require('../internal/wrapperClone');
@@ -82,11 +83,15 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * var wrapped = _([1, 2, 3]);
  *
  * // returns an unwrapped value
- * wrapped.reduce(function(sum, n) { return sum + n; });
+ * wrapped.reduce(function(sum, n) {
+ *   return sum + n;
+ * });
  * // => 6
  *
  * // returns a wrapped value
- * var squares = wrapped.map(function(n) { return n * n; });
+ * var squares = wrapped.map(function(n) {
+ *   return n * n;
+ * });
  *
  * _.isArray(squares);
  * // => false
@@ -105,5 +110,8 @@ function lodash(value) {
   }
   return new LodashWrapper(value);
 }
+
+// Ensure wrappers are instances of `baseLodash`.
+lodash.prototype = baseLodash.prototype;
 
 module.exports = lodash;

@@ -34,14 +34,16 @@ var baseClone = require('../internal/baseClone'),
  *
  * // using a customizer callback
  * var el = _.cloneDeep(document.body, function(value) {
- *   return _.isElement(value) ? value.cloneNode(true) : undefined;
+ *   if (_.isElement(value)) {
+ *     return value.cloneNode(true);
+ *   }
  * });
  *
- * body === document.body
+ * el === document.body
  * // => false
- * body.nodeName
+ * el.nodeName
  * // => BODY
- * body.childNodes.length;
+ * el.childNodes.length;
  * // => 20
  */
 function cloneDeep(value, customizer, thisArg) {

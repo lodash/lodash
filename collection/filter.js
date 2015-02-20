@@ -30,8 +30,10 @@ var arrayFilter = require('../internal/arrayFilter'),
  * @returns {Array} Returns the new filtered array.
  * @example
  *
- * var evens = _.filter([1, 2, 3, 4], function(n) { return n % 2 == 0; });
- * // => [2, 4]
+ * _.filter([4, 5, 6], function(n) {
+ *   return n % 2 == 0;
+ * });
+ * // => [4, 6]
  *
  * var users = [
  *   { 'user': 'barney', 'age': 36, 'active': true },

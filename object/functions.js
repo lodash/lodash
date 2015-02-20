@@ -14,7 +14,7 @@ var baseFunctions = require('../internal/baseFunctions'),
  * @example
  *
  * _.functions(_);
- * // => ['all', 'any', 'bind', ...]
+ * // => ['after', 'ary', 'assign', ...]
  */
 function functions(object) {
   return baseFunctions(object, keysIn(object));

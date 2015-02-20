@@ -29,14 +29,16 @@ var arrayReduce = require('../internal/arrayReduce'),
  * @returns {*} Returns the accumulated value.
  * @example
  *
- * var sum = _.reduce([1, 2, 3], function(sum, n) { return sum + n; });
- * // => 6
+ * _.reduce([1, 2], function(sum, n) {
+ *   return sum + n;
+ * });
+ * // => 3
  *
- * var mapped = _.reduce({ 'a': 1, 'b': 2, 'c': 3 }, function(result, n, key) {
+ * _.reduce({ 'a': 1, 'b': 2 }, function(result, n, key) {
  *   result[key] = n * 3;
  *   return result;
  * }, {});
- * // => { 'a': 3, 'b': 6, 'c': 9 } (iteration order is not guaranteed)
+ * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
  */
 function reduce(collection, iteratee, accumulator, thisArg) {
   var func = isArray(collection) ? arrayReduce : baseReduce;

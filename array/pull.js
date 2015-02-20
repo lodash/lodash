@@ -25,6 +25,7 @@ var splice = arrayProto.splice;
  * @example
  *
  * var array = [1, 2, 3, 1, 2, 3];
+ *
  * _.pull(array, 2, 3);
  * console.log(array);
  * // => [1, 1]

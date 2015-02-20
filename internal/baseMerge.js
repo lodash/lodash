@@ -3,6 +3,7 @@ var arrayEach = require('./arrayEach'),
     baseMergeDeep = require('./baseMergeDeep'),
     isArray = require('../lang/isArray'),
     isLength = require('./isLength'),
+    isObject = require('../lang/isObject'),
     isObjectLike = require('./isObjectLike'),
     isTypedArray = require('../lang/isTypedArray');
 
@@ -19,8 +20,10 @@ var arrayEach = require('./arrayEach'),
  * @returns {Object} Returns the destination object.
  */
 function baseMerge(object, source, customizer, stackA, stackB) {
+  if (!isObject(object)) {
+    return object;
+  }
   var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
-
   (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
     if (isObjectLike(srcValue)) {
       stackA || (stackA = []);

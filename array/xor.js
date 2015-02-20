@@ -15,11 +15,8 @@ var baseDifference = require('../internal/baseDifference'),
  * @returns {Array} Returns the new array of values.
  * @example
  *
- * _.xor([1, 2, 3], [5, 2, 1, 4]);
- * // => [3, 5, 4]
- *
- * _.xor([1, 2, 5], [2, 3, 5], [3, 4, 5]);
- * // => [1, 4, 5]
+ * _.xor([1, 2], [4, 2]);
+ * // => [1, 4]
  */
 function xor() {
   var index = -1,

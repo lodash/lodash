@@ -39,7 +39,9 @@ var arrayMax = require('../internal/arrayMax'),
  *   { 'user': 'fred',   'age': 40 }
  * ];
  *
- * _.max(users, function(chr) { return chr.age; });
+ * _.max(users, function(chr) {
+ *   return chr.age;
+ * });
  * // => { 'user': 'fred', 'age': 40 };
  *
  * // using the `_.property` callback shorthand

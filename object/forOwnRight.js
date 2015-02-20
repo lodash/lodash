@@ -15,10 +15,17 @@ var baseForRight = require('../internal/baseForRight'),
  * @returns {Object} Returns `object`.
  * @example
  *
- * _.forOwnRight({ '0': 'zero', '1': 'one', 'length': 2 }, function(n, key) {
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.forOwnRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'length', '1', and '0' assuming `_.forOwn` logs '0', '1', and 'length'
+ * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
  */
 function forOwnRight(object, iteratee, thisArg) {
   iteratee = bindCallback(iteratee, thisArg, 3);

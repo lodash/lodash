@@ -24,10 +24,14 @@ var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1;
  * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
  * // => [3, 6, 4]
  *
- * _.times(3, function(n) { mage.castSpell(n); });
+ * _.times(3, function(n) {
+ *   mage.castSpell(n);
+ * });
  * // => invokes `mage.castSpell(n)` three times with `n` of `0`, `1`, and `2` respectively
  *
- * _.times(3, function(n) { this.cast(n); }, mage);
+ * _.times(3, function(n) {
+ *   this.cast(n);
+ * }, mage);
  * // => also invokes `mage.castSpell(n)` three times
  */
 function times(n, iteratee, thisArg) {

@@ -27,7 +27,9 @@ var baseCallback = require('../internal/baseCallback'),
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
- * _.takeRightWhile([1, 2, 3], function(n) { return n > 1; });
+ * _.takeRightWhile([1, 2, 3], function(n) {
+ *   return n > 1;
+ * });
  * // => [2, 3]
  *
  * var users = [

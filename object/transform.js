@@ -25,18 +25,16 @@ var arrayEach = require('../internal/arrayEach'),
  * @returns {*} Returns the accumulated value.
  * @example
  *
- * var squares = _.transform([1, 2, 3, 4, 5, 6], function(result, n) {
- *   n *= n;
- *   if (n % 2) {
- *     return result.push(n) < 3;
- *   }
+ * _.transform([2, 3, 4], function(result, n) {
+ *   result.push(n *= n);
+ *   return n % 2 == 0;
  * });
- * // => [1, 9, 25]
+ * // => [4, 9]
  *
- * var mapped = _.transform({ 'a': 1, 'b': 2, 'c': 3 }, function(result, n, key) {
+ * _.transform({ 'a': 1, 'b': 2 }, function(result, n, key) {
  *   result[key] = n * 3;
  * });
- * // => { 'a': 3, 'b': 6, 'c': 9 }
+ * // => { 'a': 3, 'b': 6 }
  */
 function transform(object, iteratee, accumulator, thisArg) {
   var isArr = isArray(object) || isTypedArray(object);

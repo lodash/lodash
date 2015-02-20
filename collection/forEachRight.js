@@ -17,7 +17,9 @@ var arrayEachRight = require('../internal/arrayEachRight'),
  * @returns {Array|Object|string} Returns `collection`.
  * @example
  *
- * _([1, 2, 3]).forEachRight(function(n) { console.log(n); }).join(',');
+ * _([1, 2]).forEachRight(function(n) {
+ *   console.log(n);
+ * }).join(',');
  * // => logs each value from right to left and returns the array
  */
 function forEachRight(collection, iteratee, thisArg) {

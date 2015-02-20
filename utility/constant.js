@@ -10,6 +10,7 @@
  *
  * var object = { 'user': 'fred' };
  * var getter = _.constant(object);
+ *
  * getter() === object;
  * // => true
  */

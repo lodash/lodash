@@ -20,7 +20,7 @@ var baseDifference = require('../internal/baseDifference'),
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
- * _.difference([1, 2, 3], [5, 2, 10]);
+ * _.difference([1, 2, 3], [4, 2]);
  * // => [1, 3]
  */
 function difference() {

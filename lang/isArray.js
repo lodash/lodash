@@ -31,7 +31,7 @@ var nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray;
  * _.isArray([1, 2, 3]);
  * // => true
  *
- * (function() { return _.isArray(arguments); })();
+ * _.isArray(function() { return arguments; }());
  * // => false
  */
 var isArray = nativeIsArray || function(value) {

@@ -14,11 +14,11 @@ var baseFlatten = require('../internal/baseFlatten'),
  * @returns {Array} Returns the new flattened array.
  * @example
  *
- * _.flatten([1, [2], [3, [[4]]]]);
- * // => [1, 2, 3, [[4]]];
+ * _.flatten([1, [2, 3, [4]]]);
+ * // => [1, 2, 3, [4]];
  *
  * // using `isDeep`
- * _.flatten([1, [2], [3, [[4]]]], true);
+ * _.flatten([1, [2, 3, [4]]], true);
  * // => [1, 2, 3, 4];
  */
 function flatten(array, isDeep, guard) {

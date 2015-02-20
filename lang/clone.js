@@ -40,22 +40,26 @@ var baseClone = require('../internal/baseClone'),
  * // => false
  *
  * // using a customizer callback
- * var body = _.clone(document.body, function(value) {
- *   return _.isElement(value) ? value.cloneNode(false) : undefined;
+ * var el = _.clone(document.body, function(value) {
+ *   if (_.isElement(value)) {
+ *     return value.cloneNode(false);
+ *   }
  * });
  *
- * body === document.body
+ * el === document.body
  * // => false
- * body.nodeName
+ * el.nodeName
  * // => BODY
- * body.childNodes.length;
+ * el.childNodes.length;
  * // => 0
  */
 function clone(value, isDeep, customizer, thisArg) {
-  // Juggle arguments.
-  if (typeof isDeep != 'boolean' && isDeep != null) {
+  if (isDeep && typeof isDeep != 'boolean' && isIterateeCall(value, isDeep, customizer)) {
+    isDeep = false;
+  }
+  else if (typeof isDeep == 'function') {
     thisArg = customizer;
-    customizer = isIterateeCall(value, isDeep, thisArg) ? null : isDeep;
+    customizer = isDeep;
     isDeep = false;
   }
   customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 1);

@@ -26,7 +26,9 @@ var baseCopy = require('../internal/baseCopy'),
  *   Shape.call(this);
  * }
  *
- * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
+ * Circle.prototype = _.create(Shape.prototype, {
+ *   'constructor': Circle
+ * });
  *
  * var circle = new Circle;
  * circle instanceof Circle;

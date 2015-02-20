@@ -35,7 +35,7 @@ var baseCallback = require('../internal/baseCallback'),
  * _.sortedIndex([30, 50], 40);
  * // => 1
  *
- * _.sortedIndex([4, 4, 5, 5, 6, 6], 5);
+ * _.sortedIndex([4, 4, 5, 5], 5);
  * // => 2
  *
  * var dict = { 'data': { 'thirty': 30, 'forty': 40, 'fifty': 50 } };

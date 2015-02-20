@@ -16,10 +16,17 @@ var baseForOwn = require('../internal/baseForOwn'),
  * @returns {Object} Returns `object`.
  * @example
  *
- * _.forOwn({ '0': 'zero', '1': 'one', 'length': 2 }, function(n, key) {
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.forOwn(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs '0', '1', and 'length' (iteration order is not guaranteed)
+ * // => logs 'a' and 'b' (iteration order is not guaranteed)
  */
 function forOwn(object, iteratee, thisArg) {
   if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {

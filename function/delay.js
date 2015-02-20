@@ -13,7 +13,9 @@ var baseDelay = require('../internal/baseDelay');
  * @returns {number} Returns the timer id.
  * @example
  *
- * _.delay(function(text) { console.log(text); }, 1000, 'later');
+ * _.delay(function(text) {
+ *   console.log(text);
+ * }, 1000, 'later');
  * // => logs 'later' after one second
  */
 function delay(func, wait) {

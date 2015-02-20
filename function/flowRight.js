@@ -1,5 +1,5 @@
 var arrayEvery = require('../internal/arrayEvery'),
-    isFunction = require('../lang/isFunction');
+    baseIsFunction = require('../internal/baseIsFunction');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -35,7 +35,7 @@ function flowRight() {
   if (fromIndex < 0) {
     return function() { return arguments[0]; };
   }
-  if (!arrayEvery(funcs, isFunction)) {
+  if (!arrayEvery(funcs, baseIsFunction)) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   return function() {

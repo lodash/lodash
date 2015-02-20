@@ -18,8 +18,8 @@ var baseDifference = require('../internal/baseDifference'),
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
- * _.without([1, 2, 1, 0, 3, 1, 4], 0, 1);
- * // => [2, 3, 4]
+ * _.without([1, 2, 1, 3], 1, 2);
+ * // => [3]
  */
 function without(array) {
   return baseDifference(array, baseSlice(arguments, 1));

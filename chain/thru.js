@@ -12,7 +12,9 @@
  *
  * _([1, 2, 3])
  *  .last()
- *  .thru(function(value) { return [value]; })
+ *  .thru(function(value) {
+ *    return [value];
+ *  })
  *  .value();
  * // => [3]
  */

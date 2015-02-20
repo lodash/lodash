@@ -38,6 +38,12 @@ git:
 branches:
   only:
     - master
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/4aab6358b0e9aed0b628
+    on_success: change
+    on_failure: always
 before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm config set loglevel error"

@@ -439,14 +439,19 @@
 
   /**
    * Used by `_.sortByAll` to compare multiple properties of each element
-   * in a collection and stable sort them in ascending order.
+   * in a collection and stable sort them in order specified by `props`.
+   *
+   * If a property name starts with "-", sort in descending order for that property.
    *
    * @private
    * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
+   * @param {...(string|string[])} props The property names to sort by,
+   *  specified as an individual property name or an array of property names.
+   *  If a property name starts with '-', sort in descending order for that property.
    * @returns {number} Returns the sort order indicator for `object`.
    */
-  function compareMultipleAscending(object, other) {
+  function compareMultiple(object, other, props) {
     var index = -1,
         objCriteria = object.criteria,
         othCriteria = other.criteria,
@@ -455,6 +460,9 @@
     while (++index < length) {
       var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
       if (result) {
+        if (props[index][0] == '-') {
+          return result * -1;
+        }
         return result;
       }
     }
@@ -6932,7 +6940,8 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {...(string|string[])} props The property names to sort by,
-     *  specified as individual property names or arrays of property names.
+     *  specified as an individual property name or an array of property names.
+     *  To sort in descending order for a property, prepend '-' before its name.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
@@ -6945,6 +6954,8 @@
      *
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
+     * _.map(_.sortByAll(users, ['user', '-age']), _.values);
+     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
      */
     function sortByAll(collection) {
       var args = arguments;
@@ -6961,11 +6972,16 @@
             criteria = Array(length);
 
         while (length--) {
-          criteria[length] = value == null ? undefined : value[props[length]];
+          criteria[length] =
+            value == null
+              ? undefined
+              : value[props[length]] || value[props[length].slice(1)];
         }
         result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
       });
-      return baseSortBy(result, compareMultipleAscending);
+      return baseSortBy(result, function(object, other) {
+        return compareMultiple(object, other, props);
+      });
     }
 
     /**

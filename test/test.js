@@ -12804,9 +12804,14 @@
       new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
     ];
 
-    test('should sort mutliple properties in ascending order', 1, function() {
+    test('should sort mutliple properties in ascending order by default', 1, function() {
       var actual = _.sortByAll(objects, ['a', 'b']);
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
+    });
+
+    test('should sort in descending order on a property if it starts with "-"', 1, function() {
+      var actual = _.sortByAll(objects, ['a', '-b']);
+      deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
     });
 
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {

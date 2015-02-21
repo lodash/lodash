@@ -11159,6 +11159,44 @@
 
     /*------------------------------------------------------------------------*/
 
+    /**
+     * Adds two numbers.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} augend The first number to add.
+     * @param {number} addend The second number to add.
+     * @returns {number} Returns the sum.
+     * @example
+     *
+     * _.add(6, 4);
+     * // => 10
+     */
+    function add(augend, addend) {
+      return augend + addend;
+    }
+
+    /**
+     * Calculates the sum of an array of numbers.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} array The numbers to add.
+     * @returns {number} Returns the sum.
+     * @example
+     *
+     * _.sum([4, 6, 2]);
+     * // => 12
+     */
+    function sum(array) {
+      if (!isArray(array) || array.length === 0) return NaN;
+      return arrayReduce(array, add, 0);
+    }
+
+    /*------------------------------------------------------------------------*/
+
     // Ensure wrappers are instances of `baseLodash`.
     lodash.prototype = baseLodash.prototype;
 
@@ -11301,6 +11339,7 @@
     /*------------------------------------------------------------------------*/
 
     // Add functions that return unwrapped values when chaining.
+    lodash.add = add;
     lodash.attempt = attempt;
     lodash.camelCase = camelCase;
     lodash.capitalize = capitalize;
@@ -11370,6 +11409,7 @@
     lodash.sortedLastIndex = sortedLastIndex;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
+    lodash.sum = sum;
     lodash.template = template;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;

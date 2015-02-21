@@ -15098,6 +15098,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.add');
+
+  (function() {
+    test('should add two numbers together', 1, function() {
+      var actual = _.add(6, 4);
+      equal(actual, 10);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sum');
+
+  (function() {
+    test('should return the sum of an array of numbers', 1, function() {
+      var actual = _.sum([6, 4, 2]);
+      equal(actual, 12);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).commit');
 
   (function() {
@@ -15579,6 +15601,7 @@
 
   (function() {
     var funcs = [
+      'add',
       'clone',
       'contains',
       'every',
@@ -15610,6 +15633,7 @@
       'parseInt',
       'pop',
       'shift',
+      'sum',
       'random',
       'reduce',
       'reduceRight',
@@ -15756,6 +15780,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('"Math" category methods');
+
+  (function() {
+    var mathArrayMethods = [
+      'sum'
+    ];
+
+    _.each(mathArrayMethods, function(methodName) {
+      var func = _[methodName];
+
+      test('`_.' + methodName + '` should return NaN when passing a value other than an array', 5, function() {
+        var values = [undefined, null, 0, 'foo', {}];
+        _.each(values, function(value) {
+          var actual = _[methodName](value);
+          deepEqual(actual, NaN);
+        });
+      });
+
+      test('`_.' + methodName + '` should return NaN when passing an empty array', 1, function() {
+        var actual = _[methodName]([]);
+        deepEqual(actual, NaN);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash methods');
 
   (function() {
@@ -15832,7 +15883,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 209, function() {
+    test('should accept falsey arguments', 211, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

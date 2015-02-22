@@ -1,7 +1,9 @@
 (function() {
+  var _ = typeof require == 'function' ? require('..') : window._;
 
-  module('Objects');
-  /* global iObject, iElement, iArguments, iFunction, iArray, iString, iNumber, iBoolean, iDate, iRegExp, iNaN, iNull, iUndefined, ActiveXObject */
+  QUnit.module('Objects');
+
+  var testElement = typeof document === 'object' ? document.createElement('div') : void 0;
 
   test('keys', function() {
     deepEqual(_.keys({one : 1, two : 2}), ['one', 'two'], 'can extract the keys from an object');
@@ -13,6 +15,62 @@
     deepEqual(_.keys(1), []);
     deepEqual(_.keys('a'), []);
     deepEqual(_.keys(true), []);
+
+    // keys that may be missed if the implementation isn't careful
+    var trouble = {
+      'constructor': Object,
+      'valueOf': _.noop,
+      'hasOwnProperty': null,
+      'toString': 5,
+      'toLocaleString': undefined,
+      'propertyIsEnumerable': /a/,
+      'isPrototypeOf': this,
+      '__defineGetter__': Boolean,
+      '__defineSetter__': {},
+      '__lookupSetter__': false,
+      '__lookupGetter__': []
+    };
+    var troubleKeys = ['constructor', 'valueOf', 'hasOwnProperty', 'toString', 'toLocaleString', 'propertyIsEnumerable',
+                  'isPrototypeOf', '__defineGetter__', '__defineSetter__', '__lookupSetter__', '__lookupGetter__'].sort();
+    deepEqual(_.keys(trouble).sort(), troubleKeys, 'matches non-enumerable properties');
+  });
+
+  test('allKeys', function() {
+    deepEqual(_.allKeys({one : 1, two : 2}), ['one', 'two'], 'can extract the allKeys from an object');
+    // the test above is not safe because it relies on for-in enumeration order
+    var a = []; a[1] = 0;
+    deepEqual(_.allKeys(a), ['1'], 'is not fooled by sparse arrays; see issue #95');
+
+    a.a = a;
+    deepEqual(_.allKeys(a), ['1', 'a'], 'is not fooled by sparse arrays with additional properties');
+
+    _.each([null, void 0, 1, 'a', true, NaN, {}, [], new Number(5), new Date(0)], function(val) {
+      deepEqual(_.allKeys(val), []);
+    });
+
+    // allKeys that may be missed if the implementation isn't careful
+    var trouble = {
+      constructor: Object,
+      valueOf: _.noop,
+      hasOwnProperty: null,
+      toString: 5,
+      toLocaleString: undefined,
+      propertyIsEnumerable: /a/,
+      isPrototypeOf: this
+    };
+    var troubleKeys = ['constructor', 'valueOf', 'hasOwnProperty', 'toString', 'toLocaleString', 'propertyIsEnumerable',
+                  'isPrototypeOf'].sort();
+    deepEqual(_.allKeys(trouble).sort(), troubleKeys, 'matches non-enumerable properties');
+
+    function A() {}
+    A.prototype.foo = 'foo';
+    var b = new A();
+    b.bar = 'bar';
+    deepEqual(_.allKeys(b).sort(), ['bar', 'foo'], 'should include inherited keys');
+
+    function y() {}
+    y.x = 'z';
+    deepEqual(_.allKeys(y), ['x'], 'should get keys from constructor');
   });
 
   test('values', function() {
@@ -63,7 +121,9 @@
     F.prototype = {a: 'b'};
     var subObj = new F();
     subObj.c = 'd';
-    deepEqual(_.extend({}, subObj), {c: 'd'}, 'extend ignores any properties but own from source');
+    deepEqual(_.extend({}, subObj), {a: 'b', c: 'd'}, 'extend copies all properties from source');
+    _.extend(subObj, {});
+    ok(!subObj.hasOwnProperty('a'), "extend does not convert destination object's 'in' properties to 'own' properties");
 
     try {
       result = {};
@@ -74,6 +134,36 @@
 
     strictEqual(_.extend(null, {a: 1}), null, 'extending null results in null');
     strictEqual(_.extend(undefined, {a: 1}), undefined, 'extending undefined results in undefined');
+  });
+
+  test('extendOwn', function() {
+    var result;
+    equal(_.extendOwn({}, {a: 'b'}).a, 'b', 'can assign an object with the attributes of another');
+    equal(_.extendOwn({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
+    equal(_.extendOwn({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overriden");
+    result = _.extendOwn({x: 'x'}, {a: 'a'}, {b: 'b'});
+    deepEqual(result, {x: 'x', a: 'a', b: 'b'}, 'can assign from multiple source objects');
+    result = _.assign({x: 'x'}, {a: 'a', x: 2}, {a: 'b'});
+    deepEqual(result, {x: 2, a: 'b'}, 'assigning from multiple source objects last property trumps');
+    deepEqual(_.extendOwn({}, {a: void 0, b: null}), {a: void 0, b: null}, 'assign copies undefined values');
+
+    var F = function() {};
+    F.prototype = {a: 'b'};
+    var subObj = new F();
+    subObj.c = 'd';
+    deepEqual(_.extendOwn({}, subObj), {c: 'd'}, 'assign copies own properties from source');
+
+    result = {};
+    deepEqual(_.assign(result, null, undefined, {a: 1}), {a: 1}, 'should not error on `null` or `undefined` sources');
+
+    _.each(['a', 5, null, false], function(val) {
+      strictEqual(_.assign(val, {a: 1}), val, 'assigning non-objects results in returning the non-object value');
+    });
+
+    strictEqual(_.extendOwn(undefined, {a: 1}), undefined, 'assigning undefined results in undefined');
+
+    result = _.extendOwn({a: 1, 0: 2, 1: '5', length: 6}, {0: 1, 1: 2, length: 2});
+    deepEqual(result, {a: 1, 0: 1, 1: 2, length: 2}, 'assign should treat array-like objects like normal objects');
   });
 
   test('pick', function() {
@@ -87,8 +177,10 @@
     result = _.pick(['a', 'b'], 1);
     deepEqual(result, {1: 'b'}, 'can pick numeric properties');
 
-    deepEqual(_.pick(null, 'a', 'b'), {}, 'non objects return empty object');
-    deepEqual(_.pick(undefined, 'toString'), {}, 'null/undefined return empty object');
+    _.each([null, void 0], function(val) {
+      deepEqual(_.pick(val, 'hasOwnProperty'), {}, 'Called with null/undefined');
+      deepEqual(_.pick(val, _.constant(true)), {});
+    });
     deepEqual(_.pick(5, 'toString', 'b'), {toString: Number.prototype.toString}, 'can iterate primitives');
 
     var data = {a: 1, b: 2, c: 3};
@@ -108,6 +200,11 @@
     deepEqual(_.pick(data, function(val, key) {
       return this[key] === 3 && this === instance;
     }, instance), {c: 3}, 'function is given context');
+
+    ok(!_.has(_.pick({}, 'foo'), 'foo'), 'does not set own property if property not in object');
+    _.pick(data, function(value, key, obj) {
+      equal(obj, data, 'passes same object as third parameter of iteratee');
+    });
   });
 
   test('omit', function() {
@@ -419,9 +516,6 @@
     b = _({x: 1, y: 2}).chain();
     equal(_.isEqual(a.isEqual(b), _(true)), true, '`isEqual` can be chained');
 
-    // Objects from another frame.
-    ok(_.isEqual({}, iObject));
-
     // Objects without a `constructor` property
     if (Object.create) {
         a = Object.create(null, {x: {value: 1, enumerable: true}});
@@ -454,37 +548,18 @@
     var args = function(){ return arguments; };
     ok(_.isEmpty(args()), 'empty arguments object is empty');
     ok(!_.isEmpty(args('')), 'non-empty arguments object is not empty');
+
+    // covers collecting non-enumerable properties in IE < 9
+    var nonEnumProp = {'toString': 5};
+    ok(!_.isEmpty(nonEnumProp), 'non-enumerable property is not empty');
   });
 
-  // Setup remote variables for iFrame tests.
-  var iframe = document.createElement('iframe');
-  iframe.frameBorder = iframe.height = iframe.width = 0;
-  document.body.appendChild(iframe);
-  var iDoc = (iDoc = iframe.contentDocument || iframe.contentWindow).document || iDoc;
-  iDoc.write(
-    '<script>' +
-    '  parent.iElement   = document.createElement("div");' +
-    '  parent.iArguments = (function(){ return arguments; })(1, 2, 3);' +
-    '  parent.iArray     = [1, 2, 3];' +
-    '  parent.iString    = new String("hello");' +
-    '  parent.iNumber    = new Number(100);' +
-    '  parent.iFunction  = (function(){});' +
-    '  parent.iDate      = new Date();' +
-    '  parent.iRegExp    = /hi/;' +
-    '  parent.iNaN       = NaN;' +
-    '  parent.iNull      = null;' +
-    '  parent.iBoolean   = new Boolean(false);' +
-    '  parent.iUndefined = undefined;' +
-    '  parent.iObject     = {};' +
-    '</script>'
-  );
-  iDoc.close();
-
-  test('isElement', function() {
-    ok(!_.isElement('div'), 'strings are not dom elements');
-    ok(_.isElement(document.body), 'the body tag is a DOM element');
-    ok(_.isElement(iElement), 'even from another frame');
-  });
+  if (typeof document === 'object') {
+    test('isElement', function() {
+      ok(!_.isElement('div'), 'strings are not dom elements');
+      ok(_.isElement(testElement), 'an element is a DOM element');
+    });
+  }
 
   test('isArguments', function() {
     var args = (function(){ return arguments; }(1, 2, 3));
@@ -493,16 +568,15 @@
     ok(_.isArguments(args), 'but the arguments object is an arguments object');
     ok(!_.isArguments(_.toArray(args)), 'but not when it\'s converted into an array');
     ok(!_.isArguments([1, 2, 3]), 'and not vanilla arrays.');
-    ok(_.isArguments(iArguments), 'even from another frame');
   });
 
   test('isObject', function() {
     ok(_.isObject(arguments), 'the arguments object is object');
     ok(_.isObject([1, 2, 3]), 'and arrays');
-    ok(_.isObject(document.body), 'and DOM element');
-    ok(_.isObject(iElement), 'even from another frame');
+    if (testElement) {
+      ok(_.isObject(testElement), 'and DOM element');
+    }
     ok(_.isObject(function () {}), 'and functions');
-    ok(_.isObject(iFunction), 'even from another frame');
     ok(!_.isObject(null), 'but not null');
     ok(!_.isObject(undefined), 'and not undefined');
     ok(!_.isObject('string'), 'and not string');
@@ -515,16 +589,17 @@
     ok(!_.isArray(undefined), 'undefined vars are not arrays');
     ok(!_.isArray(arguments), 'the arguments object is not an array');
     ok(_.isArray([1, 2, 3]), 'but arrays are');
-    ok(_.isArray(iArray), 'even from another frame');
   });
 
   test('isString', function() {
     var obj = new String('I am a string object');
-    ok(!_.isString(document.body), 'the document body is not a string');
+    if (testElement) {
+      ok(!_.isString(testElement), 'an element is not a string');
+    }
     ok(_.isString([1, 2, 3].join(', ')), 'but strings are');
-    ok(_.isString(iString), 'even from another frame');
-    ok(_.isString('I am a string literal'), 'string literals are');
+    strictEqual(_.isString('I am a string literal'), true, 'string literals are');
     ok(_.isString(obj), 'so are String objects');
+    strictEqual(_.isString(1), false);
   });
 
   test('isNumber', function() {
@@ -534,7 +609,6 @@
     ok(_.isNumber(3 * 4 - 7 / 10), 'but numbers are');
     ok(_.isNumber(NaN), 'NaN *is* a number');
     ok(_.isNumber(Infinity), 'Infinity is a number');
-    ok(_.isNumber(iNumber), 'even from another frame');
     ok(!_.isNumber('1'), 'numeric strings are not numbers');
   });
 
@@ -549,7 +623,6 @@
     ok(!_.isBoolean(null), 'null is not a boolean');
     ok(_.isBoolean(true), 'but true is');
     ok(_.isBoolean(false), 'and so is false');
-    ok(_.isBoolean(iBoolean), 'even from another frame');
   });
 
   test('isFunction', function() {
@@ -557,21 +630,35 @@
     ok(!_.isFunction([1, 2, 3]), 'arrays are not functions');
     ok(!_.isFunction('moe'), 'strings are not functions');
     ok(_.isFunction(_.isFunction), 'but functions are');
-    ok(_.isFunction(iFunction), 'even from another frame');
     ok(_.isFunction(function(){}), 'even anonymous ones');
+
+    if (testElement) {
+      ok(!_.isFunction(testElement), 'elements are not functions');
+    }
   });
+
+  if (typeof Int8Array !== 'undefined') {
+    test('#1929 Typed Array constructors are functions', function() {
+      _.chain(['Float32Array', 'Float64Array', 'Int8Array', 'Int16Array', 'Int32Array', 'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array'])
+      .map(_.propertyOf(typeof GLOBAL != 'undefined' ? GLOBAL : window))
+      .compact()
+      .each(function(TypedArray) {
+          // PhantomJS reports `typeof UInt8Array == 'object'` and doesn't report toString TypeArray
+          // as a function
+          strictEqual(_.isFunction(TypedArray), Object.prototype.toString.call(TypedArray) === '[object Function]');
+      });
+    });
+  }
 
   test('isDate', function() {
     ok(!_.isDate(100), 'numbers are not dates');
     ok(!_.isDate({}), 'objects are not dates');
     ok(_.isDate(new Date()), 'but dates are');
-    ok(_.isDate(iDate), 'even from another frame');
   });
 
   test('isRegExp', function() {
     ok(!_.isRegExp(_.identity), 'functions are not RegExps');
     ok(_.isRegExp(/identity/), 'but RegExps are');
-    ok(_.isRegExp(iRegExp), 'even from another frame');
   });
 
   test('isFinite', function() {
@@ -595,7 +682,6 @@
     ok(!_.isNaN(null), 'null is not NaN');
     ok(!_.isNaN(0), '0 is not NaN');
     ok(_.isNaN(NaN), 'but NaN is');
-    ok(_.isNaN(iNaN), 'even from another frame');
     ok(_.isNaN(new Number(NaN)), 'wrapped NaN is still NaN');
   });
 
@@ -603,7 +689,6 @@
     ok(!_.isNull(undefined), 'undefined is not null');
     ok(!_.isNull(NaN), 'NaN is not null');
     ok(_.isNull(null), 'but null is');
-    ok(_.isNull(iNull), 'even from another frame');
   });
 
   test('isUndefined', function() {
@@ -613,20 +698,20 @@
     ok(!_.isUndefined(NaN), 'NaN is defined');
     ok(_.isUndefined(), 'nothing is undefined');
     ok(_.isUndefined(undefined), 'undefined is undefined');
-    ok(_.isUndefined(iUndefined), 'even from another frame');
   });
 
-  if (window.ActiveXObject) {
-    test('IE host objects', function() {
-      var xml = new ActiveXObject('Msxml2.DOMDocument.3.0');
-      ok(!_.isNumber(xml));
-      ok(!_.isBoolean(xml));
-      ok(!_.isNaN(xml));
-      ok(!_.isFunction(xml));
-      ok(!_.isNull(xml));
-      ok(!_.isUndefined(xml));
-    });
-  }
+  test('isError', function() {
+    ok(!_.isError(1), 'numbers are not Errors');
+    ok(!_.isError(null), 'null is not an Error');
+    ok(!_.isError(Error), 'functions are not Errors');
+    ok(_.isError(new Error()), 'Errors are Errors');
+    ok(_.isError(new EvalError()), 'EvalErrors are Errors');
+    ok(_.isError(new RangeError()), 'RangeErrors are Errors');
+    ok(_.isError(new ReferenceError()), 'ReferenceErrors are Errors');
+    ok(_.isError(new SyntaxError()), 'SyntaxErrors are Errors');
+    ok(_.isError(new TypeError()), 'TypeErrors are Errors');
+    ok(_.isError(new URIError()), 'URIErrors are Errors');
+  });
 
   test('tap', function() {
     var intercepted = null;
@@ -658,22 +743,62 @@
     strictEqual(_.has(undefined, 'foo'), false, 'has() returns false for undefined');
   });
 
-  test('matches', function() {
+  test('isMatch', function() {
+    var moe = {name: 'Moe Howard', hair: true};
+    var curly = {name: 'Curly Howard', hair: false};
+
+    equal(_.isMatch(moe, {hair: true}), true, 'Returns a boolean');
+    equal(_.isMatch(curly, {hair: true}), false, 'Returns a boolean');
+
+    equal(_.isMatch(5, {__x__: undefined}), false, 'can match undefined props on primitives');
+    equal(_.isMatch({__x__: undefined}, {__x__: undefined}), true, 'can match undefined props');
+
+    equal(_.isMatch(null, {}), true, 'Empty spec called with null object returns true');
+    equal(_.isMatch(null, {a: 1}), false, 'Non-empty spec called with null object returns false');
+
+    _.each([null, undefined], function(item) { strictEqual(_.isMatch(item, null), true, 'null matches null'); });
+    _.each([null, undefined], function(item) { strictEqual(_.isMatch(item, null), true, 'null matches {}'); });
+    strictEqual(_.isMatch({b: 1}, {a: undefined}), false, 'handles undefined values (1683)');
+
+    _.each([true, 5, NaN, null, undefined], function(item) {
+      strictEqual(_.isMatch({a: 1}, item), true, 'treats primitives as empty');
+    });
+
+    function Prototest() {}
+    Prototest.prototype.x = 1;
+    var specObj = new Prototest;
+    equal(_.isMatch({x: 2}, specObj), true, 'spec is restricted to own properties');
+
+    specObj.y = 5;
+    equal(_.isMatch({x: 1, y: 5}, specObj), true);
+    equal(_.isMatch({x: 1, y: 4}, specObj), false);
+
+    ok(_.isMatch(specObj, {x: 1, y: 5}), 'inherited and own properties are checked on the test object');
+
+    Prototest.x = 5;
+    ok(_.isMatch({x: 5, y: 1}, Prototest), 'spec can be a function');
+
+    //null edge cases
+    var oCon = {'constructor': Object};
+    deepEqual(_.map([null, undefined, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true], 'doesnt falsey match constructor on undefined/null');
+  });
+
+  test('matcher', function() {
     var moe = {name: 'Moe Howard', hair: true};
     var curly = {name: 'Curly Howard', hair: false};
     var stooges = [moe, curly];
 
-    equal(_.matches({hair: true})(moe), true, 'Returns a boolean');
-    equal(_.matches({hair: true})(curly), false, 'Returns a boolean');
+    equal(_.matcher({hair: true})(moe), true, 'Returns a boolean');
+    equal(_.matcher({hair: true})(curly), false, 'Returns a boolean');
 
-    equal(_.matches({__x__: undefined})(5), false, 'can match undefined props on primitives');
-    equal(_.matches({__x__: undefined})({__x__: undefined}), true, 'can match undefined props');
+    equal(_.matcher({__x__: undefined})(5), false, 'can match undefined props on primitives');
+    equal(_.matcher({__x__: undefined})({__x__: undefined}), true, 'can match undefined props');
 
-    equal(_.matches({})(null), true, 'Empty spec called with null object returns true');
-    equal(_.matches({a: 1})(null), false, 'Non-empty spec called with null object returns false');
+    equal(_.matcher({})(null), true, 'Empty spec called with null object returns true');
+    equal(_.matcher({a: 1})(null), false, 'Non-empty spec called with null object returns false');
 
-    ok(_.find(stooges, _.matches({hair: false})) === curly, 'returns a predicate that can be used by finding functions.');
-    ok(_.find(stooges, _.matches(moe)) === moe, 'can be used to locate an object exists in a collection.');
+    ok(_.find(stooges, _.matcher({hair: false})) === curly, 'returns a predicate that can be used by finding functions.');
+    ok(_.find(stooges, _.matcher(moe)) === moe, 'can be used to locate an object exists in a collection.');
     deepEqual(_.where([null, undefined], {a: 1}), [], 'Do not throw on null values.');
 
     deepEqual(_.where([null, undefined], null), [null, undefined], 'null matches null');
@@ -687,22 +812,22 @@
     function Prototest() {}
     Prototest.prototype.x = 1;
     var specObj = new Prototest;
-    var protospec = _.matches(specObj);
+    var protospec = _.matcher(specObj);
     equal(protospec({x: 2}), true, 'spec is restricted to own properties');
 
     specObj.y = 5;
-    protospec = _.matches(specObj);
+    protospec = _.matcher(specObj);
     equal(protospec({x: 1, y: 5}), true);
     equal(protospec({x: 1, y: 4}), false);
 
-    ok(_.matches({x: 1, y: 5})(specObj), 'inherited and own properties are checked on the test object');
+    ok(_.matcher({x: 1, y: 5})(specObj), 'inherited and own properties are checked on the test object');
 
     Prototest.x = 5;
-    ok(_.matches(Prototest)({x: 5, y: 1}), 'spec can be a function');
+    ok(_.matcher(Prototest)({x: 5, y: 1}), 'spec can be a function');
 
     // #1729
     var o = {'b': 1};
-    var m = _.matches(o);
+    var m = _.matcher(o);
 
     equal(m({'b': 1}), true);
     o.b = 2;
@@ -711,8 +836,159 @@
 
 
     //null edge cases
-    var oCon = _.matches({'constructor': Object});
-    deepEqual(_.map([null, undefined, 5, {}], oCon), [false, false, false, true], 'doesnt fasley match constructor on undefined/null');
+    var oCon = _.matcher({'constructor': Object});
+    deepEqual(_.map([null, undefined, 5, {}], oCon), [false, false, false, true], 'doesnt falsey match constructor on undefined/null');
   });
 
+  test('matcher', function() {
+    var moe = {name: 'Moe Howard', hair: true};
+    var curly = {name: 'Curly Howard', hair: false};
+    var stooges = [moe, curly];
+
+    equal(_.matcher({hair: true})(moe), true, 'Returns a boolean');
+    equal(_.matcher({hair: true})(curly), false, 'Returns a boolean');
+
+    equal(_.matcher({__x__: undefined})(5), false, 'can match undefined props on primitives');
+    equal(_.matcher({__x__: undefined})({__x__: undefined}), true, 'can match undefined props');
+
+    equal(_.matcher({})(null), true, 'Empty spec called with null object returns true');
+    equal(_.matcher({a: 1})(null), false, 'Non-empty spec called with null object returns false');
+
+    ok(_.find(stooges, _.matcher({hair: false})) === curly, 'returns a predicate that can be used by finding functions.');
+    ok(_.find(stooges, _.matcher(moe)) === moe, 'can be used to locate an object exists in a collection.');
+    deepEqual(_.where([null, undefined], {a: 1}), [], 'Do not throw on null values.');
+
+    deepEqual(_.where([null, undefined], null), [null, undefined], 'null matches null');
+    deepEqual(_.where([null, undefined], {}), [null, undefined], 'null matches {}');
+    deepEqual(_.where([{b: 1}], {a: undefined}), [], 'handles undefined values (1683)');
+
+    _.each([true, 5, NaN, null, undefined], function(item) {
+      deepEqual(_.where([{a: 1}], item), [{a: 1}], 'treats primitives as empty');
+    });
+
+    function Prototest() {}
+    Prototest.prototype.x = 1;
+    var specObj = new Prototest;
+    var protospec = _.matcher(specObj);
+    equal(protospec({x: 2}), true, 'spec is restricted to own properties');
+
+    specObj.y = 5;
+    protospec = _.matcher(specObj);
+    equal(protospec({x: 1, y: 5}), true);
+    equal(protospec({x: 1, y: 4}), false);
+
+    ok(_.matcher({x: 1, y: 5})(specObj), 'inherited and own properties are checked on the test object');
+
+    Prototest.x = 5;
+    ok(_.matcher(Prototest)({x: 5, y: 1}), 'spec can be a function');
+
+    // #1729
+    var o = {'b': 1};
+    var m = _.matcher(o);
+
+    equal(m({'b': 1}), true);
+    o.b = 2;
+    o.a = 1;
+    equal(m({'b': 1}), true, 'changing spec object doesnt change matches result');
+
+
+    //null edge cases
+    var oCon = _.matcher({'constructor': Object});
+    deepEqual(_.map([null, undefined, 5, {}], oCon), [false, false, false, true], 'doesnt falsey match constructor on undefined/null');
+  });
+
+  test('findKey', function() {
+    var objects = {
+      a: {'a': 0, 'b': 0},
+      b: {'a': 1, 'b': 1},
+      c: {'a': 2, 'b': 2}
+    };
+
+    equal(_.findKey(objects, function(obj) {
+      return obj.a === 0;
+    }), 'a');
+
+    equal(_.findKey(objects, function(obj) {
+      return obj.b * obj.a === 4;
+    }), 'c');
+
+    equal(_.findKey(objects, 'a'), 'b', 'Uses lookupIterator');
+
+    equal(_.findKey(objects, function(obj) {
+      return obj.b * obj.a === 5;
+    }), undefined);
+
+    strictEqual(_.findKey([1, 2, 3, 4, 5, 6], function(obj) {
+      return obj === 3;
+    }), '2', 'Keys are strings');
+
+    strictEqual(_.findKey(objects, function(a) {
+      return a.foo === null;
+    }), undefined);
+
+    _.findKey({a: {a: 1}}, function(a, key, obj) {
+      equal(key, 'a');
+      deepEqual(obj, {a: {a: 1}});
+      strictEqual(this, objects, 'called with context');
+    }, objects);
+
+    var array = [1, 2, 3, 4];
+    array.match = 55;
+    strictEqual(_.findKey(array, function(x) { return x === 55; }), 'match', 'matches array-likes keys');
+  });
+
+
+  test('mapObject', function() {
+   var obj = {'a': 1, 'b': 2};
+   var objects = {
+      a: {'a': 0, 'b': 0},
+      b: {'a': 1, 'b': 1},
+      c: {'a': 2, 'b': 2}
+    };
+
+    deepEqual(_.mapObject(obj, function(val) {
+      return val * 2;
+    }), {'a': 2, 'b': 4}, 'simple objects');
+
+    deepEqual(_.mapObject(objects, function(val) {
+      return _.reduce(val, function(memo,v){
+       return memo + v;
+      },0);
+    }), {'a': 0, 'b': 2, 'c': 4}, 'nested objects');
+
+    deepEqual(_.mapObject(obj, function(val,key,obj) {
+      return obj[key] * 2;
+    }), {'a': 2, 'b': 4}, 'correct keys');
+
+    deepEqual(_.mapObject([1,2], function(val) {
+      return val * 2;
+    }), {'0': 2, '1': 4}, 'check behavior for arrays');
+
+    deepEqual(_.mapObject(obj, function(val) {
+      return val * this.multiplier;
+    }, {multiplier : 3}), {'a': 3, 'b': 6}, 'keep context');
+
+    deepEqual(_.mapObject({a: 1}, function() {
+      return this.length;
+    }, [1,2]), {'a': 2}, 'called with context');
+
+    var ids = _.mapObject({length: 2, 0: {id: '1'}, 1: {id: '2'}}, function(n){
+      return n.id;
+    });
+    deepEqual(ids, {'length': undefined, '0': '1', '1': '2'}, 'Check with array-like objects');
+
+    // Passing a property name like _.pluck.
+    var people = {'a': {name : 'moe', age : 30}, 'b': {name : 'curly', age : 50}};
+    deepEqual(_.mapObject(people, 'name'), {'a': 'moe', 'b': 'curly'}, 'predicate string map to object properties');
+
+    _.each([null, void 0, 1, 'abc', [], {}, undefined], function(val){
+      deepEqual(_.mapObject(val, _.identity), {}, 'mapValue identity');
+    });
+
+    var Proto = function(){this.a = 1;};
+    Proto.prototype.b = 1;
+    var protoObj = new Proto();
+    deepEqual(_.mapObject(protoObj, _.identity), {a: 1}, 'ignore inherited values from prototypes');
+
+  });
 }());

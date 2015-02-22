@@ -1,6 +1,7 @@
 (function() {
+  var _ = typeof require == 'function' ? require('..') : window._;
 
-  module('Arrays');
+  QUnit.module('Arrays');
 
   test('first', function() {
     equal(_.first([1, 2, 3]), 1, 'can pull out the first element of an array');
@@ -79,6 +80,12 @@
   });
 
   test('flatten', function() {
+    deepEqual(_.flatten(null), [], 'Flattens supports null');
+    deepEqual(_.flatten(void 0), [], 'Flattens supports undefined');
+
+    deepEqual(_.flatten([[], [[]], []]), [], 'Flattens empty arrays');
+    deepEqual(_.flatten([[], [[]], []], true), [[]], 'Flattens empty arrays');
+
     var list = [1, [2], [3, [[[4]]]]];
     deepEqual(_.flatten(list), [1, 2, 3, 4], 'can flatten nested arrays');
     deepEqual(_.flatten(list, true), [1, 2, 3, [[[4]]]], 'can shallowly flatten nested arrays');
@@ -86,6 +93,11 @@
     deepEqual(result, [1, 2, 3, 4], 'works on an arguments object');
     list = [[1], [2], [3], [[4]]];
     deepEqual(_.flatten(list, true), [1, 2, 3, [4]], 'can shallowly flatten arrays containing only other arrays');
+
+    equal(_.flatten([_.range(10), _.range(10), 5, 1, 3], true).length, 23);
+    equal(_.flatten([_.range(10), _.range(10), 5, 1, 3]).length, 23);
+    equal(_.flatten([new Array(1000000), _.range(56000), 5, 1, 3]).length, 1056003, 'Flatten can handle massive collections');
+    equal(_.flatten([new Array(1000000), _.range(56000), 5, 1, 3], true).length, 1056003, 'Flatten can handle massive collections');
   });
 
   test('without', function() {
@@ -97,6 +109,32 @@
     list = [{one : 1}, {two : 2}];
     equal(_.without(list, {one : 1}).length, 2, 'uses real object identity for comparisons.');
     equal(_.without(list, list[0]).length, 1, 'ditto.');
+  });
+
+  test('sortedIndex', function() {
+    var numbers = [10, 20, 30, 40, 50], num = 35;
+    var indexForNum = _.sortedIndex(numbers, num);
+    equal(indexForNum, 3, '35 should be inserted at index 3');
+
+    var indexFor30 = _.sortedIndex(numbers, 30);
+    equal(indexFor30, 2, '30 should be inserted at index 2');
+
+    var objects = [{x: 10}, {x: 20}, {x: 30}, {x: 40}];
+    var iterator = function(obj){ return obj.x; };
+    strictEqual(_.sortedIndex(objects, {x: 25}, iterator), 2);
+    strictEqual(_.sortedIndex(objects, {x: 35}, 'x'), 3);
+
+    var context = {1: 2, 2: 3, 3: 4};
+    iterator = function(obj){ return this[obj]; };
+    strictEqual(_.sortedIndex([1, 3], 2, iterator, context), 1);
+
+    var values = [0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383, 32767, 65535, 131071, 262143, 524287, 1048575, 2097151, 4194303, 8388607, 16777215, 33554431, 67108863, 134217727, 268435455, 536870911, 1073741823, 2147483647];
+    var array = Array(Math.pow(2, 32) - 1);
+    var length = values.length;
+    while (length--) {
+      array[values[length]] = values[length];
+    }
+    equal(_.sortedIndex(array, 2147483648), 2147483648, 'should work with large indexes');
   });
 
   test('uniq', function() {
@@ -115,6 +153,20 @@
     iterator = function(value) { return value + 1; };
     list = [1, 2, 2, 3, 4, 4];
     deepEqual(_.uniq(list, true, iterator), [1, 2, 3, 4], 'iterator works with sorted array');
+
+    var kittens = [
+      {kitten: 'Celery', cuteness: 8},
+      {kitten: 'Juniper', cuteness: 10},
+      {kitten: 'Spottis', cuteness: 10}
+    ];
+
+    var expected = [
+      {kitten: 'Celery', cuteness: 8},
+      {kitten: 'Juniper', cuteness: 10}
+    ];
+
+    deepEqual(_.uniq(kittens, true, 'cuteness'), expected, 'string iterator works with sorted array');
+
 
     var result = (function(){ return _.uniq(arguments); }(1, 2, 1, 3, 1, 4));
     deepEqual(result, [1, 2, 3, 4], 'works on an arguments object');
@@ -209,6 +261,19 @@
     deepEqual(_.zip(), [], '_.zip() returns []');
   });
 
+  test('unzip', function() {
+    deepEqual(_.unzip(null), [], 'handles null');
+
+    deepEqual(_.unzip([['a', 'b'], [1, 2]]), [['a', 1], ['b', 2]]);
+
+    // complements zip
+    var zipped = _.zip(['fred', 'barney'], [30, 40], [true, false]);
+    deepEqual(_.unzip(zipped), [['fred', 'barney'], [30, 40], [true, false]]);
+
+    zipped = _.zip(['moe', 30], ['larry', 40], ['curly', 50, 'extra data']);
+    deepEqual(_.unzip(zipped), [['moe', 30, void 0], ['larry', 40, void 0], ['curly', 50, 'extra data']], 'Uses length of largest array');
+  });
+
   test('object', function() {
     var result = _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
     var shouldBe = {moe: 30, larry: 40, curly: 50};
@@ -229,7 +294,14 @@
     equal(_.indexOf(numbers, 2), 1, 'can compute indexOf');
     var result = (function(){ return _.indexOf(arguments, 2); }(1, 2, 3));
     equal(result, 1, 'works on an arguments object');
-    equal(_.indexOf(null, 2), -1, 'handles nulls properly');
+
+    _.each([null, void 0, [], false], function(val) {
+      var msg = 'Handles: ' + (_.isArray(val) ? '[]' : val);
+      equal(_.indexOf(val, 2), -1, msg);
+      equal(_.indexOf(val, 2, -1), -1, msg);
+      equal(_.indexOf(val, 2, -20), -1, msg);
+      equal(_.indexOf(val, 2, 15), -1, msg);
+    });
 
     var num = 35;
     numbers = [10, 20, 30, 40, 50];
@@ -263,6 +335,25 @@
       strictEqual(_.indexOf(array, 1, fromIndex), 0);
     });
     strictEqual(_.indexOf([1, 2, 3], 1, true), 0);
+
+    index = _.indexOf([], undefined, true);
+    equal(index, -1, 'empty array with truthy `isSorted` returns -1');
+  });
+
+  test('indexOf with NaN', function() {
+    strictEqual(_.indexOf([1, 2, NaN, NaN], NaN), 2, 'Expected [1, 2, NaN] to contain NaN');
+    strictEqual(_.indexOf([1, 2, Infinity], NaN), -1, 'Expected [1, 2, NaN] to contain NaN');
+
+    (function() {
+      strictEqual(_.indexOf(arguments, NaN), 2, 'Expected arguments [1, 2, NaN] to contain NaN');
+    }(1, 2, NaN, NaN));
+  });
+
+  test('indexOf with +- 0', function() {
+    _.each([-0, +0], function(val) {
+      strictEqual(_.indexOf([1, 2, val, val], val), 2);
+      strictEqual(_.indexOf([1, 2, val, val], -val), 2);
+    });
   });
 
   test('lastIndexOf', function() {
@@ -276,7 +367,14 @@
     equal(_.lastIndexOf(numbers, 0), 8, 'lastIndexOf the other element');
     var result = (function(){ return _.lastIndexOf(arguments, 1); }(1, 0, 1, 0, 0, 1, 0, 0, 0));
     equal(result, 5, 'works on an arguments object');
-    equal(_.lastIndexOf(null, 2), -1, 'handles nulls properly');
+
+    _.each([null, void 0, [], false], function(val) {
+      var msg = 'Handles: ' + (_.isArray(val) ? '[]' : val);
+      equal(_.lastIndexOf(val, 2), -1, msg);
+      equal(_.lastIndexOf(val, 2, -1), -1, msg);
+      equal(_.lastIndexOf(val, 2, -20), -1, msg);
+      equal(_.lastIndexOf(val, 2, 15), -1, msg);
+    });
 
     numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
     var index = _.lastIndexOf(numbers, 2, 2);
@@ -314,6 +412,109 @@
     deepEqual(_.map([-6, -8, -Infinity], function(fromIndex) {
       return _.lastIndexOf(array, 1, fromIndex);
     }), [0, -1, -1]);
+  });
+
+  test('lastIndexOf with NaN', function() {
+    strictEqual(_.lastIndexOf([1, 2, NaN, NaN], NaN), 3, 'Expected [1, 2, NaN] to contain NaN');
+    strictEqual(_.lastIndexOf([1, 2, Infinity], NaN), -1, 'Expected [1, 2, NaN] to contain NaN');
+
+    (function() {
+      strictEqual(_.lastIndexOf(arguments, NaN), 3, 'Expected arguments [1, 2, NaN] to contain NaN');
+    }(1, 2, NaN, NaN));
+  });
+
+  test('lastIndexOf with +- 0', function() {
+    _.each([-0, +0], function(val) {
+      strictEqual(_.lastIndexOf([1, 2, val, val], val), 3);
+      strictEqual(_.lastIndexOf([1, 2, val, val], -val), 3);
+      strictEqual(_.lastIndexOf([-1, 1, 2], -val), -1);
+    });
+  });
+
+  test('findIndex', function() {
+    var objects = [
+      {'a': 0, 'b': 0},
+      {'a': 1, 'b': 1},
+      {'a': 2, 'b': 2},
+      {'a': 0, 'b': 0}
+    ];
+
+    equal(_.findIndex(objects, function(obj) {
+      return obj.a === 0;
+    }), 0);
+
+    equal(_.findIndex(objects, function(obj) {
+      return obj.b * obj.a === 4;
+    }), 2);
+
+    equal(_.findIndex(objects, 'a'), 1, 'Uses lookupIterator');
+
+    equal(_.findIndex(objects, function(obj) {
+      return obj.b * obj.a === 5;
+    }), -1);
+
+    equal(_.findIndex(null, _.noop), -1);
+    strictEqual(_.findIndex(objects, function(a) {
+      return a.foo === null;
+    }), -1);
+    _.findIndex([{a: 1}], function(a, key, obj) {
+      equal(key, 0);
+      deepEqual(obj, [{a: 1}]);
+      strictEqual(this, objects, 'called with context');
+    }, objects);
+
+    var sparse = [];
+    sparse[20] = {'a': 2, 'b': 2};
+    equal(_.findIndex(sparse, function(obj) {
+      return obj && obj.b * obj.a === 4;
+    }), 20, 'Works with sparse arrays');
+
+    var array = [1, 2, 3, 4];
+    array.match = 55;
+    strictEqual(_.findIndex(array, function(x) { return x === 55; }), -1, 'doesn\'t match array-likes keys');
+  });
+
+  test('findLastIndex', function() {
+    var objects = [
+      {'a': 0, 'b': 0},
+      {'a': 1, 'b': 1},
+      {'a': 2, 'b': 2},
+      {'a': 0, 'b': 0}
+    ];
+
+    equal(_.findLastIndex(objects, function(obj) {
+      return obj.a === 0;
+    }), 3);
+
+    equal(_.findLastIndex(objects, function(obj) {
+      return obj.b * obj.a === 4;
+    }), 2);
+
+    equal(_.findLastIndex(objects, 'a'), 2, 'Uses lookupIterator');
+
+    equal(_.findLastIndex(objects, function(obj) {
+      return obj.b * obj.a === 5;
+    }), -1);
+
+    equal(_.findLastIndex(null, _.noop), -1);
+    strictEqual(_.findLastIndex(objects, function(a) {
+      return a.foo === null;
+    }), -1);
+    _.findLastIndex([{a: 1}], function(a, key, obj) {
+      equal(key, 0);
+      deepEqual(obj, [{a: 1}]);
+      strictEqual(this, objects, 'called with context');
+    }, objects);
+
+    var sparse = [];
+    sparse[20] = {'a': 2, 'b': 2};
+    equal(_.findLastIndex(sparse, function(obj) {
+      return obj && obj.b * obj.a === 4;
+    }), 20, 'Works with sparse arrays');
+
+    var array = [1, 2, 3, 4];
+    array.match = 55;
+    strictEqual(_.findLastIndex(array, function(x) { return x === 55; }), -1, 'doesn\'t match array-likes keys');
   });
 
   test('range', function() {

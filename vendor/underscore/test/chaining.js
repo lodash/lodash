@@ -1,6 +1,7 @@
 (function() {
+  var _ = typeof require == 'function' ? require('..') : window._;
 
-  module('Chaining');
+  QUnit.module('Chaining');
 
   test('map/flatten/reduce', function() {
     var lyrics = [
@@ -57,10 +58,41 @@
     deepEqual(numbers, [34, 10, 8, 6, 4, 2, 10, 10], 'can chain together array functions.');
   });
 
+  test('splice', function() {
+    var instance = _([1, 2, 3, 4, 5]).chain();
+    deepEqual(instance.splice(1, 3).value(), [1, 5]);
+    deepEqual(instance.splice(1, 0).value(), [1, 5]);
+    deepEqual(instance.splice(1, 1).value(), [1]);
+    deepEqual(instance.splice(0, 1).value(), [], '#397 Can create empty array');
+  });
+
+  test('shift', function() {
+    var instance = _([1, 2, 3]).chain();
+    deepEqual(instance.shift().value(), [2, 3]);
+    deepEqual(instance.shift().value(), [3]);
+    deepEqual(instance.shift().value(), [], '#397 Can create empty array');
+  });
+
+  test('pop', function() {
+    var instance = _([1, 2, 3]).chain();
+    deepEqual(instance.pop().value(), [1, 2]);
+    deepEqual(instance.pop().value(), [1]);
+    deepEqual(instance.pop().value(), [], '#397 Can create empty array');
+  });
+
   test('chaining works in small stages', function() {
     var o = _([1, 2, 3, 4]).chain();
     deepEqual(o.filter(function(i) { return i < 3; }).value(), [1, 2]);
     deepEqual(o.filter(function(i) { return i > 2; }).value(), [3, 4]);
+  });
+
+  test('#1562: Engine proxies for chained functions', function() {
+    var wrapped = _(512);
+    strictEqual(wrapped.toJSON(), 512);
+    strictEqual(wrapped.valueOf(), 512);
+    strictEqual(+wrapped, 512);
+    strictEqual(wrapped.toString(), '512');
+    strictEqual('' + wrapped, '512');
   });
 
 }());

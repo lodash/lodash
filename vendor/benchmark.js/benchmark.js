@@ -8,56 +8,56 @@
 ;(function() {
   'use strict';
 
-  /** Used as a safe reference for `undefined` in pre ES5 environments */
+  /** Used as a safe reference for `undefined` in pre ES5 environments. */
   var undefined;
 
-  /** Used to determine if values are of the language type Object */
+  /** Used to determine if values are of the language type Object. */
   var objectTypes = {
     'function': true,
     'object': true
   };
 
-  /** Used as a reference to the global object */
+  /** Used as a reference to the global object. */
   var root = (objectTypes[typeof window] && window) || this;
 
-  /** Detect free variable `define` */
+  /** Detect free variable `define`. */
   var freeDefine = typeof define == 'function' && typeof define.amd == 'object' && define.amd && define;
 
-  /** Detect free variable `exports` */
+  /** Detect free variable `exports`. */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
-  /** Detect free variable `module` */
+  /** Detect free variable `module`. */
   var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `root` */
+  /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
   var freeGlobal = freeExports && freeModule && typeof global == 'object' && global;
   if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
     root = freeGlobal;
   }
 
-  /** Detect free variable `require` */
+  /** Detect free variable `require`. */
   var freeRequire = typeof require == 'function' && require;
 
-  /** Used to assign each benchmark an incrimented id */
+  /** Used to assign each benchmark an incrimented id. */
   var counter = 0;
 
-  /** Detect the popular CommonJS extension `module.exports` */
+  /** Detect the popular CommonJS extension `module.exports`. */
   var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
 
-  /** Used to detect primitive types */
+  /** Used to detect primitive types. */
   var rePrimitive = /^(?:boolean|number|string|undefined)$/;
 
-  /** Used to make every compiled test unique */
+  /** Used to make every compiled test unique. */
   var uidCounter = 0;
 
-  /** Used to assign default `context` object properties */
+  /** Used to assign default `context` object properties. */
   var contextProps = [
     'Array', 'Date', 'Function', 'Math', 'Object', 'RegExp', 'String', '_',
     'clearTimeout', 'chrome', 'chromium', 'document', 'java', 'navigator',
     'phantom', 'platform', 'process', 'runtime', 'setTimeout'
   ];
 
-  /** Used to avoid hz of Infinity */
+  /** Used to avoid hz of Infinity. */
   var divisors = {
     '1': 4096,
     '2': 512,
@@ -67,8 +67,8 @@
   };
 
   /**
-   * T-Distribution two-tailed critical values for 95% confidence
-   * http://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm
+   * T-Distribution two-tailed critical values for 95% confidence.
+   * For more info see http://www.itl.nist.gov/div898/handbook/eda/section3/eda3672.htm.
    */
   var tTable = {
     '1':  12.706, '2':  4.303, '3':  3.182, '4':  2.776, '5':  2.571, '6':  2.447,
@@ -80,8 +80,8 @@
   };
 
   /**
-   * Critical Mann-Whitney U-values for 95% confidence
-   * http://www.saburchill.com/IBbiology/stats/003.html
+   * Critical Mann-Whitney U-values for 95% confidence.
+   * For more info see http://www.saburchill.com/IBbiology/stats/003.html.
    */
   var uTable = {
     '5':  [0, 1, 2],
@@ -123,7 +123,7 @@
    * @returns {Function} Returns a new `Benchmark` function.
    */
   function runInContext(context) {
-    // exit early if unable to acquire lodash
+    // Exit early if unable to acquire lodash.
     var _ = context && context._ || req('lodash') || root._;
     if (!_) {
       Benchmark.runInContext = runInContext;
@@ -135,7 +135,7 @@
     // See http://es5.github.io/#x11.1.5.
     context = context ? _.defaults(root.Object(), context, _.pick(root, contextProps)) : root;
 
-    /** Native constructor references */
+    /** Native constructor references. */
     var Array = context.Array,
         Date = context.Date,
         Function = context.Function,
@@ -144,11 +144,11 @@
         RegExp = context.RegExp,
         String = context.String;
 
-    /** Used for `Array` and `Object` method references */
+    /** Used for `Array` and `Object` method references. */
     var arrayRef = [],
         objectProto = Object.prototype;
 
-    /** Native method shortcuts */
+    /** Native method shortcuts. */
     var abs = Math.abs,
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
@@ -164,22 +164,22 @@
         toString = objectProto.toString,
         unshift = arrayRef.unshift;
 
-    /** Detect DOM document object */
+    /** Detect DOM document object. */
     var doc = isHostType(context, 'document') && context.document;
 
-    /** Used to access Wade Simmons' Node.js `microtime` module */
+    /** Used to access Wade Simmons' Node.js `microtime` module. */
     var microtimeObject = req('microtime');
 
-    /** Used to access Node.js's high resolution timer */
+    /** Used to access Node.js's high resolution timer. */
     var processObject = isHostType(context, 'process') && context.process;
 
-    /** Used to prevent a `removeChild` memory leak in IE < 9 */
+    /** Used to prevent a `removeChild` memory leak in IE < 9. */
     var trash = doc && doc.createElement('div');
 
-    /** Used to integrity check compiled tests */
+    /** Used to integrity check compiled tests. */
     var uid = 'uid' + _.now();
 
-    /** Used to avoid infinite recursion when methods call each other */
+    /** Used to avoid infinite recursion when methods call each other. */
     var calledBy = {};
 
     /**
@@ -233,15 +233,13 @@
        * @type boolean
        */
       try {
-        // Safari 2.x removes commas in object literals
-        // from `Function#toString` results
-        // http://webk.it/11609
-        // Firefox 3.6 and Opera 9.25 strip grouping
-        // parentheses from `Function#toString` results
-        // http://bugzil.la/559438
+        // Safari 2.x removes commas in object literals from `Function#toString` results.
+        // See http://webk.it/11609 for more details.
+        // Firefox 3.6 and Opera 9.25 strip grouping parentheses from `Function#toString` results.
+        // See http://bugzil.la/559438 for more details.
         support.decompilation = Function(
           ('return (' + (function(x) { return { 'x': '' + (1 + x) + '', 'y': 0 }; }) + ')')
-          // avoid issues with code added by Istanbul
+          // Avoid issues with code added by Istanbul.
           .replace(/__cov__[^;]+;/g, '')
         )()(0).x === '1';
       } catch(e) {
@@ -273,7 +271,7 @@
        * @memberOf timer
        * @param {Object} deferred The deferred instance.
        */
-      'start': null, // lazy defined in `clock()`
+      'start': null, // Lazy defined in `clock()`.
 
       /**
        * Stops the deferred timer.
@@ -282,7 +280,7 @@
        * @memberOf timer
        * @param {Object} deferred The deferred instance.
        */
-      'stop': null // lazy defined in `clock()`
+      'stop': null // Lazy defined in `clock()`.
     };
 
     /*------------------------------------------------------------------------*/
@@ -372,28 +370,28 @@
     function Benchmark(name, fn, options) {
       var bench = this;
 
-      // allow instance creation without the `new` operator
+      // Allow instance creation without the `new` operator.
       if (bench == null || bench.constructor != Benchmark) {
         return new Benchmark(name, fn, options);
       }
-      // juggle arguments
+      // Juggle arguments.
       if (_.isPlainObject(name)) {
-        // 1 argument (options)
+        // 1 argument (options).
         options = name;
       }
       else if (_.isFunction(name)) {
-        // 2 arguments (fn, options)
+        // 2 arguments (fn, options).
         options = fn;
         fn = name;
       }
       else if (_.isPlainObject(fn)) {
-        // 2 arguments (name, options)
+        // 2 arguments (name, options).
         options = fn;
         fn = null;
         bench.name = name;
       }
       else {
-        // 3 arguments (name, fn [, options])
+        // 3 arguments (name, fn [, options]).
         bench.name = name;
       }
       setOptions(bench, options);
@@ -484,16 +482,16 @@
     function Suite(name, options) {
       var suite = this;
 
-      // allow instance creation without the `new` operator
+      // Allow instance creation without the `new` operator.
       if (suite == null || suite.constructor != Suite) {
         return new Suite(name, options);
       }
-      // juggle arguments
+      // Juggle arguments.
       if (_.isPlainObject(name)) {
-        // 1 argument (options)
+        // 1 argument (options).
         options = name;
       } else {
-        // 2 arguments (name [, options])
+        // 2 arguments (name [, options]).
         suite.name = name;
       }
       setOptions(suite, options);
@@ -509,7 +507,7 @@
      * @returns {*} The cloned value.
      */
     var cloneDeep = _.partial(_.cloneDeep, _, function(value) {
-      // only clone primitives, arrays, and plain objects
+      // Only clone primitives, arrays, and plain objects.
       return (_.isObject(value) && !_.isArray(value) && !_.isPlainObject(value))
         ? value
         : undefined;
@@ -524,7 +522,7 @@
      * @returns {Function} The new function.
      */
     function createFunction() {
-      // lazy define
+      // Lazy define.
       createFunction = function(args, body) {
         var result,
             anchor = freeDefine ? freeDefine.amd : Benchmark,
@@ -535,8 +533,8 @@
         delete anchor[prop];
         return result;
       };
-      // fix JaegerMonkey bug
-      // http://bugzil.la/639720
+      // Fix JaegerMonkey bug.
+      // For more information see http://bugzil.la/639720.
       createFunction = support.browser && (createFunction('', 'return"' + uid + '"') || _.noop)() == uid ? createFunction : Function;
       return createFunction.apply(null, arguments);
     }
@@ -600,13 +598,13 @@
       if (isStringable(fn)) {
         result = String(fn);
       } else if (support.decompilation) {
-        // escape the `{` for Firefox 1
+        // Escape the `{` for Firefox 1.
         result = _.result(/^[^{]+\{([\s\S]*)\}\s*$/.exec(fn), 1);
       }
-      // trim string
+      // Trim string.
       result = (result || '').replace(/^\s+|\s+$/g, '');
 
-      // detect strings containing only the "use strict" directive
+      // Detect strings containing only the "use strict" directive.
       return /^(?:\/\*+[\w\W]*?\*\/|\/\/.*?[\n\r\u2028\u2029]|\s)*(["'])use strict\1;?$/.test(result)
         ? ''
         : result;
@@ -685,7 +683,7 @@
       // asynchronously, but that's OK because script injection is only used to avoid
       // the previously commented JaegerMonkey bug.
       try {
-        // remove the inserted script *before* running the code to avoid differences
+        // Remove the inserted script *before* running the code to avoid differences
         // in the expected script element count/order of the document.
         script.appendChild(doc.createTextNode(prefix + code));
         anchor[prop] = function() { destroyElement(script); };
@@ -710,7 +708,7 @@
 
       _.forOwn(options, function(value, key) {
         if (value != null) {
-          // add event listeners
+          // Add event listeners.
           if (/^on[A-Z]/.test(key)) {
             _.each(key.split(' '), function(key) {
               object.on(key.slice(2).toLowerCase(), value);
@@ -735,7 +733,7 @@
           bench = clone._original;
 
       if (bench.aborted) {
-        // cycle() -> clone cycle/complete event -> compute()'s invoked bench.run() cycle/complete
+        // cycle() -> clone cycle/complete event -> compute()'s invoked bench.run() cycle/complete.
         deferred.teardown();
         clone.running = false;
         cycle(deferred);
@@ -779,13 +777,13 @@
      */
     function filter(array, callback, thisArg) {
       if (callback === 'successful') {
-        // callback to exclude those that are errored, unrun, or have hz of Infinity
+        // Callback to exclude those that are errored, unrun, or have hz of Infinity.
         callback = function(bench) {
           return bench.cycles && _.isFinite(bench.hz);
         };
       }
       else if (callback === 'fastest' || callback === 'slowest') {
-        // get successful, sort by period + margin of error, and filter fastest/slowest
+        // Get successful, sort by period + margin of error, and filter fastest/slowest.
         var result = filter(array, 'successful').sort(function(a, b) {
           a = a.stats; b = b.stats;
           return (a.mean + a.moe > b.mean + b.moe ? 1 : -1) * (callback === 'fastest' ? 1 : -1);
@@ -868,14 +866,14 @@
             async = isAsync(bench);
 
         if (async) {
-          // use `getNext` as the first listener
+          // Use `getNext` as the first listener.
           bench.on('complete', getNext);
           listeners = bench.events.complete;
           listeners.splice(0, 0, listeners.pop());
         }
-        // execute method
+        // Execute method.
         result[index] = _.isFunction(bench && bench[name]) ? bench[name].apply(bench, args) : undefined;
-        // if synchronous return `true` until finished
+        // If synchronous return `true` until finished.
         return !async && getNext();
       }
 
@@ -891,28 +889,28 @@
           last.off('complete', getNext);
           last.emit('complete');
         }
-        // emit "cycle" event
+        // Emit "cycle" event.
         eventProps.type = 'cycle';
         eventProps.target = last;
         cycleEvent = Event(eventProps);
         options.onCycle.call(benches, cycleEvent);
 
-        // choose next benchmark if not exiting early
+        // Choose next benchmark if not exiting early.
         if (!cycleEvent.aborted && raiseIndex() !== false) {
           bench = queued ? benches[0] : result[index];
           if (isAsync(bench)) {
             delay(bench, execute);
           }
           else if (async) {
-            // resume execution if previously asynchronous but now synchronous
+            // Resume execution if previously asynchronous but now synchronous.
             while (execute()) {}
           }
           else {
-            // continue synchronous execution
+            // Continue synchronous execution.
             return true;
           }
         } else {
-          // emit "complete" event
+          // Emit "complete" event.
           eventProps.type = 'complete';
           options.onComplete.call(benches, Event(eventProps));
         }
@@ -930,7 +928,7 @@
        * Checks if invoking `Benchmark#run` with asynchronous cycles.
        */
       function isAsync(object) {
-        // avoid using `instanceof` here because of IE memory leak issues with host objects
+        // Avoid using `instanceof` here because of IE memory leak issues with host objects.
         var async = args[0] && args[0].async;
         return Object(object).constructor == Benchmark && name == 'run' &&
           ((async == null ? object.options.async : async) && support.timeout || object.defer);
@@ -942,46 +940,46 @@
       function raiseIndex() {
         index++;
 
-        // if queued remove the previous bench
+        // If queued remove the previous bench.
         if (queued && index > 0) {
           shift.call(benches);
         }
-        // if we reached the last index then return `false`
+        // If we reached the last index then return `false`.
         return (queued ? benches.length : index < result.length)
           ? index
           : (index = false);
       }
 
-      // juggle arguments
+      // Juggle arguments.
       if (_.isString(name)) {
-        // 2 arguments (array, name)
+        // 2 arguments (array, name).
         args = slice.call(arguments, 2);
       } else {
-        // 2 arguments (array, options)
+        // 2 arguments (array, options).
         options = _.assign(options, name);
         name = options.name;
         args = _.isArray(args = 'args' in options ? options.args : []) ? args : [args];
         queued = options.queued;
       }
 
-      // start iterating over the array
+      // Start iterating over the array.
       if (raiseIndex() !== false) {
-        // emit "start" event
+        // Emit "start" event.
         bench = result[index];
         eventProps.type = 'start';
         eventProps.target = bench;
         options.onStart.call(benches, Event(eventProps));
 
-        // end early if the suite was aborted in an "onStart" listener
+        // End early if the suite was aborted in an "onStart" listener.
         if (benches.aborted && benches.constructor == Suite && name == 'run') {
-          // emit "cycle" event
+          // Emit "cycle" event.
           eventProps.type = 'cycle';
           options.onCycle.call(benches, Event(eventProps));
-          // emit "complete" event
+          // Emit "complete" event.
           eventProps.type = 'complete';
           options.onComplete.call(benches, Event(eventProps));
         }
-        // else start
+        // Start method execution.
         else {
           if (isAsync(bench)) {
             delay(bench, execute);
@@ -1033,7 +1031,7 @@
         event = Event('abort');
         suite.emit(event);
         if (!event.cancelled || resetting) {
-          // avoid infinite recursion
+          // Avoid infinite recursion.
           calledBy.abortSuite = true;
           suite.reset();
           delete calledBy.abortSuite;
@@ -1107,7 +1105,7 @@
       var suite = this,
           result = new suite.constructor(_.assign({}, suite.options, options));
 
-      // copy own properties
+      // Copy own properties.
       _.forOwn(suite, function(value, key) {
         if (!_.has(result, key)) {
           result[key] = value && _.isFunction(value.clone)
@@ -1147,12 +1145,12 @@
           aborting = calledBy.abortSuite;
 
       if (suite.running && !aborting) {
-        // no worries, `resetSuite()` is called within `abortSuite()`
+        // No worries, `resetSuite()` is called within `abortSuite()`.
         calledBy.resetSuite = true;
         suite.abort();
         delete calledBy.resetSuite;
       }
-      // reset if the state has changed
+      // Reset if the state has changed.
       else if ((suite.aborted || suite.running) &&
           (suite.emit(event = Event('reset')), !event.cancelled)) {
         suite.aborted = suite.running = false;
@@ -1353,7 +1351,7 @@
         event = Event('abort');
         bench.emit(event);
         if (!event.cancelled || resetting) {
-          // avoid infinite recursion
+          // Avoid infinite recursion.
           calledBy.abort = true;
           bench.reset();
           delete calledBy.abort;
@@ -1387,10 +1385,10 @@
       var bench = this,
           result = new bench.constructor(_.assign({}, bench, options));
 
-      // correct the `options` object
+      // Correct the `options` object.
       result.options = _.assign({}, cloneDeep(bench.options), cloneDeep(options));
 
-      // copy own custom properties
+      // Copy own custom properties.
       _.forOwn(bench, function(value, key) {
         if (!_.has(result, key)) {
           result[key] = cloneDeep(value);
@@ -1410,7 +1408,7 @@
     function compare(other) {
       var bench = this;
 
-      // exit early if comparing the same benchmark
+      // Exit early if comparing the same benchmark.
       if (bench == other) {
         return 0;
       }
@@ -1441,7 +1439,7 @@
       function getZ(u) {
         return (u - ((size1 * size2) / 2)) / sqrt((size1 * size2 * (size1 + size2 + 1)) / 12);
       }
-      // reject the null hyphothesis the two samples come from the
+      // Reject the null hyphothesis the two samples come from the
       // same population (i.e. have the same median) if...
       if (size1 + size2 > 30) {
         // ...the z-stat is greater than 1.96 or less than -1.96
@@ -1449,7 +1447,7 @@
         zStat = getZ(u);
         return abs(zStat) > 1.96 ? (u == u1 ? 1 : -1) : 0;
       }
-      // ...the U value is less than or equal the critical U value
+      // ...the U value is less than or equal the critical U value.
       critical = maxSize < 5 || minSize < 3 ? 0 : uTable[maxSize][minSize - 3];
       return u <= critical ? (u == u1 ? 1 : -1) : 0;
     }
@@ -1463,7 +1461,7 @@
     function reset() {
       var bench = this;
       if (bench.running && !calledBy.abort) {
-        // no worries, `reset()` is called within `abort()`
+        // No worries, `reset()` is called within `abort()`.
         calledBy.reset = true;
         bench.abort();
         delete calledBy.reset;
@@ -1474,8 +1472,8 @@
           changes = [],
           queue = [];
 
-      // a non-recursive solution to check if properties have changed
-      // http://www.jslab.dk/articles/non.recursive.preorder.traversal.part4
+      // A non-recursive solution to check if properties have changed.
+      // For more information see http://www.jslab.dk/articles/non.recursive.preorder.traversal.part4.
       var data = {
         'destination': bench,
         'source': _.assign({}, cloneDeep(bench.constructor.prototype), cloneDeep(bench.options))
@@ -1487,34 +1485,34 @@
               destination = data.destination,
               currValue = destination[key];
 
-          // skip pseudo private properties like `_timerId` which could be a
-          // Java object in environments like RingoJS
+          // Skip pseudo private properties like `_timerId` which could be a
+          // Java object in environments like RingoJS.
           if (key.charAt(0) == '_') {
             return;
           }
           if (value && typeof value == 'object') {
             if (_.isArray(value)) {
-              // check if an array value has changed to a non-array value
+              // Check if an array value has changed to a non-array value.
               if (!_.isArray(currValue)) {
                 changed = currValue = [];
               }
-              // or has changed its length
+              // Check if an array has changed its length.
               if (currValue.length != value.length) {
                 changed = currValue = currValue.slice(0, value.length);
                 currValue.length = value.length;
               }
             }
-            // check if an object has changed to a non-object value
+            // Check if an object has changed to a non-object value.
             else if (!currValue || typeof currValue != 'object') {
               changed = currValue = {};
             }
-            // register a changed object
+            // Register a changed object.
             if (changed) {
               changes.push({ 'destination': destination, 'key': key, 'value': currValue });
             }
             queue.push({ 'destination': currValue, 'source': value });
           }
-          // register a changed primitive
+          // Register a changed primitive.
           else if (value !== currValue && !(value == null || _.isFunction(value))) {
             changes.push({ 'destination': destination, 'key': key, 'value': value });
           }
@@ -1522,7 +1520,7 @@
       }
       while ((data = queue[index++]));
 
-      // if changed emit the `reset` event and if it isn't cancelled reset the benchmark
+      // If changed emit the `reset` event and if it isn't cancelled reset the benchmark.
       if (changes.length && (bench.emit(event = Event('reset')), !event.cancelled)) {
         _.each(changes, function(data) {
           data.destination[data.key] = data.value;
@@ -1572,7 +1570,7 @@
           templateData = {},
           timers = [{ 'ns': timer.ns, 'res': max(0.0015, getRes('ms')), 'unit': 'ms' }];
 
-      // lazy define for hi-res timers
+      // Lazy define for hi-res timers.
       clock = function(clone) {
         var deferred;
 
@@ -1588,16 +1586,16 @@
             name = bench.name || (typeof id == 'number' ? '<Test #' + id + '>' : id),
             result = 0;
 
-        // init `minTime` if needed
+        // Init `minTime` if needed.
         clone.minTime = bench.minTime || (bench.minTime = bench.options.minTime = options.minTime);
 
-        // repair nanosecond timer
-        // (some Chrome builds erase the `ns` variable after millions of executions)
+        // Repair nanosecond timer.
+        // Some Chrome builds erase the `ns` variable after millions of executions.
         if (applet) {
           try {
             timer.ns.nanoTime();
           } catch(e) {
-            // use non-element to avoid issues with libs that augment them
+            // Use non-element to avoid issues with libs that augment them.
             timer.ns = new applet.Packages.nano;
           }
         }
@@ -1606,17 +1604,17 @@
         // to avoid potential engine optimizations enabled over the life of the test.
         var funcBody = deferred
           ? 'var d#=this,${fnArg}=d#,m#=d#.benchmark._original,f#=m#.fn,su#=m#.setup,td#=m#.teardown;' +
-            // when `deferred.cycles` is `0` then...
+            // When `deferred.cycles` is `0` then...
             'if(!d#.cycles){' +
-            // set `deferred.fn`
+            // set `deferred.fn`,
             'd#.fn=function(){var ${fnArg}=d#;if(typeof f#=="function"){try{${fn}\n}catch(e#){f#(d#)}}else{${fn}\n}};' +
-            // set `deferred.teardown`
+            // set `deferred.teardown`,
             'd#.teardown=function(){d#.cycles=0;if(typeof td#=="function"){try{${teardown}\n}catch(e#){td#()}}else{${teardown}\n}};' +
-            // execute the benchmark's `setup`
+            // execute the benchmark's `setup`,
             'if(typeof su#=="function"){try{${setup}\n}catch(e#){su#()}}else{${setup}\n};' +
-            // start timer
+            // start timer,
             't#.start(d#);' +
-            // execute `deferred.fn` and return a dummy object
+            // and then execute `deferred.fn` and return a dummy object.
             '}d#.fn();return{uid:"${uid}"}'
 
           : 'var r#,s#,m#=this,f#=m#.fn,i#=m#.count,n#=t#.ns;${setup}\n${begin};' +
@@ -1627,13 +1625,13 @@
 
         try {
           if (isEmpty) {
-            // Firefox may remove dead code from `Function#toString` results
-            // http://bugzil.la/536085
+            // Firefox may remove dead code from `Function#toString` results.
+            // For more information see http://bugzil.la/536085.
             throw new Error('The test "' + name + '" is empty. This may be the result of dead code removal.');
           }
           else if (!deferred) {
-            // pretest to determine if compiled code exits early, usually by a
-            // rogue `return` statement, by checking for a return object with the uid
+            // Pretest to determine if compiled code exits early, usually by a
+            // rogue `return` statement, by checking for a return object with the uid.
             bench.count = 1;
             compiled = decompilable && (compiled.call(bench, context, timer) || {}).uid == templateData.uid && compiled;
             bench.count = count;
@@ -1643,7 +1641,7 @@
           clone.error = e || new Error(String(e));
           bench.count = count;
         }
-        // fallback when a test exits early or errors during pretest
+        // Fallback when a test exits early or errors during pretest.
         if (!compiled && !deferred && !isEmpty) {
           funcBody = (
             stringable || (decompilable && !clone.error)
@@ -1656,7 +1654,7 @@
           compiled = createCompiled(bench, decompilable, deferred, funcBody);
 
           try {
-            // pretest one more time to check for errors
+            // Pretest one more time to check for errors.
             bench.count = 1;
             compiled.call(bench, context, timer);
             bench.count = count;
@@ -1669,7 +1667,7 @@
             }
           }
         }
-        // if no errors run the full test loop
+        // If no errors run the full test loop.
         if (!clone.error) {
           compiled = bench.compiled = clone.compiled = createCompiled(bench, decompilable, deferred, funcBody);
           result = compiled.call(deferred || bench, context, timer).elapsed;
@@ -1695,7 +1693,7 @@
           'teardown': decompilable ? getSource(bench.teardown) : interpolate('m#.teardown()')
         });
 
-        // use API of chosen timer
+        // Use API of chosen timer.
         if (timer.unit == 'ns') {
           if (timer.ns.nanoTime) {
             _.assign(templateData, {
@@ -1734,7 +1732,7 @@
             'end': interpolate('r#=(new n#().getTime()-s#)/1e3')
           });
         }
-        // define `timer` methods
+        // Define `timer` methods.
         timer.start = createFunction(
           interpolate('o#'),
           interpolate('var n#=this.ns,${begin};o#.elapsed=0;o#.timeStamp=s#')
@@ -1745,7 +1743,7 @@
           interpolate('var n#=this.ns,s#=o#.timeStamp,${end};o#.elapsed=r#')
         );
 
-        // create compiled test
+        // Create compiled test.
         return createFunction(
           interpolate('window,t#'),
           'var global = window, clearTimeout = global.clearTimeout, setTimeout = global.setTimeout;\n' +
@@ -1764,7 +1762,7 @@
             ns = timer.ns,
             sample = [];
 
-        // get average smallest measurable time
+        // Get average smallest measurable time.
         while (count--) {
           if (unit == 'us') {
             divisor = 1e6;
@@ -1795,8 +1793,8 @@
             begin = new ns().getTime();
             while (!(measured = new ns().getTime() - begin)) {}
           }
-          // check for broken timers (`nanoTime` may have issues)
-          // http://alivebutsleepy.srnet.cz/unreliable-system-nanotime/
+          // Check for broken timers (`nanoTime` may have issues).
+          // For more information see http://alivebutsleepy.srnet.cz/unreliable-system-nanotime/.
           if (measured > 0) {
             sample.push(measured);
           } else {
@@ -1804,7 +1802,7 @@
             break;
           }
         }
-        // convert to seconds
+        // Convert to seconds.
         return getMean(sample) / divisor;
       }
 
@@ -1812,25 +1810,25 @@
        * Interpolates a given template string.
        */
       function interpolate(string) {
-        // replaces all occurrences of `#` with a unique number and template tokens with content
+        // Replaces all occurrences of `#` with a unique number and template tokens with content.
         return _.template(string.replace(/\#/g, /\d+/.exec(templateData.uid)))(templateData);
       }
 
       /*----------------------------------------------------------------------*/
 
-      // detect nanosecond support from a Java applet
+      // Detect nanosecond support from a Java applet.
       _.each(doc && doc.applets || [], function(element) {
         return !(timer.ns = applet = 'nanoTime' in element && element);
       });
 
-      // check type in case Safari returns an object instead of a number
+      // Check type in case Safari returns an object instead of a number.
       try {
         if (typeof timer.ns.nanoTime() == 'number') {
           timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
         }
       } catch(e) {}
 
-      // detect Chrome's microsecond timer:
+      // Detect Chrome's microsecond timer:
       // enable benchmarking via the --enable-benchmarking command
       // line switch in at least Chrome 7 to use chrome.Interval
       try {
@@ -1839,27 +1837,27 @@
         }
       } catch(e) {}
 
-      // detect Node.js's nanosecond resolution timer available in Node.js >= 0.8
+      // Detect Node.js's nanosecond resolution timer available in Node.js >= 0.8.
       if (processObject && typeof (timer.ns = processObject.hrtime) == 'function') {
         timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
       }
-      // detect Wade Simmons' Node.js `microtime` module
+      // Detect Wade Simmons' Node.js `microtime` module.
       if (microtimeObject && typeof (timer.ns = microtimeObject.now) == 'function') {
         timers.push({ 'ns': timer.ns,  'res': getRes('us'), 'unit': 'us' });
       }
-      // pick timer with highest resolution
+      // Pick timer with highest resolution.
       timer = _.min(timers, 'res');
 
-      // remove unused applet
+      // Remove unused applet.
       if (timer.unit != 'ns' && applet) {
         applet = destroyElement(applet);
       }
-      // error if there are no working timers
+      // Error if there are no working timers.
       if (timer.res == Infinity) {
         throw new Error('Benchmark.js was unable to find a working timer.');
       }
-      // resolve time span required to achieve a percent uncertainty of at most 1%
-      // http://spiff.rit.edu/classes/phys273/uncert/uncert.html
+      // Resolve time span required to achieve a percent uncertainty of at most 1%.
+      // For more information see http://spiff.rit.edu/classes/phys273/uncert/uncert.html.
       options.minTime || (options.minTime = max(timer.res / 2 / 0.01, 0.05));
       return clock.apply(null, arguments);
     }
@@ -1907,7 +1905,7 @@
 
         if (bench.running) {
           if (type == 'start') {
-            // Note: `clone.minTime` prop is inited in `clock()`
+            // Note: `clone.minTime` prop is inited in `clock()`.
             clone.count = bench.initCount;
           }
           else {
@@ -1923,7 +1921,7 @@
             }
           }
         } else if (bench.aborted) {
-          // clear abort listeners to avoid triggering bench's abort/cycle again
+          // Clear abort listeners to avoid triggering bench's abort/cycle again.
           clone.events.abort.length = 0;
           clone.abort();
         }
@@ -1949,27 +1947,27 @@
             times = bench.times,
             varOf = function(sum, x) { return sum + pow(x - mean, 2); };
 
-        // exit early for aborted or unclockable tests
+        // Exit early for aborted or unclockable tests.
         if (done || clone.hz == Infinity) {
           maxedOut = !(size = sample.length = queue.length = 0);
         }
 
         if (!done) {
-          // sample mean (estimate of the population mean)
+          // Compute the sample mean (estimate of the population mean).
           mean = getMean(sample);
-          // sample variance (estimate of the population variance)
+          // Compute the sample variance (estimate of the population variance).
           variance = _.reduce(sample, varOf, 0) / (size - 1) || 0;
-          // sample standard deviation (estimate of the population standard deviation)
+          // Compute the sample standard deviation (estimate of the population standard deviation).
           sd = sqrt(variance);
-          // standard error of the mean (a.k.a. the standard deviation of the sampling distribution of the sample mean)
+          // Compute the standard error of the mean (a.k.a. the standard deviation of the sampling distribution of the sample mean).
           sem = sd / sqrt(size);
-          // degrees of freedom
+          // Compute the degrees of freedom.
           df = size - 1;
-          // critical value
+          // Compute the critical value.
           critical = tTable[Math.round(df) || 1] || tTable.infinity;
-          // margin of error
+          // Compute the margin of error.
           moe = sem * critical;
-          // relative margin of error
+          // Compute the relative margin of error.
           rme = (moe / mean) * 100 || 0;
 
           _.assign(bench.stats, {
@@ -1984,10 +1982,10 @@
           // Abort the cycle loop when the minimum sample size has been collected
           // and the elapsed time exceeds the maximum time allowed per benchmark.
           // We don't count cycle delays toward the max time because delays may be
-          // increased by browsers that clamp timeouts for inactive tabs.
-          // https://developer.mozilla.org/en/window.setTimeout#Inactive_tabs
+          // increased by browsers that clamp timeouts for inactive tabs. For more
+          // information see https://developer.mozilla.org/en/window.setTimeout#Inactive_tabs.
           if (maxedOut) {
-            // reset the `initCount` in case the benchmark is rerun
+            // Reset the `initCount` in case the benchmark is rerun.
             bench.initCount = initCount;
             bench.running = false;
             done = true;
@@ -1999,15 +1997,15 @@
             times.period = mean;
           }
         }
-        // if time permits, increase sample size to reduce the margin of error
+        // If time permits, increase sample size to reduce the margin of error.
         if (queue.length < 2 && !maxedOut) {
           enqueue();
         }
-        // abort the `invoke` cycle when done
+        // Abort the `invoke` cycle when done.
         event.aborted = done;
       }
 
-      // init queue and begin
+      // Init queue and begin.
       enqueue();
       invoke(queue, {
         'name': 'run',
@@ -2047,9 +2045,9 @@
           count = clone.count,
           times = clone.times;
 
-      // continue, if not aborted between cycles
+      // Continue, if not aborted between cycles.
       if (clone.running) {
-        // `minTime` is set to `Benchmark.options.minTime` in `clock()`
+        // `minTime` is set to `Benchmark.options.minTime` in `clock()`.
         cycles = ++clone.cycles;
         clocked = deferred ? deferred.elapsed : clock(clone);
         minTime = clone.minTime;
@@ -2067,41 +2065,41 @@
         }
       }
 
-      // continue, if not errored
+      // Continue, if not errored.
       if (clone.running) {
-        // time taken to complete last test cycle
+        // Compute the time taken to complete last test cycle.
         bench.times.cycle = times.cycle = clocked;
-        // seconds per operation
+        // Compute the seconds per operation.
         period = bench.times.period = times.period = clocked / count;
-        // ops per second
+        // Compute the ops per second.
         bench.hz = clone.hz = 1 / period;
-        // avoid working our way up to this next time
+        // Avoid working our way up to this next time.
         bench.initCount = clone.initCount = count;
-        // do we need to do another cycle?
+        // Do we need to do another cycle?
         clone.running = clocked < minTime;
 
         if (clone.running) {
-          // tests may clock at `0` when `initCount` is a small number,
-          // to avoid that we set its count to something a bit higher
+          // Tests may clock at `0` when `initCount` is a small number,
+          // to avoid that we set its count to something a bit higher.
           if (!clocked && (divisor = divisors[clone.cycles]) != null) {
             count = floor(4e6 / divisor);
           }
-          // calculate how many more iterations it will take to achive the `minTime`
+          // Calculate how many more iterations it will take to achive the `minTime`.
           if (count <= clone.count) {
             count += Math.ceil((minTime - clocked) / period);
           }
           clone.running = count != Infinity;
         }
       }
-      // should we exit early?
+      // Should we exit early?
       event = Event('cycle');
       clone.emit(event);
       if (event.aborted) {
         clone.abort();
       }
-      // figure out what to do next
+      // Figure out what to do next.
       if (clone.running) {
-        // start a new cycle
+        // Start a new cycle.
         clone.count = count;
         if (deferred) {
           clone.compiled.call(deferred, context, timer);
@@ -2112,12 +2110,12 @@
         }
       }
       else {
-        // fix TraceMonkey bug associated with clock fallbacks
-        // http://bugzil.la/509069
+        // Fix TraceMonkey bug associated with clock fallbacks.
+        // For more information see http://bugzil.la/509069.
         if (support.browser) {
           runScript(uid + '=1;delete ' + uid);
         }
-        // done
+        // We're done.
         clone.emit('complete');
       }
     }
@@ -2142,7 +2140,7 @@
       var bench = this,
           event = Event('start');
 
-      // set `running` to `false` so `reset()` won't call `abort()`
+      // Set `running` to `false` so `reset()` won't call `abort()`.
       bench.running = false;
       bench.reset();
       bench.running = true;
@@ -2154,7 +2152,7 @@
       if (!event.cancelled) {
         options = { 'async': ((options = options && options.async) == null ? bench.async : options) && support.timeout };
 
-        // for clones created within `compute()`
+        // For clones created within `compute()`.
         if (bench._original) {
           if (bench.defer) {
             Deferred(bench);
@@ -2162,7 +2160,7 @@
             cycle(bench, options);
           }
         }
-        // for original benchmarks
+        // For original benchmarks.
         else {
           compute(bench, options);
         }
@@ -2354,7 +2352,7 @@
       'support': support
     });
 
-    // Add lodash methods to Benchmark
+    // Add lodash methods to Benchmark.
     _.each(['each', 'forEach', 'forOwn', 'has', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
       Benchmark[methodName] = _[methodName];
     });
@@ -2793,7 +2791,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // expose Deferred, Event, and Suite
+    // Expose Deferred, Event, and Suite.
     _.assign(Benchmark, {
       'Deferred': Deferred,
       'Event': Event,
@@ -2802,7 +2800,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // add lodash methods as Suite methods
+    // Add lodash methods as Suite methods.
     _.each(['each', 'forEach', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
       var func = _[methodName];
       Suite.prototype[methodName] = function() {
@@ -2812,8 +2810,8 @@
       };
     });
 
-    // avoid array-like object bugs with `Array#shift` and `Array#splice`
-    // in Firefox < 10 and IE < 9
+    // Avoid array-like object bugs with `Array#shift` and `Array#splice`
+    // in Firefox < 10 and IE < 9.
     if (!_.support.spliceObjects) {
       _.each(['pop', 'shift', 'splice'], function(methodName) {
         var func = arrayRef[methodName];
@@ -2829,8 +2827,8 @@
         };
       });
     }
-    // avoid buggy `Array#unshift` in IE < 8 which doesn't return the new
-    // length of the array
+    // Avoid buggy `Array#unshift` in IE < 8 which doesn't return the new
+    // length of the array.
     if (!support.unshiftResult) {
       Suite.prototype.unshift = function() {
         var value = this;
@@ -2843,10 +2841,10 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // export Benchmark
-  // some AMD build optimizers, like r.js, check for condition patterns like the following:
+  // Export Benchmark.
+  // Some AMD build optimizers, like r.js, check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // define as an anonymous module so, through path mapping, it can be aliased
+    // Define as an anonymous module so, through path mapping, it can be aliased.
     define(['lodash', 'platform'], function(_, platform) {
       return runInContext({
         '_': _,
@@ -2857,19 +2855,19 @@
   else {
     var Benchmark = runInContext();
 
-    // check for `exports` after `define` in case a build optimizer adds an `exports` object
+    // Check for `exports` after `define` in case a build optimizer adds an `exports` object.
     if (freeExports && freeModule) {
-      // in Node.js or RingoJS
+      // Export for Node.js or RingoJS.
       if (moduleExports) {
         (freeModule.exports = Benchmark).Benchmark = Benchmark;
       }
-      // in Narwhal or Rhino -require
+      // Export for Narwhal or Rhino -require.
       else {
         freeExports.Benchmark = Benchmark;
       }
     }
     else {
-      // in a browser or Rhino
+      // Export for a browser or Rhino.
       root.Benchmark = Benchmark;
     }
   }

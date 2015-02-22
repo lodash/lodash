@@ -51,6 +51,7 @@
 						'0'
 					],
 					'flatten': [
+						'Flattens empty arrays',
 						'can flatten nested arrays',
 						'can shallowly flatten nested arrays',
 						'works on an arguments object',
@@ -83,6 +84,9 @@
 					]
 				},
 				'Chaining': {
+					'pop': true,
+					'shift': true,
+					'splice': true,
 					'select/reject/sortBy': [
 						'Died on test #1'
 					],
@@ -97,16 +101,14 @@
 					'filter': [
 						'OO-filter'
 					],
+					'invoke': [
+						'handles null & undefined'
+					],
 					'map': [
 						'OO-style doubled numbers'
 					],
-					'reduce': [
-						'handles a null (without initial value) properly',
-						'throws an error for empty arrays with no initial value'
-					],
-					'reduceRight': [
-						'handles a null (without initial value) properly',
-						'throws an error for empty arrays with no initial value'
+					'Resistant to collection length and properties changing while iterating': [
+						'Died on test #50'
 					]
 				},
 				'Functions': {
@@ -127,13 +129,22 @@
 					'debounce asap': true
 				},
 				'Objects': {
-					'isEqual': [
-						'Died on test #60',
-						'Died on test #63'
+					'#1929 Typed Array constructors are functions': true,
+					'allKeys': true,
+					'extendOwn': true,
+					'mapObject': true,
+					'matcher': true,
+					'matcher ': true,
+					'extend': [
+						'extend copies all properties from source'
 					],
 					'isFinite': [
 						'Numeric strings are numbers',
 						'Number instances can be finite'
+					],
+					'isMatch': [
+						'inherited and own properties are checked on the test object',
+						'doesnt falsey match constructor on undefined/null'
 					],
 					'keys': [
 						'is not fooled by sparse arrays; see issue #95',
@@ -145,9 +156,6 @@
 					]
 				},
 				'Utility': {
-					'now': [
-						'Produces the correct time in milliseconds'
-					],
 					'_.templateSettings.variable': [
 						'"x"'
 					],

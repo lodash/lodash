@@ -1,6 +1,8 @@
 (function() {
+  var _ = typeof require == 'function' ? require('..') : window._;
 
-  module('Functions');
+  QUnit.module('Functions');
+  QUnit.config.asyncRetries = 3;
 
   test('bind', function() {
     var context = {name : 'moe'};
@@ -12,7 +14,9 @@
     equal(bound(), 'name: moe', 'can do OO-style binding');
 
     bound = _.bind(func, null, 'curly');
-    equal(bound(), 'name: curly', 'can bind without specifying a context');
+    var result = bound();
+    // Work around a PhantomJS bug when applying a function with null|undefined.
+    ok(result === 'name: curly' || result === 'name: ' + window.name, 'can bind without specifying a context');
 
     func = function(salutation, name) { return salutation + ': ' + name; };
     func = _.bind(func, this, 'hello');
@@ -40,7 +44,7 @@
     equal(boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
     ok(newBoundf instanceof F, 'a bound instance is an instance of the original function');
 
-    raises(function() { _.bind('notafunction'); }, TypeError, 'throws an error when binding to a non-function');
+    throws(function() { _.bind('notafunction'); }, TypeError, 'throws an error when binding to a non-function');
   });
 
   test('partial', function() {
@@ -59,6 +63,20 @@
 
     func = _.partial(function() { return typeof arguments[2]; }, _, 'b', _, 'd');
     equal(func('a'), 'undefined', 'unfilled placeholders are undefined');
+
+    // passes context
+    function MyWidget(name, options) {
+      this.name = name;
+      this.options = options;
+    }
+    MyWidget.prototype.get = function() {
+      return this.name;
+    };
+    var MyWidgetWithCoolOpts = _.partial(MyWidget, _, {a: 1});
+    var widget = new MyWidgetWithCoolOpts('foo');
+    ok(widget instanceof MyWidget, 'Can partially bind a constructor');
+    equal(widget.get(), 'foo', 'keeps prototype');
+    deepEqual(widget.options, {a: 1});
   });
 
   test('bindAll', function() {
@@ -81,9 +99,9 @@
       sayLast : function() { return this.sayHi(_.last(arguments)); }
     };
 
-    raises(function() { _.bindAll(moe); }, Error, 'throws an error for bindAll with no functions named');
-    raises(function() { _.bindAll(moe, 'sayBye'); }, TypeError, 'throws an error for bindAll if the given key is undefined');
-    raises(function() { _.bindAll(moe, 'name'); }, TypeError, 'throws an error for bindAll if the given key is not a function');
+    throws(function() { _.bindAll(moe); }, Error, 'throws an error for bindAll with no functions named');
+    throws(function() { _.bindAll(moe, 'sayBye'); }, TypeError, 'throws an error for bindAll if the given key is undefined');
+    throws(function() { _.bindAll(moe, 'name'); }, TypeError, 'throws an error for bindAll if the given key is not a function');
 
     _.bindAll(moe, 'sayHi', 'sayLast');
     curly.sayHi = moe.sayHi;
@@ -548,6 +566,16 @@
   test('iteratee', function() {
     var identity = _.iteratee();
     equal(identity, _.identity, '_.iteratee is exposed as an external function.');
+
+    function fn() {
+      return arguments;
+    }
+    _.each([_.iteratee(fn), _.iteratee(fn, {})], function(cb) {
+      equal(cb().length, 0);
+      deepEqual(_.toArray(cb(1, 2, 3)), _.range(1, 4));
+      deepEqual(_.toArray(cb(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)), _.range(1, 11));
+    });
+    
   });
 
 }());

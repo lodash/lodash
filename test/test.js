@@ -3212,17 +3212,17 @@
   (function() {
     asyncTest('should debounce a function', 2, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0,
-            debounced = _.debounce(function() { count++; }, 32);
+        var callCount = 0,
+            debounced = _.debounce(function() { callCount++; }, 32);
 
         debounced();
         debounced();
         debounced();
 
-        strictEqual(count, 0);
+        strictEqual(callCount, 0);
 
         setTimeout(function() {
-          strictEqual(count, 1);
+          strictEqual(callCount, 1);
           QUnit.start();
         }, 96);
       }
@@ -3273,17 +3273,17 @@
 
     asyncTest('should apply default options correctly', 2, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
+        var callCount = 0;
 
         var debounced = _.debounce(function(value) {
-          count++;
+          callCount++;
           return value;
         }, 32, {});
 
         strictEqual(debounced('x'), undefined);
 
         setTimeout(function() {
-          strictEqual(count, 1);
+          strictEqual(callCount, 1);
           QUnit.start();
         }, 64);
       }
@@ -3296,11 +3296,11 @@
     asyncTest('should support a `leading` option', 7, function() {
       if (!(isRhino && isModularize)) {
         var withLeading,
-            counts = [0, 0, 0];
+            callCounts = [0, 0, 0];
 
         _.each([true, { 'leading': true }], function(options, index) {
           var debounced = _.debounce(function(value) {
-            counts[index]++;
+            callCounts[index]++;
             return value;
           }, 32, options);
 
@@ -3316,19 +3316,19 @@
         });
 
         var withLeadingAndTrailing = _.debounce(function() {
-          counts[2]++;
+          callCounts[2]++;
         }, 32, { 'leading': true });
 
         withLeadingAndTrailing();
         withLeadingAndTrailing();
 
-        strictEqual(counts[2], 1);
+        strictEqual(callCounts[2], 1);
 
         setTimeout(function() {
-          deepEqual(counts, [1, 1, 2]);
+          deepEqual(callCounts, [1, 1, 2]);
 
           withLeading('x');
-          strictEqual(counts[1], 2);
+          strictEqual(callCounts[1], 2);
 
           QUnit.start();
         }, 64);
@@ -3403,16 +3403,16 @@
 
     asyncTest('should cancel `maxDelayed` when `delayed` is invoked', 1, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
+        var callCount = 0;
 
         var debounced = _.debounce(function() {
-          count++;
+          callCount++;
         }, 32, { 'maxWait': 64 });
 
         debounced();
 
         setTimeout(function() {
-          strictEqual(count, 1);
+          strictEqual(callCount, 1);
           QUnit.start();
         }, 128);
       }
@@ -3425,13 +3425,13 @@
     asyncTest('should invoke the `trailing` call with the correct arguments and `this` binding', 2, function() {
       if (!(isRhino && isModularize)) {
         var actual,
-            count = 0,
+            callCount = 0,
             object = {};
 
         var debounced = _.debounce(function(value) {
           actual = [this];
           push.apply(actual, arguments);
-          return ++count != 2;
+          return ++callCount != 2;
         }, 32, { 'leading': true, 'maxWait': 64 });
 
         while (true) {
@@ -3440,7 +3440,7 @@
           }
         }
         setTimeout(function() {
-          strictEqual(count, 2);
+          strictEqual(callCount, 2);
           deepEqual(actual, [object, 'a']);
           QUnit.start();
         }, 64);
@@ -13638,18 +13638,18 @@
   (function() {
     asyncTest('should throttle a function', 2, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
-        var throttled = _.throttle(function() { count++; }, 32);
+        var callCount = 0,
+            throttled = _.throttle(function() { callCount++; }, 32);
 
         throttled();
         throttled();
         throttled();
 
-        var lastCount = count;
-        ok(count > 0);
+        var lastCount = callCount;
+        ok(callCount > 0);
 
         setTimeout(function() {
-          ok(count > lastCount);
+          ok(callCount > lastCount);
           QUnit.start();
         }, 64);
       }
@@ -13718,14 +13718,14 @@
 
     asyncTest('should not trigger a trailing call when invoked once', 2, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0,
-            throttled = _.throttle(function() { count++; }, 32);
+        var callCount = 0,
+            throttled = _.throttle(function() { callCount++; }, 32);
 
         throttled();
-        strictEqual(count, 1);
+        strictEqual(callCount, 1);
 
         setTimeout(function() {
-          strictEqual(count, 1);
+          strictEqual(callCount, 1);
           QUnit.start();
         }, 64);
       }
@@ -13738,19 +13738,19 @@
     _.times(2, function(index) {
       asyncTest('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), 1, function() {
         if (!(isRhino && isModularize)) {
-          var count = 0,
+          var callCount = 0,
               limit = (argv || isPhantom) ? 1000 : 320,
               options = index ? { 'leading': false } : {};
 
           var throttled = _.throttle(function() {
-            count++;
+            callCount++;
           }, 32, options);
 
           var start = +new Date;
           while ((new Date - start) < limit) {
             throttled();
           }
-          var actual = count > 1;
+          var actual = callCount > 1;
 
           setTimeout(function() {
             ok(actual);
@@ -13766,10 +13766,10 @@
 
     asyncTest('should apply default options correctly', 3, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
+        var callCount = 0;
 
         var throttled = _.throttle(function(value) {
-          count++;
+          callCount++;
           return value;
         }, 32, {});
 
@@ -13777,7 +13777,7 @@
         strictEqual(throttled('b'), 'a');
 
         setTimeout(function() {
-          strictEqual(count, 2);
+          strictEqual(callCount, 2);
           QUnit.start();
         }, 256);
       }
@@ -13844,10 +13844,10 @@
 
     asyncTest('should not update `lastCalled`, at the end of the timeout, when `trailing` is `false`', 1, function() {
       if (!(isRhino && isModularize)) {
-        var count = 0;
+        var callCount = 0;
 
         var throttled = _.throttle(function() {
-          count++;
+          callCount++;
         }, 64, { 'trailing': false });
 
         throttled();
@@ -13859,7 +13859,7 @@
         }, 96);
 
         setTimeout(function() {
-          ok(count > 1);
+          ok(callCount > 1);
           QUnit.start();
         }, 192);
       }

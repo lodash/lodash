@@ -13889,6 +13889,28 @@
       ok(pass);
     });
 
+    asyncTest('_.' + methodName + ' should have a default `wait` of `0`', 1, function() {
+      if (!(isRhino && isModularize)) {
+        var callCount = 0;
+
+        var funced = func(function() {
+          callCount++;
+        });
+
+        funced();
+
+        setTimeout(function() {
+          funced();
+          strictEqual(callCount, isDebounce ? 1 : 2);
+          QUnit.start();
+        }, 32);
+      }
+      else {
+        skipTest();
+        QUnit.start();
+      }
+    });
+
     asyncTest('_.' + methodName + ' should call `func` with the correct `this` binding', 1, function() {
       if (!(isRhino && isModularize)) {
         var object = {

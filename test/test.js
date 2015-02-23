@@ -3971,17 +3971,18 @@
       deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
+    test('should work in a lazy chain sequence', 3, function() {
       if (!isNpm) {
         var wrapped = _(array).dropWhile(function(num) {
           return num < 3;
         });
 
-        ok(wrapped instanceof _);
         deepEqual(wrapped.value(), [3, 4]);
+        deepEqual(wrapped.reverse().value(), [4, 3]);
+        strictEqual(wrapped.last(), 4);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
 
@@ -4856,17 +4857,18 @@
       deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
+    test('should work in a lazy chain sequence', 3, function() {
       if (!isNpm) {
         var wrapped = _(array).takeWhile(function(num) {
           return num < 3;
         });
 
-        ok(wrapped instanceof _);
         deepEqual(wrapped.value(), [1, 2]);
+        deepEqual(wrapped.reverse().value(), [2, 1]);
+        strictEqual(wrapped.last(), 2);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
 

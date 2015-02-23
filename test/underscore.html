@@ -87,12 +87,6 @@
 					'pop': true,
 					'shift': true,
 					'splice': true,
-					'select/reject/sortBy': [
-						'Died on test #1'
-					],
-					'select/reject/sortBy in functional style': [
-						'Died on test #1'
-					],
 					'reverse/concat/unshift/pop/map': [
 						'can chain together array functions.'
 					]
@@ -113,7 +107,6 @@
 				},
 				'Functions': {
 					'bind': [
-						'can bind without specifying a context',
 						'Died on test #2'
 					],
 					'bindAll': [
@@ -160,26 +153,17 @@
 						'"x"'
 					],
 					'times': [
-						'Died on test #1',
 						'works as a wrapper'
-					],
-					'uniqueId': [
-						'Died on test #1'
 					]
 				}
 			};
 
 			// only excuse in Sauce Labs (buggy Safari and timers)
 			if (!ui.isSauceLabs) {
-				QUnit.config.excused.Utility.times.shift();
-				delete QUnit.config.excused.Chaining['select/reject/sortBy'];
-				delete QUnit.config.excused.Chaining['select/reject/sortBy in functional style'];
 				delete QUnit.config.excused.Functions['throttle repeatedly with results'];
 				delete QUnit.config.excused.Functions['more throttle does not trigger leading call when leading is set to false'];
 				delete QUnit.config.excused.Functions['throttle does not trigger trailing call when trailing is set to false'];
 				delete QUnit.config.excused.Functions['debounce asap'];
-				delete QUnit.config.excused.Objects.isEqual;
-				delete QUnit.config.excused.Utility.uniqueId;
 			}
 			// load test scripts
 			document.write(ui.urlParams.loader != 'none'

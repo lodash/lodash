@@ -1758,7 +1758,7 @@
             .concat([2, 1])
             .unshift(5)
             .tap(function(value) { value.pop(); })
-            .map(function(n) { return n * n; })
+            .map(square)
             .value();
 
           deepEqual(actual,[25, 16, 9, 4]);
@@ -3908,7 +3908,7 @@
       if (!isNpm) {
         var args;
 
-        _(array).map(function(n) { return n * n; }).dropRightWhile(function() {
+        _(array).map(square).dropRightWhile(function() {
           args = slice.call(arguments);
         }).value();
 
@@ -3989,7 +3989,7 @@
       if (!isNpm) {
         var args;
 
-        _(array).map(function(n) { return n * n; }).dropWhile(function() {
+        _(array).map(square).dropWhile(function() {
           args = slice.call(arguments);
         }).value();
 
@@ -4794,7 +4794,7 @@
       if (!isNpm) {
         var args;
 
-        _(array).map(function(n) { return n * n; }).takeRightWhile(function() {
+        _(array).map(square).takeRightWhile(function() {
           args = slice.call(arguments);
         }).value();
 
@@ -4874,7 +4874,7 @@
       if (!isNpm) {
         var args;
 
-        _(array).map(function(n) { return n * n; }).takeWhile(function() {
+        _(array).map(square).takeWhile(function() {
           args = slice.call(arguments);
         }).value();
 

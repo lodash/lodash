@@ -21,7 +21,7 @@ function baseDifference(array, values) {
   var index = -1,
       indexOf = baseIndexOf,
       isCommon = true,
-      cache = isCommon && values.length >= 200 && createCache(values),
+      cache = (isCommon && values.length >= 200) ? createCache(values) : null,
       valuesLength = values.length;
 
   if (cache) {

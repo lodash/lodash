@@ -26,7 +26,7 @@ var nativeMax = Math.max;
  * @example
  *
  * _.indexOf([1, 2, 1, 2], 2);
- * // => 2
+ * // => 1
  *
  * // using `fromIndex`
  * _.indexOf([1, 2, 1, 2], 2, 2);

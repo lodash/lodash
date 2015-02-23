@@ -34,7 +34,7 @@ function intersection() {
     var value = arguments[argsIndex];
     if (isArray(value) || isArguments(value)) {
       args.push(value);
-      caches.push(isCommon && value.length >= 120 && createCache(argsIndex && value));
+      caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
     }
   }
   argsLength = args.length;

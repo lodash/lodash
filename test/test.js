@@ -833,6 +833,18 @@
       }
     });
 
+    test('should return `false` for non-iteratee calls', 4, function() {
+      if (func) {
+        strictEqual(func(2, 0, array), false);
+        strictEqual(func(1, 1.1, array), false);
+        strictEqual(func(1, 0, { 'length': MAX_SAFE_INTEGER + 1 }), false);
+        strictEqual(func(1, 'b', object), false);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
     test('should work with `NaN` values', 2, function() {
       if (func) {
         strictEqual(func(NaN, 0, [NaN]), true);
@@ -843,15 +855,17 @@
       }
     });
 
-    test('should return `false` for non-iteratee calls', 4, function() {
+    test('should not error when `index` is an object without a `toString` method', 1, function() {
       if (func) {
-        strictEqual(func(2, 0, array), false);
-        strictEqual(func(1, 1.1, array), false);
-        strictEqual(func(1, 0, { 'length': MAX_SAFE_INTEGER + 1 }), false);
-        strictEqual(func(1, 'b', object), false);
+        try {
+          var actual = func(1, { 'toString': null }, [1]);
+        } catch(e) {
+          var message = e.message;
+        }
+        strictEqual(actual, false, message || '');
       }
       else {
-        skipTest(4);
+        skipTest();
       }
     });
   }());

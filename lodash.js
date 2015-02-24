@@ -1,9 +1,9 @@
 /**
  * @license
- * lodash 3.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -38,7 +38,7 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.3.0';
+var VERSION = '3.3.1';
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_FILTER_FLAG = 0,
@@ -320,15 +320,13 @@ arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'],
 
 // Add `LazyWrapper` methods that accept an `iteratee` value.
 arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
-  var isFilter = index == LAZY_FILTER_FLAG,
-      isWhile = index == LAZY_WHILE_FLAG;
+  var isFilter = index == LAZY_FILTER_FLAG || index == LAZY_WHILE_FLAG;
 
   LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
     var result = this.clone(),
-        filtered = result.__filtered__,
         iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
-    result.__filtered__ = filtered || isFilter || (isWhile && result.__dir__ < 0);
+    result.__filtered__ = result.__filtered__ || isFilter;
     iteratees.push({ 'iteratee': baseCallback(iteratee, thisArg, 3), 'type': index });
     return result;
   };
@@ -395,9 +393,14 @@ LazyWrapper.prototype.compact = function() {
 };
 
 LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
-  var done;
+  var done,
+      lastIndex,
+      isRight = this.__dir__ < 0;
+
   predicate = baseCallback(predicate, thisArg, 3);
   return this.filter(function(value, index, array) {
+    done = done && (isRight ? index < lastIndex : index > lastIndex);
+    lastIndex = index;
     return done || (done = !predicate(value, index, array));
   });
 };

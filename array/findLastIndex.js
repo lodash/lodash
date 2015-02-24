@@ -37,7 +37,7 @@ import baseCallback from '../internal/baseCallback';
  * // => 2
  *
  * // using the `_.matches` callback shorthand
- * _.findLastIndex(users, { user': 'barney', 'active': true });
+ * _.findLastIndex(users, { 'user': 'barney', 'active': true });
  * // => 0
  *
  * // using the `_.matchesProperty` callback shorthand

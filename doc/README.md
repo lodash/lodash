@@ -500,7 +500,7 @@ var users = [
 ];
 
 // using the `_.matches` callback shorthand
-_.pluck(_.dropRightWhile(users, { 'user': pebbles, 'active': false }), 'user');
+_.pluck(_.dropRightWhile(users, { 'user': 'pebbles', 'active': false }), 'user');
 // => ['barney', 'fred']
 
 // using the `_.matchesProperty` callback shorthand

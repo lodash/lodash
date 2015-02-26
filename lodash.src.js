@@ -11191,8 +11191,13 @@
      * // => 12
      */
     function sum(array) {
-      if (!isArray(array) || array.length === 0) return NaN;
-      return arrayReduce(array, add, 0);
+      var length = array ? array.length : 0,
+          result = 0;
+
+      while (length--) {
+        result += array[length];
+      }
+      return result;
     }
 
     /*------------------------------------------------------------------------*/

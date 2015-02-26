@@ -11587,6 +11587,7 @@
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName],
+          checkIteratee = /(?:filter|map|reject|While)/.test(methodName),
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
@@ -11594,9 +11595,14 @@
             args = arguments,
             chainAll = this.__chain__,
             isHybrid = !!this.__actions__.length,
-            isLazy = value instanceof LazyWrapper,
-            onlyLazy = isLazy && !isHybrid;
+            isLazy = value instanceof LazyWrapper;
 
+        if (isLazy && checkIteratee) {
+          // avoid lazy use if the iteratee has a `length` other than `1`
+          var iteratee = args[0];
+          isLazy = !(typeof iteratee == 'function' && iteratee.length != 1);
+        }
+        var onlyLazy = isLazy && !isHybrid;
         if (retUnwrapped && !chainAll) {
           return onlyLazy
             ? func.call(value)

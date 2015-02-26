@@ -962,6 +962,24 @@
     test('should add two numbers together', 1, function() {
       equal(_.add(6, 4), 10);
     });
+
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
+      if (!isNpm) {
+        strictEqual(_(1).add(2), 3);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(1).chain().add(2) instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1248,9 +1266,18 @@
       }
     });
 
-    test('should return an unwrapped value when chaining', 1, function() {
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_(_.constant('x')).attempt(), 'x');
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(_.constant('x')).chain().attempt() instanceof _);
       }
       else {
         skipTest();
@@ -1643,9 +1670,18 @@
       strictEqual(func({ 'toString': _.constant(string) }), converted);
     });
 
-    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+    test('`_.' + methodName + '` should return an unwrapped value implicitly when chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_('foo bar')[methodName](), converted);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.' + methodName + '` should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_('foo bar').chain()[methodName]() instanceof _);
       }
       else {
         skipTest();
@@ -1690,9 +1726,18 @@
       strictEqual(_.capitalize(' fred'), ' fred');
     });
 
-    test('should return an unwrapped value when chaining', 1, function() {
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_('fred').capitalize(), 'Fred');
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_('fred').chain().capitalize() instanceof _);
       }
       else {
         skipTest();
@@ -4559,9 +4604,18 @@
       deepEqual(actual, [1, 4, 7]);
     });
 
-    test('should return an unwrapped value when chaining', 1, function() {
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_(array).first(), 1);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).chain().first() instanceof _);
       }
       else {
         skipTest();
@@ -5308,7 +5362,7 @@
           func = _[methodName],
           isBaseEach = methodName == '_baseEach';
 
-      test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
+      test('`_.' + methodName + '` should return a wrapped value when implicitly chaining', 1, function() {
         if (!(isBaseEach || isNpm)) {
           var wrapped = _(array)[methodName](_.noop);
           ok(wrapped instanceof _);
@@ -5323,10 +5377,20 @@
       var array = [1, 2, 3],
           func = _[methodName];
 
-      test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+      test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', 1, function() {
         if (!isNpm) {
           var wrapped = _(array)[methodName](_.noop);
           ok(!(wrapped instanceof _));
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test('`_.' + methodName + '` should return a wrapped value when implicitly chaining', 1, function() {
+        if (!isNpm) {
+          var wrapped = _(array).chain()[methodName](_.noop);
+          ok(wrapped instanceof _);
         }
         else {
           skipTest();
@@ -5992,9 +6056,18 @@
         });
       });
 
-      test('should work with ' + key + ' and return an unwrapped value when chaining', 1, function() {
+      test('should work with ' + key + ' and return an unwrapped value implicitly when chaining', 1, function() {
         if (!isNpm) {
           strictEqual(_(collection).includes(3), true);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test('should work with ' + key + ' and return a wrapped value when explicitly chaining', 1, function() {
+        if (!isNpm) {
+          ok(_(collection).chain().includes(3) instanceof _);
         }
         else {
           skipTest();
@@ -8776,9 +8849,18 @@
       deepEqual(actual, [3, 6, 9]);
     });
 
-    test('should return an unwrapped value when chaining', 1, function() {
+    test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_(array).last(), 3);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).chain().last() instanceof _);
       }
       else {
         skipTest();
@@ -11865,13 +11947,18 @@
       strictEqual(_.reduce(object, _.noop), undefined);
     });
 
-    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+    test('`_.' + methodName + '` should return an unwrapped value when implicityly chaining', 1, function() {
       if (!isNpm) {
-        var actual = _(array)[methodName](function(sum, num) {
-          return sum + num;
-        });
+        strictEqual(_(array)[methodName](add), 6);
+      }
+      else {
+        skipTest();
+      }
+    });
 
-        strictEqual(actual, 6);
+    test('`_.' + methodName + '` should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).chain()[methodName](add) instanceof _);
       }
       else {
         skipTest();
@@ -12337,6 +12424,15 @@
       if (!isNpm) {
         var actual = _(array).sample();
         ok(_.includes(array, actual));
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).chain().sample() instanceof _);
       }
       else {
         skipTest();
@@ -14510,12 +14606,22 @@
       deepEqual(actual, [trimmed, trimmed, trimmed]);
     });
 
-    test('`_.' + methodName + '` should return an unwrapped value when chaining', 1, function() {
+    test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         var string = whitespace + 'a b c' + whitespace,
             expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
         strictEqual(_(string)[methodName](), expected);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.' + methodName + '` should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        var string = whitespace + 'a b c' + whitespace;
+        ok(_(string).chain()[methodName]() instanceof _);
       }
       else {
         skipTest();
@@ -15609,7 +15715,6 @@
 
   (function() {
     var funcs = [
-      'add',
       'clone',
       'contains',
       'every',

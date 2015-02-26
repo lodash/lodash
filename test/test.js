@@ -956,6 +956,16 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.add');
+
+  (function() {
+    test('should add two numbers together', 1, function() {
+      equal(_.add(6, 4), 10);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.after');
 
   (function() {
@@ -13080,6 +13090,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.sum');
+
+  (function() {
+    test('should return the sum of an array of numbers', 1, function() {
+      equal(_.sum([6, 4, 2]), 12);
+    });
+
+    test('should return `0` when passing empty `array` values', 1, function() {
+      var expected = _.map(empties, _.constant(0));
+
+      var actual = _.map(empties, function(value) {
+        return _.sum(value);
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.support');
 
   (function() {
@@ -15098,28 +15128,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.add');
-
-  (function() {
-    test('should add two numbers together', 1, function() {
-      var actual = _.add(6, 4);
-      equal(actual, 10);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.sum');
-
-  (function() {
-    test('should return the sum of an array of numbers', 1, function() {
-      var actual = _.sum([6, 4, 2]);
-      equal(actual, 12);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash(...).commit');
 
   (function() {
@@ -15774,33 +15782,6 @@
         strictEqual(func(null), '');
         strictEqual(func(undefined), '');
         strictEqual(func(''), '');
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('"Math" category methods');
-
-  (function() {
-    var mathArrayMethods = [
-      'sum'
-    ];
-
-    _.each(mathArrayMethods, function(methodName) {
-      var func = _[methodName];
-
-      test('`_.' + methodName + '` should return NaN when passing a value other than an array', 5, function() {
-        var values = [undefined, null, 0, 'foo', {}];
-        _.each(values, function(value) {
-          var actual = _[methodName](value);
-          deepEqual(actual, NaN);
-        });
-      });
-
-      test('`_.' + methodName + '` should return NaN when passing an empty array', 1, function() {
-        var actual = _[methodName]([]);
-        deepEqual(actual, NaN);
       });
     });
   }());

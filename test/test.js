@@ -3973,18 +3973,37 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var args;
+        var args,
+            expected = [16, 3, [1, 4, 9 ,16]];
+
+        _(array).map(square).dropRightWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).dropRightWhile(function(value, index) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).dropRightWhile(function(value) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [16, 3, array]);
 
         _(array).map(square).dropRightWhile(function() {
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [16, 3, array]);
+        deepEqual(args, expected);
       }
       else {
-        skipTest(1);
+        skipTest(4);
       }
     });
   }());
@@ -4055,18 +4074,37 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var args;
+        var args,
+            expected = [1, 0, [1, 4, 9, 16]];
+
+        _(array).map(square).dropWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).dropWhile(function(value, index) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).dropWhile(function(index) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
 
         _(array).map(square).dropWhile(function() {
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, expected);
       }
       else {
-        skipTest(1);
+        skipTest(4);
       }
     });
   }());
@@ -4855,32 +4893,52 @@
       deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
+    test('should work in a lazy chain sequence', 3, function() {
       if (!isNpm) {
         var wrapped = _(array).takeRightWhile(function(num) {
           return num > 2;
         });
 
-        ok(wrapped instanceof _);
         deepEqual(wrapped.value(), [3, 4]);
+        deepEqual(wrapped.reverse().value(), [4, 3]);
+        strictEqual(wrapped.last(), 4);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var args;
+        var args,
+            expected = [16, 3, [1, 4, 9 , 16]];
+
+        _(array).map(square).takeRightWhile(function(value, index, array) {
+          args = slice.call(arguments)
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).takeRightWhile(function(value, index) {
+          args = slice.call(arguments)
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).takeRightWhile(function(index) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [16, 3, array]);
 
         _(array).map(square).takeRightWhile(function() {
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [16, 3, array]);
+        deepEqual(args, expected);
       }
       else {
-        skipTest(1);
+        skipTest(4);
       }
     });
   }());
@@ -4950,18 +5008,37 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 1, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var args;
+        var args,
+            expected = [1, 0, [1, 4, 9, 16]];
+
+        _(array).map(square).takeWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).takeWhile(function(value, index) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).map(square).takeWhile(function(value) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
 
         _(array).map(square).takeWhile(function() {
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, expected);
       }
       else {
-        skipTest(1);
+        skipTest(4);
       }
     });
   }());
@@ -5934,7 +6011,7 @@
       if (!isNpm) {
         var array = [1, 2, 1, 3],
             iteratee = function(value) { value.push(value[0]); return value; },
-            predicate = function(value, index) { return index; },
+            predicate = function(value) { return value[0] > 1; },
             actual = _(array).groupBy(_.identity).map(iteratee).filter(predicate).take().value();
 
         deepEqual(actual, [[2, 2]]);
@@ -9099,6 +9176,43 @@
       }
     });
 
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+      if (!isNpm) {
+        var args,
+            expected = [1, 0, [1, 4, 9]];
+
+        _(array).map(square).map(function(value, index, array) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+
+        args = null;
+        _(array).map(square).map(function(value, index) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+
+        args = null;
+        _(array).map(square).map(function(value) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+
+        args = null;
+        _(array).map(square).map(function() {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.collect, _.map);
     });
@@ -10307,10 +10421,11 @@
 
     test('should produce methods that work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
-        var predicate = function(value) { return value > 2; };
         _.mixin({ 'a': _.countBy, 'b': _.filter });
 
-        var actual = _([1, 2, 1, 3]).a(_.identity).map(square).b(predicate).take().value();
+        var predicate = function(value) { return value > 2; },
+            actual = _([1, 2, 1, 3]).a(_.identity).map(square).b(predicate).take().value();
+
         deepEqual(actual, [4]);
 
         delete _.a;
@@ -11987,8 +12102,10 @@
   QUnit.module('filter methods');
 
   _.each(['filter', 'reject'], function(methodName) {
-    var func = _[methodName],
-        isFilter = methodName == 'filter';
+    var array = [1, 2, 3, 4],
+        func = _[methodName],
+        isFilter = methodName == 'filter',
+        objects = [{ 'a': 0 }, { 'a': 1 }];
 
     test('`_.' + methodName + '` should not modify the resulting value from within `predicate`', 1, function() {
       var actual = func([0], function(num, index, array) {
@@ -12000,18 +12117,16 @@
     });
 
     test('`_.' + methodName + '` should work with a "_.property" style `predicate`', 1, function() {
-      var objects = [{ 'a': 0 }, { 'a': 1 }];
       deepEqual(func(objects, 'a'), [objects[isFilter ? 1 : 0]]);
     });
 
     test('`_.' + methodName + '` should work with a "_where" style `predicate`', 1, function() {
-      var objects = [{ 'a': 0 }, { 'a': 1 }];
       deepEqual(func(objects, objects[1]), [objects[isFilter ? 1 : 0]]);
     });
 
     test('`_.' + methodName + '` should not modify wrapped values', 2, function() {
       if (!isNpm) {
-        var wrapped = _([1, 2, 3, 4]);
+        var wrapped = _(array);
 
         var actual = wrapped[methodName](function(num) {
           return num < 3;
@@ -12032,21 +12147,56 @@
 
     test('`_.' + methodName + '` should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = [1, 2, 3],
-            object = { 'a': 1, 'b': 2, 'c': 3 },
-            doubled = function(value) { return value * 2; },
-            predicate = function(value) { return isFilter ? (value > 3) : (value < 3); };
+        var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
+            predicate = function(value) { return isFilter ? (value > 6) : (value < 6); };
 
-        var expected = [4, 6],
-            actual = _(array).map(doubled)[methodName](predicate).value();
+        var expected = [9, 16],
+            actual = _(array).map(square)[methodName](predicate).value();
 
         deepEqual(actual, expected);
 
-        actual = _(object).mapValues(doubled)[methodName](predicate).value();
+        actual = _(object).mapValues(square)[methodName](predicate).value();
         deepEqual(actual, expected);
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+      if (!isNpm) {
+        var args,
+            expected = [1, 0, [1, 4, 9, 16]];
+
+        _(array).map(square)[methodName](function(value, index, array) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+
+        args = null;
+        _(array).map(square)[methodName](function(value, index) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+
+        args = null;
+        _(array).map(square)[methodName](function(value) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+
+        args = null;
+        _(array).map(square)[methodName](function() {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+      }
+      else {
+        skipTest(4);
       }
     });
   });

@@ -2057,7 +2057,7 @@ _.countBy(['one', 'two', 'three'], 'length');
 <a href="#_everycollection-predicate_identity-thisarg">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.3.1/lodash.src.js#L5932 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.every "See the npm package")
 
 Checks if `predicate` returns truthy for **all** elements of `collection`.
-The predicate is bound to `thisArg` and invoked with three arguments;
+The predicate is bound to `thisArg` and invoked with three arguments:
 (value, index|key, collection).
 <br>
 <br>

@@ -13115,6 +13115,73 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.sortByOrder');
+
+  (function() {
+    function Pair(a, b, c) {
+      this.a = a;
+      this.b = b;
+      this.c = c;
+    }
+
+    var objects = [
+      { 'a': 'x', 'b': 3 },
+      { 'a': 'y', 'b': 4 },
+      { 'a': 'x', 'b': 1 },
+      { 'a': 'y', 'b': 2 }
+    ];
+
+    var complexObjects = [
+      { 'a': 'x', 'b': 3, 'c': 'bar' },
+      { 'a': 'y', 'b': 4, 'c': 'foo' },
+      { 'a': 'x', 'b': 1, 'c': 'foo' },
+      { 'a': 'y', 'b': 2, 'c': 'bar' }
+    ]
+
+    var stableOrder = [
+      new Pair(1, 1, 1), new Pair(1, 2, 1),
+      new Pair(1, 1, 1), new Pair(1, 2, 1),
+      new Pair(1, 3, 1), new Pair(1, 4, 1),
+      new Pair(1, 5, 1), new Pair(1, 6, 1),
+      new Pair(2, 1, 2), new Pair(2, 2, 2),
+      new Pair(2, 3, 2), new Pair(2, 4, 2),
+      new Pair(2, 5, 2), new Pair(2, 6, 2),
+      new Pair(undefined, 1, 1), new Pair(undefined, 2, 1),
+      new Pair(undefined, 3, 1), new Pair(undefined, 4, 1),
+      new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
+    ];
+
+    test('should sort mutliple properties in ascending order by default', 1, function() {
+      var actual = _.sortByOrder(objects, ['a', 'b']);
+      deepEqual(actual, _.at(objects, [2, 0, 3, 1]));
+    });
+
+    test('should sort multiple properties depending on specified orders', 1, function() {
+      var actual = _.sortByOrder(complexObjects, ['a', 'b'], [false, true]);
+      deepEqual(actual, _.at(complexObjects, [3, 1, 2, 0]));
+    });
+
+    test('should sort ascendingly for property not specified', 1, function() {
+      var actual = _.sortByOrder(complexObjects, ['a', 'c'], [false]);
+      deepEqual(actual, _.at(complexObjects, [3, 1, 0, 2]));
+    });
+
+    test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
+      var actual = _.sortByOrder(stableOrder, ['a', 'c']);
+      deepEqual(actual, stableOrder);
+    });
+
+    test('should not error on nullish elements', 1, function() {
+      try {
+        var actual = _.sortByOrder(objects.concat(undefined), ['a', 'b']);
+      } catch(e) {}
+
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('sortedIndex methods');
 
   _.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
@@ -16119,6 +16186,7 @@
       'shuffle',
       'sortBy',
       'sortByAll',
+      'sortByOrder',
       'take',
       'times',
       'toArray',
@@ -16133,7 +16201,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 211, function() {
+    test('should accept falsey arguments', 213, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -16175,7 +16243,7 @@
       });
     });
 
-    test('should return an array', 70, function() {
+    test('should return an array', 72, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

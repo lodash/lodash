@@ -9648,7 +9648,7 @@
 
   (function() {
     test('should return the largest value from a collection', 1, function() {
-      strictEqual(3, _.max([1, 2, 3]));
+      strictEqual(_.max([1, 2, 3]), 3);
     });
 
     test('should return `-Infinity` for empty collections', 1, function() {
@@ -10067,7 +10067,7 @@
 
   (function() {
     test('should return the smallest value from a collection', 1, function() {
-      strictEqual(1, _.min([1, 2, 3]));
+      strictEqual(_.min([1, 2, 3]), 1);
     });
 
     test('should return `Infinity` for empty collections', 1, function() {
@@ -13340,7 +13340,7 @@
 
   (function() {
     test('should return the sum of an array of numbers', 1, function() {
-      equal(_.sum([6, 4, 2]), 12);
+      strictEqual(_.sum([6, 4, 2]), 12);
     });
 
     test('should return `0` when passing empty `array` values', 1, function() {
@@ -13351,6 +13351,20 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should coerce values to numbers and `NaN` to `0`', 1, function() {
+      strictEqual(_.sum(['1', NaN, '2']), 3);
+    });
+
+    test('should iterate an object', 1, function() {
+      strictEqual(_.sum({ 'a': 1, 'b': 2, 'c': 3 }), 6);
+    });
+
+    test('should iterate a string', 2, function() {
+      _.each(['123', Object('123')], function(value) {
+        strictEqual(_.sum(value), 6);
+      });
     });
   }());
 

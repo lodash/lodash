@@ -5999,7 +5999,7 @@ _.endsWith('abc', 'b', 2);
 ### <a id="_escapestring"></a>`_.escape([string=''])`
 <a href="#_escapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.3.1/lodash.src.js#L9925 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.escape "See the npm package")
 
-Converts the characters "&", "<", ">", '"', "'", and '`', in `string` to
+Converts the characters "&", "<", ">", '"', "'", and "\`", in `string` to
 their corresponding HTML entities.
 <br>
 <br>

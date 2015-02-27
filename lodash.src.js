@@ -4596,7 +4596,7 @@
      *
      * // using the `_.matchesProperty` callback shorthand
      * _.findLastIndex(users, 'active', false);
-     * // => 1
+     * // => 2
      *
      * // using the `_.property` callback shorthand
      * _.findLastIndex(users, 'active');

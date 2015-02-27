@@ -13076,9 +13076,32 @@
       new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
     ];
 
+    var complexObjects = [
+      { 'a': 'x', 'b': 3, 'c': 'bar' },
+      { 'a': 'y', 'b': 4, 'c': 'foo' },
+      { 'a': 'x', 'b': 1, 'c': 'foo' },
+      { 'a': 'y', 'b': 2, 'c': 'bar' }
+    ]
+
     test('should sort mutliple properties in ascending order', 1, function() {
       var actual = _.sortByAll(objects, ['a', 'b']);
-      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
+      deepEqual(actual, _.at(objects, [2, 0, 3, 1]));
+    });
+
+    test('should sort multiple properties depending on desc', 1, function() {
+      var actual = _.sortByAll(complexObjects, [
+        { 'key': 'a', 'desc': true },
+        { 'key': 'b' }
+      ]);
+      deepEqual(actual, _.at(complexObjects, [3, 1, 2, 0]));
+    });
+
+    test('should allow mix of string and object as sorting criteria', 1, function() {
+      var actual = _.sortByAll(complexObjects, [
+        { 'key': 'a', 'desc': true },
+        'c'
+      ]);
+      deepEqual(actual, _.at(complexObjects, [3, 1, 0, 2]));
     });
 
     test('should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {

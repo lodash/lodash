@@ -7,6 +7,10 @@ Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 $ lodash modern -o ./lodash.js
 ```
 
+## Community
+
+[![Join the chat at https://gitter.im/lodash/lodash](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lodash/lodash)
+
 ## Module formats
 
 lodash is also available in a variety of other builds & module formats.

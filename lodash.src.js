@@ -320,7 +320,7 @@
     if (value !== value) {
       return indexOfNaN(array, fromIndex);
     }
-    var index = (fromIndex || 0) - 1,
+    var index = fromIndex == null ? -1 : (fromIndex - 1),
         length = array.length;
 
     while (++index < length) {
@@ -514,7 +514,7 @@
    */
   function indexOfNaN(array, fromIndex, fromRight) {
     var length = array.length,
-        index = fromRight ? (fromIndex || length) : ((fromIndex || 0) - 1);
+        index = fromIndex == null ? (fromRight ? length : -1) : (fromIndex + (fromRight ? 0 : -1));
 
     while ((fromRight ? index-- : ++index < length)) {
       var other = array[index];
@@ -2143,7 +2143,7 @@
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isDeep, isStrict, fromIndex) {
-      var index = (fromIndex || 0) - 1,
+      var index = fromIndex == null ? -1 : (fromIndex - 1),
           length = array.length,
           resIndex = -1,
           result = [];

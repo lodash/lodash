@@ -3994,7 +3994,7 @@
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [16, 3, array]);
+        deepEqual(args, [16]);
 
         _(array).map(square).dropRightWhile(function() {
           args = slice.call(arguments);
@@ -4095,7 +4095,7 @@
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1]);
 
         _(array).map(square).dropWhile(function() {
           args = slice.call(arguments);
@@ -4929,7 +4929,7 @@
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [16, 3, array]);
+        deepEqual(args, [16]);
 
         _(array).map(square).takeRightWhile(function() {
           args = slice.call(arguments);
@@ -5029,7 +5029,7 @@
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1]);
 
         _(array).map(square).takeWhile(function() {
           args = slice.call(arguments);
@@ -9199,7 +9199,7 @@
           args || (args = slice.call(arguments));
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1]);
 
         args = null;
         _(array).map(square).map(function() {
@@ -12186,7 +12186,7 @@
           args || (args = slice.call(arguments));
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1]);
 
         args = null;
         _(array).map(square)[methodName](function() {

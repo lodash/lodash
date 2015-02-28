@@ -34,9 +34,10 @@
       HOT_SPAN = 16;
 
   /** Used to indicate the type of lazy iteratees. */
-  var LAZY_FILTER_FLAG = 0,
-      LAZY_MAP_FLAG = 1,
-      LAZY_WHILE_FLAG = 2;
+  var LAZY_DROP_WHILE_FLAG = 0,
+      LAZY_FILTER_FLAG = 1,
+      LAZY_MAP_FLAG = 2,
+      LAZY_TAKE_WHILE_FLAG = 3;
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -1292,16 +1293,22 @@
         while (++iterIndex < iterLength) {
           var data = iteratees[iterIndex],
               iteratee = data.iteratee,
-              computed = iteratee(value, index, array),
               type = data.type;
 
+          if (type != LAZY_DROP_WHILE_FLAG) {
+            var computed = iteratee(value);
+          } else {
+            data.done = data.done && (isRight ? index < data.index : index > data.index);
+            data.index = index;
+            computed = data.done || (data.done = !iteratee(value));
+          }
           if (type == LAZY_MAP_FLAG) {
             value = computed;
           } else if (!computed) {
-            if (type == LAZY_FILTER_FLAG) {
-              continue outer;
-            } else {
+            if (type == LAZY_TAKE_WHILE_FLAG) {
               break outer;
+            } else {
+              continue outer;
             }
           }
         }
@@ -11482,15 +11489,15 @@
     });
 
     // Add `LazyWrapper` methods that accept an `iteratee` value.
-    arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
-      var isFilter = index == LAZY_FILTER_FLAG || index == LAZY_WHILE_FLAG;
+    arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type) {
+      var isFilter = type != LAZY_MAP_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         var result = this.clone(),
             iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
         result.__filtered__ = result.__filtered__ || isFilter;
-        iteratees.push({ 'iteratee': getCallback(iteratee, thisArg, 1), 'type': index });
+        iteratees.push({ 'done': false, 'index': 0, 'iteratee': getCallback(iteratee, thisArg, 1), 'type': type });
         return result;
       };
     });
@@ -11555,23 +11562,10 @@
       return this.filter(identity);
     };
 
-    LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
-      var done,
-          lastIndex,
-          isRight = this.__dir__ < 0;
-
-      predicate = getCallback(predicate, thisArg, 1);
-      return this.filter(function(value, index, array) {
-        done = done && (isRight ? index < lastIndex : index > lastIndex);
-        lastIndex = index;
-        return done || (done = !predicate(value, index, array));
-      });
-    };
-
     LazyWrapper.prototype.reject = function(predicate, thisArg) {
       predicate = getCallback(predicate, thisArg, 1);
-      return this.filter(function(value, index, array) {
-        return !predicate(value, index, array);
+      return this.filter(function(value) {
+        return !predicate(value);
       });
     };
 
@@ -11593,7 +11587,7 @@
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName],
-          checkIteratee = /(?:filter|map|reject|While)/.test(methodName),
+          checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {

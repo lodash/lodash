@@ -62,7 +62,7 @@ script:
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls)"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.$BUILD.js"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.$BUILD.min.js"
+  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../lodash.$BUILD.min.js"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.$BUILD.js&noglobals=true\" tags=\"$BUILD,development\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.$BUILD.min.js&noglobals=true\" tags=\"$BUILD,production\""
   - "[ $SAUCE_LABS == false ] || [ $BUILD != 'compat' ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.$BUILD.js\" tags=\"$BUILD,development,ie-compat\" compatMode=7"

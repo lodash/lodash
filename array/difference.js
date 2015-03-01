@@ -24,16 +24,17 @@ import isArray from '../lang/isArray';
  * // => [1, 3]
  */
 function difference() {
-  var index = -1,
-      length = arguments.length;
+  var args = arguments,
+      index = -1,
+      length = args.length;
 
   while (++index < length) {
-    var value = arguments[index];
+    var value = args[index];
     if (isArray(value) || isArguments(value)) {
       break;
     }
   }
-  return baseDifference(value, baseFlatten(arguments, false, true, ++index));
+  return baseDifference(value, baseFlatten(args, false, true, ++index));
 }
 
 export default difference;

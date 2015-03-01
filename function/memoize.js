@@ -61,13 +61,14 @@ function memoize(func, resolver) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   var memoized = function() {
-    var cache = memoized.cache,
-        key = resolver ? resolver.apply(this, arguments) : arguments[0];
+    var args = arguments,
+        cache = memoized.cache,
+        key = resolver ? resolver.apply(this, args) : args[0];
 
     if (cache.has(key)) {
       return cache.get(key);
     }
-    var result = func.apply(this, arguments);
+    var result = func.apply(this, args);
     cache.set(key, result);
     return result;
   };

@@ -55,8 +55,11 @@ import isLength from '../internal/isLength';
  * // => ['barney', 'fred', 'pebbles']
  */
 function sortBy(collection, iteratee, thisArg) {
+  if (collection == null) {
+    return [];
+  }
   var index = -1,
-      length = collection ? collection.length : 0,
+      length = collection.length,
       result = isLength(length) ? Array(length) : [];
 
   if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {

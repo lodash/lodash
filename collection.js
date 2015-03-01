@@ -23,8 +23,8 @@ import indexBy from './collection/indexBy';
 import inject from './collection/inject';
 import invoke from './collection/invoke';
 import map from './collection/map';
-import max from './collection/max';
-import min from './collection/min';
+import max from './math/max';
+import min from './math/min';
 import partition from './collection/partition';
 import pluck from './collection/pluck';
 import reduce from './collection/reduce';
@@ -37,6 +37,8 @@ import size from './collection/size';
 import some from './collection/some';
 import sortBy from './collection/sortBy';
 import sortByAll from './collection/sortByAll';
+import sortByOrder from './collection/sortByOrder';
+import sum from './math/sum';
 import where from './collection/where';
 
 export default {
@@ -79,5 +81,7 @@ export default {
   'some': some,
   'sortBy': sortBy,
   'sortByAll': sortByAll,
+  'sortByOrder': sortByOrder,
+  'sum': sum,
   'where': where
 };

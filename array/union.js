@@ -21,7 +21,7 @@ import baseUniq from '../internal/baseUniq';
  * // => [1, 2, 4]
  */
 function union() {
-  return baseUniq(baseFlatten(arguments, false, true));
+  return baseUniq(baseFlatten(arguments, false, true, 0));
 }
 
 export default union;

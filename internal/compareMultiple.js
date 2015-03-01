@@ -1,24 +1,34 @@
 import baseCompareAscending from './baseCompareAscending';
 
 /**
- * Used by `_.sortByAll` to compare multiple properties of each element
- * in a collection and stable sort them in ascending order.
+ * Used by `_.sortByOrder` to compare multiple properties of each element
+ * in a collection and stable sort them in the following order:
+ *
+ * If orders is unspecified, sort in ascending order for all properties.
+ * Otherwise, for each property, sort in ascending order if its corresponding value in
+ * orders is true, and descending order if false.
  *
  * @private
  * @param {Object} object The object to compare to `other`.
  * @param {Object} other The object to compare to `object`.
+ * @param {boolean[]} orders The order to sort by for each property.
  * @returns {number} Returns the sort order indicator for `object`.
  */
-function compareMultipleAscending(object, other) {
+function compareMultiple(object, other, orders) {
   var index = -1,
       objCriteria = object.criteria,
       othCriteria = other.criteria,
-      length = objCriteria.length;
+      length = objCriteria.length,
+      ordersLength = orders.length;
 
   while (++index < length) {
     var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
     if (result) {
-      return result;
+      if (index >= ordersLength) {
+        return result;
+      } else {
+        return orders[index] ? result : result * -1;
+      }
     }
   }
   // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -31,4 +41,4 @@ function compareMultipleAscending(object, other) {
   return object.index - other.index;
 }
 
-export default compareMultipleAscending;
+export default compareMultiple;

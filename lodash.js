@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -13,6 +13,7 @@ import collection from './collection';
 import date from './date';
 import func from './function';
 import lang from './lang';
+import math from './math';
 import number from './number';
 import object from './object';
 import string from './string';
@@ -38,11 +39,11 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.3.1';
+var VERSION = '3.4.0';
 
 /** Used to indicate the type of lazy iteratees. */
-var LAZY_FILTER_FLAG = 0,
-    LAZY_WHILE_FLAG = 2;
+var LAZY_DROP_WHILE_FLAG = 0,
+    LAZY_MAP_FLAG = 2;
 
 /** Used for native method references. */
 var arrayProto = Array.prototype;
@@ -150,6 +151,7 @@ lodash.shuffle = collection.shuffle;
 lodash.slice = array.slice;
 lodash.sortBy = collection.sortBy;
 lodash.sortByAll = collection.sortByAll;
+lodash.sortByOrder = collection.sortByOrder;
 lodash.spread = func.spread;
 lodash.take = array.take;
 lodash.takeRight = array.takeRight;
@@ -192,6 +194,7 @@ lodash.unique = array.uniq;
 mixin(lodash, lodash);
 
 // Add functions that return unwrapped values when chaining.
+lodash.add = math.add;
 lodash.attempt = utility.attempt;
 lodash.camelCase = string.camelCase;
 lodash.capitalize = string.capitalize;
@@ -239,8 +242,8 @@ lodash.isUndefined = lang.isUndefined;
 lodash.kebabCase = string.kebabCase;
 lodash.last = array.last;
 lodash.lastIndexOf = array.lastIndexOf;
-lodash.max = collection.max;
-lodash.min = collection.min;
+lodash.max = math.max;
+lodash.min = math.min;
 lodash.noop = utility.noop;
 lodash.now = date.now;
 lodash.pad = string.pad;
@@ -259,6 +262,7 @@ lodash.sortedIndex = array.sortedIndex;
 lodash.sortedLastIndex = array.sortedLastIndex;
 lodash.startCase = string.startCase;
 lodash.startsWith = string.startsWith;
+lodash.sum = math.sum;
 lodash.template = string.template;
 lodash.trim = string.trim;
 lodash.trimLeft = string.trimLeft;
@@ -319,15 +323,17 @@ arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'],
 });
 
 // Add `LazyWrapper` methods that accept an `iteratee` value.
-arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
-  var isFilter = index == LAZY_FILTER_FLAG || index == LAZY_WHILE_FLAG;
+arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type) {
+  var isFilter = type != LAZY_MAP_FLAG,
+      isDropWhile = type == LAZY_DROP_WHILE_FLAG;
 
   LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
-    var result = this.clone(),
+    var filtered = this.__filtered__,
+        result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
         iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
-    result.__filtered__ = result.__filtered__ || isFilter;
-    iteratees.push({ 'iteratee': baseCallback(iteratee, thisArg, 3), 'type': index });
+    result.__filtered__ = filtered || isFilter;
+    iteratees.push({ 'done': false, 'index': 0, 'iteratee': baseCallback(iteratee, thisArg, 1), 'type': type });
     return result;
   };
 });
@@ -392,23 +398,10 @@ LazyWrapper.prototype.compact = function() {
   return this.filter(identity);
 };
 
-LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
-  var done,
-      lastIndex,
-      isRight = this.__dir__ < 0;
-
-  predicate = baseCallback(predicate, thisArg, 3);
-  return this.filter(function(value, index, array) {
-    done = done && (isRight ? index < lastIndex : index > lastIndex);
-    lastIndex = index;
-    return done || (done = !predicate(value, index, array));
-  });
-};
-
 LazyWrapper.prototype.reject = function(predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return this.filter(function(value, index, array) {
-    return !predicate(value, index, array);
+  predicate = baseCallback(predicate, thisArg, 1);
+  return this.filter(function(value) {
+    return !predicate(value);
   });
 };
 
@@ -430,16 +423,24 @@ LazyWrapper.prototype.toArray = function() {
 // Add `LazyWrapper` methods to `lodash.prototype`.
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   var lodashFunc = lodash[methodName],
+      checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
       retUnwrapped = /^(?:first|last)$/.test(methodName);
 
   lodash.prototype[methodName] = function() {
-    var value = this.__wrapped__,
-        args = arguments,
+    var args = arguments,
+        length = args.length,
         chainAll = this.__chain__,
+        value = this.__wrapped__,
         isHybrid = !!this.__actions__.length,
         isLazy = value instanceof LazyWrapper,
-        onlyLazy = isLazy && !isHybrid;
+        iteratee = args[0],
+        useLazy = isLazy || isArray(value);
 
+    if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
+      // avoid lazy use if the iteratee has a `length` other than `1`
+      isLazy = useLazy = false;
+    }
+    var onlyLazy = isLazy && !isHybrid;
     if (retUnwrapped && !chainAll) {
       return onlyLazy
         ? func.call(value)
@@ -450,7 +451,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       push.apply(otherArgs, args);
       return lodashFunc.apply(lodash, otherArgs);
     };
-    if (isLazy || isArray(value)) {
+    if (useLazy) {
       var wrapper = onlyLazy ? value : new LazyWrapper(this),
           result = func.apply(wrapper, args);
 

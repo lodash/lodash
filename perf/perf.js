@@ -412,7 +412,7 @@
       }\
       if (typeof flatten != "undefined") {\
         var _flattenDeep = _.flatten([[1]])[0] !== 1,\
-            lodashFlattenDeep = lodash.flatten([[1]]) !== 1;\
+            lodashFlattenDeep = lodash.flatten([[1]])[0] !== 1;\
       }\
       if (typeof isEqual != "undefined") {\
         var objectOfPrimitives = {\

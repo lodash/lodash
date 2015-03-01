@@ -7500,15 +7500,11 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * function add(x, y) {
-     *   return x + y;
-     * }
-     *
      * function square(n) {
      *   return n * n;
      * }
      *
-     * var addSquare = _.flow(add, square);
+     * var addSquare = _.flow(_.add, square);
      * addSquare(1, 2);
      * // => 9
      */
@@ -7545,15 +7541,11 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * function add(x, y) {
-     *   return x + y;
-     * }
-     *
      * function square(n) {
      *   return n * n;
      * }
      *
-     * var addSquare = _.flowRight(square, add);
+     * var addSquare = _.flowRight(square, _.add);
      * addSquare(1, 2);
      * // => 9
      */
@@ -8783,7 +8775,7 @@
     /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object for all destination properties that resolve to `undefined`. Once a
-     * property is set, additional defaults of the same property are ignored.
+     * property is set, additional values of the same property are ignored.
      *
      * @static
      * @memberOf _
@@ -9602,7 +9594,7 @@
 
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
-     * `end` is not specified it defaults to `start` with `start` becoming `0`.
+     * `end` is not specified it is set to `start` with `start` then set to `0`.
      *
      * @static
      * @memberOf _
@@ -10939,9 +10931,9 @@
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to, but not including, `end`. If `end` is not specified it
-     * defaults to `start` with `start` becoming `0`. If `start` is less than
-     * `end` a zero-length range is created unless a negative `step` is specified.
+     * `start` up to, but not including, `end`. If `end` is not specified it is
+     * set to `start` with `start` then set to `0`. If `start` is less than `end`
+     * a zero-length range is created unless a negative `step` is specified.
      *
      * @static
      * @memberOf _
@@ -11185,13 +11177,13 @@
     var min = createExtremum(arrayMin, true);
 
     /**
-     * Gets the sum of `collection` values.
+     * Gets the sum of the values in `collection`.
      *
      * @static
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @returns {number} Returns the sum of values.
+     * @returns {number} Returns the sum.
      * @example
      *
      * _.sum([4, 6, 2]);

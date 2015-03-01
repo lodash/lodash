@@ -439,19 +439,14 @@
 
   /**
    * Used by `_.sortByAll` to compare multiple properties of each element
-   * in a collection and stable sort them in the following order:
+   * in a collection and stable sort them in ascending order.
    *
-   * If orderArray is unspecified, sort in ascending order for all properties.
-   * Otherwise, for each property, sort in ascending order if its corresponding value in
-   * orderArray is true, and descending order if false.
-   * 
    * @private
    * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
-   * @param {Object} [orderArray] The order to sort by for each property.
    * @returns {number} Returns the sort order indicator for `object`.
    */
-  function compareMultiple(object, other, orderArray) {
+  function compareMultipleAscending(object, other) {
     var index = -1,
         objCriteria = object.criteria,
         othCriteria = other.criteria,
@@ -460,7 +455,47 @@
     while (++index < length) {
       var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
       if (result) {
-        return (orderArray && orderArray[index]) ? result : -1 * result;
+        return result;
+      }
+    }
+    // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
+    // that causes it, under certain circumstances, to provide the same value for
+    // `object` and `other`. See https://github.com/jashkenas/underscore/pull/1247
+    // for more details.
+    //
+    // This also ensures a stable sort in V8 and other engines.
+    // See https://code.google.com/p/v8/issues/detail?id=90 for more details.
+    return object.index - other.index;
+  }
+
+  /**
+   * Used by `_.sortByOrder` to compare multiple properties of each element
+   * in a collection and stable sort them in the following order:
+   *
+   * If orders is unspecified, sort in ascending order for all properties.
+   * Otherwise, for each property, sort in ascending order if its corresponding value in
+   * orders is true, and descending order if false.
+   * 
+   * @private
+   * @param {Object} object The object to compare to `other`.
+   * @param {Object} other The object to compare to `object`.
+   * @param {boolean[]} orders The order to sort by for each property.
+   * @returns {number} Returns the sort order indicator for `object`.
+   */
+  function compareMultiple(object, other, orders) {
+    var index = -1,
+        objCriteria = object.criteria,
+        othCriteria = other.criteria,
+        length = objCriteria.length;
+
+    while (++index < length) {
+      var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
+      if (result) {
+        if (typeof orders[index] != 'boolean') {
+          return result;
+        } else {
+          return orders[index] ? result : -1 * result;
+        }
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -6935,16 +6970,12 @@
      * This method is like `_.sortBy` except that it sorts by property names
      * instead of an iteratee function.
      *
-     * If using an array of object as `props`, a `desc` property can be specified
-     * to allow sorting in descending order.
-     *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(string|(string|Object)[])} props The properties to sort by,
-     *  specified as an individual property name, array of property names, or
-     *  array of objects that have the form { key: 'name', desc: true }.
+     * @param {...(string|string[])} props The property names to sort by,
+     *  specified as individual property names or arrays of property names.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
@@ -6957,14 +6988,6 @@
      *
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
-     *
-     * // If desc is not provided, default to sort in ascending order
-     * _.map(_.sortByAll(users, [{ key: 'user' }, { key: 'age', desc: true }]), _.values)
-     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
-     *
-     * // Using a mix of property name string and object
-     * _.map(_.sortByAll(users, ['user', { key: 'age', desc: true }]), _.values)
-     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
      */
     function sortByAll(collection) {
       var args = arguments;
@@ -6976,12 +6999,72 @@
           props = baseFlatten(args, false, false, 1),
           result = isLength(length) ? Array(length) : [];
 
-      var orderArray = map(props, function(prop) {
-        if (typeof prop == 'string') {
-            return true;
+      baseEach(collection, function(value) {
+        var length = props.length,
+            criteria = Array(length);
+
+        while (length--) {
+          criteria[length] = value == null ? undefined : value[props[length]];
         }
-        return !prop.desc;
+        result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
       });
+      return baseSortBy(result, compareMultipleAscending);
+    }
+
+    /**
+     * This method is like `_.sortByAll` except that it takes an optional 
+     * `orders` which can be used to specify sorting orders.
+     *
+     * Sort ascendingly for properties that don't have a corresponding order in `orders`.
+     * 
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {string|string[]} props The property names to sort by,
+     *  specified as individual property names or arrays of property names.
+     * @param {boolean|boolean[]} orders The orders to sort by.
+     * When not specified, default to true, which sort ascendingly.
+     * @returns {Array} Returns the new sorted array.
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'barney', 'age': 26 },
+     *   { 'user': 'fred',   'age': 30 }
+     * ];
+     *
+     * // Sort by `user` ascendingly
+     * _.map(_.sortByOrder(users, 'user'), _.values)
+     * _.map(_.sortByOrder(users, ['user']), _.values)
+     * _.map(_.sortByOrder(users, 'user', true), _.values)
+     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
+     *
+     * // Sort by 'user' descendingly
+     * _.map(_.sortByOrder(users, ['user'], [false]), _.values);
+     * // => [['fred', 40], ['fred', 30], ['barney', 36], ['barney', 26]]
+     *
+     * // Same as _.sortByAll(users, ['user', 'age'])
+     * _.map(_.sortByOrder(users, ['user', 'age']), _.values);
+     * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
+     *
+     * // Sort by user ascendingly but age descendingly
+     * _.map(_.sortByOrder(users, ['user', 'age'], [true, false]), _.values);
+     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
+     *
+     * // Default to sort 'age' ascendingly
+     * _.map(_.sortByOrder(users, ['user', 'age'], [false]), _.values);
+     * // => [['fred', 30], ['fred', 40], ['barney', 26], ['barney', 36]]
+     */
+    function sortByOrder(collection) {
+      var args = arguments;
+
+      var index = -1,
+          length = collection ? collection.length : 0,
+          props = baseFlatten(args, false, false, 1),
+          orders = baseFlatten(args, false, false, 2),
+          result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
         var length = props.length,
@@ -6995,7 +7078,7 @@
         result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
       });
       return baseSortBy(result, function(object, other) {
-        return compareMultiple(object, other, orderArray);
+        return compareMultiple(object, other, orders);
       });
     }
 
@@ -11328,6 +11411,7 @@
     lodash.slice = slice;
     lodash.sortBy = sortBy;
     lodash.sortByAll = sortByAll;
+    lodash.sortByOrder = sortByOrder;
     lodash.spread = spread;
     lodash.take = take;
     lodash.takeRight = takeRight;

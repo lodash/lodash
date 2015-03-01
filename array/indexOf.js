@@ -42,14 +42,14 @@ function indexOf(array, value, fromIndex) {
     return -1;
   }
   if (typeof fromIndex == 'number') {
-    fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
+    fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
   } else if (fromIndex) {
     var index = binaryIndex(array, value),
         other = array[index];
 
     return (value === value ? value === other : other !== other) ? index : -1;
   }
-  return baseIndexOf(array, value, fromIndex);
+  return baseIndexOf(array, value, fromIndex || 0);
 }
 
 module.exports = indexOf;

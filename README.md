@@ -1,4 +1,4 @@
-# lodash v3.3.1
+# lodash v3.4.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) modules.
 
@@ -24,11 +24,11 @@ In Node.js/io.js:
 var _ = require('lodash');
 // or a method category
 var array = require('lodash/array');
-// or a method (works great with browserify/webpack to create smaller builds)
+// or a method (great for smaller builds with browserify/webpack)
 var chunk = require('lodash/array/chunk');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.3.1-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/3.4.0-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
@@ -39,8 +39,8 @@ Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash b
 lodash is also available in a variety of other builds & module formats.
 
  * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.3.1-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.3.1-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.3.1-es) build
+ * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.4.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.4.0-amd) builds
+ * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.4.0-es) build
 
 ## Further Reading
 
@@ -57,6 +57,7 @@ lodash is also available in a variety of other builds & module formats.
  * Follows [semantic versioning](http://semver.org/) for releases
  * [Lazily evaluated](http://filimanjaro.com/blog/2014/introducing-lazy-evaluation/) chaining
  * [_(…)](https://lodash.com/docs#_) supports intuitive chaining
+ * [_.add](https://lodash.com/docs#add) for mathematical composition
  * [_.ary](https://lodash.com/docs#ary) & [_.rearg](https://lodash.com/docs#rearg) to change function argument limits & order
  * [_.at](https://lodash.com/docs#at) for cherry-picking collection values
  * [_.attempt](https://lodash.com/docs#attempt) to execute functions which may error without a try-catch
@@ -86,8 +87,9 @@ lodash is also available in a variety of other builds & module formats.
  * [_.random](https://lodash.com/docs#random) supports returning floating-point numbers
  * [_.runInContext](https://lodash.com/docs#runInContext) for collisionless mixins & easier mocking
  * [_.slice](https://lodash.com/docs#slice) for creating subsets of array-like values
- * [_.sortByAll](https://lodash.com/docs#sortBy) for sorting by multiple properties
+ * [_.sortByAll](https://lodash.com/docs#sortByAll) & [_.sortByOrder](https://lodash.com/docs#sortByOrder) for sorting by multiple properties & orders
  * [_.spread](https://lodash.com/docs#spread) for creating a function to spread an array of arguments to another
+ * [_.sum](https://lodash.com/docs#sum) to get the sum of values
  * [_.support](https://lodash.com/docs#support) for flagging environment features
  * [_.template](https://lodash.com/docs#template) supports [*“imports”*](https://lodash.com/docs#templateSettings-imports) options & [ES template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
  * [_.transform](https://lodash.com/docs#transform) as a powerful alternative to [_.reduce](https://lodash.com/docs#reduce) for transforming objects
@@ -110,6 +112,5 @@ lodash is also available in a variety of other builds & module formats.
 
 ## Support
 
-Tested in Chrome 39-40, Firefox 34-35, IE 6-11, Opera 26-27, Safari 5-8, io.js 1.3.0, Node.js 0.8.28, 0.10.36, & 0.12.0, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
-
+Tested in Chrome 40-41, Firefox 35-36, IE 6-11, Opera 26-27, Safari 5-8, io.js 1.4.3, Node.js 0.8.28, 0.10.36, & 0.12.0, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
 Automated [browser](https://saucelabs.com/u/lodash) & [CI](https://travis-ci.org/lodash/lodash/) test runs are available. Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.

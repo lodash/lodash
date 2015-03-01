@@ -1,9 +1,6 @@
-var baseEach = require('../internal/baseEach'),
-    baseFlatten = require('../internal/baseFlatten'),
-    baseSortBy = require('../internal/baseSortBy'),
-    compareMultipleAscending = require('../internal/compareMultipleAscending'),
-    isIterateeCall = require('../internal/isIterateeCall'),
-    isLength = require('../internal/isLength');
+var baseFlatten = require('../internal/baseFlatten'),
+    baseSortByOrder = require('../internal/baseSortByOrder'),
+    isIterateeCall = require('../internal/isIterateeCall');
 
 /**
  * This method is like `_.sortBy` except that it sorts by property names
@@ -29,25 +26,16 @@ var baseEach = require('../internal/baseEach'),
  * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
  */
 function sortByAll(collection) {
-  var args = arguments;
-  if (args.length > 3 && isIterateeCall(args[1], args[2], args[3])) {
+  if (collection == null) {
+    return [];
+  }
+  var args = arguments,
+      guard = args[3];
+
+  if (guard && isIterateeCall(args[1], args[2], guard)) {
     args = [collection, args[1]];
   }
-  var index = -1,
-      length = collection ? collection.length : 0,
-      props = baseFlatten(args, false, false, 1),
-      result = isLength(length) ? Array(length) : [];
-
-  baseEach(collection, function(value) {
-    var length = props.length,
-        criteria = Array(length);
-
-    while (length--) {
-      criteria[length] = value == null ? undefined : value[props[length]];
-    }
-    result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
-  });
-  return baseSortBy(result, compareMultipleAscending);
+  return baseSortByOrder(collection, baseFlatten(args, false, false, 1), []);
 }
 
 module.exports = sortByAll;

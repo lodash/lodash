@@ -26,7 +26,7 @@ function flatten(array, isDeep, guard) {
   if (guard && isIterateeCall(array, isDeep, guard)) {
     isDeep = false;
   }
-  return length ? baseFlatten(array, isDeep) : [];
+  return length ? baseFlatten(array, isDeep, false, 0) : [];
 }
 
 module.exports = flatten;

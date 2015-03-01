@@ -24,8 +24,8 @@ module.exports = {
   'inject': require('./collection/inject'),
   'invoke': require('./collection/invoke'),
   'map': require('./collection/map'),
-  'max': require('./collection/max'),
-  'min': require('./collection/min'),
+  'max': require('./math/max'),
+  'min': require('./math/min'),
   'partition': require('./collection/partition'),
   'pluck': require('./collection/pluck'),
   'reduce': require('./collection/reduce'),
@@ -38,5 +38,7 @@ module.exports = {
   'some': require('./collection/some'),
   'sortBy': require('./collection/sortBy'),
   'sortByAll': require('./collection/sortByAll'),
+  'sortByOrder': require('./collection/sortByOrder'),
+  'sum': require('./math/sum'),
   'where': require('./collection/where')
 };

@@ -31,17 +31,19 @@ var splice = arrayProto.splice;
  * // => [1, 1]
  */
 function pull() {
-  var array = arguments[0];
+  var args = arguments,
+      array = args[0];
+
   if (!(array && array.length)) {
     return array;
   }
   var index = 0,
       indexOf = baseIndexOf,
-      length = arguments.length;
+      length = args.length;
 
   while (++index < length) {
     var fromIndex = 0,
-        value = arguments[index];
+        value = args[index];
 
     while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
       splice.call(array, fromIndex, 1);

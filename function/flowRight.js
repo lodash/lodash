@@ -1,8 +1,4 @@
-var arrayEvery = require('../internal/arrayEvery'),
-    baseIsFunction = require('../internal/baseIsFunction');
-
-/** Used as the `TypeError` message for "Functions" methods. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+var createComposer = require('../internal/createComposer');
 
 /**
  * This method is like `_.flow` except that it creates a function that
@@ -16,37 +12,14 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @returns {Function} Returns the new function.
  * @example
  *
- * function add(x, y) {
- *   return x + y;
- * }
- *
  * function square(n) {
  *   return n * n;
  * }
  *
- * var addSquare = _.flowRight(square, add);
+ * var addSquare = _.flowRight(square, _.add);
  * addSquare(1, 2);
  * // => 9
  */
-function flowRight() {
-  var funcs = arguments,
-      fromIndex = funcs.length - 1;
-
-  if (fromIndex < 0) {
-    return function() { return arguments[0]; };
-  }
-  if (!arrayEvery(funcs, baseIsFunction)) {
-    throw new TypeError(FUNC_ERROR_TEXT);
-  }
-  return function() {
-    var index = fromIndex,
-        result = funcs[index].apply(this, arguments);
-
-    while (index--) {
-      result = funcs[index].call(this, result);
-    }
-    return result;
-  };
-}
+var flowRight = createComposer(true);
 
 module.exports = flowRight;

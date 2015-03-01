@@ -21,7 +21,7 @@ var baseFlatten = require('../internal/baseFlatten'),
  * // => [1, 2, 4]
  */
 function union() {
-  return baseUniq(baseFlatten(arguments, false, true));
+  return baseUniq(baseFlatten(arguments, false, true, 0));
 }
 
 module.exports = union;

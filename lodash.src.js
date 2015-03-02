@@ -11557,13 +11557,14 @@
     // Add `LazyWrapper` methods that accept an `iteratee` value.
     arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type) {
       var isFilter = type != LAZY_MAP_FLAG,
-          isWhile = type == LAZY_DROP_WHILE_FLAG || type == LAZY_TAKE_WHILE_FLAG;
+          isDropWhile = type == LAZY_DROP_WHILE_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
-        var result = isWhile ? new LazyWrapper(this) : this.clone(),
+        var filtered = this.__filtered__,
+            result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
             iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
-        result.__filtered__ = result.__filtered__ || isFilter;
+        result.__filtered__ = filtered || isFilter;
         iteratees.push({ 'done': false, 'index': 0, 'iteratee': getCallback(iteratee, thisArg, 1), 'type': type });
         return result;
       };

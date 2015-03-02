@@ -11556,10 +11556,11 @@
 
     // Add `LazyWrapper` methods that accept an `iteratee` value.
     arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type) {
-      var isFilter = type != LAZY_MAP_FLAG;
+      var isFilter = type != LAZY_MAP_FLAG,
+          isWhile = type == LAZY_DROP_WHILE_FLAG || type == LAZY_TAKE_WHILE_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
-        var result = this.clone(),
+        var result = isWhile ? new LazyWrapper(this) : this.clone(),
             iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
         result.__filtered__ = result.__filtered__ || isFilter;
@@ -11657,12 +11658,16 @@
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__,
-            args = arguments,
+        var length = arguments.length,
+            args = Array(length),
             chainAll = this.__chain__,
+            value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
             isLazy = value instanceof LazyWrapper;
 
+        while (length--) {
+          args[length] = arguments[length];
+        }
         if (isLazy && checkIteratee) {
           // avoid lazy use if the iteratee has a `length` other than `1`
           var iteratee = args[0];

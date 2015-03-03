@@ -4312,16 +4312,17 @@
      * // => [1, 3]
      */
     function difference() {
-      var index = -1,
-          length = arguments.length;
+      var args = arguments,
+          index = -1,
+          length = args.length;
 
       while (++index < length) {
-        var value = arguments[index];
+        var value = args[index];
         if (isArray(value) || isArguments(value)) {
           break;
         }
       }
-      return baseDifference(value, baseFlatten(arguments, false, true, ++index));
+      return baseDifference(value, baseFlatten(args, false, true, ++index));
     }
 
     /**
@@ -4945,17 +4946,19 @@
      * // => [1, 1]
      */
     function pull() {
-      var array = arguments[0];
+      var args = arguments,
+          array = args[0];
+
       if (!(array && array.length)) {
         return array;
       }
       var index = 0,
           indexOf = getIndexOf(),
-          length = arguments.length;
+          length = args.length;
 
       while (++index < length) {
         var fromIndex = 0,
-            value = arguments[index];
+            value = args[index];
 
         while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
           splice.call(array, fromIndex, 1);
@@ -7703,13 +7706,14 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       var memoized = function() {
-        var cache = memoized.cache,
-            key = resolver ? resolver.apply(this, arguments) : arguments[0];
+        var args = arguments,
+            cache = memoized.cache,
+            key = resolver ? resolver.apply(this, args) : args[0];
 
         if (cache.has(key)) {
           return cache.get(key);
         }
-        var result = func.apply(this, arguments);
+        var result = func.apply(this, args);
         cache.set(key, result);
         return result;
       };

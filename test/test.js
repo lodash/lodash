@@ -4088,13 +4088,18 @@
     });
 
     test('should work in a lazy chain sequence with `drop`', 1, function() {
-      var actual = _(array)
-        .dropWhile(function(num) { return num == 1; })
-        .drop()
-        .dropWhile(function(num) { return num == 3; })
-        .value();
+      if (!isNpm) {
+        var actual = _(array)
+          .dropWhile(function(num) { return num == 1; })
+          .drop()
+          .dropWhile(function(num) { return num == 3; })
+          .value();
 
-      deepEqual(actual, [4]);
+        deepEqual(actual, [4]);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
@@ -5032,13 +5037,18 @@
     });
 
     test('should work in a lazy chain sequence with `take`', 1, function() {
-      var actual = _(array)
-        .takeWhile(function(num) { return num < 4; })
-        .take(2)
-        .takeWhile(function(num) { return num == 1; })
-        .value();
+      if (!isNpm) {
+        var actual = _(array)
+          .takeWhile(function(num) { return num < 4; })
+          .take(2)
+          .takeWhile(function(num) { return num == 1; })
+          .value();
 
-      deepEqual(actual, [1]);
+        deepEqual(actual, [1]);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {

@@ -1659,7 +1659,7 @@
       deepEqual(actual, _.map(burredLetters, _.constant(true)));
     });
 
-    test('should trim latin-1 mathematical operators', 1, function() {
+    test('`_.' + methodName + '` should trim latin-1 mathematical operators', 1, function() {
       var actual = _.map(['\xd7', '\xf7'], func);
       deepEqual(actual, ['', '']);
     });
@@ -1689,12 +1689,25 @@
     });
   });
 
+  (function() {
+    test('should get the original value after cycling through all case methods', 1, function() {
+      var funcs = [_.camelCase, _.kebabCase, _.snakeCase, _.startCase, _.camelCase];
+
+      var actual = _.reduce(funcs, function(result, func) {
+        return func(result);
+      }, 'enable 24h format');
+
+      strictEqual(actual, 'enable24HFormat');
+    });
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.camelCase');
 
   (function() {
-    test('should work with numbers', 3, function() {
+    test('should work with numbers', 4, function() {
+      strictEqual(_.camelCase('enable 24h format'), 'enable24HFormat');
       strictEqual(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
       strictEqual(_.camelCase('walk 500 miles'), 'walk500Miles');
       strictEqual(_.camelCase('xhr2 request'), 'xhr2Request');
@@ -15211,10 +15224,15 @@
     });
 
     test('should work with compound words', 6, function() {
-      deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
       deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
-      deepEqual(_.words('aeiou2Consonants'), ['aeiou', '2', 'Consonants']);
+      deepEqual(_.words('enable 24h format'), ['enable', '24', 'h', 'format']);
+      deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
+      deepEqual(_.words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
+      deepEqual(_.words('walk500Miles'), ['walk', '500', 'Miles']);
+      deepEqual(_.words('xhr2Request'), ['xhr', '2', 'Request']);
+    });
 
+    test('should work with compound words containing diacritical marks', 3, function() {
       deepEqual(_.words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are', 'Vowels']);
       deepEqual(_.words('æiouAreVowels'), ['æiou', 'Are', 'Vowels']);
       deepEqual(_.words('æiou2Consonants'), ['æiou', '2', 'Consonants']);

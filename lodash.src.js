@@ -3160,27 +3160,26 @@
      */
     function createAssigner(assigner) {
       return function() {
-        var length = arguments.length,
-            object = arguments[0];
+        var args = arguments,
+            length = args.length,
+            object = args[0];
 
         if (length < 2 || object == null) {
           return object;
         }
-        if (length > 3 && isIterateeCall(arguments[1], arguments[2], arguments[3])) {
-          if (typeof arguments[length - 1] == 'function') {
-            customizer = arguments[--length];
-          }
+        if (length > 3 && typeof args[length - 2] == 'function') {
+          var index = (length -= 2);
+        } else if (length > 2 && typeof args[length - 1] == 'function') {
+          index = --length;
+        }
+        var customizer = index && bindCallback(args[index], args[index + 1], 5);
+        if (length > 3 && isIterateeCall(args[1], args[2], args[3])) {
           length = 2;
+          customizer = index === 3 ? null : customizer;
         }
-        // Juggle arguments.
-        if (length > 3 && typeof arguments[length - 2] == 'function') {
-          var customizer = bindCallback(arguments[--length - 1], arguments[length--], 5);
-        } else if (length > 2 && typeof arguments[length - 1] == 'function') {
-          customizer = arguments[--length];
-        }
-        var index = 0;
+        index = 0;
         while (++index < length) {
-          var source = arguments[index];
+          var source = args[index];
           if (source) {
             assigner(object, source, customizer);
           }

@@ -3167,6 +3167,9 @@
           return object;
         }
         if (length > 3 && isIterateeCall(arguments[1], arguments[2], arguments[3])) {
+          if (typeof arguments[length - 1] == 'function') {
+            customizer = arguments[--length];
+          }
           length = 2;
         }
         // Juggle arguments.

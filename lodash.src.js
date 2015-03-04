@@ -3168,17 +3168,22 @@
         if (length < 2 || object == null) {
           return object;
         }
-        if (length > 3 && typeof args[length - 2] == 'function') {
-          var index = (length -= 2);
-        } else if (length > 2 && typeof args[length - 1] == 'function') {
-          index = --length;
+        var customizer = args[length - 2],
+            thisArg = args[length - 1],
+            guard = args[3];
+
+        if (length > 3 && typeof customizer == 'function') {
+          customizer = bindCallback(customizer, thisArg, 5);
+          length -= 2;
+        } else {
+          customizer = (length > 2 && typeof thisArg == 'function') ? thisArg : null;
+          length -= (customizer ? 1 : 0);
         }
-        var customizer = index && bindCallback(args[index], args[index + 1], 5);
-        if (length > 3 && isIterateeCall(args[1], args[2], args[3])) {
+        if (guard && isIterateeCall(args[1], args[2], guard)) {
+          customizer = length == 3 ? null : customizer;
           length = 2;
-          customizer = index === 3 ? null : customizer;
         }
-        index = 0;
+        var index = 0;
         while (++index < length) {
           var source = args[index];
           if (source) {

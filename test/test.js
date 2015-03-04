@@ -5712,7 +5712,8 @@
   QUnit.module('object assignments');
 
   _.each(['assign', 'defaults', 'merge'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isDefaults = methodName == 'defaults';
 
     test('`_.' + methodName + '` should pass thru falsey `object` values', 1, function() {
       var actual = _.map(falsey, function(value, index) {
@@ -5787,8 +5788,11 @@
     });
 
     test('`_.' + methodName + '` should work as an iteratee for `_.reduce`', 1, function() {
-      var array = [{ 'b': 2 }, { 'c': 3 }];
-      deepEqual(_.reduce(array, func, { 'a': 1}), { 'a': 1, 'b': 2, 'c': 3 });
+      var array = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
+          expected = { 'a': 1, 'b': 2, 'c': 3 };
+
+      expected.a = isDefaults ? 0 : 1;
+      deepEqual(_.reduce(array, func, { 'a': 0 }), expected);
     });
 
     test('`_.' + methodName + '` should not return the existing wrapped value when chaining', 1, function() {

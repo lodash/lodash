@@ -10145,7 +10145,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.max and lodash.min');
+  QUnit.module('extremum methods');
 
   _.each(['max', 'min'], function(methodName) {
     var array = [1, 2, 3],

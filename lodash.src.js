@@ -11670,16 +11670,13 @@
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
-        var length = arguments.length,
-            args = Array(length),
+        var args = arguments,
+            length = args.length,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
             isLazy = value instanceof LazyWrapper;
 
-        while (length--) {
-          args[length] = arguments[length];
-        }
         if (isLazy && checkIteratee) {
           // avoid lazy use if the iteratee has a `length` other than `1`
           var iteratee = args[0];

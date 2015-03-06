@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,11 +10,13 @@ var baseCallback = require('lodash._basecallback'),
     baseEach = require('lodash._baseeach'),
     isIterateeCall = require('lodash._isiterateecall'),
     toIterable = require('lodash._toiterable'),
-    keys = require('lodash.keys'),
     lt = require('lodash.lt');
 
+/** Used as references for `-Infinity` and `Infinity`. */
+var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
+
 /**
- * A specialized version of `baseExtremum` for arrays whichs invokes `iteratee`
+ * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
  * with one argument: (value).
  *
  * @private
@@ -140,6 +142,6 @@ function createExtremum(comparator, exValue) {
  * _.min(users, 'age');
  * // => { 'user': 'barney', 'age': 36 }
  */
-var min = createExtremum(lt, Infinity);
+var min = createExtremum(lt, POSITIVE_INFINITY);
 
 module.exports = min;

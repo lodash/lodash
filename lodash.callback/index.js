@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -62,7 +62,7 @@ function isObjectLike(value) {
  */
 function callback(func, thisArg, guard) {
   if (guard && isIterateeCall(func, thisArg, guard)) {
-    thisArg = null;
+    thisArg = undefined;
   }
   return isObjectLike(func)
     ? matches(func)

@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -9,13 +9,11 @@
 var arrayCopy = require('lodash._arraycopy'),
     arrayEach = require('lodash._arrayeach'),
     createAssigner = require('lodash._createassigner'),
-    getNative = require('lodash._getnative'),
     isArguments = require('lodash.isarguments'),
     isArray = require('lodash.isarray'),
     isPlainObject = require('lodash.isplainobject'),
     isTypedArray = require('lodash.istypedarray'),
     keys = require('lodash.keys'),
-    keysIn = require('lodash.keysin'),
     toPlainObject = require('lodash.toplainobject');
 
 /**

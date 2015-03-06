@@ -1,4 +1,4 @@
-# lodash._basematchesproperty v3.3.0
+# lodash._basematchesproperty v3.3.1
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `baseMatchesProperty` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var baseMatchesProperty = require('lodash._basematchesproperty');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.3.0-npm-packages/lodash._basematchesproperty) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/3.3.1-npm-packages/lodash._basematchesproperty) for more details.

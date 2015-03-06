@@ -3986,10 +3986,16 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
             expected = [16, 3, [1, 4, 9 ,16]];
+
+        _(array).dropRightWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [4, 3, array]);
 
         _(array).map(square).dropRightWhile(function(value, index, array) {
           args = slice.call(arguments);
@@ -4016,7 +4022,7 @@
         deepEqual(args, expected);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
   }());
@@ -4102,10 +4108,16 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
             expected = [1, 0, [1, 4, 9, 16]];
+
+        _(array).dropWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
 
         _(array).map(square).dropWhile(function(value, index, array) {
           args = slice.call(arguments);
@@ -4132,7 +4144,7 @@
         deepEqual(args, expected);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
   }());
@@ -4936,10 +4948,16 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
             expected = [16, 3, [1, 4, 9 , 16]];
+
+        _(array).takeRightWhile(function(value, index, array) {
+          args = slice.call(arguments)
+        }).value();
+
+        deepEqual(args, [4, 3, array]);
 
         _(array).map(square).takeRightWhile(function(value, index, array) {
           args = slice.call(arguments)
@@ -4966,7 +4984,7 @@
         deepEqual(args, expected);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
   }());
@@ -5051,10 +5069,16 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
             expected = [1, 0, [1, 4, 9, 16]];
+
+        _(array).takeWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
 
         _(array).map(square).takeWhile(function(value, index, array) {
           args = slice.call(arguments);
@@ -5081,7 +5105,7 @@
         deepEqual(args, expected);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
   }());
@@ -9223,11 +9247,18 @@
       }
     });
 
-    test('should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+    test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
             expected = [1, 0, [1, 4, 9]];
 
+        _(array).map(function(value, index, array) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+
+        args = null;
         _(array).map(square).map(function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
@@ -9256,7 +9287,7 @@
         deepEqual(args, expected);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
 
@@ -12210,11 +12241,18 @@
       }
     });
 
-    test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy chain sequence', 4, function() {
+    test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
             expected = [1, 0, [1, 4, 9, 16]];
 
+        _(array)[methodName](function(value, index, array) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, [1, 0, array]);
+
+        args = null;
         _(array).map(square)[methodName](function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
@@ -12243,7 +12281,7 @@
         deepEqual(args, expected);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
   });

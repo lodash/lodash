@@ -11674,12 +11674,13 @@
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
-            isLazy = value instanceof LazyWrapper;
+            isLazy = value instanceof LazyWrapper,
+            iteratee = args[0],
+            useLazy = isLazy || isArray(value);
 
-        if (isLazy && checkIteratee) {
+        if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
           // avoid lazy use if the iteratee has a `length` other than `1`
-          var iteratee = args[0];
-          isLazy = !(typeof iteratee == 'function' && iteratee.length != 1);
+          isLazy = useLazy = false;
         }
         var onlyLazy = isLazy && !isHybrid;
         if (retUnwrapped && !chainAll) {
@@ -11692,7 +11693,7 @@
           push.apply(otherArgs, args);
           return lodashFunc.apply(lodash, otherArgs);
         };
-        if (isLazy || isArray(value)) {
+        if (useLazy) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),
               result = func.apply(wrapper, args);
 

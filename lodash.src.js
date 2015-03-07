@@ -858,6 +858,9 @@
      * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
      * and `unshift`
      *
+     * These `String` methods are also available:
+     * `split` and `replace`
+     *
      * The wrapper methods that support shortcut fusion are:
      * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
      * `first`, `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`,
@@ -11707,22 +11710,29 @@
       };
     });
 
-    // Add `Array.prototype` functions to `lodash.prototype`.
-    arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    // Add `Array.prototype` and `String.prototype` functions to `lodash.prototype`.
+    arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift',
+               'split', 'replace'], function(methodName) {
       var arrayFunc = arrayProto[methodName],
+          stringFunc = stringProto[methodName],
+          isStringFunc = /^(?:split|replace)$/.test(methodName),
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
           fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
           retUnwrapped = /^(?:join|pop|shift)$/.test(methodName);
 
-      // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
-      // IE < 9, Firefox < 10, Narwhal, and RingoJS.
-      var func = !fixObjects ? arrayFunc : function() {
-        var result = arrayFunc.apply(this, arguments);
-        if (this.length === 0) {
-          delete this[0];
-        }
-        return result;
-      };
+      if (isStringFunc) {
+        var func = stringFunc;
+      } else {
+        // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
+        // IE < 9, Firefox < 10, Narwhal, and RingoJS.
+        var func = !fixObjects ? arrayFunc : function() {
+          var result = arrayFunc.apply(this, arguments);
+          if (this.length === 0) {
+            delete this[0];
+          }
+          return result;
+        };
+      }
 
       lodash.prototype[methodName] = function() {
         var args = arguments;

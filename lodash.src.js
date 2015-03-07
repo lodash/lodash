@@ -854,12 +854,14 @@
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.
      *
-     * In addition to lodash methods, wrappers also have the following `Array` methods:
-     * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
-     * and `unshift`
+     * In addition to lodash methods, wrappers have `Array` and `String` methods.
      *
-     * These `String` methods are also available:
-     * `split` and `replace`
+     * The wrapper `Array` methods are:
+     * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`,
+     * `splice`, and `unshift`
+     *
+     * The wrapper `String` methods are:
+     * `replace` and `split`
      *
      * The wrapper methods that support shortcut fusion are:
      * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
@@ -11710,29 +11712,22 @@
       };
     });
 
-    // Add `Array.prototype` and `String.prototype` functions to `lodash.prototype`.
-    arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift',
-               'split', 'replace'], function(methodName) {
-      var arrayFunc = arrayProto[methodName],
-          stringFunc = stringProto[methodName],
-          isStringFunc = /^(?:split|replace)$/.test(methodName),
+    // Add `Array` and `String` methods to `lodash.prototype`.
+    arrayEach(['concat', 'join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+      var protoFunc = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
           fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
-          retUnwrapped = /^(?:join|pop|shift)$/.test(methodName);
+          retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
 
-      if (isStringFunc) {
-        var func = stringFunc;
-      } else {
-        // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
-        // IE < 9, Firefox < 10, Narwhal, and RingoJS.
-        var func = !fixObjects ? arrayFunc : function() {
-          var result = arrayFunc.apply(this, arguments);
-          if (this.length === 0) {
-            delete this[0];
-          }
-          return result;
-        };
-      }
+      // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
+      // IE < 9, Firefox < 10, Narwhal, and RingoJS.
+      var func = !fixObjects ? protoFunc : function() {
+        var result = protoFunc.apply(this, arguments);
+        if (this.length === 0) {
+          delete this[0];
+        }
+        return result;
+      };
 
       lodash.prototype[methodName] = function() {
         var args = arguments;

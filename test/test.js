@@ -15571,17 +15571,25 @@
   QUnit.module('lodash(...).join');
 
   (function() {
+    var array = [1, 2, 3];
+
     test('should return join all array elements into a string', 2, function() {
       if (!isNpm) {
-        var array = [1, 2, 3],
-            wrapped = _(array),
-            actual = wrapped.join('.');
-
-        strictEqual(actual, '1.2.3');
+        var wrapped = _(array);
+        strictEqual(wrapped.join('.'), '1.2.3');
         strictEqual(wrapped.value(), array);
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_(array).chain().join('.') instanceof _);
+      }
+      else {
+        skipTest();
       }
     });
   }());
@@ -15656,16 +15664,23 @@
   QUnit.module('lodash(...).replace');
 
   (function() {
-      test('should support string replace', 2, function() {
+      test('should replace the matched pattern', 2, function() {
       if (!isNpm) {
-        var string = 'hi hidash',
-            wrapped = _(string);
-
-        deepEqual(wrapped.replace('hi', 'lo').value(), 'lo hidash');
-        deepEqual(wrapped.replace(/hi/g, 'lo').value(), 'lo lodash');
+        var wrapped = _('abcdef');
+        strictEqual(wrapped.replace('def', '123'), 'abc123');
+        strictEqual(wrapped.replace(/[bdf]/g, '-'), 'a-c-e-');
       }
       else {
         skipTest(2);
+      }
+    });
+
+    test('should return a wrapped value when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        ok(_('abc').chain().replace('b', '_') instanceof _);
+      }
+      else {
+        skipTest();
       }
     });
   }());
@@ -15844,31 +15859,24 @@
   QUnit.module('lodash(...).split');
 
   (function() {
-    test('should support string split', 1, function() {
+    test('should support string split', 2, function() {
       if (!isNpm) {
-        var string = 'hi ya',
-            wrapped = _(string),
-            actual = ['hi', 'ya'];
-
-        deepEqual(wrapped.split(' ').value(), actual);
+        var wrapped = _('abcde');
+        deepEqual(wrapped.split('c').value(), ['ab', 'de']);
+        deepEqual(wrapped.split(/[bd]/).value(), ['a', 'c', 'e']);
       }
       else {
-        skipTest(1);
+        skipTest(2);
       }
     });
-  }());
 
-  (function() {
     test('should allow mixed string and array prototype methods', 1, function() {
       if (!isNpm) {
-        var string = 'hi ya',
-            wrapped = _(string),
-            actual = 'hi,ya';
-
-        deepEqual(wrapped.split(' ').join(','), actual);
+        var wrapped = _('abc');
+        strictEqual(wrapped.split('b').join(','), 'a,c');
       }
       else {
-        skipTest(1);
+        skipTest();
       }
     });
   }());

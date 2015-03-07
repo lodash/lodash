@@ -15653,6 +15653,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).replace');
+
+  (function() {
+      test('should support string replace', 2, function() {
+      if (!isNpm) {
+        var string = 'hi hidash',
+            wrapped = _(string);
+
+        deepEqual(wrapped.replace('hi', 'lo').value(), 'lo hidash');
+        deepEqual(wrapped.replace(/hi/g, 'lo').value(), 'lo lodash');
+      }
+      else {
+        skipTest(2);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).reverse');
 
   (function() {
@@ -15816,6 +15835,40 @@
       }
       else {
         skipTest(5);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash(...).split');
+
+  (function() {
+    test('should support string split', 1, function() {
+      if (!isNpm) {
+        var string = 'hi ya',
+            wrapped = _(string),
+            actual = ['hi', 'ya'];
+
+        deepEqual(wrapped.split(' ').value(), actual);
+      }
+      else {
+        skipTest(1);
+      }
+    });
+  }());
+
+  (function() {
+    test('should allow mixed string and array prototype methods', 1, function() {
+      if (!isNpm) {
+        var string = 'hi ya',
+            wrapped = _(string),
+            actual = 'hi,ya';
+
+        deepEqual(wrapped.split(' ').join(','), actual);
+      }
+      else {
+        skipTest(1);
       }
     });
   }());

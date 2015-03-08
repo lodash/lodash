@@ -1452,6 +1452,20 @@
       deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
 
+    test('should rebind functions correctly', 3, function() {
+      var object1 = {},
+          object2 = {},
+          object3 = {};
+
+      var bound1 = _.bind(fn, object1),
+          bound2 = _.bind(bound1, object2, 'a'),
+          bound3 = _.bind(bound1, object3, 'b');
+
+      deepEqual(bound1(), [object1]);
+      deepEqual(bound2(), [object1, 'a']);
+      deepEqual(bound3(), [object1, 'b']);
+    });
+
     test('should return a wrapped value when chaining', 2, function() {
       if (!isNpm) {
         var object = {},
@@ -1465,20 +1479,6 @@
       else {
         skipTest(2);
       }
-    });
-
-    test('should rebind functions correctly', 3, function() {
-      var object1 = {},
-          object2 = {},
-          object3 = {};
-
-      var bound1 = _.bind(fn, object1),
-          bound2 = _.bind(bound1, object2, 'a'),
-          bound3 = _.bind(bound1, object3, 'b');
-
-      deepEqual(bound1(), [object1]);
-      deepEqual(bound2(), [object1, 'a']);
-      deepEqual(bound3(), [object1, 'b']);
     });
   }());
 
@@ -2162,17 +2162,6 @@
     test('should filter falsey values', 1, function() {
       var array = ['0', '1', '2'];
       deepEqual(_.compact(falsey.concat(array)), array);
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(falsey).compact();
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), []);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should work when in between lazy operators', 2, function() {
@@ -3801,17 +3790,6 @@
       deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(array).drop(2);
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [3]);
-      }
-      else {
-        skipTest(2);
-      }
-    });
-
     test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -3880,17 +3858,6 @@
           actual = _.map(array, _.dropRight);
 
       deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(array).dropRight(2);
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [1]);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should work in a lazy chain sequence', 6, function() {
@@ -4762,17 +4729,6 @@
       deepEqual(actual, [[1], [4], [7]]);
     });
 
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(array).take(2);
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [1, 2]);
-      }
-      else {
-        skipTest(2);
-      }
-    });
-
     test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
         var array = [1, 2, 3, 4, 5, 6, 7, 8, 9 , 10],
@@ -4841,17 +4797,6 @@
           actual = _.map(array, _.takeRight);
 
       deepEqual(actual, [[3], [6], [9]]);
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(array).takeRight(2);
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [2, 3]);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should work in a lazy chain sequence', 6, function() {
@@ -6514,17 +6459,6 @@
           actual = _.map(array, _.initial);
 
       deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(array).initial();
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [1, 2]);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should work in a lazy chain sequence', 4, function() {
@@ -12465,17 +12399,6 @@
           actual = _.map(array, _.rest);
 
       deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
-    });
-
-    test('should return a wrapped value when chaining', 2, function() {
-      if (!isNpm) {
-        var wrapped = _(array).rest();
-        ok(wrapped instanceof _);
-        deepEqual(wrapped.value(), [2, 3]);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should work in a lazy chain sequence', 4, function() {

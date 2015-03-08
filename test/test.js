@@ -12509,6 +12509,27 @@
       }
     });
 
+    test('should not execute subsequent iteratees on an empty array in a lazy chain sequence', 4, function() {
+      if (!isNpm) {
+        var array = [1],
+            iteratee = function() { pass = false },
+            pass = true,
+            actual = _(array).rest().map(iteratee).value();
+
+        ok(pass);
+        deepEqual(actual, []);
+
+        pass = true;
+        actual = _(array).filter(_.identity).rest().map(iteratee).value();
+
+        ok(pass);
+        deepEqual(actual, []);
+      }
+      else {
+        skipTest(4);
+      }
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.tail, _.rest);
     });

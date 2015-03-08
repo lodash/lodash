@@ -1223,7 +1223,6 @@
 
       result.__actions__ = actions ? arrayCopy(actions) : null;
       result.__dir__ = this.__dir__;
-      result.__dropCount__ = this.__dropCount__;
       result.__filtered__ = this.__filtered__;
       result.__iteratees__ = iteratees ? arrayCopy(iteratees) : null;
       result.__takeCount__ = this.__takeCount__;
@@ -1270,9 +1269,8 @@
           start = view.start,
           end = view.end,
           length = end - start,
-          dropCount = this.__dropCount__,
-          takeCount = nativeMin(length, this.__takeCount__),
           index = isRight ? end : start - 1,
+          takeCount = nativeMin(length, this.__takeCount__),
           iteratees = this.__iteratees__,
           iterLength = iteratees ? iteratees.length : 0,
           resIndex = 0,
@@ -1290,28 +1288,32 @@
               iteratee = data.iteratee,
               type = data.type;
 
-          if (type != LAZY_DROP_WHILE_FLAG) {
-            var computed = iteratee(value);
-          } else {
-            data.done = data.done && (isRight ? index < data.index : index > data.index);
+          if (type == LAZY_DROP_WHILE_FLAG) {
+            if (data.done && (isRight ? index > data.index : index < data.index)) {
+              data.count = 0;
+              data.done = false;
+            }
             data.index = index;
-            computed = data.done || (data.done = !iteratee(value));
-          }
-          if (type == LAZY_MAP_FLAG) {
-            value = computed;
-          } else if (!computed) {
-            if (type == LAZY_TAKE_WHILE_FLAG) {
-              break outer;
-            } else {
-              continue outer;
+            if (!data.done) {
+              var limit = data.limit;
+              if (!(data.done = limit > -1 ? data.count++ >= limit : !iteratee(value))) {
+                continue outer;
+              }
+            }
+          } else {
+            var computed = iteratee(value);
+            if (type == LAZY_MAP_FLAG) {
+              value = computed;
+            } else if (!computed) {
+              if (type == LAZY_FILTER_FLAG) {
+                continue outer;
+              } else {
+                break outer;
+              }
             }
           }
         }
-        if (dropCount) {
-          dropCount--;
-        } else {
-          result[resIndex++] = value;
-        }
+        result[resIndex++] = value;
       }
       return result;
     }
@@ -11580,24 +11582,35 @@
             result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
             iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
+        iteratees.push({
+          'done': false,
+          'count': 0,
+          'index': 0,
+          'iteratee': getCallback(iteratee, thisArg, 1),
+          'limit': -1,
+          'type': type
+        });
+
         result.__filtered__ = filtered || isFilter;
-        iteratees.push({ 'done': false, 'index': 0, 'iteratee': getCallback(iteratee, thisArg, 1), 'type': type });
         return result;
       };
     });
 
     // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
     arrayEach(['drop', 'take'], function(methodName, index) {
-      var countName = '__' + methodName + 'Count__',
-          whileName = methodName + 'While';
+      var whileName = methodName + 'While';
 
       LazyWrapper.prototype[methodName] = function(n) {
-        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+        var filtered = this.__filtered__,
+            result = (filtered && !index) ? this.dropWhile() : this.clone();
 
-        var result = this.clone();
-        if (result.__filtered__) {
-          var value = result[countName];
-          result[countName] = index ? nativeMin(value, n) : (value + n);
+        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+        if (filtered) {
+          if (index) {
+            result.__takeCount__ = nativeMin(result.__takeCount__, n);
+          } else {
+            last(result.__iteratees__).limit = n;
+          }
         } else {
           var views = result.__views__ || (result.__views__ = []);
           views.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });

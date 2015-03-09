@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.4.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.5.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -30,6 +30,7 @@ import identity from './utility/identity';
 import isArray from './lang/isArray';
 import isObject from './lang/isObject';
 import keys from './object/keys';
+import last from './array/last';
 import lazyClone from './internal/lazyClone';
 import lazyReverse from './internal/lazyReverse';
 import lazyValue from './internal/lazyValue';
@@ -39,14 +40,15 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.4.0';
+var VERSION = '3.5.0';
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_DROP_WHILE_FLAG = 0,
     LAZY_MAP_FLAG = 2;
 
 /** Used for native method references. */
-var arrayProto = Array.prototype;
+var arrayProto = Array.prototype,
+    stringProto = String.prototype;
 
 /** Native method references. */
 var floor = Math.floor,
@@ -240,7 +242,7 @@ lodash.isString = lang.isString;
 lodash.isTypedArray = lang.isTypedArray;
 lodash.isUndefined = lang.isUndefined;
 lodash.kebabCase = string.kebabCase;
-lodash.last = array.last;
+lodash.last = last;
 lodash.lastIndexOf = array.lastIndexOf;
 lodash.max = math.max;
 lodash.min = math.min;
@@ -332,24 +334,35 @@ arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type
         result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
         iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
+    iteratees.push({
+      'done': false,
+      'count': 0,
+      'index': 0,
+      'iteratee': baseCallback(iteratee, thisArg, 1),
+      'limit': -1,
+      'type': type
+    });
+
     result.__filtered__ = filtered || isFilter;
-    iteratees.push({ 'done': false, 'index': 0, 'iteratee': baseCallback(iteratee, thisArg, 1), 'type': type });
     return result;
   };
 });
 
 // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
 arrayEach(['drop', 'take'], function(methodName, index) {
-  var countName = '__' + methodName + 'Count__',
-      whileName = methodName + 'While';
+  var whileName = methodName + 'While';
 
   LazyWrapper.prototype[methodName] = function(n) {
-    n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+    var filtered = this.__filtered__,
+        result = (filtered && !index) ? this.dropWhile() : this.clone();
 
-    var result = this.clone();
-    if (result.__filtered__) {
-      var value = result[countName];
-      result[countName] = index ? nativeMin(value, n) : (value + n);
+    n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+    if (filtered) {
+      if (index) {
+        result.__takeCount__ = nativeMin(result.__takeCount__, n);
+      } else {
+        last(result.__iteratees__).limit = n;
+      }
     } else {
       var views = result.__views__ || (result.__views__ = []);
       views.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
@@ -465,11 +478,11 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   };
 });
 
-// Add `Array.prototype` functions to `lodash.prototype`.
-arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-  var func = arrayProto[methodName],
+// Add `Array` and `String` methods to `lodash.prototype`.
+arrayEach(['concat', 'join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+  var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
       chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-      retUnwrapped = /^(?:join|pop|shift)$/.test(methodName);
+      retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
 
   lodash.prototype[methodName] = function() {
     var args = arguments;

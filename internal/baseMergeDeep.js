@@ -59,7 +59,7 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
   if (isCommon) {
     // Recursively merge objects and arrays (susceptible to call stack limits).
     object[key] = mergeFunc(result, srcValue, customizer, stackA, stackB);
-  } else if (result === result ? result !== value : value === value) {
+  } else if (result === result ? (result !== value) : (value === value)) {
     object[key] = result;
   }
 }

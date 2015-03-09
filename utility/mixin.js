@@ -70,7 +70,11 @@ function mixin(object, source, options) {
           var chainAll = this.__chain__;
           if (chain || chainAll) {
             var result = object(this.__wrapped__);
-            (result.__actions__ = arrayCopy(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
+            (result.__actions__ = arrayCopy(this.__actions__)).push({
+              'func': func,
+              'args': arguments,
+              'thisArg': object
+            });
             result.__chain__ = chainAll;
             return result;
           }

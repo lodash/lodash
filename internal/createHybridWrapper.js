@@ -4,6 +4,7 @@ import composeArgsRight from './composeArgsRight';
 import createCtorWrapper from './createCtorWrapper';
 import reorder from './reorder';
 import replaceHolders from './replaceHolders';
+import root from './root';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -96,7 +97,8 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
     if (isAry && ary < args.length) {
       args.length = ary;
     }
-    return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+    var fn = (this && this !== root && this instanceof wrapper) ? (Ctor || createCtorWrapper(func)) : func;
+    return fn.apply(thisBinding, args);
   }
   return wrapper;
 }

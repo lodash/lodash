@@ -60,7 +60,7 @@ function trunc(string, options, guard) {
   if (options != null) {
     if (isObject(options)) {
       var separator = 'separator' in options ? options.separator : separator;
-      length = 'length' in options ? +options.length || 0 : length;
+      length = 'length' in options ? (+options.length || 0) : length;
       omission = 'omission' in options ? baseToString(options.omission) : omission;
     } else {
       length = +options || 0;

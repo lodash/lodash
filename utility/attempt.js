@@ -23,7 +23,7 @@ import isError from '../lang/isError';
 function attempt() {
   var func = arguments[0],
       length = arguments.length,
-      args = Array(length ? length - 1 : 0);
+      args = Array(length ? (length - 1) : 0);
 
   while (--length > 0) {
     args[length - 1] = arguments[length];

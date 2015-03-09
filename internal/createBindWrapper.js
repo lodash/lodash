@@ -1,4 +1,5 @@
 import createCtorWrapper from './createCtorWrapper';
+import root from './root';
 
 /**
  * Creates a function that wraps `func` and invokes it with the `this`
@@ -13,7 +14,8 @@ function createBindWrapper(func, thisArg) {
   var Ctor = createCtorWrapper(func);
 
   function wrapper() {
-    return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
+    var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+    return fn.apply(thisArg, arguments);
   }
   return wrapper;
 }

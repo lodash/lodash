@@ -1,5 +1,5 @@
 /**
- * lodash 3.4.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -21,7 +21,7 @@ function createComposer(fromRight) {
   return function() {
     var length = arguments.length,
         index = length,
-        fromIndex = fromRight ? length - 1 : 0;
+        fromIndex = fromRight ? (length - 1) : 0;
 
     if (!length) {
       return function() { return arguments[0]; };

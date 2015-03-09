@@ -1,5 +1,5 @@
 /**
- * lodash 3.4.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -10,39 +10,6 @@ var baseEach = require('lodash._baseeach'),
     baseSortByOrder = require('lodash._basesortbyorder'),
     isIterateeCall = require('lodash._isiterateecall'),
     isArray = require('lodash.isarray');
-
-/**
- * Checks if `value` is object-like.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- */
-function isObjectLike(value) {
-  return (value && typeof value == 'object') || false;
-}
-
-/**
- * Used as the maximum length of an array-like value.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
- * for more details.
- */
-var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
-
-/**
- * Checks if `value` is a valid array-like length.
- *
- * **Note:** This function is based on ES `ToLength`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
- * for more details.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
- */
-function isLength(value) {
-  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-}
 
 /**
  * This method is like `_.sortByAll` except that it allows specifying the

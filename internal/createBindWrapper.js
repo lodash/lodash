@@ -13,7 +13,8 @@ function createBindWrapper(func, thisArg) {
   var Ctor = createCtorWrapper(func);
 
   function wrapper() {
-    return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
+    var fn = (this && this !== global && this instanceof wrapper) ? Ctor : func;
+    return fn.apply(thisArg, arguments);
   }
   return wrapper;
 }

@@ -34,7 +34,8 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
     while (argsLength--) {
       args[leftIndex++] = arguments[++argsIndex];
     }
-    return (this instanceof wrapper ? Ctor : func).apply(isBind ? thisArg : this, args);
+    var fn = (this && this !== global && this instanceof wrapper) ? Ctor : func;
+    return fn.apply(isBind ? thisArg : this, args);
   }
   return wrapper;
 }

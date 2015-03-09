@@ -96,7 +96,8 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
     if (isAry && ary < args.length) {
       args.length = ary;
     }
-    return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+    var fn = (this && this !== global && this instanceof wrapper) ? (Ctor || createCtorWrapper(func)) : func;
+    return fn.apply(thisBinding, args);
   }
   return wrapper;
 }

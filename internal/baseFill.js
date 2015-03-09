@@ -19,7 +19,7 @@ function baseFill(array, value, start, end) {
   if (end < 0) {
     end += length;
   }
-  length = start > end ? 0 : end >>> 0;
+  length = start > end ? 0 : (end >>> 0);
   start >>>= 0;
 
   while (start < length) {

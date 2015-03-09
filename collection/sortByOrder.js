@@ -14,13 +14,14 @@ var baseSortByOrder = require('../internal/baseSortByOrder'),
  * @param {Array|Object|string} collection The collection to iterate over.
  * @param {string[]} props The property names to sort by.
  * @param {boolean[]} orders The sort orders of `props`.
+ * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
  * @returns {Array} Returns the new sorted array.
  * @example
  *
  * var users = [
- *   { 'user': 'barney', 'age': 36 },
- *   { 'user': 'fred',   'age': 40 },
  *   { 'user': 'barney', 'age': 26 },
+ *   { 'user': 'fred',   'age': 40 },
+ *   { 'user': 'barney', 'age': 36 },
  *   { 'user': 'fred',   'age': 30 }
  * ];
  *

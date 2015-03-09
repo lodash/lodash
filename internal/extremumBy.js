@@ -23,7 +23,8 @@ function extremumBy(collection, iteratee, isMin) {
 
   baseEach(collection, function(value, index, collection) {
     var current = iteratee(value, index, collection);
-    if ((isMin ? current < computed : current > computed) || (current === exValue && current === result)) {
+    if ((isMin ? (current < computed) : (current > computed)) ||
+        (current === exValue && current === result)) {
       computed = current;
       result = value;
     }

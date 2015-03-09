@@ -1,6 +1,6 @@
 {
   "name": "lodash.throttle",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "The modern build of lodash’s `_.throttle` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

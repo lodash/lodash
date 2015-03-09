@@ -1,6 +1,6 @@
 {
   "name": "lodash.isnative",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "The modern build of lodash’s `_.isNative` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,5 +15,8 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
+  "dependencies": {
+    "lodash.isfunction": "^3.0.0"
+  }
 }

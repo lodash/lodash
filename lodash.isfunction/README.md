@@ -1,4 +1,4 @@
-# lodash.isfunction v3.0.3
+# lodash.isfunction v3.0.4
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.isFunction` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var isFunction = require('lodash.isfunction');
 ```
 
-See the [documentation](https://lodash.com/docs#isFunction) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.isfunction) for more details.
+See the [documentation](https://lodash.com/docs#isFunction) or [package source](https://github.com/lodash/lodash/blob/3.0.4-npm-packages/lodash.isfunction) for more details.

@@ -1,11 +1,4 @@
-/**
- * lodash 3.0.3 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
- */
+/** Used as the `TypeError` message for "Functions" methods. */
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -94,7 +87,7 @@ function mapSet(key, value) {
  *
  * **Note:** The cache is exposed as the `cache` property on the memoized
  * function. Its creation may be customized by replacing the `_.memoize.Cache`
- * constructor with one whose instances implement the [`Map`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
+ * constructor with one whose instances implement the [`Map`](http://ecma-international.org/ecma-262/6.0/#sec-properties-of-the-map-prototype-object)
  * method interface of `get`, `has`, and `set`.
  *
  * @static
@@ -141,14 +134,14 @@ function memoize(func, resolver) {
   }
   var memoized = function() {
     var args = arguments,
-        cache = memoized.cache,
-        key = resolver ? resolver.apply(this, args) : args[0];
+        key = resolver ? resolver.apply(this, args) : args[0],
+        cache = memoized.cache;
 
     if (cache.has(key)) {
       return cache.get(key);
     }
     var result = func.apply(this, args);
-    cache.set(key, result);
+    memoized.cache = cache.set(key, result);
     return result;
   };
   memoized.cache = new memoize.Cache;

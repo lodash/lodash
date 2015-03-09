@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,13 +10,6 @@ var debounce = require('lodash.debounce');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
-
-/** Used as an internal `_.debounce` options object by `_.throttle`. */
-var debounceOptions = {
-  'leading': false,
-  'maxWait': 0,
-  'trailing': false
-};
 
 /**
  * Creates a throttled function that only invokes `func` at most once per
@@ -70,10 +63,7 @@ function throttle(func, wait, options) {
     leading = 'leading' in options ? !!options.leading : leading;
     trailing = 'trailing' in options ? !!options.trailing : trailing;
   }
-  debounceOptions.leading = leading;
-  debounceOptions.maxWait = +wait;
-  debounceOptions.trailing = trailing;
-  return debounce(func, wait, debounceOptions);
+  return debounce(func, wait, { 'leading': leading, 'maxWait': +wait, 'trailing': trailing });
 }
 
 /**

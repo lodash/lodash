@@ -1,4 +1,4 @@
-# lodash.trimright v3.0.3
+# lodash.trimright v3.0.4
 
 The [lodash](https://lodash.com/) method `_.trimRight` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -21,4 +21,4 @@ In Node.js/io.js:
 var trimRight = require('lodash.trimright');
 ```
 
-See the [documentation](https://lodash.com/docs#trimRight) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.trimright) for more details.
+See the [documentation](https://lodash.com/docs#trimRight) or [package source](https://github.com/lodash/lodash/blob/3.0.4-npm-packages/lodash.trimright) for more details.

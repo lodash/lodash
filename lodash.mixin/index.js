@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -11,11 +11,24 @@ var arrayCopy = require('lodash._arraycopy'),
     isFunction = require('lodash.isfunction'),
     keys = require('lodash.keys');
 
-/** Used for native method references. */
-var arrayProto = Array.prototype;
+/**
+ * Appends the elements of `values` to `array`.
+ *
+ * @private
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to append.
+ * @returns {Array} Returns `array`.
+ */
+function arrayPush(array, values) {
+  var index = -1,
+      length = values.length,
+      offset = array.length;
 
-/** Native method references. */
-var push = arrayProto.push;
+  while (++index < length) {
+    array[offset + index] = values[index];
+  }
+  return array;
+}
 
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
@@ -110,9 +123,7 @@ function mixin(object, source, options) {
             result.__chain__ = chainAll;
             return result;
           }
-          var args = [this.value()];
-          push.apply(args, arguments);
-          return func.apply(object, args);
+          return func.apply(object, arrayPush([this.value()], arguments));
         };
       }(func));
     }

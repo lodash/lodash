@@ -1,4 +1,4 @@
-# lodash.trimleft v3.0.3
+# lodash.trimleft v3.0.4
 
 The [lodash](https://lodash.com/) method `_.trimLeft` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -21,4 +21,4 @@ In Node.js/io.js:
 var trimLeft = require('lodash.trimleft');
 ```
 
-See the [documentation](https://lodash.com/docs#trimLeft) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.trimleft) for more details.
+See the [documentation](https://lodash.com/docs#trimLeft) or [package source](https://github.com/lodash/lodash/blob/3.0.4-npm-packages/lodash.trimleft) for more details.

@@ -1,4 +1,4 @@
-# lodash._createwrapper v3.0.3
+# lodash._createwrapper v3.0.4
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `createWrapper` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var createWrapper = require('lodash._createwrapper');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash._createwrapper) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/3.0.4-npm-packages/lodash._createwrapper) for more details.

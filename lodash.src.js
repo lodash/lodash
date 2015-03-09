@@ -444,9 +444,8 @@
       if (result) {
         if (index >= ordersLength) {
           return result;
-        } else {
-          return orders[index] ? result : result * -1;
         }
+        return result * (orders[index] ? 1 : -1);
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -1269,7 +1268,7 @@
           start = view.start,
           end = view.end,
           length = end - start,
-          index = isRight ? end : start - 1,
+          index = isRight ? end : (start - 1),
           takeCount = nativeMin(length, this.__takeCount__),
           iteratees = this.__iteratees__,
           iterLength = iteratees ? iteratees.length : 0,
@@ -1289,14 +1288,14 @@
               type = data.type;
 
           if (type == LAZY_DROP_WHILE_FLAG) {
-            if (data.done && (isRight ? index > data.index : index < data.index)) {
+            if (data.done && (isRight ? (index > data.index) : (index < data.index))) {
               data.count = 0;
               data.done = false;
             }
             data.index = index;
             if (!data.done) {
               var limit = data.limit;
-              if (!(data.done = limit > -1 ? data.count++ >= limit : !iteratee(value))) {
+              if (!(data.done = limit > -1 ? (data.count++ >= limit) : !iteratee(value))) {
                 continue outer;
               }
             }
@@ -1733,7 +1732,7 @@
             value = object[key],
             result = customizer(value, source[key], key, object, source);
 
-        if ((result === result ? result !== value : value === value) ||
+        if ((result === result ? (result !== value) : (value === value)) ||
             (typeof value == 'undefined' && !(key in object))) {
           object[key] = result;
         }
@@ -2083,7 +2082,7 @@
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : end >>> 0;
+      length = start > end ? 0 : (end >>> 0);
       start >>>= 0;
 
       while (start < length) {
@@ -2570,7 +2569,7 @@
           result = srcValue;
         }
         if ((isSrcArr || typeof result != 'undefined') &&
-            (isCommon || (result === result ? result !== value : value === value))) {
+            (isCommon || (result === result ? (result !== value) : (value === value)))) {
           object[key] = result;
         }
       });
@@ -2630,7 +2629,7 @@
       if (isCommon) {
         // Recursively merge objects and arrays (susceptible to call stack limits).
         object[key] = mergeFunc(result, srcValue, customizer, stackA, stackB);
-      } else if (result === result ? result !== value : value === value) {
+      } else if (result === result ? (result !== value) : (value === value)) {
         object[key] = result;
       }
     }
@@ -2742,7 +2741,7 @@
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : (end - start) >>> 0;
+      length = start > end ? 0 : ((end - start) >>> 0);
       start >>>= 0;
 
       var result = Array(length);
@@ -3241,7 +3240,7 @@
       return function() {
         var length = arguments.length,
             index = length,
-            fromIndex = fromRight ? length - 1 : 0;
+            fromIndex = fromRight ? (length - 1) : 0;
 
         if (!length) {
           return function() { return arguments[0]; };
@@ -3696,8 +3695,10 @@
             othCtor = other.constructor;
 
         // Non `Object` object instances with different constructors are not equal.
-        if (objCtor != othCtor && ('constructor' in object && 'constructor' in other) &&
-            !(typeof objCtor == 'function' && objCtor instanceof objCtor && typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+        if (objCtor != othCtor &&
+            ('constructor' in object && 'constructor' in other) &&
+            !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+              typeof othCtor == 'function' && othCtor instanceof othCtor)) {
           return false;
         }
       }
@@ -3723,7 +3724,8 @@
 
       baseEach(collection, function(value, index, collection) {
         var current = iteratee(value, index, collection);
-        if ((isMin ? current < computed : current > computed) || (current === exValue && current === result)) {
+        if ((isMin ? (current < computed) : (current > computed)) ||
+            (current === exValue && current === result)) {
           computed = current;
           result = value;
         }
@@ -3939,7 +3941,7 @@
       }
       if (prereq) {
         var other = object[index];
-        return value === value ? value === other : other !== other;
+        return value === value ? (value === other) : (other !== other);
       }
       return false;
     }
@@ -4822,7 +4824,10 @@
         var index = binaryIndex(array, value),
             other = array[index];
 
-        return (value === value ? value === other : other !== other) ? index : -1;
+        if (value === value ? (value === other) : (other !== other)) {
+          return index;
+        }
+        return -1;
       }
       return baseIndexOf(array, value, fromIndex || 0);
     }
@@ -4958,7 +4963,10 @@
       } else if (fromIndex) {
         index = binaryIndex(array, value, true) - 1;
         var other = array[index];
-        return (value === value ? value === other : other !== other) ? index : -1;
+        if (value === value ? (value === other) : (other !== other)) {
+          return index;
+        }
+        return -1;
       }
       if (value !== value) {
         return indexOfNaN(array, index, true);
@@ -8241,7 +8249,7 @@
      */
     function isElement(value) {
       return (value && value.nodeType === 1 && isObjectLike(value) &&
-        (lodash.support.nodeTag ? objToString.call(value).indexOf('Element') > -1 : isHostObject(value))) || false;
+        (lodash.support.nodeTag ? (objToString.call(value).indexOf('Element') > -1) : isHostObject(value))) || false;
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
@@ -9248,7 +9256,7 @@
             length = object.length;
       }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-         (typeof object == 'function' ? lodash.support.enumPrototypes : (length && isLength(length)))) {
+          (typeof object == 'function' ? lodash.support.enumPrototypes : (length && isLength(length)))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -9315,7 +9323,7 @@
         }
       }
       if (support.nonEnumShadows && object !== objectProto) {
-        var tag = object === stringProto ? stringTag : object === errorProto ? errorTag : objToString.call(object),
+        var tag = object === stringProto ? stringTag : (object === errorProto ? errorTag : objToString.call(object)),
             nonEnums = nonEnumProps[tag] || nonEnumProps[objectTag];
 
         if (tag == objectTag) {
@@ -9881,7 +9889,11 @@
       target = (target + '');
 
       var length = string.length;
-      position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
+      position = typeof position == 'undefined'
+        ? length
+        : nativeMin(position < 0 ? 0 : (+position || 0), length);
+
+      position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
     }
 
@@ -10223,7 +10235,10 @@
      */
     function startsWith(string, target, position) {
       string = baseToString(string);
-      position = position == null ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+      position = position == null
+        ? 0
+        : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -10573,7 +10588,7 @@
       if (options != null) {
         if (isObject(options)) {
           var separator = 'separator' in options ? options.separator : separator;
-          length = 'length' in options ? +options.length || 0 : length;
+          length = 'length' in options ? (+options.length || 0) : length;
           omission = 'omission' in options ? baseToString(options.omission) : omission;
         } else {
           length = +options || 0;
@@ -10691,7 +10706,7 @@
     function attempt() {
       var func = arguments[0],
           length = arguments.length,
-          args = Array(length ? length - 1 : 0);
+          args = Array(length ? (length - 1) : 0);
 
       while (--length > 0) {
         args[length - 1] = arguments[length];
@@ -10922,7 +10937,11 @@
               var chainAll = this.__chain__;
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
-                (result.__actions__ = arrayCopy(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
+                (result.__actions__ = arrayCopy(this.__actions__)).push({
+                  'func': func,
+                  'args': arguments,
+                  'thisArg': object
+                });
                 result.__chain__ = chainAll;
                 return result;
               }

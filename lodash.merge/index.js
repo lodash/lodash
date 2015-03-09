@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -28,7 +28,7 @@ function isObjectLike(value) {
 }
 
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -40,7 +40,7 @@ var MAX_SAFE_INTEGER = 9007199254740991;
  * @private
  * @param {Object} object The destination object.
  * @param {Object} source The source object.
- * @param {Function} [customizer] The function to customize merging properties.
+ * @param {Function} [customizer] The function to customize merged values.
  * @param {Array} [stackA=[]] Tracks traversed source objects.
  * @param {Array} [stackB=[]] Associates values with source counterparts.
  * @returns {Object} Returns `object`.
@@ -50,7 +50,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
     return object;
   }
   var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-      props = isSrcArr ? null : keys(source);
+      props = isSrcArr ? undefined : keys(source);
 
   arrayEach(props || source, function(srcValue, key) {
     if (props) {
@@ -89,7 +89,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
  * @param {Object} source The source object.
  * @param {string} key The key of the value to merge.
  * @param {Function} mergeFunc The function to merge values.
- * @param {Function} [customizer] The function to customize merging properties.
+ * @param {Function} [customizer] The function to customize merged values.
  * @param {Array} [stackA=[]] Tracks traversed source objects.
  * @param {Array} [stackB=[]] Associates values with source counterparts.
  * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
@@ -176,7 +176,7 @@ function isArrayLike(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -217,7 +217,7 @@ function isObject(value) {
  * Recursively merges own enumerable properties of the source object(s), that
  * don't resolve to `undefined` into the destination object. Subsequent sources
  * overwrite property assignments of previous sources. If `customizer` is
- * provided it is invoked to produce the merged values of the destination and
+ * provided it's invoked to produce the merged values of the destination and
  * source properties. If `customizer` returns `undefined` merging is handled
  * by the method instead. The `customizer` is bound to `thisArg` and invoked
  * with five arguments: (objectValue, sourceValue, key, object, source).

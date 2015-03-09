@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,17 +17,16 @@ var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
     reIsPlainProp = /^\w*$/;
 
 /**
- * The base implementation of `_.matchesProperty` which does not which does
- * not clone `value`.
+ * The base implementation of `_.matchesProperty` which does not clone `srcValue`.
  *
  * @private
  * @param {string} path The path of the property to get.
- * @param {*} value The value to compare.
+ * @param {*} srcValue The value to compare.
  * @returns {Function} Returns the new function.
  */
-function baseMatchesProperty(path, value) {
+function baseMatchesProperty(path, srcValue) {
   var isArr = isArray(path),
-      isCommon = isKey(path) && isStrictComparable(value),
+      isCommon = isKey(path) && isStrictComparable(srcValue),
       pathKey = (path + '');
 
   path = toPath(path);
@@ -45,9 +44,9 @@ function baseMatchesProperty(path, value) {
       key = last(path);
       object = toObject(object);
     }
-    return object[key] === value
-      ? (value !== undefined || (key in object))
-      : baseIsEqual(value, object[key], null, true);
+    return object[key] === srcValue
+      ? (srcValue !== undefined || (key in object))
+      : baseIsEqual(srcValue, object[key], undefined, true);
   };
 }
 
@@ -84,7 +83,7 @@ function isStrictComparable(value) {
 }
 
 /**
- * Converts `value` to an object if it is not one.
+ * Converts `value` to an object if it's not one.
  *
  * @private
  * @param {*} value The value to process.
@@ -136,7 +135,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
+  return !!value && (type == 'object' || type == 'function');
 }
 
 module.exports = baseMatchesProperty;

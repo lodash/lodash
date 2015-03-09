@@ -1,10 +1,10 @@
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
 /** Used as references for various `Number` constants. */
@@ -19,13 +19,13 @@ var funcTag = '[object Function]',
  * iteratee shorthands.
  *
  * @private
- * @param {Array} array The array to iterate over.
+ * @param {Array} [array] The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
  */
 function arrayFilter(array, predicate) {
   var index = -1,
-      length = array.length,
+      length = array ? array.length : 0,
       resIndex = 0,
       result = [];
 
@@ -43,19 +43,32 @@ function arrayFilter(array, predicate) {
  * shorthands.
  *
  * @private
- * @param {Array} array The array to iterate over.
+ * @param {Array} [array] The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the new mapped array.
  */
 function arrayMap(array, iteratee) {
   var index = -1,
-      length = array.length,
+      length = array ? array.length : 0,
       result = Array(length);
 
   while (++index < length) {
     result[index] = iteratee(array[index], index, array);
   }
   return result;
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
 }
 
 /**
@@ -91,19 +104,6 @@ var objectToString = objectProto.toString;
 var nativeMax = Math.max;
 
 /**
- * The base implementation of `_.property` without support for deep paths.
- *
- * @private
- * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new accessor function.
- */
-function baseProperty(key) {
-  return function(object) {
-    return object == null ? undefined : object[key];
-  };
-}
-
-/**
  * Gets the "length" property value of `object`.
  *
  * **Note:** This function is used to avoid a
@@ -129,11 +129,11 @@ var getLength = baseProperty('length');
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
  *
- * var zipped = _.zip(['fred', 'barney'], [30, 40], [true, false]);
- * // => [['fred', 30, true], ['barney', 40, false]]
+ * var zipped = _.zip(['a', 'b'], [1, 2], [true, false]);
+ * // => [['a', 1, true], ['b', 2, false]]
  *
  * _.unzip(zipped);
- * // => [['fred', 'barney'], [30, 40], [true, false]]
+ * // => [['a', 'b'], [1, 2], [true, false]]
  */
 function unzip(array) {
   if (!(array && array.length)) {
@@ -217,8 +217,7 @@ function isArrayLikeObject(value) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);

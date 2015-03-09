@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -124,7 +124,7 @@ function baseAssign(object, source, customizer) {
         value = object[key],
         result = customizer(value, source[key], key, object, source);
 
-    if ((result === result ? result !== value : value === value) ||
+    if ((result === result ? (result !== value) : (value === value)) ||
         (typeof value == 'undefined' && !(key in object))) {
       object[key] = result;
     }
@@ -374,7 +374,7 @@ function template(string, options, otherOptions) {
 function attempt() {
   var func = arguments[0],
       length = arguments.length,
-      args = Array(length ? length - 1 : 0);
+      args = Array(length ? (length - 1) : 0);
 
   while (--length > 0) {
     args[length - 1] = arguments[length];

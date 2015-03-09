@@ -1,6 +1,6 @@
 {
   "name": "lodash.callback",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "The modern build of lodash’s `_.callback` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

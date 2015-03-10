@@ -4276,6 +4276,11 @@
       deepEqual(actual, expected);
     });
 
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var actual = _.map([[1]], _.every);
+      deepEqual(actual, [true]);
+    });
+
     test('should be aliased', 1, function() {
       strictEqual(_.all, _.every);
     });
@@ -12952,6 +12957,11 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should work as an iteratee for `_.map`', 1, function() {
+      var actual = _.map([[1]], _.some);
+      deepEqual(actual, [true]);
     });
 
     test('should be aliased', 1, function() {

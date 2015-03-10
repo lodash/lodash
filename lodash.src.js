@@ -6622,7 +6622,7 @@
      * `_.reduce`, `_.reduceRight`, and `_.transform`.
      *
      * The guarded methods are:
-     * `assign`, `defaults`, `merge`, and `sortAllBy`
+     * `assign`, `defaults`, `merge`, `sortByAll`, and `sortByOrder`
      *
      * @static
      * @memberOf _

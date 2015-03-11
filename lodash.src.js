@@ -6641,8 +6641,10 @@
      * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
      */
     function reduce(collection, iteratee, accumulator, thisArg) {
-      var func = isArray(collection) ? arrayReduce : baseReduce;
-      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEach);
+      var initFromArray = arguments.length < 3;
+      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayReduce(collection, iteratee, accumulator, initFromArray)
+        : baseReduce(collection, getCallback(iteratee, thisArg, 4), accumulator, initFromArray, baseEach);
     }
 
     /**
@@ -6668,8 +6670,10 @@
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, iteratee, accumulator, thisArg) {
-      var func = isArray(collection) ? arrayReduceRight : baseReduce;
-      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
+      var initFromArray = arguments.length < 3;
+      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+        ? arrayReduceRight(collection, iteratee, accumulator, initFromArray)
+        : baseReduce(collection, getCallback(iteratee, thisArg, 4), accumulator, initFromArray, baseEachRight);
     }
 
     /**

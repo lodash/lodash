@@ -2074,16 +2074,16 @@
     function baseFill(array, value, start, end) {
       var length = array.length;
 
-      start = start == null ? 0 : (+start || 0);
+      start = start == null ? 0 : ((start | 0) || 0);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      end = (typeof end == 'undefined' || end > length) ? length : ((end | 0) || 0);
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : (end >>> 0);
-      start >>>= 0;
+      length = start > end ? 0 : (end | 0);
+      start |= 0;
 
       while (start < length) {
         array[start++] = value;
@@ -2733,16 +2733,16 @@
       var index = -1,
           length = array.length;
 
-      start = start == null ? 0 : (+start || 0);
+      start = start == null ? 0 : ((start | 0) || 0);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      end = (typeof end == 'undefined' || end > length) ? length : ((end | 0) || 0);
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : ((end - start) >>> 0);
-      start >>>= 0;
+      length = start > end ? 0 : ((end - start) | 0);
+      start |= 0;
 
       var result = Array(length);
       while (++index < length) {
@@ -3435,7 +3435,7 @@
      */
     function createPad(string, length, chars) {
       var strLength = string.length;
-      length = +length;
+      length |= 0;
 
       if (strLength >= length || !nativeIsFinite(length)) {
         return '';
@@ -3619,17 +3619,17 @@
         case dateTag:
           // Coerce dates and booleans to numbers, dates to milliseconds and booleans
           // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
-          return +object == +other;
+          return object | 0 == other | 0;
 
         case errorTag:
           return object.name == other.name && object.message == other.message;
 
         case numberTag:
           // Treat `NaN` vs. `NaN` as equal.
-          return (object != +object)
-            ? other != +other
+          return (object != object | 0)
+            ? other != other | 0
             // But, treat `-0` vs. `+0` as not equal.
-            : (object == 0 ? ((1 / object) == (1 / other)) : object == +other);
+            : (object == 0 ? ((1 / object) == (1 / other)) : object == other | 0);
 
         case regexpTag:
         case stringTag:
@@ -3857,7 +3857,7 @@
 
         case boolTag:
         case dateTag:
-          return new Ctor(+object);
+          return new Ctor(object | 0);
 
         case float32Tag: case float64Tag:
         case int8Tag: case int16Tag: case int32Tag:
@@ -3914,7 +3914,7 @@
      * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
      */
     function isIndex(value, length) {
-      value = +value;
+      value |= 0;
       length = length == null ? MAX_SAFE_INTEGER : length;
       return value > -1 && value % 1 == 0 && value < length;
     }
@@ -4301,7 +4301,7 @@
       if (guard ? isIterateeCall(array, size, guard) : size == null) {
         size = 1;
       } else {
-        size = nativeMax(+size || 1, 1);
+        size = nativeMax((size | 0) || 1, 1);
       }
       var index = 0,
           length = array ? array.length : 0,
@@ -4436,7 +4436,7 @@
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      n = length - (+n || 0);
+      n = length - ((n | 0) || 0);
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -5295,7 +5295,7 @@
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
         n = 1;
       }
-      n = length - (+n || 0);
+      n = length - ((n | 0) || 0);
       return baseSlice(array, n < 0 ? 0 : n);
     }
 
@@ -6756,7 +6756,7 @@
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var result = shuffle(collection);
-      result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
+      result.length = nativeMin(n < 0 ? 0 : ((n | 0) || 0), result.length);
       return result;
     }
 
@@ -7111,7 +7111,7 @@
           throw new TypeError(FUNC_ERROR_TEXT);
         }
       }
-      n = nativeIsFinite(n = +n) ? n : 0;
+      n = nativeIsFinite(n |= 0) ? n : 0;
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);
@@ -7139,7 +7139,7 @@
       if (guard && isIterateeCall(func, n, guard)) {
         n = null;
       }
-      n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
+      n = (func && n == null) ? func.length : nativeMax((n | 0) || 0, 0);
       return createWrapper(func, ARY_FLAG, null, null, null, null, n);
     }
 
@@ -7489,13 +7489,13 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      wait = wait < 0 ? 0 : (+wait || 0);
+      wait = wait < 0 ? 0 : ((wait | 0) || 0);
       if (options === true) {
         var leading = true;
         trailing = false;
       } else if (isObject(options)) {
         leading = options.leading;
-        maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
+        maxWait = 'maxWait' in options && nativeMax((options.maxWait | 0) || 0, wait);
         trailing = 'trailing' in options ? options.trailing : trailing;
       }
 
@@ -7999,7 +7999,7 @@
         trailing = 'trailing' in options ? !!options.trailing : trailing;
       }
       debounceOptions.leading = leading;
-      debounceOptions.maxWait = +wait;
+      debounceOptions.maxWait = wait | 0;
       debounceOptions.trailing = trailing;
       return debounce(func, wait, debounceOptions);
     }
@@ -8550,7 +8550,7 @@
     function isNaN(value) {
       // An `NaN` primitive is the only value that is not equal to itself.
       // Perform the `toStringTag` check first to avoid errors with some host objects in IE.
-      return isNumber(value) && value != +value;
+      return isNumber(value) && value != value | 0;
     }
 
     /**
@@ -9730,12 +9730,12 @@
      * // => false
      */
     function inRange(value, start, end) {
-      start = +start || 0;
+      start = (start | 0) || 0;
       if (typeof end === 'undefined') {
         end = start;
         start = 0;
       } else {
-        end = +end || 0;
+        end = (end | 0) || 0;
       }
       return value >= start && value < end;
     }
@@ -9788,12 +9788,12 @@
         max = 1;
         noMax = false;
       }
-      min = +min || 0;
+      min = (min | 0) || 0;
       if (noMax) {
         max = min;
         min = 0;
       } else {
-        max = +max || 0;
+        max = (max | 0) || 0;
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();
@@ -9895,7 +9895,7 @@
       var length = string.length;
       position = typeof position == 'undefined'
         ? length
-        : nativeMin(position < 0 ? 0 : (+position || 0), length);
+        : nativeMin(position < 0 ? 0 : ((position | 0) || 0), length);
 
       position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
@@ -10012,7 +10012,7 @@
      */
     function pad(string, length, chars) {
       string = baseToString(string);
-      length = +length;
+      length |= 0;
 
       var strLength = string.length;
       if (strLength >= length || !nativeIsFinite(length)) {
@@ -10120,7 +10120,7 @@
         if (guard ? isIterateeCall(string, radix, guard) : radix == null) {
           radix = 0;
         } else if (radix) {
-          radix = +radix;
+          radix |= 0;
         }
         string = trim(string);
         return nativeParseInt(string, radix || (reHexPrefix.test(string) ? 16 : 10));
@@ -10150,7 +10150,7 @@
     function repeat(string, n) {
       var result = '';
       string = baseToString(string);
-      n = +n;
+      n |= 0;
       if (n < 1 || !string || !nativeIsFinite(n)) {
         return result;
       }
@@ -10241,7 +10241,7 @@
       string = baseToString(string);
       position = position == null
         ? 0
-        : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+        : nativeMin(position < 0 ? 0 : ((position | 0) || 0), string.length);
 
       return string.lastIndexOf(target, position) == position;
     }
@@ -10592,10 +10592,10 @@
       if (options != null) {
         if (isObject(options)) {
           var separator = 'separator' in options ? options.separator : separator;
-          length = 'length' in options ? (+options.length || 0) : length;
+          length = 'length' in options ? ((options.length | 0) || 0) : length;
           omission = 'omission' in options ? baseToString(options.omission) : omission;
         } else {
-          length = +options || 0;
+          length = (options | 0) || 0;
         }
       }
       string = baseToString(string);
@@ -11081,14 +11081,14 @@
       if (step && isIterateeCall(start, end, step)) {
         end = step = null;
       }
-      start = +start || 0;
-      step = step == null ? 1 : (+step || 0);
+      start = (start | 0) || 0;
+      step = step == null ? 1 : ((step | 0) || 0);
 
       if (end == null) {
         end = start;
         start = 0;
       } else {
-        end = +end || 0;
+        end = (end | 0) || 0;
       }
       // Use `Array(length)` so engines like Chakra and V8 avoid slower modes.
       // See https://youtu.be/XAqIpGU8ZZk#t=17m25s for more details.
@@ -11131,7 +11131,7 @@
      * // => also invokes `mage.castSpell(n)` three times
      */
     function times(n, iteratee, thisArg) {
-      n = +n;
+      n |= 0;
 
       // Exit early to avoid a JSC JIT bug in Safari 8
       // where `Array(0)` is treated as `Array(1)`.
@@ -11315,7 +11315,7 @@
           result = 0;
 
       while (length--) {
-        result += +collection[length] || 0;
+        result += (collection[length] | 0) || 0;
       }
       return result;
     }
@@ -11691,11 +11691,11 @@
     };
 
     LazyWrapper.prototype.slice = function(start, end) {
-      start = start == null ? 0 : (+start || 0);
+      start = start == null ? 0 : (start | 0) || 0;
       var result = start < 0 ? this.takeRight(-start) : this.drop(start);
 
       if (typeof end != 'undefined') {
-        end = (+end || 0);
+        end = (end | 0)  || 0;
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
       }
       return result;

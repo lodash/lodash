@@ -3740,11 +3740,12 @@
       deepEqual(_.difference([1, NaN, 3], largeArray), [1, 3]);
     });
 
-    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
-      var array = [0, 1, null, 3];
-      deepEqual(_.difference(array, 3, null, { '0': 1 }), array);
-      deepEqual(_.difference(null, array, null, [2, 1]), [0, null, 3]);
-      deepEqual(_.difference(array, null, args, null), [0, null]);
+    test('should ignore values that are not arrays or `arguments` objects', 4, function() {
+      var array = [1, null, 3];
+      deepEqual(_.difference(args, 3, { '0': 1 }), [1, 2, 3]);
+      deepEqual(_.difference(null, array, 1), []);
+      deepEqual(_.difference(array, args, null), [null]);
+      deepEqual(_.difference('abc', array, 'b'), []);
     });
   }(1, 2, 3));
 
@@ -15173,7 +15174,11 @@
       var array = [1, 2, 3, 1, 2, 3];
       deepEqual(_.without(array, 1, 2), [3, 3]);
     });
-  }());
+
+    test('should treat string values for `array` as empty', 1, function() {
+      deepEqual(_.without('abc', 'b'), []);
+    });
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 
@@ -16134,7 +16139,7 @@
         return '`_.' + methodName + '` should accept falsey primary arguments';
       }
 
-      deepEqual(_.difference(null, array), array, message('difference'));
+      deepEqual(_.difference(null, array), [], message('difference'));
       deepEqual(_.intersection(null, array), array, message('intersection'));
       deepEqual(_.union(null, array), array, message('union'));
       deepEqual(_.xor(null, array), array, message('xor'));

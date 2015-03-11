@@ -4363,18 +4363,10 @@
      * _.difference([1, 2, 3], [4, 2]);
      * // => [1, 3]
      */
-    function difference() {
-      var args = arguments,
-          index = -1,
-          length = args.length;
-
-      while (++index < length) {
-        var value = args[index];
-        if (isArray(value) || isArguments(value)) {
-          break;
-        }
-      }
-      return baseDifference(value, baseFlatten(args, false, true, ++index));
+    function difference(array) {
+      return (isArray(array) || isArguments(array))
+        ? baseDifference(array, baseFlatten(arguments, false, true, 1))
+        : [];
     }
 
     /**
@@ -5570,7 +5562,9 @@
      * // => [3]
      */
     function without(array) {
-      return baseDifference(array, baseSlice(arguments, 1));
+      return (isArray(array) || isArguments(array))
+        ? baseDifference(array, baseSlice(arguments, 1))
+        : [];
     }
 
     /**

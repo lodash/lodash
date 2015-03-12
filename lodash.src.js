@@ -3401,7 +3401,13 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity);
+            var funcName = support.funcNames ? func.name : '',
+                newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity],
+                result = createHybridWrapper.apply(undefined, newData);
+
+            if (funcName && func === lodash[funcName] && LazyWrapper.prototype[funcName]) {
+              setData(result, newData);
+            }
             result.placeholder = placeholder;
             return result;
           }

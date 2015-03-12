@@ -54,6 +54,7 @@
       params = root.arguments,
       push = arrayProto.push,
       slice = arrayProto.slice,
+      Symbol = root.Symbol,
       system = root.system,
       Uint8Array = root.Uint8Array;
 
@@ -8342,7 +8343,8 @@
     });
 
     test('should return `false` for non-objects', 1, function() {
-      var values = falsey.concat(true, 1, 'a'),
+      var symbol = (Symbol || noop)(),
+          values = falsey.concat(true, 1, 'a', symbol),
           expected = _.map(values, _.constant(false));
 
       var actual = _.map(values, function(value, index) {
@@ -15005,29 +15007,40 @@
     });
 
     test('should work with large arrays', 1, function() {
-      var object = {};
+      var largeArray = [],
+          expected = [0, 'a', {}],
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
-      var largeArray = _.times(LARGE_ARRAY_SIZE, function(index) {
-        switch (index % 3) {
-          case 0: return 0;
-          case 1: return 'a';
-          case 2: return object;
-        }
+      _.times(count, function() {
+        push.apply(largeArray, expected);
       });
 
-      deepEqual(_.uniq(largeArray), [0, 'a', object]);
+      deepEqual(_.uniq(largeArray), expected);
     });
 
     test('should work with large arrays of boolean, `NaN`, `null`, and `undefined` values', 1, function() {
-      var array = [],
+      var largeArray = [],
           expected = [true, false, NaN, null, undefined],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       _.times(count, function() {
-        push.apply(array, expected);
+        push.apply(largeArray, expected);
       });
 
-      deepEqual(_.uniq(array), expected);
+      deepEqual(_.uniq(largeArray), expected);
+    });
+
+    test('should work with large arrays of symbols', 1, function() {
+      if (Symbol) {
+        var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
+          return Symbol();
+        });
+
+        deepEqual(_.uniq(largeArray), largeArray);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should distinguish between numbers and numeric strings', 1, function() {

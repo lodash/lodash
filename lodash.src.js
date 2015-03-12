@@ -5638,6 +5638,9 @@
      *
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
+     * 
+     * _.zipObject([ ['fred', 30], ['barney', 40] ]);
+     * // => { 'fred': 30, 'barney': 40 }
      */
     function zipObject(props, values) {
       var index = -1,

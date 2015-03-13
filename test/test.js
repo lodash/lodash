@@ -6211,6 +6211,13 @@
       strictEqual(_.includes([-0], 0), true);
     });
 
+    test('should work as an iteratee for methods like `_.reduce`', 1, function() {
+      var array1 = [1, 2, 3],
+          array2 = [2, 3, 1];
+
+      ok(_.every(array1, _.partial(_.includes, array2)));
+    });
+
     test('should be aliased', 2, function() {
       strictEqual(_.contains, _.includes);
       strictEqual(_.include, _.includes);

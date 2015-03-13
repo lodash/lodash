@@ -6342,6 +6342,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
      *
@@ -6357,7 +6358,7 @@
      * _.includes('pebbles', 'eb');
      * // => true
      */
-    function includes(collection, target, fromIndex) {
+    function includes(collection, target, fromIndex, guard) {
       var length = collection ? collection.length : 0;
       if (!isLength(length)) {
         collection = values(collection);
@@ -6366,10 +6367,10 @@
       if (!length) {
         return false;
       }
-      if (typeof fromIndex == 'number') {
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
-      } else {
+      if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
         fromIndex = 0;
+      } else {
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       }
       return (typeof collection == 'string' || !isArray(collection) && isString(collection))
         ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)
@@ -6616,7 +6617,7 @@
      * `_.reduce`, `_.reduceRight`, and `_.transform`.
      *
      * The guarded methods are:
-     * `assign`, `defaults`, `merge`, `sortByAll`, and `sortByOrder`
+     * `assign`, `defaults`, `includes`, `merge`, `sortByAll`, and `sortByOrder`
      *
      * @static
      * @memberOf _

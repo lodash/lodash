@@ -543,9 +543,6 @@ function Job(properties) {
   EventEmitter.call(this);
 
   this.options = {};
-  this.retries = maxJobRetries;
-  this.statusInterval = statusInterval;
-
   _.merge(this, properties);
   _.defaults(this.options, _.cloneDeep(jobOptions));
 
@@ -706,7 +703,6 @@ Job.prototype.stop = function(callback) {
 function Tunnel(properties) {
   EventEmitter.call(this);
 
-  this.retries = maxTunnelRetries;
   _.merge(this, properties);
 
   var active = [],

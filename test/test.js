@@ -4646,6 +4646,7 @@
     test('should return `undefined` when querying empty arrays', 1, function() {
       var array = [];
       array['-1'] = 1;
+
       strictEqual(_.first(array), undefined);
     });
 
@@ -8929,6 +8930,7 @@
     test('should return `undefined` when querying empty arrays', 1, function() {
       var array = [];
       array['-1'] = 1;
+
       strictEqual(_.last([]), undefined);
     });
 

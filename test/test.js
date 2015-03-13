@@ -9048,7 +9048,8 @@
   QUnit.module('indexOf methods');
 
   _.each(['indexOf', 'lastIndexOf'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isIndexOf = methodName == 'indexOf';
 
     test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant(-1));
@@ -9081,9 +9082,12 @@
       strictEqual(func(array, 0, true), -1);
     });
 
-    test('`_.' + methodName + '` should match `NaN`', 2, function() {
-      strictEqual(func([1, NaN, 3], NaN), 1);
-      strictEqual(func([1, 3, NaN], NaN, true), 2);
+    test('`_.' + methodName + '` should match `NaN`', 4, function() {
+      var array = [1, NaN, 3, NaN, 5, NaN];
+      strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
+      strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
+      strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
+      strictEqual(func([1, 2, NaN, NaN], NaN, true), isIndexOf ? 2 : 3);
     });
 
     test('`_.' + methodName + '` should match `-0` as `0`', 1, function() {

@@ -13197,8 +13197,7 @@
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
     test('`_.' + methodName + '` should return the correct insert index', 1, function() {
-      var array = [30, 50],
-          values = [30, 40, 50],
+      var values = [30, 40, 50],
           expected = isSortedIndex ? [0, 1, 1] : [1, 1, 2];
 
       var actual = _.map(values, function(value) {

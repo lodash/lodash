@@ -1070,7 +1070,7 @@
       deepEqual(capped('a'), ['a']);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var funcs = _.map([fn], _.ary),
           actual = funcs[0]('a', 'b', 'c');
 
@@ -1881,7 +1881,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([[1, 2], [3, 4]], _.chunk);
       deepEqual(actual, [[[1], [2]], [[3], [4]]]);
     });
@@ -2103,7 +2103,7 @@
         }
       });
 
-      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for `_.map`', 3, function() {
+      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for methods like `_.map`', 3, function() {
         var expected = [{ 'a': [0] }, { 'b': [1] }],
             actual = _.map(expected, func);
 
@@ -2451,7 +2451,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
           expected = _.map(array, _.constant(true)),
           objects = _.map(array, _.create);
@@ -2644,7 +2644,7 @@
       supportBizarro.funcNames = funcNames;
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var fn = function() { return this instanceof Number; },
           array = [fn, fn, fn],
           callbacks = _.map(array, _.callback),
@@ -3260,7 +3260,7 @@
         fn = function(a, b) { return slice.call(arguments); },
         isCurry = methodName == 'curry';
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 2, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 2, function() {
       var array = [fn, fn, fn],
           object = { 'a': fn, 'b': fn, 'c': fn };
 
@@ -3785,7 +3785,7 @@
       });
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.drop);
 
@@ -3855,7 +3855,7 @@
       });
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.dropRight);
 
@@ -4278,7 +4278,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([[1]], _.every);
       deepEqual(actual, [true]);
     });
@@ -4426,7 +4426,7 @@
       deepEqual(actual, [['a', 2, 3], ['a', 2, 3], ['a', 2, 3], [1, 'a', 'a'], ['a', 2, 3], [1, 2, 3]]);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2], [3, 4]],
           actual = _.map(array, _.fill);
 
@@ -4650,7 +4650,7 @@
       strictEqual(_.first(array), undefined);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.first);
 
@@ -4730,7 +4730,7 @@
       });
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.take);
 
@@ -4800,7 +4800,7 @@
       });
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.takeRight);
 
@@ -5094,7 +5094,7 @@
       deepEqual(_.flattenDeep(array), expected);
     });
 
-    test('should work as an iteratee for `_.map`', 2, function() {
+    test('should work as an iteratee for methods like `_.map`', 2, function() {
       var array = [[[['a']]], [[['b']]]];
 
       deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
@@ -5764,7 +5764,7 @@
       deepEqual(actual, expected);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.reduce`', 1, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.reduce`', 1, function() {
       var array = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
           expected = { 'a': 1, 'b': 2, 'c': 3 };
 
@@ -6462,7 +6462,7 @@
       deepEqual(_.initial([]), []);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.initial);
 
@@ -6636,7 +6636,7 @@
       ok(_.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
     });
 
-    test('should work as an iteratee for `_.map`', 2, function() {
+    test('should work as an iteratee for methods like `_.map`', 2, function() {
       var regular = { 'a': 1, 'b': 2, 'c': 1 },
           inverted = { '1': 'c', '2': 'b' };
 
@@ -8934,7 +8934,7 @@
       strictEqual(_.last([]), undefined);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.last);
 
@@ -10220,7 +10220,7 @@
       strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 3, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 3, function() {
       var arrays = [[2, 1], [5, 4], [7, 8]],
           objects = [{ 'a': 2, 'b': 1 }, { 'a': 5, 'b': 4 }, { 'a': 7, 'b': 8 }],
           expected = isMax ? [2, 5, 8] : [1, 4, 7];
@@ -10871,7 +10871,7 @@
       strictEqual(_.parseInt('0x20', object), 32);
     });
 
-    test('should work as an iteratee for `_.map`', 2, function() {
+    test('should work as an iteratee for methods like `_.map`', 2, function() {
       var strings = _.map(['6', '08', '10'], Object),
           actual = _.map(strings, _.parseInt);
 
@@ -11721,7 +11721,7 @@
       ok(actual % 1 && actual >= 2 && actual <= 4);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [1, 2, 3],
           expected = _.map(array, _.constant(true)),
           randoms = _.map(array, _.random);
@@ -11780,7 +11780,7 @@
       deepEqual(actual, [[0], [0], [0], [], []]);
     });
 
-    test('should work as an iteratee for `_.map`', 2, function() {
+    test('should work as an iteratee for methods like `_.map`', 2, function() {
       var array = [1, 2, 3],
           object = { 'a': 1, 'b': 2, 'c': 3 },
           expected = [[0], [0, 1], [0, 1, 2]];
@@ -12408,7 +12408,7 @@
       deepEqual(_.rest([]), []);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.rest);
 
@@ -12586,7 +12586,7 @@
       ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
     });
 
-    test('should work as an iteratee for `_.map`', 2, function() {
+    test('should work as an iteratee for methods like `_.map`', 2, function() {
       var array1 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           array2 = ['abc', 'def', 'ghi'];
 
@@ -12861,7 +12861,7 @@
       deepEqual(actual, [[1], [1], [1], [2, 3], [1], []]);
     });
 
-    test('should work as an iteratee for `_.map`', 2, function() {
+    test('should work as an iteratee for methods like `_.map`', 2, function() {
       var array = [[1], [2, 3]],
           actual = _.map(array, _.slice);
 
@@ -12968,7 +12968,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([[1]], _.some);
       deepEqual(actual, [true]);
     });
@@ -13087,7 +13087,7 @@
       deepEqual(actual, [objects[0], objects[2], objects[1], objects[3]]);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([[2, 1, 3], [3, 2, 1]], _.sortBy);
       deepEqual(actual, [[1, 2, 3], [1, 2, 3]]);
     });
@@ -13167,7 +13167,7 @@
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.reduce`', 1, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.reduce`', 1, function() {
       var objects = [
         { 'a': 'x', '0': 3 },
         { 'a': 'y', '0': 4 },
@@ -13933,7 +13933,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = ['<%= a %>', '<%- b %>', '<% print(c) %>'],
           compiles = _.map(array, _.template),
           data = { 'a': 'one', 'b': '`two`', 'c': 'three' };
@@ -13999,7 +13999,7 @@
       strictEqual(_.trunc({ 'toString': _.constant(string) }, 5), 'hi...');
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([string, string, string], _.trunc),
           truncated = 'hi-diddly-ho there, neighbo...';
 
@@ -14834,7 +14834,7 @@
       strictEqual(func(string, ''), string);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for `_.map`', 1, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 1, function() {
       var string = Object(whitespace + 'a b c' + whitespace),
           trimmed = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : ''),
           actual = _.map([string, string, string], func);
@@ -15004,7 +15004,7 @@
       deepEqual(actual, arrays.slice(0, 3));
     });
 
-    test('should perform an unsorted uniq when used as an iteratee for `_.map`', 1, function() {
+    test('should perform an unsorted uniq when used as an iteratee for methods like `_.map`', 1, function() {
       var array = [[2, 1, 2], [1, 2, 1]],
           actual = _.map(array, _.uniq);
 
@@ -15250,7 +15250,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work as an iteratee for `_.map`', 1, function() {
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
       var strings = _.map(['a', 'b', 'c'], Object),
           actual = _.map(strings, _.words);
 

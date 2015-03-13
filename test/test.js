@@ -15048,6 +15048,33 @@
       }
     });
 
+    test('should work with large arrays of well-known symbols', 1, function() {
+      if (Symbol) {
+        // See https://people.mozilla.org/~jorendorff/es6-draft.html#sec-well-known-symbols.
+        var expected = [
+          Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.iterator,
+          Symbol.match, Symbol.replace,  Symbol.search, Symbol.species,
+          Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, Symbol.unscopables
+        ];
+
+        var largeArray = [],
+            count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+
+        expected = _.map(expected, function(symbol) {
+          return symbol || {};
+        });
+
+        _.times(count, function() {
+          push.apply(largeArray, expected);
+        });
+
+        deepEqual(_.uniq(largeArray), expected);
+      }
+      else {
+        skipTest();
+      }
+    });
+
     test('should distinguish between numbers and numeric strings', 1, function() {
       var array = [],
           expected = ['2', 2, Object('2'), Object(2)],

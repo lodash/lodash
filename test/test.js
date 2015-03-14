@@ -12481,6 +12481,35 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.restParam');
+
+  (function() {
+    function fn(a, b, c) {
+      return slice.call(arguments);
+    }
+
+    test('should apply a rest parameter to `func`', 1, function() {
+      var rp = _.restParam(fn);
+      deepEqual(rp(1, 2, 3, 4), [1, 2, [3, 4]]);
+    });
+
+    test('should work with `start`', 1, function() {
+      var rp = _.restParam(fn, 1);
+      deepEqual(rp(1, 2, 3, 4), [1, [2, 3, 4]]);
+    });
+
+    test('should not set a `this` binding', 1, function() {
+      var rp = _.restParam(function(x, y) {
+        return this[x] + this[y[0]];
+      });
+
+      var object = { 'rp': rp, 'x': 4, 'y': 2 };
+      strictEqual(object.rp('x', 'y'), 6);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.runInContext');
 
   (function() {
@@ -16267,6 +16296,7 @@
       'partial',
       'partialRight',
       'rearg',
+      'restParam',
       'spread',
       'throttle'
     ];
@@ -16387,7 +16417,7 @@
       });
     });
 
-    test('should throw an error for falsey arguments', 23, function() {
+    test('should throw an error for falsey arguments', 24, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

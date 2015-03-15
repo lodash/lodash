@@ -11297,6 +11297,8 @@
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {number} Returns the sum.
      * @example
      *
@@ -11305,16 +11307,41 @@
      *
      * _.sum({ 'a': 4, 'b': 6, 'c': 2 });
      * // => 12
+     *
+     * _.sum([]);
+     * // => 0
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
+     * ];
+     *
+     * _.sum(users, function(chr) {
+     *   return chr.age;
+     * });
+     * // => 76
+     *
+     * // using the `_.property` callback shorthand
+     * _.sum(users, 'age');
+     * // => 76
      */
-    function sum(collection) {
+    function sum(collection, iteratee, thisArg) {
+      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
+        iteratee = null;
+      }
       if (!isArray(collection)) {
         collection = toIterable(collection);
       }
+      var func = getCallback();
+      if (!(func === baseCallback && iteratee == null)) {
+        iteratee = func(iteratee, thisArg, 3);
+      }
+
       var length = collection.length,
           result = 0;
 
       while (length--) {
-        result += +collection[length] || 0;
+        result += +(iteratee == null ? collection[length] : iteratee(collection[length])) || 0;
       }
       return result;
     }

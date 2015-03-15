@@ -309,6 +309,28 @@
   }
 
   /**
+   * The base implementation of `_.findIndex` and `_.findLastIndex` without
+   * support for callback shorthands and `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {Function} predicate The function invoked per iteration.
+   * @param {boolean} [fromRight] Specify iterating from right to left.
+   * @returns {number} Returns the index of the matched value, else `-1`.
+   */
+  function baseFindIndex(array, predicate, fromRight) {
+    var length = array.length,
+        index = fromRight ? length : -1;
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (predicate(array[index], index, array)) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * The base implementation of `_.indexOf` without support for binary searches.
    *
    * @private
@@ -494,7 +516,6 @@
 
   /**
    * Gets the index at which the first occurrence of `NaN` is found in `array`.
-   * If `fromRight` is provided elements of `array` are iterated from right to left.
    *
    * @private
    * @param {Array} array The array to search.
@@ -4563,16 +4584,11 @@
      * // => 2
      */
     function findIndex(array, predicate, thisArg) {
-      var index = -1,
-          length = array ? array.length : 0;
-
-      predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length) {
-        if (predicate(array[index], index, array)) {
-          return index;
-        }
+      if (!(array && array.length)) {
+        return -1;
       }
-      return -1;
+      predicate = getCallback(predicate, thisArg, 3);
+      return baseFindIndex(array, predicate);
     }
 
     /**
@@ -4624,14 +4640,11 @@
      * // => 0
      */
     function findLastIndex(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      predicate = getCallback(predicate, thisArg, 3);
-      while (length--) {
-        if (predicate(array[length], length, array)) {
-          return length;
-        }
+      if (!(array && array.length)) {
+        return -1;
       }
-      return -1;
+      predicate = getCallback(predicate, thisArg, 3);
+      return baseFindIndex(array, predicate, true);
     }
 
     /**
@@ -6086,11 +6099,11 @@
      * // => 'barney'
      */
     function find(collection, predicate, thisArg) {
+      predicate = getCallback(predicate, thisArg, 3);
       if (isArray(collection)) {
-        var index = findIndex(collection, predicate, thisArg);
+        var index = baseFindIndex(collection, predicate);
         return index > -1 ? collection[index] : undefined;
       }
-      predicate = getCallback(predicate, thisArg, 3);
       return baseFind(collection, predicate, baseEach);
     }
 

@@ -7953,7 +7953,7 @@
           case 1: return func.call(this, args[0], rest);
           case 2: return func.call(this, args[0], args[1], rest);
         }
-        var otherArgs = Array(start);
+        var otherArgs = Array(start + 1);
         index = -1;
         while (++index < start) {
           otherArgs[index] = args[index];

@@ -13515,6 +13515,23 @@
       deepEqual(actual, 6);
     });
 
+    test('should provide the correct `iteratee` arguments', 2, function() {
+      var args;
+
+      _.sum(array, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [6, 0, array]);
+
+      args = null;
+      _.sum(object, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [2, 'a', object]);
+    });
+
     test('should support the `thisArg` argument', 1, function() {
       var actual = _.sum([6.8, 4.5, 2.6], function(num) {
         return this.floor(num);

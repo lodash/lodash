@@ -1699,6 +1699,16 @@
       return false;
     }
 
+    function arraySum(array) {
+      var length = array.length,
+          result = 0;
+
+      while (length--) {
+        result += +array[length] || 0;
+      }
+      return result;
+    }
+
     /**
      * Used by `_.defaults` to customize its `_.assign` use.
      *
@@ -2745,6 +2755,14 @@
       return baseSortBy(result, function(object, other) {
         return compareMultiple(object, other, orders);
       });
+    }
+
+    function baseSum(collection, iteratee) {
+      var result = 0;
+      baseEach(collection, function(value, index, collection) {
+        result += +iteratee(value, index, collection) || 0;
+      });
+      return result;
     }
 
     /**
@@ -11333,9 +11351,6 @@
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
-      if (!isArray(collection)) {
-        collection = toIterable(collection);
-      }
       var func = getCallback(),
           noIteratee = iteratee == null;
 
@@ -11343,14 +11358,9 @@
         noIteratee = false;
         iteratee = func(iteratee, thisArg, 3);
       }
-      var length = collection.length,
-          result = 0;
-
-      while (length--) {
-        var value = collection[length];
-        result += +(noIteratee ? value : iteratee(value)) || 0;
-      }
-      return result;
+      return noIteratee
+        ? arraySum(isArray(collection) ? collection : toIterable(collection))
+        : baseSum(collection, iteratee);
     }
 
     /*------------------------------------------------------------------------*/

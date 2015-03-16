@@ -11309,28 +11309,25 @@
      * @returns {number} Returns the sum.
      * @example
      *
-     * _.sum([4, 6, 2]);
-     * // => 12
+     * _.sum([4, 6]);
+     * // => 10
      *
-     * _.sum({ 'a': 4, 'b': 6, 'c': 2 });
-     * // => 12
+     * _.sum({ 'a': 4, 'b': 6 });
+     * // => 10
      *
-     * _.sum([]);
-     * // => 0
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
+     * var objects = [
+     *   { 'n': 4 },
+     *   { 'n': 6 }
      * ];
      *
-     * _.sum(users, function(chr) {
-     *   return chr.age;
+     * _.sum(objects, function(object) {
+     *   return object.n;
      * });
-     * // => 76
+     * // => 10
      *
      * // using the `_.property` callback shorthand
-     * _.sum(users, 'age');
-     * // => 76
+     * _.sum(objects, 'n');
+     * // => 10
      */
     function sum(collection, iteratee, thisArg) {
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
@@ -11339,16 +11336,19 @@
       if (!isArray(collection)) {
         collection = toIterable(collection);
       }
-      var func = getCallback();
-      if (!(func === baseCallback && iteratee == null)) {
+      var func = getCallback(),
+          noIteratee = iteratee == null;
+
+      if (!(func === baseCallback && noIteratee)) {
+        noIteratee = false;
         iteratee = func(iteratee, thisArg, 3);
       }
-
       var length = collection.length,
           result = 0;
 
       while (length--) {
-        result += +(iteratee == null ? collection[length] : iteratee(collection[length])) || 0;
+        var value = collection[length];
+        result += +(noIteratee ? value : iteratee(value)) || 0;
       }
       return result;
     }

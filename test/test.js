@@ -13475,10 +13475,12 @@
   QUnit.module('lodash.sum');
 
   (function() {
-    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+    var array = [6, 4, 2],
+        object = { 'a': 2, 'b': 3, 'c': 1 },
+        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
     test('should return the sum of an array of numbers', 1, function() {
-      strictEqual(_.sum([6, 4, 2]), 12);
+      strictEqual(_.sum(array), 12);
     });
 
     test('should return `0` when passing empty `array` values', 1, function() {
@@ -13496,7 +13498,7 @@
     });
 
     test('should iterate an object', 1, function() {
-      strictEqual(_.sum({ 'a': 1, 'b': 2, 'c': 3 }), 6);
+      strictEqual(_.sum(object), 6);
     });
 
     test('should iterate a string', 2, function() {
@@ -13514,29 +13516,22 @@
     });
 
     test('should support the `thisArg` argument', 1, function() {
-      var actual = _.sum([1, 2.5, 1.5], function(num) {
+      var actual = _.sum([6.8, 4.5, 2.6], function(num) {
         return this.floor(num);
       }, Math);
 
-      strictEqual(actual, 4);
+      strictEqual(actual, 12);
     });
 
     test('should work with a "_.property" style `iteratee`', 2, function() {
-      var actual = _.sum(objects, 'a');
-
-      strictEqual(actual, 6);
-
       var arrays = [[2], [3], [1]];
-      actual = _.sum(arrays, 0);
-
-      strictEqual(actual, 6);
+      strictEqual(_.sum(arrays, 0), 6);
+      strictEqual(_.sum(objects, 'a'), 6);
     });
 
     test('should perform basic sum when used as an iteratee for methods like `_.map`', 1, function() {
-      var array = [{ 'a': 1, 'b': 2, 'c': 3 }, [1, 2, 1]],
-          actual = _.map(array, _.sum);
-
-      deepEqual(actual, [6, 4]);
+      var actual = _.map([array, object], _.sum);
+      deepEqual(actual, [12, 6]);
     });
   }());
 

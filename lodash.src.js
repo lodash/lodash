@@ -3249,12 +3249,12 @@
       };
     }
 
-    function createCurry(curryFlag) {
+    function createCurry(flag) {
       function curryFunc(func, arity, guard) {
         if (guard && isIterateeCall(func, arity, guard)) {
           arity = null;
         }
-        var result = createWrapper(func, curryFlag, null, null, null, null, null, arity);
+        var result = createWrapper(func, flag, null, null, null, null, null, arity);
         result.placeholder = curryFunc.placeholder;
         return result;
       }
@@ -3322,15 +3322,6 @@
       };
     }
 
-    function createForOwn(eachFunc) {
-      return function(object, iteratee, thisArg) {
-        if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-          iteratee = bindCallback(iteratee, thisArg, 3);
-        }
-        return eachFunc(object, iteratee);
-      };
-    }
-
     function createForEach(arrayFunc, baseFunc) {
       return function(collection, iteratee, thisArg) {
         return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
@@ -3348,6 +3339,15 @@
       };
     }
 
+    function createForOwn(baseFunc) {
+      return function(object, iteratee, thisArg) {
+        if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+          iteratee = bindCallback(iteratee, thisArg, 3);
+        }
+        return baseFunc(object, iteratee);
+      };
+    }
+
     function createPadDir(fromRight) {
       return function(string, length, chars) {
         string = baseToString(string);
@@ -3355,10 +3355,10 @@
       };
     }
 
-    function createPartial(partialFlag) {
+    function createPartial(flag) {
       var partialFunc = restParam(function(func, partials) {
         var holders = replaceHolders(partials, partialFunc.placeholder);
-        return createWrapper(func, partialFlag, null, partials, holders);
+        return createWrapper(func, flag, null, partials, holders);
       });
       return partialFunc;
     }

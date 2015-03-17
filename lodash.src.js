@@ -4692,7 +4692,7 @@
 
     /**
      * This method is like `_.find` except that it returns the index of the first
-     * element `predicate` returns truthy for, instead of the element itself.
+     * element `predicate` returns truthy for instead of the element itself.
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -9018,8 +9018,8 @@
     });
 
     /**
-     * This method is like `_.findIndex` except that it returns the key of the
-     * first element `predicate` returns truthy for, instead of the element itself.
+     * This method is like `_.find` except that it returns the key of the first
+     * element `predicate` returns truthy for instead of the element itself.
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.

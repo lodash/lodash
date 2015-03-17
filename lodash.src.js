@@ -3090,6 +3090,10 @@
      * object composed from the results of running each element in the collection
      * through an iteratee.
      *
+     * **Note:** This function is used to create `_.countBy`, `_.groupBy`, `_.indexBy`,
+     * and `_.partition`.
+     *
+     *
      * @private
      * @param {Function} setter The function to set keys and values of the accumulator object.
      * @param {Function} [initializer] The function to initialize the accumulator object.
@@ -3120,6 +3124,8 @@
     /**
      * Creates a function that assigns properties of source object(s) to a given
      * destination object.
+     *
+     * **Note:** This function is used to create `_.assign`, `_.defaults`, and `_.merge`.
      *
      * @private
      * @param {Function} assigner The function to assign values.
@@ -3256,7 +3262,7 @@
     }
 
     /**
-     * Creates a function to curry other functions.
+     * Creates a `_.curry` or `_.curryRight` function.
      *
      * @private
      * @param {boolean} flag The curry bit flag.
@@ -3275,7 +3281,7 @@
     }
 
     /**
-     * Creates a function that gets the extremum value of a collection.
+     * Creates a `_.max` or `_.min` function.
      *
      * @private
      * @param {Function} arrayFunc The function to get the extremum value from an array.
@@ -3308,8 +3314,7 @@
     }
 
     /**
-     * Creates a function to find the first element in a collection a predicate
-     * returns truthy for.
+     * Creates a `_.find` or `_.findLast` function.
      *
      * @private
      * @param {Function} eachFunc The function to iterate over a collection.
@@ -3328,8 +3333,7 @@
     }
 
     /**
-     * Creates a function to find the index of the first element in an array a
-     * predicate returns truthy for.
+     * Creates a `_.findIndex` or `_.findLastIndex` function.
      *
      * @private
      * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -3346,22 +3350,21 @@
     }
 
     /**
-     * Creates a function to find the key of the first element in an object a
-     * predicate returns truthy for.
+     * Creates a `_.findKey` or `_.findLastKey` function.
      *
      * @private
-     * @param {Function} eachFunc The function to iterate over an object.
+     * @param {Function} objectFunc The function to iterate over an object.
      * @returns {Function} Returns the new find function.
      */
-    function createFindKey(eachFunc) {
+    function createFindKey(objectFunc) {
       return function(object, predicate, thisArg) {
         predicate = getCallback(predicate, thisArg, 3);
-        return baseFind(object, predicate, eachFunc, true);
+        return baseFind(object, predicate, objectFunc, true);
       };
     }
 
     /**
-     * Creates a function to combine other functions into a single function.
+     * Creates a `_.flow` or `_.flowRight` function.
      *
      * @private
      * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -3395,32 +3398,61 @@
       };
     }
 
-    function createForEach(arrayFunc, baseFunc) {
+    /**
+     * Creates a function for `_.forEach` or `_.forEachRight`.
+     *
+     * @private
+     * @param {Function} arrayFunc The function to iterate over an array.
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @returns {Function} Returns the new each function.
+     */
+    function createForEach(arrayFunc, eachFunc) {
       return function(collection, iteratee, thisArg) {
         return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
           ? arrayFunc(collection, iteratee)
-          : baseFunc(collection, bindCallback(iteratee, thisArg, 3));
+          : eachFunc(collection, bindCallback(iteratee, thisArg, 3));
       };
     }
 
-    function createForIn(baseFunc) {
+    /**
+     * Creates a function for `_.forIn` or `_.forInRight`.
+     *
+     * @private
+     * @param {Function} objectFunc The function to iterate over an object.
+     * @returns {Function} Returns the new each function.
+     */
+    function createForIn(objectFunc) {
       return function(object, iteratee, thisArg) {
         if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
           iteratee = bindCallback(iteratee, thisArg, 3);
         }
-        return baseFunc(object, iteratee, keysIn);
+        return objectFunc(object, iteratee, keysIn);
       };
     }
 
-    function createForOwn(baseFunc) {
+    /**
+     * Creates a function for `_.forOwn` or `_.forOwnRight`.
+     *
+     * @private
+     * @param {Function} objectFunc The function to iterate over an object.
+     * @returns {Function} Returns the new each function.
+     */
+    function createForOwn(objectFunc) {
       return function(object, iteratee, thisArg) {
         if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
           iteratee = bindCallback(iteratee, thisArg, 3);
         }
-        return baseFunc(object, iteratee);
+        return objectFunc(object, iteratee);
       };
     }
 
+    /**
+     * Creates a function for `_.padLeft` or `_.padRight`.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify padding from the right.
+     * @returns {Function} Returns the new pad function.
+     */
     function createPadDir(fromRight) {
       return function(string, length, chars) {
         string = baseToString(string);
@@ -3428,6 +3460,13 @@
       };
     }
 
+    /**
+     * Creates a `_.partial` or `_.partialRight` function.
+     *
+     * @private
+     * @param {boolean} flag The partial bit flag.
+     * @returns {Function} Returns the new partial function.
+     */
     function createPartial(flag) {
       var partialFunc = restParam(function(func, partials) {
         var holders = replaceHolders(partials, partialFunc.placeholder);
@@ -3436,6 +3475,14 @@
       return partialFunc;
     }
 
+    /**
+     * Creates a function for `_.reduce` or `_.reduceRight`.
+     *
+     * @private
+     * @param {Function} arrayFunc The function to iterate over an array.
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @returns {Function} Returns the new each function.
+     */
     function createReduce(arrayFunc, eachFunc) {
       return function(collection, iteratee, accumulator, thisArg) {
         var initFromArray = arguments.length < 3;

@@ -1588,9 +1588,12 @@ _.zip(['fred', 'barney'], [30, 40], [true, false]);
 ### <a id="_zipobjectprops-values"></a>`_.zipObject(props, [values=[]])`
 <a href="#_zipobjectprops-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.5.0/lodash.src.js#L5648 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.zipobject "See the npm package")
 
-Creates an object composed from arrays of property names and values. Provide
-either a single two dimensional array, e.g. `[[key1, value1], [key2, value2]]`
-or two arrays, one of property names and one of corresponding values.
+The opposite of `_.pairs`; this method returns an object composed from arrays
+of property names and values.
+
+Provide either a single two dimensional array, e.g.
+`[[key1, value1], [key2, value2]]` or two arrays, one of property names and one
+of corresponding values.
 
 #### Arguments
 1. `props` *(Array)*: The property names.
@@ -1602,6 +1605,9 @@ or two arrays, one of property names and one of corresponding values.
 #### Example
 ```js
 _.zipObject(['fred', 'barney'], [30, 40]);
+// => { 'fred': 30, 'barney': 40 }
+
+_.zipObject([['fred', 30], ['barney', 40]]);
 // => { 'fred': 30, 'barney': 40 }
 ```
 * * *

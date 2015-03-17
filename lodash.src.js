@@ -3215,41 +3215,6 @@
     };
 
     /**
-     * Creates a function to compose other functions into a single function.
-     *
-     * @private
-     * @param {boolean} [fromRight] Specify iterating from right to left.
-     * @returns {Function} Returns the new composer function.
-     */
-    function createComposer(fromRight) {
-      return function() {
-        var length = arguments.length,
-            index = length,
-            fromIndex = fromRight ? (length - 1) : 0;
-
-        if (!length) {
-          return function() { return arguments[0]; };
-        }
-        var funcs = Array(length);
-        while (index--) {
-          funcs[index] = arguments[index];
-          if (typeof funcs[index] != 'function') {
-            throw new TypeError(FUNC_ERROR_TEXT);
-          }
-        }
-        return function() {
-          var index = fromIndex,
-              result = funcs[index].apply(this, arguments);
-
-          while ((fromRight ? index-- : ++index < length)) {
-            result = funcs[index].call(this, result);
-          }
-          return result;
-        };
-      };
-    }
-
-    /**
      * Creates a function that produces compound words out of the words in a
      * given string.
      *
@@ -3392,6 +3357,41 @@
       return function(object, predicate, thisArg) {
         predicate = getCallback(predicate, thisArg, 3);
         return baseFind(object, predicate, eachFunc, true);
+      };
+    }
+
+    /**
+     * Creates a function to combine other functions into a single function.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new flow function.
+     */
+    function createFlow(fromRight) {
+      return function() {
+        var length = arguments.length,
+            index = length,
+            fromIndex = fromRight ? (length - 1) : 0;
+
+        if (!length) {
+          return function() { return arguments[0]; };
+        }
+        var funcs = Array(length);
+        while (index--) {
+          funcs[index] = arguments[index];
+          if (typeof funcs[index] != 'function') {
+            throw new TypeError(FUNC_ERROR_TEXT);
+          }
+        }
+        return function() {
+          var index = fromIndex,
+              result = funcs[index].apply(this, arguments);
+
+          while ((fromRight ? index-- : ++index < length)) {
+            result = funcs[index].call(this, result);
+          }
+          return result;
+        };
       };
     }
 
@@ -7720,7 +7720,7 @@
      * addSquare(1, 2);
      * // => 9
      */
-    var flow = createComposer();
+    var flow = createFlow();
 
     /**
      * This method is like `_.flow` except that it creates a function that
@@ -7742,7 +7742,7 @@
      * addSquare(1, 2);
      * // => 9
      */
-    var flowRight = createComposer(true);
+    var flowRight = createFlow(true);
 
     /**
      * Creates a function that memoizes the result of `func`. If `resolver` is

@@ -3160,6 +3160,13 @@
       };
     }
 
+    /**
+     * Creates a base function for `_.forIn` or `_.forInRight`.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new base function.
+     */
     function createBaseFor(fromRight) {
       return function(object, iteratee, keysFunc) {
         var iterable = toObject(object),
@@ -3283,6 +3290,13 @@
       };
     }
 
+    /**
+     * Creates a function to curry other functions.
+     *
+     * @private
+     * @param {boolean} flag The curry bit flag.
+     * @returns {Function} Returns the new curry function.
+     */
     function createCurry(flag) {
       function curryFunc(func, arity, guard) {
         if (guard && isIterateeCall(func, arity, guard)) {
@@ -3328,6 +3342,15 @@
       };
     }
 
+    /**
+     * Creates a function to find the first element in a collection a predicate
+     * returns truthy for.
+     *
+     * @private
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new find function.
+     */
     function createFind(eachFunc, fromRight) {
       return function(collection, predicate, thisArg) {
         predicate = getCallback(predicate, thisArg, 3);
@@ -3339,6 +3362,14 @@
       }
     }
 
+    /**
+     * Creates a function to find the index of the first element in an array a
+     * predicate returns truthy for.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new find function.
+     */
     function createFindIndex(fromRight) {
       return function(array, predicate, thisArg) {
         if (!(array && array.length)) {
@@ -3349,6 +3380,14 @@
       };
     }
 
+    /**
+     * Creates a function to find the key of the first element in an object a
+     * predicate returns truthy for.
+     *
+     * @private
+     * @param {Function} eachFunc The function to iterate over an object.
+     * @returns {Function} Returns the new find function.
+     */
     function createFindKey(eachFunc) {
       return function(object, predicate, thisArg) {
         predicate = getCallback(predicate, thisArg, 3);

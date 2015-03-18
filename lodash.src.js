@@ -3375,25 +3375,39 @@
      */
     function createFlow(fromRight) {
       return function() {
-        var length = arguments.length,
-            index = length,
-            fromIndex = fromRight ? (length - 1) : 0;
-
+        var length = arguments.length;
         if (!length) {
           return function() { return arguments[0]; };
         }
-        var funcs = Array(length);
-        while (index--) {
-          funcs[index] = arguments[index];
-          if (typeof funcs[index] != 'function') {
+        var index = fromRight ? length : -1,
+            leftIndex = 0,
+            funcs = Array(length),
+            wrapper = new LodashWrapper([]);
+
+        while ((fromRight ? index-- : ++index < length)) {
+          var func = arguments[index];
+          if (typeof func != 'function') {
             throw new TypeError(FUNC_ERROR_TEXT);
           }
+          var data = func.name === 'wrapper' && getData(func);
+          if (data && data !== true && isLaziable(data[0])) {
+            wrapper = wrapper[data[0].name].apply(wrapper, data[3]);
+          } else if (func.length == 1 && isLaziable(func)) {
+            wrapper = wrapper[func.name]();
+          } else {
+            wrapper = wrapper.thru(func);
+          }
+          funcs[leftIndex++] = func;
         }
         return function() {
-          var index = fromIndex,
-              result = funcs[index].apply(this, arguments);
+          var args = arguments;
+          if (args.length == 1 && isArray(args[0])) {
+            return wrapper.plant(args[0]).value();
+          }
+          var index = 0,
+              result = funcs[index].apply(this, args);
 
-          while ((fromRight ? index-- : ++index < length)) {
+          while (++index < length) {
             result = funcs[index].call(this, result);
           }
           return result;
@@ -3558,11 +3572,10 @@
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var funcName = support.funcNames ? func.name : '',
-                newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity],
+            var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity],
                 result = createHybridWrapper.apply(undefined, newData);
 
-            if (funcName && func === lodash[funcName] && LazyWrapper.prototype[funcName]) {
+            if (isLaziable(func)) {
               setData(result, newData);
             }
             result.placeholder = placeholder;
@@ -4106,6 +4119,11 @@
         return value === value ? (value === other) : (other !== other);
       }
       return false;
+    }
+
+    function isLaziable(func) {
+      var funcName = support.funcNames ? func.name : '';
+      return (funcName && func === lodash[funcName] && funcName in LazyWrapper.prototype) || false;
     }
 
     /**

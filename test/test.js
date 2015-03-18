@@ -2232,6 +2232,34 @@
       notStrictEqual(combined, _.identity);
     });
 
+    test('`_.' + methodName + '` should support shortcut fusion', 3, function() {
+      if (!isNpm) {
+        var filterCount = 0,
+            mapCount = 0;
+
+        var map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2),
+            filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2),
+            take = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2);
+
+        var partialMap = map(function(value) { mapCount++; return value * value; }),
+            partialFilter = filter(function(value) { filterCount++; return value % 2 == 0; }),
+            partialTake = take(2);
+
+        var combined = isFlow
+          ? func(partialMap, partialFilter, _.compact, partialTake)
+          : func(partialTake, _.compact, partialFilter, partialMap);
+
+        var actual = combined(_.range(100));
+
+        deepEqual(actual, [4, 16]);
+        strictEqual(filterCount, 5, 'filterCount');
+        strictEqual(mapCount, 5, 'mapCount');
+      }
+      else {
+        skipTest(3);
+      }
+    });
+
     test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
         var wrapped = _(_.noop)[methodName]();

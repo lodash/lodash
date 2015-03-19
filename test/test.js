@@ -9995,8 +9995,10 @@
     });
 
     test('should work with four arguments', 1, function() {
-      var expected = { 'a': 4 };
-      deepEqual(_.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected), expected);
+      var expected = { 'a': 4 },
+          actual = _.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected);
+
+      deepEqual(actual, expected);
     });
 
     test('should assign `null` values', 1, function() {
@@ -10009,7 +10011,7 @@
       deepEqual(actual, { 'a': 1 });
     });
 
-    test('should not not error on DOM elements', 1, function() {
+    test('should not error on DOM elements', 1, function() {
       var object1 = { 'el': document && document.createElement('div') },
           object2 = { 'el': document && document.createElement('div') },
           pairs = [[{}, object1], [object1, object2]],
@@ -10036,6 +10038,16 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should convert values to an array when merging with arrays of `source`', 2, function() {
+      var object = { 'a': { '1': 'y', 'b': 'z', 'length': 2 } },
+          actual = _.merge(object, { 'a': ['x'] });
+
+      deepEqual(actual, { 'a': ['x', 'y'] });
+
+      actual = _.merge({ 'a': {} }, { 'a': [] });
+      deepEqual(actual, { 'a': [] });
     });
 
     test('should work with a function `object` value', 2, function() {

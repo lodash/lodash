@@ -120,9 +120,6 @@
   var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
       reHasRegExpChars = RegExp(reRegExpChars.source);
 
-  /** Used to detect functions containing a `this` reference. */
-  var reThis = /\bthis\b/;
-
   /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
@@ -153,7 +150,7 @@
     'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document',
     'isFinite', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
-    'window', 'WinRTError'
+    'window'
   ];
 
   /** Used to fix the JScript `[[DontEnum]]` bug. */
@@ -831,6 +828,9 @@
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
+    /** Used to lookup unminified function names. */
+    var realNames = {};
+
     /** Used to lookup a type array constructors by `toStringTag`. */
     var ctorByTag = {};
     ctorByTag[float32Tag] = context.Float32Array;
@@ -1046,7 +1046,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.funcDecomp = !isNative(context.WinRTError) && reThis.test(runInContext);
+      support.funcDecomp = /\bthis\b/.test(function() { return this; });
 
       /**
        * Detect if `Function#name` is supported (all but IE).
@@ -1846,9 +1846,9 @@
     function baseCallback(func, thisArg, argCount) {
       var type = typeof func;
       if (type == 'function') {
-        return (typeof thisArg != 'undefined' && isBindable(func))
-          ? bindCallback(func, thisArg, argCount)
-          : func;
+        return typeof thisArg == 'undefined'
+          ? func
+          : bindCallback(func, thisArg, argCount);
       }
       if (func == null) {
         return identity;
@@ -3379,29 +3379,37 @@
         if (!length) {
           return function() { return arguments[0]; };
         }
-        var index = fromRight ? length : -1,
+        var wrapper,
+            index = fromRight ? length : -1,
             leftIndex = 0,
-            funcs = Array(length),
-            wrapper = new LodashWrapper([]);
+            funcs = Array(length);
 
         while ((fromRight ? index-- : ++index < length)) {
-          var func = arguments[index];
+          var func = funcs[leftIndex++] = arguments[index];
           if (typeof func != 'function') {
             throw new TypeError(FUNC_ERROR_TEXT);
           }
-          var data = func.name === 'wrapper' && getData(func);
-          if (data && data !== true && isLaziable(data[0])) {
-            wrapper = wrapper[data[0].name].apply(wrapper, data[3]);
-          } else if (func.length == 1 && isLaziable(func)) {
-            wrapper = wrapper[func.name]();
-          } else {
-            wrapper = wrapper.thru(func);
+          var funcName = wrapper ? null : getFuncName(func);
+          if (funcName && (funcName == 'wrapper' || isLaziable(func))) {
+            wrapper = new LodashWrapper([]);
           }
-          funcs[leftIndex++] = func;
+        }
+        index = wrapper ? -1 : length;
+        while (++index < length) {
+          func = funcs[index];
+
+          var funcName = getFuncName(func),
+              data = funcName == 'wrapper' ? getData(func) : null;
+
+          if (data && isLaziable(data[0])) {
+            wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
+          } else {
+            wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);
+          }
         }
         return function() {
           var args = arguments;
-          if (args.length == 1 && isArray(args[0])) {
+          if (wrapper && args.length == 1 && isArray(args[0])) {
             return wrapper.plant(args[0]).value();
           }
           var index = 0,
@@ -3699,10 +3707,10 @@
 
         partials = holders = null;
       }
-      var data = !isBindKey && getData(func),
+      var data = isBindKey ? null : getData(func),
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 
-      if (data && data !== true) {
+      if (data) {
         mergeData(newData, data);
         bitmask = newData[1];
         arity = newData[9];
@@ -4056,31 +4064,6 @@
     }
 
     /**
-     * Checks if `func` is eligible for `this` binding.
-     *
-     * @private
-     * @param {Function} func The function to check.
-     * @returns {boolean} Returns `true` if `func` is eligible, else `false`.
-     */
-    function isBindable(func) {
-      var support = lodash.support,
-          result = !(support.funcNames ? func.name : support.funcDecomp);
-
-      if (!result) {
-        var source = fnToString.call(func);
-        if (!support.funcNames) {
-          result = !reFuncName.test(source);
-        }
-        if (!result) {
-          // Check if `func` references the `this` keyword and store the result.
-          result = reThis.test(source) || isNative(func);
-          baseSetData(func, result);
-        }
-      }
-      return result;
-    }
-
-    /**
      * Checks if `value` is a valid array-like index.
      *
      * @private
@@ -4121,9 +4104,28 @@
       return false;
     }
 
+    var getFuncName = !support.funcNames ? constant('') : function(func) {
+      var result = func.name;
+      if (result) {
+        return realNames[result] || result;
+      }
+      var anons = realNames[result];
+      if (!anons) {
+        return result;
+      }
+      var length = anons.length;
+      while (length--) {
+        var anon = anons[length];
+        if (anon.func == func) {
+          return anon.name;
+        }
+      }
+      return result;
+    };
+
     function isLaziable(func) {
-      var funcName = support.funcNames ? func.name : '';
-      return (funcName && func === lodash[funcName] && funcName in LazyWrapper.prototype) || false;
+      var funcName = getFuncName(func);
+      return funcName ? func === lodash[funcName] : false;
     }
 
     /**
@@ -11942,6 +11944,20 @@
       };
     });
 
+    if (support.funcNames) {
+      realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = 'wrapper';
+      baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+        var lodashFunc = lodash[methodName],
+            key = lodashFunc.name;
+
+        if (key) {
+          realNames[key] = methodName;
+        } else {
+          var anons = realNames[key] || (realNames[key] = []);
+          anons.push({ 'name': methodName, 'func': lodashFunc });
+        }
+      });
+    }
     // Add functions to the lazy wrapper.
     LazyWrapper.prototype.clone = lazyClone;
     LazyWrapper.prototype.reverse = lazyReverse;

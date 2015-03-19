@@ -2233,7 +2233,7 @@
     });
 
     test('`_.' + methodName + '` should support shortcut fusion', 3, function() {
-      if (!isNpm) {
+      if (!isNpm && _.support.funcNames) {
         var filterCount = 0,
             mapCount = 0;
 
@@ -2623,53 +2623,6 @@
       else {
         skipTest();
       }
-    });
-
-    test('should return the function provided when there is no `this` reference', 2, function() {
-      function a() {}
-      function b() { return this.b; }
-
-      var object = {};
-
-      if (_.support.funcDecomp) {
-        strictEqual(_.callback(a, object), a);
-        notStrictEqual(_.callback(b, object), b);
-      }
-      else {
-        skipTest(2);
-      }
-    });
-
-    test('should work with bizarro `_.support.funcNames`', 6, function() {
-      function a() {}
-
-      var b = function() {};
-
-      function c() {
-        return this;
-      }
-
-      var object = {},
-          supportBizarro = lodashBizarro ? lodashBizarro.support : {},
-          funcDecomp = supportBizarro.funcDecomp,
-          funcNames = supportBizarro.funcNames;
-
-      supportBizarro.funcNames = !supportBizarro.funcNames;
-      supportBizarro.funcDecomp = true;
-
-      _.each([a, b, c], function(fn) {
-        if (lodashBizarro && _.support.funcDecomp) {
-          var callback = lodashBizarro.callback(fn, object);
-          strictEqual(callback(), fn === c ? object : undefined);
-          strictEqual(callback === fn, _.support.funcNames && fn === a);
-        }
-        else {
-          skipTest(2);
-        }
-      });
-
-      supportBizarro.funcDecomp = funcDecomp;
-      supportBizarro.funcNames = funcNames;
     });
 
     test('should work as an iteratee for methods like `_.map`', 1, function() {

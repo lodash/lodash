@@ -564,7 +564,7 @@
    * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
    */
   function isObjectLike(value) {
-    return (value && typeof value == 'object') || false;
+    return !!value && typeof value == 'object';
   }
 
   /**
@@ -8348,14 +8348,14 @@
      */
     function isArguments(value) {
       var length = isObjectLike(value) ? value.length : undefined;
-      return (isLength(length) && objToString.call(value) == argsTag) || false;
+      return isLength(length) && objToString.call(value) == argsTag;
     }
     // Fallback for environments without a `toStringTag` for `arguments` objects.
     if (!support.argsTag) {
       isArguments = function(value) {
         var length = isObjectLike(value) ? value.length : undefined;
-        return (isLength(length) && hasOwnProperty.call(value, 'callee') &&
-          !propertyIsEnumerable.call(value, 'callee')) || false;
+        return isLength(length) && hasOwnProperty.call(value, 'callee') &&
+          !propertyIsEnumerable.call(value, 'callee');
       };
     }
 
@@ -8376,7 +8376,7 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return (isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag) || false;
+      return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
     };
 
     /**
@@ -8396,7 +8396,7 @@
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false || isObjectLike(value) && objToString.call(value) == boolTag) || false;
+      return value === true || value === false || (isObjectLike(value) && objToString.call(value) == boolTag);
     }
 
     /**
@@ -8416,7 +8416,7 @@
      * // => false
      */
     function isDate(value) {
-      return (isObjectLike(value) && objToString.call(value) == dateTag) || false;
+      return isObjectLike(value) && objToString.call(value) == dateTag;
     }
 
     /**
@@ -8436,13 +8436,13 @@
      * // => false
      */
     function isElement(value) {
-      return (value && value.nodeType === 1 && isObjectLike(value) &&
-        (lodash.support.nodeTag ? (objToString.call(value).indexOf('Element') > -1) : isHostObject(value))) || false;
+      return !!value && value.nodeType === 1 && isObjectLike(value) &&
+        (lodash.support.nodeTag ? (objToString.call(value).indexOf('Element') > -1) : isHostObject(value));
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
       isElement = function(value) {
-        return (value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value)) || false;
+        return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
       };
     }
 
@@ -8555,7 +8555,7 @@
      * // => false
      */
     function isError(value) {
-      return (isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag) || false;
+      return isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag;
     }
 
     /**
@@ -8640,7 +8640,7 @@
       // Avoid a V8 JIT bug in Chrome 19-20.
       // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
       var type = typeof value;
-      return type == 'function' || (value && type == 'object') || false;
+      return type == 'function' || (!!value && type == 'object');
     }
 
     /**
@@ -8760,8 +8760,7 @@
       if (objToString.call(value) == funcTag) {
         return reNative.test(fnToString.call(value));
       }
-      return (isObjectLike(value) &&
-        (isHostObject(value) ? reNative : reHostCtor).test(value)) || false;
+      return isObjectLike(value) && (isHostObject(value) ? reNative : reHostCtor).test(value);
     }
 
     /**
@@ -8807,7 +8806,7 @@
      * // => false
      */
     function isNumber(value) {
-      return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag) || false;
+      return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag);
     }
 
     /**
@@ -8869,7 +8868,7 @@
      * // => false
      */
     function isRegExp(value) {
-      return (isObject(value) && objToString.call(value) == regexpTag) || false;
+      return isObject(value) && objToString.call(value) == regexpTag;
     }
 
     /**
@@ -8889,7 +8888,7 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag) || false;
+      return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag);
     }
 
     /**
@@ -8909,7 +8908,7 @@
      * // => false
      */
     function isTypedArray(value) {
-      return (isObjectLike(value) && isLength(value.length) && typedArrayTags[objToString.call(value)]) || false;
+      return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
     }
 
     /**

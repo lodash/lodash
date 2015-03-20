@@ -3395,10 +3395,9 @@
         index = wrapper ? -1 : length;
         while (++index < length) {
           func = funcs[index];
+          funcName = getFuncName(func);
 
-          var funcName = getFuncName(func),
-              data = funcName == 'wrapper' ? getData(func) : null;
-
+          var data = funcName == 'wrapper' ? getData(func) : null;
           if (data && isLaziable(data[0])) {
             wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
           } else {

@@ -56,7 +56,8 @@
       slice = arrayProto.slice,
       Symbol = root.Symbol,
       system = root.system,
-      Uint8Array = root.Uint8Array;
+      Uint8Array = root.Uint8Array,
+      WeakMap = root.WeakMap;
 
   /** Math helpers. */
   var add = function(x, y) { return x + y; },
@@ -2233,7 +2234,7 @@
     });
 
     test('`_.' + methodName + '` should support shortcut fusion', 3, function() {
-      if (!isNpm && _.support.funcNames) {
+      if (!isNpm && WeakMap && _.support.funcNames) {
         var filterCount = 0,
             mapCount = 0;
 

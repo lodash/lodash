@@ -3389,10 +3389,8 @@
           if (typeof func != 'function') {
             throw new TypeError(FUNC_ERROR_TEXT);
           }
-          var funcName = wrapper ? null : getFuncName(func);
-          if (funcName && (funcName == 'wrapper' || isLaziable(func))) {
-            wrapper = new LodashWrapper([]);
-          }
+          var funcName = wrapper ? '' : getFuncName(func);
+          wrapper = funcName == 'wrapper' ? new LodashWrapper([]) : wrapper;
         }
         index = wrapper ? -1 : length;
         while (++index < length) {
@@ -4104,28 +4102,33 @@
       return false;
     }
 
-    var getFuncName = !support.funcNames ? constant('') : function(func) {
-      var result = func.name;
-      if (result) {
-        return realNames[result] || result;
+    var getFuncName = (function() {
+      if (!support.funcNames) {
+        return constant('');
       }
-      var anons = realNames[result];
-      if (!anons) {
-        return result;
+      if (constant.name == 'constant') {
+        return baseProperty('name');
       }
-      var length = anons.length;
-      while (length--) {
-        var anon = anons[length];
-        if (anon.func == func) {
-          return anon.name;
+      return function(func) {
+        var result = func.name,
+            array = realNames[result],
+            length = array ? array.length : 0;
+
+        while (length--) {
+          var data = array[length],
+              otherFunc = data.func;
+
+          if (otherFunc == null || otherFunc == func) {
+            return data.name;
+          }
         }
-      }
-      return result;
-    };
+        return result;
+      };
+    }());
 
     function isLaziable(func) {
       var funcName = getFuncName(func);
-      return funcName ? func === lodash[funcName] : false;
+      return !!funcName && func === lodash[funcName] && funcName in LazyWrapper.prototype;
     }
 
     /**
@@ -11943,20 +11946,17 @@
       };
     });
 
-    if (support.funcNames) {
-      realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = 'wrapper';
-      baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-        var lodashFunc = lodash[methodName],
-            key = lodashFunc.name;
+    // Map minified function names to their real names.
+    baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+      var lodashFunc = lodash[methodName],
+          key = lodashFunc.name,
+          names = realNames[key] || (realNames[key] = []);
 
-        if (key) {
-          realNames[key] = methodName;
-        } else {
-          var anons = realNames[key] || (realNames[key] = []);
-          anons.push({ 'name': methodName, 'func': lodashFunc });
-        }
-      });
-    }
+      names.push({ 'name': methodName, 'func': lodashFunc });
+    });
+
+    realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': null }];
+
     // Add functions to the lazy wrapper.
     LazyWrapper.prototype.clone = lazyClone;
     LazyWrapper.prototype.reverse = lazyReverse;

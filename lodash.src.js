@@ -11887,8 +11887,11 @@
 
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var lodashFunc = lodash[methodName],
-          checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
+      var lodashFunc = lodash[methodName];
+      if (!lodashFunc) {
+        return;
+      }
+      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
@@ -11960,11 +11963,13 @@
 
     // Map minified function names to their real names.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var lodashFunc = lodash[methodName],
-          key = lodashFunc.name,
-          names = realNames[key] || (realNames[key] = []);
+      var lodashFunc = lodash[methodName];
+      if (lodashFunc) {
+        var key = lodashFunc.name,
+            names = realNames[key] || (realNames[key] = []);
 
-      names.push({ 'name': methodName, 'func': lodashFunc });
+        names.push({ 'name': methodName, 'func': lodashFunc });
+      }
     });
 
     realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': null }];

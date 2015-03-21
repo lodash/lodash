@@ -4195,18 +4195,29 @@
   QUnit.module('lodash.escapeRegExp');
 
   (function() {
-    var escaped = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\/\\\\',
-        unescaped = '.*+?^${}()|[\]\/\\';
-
-    escaped += escaped;
-    unescaped += unescaped;
-
     test('should escape values', 1, function() {
+      var escaped = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\/\\\\',
+          unescaped = '.*+?^${}()|[\]\/\\';
+
+      escaped += escaped;
+      unescaped += unescaped;
+
       strictEqual(_.escapeRegExp(unescaped), escaped);
     });
 
     test('should handle strings with nothing to escape', 1, function() {
       strictEqual(_.escapeRegExp('abc'), 'abc');
+    });
+
+    test('should work with `eval` and `Function`', 2, function() {
+      var string = '[lodash](https://lodash.com/)',
+          escaped = _.escapeRegExp(string),
+          regexp = eval('(/' + escaped + '/)');
+
+      ok(regexp.test(string));
+
+      regexp = Function('return /' + escaped + '/')();
+      ok(regexp.test(string));
     });
   }());
 

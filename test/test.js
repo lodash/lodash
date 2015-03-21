@@ -2222,7 +2222,7 @@
       notStrictEqual(func(_.noop), _.noop);
     });
 
-    test('`_.' + methodName + '` should return an identity function when no arguments are provided', 2, function() {
+    test('`_.' + methodName + '` should return an identity function when no arguments are provided', 3, function() {
       var combined = func();
 
       try {
@@ -2230,6 +2230,7 @@
       } catch(e) {
         ok(false, e.message);
       }
+      strictEqual(combined.length, 0);
       notStrictEqual(combined, _.identity);
     });
 

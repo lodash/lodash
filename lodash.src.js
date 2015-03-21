@@ -10634,7 +10634,7 @@
      * // => 'abc'
      *
      * _.map(['  foo  ', '  bar  '], _.trim);
-     * // => ['foo', 'bar]
+     * // => ['foo', 'bar']
      */
     function trim(string, chars, guard) {
       var value = string;
@@ -11016,9 +11016,9 @@
      * @example
      *
      * var users = [
-     *   { 'user': 'barney' },
-     *   { 'user': 'fred' },
-     *   { 'user': 'pebbles' }
+     *   { 'user': 'barney',  'age': 36 },
+     *   { 'user': 'fred',    'age': 40 },
+     *   { 'user': 'pebbles', 'age': 1 }
      * ];
      *
      * _.find(users, _.matchesProperty('user', 'fred'));
@@ -11170,7 +11170,7 @@
      * var getName = _.property('user');
      *
      * _.map(users, getName);
-     * // => ['fred', barney']
+     * // => ['fred', 'barney']
      *
      * _.pluck(_.sortBy(users, getName), 'user');
      * // => ['barney', 'fred']

@@ -9634,7 +9634,7 @@
           objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
           actual = _.map(objects, matches);
 
-      deepEqual(actual, [true, false, true]);
+      deepEqual(actual, [false, false, true]);
 
       matches = _.matchesProperty('a', { 'b': undefined });
       objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 1 } }, { 'a': { 'a': 1, 'b': undefined } }];

@@ -9478,10 +9478,29 @@
       deepEqual(actual, expected);
 
       matches = _.matches({ 'a': { 'c': undefined } });
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
       actual = _.map(objects, matches);
 
       deepEqual(actual, expected);
+    });
+
+    test('should match inherited `value` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var object = { 'a': new Foo },
+          matches = _.matches({ 'a': { 'b': 2 } });
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should match properties when `value` is not a plain object', 1, function() {
+      function Foo(object) { _.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
+          matches = _.matches({ 'a': { 'b': 1 } });
+
+      strictEqual(matches(object), true);
     });
 
     test('should not match by inherited `source` properties', 1, function() {
@@ -9643,7 +9662,26 @@
       deepEqual(actual, [false, false, true]);
     });
 
-    test('should not match by inherited `value` properties', 1, function() {
+    test('should match inherited `value` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var object = { 'a': new Foo },
+          matches = _.matchesProperty('a', { 'b': 2 });
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should match properties when `value` is not a plain object', 1, function() {
+      function Foo(object) { _.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
+          matches = _.matchesProperty('a', { 'b': 1 });
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should not match inherited `source` properties', 1, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 

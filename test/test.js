@@ -12569,6 +12569,14 @@
       deepEqual(rp(1), [1, undefined, []]);
     });
 
+    test('should work on functions with more than 3 params', 1, function() {
+      var rp = _.restParam(function(a, b, c, d) {
+        return slice.call(arguments);
+      });
+
+      deepEqual(rp(1, 2, 3, 4, 5), [1, 2, 3, [4, 5]]);
+    });
+
     test('should not set a `this` binding', 1, function() {
       var rp = _.restParam(function(x, y) {
         return this[x] + this[y[0]];

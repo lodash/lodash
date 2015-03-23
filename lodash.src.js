@@ -2326,7 +2326,7 @@
         }
       }
       var objIsObj = (objTag == objectTag || (isLoose && objTag == funcTag)) && !isHostObject(object),
-          othIsObj = othTag == objectTag && !isHostObject(other),
+          othIsObj = (othTag == objectTag || (isLoose && othTag == funcTag)) && !isHostObject(other),
           isSameTag = objTag == othTag;
 
       if (isSameTag && !(objIsArr || objIsObj)) {

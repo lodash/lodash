@@ -9494,6 +9494,16 @@
       strictEqual(matches(object), true);
     });
 
+    test('should match properties when `value` is a function', 1, function() {
+      function Foo() {}
+      Foo.a = function() {};
+      Foo.a.b = 1;
+      Foo.a.c = 2;
+
+      var matches = _.matches({ 'a': { 'b': 1 } });
+      strictEqual(matches(Foo), true);
+    });
+
     test('should match properties when `value` is not a plain object', 1, function() {
       function Foo(object) { _.assign(this, object); }
 
@@ -9670,6 +9680,16 @@
           matches = _.matchesProperty('a', { 'b': 2 });
 
       strictEqual(matches(object), true);
+    });
+
+    test('should match properties when `value` is a function', 1, function() {
+      function Foo() {}
+      Foo.a = function() {};
+      Foo.a.b = 1;
+      Foo.a.c = 2;
+
+      var matches = _.matchesProperty('a', { 'b': 1 });
+      strictEqual(matches(Foo), true);
     });
 
     test('should match properties when `value` is not a plain object', 1, function() {

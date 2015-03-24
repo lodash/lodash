@@ -88,6 +88,13 @@
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /**
+   * Used to match combining diacritical marks.
+   * See [Wikipedia](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks)
+   * for more details.
+   */
+  var reComboMarks = /[\u0300-\u036f\ufe20-\ufe23]/g;
+
+  /**
    * Used to match ES template delimiters.
    * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
    * for more details.
@@ -10073,7 +10080,7 @@
      */
     function deburr(string) {
       string = baseToString(string);
-      return string && string.replace(reLatin1, deburrLetter);
+      return string && string.replace(reLatin1, deburrLetter).replace(reComboMarks, '');
     }
 
     /**

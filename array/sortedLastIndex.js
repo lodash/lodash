@@ -1,6 +1,4 @@
-var baseCallback = require('../internal/baseCallback'),
-    binaryIndex = require('../internal/binaryIndex'),
-    binaryIndexBy = require('../internal/binaryIndexBy');
+var createSortedIndex = require('../internal/createSortedIndex');
 
 /**
  * This method is like `_.sortedIndex` except that it returns the highest
@@ -22,10 +20,6 @@ var baseCallback = require('../internal/baseCallback'),
  * _.sortedLastIndex([4, 4, 5, 5], 5);
  * // => 4
  */
-function sortedLastIndex(array, value, iteratee, thisArg) {
-  return iteratee == null
-    ? binaryIndex(array, value, true)
-    : binaryIndexBy(array, value, baseCallback(iteratee, thisArg, 1), true);
-}
+var sortedLastIndex = createSortedIndex(true);
 
 module.exports = sortedLastIndex;

@@ -1,6 +1,4 @@
-var baseSlice = require('../internal/baseSlice'),
-    createWrapper = require('../internal/createWrapper'),
-    replaceHolders = require('../internal/replaceHolders');
+var createPartial = require('../internal/createPartial');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var PARTIAL_FLAG = 32;
@@ -20,7 +18,7 @@ var PARTIAL_FLAG = 32;
  * @memberOf _
  * @category Function
  * @param {Function} func The function to partially apply arguments to.
- * @param {...*} [args] The arguments to be partially applied.
+ * @param {...*} [partials] The arguments to be partially applied.
  * @returns {Function} Returns the new partially applied function.
  * @example
  *
@@ -37,12 +35,7 @@ var PARTIAL_FLAG = 32;
  * greetFred('hi');
  * // => 'hi fred'
  */
-function partial(func) {
-  var partials = baseSlice(arguments, 1),
-      holders = replaceHolders(partials, partial.placeholder);
-
-  return createWrapper(func, PARTIAL_FLAG, null, partials, holders);
-}
+var partial = createPartial(PARTIAL_FLAG);
 
 // Assign default placeholders.
 partial.placeholder = {};

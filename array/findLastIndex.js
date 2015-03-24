@@ -1,4 +1,4 @@
-var baseCallback = require('../internal/baseCallback');
+var createFindIndex = require('../internal/createFindIndex');
 
 /**
  * This method is like `_.findIndex` except that it iterates over elements
@@ -48,15 +48,6 @@ var baseCallback = require('../internal/baseCallback');
  * _.findLastIndex(users, 'active');
  * // => 0
  */
-function findLastIndex(array, predicate, thisArg) {
-  var length = array ? array.length : 0;
-  predicate = baseCallback(predicate, thisArg, 3);
-  while (length--) {
-    if (predicate(array[length], length, array)) {
-      return length;
-    }
-  }
-  return -1;
-}
+var findLastIndex = createFindIndex(true);
 
 module.exports = findLastIndex;

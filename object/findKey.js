@@ -1,10 +1,9 @@
-var baseCallback = require('../internal/baseCallback'),
-    baseFind = require('../internal/baseFind'),
-    baseForOwn = require('../internal/baseForOwn');
+var baseForOwn = require('../internal/baseForOwn'),
+    createFindKey = require('../internal/createFindKey');
 
 /**
- * This method is like `_.findIndex` except that it returns the key of the
- * first element `predicate` returns truthy for, instead of the element itself.
+ * This method is like `_.find` except that it returns the key of the first
+ * element `predicate` returns truthy for instead of the element itself.
  *
  * If a property name is provided for `predicate` the created `_.property`
  * style callback returns the property value of the given element.
@@ -50,9 +49,6 @@ var baseCallback = require('../internal/baseCallback'),
  * _.findKey(users, 'active');
  * // => 'barney'
  */
-function findKey(object, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(object, predicate, baseForOwn, true);
-}
+var findKey = createFindKey(baseForOwn);
 
 module.exports = findKey;

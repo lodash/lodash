@@ -1,4 +1,4 @@
-var createComposer = require('../internal/createComposer');
+var createFlow = require('../internal/createFlow');
 
 /**
  * Creates a function that returns the result of invoking the provided
@@ -20,6 +20,6 @@ var createComposer = require('../internal/createComposer');
  * addSquare(1, 2);
  * // => 9
  */
-var flow = createComposer();
+var flow = createFlow();
 
 module.exports = flow;

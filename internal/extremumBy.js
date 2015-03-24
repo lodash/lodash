@@ -7,7 +7,7 @@ var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
 /**
  * Gets the extremum value of `collection` invoking `iteratee` for each value
  * in `collection` to generate the criterion by which the value is ranked.
- * The `iteratee` is invoked with three arguments; (value, index, collection).
+ * The `iteratee` is invoked with three arguments: (value, index, collection).
  *
  * @private
  * @param {Array|Object|string} collection The collection to iterate over.

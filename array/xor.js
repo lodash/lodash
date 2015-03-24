@@ -4,9 +4,8 @@ var baseDifference = require('../internal/baseDifference'),
     isArray = require('../lang/isArray');
 
 /**
- * Creates an array that is the symmetric difference of the provided arrays.
- * See [Wikipedia](https://en.wikipedia.org/wiki/Symmetric_difference) for
- * more details.
+ * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+ * of the provided arrays.
  *
  * @static
  * @memberOf _

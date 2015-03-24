@@ -1,10 +1,10 @@
 var baseCallback = require('../internal/baseCallback'),
-    baseSlice = require('../internal/baseSlice');
+    baseWhile = require('../internal/baseWhile');
 
 /**
  * Creates a slice of `array` excluding elements dropped from the beginning.
  * Elements are dropped until `predicate` returns falsey. The predicate is
- * bound to `thisArg` and invoked with three arguments; (value, index, array).
+ * bound to `thisArg` and invoked with three arguments: (value, index, array).
  *
  * If a property name is provided for `predicate` the created `_.property`
  * style callback returns the property value of the given element.
@@ -51,14 +51,9 @@ var baseCallback = require('../internal/baseCallback'),
  * // => ['barney', 'fred', 'pebbles']
  */
 function dropWhile(array, predicate, thisArg) {
-  var length = array ? array.length : 0;
-  if (!length) {
-    return [];
-  }
-  var index = -1;
-  predicate = baseCallback(predicate, thisArg, 3);
-  while (++index < length && predicate(array[index], index, array)) {}
-  return baseSlice(array, index);
+  return (array && array.length)
+    ? baseWhile(array, baseCallback(predicate, thisArg, 3), true)
+    : [];
 }
 
 module.exports = dropWhile;

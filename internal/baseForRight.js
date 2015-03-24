@@ -1,4 +1,4 @@
-var toObject = require('./toObject');
+var createBaseFor = require('./createBaseFor');
 
 /**
  * This function is like `baseFor` except that it iterates over properties
@@ -10,18 +10,6 @@ var toObject = require('./toObject');
  * @param {Function} keysFunc The function to get the keys of `object`.
  * @returns {Object} Returns `object`.
  */
-function baseForRight(object, iteratee, keysFunc) {
-  var iterable = toObject(object),
-      props = keysFunc(object),
-      length = props.length;
-
-  while (length--) {
-    var key = props[length];
-    if (iteratee(iterable[key], key, iterable) === false) {
-      break;
-    }
-  }
-  return object;
-}
+var baseForRight = createBaseFor(true);
 
 module.exports = baseForRight;

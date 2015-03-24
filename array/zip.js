@@ -1,4 +1,5 @@
-var unzip = require('./unzip');
+var restParam = require('../function/restParam'),
+    unzip = require('./unzip');
 
 /**
  * Creates an array of grouped elements, the first of which contains the first
@@ -15,14 +16,6 @@ var unzip = require('./unzip');
  * _.zip(['fred', 'barney'], [30, 40], [true, false]);
  * // => [['fred', 30, true], ['barney', 40, false]]
  */
-function zip() {
-  var length = arguments.length,
-      array = Array(length);
-
-  while (length--) {
-    array[length] = arguments[length];
-  }
-  return unzip(array);
-}
+var zip = restParam(unzip);
 
 module.exports = zip;

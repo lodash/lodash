@@ -15,6 +15,9 @@ var push = arrayProto.push;
  * destination object. If `object` is a function then methods are added to
  * its prototype as well.
  *
+ * **Note:** Use `_.runInContext` to create a pristine `lodash` function
+ * for mixins to avoid conflicts caused by modifying the original.
+ *
  * @static
  * @memberOf _
  * @category Utility
@@ -32,7 +35,7 @@ var push = arrayProto.push;
  *   });
  * }
  *
- * // use `_.runInContext` to avoid potential conflicts (esp. in Node.js)
+ * // use `_.runInContext` to avoid conflicts (esp. in Node.js)
  * var _ = require('lodash').runInContext();
  *
  * _.mixin({ 'vowels': vowels });
@@ -69,12 +72,10 @@ function mixin(object, source, options) {
         return function() {
           var chainAll = this.__chain__;
           if (chain || chainAll) {
-            var result = object(this.__wrapped__);
-            (result.__actions__ = arrayCopy(this.__actions__)).push({
-              'func': func,
-              'args': arguments,
-              'thisArg': object
-            });
+            var result = object(this.__wrapped__),
+                actions = result.__actions__ = arrayCopy(this.__actions__);
+
+            actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
             result.__chain__ = chainAll;
             return result;
           }

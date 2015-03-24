@@ -15,18 +15,18 @@ var baseFlatten = require('../internal/baseFlatten'),
  * @example
  *
  * _.flatten([1, [2, 3, [4]]]);
- * // => [1, 2, 3, [4]];
+ * // => [1, 2, 3, [4]]
  *
  * // using `isDeep`
  * _.flatten([1, [2, 3, [4]]], true);
- * // => [1, 2, 3, 4];
+ * // => [1, 2, 3, 4]
  */
 function flatten(array, isDeep, guard) {
   var length = array ? array.length : 0;
   if (guard && isIterateeCall(array, isDeep, guard)) {
     isDeep = false;
   }
-  return length ? baseFlatten(array, isDeep, false, 0) : [];
+  return length ? baseFlatten(array, isDeep) : [];
 }
 
 module.exports = flatten;

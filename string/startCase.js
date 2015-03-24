@@ -1,9 +1,7 @@
 var createCompounder = require('../internal/createCompounder');
 
 /**
- * Converts `string` to start case.
- * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage)
- * for more details.
+ * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
  *
  * @static
  * @memberOf _

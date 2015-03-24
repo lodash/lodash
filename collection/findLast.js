@@ -1,6 +1,5 @@
-var baseCallback = require('../internal/baseCallback'),
-    baseEachRight = require('../internal/baseEachRight'),
-    baseFind = require('../internal/baseFind');
+var baseEachRight = require('../internal/baseEachRight'),
+    createFind = require('../internal/createFind');
 
 /**
  * This method is like `_.find` except that it iterates over elements of
@@ -21,9 +20,6 @@ var baseCallback = require('../internal/baseCallback'),
  * });
  * // => 3
  */
-function findLast(collection, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(collection, predicate, baseEachRight);
-}
+var findLast = createFind(baseEachRight, true);
 
 module.exports = findLast;

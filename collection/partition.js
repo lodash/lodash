@@ -4,7 +4,7 @@ var createAggregator = require('../internal/createAggregator');
  * Creates an array of elements split into two groups, the first of which
  * contains elements `predicate` returns truthy for, while the second of which
  * contains elements `predicate` returns falsey for. The predicate is bound
- * to `thisArg` and invoked with three arguments; (value, index|key, collection).
+ * to `thisArg` and invoked with three arguments: (value, index|key, collection).
  *
  * If a property name is provided for `predicate` the created `_.property`
  * style callback returns the property value of the given element.

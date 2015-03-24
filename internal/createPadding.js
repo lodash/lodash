@@ -7,9 +7,8 @@ var ceil = Math.ceil;
 var nativeIsFinite = global.isFinite;
 
 /**
- * Creates the pad required for `string` based on the given padding length.
- * The `chars` string may be truncated if the number of padding characters
- * exceeds the padding length.
+ * Creates the padding required for `string` based on the given `length`.
+ * The `chars` string is truncated if the number of characters exceeds `length`.
  *
  * @private
  * @param {string} string The string to create padding for.
@@ -17,7 +16,7 @@ var nativeIsFinite = global.isFinite;
  * @param {string} [chars=' '] The string used as padding.
  * @returns {string} Returns the pad for `string`.
  */
-function createPad(string, length, chars) {
+function createPadding(string, length, chars) {
   var strLength = string.length;
   length = +length;
 
@@ -29,4 +28,4 @@ function createPad(string, length, chars) {
   return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
 }
 
-module.exports = createPad;
+module.exports = createPadding;

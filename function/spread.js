@@ -2,23 +2,24 @@
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
- * Creates a function that invokes `func` with the `this` binding of the
- * created function and the array of arguments provided to the created
- * function much like [Function#apply](http://es5.github.io/#x15.3.4.3).
+ * Creates a function that invokes `func` with the `this` binding of the created
+ * function and an array of arguments much like [`Function#apply`](https://es5.github.io/#x15.3.4.3).
+ *
+ * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator).
  *
  * @static
  * @memberOf _
  * @category Function
  * @param {Function} func The function to spread arguments over.
- * @returns {*} Returns the new function.
+ * @returns {Function} Returns the new function.
  * @example
  *
- * var spread = _.spread(function(who, what) {
+ * var say = _.spread(function(who, what) {
  *   return who + ' says ' + what;
  * });
  *
- * spread(['Fred', 'hello']);
- * // => 'Fred says hello'
+ * say(['fred', 'hello']);
+ * // => 'fred says hello'
  *
  * // with a Promise
  * var numbers = Promise.all([

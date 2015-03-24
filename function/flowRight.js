@@ -1,4 +1,4 @@
-var createComposer = require('../internal/createComposer');
+var createFlow = require('../internal/createFlow');
 
 /**
  * This method is like `_.flow` except that it creates a function that
@@ -20,6 +20,6 @@ var createComposer = require('../internal/createComposer');
  * addSquare(1, 2);
  * // => 9
  */
-var flowRight = createComposer(true);
+var flowRight = createFlow(true);
 
 module.exports = flowRight;

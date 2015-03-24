@@ -24,7 +24,7 @@ var baseToString = require('../internal/baseToString'),
  * // => 'abc'
  *
  * _.map(['  foo  ', '  bar  '], _.trim);
- * // => ['foo', 'bar]
+ * // => ['foo', 'bar']
  */
 function trim(string, chars, guard) {
   var value = string;

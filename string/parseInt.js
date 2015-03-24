@@ -24,8 +24,8 @@ var nativeParseInt = global.parseInt;
  * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
  * in which case a `radix` of `16` is used.
  *
- * **Note:** This method aligns with the ES5 implementation of `parseInt`.
- * See the [ES5 spec](https://es5.github.io/#E) for more details.
+ * **Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#E)
+ * of `parseInt`.
  *
  * @static
  * @memberOf _

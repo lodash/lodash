@@ -1,10 +1,10 @@
 var baseForOwn = require('../internal/baseForOwn'),
-    bindCallback = require('../internal/bindCallback');
+    createForOwn = require('../internal/createForOwn');
 
 /**
  * Iterates over own enumerable properties of an object invoking `iteratee`
  * for each property. The `iteratee` is bound to `thisArg` and invoked with
- * three arguments; (value, key, object). Iterator functions may exit iteration
+ * three arguments: (value, key, object). Iterator functions may exit iteration
  * early by explicitly returning `false`.
  *
  * @static
@@ -28,11 +28,6 @@ var baseForOwn = require('../internal/baseForOwn'),
  * });
  * // => logs 'a' and 'b' (iteration order is not guaranteed)
  */
-function forOwn(object, iteratee, thisArg) {
-  if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-    iteratee = bindCallback(iteratee, thisArg, 3);
-  }
-  return baseForOwn(object, iteratee);
-}
+var forOwn = createForOwn(baseForOwn);
 
 module.exports = forOwn;

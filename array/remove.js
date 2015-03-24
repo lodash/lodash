@@ -9,7 +9,7 @@ var splice = arrayProto.splice;
 /**
  * Removes all elements from `array` that `predicate` returns truthy for
  * and returns an array of the removed elements. The predicate is bound to
- * `thisArg` and invoked with three arguments; (value, index, array).
+ * `thisArg` and invoked with three arguments: (value, index, array).
  *
  * If a property name is provided for `predicate` the created `_.property`
  * style callback returns the property value of the given element.

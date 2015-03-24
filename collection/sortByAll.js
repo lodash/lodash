@@ -25,17 +25,24 @@ var baseFlatten = require('../internal/baseFlatten'),
  * _.map(_.sortByAll(users, ['user', 'age']), _.values);
  * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
  */
-function sortByAll(collection) {
+function sortByAll() {
+  var args = arguments,
+      collection = args[0],
+      guard = args[3],
+      index = 0,
+      length = args.length - 1;
+
   if (collection == null) {
     return [];
   }
-  var args = arguments,
-      guard = args[3];
-
-  if (guard && isIterateeCall(args[1], args[2], guard)) {
-    args = [collection, args[1]];
+  var props = Array(length);
+  while (index < length) {
+    props[index] = args[++index];
   }
-  return baseSortByOrder(collection, baseFlatten(args, false, false, 1), []);
+  if (guard && isIterateeCall(args[1], args[2], guard)) {
+    props = args[1];
+  }
+  return baseSortByOrder(collection, baseFlatten(props), []);
 }
 
 module.exports = sortByAll;

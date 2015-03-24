@@ -1,10 +1,8 @@
-var baseToString = require('../internal/baseToString'),
-    createPad = require('../internal/createPad');
+var createPadDir = require('../internal/createPadDir');
 
 /**
- * Pads `string` on the left side if it is shorter then the given padding
- * length. The `chars` string may be truncated if the number of padding
- * characters exceeds the padding length.
+ * Pads `string` on the left side if it is shorter than `length`. Padding
+ * characters are truncated if they exceed `length`.
  *
  * @static
  * @memberOf _
@@ -24,9 +22,6 @@ var baseToString = require('../internal/baseToString'),
  * _.padLeft('abc', 3);
  * // => 'abc'
  */
-function padLeft(string, length, chars) {
-  string = baseToString(string);
-  return string && (createPad(string, length, chars) + string);
-}
+var padLeft = createPadDir();
 
 module.exports = padLeft;

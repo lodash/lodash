@@ -1,6 +1,6 @@
-var arrayCopy = require('../internal/arrayCopy'),
-    assign = require('./assign'),
-    assignDefaults = require('../internal/assignDefaults');
+var assign = require('./assign'),
+    assignDefaults = require('../internal/assignDefaults'),
+    restParam = require('../function/restParam');
 
 /**
  * Assigns own enumerable properties of source object(s) to the destination
@@ -18,13 +18,13 @@ var arrayCopy = require('../internal/arrayCopy'),
  * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
  * // => { 'user': 'barney', 'age': 36 }
  */
-function defaults(object) {
+var defaults = restParam(function(args) {
+  var object = args[0];
   if (object == null) {
     return object;
   }
-  var args = arrayCopy(arguments);
   args.push(assignDefaults);
   return assign.apply(undefined, args);
-}
+});
 
 module.exports = defaults;

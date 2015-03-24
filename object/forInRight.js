@@ -1,6 +1,5 @@
 var baseForRight = require('../internal/baseForRight'),
-    bindCallback = require('../internal/bindCallback'),
-    keysIn = require('./keysIn');
+    createForIn = require('../internal/createForIn');
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of
@@ -27,9 +26,6 @@ var baseForRight = require('../internal/baseForRight'),
  * });
  * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
  */
-function forInRight(object, iteratee, thisArg) {
-  iteratee = bindCallback(iteratee, thisArg, 3);
-  return baseForRight(object, iteratee, keysIn);
-}
+var forInRight = createForIn(baseForRight);
 
 module.exports = forInRight;

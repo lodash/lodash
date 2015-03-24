@@ -1,8 +1,9 @@
 var baseFlatten = require('../internal/baseFlatten'),
-    createWrapper = require('../internal/createWrapper');
+    createWrapper = require('../internal/createWrapper'),
+    restParam = require('./restParam');
 
 /** Used to compose bitmasks for wrapper metadata. */
-var REARG_FLAG = 128;
+var REARG_FLAG = 256;
 
 /**
  * Creates a function that invokes `func` with arguments arranged according
@@ -32,9 +33,8 @@ var REARG_FLAG = 128;
  * }, [1, 2, 3]);
  * // => [3, 6, 9]
  */
-function rearg(func) {
-  var indexes = baseFlatten(arguments, false, false, 1);
-  return createWrapper(func, REARG_FLAG, null, null, null, indexes);
-}
+var rearg = restParam(function(func, indexes) {
+  return createWrapper(func, REARG_FLAG, null, null, null, baseFlatten(indexes));
+});
 
 module.exports = rearg;

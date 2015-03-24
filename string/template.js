@@ -16,9 +16,7 @@ var reEmptyStringLeading = /\b__p \+= '';/g,
     reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
 /**
- * Used to match ES template delimiters.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
- * for more details.
+ * Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components).
  */
 var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
@@ -35,9 +33,9 @@ var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
  * properties may be accessed as free variables in the template. If a setting
  * object is provided it takes precedence over `_.templateSettings` values.
  *
- * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
- * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
- * for more details.
+ * **Note:** In the development build `_.template` utilizes
+ * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+ * for easier debugging.
  *
  * For more information on precompiling templates see
  * [lodash's custom builds documentation](https://lodash.com/custom-builds).

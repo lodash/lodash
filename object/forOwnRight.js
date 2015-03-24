@@ -1,6 +1,5 @@
-var baseForRight = require('../internal/baseForRight'),
-    bindCallback = require('../internal/bindCallback'),
-    keys = require('./keys');
+var baseForOwnRight = require('../internal/baseForOwnRight'),
+    createForOwn = require('../internal/createForOwn');
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of
@@ -27,9 +26,6 @@ var baseForRight = require('../internal/baseForRight'),
  * });
  * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
  */
-function forOwnRight(object, iteratee, thisArg) {
-  iteratee = bindCallback(iteratee, thisArg, 3);
-  return baseForRight(object, iteratee, keys);
-}
+var forOwnRight = createForOwn(baseForOwnRight);
 
 module.exports = forOwnRight;

@@ -1,4 +1,4 @@
-# lodash v3.5.0
+# lodash v3.6.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) modules.
 
@@ -28,7 +28,7 @@ var array = require('lodash/array');
 var chunk = require('lodash/array/chunk');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.5.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/3.6.0-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
@@ -39,8 +39,8 @@ Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash b
 lodash is also available in a variety of other builds & module formats.
 
  * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.5.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.5.0-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.5.0-es) build
+ * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.6.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.6.0-amd) builds
+ * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.6.0-es) build
 
 ## Further Reading
 
@@ -51,7 +51,7 @@ lodash is also available in a variety of other builds & module formats.
   * [Roadmap](https://github.com/lodash/lodash/wiki/Roadmap)
   * [More Resources](https://github.com/lodash/lodash/wiki/Resources)
 
-## Features *not* in Underscore
+## Features
 
  * ~100% [code coverage](https://coveralls.io/r/lodash)
  * Follows [semantic versioning](http://semver.org/) for releases
@@ -85,10 +85,10 @@ lodash is also available in a variety of other builds & module formats.
  * [_.parseInt](https://lodash.com/docs#parseInt) for consistent cross-environment behavior
  * [_.pull](https://lodash.com/docs#pull), [_.pullAt](https://lodash.com/docs#pullAt), & [_.remove](https://lodash.com/docs#remove) for mutating arrays
  * [_.random](https://lodash.com/docs#random) supports returning floating-point numbers
+ * [_.restParam](https://lodash.com/docs#restParam) & [_.spread](https://lodash.com/docs#spread) for applying rest parameters & spreading arguments to functions
  * [_.runInContext](https://lodash.com/docs#runInContext) for collisionless mixins & easier mocking
  * [_.slice](https://lodash.com/docs#slice) for creating subsets of array-like values
  * [_.sortByAll](https://lodash.com/docs#sortByAll) & [_.sortByOrder](https://lodash.com/docs#sortByOrder) for sorting by multiple properties & orders
- * [_.spread](https://lodash.com/docs#spread) for creating a function to spread an array of arguments to another
  * [_.sum](https://lodash.com/docs#sum) to get the sum of values
  * [_.support](https://lodash.com/docs#support) for flagging environment features
  * [_.template](https://lodash.com/docs#template) supports [*“imports”*](https://lodash.com/docs#templateSettings-imports) options & [ES template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
@@ -112,5 +112,5 @@ lodash is also available in a variety of other builds & module formats.
 
 ## Support
 
-Tested in Chrome 40-41, Firefox 35-36, IE 6-11, Opera 26-27, Safari 5-8, io.js 1.5.0, Node.js 0.8.28, 0.10.36, & 0.12.0, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
+Tested in Chrome 40-41, Firefox 35-36, IE 6-11, Opera 27-28, Safari 5-8, io.js 1.6.2, Node.js 0.8.28, 0.10.36, & 0.12.0, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
 Automated [browser](https://saucelabs.com/u/lodash) & [CI](https://travis-ci.org/lodash/lodash/) test runs are available. Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.

@@ -1,6 +1,5 @@
-var baseCallback = require('../internal/baseCallback'),
-    baseFind = require('../internal/baseFind'),
-    baseForOwnRight = require('../internal/baseForOwnRight');
+var baseForOwnRight = require('../internal/baseForOwnRight'),
+    createFindKey = require('../internal/createFindKey');
 
 /**
  * This method is like `_.findKey` except that it iterates over elements of
@@ -50,9 +49,6 @@ var baseCallback = require('../internal/baseCallback'),
  * _.findLastKey(users, 'active');
  * // => 'pebbles'
  */
-function findLastKey(object, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(object, predicate, baseForOwnRight, true);
-}
+var findLastKey = createFindKey(baseForOwnRight);
 
 module.exports = findLastKey;

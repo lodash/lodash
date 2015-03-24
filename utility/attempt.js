@@ -1,4 +1,5 @@
-var isError = require('../lang/isError');
+var isError = require('../lang/isError'),
+    restParam = require('../function/restParam');
 
 /**
  * Attempts to invoke `func`, returning either the result or the caught error
@@ -7,7 +8,7 @@ var isError = require('../lang/isError');
  * @static
  * @memberOf _
  * @category Utility
- * @param {*} func The function to attempt.
+ * @param {Function} func The function to attempt.
  * @returns {*} Returns the `func` result or error object.
  * @example
  *
@@ -20,19 +21,12 @@ var isError = require('../lang/isError');
  *   elements = [];
  * }
  */
-function attempt() {
-  var func = arguments[0],
-      length = arguments.length,
-      args = Array(length ? (length - 1) : 0);
-
-  while (--length > 0) {
-    args[length - 1] = arguments[length];
-  }
+var attempt = restParam(function(func, args) {
   try {
     return func.apply(undefined, args);
   } catch(e) {
     return isError(e) ? e : new Error(e);
   }
-}
+});
 
 module.exports = attempt;

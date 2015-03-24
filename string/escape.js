@@ -23,9 +23,8 @@ var reUnescapedHtml = /[&<>"'`]/g,
  * [#108](https://html5sec.org/#108), and [#133](https://html5sec.org/#133) of
  * the [HTML5 Security Cheatsheet](https://html5sec.org/) for more details.
  *
- * When working with HTML you should always quote attribute values to reduce
- * XSS vectors. See [Ryan Grove's article](http://wonko.com/post/html-escaping)
- * for more details.
+ * When working with HTML you should always [quote attribute values](http://wonko.com/post/html-escaping)
+ * to reduce XSS vectors.
  *
  * @static
  * @memberOf _

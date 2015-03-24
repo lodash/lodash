@@ -7,7 +7,7 @@ var baseCallback = require('./baseCallback'),
     toIterable = require('./toIterable');
 
 /**
- * Creates a function that gets the extremum value of a collection.
+ * Creates a `_.max` or `_.min` function.
  *
  * @private
  * @param {Function} arrayFunc The function to get the extremum value from an array.

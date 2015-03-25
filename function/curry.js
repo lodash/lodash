@@ -1,5 +1,4 @@
-import createWrapper from '../internal/createWrapper';
-import isIterateeCall from '../internal/isIterateeCall';
+import createCurry from '../internal/createCurry';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var CURRY_FLAG = 8;
@@ -44,14 +43,7 @@ var CURRY_FLAG = 8;
  * curried(1)(_, 3)(2);
  * // => [1, 2, 3]
  */
-function curry(func, arity, guard) {
-  if (guard && isIterateeCall(func, arity, guard)) {
-    arity = null;
-  }
-  var result = createWrapper(func, CURRY_FLAG, null, null, null, null, null, arity);
-  result.placeholder = curry.placeholder;
-  return result;
-}
+var curry = createCurry(CURRY_FLAG);
 
 // Assign default placeholders.
 curry.placeholder = {};

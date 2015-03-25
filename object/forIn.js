@@ -1,11 +1,10 @@
 import baseFor from '../internal/baseFor';
-import bindCallback from '../internal/bindCallback';
-import keysIn from './keysIn';
+import createForIn from '../internal/createForIn';
 
 /**
  * Iterates over own and inherited enumerable properties of an object invoking
  * `iteratee` for each property. The `iteratee` is bound to `thisArg` and invoked
- * with three arguments; (value, key, object). Iterator functions may exit
+ * with three arguments: (value, key, object). Iterator functions may exit
  * iteration early by explicitly returning `false`.
  *
  * @static
@@ -29,11 +28,6 @@ import keysIn from './keysIn';
  * });
  * // => logs 'a', 'b', and 'c' (iteration order is not guaranteed)
  */
-function forIn(object, iteratee, thisArg) {
-  if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-    iteratee = bindCallback(iteratee, thisArg, 3);
-  }
-  return baseFor(object, iteratee, keysIn);
-}
+var forIn = createForIn(baseFor);
 
 export default forIn;

@@ -1,5 +1,6 @@
-import baseInvoke from '../internal/baseInvoke';
-import baseSlice from '../internal/baseSlice';
+import baseEach from '../internal/baseEach';
+import isLength from '../internal/isLength';
+import restParam from '../function/restParam';
 
 /**
  * Invokes the method named by `methodName` on each element in `collection`,
@@ -23,8 +24,17 @@ import baseSlice from '../internal/baseSlice';
  * _.invoke([123, 456], String.prototype.split, '');
  * // => [['1', '2', '3'], ['4', '5', '6']]
  */
-function invoke(collection, methodName) {
-  return baseInvoke(collection, methodName, baseSlice(arguments, 2));
-}
+var invoke = restParam(function(collection, methodName, args) {
+  var index = -1,
+      isFunc = typeof methodName == 'function',
+      length = collection ? collection.length : 0,
+      result = isLength(length) ? Array(length) : [];
+
+  baseEach(collection, function(value) {
+    var func = isFunc ? methodName : (value != null && value[methodName]);
+    result[++index] = func ? func.apply(value, args) : undefined;
+  });
+  return result;
+});
 
 export default invoke;

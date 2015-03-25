@@ -1,6 +1,6 @@
-import arrayCopy from '../internal/arrayCopy';
 import assign from './assign';
 import assignDefaults from '../internal/assignDefaults';
+import restParam from '../function/restParam';
 
 /**
  * Assigns own enumerable properties of source object(s) to the destination
@@ -18,13 +18,13 @@ import assignDefaults from '../internal/assignDefaults';
  * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
  * // => { 'user': 'barney', 'age': 36 }
  */
-function defaults(object) {
+var defaults = restParam(function(args) {
+  var object = args[0];
   if (object == null) {
     return object;
   }
-  var args = arrayCopy(arguments);
   args.push(assignDefaults);
   return assign.apply(undefined, args);
-}
+});
 
 export default defaults;

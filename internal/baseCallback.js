@@ -3,7 +3,6 @@ import baseMatchesProperty from './baseMatchesProperty';
 import baseProperty from './baseProperty';
 import bindCallback from './bindCallback';
 import identity from '../utility/identity';
-import isBindable from './isBindable';
 
 /**
  * The base implementation of `_.callback` which supports specifying the
@@ -18,9 +17,9 @@ import isBindable from './isBindable';
 function baseCallback(func, thisArg, argCount) {
   var type = typeof func;
   if (type == 'function') {
-    return (typeof thisArg != 'undefined' && isBindable(func))
-      ? bindCallback(func, thisArg, argCount)
-      : func;
+    return typeof thisArg == 'undefined'
+      ? func
+      : bindCallback(func, thisArg, argCount);
   }
   if (func == null) {
     return identity;

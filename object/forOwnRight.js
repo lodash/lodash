@@ -1,6 +1,5 @@
-import baseForRight from '../internal/baseForRight';
-import bindCallback from '../internal/bindCallback';
-import keys from './keys';
+import baseForOwnRight from '../internal/baseForOwnRight';
+import createForOwn from '../internal/createForOwn';
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of
@@ -27,9 +26,6 @@ import keys from './keys';
  * });
  * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
  */
-function forOwnRight(object, iteratee, thisArg) {
-  iteratee = bindCallback(iteratee, thisArg, 3);
-  return baseForRight(object, iteratee, keys);
-}
+var forOwnRight = createForOwn(baseForOwnRight);
 
 export default forOwnRight;

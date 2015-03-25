@@ -2,12 +2,13 @@ import arraySome from '../internal/arraySome';
 import baseCallback from '../internal/baseCallback';
 import baseSome from '../internal/baseSome';
 import isArray from '../lang/isArray';
+import isIterateeCall from '../internal/isIterateeCall';
 
 /**
  * Checks if `predicate` returns truthy for **any** element of `collection`.
  * The function returns as soon as it finds a passing value and does not iterate
  * over the entire collection. The predicate is bound to `thisArg` and invoked
- * with three arguments; (value, index|key, collection).
+ * with three arguments: (value, index|key, collection).
  *
  * If a property name is provided for `predicate` the created `_.property`
  * style callback returns the property value of the given element.
@@ -54,6 +55,9 @@ import isArray from '../lang/isArray';
  */
 function some(collection, predicate, thisArg) {
   var func = isArray(collection) ? arraySome : baseSome;
+  if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+    predicate = null;
+  }
   if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
     predicate = baseCallback(predicate, thisArg, 3);
   }

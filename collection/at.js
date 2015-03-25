@@ -1,6 +1,7 @@
 import baseAt from '../internal/baseAt';
 import baseFlatten from '../internal/baseFlatten';
 import isLength from '../internal/isLength';
+import restParam from '../function/restParam';
 import toIterable from '../internal/toIterable';
 
 /**
@@ -20,15 +21,15 @@ import toIterable from '../internal/toIterable';
  * _.at(['a', 'b', 'c'], [0, 2]);
  * // => ['a', 'c']
  *
- * _.at(['fred', 'barney', 'pebbles'], 0, 2);
- * // => ['fred', 'pebbles']
+ * _.at(['barney', 'fred', 'pebbles'], 0, 2);
+ * // => ['barney', 'pebbles']
  */
-function at(collection) {
+var at = restParam(function(collection, props) {
   var length = collection ? collection.length : 0;
   if (isLength(length)) {
     collection = toIterable(collection);
   }
-  return baseAt(collection, baseFlatten(arguments, false, false, 1));
-}
+  return baseAt(collection, baseFlatten(props));
+});
 
 export default at;

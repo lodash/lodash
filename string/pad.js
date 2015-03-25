@@ -1,5 +1,5 @@
 import baseToString from '../internal/baseToString';
-import createPad from '../internal/createPad';
+import createPadding from '../internal/createPadding';
 import root from '../internal/root';
 
 /** Native method references. */
@@ -10,9 +10,8 @@ var ceil = Math.ceil,
 var nativeIsFinite = root.isFinite;
 
 /**
- * Pads `string` on the left and right sides if it is shorter then the given
- * padding length. The `chars` string may be truncated if the number of padding
- * characters can't be evenly divided by the padding length.
+ * Pads `string` on the left and right sides if it is shorter than `length`.
+ * Padding characters are truncated if they can't be evenly divided by `length`.
  *
  * @static
  * @memberOf _
@@ -44,7 +43,7 @@ function pad(string, length, chars) {
       leftLength = floor(mid),
       rightLength = ceil(mid);
 
-  chars = createPad('', rightLength, chars);
+  chars = createPadding('', rightLength, chars);
   return chars.slice(0, leftLength) + string + chars;
 }
 

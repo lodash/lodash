@@ -1,5 +1,14 @@
+import baseAt from '../internal/baseAt';
+import baseCompareAscending from '../internal/baseCompareAscending';
 import baseFlatten from '../internal/baseFlatten';
-import basePullAt from '../internal/basePullAt';
+import isIndex from '../internal/isIndex';
+import restParam from '../function/restParam';
+
+/** Used for native method references. */
+var arrayProto = Array.prototype;
+
+/** Native method references. */
+var splice = arrayProto.splice;
 
 /**
  * Removes elements from `array` corresponding to the given indexes and returns
@@ -26,8 +35,22 @@ import basePullAt from '../internal/basePullAt';
  * console.log(evens);
  * // => [10, 20]
  */
-function pullAt(array) {
-  return basePullAt(array || [], baseFlatten(arguments, false, false, 1));
-}
+var pullAt = restParam(function(array, indexes) {
+  array || (array = []);
+  indexes = baseFlatten(indexes);
+
+  var length = indexes.length,
+      result = baseAt(array, indexes);
+
+  indexes.sort(baseCompareAscending);
+  while (length--) {
+    var index = parseFloat(indexes[length]);
+    if (index != previous && isIndex(index)) {
+      var previous = index;
+      splice.call(array, index, 1);
+    }
+  }
+  return result;
+});
 
 export default pullAt;

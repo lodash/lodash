@@ -1,14 +1,14 @@
 import baseFlatten from '../internal/baseFlatten';
 import baseUniq from '../internal/baseUniq';
+import restParam from '../function/restParam';
 
 /**
  * Creates an array of unique values, in order, of the provided arrays using
  * `SameValueZero` for equality comparisons.
  *
- * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
- * e.g. `===`, except that `NaN` matches `NaN`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for more details.
+ * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * comparisons are like strict equality comparisons, e.g. `===`, except that
+ * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _
@@ -20,8 +20,8 @@ import baseUniq from '../internal/baseUniq';
  * _.union([1, 2], [4, 2], [2, 1]);
  * // => [1, 2, 4]
  */
-function union() {
-  return baseUniq(baseFlatten(arguments, false, true, 0));
-}
+var union = restParam(function(arrays) {
+  return baseUniq(baseFlatten(arrays, false, true));
+});
 
 export default union;

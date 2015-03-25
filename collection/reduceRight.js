@@ -1,8 +1,6 @@
 import arrayReduceRight from '../internal/arrayReduceRight';
-import baseCallback from '../internal/baseCallback';
 import baseEachRight from '../internal/baseEachRight';
-import baseReduce from '../internal/baseReduce';
-import isArray from '../lang/isArray';
+import createReduce from '../internal/createReduce';
 
 /**
  * This method is like `_.reduce` except that it iterates over elements of
@@ -26,9 +24,6 @@ import isArray from '../lang/isArray';
  * }, []);
  * // => [4, 5, 2, 3, 0, 1]
  */
-function reduceRight(collection, iteratee, accumulator, thisArg) {
-  var func = isArray(collection) ? arrayReduceRight : baseReduce;
-  return func(collection, baseCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
-}
+var reduceRight =  createReduce(arrayReduceRight, baseEachRight);
 
 export default reduceRight;

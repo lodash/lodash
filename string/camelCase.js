@@ -1,8 +1,7 @@
 import createCompounder from '../internal/createCompounder';
 
 /**
- * Converts `string` to camel case.
- * See [Wikipedia](https://en.wikipedia.org/wiki/CamelCase) for more details.
+ * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
  *
  * @static
  * @memberOf _

@@ -2,7 +2,7 @@ import createWrapper from '../internal/createWrapper';
 import isIterateeCall from '../internal/isIterateeCall';
 
 /** Used to compose bitmasks for wrapper metadata. */
-var ARY_FLAG = 256;
+var ARY_FLAG = 128;
 
 /* Native method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;

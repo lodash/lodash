@@ -60,10 +60,10 @@ function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, a
 
     partials = holders = null;
   }
-  var data = !isBindKey && getData(func),
+  var data = isBindKey ? null : getData(func),
       newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 
-  if (data && data !== true) {
+  if (data) {
     mergeData(newData, data);
     bitmask = newData[1];
     arity = newData[9];

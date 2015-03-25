@@ -1,7 +1,6 @@
 import arrayEachRight from '../internal/arrayEachRight';
 import baseEachRight from '../internal/baseEachRight';
-import bindCallback from '../internal/bindCallback';
-import isArray from '../lang/isArray';
+import createForEach from '../internal/createForEach';
 
 /**
  * This method is like `_.forEach` except that it iterates over elements of
@@ -19,13 +18,9 @@ import isArray from '../lang/isArray';
  *
  * _([1, 2]).forEachRight(function(n) {
  *   console.log(n);
- * }).join(',');
+ * }).value();
  * // => logs each value from right to left and returns the array
  */
-function forEachRight(collection, iteratee, thisArg) {
-  return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-    ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, bindCallback(iteratee, thisArg, 3));
-}
+var forEachRight = createForEach(arrayEachRight, baseEachRight);
 
 export default forEachRight;

@@ -1,10 +1,8 @@
-import baseToString from '../internal/baseToString';
-import createPad from '../internal/createPad';
+import createPadDir from '../internal/createPadDir';
 
 /**
- * Pads `string` on the right side if it is shorter then the given padding
- * length. The `chars` string may be truncated if the number of padding
- * characters exceeds the padding length.
+ * Pads `string` on the right side if it is shorter than `length`. Padding
+ * characters are truncated if they exceed `length`.
  *
  * @static
  * @memberOf _
@@ -24,9 +22,6 @@ import createPad from '../internal/createPad';
  * _.padRight('abc', 3);
  * // => 'abc'
  */
-function padRight(string, length, chars) {
-  string = baseToString(string);
-  return string && (string + createPad(string, length, chars));
-}
+var padRight = createPadDir(true);
 
 export default padRight;

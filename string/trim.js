@@ -24,7 +24,7 @@ import trimmedRightIndex from '../internal/trimmedRightIndex';
  * // => 'abc'
  *
  * _.map(['  foo  ', '  bar  '], _.trim);
- * // => ['foo', 'bar]
+ * // => ['foo', 'bar']
  */
 function trim(string, chars, guard) {
   var value = string;

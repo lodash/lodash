@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.5.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -26,6 +26,7 @@ import baseForOwn from './internal/baseForOwn';
 import baseFunctions from './internal/baseFunctions';
 import baseMatches from './internal/baseMatches';
 import baseProperty from './internal/baseProperty';
+import createHybridWrapper from './internal/createHybridWrapper';
 import identity from './utility/identity';
 import isArray from './lang/isArray';
 import isObject from './lang/isObject';
@@ -36,11 +37,15 @@ import lazyReverse from './internal/lazyReverse';
 import lazyValue from './internal/lazyValue';
 import lodash from './chain/lodash';
 import _mixin from './utility/mixin';
+import realNames from './internal/realNames';
 import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.5.0';
+var VERSION = '3.6.0';
+
+/** Used to compose bitmasks for wrapper metadata. */
+var BIND_KEY_FLAG = 2;
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_DROP_WHILE_FLAG = 0,
@@ -149,6 +154,7 @@ lodash.rearg = func.rearg;
 lodash.reject = collection.reject;
 lodash.remove = array.remove;
 lodash.rest = array.rest;
+lodash.restParam = func.restParam;
 lodash.shuffle = collection.shuffle;
 lodash.slice = array.slice;
 lodash.sortBy = collection.sortBy;
@@ -435,8 +441,11 @@ LazyWrapper.prototype.toArray = function() {
 
 // Add `LazyWrapper` methods to `lodash.prototype`.
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-  var lodashFunc = lodash[methodName],
-      checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
+  var lodashFunc = lodash[methodName];
+  if (!lodashFunc) {
+    return;
+  }
+  var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
       retUnwrapped = /^(?:first|last)$/.test(methodName);
 
   lodash.prototype[methodName] = function() {
@@ -494,6 +503,19 @@ arrayEach(['concat', 'join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice'
     });
   };
 });
+
+// Map minified function names to their real names.
+baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+  var lodashFunc = lodash[methodName];
+  if (lodashFunc) {
+    var key = lodashFunc.name,
+        names = realNames[key] || (realNames[key] = []);
+
+    names.push({ 'name': methodName, 'func': lodashFunc });
+  }
+});
+
+realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': null }];
 
 // Add functions to the lazy wrapper.
 LazyWrapper.prototype.clone = lazyClone;

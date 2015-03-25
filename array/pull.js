@@ -11,10 +11,10 @@ var splice = arrayProto.splice;
  * comparisons.
  *
  * **Notes:**
- *  - Unlike `_.without`, this method mutates `array`.
- *  - `SameValueZero` comparisons are like strict equality comparisons, e.g. `===`,
- *    except that `NaN` matches `NaN`. See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- *    for more details.
+ *  - Unlike `_.without`, this method mutates `array`
+ *  - [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ *    comparisons are like strict equality comparisons, e.g. `===`, except
+ *    that `NaN` matches `NaN`
  *
  * @static
  * @memberOf _

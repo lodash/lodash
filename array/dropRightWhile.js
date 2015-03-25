@@ -1,10 +1,10 @@
 import baseCallback from '../internal/baseCallback';
-import baseSlice from '../internal/baseSlice';
+import baseWhile from '../internal/baseWhile';
 
 /**
  * Creates a slice of `array` excluding elements dropped from the end.
  * Elements are dropped until `predicate` returns falsey. The predicate is
- * bound to `thisArg` and invoked with three arguments; (value, index, array).
+ * bound to `thisArg` and invoked with three arguments: (value, index, array).
  *
  * If a property name is provided for `predicate` the created `_.property`
  * style callback returns the property value of the given element.
@@ -51,13 +51,9 @@ import baseSlice from '../internal/baseSlice';
  * // => ['barney', 'fred', 'pebbles']
  */
 function dropRightWhile(array, predicate, thisArg) {
-  var length = array ? array.length : 0;
-  if (!length) {
-    return [];
-  }
-  predicate = baseCallback(predicate, thisArg, 3);
-  while (length-- && predicate(array[length], length, array)) {}
-  return baseSlice(array, 0, length + 1);
+  return (array && array.length)
+    ? baseWhile(array, baseCallback(predicate, thisArg, 3), true, true)
+    : [];
 }
 
 export default dropRightWhile;

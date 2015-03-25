@@ -1,4 +1,4 @@
-import createComposer from '../internal/createComposer';
+import createFlow from '../internal/createFlow';
 
 /**
  * This method is like `_.flow` except that it creates a function that
@@ -20,6 +20,6 @@ import createComposer from '../internal/createComposer';
  * addSquare(1, 2);
  * // => 9
  */
-var flowRight = createComposer(true);
+var flowRight = createFlow(true);
 
 export default flowRight;

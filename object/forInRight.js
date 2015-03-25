@@ -1,6 +1,5 @@
 import baseForRight from '../internal/baseForRight';
-import bindCallback from '../internal/bindCallback';
-import keysIn from './keysIn';
+import createForIn from '../internal/createForIn';
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of
@@ -27,9 +26,6 @@ import keysIn from './keysIn';
  * });
  * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
  */
-function forInRight(object, iteratee, thisArg) {
-  iteratee = bindCallback(iteratee, thisArg, 3);
-  return baseForRight(object, iteratee, keysIn);
-}
+var forInRight = createForIn(baseForRight);
 
 export default forInRight;

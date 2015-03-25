@@ -1,6 +1,5 @@
-import baseCallback from '../internal/baseCallback';
 import baseEachRight from '../internal/baseEachRight';
-import baseFind from '../internal/baseFind';
+import createFind from '../internal/createFind';
 
 /**
  * This method is like `_.find` except that it iterates over elements of
@@ -21,9 +20,6 @@ import baseFind from '../internal/baseFind';
  * });
  * // => 3
  */
-function findLast(collection, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(collection, predicate, baseEachRight);
-}
+var findLast = createFind(baseEachRight, true);
 
 export default findLast;

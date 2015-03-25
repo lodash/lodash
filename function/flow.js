@@ -1,4 +1,4 @@
-import createComposer from '../internal/createComposer';
+import createFlow from '../internal/createFlow';
 
 /**
  * Creates a function that returns the result of invoking the provided
@@ -20,6 +20,6 @@ import createComposer from '../internal/createComposer';
  * addSquare(1, 2);
  * // => 9
  */
-var flow = createComposer();
+var flow = createFlow();
 
 export default flow;

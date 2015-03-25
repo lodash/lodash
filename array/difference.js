@@ -2,15 +2,15 @@ import baseDifference from '../internal/baseDifference';
 import baseFlatten from '../internal/baseFlatten';
 import isArguments from '../lang/isArguments';
 import isArray from '../lang/isArray';
+import restParam from '../function/restParam';
 
 /**
  * Creates an array excluding all values of the provided arrays using
  * `SameValueZero` for equality comparisons.
  *
- * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
- * e.g. `===`, except that `NaN` matches `NaN`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for more details.
+ * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * comparisons are like strict equality comparisons, e.g. `===`, except that
+ * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _
@@ -23,18 +23,10 @@ import isArray from '../lang/isArray';
  * _.difference([1, 2, 3], [4, 2]);
  * // => [1, 3]
  */
-function difference() {
-  var args = arguments,
-      index = -1,
-      length = args.length;
-
-  while (++index < length) {
-    var value = args[index];
-    if (isArray(value) || isArguments(value)) {
-      break;
-    }
-  }
-  return baseDifference(value, baseFlatten(args, false, true, ++index));
-}
+var difference = restParam(function(array, values) {
+  return (isArray(array) || isArguments(array))
+    ? baseDifference(array, baseFlatten(values, false, true))
+    : [];
+});
 
 export default difference;

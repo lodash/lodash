@@ -1,5 +1,6 @@
 import baseIsEqual from './baseIsEqual';
 import isStrictComparable from './isStrictComparable';
+import toObject from './toObject';
 
 /**
  * The base implementation of `_.matchesProperty` which does not coerce `key`
@@ -13,7 +14,8 @@ import isStrictComparable from './isStrictComparable';
 function baseMatchesProperty(key, value) {
   if (isStrictComparable(value)) {
     return function(object) {
-      return object != null && object[key] === value;
+      return object != null && object[key] === value &&
+        (typeof value != 'undefined' || (key in toObject(object)));
     };
   }
   return function(object) {

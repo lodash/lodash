@@ -1,6 +1,5 @@
-import baseCallback from '../internal/baseCallback';
-import baseFind from '../internal/baseFind';
 import baseForOwnRight from '../internal/baseForOwnRight';
+import createFindKey from '../internal/createFindKey';
 
 /**
  * This method is like `_.findKey` except that it iterates over elements of
@@ -50,9 +49,6 @@ import baseForOwnRight from '../internal/baseForOwnRight';
  * _.findLastKey(users, 'active');
  * // => 'pebbles'
  */
-function findLastKey(object, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(object, predicate, baseForOwnRight, true);
-}
+var findLastKey = createFindKey(baseForOwnRight);
 
 export default findLastKey;

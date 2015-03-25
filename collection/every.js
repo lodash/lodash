@@ -2,10 +2,11 @@ import arrayEvery from '../internal/arrayEvery';
 import baseCallback from '../internal/baseCallback';
 import baseEvery from '../internal/baseEvery';
 import isArray from '../lang/isArray';
+import isIterateeCall from '../internal/isIterateeCall';
 
 /**
  * Checks if `predicate` returns truthy for **all** elements of `collection`.
- * The predicate is bound to `thisArg` and invoked with three arguments;
+ * The predicate is bound to `thisArg` and invoked with three arguments:
  * (value, index|key, collection).
  *
  * If a property name is provided for `predicate` the created `_.property`
@@ -53,6 +54,9 @@ import isArray from '../lang/isArray';
  */
 function every(collection, predicate, thisArg) {
   var func = isArray(collection) ? arrayEvery : baseEvery;
+  if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+    predicate = null;
+  }
   if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
     predicate = baseCallback(predicate, thisArg, 3);
   }

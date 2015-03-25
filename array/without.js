@@ -1,14 +1,15 @@
 import baseDifference from '../internal/baseDifference';
-import baseSlice from '../internal/baseSlice';
+import isArguments from '../lang/isArguments';
+import isArray from '../lang/isArray';
+import restParam from '../function/restParam';
 
 /**
  * Creates an array excluding all provided values using `SameValueZero` for
  * equality comparisons.
  *
- * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
- * e.g. `===`, except that `NaN` matches `NaN`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for more details.
+ * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * comparisons are like strict equality comparisons, e.g. `===`, except that
+ * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _
@@ -21,8 +22,10 @@ import baseSlice from '../internal/baseSlice';
  * _.without([1, 2, 1, 3], 1, 2);
  * // => [3]
  */
-function without(array) {
-  return baseDifference(array, baseSlice(arguments, 1));
-}
+var without = restParam(function(array, values) {
+  return (isArray(array) || isArguments(array))
+    ? baseDifference(array, values)
+    : [];
+});
 
 export default without;

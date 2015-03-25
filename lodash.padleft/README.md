@@ -1,4 +1,4 @@
-# lodash.padleft v3.1.2
+# lodash.padleft v3.1.3
 
 The [lodash](https://lodash.com/) method `_.padLeft` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -21,4 +21,4 @@ In Node.js/io.js:
 var padLeft = require('lodash.padleft');
 ```
 
-See the [documentation](https://lodash.com/docs#padLeft) or [package source](https://github.com/lodash/lodash/blob/3.1.2-npm-packages/lodash.padleft) for more details.
+See the [documentation](https://lodash.com/docs#padLeft) or [package source](https://github.com/lodash/lodash/blob/3.1.3-npm-packages/lodash.padleft) for more details.

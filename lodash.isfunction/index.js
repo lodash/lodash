@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.4 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.5 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -83,7 +83,7 @@ var reIsNative = RegExp('^' +
 );
 
 /** Native method references. */
-var Uint8Array = getNative(root, 'Uint8Array');
+var Uint8Array = getNative(global, 'Uint8Array');
 
 /**
  * Gets the native function at `key` of `object`.

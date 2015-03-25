@@ -1,4 +1,4 @@
-# lodash.isregexp v3.0.4
+# lodash.isregexp v3.0.5
 
 The [lodash](https://lodash.com/) method `_.isRegExp` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isRegExp = require('lodash.isregexp');
 ```
 
-See the [documentation](https://lodash.com/docs#isRegExp) or [package source](https://github.com/lodash/lodash/blob/3.0.4-npm-packages/lodash.isregexp) for more details.
+See the [documentation](https://lodash.com/docs#isRegExp) or [package source](https://github.com/lodash/lodash/blob/3.0.5-npm-packages/lodash.isregexp) for more details.

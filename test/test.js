@@ -12414,6 +12414,13 @@
       _.remove(array, function(num) { return num == null; });
       deepEqual(array, [1, 3]);
     });
+
+    test('should not mutate the array until all elements to remove are determined', 1, function() {
+      var array = [1, 2, 3];
+
+      _.remove(array, function(num, i) { return i % 2 == 0; });
+      deepEqual(array, [2]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

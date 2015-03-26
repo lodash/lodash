@@ -5310,16 +5310,31 @@
     function remove(array, predicate, thisArg) {
       var index = -1,
           length = array ? array.length : 0,
-          result = [];
+          result = [],
+          removes = 0,
+          indexes = [],
+          last;
 
       predicate = getCallback(predicate, thisArg, 3);
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
+          if (last && last[0] + last[1] === index) {
+            ++last[1];
+          } else {
+            last = [index - removes, 1];
+            indexes.push(last);
+          }
           result.push(value);
-          splice.call(array, index--, 1);
-          length--;
+          ++removes;
         }
+      }
+
+      index = -1;
+      length = indexes.length;
+      while (++index < length) {
+        last = indexes[index];
+        splice.call(array, last[0], last[1]);
       }
       return result;
     }

@@ -9797,6 +9797,45 @@
     }
 
     /**
+     * Resolves the value of `keyPath` on `object`. If any values along `keyPath`
+     * is a function it is invoked with the `this` binding of `object` and its
+     * result is used to resolve the remainder of the `keyPath` rather than the
+     * function itself. If at any point along the `keyPath` the value is
+     * `undefined` the `defaultValue` is returned.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {array} keyPath The key path of the properties to resolve.
+     * @param {*} [defaultValue] The value returned if the property value
+     *  resolves to `undefined`.
+     * @returns {*} Returns the resolved value.
+     * @example
+     *
+     * var object = {
+     *  'user': 'fred',
+     *  'dates': { 'birthdate': '03/17/1988', anniversary: '07/29/2012' }
+     * };
+     *
+     * _.resultDeep(object, ['user']);
+     * // => 'fred'
+     *
+     * _.resultDeep(object, ['user', 'dates', 'anniversary']);
+     * // => '07/29/2012'
+     *
+     * _.resultDeep(object, ['status', 'timestamp'], _.constant('busy'));
+     * // => 'busy'
+     */
+    function resultDeep(object, keyPath, defaultValue) {
+      arrayEach(dropRight(keyPath), function(key) {
+        object = result(object, key);
+        return object != null;
+      });
+      return result(object, last(keyPath), defaultValue);
+    }
+
+    /**
      * An alternative to `_.reduce`; this method transforms `object` to a new
      * `accumulator` object which is the result of running each of its own enumerable
      * properties through `iteratee`, with each invocation potentially mutating
@@ -11732,6 +11771,7 @@
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
     lodash.result = result;
+    lodash.resultDeep = resultDeep;
     lodash.runInContext = runInContext;
     lodash.size = size;
     lodash.snakeCase = snakeCase;

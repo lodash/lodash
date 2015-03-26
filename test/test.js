@@ -12491,6 +12491,52 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.resultDeep');
+
+  (function() {
+    var object = {
+      'a': { d: 1 },
+      'b': null,
+      'c': function() { return this.a; }
+    };
+
+    test('should resolve property values', 4, function() {
+      strictEqual(_.resultDeep(object, ['a', 'd']), 1);
+      strictEqual(_.resultDeep(object, ['b']), null);
+      strictEqual(_.resultDeep(object, ['c', 'd']), 1);
+      strictEqual(_.resultDeep(object, ['d']), undefined);
+    });
+
+    test('should return `undefined` when `object` is nullish', 2, function() {
+      strictEqual(_.resultDeep(null, ['a']), undefined);
+      strictEqual(_.resultDeep(undefined, ['a']), undefined);
+    });
+
+    test('should return the specified default value for undefined properties', 1, function() {
+      var values = empties.concat(true, new Date, 1, /x/, 'a');
+
+      var expected = _.transform(values, function(result, value) {
+        result.push(value, value);
+      });
+
+      var actual = _.transform(values, function(result, value) {
+        result.push(
+          _.resultDeep(object, ['d'], value),
+          _.resultDeep(null, ['d'], value)
+        );
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should execute default function values', 1, function() {
+      var actual = _.resultDeep(object, ['d'], object.c);
+      strictEqual(actual, object.a);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.rest');
 
   (function() {
@@ -16525,7 +16571,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 213, function() {
+    test('should accept falsey arguments', 214, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

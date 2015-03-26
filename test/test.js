@@ -12360,16 +12360,17 @@
 
     test('should provide the correct `predicate` arguments', 1, function() {
       var argsList = [],
-          array = [1, 2, 3, 4];
+          array = [1, 2, 3],
+          clone = array.slice();
 
       _.remove(array, function(value, index) {
         var args = slice.call(arguments);
         args[2] = args[2].slice();
         argsList.push(args);
-        return index % 2;
+        return index % 2 == 0;
       });
 
-      deepEqual(argsList, [[1, 0, [1, 2, 3, 4]], [2, 1, [1, 2, 3, 4]], [3, 1, [1, 3, 4]], [4, 1, [1, 4]]]);
+      deepEqual(argsList, [[1, 0, clone], [2, 1, clone], [3, 2, clone]]);
     });
 
     test('should support the `thisArg` argument', 1, function() {
@@ -12420,8 +12421,7 @@
 
     test('should not mutate the array until all elements to remove are determined', 1, function() {
       var array = [1, 2, 3];
-
-      _.remove(array, function(num, i) { return i % 2 == 0; });
+      _.remove(array, function(num, index) { return index % 2 == 0; });
       deepEqual(array, [2]);
     });
   }());

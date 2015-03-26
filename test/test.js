@@ -12359,14 +12359,17 @@
     });
 
     test('should provide the correct `predicate` arguments', 1, function() {
-      var args,
-          array = [1, 2, 3];
+      var argsList = [],
+          array = [1, 2, 3, 4];
 
-      _.remove(array, function() {
-        args || (args = slice.call(arguments));
+      _.remove(array, function(value, index) {
+        var args = slice.call(arguments);
+        args[2] = args[2].slice();
+        argsList.push(args);
+        return index % 2;
       });
 
-      deepEqual(args, [1, 0, array]);
+      deepEqual(argsList, [[1, 0, [1, 2, 3, 4]], [2, 1, [1, 2, 3, 4]], [3, 1, [1, 3, 4]], [4, 1, [1, 4]]]);
     });
 
     test('should support the `thisArg` argument', 1, function() {

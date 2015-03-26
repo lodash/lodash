@@ -6595,14 +6595,14 @@
       deepEqual(actual, [1, 2]);
     });
 
-    test('should return an array of unique values', 2, function() {
-      var array = [1, 1, 3, 2, 2];
-      deepEqual(_.intersection(array, [5, 2, 2, 1, 4], [2, 1, 1]), [1, 2]);
-      deepEqual(_.intersection(array), [1, 3, 2]);
+    test('should return an array of unique values', 1, function() {
+      var actual = _.intersection([1, 1, 3, 2, 2], [5, 2, 2, 1, 4], [2, 1, 1]);
+      deepEqual(actual, [1, 2]);
     });
 
     test('should match `NaN`', 1, function() {
-      deepEqual(_.intersection([1, NaN, 3], [NaN, 5, NaN]), [NaN]);
+      var actual = _.intersection([1, NaN, 3], [NaN, 5, NaN]);
+      deepEqual(actual, [NaN]);
     });
 
     test('should work with large arrays of objects', 1, function() {
@@ -6627,7 +6627,7 @@
 
     test('should ignore values that are not arrays or `arguments` objects', 3, function() {
       var array = [0, 1, null, 3];
-      deepEqual(_.intersection(array, 3, null, { '0': 1 }), array);
+      deepEqual(_.intersection(array, 3, null, { '0': 1 }), []);
       deepEqual(_.intersection(null, array, null, [2, 1]), [1]);
       deepEqual(_.intersection(array, null, args, null), [1, 3]);
     });
@@ -16405,7 +16405,7 @@
       }
 
       deepEqual(_.difference(null, array), [], message('difference'));
-      deepEqual(_.intersection(null, array), array, message('intersection'));
+      deepEqual(_.intersection(null, array), [], message('intersection'));
       deepEqual(_.union(null, array), array, message('union'));
       deepEqual(_.xor(null, array), array, message('xor'));
     });
@@ -16416,7 +16416,7 @@
       }
 
       deepEqual(_.difference(array, null), array, message('difference'));
-      deepEqual(_.intersection(array, null), array, message('intersection'));
+      deepEqual(_.intersection(array, null), [], message('intersection'));
       deepEqual(_.union(array, null), array, message('union'));
     });
   }(1, null, [3], null, 5));

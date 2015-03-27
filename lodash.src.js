@@ -9798,13 +9798,13 @@
      *  'dates': { 'birthdate': '03/17/1988', anniversary: '07/29/2012' }
      * };
      *
-     * _.result(object, ['user']);
+     * _.resultDeep(object, ['user']);
      * // => 'fred'
      *
-     * _.result(object, ['user', 'dates', 'anniversary']);
+     * _.resultDeep(object, ['user', 'dates', 'anniversary']);
      * // => '07/29/2012'
      *
-     * _.result(object, ['status', 'timestamp'], _.constant('busy'));
+     * _.resultDeep(object, ['status', 'timestamp'], _.constant('busy'));
      * // => 'busy'
      */
     function resultDeep(object, keyPath, defaultValue) {

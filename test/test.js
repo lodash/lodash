@@ -11588,6 +11588,40 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.propertyDeep');
+
+  (function() {
+    test('should create a function that plucks a deep property of a given object', 3, function() {
+      var object = { 'a': { 'b': 1 } },
+          propDeep = _.propertyDeep(['a']);
+          propDeeper = _.propertyDeep(['a', 'b']);
+
+      strictEqual(propDeep.length, 1);
+      strictEqual(propDeep(object), { 'b': 1 });
+      strictEqual(propDeeper(object), 1);
+    });
+
+    test('should work with non-string `keys` argument', 1, function() {
+      var matrix = [[1, 2],
+                    [3, 4]],
+          propDeep = _.propertyDeep([1, 1]);
+
+      strictEqual(propDeep(matrix), 4);
+    });
+
+    test('should return `undefined` for non-existing properties', 3, function() {
+      var object = { 'a': { 'b': 1 } };
+
+      strictEqual(_.propertyDeep(['c'])(object), undefined);
+      strictEqual(_.propertyDeep(['a', 'c'])(object), undefined);
+      strictEqual(_.propertyDeep(['a', 'b', 'c'])(object), undefined);
+
+    });
+
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.propertyOf');
 
   (function() {
@@ -16535,7 +16569,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 213, function() {
+    test('should accept falsey arguments', 214, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

@@ -2599,6 +2599,28 @@
     }
 
     /**
+     * The base implementation of `_.propertyDeep` which does not coerce `keys` to strings.
+     *
+     * @private
+     * @param {string[]} keys Keys that specify the property to get.
+     * @returns {Function} Returns the new function.
+     */
+    function basePropertyDeep(keys) {
+      return function(object) {
+        var index = -1,
+            length = keys.length;
+
+        while (++index < length) {
+          object = baseProperty(keys[index])(object);
+          if (object == null) {
+            return undefined;
+          }
+        }
+        return object;
+      };
+    }
+
+    /**
      * The base implementation of `_.pullAt` without support for individual
      * index arguments and capturing the removed elements.
      *
@@ -11204,6 +11226,34 @@
     }
 
     /**
+     * This function is like `property` except it takes a `keys` array to get nested property.
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {string[]} keys Keys that specify the property to get.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var users = [
+     *   { 'user': { 'name': 'fred'   } },
+     *   { 'user': { 'name': 'barney', 'age': 36 } }
+     * ];
+     *
+     * var getName = _.propertyDeep(['user', 'name']);
+     * var getAge  = _.propertyDeep(['user', 'age']);
+     *
+     * _.map(users, getName);
+     * // => ['fred', 'barney']
+     *
+     * _.map(users, getAge);
+     * // => [undefined, 36]
+     */
+    function propertyDeep(keys) {
+      keys = baseMap(keys, function(key) { return key + '' });
+      return basePropertyDeep(keys);
+    }
+
+    /**
      * The opposite of `_.property`; this method creates a function which returns
      * the property value of a given key on `object`.
      *
@@ -11611,6 +11661,7 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
+    lodash.propertyDeep = propertyDeep;
     lodash.propertyOf = propertyOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;

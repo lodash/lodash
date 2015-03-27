@@ -9809,7 +9809,8 @@
      */
     function resultDeep(object, keyPath, defaultValue) {
       arrayEach(dropRight(keyPath), function(key) {
-        return object = result(object, key);
+        object = result(object, key);
+        return object != null;
       });
       return result(object, last(keyPath), defaultValue);
     }

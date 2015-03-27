@@ -2611,7 +2611,7 @@
             length = keys.length;
 
         while (++index < length) {
-          object = baseProperty(keys[index])(object);
+          object = object[keys[index]];
           if (object == null) {
             return undefined;
           }
@@ -11249,8 +11249,7 @@
      * // => [undefined, 36]
      */
     function propertyDeep(keys) {
-      keys = baseMap(keys, function(key) { return key + '' });
-      return basePropertyDeep(keys);
+      return keys == null ? undefined : basePropertyDeep(arrayMap(keys, baseToString))
     }
 
     /**

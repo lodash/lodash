@@ -11609,6 +11609,16 @@
       strictEqual(propDeep(matrix), 4);
     });
 
+    test('should return a function even for falsey values', 1, function() {
+      var pass = true;
+
+      _.each(falsey, function(keys) {
+        pass = typeof _.propertyDeep(keys) == 'function'
+      });
+
+      ok(pass);
+    });
+
     test('should return `undefined` for non-existing properties', 3, function() {
       var object = { 'a': { 'b': 1 } };
 

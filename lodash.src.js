@@ -11249,7 +11249,9 @@
      * // => [undefined, 36]
      */
     function propertyDeep(keys) {
-      return keys == null ? undefined : basePropertyDeep(arrayMap(keys, baseToString))
+      return keys == null
+                   ? function() { return undefined; }
+                   : basePropertyDeep(arrayMap(keys, baseToString))
     }
 
     /**

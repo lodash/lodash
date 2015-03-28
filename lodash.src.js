@@ -1855,7 +1855,7 @@
         return baseMatches(func);
       }
       return typeof thisArg == 'undefined'
-        ? baseProperty(func + '')
+        ? property(func)
         : baseMatchesProperty(func + '', thisArg);
     }
 
@@ -2598,28 +2598,9 @@
       };
     }
 
-    /**
-     * The base implementation of `_.propertyDeep` which does not coerce `keys` to strings.
-     *
-     * @private
-     * @param {string[]} keys Keys that specify the property to get.
-     * @returns {Function} Returns the new function.
-     */
-    function basePropertyDeep(keys) {
+    function basePropertyDeep(path) {
       return function(object) {
-        if (object == null) {
-          return undefined;
-        }
-        var index = -1,
-            length = keys.length;
-
-        while (++index < length) {
-          object = object[keys[index]];
-          if (object == null) {
-            return undefined;
-          }
-        }
-        return object;
+        return object == null ? undefined : getPath(object, path);
       };
     }
 
@@ -4071,6 +4052,23 @@
       return collection ? result(collection, target, fromIndex) : result;
     }
 
+    function getPath(object, path) {
+      var index = -1,
+          length = path.length;
+
+      while (++index < length) {
+        object = object[path[index]];
+        if (object == null) {
+          return object;
+        }
+      }
+      return object;
+    }
+
+    function getProperty(object, path) {
+      return isKey(path) ? object[path] : getPath(object, toPath(path));
+    }
+
     /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.
      *
@@ -4216,6 +4214,10 @@
         return value === value ? (value === other) : (other !== other);
       }
       return false;
+    }
+
+    function isKey(value) {
+      return typeof value == 'string' && value.indexOf('.') < 0;
     }
 
     /**
@@ -4512,6 +4514,10 @@
         return value.split('');
       }
       return isObject(value) ? value : Object(value);
+    }
+
+    function toPath(value) {
+      return isArray(value) ? value : (value + '').split('.');
     }
 
     /**
@@ -6832,7 +6838,7 @@
      * // => [36, 40] (iteration order is not guaranteed)
      */
     function pluck(collection, key) {
-      return map(collection, baseProperty(key));
+      return map(collection, property(key));
     }
 
     /**
@@ -9793,7 +9799,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to query.
-     * @param {string} key The key of the property to resolve.
+     * @param {string} path The path of the property to resolve.
      * @param {*} [defaultValue] The value returned if the property value
      *  resolves to `undefined`.
      * @returns {*} Returns the resolved value.
@@ -9813,51 +9819,12 @@
      * _.result(object, 'status', _.constant('busy'));
      * // => 'busy'
      */
-    function result(object, key, defaultValue) {
-      var value = object == null ? undefined : object[key];
+    function result(object, path, defaultValue) {
+      var value = object == null ? undefined : getProperty(object, path);
       if (typeof value == 'undefined') {
         value = defaultValue;
       }
       return isFunction(value) ? value.call(object) : value;
-    }
-
-    /**
-     * Resolves the value of `keyPath` on `object`. If any values along `keyPath`
-     * is a function it is invoked with the `this` binding of `object` and its
-     * result is used to resolve the remainder of the `keyPath` rather than the
-     * function itself. If at any point along the `keyPath` the value is
-     * `undefined` the `defaultValue` is returned.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @param {array} keyPath The key path of the properties to resolve.
-     * @param {*} [defaultValue] The value returned if the property value
-     *  resolves to `undefined`.
-     * @returns {*} Returns the resolved value.
-     * @example
-     *
-     * var object = {
-     *  'user': 'fred',
-     *  'dates': { 'birthdate': '03/17/1988', anniversary: '07/29/2012' }
-     * };
-     *
-     * _.resultDeep(object, ['user']);
-     * // => 'fred'
-     *
-     * _.resultDeep(object, ['user', 'dates', 'anniversary']);
-     * // => '07/29/2012'
-     *
-     * _.resultDeep(object, ['status', 'timestamp'], _.constant('busy'));
-     * // => 'busy'
-     */
-    function resultDeep(object, keyPath, defaultValue) {
-      arrayEach(dropRight(keyPath), function(key) {
-        object = result(object, key);
-        return object != null;
-      });
-      return result(object, last(keyPath), defaultValue);
     }
 
     /**
@@ -11242,12 +11209,12 @@
     }
 
     /**
-     * Creates a function which returns the property value of `key` on a given object.
+     * Creates a function which returns the property value of `path` on a given object.
      *
      * @static
      * @memberOf _
      * @category Utility
-     * @param {string} key The key of the property to get.
+     * @param {string} path The path of the property to get.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -11264,40 +11231,13 @@
      * _.pluck(_.sortBy(users, getName), 'user');
      * // => ['barney', 'fred']
      */
-    function property(key) {
-      return baseProperty(key + '');
-    }
-
-    /**
-     * This function is like `_.property` except it takes a `keys` array to get nested property.
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {string[]} keys Keys that specify the property to get.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var users = [
-     *   { 'user': { 'name': 'fred' } },
-     *   { 'user': { 'name': 'barney', 'age': 36 } }
-     * ];
-     *
-     * var getName = _.propertyDeep(['user', 'name']);
-     * var getAge  = _.propertyDeep(['user', 'age']);
-     *
-     * _.map(users, getName);
-     * // => ['fred', 'barney']
-     *
-     * _.map(users, getAge);
-     * // => [undefined, 36]
-     */
-    function propertyDeep(keys) {
-      return basePropertyDeep(arrayMap(keys || [], baseToString));
+    function property(path) {
+      return isKey(path) ? baseProperty(path) : basePropertyDeep(toPath(path));
     }
 
     /**
      * The opposite of `_.property`; this method creates a function which returns
-     * the property value of a given key on `object`.
+     * the property value of a given path on `object`.
      *
      * @static
      * @memberOf _
@@ -11315,38 +11255,8 @@
      * // => ['b', 'c', 'a']
      */
     function propertyOf(object) {
-      return function(key) {
-        return object == null ? undefined : object[key];
-      };
-    }
-
-    /**
-     * The opposite of `_.propertyDeep`; this method creates a function which returns
-     * the property value of a given key path on `object`.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {Object} object The object to inspect.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var users = [
-     *   { user: 'fredrick', nickname: 'fred' },
-     *   { user: 'bernard', nickname: 'barney' }
-     * ];
-     *
-     * var propertyOfUsers = _.propertyDeepOf(users);
-     *
-     * propertyOfUsers([0, 'nickname']);
-     * // => 'fred'
-     *
-     * propertyOfUsers([1, 'name']);
-     * // => 'bernard'
-     */
-    function propertyDeepOf(object) {
-      return function(keyPath) {
-        return resultDeep(object, keyPath);
+      return function(path) {
+        return object == null ? undefined : getProperty(object, path);
       };
     }
 
@@ -11733,9 +11643,7 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
-    lodash.propertyDeep = propertyDeep;
     lodash.propertyOf = propertyOf;
-    lodash.propertyDeepOf = propertyDeepOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;
@@ -11855,7 +11763,6 @@
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
     lodash.result = result;
-    lodash.resultDeep = resultDeep;
     lodash.runInContext = runInContext;
     lodash.size = size;
     lodash.snakeCase = snakeCase;
@@ -12001,7 +11908,7 @@
     // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
     arrayEach(['pluck', 'where'], function(methodName, index) {
       var operationName = index ? 'filter' : 'map',
-          createCallback = index ? baseMatches : baseProperty;
+          createCallback = index ? baseMatches : property;
 
       LazyWrapper.prototype[methodName] = function(value) {
         return this[operationName](createCallback(value));

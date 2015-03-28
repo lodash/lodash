@@ -11588,58 +11588,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.propertyDeep');
-
-  (function() {
-    test('should create a function that plucks a property value of a given object', 3, function() {
-      var object = { 'a': [1, 2], 'b': 3 },
-          prop = _.propertyDeep(['a', 1]);
-
-      strictEqual(prop.length, 1);
-      strictEqual(prop(object), 2);
-
-      prop = _.propertyDeep(['b']);
-      strictEqual(prop(object), 3);
-    });
-
-    test('should work with non-string `prop` arguments', 1, function() {
-      var prop = _.propertyDeep([1]);
-      strictEqual(prop([1, 2, 3]), 2);
-    });
-
-    test('should return a function even for falsey values', 1, function() {
-      var pass = true;
-
-      _.each(falsey, function(keys) {
-        pass = typeof _.propertyDeep(keys) == 'function'
-      });
-
-      ok(pass);
-    });
-
-    test('should pluck inherited property values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var prop = _.propertyDeep(['b']);
-      strictEqual(prop(new Foo), 2);
-    });
-
-    test('should work when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(undefined));
-
-      var actual = _.map(values, function(value, index) {
-        var prop = _.propertyDeep(['a']);
-        return index ? prop(value) : prop();
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.propertyOf');
 
   (function() {
@@ -11667,41 +11615,6 @@
       var actual = _.map(values, function(value, index) {
         var propOf = index ? _.propertyOf(value) : _.propertyOf();
         return propOf('a');
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.propertyDeepOf');
-
-  (function() {
-    test('should create a function that plucks a property value of a given key', 3, function() {
-      var object = { 'a': 1, 'b': 2 },
-          propOf = _.propertyDeepOf(object);
-
-      strictEqual(propOf.length, 1);
-      strictEqual(propOf(['a']), 1);
-      strictEqual(propOf(['b']), 2);
-    });
-
-    test('should pluck inherited property values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var propOf = _.propertyDeepOf(new Foo);
-      strictEqual(propOf(['b']), 2);
-    });
-
-    test('should work when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(undefined));
-
-      var actual = _.map(values, function(value, index) {
-        var propOf = index ? _.propertyDeepOf(value) : _.propertyDeepOf();
-        return propOf(['a']);
       });
 
       deepEqual(actual, expected);
@@ -12583,52 +12496,6 @@
     test('should execute default function values', 1, function() {
       var actual = _.result(object, 'd', object.c);
       strictEqual(actual, 1);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.resultDeep');
-
-  (function() {
-    var object = {
-      'a': { d: 1 },
-      'b': null,
-      'c': function() { return this.a; }
-    };
-
-    test('should resolve property values', 4, function() {
-      strictEqual(_.resultDeep(object, ['a', 'd']), 1);
-      strictEqual(_.resultDeep(object, ['b']), null);
-      strictEqual(_.resultDeep(object, ['c', 'd']), 1);
-      strictEqual(_.resultDeep(object, ['d']), undefined);
-    });
-
-    test('should return `undefined` when `object` is nullish', 2, function() {
-      strictEqual(_.resultDeep(null, ['a']), undefined);
-      strictEqual(_.resultDeep(undefined, ['a']), undefined);
-    });
-
-    test('should return the specified default value for undefined properties', 1, function() {
-      var values = empties.concat(true, new Date, 1, /x/, 'a');
-
-      var expected = _.transform(values, function(result, value) {
-        result.push(value, value);
-      });
-
-      var actual = _.transform(values, function(result, value) {
-        result.push(
-          _.resultDeep(object, ['d'], value),
-          _.resultDeep(null, ['d'], value)
-        );
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should execute default function values', 1, function() {
-      var actual = _.resultDeep(object, ['d'], object.c);
-      strictEqual(actual, object.a);
     });
   }());
 
@@ -16668,7 +16535,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 216, function() {
+    test('should accept falsey arguments', 213, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

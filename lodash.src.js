@@ -2599,6 +2599,31 @@
     }
 
     /**
+     * The base implementation of `_.propertyDeep` which does not coerce `keys` to strings.
+     *
+     * @private
+     * @param {string[]} keys Keys that specify the property to get.
+     * @returns {Function} Returns the new function.
+     */
+    function basePropertyDeep(keys) {
+      return function(object) {
+        if (object == null) {
+          return undefined;
+        }
+        var index = -1,
+            length = keys.length;
+
+        while (++index < length) {
+          object = object[keys[index]];
+          if (object == null) {
+            return undefined;
+          }
+        }
+        return object;
+      };
+    }
+
+    /**
      * The base implementation of `_.pullAt` without support for individual
      * index arguments and capturing the removed elements.
      *
@@ -11244,6 +11269,33 @@
     }
 
     /**
+     * This function is like `_.property` except it takes a `keys` array to get nested property.
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {string[]} keys Keys that specify the property to get.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var users = [
+     *   { 'user': { 'name': 'fred' } },
+     *   { 'user': { 'name': 'barney', 'age': 36 } }
+     * ];
+     *
+     * var getName = _.propertyDeep(['user', 'name']);
+     * var getAge  = _.propertyDeep(['user', 'age']);
+     *
+     * _.map(users, getName);
+     * // => ['fred', 'barney']
+     *
+     * _.map(users, getAge);
+     * // => [undefined, 36]
+     */
+    function propertyDeep(keys) {
+      return basePropertyDeep(arrayMap(keys || [], baseToString));
+    }
+
+    /**
      * The opposite of `_.property`; this method creates a function which returns
      * the property value of a given key on `object`.
      *
@@ -11265,6 +11317,36 @@
     function propertyOf(object) {
       return function(key) {
         return object == null ? undefined : object[key];
+      };
+    }
+
+    /**
+     * The opposite of `_.propertyDeep`; this method creates a function which returns
+     * the property value of a given key path on `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var users = [
+     *   { user: 'fredrick', nickname: 'fred' },
+     *   { user: 'bernard', nickname: 'barney' }
+     * ];
+     *
+     * var propertyOfUsers = _.propertyDeepOf(users);
+     *
+     * propertyOfUsers([0, 'nickname']);
+     * // => 'fred'
+     *
+     * propertyOfUsers([1, 'name']);
+     * // => 'bernard'
+     */
+    function propertyDeepOf(object) {
+      return function(keyPath) {
+        return resultDeep(object, keyPath);
       };
     }
 
@@ -11651,7 +11733,9 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
+    lodash.propertyDeep = propertyDeep;
     lodash.propertyOf = propertyOf;
+    lodash.propertyDeepOf = propertyDeepOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;

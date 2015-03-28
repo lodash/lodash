@@ -11226,7 +11226,7 @@
     }
 
     /**
-     * This function is like `property` except it takes a `keys` array to get nested property.
+     * This function is like `_.property` except it takes a `keys` array to get nested property.
      * @static
      * @memberOf _
      * @category Utility
@@ -11235,7 +11235,7 @@
      * @example
      *
      * var users = [
-     *   { 'user': { 'name': 'fred'   } },
+     *   { 'user': { 'name': 'fred' } },
      *   { 'user': { 'name': 'barney', 'age': 36 } }
      * ];
      *

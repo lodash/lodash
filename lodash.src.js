@@ -2599,28 +2599,28 @@
     }
 
     /**
-     * The base implementation of `_.propertyDeep` which does not coerce `keys` to strings.
+     * The base implementation of `_.propertyDeep` and `_.propertyDeepOf` which
+     * does not coerce `keys` to strings and takes `object` as a parameter.
      *
      * @private
+     * @param {object} object Object to look for keys.
      * @param {string[]} keys Keys that specify the property to get.
-     * @returns {Function} Returns the new function.
+     * @returns {Function} Returns value at the end of the key path or undefined.
      */
-    function basePropertyDeep(keys) {
-      return function(object) {
+    function basePropertyDeep(object, keys) {
+      if (object == null) {
+        return undefined;
+      }
+      var index = -1,
+          length = keys.length;
+
+      while (++index < length) {
+        object = object[keys[index]];
         if (object == null) {
           return undefined;
         }
-        var index = -1,
-            length = keys.length;
-
-        while (++index < length) {
-          object = object[keys[index]];
-          if (object == null) {
-            return undefined;
-          }
-        }
-        return object;
-      };
+      }
+      return object;
     }
 
     /**
@@ -11292,7 +11292,9 @@
      * // => [undefined, 36]
      */
     function propertyDeep(keys) {
-      return basePropertyDeep(arrayMap(keys || [], baseToString));
+      return function(object) {
+        return basePropertyDeep(object, arrayMap(keys || [], baseToString));
+      };
     }
 
     /**
@@ -11345,8 +11347,8 @@
      * // => 'bernard'
      */
     function propertyDeepOf(object) {
-      return function(keyPath) {
-        return resultDeep(object, keyPath);
+      return function(keys) {
+        return basePropertyDeep(object, arrayMap(keys || [], baseToString));
       };
     }
 

@@ -11224,6 +11224,31 @@
     }
 
     /**
+     * Creates a function which returns the property value of `key` on a given object.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {array} keyPath The key path of the property to get.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var highScores = [
+     *   { user: 'fred', score: 850 },
+     *   { user: 'barney', score: 630 }
+     * ];
+     *
+     * var getHighestScore = _.propertyDeep([0, 'score']);
+     * getHighestScore(highScores);
+     * // => 850
+     */
+    function propertyDeep(keyPath) {
+      return function(object) {
+        return resultDeep(object, keyPath);
+      };
+    }
+
+    /**
      * The opposite of `_.property`; this method creates a function which returns
      * the property value of a given key on `object`.
      *
@@ -11245,6 +11270,36 @@
     function propertyOf(object) {
       return function(key) {
         return object == null ? undefined : object[key];
+      };
+    }
+
+    /**
+     * The opposite of `_.propertyDeep`; this method creates a function which returns
+     * the property value of a given key path on `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var users = [
+     *   { user: 'fredrick', nickname: 'fred' },
+     *   { user: 'bernard', nickname: 'barney' }
+     * ];
+     *
+     * var propertyOfUsers = _.propertyDeepOf(users);
+     *
+     * propertyOfusers([0, 'nickname']);
+     * // => 'fred'
+     *
+     * propertyOfusers([1, 'name']);
+     * // => 'bernard'
+     */
+    function propertyDeepOf(object) {
+      return function(keyPath) {
+        return resultDeep(object, keyPath);
       };
     }
 
@@ -11631,7 +11686,9 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
+    lodash.propertyDeep = propertyDeep;
     lodash.propertyOf = propertyOf;
+    lodash.propertyDeepOf = propertyDeepOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;

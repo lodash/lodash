@@ -9797,6 +9797,45 @@
     }
 
     /**
+     * Resolves the value of `keyPath` on `object`. If any values along `keyPath`
+     * is a function it is invoked with the `this` binding of `object` and its
+     * result is used to resolve the remainder of the `keyPath` rather than the
+     * function itself. If at any point along the `keyPath` the value is
+     * `undefined` the `defaultValue` is returned.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {array} keyPath The key path of the properties to resolve.
+     * @param {*} [defaultValue] The value returned if the property value
+     *  resolves to `undefined`.
+     * @returns {*} Returns the resolved value.
+     * @example
+     *
+     * var object = {
+     *  'user': 'fred',
+     *  'dates': { 'birthdate': '03/17/1988', anniversary: '07/29/2012' }
+     * };
+     *
+     * _.resultDeep(object, ['user']);
+     * // => 'fred'
+     *
+     * _.resultDeep(object, ['user', 'dates', 'anniversary']);
+     * // => '07/29/2012'
+     *
+     * _.resultDeep(object, ['status', 'timestamp'], _.constant('busy'));
+     * // => 'busy'
+     */
+    function resultDeep(object, keyPath, defaultValue) {
+      arrayEach(dropRight(keyPath), function(key) {
+        object = result(object, key);
+        return object != null;
+      });
+      return result(object, last(keyPath), defaultValue);
+    }
+
+    /**
      * An alternative to `_.reduce`; this method transforms `object` to a new
      * `accumulator` object which is the result of running each of its own enumerable
      * properties through `iteratee`, with each invocation potentially mutating
@@ -11205,6 +11244,31 @@
     }
 
     /**
+     * Creates a function which returns the property value of `key` on a given object.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {array} keyPath The key path of the property to get.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var highScores = [
+     *   { user: 'fred', score: 850 },
+     *   { user: 'barney', score: 630 }
+     * ];
+     *
+     * var getHighestScore = _.propertyDeep([0, 'score']);
+     * getHighestScore(highScores);
+     * // => 850
+     */
+    function propertyDeep(keyPath) {
+      return function(object) {
+        return resultDeep(object, keyPath);
+      };
+    }
+
+    /**
      * The opposite of `_.property`; this method creates a function which returns
      * the property value of a given key on `object`.
      *
@@ -11226,6 +11290,36 @@
     function propertyOf(object) {
       return function(key) {
         return object == null ? undefined : object[key];
+      };
+    }
+
+    /**
+     * The opposite of `_.propertyDeep`; this method creates a function which returns
+     * the property value of a given key path on `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var users = [
+     *   { user: 'fredrick', nickname: 'fred' },
+     *   { user: 'bernard', nickname: 'barney' }
+     * ];
+     *
+     * var propertyOfUsers = _.propertyDeepOf(users);
+     *
+     * propertyOfUsers([0, 'nickname']);
+     * // => 'fred'
+     *
+     * propertyOfUsers([1, 'name']);
+     * // => 'bernard'
+     */
+    function propertyDeepOf(object) {
+      return function(keyPath) {
+        return resultDeep(object, keyPath);
       };
     }
 
@@ -11612,7 +11706,9 @@
     lodash.pick = pick;
     lodash.pluck = pluck;
     lodash.property = property;
+    lodash.propertyDeep = propertyDeep;
     lodash.propertyOf = propertyOf;
+    lodash.propertyDeepOf = propertyDeepOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;
@@ -11732,6 +11828,7 @@
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
     lodash.result = result;
+    lodash.resultDeep = resultDeep;
     lodash.runInContext = runInContext;
     lodash.size = size;
     lodash.snakeCase = snakeCase;

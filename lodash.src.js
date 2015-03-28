@@ -11291,10 +11291,10 @@
      *
      * var propertyOfUsers = _.propertyDeepOf(users);
      *
-     * propertyOfusers([0, 'nickname']);
+     * propertyOfUsers([0, 'nickname']);
      * // => 'fred'
      *
-     * propertyOfusers([1, 'name']);
+     * propertyOfUsers([1, 'name']);
      * // => 'bernard'
      */
     function propertyDeepOf(object) {

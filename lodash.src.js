@@ -11280,6 +11280,44 @@
     }
 
     /**
+     * The opposite of `_.propertyDeep`; this method creates a function which returns
+     * the nested property value of a given keys on `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var object = { 'a': 3, 'b': 1, 'c': 2 };
+     *
+     * var users = [
+     *   { 'user': { 'name': 'fred' } },
+     *   { 'user': { 'name': 'barney', 'age': 36 } }
+     * ];
+     *
+     * userFuncs = _.map(users, _.propertyDeepOf);
+     *
+     * _.map(userFuncs, function(f) {
+     *   return f(['user', 'name']);
+     * });
+     * // => ['fred', 'barney']
+     *
+     * _.map(userFuncs, function(f) {
+     *   return f(['user', 'age']);
+     * });
+     * // => [undefined, 36]
+     */
+    function propertyDeepOf(object) {
+      return function(keys) {
+        return object == null
+                       ? undefined
+                       : basePropertyDeep(arrayMap(keys, baseToString))(object);
+      };
+    }
+
+    /**
      * Creates an array of numbers (positive and/or negative) progressing from
      * `start` up to, but not including, `end`. If `end` is not specified it is
      * set to `start` with `start` then set to `0`. If `start` is less than `end`
@@ -11664,6 +11702,7 @@
     lodash.property = property;
     lodash.propertyDeep = propertyDeep;
     lodash.propertyOf = propertyOf;
+    lodash.propertyDeepOf = propertyDeepOf;
     lodash.pull = pull;
     lodash.pullAt = pullAt;
     lodash.range = range;

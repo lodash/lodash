@@ -11667,6 +11667,43 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.propertyDeepOf');
+
+  (function() {
+    test('should create a function that plucks a nested property value of a given keys', 3, function() {
+      var object = { 'a': 1,
+                     'b': { 'c': 2 } },
+          propOf = _.propertyDeepOf(object);
+
+      strictEqual(propOf.length, 1);
+      strictEqual(propOf(['a']), 1);
+      strictEqual(propOf(['b', 'c']), 2);
+    });
+
+    test('should return `undefined` for non-existing properties', 2, function() {
+      var object = { 'a': 1,
+                     'b': { 'c': 2 } },
+          propOf = _.propertyDeepOf(object);
+
+      strictEqual(propOf['a', 'c'], undefined);
+      strictEqual(propOf['b', 'c', 'd'], undefined);
+    });
+
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var propOf = index ? _.propertyDeepOf(value) : _.propertyDeepOf();
+        return propOf('a');
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.pull');
 
   (function() {
@@ -16579,7 +16616,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 214, function() {
+    test('should accept falsey arguments', 215, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

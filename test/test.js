@@ -11593,11 +11593,11 @@
   (function() {
     test('should create a function that plucks a deep property of a given object', 3, function() {
       var object = { 'a': { 'b': 1 } },
-          propDeep = _.propertyDeep(['a']);
+          propDeep = _.propertyDeep(['a']),
           propDeeper = _.propertyDeep(['a', 'b']);
 
       strictEqual(propDeep.length, 1);
-      strictEqual(propDeep(object), { 'b': 1 });
+      strictEqual(propDeep(object), object['a']);
       strictEqual(propDeeper(object), 1);
     });
 
@@ -11627,8 +11627,7 @@
       strictEqual(_.propertyDeep(['a', 'b', 'c'])(object), undefined);
 
     });
-
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

@@ -9414,8 +9414,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to inspect.
-     * @param {string} key The key to check.
-     * @returns {boolean} Returns `true` if `key` is a direct property, else `false`.
+     * @param {string} path The path to check.
+     * @returns {boolean} Returns `true` if `path` is a direct property, else `false`.
      * @example
      *
      * var object = { 'a': 1, 'b': 2, 'c': 3 };
@@ -9423,8 +9423,19 @@
      * _.has(object, 'b');
      * // => true
      */
-    function has(object, key) {
-      return object ? hasOwnProperty.call(object, key) : false;
+    function has(object, path) {
+      if (object == null) {
+        return false;
+      }
+      if (hasOwnProperty.call(object, path)) {
+        return true;
+      }
+      if (isKey(path)) {
+        return false;
+      }
+      path = toPath(path);
+      object = getPath(object, baseSlice(path, 0, -1));
+      return hasOwnProperty.call(object, last(path));
     }
 
     /**

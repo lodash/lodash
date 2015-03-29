@@ -10197,6 +10197,125 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.method');
+
+  (function() {
+    test('should create a function that calls a property function of a given object', 3, function() {
+      var object = { 'a': _.constant(1), 'b': _.constant(2) },
+          method = _.method('a');
+
+      strictEqual(method.length, 1);
+      strictEqual(method(object), 1);
+
+      method = _.method('b');
+      strictEqual(method(object), 2);
+    });
+
+    test('should work with non-string `prop` arguments', 1, function() {
+      var array = _.times(3, _.constant),
+          prop = _.method(1);
+      strictEqual(prop(array), 1);
+    });
+
+    test('should coerce key to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
+
+      var values = [null, undefined, fn, {}];
+      var objects = _.map(values, function(value, index) {
+        var object = {};
+        object[value] = _.constant(index);
+        return object;
+      });
+
+      var actual = _.map(objects, function(object, index) {
+        var method = _.method(values[index]);
+        return method(object);
+      });
+
+      deepEqual(actual, [0, 1, 2, 3]);
+    });
+
+    test('should pluck inherited property values', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = _.constant(2);
+
+      var method = _.method('b');
+      strictEqual(method(new Foo), 2);
+    });
+
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var method = _.method('a');
+        return index ? method(value) : method();
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should apply partial arguments to function', function() {
+      var object = {
+        'fn': function() {
+          return slice.call(arguments);
+        }
+      };
+
+      var method = _.method('fn', 1, 2, 3);
+      deepEqual(method(object), [1, 2, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.methodOf');
+
+  (function() {
+    test('should create a function that calls a method function of a given key', 3, function() {
+      var object = { 'a': _.constant(1), 'b': _.constant(2) },
+          methodOf = _.methodOf(object);
+
+      strictEqual(methodOf.length, 1);
+      strictEqual(methodOf('a'), 1);
+      strictEqual(methodOf('b'), 2);
+    });
+
+    test('should pluck inherited method values', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = _.constant(2);
+
+      var methodOf = _.methodOf(new Foo);
+      strictEqual(methodOf('b'), 2);
+    });
+
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var methodOf = index ? _.methodOf(value) : _.methodOf();
+        return methodOf('a');
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should apply partial arguments to function', function() {
+      var object = {
+        'fn': function() {
+          return slice.call(arguments);
+        }
+      };
+
+      var method = _.methodOf(object, 1, 2, 3);
+      deepEqual(method('fn'), [1, 2, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.min');
 
   (function() {

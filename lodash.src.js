@@ -2622,6 +2622,19 @@
       }
     }
 
+    function baseMethod(object, path, args) {
+      if (object == null) {
+        return undefined;
+      }
+      if (!(isKey(path) || (path in toObject(object)))) {
+        path = toPath(path);
+        object = baseGet(object, baseSlice(path, 0, -1));
+        path = last(path);
+      }
+      var func = object[path];
+      return isFunction(func) ? func.apply(object, args) : undefined;
+    }
+
     /**
      * The base implementation of `_.property` without support for deep paths.
      *
@@ -11225,6 +11238,21 @@
       return baseMatchesProperty(path, baseClone(value, true));
     }
 
+    var method = restParam(function(path, args) {
+      return function(object) {
+        return baseMethod(object, path, args);
+      }
+    });
+
+    var methodOf = restParam(function(object, args) {
+      if (object == null) {
+        return constant(undefined);
+      }
+      return function(path) {
+        return baseMethod(object, path, args);
+      };
+    });
+
     /**
      * Adds all own enumerable function properties of a source object to the
      * destination object. If `object` is a function then methods are added to
@@ -11782,6 +11810,8 @@
     lodash.matchesProperty = matchesProperty;
     lodash.memoize = memoize;
     lodash.merge = merge;
+    lodash.method = method;
+    lodash.methodOf = methodOf;
     lodash.mixin = mixin;
     lodash.negate = negate;
     lodash.omit = omit;

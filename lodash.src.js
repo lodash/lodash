@@ -9820,7 +9820,11 @@
      * // => 'busy'
      */
     function result(object, path, defaultValue) {
-      var value = object == null ? undefined : getProperty(object, path);
+      path = toPath(path);
+      if (path.length > 1) {
+        object = getPath(object, dropRight(path));
+      }
+      var value = getProperty(object, last(path));
       if (typeof value == 'undefined') {
         value = defaultValue;
       }

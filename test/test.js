@@ -12497,6 +12497,14 @@
       var actual = _.result(object, 'd', object.c);
       strictEqual(actual, 1);
     });
+
+    test('should call deep property method with correct context', function() {
+      var value = {
+        deep: object
+      };
+
+      strictEqual(_.result(value, ['deep', 'c']), 1);
+    })
   }());
 
   /*--------------------------------------------------------------------------*/

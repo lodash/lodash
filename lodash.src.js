@@ -87,34 +87,9 @@
       reEvaluate = /<%([\s\S]+?)%>/g,
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
-  /**
-   * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
-   */
-  var reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
-
-  /**
-   * Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components).
-   */
-  var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
-
-  /** Used to match `RegExp` flags from their coerced string values. */
-  var reFlags = /\w*$/;
-
-  /** Used to detect hexadecimal string values. */
-  var reHexPrefix = /^0[xX]/;
-
-  /** Used to detect host constructors (Safari > 5). */
-  var reHostCtor = /^\[object .+?Constructor\]$/;
-
-  /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
-  var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
-
-  /** Used to ensure capturing order of template delimiters. */
-  var reNoMatch = /($^)/;
-
-  var reProp = /(?:[^.\\]|\\.)+/g,
-      reDeepProp = /[[.]/,
-      reBracketProp = /\[((?:[^[\\]|\\.)*?)\]/g;
+  /** Used to match property names within property paths. */
+  var reIsDeepProp = /\.|\[(?:\d+(?:\.\d+)?|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
+      rePropName = /([^.[\]]+)|\[(?:(\d+(?:\.\d+)?)|(["'])((?:(?!\3)[^\n\\]|\\.)*?)\3)\]/g;
 
   /**
    * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
@@ -123,6 +98,27 @@
    */
   var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
       reHasRegExpChars = RegExp(reRegExpChars.source);
+
+  /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
+  var reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
+
+  /** Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components). */
+  var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
+
+  /** Used to match `RegExp` flags from their coerced string values. */
+  var reFlags = /\w*$/;
+
+  /** Used to detect hexadecimal string values. */
+  var reHasHexPrefix = /^0[xX]/;
+
+  /** Used to detect host constructors (Safari > 5). */
+  var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+  /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
+  var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
+
+  /** Used to ensure capturing order of template delimiters. */
+  var reNoMatch = /($^)/;
 
   /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
@@ -584,10 +580,6 @@
       (charCode >= 8192 && (charCode <= 8202 || charCode == 8232 || charCode == 8233 || charCode == 8239 || charCode == 8287 || charCode == 12288 || charCode == 65279)));
   }
 
-  function replaceBracket(match, key, index) {
-    return (index ? '.': '') + key;
-  }
-
   /**
    * Replaces all `placeholder` elements in `array` with an internal placeholder
    * and returns an array of their indexes.
@@ -769,7 +761,7 @@
     var oldDash = context._;
 
     /** Used to detect if a method is native. */
-    var reNative = RegExp('^' +
+    var reIsNative = RegExp('^' +
       escapeRegExp(objToString)
       .replace(/toString|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
@@ -1864,7 +1856,7 @@
       }
       return typeof thisArg == 'undefined'
         ? property(func)
-        : baseMatchesProperty(func + '', thisArg);
+        : baseMatchesProperty(func, thisArg);
     }
 
     /**
@@ -2477,23 +2469,40 @@
     }
 
     /**
-     * The base implementation of `_.matchesProperty` which does not coerce `key`
-     * to a string.
+     * The base implementation of `_.matchesProperty` which does not which does
+     * not clone `value`.
      *
      * @private
-     * @param {string} key The key of the property to get.
+     * @param {string} path The path of the property to get.
      * @param {*} value The value to compare.
      * @returns {Function} Returns the new function.
      */
-    function baseMatchesProperty(key, value) {
-      if (isStrictComparable(value)) {
+    function baseMatchesProperty(path, value) {
+      var pathKey = path + '';
+      if (isKey(path) && isStrictComparable(value)) {
         return function(object) {
-          return object != null && object[key] === value &&
-            (typeof value != 'undefined' || (key in toObject(object)));
+          return object != null && object[pathKey] === value &&
+            (typeof value != 'undefined' || (pathKey in toObject(object)));
         };
       }
+      path = toPath(path);
       return function(object) {
-        return object != null && baseIsEqual(value, object[key], null, true);
+        if (object == null) {
+          return false;
+        }
+        var key = pathKey;
+        object = toObject(object);
+        if (!(key in object)) {
+          object = getPath(object, baseSlice(path, 0, -1));
+          if (object == null) {
+            return false;
+          }
+          key = last(path);
+          object = toObject(object);
+        }
+        return object[key] === value
+          ? (typeof value != 'undefined' || (key in object))
+          : baseIsEqual(value, object[key], null, true);
       };
     }
 
@@ -2594,7 +2603,7 @@
     }
 
     /**
-     * The base implementation of `_.property` which does not coerce `key` to a string.
+     * The base implementation of `_.property` without support for deep paths.
      *
      * @private
      * @param {string} key The key of the property to get.
@@ -2606,15 +2615,22 @@
       };
     }
 
+    /**
+     * A specialized version of `baseProperty` which supports deep paths.
+     *
+     * @private
+     * @param {string} path The path of the property to get.
+     * @returns {Function} Returns the new function.
+     */
     function basePropertyDeep(path) {
-      var key = path + '';
+      var pathKey = path + '';
       path = toPath(path);
       return function(object) {
         if (object == null) {
           return undefined;
         }
-        return key in toObject(object)
-          ? object[key]
+        return pathKey in toObject(object)
+          ? object[pathKey]
           : getPath(object, path);
       };
     }
@@ -4224,8 +4240,16 @@
       return false;
     }
 
+    /**
+     * Checks if `value` is a property name and not a property path.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+     */
     function isKey(value) {
-      return typeof value == 'string' && !reDeepProp.test(value);
+      var type = typeof value;
+      return type == 'number' || (type == 'string' && !reIsDeepProp.test(value));
     }
 
     /**
@@ -4524,12 +4548,22 @@
       return isObject(value) ? value : Object(value);
     }
 
+    /**
+     * Converts `value` to property path array if it is not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Array} Returns the property path array.
+     */
     function toPath(value) {
       if (isArray(value)) {
         return value;
       }
-      value = (value + '').replace(reBracketProp, replaceBracket);
-      return value.match(reProp) || [];
+      var result = [];
+      (value + '').replace(rePropName, function(match, key, number, quote, string) {
+        result.push(key || number || string);
+      });
+      return result;
     }
 
     /**
@@ -6827,13 +6861,13 @@
     }, function() { return [[], []]; });
 
     /**
-     * Gets the value of `key` from all elements in `collection`.
+     * Gets the value of `path` from all elements in `collection`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string} key The key of the property to pluck.
+     * @param {string} path The path of the property to pluck.
      * @returns {Array} Returns the property values.
      * @example
      *
@@ -6849,8 +6883,8 @@
      * _.pluck(userIndex, 'age');
      * // => [36, 40] (iteration order is not guaranteed)
      */
-    function pluck(collection, key) {
-      return map(collection, property(key));
+    function pluck(collection, path) {
+      return map(collection, property(path));
     }
 
     /**
@@ -8847,9 +8881,9 @@
         return false;
       }
       if (objToString.call(value) == funcTag) {
-        return reNative.test(fnToString.call(value));
+        return reIsNative.test(fnToString.call(value));
       }
-      return isObjectLike(value) && (isHostObject(value) ? reNative : reHostCtor).test(value);
+      return isObjectLike(value) && (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
     }
 
     /**
@@ -9407,8 +9441,7 @@
     }
 
     /**
-     * Checks if `key` exists as a direct property of `object` instead of an
-     * inherited property.
+     * Checks if `path` is a direct property.
      *
      * @static
      * @memberOf _
@@ -9424,18 +9457,13 @@
      * // => true
      */
     function has(object, path) {
-      if (object == null) {
-        return false;
+      var result = object != null && hasOwnProperty.call(object, path);
+      if (!result && !isKey(path)) {
+        path = toPath(path);
+        object = getPath(object, baseSlice(path, 0, -1));
+        result = object != null && hasOwnProperty.call(object, last(path));
       }
-      if (hasOwnProperty.call(object, path)) {
-        return true;
-      }
-      if (isKey(path)) {
-        return false;
-      }
-      path = toPath(path);
-      object = getPath(object, baseSlice(path, 0, -1));
-      return hasOwnProperty.call(object, last(path));
+      return result;
     }
 
     /**
@@ -9813,10 +9841,10 @@
     });
 
     /**
-     * Resolves the value of property `key` on `object`. If the value of `key` is
-     * a function it is invoked with the `this` binding of `object` and its result
-     * is returned, else the property value is returned. If the property value is
-     * `undefined` the `defaultValue` is used in its place.
+     * Resolves the value of property `path` on `object`. If the value of `path`
+     * is a function it is invoked with the `this` binding of `object` and its
+     * result is returned, else the property value is returned. If the property
+     * value is `undefined` the `defaultValue` is used in its place.
      *
      * @static
      * @memberOf _
@@ -10375,7 +10403,7 @@
           radix = +radix;
         }
         string = trim(string);
-        return nativeParseInt(string, radix || (reHexPrefix.test(string) ? 16 : 10));
+        return nativeParseInt(string, radix || (reHasHexPrefix.test(string) ? 16 : 10));
       };
     }
 
@@ -11082,7 +11110,7 @@
     }
 
     /**
-     * Creates a function which compares the property value of `key` on a given
+     * Creates a function which compares the property value of `path` on a given
      * object to `value`.
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
@@ -11092,7 +11120,7 @@
      * @static
      * @memberOf _
      * @category Utility
-     * @param {string} key The key of the property to get.
+     * @param {string} path The path of the property to get.
      * @param {*} value The value to compare.
      * @returns {Function} Returns the new function.
      * @example
@@ -11105,8 +11133,8 @@
      * _.find(users, _.matchesProperty('user', 'fred'));
      * // => { 'user': 'fred' }
      */
-    function matchesProperty(key, value) {
-      return baseMatchesProperty(key + '', baseClone(value, true));
+    function matchesProperty(path, value) {
+      return baseMatchesProperty(path, baseClone(value, true));
     }
 
     /**

@@ -90,7 +90,7 @@
   /**
    * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
    */
-  var reComboMarks = /[\u0300-\u036f\ufe20-\ufe23]/g;
+  var reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
 
   /**
    * Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components).
@@ -10117,7 +10117,7 @@
      */
     function deburr(string) {
       string = baseToString(string);
-      return string && string.replace(reLatin1, deburrLetter).replace(reComboMarks, '');
+      return string && string.replace(reLatin1, deburrLetter).replace(reComboMark, '');
     }
 
     /**

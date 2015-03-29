@@ -2600,7 +2600,7 @@
 
     function basePropertyDeep(path) {
       return function(object) {
-        return object == null ? undefined : getPath(object, path);
+        return getProperty(object, path);
       };
     }
 
@@ -4056,16 +4056,16 @@
       var index = -1,
           length = path.length;
 
-      while (++index < length) {
+      while (object != null && ++index < length) {
         object = object[path[index]];
-        if (object == null) {
-          return object;
-        }
       }
       return object;
     }
 
     function getProperty(object, path) {
+      if (object == null) {
+        return undefined;
+      }
       return isKey(path) ? object[path] : getPath(object, toPath(path));
     }
 
@@ -11256,7 +11256,7 @@
      */
     function propertyOf(object) {
       return function(path) {
-        return object == null ? undefined : getProperty(object, path);
+        return getProperty(object, path);
       };
     }
 

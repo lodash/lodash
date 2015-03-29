@@ -112,6 +112,10 @@
   /** Used to ensure capturing order of template delimiters. */
   var reNoMatch = /($^)/;
 
+  var reProp = /(?:[^.\\]|\\.)+/g,
+      reDeepProp = /[[.]/,
+      reBracketProp = /\[((?:[^[\\]|\\.)*?)\]/g;
+
   /**
    * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
    * In addition to special characters the forward slash is escaped to allow for
@@ -578,6 +582,10 @@
   function isSpace(charCode) {
     return ((charCode <= 160 && (charCode >= 9 && charCode <= 13) || charCode == 32 || charCode == 160) || charCode == 5760 || charCode == 6158 ||
       (charCode >= 8192 && (charCode <= 8202 || charCode == 8232 || charCode == 8233 || charCode == 8239 || charCode == 8287 || charCode == 12288 || charCode == 65279)));
+  }
+
+  function replaceBracket(match, key, index) {
+    return (index ? '.': '') + key;
   }
 
   /**
@@ -2599,8 +2607,15 @@
     }
 
     function basePropertyDeep(path) {
+      var key = path + '';
+      path = toPath(path);
       return function(object) {
-        return getProperty(object, path);
+        if (object == null) {
+          return undefined;
+        }
+        return key in toObject(object)
+          ? object[key]
+          : getPath(object, path);
       };
     }
 
@@ -4062,13 +4077,6 @@
       return object;
     }
 
-    function getProperty(object, path) {
-      if (object == null) {
-        return undefined;
-      }
-      return isKey(path) ? object[path] : getPath(object, toPath(path));
-    }
-
     /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.
      *
@@ -4217,7 +4225,7 @@
     }
 
     function isKey(value) {
-      return typeof value == 'string' && value.indexOf('.') < 0;
+      return typeof value == 'string' && !reDeepProp.test(value);
     }
 
     /**
@@ -4517,7 +4525,11 @@
     }
 
     function toPath(value) {
-      return isArray(value) ? value : (value + '').split('.');
+      if (isArray(value)) {
+        return value;
+      }
+      value = (value + '').replace(reBracketProp, replaceBracket);
+      return value.match(reProp) || [];
     }
 
     /**
@@ -9820,11 +9832,12 @@
      * // => 'busy'
      */
     function result(object, path, defaultValue) {
-      path = toPath(path);
-      if (path.length > 1) {
-        object = getPath(object, dropRight(path));
+      if (object != null && !isKey(path) && !(path in toObject(object))) {
+        path = toPath(path);
+        object = getPath(object, baseSlice(path, 0, -1));
+        path = last(path);
       }
-      var value = getProperty(object, last(path));
+      var value = object == null ? undefined : object[path];
       if (typeof value == 'undefined') {
         value = defaultValue;
       }
@@ -11236,7 +11249,7 @@
      * // => ['barney', 'fred']
      */
     function property(path) {
-      return isKey(path) ? baseProperty(path) : basePropertyDeep(toPath(path));
+      return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
     }
 
     /**
@@ -11259,8 +11272,13 @@
      * // => ['b', 'c', 'a']
      */
     function propertyOf(object) {
+      if (object == null) {
+        return constant(undefined);
+      }
       return function(path) {
-        return getProperty(object, path);
+        return (isKey(path) || (path in toObject(object)))
+          ? object[path]
+          : getPath(object, toPath(path));
       };
     }
 

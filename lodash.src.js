@@ -2255,6 +2255,26 @@
     }
 
     /**
+     * The base implementation of `get` without support for string paths
+     * and default values.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array} path The path of the property to get.
+     * @returns {*} Returns the resolved value.
+     */
+    function baseGet(object, path) {
+      var result,
+          index = -1,
+          length = path.length;
+
+      while (object != null && ++index < length) {
+        result = object = object[path[index]];
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `_.isEqual` without support for `this` binding
      * `customizer` functions.
      *
@@ -2493,7 +2513,7 @@
         var key = pathKey;
         object = toObject(object);
         if (!(key in object)) {
-          object = getPath(object, baseSlice(path, 0, -1));
+          object = baseGet(object, baseSlice(path, 0, -1));
           if (object == null) {
             return false;
           }
@@ -2619,7 +2639,7 @@
      * A specialized version of `baseProperty` which supports deep paths.
      *
      * @private
-     * @param {string} path The path of the property to get.
+     * @param {Array|string} path The path of the property to get.
      * @returns {Function} Returns the new function.
      */
     function basePropertyDeep(path) {
@@ -2631,7 +2651,7 @@
         }
         return pathKey in toObject(object)
           ? object[pathKey]
-          : getPath(object, path);
+          : baseGet(object, path);
       };
     }
 
@@ -4083,16 +4103,6 @@
       return collection ? result(collection, target, fromIndex) : result;
     }
 
-    function getPath(object, path) {
-      var index = -1,
-          length = path.length;
-
-      while (object != null && ++index < length) {
-        object = object[path[index]];
-      }
-      return object;
-    }
-
     /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.
      *
@@ -4560,8 +4570,8 @@
         return value;
       }
       var result = [];
-      (value + '').replace(rePropName, function(match, key, number, quote, string) {
-        result.push(key || number || string);
+      (value + '').replace(rePropName, function(match, number, quote, string) {
+        result.push(typeof string == 'string' ? string : (number || match));
       });
       return result;
     }
@@ -6861,13 +6871,13 @@
     }, function() { return [[], []]; });
 
     /**
-     * Gets the value of `path` from all elements in `collection`.
+     * Gets the property value of `path` from all elements in `collection`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string} path The path of the property to pluck.
+     * @param {Array|string} path The path of the property to pluck.
      * @returns {Array} Returns the property values.
      * @example
      *
@@ -9441,13 +9451,47 @@
     }
 
     /**
+     * Gets the property value of `path` on `object`. If the resolved value is
+     * `undefined` the `defaultValue` is used in its place.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the property to get.
+     * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
+     * @returns {*} Returns the resolved value.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+     *
+     * _.get(object, 'a[0].b.c');
+     * // => 3
+     *
+     * _.get(object, ['a', '0', 'b', 'c']);
+     * // => 3
+     *
+     * _.get(object, 'a.b.c', 'default');
+     * // => 'default'
+     */
+    function get(object, path, defaultValue) {
+      var result;
+      if (object != null) {
+        result = (isKey(path) || (path in toObject(object)))
+          ? object[path]
+          : baseGet(object, toPath(path));
+      }
+      return typeof result == 'undefined' ? defaultValue : result;
+    }
+
+    /**
      * Checks if `path` is a direct property.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {Object} object The object to inspect.
-     * @param {string} path The path to check.
+     * @param {Array|string} path The path to check.
      * @returns {boolean} Returns `true` if `path` is a direct property, else `false`.
      * @example
      *
@@ -9460,7 +9504,7 @@
       var result = object != null && hasOwnProperty.call(object, path);
       if (!result && !isKey(path)) {
         path = toPath(path);
-        object = getPath(object, baseSlice(path, 0, -1));
+        object = baseGet(object, baseSlice(path, 0, -1));
         result = object != null && hasOwnProperty.call(object, last(path));
       }
       return result;
@@ -9841,18 +9885,16 @@
     });
 
     /**
-     * Resolves the value of property `path` on `object`. If the value of `path`
-     * is a function it is invoked with the `this` binding of `object` and its
-     * result is returned, else the property value is returned. If the property
-     * value is `undefined` the `defaultValue` is used in its place.
+     * This method is like `_.get` except that if the resolved value is a function
+     * it is invoked with the `this` binding of its parent object and its result
+     * is returned.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {Object} object The object to query.
-     * @param {string} path The path of the property to resolve.
-     * @param {*} [defaultValue] The value returned if the property value
-     *  resolves to `undefined`.
+     * @param {Array|string} path The path of the property to resolve.
+     * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
      * @returns {*} Returns the resolved value.
      * @example
      *
@@ -9871,16 +9913,62 @@
      * // => 'busy'
      */
     function result(object, path, defaultValue) {
-      if (object != null && !isKey(path) && !(path in toObject(object))) {
+      if (object != null && !(isKey(path) || (path in toObject(object)))) {
         path = toPath(path);
-        object = getPath(object, baseSlice(path, 0, -1));
+        object = baseGet(object, baseSlice(path, 0, -1));
         path = last(path);
       }
-      var value = object == null ? undefined : object[path];
-      if (typeof value == 'undefined') {
-        value = defaultValue;
+      var result = object == null ? undefined : object[path];
+      if (typeof result == 'undefined') {
+        result = defaultValue;
       }
-      return isFunction(value) ? value.call(object) : value;
+      return isFunction(result) ? result.call(object) : result;
+    }
+
+    /**
+     * Sets the property value of `path` on `object`. If a portion of `path`
+     * does not exist it is created.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to augment.
+     * @param {Array|string} path The path of the property to set.
+     * @param {*} value The value to set.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var object = { 'a': { 'b': { 'c': 3 } } };
+     *
+     * _.set(object, 'a.b.c', 4);
+     * console.log(object.a.b.c);
+     * // => 4
+     *
+     * _.set(object, 'x[0].y.z', 5);
+     * console.log(object.x[0].y.z);
+     * // => 5
+     */
+    function set(object, path, value) {
+      if (object == null) {
+        return object;
+      }
+      path = toPath(path);
+
+      var index = -1,
+          length = path.length,
+          endIndex = length - 1,
+          nested = object;
+
+      while (++index < length) {
+        var key = path[index];
+        if (index == endIndex) {
+          nested[key] = value;
+        } else if (nested[key] == null) {
+          nested[key] = isIndex(path[index + 1]) ? [] : {};
+        }
+        nested = nested[key];
+      }
+      return object;
     }
 
     /**
@@ -11120,7 +11208,7 @@
      * @static
      * @memberOf _
      * @category Utility
-     * @param {string} path The path of the property to get.
+     * @param {Array|string} path The path of the property to get.
      * @param {*} value The value to compare.
      * @returns {Function} Returns the new function.
      * @example
@@ -11265,12 +11353,13 @@
     }
 
     /**
-     * Creates a function which returns the property value of `path` on a given object.
+     * Creates a function which returns the property value of `path` on a
+     * given object.
      *
      * @static
      * @memberOf _
      * @category Utility
-     * @param {string} path The path of the property to get.
+     * @param {Array|string} path The path of the property to get.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -11317,7 +11406,7 @@
       return function(path) {
         return (isKey(path) || (path in toObject(object)))
           ? object[path]
-          : getPath(object, toPath(path));
+          : baseGet(object, toPath(path));
       };
     }
 
@@ -11713,6 +11802,7 @@
     lodash.remove = remove;
     lodash.rest = rest;
     lodash.restParam = restParam;
+    lodash.set = set;
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
@@ -11781,6 +11871,7 @@
     lodash.findLastKey = findLastKey;
     lodash.findWhere = findWhere;
     lodash.first = first;
+    lodash.get = get;
     lodash.has = has;
     lodash.identity = identity;
     lodash.includes = includes;

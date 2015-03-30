@@ -1393,7 +1393,7 @@
     }
 
     /**
-     * Adds `value` to `key` of the cache.
+     * Sets `value` to `key` of the cache.
      *
      * @private
      * @name set

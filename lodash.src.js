@@ -88,8 +88,8 @@
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match property names within property paths. */
-  var reIsDeepProp = /\.|\[(?:\d+(?:\.\d+)?|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
-      rePropName = /([^.[\]]+)|\[(?:(\d+(?:\.\d+)?)|(["'])((?:(?!\3)[^\n\\]|\\.)*?)\3)\]/g;
+  var reIsDeepProp = /\.|\[(?:[^[\]]+|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
+      rePropName = /[^.[\]]+|\[(?:(\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
 
   /**
    * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).

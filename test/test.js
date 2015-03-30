@@ -304,8 +304,8 @@
   ];
 
   /**
-   * Used to check for problems removing whitespace. For a whitespace reference
-   * see V8's unit test https://code.google.com/p/v8/source/browse/branches/bleeding_edge/test/mjsunit/whitespaces.js.
+   * Used to check for problems removing whitespace. For a whitespace reference,
+   * see [V8's unit test](https://code.google.com/p/v8/source/browse/branches/bleeding_edge/test/mjsunit/whitespaces.js).
    */
   var whitespace = ' \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
 
@@ -1059,7 +1059,7 @@
       return slice.call(arguments);
     }
 
-    test('should cap the numer of params provided to `func`', 2, function() {
+    test('should cap the number of params provided to `func`', 2, function() {
       var actual = _.map(['6', '8', '10'], _.ary(parseInt, 1));
       deepEqual(actual, [6, 8, 10]);
 

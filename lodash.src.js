@@ -444,7 +444,7 @@
    * Used by `_.sortByOrder` to compare multiple properties of each element
    * in a collection and stable sort them in the following order:
    *
-   * If orders is unspecified, sort in ascending order for all properties.
+   * If `orders` is unspecified, sort in ascending order for all properties.
    * Otherwise, for each property, sort in ascending order if its corresponding value in
    * orders is true, and descending order if false.
    *
@@ -1808,7 +1808,7 @@
     }
 
     /**
-     * Copies the properties of `source` to `object`.
+     * Copies properties of `source` to `object`.
      *
      * @private
      * @param {Object} source The object to copy properties from.
@@ -2897,7 +2897,7 @@
     /**
      * The base implementation of `_.values` and `_.valuesIn` which creates an
      * array of `object` property values corresponding to the property names
-     * returned by `keysFunc`.
+     * of `props`.
      *
      * @private
      * @param {Object} object The object to query.
@@ -4371,7 +4371,7 @@
 
     /**
      * A specialized version of `_.pick` that picks `object` properties specified
-     * by the `props` array.
+     * by `props`.
      *
      * @private
      * @param {Object} object The source object.
@@ -11231,13 +11231,13 @@
      * destination object. If `object` is a function then methods are added to
      * its prototype as well.
      *
-     * **Note:** Use `_.runInContext` to create a pristine `lodash` function
-     * for mixins to avoid conflicts caused by modifying the original.
+     * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
+     * avoid conflicts caused by modifying the original.
      *
      * @static
      * @memberOf _
      * @category Utility
-     * @param {Function|Object} [object=this] object The destination object.
+     * @param {Function|Object} [object=lodash] The destination object.
      * @param {Object} source The object of functions to add.
      * @param {Object} [options] The options object.
      * @param {boolean} [options.chain=true] Specify whether the functions added

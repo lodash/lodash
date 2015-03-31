@@ -35,6 +35,7 @@
       errorProto = Error.prototype,
       funcProto = Function.prototype,
       objectProto = Object.prototype,
+      numberProto = Number.prototype,
       stringProto = String.prototype;
 
   /** Method and object shortcuts. */
@@ -12839,6 +12840,40 @@
         actual = _.sample(collection, 2);
         ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(collection, actual[0]) && _.includes(collection, actual[1]));
       });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.set');
+
+  (function() {
+    test('should set deep property values', 2, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } },
+          actual = _.set(object, 'a.b.c', 4);
+
+      strictEqual(actual, object);
+      strictEqual(object.a.b.c, 4);
+    });
+
+    test('should create parts of `path` that are missing', 3, function() {
+      var object = {},
+          actual = _.set(object, 'a[1].b.c', 4);
+
+      strictEqual(actual, object);
+      deepEqual(actual, { 'a': [undefined, { 'b': { 'c': 4 } }] });
+      ok(!(0 in object.a));
+    });
+
+    test('should follow `path` over non-plain objects', 2, function() {
+      _.set(0, 'constructor.prototype.a', 'ok');
+      strictEqual(1..a, 'ok');
+      delete numberProto.a;
+
+      var object = { 'a': '' };
+      _.set(object, 'a.replace.b', 1);
+      strictEqual(stringProto.replace.b, 1);
+      delete stringProto.replace.b;
     });
   }());
 

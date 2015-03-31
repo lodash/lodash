@@ -4571,7 +4571,7 @@
       }
       var result = [];
       baseToString(value).replace(rePropName, function(match, number, quote, string) {
-        result.push(typeof string == 'string' ? string : (number || match));
+        result.push(quote ? string : (number || match));
       });
       return result;
     }

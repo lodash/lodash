@@ -9402,6 +9402,17 @@
       strictEqual(matches(object2), false);
     });
 
+    test('should compare functions by reference', 3, function() {
+      var object1 = { 'a': _.noop },
+          object2 = { 'a': noop },
+          object3 = { 'a': {} },
+          matches = _.matches(object1);
+
+      strictEqual(matches(object1), true);
+      strictEqual(matches(object2), false);
+      strictEqual(matches(object3), false);
+    });
+
     test('should not change match behavior if `source` is augmented', 9, function() {
       _.each([{ 'a': { 'b': 2, 'c': 3 } }, { 'a': 1, 'b': 2 }, { 'a': 1 }], function(source, index) {
         var object = _.cloneDeep(source),
@@ -9524,9 +9535,7 @@
 
     test('should match properties when `value` is a function', 1, function() {
       function Foo() {}
-      Foo.a = function() {};
-      Foo.a.b = 1;
-      Foo.a.c = 2;
+      Foo.a = { 'b': 1, 'c': 2 };
 
       var matches = _.matches({ 'a': { 'b': 1 } });
       strictEqual(matches(Foo), true);
@@ -9611,6 +9620,17 @@
 
       strictEqual(matches({ 'a': object1 }), true);
       strictEqual(matches({ 'a': object2 }), false);
+    });
+
+    test('should compare functions by reference', 3, function() {
+      var object1 = { 'a': _.noop },
+          object2 = { 'a': noop },
+          object3 = { 'a': {} },
+          matches = _.matchesProperty('a', object1);
+
+      strictEqual(matches({ 'a': object1 }), true);
+      strictEqual(matches({ 'a': object2 }), false);
+      strictEqual(matches({ 'a': object3 }), false);
     });
 
     test('should not change match behavior if `value` is augmented', 9, function() {
@@ -9708,16 +9728,6 @@
           matches = _.matchesProperty('a', { 'b': 2 });
 
       strictEqual(matches(object), true);
-    });
-
-    test('should match properties when `value` is a function', 1, function() {
-      function Foo() {}
-      Foo.a = function() {};
-      Foo.a.b = 1;
-      Foo.a.c = 2;
-
-      var matches = _.matchesProperty('a', { 'b': 1 });
-      strictEqual(matches(Foo), true);
     });
 
     test('should match properties when `value` is not a plain object', 1, function() {

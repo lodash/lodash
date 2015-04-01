@@ -2342,8 +2342,8 @@
           othIsArr = isTypedArray(other);
         }
       }
-      var objIsObj = (objTag == objectTag || (isLoose && objTag == funcTag)) && !isHostObject(object),
-          othIsObj = (othTag == objectTag || (isLoose && othTag == funcTag)) && !isHostObject(other),
+      var objIsObj = objTag == objectTag && !isHostObject(object),
+          othIsObj = othTag == objectTag && !isHostObject(other),
           isSameTag = objTag == othTag;
 
       if (isSameTag && !(objIsArr || objIsObj)) {

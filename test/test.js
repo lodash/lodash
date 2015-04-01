@@ -6569,6 +6569,11 @@
       });
     });
 
+    test('should swap `start` and `end` when `start` is greater than `end`', 2, function() {
+      strictEqual(_.inRange(2, 5, 1), true);
+      strictEqual(_.inRange(-3, -2, -6), true);
+    });
+
     test('should work with a floating point `n` value', 4, function() {
       strictEqual(_.inRange(0.5, 5), true);
       strictEqual(_.inRange(1.2, 1, 5), true);

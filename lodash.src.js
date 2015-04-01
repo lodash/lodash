@@ -9584,7 +9584,7 @@
             length = object.length;
       }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-          (typeof object == 'function' ? lodash.support.enumPrototypes : (length && isLength(length)))) {
+          (typeof object == 'function' ? lodash.support.enumPrototypes : isLength(length))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];

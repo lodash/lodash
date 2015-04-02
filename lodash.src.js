@@ -742,7 +742,10 @@
     /** Used to resolve the decompiled source of functions. */
     var fnToString = Function.prototype.toString;
 
-    /** Used to the length of n-tuples for `_.unzip`. */
+    /**
+     * Used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+     * in Safari on iOS 8.1 ARM64.
+     */
     var getLength = baseProperty('length');
 
     /** Used to check objects for own properties. */
@@ -2594,7 +2597,7 @@
         if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
           result = isArray(value)
             ? value
-            : ((value && value.length) ? arrayCopy(value) : []);
+            : (getLength(value) ? arrayCopy(value) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
@@ -2803,7 +2806,7 @@
      */
     function baseSortByOrder(collection, props, orders) {
       var index = -1,
-          length = collection.length,
+          length = getLength(collection),
           result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
@@ -3245,7 +3248,7 @@
      */
     function createBaseEach(eachFunc, fromRight) {
       return function(collection, iteratee) {
-        var length = collection ? collection.length : 0;
+        var length = collection ? getLength(collection) : 0;
         if (!isLength(length)) {
           return eachFunc(collection, iteratee);
         }
@@ -4228,7 +4231,7 @@
       }
       var type = typeof index;
       if (type == 'number') {
-        var length = object.length,
+        var length = getLength(object),
             prereq = isLength(length) && isIndex(index, length);
       } else {
         prereq = type == 'string' && index in object;
@@ -4539,7 +4542,7 @@
       if (value == null) {
         return [];
       }
-      if (!isLength(value.length)) {
+      if (!isLength(getLength(value))) {
         return values(value);
       }
       if (lodash.support.unindexedChars && isString(value)) {
@@ -6225,7 +6228,7 @@
      * // => ['barney', 'pebbles']
      */
     var at = restParam(function(collection, props) {
-      var length = collection ? collection.length : 0;
+      var length = collection ? getLength(collection) : 0;
       if (isLength(length)) {
         collection = toIterable(collection);
       }
@@ -6633,7 +6636,7 @@
      * // => true
      */
     function includes(collection, target, fromIndex, guard) {
-      var length = collection ? collection.length : 0;
+      var length = collection ? getLength(collection) : 0;
       if (!isLength(length)) {
         collection = values(collection);
         length = collection.length;
@@ -6726,7 +6729,7 @@
     var invoke = restParam(function(collection, methodName, args) {
       var index = -1,
           isFunc = typeof methodName == 'function',
-          length = collection ? collection.length : 0,
+          length = getLength(collection),
           result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
@@ -7086,7 +7089,7 @@
      * // => 7
      */
     function size(collection) {
-      var length = collection ? collection.length : 0;
+      var length = collection ? getLength(collection) : 0;
       return isLength(length) ? length : keys(collection).length;
     }
 
@@ -7204,7 +7207,7 @@
         return [];
       }
       var index = -1,
-          length = collection.length,
+          length = getLength(collection),
           result = isLength(length) ? Array(length) : [];
 
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
@@ -8600,7 +8603,7 @@
       if (value == null) {
         return true;
       }
-      var length = value.length;
+      var length = getLength(value);
       if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
           (isObjectLike(value) && isFunction(value.splice)))) {
         return !length;
@@ -9071,7 +9074,7 @@
      * // => [2, 3]
      */
     function toArray(value) {
-      var length = value ? value.length : 0;
+      var length = value ? getLength(value) : 0;
       if (!isLength(length)) {
         return values(value);
       }

@@ -1000,11 +1000,11 @@
     var support = lodash.support = {};
 
     (function(x) {
-      var Ctor = function() { this.x = 1; },
-          object = { '0': 1, 'length': 1 },
+      var Ctor = function() { this.x = x; },
+          object = { '0': !x, 'length': 1 },
           props = [];
 
-      Ctor.prototype = { 'valueOf': 1, 'y': 1 };
+      Ctor.prototype = { 'valueOf': x, 'y': x };
       for (var key in new Ctor) { props.push(key); }
 
       /**

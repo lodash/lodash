@@ -9951,6 +9951,10 @@
       if (object == null) {
         return object;
       }
+      if (isKey(path) || (path in toObject(object))) {
+        object[path] = value;
+        return object;
+      }
       path = toPath(path);
 
       var index = -1,

@@ -6003,6 +6003,11 @@
       strictEqual(_.get(object, 'a.b.c'), 3);
     });
 
+    test('should get a key before treating it as a path', 1, function() {
+      var object = { 'a.b.c': 3 };
+      strictEqual(_.get(object, 'a.b.c'), 3);
+    });
+
     test('should return `undefined` when `object` is nullish', 2, function() {
       strictEqual(_.get(null, 'a'), undefined);
       strictEqual(_.get(undefined, 'a'), undefined);
@@ -12973,6 +12978,14 @@
 
       strictEqual(actual, object);
       strictEqual(object.a.b.c, 4);
+    });
+
+    test('should set a key before treating it as a path', 2, function() {
+      var object = { 'a.b.c': 3 },
+          actual = _.set(object, 'a.b.c', 4);
+
+      strictEqual(actual, object);
+      deepEqual(object, { 'a.b.c': 4 });
     });
 
     test('should create parts of `path` that are missing', 3, function() {

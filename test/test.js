@@ -9671,6 +9671,20 @@
       strictEqual(matches(object), true);
     });
 
+    test('should support deep paths', 1, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } },
+          matches = _.matchesProperty('a.b.c', 3);
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should get a key before treating it as a path', 1, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
+          matches = _.matchesProperty('a.b.c', 3);
+
+      strictEqual(matches(object, 'a.b.c'), true);
+    });
+
     test('should compare a variety of values', 2, function() {
       var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
           object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },

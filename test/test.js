@@ -12610,6 +12610,16 @@
       strictEqual(_.result(object, 'd'), undefined);
     });
 
+    test('should get deep property values', 1, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
+      strictEqual(_.result(object, 'a.b.c'), 3);
+    });
+
+    test('should get a key before treating it as a path', 1, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
+      strictEqual(_.result(object, 'a.b.c'), 3);
+    });
+
     test('should return `undefined` when `object` is nullish', 2, function() {
       strictEqual(_.result(null, 'a'), undefined);
       strictEqual(_.result(undefined, 'a'), undefined);

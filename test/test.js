@@ -5995,6 +5995,54 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.get');
+
+  (function() {
+    test('should get deep property values', 1, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
+      strictEqual(_.get(object, 'a.b.c'), 3);
+    });
+
+    test('should return `undefined` when `object` is nullish', 2, function() {
+      strictEqual(_.get(null, 'a'), undefined);
+      strictEqual(_.get(undefined, 'a'), undefined);
+    });
+
+    test('should return `undefined` if parts of `path` are missing', 1, function() {
+      var object = {};
+      strictEqual(_.get(object, 'a[1].b.c'), undefined);
+    });
+
+    test('should follow `path` over non-plain objects', 2, function() {
+      var actual = _.get(0, 'constructor.prototype.toFixed');
+      strictEqual(actual, 0..toFixed);
+
+      var object = { 'a': '' };
+      actual = _.get(object, 'a.replace');
+      strictEqual(actual, stringProto.replace);
+    });
+
+    test('should return the specified default value for `undefined` values', 1, function() {
+      var object = { 'a': {} },
+          values = empties.concat(true, new Date, 1, /x/, 'a');
+
+      var expected = _.transform(values, function(result, value) {
+        result.push(value, value);
+      });
+
+      var actual = _.transform(values, function(result, value) {
+        result.push(
+          _.get(object, 'a.b.c', value),
+          _.get(null, 'a.b.c', value)
+        );
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.groupBy');
 
   (function() {
@@ -12878,6 +12926,20 @@
       strictEqual(actual, object);
       deepEqual(actual, { 'a': [undefined, { 'b': { 'c': 4 } }] });
       ok(!(0 in object.a));
+    });
+
+    test('should not error when `object` is nullish', 1, function() {
+      var values = [null, undefined];
+
+      var actual = _.map(values, function(value) {
+        try {
+          return _.set(value, 'a.b', 1);
+        } catch(e) {
+          return e;
+        }
+      });
+
+      deepEqual(actual, values);
     });
 
     test('should follow `path` over non-plain objects', 2, function() {

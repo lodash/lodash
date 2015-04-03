@@ -2581,9 +2581,15 @@
     });
 
     test('should return a callback created by `_.matches` when `func` is an object', 2, function() {
-      var callback = _.callback({ 'a': 1 });
-      strictEqual(callback({ 'a': 1, 'b': 2 }), true);
-      strictEqual(callback({}), false);
+      var callback = _.callback({ 'a': 1, 'b': 2 });
+      strictEqual(callback({ 'a': 1, 'b': 2, 'c': 3 }), true);
+      strictEqual(callback({ 'b': 2 }), false);
+    });
+
+    test('should return a callback created by `_.matches` when `func` is an array', 2, function() {
+      var callback = _.callback(['a', 'b']);
+      strictEqual(callback({ '0': 'a', '1': 'b', '2': 'c' }), true);
+      strictEqual(callback({ '1': 'b' }), false);
     });
 
     test('should return a callback created by `_.matchesProperty` when `func` is a number or string and `thisArg` is not `undefined`', 3, function() {
@@ -2599,6 +2605,13 @@
       strictEqual(callback(array), undefined);
     });
 
+    test('should support deep paths for `_.matchesProperty` shorthands', 1, function() {
+      var object = { 'a': { 'b': { 'c': { 'd': 1, 'e': 2 } } } },
+          callback = _.callback('a.b.c', { 'e': 2 });
+
+      strictEqual(callback(object), true);
+    });
+
     test('should return a callback created by `_.property` when `func` is a number or string', 2, function() {
       var array = ['a'],
           callback = _.callback(0);
@@ -2607,6 +2620,13 @@
 
       callback = _.callback('0');
       strictEqual(callback(array), 'a');
+    });
+
+    test('should support deep paths for `_.property` shorthands', 1, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } },
+          callback = _.callback('a.b.c');
+
+      strictEqual(callback(object), 3);
     });
 
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {

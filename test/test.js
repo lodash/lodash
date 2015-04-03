@@ -6152,7 +6152,17 @@
       strictEqual(_.has(object, 'a'), true);
     });
 
-    test('should not check for inherited properties', 1, function() {
+    test('should support deep paths', 1, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
+      strictEqual(_.has(object, 'a.b.c'), true);
+    });
+
+    test('should check for a key over a path', 1, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': {} } };
+      strictEqual(_.has(object, 'a.b.c'), true);
+    });
+
+    test('should return `false` for inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 

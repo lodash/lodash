@@ -5998,6 +5998,11 @@
   QUnit.module('lodash.get');
 
   (function() {
+    test('should get property values', 1, function() {
+      var object = { 'a': 'b' };
+      strictEqual(_.get(object, 'a'), 'b');
+    });
+
     test('should get deep property values', 1, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
       strictEqual(_.get(object, 'a.b.c'), 3);

@@ -6004,7 +6004,7 @@
     });
 
     test('should get a key before treating it as a path', 1, function() {
-      var object = { 'a.b.c': 3 };
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
       strictEqual(_.get(object, 'a.b.c'), 3);
     });
 
@@ -11667,7 +11667,7 @@
     });
 
     test('should pluck a key before treating it as a path', 1, function() {
-      var object = { 'a.b.c': 3 },
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
           prop = _.property('a.b.c');
 
       strictEqual(prop(object), 3);
@@ -11729,7 +11729,7 @@
     });
 
     test('should pluck a key before treating it as a path', 1, function() {
-      var object = { 'a.b.c': 3 },
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
           propOf = _.propertyOf(object);
 
       strictEqual(propOf('a.b.c'), 3);

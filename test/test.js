@@ -6008,7 +6008,7 @@
       strictEqual(_.get(object, 'a.b.c'), 3);
     });
 
-    test('should get a key before treating it as a path', 1, function() {
+    test('should get a key over a path', 1, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
       strictEqual(_.get(object, 'a.b.c'), 3);
     });
@@ -9693,7 +9693,7 @@
       strictEqual(matches(object), true);
     });
 
-    test('should get a key before treating it as a path', 1, function() {
+    test('should match a key over a path', 1, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
           matches = _.matchesProperty('a.b.c', 3);
 
@@ -11681,7 +11681,7 @@
       strictEqual(prop(object), 3);
     });
 
-    test('should pluck a key before treating it as a path', 1, function() {
+    test('should pluck a key over a path', 1, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
           prop = _.property('a.b.c');
 
@@ -11743,7 +11743,7 @@
       strictEqual(propOf(['a', 'b', 'c']), 3);
     });
 
-    test('should pluck a key before treating it as a path', 1, function() {
+    test('should pluck a key over a path', 1, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
           propOf = _.propertyOf(object);
 
@@ -12630,7 +12630,7 @@
       strictEqual(_.result(object, 'a.b.c'), 3);
     });
 
-    test('should get a key before treating it as a path', 1, function() {
+    test('should get a key over a path', 1, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
       strictEqual(_.result(object, 'a.b.c'), 3);
     });
@@ -13019,7 +13019,7 @@
       strictEqual(object.a.b.c, 4);
     });
 
-    test('should set a key before treating it as a path', 2, function() {
+    test('should set a key over a path', 2, function() {
       var object = { 'a.b.c': 3 },
           actual = _.set(object, 'a.b.c', 4);
 

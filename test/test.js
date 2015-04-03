@@ -11637,12 +11637,41 @@
       strictEqual(prop(new Foo), 2);
     });
 
+    test('should pluck deep property values', 2, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } },
+          prop = _.property('a.b.c');
+
+      strictEqual(prop(object), 3);
+
+      prop = _.property(['a', 'b', 'c']);
+      strictEqual(prop(object), 3);
+    });
+
+    test('should pluck a key before treating it as a path', 1, function() {
+      var object = { 'a.b.c': 3 },
+          prop = _.property('a.b.c');
+
+      strictEqual(prop(object), 3);
+    });
+
     test('should work when `object` is nullish', 1, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
       var actual = _.map(values, function(value, index) {
         var prop = _.property('a');
+        return index ? prop(value) : prop();
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with deep paths when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var prop = _.property('a.b.c');
         return index ? prop(value) : prop();
       });
 
@@ -11672,6 +11701,21 @@
       strictEqual(propOf('b'), 2);
     });
 
+    test('should pluck deep property values', 2, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } },
+          propOf = _.propertyOf(object);
+
+      strictEqual(propOf('a.b.c'), 3);
+      strictEqual(propOf(['a', 'b', 'c']), 3);
+    });
+
+    test('should pluck a key before treating it as a path', 1, function() {
+      var object = { 'a.b.c': 3 },
+          propOf = _.propertyOf(object);
+
+      strictEqual(propOf('a.b.c'), 3);
+    });
+
     test('should work when `object` is nullish', 1, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
@@ -11679,6 +11723,18 @@
       var actual = _.map(values, function(value, index) {
         var propOf = index ? _.propertyOf(value) : _.propertyOf();
         return propOf('a');
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with deep paths when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      var actual = _.map(values, function(value, index) {
+        var propOf = index ? _.propertyOf(value) : _.propertyOf();
+        return propOf('a.b.c');
       });
 
       deepEqual(actual, expected);

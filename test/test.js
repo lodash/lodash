@@ -12540,7 +12540,7 @@
       strictEqual(_.result(undefined, 'a'), undefined);
     });
 
-    test('should return the specified default value for undefined properties', 1, function() {
+    test('should return the specified default value for `undefined` values', 1, function() {
       var values = empties.concat(true, new Date, 1, /x/, 'a');
 
       var expected = _.transform(values, function(result, value) {
@@ -12562,7 +12562,7 @@
       strictEqual(actual, 1);
     });
 
-    test('should call deep property method with correct context', 1, function() {
+    test('should call deep property methods with the correct `this` binding', 1, function() {
       var value = {
         'deep': object
       };
@@ -13453,10 +13453,10 @@
 
     test('`_.' + methodName + '` should not error on nullish elements', 1, function() {
       try {
-        var actual = func(objects.concat(undefined), ['a', 'b']);
+        var actual = func(objects.concat(null, undefined), ['a', 'b']);
       } catch(e) {}
 
-      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], undefined]);
+      deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], null, undefined]);
     });
 
     test('`_.' + methodName + '` should work as an iteratee for methods like `_.reduce`', 1, function() {
@@ -14876,8 +14876,7 @@
     test('should work with a node list for `collection` (test in IE < 9)', 1, function() {
       if (document) {
         try {
-          var nodeList = document.getElementsByTagName('body'),
-              actual = func(nodeList);
+          var actual = func(document.getElementsByTagName('body'));
         } catch(e) {}
 
         deepEqual(actual, [body]);

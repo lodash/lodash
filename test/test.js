@@ -8042,6 +8042,20 @@
       strictEqual(_.isMatch(object1, object2), false);
     });
 
+    test('should work when `object` is nullish', 1, function() {
+      var values = [null, undefined],
+          expected = _.map(values, _.constant(false)),
+          source = { 'a': 1 };
+
+      var actual = _.map(values, function(value) {
+        try {
+          return _.isMatch(value, source);
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should return `true` when comparing an empty `source`', 1, function() {
       var object = { 'a': 1 },
           expected = _.map(empties, _.constant(true));
@@ -8064,22 +8078,8 @@
       deepEqual(actual, objects);
     });
 
-    test('should not error for falsey `object` values', 1, function() {
-      var values = falsey.slice(1),
-          expected = _.map(values, _.constant(false)),
-          source = { 'a': 1 };
-
-      var actual = _.map(values, function(value) {
-        try {
-          return _.isMatch(value, source);
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should return `true` when comparing an empty `source` to a falsey `object`', 1, function() {
-      var values = falsey.slice(1),
+    test('should return `true` when comparing an empty `source` to a nullish `object`', 1, function() {
+      var values = [null, undefined],
           expected = _.map(values, _.constant(true)),
           source = {};
 
@@ -9527,6 +9527,20 @@
       });
     });
 
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false)),
+          matches = _.matches({ 'a': 1 });
+
+      var actual = _.map(values, function(value, index) {
+        try {
+          return index ? matches(value) : matches();
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should return `true` when comparing an empty `source`', 1, function() {
       var object = { 'a': 1 },
           expected = _.map(empties, _.constant(true));
@@ -9547,24 +9561,12 @@
       deepEqual(actual, objects);
     });
 
-    test('should not error for falsey `object` values', 1, function() {
-      var expected = _.map(falsey, _.constant(false)),
-          matches = _.matches({ 'a': 1 });
-
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? matches(value) : matches();
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should return `true` when comparing an empty `source` to a falsey `object`', 1, function() {
-      var expected = _.map(falsey, _.constant(true)),
+    test('should return `true` when comparing an empty `source` to a nullish `object`', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(true)),
           matches = _.matches({});
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(values, function(value, index) {
         try {
           return index ? matches(value) : matches();
         } catch(e) {}
@@ -9772,11 +9774,26 @@
       deepEqual(actual, objects);
     });
 
-    test('should not error for falsey `object` values', 1, function() {
-      var expected = _.map(falsey, _.constant(false)),
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false)),
           matches = _.matchesProperty('a', 1);
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(values, function(value, index) {
+        try {
+          return index ? matches(value) : matches();
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with deep paths when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false)),
+          matches = _.matchesProperty('a.b.c', 1);
+
+      var actual = _.map(values, function(value, index) {
         try {
           return index ? matches(value) : matches();
         } catch(e) {}

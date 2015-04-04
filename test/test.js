@@ -11748,6 +11748,16 @@
 
       deepEqual(actual, expected);
     });
+
+    test('should return `undefined` if parts of `path` are missing', 2, function() {
+      var object = {},
+          prop = _.property('a');
+
+      strictEqual(prop(object), undefined);
+
+      prop = _.property('a[1].b.c');
+      strictEqual(prop(object), undefined);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -11809,6 +11819,14 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should return `undefined` if parts of `path` are missing', 2, function() {
+      var object = {},
+          propOf = _.propertyOf(object);
+
+      strictEqual(propOf('a'), undefined);
+      strictEqual(propOf('a[1].b.c'), undefined);
     });
   }());
 

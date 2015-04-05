@@ -979,7 +979,13 @@
 
   (function() {
     test('should add two numbers together', 1, function() {
-      equal(_.add(6, 4), 10);
+      strictEqual(_.add(6, 4), 10);
+    });
+
+    test('should coerce params to numbers', 3, function() {
+      strictEqual(_.add('6', '4'), 10);
+      strictEqual(_.add('6', 'y'), 6);
+      strictEqual(_.add('x', 'y'), 0);
     });
 
     test('should return an unwrapped value when implicitly chaining', 1, function() {

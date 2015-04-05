@@ -1471,7 +1471,7 @@
       deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
 
-    test('should rebind functions correctly', 3, function() {
+    test('should rebind functions', 3, function() {
       var object1 = {},
           object2 = {},
           object3 = {};
@@ -3373,7 +3373,7 @@
       }
     });
 
-    asyncTest('should apply default options correctly', 2, function() {
+    asyncTest('should apply default options', 2, function() {
       if (!(isRhino && isModularize)) {
         var callCount = 0;
 
@@ -4516,7 +4516,7 @@
       deepEqual(actual, [1, 3]);
     });
 
-    test('should iterate correctly over an object with numeric keys (test in Mobile Safari 8)', 1, function() {
+    test('should iterate over an object with numeric keys (test in Mobile Safari 8)', 1, function() {
       // Trigger a Mobile Safari 8 JIT bug.
       // See https://github.com/lodash/lodash/issues/799.
       var counter = 0,
@@ -4562,7 +4562,7 @@
         'findLastKey': ['2', undefined, '2', '2']
       })[methodName];
 
-      test('should return the correct value', 1, function() {
+      test('should return the found value', 1, function() {
         strictEqual(func(objects, function(object) { return object.a; }), expected[0]);
       });
 
@@ -7632,7 +7632,7 @@
       deepEqual(argsList, expected);
     });
 
-    test('should correctly set the `this` binding', 1, function() {
+    test('should set the `this` binding', 1, function() {
       var actual = _.isEqual('a', 'b', function(a, b) {
         return this[a] == this[b];
       }, { 'a': 1, 'b': 1 });
@@ -8212,7 +8212,7 @@
       deepEqual(argsList, expected);
     });
 
-    test('should correctly set the `this` binding', 1, function() {
+    test('should set the `this` binding', 1, function() {
       var actual = _.isMatch({ 'a': 1 }, { 'a': 2 }, function(a, b) {
         return this[a] == this[b];
       }, { 'a': 1, 'b': 1 });
@@ -10870,7 +10870,7 @@
       deepEqual(args, expected);
     });
 
-    test('should correctly set the `this` binding', 1, function() {
+    test('should set the `this` binding', 1, function() {
       var actual = _.omit(object, function(num) {
         return num != this.b;
       }, { 'b': 2 });
@@ -11597,7 +11597,7 @@
       deepEqual(args, expected);
     });
 
-    test('should correctly set the `this` binding', 1, function() {
+    test('should set the `this` binding', 1, function() {
       var actual = _.pick(object, function(num) {
         return num != this.b;
       }, { 'b': 2 });
@@ -13661,7 +13661,7 @@
         isSortedIndex = methodName == 'sortedIndex',
         objects = [{ 'x': 30 }, { 'x': 50 }];
 
-    test('`_.' + methodName + '` should return the correct insert index', 1, function() {
+    test('`_.' + methodName + '` should return the insert index', 1, function() {
       var values = [30, 40, 50],
           expected = isSortedIndex ? [0, 1, 1] : [1, 1, 2];
 
@@ -14249,7 +14249,7 @@
       strictEqual(actual, '1b012');
     });
 
-    test('should work correctly with `this` references', 2, function() {
+    test('should work with `this` references', 2, function() {
       var compiled = _.template('a<%= this.String("b") %>c');
       strictEqual(compiled(), 'abc');
 
@@ -14653,7 +14653,7 @@
       });
     });
 
-    asyncTest('should apply default options correctly', 3, function() {
+    asyncTest('should apply default options', 3, function() {
       if (!(isRhino && isModularize)) {
         var callCount = 0;
 
@@ -15388,7 +15388,7 @@
     escaped += escaped;
     unescaped += unescaped;
 
-    test('should unescape entities in the correct order', 1, function() {
+    test('should unescape entities in order', 1, function() {
       strictEqual(_.unescape('&amp;lt;'), '&lt;');
     });
 

@@ -995,7 +995,7 @@
 
     (function(x) {
       var Ctor = function() { this.x = x; },
-          object = { '0': !x, 'length': 1 },
+          object = { '0': x, 'length': x },
           props = [];
 
       Ctor.prototype = { 'valueOf': x, 'y': x };
@@ -1143,7 +1143,7 @@
       } catch(e) {
         support.nonEnumArgs = true;
       }
-    }(0, 0));
+    }(1, 0));
 
     /**
      * By default, the template delimiters used by lodash are like those in

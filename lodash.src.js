@@ -11559,7 +11559,7 @@
      * // => 10
      */
     function add(augend, addend) {
-      return parseFloat(augend) + parseFloat(addend);
+      return Number(augend) + Number(addend);
     }
 
     /**

@@ -9802,6 +9802,16 @@
       deepEqual(actual, expected);
     });
 
+    test('should return `false` if parts of `path` are missing', 2, function() {
+      var object = {},
+          matches = _.matchesProperty('a', 1);
+
+      strictEqual(matches(object), false);
+
+      matches = _.matchesProperty('a[1].b.c', 1);
+      strictEqual(matches(object), false);
+    });
+
     test('should search arrays of `value` for values', 3, function() {
       var objects = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
           matches = _.matchesProperty('a', ['d']),

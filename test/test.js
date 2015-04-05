@@ -6033,6 +6033,11 @@
       strictEqual(_.get(object, 'a.b.c'), 3);
     });
 
+    test('should handle empty paths', 2, function() {
+      strictEqual(_.get({}, ''), undefined);
+      strictEqual(_.get({ '': 3 }, ''), 3);
+    });
+
     test('should return `undefined` when `object` is nullish', 2, function() {
       strictEqual(_.get(null, 'a'), undefined);
       strictEqual(_.get(undefined, 'a'), undefined);

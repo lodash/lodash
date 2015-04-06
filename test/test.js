@@ -6024,14 +6024,16 @@
   QUnit.module('lodash.get');
 
   (function() {
-    test('should get property values', 1, function() {
+    test('should get property values', 2, function() {
       var object = { 'a': 'b' };
       strictEqual(_.get(object, 'a'), 'b');
+      strictEqual(_.get(object, ['a']), 'b');
     });
 
-    test('should get deep property values', 1, function() {
+    test('should get deep property values', 2, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
       strictEqual(_.get(object, 'a.b.c'), 3);
+      strictEqual(_.get(object, ['a', 'b', 'c']), 3);
     });
 
     test('should get a key over a path', 1, function() {
@@ -6039,19 +6041,31 @@
       strictEqual(_.get(object, 'a.b.c'), 3);
     });
 
-    test('should handle empty paths', 2, function() {
-      strictEqual(_.get({}, ''), undefined);
-      strictEqual(_.get({ '': 3 }, ''), 3);
+    test('should not coerce array paths to strings', 1, function() {
+      var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } };
+      strictEqual(_.get(object, ['a', 'b', 'c']), 4);
     });
 
-    test('should return `undefined` when `object` is nullish', 2, function() {
-      strictEqual(_.get(null, 'a'), undefined);
-      strictEqual(_.get(undefined, 'a'), undefined);
+    test('should handle empty paths', 4, function() {
+      _.each([['', ''], [[], ['']]], function(paths) {
+        strictEqual(_.get({}, paths[0]), undefined);
+        strictEqual(_.get({ '': 3 }, paths[1]), 3);
+      });
     });
 
-    test('should return `undefined` if parts of `path` are missing', 1, function() {
+    test('should return `undefined` when `object` is nullish', 4, function() {
+      _.each(['a', ['a']], function(path) {
+        strictEqual(_.get(null, path), undefined);
+        strictEqual(_.get(undefined, path), undefined);
+      });
+    });
+
+    test('should return `undefined` if parts of `path` are missing', 2, function() {
       var object = {};
-      strictEqual(_.get(object, 'a[1].b.c'), undefined);
+
+      _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
+        strictEqual(_.get(object, path), undefined);
+      });
     });
 
     test('should follow `path` over non-plain objects', 2, function() {

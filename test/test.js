@@ -13256,6 +13256,22 @@
       });
     });
 
+    test('should not coerce array paths to strings', 1, function() {
+      var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 3 } } };
+      _.set(object, ['a', 'b', 'c'], 4);
+      deepEqual(object, { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } });
+    });
+
+    test('should handle empty paths', 4, function() {
+      _.each([['', ''], [[], ['']]], function(paths, index) {
+        var object = {};
+        _.set(object, paths[0], 1);
+        deepEqual(object, index ? {} : { '': 1 });
+        _.set(object, paths[1], 2);
+        deepEqual(object, { '': 2 });
+      });
+    });
+
     test('should create parts of `path` that are missing', 6, function() {
       var object = {};
 

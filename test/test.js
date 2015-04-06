@@ -6026,19 +6026,26 @@
   (function() {
     test('should get property values', 2, function() {
       var object = { 'a': 'b' };
-      strictEqual(_.get(object, 'a'), 'b');
-      strictEqual(_.get(object, ['a']), 'b');
+
+      _.each(['a', ['a']], function(path) {
+        strictEqual(_.get(object, path), 'b');
+      });
     });
 
     test('should get deep property values', 2, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
-      strictEqual(_.get(object, 'a.b.c'), 3);
-      strictEqual(_.get(object, ['a', 'b', 'c']), 3);
+
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        strictEqual(_.get(object, path), 3);
+      });
     });
 
-    test('should get a key over a path', 1, function() {
+    test('should get a key over a path', 2, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
-      strictEqual(_.get(object, 'a.b.c'), 3);
+
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        strictEqual(_.get(object, path), 3);
+      });
     });
 
     test('should not coerce array paths to strings', 1, function() {
@@ -6068,13 +6075,18 @@
       });
     });
 
-    test('should follow `path` over non-plain objects', 2, function() {
-      var actual = _.get(0, 'constructor.prototype.toFixed');
-      strictEqual(actual, 0..toFixed);
-
+    test('should follow `path` over non-plain objects', 4, function() {
       var object = { 'a': '' };
-      actual = _.get(object, 'a.replace');
-      strictEqual(actual, stringProto.replace);
+
+      _.each(['constructor.prototype.toFixed', ['constructor', 'prototype', 'toFixed']], function(path) {
+        var actual = _.get(0, path);
+        strictEqual(actual, 0..toFixed);
+      });
+
+      _.each(['a.replace', ['a', 'replace']], function(path) {
+        var actual = _.get(object, path);
+        strictEqual(actual, stringProto.replace);
+      });
     });
 
     test('should return the specified default value for `undefined` values', 1, function() {
@@ -6082,14 +6094,16 @@
           values = empties.concat(true, new Date, 1, /x/, 'a');
 
       var expected = _.transform(values, function(result, value) {
-        result.push(value, value);
+        result.push(value, value, value, value);
       });
 
       var actual = _.transform(values, function(result, value) {
-        result.push(
-          _.get(object, 'a.b.c', value),
-          _.get(null, 'a.b.c', value)
-        );
+        _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+          result.push(
+            _.get(object, path, value),
+            _.get(null, path, value)
+          );
+        });
       });
 
       deepEqual(actual, expected);

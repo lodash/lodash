@@ -2257,15 +2257,18 @@
      * @private
      * @param {Object} object The object to query.
      * @param {Array} path The path of the property to get.
+     * @param {string} [pathKey] The key representation of path.
      * @returns {*} Returns the resolved value.
      */
-    function baseGet(object, path) {
-      var result,
-          index = -1,
+    function baseGet(object, path, pathKey) {
+      if (typeof pathKey != 'undefined' && pathKey in toObject(object)) {
+        path = [pathKey];
+      }
+      var index = -1,
           length = path.length;
 
       while (object != null && ++index < length) {
-        result = object = object[path[index]];
+        var result = object = object[path[index]];
       }
       return result;
     }
@@ -2490,13 +2493,13 @@
      * @returns {Function} Returns the new function.
      */
     function baseMatchesProperty(path, value) {
-      var pathKey = path + '';
       if (isKey(path) && isStrictComparable(value)) {
         return function(object) {
-          return object != null && object[pathKey] === value &&
-            (typeof value != 'undefined' || (pathKey in toObject(object)));
+          return object != null && object[path] === value &&
+            (typeof value != 'undefined' || (path in toObject(object)));
         };
       }
+      var pathKey = isArray(path) ? undefined : path;
       path = toPath(path);
       return function(object) {
         if (object == null) {
@@ -2504,7 +2507,7 @@
         }
         var key = pathKey;
         object = toObject(object);
-        if (!(key in object)) {
+        if (typeof key == 'undefined' || !(key in object)) {
           object = baseGet(object, baseSlice(path, 0, -1));
           if (object == null) {
             return false;
@@ -2648,15 +2651,10 @@
      * @returns {Function} Returns the new function.
      */
     function basePropertyDeep(path) {
-      var pathKey = path + '';
+      var pathKey = isArray(path) ? undefined : (path + '');
       path = toPath(path);
       return function(object) {
-        if (object == null) {
-          return undefined;
-        }
-        return pathKey in toObject(object)
-          ? object[pathKey]
-          : baseGet(object, path);
+        return baseGet(object, path, pathKey);
       };
     }
 
@@ -4265,11 +4263,15 @@
      *
      * @private
      * @param {*} value The value to check.
+     * @param {Object} [object] The object to query keys on.
      * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
      */
-    function isKey(value) {
-      var type = typeof value;
-      return type == 'number' || (type == 'string' && !reIsDeepProp.test(value));
+    function isKey(value, object) {
+      if (isArray(value)) {
+        return false;
+      }
+      var result = !reIsDeepProp.test(value);
+      return result || (object != null && value in toObject(object));
     }
 
     /**
@@ -9486,12 +9488,9 @@
      * // => 'default'
      */
     function get(object, path, defaultValue) {
-      var result;
-      if (object != null) {
-        result = (isKey(path) || (path in toObject(object)))
-          ? object[path]
-          : baseGet(object, toPath(path));
-      }
+      var pathKey = isArray(path) ? undefined : (path + ''),
+          result = baseGet(object, toPath(path), pathKey);
+
       return typeof result == 'undefined' ? defaultValue : result;
     }
 
@@ -9512,7 +9511,12 @@
      * // => true
      */
     function has(object, path) {
-      var result = object != null && hasOwnProperty.call(object, path);
+      if (object == null) {
+        return false;
+      }
+      var pathKey = isArray(path) ? undefined : (path + ''),
+          result = typeof pathKey != 'undefined' && hasOwnProperty.call(object, path);
+
       if (!result && !isKey(path)) {
         path = toPath(path);
         object = baseGet(object, baseSlice(path, 0, -1));
@@ -9924,7 +9928,7 @@
      * // => 'busy'
      */
     function result(object, path, defaultValue) {
-      if (object != null && !(isKey(path) || (path in toObject(object)))) {
+      if (!isKey(path, object)) {
         path = toPath(path);
         object = baseGet(object, baseSlice(path, 0, -1));
         path = last(path);
@@ -9963,7 +9967,7 @@
       if (object == null) {
         return object;
       }
-      if (isKey(path) || (path in toObject(object))) {
+      if (isKey(path, object)) {
         object[path] = value;
         return object;
       }
@@ -11247,11 +11251,8 @@
     });
 
     var methodOf = restParam(function(object, args) {
-      if (object == null) {
-        return constant(undefined);
-      }
       return function(path) {
-        return baseMethod(object, path, args);
+        return object == null ? undefined : baseMethod(object, path, args);
       };
     });
 
@@ -11430,13 +11431,9 @@
      * // => ['b', 'c', 'a']
      */
     function propertyOf(object) {
-      if (object == null) {
-        return constant(undefined);
-      }
       return function(path) {
-        return (isKey(path) || (path in toObject(object)))
-          ? object[path]
-          : baseGet(object, toPath(path));
+        var pathKey = isArray(path) ? undefined : (path + '');
+        return baseGet(object, toPath(path), pathKey);
       };
     }
 

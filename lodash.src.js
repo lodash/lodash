@@ -9964,13 +9964,7 @@
      * // => 5
      */
     function set(object, path, value) {
-      if (isKey(path, object)) {
-        if (isObject(object)) {
-          object[path] = value;
-        }
-        return object;
-      }
-      path = toPath(path);
+      path = isKey(path, object) ? [path] : toPath(path);
 
       var index = -1,
           length = path.length,

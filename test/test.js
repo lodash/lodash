@@ -6025,10 +6025,10 @@
 
   (function() {
     test('should get property values', 2, function() {
-      var object = { 'a': 'b' };
+      var object = { 'a': 1 };
 
       _.each(['a', ['a']], function(path) {
-        strictEqual(_.get(object, path), 'b');
+        strictEqual(_.get(object, path), 1);
       });
     });
 
@@ -13234,6 +13234,17 @@
   QUnit.module('lodash.set');
 
   (function() {
+    test('should set property values', 4, function() {
+      var object = { 'a': 1 };
+
+      _.each(['a', ['a']], function(path) {
+        var actual = _.set(object, path, 2);
+        strictEqual(actual, object);
+        strictEqual(object.a, 2);
+        object.a = 1;
+      });
+    });
+
     test('should set deep property values', 4, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
 

@@ -13220,54 +13220,69 @@
   QUnit.module('lodash.set');
 
   (function() {
-    test('should set deep property values', 2, function() {
-      var object = { 'a': { 'b': { 'c': 3 } } },
-          actual = _.set(object, 'a.b.c', 4);
+    test('should set deep property values', 4, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
 
-      strictEqual(actual, object);
-      strictEqual(object.a.b.c, 4);
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var actual = _.set(object, path, 4);
+        strictEqual(actual, object);
+        strictEqual(object.a.b.c, 4);
+        object.a.b.c = 3;
+      });
     });
 
-    test('should set a key over a path', 2, function() {
-      var object = { 'a.b.c': 3 },
-          actual = _.set(object, 'a.b.c', 4);
+    test('should set a key over a path', 4, function() {
+      var object = { 'a.b.c': 3 };
 
-      strictEqual(actual, object);
-      deepEqual(object, { 'a.b.c': 4 });
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        var actual = _.set(object, path, 4);
+        strictEqual(actual, object);
+        deepEqual(object, { 'a.b.c': 4 });
+        object['a.b.c'] = 3;
+      });
     });
 
-    test('should create parts of `path` that are missing', 3, function() {
-      var object = {},
-          actual = _.set(object, 'a[1].b.c', 4);
+    test('should create parts of `path` that are missing', 6, function() {
+      var object = {};
 
-      strictEqual(actual, object);
-      deepEqual(actual, { 'a': [undefined, { 'b': { 'c': 4 } }] });
-      ok(!(0 in object.a));
+      _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
+        var actual = _.set(object, path, 4);
+        strictEqual(actual, object);
+        deepEqual(actual, { 'a': [undefined, { 'b': { 'c': 4 } }] });
+        ok(!(0 in object.a));
+        delete object.a;
+      });
     });
 
     test('should not error when `object` is nullish', 1, function() {
-      var values = [null, undefined];
+      var values = [null, undefined],
+          expected = [[null, null], [undefined, undefined]];
 
       var actual = _.map(values, function(value) {
         try {
-          return _.set(value, 'a.b', 1);
+          return [_.set(value, 'a.b', 1), _.set(value, ['a', 'b'], 1)];
         } catch(e) {
-          return e;
+          return e.message;
         }
       });
 
-      deepEqual(actual, values);
+      deepEqual(actual, expected);
     });
 
-    test('should follow `path` over non-plain objects', 2, function() {
-      _.set(0, 'constructor.prototype.a', 'ok');
-      strictEqual(0..a, 'ok');
-      delete numberProto.a;
-
+    test('should follow `path` over non-plain objects', 4, function() {
       var object = { 'a': '' };
-      _.set(object, 'a.replace.b', 1);
-      strictEqual(stringProto.replace.b, 1);
-      delete stringProto.replace.b;
+
+      _.each(['constructor.prototype.a', ['constructor', 'prototype', 'a']], function(path) {
+        _.set(0, path, 1);
+        strictEqual(0..a, 1);
+        delete numberProto.a;
+      });
+
+      _.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
+        _.set(object, path, 1);
+        strictEqual(stringProto.replace.b, 1);
+        delete stringProto.replace.b;
+      });
     });
 
     test('should not error on paths over primitive values in strict mode', 2, function() {
@@ -13280,6 +13295,7 @@
         } catch(e) {
           ok(false, e.message);
         }
+        numberProto.a = 0;
       });
 
       delete numberProto.a;

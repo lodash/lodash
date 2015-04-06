@@ -13261,13 +13261,28 @@
 
     test('should follow `path` over non-plain objects', 2, function() {
       _.set(0, 'constructor.prototype.a', 'ok');
-      strictEqual(1..a, 'ok');
+      strictEqual(0..a, 'ok');
       delete numberProto.a;
 
       var object = { 'a': '' };
       _.set(object, 'a.replace.b', 1);
       strictEqual(stringProto.replace.b, 1);
       delete stringProto.replace.b;
+    });
+
+    test('should not error on paths over primitive values in strict mode', 2, function() {
+      numberProto.a = 0;
+
+      _.each(['a', 'a.a.a'], function(path) {
+        try {
+          _.set(0, path, 1);
+          strictEqual(0..a, 0);
+        } catch(e) {
+          ok(false, e.message);
+        }
+      });
+
+      delete numberProto.a;
     });
   }());
 

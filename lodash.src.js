@@ -9964,11 +9964,10 @@
      * // => 5
      */
     function set(object, path, value) {
-      if (object == null) {
-        return object;
-      }
       if (isKey(path, object)) {
-        object[path] = value;
+        if (isObject(object)) {
+          object[path] = value;
+        }
         return object;
       }
       path = toPath(path);
@@ -9978,12 +9977,14 @@
           endIndex = length - 1,
           nested = object;
 
-      while (++index < length) {
+      while (nested != null && ++index < length) {
         var key = path[index];
-        if (index == endIndex) {
-          nested[key] = value;
-        } else if (nested[key] == null) {
-          nested[key] = isIndex(path[index + 1]) ? [] : {};
+        if (isObject(nested)) {
+          if (index == endIndex) {
+            nested[key] = value;
+          } else if (nested[key] == null) {
+            nested[key] = isIndex(path[index + 1]) ? [] : {};
+          }
         }
         nested = nested[key];
       }

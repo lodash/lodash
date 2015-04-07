@@ -12970,10 +12970,13 @@
       strictEqual(actual, 1);
     });
 
-    test('should call deep property methods with the correct `this` binding', 1, function() {
+    test('should call deep property methods with the correct `this` binding', 2, function() {
       var value = { 'deep': object };
-      strictEqual(_.result(value, ['deep', 'b']), 1);
-    })
+
+      _.each(['deep.b', ['deep', 'b']], function(path) {
+        strictEqual(_.result(value, path), 1);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

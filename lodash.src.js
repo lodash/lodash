@@ -2621,16 +2621,13 @@
     }
 
     function baseMethod(object, path, args) {
-      if (object == null) {
-        return undefined;
-      }
-      if (!(isKey(path) || (path in toObject(object)))) {
+      if (!isKey(path, object)) {
         path = toPath(path);
-        object = baseGet(object, baseSlice(path, 0, -1));
+        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         path = last(path);
       }
-      var func = object[path];
-      return isFunction(func) ? func.apply(object, args) : undefined;
+      var func = object == null ? object : object[path];
+      return func == null ? undefined : func.apply(object, args);
     }
 
     /**
@@ -6755,8 +6752,8 @@
           result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
-        var func = isFunc ? methodName : (value != null && value[methodName]);
-        result[++index] = func ? func.apply(value, args) : undefined;
+        var func = isFunc ? methodName : (value == null ? value : value[methodName]);
+        result[++index] = func == null ? undefined : func.apply(value, args);
       });
       return result;
     });
@@ -11251,7 +11248,7 @@
 
     var methodOf = restParam(function(object, args) {
       return function(path) {
-        return object == null ? undefined : baseMethod(object, path, args);
+        return baseMethod(object, path, args);
       };
     });
 

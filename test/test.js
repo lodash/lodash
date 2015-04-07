@@ -6882,7 +6882,7 @@
     });
 
     test('should not error on elements with missing properties', 1, function() {
-      var objects = _.map(falsey.concat(_.constant(1)), function(value) {
+      var objects = _.map([null, undefined, _.constant(1)], function(value) {
         return { 'a': value };
       });
 

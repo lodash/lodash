@@ -10340,21 +10340,21 @@
   QUnit.module('lodash.method');
 
   (function() {
-    test('should create a function that calls a property function of a given object', 3, function() {
-      var object = { 'a': _.constant(1), 'b': _.constant(2) },
-          method = _.method('a');
+    test('should create a function that calls a method of a given object', 4, function() {
+      var object = { 'a': _.constant(1) };
 
-      strictEqual(method.length, 1);
-      strictEqual(method(object), 1);
-
-      method = _.method('b');
-      strictEqual(method(object), 2);
+      _.each(['a', ['a']], function(path) {
+        var method = _.method(path);
+        strictEqual(method.length, 1);
+        strictEqual(method(object), 1);
+      });
     });
 
-    test('should work with non-string `prop` arguments', 1, function() {
+    test('should work with non-string `path` arguments', 1, function() {
       var array = _.times(3, _.constant),
-          prop = _.method(1);
-      strictEqual(prop(array), 1);
+          method = _.method(1);
+
+      strictEqual(method(array), 1);
     });
 
     test('should coerce key to a string', 1, function() {
@@ -10377,11 +10377,11 @@
     });
 
     test('should pluck inherited property values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = _.constant(2);
+      function Foo() {}
+      Foo.prototype.a = _.constant(1);
 
-      var method = _.method('b');
-      strictEqual(method(new Foo), 2);
+      var method = _.method('a');
+      strictEqual(method(new Foo), 1);
     });
 
     test('should work when `object` is nullish', 1, function() {

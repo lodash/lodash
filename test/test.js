@@ -6021,97 +6021,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.get');
-
-  (function() {
-    test('should get property values', 2, function() {
-      var object = { 'a': 1 };
-
-      _.each(['a', ['a']], function(path) {
-        strictEqual(_.get(object, path), 1);
-      });
-    });
-
-    test('should get deep property values', 2, function() {
-      var object = { 'a': { 'b': { 'c': 3 } } };
-
-      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-        strictEqual(_.get(object, path), 3);
-      });
-    });
-
-    test('should get a key over a path', 2, function() {
-      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
-
-      _.each(['a.b.c', ['a.b.c']], function(path) {
-        strictEqual(_.get(object, path), 3);
-      });
-    });
-
-    test('should not coerce array paths to strings', 1, function() {
-      var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } };
-      strictEqual(_.get(object, ['a', 'b', 'c']), 4);
-    });
-
-    test('should handle empty paths', 4, function() {
-      _.each([['', ''], [[], ['']]], function(paths) {
-        strictEqual(_.get({}, paths[0]), undefined);
-        strictEqual(_.get({ '': 3 }, paths[1]), 3);
-      });
-    });
-
-    test('should return `undefined` when `object` is nullish', 4, function() {
-      _.each(['a', ['a']], function(path) {
-        strictEqual(_.get(null, path), undefined);
-        strictEqual(_.get(undefined, path), undefined);
-      });
-    });
-
-    test('should return `undefined` if parts of `path` are missing', 2, function() {
-      var object = {};
-
-      _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
-        strictEqual(_.get(object, path), undefined);
-      });
-    });
-
-    test('should follow `path` over non-plain objects', 4, function() {
-      var object = { 'a': '' };
-
-      _.each(['constructor.prototype.toFixed', ['constructor', 'prototype', 'toFixed']], function(path) {
-        var actual = _.get(0, path);
-        strictEqual(actual, 0..toFixed);
-      });
-
-      _.each(['a.replace', ['a', 'replace']], function(path) {
-        var actual = _.get(object, path);
-        strictEqual(actual, stringProto.replace);
-      });
-    });
-
-    test('should return the specified default value for `undefined` values', 1, function() {
-      var object = { 'a': {} },
-          values = empties.concat(true, new Date, 1, /x/, 'a');
-
-      var expected = _.transform(values, function(result, value) {
-        result.push(value, value, value, value);
-      });
-
-      var actual = _.transform(values, function(result, value) {
-        _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-          result.push(
-            _.get(object, path, value),
-            _.get(null, path, value)
-          );
-        });
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.groupBy');
 
   (function() {
@@ -12837,62 +12746,139 @@
   (function() {
     var object = {
       'a': 1,
-      'b': null,
-      'c': function() { return this.a; }
+      'b': function() { return this.a; }
     };
 
-    test('should resolve property values', 4, function() {
-      strictEqual(_.result(object, 'a'), 1);
-      strictEqual(_.result(object, 'b'), null);
-      strictEqual(_.result(object, 'c'), 1);
-      strictEqual(_.result(object, 'd'), undefined);
-    });
-
-    test('should get deep property values', 1, function() {
-      var object = { 'a': { 'b': { 'c': 3 } } };
-      strictEqual(_.result(object, 'a.b.c'), 3);
-    });
-
-    test('should get a key over a path', 1, function() {
-      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
-      strictEqual(_.result(object, 'a.b.c'), 3);
-    });
-
-    test('should return `undefined` when `object` is nullish', 2, function() {
-      strictEqual(_.result(null, 'a'), undefined);
-      strictEqual(_.result(undefined, 'a'), undefined);
-    });
-
-    test('should return the specified default value for `undefined` values', 1, function() {
-      var values = empties.concat(true, new Date, 1, /x/, 'a');
-
-      var expected = _.transform(values, function(result, value) {
-        result.push(value, value);
-      });
-
-      var actual = _.transform(values, function(result, value) {
-        result.push(
-          _.result(object, 'd', value),
-          _.result(null, 'd', value)
-        );
-      });
-
-      deepEqual(actual, expected);
+    test('should execute function values', 1, function() {
+      strictEqual(_.result(object, 'b'), 1);
     });
 
     test('should execute default function values', 1, function() {
-      var actual = _.result(object, 'd', object.c);
+      var actual = _.result(object, 'c', object.b);
       strictEqual(actual, 1);
     });
 
     test('should call deep property methods with the correct `this` binding', 1, function() {
-      var value = {
-        'deep': object
-      };
-
-      strictEqual(_.result(value, ['deep', 'c']), 1);
+      var value = { 'deep': object };
+      strictEqual(_.result(value, ['deep', 'b']), 1);
     })
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.get and lodash.result');
+
+  _.each(['get', 'result'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should get property values', 2, function() {
+      var object = { 'a': 1 };
+
+      _.each(['a', ['a']], function(path) {
+        strictEqual(func(object, path), 1);
+      });
+    });
+
+    test('`_.' + methodName + '` should get deep property values', 2, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
+
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        strictEqual(func(object, path), 3);
+      });
+    });
+
+    test('`_.' + methodName + '` should get characters of string indexes (test in IE < 9)', 2, function() {
+      _.each([1, [1]], function(path) {
+        strictEqual(func('xo', path), 'o');
+      });
+    });
+
+    test('`_.' + methodName + '` should get a key over a path', 2, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
+
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        strictEqual(func(object, path), 3);
+      });
+    });
+
+    test('`_.' + methodName + '` should not coerce array paths to strings', 1, function() {
+      var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } };
+      strictEqual(func(object, ['a', 'b', 'c']), 4);
+    });
+
+    test('`_.' + methodName + '` should handle empty paths', 4, function() {
+      _.each([['', ''], [[], ['']]], function(paths) {
+        strictEqual(func({}, paths[0]), undefined);
+        strictEqual(func({ '': 3 }, paths[1]), 3);
+      });
+    });
+
+    test('`_.' + methodName + '` should return `undefined` when `object` is nullish', 4, function() {
+      _.each(['a', ['a']], function(path) {
+        strictEqual(func(null, path), undefined);
+        strictEqual(func(undefined, path), undefined);
+      });
+    });
+
+    test('`_.' + methodName + '` should work with deep paths when `object` is nullish', 2, function() {
+      var values = [null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var actual = _.map(values, function(value) {
+          return func(value, path);
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('`_.' + methodName + '` should return `undefined` if parts of `path` are missing', 2, function() {
+      var object = {};
+
+      _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
+        strictEqual(func(object, path), undefined);
+      });
+    });
+
+    test('`_.' + methodName + '` should follow `path` over non-plain objects', 4, function() {
+      var object = { 'a': '' };
+
+      _.each(['constructor.prototype.a', ['constructor', 'prototype', 'a']], function(path) {
+        numberProto.a = 1;
+        var actual = func(0, path);
+        strictEqual(actual, 1);
+        delete numberProto.a;
+      });
+
+      _.each(['a.a.a', ['a', 'a', 'a']], function(path) {
+        stringProto.a = '_';
+        var actual = func(object, path);
+        strictEqual(actual, '_');
+        delete stringProto.a;
+      });
+    });
+
+    test('`_.' + methodName + '` should return the specified default value for `undefined` values', 1, function() {
+      var object = { 'a': {} },
+          values = empties.concat(true, new Date, 1, /x/, 'a');
+
+      var expected = _.transform(values, function(result, value) {
+        result.push(value, value, value, value);
+      });
+
+      var actual = _.transform(values, function(result, value) {
+        _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+          result.push(
+            func(object, path, value),
+            func(null, path, value)
+          );
+        });
+      });
+
+      deepEqual(actual, expected);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

@@ -9656,18 +9656,126 @@
       strictEqual(matches(object), true);
     });
 
-    test('should support deep paths', 1, function() {
-      var object = { 'a': { 'b': { 'c': 3 } } },
-          matches = _.matchesProperty('a.b.c', 3);
+    test('should support deep paths', 2, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
 
-      strictEqual(matches(object), true);
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var matches = _.matchesProperty(path, 3);
+        strictEqual(matches(object), true);
+      });
     });
 
-    test('should match a key over a path', 1, function() {
-      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
-          matches = _.matchesProperty('a.b.c', 3);
+    test('should coerce key to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
 
-      strictEqual(matches(object, 'a.b.c'), true);
+      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+          values = [null, undefined, fn, {}];
+
+      var expected = _.transform(values, function(result) {
+        result.push(true, true);
+      });
+
+      var actual = _.transform(objects, function(result, object, index) {
+        var key = values[index];
+        _.each([key, [key]], function(path) {
+          var matches = _.matchesProperty(path, object[key]);
+          result.push(matches(object));
+        });
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should match inherited `value` properties', 2, function() {
+      function Foo() {}
+      Foo.prototype.b = 2;
+
+      var object = { 'a': new Foo };
+
+      _.each(['a', ['a']], function(path) {
+        var matches = _.matchesProperty(path, { 'b': 2 });
+        strictEqual(matches(object), true);
+      });
+    });
+
+    test('should not match inherited `source` properties', 2, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 2 } }],
+          expected = _.map(objects, _.constant(true));
+
+      _.each(['a', ['a']], function(path) {
+        var matches = _.matchesProperty(path, new Foo);
+        deepEqual(_.map(objects, matches), expected);
+      });
+    });
+
+    test('should match characters of string indexes (test in IE < 9)', 1, function() {
+      var matches = _.matchesProperty(1, 'o');
+      strictEqual(matches('xo'), true);
+    });
+
+    test('should match a key over a path', 2, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
+
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        var matches = _.matchesProperty(path, 3);
+        strictEqual(matches(object), true);
+      });
+    });
+
+    test('should work with non-string `path` arguments', 2, function() {
+      var array = [1, 2, 3];
+
+      _.each([1, [1]], function(path) {
+        var matches = _.matchesProperty(path, 2);
+        strictEqual(matches(array), true);
+      });
+    });
+
+    test('should work when `object` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false));
+
+      _.each(['a', ['a']], function(path) {
+        var matches = _.matchesProperty(path, 1);
+
+        var actual = _.map(values, function(value, index) {
+          try {
+            return index ? matches(value) : matches();
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('should work with deep paths when `object` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false));
+
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var matches = _.matchesProperty(path, 1);
+
+        var actual = _.map(values, function(value, index) {
+          try {
+            return index ? matches(value) : matches();
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('should return `false` if parts of `path` are missing', 4, function() {
+      var object = {};
+
+      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        var matches = _.matchesProperty(path, 1);
+        strictEqual(matches(object), false);
+      });
     });
 
     test('should compare a variety of values', 2, function() {
@@ -9722,44 +9830,6 @@
       deepEqual(actual, objects);
     });
 
-    test('should work when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(false)),
-          matches = _.matchesProperty('a', 1);
-
-      var actual = _.map(values, function(value, index) {
-        try {
-          return index ? matches(value) : matches();
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should work with deep paths when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(false)),
-          matches = _.matchesProperty('a.b.c', 1);
-
-      var actual = _.map(values, function(value, index) {
-        try {
-          return index ? matches(value) : matches();
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should return `false` if parts of `path` are missing', 2, function() {
-      var object = {},
-          matches = _.matchesProperty('a', 1);
-
-      strictEqual(matches(object), false);
-
-      matches = _.matchesProperty('a[1].b.c', 1);
-      strictEqual(matches(object), false);
-    });
-
     test('should search arrays of `value` for values', 3, function() {
       var objects = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
           matches = _.matchesProperty('a', ['d']),
@@ -9802,16 +9872,6 @@
       deepEqual(actual, [false, false, true]);
     });
 
-    test('should match inherited `value` properties', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var object = { 'a': new Foo },
-          matches = _.matchesProperty('a', { 'b': 2 });
-
-      strictEqual(matches(object), true);
-    });
-
     test('should match properties when `value` is not a plain object', 1, function() {
       function Foo(object) { _.assign(this, object); }
 
@@ -9819,19 +9879,6 @@
           matches = _.matchesProperty('a', { 'b': 1 });
 
       strictEqual(matches(object), true);
-    });
-
-    test('should not match inherited `source` properties', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 2 } }],
-          source = new Foo,
-          matches = _.matchesProperty('a', source),
-          actual = _.map(objects, matches),
-          expected = _.map(objects, _.constant(true));
-
-      deepEqual(actual, expected);
     });
 
     test('should work with a function for `value`', 1, function() {

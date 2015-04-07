@@ -9143,6 +9143,8 @@
      * The `customizer` is bound to `thisArg` and invoked with five arguments:
      * (objectValue, sourceValue, key, object, source).
      *
+     * **Note:** This method mutates `object`.
+     *
      * @static
      * @memberOf _
      * @alias extend
@@ -9213,6 +9215,8 @@
      * Assigns own enumerable properties of source object(s) to the destination
      * object for all destination properties that resolve to `undefined`. Once a
      * property is set, additional values of the same property are ignored.
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _

@@ -9434,6 +9434,43 @@
       strictEqual(matches(object), true);
     });
 
+    test('should match inherited `value` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var object = { 'a': new Foo },
+          matches = _.matches({ 'a': { 'b': 2 } });
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should not match by inherited `source` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
+          source = new Foo,
+          matches = _.matches(source),
+          actual = _.map(objects, matches),
+          expected = _.map(objects, _.constant(true));
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work when `object` is nullish', 1, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(false)),
+          matches = _.matches({ 'a': 1 });
+
+      var actual = _.map(values, function(value, index) {
+        try {
+          return index ? matches(value) : matches();
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should compare a variety of `source` values', 2, function() {
       var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
           object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },
@@ -9473,20 +9510,6 @@
         strictEqual(matches(object), true);
         strictEqual(matches(source), false);
       });
-    });
-
-    test('should work when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(false)),
-          matches = _.matches({ 'a': 1 });
-
-      var actual = _.map(values, function(value, index) {
-        try {
-          return index ? matches(value) : matches();
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
     });
 
     test('should return `true` when comparing an empty `source`', 1, function() {
@@ -9566,16 +9589,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should match inherited `value` properties', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var object = { 'a': new Foo },
-          matches = _.matches({ 'a': { 'b': 2 } });
-
-      strictEqual(matches(object), true);
-    });
-
     test('should match properties when `value` is a function', 1, function() {
       function Foo() {}
       Foo.a = { 'b': 1, 'c': 2 };
@@ -9591,19 +9604,6 @@
           matches = _.matches({ 'a': { 'b': 1 } });
 
       strictEqual(matches(object), true);
-    });
-
-    test('should not match by inherited `source` properties', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
-          source = new Foo,
-          matches = _.matches(source),
-          actual = _.map(objects, matches),
-          expected = _.map(objects, _.constant(true));
-
-      deepEqual(actual, expected);
     });
 
     test('should work with a function for `source`', 1, function() {

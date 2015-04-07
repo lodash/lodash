@@ -1137,7 +1137,7 @@
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
-    test('should assign source properties with `null` and `undefined` values', 1, function() {
+    test('should assign source properties with nullish values', 1, function() {
       var expected = { 'a': null, 'b': undefined, 'c': null };
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
@@ -1394,7 +1394,7 @@
       }));
     });
 
-    test('should bind a function to `null` or `undefined`', 6, function() {
+    test('should bind a function to nullish values', 6, function() {
       var bound = _.bind(fn, null),
           actual = bound('a');
 
@@ -8831,7 +8831,7 @@
       deepEqual(func(array).sort(), ['0', '1', '2']);
     });
 
-    test('`_.' + methodName + '` should return an empty array for `null` or `undefined` values', 2, function() {
+    test('`_.' + methodName + '` should return an empty array for nullish values', 2, function() {
       objectProto.a = 1;
       _.each([null, undefined], function(value) {
         deepEqual(func(value), []);
@@ -10934,7 +10934,7 @@
       deepEqual(_.omit(new Foo, 'a', 'c'), expected);
     });
 
-    test('should return an empty object when `object` is `null` or `undefined`', 2, function() {
+    test('should return an empty object when `object` is nullish', 2, function() {
       objectProto.a = 1;
       _.each([null, undefined], function(value) {
         deepEqual(_.omit(value, 'valueOf'), {});
@@ -11134,7 +11134,7 @@
       });
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string and `chars`', 6, function() {
+    test('`_.' + methodName + '` should return an empty string when provided nullish or empty string values and `chars`', 6, function() {
       _.each([null, '_-'], function(chars) {
         strictEqual(func(null, 0, chars), '');
         strictEqual(func(undefined, 0, chars), '');
@@ -11142,7 +11142,7 @@
       });
     });
 
-    test('`_.' + methodName + '` should work with `null`, `undefined`, or empty string for `chars`', 3, function() {
+    test('`_.' + methodName + '` should work with nullish or empty string values for `chars`', 3, function() {
       notStrictEqual(func('abc', 6, null), 'abc');
       notStrictEqual(func('abc', 6, undefined), 'abc');
       strictEqual(func('abc', 6, ''), 'abc');
@@ -11669,7 +11669,7 @@
       deepEqual(_.pick(new Foo, 'a', 'c'), expected);
     });
 
-    test('should return an empty object when `object` is `null` or `undefined`', 2, function() {
+    test('should return an empty object when `object` is nullish', 2, function() {
       _.each([null, undefined], function(value) {
         deepEqual(_.pick(value, 'valueOf'), {});
       });
@@ -14652,7 +14652,7 @@
       strictEqual(compiled(), '<<\n a \n>>');
     });
 
-    test('should resolve `null` and `undefined` values to an empty string', 3, function() {
+    test('should resolve nullish values to an empty string', 3, function() {
       var compiled = _.template('<%= a %><%- a %>'),
           data = { 'a': null };
 
@@ -15419,7 +15419,7 @@
       this.c = 3;
     }
 
-    test('should create an object with the same `[[Prototype]]` as `object` when `accumulator` is `null` or `undefined`', 4, function() {
+    test('should create an object with the same `[[Prototype]]` as `object` when `accumulator` is nullish', 4, function() {
       var accumulators = [, null, undefined],
           expected = _.map(accumulators, _.constant(true)),
           object = new Foo;
@@ -15647,7 +15647,7 @@
       strictEqual(func(string, object), expected);
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string and `chars`', 6, function() {
+    test('`_.' + methodName + '` should return an empty string when provided nullish or empty string values and `chars`', 6, function() {
       _.each([null, '_-'], function(chars) {
         strictEqual(func(null, chars), '');
         strictEqual(func(undefined, chars), '');
@@ -15655,7 +15655,7 @@
       });
     });
 
-    test('`_.' + methodName + '` should work with `null`, `undefined`, or empty string for `chars`', 3, function() {
+    test('`_.' + methodName + '` should work with nullish or empty string values for `chars`', 3, function() {
       var string = whitespace + 'a b c' + whitespace,
           expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
@@ -15853,7 +15853,7 @@
       deepEqual(_.uniq(largeArray), expected);
     });
 
-    test('should work with large arrays of boolean, `NaN`, `null`, and `undefined` values', 1, function() {
+    test('should work with large arrays of boolean, `NaN`, and nullish values', 1, function() {
       var largeArray = [],
           expected = [true, false, NaN, null, undefined],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
@@ -17057,7 +17057,7 @@
     _.each(stringMethods, function(methodName) {
       var func = _[methodName];
 
-      test('`_.' + methodName + '` should return an empty string when provided `null`, `undefined`, or empty string', 3, function() {
+      test('`_.' + methodName + '` should return an empty string when provided nullish or empty string values', 3, function() {
         strictEqual(func(null), '');
         strictEqual(func(undefined), '');
         strictEqual(func(''), '');

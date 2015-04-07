@@ -6130,6 +6130,44 @@
       strictEqual(_.has(object, 'a.b.c'), true);
     });
 
+    test('should work with non-string `path` arguments', 2, function() {
+      var array = [1, 2, 3];
+
+      _.each([1, [1]], function(path) {
+        strictEqual(_.has(array, path), true);
+      });
+    });
+
+    test('should work when `object` is nullish', 2, function() {
+      var values = [null, undefined],
+          expected = _.map(values, _.constant(false));
+
+      _.each(['constructor', ['constructor']], function(path) {
+        var actual = _.map(values, function(value) {
+          try {
+            return _.has(value, path);
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('should work with deep paths when `object` is nullish', 2, function() {
+      var values = [null, undefined],
+          expected = _.map(values, _.constant(false));
+
+      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
+        var actual = _.map(values, function(value) {
+          try {
+            return _.has(value, path);
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
     test('should return `false` for inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype.a = 1;
@@ -9739,7 +9777,7 @@
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false));
 
-      _.each(['a', ['a']], function(path) {
+      _.each(['constructor', ['constructor']], function(path) {
         var matches = _.matchesProperty(path, 1);
 
         var actual = _.map(values, function(value, index) {
@@ -9756,7 +9794,7 @@
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false));
 
-      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var matches = _.matchesProperty(path, 1);
 
         var actual = _.map(values, function(value, index) {
@@ -11870,7 +11908,7 @@
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      _.each(['a', ['a']], function(path) {
+      _.each(['constructor', ['constructor']], function(path) {
         var prop = _.property(path);
 
         var actual = _.map(values, function(value, index) {
@@ -11885,7 +11923,7 @@
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var prop = _.property(path);
 
         var actual = _.map(values, function(value, index) {
@@ -11990,7 +12028,7 @@
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      _.each(['a', ['a']], function(path) {
+      _.each(['constructor', ['constructor']], function(path) {
         var actual = _.map(values, function(value, index) {
           var propOf = index ? _.propertyOf(value) : _.propertyOf();
           return propOf(path);
@@ -12004,7 +12042,7 @@
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var actual = _.map(values, function(value, index) {
           var propOf = index ? _.propertyOf(value) : _.propertyOf();
           return propOf(path);
@@ -12930,7 +12968,7 @@
     });
 
     test('`_.' + methodName + '` should return `undefined` when `object` is nullish', 4, function() {
-      _.each(['a', ['a']], function(path) {
+      _.each(['constructor', ['constructor']], function(path) {
         strictEqual(func(null, path), undefined);
         strictEqual(func(undefined, path), undefined);
       });
@@ -12940,7 +12978,7 @@
       var values = [null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var actual = _.map(values, function(value) {
           return func(value, path);
         });

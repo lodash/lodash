@@ -2261,7 +2261,11 @@
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path, pathKey) {
-      if (typeof pathKey != 'undefined' && pathKey in toObject(object)) {
+      if (object == null) {
+        return;
+      }
+      object = toObject(object);
+      if (typeof pathKey != 'undefined' && pathKey in object) {
         path = [pathKey];
       }
       var index = -1,
@@ -2465,8 +2469,11 @@
 
         if (isStrictComparable(value)) {
           return function(object) {
-            return object != null && object[key] === value &&
-              (typeof value != 'undefined' || (key in toObject(object)));
+            if (object == null) {
+              return false;
+            }
+            object = toObject(object);
+            return object[key] === value && (typeof value != 'undefined' || (key in object));
           };
         }
       }
@@ -2493,22 +2500,18 @@
      * @returns {Function} Returns the new function.
      */
     function baseMatchesProperty(path, value) {
-      if (isKey(path) && isStrictComparable(value)) {
-        return function(object) {
-          return object != null && object[path] === value &&
-            (typeof value != 'undefined' || (path in toObject(object)));
-        };
-      }
-      var pathKey = isArray(path) ? undefined : path;
+      var isArr = isArray(path),
+          isCommon = isKey(path) && isStrictComparable(value),
+          pathKey = isArr ? undefined : (path + '');
+
       path = toPath(path);
       return function(object) {
         if (object == null) {
           return false;
         }
         var key = pathKey;
-        object = toObject(object);
-        if (typeof key == 'undefined' || !(key in object)) {
-          object = baseGet(object, baseSlice(path, 0, -1));
+        if ((isArr || !isCommon) && !(key in object)) {
+          object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
           if (object == null) {
             return false;
           }
@@ -8834,12 +8837,13 @@
         return false;
       }
       customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
+      object = toObject(object);
       if (!customizer && length == 1) {
         var key = props[0],
             value = source[key];
 
         if (isStrictComparable(value)) {
-          return value === object[key] && (typeof value != 'undefined' || (key in toObject(object)));
+          return value === object[key] && (typeof value != 'undefined' || (key in object));
         }
       }
       var values = Array(length),
@@ -8849,7 +8853,7 @@
         value = values[length] = source[props[length]];
         strictCompareFlags[length] = isStrictComparable(value);
       }
-      return baseIsMatch(toObject(object), props, values, strictCompareFlags, customizer);
+      return baseIsMatch(object, props, values, strictCompareFlags, customizer);
     }
 
     /**
@@ -9519,7 +9523,7 @@
 
       if (!result && !isKey(path)) {
         path = toPath(path);
-        object = baseGet(object, baseSlice(path, 0, -1));
+        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         result = object != null && hasOwnProperty.call(object, last(path));
       }
       return result;
@@ -9930,7 +9934,7 @@
     function result(object, path, defaultValue) {
       if (!isKey(path, object)) {
         path = toPath(path);
-        object = baseGet(object, baseSlice(path, 0, -1));
+        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         path = last(path);
       }
       var result = object == null ? undefined : object[path];

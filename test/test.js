@@ -11793,94 +11793,116 @@
   QUnit.module('lodash.property');
 
   (function() {
-    test('should create a function that plucks a property value of a given object', 3, function() {
-      var object = { 'a': 1, 'b': 2 },
-          prop = _.property('a');
+    test('should create a function that plucks a property value of a given object', 4, function() {
+      var object = { 'a': 1 };
 
-      strictEqual(prop.length, 1);
-      strictEqual(prop(object), 1);
-
-      prop = _.property('b');
-      strictEqual(prop(object), 2);
+      _.each(['a', ['a']], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop.length, 1);
+        strictEqual(prop(object), 1);
+      });
     });
 
-    test('should work with non-string `prop` arguments', 1, function() {
-      var prop = _.property(1);
-      strictEqual(prop([1, 2, 3]), 2);
+    test('should pluck deep property values', 2, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } };
+
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop(object), 3);
+      });
+    });
+
+    test('should work with non-string `path` arguments', 2, function() {
+      var array = [1, 2, 3];
+
+      _.each([1, [1]], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop(array), 2);
+      });
     });
 
     test('should coerce key to a string', 1, function() {
       function fn() {}
       fn.toString = _.constant('fn');
 
-      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}]
+      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
+          objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+          values = [null, undefined, fn, {}];
 
-      var actual = _.map(objects, function(object, index) {
-        var prop = _.property(values[index]);
-        return prop(object);
-      });
-
-      deepEqual(actual, [1, 2, 3, 4]);
-    });
-
-    test('should pluck inherited property values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var prop = _.property('b');
-      strictEqual(prop(new Foo), 2);
-    });
-
-    test('should pluck deep property values', 2, function() {
-      var object = { 'a': { 'b': { 'c': 3 } } },
-          prop = _.property('a.b.c');
-
-      strictEqual(prop(object), 3);
-
-      prop = _.property(['a', 'b', 'c']);
-      strictEqual(prop(object), 3);
-    });
-
-    test('should pluck a key over a path', 1, function() {
-      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
-          prop = _.property('a.b.c');
-
-      strictEqual(prop(object), 3);
-    });
-
-    test('should work when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(undefined));
-
-      var actual = _.map(values, function(value, index) {
-        var prop = _.property('a');
-        return index ? prop(value) : prop();
+      var actual = _.transform(objects, function(result, object, index) {
+        var key = values[index];
+        _.each([key, [key]], function(path) {
+          var prop = _.property(key);
+          result.push(prop(object));
+        });
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should work with deep paths when `object` is nullish', 1, function() {
+    test('should pluck inherited property values', 2, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      _.each(['a', ['a']], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop(new Foo), 1);
+      });
+    });
+
+    test('should pluck string indexes (test in IE < 9)', 2, function() {
+      _.each([1, [1]], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop('xo'), 'o');
+      });
+    });
+
+    test('should pluck a key over a path', 2, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
+
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop(object), 3);
+      });
+    });
+
+    test('should work when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      var actual = _.map(values, function(value, index) {
-        var prop = _.property('a.b.c');
-        return index ? prop(value) : prop();
-      });
+      _.each(['a', ['a']], function(path) {
+        var prop = _.property(path);
 
-      deepEqual(actual, expected);
+        var actual = _.map(values, function(value, index) {
+          return index ? prop(value) : prop();
+        });
+
+        deepEqual(actual, expected);
+      });
     });
 
-    test('should return `undefined` if parts of `path` are missing', 2, function() {
-      var object = {},
-          prop = _.property('a');
+    test('should work with deep paths when `object` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
 
-      strictEqual(prop(object), undefined);
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var prop = _.property(path);
 
-      prop = _.property('a[1].b.c');
-      strictEqual(prop(object), undefined);
+        var actual = _.map(values, function(value, index) {
+          return index ? prop(value) : prop();
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('should return `undefined` if parts of `path` are missing', 4, function() {
+      var object = {};
+
+      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        var prop = _.property(path);
+        strictEqual(prop(object), undefined);
+      });
     });
   }());
 
@@ -11890,67 +11912,114 @@
 
   (function() {
     test('should create a function that plucks a property value of a given key', 3, function() {
-      var object = { 'a': 1, 'b': 2 },
+      var object = { 'a': 1 },
           propOf = _.propertyOf(object);
 
       strictEqual(propOf.length, 1);
-      strictEqual(propOf('a'), 1);
-      strictEqual(propOf('b'), 2);
-    });
-
-    test('should pluck inherited property values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var propOf = _.propertyOf(new Foo);
-      strictEqual(propOf('b'), 2);
+      _.each(['a', ['a']], function(path) {
+        strictEqual(propOf(path), 1);
+      });
     });
 
     test('should pluck deep property values', 2, function() {
       var object = { 'a': { 'b': { 'c': 3 } } },
           propOf = _.propertyOf(object);
 
-      strictEqual(propOf('a.b.c'), 3);
-      strictEqual(propOf(['a', 'b', 'c']), 3);
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        strictEqual(propOf(path), 3);
+      });
     });
 
-    test('should pluck a key over a path', 1, function() {
+    test('should work with non-string `path` arguments', 2, function() {
+      var array = [1, 2, 3],
+          propOf = _.propertyOf(array);
+
+      _.each([1, [1]], function(path) {
+        strictEqual(propOf(path), 2);
+      });
+    });
+
+    test('should coerce key to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
+
+      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
+          objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+          values = [null, undefined, fn, {}];
+
+      var actual = _.transform(objects, function(result, object, index) {
+        var key = values[index];
+        _.each([key, [key]], function(path) {
+          var propOf = _.propertyOf(object);
+          result.push(propOf(key));
+        });
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should pluck inherited property values', 2, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var propOf = _.propertyOf(new Foo);
+
+      _.each(['b', ['b']], function(path) {
+        strictEqual(propOf(path), 2);
+      });
+    });
+
+    test('should pluck string indexes (test in IE < 9)', 2, function() {
+      var propOf = _.propertyOf('xo');
+
+      _.each([1, [1]], function(path) {
+        strictEqual(propOf(path), 'o');
+      });
+    });
+
+    test('should pluck a key over a path', 2, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } },
           propOf = _.propertyOf(object);
 
-      strictEqual(propOf('a.b.c'), 3);
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        strictEqual(propOf(path), 3);
+      });
     });
 
-    test('should work when `object` is nullish', 1, function() {
+    test('should work when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      var actual = _.map(values, function(value, index) {
-        var propOf = index ? _.propertyOf(value) : _.propertyOf();
-        return propOf('a');
-      });
+      _.each(['a', ['a']], function(path) {
+        var actual = _.map(values, function(value, index) {
+          var propOf = index ? _.propertyOf(value) : _.propertyOf();
+          return propOf(path);
+        });
 
-      deepEqual(actual, expected);
+        deepEqual(actual, expected);
+      });
     });
 
-    test('should work with deep paths when `object` is nullish', 1, function() {
+    test('should work with deep paths when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
-      var actual = _.map(values, function(value, index) {
-        var propOf = index ? _.propertyOf(value) : _.propertyOf();
-        return propOf('a.b.c');
-      });
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var actual = _.map(values, function(value, index) {
+          var propOf = index ? _.propertyOf(value) : _.propertyOf();
+          return propOf(path);
+        });
 
-      deepEqual(actual, expected);
+        deepEqual(actual, expected);
+      });
     });
 
-    test('should return `undefined` if parts of `path` are missing', 2, function() {
-      var object = {},
-          propOf = _.propertyOf(object);
+    test('should return `undefined` if parts of `path` are missing', 4, function() {
+      var propOf = _.propertyOf({});
 
-      strictEqual(propOf('a'), undefined);
-      strictEqual(propOf('a[1].b.c'), undefined);
+      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        strictEqual(propOf(path), undefined);
+      });
     });
   }());
 

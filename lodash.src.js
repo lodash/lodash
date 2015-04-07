@@ -2510,6 +2510,7 @@
           return false;
         }
         var key = pathKey;
+        object = toObject(object);
         if ((isArr || !isCommon) && !(key in object)) {
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
           if (object == null) {
@@ -2639,7 +2640,7 @@
      */
     function baseProperty(key) {
       return function(object) {
-        return object == null ? undefined : object[key];
+        return object == null ? undefined : toObject(object)[key];
       };
     }
 
@@ -9934,7 +9935,7 @@
         object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         path = last(path);
       }
-      var result = object == null ? undefined : object[path];
+      var result = object == null ? undefined : toObject(object)[path];
       if (typeof result == 'undefined') {
         result = defaultValue;
       }

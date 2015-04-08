@@ -468,10 +468,10 @@
 
     var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
     setProperty(objectProto, 'propertyIsEnumerable', function(key) {
-      if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [0, 0])) {
+      if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [1, 0])) {
         throw new Error;
       }
-      return _.has(this, key);
+      return _propertyIsEnumerable.call(this, key);
     });
 
     var _isFinite = Number.isFinite;

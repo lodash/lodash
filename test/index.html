@@ -97,10 +97,10 @@
 
 				setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
 				setProperty(objectProto, 'propertyIsEnumerable', function(key) {
-					if (key == '1' && this && typeof this == 'object' && this.length === 2 &&
+					if (key == '1' && this && typeof this == 'object' &&
 							hasOwnProperty.call(this, 'callee') &&
 							!propertyIsEnumerable.call(this, 'callee') &&
-							this[0] === 0 && this[1] === 0) {
+							this.length === 2 && this[0] === 1 && this[1] === 0) {
 						throw new Error;
 					}
 					return propertyIsEnumerable.call(this, key);

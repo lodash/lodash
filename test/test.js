@@ -6111,8 +6111,10 @@
   (function() {
     test('should check for own properties', 2, function() {
       var object = { 'a': 1 };
-      strictEqual(_.has(object, 'a'), true);
-      strictEqual(_.has(object, 'b'), false);
+
+      _.each(['a', ['a']], function(path) {
+        strictEqual(_.has(object, path), true);
+      });
     });
 
     test('should not use the `hasOwnProperty` method of the object', 1, function() {
@@ -6120,14 +6122,12 @@
       strictEqual(_.has(object, 'a'), true);
     });
 
-    test('should support deep paths', 1, function() {
+    test('should support deep paths', 2, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
-      strictEqual(_.has(object, 'a.b.c'), true);
-    });
 
-    test('should check for a key over a path', 1, function() {
-      var object = { 'a.b.c': 3, 'a': { 'b': {} } };
-      strictEqual(_.has(object, 'a.b.c'), true);
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        strictEqual(_.has(object, path), true);
+      });
     });
 
     test('should work with non-string `path` arguments', 2, function() {
@@ -6138,57 +6138,80 @@
       });
     });
 
-    test('should work when `object` is nullish', 2, function() {
+    test('should coerce key to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
+
+      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
+          objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+          values = [null, undefined, fn, {}];
+
+      var actual = _.transform(objects, function(result, object, index) {
+        var key = values[index];
+        _.each([key, [key]], function(path) {
+          var prop = _.property(key);
+          result.push(prop(object));
+        });
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `false` for inherited properties', 2, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      _.each(['a', ['a']], function(path) {
+        strictEqual(_.has(new Foo, path), false);
+      });
+    });
+
+    test('should return `true` for string indexes (test in IE < 9)', 2, function() {
+      _.each([1, [1]], function(path) {
+        strictEqual(_.has('xo', path), true);
+      });
+    });
+
+    test('should check for a key over a path', 2, function() {
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
+
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        strictEqual(_.has(object, path), true);
+      });
+    });
+
+    test('should return `false` when `object` is nullish', 2, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(false));
 
       _.each(['constructor', ['constructor']], function(path) {
         var actual = _.map(values, function(value) {
-          try {
-            return _.has(value, path);
-          } catch(e) {}
+          return _.has(value, path);
         });
 
         deepEqual(actual, expected);
       });
     });
 
-    test('should work with deep paths when `object` is nullish', 2, function() {
+    test('should return `false` with deep paths when `object` is nullish', 2, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(false));
 
       _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var actual = _.map(values, function(value) {
-          try {
-            return _.has(value, path);
-          } catch(e) {}
+          return _.has(value, path);
         });
 
         deepEqual(actual, expected);
       });
     });
 
-    test('should return `false` for inherited properties', 1, function() {
-      function Foo() {}
-      Foo.prototype.a = 1;
+    test('should return `false` if parts of `path` are missing', 4, function() {
+      var object = {};
 
-      strictEqual(_.has(new Foo, 'a'), false);
-    });
-
-    test('should work with functions', 1, function() {
-      function Foo() {}
-      strictEqual(_.has(Foo, 'prototype'), true);
-    });
-
-    test('should return `false` for primitives', 1, function() {
-      var values = falsey.concat(true, 1, 'a'),
-          expected = _.map(values, _.constant(false));
-
-      var actual = _.map(values, function(value) {
-        return _.has(value, 'valueOf');
+      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        strictEqual(_.has(object, path), false);
       });
-
-      deepEqual(actual, expected);
     });
   }());
 
@@ -10483,15 +10506,17 @@
       });
     });
 
-    test('should apply partial arguments to function', function() {
+    test('should apply partial arguments to function', 2, function() {
       var object = {
         'fn': function() {
           return slice.call(arguments);
         }
       };
 
-      var method = _.method('fn', 1, 2, 3);
-      deepEqual(method(object), [1, 2, 3]);
+      _.each(['fn', ['fn']], function(path) {
+        var method = _.method(path, 1, 2, 3);
+        deepEqual(method(object), [1, 2, 3]);
+      });
     });
 
     test('should call deep property methods with the correct `this` binding', 2, function() {
@@ -10509,44 +10534,130 @@
   QUnit.module('lodash.methodOf');
 
   (function() {
-    test('should create a function that calls a method function of a given key', 3, function() {
-      var object = { 'a': _.constant(1), 'b': _.constant(2) },
-          methodOf = _.methodOf(object);
+    test('hould create a function that calls a method of a given key', 4, function() {
+      var object = { 'a': _.constant(1) };
 
-      strictEqual(methodOf.length, 1);
-      strictEqual(methodOf('a'), 1);
-      strictEqual(methodOf('b'), 2);
+      _.each(['a', ['a']], function(path) {
+        var methodOf = _.methodOf(object);
+        strictEqual(methodOf.length, 1);
+        strictEqual(methodOf(path), 1);
+      });
     });
 
-    test('should pluck inherited method values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = _.constant(2);
+    test('should work with deep property values', 2, function() {
+      var object = { 'a': { 'b': { 'c': _.constant(3) } } };
 
-      var methodOf = _.methodOf(new Foo);
-      strictEqual(methodOf('b'), 2);
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var methodOf = _.methodOf(object);
+        strictEqual(methodOf(path), 3);
+      });
     });
 
-    test('should work when `object` is nullish', 1, function() {
-      var values = [, null, undefined],
-          expected = _.map(values, _.constant(undefined));
+    test('should work with non-string `path` arguments', 2, function() {
+      var array = _.times(3, _.constant);
 
-      var actual = _.map(values, function(value, index) {
-        var methodOf = index ? _.methodOf(value) : _.methodOf();
-        return methodOf('a');
+      _.each([1, [1]], function(path) {
+        var methodOf = _.methodOf(array);
+        strictEqual(methodOf(path), 1);
+      });
+    });
+
+    test('should coerce key to a string', 1, function() {
+      function fn() {}
+      fn.toString = _.constant('fn');
+
+      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
+          objects = [{ 'null': _.constant(1) }, { 'undefined': _.constant(2) }, { 'fn': _.constant(3) }, { '[object Object]': _.constant(4) }],
+          values = [null, undefined, fn, {}];
+
+      var actual = _.transform(objects, function(result, object, index) {
+        var key = values[index];
+        _.each([key, [key]], function(path) {
+          var methodOf = _.methodOf(object);
+          result.push(methodOf(key));
+        });
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should apply partial arguments to function', function() {
+    test('should work with inherited property values', 2, function() {
+      function Foo() {}
+      Foo.prototype.a = _.constant(1);
+
+      _.each(['a', ['a']], function(path) {
+        var methodOf = _.methodOf(new Foo);
+        strictEqual(methodOf(path), 1);
+      });
+    });
+
+    test('should use a key over a path', 2, function() {
+      var object = { 'a.b.c': _.constant(3), 'a': { 'b': { 'c': _.constant(4) } } };
+
+      _.each(['a.b.c', ['a.b.c']], function(path) {
+        var methodOf = _.methodOf(object);
+        strictEqual(methodOf(path), 3);
+      });
+    });
+
+    test('should return `undefined` when `object` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      _.each(['constructor', ['constructor']], function(path) {
+        var actual = _.map(values, function(value, index) {
+          var methodOf = index ? _.methodOf() : _.methodOf(value);
+          return methodOf(path);
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('should return `undefined` with deep paths when `object` is nullish', 2, function() {
+      var values = [, null, undefined],
+          expected = _.map(values, _.constant(undefined));
+
+      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
+        var actual = _.map(values, function(value, index) {
+          var methodOf = index ? _.methodOf() : _.methodOf(value);
+          return methodOf(path);
+        });
+
+        deepEqual(actual, expected);
+      });
+    });
+
+    test('should return `undefined` if parts of `path` are missing', 4, function() {
+      var object = {},
+          methodOf = _.methodOf(object);
+
+      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        strictEqual(methodOf(path), undefined);
+      });
+    });
+
+    test('should apply partial arguments to function', 2, function() {
       var object = {
         'fn': function() {
           return slice.call(arguments);
         }
       };
 
-      var method = _.methodOf(object, 1, 2, 3);
-      deepEqual(method('fn'), [1, 2, 3]);
+      var methodOf = _.methodOf(object, 1, 2, 3);
+
+      _.each(['fn', ['fn']], function(path) {
+        deepEqual(methodOf(path), [1, 2, 3]);
+      });
+    });
+
+    test('should call deep property methods with the correct `this` binding', 2, function() {
+      var object = { 'deep': { 'a': 1, 'b': function() { return this.a; } } },
+          methodOf = _.methodOf(object);
+
+      _.each(['deep.b', ['deep', 'b']], function(path) {
+        strictEqual(methodOf(path), 1);
+      });
     });
   }());
 

@@ -9527,7 +9527,8 @@
       if (!result && !isKey(path)) {
         path = toPath(path);
         object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-        result = object != null && hasOwnProperty.call(object, last(path));
+        path = last(path);
+        result = object != null && hasOwnProperty.call(object, path);
       }
       return result || (lodash.support.nonEnumStrings && isString(object) && isIndex(path, object.length));
     }

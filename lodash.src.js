@@ -301,10 +301,10 @@
       var valIsReflexive = value === value,
           othIsReflexive = other === other;
 
-      if (value > other || !valIsReflexive || (typeof value == 'undefined' && othIsReflexive)) {
+      if (value > other || !valIsReflexive || (value === undefined && othIsReflexive)) {
         return 1;
       }
-      if (value < other || !othIsReflexive || (typeof other == 'undefined' && valIsReflexive)) {
+      if (value < other || !othIsReflexive || (other === undefined && valIsReflexive)) {
         return -1;
       }
     }
@@ -1724,7 +1724,7 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function assignDefaults(objectValue, sourceValue) {
-      return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+      return objectValue === undefined ? sourceValue : objectValue;
     }
 
     /**
@@ -1741,7 +1741,7 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function assignOwnDefaults(objectValue, sourceValue, key, object) {
-      return (typeof objectValue == 'undefined' || !hasOwnProperty.call(object, key))
+      return (objectValue === undefined || !hasOwnProperty.call(object, key))
         ? sourceValue
         : objectValue;
     }
@@ -1770,7 +1770,7 @@
             result = customizer(value, source[key], key, object, source);
 
         if ((result === result ? (result !== value) : (value === value)) ||
-            (typeof value == 'undefined' && !(key in object))) {
+            (value === undefined && !(key in object))) {
           object[key] = result;
         }
       }
@@ -1841,7 +1841,7 @@
     function baseCallback(func, thisArg, argCount) {
       var type = typeof func;
       if (type == 'function') {
-        return typeof thisArg == 'undefined'
+        return thisArg === undefined
           ? func
           : bindCallback(func, thisArg, argCount);
       }
@@ -1851,7 +1851,7 @@
       if (type == 'object') {
         return baseMatches(func);
       }
-      return typeof thisArg == 'undefined'
+      return thisArg === undefined
         ? property(func)
         : baseMatchesProperty(func, thisArg);
     }
@@ -1875,7 +1875,7 @@
       if (customizer) {
         result = object ? customizer(value, key, object) : customizer(value);
       }
-      if (typeof result != 'undefined') {
+      if (result !== undefined) {
         return result;
       }
       if (!isObject(value)) {
@@ -2068,7 +2068,7 @@
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      end = (end === undefined || end > length) ? length : (+end || 0);
       if (end < 0) {
         end += length;
       }
@@ -2266,7 +2266,7 @@
         return;
       }
       object = toObject(object);
-      if (typeof pathKey != 'undefined' && pathKey in object) {
+      if (pathKey !== undefined && pathKey in object) {
         path = [pathKey];
       }
       var index = -1,
@@ -2419,10 +2419,10 @@
             srcValue = values[index];
 
         if (noCustomizer && strictCompareFlags[index]) {
-          var result = typeof objValue != 'undefined' || (key in object);
+          var result = objValue !== undefined || (key in object);
         } else {
           result = customizer ? customizer(objValue, srcValue, key) : undefined;
-          if (typeof result == 'undefined') {
+          if (result === undefined) {
             result = baseIsEqual(srcValue, objValue, customizer, true);
           }
         }
@@ -2474,7 +2474,7 @@
               return false;
             }
             object = toObject(object);
-            return object[key] === value && (typeof value != 'undefined' || (key in object));
+            return object[key] === value && (value !== undefined || (key in object));
           };
         }
       }
@@ -2521,7 +2521,7 @@
           object = toObject(object);
         }
         return object[key] === value
-          ? (typeof value != 'undefined' || (key in object))
+          ? (value !== undefined || (key in object))
           : baseIsEqual(value, object[key], null, true);
       };
     }
@@ -2551,12 +2551,12 @@
         }
         var value = object[key],
             result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-            isCommon = typeof result == 'undefined';
+            isCommon = result === undefined;
 
         if (isCommon) {
           result = srcValue;
         }
-        if ((isSrcArr || typeof result != 'undefined') &&
+        if ((isSrcArr || result !== undefined) &&
             (isCommon || (result === result ? (result !== value) : (value === value)))) {
           object[key] = result;
         }
@@ -2591,7 +2591,7 @@
       }
       var value = object[key],
           result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-          isCommon = typeof result == 'undefined';
+          isCommon = result === undefined;
 
       if (isCommon) {
         result = srcValue;
@@ -2747,7 +2747,7 @@
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+      end = (end === undefined || end > length) ? length : (+end || 0);
       if (end < 0) {
         end += length;
       }
@@ -3019,7 +3019,7 @@
       var low = 0,
           high = array ? array.length : 0,
           valIsNaN = value !== value,
-          valIsUndef = typeof value == 'undefined';
+          valIsUndef = value === undefined;
 
       while (low < high) {
         var mid = floor((low + high) / 2),
@@ -3029,7 +3029,7 @@
         if (valIsNaN) {
           var setLow = isReflexive || retHighest;
         } else if (valIsUndef) {
-          setLow = isReflexive && (retHighest || typeof computed != 'undefined');
+          setLow = isReflexive && (retHighest || computed !== undefined);
         } else {
           setLow = retHighest ? (computed <= value) : (computed < value);
         }
@@ -3056,7 +3056,7 @@
       if (typeof func != 'function') {
         return identity;
       }
-      if (typeof thisArg == 'undefined') {
+      if (thisArg === undefined) {
         return func;
       }
       switch (argCount) {
@@ -3531,7 +3531,7 @@
      */
     function createForEach(arrayFunc, eachFunc) {
       return function(collection, iteratee, thisArg) {
-        return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+        return (typeof iteratee == 'function' && thisArg === undefined && isArray(collection))
           ? arrayFunc(collection, iteratee)
           : eachFunc(collection, bindCallback(iteratee, thisArg, 3));
       };
@@ -3546,7 +3546,7 @@
      */
     function createForIn(objectFunc) {
       return function(object, iteratee, thisArg) {
-        if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+        if (typeof iteratee != 'function' || thisArg !== undefined) {
           iteratee = bindCallback(iteratee, thisArg, 3);
         }
         return objectFunc(object, iteratee, keysIn);
@@ -3562,7 +3562,7 @@
      */
     function createForOwn(objectFunc) {
       return function(object, iteratee, thisArg) {
-        if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+        if (typeof iteratee != 'function' || thisArg !== undefined) {
           iteratee = bindCallback(iteratee, thisArg, 3);
         }
         return objectFunc(object, iteratee);
@@ -3609,7 +3609,7 @@
     function createReduce(arrayFunc, eachFunc) {
       return function(collection, iteratee, accumulator, thisArg) {
         var initFromArray = arguments.length < 3;
-        return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+        return (typeof iteratee == 'function' && thisArg === undefined && isArray(collection))
           ? arrayFunc(collection, iteratee, accumulator, initFromArray)
           : baseReduce(collection, getCallback(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
       };
@@ -3878,7 +3878,7 @@
             ? customizer(othValue, arrValue, index)
             : customizer(arrValue, othValue, index);
         }
-        if (typeof result == 'undefined') {
+        if (result === undefined) {
           // Recursively compare arrays (susceptible to call stack limits).
           if (isLoose) {
             var othIndex = othLength;
@@ -3977,7 +3977,7 @@
               ? customizer(othValue, objValue, key)
               : customizer(objValue, othValue, key);
           }
-          if (typeof result == 'undefined') {
+          if (result === undefined) {
             // Recursively compare objects (susceptible to call stack limits).
             result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB);
           }
@@ -4519,7 +4519,7 @@
       baseForIn(value, function(subValue, key) {
         result = key;
       });
-      return typeof result == 'undefined' || hasOwnProperty.call(value, result);
+      return result === undefined || hasOwnProperty.call(value, result);
     }
 
     /**
@@ -6354,7 +6354,7 @@
       if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
         predicate = null;
       }
-      if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+      if (typeof predicate != 'function' || thisArg !== undefined) {
         predicate = getCallback(predicate, thisArg, 3);
       }
       return func(collection, predicate);
@@ -7168,7 +7168,7 @@
       if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
         predicate = null;
       }
-      if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+      if (typeof predicate != 'function' || thisArg !== undefined) {
         predicate = getCallback(predicate, thisArg, 3);
       }
       return func(collection, predicate);
@@ -8212,7 +8212,7 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      start = nativeMax(typeof start == 'undefined' ? (func.length - 1) : (+start || 0), 0);
+      start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
       return function() {
         var args = arguments,
             index = -1,
@@ -8681,7 +8681,7 @@
         return value === other;
       }
       var result = customizer ? customizer(value, other) : undefined;
-      return typeof result == 'undefined' ? baseIsEqual(value, other, customizer) : !!result;
+      return result === undefined ? baseIsEqual(value, other, customizer) : !!result;
     }
 
     /**
@@ -8842,7 +8842,7 @@
             value = source[key];
 
         if (isStrictComparable(value)) {
-          return value === object[key] && (typeof value != 'undefined' || (key in object));
+          return value === object[key] && (value !== undefined || (key in object));
         }
       }
       var values = Array(length),
@@ -9077,7 +9077,7 @@
      * // => false
      */
     function isUndefined(value) {
-      return typeof value == 'undefined';
+      return value === undefined;
     }
 
     /**
@@ -9162,7 +9162,7 @@
      *
      * // using a customizer callback
      * var defaults = _.partialRight(_.assign, function(value, other) {
-     *   return typeof value == 'undefined' ? other : value;
+     *   return _.isUndefined(value) ? other : value;
      * });
      *
      * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
@@ -9498,7 +9498,7 @@
       var pathKey = isArray(path) ? undefined : (path + ''),
           result = baseGet(object, toPath(path), pathKey);
 
-      return typeof result == 'undefined' ? defaultValue : result;
+      return result === undefined ? defaultValue : result;
     }
 
     /**
@@ -9528,7 +9528,7 @@
         return false;
       }
       var pathKey = isArray(path) ? undefined : (path + ''),
-          result = typeof pathKey != 'undefined' && hasOwnProperty.call(object, path);
+          result = pathKey !== undefined && hasOwnProperty.call(object, path);
 
       if (!result && !isKey(path)) {
         path = toPath(path);
@@ -9948,7 +9948,7 @@
         path = last(path);
       }
       var result = object == null ? undefined : toObject(object)[path];
-      if (typeof result == 'undefined') {
+      if (result === undefined) {
         result = defaultValue;
       }
       return isFunction(result) ? result.call(object) : result;
@@ -10301,7 +10301,7 @@
       target = (target + '');
 
       var length = string.length;
-      position = typeof position == 'undefined'
+      position = position === undefined
         ? length
         : nativeMin(position < 0 ? 0 : (+position || 0), length);
 
@@ -12121,7 +12121,7 @@
       start = start == null ? 0 : (+start || 0);
       var result = start < 0 ? this.takeRight(-start) : this.drop(start);
 
-      if (typeof end != 'undefined') {
+      if (end !== undefined) {
         end = (+end || 0);
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
       }

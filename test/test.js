@@ -13139,6 +13139,14 @@
       });
     });
 
+    test('`_.' + methodName + '` should handle complex paths', 2, function() {
+      var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { 'e': 5 } } } } } };
+
+      _.each(['a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'].e', ['a', '-1.23', '["b"]', 'c', "['d']", 'e']], function(path) {
+        strictEqual(func(object, path), 5);
+      });
+    });
+
     test('`_.' + methodName + '` should return `undefined` when `object` is nullish', 4, function() {
       _.each(['constructor', ['constructor']], function(path) {
         strictEqual(func(null, path), undefined);
@@ -13592,6 +13600,16 @@
         deepEqual(object, index ? {} : { '': 1 });
         _.set(object, paths[1], 2);
         deepEqual(object, { '': 2 });
+      });
+    });
+
+    test('should handle complex paths', 2, function() {
+      var object = { 'a': { '1.23': { '["b"]': { 'c': { "['d']": { 'e': 5 } } } } } };
+
+      _.each(['a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'].e', ['a', '-1.23', '["b"]', 'c', "['d']", 'e']], function(path) {
+        _.set(object, path, 6);
+        strictEqual(object.a[-1.23]['["b"]'].c["['d']"].e, 6);
+        object.a[-1.23]['["b"]'].c["['d']"].e = 5;
       });
     });
 

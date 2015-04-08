@@ -89,7 +89,7 @@
 
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]+|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
-      rePropName = /[^.[\]]+|\[(?:(\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
+      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
 
   /**
    * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
@@ -101,6 +101,9 @@
 
   /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
   var reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
+
+  /** Used to match backslashes in property paths. */
+  var reEscapeChar = /\\(\\)?/g;
 
   /** Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components). */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
@@ -4584,7 +4587,7 @@
       }
       var result = [];
       baseToString(value).replace(rePropName, function(match, number, quote, string) {
-        result.push(quote ? string : (number || match));
+        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
       });
       return result;
     }

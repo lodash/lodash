@@ -8051,7 +8051,7 @@
       strictEqual(_.isMatch(object1, object2), false);
     });
 
-    test('should work when `object` is nullish', 1, function() {
+    test('should return `false` when `object` is nullish', 1, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(false)),
           source = { 'a': 1 };
@@ -9518,7 +9518,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work when `object` is nullish', 1, function() {
+    test('should return `false` when `object` is nullish', 1, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false)),
           matches = _.matches({ 'a': 1 });
@@ -9527,6 +9527,18 @@
         try {
           return index ? matches(value) : matches();
         } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `true` when comparing an empty `source`', 1, function() {
+      var object = { 'a': 1 },
+          expected = _.map(empties, _.constant(true));
+
+      var actual = _.map(empties, function(value) {
+        var matches = _.matches(value);
+        return matches(object);
       });
 
       deepEqual(actual, expected);
@@ -9571,18 +9583,6 @@
         strictEqual(matches(object), true);
         strictEqual(matches(source), false);
       });
-    });
-
-    test('should return `true` when comparing an empty `source`', 1, function() {
-      var object = { 'a': 1 },
-          expected = _.map(empties, _.constant(true));
-
-      var actual = _.map(empties, function(value) {
-        var matches = _.matches(value);
-        return matches(object);
-      });
-
-      deepEqual(actual, expected);
     });
 
     test('should return `true` when comparing a `source` of empty arrays and objects', 1, function() {
@@ -9796,7 +9796,7 @@
       });
     });
 
-    test('should work when `object` is nullish', 2, function() {
+    test('should return `false` when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false));
 
@@ -9813,7 +9813,7 @@
       });
     });
 
-    test('should work with deep paths when `object` is nullish', 2, function() {
+    test('should return `false` with deep paths when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false));
 
@@ -9837,6 +9837,17 @@
         var matches = _.matchesProperty(path, 1);
         strictEqual(matches(object), false);
       });
+    });
+
+    test('should return `true` when comparing a `value` of empty arrays and objects', 1, function() {
+      var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
+          matches = _.matchesProperty('a', { 'a': [], 'b': {} });
+
+      var actual = _.filter(objects, function(object) {
+        return matches({ 'a': object });
+      });
+
+      deepEqual(actual, objects);
     });
 
     test('should compare a variety of values', 2, function() {
@@ -9878,17 +9889,6 @@
         strictEqual(matches({ 'a': object }), true);
         strictEqual(matches({ 'a': source }), false);
       });
-    });
-
-    test('should return `true` when comparing a `value` of empty arrays and objects', 1, function() {
-      var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
-          matches = _.matchesProperty('a', { 'a': [], 'b': {} });
-
-      var actual = _.filter(objects, function(object) {
-        return matches({ 'a': object });
-      });
-
-      deepEqual(actual, objects);
     });
 
     test('should search arrays of `value` for values', 3, function() {
@@ -10467,7 +10467,7 @@
       });
     });
 
-    test('should work when `object` is nullish', 2, function() {
+    test('should return `undefined` when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
@@ -10482,7 +10482,7 @@
       });
     });
 
-    test('should work with deep paths when `object` is nullish', 2, function() {
+    test('should return `undefined` with deep paths when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
@@ -12073,7 +12073,7 @@
       });
     });
 
-    test('should work when `object` is nullish', 2, function() {
+    test('should return `undefined` when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
@@ -12088,7 +12088,7 @@
       });
     });
 
-    test('should work with deep paths when `object` is nullish', 2, function() {
+    test('should return `undefined` with deep paths when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
@@ -12193,7 +12193,7 @@
       });
     });
 
-    test('should work when `object` is nullish', 2, function() {
+    test('should return `undefined` when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
@@ -12207,7 +12207,7 @@
       });
     });
 
-    test('should work with deep paths when `object` is nullish', 2, function() {
+    test('should return `undefined` with deep paths when `object` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(undefined));
 
@@ -13146,7 +13146,7 @@
       });
     });
 
-    test('`_.' + methodName + '` should work with deep paths when `object` is nullish', 2, function() {
+    test('`_.' + methodName + '` should return `undefined` with deep paths when `object` is nullish', 2, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(undefined));
 

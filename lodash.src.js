@@ -1063,8 +1063,7 @@
       support.nodeTag = objToString.call(document) != objectTag;
 
       /**
-       * Detect if string indexes are non-enumerable
-       * (IE < 9, RingoJS, Rhino, Narwhal).
+       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino, Narwhal).
        *
        * @memberOf _.support
        * @type boolean
@@ -1072,8 +1071,7 @@
       support.nonEnumStrings = !propertyIsEnumerable.call('x', 0);
 
       /**
-       * Detect if properties shadowing those on `Object.prototype` are
-       * non-enumerable.
+       * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
        *
        * In IE < 9 an object's own properties, shadowing non-enumerable ones,
        * are made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
@@ -1095,11 +1093,11 @@
        * Detect if `Array#shift` and `Array#splice` augment array-like objects
        * correctly.
        *
-       * Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array `shift()`
-       * and `splice()` functions that fail to remove the last element, `value[0]`,
-       * of array-like objects even though the "length" property is set to `0`.
-       * The `shift()` method is buggy in compatibility modes of IE 8, while `splice()`
-       * is buggy regardless of mode in IE < 9.
+       * Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array
+       * `shift()` and `splice()` functions that fail to remove the last element,
+       * `value[0]`, of array-like objects even though the "length" property is
+       * set to `0`. The `shift()` method is buggy in compatibility modes of IE 8,
+       * while `splice()` is buggy regardless of mode in IE < 9.
        *
        * @memberOf _.support
        * @type boolean
@@ -4575,24 +4573,6 @@
     }
 
     /**
-     * Converts `value` to property path array if it is not one.
-     *
-     * @private
-     * @param {*} value The value to process.
-     * @returns {Array} Returns the property path array.
-     */
-    function toPath(value) {
-      if (isArray(value)) {
-        return value;
-      }
-      var result = [];
-      baseToString(value).replace(rePropName, function(match, number, quote, string) {
-        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
-      });
-      return result;
-    }
-
-    /**
      * Converts `value` to an object if it is not one.
      *
      * @private
@@ -4611,6 +4591,24 @@
         return result;
       }
       return isObject(value) ? value : Object(value);
+    }
+
+    /**
+     * Converts `value` to property path array if it is not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Array} Returns the property path array.
+     */
+    function toPath(value) {
+      if (isArray(value)) {
+        return value;
+      }
+      var result = [];
+      baseToString(value).replace(rePropName, function(match, number, quote, string) {
+        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+      });
+      return result;
     }
 
     /**
@@ -9531,7 +9529,7 @@
         object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         result = object != null && hasOwnProperty.call(object, last(path));
       }
-      return result;
+      return result || (lodash.support.nonEnumStrings && isString(object) && isIndex(path, object.length));
     }
 
     /**

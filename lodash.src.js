@@ -9512,9 +9512,15 @@
      * @returns {boolean} Returns `true` if `path` is a direct property, else `false`.
      * @example
      *
-     * var object = { 'a': 1, 'b': 2, 'c': 3 };
+     * var object = { 'a': { 'b': { 'c': 3 } } };
      *
-     * _.has(object, 'b');
+     * _.has(object, 'a');
+     * // => true
+     *
+     * _.has(object, 'a.b.c');
+     * // => true
+     *
+     * _.has(object, ['a', 'b', 'c']);
      * // => true
      */
     function has(object, path) {

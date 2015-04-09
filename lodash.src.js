@@ -3219,14 +3219,14 @@
       return restParam(function(object, sources) {
         var index = -1,
             length = object == null ? 0 : sources.length,
-            customizer = sources[length - 2],
-            thisArg = sources[length - 1],
-            guard = sources[2];
+            customizer = length > 2 && sources[length - 2],
+            guard = length > 2 && sources[2],
+            thisArg = length > 1 && sources[length - 1];
 
-        if (length > 2 && typeof customizer == 'function') {
+        if (typeof customizer == 'function') {
           customizer = bindCallback(customizer, thisArg, 5);
           length -= 2;
-        } else if (length > 1) {
+        } else {
           customizer = typeof thisArg == 'function' ? thisArg : null;
           length -= (customizer ? 1 : 0);
         }

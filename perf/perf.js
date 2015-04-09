@@ -306,6 +306,10 @@
       }\
       var strNumbers = numbers + "";\
       \
+      if (typeof assign != "undefined") {\
+        var _assign = _.assign || _.extend,\
+            lodashAssign = lodash.assign;\
+      }\
       if (typeof bind != "undefined") {\
         var thisArg = { "name": "fred" };\
         \
@@ -559,6 +563,32 @@
       .add(otherName, {
         'fn': '_chaining.map(square).filter(even).take(100).value()',
         'teardown': 'function chaining(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.assign`')
+      .add(buildName, {
+        'fn': 'lodashAssign({}, object)',
+        'teardown': 'function assign(){}'
+      })
+      .add(otherName, {
+        'fn': '_assign({}, object)',
+        'teardown': 'function assign(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.assign` with multiple sources')
+      .add(buildName, {
+        'fn': 'lodashAssign({}, object, object)',
+        'teardown': 'function assign(){}'
+      })
+      .add(otherName, {
+        'fn': '_assign({}, object, object)',
+        'teardown': 'function assign(){}'
       })
   );
 
@@ -861,18 +891,6 @@
         _.every(object, function(num) {\
           return num < limit;\
         })'
-      )
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.extend`')
-      .add(buildName, '\
-        lodash.extend({}, object)'
-      )
-      .add(otherName, '\
-        _.extend({}, object)'
       )
   );
 

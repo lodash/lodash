@@ -9927,19 +9927,19 @@
      * @returns {*} Returns the resolved value.
      * @example
      *
-     * var object = { 'user': 'fred', 'age': _.constant(40) };
+     * var object = { 'a': [{ 'b': { 'c1': 3, 'c2': _.constant(4) } }] };
      *
-     * _.result(object, 'user');
-     * // => 'fred'
+     * _.result(object, 'a[0].b.c1');
+     * // => 3
      *
-     * _.result(object, 'age');
-     * // => 40
+     * _.result(object, 'a[0].b.c2');
+     * // => 4
      *
-     * _.result(object, 'status', 'busy');
-     * // => 'busy'
+     * _.result(object, 'a.b.c', 'default');
+     * // => 'default'
      *
-     * _.result(object, 'status', _.constant('busy'));
-     * // => 'busy'
+     * _.result(object, 'a.b.c', _.constant('default'));
+     * // => 'default'
      */
     function result(object, path, defaultValue) {
       if (!isKey(path, object)) {
@@ -9967,10 +9967,10 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * var object = { 'a': { 'b': { 'c': 3 } } };
+     * var object = { 'a': [{ 'b': { 'c': 3 } }] };
      *
-     * _.set(object, 'a.b.c', 4);
-     * console.log(object.a.b.c);
+     * _.set(object, 'a[0].b.c', 4);
+     * console.log(object.a[0].b.c);
      * // => 4
      *
      * _.set(object, 'x[0].y.z', 5);

@@ -11254,12 +11254,52 @@
       return baseMatchesProperty(path, baseClone(value, true));
     }
 
+    /**
+     * Creates a function which invokes the method at `path` on a given object.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Array|string} path The path of the method to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var objects = [
+     *  { 'a': _.constant(2) },
+     *  { 'a': _.constant(1) }
+     * ];
+     *
+     * _.map(objects, _.method('a'));
+     * // => [2, 1]
+     *
+     * _.invoke(_.sortBy(objects, _.method('a')), 'a');
+     * // => [1, 2]
+     */
     var method = restParam(function(path, args) {
       return function(object) {
         return baseMethod(object, path, args);
       }
     });
 
+    /**
+     * The opposite of `_.method`; this method creates a function which invokes
+     * the method at a given path on `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} object The object to inspect.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var object = { 'a': _.constant(3), 'b': _.constant(1), 'c': _.constant(2) };
+     *
+     * _.map(['a', 'c'], _.methodOf(object));
+     * // => [3, 2]
+     *
+     * _.sortBy(['a', 'b', 'c'], _.methodOf(object));
+     * // => ['b', 'c', 'a']
+     */
     var methodOf = restParam(function(object, args) {
       return function(path) {
         return baseMethod(object, path, args);
@@ -11394,7 +11434,7 @@
     }
 
     /**
-     * Creates a function which returns the property value of `path` on a
+     * Creates a function which returns the property value at `path` on a
      * given object.
      *
      * @static
@@ -11404,18 +11444,16 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var users = [
-     *   { 'user': 'fred' },
-     *   { 'user': 'barney' }
+     * var objects = [
+     *   { 'a': 2 },
+     *   { 'a': 1 }
      * ];
      *
-     * var getName = _.property('user');
+     * _.map(objects, _.property('a'));
+     * // => [2, 1]
      *
-     * _.map(users, getName);
-     * // => ['fred', 'barney']
-     *
-     * _.pluck(_.sortBy(users, getName), 'user');
-     * // => ['barney', 'fred']
+     * _.pluck(_.sortBy(objects, _.property('a')), 'a');
+     * // => [1, 2]
      */
     function property(path) {
       return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
@@ -11423,7 +11461,7 @@
 
     /**
      * The opposite of `_.property`; this method creates a function which returns
-     * the property value of a given path on `object`.
+     * the property value at a given path on `object`.
      *
      * @static
      * @memberOf _

@@ -775,6 +775,7 @@
         getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         push = arrayProto.push,
+        preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
@@ -796,13 +797,13 @@
 
     /** Used as `baseAssign`. */
     var nativeAssign = (function() {
-      var object = Object('x'),
-          func = isNative(func = Object.assign) && func;
+      var object = { '1': 0 },
+          func = preventExtensions && isNative(func = Object.assign) && func;
 
       // Avoid `Object.assign` in Firefox 34-37 which have an early implementation
       // with a slower try/catch behavior. See https://bugzilla.mozilla.org/show_bug.cgi?id=1103344
       // for more details.
-      try { func(object, 'xo'); } catch(e) {}
+      try { func(preventExtensions(object), 'xo'); } catch(e) {}
       return !object[1] && func;
     }());
 

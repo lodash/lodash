@@ -14940,7 +14940,7 @@
       } catch(e) {
         pass = false;
       }
-      ok(pass);
+      ok(pass, '`data` value');
 
       pass = true;
 
@@ -14949,7 +14949,7 @@
       } catch(e) {
         pass = false;
       }
-      ok(pass);
+      ok(pass, '`options` value');
     });
 
     test('should expose the source for compiled templates', 1, function() {

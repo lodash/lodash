@@ -4145,7 +4145,9 @@
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the array of symbols.
      */
-    var getSymbols = getOwnPropertySymbols || constant([]);
+    var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
+      return object == null ? [] : getOwnPropertySymbols(toObject(object));
+    };
 
     /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.

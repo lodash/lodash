@@ -2664,16 +2664,6 @@
       }
     }
 
-    function baseMethod(object, path, args) {
-      if (!isKey(path, object)) {
-        path = toPath(path);
-        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-        path = last(path);
-      }
-      var func = object == null ? object : object[path];
-      return func == null ? undefined : func.apply(object, args);
-    }
-
     /**
      * The base implementation of `_.property` without support for deep paths.
      *
@@ -4270,6 +4260,25 @@
           result.lastIndex = object.lastIndex;
       }
       return result;
+    }
+
+    /**
+     * Invokes the method at `path` on `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the method to invoke.
+     * @param {Array} args The arguments to invoke the method with.
+     * @returns {*} Returns the result of the invoked method.
+     */
+    function invokePath(object, path, args) {
+      if (!isKey(path, object)) {
+        path = toPath(path);
+        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+        path = last(path);
+      }
+      var func = object == null ? object : object[path];
+      return func == null ? undefined : func.apply(object, args);
     }
 
     /**
@@ -6779,16 +6788,16 @@
     });
 
     /**
-     * Invokes the method named by `methodName` on each element in `collection`,
-     * returning an array of the results of each invoked method. Any additional
-     * arguments are provided to each invoked method. If `methodName` is a function
-     * it is invoked for, and `this` bound to, each element in `collection`.
+     * Invokes the method at `path` on each element in `collection`, returning
+     * an array of the results of each invoked method. Any additional arguments
+     * are provided to each invoked method. If `methodName` is a function it is
+     * invoked for, and `this` bound to, each element in `collection`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|string} methodName The name of the method to invoke or
+     * @param {Array|Function|string} path The path of the method to invoke or
      *  the function invoked per iteration.
      * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Array} Returns the array of results.
@@ -6800,15 +6809,14 @@
      * _.invoke([123, 456], String.prototype.split, '');
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
-    var invoke = restParam(function(collection, methodName, args) {
+    var invoke = restParam(function(collection, path, args) {
       var index = -1,
-          isFunc = typeof methodName == 'function',
+          isFunc = typeof path == 'function',
           length = getLength(collection),
           result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
-        var func = isFunc ? methodName : (value == null ? value : value[methodName]);
-        result[++index] = func == null ? undefined : func.apply(value, args);
+        result[++index] = isFunc ? path.apply(value, args) : invokePath(value, path, args);
       });
       return result;
     });
@@ -11322,19 +11330,19 @@
      * @example
      *
      * var objects = [
-     *  { 'a': _.constant(2) },
-     *  { 'a': _.constant(1) }
+     *   { 'a': { 'b': _.constant(2) } },
+     *   { 'a': { 'b': _.constant(1) } }
      * ];
      *
-     * _.map(objects, _.method('a'));
+     * _.map(objects, _.method('a.b'));
      * // => [2, 1]
      *
-     * _.invoke(_.sortBy(objects, _.method('a')), 'a');
+     * _.invoke(_.sortBy(objects, _.method(['a', 'b'])), 'a.b');
      * // => [1, 2]
      */
     var method = restParam(function(path, args) {
       return function(object) {
-        return baseMethod(object, path, args);
+        return invokePath(object, path, args);
       }
     });
 
@@ -11345,21 +11353,25 @@
      * @static
      * @memberOf _
      * @category Utility
-     * @param {Object} object The object to inspect.
+     * @param {Object} object The object to query.
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var object = { 'a': _.constant(3), 'b': _.constant(1), 'c': _.constant(2) };
+     * var object = {
+     *   'a': { 'aa': _.constant(3) },
+     *   'b': { 'bb': _.constant(1) },
+     *   'c': { 'cc': _.constant(2) }
+     * };
      *
-     * _.map(['a', 'c'], _.methodOf(object));
+     * _.map(['a.aa', 'c.cc'], _.methodOf(object));
      * // => [3, 2]
      *
-     * _.sortBy(['a', 'b', 'c'], _.methodOf(object));
-     * // => ['b', 'c', 'a']
+     * _.map([['a', 'aa'], ['c', 'cc']], _.methodOf(object));
+     * // => [3, 2]
      */
     var methodOf = restParam(function(object, args) {
       return function(path) {
-        return baseMethod(object, path, args);
+        return invokePath(object, path, args);
       };
     });
 

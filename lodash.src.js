@@ -4147,7 +4147,7 @@
      * @returns {Array} Returns the array of symbols.
      */
     var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
-      return object == null ? [] : getOwnPropertySymbols(toObject(object));
+      return getOwnPropertySymbols(toObject(object));
     };
 
     /**

@@ -5767,6 +5767,25 @@
       deepEqual(func({}, new Foo), { 'a': 1 });
     });
 
+    test('`_.' + methodName + '` should assign own symbols', 2, function() {
+      if (Symbol) {
+        var symbol1 = Symbol('a'),
+            symbol2 = Symbol('b');
+
+        var Foo = function() {
+          this[symbol1] = 1;
+        };
+        Foo.prototype[symbol2] = 2;
+
+        var actual = func({}, new Foo);
+        strictEqual(actual[symbol1], 1);
+        strictEqual(actual[symbol2], undefined);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
       var object = {
         'constructor': '0',
@@ -5881,7 +5900,7 @@
       if (isMerge) {
         expected.push([undefined, 2, 'b', sourceValue, sourceValue]);
       }
-      deepEqual(argsList, expected, 'non-primitive property values');
+      deepEqual(argsList, expected, 'object property values');
     });
 
     test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {

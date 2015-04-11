@@ -1777,8 +1777,10 @@
      * @returns {Object} Returns `object`.
      */
     function assignWith(object, source, customizer) {
+      var props = keys(source);
+      push.apply(props, getSymbols(source));
+
       var index = -1,
-          props = keys(source),
           length = props.length;
 
       while (++index < length) {
@@ -2573,22 +2575,32 @@
         return object;
       }
       var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
-      (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
+      if (!isSrcArr) {
+        var props = keys(source);
+        push.apply(props, getSymbols(source));
+      }
+      arrayEach(props || source, function(srcValue, key) {
+        if (props) {
+          key = srcValue;
+          srcValue = source[key];
+        }
         if (isObjectLike(srcValue)) {
           stackA || (stackA = []);
           stackB || (stackB = []);
-          return baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+          baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
         }
-        var value = object[key],
-            result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-            isCommon = result === undefined;
+        else {
+          var value = object[key],
+              result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+              isCommon = result === undefined;
 
-        if (isCommon) {
-          result = srcValue;
-        }
-        if ((isSrcArr || result !== undefined) &&
-            (isCommon || (result === result ? (result !== value) : (value === value)))) {
-          object[key] = result;
+          if (isCommon) {
+            result = srcValue;
+          }
+          if ((isSrcArr || result !== undefined) &&
+              (isCommon || (result === result ? (result !== value) : (value === value)))) {
+            object[key] = result;
+          }
         }
       });
       return object;

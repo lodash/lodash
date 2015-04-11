@@ -11330,14 +11330,14 @@
      * @example
      *
      * var objects = [
-     *   { 'a': { 'b': _.constant(2) } },
-     *   { 'a': { 'b': _.constant(1) } }
+     *   { 'a': { 'b': { 'c': _.constant(2) } } },
+     *   { 'a': { 'b': { 'c': _.constant(1) } } }
      * ];
      *
-     * _.map(objects, _.method('a.b'));
+     * _.map(objects, _.method('a.b.c'));
      * // => [2, 1]
      *
-     * _.invoke(_.sortBy(objects, _.method(['a', 'b'])), 'a.b');
+     * _.invoke(_.sortBy(objects, _.method(['a', 'b', 'c'])), 'a.b.c');
      * // => [1, 2]
      */
     var method = restParam(function(path, args) {
@@ -11357,17 +11357,14 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var object = {
-     *   'a': { 'aa': _.constant(3) },
-     *   'b': { 'bb': _.constant(1) },
-     *   'c': { 'cc': _.constant(2) }
-     * };
+     * var array = _.times(3, _.constant),
+     *     object = { 'a': array, 'b': array, 'c': array };
      *
-     * _.map(['a.aa', 'c.cc'], _.methodOf(object));
-     * // => [3, 2]
+     * _.map(['a[2]', 'c[0]'], _.methodOf(object));
+     * // => [2, 0]
      *
-     * _.map([['a', 'aa'], ['c', 'cc']], _.methodOf(object));
-     * // => [3, 2]
+     * _.map([['a', '2'], ['c', '0']], _.methodOf(object));
+     * // => [2, 0]
      */
     var methodOf = restParam(function(object, args) {
       return function(path) {
@@ -11514,14 +11511,14 @@
      * @example
      *
      * var objects = [
-     *   { 'a': 2 },
-     *   { 'a': 1 }
+     *   { 'a': { 'b': { 'c': 2 } } },
+     *   { 'a': { 'b': { 'c': 1 } } }
      * ];
      *
-     * _.map(objects, _.property('a'));
+     * _.map(objects, _.property('a.b.c'));
      * // => [2, 1]
      *
-     * _.pluck(_.sortBy(objects, _.property('a')), 'a');
+     * _.pluck(_.sortBy(objects, _.property(['a', 'b', 'c'])), 'a.b.c');
      * // => [1, 2]
      */
     function property(path) {
@@ -11535,17 +11532,18 @@
      * @static
      * @memberOf _
      * @category Utility
-     * @param {Object} object The object to inspect.
+     * @param {Object} object The object to query.
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var object = { 'a': 3, 'b': 1, 'c': 2 };
+     * var array = [0, 1, 2],
+     *     object = { 'a': array, 'b': array, 'c': array };
      *
-     * _.map(['a', 'c'], _.propertyOf(object));
-     * // => [3, 2]
+     * _.map(['a[2]', 'c[0]'], _.propertyOf(object));
+     * // => [2, 0]
      *
-     * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
-     * // => ['b', 'c', 'a']
+     * _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
+     * // => [2, 0]
      */
     function propertyOf(object) {
       return function(path) {

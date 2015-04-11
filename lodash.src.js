@@ -10610,6 +10610,40 @@
     }
 
     /**
+     * Replace all occurrences of the pattern with the replacement string.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string] The subject to change.
+     * @param {string} [pattern] The pattern to replace.
+     * @param {string} [replacement] The replacement value.
+     * @returns {string} Returns the subject with replaced pattern.
+     * @example
+     *
+     * _.replaceAll('a/b/c', '/', '-');
+     * // => 'a-b-c'
+     *
+     * _.replaceAll('a/b/c', '/', '//');
+     * // => 'a//b//c'
+     *
+     * _.replaceAll('aabbaabbaacc', 'aa', 'd');
+     * // => 'dbbdbbdcc'
+     */
+    function replaceAll(string, pattern, replacement) {
+      string = baseToString(string);
+      pattern = baseToString(pattern);
+
+      if (!string || !pattern) {
+        return string;
+      }
+
+      replacement = baseToString(replacement);
+
+      return string.replace(RegExp(escapeRegExp(pattern), 'g'), replacement);
+    }
+
+    /**
      * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).
      *
      * @static
@@ -12036,6 +12070,7 @@
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
+    lodash.replaceAll = replaceAll;
     lodash.result = result;
     lodash.runInContext = runInContext;
     lodash.size = size;

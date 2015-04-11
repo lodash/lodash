@@ -13064,6 +13064,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.replaceAll');
+
+  (function() {
+    test('should replace all occurences of pattern in a string', 2, function() {
+      strictEqual(_.replaceAll('abc/def/ghi', '/', '-'), 'abc-def-ghi');
+      strictEqual(_.replaceAll('abc||def||ghi', '||', '.'), 'abc.def.ghi');
+    });
+
+    test('should replace nested patterns', 1, function() {
+      strictEqual(_.replaceAll('a/b/c', '/', '//'), 'a//b//c');
+    });
+
+    test('should coerce `pattern` and `replacement` to a string', 1, function() {
+      strictEqual(_.replaceAll('123456', 3, '4'), '124456');
+    });
+
+    test('should coerce `replacement` to a string', 1, function() {
+      strictEqual(_.replaceAll('123', '2', { 'toString': _.constant('4') }), '143');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.result');
 
   (function() {
@@ -17274,6 +17297,7 @@
       'padLeft',
       'padRight',
       'repeat',
+      'replaceAll',
       'snakeCase',
       'trim',
       'trimLeft',
@@ -17373,7 +17397,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 217, function() {
+    test('should accept falsey arguments', 218, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

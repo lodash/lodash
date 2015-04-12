@@ -2475,9 +2475,12 @@
      * @returns {Array} Returns the new mapped array.
      */
     function baseMap(collection, iteratee) {
-      var result = [];
+      var index = -1,
+          length = getLength(collection),
+          result = isLength(length) ? Array(length) : [];
+
       baseEach(collection, function(value, key, collection) {
-        result.push(iteratee(value, key, collection));
+        result[++index] = iteratee(value, key, collection);
       });
       return result;
     }

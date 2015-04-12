@@ -56,6 +56,7 @@
 				    fnToString = funcProto.toString,
 				    nativeString = fnToString.call(objectProto.toString),
 				    noop = function() {},
+				    parseInt = window.parseInt,
 				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
 				    reToString = /toString/g,
 				    whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
@@ -88,6 +89,15 @@
 
 				setProperty(Date, '_now', Date.now);
 				setProperty(Date, 'now', noop);
+
+				setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
+				setProperty(Object, 'getOwnPropertySymbols', (function() {
+					function getOwnPropertySymbols() {
+						return [];
+					}
+					setProperty(getOwnPropertySymbols, 'toString', createToString('getOwnPropertySymbols'));
+					return getOwnPropertySymbols;
+				}()));
 
 				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
 				setProperty(Object, 'getPrototypeOf', noop);
@@ -150,9 +160,9 @@
 				setProperty(window, 'WeakMap', noop);
 
 				setProperty(window, '_parseInt', parseInt);
-				setProperty(window, 'parseInt', (function(_parseInt) {
+				setProperty(window, 'parseInt', (function() {
 					var checkStr = whitespace + '08',
-					    isFaked = _parseInt(checkStr) != 8,
+					    isFaked = parseInt(checkStr) != 8,
 					    reHexPrefix = /^0[xX]/,
 					    reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
 
@@ -162,9 +172,9 @@
 							return 0;
 						}
 						value = String(value == null ? '' : value).replace(reTrim, '');
-						return _parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
+						return parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
 					};
-				}(_parseInt)));
+				}()));
 
 				// fake lack of DOM support
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
@@ -193,6 +203,11 @@
 					setProperty(Date, 'now', Date._now);
 				} else {
 					delete Date.now;
+				}
+				if (Object._getOwnPropertySymbols) {
+					setProperty(Object, 'getOwnPropertySymbols', Object._getOwnPropertySymbols);
+				} else {
+					delete Object.getOwnPropertySymbols;
 				}
 				if (Object._getPrototypeOf) {
 					setProperty(Object, 'getPrototypeOf', Object._getPrototypeOf);
@@ -240,10 +255,10 @@
 
 				delete Array._isArray;
 				delete Date._now;
-				delete funcProto._method;
-				delete Object._create;
+				delete Object._getOwnPropertySymbols;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
+				delete funcProto._method;
 				delete objectProto._propertyIsEnumerable;
 			}
 

@@ -460,6 +460,15 @@
     var _now = Date.now;
     setProperty(Date, 'now', _.noop);
 
+    var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
+    setProperty(Object, 'getOwnPropertySymbols', (function() {
+      function getOwnPropertySymbols() {
+        return [];
+      }
+      setProperty(getOwnPropertySymbols, 'toString', createToString('getOwnPropertySymbols'));
+      return getOwnPropertySymbols;
+    }()));
+
     var _getPrototypeOf = Object.getPrototypeOf;
     setProperty(Object, 'getPrototypeOf', _.noop);
 
@@ -552,6 +561,7 @@
     // Restore built-in methods.
     setProperty(Array,  'isArray', _isArray);
     setProperty(Date,   'now', _now);
+    setProperty(Object, 'getOwnPropertySymbols', _getOwnPropertySymbols);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
@@ -698,7 +708,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 12, function() {
+    test('should avoid overwritten native methods', 13, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -723,6 +733,13 @@
           actual = null;
         }
         ok(typeof actual == 'number', message('_.now', 'Date.now'));
+
+        try {
+          actual = lodashBizarro.merge({}, object);
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, object, message('_.merge', 'Object.getOwnPropertySymbols'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -792,7 +809,7 @@
         }
       }
       else {
-        skipTest(12);
+        skipTest(13);
       }
     });
   }());

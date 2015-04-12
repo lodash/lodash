@@ -15371,7 +15371,7 @@
       }
     });
 
-    asyncTest('_.' + methodName + ' should call `func` with the correct `this` binding', 1, function() {
+    asyncTest('_.' + methodName + ' should invoke `func` with the correct `this` binding', 1, function() {
       if (!(isRhino && isModularize)) {
         var object = {
           'funced': func(function() { actual.push(this); }, 32)

@@ -6885,7 +6885,7 @@
     });
 
     test('should invoke deep property methods with the correct `this` binding', 2, function() {
-      var object = { 'a': { 'b': function() { this.c; }, 'c': 1 } };
+      var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } };
 
       _.each(['a.b', ['a', 'b']], function(path) {
         deepEqual(_.invoke([object], path), [1]);
@@ -10546,10 +10546,10 @@
       });
     });
 
-    test('should call deep property methods with the correct `this` binding', 2, function() {
-      var object = { 'deep': { 'a': 1, 'b': function() { return this.a; } } };
+    test('should invoke deep property methods with the correct `this` binding', 2, function() {
+      var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } };
 
-      _.each(['deep.b', ['deep', 'b']], function(path) {
+      _.each(['a.b', ['a', 'b']], function(path) {
         var method = _.method(path);
         strictEqual(method(object), 1);
       });
@@ -10678,11 +10678,11 @@
       });
     });
 
-    test('should call deep property methods with the correct `this` binding', 2, function() {
-      var object = { 'deep': { 'a': 1, 'b': function() { return this.a; } } },
+    test('should invoke deep property methods with the correct `this` binding', 2, function() {
+      var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } },
           methodOf = _.methodOf(object);
 
-      _.each(['deep.b', ['deep', 'b']], function(path) {
+      _.each(['a.b', ['a', 'b']], function(path) {
         strictEqual(methodOf(path), 1);
       });
     });
@@ -13099,19 +13099,19 @@
       'b': function() { return this.a; }
     };
 
-    test('should execute function values', 1, function() {
+    test('should invoke function values', 1, function() {
       strictEqual(_.result(object, 'b'), 1);
     });
 
-    test('should execute default function values', 1, function() {
+    test('should invoke default function values', 1, function() {
       var actual = _.result(object, 'c', object.b);
       strictEqual(actual, 1);
     });
 
-    test('should call deep property methods with the correct `this` binding', 2, function() {
-      var value = { 'deep': object };
+    test('should invoke deep property methods with the correct `this` binding', 2, function() {
+      var value = { 'a': object };
 
-      _.each(['deep.b', ['deep', 'b']], function(path) {
+      _.each(['a.b', ['a', 'b']], function(path) {
         strictEqual(_.result(value, path), 1);
       });
     });

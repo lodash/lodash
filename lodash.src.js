@@ -2842,19 +2842,21 @@
      * @param {boolean[]} orders The sort orders of `props`.
      * @returns {Array} Returns the new sorted array.
      */
-    function baseSortByOrder(collection, props, orders) {
-      var index = -1,
-          length = getLength(collection),
-          result = isLength(length) ? Array(length) : [];
+    function baseSortByOrder(collection, comparitors, orders) {
+      var callback = getCallback();
 
-      baseEach(collection, function(value) {
-        var length = props.length,
+      comparitors = arrayMap(comparitors, function(comparitor) {
+        return callback(comparitor);
+      });
+
+      var result = baseMap(collection, function(value, index) {
+        var length = comparitors.length,
             criteria = Array(length);
 
         while (length--) {
-          criteria[length] = value == null ? undefined : value[props[length]];
+          criteria[length] = comparitors[length](value);
         }
-        result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
+        return { 'criteria': criteria, 'index': index, 'value': value };
       });
 
       return baseSortBy(result, function(object, other) {

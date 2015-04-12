@@ -14168,10 +14168,10 @@
     }
 
     var objects = [
-      { 'a': 'x', 'b': 3 },
-      { 'a': 'y', 'b': 4 },
-      { 'a': 'x', 'b': 1 },
-      { 'a': 'y', 'b': 2 }
+      { 'a': 'x', 'b': 3, c: 2 },
+      { 'a': 'y', 'b': 4, c: 1 },
+      { 'a': 'x', 'b': 1, c: 4},
+      { 'a': 'y', 'b': 2, c: 3}
     ];
 
     var stableOrder = [
@@ -14190,6 +14190,14 @@
     test('`_.' + methodName + '` should sort mutliple properties in ascending order', 1, function() {
       var actual = func(objects, ['a', 'b']);
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
+    });
+
+    test('`_.' + methodName + '` should permit function comparators', 1, function() {
+      function b(obj) {
+        return obj.b * obj.c;
+      }
+      var actual = func(objects, [b, 'a']);
+      deepEqual(actual, [objects[2], objects[1], objects[0], objects[3]]);
     });
 
     test('`_.' + methodName + '` should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {

@@ -2842,19 +2842,19 @@
      * @param {boolean[]} orders The sort orders of `props`.
      * @returns {Array} Returns the new sorted array.
      */
-    function baseSortByOrder(collection, comparitors, orders) {
+    function baseSortByOrder(collection, comparators, orders) {
       var callback = getCallback();
 
-      comparitors = arrayMap(comparitors, function(comparitor) {
+      comparators = arrayMap(comparators, function(comparitor) {
         return callback(comparitor);
       });
 
       var result = baseMap(collection, function(value, index) {
-        var length = comparitors.length,
+        var length = comparators.length,
             criteria = Array(length);
 
         while (length--) {
-          criteria[length] = comparitors[length](value);
+          criteria[length] = comparators[length](value);
         }
         return { 'criteria': criteria, 'index': index, 'value': value };
       });
@@ -7312,20 +7312,24 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(string|string[])} props The property names to sort by,
-     *  specified as individual property names or arrays of property names.
+     * @param {...(string|string[]|func[])} args The iteratees to sort by,
+     *  specified by a single, an array or multiple property names and functions.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 },
-     *   { 'user': 'barney', 'age': 26 },
-     *   { 'user': 'fred',   'age': 30 }
+     *   { 'user': 'barney', 'age': 36, 'years': 1},
+     *   { 'user': 'fred',   'age': 40, 'years': 5},
+     *   { 'user': 'barney', 'age': 26, 'years': 0},
+     *   { 'user': 'fred',   'age': 30, 'years': 3}
      * ];
      *
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
-     * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
+     * // => [['barney', 26, 0], ['barney', 40, 6], ['fred', 30, 3], ['fred', 36, 1]]
+     *
+     * function a(customer) {return customer.age - customer.years}
+     * _.sortByAll(users, a, 'age')
+     * // => [['barney', 26, 0], ['fred', 30, 3], ['barney', 40, 6], ['fred', 36, 1]]
      */
     var sortByAll = restParam(function(collection, args) {
       if (collection == null) {
@@ -7348,7 +7352,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string[]} props The property names to sort by.
+     * @param {string[]|func[]} comparators The iteratees to sort by.
      * @param {boolean[]} orders The sort orders of `props`.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {Array} Returns the new sorted array.
@@ -7365,20 +7369,20 @@
      * _.map(_.sortByOrder(users, ['user', 'age'], [true, false]), _.values);
      * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
      */
-    function sortByOrder(collection, props, orders, guard) {
+    function sortByOrder(collection, comparators, orders, guard) {
       if (collection == null) {
         return [];
       }
-      if (guard && isIterateeCall(props, orders, guard)) {
+      if (guard && isIterateeCall(comparators, orders, guard)) {
         orders = null;
       }
-      if (!isArray(props)) {
-        props = props == null ? [] : [props];
+      if (!isArray(comparators)) {
+        comparators = comparators == null ? [] : [comparators];
       }
       if (!isArray(orders)) {
         orders = orders == null ? [] : [orders];
       }
-      return baseSortByOrder(collection, props, orders);
+      return baseSortByOrder(collection, comparators, orders);
     }
 
     /**

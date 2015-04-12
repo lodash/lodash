@@ -7325,25 +7325,17 @@
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
-    function sortByAll() {
-      var args = arguments,
-          collection = args[0],
-          guard = args[3],
-          index = 0,
-          length = args.length - 1;
+    var sortByAll = restParam(function(collection, args) {
+      var guard = args[2];
 
       if (collection == null) {
         return [];
       }
-      var props = Array(length);
-      while (index < length) {
-        props[index] = args[++index];
+      if (guard && isIterateeCall(args[0], args[1], guard)) {
+        args = args[0];
       }
-      if (guard && isIterateeCall(args[1], args[2], guard)) {
-        props = args[1];
-      }
-      return baseSortByOrder(collection, baseFlatten(props), []);
-    }
+      return baseSortByOrder(collection, baseFlatten(args), []);
+    });
 
     /**
      * This method is like `_.sortByAll` except that it allows specifying the

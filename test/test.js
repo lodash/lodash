@@ -6883,6 +6883,14 @@
 
       deepEqual(actual, expected);
     });
+
+    test('should invoke deep property methods with the correct `this` binding', 2, function() {
+      var object = { 'a': { 'b': function() { this.c; }, 'c': 1 } };
+
+      _.each(['a.b', ['a', 'b']], function(path) {
+        deepEqual(_.invoke([object], path), [1]);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

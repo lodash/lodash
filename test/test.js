@@ -14197,7 +14197,7 @@
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], null, undefined]);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for methods like `_.reduce`', 1, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.reduce`', 3, function() {
       var objects = [
         { 'a': 'x', '0': 3 },
         { 'a': 'y', '0': 4 },
@@ -14205,14 +14205,20 @@
         { 'a': 'y', '0': 2 }
       ];
 
-      var funcs = [func, _.partialRight(func, 'bogus')],
-          expected = _.map(funcs, _.constant([objects[0], objects[2], objects[1], objects[3]]));
+      var funcs = [func, _.partialRight(func, 'bogus')];
 
-      var actual = _.map(funcs, function(func) {
-        return _.reduce([['a']], func, objects);
+      _.each(['a', 0, [0]], function(props, index) {
+        var expected = _.map(funcs, _.constant(index
+          ? [objects[2], objects[3], objects[0], objects[1]]
+          : [objects[0], objects[2], objects[1], objects[3]]
+        ));
+
+        var actual = _.map(funcs, function(func) {
+          return _.reduce([props], func, objects);
+        });
+
+        deepEqual(actual, expected);
       });
-
-      deepEqual(actual, expected);
     });
   });
 

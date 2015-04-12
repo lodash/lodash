@@ -7331,7 +7331,7 @@
       }
       var guard = args[2];
       if (guard && isIterateeCall(args[0], args[1], guard)) {
-        args = args[0];
+        args.length = 1;
       }
       return baseSortByOrder(collection, baseFlatten(args), []);
     });

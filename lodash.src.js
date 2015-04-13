@@ -2841,24 +2841,16 @@
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string[]} props The property names to sort by.
-     * @param {boolean[]} orders The sort orders of `props`.
+     * @param {Function[]|string[]} iteratees The iteratees to sort by.
+     * @param {boolean[]} orders The sort orders of `iteratees`.
      * @returns {Array} Returns the new sorted array.
      */
-    function baseSortByOrder(collection, comparators, orders) {
+    function baseSortByOrder(collection, iteratees, orders) {
       var callback = getCallback();
-
-      comparators = arrayMap(comparators, function(comparitor) {
-        return callback(comparitor);
-      });
+      iteratees = arrayMap(iteratees, function(iteratee) { return callback(iteratee); });
 
       var result = baseMap(collection, function(value, index) {
-        var length = comparators.length,
-            criteria = Array(length);
-
-        while (length--) {
-          criteria[length] = comparators[length](value);
-        }
+        var criteria = arrayMap(iteratees, function(iteratee) { return iteratee(value); });
         return { 'criteria': criteria, 'index': index, 'value': value };
       });
 
@@ -7293,99 +7285,101 @@
       if (collection == null) {
         return [];
       }
-      var index = -1,
-          length = getLength(collection),
-          result = isLength(length) ? Array(length) : [];
-
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = null;
       }
+      var index = -1;
       iteratee = getCallback(iteratee, thisArg, 3);
-      baseEach(collection, function(value, key, collection) {
-        result[++index] = { 'criteria': iteratee(value, key, collection), 'index': index, 'value': value };
+
+      var result = baseMap(collection, function(value, key, collection) {
+        return { 'criteria': iteratee(value, key, collection), 'index': ++index, 'value': value };
       });
       return baseSortBy(result, compareAscending);
     }
 
     /**
-     * This method is like `_.sortBy` except that it sorts by property names
-     * instead of an iteratee function.
+     * This method is like `_.sortBy` except that it can sort by multiple iteratees
+     * or property names.
+     *
+     * If a property name is provided for an iteratee the created `_.property`
+     * style callback returns the property value of the given element.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(string|string[]|func[])} args The iteratees to sort by,
-     *  specified by a single, an array or multiple property names and functions.
+     * @param {...(Function|Function[]|string|string[])} iteratees The iteratees
+     *  to sort by, specified as individual values or arrays of values.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 36, 'years': 1},
-     *   { 'user': 'fred',   'age': 40, 'years': 5},
-     *   { 'user': 'barney', 'age': 26, 'years': 0},
-     *   { 'user': 'fred',   'age': 30, 'years': 3}
+     *   { 'user': 'fred',   'age': 48 },
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 42 },
+     *   { 'user': 'barney', 'age': 34 }
      * ];
      *
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
-     * // => [['barney', 26, 0], ['barney', 40, 6], ['fred', 30, 3], ['fred', 36, 1]]
+     * // => [['barney', 34], ['barney', 36], ['fred', 42], ['fred', 48]]
      *
-     * function a(customer) {return customer.age - customer.years}
-     * _.sortByAll(users, a, 'age')
-     * // => [['barney', 26, 0], ['fred', 30, 3], ['barney', 40, 6], ['fred', 36, 1]]
+     * _.map(_.sortByAll(users, 'user', function(chr) {
+     *   return Math.floor(chr.age / 10);
+     * }), _.values);
+     * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
      */
-    var sortByAll = restParam(function(collection, args) {
+    var sortByAll = restParam(function(collection, iteratees) {
       if (collection == null) {
         return [];
       }
-      var guard = args[2];
-      if (guard && isIterateeCall(args[0], args[1], guard)) {
-        args.length = 1;
+      var guard = iteratees[2];
+      if (guard && isIterateeCall(iteratees[0], iteratees[1], guard)) {
+        iteratees.length = 1;
       }
-      return baseSortByOrder(collection, baseFlatten(args), []);
+      return baseSortByOrder(collection, baseFlatten(iteratees), []);
     });
 
     /**
      * This method is like `_.sortByAll` except that it allows specifying the
-     * sort orders of the property names to sort by. A truthy value in `orders`
-     * will sort the corresponding property name in ascending order while a
-     * falsey value will sort it in descending order.
+     * sort orders of the iteratees to sort by. A truthy value in `orders` will
+     * sort the corresponding property name in ascending order while a falsey
+     * value will sort it in descending order.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {string[]|func[]} comparators The iteratees to sort by.
-     * @param {boolean[]} orders The sort orders of `props`.
+     * @param {Function[]|string[]} iteratees The iteratees to sort by.
+     * @param {boolean[]} orders The sort orders of `iteratees`.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
      * var users = [
-     *   { 'user': 'barney', 'age': 26 },
-     *   { 'user': 'fred',   'age': 40 },
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 30 }
+     *   { 'user': 'fred',   'age': 48 },
+     *   { 'user': 'barney', 'age': 34 },
+     *   { 'user': 'fred',   'age': 42 },
+     *   { 'user': 'barney', 'age': 36 }
      * ];
      *
      * // sort by `user` in ascending order and by `age` in descending order
      * _.map(_.sortByOrder(users, ['user', 'age'], [true, false]), _.values);
-     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
+     * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
      */
-    function sortByOrder(collection, comparators, orders, guard) {
+    function sortByOrder(collection, iteratees, orders, guard) {
       if (collection == null) {
         return [];
       }
-      if (guard && isIterateeCall(comparators, orders, guard)) {
+      if (guard && isIterateeCall(iteratees, orders, guard)) {
         orders = null;
       }
-      if (!isArray(comparators)) {
-        comparators = comparators == null ? [] : [comparators];
+      if (!isArray(iteratees)) {
+        iteratees = iteratees == null ? [] : [iteratees];
       }
       if (!isArray(orders)) {
         orders = orders == null ? [] : [orders];
       }
-      return baseSortByOrder(collection, comparators, orders);
+      return baseSortByOrder(collection, iteratees, orders);
     }
 
     /**

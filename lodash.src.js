@@ -10634,13 +10634,13 @@
       string = baseToString(string);
       pattern = baseToString(pattern);
 
-      if (!string || !pattern) {
+      if (!pattern) {
         return string;
       }
 
       replacement = baseToString(replacement);
 
-      return string.replace(RegExp(escapeRegExp(pattern), 'g'), replacement);
+      return string.split(pattern).join(replacement);
     }
 
     /**

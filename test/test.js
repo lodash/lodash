@@ -14051,7 +14051,7 @@
       { 'a': 'y', 'b': 2 }
     ];
 
-    var stableOrder = [
+    var stableArray = [
       new Pair(1, 1, 1), new Pair(1, 2, 1),
       new Pair(1, 1, 1), new Pair(1, 2, 1),
       new Pair(1, 3, 1), new Pair(1, 4, 1),
@@ -14064,6 +14064,8 @@
       new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
     ];
 
+    var stableObject = _.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
+
     test('should sort in ascending order', 1, function() {
       var actual = _.pluck(_.sortBy(objects, function(object) {
         return object.b;
@@ -14072,12 +14074,14 @@
       deepEqual(actual, [1, 2, 3, 4]);
     });
 
-    test('should perform a stable sort (test in V8)', 1, function() {
-      var actual = _.sortBy(stableOrder, function(pair) {
-        return pair.a;
-      });
+    test('should perform a stable sort (test in V8)', 2, function() {
+      _.each([stableArray, stableObject], function(value, index) {
+        var actual = _.sortBy(value, function(pair) {
+          return pair.a;
+        });
 
-      deepEqual(actual, stableOrder);
+        deepEqual(actual, stableArray, index ? 'object' : 'array');
+      });
     });
 
     test('should use `_.identity` when `iteratee` is nullish', 1, function() {
@@ -14191,7 +14195,7 @@
       { 'a': 'y', 'b': 2 }
     ];
 
-    var stableOrder = [
+    var stableArray = [
       new Pair(1, 1, 1), new Pair(1, 2, 1),
       new Pair(1, 1, 1), new Pair(1, 2, 1),
       new Pair(1, 3, 1), new Pair(1, 4, 1),
@@ -14204,6 +14208,8 @@
       new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
     ];
 
+    var stableObject = _.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
+
     test('`_.' + methodName + '` should sort mutliple properties in ascending order', 1, function() {
       var actual = func(objects, ['a', 'b']);
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
@@ -14214,9 +14220,11 @@
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
     });
 
-    test('`_.' + methodName + '` should perform a stable sort (test in IE > 8, Opera, and V8)', 1, function() {
-      var actual = func(stableOrder, ['a', 'c']);
-      deepEqual(actual, stableOrder);
+    test('`_.' + methodName + '` should perform a stable sort (test in IE > 8, Opera, and V8)', 2, function() {
+      _.each([stableArray, stableObject], function(value, index) {
+        var actual = func(value, ['a', 'c']);
+        deepEqual(actual, stableArray, index ? 'object' : 'array');
+      });
     });
 
     test('`_.' + methodName + '` should not error on nullish elements', 1, function() {

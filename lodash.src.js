@@ -6042,6 +6042,22 @@
     }
 
     /*------------------------------------------------------------------------*/
+     
+    /**
+     * Combines elements of given arrays, like _.zip but with a function  
+     * specifying how they should be combined
+
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Function} accumulator Function used to reduce zipped elements
+     * @param {...Array} [arrays] Arrays to be zipped with accumulator
+     * @returns {Array} Returns new array of accumulated groups
+     * @example
+     *
+     * _.zipWith(_.add,[1,2,3],[10,20,30],[100,200,300]) 
+     * // => [111,222,333]
+     */
     var zipWith = restParam(
       function(foldFunc, lists) {
         return arrayMap(unzip(lists), function(list) {

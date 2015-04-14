@@ -692,8 +692,7 @@
    * _.mixin({ 'foo': _.constant('foo') });
    *
    * var lodash = _.runInContext();
-   * 
-   mixin({ 'bar': lodash.constant('bar') });
+   * lodash.mixin({ 'bar': lodash.constant('bar') });
    *
    * _.isFunction(_.foo);
    * // => true
@@ -6041,7 +6040,6 @@
       }
       return result;
     }
-      
       
     var zipWith = restParam(
         function _zipWith(foldFunc, lists) {

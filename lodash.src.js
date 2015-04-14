@@ -4272,7 +4272,7 @@
      * @returns {*} Returns the result of the invoked method.
      */
     function invokePath(object, path, args) {
-      if (!isKey(path, object)) {
+      if (object != null && !isKey(path, object)) {
         path = toPath(path);
         object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         path = last(path);
@@ -6816,11 +6816,13 @@
     var invoke = restParam(function(collection, path, args) {
       var index = -1,
           isFunc = typeof path == 'function',
+          isProp = isKey(path),
           length = getLength(collection),
           result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
-        result[++index] = isFunc ? path.apply(value, args) : invokePath(value, path, args);
+        var func = isFunc ? path : (isProp && value != null && value[path]);
+        result[++index] = func ? func.apply(value, args) : invokePath(value, path, args);
       });
       return result;
     });
@@ -10019,7 +10021,7 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      if (!isKey(path, object)) {
+      if (object != null && !isKey(path, object)) {
         path = toPath(path);
         object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
         path = last(path);

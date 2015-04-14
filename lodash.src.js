@@ -6061,6 +6061,28 @@
       return result;
     }
 
+    /**
+     * Combines elements of given arrays, like `_.zip` but with a function
+     * specifying how they should be combined.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] Arrays to be zipped with accumulator.
+     * @param {Function} accumulator Function used to reduce zipped elements.
+     * @returns {Array} Returns new array of accumulated groups.
+     * @example
+     *
+     * _.zipWith([1, 2, 3], [10, 20 , 30], _.add);
+     * // => [11, 22, 33]
+     */
+    var zipWith = restParam(function(arrays) {
+      var iteratee = arrays.pop();
+      return arrayMap(unzip(arrays), function(array) {
+        return arrayReduce(array, iteratee, undefined, true);
+      });
+    });
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -12009,6 +12031,7 @@
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
+    lodash.zipWith = zipWith;
 
     // Add aliases.
     lodash.backflow = flowRight;

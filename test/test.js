@@ -16718,6 +16718,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.zipWith');
+
+  (function() {
+    test('should combine values in lists with given function', 2, function() {
+      var array1 = [1, 2, 3],
+          array2 = [1, 2, 3];
+
+      deepEqual(_.zipWith(array1, array2, _.add), [2, 4, 6]);
+      deepEqual(_.zipWith(array1, [], _.add), [1, 2, 3]);
+    });
+  }())
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).commit');
 
   (function() {
@@ -17516,7 +17530,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 218, function() {
+    test('should accept falsey arguments', 219, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

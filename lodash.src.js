@@ -6044,7 +6044,7 @@
     /*------------------------------------------------------------------------*/
     var zipWith = restParam(
       function(foldFunc, lists) {
-        return _.map(unzip(lists), function(list) {
+        return arrayMap(unzip(lists), function(list) {
           return  _.reduce(list, foldFunc);    
         });
       });

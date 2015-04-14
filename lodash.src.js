@@ -6044,10 +6044,7 @@
     /*------------------------------------------------------------------------*/
     var zipWith = restParam(
         function(foldFunc, lists) {
-
-          var zippedLists = unzip(lists);
-
-          return _.map(zippedLists, function(list) {
+          return _.map(unzip(lists), function(list) {
             return  _.reduce(list, foldFunc);    
           });
         });

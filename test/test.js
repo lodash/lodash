@@ -16713,6 +16713,19 @@
       strictEqual(_.object, _.zipObject);
     });
   }());
+    
+  /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.zipWith');
+  
+  (function() {
+    test('should combine values in lists with given function ',2, function(){
+      var list1 = [1,2,3];
+      var list2 = [1,2,3];
+
+      deepEqual(_.zipWith(list1,list2,_.add),[2,4,6]);
+      deepEqual(_.zipWith(list1,[],_.add),[1,2,3]);  
+    });
+  }())
 
   /*--------------------------------------------------------------------------*/
 

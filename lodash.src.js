@@ -6062,6 +6062,33 @@
     }
 
     /*------------------------------------------------------------------------*/
+     
+    /**
+     * Combines elements of given arrays, like _.zip but with a function  
+     * specifying how they should be combined
+
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] Arrays to be zipped with accumulator
+     * @param {Function} accumulator Function used to reduce zipped elements
+     * @returns {Array} Returns new array of accumulated groups
+     * @example
+     *
+     * _.zipWith([1,2,3],[10,20,30],[100,200,300],_.add) 
+     * // => [111,222,333]
+     */
+    function zipWith(){
+      var foldFunc = last(arguments);
+      var collection = take(arguments,arguments.length - 1)
+        if (collection.length && foldFunc && isFunction(foldFunc)) {
+          return arrayMap(unzip(collection), function(list) {
+            return reduce(list, foldFunc);
+          });
+        }
+    }  
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a `lodash` object that wraps `value` with explicit method
@@ -12009,6 +12036,7 @@
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
+    lodash.zipWith = zipWith;
 
     // Add aliases.
     lodash.backflow = flowRight;

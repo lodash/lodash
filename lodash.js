@@ -5649,7 +5649,6 @@
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
      */
-    
     function zipObject(props, values) {
       var index = -1,
           length = props ? props.length : 0,
@@ -5668,15 +5667,6 @@
       }
       return result;
     }
-      
-    
-    var zipWith = restParam(
-      function zipwith(foldFunction, lists) {
-        var zippedLists = _.zip.apply(this,lists)
-          return _.map(zippedLists, function reduceZips(list) {
-            return  _.reduce(list, foldFunction);      
-          });
-      });
 
     /*------------------------------------------------------------------------*/
 
@@ -11415,7 +11405,6 @@
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
-    lodash.zipWith = zipWith;
 
     // Add aliases.
     lodash.backflow = flowRight;

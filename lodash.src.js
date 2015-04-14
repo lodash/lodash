@@ -6022,7 +6022,7 @@
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
      */
-    function zipObject(props, values) {
+     function zipObject(props, values) {
       var index = -1,
           length = props ? props.length : 0,
           result = {};
@@ -6040,18 +6040,17 @@
       }
       return result;
     }
-      
+
+    /*------------------------------------------------------------------------*/
     var zipWith = restParam(
-        function _zipWith(foldFunc, lists) {
-            
-          var zippedLists = _.zip.apply(this,lists);
-        
-          return _.map(zippedLists, function toReducedLists(list) {
+        function(foldFunc, lists) {
+
+          var zippedLists = unzip(lists);
+
+          return _.map(zippedLists, function(list) {
             return  _.reduce(list, foldFunc);    
           });
-            
         });
-
 
     /*------------------------------------------------------------------------*/
 

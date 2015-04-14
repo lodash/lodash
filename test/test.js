@@ -16630,6 +16630,20 @@
       strictEqual(_.object, _.zipObject);
     });
   }());
+    
+  /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.zipWith');
+  
+    (function() {
+      test('should combine values in lists with given function ',2, function(){
+          var list1 = [1,2,3];
+          var list2 = [1,2,3];
+          
+          deepEqual(_.zipWith(_.add,list1,list2),[2,4,6]);
+          deepEqual(_.zipWith(_.add,list1,[]),[1,2,3]);
+        
+      });
+    }())
 
   /*--------------------------------------------------------------------------*/
 
@@ -17431,7 +17445,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 217, function() {
+    test('should accept falsey arguments', 218, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

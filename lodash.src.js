@@ -692,7 +692,8 @@
    * _.mixin({ 'foo': _.constant('foo') });
    *
    * var lodash = _.runInContext();
-   * lodash.mixin({ 'bar': lodash.constant('bar') });
+   * 
+   mixin({ 'bar': lodash.constant('bar') });
    *
    * _.isFunction(_.foo);
    * // => true
@@ -6040,6 +6041,19 @@
       }
       return result;
     }
+      
+      
+    var zipWith = restParam(
+        function _zipWith(foldFunc, lists) {
+            
+          var zippedLists = _.zip.apply(this,lists);
+        
+          return _.map(zippedLists, function toReducedLists(list) {
+            return  _.reduce(list, foldFunc);    
+          });
+            
+        });
+
 
     /*------------------------------------------------------------------------*/
 
@@ -11975,6 +11989,8 @@
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
+    lodash.zipWith = zipWith;
+
 
     // Add aliases.
     lodash.backflow = flowRight;

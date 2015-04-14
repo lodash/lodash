@@ -6022,7 +6022,7 @@
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
      */
-     function zipObject(props, values) {
+    function zipObject(props, values) {
       var index = -1,
           length = props ? props.length : 0,
           result = {};
@@ -6043,11 +6043,11 @@
 
     /*------------------------------------------------------------------------*/
     var zipWith = restParam(
-        function(foldFunc, lists) {
-          return _.map(unzip(lists), function(list) {
-            return  _.reduce(list, foldFunc);    
-          });
+      function(foldFunc, lists) {
+        return _.map(unzip(lists), function(list) {
+          return  _.reduce(list, foldFunc);    
         });
+      });
 
     /*------------------------------------------------------------------------*/
 
@@ -11984,7 +11984,6 @@
     lodash.zip = zip;
     lodash.zipObject = zipObject;
     lodash.zipWith = zipWith;
-
 
     // Add aliases.
     lodash.backflow = flowRight;

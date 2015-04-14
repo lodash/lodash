@@ -798,7 +798,6 @@
 
     /** Used as `baseAssign`. */
     var nativeAssign = (function() {
-      'use strict';
       // Avoid `Object.assign` in Firefox 34-37 which have an early implementation
       // with a now defunct try/catch behavior. See https://bugzilla.mozilla.org/show_bug.cgi?id=1103344
       // for more details.

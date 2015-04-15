@@ -462,10 +462,10 @@
         var source = { "num": 9 };\
         \
         var _findWhere = _.findWhere || _.find,\
-            _match = (_.matches || _.createCallback || _.noop)(source);\
+            _matcher = (_.matches || _.createCallback || _.noop)(source);\
         \
         var lodashFindWhere = lodash.findWhere || lodash.find,\
-            lodashMatch = (lodash.matches || lodash.createCallback || lodash.noop)(source);\
+            lodashMatcher = (lodash.matches || lodash.createCallback || lodash.noop)(source);\
       }\
       if (typeof multiArrays != "undefined") {\
         var twentyValues = belt.shuffle(belt.range(20)),\
@@ -938,6 +938,18 @@
       )
   );
 
+  suites.push(
+    Benchmark.Suite('`_.filter` with `_.matches` predicate')
+      .add(buildName, {
+        'fn': 'lodash.filter(objects, lodashMatcher)',
+        'teardown': 'function matches(){}'
+      })
+      .add(otherName, {
+        'fn': '_.filter(objects, _matcher)',
+        'teardown': 'function matches(){}'
+      })
+  );
+
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -971,7 +983,7 @@
   // Avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo.
   if (!isJava) {
     suites.push(
-      Benchmark.Suite('`_.find` with `properties`')
+      Benchmark.Suite('`_.find` with `_.matches` shorthand')
         .add(buildName, {
           'fn': 'lodashFindWhere(objects, source)',
           'teardown': 'function matches(){}'
@@ -1224,7 +1236,7 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.invoke` with a function for `methodName` iterating an array')
+    Benchmark.Suite('`_.invoke` with a function for `path` iterating an array')
       .add(buildName, '\
         lodash.invoke(numbers, Number.prototype.toFixed, 1)'
       )
@@ -1455,20 +1467,6 @@
           return value;\
         })'
       )
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.matches` predicate')
-      .add(buildName, {
-        'fn': 'lodash.filter(objects, lodashMatch)',
-        'teardown': 'function matches(){}'
-      })
-      .add(otherName, {
-        'fn': '_.filter(objects, _match)',
-        'teardown': 'function matches(){}'
-      })
   );
 
   /*--------------------------------------------------------------------------*/

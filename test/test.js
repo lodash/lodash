@@ -9817,9 +9817,11 @@
       });
     });
 
-    test('should match characters of string indexes (test in IE < 9)', 1, function() {
+    test('should match characters of string indexes (test in IE < 9)', 2, function() {
       var matches = _.matchesProperty(1, 'o');
-      strictEqual(matches('xo'), true);
+      _.each(['xo', Object('xo')], function(string) {
+        strictEqual(matches(string), true);
+      });
     });
 
     test('should match a key over a path', 2, function() {
@@ -13157,9 +13159,11 @@
       });
     });
 
-    test('`_.' + methodName + '` should get characters of string indexes (test in IE < 9)', 2, function() {
+    test('`_.' + methodName + '` should get characters of string indexes (test in IE < 9)', 4, function() {
       _.each([1, [1]], function(path) {
-        strictEqual(func('xo', path), 'o');
+        _.each(['xo', Object('xo')], function(string) {
+          strictEqual(func(string, path), 'o');
+        });
       });
     });
 
@@ -13171,9 +13175,9 @@
       });
     });
 
-    test('`_.' + methodName + '` should not coerce array paths to strings', 1, function() {
+    test('`_.' + methodName + '` should coerce array paths to strings', 1, function() {
       var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } };
-      strictEqual(func(object, ['a', 'b', 'c']), 4);
+      strictEqual(func(object, ['a', 'b', 'c']), 3);
     });
 
     test('`_.' + methodName + '` should handle empty paths', 4, function() {
@@ -13631,10 +13635,10 @@
       });
     });
 
-    test('should not coerce array paths to strings', 1, function() {
+    test('should coerce array paths to strings', 1, function() {
       var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 3 } } };
       _.set(object, ['a', 'b', 'c'], 4);
-      deepEqual(object, { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } });
+      deepEqual(object, { 'a,b,c': 4, 'a': { 'b': { 'c': 3 } } });
     });
 
     test('should handle empty paths', 4, function() {

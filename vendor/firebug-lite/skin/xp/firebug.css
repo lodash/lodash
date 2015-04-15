@@ -136,10 +136,10 @@ h1.groupHeader {
     position: relative;
     top: -7px;
     left: -5px;
-
+    
     outline: none;
     resize: none;
-
+    
     /*
     _border: 1px solid #999 !important;
     _padding: 1px !important;
@@ -311,17 +311,17 @@ h1.groupHeader {
     outline: none;
     background-color: transparent
  }
-
- .useA11y .a11yCSSView .focusRow:focus .cssSelector,
- .useA11y .a11yCSSView .focusRow:focus .cssPropName,
+ 
+ .useA11y .a11yCSSView .focusRow:focus .cssSelector, 
+ .useA11y .a11yCSSView .focusRow:focus .cssPropName, 
  .useA11y .a11yCSSView .focusRow:focus .cssPropValue,
- .useA11y .a11yCSSView .computedStyleRow:focus,
+ .useA11y .a11yCSSView .computedStyleRow:focus, 
  .useA11y .a11yCSSView .groupHeader:focus {
     outline: 2px solid #FF9933;
     outline-offset: -2px;
     background-color: #FFFFD6;
  }
-
+ 
  .useA11y .a11yCSSView .groupHeader:focus {
     outline-offset: -2px;
  }
@@ -731,7 +731,7 @@ h1.groupHeader {
 /* Time Info tip */
 
 .timeInfoTip {
-    width: 150px;
+    width: 150px; 
     height: 40px
 }
 
@@ -944,7 +944,7 @@ h1.groupHeader {
     /*overflow-x: auto; HTML is damaged in case of big (2-3MB) responses */
 }
 
-/* replaced by .netInfoTextSelected for IE6 support
+/* replaced by .netInfoTextSelected for IE6 support 
 .netInfoText[selected="true"] {
     display: block;
 }
@@ -963,7 +963,7 @@ h1.groupHeader {
 }
 
 .netInfoPostText .netInfoParamName {
-    width: 1px; /* Google Chrome need this otherwise the first column of
+    width: 1px; /* Google Chrome need this otherwise the first column of 
                    the post variables table will be larger than expected */
 }
 
@@ -1148,7 +1148,7 @@ h1.groupHeader {
 }
 
 * html .opened .spyHead .spyTitle,
-* html .opened .logGroupLabel,
+* html .opened .logGroupLabel, 
 * html .opened .memberLabelCell .memberLabel {
     background-image: url(tree_close.gif);
     background-repeat: no-repeat;
@@ -1677,7 +1677,7 @@ h1.groupHeader {
 /*
 .logRow-errorMessage > .hasTwisty > .errorTitle,
 .logRow-spy .spyHead .spyTitle,
-.logGroup > .logRow
+.logGroup > .logRow 
 */
 .logRow-errorMessage .hasTwisty .errorTitle,
 .logRow-spy .spyHead .spyTitle,
@@ -2056,11 +2056,11 @@ h1.groupHeader {
     width: 10px;
     height: 10px;
     margin-top: 6px;
-    background: url(tabMenuTarget.png);
+    background: url(tabMenuTarget.png);   
 }
 
 .fbTabMenuTarget:hover {
-    background: url(tabMenuTargetHover.png);
+    background: url(tabMenuTargetHover.png);   
 }
 
 .fbShadow {
@@ -2098,7 +2098,7 @@ h1.groupHeader {
     padding: 1px 18px 0;
     text-decoration: none;
     color: #000;
-    cursor: default;
+    cursor: default;    
     background: #ACA899;
     margin: 4px 0;
 }
@@ -2149,7 +2149,7 @@ h1.groupHeader {
 }
 
 .fbMenuShortcut {
-    padding-right: 85px;
+    padding-right: 85px; 
 }
 
 .fbMenuShortcutKey {
@@ -2274,7 +2274,7 @@ h1.groupHeader {
     margin: 0;
     padding: 0;
     overflow: hidden;
-
+    
     font-family: Lucida Grande, Tahoma, sans-serif;
     font-size: 11px;
     background: #fff;
@@ -2311,7 +2311,7 @@ h1.groupHeader {
     margin: 0 5px 0 0;
     background: #fff url(search.png) no-repeat 4px 2px !important;
     background: #fff url(search.gif) no-repeat 4px 2px;
-    padding-left: 20px;
+    padding-left: 20px;    
     font-size: 11px;
 }
 
@@ -2333,7 +2333,7 @@ h1.groupHeader {
     background: url(errorIcon.png) no-repeat !important;
     background: url(errorIcon.gif) no-repeat;
     color: #f00;
-    font-weight: bold;
+    font-weight: bold;    
 }
 
 #fbMiniErrors {
@@ -2348,7 +2348,7 @@ h1.groupHeader {
     margin: 3px 4px 0;
     height: 20px;
     width: 20px;
-    float: right;
+    float: right;    
     background: url(sprite.png) 0 -135px;
     cursor: pointer;
 }
@@ -2403,10 +2403,10 @@ h1.groupHeader {
 }
 
 /************************************************************************************************
- Sub-Layout
+ Sub-Layout 
 *************************************************************************************************/
 
-/* fbToolbar
+/* fbToolbar 
 *************************************************************************************************/
 #fbToolbarIcon {
     float: left;
@@ -2472,7 +2472,7 @@ h1.groupHeader {
 
 #fbStatusBarBox {
     top: 4px;
-    cursor: default;
+    cursor: default;    
 }
 
 .fbToolbarSeparator {
@@ -2500,7 +2500,7 @@ h1.groupHeader {
 
 .fbStatusBar a:hover {
     color: blue;
-    cursor: pointer;
+    cursor: pointer;    
 }
 
 
@@ -2545,7 +2545,7 @@ h1.groupHeader {
     padding-left: 4px;
 }
 
-/* body
+/* body 
 *************************************************************************************************/
 .fbPanel {
     display: none;
@@ -2609,7 +2609,7 @@ h1.groupHeader {
     position: absolute;
     right: 2px;
     bottom: 3px;
-
+    
     z-index: 99;
 }
 
@@ -2624,7 +2624,7 @@ h1.groupHeader {
     visibility: hidden !important;
 }
 
-/* fbBottom
+/* fbBottom 
 *************************************************************************************************/
 
 #fbCommand {
@@ -2689,7 +2689,7 @@ div.fbFitHeight {
  Layout Controls
 *************************************************************************************************/
 
-/* fbToolbar buttons
+/* fbToolbar buttons 
 *************************************************************************************************/
 .fbSmallButton {
     overflow: hidden;
@@ -2729,7 +2729,7 @@ div.fbFitHeight {
 }
 
 
-/* fbPanelBarBox tabs
+/* fbPanelBarBox tabs 
 *************************************************************************************************/
 .fbTab {
     text-decoration: none;
@@ -2785,7 +2785,7 @@ a.fbTab:hover .fbTabR {
     background: url(sprite.png) -8px -96px !important;
 }
 
-/* splitters
+/* splitters 
 *************************************************************************************************/
 #fbHSplitter {
     position: fixed;
@@ -2888,7 +2888,7 @@ div.objectBox-element {
     position: relative;
 }
 
-/* Webkit CSS Hack - bug in "highlight" named color */
+/* Webkit CSS Hack - bug in "highlight" named color */ 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .selectedElement{
       background: #316AC5;
@@ -2903,7 +2903,7 @@ div.objectBox-element {
 }
 
 /* TODO: remove this? */
-/* TODO: xxxpedro - IE need this in windowless mode (cnn.com) check if the issue is related to
+/* TODO: xxxpedro - IE need this in windowless mode (cnn.com) check if the issue is related to 
 position. if so, override it at chrome.js initialization when creating the div */
 .logRow {
     position: relative;
@@ -2939,9 +2939,9 @@ position. if so, override it at chrome.js initialization when creating the div *
 
 .objectBox-string {
     color: red;
-
+    
     /* TODO: xxxpedro make long strings break line */
-    /*white-space: pre; */
+    /*white-space: pre; */ 
 }
 
 .objectBox-number {

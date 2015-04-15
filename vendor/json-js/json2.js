@@ -1,6 +1,6 @@
 /*
     json2.js
-    2014-02-04
+    2015-02-25
 
     Public Domain.
 
@@ -48,7 +48,9 @@
                 Date.prototype.toJSON = function (key) {
                     function f(n) {
                         // Format integers to have at least two digits.
-                        return n < 10 ? '0' + n : n;
+                        return n < 10
+                        ? '0' + n
+                        : n;
                     }
 
                     return this.getUTCFullYear()   + '-' +
@@ -146,10 +148,12 @@
     redistribute.
 */
 
-/*jslint evil: true, regexp: true */
+/*jslint
+    eval, for, this
+*/
 
-/*members "", "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
-    call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
+/*property
+    JSON, apply, call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
     getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,
     lastIndex, length, parse, prototype, push, replace, slice, stringify,
     test, toJSON, toString, valueOf
@@ -168,7 +172,13 @@ if (typeof JSON !== 'object') {
 
     function f(n) {
         // Format integers to have at least two digits.
-        return n < 10 ? '0' + n : n;
+        return n < 10
+        ? '0' + n
+        : n;
+    }
+
+    function this_value() {
+        return this.valueOf();
     }
 
     if (typeof Date.prototype.toJSON !== 'function') {
@@ -176,20 +186,18 @@ if (typeof JSON !== 'object') {
         Date.prototype.toJSON = function () {
 
             return isFinite(this.valueOf())
-                ? this.getUTCFullYear()     + '-' +
+            ? this.getUTCFullYear() + '-' +
                     f(this.getUTCMonth() + 1) + '-' +
-                    f(this.getUTCDate())      + 'T' +
-                    f(this.getUTCHours())     + ':' +
-                    f(this.getUTCMinutes())   + ':' +
-                    f(this.getUTCSeconds())   + 'Z'
-                : null;
+                    f(this.getUTCDate()) + 'T' +
+                    f(this.getUTCHours()) + ':' +
+                    f(this.getUTCMinutes()) + ':' +
+                    f(this.getUTCSeconds()) + 'Z'
+            : null;
         };
 
-        String.prototype.toJSON      =
-            Number.prototype.toJSON  =
-            Boolean.prototype.toJSON = function () {
-                return this.valueOf();
-            };
+        Boolean.prototype.toJSON = this_value;
+        Number.prototype.toJSON = this_value;
+        String.prototype.toJSON = this_value;
     }
 
     var cx,
@@ -208,12 +216,14 @@ if (typeof JSON !== 'object') {
 // sequences.
 
         escapable.lastIndex = 0;
-        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+        return escapable.test(string)
+        ? '"' + string.replace(escapable, function (a) {
             var c = meta[a];
             return typeof c === 'string'
-                ? c
-                : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-        }) + '"' : '"' + string + '"';
+            ? c
+            : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '"'
+        : '"' + string + '"';
     }
 
 
@@ -253,7 +263,9 @@ if (typeof JSON !== 'object') {
 
 // JSON numbers must be finite. Encode non-finite numbers as null.
 
-            return isFinite(value) ? String(value) : 'null';
+            return isFinite(value)
+            ? String(value)
+            : 'null';
 
         case 'boolean':
         case 'null':
@@ -297,10 +309,10 @@ if (typeof JSON !== 'object') {
 // brackets.
 
                 v = partial.length === 0
-                    ? '[]'
-                    : gap
-                    ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
-                    : '[' + partial.join(',') + ']';
+                ? '[]'
+                : gap
+                ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
+                : '[' + partial.join(',') + ']';
                 gap = mind;
                 return v;
             }
@@ -314,7 +326,11 @@ if (typeof JSON !== 'object') {
                         k = rep[i];
                         v = str(k, value);
                         if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            partial.push(quote(k) + (
+                                gap
+                                ? ': '
+                                : ':'
+                            ) + v);
                         }
                     }
                 }
@@ -326,7 +342,11 @@ if (typeof JSON !== 'object') {
                     if (Object.prototype.hasOwnProperty.call(value, k)) {
                         v = str(k, value);
                         if (v) {
-                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            partial.push(quote(k) + (
+                                gap
+                                ? ': '
+                                : ':'
+                            ) + v);
                         }
                     }
                 }
@@ -336,10 +356,10 @@ if (typeof JSON !== 'object') {
 // and wrap them in braces.
 
             v = partial.length === 0
-                ? '{}'
-                : gap
-                ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
-                : '{' + partial.join(',') + '}';
+            ? '{}'
+            : gap
+            ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
+            : '{' + partial.join(',') + '}';
             gap = mind;
             return v;
         }
@@ -348,14 +368,14 @@ if (typeof JSON !== 'object') {
 // If the JSON object does not yet have a stringify method, give it one.
 
     if (typeof JSON.stringify !== 'function') {
-        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+        escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
         meta = {    // table of character substitutions
             '\b': '\\b',
             '\t': '\\t',
             '\n': '\\n',
             '\f': '\\f',
             '\r': '\\r',
-            '"' : '\\"',
+            '"': '\\"',
             '\\': '\\\\'
         };
         JSON.stringify = function (value, replacer, space) {
@@ -444,7 +464,7 @@ if (typeof JSON !== 'object') {
             if (cx.test(text)) {
                 text = text.replace(cx, function (a) {
                     return '\\u' +
-                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                            ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
                 });
             }
 
@@ -461,10 +481,13 @@ if (typeof JSON !== 'object') {
 // we look to see that the remaining characters are only whitespace or ']' or
 // ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
 
-            if (/^[\],:{}\s]*$/
-                    .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+            if (
+                /^[\],:{}\s]*$/.test(
+                    text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
                         .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-                        .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+                        .replace(/(?:^|:|,)(?:\s*\[)+/g, '')
+                )
+            ) {
 
 // In the third stage we use the eval function to compile the text into a
 // JavaScript structure. The '{' operator is subject to a syntactic ambiguity
@@ -477,8 +500,8 @@ if (typeof JSON !== 'object') {
 // each name/value pair to a reviver function for possible transformation.
 
                 return typeof reviver === 'function'
-                    ? walk({'': j}, '')
-                    : j;
+                ? walk({'': j}, '')
+                : j;
             }
 
 // If the text is not JSON parseable, then a SyntaxError is thrown.

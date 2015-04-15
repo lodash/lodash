@@ -23,6 +23,13 @@
     deepEqual(answers, ['one', 'two', 'three'], 'iterating over objects works, and ignores the object prototype.');
     delete obj.constructor.prototype.four;
 
+    // ensure the each function is JITed
+    _(1000).times(function() { _.each([], function(){}); });
+    var count = 0;
+    obj = {1 : 'foo', 2 : 'bar', 3 : 'baz'};
+    _.each(obj, function(value, key){ count++; });
+    equal(count, 3, 'the fun should be called only 3 times');
+
     var answer = null;
     _.each([1, 2, 3], function(num, index, arr){ if (_.include(arr, num)) answer = true; });
     ok(answer, 'can reference the original collection from inside the iterator');
@@ -420,12 +427,14 @@
     strictEqual(_.includes, _.contains, 'alias for includes');
 
     var numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3];
-    strictEqual(_.includes(numbers, 1, 1), true);
-    strictEqual(_.includes(numbers, 1, -1), false);
-    strictEqual(_.includes(numbers, 1, -2), false);
-    strictEqual(_.includes(numbers, 1, -3), true);
-    strictEqual(_.includes(numbers, 1, 6), true);
-    strictEqual(_.includes(numbers, 1, 7), false);
+    strictEqual(_.includes(numbers, 1, 1), true, 'contains takes a fromIndex');
+    strictEqual(_.includes(numbers, 1, -1), false, 'contains takes a fromIndex');
+    strictEqual(_.includes(numbers, 1, -2), false, 'contains takes a fromIndex');
+    strictEqual(_.includes(numbers, 1, -3), true, 'contains takes a fromIndex');
+    strictEqual(_.includes(numbers, 1, 6), true, 'contains takes a fromIndex');
+    strictEqual(_.includes(numbers, 1, 7), false, 'contains takes a fromIndex');
+
+    ok(_.every([1, 2, 3], _.partial(_.contains, numbers)), 'fromIndex is guarded');
   });
 
   test('includes with NaN', function() {
@@ -789,6 +798,7 @@
     equal(_.size(new String('hello')), 5, 'can compute the size of string object');
 
     equal(_.size(null), 0, 'handles nulls');
+    equal(_.size(0), 0, 'handles numbers');
   });
 
   test('partition', function() {

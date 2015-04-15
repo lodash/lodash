@@ -6258,7 +6258,7 @@ FBL.Firebug =
 {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     version:  "Firebug Lite 1.4.0",
-    revision: "$Revision: 11967 $",
+    revision: "$Revision$",
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     modules: modules,

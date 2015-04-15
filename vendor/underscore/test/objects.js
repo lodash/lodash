@@ -282,6 +282,32 @@
     equal(_.clone(null), null, 'non objects should not be changed by clone');
   });
 
+  test('create', function() {
+    var Parent = function() {};
+    Parent.prototype = {foo: function() {}, bar: 2};
+
+    _.each(['foo', null, undefined, 1], function(val) {
+      deepEqual(_.create(val), {}, 'should return empty object when a non-object is provided');
+    });
+
+    ok(_.create([]) instanceof Array, 'should return new instance of array when array is provided');
+
+    var Child = function() {};
+    Child.prototype = _.create(Parent.prototype);
+    ok(new Child instanceof Parent, 'object should inherit prototype');
+
+    var func = function() {};
+    Child.prototype = _.create(Parent.prototype, {func: func});
+    strictEqual(Child.prototype.func, func, 'properties should be added to object');
+
+    Child.prototype = _.create(Parent.prototype, {constructor: Child});
+    strictEqual(Child.prototype.constructor, Child);
+
+    Child.prototype.foo = 'foo';
+    var created = _.create(Child.prototype, new Child);
+    ok(!created.hasOwnProperty('foo'), 'should only add own properties');
+  });
+
   test('isEqual', function() {
     function First() {
       this.value = 1;

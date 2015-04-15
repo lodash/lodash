@@ -10056,11 +10056,7 @@
         return object;
       }
       var pathKey = (path + '');
-      if (pathKey in toObject(object)) {
-        object[pathKey] = value;
-        return object;
-      }
-      path = isKey(path, object) ? [path] : toPath(path);
+      path = (object[pathKey] != null || isKey(path, object)) ? [pathKey] : toPath(path);
 
       var index = -1,
           length = path.length,

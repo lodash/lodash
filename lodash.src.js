@@ -2305,7 +2305,7 @@
           length = path.length;
 
       while (object != null && ++index < length) {
-        var result = object = object[path[index]];
+        var result = object = toObject(object)[path[index]];
       }
       return result;
     }
@@ -10021,7 +10021,7 @@
         if (object != null && !isKey(path, object)) {
           path = toPath(path);
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          result = object == null ? undefined : object[last(path)];
+          result = object == null ? undefined : toObject(object)[last(path)];
         }
         result = result === undefined ? defaultValue : result;
       }

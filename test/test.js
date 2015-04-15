@@ -13159,10 +13159,16 @@
       });
     });
 
-    test('`_.' + methodName + '` should get characters of string indexes (test in IE < 9)', 4, function() {
+    test('`_.' + methodName + '` should get characters of string indexes (test in IE < 9)', 8, function() {
       _.each([1, [1]], function(path) {
         _.each(['xo', Object('xo')], function(string) {
           strictEqual(func(string, path), 'o');
+        });
+      });
+
+      _.each([{ 'a': 'xo' }, { 'a': Object('xo') }], function(object) {
+        _.each(['a[1]', ['a', '1']], function(path) {
+          strictEqual(func(object, path), 'o');
         });
       });
     });

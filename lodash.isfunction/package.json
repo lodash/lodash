@@ -1,6 +1,6 @@
 {
   "name": "lodash.isfunction",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "The modern build of lodash’s `_.isFunction` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

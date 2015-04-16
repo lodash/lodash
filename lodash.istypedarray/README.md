@@ -1,4 +1,4 @@
-# lodash.istypedarray v3.0.5
+# lodash.istypedarray v3.0.6
 
 The [lodash](https://lodash.com/) method `_.isTypedArray` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isTypedArray = require('lodash.istypedarray');
 ```
 
-See the [documentation](https://lodash.com/docs#isTypedArray) or [package source](https://github.com/lodash/lodash/blob/3.0.5-npm-packages/lodash.istypedarray) for more details.
+See the [documentation](https://lodash.com/docs#isTypedArray) or [package source](https://github.com/lodash/lodash/blob/3.0.6-npm-packages/lodash.istypedarray) for more details.

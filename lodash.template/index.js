@@ -1,5 +1,5 @@
 /**
- * lodash 3.6.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -11,7 +11,6 @@ var baseCopy = require('lodash._basecopy'),
     baseValues = require('lodash._basevalues'),
     isIterateeCall = require('lodash._isiterateecall'),
     reInterpolate = require('lodash._reinterpolate'),
-    escape = require('lodash.escape'),
     keys = require('lodash.keys'),
     restParam = require('lodash.restparam'),
     templateSettings = require('lodash.templatesettings');

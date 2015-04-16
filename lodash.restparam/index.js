@@ -1,8 +1,8 @@
 /**
- * lodash 3.6.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -17,7 +17,7 @@ var nativeMax = Math.max;
  * Creates a function that invokes `func` with the `this` binding of the
  * created function and arguments from `start` and beyond provided as an array.
  *
- * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+ * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
  *
  * @static
  * @memberOf _
@@ -39,7 +39,7 @@ function restParam(func, start) {
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  start = nativeMax(typeof start == 'undefined' ? (func.length - 1) : (+start || 0), 0);
+  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
   return function() {
     var args = arguments,
         index = -1,

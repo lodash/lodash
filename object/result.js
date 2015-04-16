@@ -1,41 +1,49 @@
-var isFunction = require('../lang/isFunction');
+var baseGet = require('../internal/baseGet'),
+    baseSlice = require('../internal/baseSlice'),
+    isFunction = require('../lang/isFunction'),
+    isKey = require('../internal/isKey'),
+    last = require('../array/last'),
+    toPath = require('../internal/toPath');
 
 /**
- * Resolves the value of property `key` on `object`. If the value of `key` is
- * a function it is invoked with the `this` binding of `object` and its result
- * is returned, else the property value is returned. If the property value is
- * `undefined` the `defaultValue` is used in its place.
+ * This method is like `_.get` except that if the resolved value is a function
+ * it is invoked with the `this` binding of its parent object and its result
+ * is returned.
  *
  * @static
  * @memberOf _
  * @category Object
  * @param {Object} object The object to query.
- * @param {string} key The key of the property to resolve.
- * @param {*} [defaultValue] The value returned if the property value
- *  resolves to `undefined`.
+ * @param {Array|string} path The path of the property to resolve.
+ * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
  * @returns {*} Returns the resolved value.
  * @example
  *
- * var object = { 'user': 'fred', 'age': _.constant(40) };
+ * var object = { 'a': [{ 'b': { 'c1': 3, 'c2': _.constant(4) } }] };
  *
- * _.result(object, 'user');
- * // => 'fred'
+ * _.result(object, 'a[0].b.c1');
+ * // => 3
  *
- * _.result(object, 'age');
- * // => 40
+ * _.result(object, 'a[0].b.c2');
+ * // => 4
  *
- * _.result(object, 'status', 'busy');
- * // => 'busy'
+ * _.result(object, 'a.b.c', 'default');
+ * // => 'default'
  *
- * _.result(object, 'status', _.constant('busy'));
- * // => 'busy'
+ * _.result(object, 'a.b.c', _.constant('default'));
+ * // => 'default'
  */
-function result(object, key, defaultValue) {
-  var value = object == null ? undefined : object[key];
-  if (typeof value == 'undefined') {
-    value = defaultValue;
+function result(object, path, defaultValue) {
+  var result = object == null ? undefined : object[path];
+  if (result === undefined) {
+    if (object != null && !isKey(path, object)) {
+      path = toPath(path);
+      object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      result = object == null ? undefined : object[last(path)];
+    }
+    result = result === undefined ? defaultValue : result;
   }
-  return isFunction(value) ? value.call(object) : value;
+  return isFunction(result) ? result.call(object) : result;
 }
 
 module.exports = result;

@@ -1,7 +1,6 @@
-var baseCopy = require('../internal/baseCopy'),
+var baseAssign = require('../internal/baseAssign'),
     baseCreate = require('../internal/baseCreate'),
-    isIterateeCall = require('../internal/isIterateeCall'),
-    keys = require('./keys');
+    isIterateeCall = require('../internal/isIterateeCall');
 
 /**
  * Creates an object that inherits from the given `prototype` object. If a
@@ -42,7 +41,7 @@ function create(prototype, properties, guard) {
   if (guard && isIterateeCall(prototype, properties, guard)) {
     properties = null;
   }
-  return properties ? baseCopy(properties, result, keys(properties)) : result;
+  return properties ? baseAssign(result, properties) : result;
 }
 
 module.exports = create;

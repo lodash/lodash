@@ -1,4 +1,5 @@
-var isArguments = require('./isArguments'),
+var getLength = require('../internal/getLength'),
+    isArguments = require('./isArguments'),
     isArray = require('./isArray'),
     isFunction = require('./isFunction'),
     isLength = require('../internal/isLength'),
@@ -37,7 +38,7 @@ function isEmpty(value) {
   if (value == null) {
     return true;
   }
-  var length = value.length;
+  var length = getLength(value);
   if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
       (isObjectLike(value) && isFunction(value.splice)))) {
     return !length;

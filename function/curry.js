@@ -13,7 +13,7 @@ var CURRY_FLAG = 8;
  * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
  * may be used as a placeholder for provided arguments.
  *
- * **Note:** This method does not set the `length` property of curried functions.
+ * **Note:** This method does not set the "length" property of curried functions.
  *
  * @static
  * @memberOf _

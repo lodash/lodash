@@ -4,7 +4,7 @@ var baseFor = require('../internal/baseFor'),
 /**
  * Iterates over own and inherited enumerable properties of an object invoking
  * `iteratee` for each property. The `iteratee` is bound to `thisArg` and invoked
- * with three arguments: (value, key, object). Iterator functions may exit
+ * with three arguments: (value, key, object). Iteratee functions may exit
  * iteration early by explicitly returning `false`.
  *
  * @static

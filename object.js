@@ -10,6 +10,7 @@ module.exports = {
   'forOwn': require('./object/forOwn'),
   'forOwnRight': require('./object/forOwnRight'),
   'functions': require('./object/functions'),
+  'get': require('./object/get'),
   'has': require('./object/has'),
   'invert': require('./object/invert'),
   'keys': require('./object/keys'),
@@ -21,6 +22,7 @@ module.exports = {
   'pairs': require('./object/pairs'),
   'pick': require('./object/pick'),
   'result': require('./object/result'),
+  'set': require('./object/set'),
   'transform': require('./object/transform'),
   'values': require('./object/values'),
   'valuesIn': require('./object/valuesIn')

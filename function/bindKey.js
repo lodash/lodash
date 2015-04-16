@@ -13,7 +13,7 @@ var BIND_FLAG = 1,
  *
  * This method differs from `_.bind` by allowing bound functions to reference
  * methods that may be redefined or don't yet exist.
- * See [Peter Michaux's article](http://michaux.ca/articles/lazy-function-definition-pattern)
+ * See [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
  * for more details.
  *
  * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic

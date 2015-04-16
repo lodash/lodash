@@ -12,7 +12,7 @@ var arrayEach = require('../internal/arrayEach'),
  * `accumulator` object which is the result of running each of its own enumerable
  * properties through `iteratee`, with each invocation potentially mutating
  * the `accumulator` object. The `iteratee` is bound to `thisArg` and invoked
- * with four arguments: (accumulator, value, key, object). Iterator functions
+ * with four arguments: (accumulator, value, key, object). Iteratee functions
  * may exit iteration early by explicitly returning `false`.
  *
  * @static

@@ -7,7 +7,7 @@ var keys = require('./keys');
  * @static
  * @memberOf _
  * @category Object
- * @param {Object} object The object to inspect.
+ * @param {Object} object The object to query.
  * @returns {Array} Returns the new array of key-value pairs.
  * @example
  *

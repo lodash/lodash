@@ -7,6 +7,8 @@ var assign = require('./assign'),
  * object for all destination properties that resolve to `undefined`. Once a
  * property is set, additional values of the same property are ignored.
  *
+ * **Note:** This method mutates `object`.
+ *
  * @static
  * @memberOf _
  * @category Object

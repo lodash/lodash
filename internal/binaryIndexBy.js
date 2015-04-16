@@ -27,7 +27,7 @@ function binaryIndexBy(array, value, iteratee, retHighest) {
   var low = 0,
       high = array ? array.length : 0,
       valIsNaN = value !== value,
-      valIsUndef = typeof value == 'undefined';
+      valIsUndef = value === undefined;
 
   while (low < high) {
     var mid = floor((low + high) / 2),
@@ -37,7 +37,7 @@ function binaryIndexBy(array, value, iteratee, retHighest) {
     if (valIsNaN) {
       var setLow = isReflexive || retHighest;
     } else if (valIsUndef) {
-      setLow = isReflexive && (retHighest || typeof computed != 'undefined');
+      setLow = isReflexive && (retHighest || computed !== undefined);
     } else {
       setLow = retHighest ? (computed <= value) : (computed < value);
     }

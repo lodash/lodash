@@ -10,7 +10,7 @@ var PARTIAL_RIGHT_FLAG = 64;
  * The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.
  *
- * **Note:** This method does not set the `length` property of partially
+ * **Note:** This method does not set the "length" property of partially
  * applied functions.
  *
  * @static

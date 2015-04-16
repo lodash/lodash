@@ -1,3 +1,7 @@
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max,
+    nativeMin = Math.min;
+
 /**
  * Checks if `n` is between `start` and up to but not including, `end`. If
  * `end` is not specified it is set to `start` with `start` then set to `0`.
@@ -37,7 +41,7 @@ function inRange(value, start, end) {
   } else {
     end = +end || 0;
   }
-  return value >= start && value < end;
+  return value >= nativeMin(start, end) && value < nativeMax(start, end);
 }
 
 module.exports = inRange;

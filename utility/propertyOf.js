@@ -1,25 +1,29 @@
+var baseGet = require('../internal/baseGet'),
+    toPath = require('../internal/toPath');
+
 /**
  * The opposite of `_.property`; this method creates a function which returns
- * the property value of a given key on `object`.
+ * the property value at a given path on `object`.
  *
  * @static
  * @memberOf _
  * @category Utility
- * @param {Object} object The object to inspect.
+ * @param {Object} object The object to query.
  * @returns {Function} Returns the new function.
  * @example
  *
- * var object = { 'a': 3, 'b': 1, 'c': 2 };
+ * var array = [0, 1, 2],
+ *     object = { 'a': array, 'b': array, 'c': array };
  *
- * _.map(['a', 'c'], _.propertyOf(object));
- * // => [3, 2]
+ * _.map(['a[2]', 'c[0]'], _.propertyOf(object));
+ * // => [2, 0]
  *
- * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
- * // => ['b', 'c', 'a']
+ * _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
+ * // => [2, 0]
  */
 function propertyOf(object) {
-  return function(key) {
-    return object == null ? undefined : object[key];
+  return function(path) {
+    return baseGet(object, toPath(path), path + '');
   };
 }
 

@@ -1,30 +1,31 @@
-var baseProperty = require('../internal/baseProperty');
+var baseProperty = require('../internal/baseProperty'),
+    basePropertyDeep = require('../internal/basePropertyDeep'),
+    isKey = require('../internal/isKey');
 
 /**
- * Creates a function which returns the property value of `key` on a given object.
+ * Creates a function which returns the property value at `path` on a
+ * given object.
  *
  * @static
  * @memberOf _
  * @category Utility
- * @param {string} key The key of the property to get.
+ * @param {Array|string} path The path of the property to get.
  * @returns {Function} Returns the new function.
  * @example
  *
- * var users = [
- *   { 'user': 'fred' },
- *   { 'user': 'barney' }
+ * var objects = [
+ *   { 'a': { 'b': { 'c': 2 } } },
+ *   { 'a': { 'b': { 'c': 1 } } }
  * ];
  *
- * var getName = _.property('user');
+ * _.map(objects, _.property('a.b.c'));
+ * // => [2, 1]
  *
- * _.map(users, getName);
- * // => ['fred', 'barney']
- *
- * _.pluck(_.sortBy(users, getName), 'user');
- * // => ['barney', 'fred']
+ * _.pluck(_.sortBy(objects, _.property(['a', 'b', 'c'])), 'a.b.c');
+ * // => [1, 2]
  */
-function property(key) {
-  return baseProperty(key + '');
+function property(path) {
+  return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
 }
 
 module.exports = property;

@@ -1,14 +1,14 @@
-var baseProperty = require('../internal/baseProperty'),
-    map = require('./map');
+var map = require('./map'),
+    property = require('../utility/property');
 
 /**
- * Gets the value of `key` from all elements in `collection`.
+ * Gets the property value of `path` from all elements in `collection`.
  *
  * @static
  * @memberOf _
  * @category Collection
  * @param {Array|Object|string} collection The collection to iterate over.
- * @param {string} key The key of the property to pluck.
+ * @param {Array|string} path The path of the property to pluck.
  * @returns {Array} Returns the property values.
  * @example
  *
@@ -24,8 +24,8 @@ var baseProperty = require('../internal/baseProperty'),
  * _.pluck(userIndex, 'age');
  * // => [36, 40] (iteration order is not guaranteed)
  */
-function pluck(collection, key) {
-  return map(collection, baseProperty(key));
+function pluck(collection, path) {
+  return map(collection, property(path));
 }
 
 module.exports = pluck;

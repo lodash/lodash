@@ -4,7 +4,7 @@ var baseCompareAscending = require('./baseCompareAscending');
  * Used by `_.sortByOrder` to compare multiple properties of each element
  * in a collection and stable sort them in the following order:
  *
- * If orders is unspecified, sort in ascending order for all properties.
+ * If `orders` is unspecified, sort in ascending order for all properties.
  * Otherwise, for each property, sort in ascending order if its corresponding value in
  * orders is true, and descending order if false.
  *

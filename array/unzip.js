@@ -1,9 +1,7 @@
 var arrayMap = require('../internal/arrayMap'),
     arrayMax = require('../internal/arrayMax'),
-    baseProperty = require('../internal/baseProperty');
-
-/** Used to the length of n-tuples for `_.unzip`. */
-var getLength = baseProperty('length');
+    baseProperty = require('../internal/baseProperty'),
+    getLength = require('../internal/getLength');
 
 /**
  * This method is like `_.zip` except that it accepts an array of grouped

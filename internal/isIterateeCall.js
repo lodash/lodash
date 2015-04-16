@@ -1,4 +1,5 @@
-var isIndex = require('./isIndex'),
+var getLength = require('./getLength'),
+    isIndex = require('./isIndex'),
     isLength = require('./isLength'),
     isObject = require('../lang/isObject');
 
@@ -17,7 +18,7 @@ function isIterateeCall(value, index, object) {
   }
   var type = typeof index;
   if (type == 'number') {
-    var length = object.length,
+    var length = getLength(object),
         prereq = isLength(length) && isIndex(index, length);
   } else {
     prereq = type == 'string' && index in object;

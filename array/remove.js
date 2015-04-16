@@ -1,10 +1,5 @@
-var baseCallback = require('../internal/baseCallback');
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var splice = arrayProto.splice;
+var baseCallback = require('../internal/baseCallback'),
+    basePullAt = require('../internal/basePullAt');
 
 /**
  * Removes all elements from `array` that `predicate` returns truthy for
@@ -46,19 +41,23 @@ var splice = arrayProto.splice;
  * // => [2, 4]
  */
 function remove(array, predicate, thisArg) {
+  var result = [];
+  if (!(array && array.length)) {
+    return result;
+  }
   var index = -1,
-      length = array ? array.length : 0,
-      result = [];
+      indexes = [],
+      length = array.length;
 
   predicate = baseCallback(predicate, thisArg, 3);
   while (++index < length) {
     var value = array[index];
     if (predicate(value, index, array)) {
       result.push(value);
-      splice.call(array, index--, 1);
-      length--;
+      indexes.push(index);
     }
   }
+  basePullAt(array, indexes);
   return result;
 }
 

@@ -1,7 +1,5 @@
 var baseCallback = require('../internal/baseCallback'),
-    isIterateeCall = require('../internal/isIterateeCall'),
-    isObjectLike = require('../internal/isObjectLike'),
-    matches = require('./matches');
+    isIterateeCall = require('../internal/isIterateeCall');
 
 /**
  * Creates a function that invokes `func` with the `this` binding of `thisArg`
@@ -45,9 +43,7 @@ function callback(func, thisArg, guard) {
   if (guard && isIterateeCall(func, thisArg, guard)) {
     thisArg = null;
   }
-  return isObjectLike(func)
-    ? matches(func)
-    : baseCallback(func, thisArg);
+  return baseCallback(func, thisArg);
 }
 
 module.exports = callback;

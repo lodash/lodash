@@ -15544,6 +15544,11 @@
       });
     });
 
+    test('should floor `n` float values', 1, function() {
+      var actual = _.times(2.4, _.indentify);
+      deepEqual(actual, [0, 1]);
+    });
+
     test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 

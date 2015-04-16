@@ -9,6 +9,7 @@ import forInRight from './object/forInRight';
 import forOwn from './object/forOwn';
 import forOwnRight from './object/forOwnRight';
 import functions from './object/functions';
+import get from './object/get';
 import has from './object/has';
 import invert from './object/invert';
 import keys from './object/keys';
@@ -20,6 +21,7 @@ import omit from './object/omit';
 import pairs from './object/pairs';
 import pick from './object/pick';
 import result from './object/result';
+import set from './object/set';
 import transform from './object/transform';
 import values from './object/values';
 import valuesIn from './object/valuesIn';
@@ -36,6 +38,7 @@ export default {
   'forOwn': forOwn,
   'forOwnRight': forOwnRight,
   'functions': functions,
+  'get': get,
   'has': has,
   'invert': invert,
   'keys': keys,
@@ -47,6 +50,7 @@ export default {
   'pairs': pairs,
   'pick': pick,
   'result': result,
+  'set': set,
   'transform': transform,
   'values': values,
   'valuesIn': valuesIn

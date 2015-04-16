@@ -1,9 +1,7 @@
 import arrayMap from '../internal/arrayMap';
 import arrayMax from '../internal/arrayMax';
 import baseProperty from '../internal/baseProperty';
-
-/** Used to the length of n-tuples for `_.unzip`. */
-var getLength = baseProperty('length');
+import getLength from '../internal/getLength';
 
 /**
  * This method is like `_.zip` except that it accepts an array of grouped

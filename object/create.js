@@ -1,7 +1,6 @@
-import baseCopy from '../internal/baseCopy';
+import baseAssign from '../internal/baseAssign';
 import baseCreate from '../internal/baseCreate';
 import isIterateeCall from '../internal/isIterateeCall';
-import keys from './keys';
 
 /**
  * Creates an object that inherits from the given `prototype` object. If a
@@ -42,7 +41,7 @@ function create(prototype, properties, guard) {
   if (guard && isIterateeCall(prototype, properties, guard)) {
     properties = null;
   }
-  return properties ? baseCopy(properties, result, keys(properties)) : result;
+  return properties ? baseAssign(result, properties) : result;
 }
 
 export default create;

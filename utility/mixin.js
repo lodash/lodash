@@ -15,13 +15,13 @@ var push = arrayProto.push;
  * destination object. If `object` is a function then methods are added to
  * its prototype as well.
  *
- * **Note:** Use `_.runInContext` to create a pristine `lodash` function
- * for mixins to avoid conflicts caused by modifying the original.
+ * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
+ * avoid conflicts caused by modifying the original.
  *
  * @static
  * @memberOf _
  * @category Utility
- * @param {Function|Object} [object=this] object The destination object.
+ * @param {Function|Object} [object=lodash] The destination object.
  * @param {Object} source The object of functions to add.
  * @param {Object} [options] The options object.
  * @param {boolean} [options.chain=true] Specify whether the functions added

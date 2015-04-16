@@ -1,5 +1,6 @@
 import baseAt from '../internal/baseAt';
 import baseFlatten from '../internal/baseFlatten';
+import getLength from '../internal/getLength';
 import isLength from '../internal/isLength';
 import restParam from '../function/restParam';
 import toIterable from '../internal/toIterable';
@@ -25,7 +26,7 @@ import toIterable from '../internal/toIterable';
  * // => ['barney', 'pebbles']
  */
 var at = restParam(function(collection, props) {
-  var length = collection ? collection.length : 0;
+  var length = collection ? getLength(collection) : 0;
   if (isLength(length)) {
     collection = toIterable(collection);
   }

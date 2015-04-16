@@ -1,3 +1,4 @@
+import getLength from '../internal/getLength';
 import isLength from '../internal/isLength';
 import keys from '../object/keys';
 
@@ -22,7 +23,7 @@ import keys from '../object/keys';
  * // => 7
  */
 function size(collection) {
-  var length = collection ? collection.length : 0;
+  var length = collection ? getLength(collection) : 0;
   return isLength(length) ? length : keys(collection).length;
 }
 

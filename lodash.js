@@ -1,9 +1,9 @@
 /**
  * @license
- * lodash 3.6.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.7.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -25,7 +25,6 @@ import baseCallback from './internal/baseCallback';
 import baseForOwn from './internal/baseForOwn';
 import baseFunctions from './internal/baseFunctions';
 import baseMatches from './internal/baseMatches';
-import baseProperty from './internal/baseProperty';
 import createHybridWrapper from './internal/createHybridWrapper';
 import identity from './utility/identity';
 import isArray from './lang/isArray';
@@ -37,12 +36,13 @@ import lazyReverse from './internal/lazyReverse';
 import lazyValue from './internal/lazyValue';
 import lodash from './chain/lodash';
 import _mixin from './utility/mixin';
+import property from './utility/property';
 import realNames from './internal/realNames';
 import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.6.0';
+var VERSION = '3.7.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -135,6 +135,8 @@ lodash.matches = utility.matches;
 lodash.matchesProperty = utility.matchesProperty;
 lodash.memoize = func.memoize;
 lodash.merge = object.merge;
+lodash.method = utility.method;
+lodash.methodOf = utility.methodOf;
 lodash.mixin = mixin;
 lodash.negate = func.negate;
 lodash.omit = object.omit;
@@ -145,7 +147,7 @@ lodash.partialRight = func.partialRight;
 lodash.partition = collection.partition;
 lodash.pick = object.pick;
 lodash.pluck = collection.pluck;
-lodash.property = utility.property;
+lodash.property = property;
 lodash.propertyOf = utility.propertyOf;
 lodash.pull = array.pull;
 lodash.pullAt = array.pullAt;
@@ -155,6 +157,7 @@ lodash.reject = collection.reject;
 lodash.remove = array.remove;
 lodash.rest = array.rest;
 lodash.restParam = func.restParam;
+lodash.set = object.set;
 lodash.shuffle = collection.shuffle;
 lodash.slice = array.slice;
 lodash.sortBy = collection.sortBy;
@@ -221,6 +224,7 @@ lodash.findLastIndex = array.findLastIndex;
 lodash.findLastKey = object.findLastKey;
 lodash.findWhere = collection.findWhere;
 lodash.first = array.first;
+lodash.get = object.get;
 lodash.has = object.has;
 lodash.identity = identity;
 lodash.includes = collection.includes;
@@ -406,7 +410,7 @@ arrayEach(['initial', 'rest'], function(methodName, index) {
 // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
 arrayEach(['pluck', 'where'], function(methodName, index) {
   var operationName = index ? 'filter' : 'map',
-      createCallback = index ? baseMatches : baseProperty;
+      createCallback = index ? baseMatches : property;
 
   LazyWrapper.prototype[methodName] = function(value) {
     return this[operationName](createCallback(value));
@@ -428,7 +432,7 @@ LazyWrapper.prototype.slice = function(start, end) {
   start = start == null ? 0 : (+start || 0);
   var result = start < 0 ? this.takeRight(-start) : this.drop(start);
 
-  if (typeof end != 'undefined') {
+  if (end !== undefined) {
     end = (+end || 0);
     result = end < 0 ? result.dropRight(-end) : result.take(end - start);
   }
@@ -459,7 +463,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
         useLazy = isLazy || isArray(value);
 
     if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
-      // avoid lazy use if the iteratee has a `length` other than `1`
+      // avoid lazy use if the iteratee has a "length" value other than `1`
       isLazy = useLazy = false;
     }
     var onlyLazy = isLazy && !isHybrid;

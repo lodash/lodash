@@ -1,3 +1,4 @@
+import getLength from './getLength';
 import isIndex from './isIndex';
 import isLength from './isLength';
 import isObject from '../lang/isObject';
@@ -17,7 +18,7 @@ function isIterateeCall(value, index, object) {
   }
   var type = typeof index;
   if (type == 'number') {
-    var length = object.length,
+    var length = getLength(object),
         prereq = isLength(length) && isIndex(index, length);
   } else {
     prereq = type == 'string' && index in object;

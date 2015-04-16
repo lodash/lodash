@@ -29,7 +29,7 @@ function endsWith(string, target, position) {
   target = (target + '');
 
   var length = string.length;
-  position = typeof position == 'undefined'
+  position = position === undefined
     ? length
     : nativeMin(position < 0 ? 0 : (+position || 0), length);
 

@@ -1,8 +1,8 @@
 import baseMatches from './baseMatches';
 import baseMatchesProperty from './baseMatchesProperty';
-import baseProperty from './baseProperty';
 import bindCallback from './bindCallback';
 import identity from '../utility/identity';
+import property from '../utility/property';
 
 /**
  * The base implementation of `_.callback` which supports specifying the
@@ -17,7 +17,7 @@ import identity from '../utility/identity';
 function baseCallback(func, thisArg, argCount) {
   var type = typeof func;
   if (type == 'function') {
-    return typeof thisArg == 'undefined'
+    return thisArg === undefined
       ? func
       : bindCallback(func, thisArg, argCount);
   }
@@ -27,9 +27,9 @@ function baseCallback(func, thisArg, argCount) {
   if (type == 'object') {
     return baseMatches(func);
   }
-  return typeof thisArg == 'undefined'
-    ? baseProperty(func + '')
-    : baseMatchesProperty(func + '', thisArg);
+  return thisArg === undefined
+    ? property(func)
+    : baseMatchesProperty(func, thisArg);
 }
 
 export default baseCallback;

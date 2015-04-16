@@ -1,3 +1,4 @@
+import getLength from './getLength';
 import isLength from './isLength';
 import toObject from './toObject';
 
@@ -11,7 +12,7 @@ import toObject from './toObject';
  */
 function createBaseEach(eachFunc, fromRight) {
   return function(collection, iteratee) {
-    var length = collection ? collection.length : 0;
+    var length = collection ? getLength(collection) : 0;
     if (!isLength(length)) {
       return eachFunc(collection, iteratee);
     }

@@ -2,7 +2,7 @@ import baseClone from '../internal/baseClone';
 import baseMatchesProperty from '../internal/baseMatchesProperty';
 
 /**
- * Creates a function which compares the property value of `key` on a given
+ * Creates a function which compares the property value of `path` on a given
  * object to `value`.
  *
  * **Note:** This method supports comparing arrays, booleans, `Date` objects,
@@ -12,7 +12,7 @@ import baseMatchesProperty from '../internal/baseMatchesProperty';
  * @static
  * @memberOf _
  * @category Utility
- * @param {string} key The key of the property to get.
+ * @param {Array|string} path The path of the property to get.
  * @param {*} value The value to compare.
  * @returns {Function} Returns the new function.
  * @example
@@ -25,8 +25,8 @@ import baseMatchesProperty from '../internal/baseMatchesProperty';
  * _.find(users, _.matchesProperty('user', 'fred'));
  * // => { 'user': 'fred' }
  */
-function matchesProperty(key, value) {
-  return baseMatchesProperty(key + '', baseClone(value, true));
+function matchesProperty(path, value) {
+  return baseMatchesProperty(path, baseClone(value, true));
 }
 
 export default matchesProperty;

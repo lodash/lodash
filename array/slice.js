@@ -4,7 +4,7 @@ import isIterateeCall from '../internal/isIterateeCall';
 /**
  * Creates a slice of `array` from `start` up to, but not including, `end`.
  *
- * **Note:** This function is used instead of `Array#slice` to support node
+ * **Note:** This method is used instead of `Array#slice` to support node
  * lists in IE < 9 and to ensure dense arrays are returned.
  *
  * @static

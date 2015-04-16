@@ -1,4 +1,5 @@
 import baseIndexOf from '../internal/baseIndexOf';
+import getLength from '../internal/getLength';
 import isArray from '../lang/isArray';
 import isIterateeCall from '../internal/isIterateeCall';
 import isLength from '../internal/isLength';
@@ -41,7 +42,7 @@ var nativeMax = Math.max;
  * // => true
  */
 function includes(collection, target, fromIndex, guard) {
-  var length = collection ? collection.length : 0;
+  var length = collection ? getLength(collection) : 0;
   if (!isLength(length)) {
     collection = values(collection);
     length = collection.length;

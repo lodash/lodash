@@ -57,7 +57,7 @@ function every(collection, predicate, thisArg) {
   if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
     predicate = null;
   }
-  if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+  if (typeof predicate != 'function' || thisArg !== undefined) {
     predicate = baseCallback(predicate, thisArg, 3);
   }
   return func(collection, predicate);

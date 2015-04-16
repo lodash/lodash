@@ -18,7 +18,7 @@ import before from './before';
  * // `initialize` invokes `createApplication` once
  */
 function once(func) {
-  return before(func, 2);
+  return before(2, func);
 }
 
 export default once;

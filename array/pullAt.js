@@ -1,14 +1,8 @@
 import baseAt from '../internal/baseAt';
 import baseCompareAscending from '../internal/baseCompareAscending';
 import baseFlatten from '../internal/baseFlatten';
-import isIndex from '../internal/isIndex';
+import basePullAt from '../internal/basePullAt';
 import restParam from '../function/restParam';
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var splice = arrayProto.splice;
 
 /**
  * Removes elements from `array` corresponding to the given indexes and returns
@@ -39,17 +33,8 @@ var pullAt = restParam(function(array, indexes) {
   array || (array = []);
   indexes = baseFlatten(indexes);
 
-  var length = indexes.length,
-      result = baseAt(array, indexes);
-
-  indexes.sort(baseCompareAscending);
-  while (length--) {
-    var index = parseFloat(indexes[length]);
-    if (index != previous && isIndex(index)) {
-      var previous = index;
-      splice.call(array, index, 1);
-    }
-  }
+  var result = baseAt(array, indexes);
+  basePullAt(array, indexes.sort(baseCompareAscending));
   return result;
 });
 

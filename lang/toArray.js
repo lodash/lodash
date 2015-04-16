@@ -1,4 +1,5 @@
 import arrayCopy from '../internal/arrayCopy';
+import getLength from '../internal/getLength';
 import isLength from '../internal/isLength';
 import values from '../object/values';
 
@@ -18,7 +19,7 @@ import values from '../object/values';
  * // => [2, 3]
  */
 function toArray(value) {
-  var length = value ? value.length : 0;
+  var length = value ? getLength(value) : 0;
   if (!isLength(length)) {
     return values(value);
   }

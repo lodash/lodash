@@ -1,3 +1,4 @@
+import getLength from '../internal/getLength';
 import isArguments from './isArguments';
 import isArray from './isArray';
 import isFunction from './isFunction';
@@ -37,7 +38,7 @@ function isEmpty(value) {
   if (value == null) {
     return true;
   }
-  var length = value.length;
+  var length = getLength(value);
   if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
       (isObjectLike(value) && isFunction(value.splice)))) {
     return !length;

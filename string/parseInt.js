@@ -3,7 +3,7 @@ import root from '../internal/root';
 import trim from './trim';
 
 /** Used to detect hexadecimal string values. */
-var reHexPrefix = /^0[xX]/;
+var reHasHexPrefix = /^0[xX]/;
 
 /** Used to detect and test for whitespace. */
 var whitespace = (
@@ -61,7 +61,7 @@ if (nativeParseInt(whitespace + '08') != 8) {
       radix = +radix;
     }
     string = trim(string);
-    return nativeParseInt(string, radix || (reHexPrefix.test(string) ? 16 : 10));
+    return nativeParseInt(string, radix || (reHasHexPrefix.test(string) ? 16 : 10));
   };
 }
 

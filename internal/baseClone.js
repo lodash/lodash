@@ -1,13 +1,12 @@
 import arrayCopy from './arrayCopy';
 import arrayEach from './arrayEach';
-import baseCopy from './baseCopy';
+import baseAssign from './baseAssign';
 import baseForOwn from './baseForOwn';
 import initCloneArray from './initCloneArray';
 import initCloneByTag from './initCloneByTag';
 import initCloneObject from './initCloneObject';
 import isArray from '../lang/isArray';
 import isObject from '../lang/isObject';
-import keys from '../object/keys';
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',
@@ -78,7 +77,7 @@ function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
   if (customizer) {
     result = object ? customizer(value, key, object) : customizer(value);
   }
-  if (typeof result != 'undefined') {
+  if (result !== undefined) {
     return result;
   }
   if (!isObject(value)) {
@@ -97,7 +96,7 @@ function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
       result = initCloneObject(isFunc ? {} : value);
       if (!isDeep) {
-        return baseCopy(value, result, keys(value));
+        return baseAssign(result, value);
       }
     } else {
       return cloneableTags[tag]

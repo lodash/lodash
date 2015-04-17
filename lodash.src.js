@@ -6050,20 +6050,23 @@
      * @static
      * @memberOf _
      * @category Array
-     * @param {Function} accumulator Function used to reduce zipped elements
      * @param {...Array} [arrays] Arrays to be zipped with accumulator
+     * @param {Function} accumulator Function used to reduce zipped elements
      * @returns {Array} Returns new array of accumulated groups
      * @example
      *
-     * _.zipWith(_.add,[1,2,3],[10,20,30],[100,200,300]) 
+     * _.zipWith([1,2,3],[10,20,30],[100,200,300],_.add) 
      * // => [111,222,333]
      */
-    var zipWith = restParam(
-      function(foldFunc, lists) {
-        return arrayMap(unzip(lists), function(list) {
-          return  _.reduce(list, foldFunc);    
-        });
-      });
+    function zipWith(){
+      var foldFunc = last(arguments);
+      var collection = take(arguments,arguments.length - 1)
+        if (collection.length && foldFunc && isFunction(foldFunc)) {
+          return arrayMap(unzip(collection), function(list) {
+            return reduce(list, foldFunc);
+          });
+        }
+    }  
 
     /*------------------------------------------------------------------------*/
 

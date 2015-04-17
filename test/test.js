@@ -2883,6 +2883,17 @@
       }
     });
 
+    test('`_.mapKeys` should use `_.callback` internally', 1, function() {
+      if (!isModularize) {
+        _.callback = getPropB;
+        deepEqual(_.mapKeys({ 'a': { 'b': 1 } }), { '1':  { 'b': 1 } });
+        _.callback = callback;
+      }
+      else {
+        skipTest();
+      }
+    });
+
     test('`_.mapValues` should use `_.callback` internally', 1, function() {
       if (!isModularize) {
         _.callback = getPropB;
@@ -5345,6 +5356,7 @@
       'groupBy',
       'indexBy',
       'map',
+      'mapKeys',
       'mapValues',
       'max',
       'min',
@@ -5405,6 +5417,7 @@
       'forInRight',
       'forOwn',
       'forOwnRight',
+      'mapKeys',
       'mapValues',
       'omit',
       'pick'
@@ -9428,6 +9441,46 @@
       strictEqual(_.collect, _.map);
     });
   }());
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.mapKeys');
+
+  (function() {
+    var array = [1, 2],
+        object = { 'a': 1, 'b': 2, 'c': 3 };
+
+    test('should map keys in `object` to a new object', 1, function() {
+      var actual = _.mapKeys(object, String);
+      deepEqual(actual, { '1': 1, '2': 2, '3': 3 });
+    });
+
+    test('should treat arrays like objects', 1, function() {
+      var actual = _.mapKeys(array, String);
+      deepEqual(actual, { '1': 1, '2': 2 });
+    });
+
+    test('should support the `thisArg` argument', 2, function() {
+      function callback(num, key) {
+        return this[key] + num
+      }
+
+      var actual = _.mapKeys({ 'a': 1 }, callback, { 'a': 2 });
+      deepEqual(actual, { '3': 1 });
+
+      actual = _.mapKeys([2], callback, [1]);
+      deepEqual(actual, { '3': 2 });
+    });
+
+    test('should work with a "_.property" style `iteratee`', 1, function() {
+      var actual = _.mapKeys({ 'a': { 'b': 'c' } }, 'b');
+      deepEqual(actual, { 'c': { 'b': 'c' } });
+    });
+
+    test('should work on an object with no `iteratee`', 1, function() {
+      var actual = _.mapKeys({ 'a': 1, 'b': 2, 'c': 3 });
+      deepEqual(actual, { '1': 1, '2': 2, '3': 3 });
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -9447,6 +9500,59 @@
       deepEqual(actual, { '0': '1', '1': '2' });
     });
 
+    test('should support the `thisArg` argument', 2, function() {
+      function callback(num, key) {
+        return this[key] + num;
+      }
+
+      var actual = _.mapValues({ 'a': 1 }, callback, { 'a': 2 });
+      deepEqual(actual, { 'a': 3 });
+
+      actual = _.mapValues([2], callback, [1]);
+      deepEqual(actual, { '0': 3 });
+    });
+
+    test('should work with a "_.property" style `iteratee`', 1, function() {
+      var actual = _.mapValues({ 'a': { 'b': 1 } }, 'b');
+      deepEqual(actual, { 'a': 1 });
+    });
+
+    test('should work on an object with no `iteratee`', 2, function() {
+      var actual = _.mapValues({ 'a': 1, 'b': 2, 'c': 3 });
+      deepEqual(actual, object);
+      notStrictEqual(actual, object);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.mapKeys and lodash.mapValues');
+
+  _.each(['mapKeys', 'mapValues'], function(methodName) {
+    var array = [1, 2],
+        func = _[methodName],
+        object = { 'a': 1, 'b': 2, 'c': 3 };
+
+    test('should iterate over own properties of objects', 1, function() {
+      function Foo() { this.a = 'a'; }
+      Foo.prototype.b = 'b';
+
+      var actual = func(new Foo, function(value, key) { return key; });
+      deepEqual(actual, { 'a': 'a' });
+    });
+
+    test('should accept a falsey `object` argument', 1, function() {
+      var expected = _.map(falsey, _.constant({}));
+
+      var actual = _.map(falsey, function(value, index) {
+        try {
+          return index ? func(value) : func();
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should provide the correct `iteratee` arguments', 2, function() {
       _.each([object, array], function(value, index) {
         var args;
@@ -9459,58 +9565,15 @@
       });
     });
 
-    test('should support the `thisArg` argument', 2, function() {
-      function callback(num, key) {
-        return this[key] + num;
-      }
-
-      var actual = _.mapValues({ 'a': 1 }, callback, { 'a': 2 });
-      deepEqual(actual, { 'a': 3 });
-
-      actual = _.mapValues([1], callback, [2]);
-      deepEqual(actual, { '0': 3 });
-    });
-
-    test('should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = _.mapValues({ 'a': { 'b': 1 } }, 'b');
-      deepEqual(actual, { 'a': 1 });
-    });
-
-    test('should iterate over own properties of objects', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var actual = _.mapValues(new Foo, function(value, key) { return key; });
-      deepEqual(actual, { 'a': 'a' });
-    });
-
-    test('should work on an object with no `iteratee`', 2, function() {
-      var actual = _.mapValues({ 'a': 1, 'b': 2, 'c': 3 });
-      deepEqual(actual, object);
-      notStrictEqual(actual, object);
-    });
-
-    test('should accept a falsey `object` argument', 1, function() {
-      var expected = _.map(falsey, _.constant({}));
-
-      var actual = _.map(falsey, function(value, index) {
-        try {
-          return index ? _.mapValues(value) : _.mapValues();
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
-    });
-
     test('should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
-        ok(_(object).mapValues(_.noop) instanceof _);
+        ok(_(object)[methodName](_.noop) instanceof _);
       }
       else {
         skipTest();
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -17451,7 +17514,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 217, function() {
+    test('should accept falsey arguments', 218, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

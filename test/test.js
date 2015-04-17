@@ -13440,11 +13440,11 @@
         var oldId = (_.uniqueId(), _.uniqueId()),
             lodash = _.runInContext();
 
-        ok(_.uniqueId() > oldId);
+        ok(_.uniqueId() > oldId, '_.uniqueId() > oldId');
 
         var id = lodash.uniqueId();
         strictEqual(id, '1');
-        ok(id < oldId);
+        ok(id < oldId, 'id < oldId');
       }
       else {
         skipTest(3);

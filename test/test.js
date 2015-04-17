@@ -13222,7 +13222,7 @@
     });
 
     test('`_.' + methodName + '` should return `undefined` if parts of `path` are missing', 2, function() {
-      var object = {};
+      var object = { 'a': [, null] };
 
       _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
         strictEqual(func(object, path), undefined);

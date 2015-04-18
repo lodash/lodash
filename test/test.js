@@ -16721,12 +16721,43 @@
   QUnit.module('lodash.zipWith');
 
   (function() {
-    test('should combine values in lists with given function', 2, function() {
+    test('should zip arrays combining their elements with `iteratee`', 2, function() {
       var array1 = [1, 2, 3],
           array2 = [1, 2, 3];
 
       deepEqual(_.zipWith(array1, array2, _.add), [2, 4, 6]);
       deepEqual(_.zipWith(array1, [], _.add), [1, 2, 3]);
+    });
+
+    test('should provide the correct `iteratee` arguments', 1, function() {
+      var args;
+
+      _.zipWith([1, 2], [3, 4], [5, 6], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 3, 1, [1, 3, 5]]);
+    });
+
+    test('should support the `thisArg` argument', 1, function() {
+      var actual = _.zipWith([1.2, 2.3], [3.4, 4.5], function(a, b) {
+        return this.floor(a) + this.floor(b);
+      }, Math);
+
+      deepEqual(actual, [4, 6]);
+    });
+
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array1 = [1, 2],
+          array2 = [3, 4],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant([1, 2]));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.zipWith(array1, array2, value) : _.zipWith(array1, array2);
+      });
+
+      deepEqual(actual, expected);
     });
   }())
 

@@ -6069,7 +6069,9 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] Arrays to be zipped with accumulator.
-     * @param {Function} accumulator Function used to reduce zipped elements.
+     * @param {Function|Object|string} [iteratee=_.identity] The function used
+     *  to reduce zipped elements.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns new array of accumulated groups.
      * @example
      *
@@ -6077,7 +6079,18 @@
      * // => [11, 22, 33]
      */
     var zipWith = restParam(function(arrays) {
-      var iteratee = arrays.pop();
+      var length = arrays.length,
+          iteratee = arrays[length - 2],
+          thisArg = arrays[length - 1];
+
+      if (length > 2 && !isArray(iteratee)) {
+        length -= 2;
+      } else {
+        iteratee = (length > 1 && !isArray(thisArg)) ? (--length, thisArg) : undefined;
+        thisArg = undefined;
+      }
+      arrays.length = length;
+      iteratee = getCallback(iteratee, thisArg, 4);
       return arrayMap(unzip(arrays), function(array) {
         return arrayReduce(array, iteratee, undefined, true);
       });

@@ -2406,6 +2406,11 @@
       deepEqual(actual, { '4': 1, '6': 2 });
     });
 
+    test('should work with a "_.property" style `iteratee`', 1, function() {
+      var actual = _.countBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': 2, '5': 1 });
+    });
+
     test('should only add values to own, not inherited, properties', 2, function() {
       var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
@@ -2413,11 +2418,6 @@
 
       deepEqual(actual.constructor, 1);
       deepEqual(actual.hasOwnProperty, 2);
-    });
-
-    test('should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = _.countBy(['one', 'two', 'three'], 'length');
-      deepEqual(actual, { '3': 2, '5': 1 });
     });
 
     test('should work with a number for `iteratee`', 2, function() {
@@ -4332,18 +4332,6 @@
       strictEqual(_.every([undefined, undefined, undefined], _.identity), false);
     });
 
-    test('should work with a "_.property" style `predicate`', 2, function() {
-      var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
-      strictEqual(_.every(objects, 'a'), false);
-      strictEqual(_.every(objects, 'b'), true);
-    });
-
-    test('should work with a "_where" style `predicate`', 2, function() {
-      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
-      strictEqual(_.every(objects, { 'a': 0 }), true);
-      strictEqual(_.every(objects, { 'b': 1 }), false);
-    });
-
     test('should use `_.identity` when `predicate` is nullish', 2, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant(false));
@@ -4362,6 +4350,18 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should work with a "_.property" style `predicate`', 2, function() {
+      var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
+      strictEqual(_.every(objects, 'a'), false);
+      strictEqual(_.every(objects, 'b'), true);
+    });
+
+    test('should work with a "_.matches" style `predicate`', 2, function() {
+      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
+      strictEqual(_.every(objects, { 'a': 0 }), true);
+      strictEqual(_.every(objects, { 'b': 1 }), false);
     });
 
     test('should work as an iteratee for methods like `_.map`', 1, function() {
@@ -6105,6 +6105,11 @@
       deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
+    test('should work with a "_.property" style `iteratee`', 1, function() {
+      var actual = _.groupBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
+    });
+
     test('should only add values to own, not inherited, properties', 2, function() {
       var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
@@ -6112,11 +6117,6 @@
 
       deepEqual(actual.constructor, [4.2]);
       deepEqual(actual.hasOwnProperty, [6.1, 6.4]);
-    });
-
-    test('should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = _.groupBy(['one', 'two', 'three'], 'length');
-      deepEqual(actual, { '3': ['one', 'two'], '5': ['three'] });
     });
 
     test('should work with a number for `iteratee`', 2, function() {
@@ -6427,6 +6427,11 @@
       deepEqual(actual, { '4': 4.2, '6': 6.4 });
     });
 
+    test('should work with a "_.property" style `iteratee`', 1, function() {
+      var actual = _.indexBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': 'two', '5': 'three' });
+    });
+
     test('should only add values to own, not inherited, properties', 2, function() {
       var actual = _.indexBy([4.2, 6.1, 6.4], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
@@ -6434,11 +6439,6 @@
 
       deepEqual(actual.constructor, 4.2);
       deepEqual(actual.hasOwnProperty, 6.4);
-    });
-
-    test('should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = _.indexBy(['one', 'two', 'three'], 'length');
-      deepEqual(actual, { '3': 'two', '5': 'three' });
     });
 
     test('should work with a number for `iteratee`', 2, function() {
@@ -12972,7 +12972,7 @@
       deepEqual(func(objects, 'a'), [objects[isFilter ? 1 : 0]]);
     });
 
-    test('`_.' + methodName + '` should work with a "_where" style `predicate`', 1, function() {
+    test('`_.' + methodName + '` should work with a "_.matches" style `predicate`', 1, function() {
       deepEqual(func(objects, objects[1]), [objects[isFilter ? 1 : 0]]);
     });
 
@@ -14072,7 +14072,7 @@
       strictEqual(_.some(objects, 'b'), true);
     });
 
-    test('should work with a "_where" style `predicate`', 2, function() {
+    test('should work with a "_.matches" style `predicate`', 2, function() {
       var objects = [{ 'a': 0, 'b': 0 }, { 'a': 1, 'b': 1}];
       strictEqual(_.some(objects, { 'a': 0 }), true);
       strictEqual(_.some(objects, { 'b': 2 }), false);
@@ -14159,23 +14159,6 @@
       });
     });
 
-    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
-      var array = [3, 2, 1],
-          values = [, null, undefined],
-          expected = _.map(values, _.constant([1, 2, 3]));
-
-      var actual = _.map(values, function(value, index) {
-        return index ? _.sortBy(array, value) : _.sortBy(array);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should move `undefined` and `NaN` values to the end', 1, function() {
-      var array = [NaN, undefined, 4, 1, undefined, 3, NaN, 2];
-      deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN]);
-    });
-
     test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
@@ -14194,6 +14177,18 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array = [3, 2, 1],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant([1, 2, 3]));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.sortBy(array, value) : _.sortBy(array);
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.pluck(_.sortBy(objects.concat(undefined), 'b'), 'b');
       deepEqual(actual, [1, 2, 3, 4, undefined]);
@@ -14205,6 +14200,11 @@
       });
 
       deepEqual(actual, [3, 1, 2]);
+    });
+
+    test('should move `undefined` and `NaN` values to the end', 1, function() {
+      var array = [NaN, undefined, 4, 1, undefined, 3, NaN, 2];
+      deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN]);
     });
 
     test('should treat number values for `collection` as empty', 1, function() {

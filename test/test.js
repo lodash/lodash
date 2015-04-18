@@ -13500,14 +13500,16 @@
 
     test('should use a zeroed `_.uniqueId` counter', 3, function() {
       if (!isModularize) {
-        var oldId = (_.uniqueId(), _.uniqueId()),
+        _.times(2, _.uniqueId);
+
+        var oldId = Number(_.uniqueId()),
             lodash = _.runInContext();
 
-        ok(_.uniqueId() > oldId, '_.uniqueId() > oldId');
+        ok(_.uniqueId() > oldId);
 
         var id = lodash.uniqueId();
         strictEqual(id, '1');
-        ok(id < oldId, 'id < oldId');
+        ok(id < oldId);
       }
       else {
         skipTest(3);

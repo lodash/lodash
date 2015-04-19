@@ -16644,6 +16644,11 @@
       deepEqual(actual, expected);
     });
 
+    test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', 1, function() {
+      var array = [[1, 2], [3, 4], null, undefined, { '0': 1 }];
+      deepEqual(func(array), [[1, 3], [2, 4]]);
+    });
+
     test('`_.' + methodName + '` should support consuming its return value', 1, function() {
       var expected = [['barney', 'fred'], [36, 40]];
       deepEqual(func(func(func(func(expected)))), expected);
@@ -16747,11 +16752,11 @@
       deepEqual(actual, [4, 6]);
     });
 
-    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+    test('should perform a basic zip when `iteratee` is nullish', 1, function() {
       var array1 = [1, 2],
           array2 = [3, 4],
           values = [, null, undefined],
-          expected = _.map(values, _.constant([1, 2]));
+          expected = _.map(values, _.constant(_.zip(array1, array2)));
 
       var actual = _.map(values, function(value, index) {
         return index ? _.zipWith(array1, array2, value) : _.zipWith(array1, array2);

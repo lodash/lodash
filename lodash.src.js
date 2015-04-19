@@ -5940,12 +5940,21 @@
      * // => [['fred', 'barney'], [30, 40], [true, false]]
      */
     function unzip(array) {
+      if (!(array && array.length)) {
+        return [];
+      }
       var index = -1,
-          length = (array && array.length && arrayMax(arrayMap(array, getLength))) >>> 0,
-          result = Array(length);
+          length = 0;
 
+      var groups = arrayFilter(array, function(value) {
+        if (isArray(value) || isArguments(value)) {
+          length = nativeMax(value.length, length);
+          return true;
+        }
+      });
+      var result = Array(length);
       while (++index < length) {
-        result[index] = arrayMap(array, baseProperty(index));
+        result[index] = arrayMap(groups, baseProperty(index));
       }
       return result;
     }
@@ -6069,8 +6078,8 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] Arrays to be zipped with accumulator.
-     * @param {Function|Object|string} [iteratee=_.identity] The function used
-     *  to reduce zipped elements.
+     * @param {Function|Object|string} [iteratee] The function used to reduce
+     *  zipped elements.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {Array} Returns new array of accumulated groups.
      * @example
@@ -6083,15 +6092,19 @@
           iteratee = arrays[length - 2],
           thisArg = arrays[length - 1];
 
-      if (length > 2 && !isArray(iteratee)) {
+      if (length > 2 && typeof iteratee == 'function') {
         length -= 2;
       } else {
-        iteratee = (length > 1 && !isArray(thisArg)) ? (--length, thisArg) : undefined;
+        iteratee = (length > 1 && typeof thisArg == 'function') ? (--length, thisArg) : undefined;
         thisArg = undefined;
       }
       arrays.length = length;
-      iteratee = getCallback(iteratee, thisArg, 4);
-      return arrayMap(unzip(arrays), function(array) {
+      arrays = unzip(arrays);
+      if (!iteratee) {
+        return arrays;
+      }
+      iteratee = bindCallback(iteratee, thisArg, 4);
+      return arrayMap(arrays, function(array) {
         return arrayReduce(array, iteratee, undefined, true);
       });
     });

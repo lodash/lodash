@@ -15,6 +15,7 @@ module.exports = {
   'invert': require('./object/invert'),
   'keys': require('./object/keys'),
   'keysIn': require('./object/keysIn'),
+  'mapKeys': require('./object/mapKeys'),
   'mapValues': require('./object/mapValues'),
   'merge': require('./object/merge'),
   'methods': require('./object/methods'),

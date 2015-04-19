@@ -1,7 +1,6 @@
 var baseDifference = require('../internal/baseDifference'),
     baseUniq = require('../internal/baseUniq'),
-    isArguments = require('../lang/isArguments'),
-    isArray = require('../lang/isArray');
+    isArrayLike = require('../internal/isArrayLike');
 
 /**
  * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
@@ -23,7 +22,7 @@ function xor() {
 
   while (++index < length) {
     var array = arguments[index];
-    if (isArray(array) || isArguments(array)) {
+    if (isArrayLike(array)) {
       var result = result
         ? baseDifference(result, array).concat(baseDifference(array, result))
         : array;

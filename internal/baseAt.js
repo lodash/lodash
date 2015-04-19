@@ -1,5 +1,5 @@
-var isIndex = require('./isIndex'),
-    isLength = require('./isLength');
+var isArrayLike = require('./isArrayLike'),
+    isIndex = require('./isIndex');
 
 /**
  * The base implementation of `_.at` without support for string collections
@@ -12,8 +12,9 @@ var isIndex = require('./isIndex'),
  */
 function baseAt(collection, props) {
   var index = -1,
-      length = collection.length,
-      isArr = isLength(length),
+      isNil = collection == null,
+      isArr = !isNil && isArrayLike(collection),
+      length = isArr && collection.length,
       propsLength = props.length,
       result = Array(propsLength);
 
@@ -22,7 +23,7 @@ function baseAt(collection, props) {
     if (isArr) {
       result[index] = isIndex(key, length) ? collection[key] : undefined;
     } else {
-      result[index] = collection[key];
+      result[index] = isNil ? undefined : collection[key];
     }
   }
   return result;

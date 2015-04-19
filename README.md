@@ -1,4 +1,4 @@
-# lodash v3.7.0
+# lodash v3.8.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) modules.
 
@@ -28,7 +28,7 @@ var array = require('lodash/array');
 var chunk = require('lodash/array/chunk');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.7.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/3.8.0-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
@@ -39,8 +39,8 @@ Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash b
 lodash is also available in a variety of other builds & module formats.
 
  * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.7.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.7.0-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.7.0-es) build
+ * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.8.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.8.0-amd) builds
+ * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.8.0-es) build
 
 ## Further Reading
 
@@ -66,7 +66,6 @@ lodash is also available in a variety of other builds & module formats.
  * [_.chunk](https://lodash.com/docs#chunk) for splitting an array into chunks of a given size
  * [_.clone](https://lodash.com/docs#clone) supports shallow cloning of `Date` & `RegExp` objects
  * [_.cloneDeep](https://lodash.com/docs#cloneDeep) for deep cloning arrays & objects
- * [_.create](https://lodash.com/docs#create) for easier object inheritance
  * [_.curry](https://lodash.com/docs#curry) & [_.curryRight](https://lodash.com/docs#curryRight) for creating [curried](http://hughfdjackson.com/javascript/why-curry-helps/) functions
  * [_.debounce](https://lodash.com/docs#debounce) & [_.throttle](https://lodash.com/docs#throttle) are cancelable & accept options for more control
  * [_.fill](https://lodash.com/docs#fill) to fill arrays with values
@@ -80,6 +79,7 @@ lodash is also available in a variety of other builds & module formats.
  * [_.isNative](https://lodash.com/docs#isNative) to check for native functions
  * [_.isPlainObject](https://lodash.com/docs#isPlainObject) & [_.toPlainObject](https://lodash.com/docs#toPlainObject) to check for & convert to `Object` objects
  * [_.isTypedArray](https://lodash.com/docs#isTypedArray) to check for typed arrays
+ * [_.mapKeys](https://lodash.com/docs#mapKeys) for mapping keys to an object
  * [_.matches](https://lodash.com/docs#matches) supports deep object comparisons
  * [_.matchesProperty](https://lodash.com/docs#matchesProperty) to complement [_.matches](https://lodash.com/docs#matches) & [_.property](https://lodash.com/docs#property)
  * [_.method](https://lodash.com/docs#method) & [_.methodOf](https://lodash.com/docs#methodOf) to create functions that invoke methods
@@ -95,6 +95,7 @@ lodash is also available in a variety of other builds & module formats.
  * [_.support](https://lodash.com/docs#support) for flagging environment features
  * [_.template](https://lodash.com/docs#template) supports [*“imports”*](https://lodash.com/docs#templateSettings-imports) options & [ES template delimiters](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
  * [_.transform](https://lodash.com/docs#transform) as a powerful alternative to [_.reduce](https://lodash.com/docs#reduce) for transforming objects
+ * [_.unzipWith](https://lodash.com/docs#unzipWith) & [_.zipWith](https://lodash.com/docs#zipWith) to specify how grouped values should be combined
  * [_.xor](https://lodash.com/docs#xor) to complement [_.difference](https://lodash.com/docs#difference), [_.intersection](https://lodash.com/docs#intersection), & [_.union](https://lodash.com/docs#union)
  * [_.valuesIn](https://lodash.com/docs#valuesIn) for getting values of all enumerable properties
  * [_.bind](https://lodash.com/docs#bind), [_.curry](https://lodash.com/docs#curry), [_.partial](https://lodash.com/docs#partial), &
@@ -102,17 +103,17 @@ lodash is also available in a variety of other builds & module formats.
  * [_.capitalize](https://lodash.com/docs#capitalize), [_.trim](https://lodash.com/docs#trim), &
    [more](https://lodash.com/docs "_.camelCase, _.deburr, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc, _.words") string methods
  * [_.clone](https://lodash.com/docs#clone), [_.isEqual](https://lodash.com/docs#isEqual), &
-   [more](https://lodash.com/docs "_.assign, _.cloneDeep, _.merge") accept callbacks
+   [more](https://lodash.com/docs "_.assign, _.cloneDeep, _.merge") accept customizer callbacks
  * [_.dropWhile](https://lodash.com/docs#dropWhile), [_.takeWhile](https://lodash.com/docs#takeWhile), &
-   [more](https://lodash.com/docs "_.drop, _.dropRightWhile, _.take, _.takeRightWhile") to complement [_.first](https://lodash.com/docs#first), [_.initial](https://lodash.com/docs#initial), [_.last](https://lodash.com/docs#last), & [_.rest](https://lodash.com/docs#rest)
+   [more](https://lodash.com/docs "_.drop, _.dropRight, _.dropRightWhile, _.take, _.takeRight, _.takeRightWhile") to complement [_.first](https://lodash.com/docs#first), [_.initial](https://lodash.com/docs#initial), [_.last](https://lodash.com/docs#last), & [_.rest](https://lodash.com/docs#rest)
  * [_.findLast](https://lodash.com/docs#findLast), [_.findLastKey](https://lodash.com/docs#findLastKey), &
-   [more](https://lodash.com/docs "_.flowRight, _.forEachRight, _.forInRight, _.forOwnRight, _.partialRight") right-associative methods
+   [more](https://lodash.com/docs "_.curryRight, _.dropRight, _.dropRightWhile, _.flowRight, _.forEachRight, _.forInRight, _.forOwnRight, _.padRight, partialRight, _.takeRight, _.trimRight, _.takeRightWhile") right-associative methods
  * [_.includes](https://lodash.com/docs#includes), [_.toArray](https://lodash.com/docs#toArray), &
-   [more](https://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.findLast, _.forEach, _.forEachRight, _.groupBy, _.indexBy, _.invoke, _.map, _.max, _.min, _.partition, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy") accept strings
+   [more](https://lodash.com/docs "_.at, _.countBy, _.every, _.filter, _.find, _.findLast, _.findWhere, _.forEach, _.forEachRight, _.groupBy, _.indexBy, _.invoke, _.map, _.max, _.min, _.partition, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.sortByAll, _.sortByOrder, _.sum, _.where") accept strings
  * [_#commit](https://lodash.com/docs#prototype-commit) & [_#plant](https://lodash.com/docs#prototype-plant) for working with chain sequences
  * [_#thru](https://lodash.com/docs#thru) to pass values thru a chain sequence
 
 ## Support
 
-Tested in Chrome 41-42, Firefox 36-37, IE 6-11, Opera 27-28, Safari 5-8, io.js 1.7.1, Node.js 0.8.28, 0.10.38, & 0.12.2, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
+Tested in Chrome 41-42, Firefox 36-37, IE 6-11, MS Edge, Opera 27-28, Safari 5-8, io.js 1.8.1, Node.js 0.8.28, 0.10.38, & 0.12.2, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
 Automated [browser](https://saucelabs.com/u/lodash) & [CI](https://travis-ci.org/lodash/lodash/) test runs are available. Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.

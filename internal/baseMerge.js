@@ -2,7 +2,7 @@ var arrayEach = require('./arrayEach'),
     baseMergeDeep = require('./baseMergeDeep'),
     getSymbols = require('./getSymbols'),
     isArray = require('../lang/isArray'),
-    isLength = require('./isLength'),
+    isArrayLike = require('./isArrayLike'),
     isObject = require('../lang/isObject'),
     isObjectLike = require('./isObjectLike'),
     isTypedArray = require('../lang/isTypedArray'),
@@ -30,7 +30,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
   if (!isObject(object)) {
     return object;
   }
-  var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
+  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
   if (!isSrcArr) {
     var props = keys(source);
     push.apply(props, getSymbols(source));

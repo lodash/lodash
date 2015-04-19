@@ -25,7 +25,7 @@ var invokePath = require('../internal/invokePath'),
 var method = restParam(function(path, args) {
   return function(object) {
     return invokePath(object, path, args);
-  }
+  };
 });
 
 module.exports = method;

@@ -1,7 +1,7 @@
 var toObject = require('./toObject');
 
 /**
- * A specialized version of `_.pick` that picks `object` properties specified
+ * A specialized version of `_.pick` which picks `object` properties specified
  * by `props`.
  *
  * @private

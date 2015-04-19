@@ -4,8 +4,9 @@ var baseCallback = require('../internal/baseCallback'),
     sortedUniq = require('../internal/sortedUniq');
 
 /**
- * Creates a duplicate-free version of an array, using `SameValueZero` for
- * equality comparisons, in which only the first occurence of each element
+ * Creates a duplicate-free version of an array, using
+ * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * for equality comparisons, in which only the first occurence of each element
  * is kept. Providing `true` for `isSorted` performs a faster search algorithm
  * for sorted arrays. If an iteratee function is provided it is invoked for
  * each element in the array to generate the criterion by which uniqueness
@@ -22,10 +23,6 @@ var baseCallback = require('../internal/baseCallback'),
  * If an object is provided for `iteratee` the created `_.matches` style
  * callback returns `true` for elements that have the properties of the given
  * object, else `false`.
- *
- * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * comparisons are like strict equality comparisons, e.g. `===`, except that
- * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _

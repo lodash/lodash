@@ -1,5 +1,4 @@
-var getLength = require('./getLength'),
-    isLength = require('./isLength'),
+var isArrayLike = require('./isArrayLike'),
     isObject = require('../lang/isObject'),
     values = require('../object/values');
 
@@ -14,7 +13,7 @@ function toIterable(value) {
   if (value == null) {
     return [];
   }
-  if (!isLength(getLength(value))) {
+  if (!isArrayLike(value)) {
     return values(value);
   }
   return isObject(value) ? value : Object(value);

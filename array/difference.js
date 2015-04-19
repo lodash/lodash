@@ -1,16 +1,12 @@
 var baseDifference = require('../internal/baseDifference'),
     baseFlatten = require('../internal/baseFlatten'),
-    isArguments = require('../lang/isArguments'),
-    isArray = require('../lang/isArray'),
+    isArrayLike = require('../internal/isArrayLike'),
     restParam = require('../function/restParam');
 
 /**
  * Creates an array excluding all values of the provided arrays using
- * `SameValueZero` for equality comparisons.
- *
- * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * comparisons are like strict equality comparisons, e.g. `===`, except that
- * `NaN` matches `NaN`.
+ * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * for equality comparisons.
  *
  * @static
  * @memberOf _
@@ -24,7 +20,7 @@ var baseDifference = require('../internal/baseDifference'),
  * // => [1, 3]
  */
 var difference = restParam(function(array, values) {
-  return (isArray(array) || isArguments(array))
+  return isArrayLike(array)
     ? baseDifference(array, baseFlatten(values, false, true))
     : [];
 });

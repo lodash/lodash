@@ -13835,6 +13835,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.cut');
+
+  (function() {
+    var array = [1, 2, 3, 4, 5];
+
+    test('should return a new array', 1, function() {
+      notStrictEqual(_.cut(array, 0), array);
+    });
+
+    test('should contain the same elements after cut', 3, function() {
+      deepEqual(_.cut(array, 3).sort(), array);
+      deepEqual(_.cut(array, 0).sort(), array);
+      deepEqual(_.cut(array, 4).sort(), array);
+    });
+
+    test('should cut array', 2, function() {
+      notStrictEqual(_.cut(array, 0), array);
+      notStrictEqual(_.cut(array, 2), [4, 5, 1, 2, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.size');
 
   (function() {
@@ -17524,6 +17547,7 @@
       'at',
       'chunk',
       'compact',
+      'cut',
       'difference',
       'drop',
       'filter',
@@ -17561,7 +17585,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 219, function() {
+    test('should accept falsey arguments', 221, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -17603,7 +17627,7 @@
       });
     });
 
-    test('should return an array', 72, function() {
+    test('should return an array', 74, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

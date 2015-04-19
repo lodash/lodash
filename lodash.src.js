@@ -912,7 +912,7 @@
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
      * `callback`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
-     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`,
+     * `countBy`, `create`, `curry`, `cut`, `debounce`, `defaults`, `defer`, `delay`,
      * `difference`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `fill`,
      * `filter`, `flatten`, `flattenDeep`, `flow`, `flowRight`, `forEach`,
      * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
@@ -4777,6 +4777,31 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Cut an array at a given point and restack.
+     * 'Cut' as in cutting a deck of playing cards
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to cut
+     * @param {Number} index The position to cut at
+     * @returns {Array} Returns a new array with the items sorted so the first
+     * item at the cut point is first and remaining items order stay constant with
+     * relation to the cut point.
+     * @example
+     *
+     * _.cut(['A', 'B', 'C', 'D', 'E' ,'F'], 2);
+     * // => ['D', 'E' ,'F', 'A', 'B', 'C']
+     */
+    function cut(array, index) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      return drop(array, index).concat(take(array, index));
     }
 
     /**
@@ -11956,6 +11981,7 @@
     lodash.create = create;
     lodash.curry = curry;
     lodash.curryRight = curryRight;
+    lodash.cut = cut;
     lodash.debounce = debounce;
     lodash.defaults = defaults;
     lodash.defer = defer;

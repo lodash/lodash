@@ -5923,7 +5923,7 @@
 
     /**
      * This method is like `_.zip` except that it accepts an array of grouped
-     * elements and creates an array regrouping the elements to their pre-`_.zip`
+     * elements and creates an array regrouping the elements to their pre-zipped
      * configuration.
      *
      * @static
@@ -5946,7 +5946,7 @@
       var index = -1,
           length = 0;
 
-      var groups = arrayFilter(array, function(value) {
+      array = arrayFilter(array, function(value) {
         if (isArray(value) || isArguments(value)) {
           length = nativeMax(value.length, length);
           return true;
@@ -5954,9 +5954,44 @@
       });
       var result = Array(length);
       while (++index < length) {
-        result[index] = arrayMap(groups, baseProperty(index));
+        result[index] = arrayMap(array, baseProperty(index));
       }
       return result;
+    }
+
+    /**
+     * This method is like `_.unzip` except that it accepts an iteratee to specify
+     * how regrouped values should be combined. The `iteratee` is bound to `thisArg`
+     * and invoked with four arguments: (accumulator, value, index, array).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array of grouped elements to process.
+     * @param {Function} [iteratee] The function to combine regrouped values.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
+     * @returns {Array} Returns the new array of regrouped elements.
+     * @example
+     *
+     * var zipped = _.zip([1, 2], [10, 20], [100, 200]);
+     * // => [[1, 10, 100], [2, 20, 200]]
+     *
+     * _.unzipWith(zipped, _.add);
+     * // => [3, 30, 300]
+     */
+    function unzipWith(array, iteratee, thisArg) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      var result = unzip(array);
+      if (iteratee == null) {
+        return result;
+      }
+      iteratee = bindCallback(iteratee, thisArg, 4);
+      return arrayMap(result, function(other) {
+        return arrayReduce(other, iteratee, undefined, true);
+      });
     }
 
     /**
@@ -6071,21 +6106,21 @@
     }
 
     /**
-     * Combines elements of given arrays, like `_.zip` but with a function
-     * specifying how they should be combined.
+     * This method is like `_.zip` except that it accepts an iteratee to specify
+     * how grouped values should be combined. The `iteratee` is bound to `thisArg`
+     * and invoked with four arguments: (accumulator, value, index, array).
      *
      * @static
      * @memberOf _
      * @category Array
-     * @param {...Array} [arrays] Arrays to be zipped with accumulator.
-     * @param {Function|Object|string} [iteratee] The function used to reduce
-     *  zipped elements.
+     * @param {...Array} [arrays] The arrays to process.
+     * @param {Function} [iteratee] The function to combine grouped values.
      * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Array} Returns new array of accumulated groups.
+     * @returns {Array} Returns the new array of grouped elements.
      * @example
      *
-     * _.zipWith([1, 2, 3], [10, 20 , 30], _.add);
-     * // => [11, 22, 33]
+     * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
+     * // => [111, 222]
      */
     var zipWith = restParam(function(arrays) {
       var length = arrays.length,
@@ -6099,14 +6134,7 @@
         thisArg = undefined;
       }
       arrays.length = length;
-      arrays = unzip(arrays);
-      if (!iteratee) {
-        return arrays;
-      }
-      iteratee = bindCallback(iteratee, thisArg, 4);
-      return arrayMap(arrays, function(array) {
-        return arrayReduce(array, iteratee, undefined, true);
-      });
+      return unzipWith(arrays, iteratee, thisArg);
     });
 
     /*------------------------------------------------------------------------*/
@@ -12049,6 +12077,7 @@
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.unzip = unzip;
+    lodash.unzipWith = unzipWith;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.where = where;

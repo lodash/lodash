@@ -16330,6 +16330,47 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.unzipWith');
+
+  (function() {
+    test('should unzip arrays combining regrouped elements with `iteratee`', 1, function() {
+      var array = [[1, 4], [2, 5], [3, 6]];
+      deepEqual(_.unzipWith(array, _.add), [6, 15]);
+    });
+
+    test('should provide the correct `iteratee` arguments', 1, function() {
+      var args;
+
+      _.unzipWith([[1, 3, 5], [2, 4, 6]], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [1, 2, 1, [1, 2]]);
+    });
+
+    test('should support the `thisArg` argument', 1, function() {
+      var actual = _.unzipWith([[1.2, 3.4], [2.3, 4.5]], function(a, b) {
+        return this.floor(a) + this.floor(b);
+      }, Math);
+
+      deepEqual(actual, [3, 7]);
+    });
+
+    test('should perform a basic unzip when `iteratee` is nullish', 1, function() {
+      var array = [[1, 3], [2, 4]],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant(_.unzip(array)));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.unzipWith(array, value) : _.unzipWith(array);
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.values');
 
   (function() {
@@ -16586,77 +16627,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.unzip and lodash.zip');
-
-  _.each(['unzip', 'zip'], function(methodName, index) {
-    var func = _[methodName];
-    func = _.bind(index ? func.apply : func.call, func, null);
-
-    var object = {
-      'an empty array': [
-        [],
-        []
-      ],
-      '0-tuples': [
-        [[], []],
-        []
-      ],
-      '2-tuples': [
-        [['barney', 'fred'], [36, 40]],
-        [['barney', 36], ['fred', 40]]
-      ],
-      '3-tuples': [
-        [['barney', 'fred'], [36, 40], [true, false]],
-        [['barney', 36, true], ['fred', 40, false]]
-      ]
-    };
-
-    _.forOwn(object, function(pair, key) {
-      test('`_.' + methodName + '` should work with ' + key, 2, function() {
-        var actual = func(pair[0]);
-        deepEqual(actual, pair[1]);
-        deepEqual(func(actual), actual.length ? pair[0] : []);
-      });
-    });
-
-    test('`_.' + methodName + '` should work with tuples of different lengths', 4, function() {
-      var pair = [
-        [['barney', 36], ['fred', 40, false]],
-        [['barney', 'fred'], [36, 40], [undefined, false]]
-      ];
-
-      var actual = func(pair[0]);
-      ok('0' in actual[2]);
-      deepEqual(actual, pair[1]);
-
-      actual = func(actual);
-      ok('2' in actual[0]);
-      deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
-    });
-
-    test('`_.' + methodName + '` should treat falsey values as empty arrays', 1, function() {
-      var expected = _.map(falsey, _.constant([]));
-
-      var actual = _.map(falsey, function(value) {
-        return func([value, value, value]);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', 1, function() {
-      var array = [[1, 2], [3, 4], null, undefined, { '0': 1 }];
-      deepEqual(func(array), [[1, 3], [2, 4]]);
-    });
-
-    test('`_.' + methodName + '` should support consuming its return value', 1, function() {
-      var expected = [['barney', 'fred'], [36, 40]];
-      deepEqual(func(func(func(func(expected)))), expected);
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.zipObject');
 
   (function() {
@@ -16726,11 +16696,11 @@
   QUnit.module('lodash.zipWith');
 
   (function() {
-    test('should zip arrays combining their elements with `iteratee`', 2, function() {
+    test('should zip arrays combining grouped elements with `iteratee`', 2, function() {
       var array1 = [1, 2, 3],
-          array2 = [1, 2, 3];
+          array2 = [4, 5, 6];
 
-      deepEqual(_.zipWith(array1, array2, _.add), [2, 4, 6]);
+      deepEqual(_.zipWith(array1, array2, _.add), [5, 7, 9]);
       deepEqual(_.zipWith(array1, [], _.add), [1, 2, 3]);
     });
 
@@ -16764,7 +16734,78 @@
 
       deepEqual(actual, expected);
     });
-  }())
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.unzip and lodash.zip');
+
+  _.each(['unzip', 'zip'], function(methodName, index) {
+    var func = _[methodName];
+    func = _.bind(index ? func.apply : func.call, func, null);
+
+    var object = {
+      'an empty array': [
+        [],
+        []
+      ],
+      '0-tuples': [
+        [[], []],
+        []
+      ],
+      '2-tuples': [
+        [['barney', 'fred'], [36, 40]],
+        [['barney', 36], ['fred', 40]]
+      ],
+      '3-tuples': [
+        [['barney', 'fred'], [36, 40], [true, false]],
+        [['barney', 36, true], ['fred', 40, false]]
+      ]
+    };
+
+    _.forOwn(object, function(pair, key) {
+      test('`_.' + methodName + '` should work with ' + key, 2, function() {
+        var actual = func(pair[0]);
+        deepEqual(actual, pair[1]);
+        deepEqual(func(actual), actual.length ? pair[0] : []);
+      });
+    });
+
+    test('`_.' + methodName + '` should work with tuples of different lengths', 4, function() {
+      var pair = [
+        [['barney', 36], ['fred', 40, false]],
+        [['barney', 'fred'], [36, 40], [undefined, false]]
+      ];
+
+      var actual = func(pair[0]);
+      ok('0' in actual[2]);
+      deepEqual(actual, pair[1]);
+
+      actual = func(actual);
+      ok('2' in actual[0]);
+      deepEqual(actual, [['barney', 36, undefined], ['fred', 40, false]]);
+    });
+
+    test('`_.' + methodName + '` should treat falsey values as empty arrays', 1, function() {
+      var expected = _.map(falsey, _.constant([]));
+
+      var actual = _.map(falsey, function(value) {
+        return func([value, value, value]);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', 1, function() {
+      var array = [[1, 2], [3, 4], null, undefined, { '0': 1 }];
+      deepEqual(func(array), [[1, 3], [2, 4]]);
+    });
+
+    test('`_.' + methodName + '` should support consuming its return value', 1, function() {
+      var expected = [['barney', 'fred'], [36, 40]];
+      deepEqual(func(func(func(func(expected)))), expected);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -17566,7 +17607,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 219, function() {
+    test('should accept falsey arguments', 220, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

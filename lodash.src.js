@@ -5923,7 +5923,7 @@
 
     /**
      * This method is like `_.zip` except that it accepts an array of grouped
-     * elements and creates an array regrouping the elements to their pre-zipped
+     * elements and creates an array regrouping the elements to their pre-zip
      * configuration.
      *
      * @static
@@ -5946,9 +5946,9 @@
       var index = -1,
           length = 0;
 
-      array = arrayFilter(array, function(value) {
-        if (isArray(value) || isArguments(value)) {
-          length = nativeMax(value.length, length);
+      array = arrayFilter(array, function(group) {
+        if (isArray(group) || isArguments(group)) {
+          length = nativeMax(group.length, length);
           return true;
         }
       });
@@ -5962,7 +5962,7 @@
     /**
      * This method is like `_.unzip` except that it accepts an iteratee to specify
      * how regrouped values should be combined. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments: (accumulator, value, index, array).
+     * and invoked with four arguments: (accumulator, value, index, group).
      *
      * @static
      * @memberOf _
@@ -5989,8 +5989,8 @@
         return result;
       }
       iteratee = bindCallback(iteratee, thisArg, 4);
-      return arrayMap(result, function(other) {
-        return arrayReduce(other, iteratee, undefined, true);
+      return arrayMap(result, function(group) {
+        return arrayReduce(group, iteratee, undefined, true);
       });
     }
 
@@ -6108,7 +6108,7 @@
     /**
      * This method is like `_.zip` except that it accepts an iteratee to specify
      * how grouped values should be combined. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments: (accumulator, value, index, array).
+     * and invoked with four arguments: (accumulator, value, index, group).
      *
      * @static
      * @memberOf _

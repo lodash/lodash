@@ -9307,7 +9307,6 @@
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
      *
-     *
      * @static
      * @memberOf _
      * @alias extend

@@ -6925,6 +6925,59 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isAll');
+
+  (function() {
+    var args = arguments;
+
+    test('should supply each function with the specified value', 8, function() {
+      var isEmptyString = _.isAll(_.isString, _.isEmpty);
+      var isEmptyObject = _.isAll(_.isPlainObject, _.isEmpty);
+
+      strictEqual(isEmptyString(""), true);
+      strictEqual(isEmptyString("1"), false);
+      strictEqual(isEmptyString({}), false);
+      strictEqual(isEmptyString(args), false);
+
+      strictEqual(isEmptyObject({}), true);
+      strictEqual(isEmptyObject(""), false);
+      strictEqual(isEmptyObject("1"), false);
+      strictEqual(isEmptyObject(args), false);
+    });
+
+    test('should return a new function', 1, function() {
+      notStrictEqual(_.isAll(_.noop), _.noop);
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isAny');
+
+  (function() {
+    var args = arguments;
+
+    test('should supply each function with the specified value', 6, function() {
+      var startsWithCfg = _.partial(_.startsWith, _, "cfg-");
+      var startsWithConf = _.partial(_.startsWith, _, "conf-");
+      var startsWithConfig = _.partial(_.startsWith, _, "config-");
+      var isConfig = _.isAny(startsWithCfg, startsWithConf, startsWithConfig);
+
+      strictEqual(isConfig("cfg-option-A"), true);
+      strictEqual(isConfig("conf-option-B"), true);
+      strictEqual(isConfig("config-option-C"), true);
+      strictEqual(isConfig({}), false);
+      strictEqual(isConfig(args), false);
+      strictEqual(isConfig(""), false);
+    });
+
+    test('should return a new function', 1, function() {
+      notStrictEqual(_.isAll(_.noop), _.noop);
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isArguments');
 
   (function() {
@@ -17562,6 +17615,8 @@
       'compose',
       'flow',
       'flowRight',
+      'isAll',
+      'isAny',
       'tap',
       'thru'
     ].concat(checkFuncs);
@@ -17673,13 +17728,13 @@
       });
     });
 
-    test('should throw an error for falsey arguments', 24, function() {
+    test('should throw an error for falsey arguments', 26, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];
 
         var actual = _.map(falsey, function(value, index) {
-          var pass = !index && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
+          var pass = !index && /^(?:backflow|compose|is(All|Any)|flow(Right)?)$/.test(methodName);
 
           try {
             index ? func(value) : func();

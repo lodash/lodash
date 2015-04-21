@@ -3378,6 +3378,45 @@
     }
 
     /**
+     * Creates a `_.isAll` or `_.isAny` function.
+     *
+     * @private
+     * @param {boolean} isAll Specify all or any must be true.
+     * @returns {Function} Returns the new conditional function.
+     */
+    function createConditional(isAll) {
+      return function () {
+        var length = arguments.length;
+        if (!length) {
+          return function() { return arguments[0]; };
+        }
+        var wrapper,
+            index = length,
+            leftIndex = 0,
+            funcs = Array(length);
+
+        while (index--) {
+          var func = funcs[leftIndex++] = arguments[index];
+
+          if (typeof func !== 'function') {
+            throw new TypeError(FUNC_ERROR_TEXT);
+          }
+        }
+
+        return function (value) {
+          var index = funcs.length - 1,
+              result = funcs[index].call(this, value);
+
+          while ((isAll ? result : !result) && index--) {
+            result = funcs[index].call(this, value);
+          }
+
+          return result;
+        }
+      };
+    }
+
+    /**
      * Creates a function that produces an instance of `Ctor` regardless of
      * whether it was invoked as part of a `new` expression or by `call` or `apply`.
      *
@@ -8638,6 +8677,63 @@
     }
 
     /**
+     * Creates a function that returns the result of invoking the provided
+     * functions with the `this` binding of the created function, where each
+     * successive invocation is only called with the value if the return
+     * value of the previous was true.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var isEmptyString = _.isAll(_.isString, _.isEmpty);
+     * isEmptyString("");
+     * // => true
+     *
+     * isEmptyString("value");
+     * // => false
+     *
+     * isEmptyString([]);
+     * // => false
+     */
+    var isAll = createConditional(true);
+
+    /**
+     * Creates a function that returns the result of invoking the provided
+     * functions with the `this` binding of the created function, where each
+     * successive invocation is only called with the value if the return
+     * value of the previous was true.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var startsWithCfg = _.partial(_.startsWith, _, "cfg-");
+     * var startsWithConf = _.partial(_.startsWith, _, "conf-");
+     * var startsWithConfig = _.partial(_.startsWith, _, "config-");
+     * var isConfig = _.isAny(startsWithCfg, startsWithConf, startsWithConfig);
+     *
+     * isConfig("cfg-option-A");
+     * // => true
+     *
+     * isConfig("conf-option-B");
+     * // => true
+     *
+     * isConfig("config-option-C");
+     * // => true
+     *
+     * isConfig("option-D");
+     * // => false
+     */
+    var isAny = createConditional();
+
+    /**
      * Checks if `value` is classified as an `arguments` object.
      *
      * @static
@@ -12132,6 +12228,8 @@
     lodash.includes = includes;
     lodash.indexOf = indexOf;
     lodash.inRange = inRange;
+    lodash.isAll = isAll;
+    lodash.isAny = isAny;
     lodash.isArguments = isArguments;
     lodash.isArray = isArray;
     lodash.isBoolean = isBoolean;

@@ -13255,9 +13255,9 @@
     });
 
     test('`_.' + methodName + '` should handle empty paths', 4, function() {
-      _.each([['', ''], [[], ['']]], function(paths) {
-        strictEqual(func({}, paths[0]), undefined);
-        strictEqual(func({ '': 3 }, paths[1]), 3);
+      _.each([['', ''], [[], ['']]], function(pair) {
+        strictEqual(func({}, pair[0]), undefined);
+        strictEqual(func({ '': 3 }, pair[1]), 3);
       });
     });
 
@@ -13283,9 +13283,10 @@
 
     test('`_.' + methodName + '` should return `undefined` with deep paths when `object` is nullish', 2, function() {
       var values = [null, undefined],
-          expected = _.map(values, _.constant(undefined));
+          expected = _.map(values, _.constant(undefined)),
+          paths = ['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']];
 
-      _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
+      _.each(paths, function(path) {
         var actual = _.map(values, function(value) {
           return func(value, path);
         });
@@ -13303,9 +13304,10 @@
     });
 
     test('`_.' + methodName + '` should follow `path` over non-plain objects', 4, function() {
-      var object = { 'a': '' };
+      var object = { 'a': '' },
+          paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
 
-      _.each(['constructor.prototype.a', ['constructor', 'prototype', 'a']], function(path) {
+      _.each(paths, function(path) {
         numberProto.a = 1;
         var actual = func(0, path);
         strictEqual(actual, 1);
@@ -13729,13 +13731,13 @@
     });
 
     test('should handle empty paths', 4, function() {
-      _.each([['', ''], [[], ['']]], function(paths, index) {
+      _.each([['', ''], [[], ['']]], function(pair, index) {
         var object = {};
 
-        _.set(object, paths[0], 1);
+        _.set(object, pair[0], 1);
         deepEqual(object, index ? {} : { '': 1 });
 
-        _.set(object, paths[1], 2);
+        _.set(object, pair[1], 2);
         deepEqual(object, { '': 2 });
       });
     });
@@ -13783,9 +13785,10 @@
     });
 
     test('should follow `path` over non-plain objects', 4, function() {
-      var object = { 'a': '' };
+      var object = { 'a': '' },
+          paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
 
-      _.each(['constructor.prototype.a', ['constructor', 'prototype', 'a']], function(path) {
+      _.each(paths, function(path) {
         _.set(0, path, 1);
         strictEqual(0..a, 1);
         delete numberProto.a;

@@ -843,7 +843,7 @@
     var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
     /** Used to store function metadata. */
-    var metaMap = WeakMap && new WeakMap;
+    var metaMap = WeakMap && new WeakMap();
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -1021,7 +1021,7 @@
           props = [];
 
       Ctor.prototype = { 'valueOf': x, 'y': x };
-      for (var key in new Ctor) { props.push(key); }
+      for (var key in new Ctor()) { props.push(key); }
 
       /**
        * Detect if the `toStringTag` of `arguments` objects is resolvable
@@ -1438,7 +1438,7 @@
     function SetCache(values) {
       var length = values ? values.length : 0;
 
-      this.data = { 'hash': nativeCreate(null), 'set': new Set };
+      this.data = { 'hash': nativeCreate(null), 'set': new Set() };
       while (length--) {
         this.push(values[length]);
       }
@@ -1971,7 +1971,7 @@
       return function(prototype) {
         if (isObject(prototype)) {
           Object.prototype = prototype;
-          var result = new Object;
+          var result = new Object();
           Object.prototype = null;
         }
         return result || context.Object();
@@ -4237,7 +4237,7 @@
       if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
         Ctor = Object;
       }
-      return new Ctor;
+      return new Ctor();
     }
 
     /**
@@ -8194,7 +8194,7 @@
         cache.set(key, result);
         return result;
       };
-      memoized.cache = new memoize.Cache;
+      memoized.cache = new memoize.Cache();
       return memoized;
     }
 
@@ -10210,7 +10210,7 @@
         if (isArr || isObject(object)) {
           var Ctor = object.constructor;
           if (isArr) {
-            accumulator = isArray(object) ? new Ctor : [];
+            accumulator = isArray(object) ? new Ctor() : [];
           } else {
             accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
           }

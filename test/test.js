@@ -13249,6 +13249,11 @@
       strictEqual(func(object, ['a', 'b', 'c']), 3);
     });
 
+    test('`_.' + methodName + '` should ignore empty brackets', 1, function() {
+      var object = { 'a': 1 };
+      strictEqual(func(object, 'a[]'), 1);
+    });
+
     test('`_.' + methodName + '` should handle empty paths', 4, function() {
       _.each([['', ''], [[], ['']]], function(paths) {
         strictEqual(func({}, paths[0]), undefined);
@@ -13712,11 +13717,19 @@
       deepEqual(object, { 'a,b,c': 4, 'a': { 'b': { 'c': 3 } } });
     });
 
+    test('should ignore empty brackets', 1, function() {
+      var object = {};
+      _.set(object, 'a[]', 1);
+      deepEqual(object, { 'a': 1 });
+    });
+
     test('should handle empty paths', 4, function() {
       _.each([['', ''], [[], ['']]], function(paths, index) {
         var object = {};
+
         _.set(object, paths[0], 1);
         deepEqual(object, index ? {} : { '': 1 });
+
         _.set(object, paths[1], 2);
         deepEqual(object, { '': 2 });
       });

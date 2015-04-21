@@ -36,8 +36,7 @@
   /** Used to indicate the type of lazy iteratees. */
   var LAZY_DROP_WHILE_FLAG = 0,
       LAZY_FILTER_FLAG = 1,
-      LAZY_MAP_FLAG = 2,
-      LAZY_TAKE_WHILE_FLAG = 3;
+      LAZY_MAP_FLAG = 2;
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -12359,7 +12358,6 @@
 
       lodash.prototype[methodName] = function() {
         var args = arguments,
-            length = args.length,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,

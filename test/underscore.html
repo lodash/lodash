@@ -147,6 +147,9 @@
 					]
 				},
 				'Utility': {
+					'now': [
+						'Produces the correct time in milliseconds'
+					],
 					'times': [
 						'works as a wrapper'
 					]
@@ -159,6 +162,7 @@
 				delete QUnit.config.excused.Functions['more throttle does not trigger leading call when leading is set to false'];
 				delete QUnit.config.excused.Functions['throttle does not trigger trailing call when trailing is set to false'];
 				delete QUnit.config.excused.Functions['debounce asap'];
+				delete QUnit.config.excused.Utility.now;
 			}
 			// load test scripts
 			document.write(ui.urlParams.loader != 'none'

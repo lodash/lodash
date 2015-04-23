@@ -2301,6 +2301,18 @@
       }
     });
 
+    test('`_.' + methodName + '` should work with curried functions with placeholders', 1, function() {
+      var curried = _.curry(_.pluck),
+          getProp = curried(curried.placeholder, 'a'),
+          objects = [{ 'a': 1 }, { 'a': 2 }, { 'a': 1 }];
+
+      var combined = isFlow
+        ? func(getProp, _.uniq)
+        : func(_.uniq, getProp);
+
+      deepEqual(combined(objects), [1, 2]);
+    });
+
     test('`_.' + methodName + '` should return a wrapped value when chaining', 1, function() {
       if (!isNpm) {
         var wrapped = _(_.noop)[methodName]();
@@ -11662,7 +11674,7 @@
       strictEqual(par3(), isPartial ? 'hi pebbles' : 'pebbles hi');
     });
 
-    test('`_.' + methodName + '` should work with curried methods', 2, function() {
+    test('`_.' + methodName + '` should work with curried functions', 2, function() {
       var fn = function(a, b, c) { return a + b + c; },
           curried = _.curry(func(fn, 1), 2);
 
@@ -11670,7 +11682,7 @@
       strictEqual(curried(2)(3), 6);
     });
 
-    test('should work with placeholders and curried methods', 1, function() {
+    test('should work with placeholders and curried functions', 1, function() {
       var fn = function() { return slice.call(arguments); },
           curried = _.curry(fn),
           par = func(curried, ph, 'b', ph, 'd');

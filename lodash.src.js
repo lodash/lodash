@@ -1016,6 +1016,7 @@
 
     (function(x) {
       var Ctor = function() { this.x = x; },
+          args = arguments,
           object = { '0': x, 'length': x },
           props = [];
 
@@ -1029,7 +1030,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.argsTag = objToString.call(arguments) == argsTag;
+      support.argsTag = objToString.call(args) == argsTag;
 
       /**
        * Detect if `name` or `message` properties of `Error.prototype` are
@@ -1158,7 +1159,7 @@
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
+        support.nonEnumArgs = !propertyIsEnumerable.call(args, 1);
       } catch(e) {
         support.nonEnumArgs = true;
       }

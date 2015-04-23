@@ -8973,7 +8973,7 @@
     });
 
     test('`_.' + methodName + '` should work with `arguments` objects (test in IE < 9)', 1, function() {
-      if (!(isPhantom || isStrict)) {
+      if (!isStrict) {
         deepEqual(func(args).sort(), ['0', '1', '2']);
       }
       else {
@@ -8982,7 +8982,7 @@
     });
 
     test('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', 1, function() {
-      if (!(isPhantom || isStrict)) {
+      if (!isStrict) {
         args.a = 1;
         deepEqual(func(args).sort(), ['0', '1', '2', 'a']);
         delete args.a;
@@ -8993,7 +8993,7 @@
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', 1, function() {
-      if (!(isPhantom || isStrict)) {
+      if (!isStrict) {
         var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'];
 
         objectProto.a = 1;

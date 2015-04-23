@@ -80,7 +80,7 @@
         result = [];
 
     if (phantom) {
-      result = params = phantom.args;
+      result = params = phantom.args || require('system').args;
     } else if (system) {
       min = 1;
       result = params = system.args;

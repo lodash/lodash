@@ -2573,11 +2573,11 @@
     test('should return `_.identity` when `func` is nullish', 1, function() {
       var object = {},
           values = [, null, undefined],
-          expected = _.map(values, _.constant(object));
+          expected = _.map(values, _.constant([_.identity, object]));
 
       var actual = _.map(values, function(value, index) {
-        var callback = index ? _.callback(value) : _.callback();
-        return callback(object);
+        var identity = index ? _.callback(value) : _.callback();
+        return [identity, identity(object)];
       });
 
       deepEqual(actual, expected);
@@ -2616,52 +2616,79 @@
     });
 
     test('should return a callback created by `_.matches` when `func` is an object', 2, function() {
-      var callback = _.callback({ 'a': 1, 'b': 2 });
-      strictEqual(callback({ 'a': 1, 'b': 2, 'c': 3 }), true);
-      strictEqual(callback({ 'b': 2 }), false);
+      var matches = _.callback({ 'a': 1, 'b': 2 });
+      strictEqual(matches({ 'a': 1, 'b': 2, 'c': 3 }), true);
+      strictEqual(matches({ 'b': 2 }), false);
     });
 
     test('should return a callback created by `_.matches` when `func` is an array', 2, function() {
-      var callback = _.callback(['a', 'b']);
-      strictEqual(callback({ '0': 'a', '1': 'b', '2': 'c' }), true);
-      strictEqual(callback({ '1': 'b' }), false);
+      var matches = _.callback(['a', 'b']);
+      strictEqual(matches({ '0': 'a', '1': 'b', '2': 'c' }), true);
+      strictEqual(matches({ '1': 'b' }), false);
+    });
+
+    test('should not change match behavior if `source` is augmented', 9, function() {
+      var sources = [
+        { 'a': { 'b': 2, 'c': 3 } },
+        { 'a': 1, 'b': 2 },
+        { 'a': 1 }
+      ];
+
+      _.each(sources, function(source, index) {
+        var object = _.cloneDeep(source),
+            matches = _.callback(source);
+
+        strictEqual(matches(object), true);
+
+        if (index) {
+          source.a = 2;
+          source.b = 1;
+          source.c = 3;
+        } else {
+          source.a.b = 1;
+          source.a.c = 2;
+          source.a.d = 3;
+        }
+        strictEqual(matches(object), true);
+        strictEqual(matches(source), false);
+      });
     });
 
     test('should return a callback created by `_.matchesProperty` when `func` is a number or string and `thisArg` is not `undefined`', 3, function() {
       var array = ['a'],
-          callback = _.callback(0, 'a');
+          matches = _.callback(0, 'a');
 
-      strictEqual(callback(array), true);
+      strictEqual(matches(array), true);
 
-      callback = _.callback('0', 'a');
-      strictEqual(callback(array), true);
+      matches = _.callback('0', 'a');
+      strictEqual(matches(array), true);
 
-      callback = _.callback(1, undefined);
-      strictEqual(callback(array), undefined);
+      matches = _.callback(1, undefined);
+      strictEqual(matches(array), undefined);
     });
 
     test('should support deep paths for `_.matchesProperty` shorthands', 1, function() {
       var object = { 'a': { 'b': { 'c': { 'd': 1, 'e': 2 } } } },
-          callback = _.callback('a.b.c', { 'e': 2 });
+          matches = _.callback('a.b.c', { 'e': 2 });
 
-      strictEqual(callback(object), true);
+      strictEqual(matches(object), true);
     });
 
     test('should return a callback created by `_.property` when `func` is a number or string', 2, function() {
       var array = ['a'],
-          callback = _.callback(0);
+          prop = _.callback(0);
 
-      strictEqual(callback(array), 'a');
+      strictEqual(prop(array), 'a');
 
-      callback = _.callback('0');
-      strictEqual(callback(array), 'a');
+      prop = _.callback('0');
+      strictEqual(prop(array), 'a');
     });
 
     test('should support deep paths for `_.property` shorthands', 1, function() {
       var object = { 'a': { 'b': { 'c': 3 } } },
-          callback = _.callback('a.b.c');
+          prop = _.callback('a.b.c');
 
-      strictEqual(callback(object), 3);
+      strictEqual(prop(object), 3);
     });
 
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
@@ -9684,7 +9711,13 @@
     });
 
     test('should not change match behavior if `source` is augmented', 9, function() {
-      _.each([{ 'a': { 'b': 2, 'c': 3 } }, { 'a': 1, 'b': 2 }, { 'a': 1 }], function(source, index) {
+      var sources = [
+        { 'a': { 'b': 2, 'c': 3 } },
+        { 'a': 1, 'b': 2 },
+        { 'a': 1 }
+      ];
+
+      _.each(sources, function(source, index) {
         var object = _.cloneDeep(source),
             matches = _.matches(source);
 

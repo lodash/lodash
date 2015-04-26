@@ -2573,11 +2573,11 @@
     test('should return `_.identity` when `func` is nullish', 1, function() {
       var object = {},
           values = [, null, undefined],
-          expected = _.map(values, _.constant([_.identity, object]));
+          expected = _.map(values, _.constant([!isNpm && _.identity, object]));
 
       var actual = _.map(values, function(value, index) {
         var identity = index ? _.callback(value) : _.callback();
-        return [identity, identity(object)];
+        return [!isNpm && identity, identity(object)];
       });
 
       deepEqual(actual, expected);

@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.7.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.8.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -o ./lodash.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.7.0';
+  var VERSION = '3.8.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -88,7 +88,7 @@
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match property names within property paths. */
-  var reIsDeepProp = /\.|\[(?:[^[\]]+|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
+  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
       reIsPlainProp = /^\w*$/,
       rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
 
@@ -279,8 +279,6 @@
    * restricted `window` object, otherwise the `window` object is used.
    */
   var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
-
-  /*--------------------------------------------------------------------------*/
 
   /**
    * The base implementation of `compareAscending` which compares values and
@@ -652,8 +650,6 @@
     return htmlUnescapes[chr];
   }
 
-  /*--------------------------------------------------------------------------*/
-
   /**
    * Create a new pristine `lodash` function using the given `context` object.
    *
@@ -749,7 +745,7 @@
         getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         push = arrayProto.push,
-        preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions,
+        preventExtensions = isNative(preventExtensions = Object.preventExtensions) && preventExtensions,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
@@ -777,12 +773,19 @@
       //
       // Use `Object.preventExtensions` on a plain object instead of simply using
       // `Object('x')` because Chrome and IE fail to throw an error when attempting
-      // to assign values to readonly indexes of strings in strict mode.
-      var object = { '1': 0 },
-          func = preventExtensions && isNative(func = Object.assign) && func;
-
-      try { func(preventExtensions(object), 'xo'); } catch(e) {}
-      return !object[1] && func;
+      // to assign values to readonly indexes of strings.
+      var func = preventExtensions && isNative(func = Object.assign) && func;
+      try {
+        if (func) {
+          var object = preventExtensions({ '1': 0 });
+          object[0] = 1;
+        }
+      } catch(e) {
+        // Only attempt in strict mode.
+        try { func(object, 'xo'); } catch(e) {}
+        return !object[1] && func;
+      }
+      return false;
     }());
 
     /* Native method references for those with the same name as other `lodash` methods. */
@@ -803,7 +806,7 @@
 
     /** Used as references for the maximum length and index of an array. */
     var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-        MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1,
+        MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
         HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
     /** Used as the size, in bytes, of each `Float64Array` element. */
@@ -820,8 +823,6 @@
 
     /** Used to lookup unminified function names. */
     var realNames = {};
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a `lodash` object which wraps `value` to enable implicit chaining.
@@ -962,6 +963,7 @@
 
     (function(x) {
       var Ctor = function() { this.x = x; },
+          args = arguments,
           object = { '0': x, 'length': x },
           props = [];
 
@@ -1011,7 +1013,7 @@
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
+        support.nonEnumArgs = !propertyIsEnumerable.call(args, 1);
       } catch(e) {
         support.nonEnumArgs = true;
       }
@@ -1077,8 +1079,6 @@
         '_': lodash
       }
     };
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
@@ -1208,8 +1208,6 @@
       return result;
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Creates a cache object to store key/value pairs.
      *
@@ -1278,8 +1276,6 @@
       return this;
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      *
      * Creates a cache object to store unique values.
@@ -1328,8 +1324,6 @@
         data.hash[value] = true;
       }
     }
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * Copies the values of `source` to `array`.
@@ -2153,9 +2147,9 @@
           length = path.length;
 
       while (object != null && ++index < length) {
-        var result = object = object[path[index]];
+        object = object[path[index]];
       }
-      return result;
+      return (index && index == length) ? object : undefined;
     }
 
     /**
@@ -3311,7 +3305,7 @@
           return index > -1 ? collection[index] : undefined;
         }
         return baseFind(collection, predicate, eachFunc);
-      }
+      };
     }
 
     /**
@@ -3377,7 +3371,7 @@
           funcName = getFuncName(func);
 
           var data = funcName == 'wrapper' ? getData(func) : null;
-          if (data && isLaziable(data[0])) {
+          if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
             wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
           } else {
             wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);
@@ -3444,6 +3438,28 @@
           iteratee = bindCallback(iteratee, thisArg, 3);
         }
         return objectFunc(object, iteratee);
+      };
+    }
+
+    /**
+     * Creates a function for `_.mapKeys` or `_.mapValues`.
+     *
+     * @private
+     * @param {boolean} [isMapKeys] Specify mapping keys instead of values.
+     * @returns {Function} Returns the new map function.
+     */
+    function createObjectMapper(isMapKeys) {
+      return function(object, iteratee, thisArg) {
+        var result = {};
+        iteratee = getCallback(iteratee, thisArg, 3);
+
+        baseForOwn(object, function(value, key, object) {
+          var mapped = iteratee(value, key, object);
+          key = isMapKeys ? mapped : key;
+          value = isMapKeys ? value : mapped;
+          result[key] = value;
+        });
+        return result;
       };
     }
 
@@ -3984,7 +4000,7 @@
      * Gets the "length" property value of `object`.
      *
      * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-     * in Safari on iOS 8.1 ARM64.
+     * that affects Safari on at least iOS 8.1-8.3 ARM64.
      *
      * @private
      * @param {Object} object The object to query.
@@ -4292,7 +4308,7 @@
     }
 
     /**
-     * A specialized version of `_.pick` that picks `object` properties specified
+     * A specialized version of `_.pick` which picks `object` properties specified
      * by `props`.
      *
      * @private
@@ -4317,7 +4333,7 @@
     }
 
     /**
-     * A specialized version of `_.pick` that picks `object` properties `predicate`
+     * A specialized version of `_.pick` which picks `object` properties `predicate`
      * returns truthy for.
      *
      * @private
@@ -4509,8 +4525,6 @@
         ? wrapper.clone()
         : new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
     }
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * Creates an array of elements split into groups the length of `size`.
@@ -5722,7 +5736,7 @@
 
     /**
      * This method is like `_.zip` except that it accepts an array of grouped
-     * elements and creates an array regrouping the elements to their pre-`_.zip`
+     * elements and creates an array regrouping the elements to their pre-zip
      * configuration.
      *
      * @static
@@ -5739,14 +5753,58 @@
      * // => [['fred', 'barney'], [30, 40], [true, false]]
      */
     function unzip(array) {
+      if (!(array && array.length)) {
+        return [];
+      }
       var index = -1,
-          length = (array && array.length && arrayMax(arrayMap(array, getLength))) >>> 0,
-          result = Array(length);
+          length = 0;
 
+      array = arrayFilter(array, function(group) {
+        if (isArray(group) || isArguments(group)) {
+          length = nativeMax(group.length, length);
+          return true;
+        }
+      });
+      var result = Array(length);
       while (++index < length) {
         result[index] = arrayMap(array, baseProperty(index));
       }
       return result;
+    }
+
+    /**
+     * This method is like `_.unzip` except that it accepts an iteratee to specify
+     * how regrouped values should be combined. The `iteratee` is bound to `thisArg`
+     * and invoked with four arguments: (accumulator, value, index, group).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array of grouped elements to process.
+     * @param {Function} [iteratee] The function to combine regrouped values.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
+     * @returns {Array} Returns the new array of regrouped elements.
+     * @example
+     *
+     * var zipped = _.zip([1, 2], [10, 20], [100, 200]);
+     * // => [[1, 10, 100], [2, 20, 200]]
+     *
+     * _.unzipWith(zipped, _.add);
+     * // => [3, 30, 300]
+     */
+    function unzipWith(array, iteratee, thisArg) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      var result = unzip(array);
+      if (iteratee == null) {
+        return result;
+      }
+      iteratee = bindCallback(iteratee, thisArg, 4);
+      return arrayMap(result, function(group) {
+        return arrayReduce(group, iteratee, undefined, true);
+      });
     }
 
     /**
@@ -5860,7 +5918,37 @@
       return result;
     }
 
-    /*------------------------------------------------------------------------*/
+    /**
+     * This method is like `_.zip` except that it accepts an iteratee to specify
+     * how grouped values should be combined. The `iteratee` is bound to `thisArg`
+     * and invoked with four arguments: (accumulator, value, index, group).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] The arrays to process.
+     * @param {Function} [iteratee] The function to combine grouped values.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
+     * @returns {Array} Returns the new array of grouped elements.
+     * @example
+     *
+     * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
+     * // => [111, 222]
+     */
+    var zipWith = restParam(function(arrays) {
+      var length = arrays.length,
+          iteratee = arrays[length - 2],
+          thisArg = arrays[length - 1];
+
+      if (length > 2 && typeof iteratee == 'function') {
+        length -= 2;
+      } else {
+        iteratee = (length > 1 && typeof thisArg == 'function') ? (--length, thisArg) : undefined;
+        thisArg = undefined;
+      }
+      arrays.length = length;
+      return unzipWith(arrays, iteratee, thisArg);
+    });
 
     /**
      * Creates a `lodash` object that wraps `value` with explicit method
@@ -6111,8 +6199,6 @@
     function wrapperValue() {
       return baseWrapperValue(this.__wrapped__, this.__actions__);
     }
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * Creates an array of elements corresponding to the given keys, or indexes,
@@ -6667,10 +6753,11 @@
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`, `drop`,
-     * `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`, `parseInt`,
-     * `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`,
-     * `trimRight`, `trunc`, `random`, `range`, `sample`, `some`, `uniq`, and `words`
+     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`,
+     * `drop`, `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`,
+     * `parseInt`, `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`,
+     * `trimLeft`, `trimRight`, `trunc`, `random`, `range`, `sample`, `some`,
+     * `sum`, `uniq`, and `words`
      *
      * @static
      * @memberOf _
@@ -6858,22 +6945,11 @@
      * }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
-    var reduceRight =  createReduce(arrayReduceRight, baseEachRight);
+    var reduceRight = createReduce(arrayReduceRight, baseEachRight);
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
      * that `predicate` does **not** return truthy for.
-     *
-     * If a property name is provided for `predicate` the created `_.property`
-     * style callback returns the property value of the given element.
-     *
-     * If a value is also provided for `thisArg` the created `_.matchesProperty`
-     * style callback returns `true` for elements that have a matching property
-     * value, else `false`.
-     *
-     * If an object is provided for `predicate` the created `_.matches` style
-     * callback returns `true` for elements that have the properties of the given
-     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -7253,8 +7329,6 @@
       return filter(collection, baseMatches(source));
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Gets the number of milliseconds that have elapsed since the Unix epoch
      * (1 January 1970 00:00:00 UTC).
@@ -7272,8 +7346,6 @@
     var now = nativeNow || function() {
       return new Date().getTime();
     };
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * The opposite of `_.before`; this method creates a function that invokes
@@ -8254,8 +8326,6 @@
       return createWrapper(wrapper, PARTIAL_FLAG, null, [value], []);
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
      * otherwise they are assigned by reference. If `customizer` is provided it is
@@ -9018,8 +9088,6 @@
       return baseCopy(value, keysIn(value));
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
@@ -9029,7 +9097,6 @@
      *
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
-     *
      *
      * @static
      * @memberOf _
@@ -9565,6 +9632,28 @@
     }
 
     /**
+     * The opposite of `_.mapValues`; this method creates an object with the
+     * same values as `object` and keys generated by running each own enumerable
+     * property of `object` through `iteratee`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to iterate over.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
+     *  per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
+     * @returns {Object} Returns the new mapped object.
+     * @example
+     *
+     * _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
+     *   return key + value;
+     * });
+     * // => { 'a1': 1, 'b2': 2 }
+     */
+    var mapKeys = createObjectMapper(true);
+
+    /**
      * Creates an object with the same keys as `object` and values generated by
      * running each own enumerable property of `object` through `iteratee`. The
      * iteratee function is bound to `thisArg` and invoked with three arguments:
@@ -9605,15 +9694,7 @@
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
-    function mapValues(object, iteratee, thisArg) {
-      var result = {};
-      iteratee = getCallback(iteratee, thisArg, 3);
-
-      baseForOwn(object, function(value, key, object) {
-        result[key] = iteratee(value, key, object);
-      });
-      return result;
-    }
+    var mapValues = createObjectMapper();
 
     /**
      * Recursively merges own enumerable properties of the source object(s), that
@@ -9668,11 +9749,6 @@
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
      * own and inherited enumerable properties of `object` that are not omitted.
-     * Property names may be specified as individual arguments or as arrays of
-     * property names. If `predicate` is provided it is invoked for each property
-     * of `object` omitting the properties `predicate` returns truthy for. The
-     * predicate is bound to `thisArg` and invoked with three arguments:
-     * (value, key, object).
      *
      * @static
      * @memberOf _
@@ -9966,8 +10042,6 @@
       return baseValues(object, keysIn(object));
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
      * `end` is not specified it is set to `start` with `start` then set to `0`.
@@ -10071,8 +10145,6 @@
       }
       return baseRandom(min, max);
     }
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
@@ -10939,8 +11011,6 @@
       return string.match(pattern || reWords) || [];
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Attempts to invoke `func`, returning either the result or the caught error
      * object. Any additional arguments are provided to `func` when it is invoked.
@@ -11011,7 +11081,9 @@
       if (guard && isIterateeCall(func, thisArg, guard)) {
         thisArg = null;
       }
-      return baseCallback(func, thisArg);
+      return isObjectLike(func)
+        ? matches(func)
+        : baseCallback(func, thisArg);
     }
 
     /**
@@ -11136,7 +11208,7 @@
     var method = restParam(function(path, args) {
       return function(object) {
         return invokePath(object, path, args);
-      }
+      };
     });
 
     /**
@@ -11473,8 +11545,6 @@
       return baseToString(prefix) + id;
     }
 
-    /*------------------------------------------------------------------------*/
-
     /**
      * Adds two numbers.
      *
@@ -11639,8 +11709,6 @@
         : baseSum(collection, iteratee);
     }
 
-    /*------------------------------------------------------------------------*/
-
     // Ensure wrappers are instances of `baseLodash`.
     lodash.prototype = baseLodash.prototype;
 
@@ -11711,6 +11779,7 @@
     lodash.keys = keys;
     lodash.keysIn = keysIn;
     lodash.map = map;
+    lodash.mapKeys = mapKeys;
     lodash.mapValues = mapValues;
     lodash.matches = matches;
     lodash.matchesProperty = matchesProperty;
@@ -11759,6 +11828,7 @@
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.unzip = unzip;
+    lodash.unzipWith = unzipWith;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.where = where;
@@ -11767,6 +11837,7 @@
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
+    lodash.zipWith = zipWith;
 
     // Add aliases.
     lodash.backflow = flowRight;
@@ -11784,8 +11855,6 @@
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);
-
-    /*------------------------------------------------------------------------*/
 
     // Add functions that return unwrapped values when chaining.
     lodash.add = add;
@@ -11890,8 +11959,6 @@
       return source;
     }()), false);
 
-    /*------------------------------------------------------------------------*/
-
     // Add functions capable of returning wrapped and unwrapped values when chaining.
     lodash.sample = sample;
 
@@ -11903,8 +11970,6 @@
         return sample(value, n);
       });
     };
-
-    /*------------------------------------------------------------------------*/
 
     /**
      * The semantic version number.
@@ -12040,7 +12105,6 @@
 
       lodash.prototype[methodName] = function() {
         var args = arguments,
-            length = args.length,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
@@ -12128,8 +12192,6 @@
 
     return lodash;
   }
-
-  /*--------------------------------------------------------------------------*/
 
   // Export lodash.
   var _ = runInContext();

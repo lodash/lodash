@@ -1829,8 +1829,8 @@
      */
     function baseAt(collection, props) {
       var index = -1,
+          isArr = isArrayLike(collection),
           length = collection.length,
-          isArr = isLength(length),
           propsLength = props.length,
           result = Array(propsLength);
 
@@ -2169,8 +2169,8 @@
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {boolean} isDeep Specify a deep flatten.
-     * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
+     * @param {boolean} [isDeep] Specify a deep flatten.
+     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isDeep, isStrict) {
@@ -2181,8 +2181,8 @@
 
       while (++index < length) {
         var value = array[index];
-
-        if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
+        if (isObjectLike(value) && isArrayLike(value) &&
+            (isStrict || isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
             value = baseFlatten(value, isDeep, isStrict);
@@ -2483,8 +2483,7 @@
      */
     function baseMap(collection, iteratee) {
       var index = -1,
-          length = getLength(collection),
-          result = isLength(length) ? Array(length) : [];
+          result = isArrayLike(collection) ? Array(collection.length) : [];
 
       baseEach(collection, function(value, key, collection) {
         result[++index] = iteratee(value, key, collection);
@@ -2584,7 +2583,7 @@
       if (!isObject(object)) {
         return object;
       }
-      var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
+      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
       if (!isSrcArr) {
         var props = keys(source);
         push.apply(props, getSymbols(source));
@@ -2647,10 +2646,10 @@
 
       if (isCommon) {
         result = srcValue;
-        if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
+        if (isArrayLike(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
           result = isArray(value)
             ? value
-            : (getLength(value) ? arrayCopy(value) : []);
+            : (isArrayLike(value) ? arrayCopy(value) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
@@ -3292,11 +3291,11 @@
      */
     function createBaseEach(eachFunc, fromRight) {
       return function(collection, iteratee) {
-        var length = collection ? getLength(collection) : 0;
-        if (!isLength(length)) {
+        if (!isArrayLike(collection)) {
           return eachFunc(collection, iteratee);
         }
-        var index = fromRight ? length : -1,
+        var length = collection.length,
+            index = fromRight ? length : -1,
             iterable = toObject(collection);
 
         while ((fromRight ? index-- : ++index < length)) {
@@ -4310,6 +4309,17 @@
     }
 
     /**
+     * Checks if `value` is array-like.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+     */
+    function isArrayLike(value) {
+      return value != null && isLength(getLength(value));
+    }
+
+    /**
      * Checks if `value` is a valid array-like index.
      *
      * @private
@@ -4337,13 +4347,9 @@
         return false;
       }
       var type = typeof index;
-      if (type == 'number') {
-        var length = getLength(object),
-            prereq = isLength(length) && isIndex(index, length);
-      } else {
-        prereq = type == 'string' && index in object;
-      }
-      if (prereq) {
+      if (type == 'number'
+          ? (isArrayLike(object) && isIndex(index, object.length))
+          : (type == 'string' && index in object)) {
         var other = object[index];
         return value === value ? (value === other) : (other !== other);
       }
@@ -4630,7 +4636,7 @@
           length = propsLength && object.length,
           support = lodash.support;
 
-      var allowIndexes = length && isLength(length) &&
+      var allowIndexes = isLength(length) &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object)));
 
@@ -4657,7 +4663,7 @@
       if (value == null) {
         return [];
       }
-      if (!isLength(getLength(value))) {
+      if (!isArrayLike(value)) {
         return values(value);
       }
       if (lodash.support.unindexedChars && isString(value)) {
@@ -4806,7 +4812,7 @@
      * // => [1, 3]
      */
     var difference = restParam(function(array, values) {
-      return (isArray(array) || isArguments(array))
+      return isArrayLike(array)
         ? baseDifference(array, baseFlatten(values, false, true))
         : [];
     });
@@ -5294,7 +5300,7 @@
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
-        if (isArray(value) || isArguments(value)) {
+        if (isArrayLike(value)) {
           args.push(value);
           caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
         }
@@ -5954,7 +5960,7 @@
           length = 0;
 
       array = arrayFilter(array, function(group) {
-        if (isArray(group) || isArguments(group)) {
+        if (isArrayLike(group)) {
           length = nativeMax(group.length, length);
           return true;
         }
@@ -6021,7 +6027,7 @@
      * // => [3]
      */
     var without = restParam(function(array, values) {
-      return (isArray(array) || isArguments(array))
+      return isArrayLike(array)
         ? baseDifference(array, values)
         : [];
     });
@@ -6046,7 +6052,7 @@
 
       while (++index < length) {
         var array = arguments[index];
-        if (isArray(array) || isArguments(array)) {
+        if (isArrayLike(array)) {
           var result = result
             ? baseDifference(result, array).concat(baseDifference(array, result))
             : array;
@@ -6419,8 +6425,7 @@
      * // => ['barney', 'pebbles']
      */
     var at = restParam(function(collection, props) {
-      var length = collection ? getLength(collection) : 0;
-      if (isLength(length)) {
+      if (!collection || isArrayLike(collection)) {
         collection = toIterable(collection);
       }
       return baseAt(collection, baseFlatten(props));
@@ -6827,11 +6832,10 @@
      * // => true
      */
     function includes(collection, target, fromIndex, guard) {
-      var length = collection ? getLength(collection) : 0;
-      if (!isLength(length)) {
+      if (!isArrayLike(collection)) {
         collection = values(collection);
-        length = collection.length;
       }
+      var length = collection.length;
       if (!length) {
         return false;
       }
@@ -6921,8 +6925,7 @@
       var index = -1,
           isFunc = typeof path == 'function',
           isProp = isKey(path),
-          length = getLength(collection),
-          result = isLength(length) ? Array(length) : [];
+          result = isArrayLike(collection) ? Array(collection.length) : [];
 
       baseEach(collection, function(value) {
         var func = isFunc ? path : (isProp && value != null && value[path]);
@@ -7270,8 +7273,7 @@
      * // => 7
      */
     function size(collection) {
-      var length = collection ? getLength(collection) : 0;
-      return isLength(length) ? length : keys(collection).length;
+      return isArrayLike(collection) ? collection.length : keys(collection).length;
     }
 
     /**
@@ -8661,15 +8663,13 @@
      * // => false
      */
     function isArguments(value) {
-      var length = isObjectLike(value) ? value.length : undefined;
-      return isLength(length) && objToString.call(value) == argsTag;
+      return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
     }
     // Fallback for environments without a `toStringTag` for `arguments` objects.
     if (!support.argsTag) {
       isArguments = function(value) {
-        var length = isObjectLike(value) ? value.length : undefined;
-        return isLength(length) && hasOwnProperty.call(value, 'callee') &&
-          !propertyIsEnumerable.call(value, 'callee');
+        return isObjectLike(value) && isArrayLike(value) &&
+          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
       };
     }
 
@@ -8690,7 +8690,7 @@
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+      return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == arrayTag;
     };
 
     /**
@@ -8791,10 +8791,9 @@
       if (value == null) {
         return true;
       }
-      var length = getLength(value);
-      if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
+      if (isArrayLike(value) && (isArray(value) || isString(value) || isArguments(value) ||
           (isObjectLike(value) && isFunction(value.splice)))) {
-        return !length;
+        return !value.length;
       }
       return !keys(value).length;
     }
@@ -9224,7 +9223,7 @@
      * // => false
      */
     function isTypedArray(value) {
-      return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
+      return isObjectLike(value) && isArrayLike(value) && !!typedArrayTags[objToString.call(value)];
     }
 
     /**
@@ -9263,11 +9262,10 @@
      * // => [2, 3]
      */
     function toArray(value) {
-      var length = value ? getLength(value) : 0;
-      if (!isLength(length)) {
+      if (!isArrayLike(value)) {
         return values(value);
       }
-      if (!length) {
+      if (!value.length) {
         return [];
       }
       return (lodash.support.unindexedChars && isString(value))
@@ -9785,12 +9783,9 @@
      * // => ['0', '1']
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      if (object) {
-        var Ctor = object.constructor,
-            length = object.length;
-      }
+      var Ctor = object != null && object.constructor;
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-          (typeof object == 'function' ? lodash.support.enumPrototypes : isLength(length))) {
+          (typeof object == 'function' ? lodash.support.enumPrototypes : isArrayLike(object))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -9828,7 +9823,7 @@
       var length = object.length,
           support = lodash.support;
 
-      length = (length && isLength(length) &&
+      length = (isLength(length) &&
         (isArray(object) || (support.nonEnumStrings && isString(object)) ||
           (support.nonEnumArgs && isArguments(object))) && length) || 0;
 

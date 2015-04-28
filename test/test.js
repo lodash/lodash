@@ -3855,12 +3855,11 @@
       deepEqual(_.difference([1, NaN, 3], largeArray), [1, 3]);
     });
 
-    test('should ignore values that are not arrays or `arguments` objects', 4, function() {
+    test('should ignore values that are not array-like', 3, function() {
       var array = [1, null, 3];
       deepEqual(_.difference(args, 3, { '0': 1 }), [1, 2, 3]);
       deepEqual(_.difference(null, array, 1), []);
       deepEqual(_.difference(array, args, null), [null]);
-      deepEqual(_.difference('abc', array, 'b'), []);
     });
   }(1, 2, 3));
 
@@ -16531,10 +16530,6 @@
     test('should remove all occurrences of each value from an array', 1, function() {
       var array = [1, 2, 3, 1, 2, 3];
       deepEqual(_.without(array, 1, 2), [3, 3]);
-    });
-
-    test('should treat string values for `array` as empty', 1, function() {
-      deepEqual(_.without('abc', 'b'), []);
     });
   }(1, 2, 3));
 

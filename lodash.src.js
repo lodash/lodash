@@ -7202,16 +7202,14 @@
           length = array.length,
           result = Array(n);
 
-      while (++index < n) {
+      while (++index < length) {
         var rand = baseRandom(0, index);
-        if (index != rand) {
-          result[index] = result[rand];
+        if (rand < n) {
+          if (index != rand) {
+            result[index] = result[rand];
+          }
+          result[rand] = array[index];
         }
-        result[rand] = array[index];
-      }
-      for (index--; ++index < length;) {
-        rand = baseRandom(0, index);
-        if (rand < n) result[rand] = array[index];
       }
       return result;
     }

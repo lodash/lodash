@@ -13076,6 +13076,10 @@
       strictEqual(_.replaceAll('a/b/c', '/', '//'), 'a//b//c');
     });
 
+    test('should replace empty pattern', 1, function() {
+      strictEqual(_.replaceAll('123', '', '/'), '/1/2/3/');
+    });
+
     test('should coerce `pattern` and `replacement` to a string', 1, function() {
       strictEqual(_.replaceAll('123456', 3, '4'), '124456');
     });

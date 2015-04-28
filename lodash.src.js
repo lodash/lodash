@@ -10629,18 +10629,25 @@
      *
      * _.replaceAll('aabbaabbaacc', 'aa', 'd');
      * // => 'dbbdbbdcc'
+     *
+     * _.replaceAll('abc', '', '/');
+     * // => '/a/b/c/'
      */
     function replaceAll(string, pattern, replacement) {
+      var ret;
+
       string = baseToString(string);
       pattern = baseToString(pattern);
 
-      if (!pattern) {
-        return string;
-      }
-
       replacement = baseToString(replacement);
 
-      return string.split(pattern).join(replacement);
+      ret = string.split(pattern).join(replacement);
+
+      if ('' === pattern) {
+          return replacement + ret + replacement;
+      }
+
+      return ret;
     }
 
     /**

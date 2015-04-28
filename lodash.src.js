@@ -7193,6 +7193,31 @@
     }
 
     /**
+     * Create a random sample of an array of up to `n` elements 
+     *
+     * @private
+     * @param {Array} array The array to create a sample from.
+     * @param {Integer} n The number of elements to include.
+     * @returns {Array} Returns the sample of list.
+     */
+    function baseSample(array, n) {
+      var index = -1,
+          length = array.length,
+          result = Array(n);
+
+      while (++index < length) {
+        var rand = baseRandom(0, index);
+        if (rand < n) {
+          if (index != rand) {
+            result[index] = result[rand];
+          }
+          result[rand] = array[index];
+        }
+      }
+      return result;
+    }
+
+    /**
      * Gets a random element or `n` random elements from a collection.
      *
      * @static
@@ -7216,9 +7241,9 @@
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
-      var result = shuffle(collection);
-      result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
-      return result;
+      collection = toIterable(collection);
+      n = nativeMin(n < 0 ? 0 : (+n || 0), collection.length);
+      return baseSample(collection, n);
     }
 
     /**
@@ -7237,19 +7262,7 @@
      */
     function shuffle(collection) {
       collection = toIterable(collection);
-
-      var index = -1,
-          length = collection.length,
-          result = Array(length);
-
-      while (++index < length) {
-        var rand = baseRandom(0, index);
-        if (index != rand) {
-          result[index] = result[rand];
-        }
-        result[rand] = collection[index];
-      }
-      return result;
+      return baseSample(collection, collection.length);
     }
 
     /**

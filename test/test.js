@@ -1219,11 +1219,11 @@
     });
 
     test('should work with a falsey `collection` argument when keys are provided', 1, function() {
-      var expected = _.map(falsey, _.constant([undefined, undefined]));
+      var expected = _.map(falsey, _.constant(Array(4)));
 
       var actual = _.map(falsey, function(value) {
         try {
-          return _.at(value, 0, 1);
+          return _.at(value, 0, 1, 'pop', 'push');
         } catch(e) {}
       });
 
@@ -4456,7 +4456,7 @@
       var array = [1, 2, 3],
           actual = _.fill(array);
 
-      deepEqual(actual, [undefined, undefined, undefined]);
+      deepEqual(actual, Array(3));
       ok(_.every(actual, function(value, index) { return index in actual; }));
     });
 
@@ -12467,7 +12467,7 @@
 
       var values = _.reject(empties, function(value) {
         return value === 0 || _.isArray(value);
-      }).concat(-1, 1.1);
+      }).concat(-1, 1.1, 'pop', 'push');
 
       var expected = _.map(values, _.constant(undefined)),
           actual = _.pullAt(array, values);
@@ -12506,11 +12506,11 @@
     });
 
     test('should work with a falsey `array` argument when keys are provided', 1, function() {
-      var expected = _.map(falsey, _.constant([undefined, undefined]));
+      var expected = _.map(falsey, _.constant(Array(4)));
 
       var actual = _.map(falsey, function(value) {
         try {
-          return _.pullAt(value, 0, 1);
+          return _.pullAt(value, 0, 1, 'pop', 'push');
         } catch(e) {}
       });
 

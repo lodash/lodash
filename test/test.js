@@ -16513,6 +16513,16 @@
         skipTest();
       }
     });
+
+    var array = [1, 2, 3];
+
+    test('should return elements `predicate` returns truthy for', 1, function() {
+      var actual = _.filter(array, function(num) {
+        return num % 2;
+      });
+
+      deepEqual(actual, [1, 3]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

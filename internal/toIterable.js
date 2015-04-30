@@ -1,5 +1,4 @@
-import getLength from './getLength';
-import isLength from './isLength';
+import isArrayLike from './isArrayLike';
 import isObject from '../lang/isObject';
 import values from '../object/values';
 
@@ -14,7 +13,7 @@ function toIterable(value) {
   if (value == null) {
     return [];
   }
-  if (!isLength(getLength(value))) {
+  if (!isArrayLike(value)) {
     return values(value);
   }
   return isObject(value) ? value : Object(value);

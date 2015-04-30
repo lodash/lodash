@@ -1,7 +1,6 @@
 import baseDifference from '../internal/baseDifference';
 import baseUniq from '../internal/baseUniq';
-import isArguments from '../lang/isArguments';
-import isArray from '../lang/isArray';
+import isArrayLike from '../internal/isArrayLike';
 
 /**
  * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
@@ -23,7 +22,7 @@ function xor() {
 
   while (++index < length) {
     var array = arguments[index];
-    if (isArray(array) || isArguments(array)) {
+    if (isArrayLike(array)) {
       var result = result
         ? baseDifference(result, array).concat(baseDifference(array, result))
         : array;

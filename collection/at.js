@@ -1,9 +1,6 @@
 import baseAt from '../internal/baseAt';
 import baseFlatten from '../internal/baseFlatten';
-import getLength from '../internal/getLength';
-import isLength from '../internal/isLength';
 import restParam from '../function/restParam';
-import toIterable from '../internal/toIterable';
 
 /**
  * Creates an array of elements corresponding to the given keys, or indexes,
@@ -26,10 +23,6 @@ import toIterable from '../internal/toIterable';
  * // => ['barney', 'pebbles']
  */
 var at = restParam(function(collection, props) {
-  var length = collection ? getLength(collection) : 0;
-  if (isLength(length)) {
-    collection = toIterable(collection);
-  }
   return baseAt(collection, baseFlatten(props));
 });
 

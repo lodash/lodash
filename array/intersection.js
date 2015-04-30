@@ -1,16 +1,12 @@
 import baseIndexOf from '../internal/baseIndexOf';
 import cacheIndexOf from '../internal/cacheIndexOf';
 import createCache from '../internal/createCache';
-import isArguments from '../lang/isArguments';
-import isArray from '../lang/isArray';
+import isArrayLike from '../internal/isArrayLike';
 
 /**
- * Creates an array of unique values in all provided arrays using `SameValueZero`
+ * Creates an array of unique values in all provided arrays using
+ * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
  * for equality comparisons.
- *
- * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * comparisons are like strict equality comparisons, e.g. `===`, except that
- * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _
@@ -32,7 +28,7 @@ function intersection() {
 
   while (++argsIndex < argsLength) {
     var value = arguments[argsIndex];
-    if (isArray(value) || isArguments(value)) {
+    if (isArrayLike(value)) {
       args.push(value);
       caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
     }

@@ -1,4 +1,4 @@
-import isLength from '../internal/isLength';
+import isArrayLike from '../internal/isArrayLike';
 import isNative from '../lang/isNative';
 import isObject from '../lang/isObject';
 import shimKeys from '../internal/shimKeys';
@@ -34,12 +34,9 @@ var nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys;
  * // => ['0', '1']
  */
 var keys = !nativeKeys ? shimKeys : function(object) {
-  if (object) {
-    var Ctor = object.constructor,
-        length = object.length;
-  }
+  var Ctor = object != null && object.constructor;
   if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-      (typeof object != 'function' && isLength(length))) {
+      (typeof object != 'function' && isArrayLike(object))) {
     return shimKeys(object);
   }
   return isObject(object) ? nativeKeys(object) : [];

@@ -2,7 +2,7 @@ import arrayEach from './arrayEach';
 import baseMergeDeep from './baseMergeDeep';
 import getSymbols from './getSymbols';
 import isArray from '../lang/isArray';
-import isLength from './isLength';
+import isArrayLike from './isArrayLike';
 import isObject from '../lang/isObject';
 import isObjectLike from './isObjectLike';
 import isTypedArray from '../lang/isTypedArray';
@@ -30,7 +30,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
   if (!isObject(object)) {
     return object;
   }
-  var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
+  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
   if (!isSrcArr) {
     var props = keys(source);
     push.apply(props, getSymbols(source));

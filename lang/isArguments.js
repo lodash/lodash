@@ -1,4 +1,4 @@
-import isLength from '../internal/isLength';
+import isArrayLike from '../internal/isArrayLike';
 import isObjectLike from '../internal/isObjectLike';
 
 /** `Object#toString` result references. */
@@ -30,8 +30,7 @@ var objToString = objectProto.toString;
  * // => false
  */
 function isArguments(value) {
-  var length = isObjectLike(value) ? value.length : undefined;
-  return isLength(length) && objToString.call(value) == argsTag;
+  return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
 }
 
 export default isArguments;

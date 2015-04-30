@@ -14,6 +14,7 @@ import has from './object/has';
 import invert from './object/invert';
 import keys from './object/keys';
 import keysIn from './object/keysIn';
+import mapKeys from './object/mapKeys';
 import mapValues from './object/mapValues';
 import merge from './object/merge';
 import methods from './object/methods';
@@ -43,6 +44,7 @@ export default {
   'invert': invert,
   'keys': keys,
   'keysIn': keysIn,
+  'mapKeys': mapKeys,
   'mapValues': mapValues,
   'merge': merge,
   'methods': methods,

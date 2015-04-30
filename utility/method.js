@@ -25,7 +25,7 @@ import restParam from '../function/restParam';
 var method = restParam(function(path, args) {
   return function(object) {
     return invokePath(object, path, args);
-  }
+  };
 });
 
 export default method;

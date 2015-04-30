@@ -1,8 +1,7 @@
 import arrayCopy from './arrayCopy';
-import getLength from './getLength';
 import isArguments from '../lang/isArguments';
 import isArray from '../lang/isArray';
-import isLength from './isLength';
+import isArrayLike from './isArrayLike';
 import isPlainObject from '../lang/isPlainObject';
 import isTypedArray from '../lang/isTypedArray';
 import toPlainObject from '../lang/toPlainObject';
@@ -38,10 +37,10 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
 
   if (isCommon) {
     result = srcValue;
-    if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
+    if (isArrayLike(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
       result = isArray(value)
         ? value
-        : (getLength(value) ? arrayCopy(value) : []);
+        : (isArrayLike(value) ? arrayCopy(value) : []);
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
       result = isArguments(value)

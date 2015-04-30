@@ -1,8 +1,7 @@
 import baseEach from '../internal/baseEach';
-import getLength from '../internal/getLength';
 import invokePath from '../internal/invokePath';
+import isArrayLike from '../internal/isArrayLike';
 import isKey from '../internal/isKey';
-import isLength from '../internal/isLength';
 import restParam from '../function/restParam';
 
 /**
@@ -31,8 +30,7 @@ var invoke = restParam(function(collection, path, args) {
   var index = -1,
       isFunc = typeof path == 'function',
       isProp = isKey(path),
-      length = getLength(collection),
-      result = isLength(length) ? Array(length) : [];
+      result = isArrayLike(collection) ? Array(collection.length) : [];
 
   baseEach(collection, function(value) {
     var func = isFunc ? path : (isProp && value != null && value[path]);

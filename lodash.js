@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.7.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.8.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -42,7 +42,7 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.7.0';
+var VERSION = '3.8.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -130,6 +130,7 @@ lodash.invoke = collection.invoke;
 lodash.keys = keys;
 lodash.keysIn = object.keysIn;
 lodash.map = collection.map;
+lodash.mapKeys = object.mapKeys;
 lodash.mapValues = object.mapValues;
 lodash.matches = utility.matches;
 lodash.matchesProperty = utility.matchesProperty;
@@ -178,6 +179,7 @@ lodash.transform = object.transform;
 lodash.union = array.union;
 lodash.uniq = array.uniq;
 lodash.unzip = array.unzip;
+lodash.unzipWith = array.unzipWith;
 lodash.values = object.values;
 lodash.valuesIn = object.valuesIn;
 lodash.where = collection.where;
@@ -186,6 +188,7 @@ lodash.wrap = func.wrap;
 lodash.xor = array.xor;
 lodash.zip = array.zip;
 lodash.zipObject = array.zipObject;
+lodash.zipWith = array.zipWith;
 
 // Add aliases.
 lodash.backflow = func.flowRight;
@@ -430,8 +433,13 @@ LazyWrapper.prototype.reject = function(predicate, thisArg) {
 
 LazyWrapper.prototype.slice = function(start, end) {
   start = start == null ? 0 : (+start || 0);
-  var result = start < 0 ? this.takeRight(-start) : this.drop(start);
 
+  var result = this;
+  if (start < 0) {
+    result = this.takeRight(-start);
+  } else if (start) {
+    result = this.drop(start);
+  }
   if (end !== undefined) {
     end = (+end || 0);
     result = end < 0 ? result.dropRight(-end) : result.take(end - start);
@@ -454,7 +462,6 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 
   lodash.prototype[methodName] = function() {
     var args = arguments,
-        length = args.length,
         chainAll = this.__chain__,
         value = this.__wrapped__,
         isHybrid = !!this.__actions__.length,

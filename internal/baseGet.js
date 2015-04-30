@@ -21,9 +21,9 @@ function baseGet(object, path, pathKey) {
       length = path.length;
 
   while (object != null && ++index < length) {
-    var result = object = object[path[index]];
+    object = object[path[index]];
   }
-  return result;
+  return (index && index == length) ? object : undefined;
 }
 
 export default baseGet;

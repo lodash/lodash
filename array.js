@@ -34,10 +34,12 @@ import union from './array/union';
 import uniq from './array/uniq';
 import unique from './array/unique';
 import unzip from './array/unzip';
+import unzipWith from './array/unzipWith';
 import without from './array/without';
 import xor from './array/xor';
 import zip from './array/zip';
 import zipObject from './array/zipObject';
+import zipWith from './array/zipWith';
 
 export default {
   'chunk': chunk,
@@ -76,8 +78,10 @@ export default {
   'uniq': uniq,
   'unique': unique,
   'unzip': unzip,
+  'unzipWith': unzipWith,
   'without': without,
   'xor': xor,
   'zip': zip,
-  'zipObject': zipObject
+  'zipObject': zipObject,
+  'zipWith': zipWith
 };

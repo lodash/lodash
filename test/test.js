@@ -11474,6 +11474,7 @@
 
   _.each(['pad', 'padLeft', 'padRight'], function(methodName) {
     var func = _[methodName],
+        isPad = methodName == 'pad',
         isPadLeft = methodName == 'padLeft';
 
     test('`_.' + methodName + '` should not pad is string is >= `length`', 2, function() {
@@ -11494,11 +11495,12 @@
       });
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided nullish or empty string values and `chars`', 6, function() {
+    test('`_.' + methodName + '` should treat nullish values as empty strings', 6, function() {
       _.each([null, '_-'], function(chars) {
-        strictEqual(func(null, 0, chars), '');
-        strictEqual(func(undefined, 0, chars), '');
-        strictEqual(func('', 0, chars), '');
+        var expected = chars ? (isPad ? '__' : chars) : '  ';
+        strictEqual(func(null, 2, chars), expected);
+        strictEqual(func(undefined, 2, chars), expected);
+        strictEqual(func('', 2, chars), expected);
       });
     });
 

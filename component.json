@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "repo": "lodash/lodash",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "The modern build of lodash.",
   "license": "MIT",
   "main": "lodash.js",

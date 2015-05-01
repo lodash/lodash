@@ -1,6 +1,6 @@
 {
   "name": "lodash._invokepath",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "description": "The modern build of lodash’s internal `invokePath` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

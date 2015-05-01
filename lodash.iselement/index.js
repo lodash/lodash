@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.6 (Custom Build) <https://lodash.com/>
+ * lodash 3.0.7 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -23,7 +23,7 @@ function isObjectLike(value) {
 var objectProto = Object.prototype;
 
 /** Used to detect DOM support. */
-var document = (document = global.window) && document.document;
+var document = (document = global.window) ? document.document : null;
 
 /**
  * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
@@ -42,7 +42,6 @@ var support = {};
 
 (function(x) {
   var Ctor = function() { this.x = x; },
-      args = arguments,
       object = { '0': x, 'length': x },
       props = [];
 

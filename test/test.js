@@ -6423,8 +6423,9 @@
       strictEqual(_.includes([1, NaN, 3], NaN), true);
     });
 
-    test('should match `-0` as `0`', 1, function() {
+    test('should match `-0` as `0`', 2, function() {
       strictEqual(_.includes([-0], 0), true);
+      strictEqual(_.includes([0], -0), true);
     });
 
     test('should work as an iteratee for methods like `_.reduce`', 1, function() {
@@ -7310,7 +7311,7 @@
     test('should perform comparisons between primitive values', 1, function() {
       var pairs = [
         [1, 1, true], [1, Object(1), true], [1, '1', false], [1, 2, false],
-        [-0, -0, true], [0, 0, true], [0, Object(0), true], [Object(0), Object(0), true], [-0, 0, false], [0, '0', false], [0, null, false],
+        [-0, -0, true], [0, 0, true], [0, Object(0), true], [Object(0), Object(0), true], [-0, 0, true], [0, '0', false], [0, null, false],
         [NaN, NaN, true], [NaN, Object(NaN), true], [Object(NaN), Object(NaN), true], [NaN, 'a', false], [NaN, Infinity, false],
         ['a', 'a', true], ['a', Object('a'), true], [Object('a'), Object('a'), true], ['a', 'b', false], ['a', ['a'], false],
         [true, true, true], [true, Object(true), true], [Object(true), Object(true), true], [true, 1, false], [true, 'a', false],
@@ -8138,12 +8139,34 @@
       strictEqual(_.isMatch(object, { 'a': { 'b': { 'c': 1 } } }), true);
     });
 
-    test('should compare a variety of `source` values', 2, function() {
-      var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
-          object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } };
+    test('should match inherited `object` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
 
-      strictEqual(_.isMatch(object1, object1), true);
-      strictEqual(_.isMatch(object1, object2), false);
+      strictEqual(_.isMatch({ 'a': new Foo }, { 'a': { 'b': 2 } }), true);
+    });
+
+    test('should match `-0` as `0`', 2, function() {
+      var object1 = { 'a': -0 },
+          object2 = { 'a': 0 };
+
+      strictEqual(_.isMatch(object1, object2), true);
+      strictEqual(_.isMatch(object2, object1), true);
+    });
+
+    test('should not match by inherited `source` properties', 1, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
+          source = new Foo,
+          expected = _.map(objects, _.constant(true));
+
+      var actual = _.map(objects, function(object) {
+        return _.isMatch(object, source);
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should return `false` when `object` is nullish', 1, function() {
@@ -8169,6 +8192,30 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should compare a variety of `source` values', 2, function() {
+      var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
+          object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } };
+
+      strictEqual(_.isMatch(object1, object1), true);
+      strictEqual(_.isMatch(object1, object2), false);
+    });
+
+    test('should work with a function for `source`', 1, function() {
+      function source() {}
+
+      source.a = 1;
+      source.b = function() {};
+      source.c = 3;
+
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': source.b, 'c': 3 }];
+
+      var actual = _.map(objects, function(object) {
+        return _.isMatch(object, source);
+      });
+
+      deepEqual(actual, [false, true]);
     });
 
     test('should return `true` when comparing a `source` of empty arrays and objects', 1, function() {
@@ -8245,19 +8292,36 @@
       deepEqual(actual, expected);
     });
 
-    test('should not match by inherited `source` properties', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
-          source = new Foo,
-          expected = _.map(objects, _.constant(true));
-
-      var actual = _.map(objects, function(object) {
-        return _.isMatch(object, source);
-      });
+    test('should handle a `source` with `undefined` values', 2, function() {
+      var matches = _.matches({ 'b': undefined }),
+          objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+          actual = _.map(objects, matches),
+          expected = [false, false, true];
 
       deepEqual(actual, expected);
+
+      matches = _.matches({ 'a': { 'c': undefined } });
+      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should match properties when `value` is a function', 1, function() {
+      function Foo() {}
+      Foo.a = { 'b': 1, 'c': 2 };
+
+      var matches = _.matches({ 'a': { 'b': 1 } });
+      strictEqual(matches(Foo), true);
+    });
+
+    test('should match properties when `value` is not a plain object', 1, function() {
+      function Foo(object) { _.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
+          matches = _.matches({ 'a': { 'b': 1 } });
+
+      strictEqual(matches(object), true);
     });
 
     test('should work with a function for `source`', 1, function() {
@@ -8267,11 +8331,9 @@
       source.b = function() {};
       source.c = 3;
 
-      var objects = [{ 'a': 1 }, { 'a': 1, 'b': source.b, 'c': 3 }];
-
-      var actual = _.map(objects, function(object) {
-        return _.isMatch(object, source);
-      });
+      var matches = _.matches(source),
+          objects = [{ 'a': 1 }, { 'a': 1, 'b': source.b, 'c': 3 }],
+          actual = _.map(objects, matches);
 
       deepEqual(actual, [false, true]);
     });
@@ -9328,8 +9390,9 @@
       strictEqual(func([1, 2, NaN, NaN], NaN, true), isIndexOf ? 2 : 3);
     });
 
-    test('`_.' + methodName + '` should match `-0` as `0`', 1, function() {
+    test('`_.' + methodName + '` should match `-0` as `0`', 2, function() {
       strictEqual(func([-0], 0), 0);
+      strictEqual(func([0], -0), 0);
     });
   });
 
@@ -9650,6 +9713,17 @@
       strictEqual(matches(object), true);
     });
 
+    test('should match `-0` as `0`', 2, function() {
+      var object1 = { 'a': -0 },
+          object2 = { 'a': 0 },
+          matches = _.matches(object1);
+
+      strictEqual(matches(object2), true);
+
+      matches = _.matches(object2);
+      strictEqual(matches(object1), true);
+    });
+
     test('should not match by inherited `source` properties', 1, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
@@ -9899,31 +9973,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should match inherited `value` properties', 2, function() {
-      function Foo() {}
-      Foo.prototype.b = 2;
-
-      var object = { 'a': new Foo };
-
-      _.each(['a', ['a']], function(path) {
-        var matches = _.matchesProperty(path, { 'b': 2 });
-        strictEqual(matches(object), true);
-      });
-    });
-
-    test('should not match inherited `source` properties', 2, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 2 } }],
-          expected = _.map(objects, _.constant(true));
-
-      _.each(['a', ['a']], function(path) {
-        var matches = _.matchesProperty(path, new Foo);
-        deepEqual(_.map(objects, matches), expected);
-      });
-    });
-
     test('should match characters of string indexes (test in IE < 9)', 2, function() {
       var matches = _.matchesProperty(1, 'o');
       _.each(['xo', Object('xo')], function(string) {
@@ -9946,6 +9995,48 @@
       _.each([1, [1]], function(path) {
         var matches = _.matchesProperty(path, 2);
         strictEqual(matches(array), true);
+      });
+    });
+
+    test('should return `false` if parts of `path` are missing', 4, function() {
+      var object = {};
+
+      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        var matches = _.matchesProperty(path, 1);
+        strictEqual(matches(object), false);
+      });
+    });
+
+    test('should match inherited `value` properties', 2, function() {
+      function Foo() {}
+      Foo.prototype.b = 2;
+
+      var object = { 'a': new Foo };
+
+      _.each(['a', ['a']], function(path) {
+        var matches = _.matchesProperty(path, { 'b': 2 });
+        strictEqual(matches(object), true);
+      });
+    });
+
+    test('should match `-0` as `0`', 2, function() {
+      var matches = _.matchesProperty('a', -0);
+      strictEqual(matches({ 'a': 0 }), true);
+
+      matches = _.matchesProperty('a', 0);
+      strictEqual(matches({ 'a': -0 }), true);
+    });
+
+    test('should not match by inherited `source` properties', 2, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 2 } }],
+          expected = _.map(objects, _.constant(true));
+
+      _.each(['a', ['a']], function(path) {
+        var matches = _.matchesProperty(path, new Foo);
+        deepEqual(_.map(objects, matches), expected);
       });
     });
 
@@ -9981,26 +10072,6 @@
 
         deepEqual(actual, expected);
       });
-    });
-
-    test('should return `false` if parts of `path` are missing', 4, function() {
-      var object = {};
-
-      _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
-        var matches = _.matchesProperty(path, 1);
-        strictEqual(matches(object), false);
-      });
-    });
-
-    test('should return `true` when comparing a `value` of empty arrays and objects', 1, function() {
-      var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
-          matches = _.matchesProperty('a', { 'a': [], 'b': {} });
-
-      var actual = _.filter(objects, function(object) {
-        return matches({ 'a': object });
-      });
-
-      deepEqual(actual, objects);
     });
 
     test('should compare a variety of values', 2, function() {
@@ -10042,6 +10113,17 @@
         strictEqual(matches({ 'a': object }), true);
         strictEqual(matches({ 'a': source }), false);
       });
+    });
+
+    test('should return `true` when comparing a `value` of empty arrays and objects', 1, function() {
+      var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
+          matches = _.matchesProperty('a', { 'a': [], 'b': {} });
+
+      var actual = _.filter(objects, function(object) {
+        return matches({ 'a': object });
+      });
+
+      deepEqual(actual, objects);
     });
 
     test('should search arrays of `value` for values', 3, function() {
@@ -10086,15 +10168,6 @@
       deepEqual(actual, [false, false, true]);
     });
 
-    test('should match properties when `value` is not a plain object', 1, function() {
-      function Foo(object) { _.assign(this, object); }
-
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
-          matches = _.matchesProperty('a', { 'b': 1 });
-
-      strictEqual(matches(object), true);
-    });
-
     test('should work with a function for `value`', 1, function() {
       function source() {}
 
@@ -10107,6 +10180,15 @@
           actual = _.map(objects, matches);
 
       deepEqual(actual, [false, true]);
+    });
+
+    test('should match properties when `value` is not a plain object', 1, function() {
+      function Foo(object) { _.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
+          matches = _.matchesProperty('a', { 'b': 1 });
+
+      strictEqual(matches(object), true);
     });
 
     test('should match problem JScript properties (test in IE < 9)', 1, function() {

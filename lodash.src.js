@@ -3290,11 +3290,11 @@
      */
     function createBaseEach(eachFunc, fromRight) {
       return function(collection, iteratee) {
-        if (!isArrayLike(collection)) {
+        var length = collection ? getLength(collection) : 0;
+        if (!isLength(length)) {
           return eachFunc(collection, iteratee);
         }
-        var length = collection.length,
-            index = fromRight ? length : -1,
+        var index = fromRight ? length : -1,
             iterable = toObject(collection);
 
         while ((fromRight ? index-- : ++index < length)) {

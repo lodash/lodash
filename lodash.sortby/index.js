@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.4 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.5 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,8 +17,8 @@ var baseCallback = require('lodash._basecallback'),
  * sort them in ascending order.
  *
  * @private
- * @param {Object} object The object to compare to `other`.
- * @param {Object} other The object to compare to `object`.
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
  * @returns {number} Returns the sort order indicator for `object`.
  */
 function compareAscending(object, other) {
@@ -26,7 +26,7 @@ function compareAscending(object, other) {
 }
 
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -89,7 +89,7 @@ function isArrayLike(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -152,7 +152,7 @@ function sortBy(collection, iteratee, thisArg) {
     return [];
   }
   if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-    iteratee = null;
+    iteratee = undefined;
   }
   var index = -1;
   iteratee = baseCallback(iteratee, thisArg, 3);

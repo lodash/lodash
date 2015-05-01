@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.4 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -35,20 +35,6 @@ var reIsUint = /^(?:0|[1-9]\d*)$/;
 var freeParseFloat = parseFloat,
     freeParseInt = parseInt;
 
-/**
- * Checks if `value` is a valid array-like index.
- *
- * @private
- * @param {*} value The value to check.
- * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
- * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
- */
-function isIndex(value, length) {
-  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-  length = length == null ? MAX_SAFE_INTEGER : length;
-  return value > -1 && value % 1 == 0 && value < length;
-}
-
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -69,7 +55,7 @@ var nativeFloor = Math.floor,
  *
  * @private
  * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new accessor function.
  */
 function baseProperty(key) {
   return function(object) {
@@ -102,6 +88,21 @@ function baseRandom(lower, upper) {
  * @returns {*} Returns the "length" value.
  */
 var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
 
 /**
  * Checks if the given arguments are from an iteratee call.
@@ -342,8 +343,8 @@ function isSymbol(value) {
  * @returns {number} Returns the number.
  * @example
  *
- * _.toNumber(3);
- * // => 3
+ * _.toNumber(3.2);
+ * // => 3.2
  *
  * _.toNumber(Number.MIN_VALUE);
  * // => 5e-324
@@ -351,8 +352,8 @@ function isSymbol(value) {
  * _.toNumber(Infinity);
  * // => Infinity
  *
- * _.toNumber('3');
- * // => 3
+ * _.toNumber('3.2');
+ * // => 3.2
  */
 function toNumber(value) {
   if (typeof value == 'number') {

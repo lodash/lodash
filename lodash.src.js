@@ -8557,8 +8557,9 @@
         customizer = isDeep;
         isDeep = false;
       }
-      customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 1) : undefined;
-      return baseClone(value, isDeep, customizer);
+      return typeof customizer == 'function'
+        ? baseClone(value, isDeep, bindCallback(customizer, thisArg, 1))
+        : baseClone(value, isDeep);
     }
 
     /**
@@ -8607,8 +8608,9 @@
      * // => 20
      */
     function cloneDeep(value, customizer, thisArg) {
-      customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 1) : undefined;
-      return baseClone(value, true, customizer);
+      return typeof customizer == 'function'
+        ? baseClone(value, true, bindCallback(customizer, thisArg, 1))
+        : baseClone(value, true);
     }
 
     /**

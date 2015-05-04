@@ -942,11 +942,11 @@
      * `isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`,
      * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `isTypedArray`,
      * `join`, `kebabCase`, `last`, `lastIndexOf`, `max`, `min`, `noConflict`,
-     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
-     * `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`, `shift`, `size`,
-     * `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`, `startCase`, `startsWith`,
-     * `sum`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
-     * `uniqueId`, `value`, and `words`
+     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pascalCase`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
+     * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
+     * `startCase`, `startsWith`, `sum`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -10534,6 +10534,29 @@
     });
 
     /**
+     * Converts `string` to [pascal case](https://en.wikipedia.org/wiki/PascalCase).
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the pascal cased string.
+     * @example
+     *
+     * _.pascalCase('Foo Bar');
+     * // => 'FooBar'
+     *
+     * _.pascalCase('--foo-bar');
+     * // => 'FooBar'
+     *
+     * _.pascalCase('__foo_bar__');
+     * // => 'FooBar'
+     */
+    var pascalCase = createCompounder(function(result, word, index) {
+      return result + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+
+    /**
      * Pads `string` on the left and right sides if it is shorter than `length`.
      * Padding characters are truncated if they can't be evenly divided by `length`.
      *
@@ -12131,6 +12154,7 @@
     lodash.padLeft = padLeft;
     lodash.padRight = padRight;
     lodash.parseInt = parseInt;
+    lodash.pascalCase = pascalCase;
     lodash.random = random;
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;

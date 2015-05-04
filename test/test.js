@@ -14415,9 +14415,12 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
-    test('should move `undefined` and `NaN` values to the end', 1, function() {
-      var array = [NaN, undefined, 4, 1, undefined, 3, NaN, 2];
-      deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN]);
+    test('should move `null`, `undefined`, and `NaN` values to the end', 2, function() {
+      var array = [NaN, undefined, null, 4, null, 1, undefined, 3, NaN, 2];
+      deepEqual(_.sortBy(array), [1, 2, 3, 4, null, null, undefined, undefined, NaN, NaN]);
+
+      array = [NaN, undefined, null, 'd', null, 'a', undefined, 'c', NaN, 'b'];
+      deepEqual(_.sortBy(array), ['a', 'b', 'c', 'd', null, null, undefined, undefined, NaN, NaN]);
     });
 
     test('should treat number values for `collection` as empty', 1, function() {
@@ -14615,16 +14618,16 @@
     });
 
     test('`_.' + methodName + '` should align with `_.sortBy`', 8, function() {
-      var expected = [1, '2', {}, undefined, NaN, NaN];
+      var expected = [1, '2', {}, null, undefined, NaN, NaN];
 
       _.each([
-        [NaN, 1, '2', {}, NaN, undefined],
-        ['2', 1, NaN, {}, NaN, undefined]
+        [NaN, null, 1, '2', {}, NaN, undefined],
+        ['2', null, 1, NaN, {}, NaN, undefined]
       ], function(array) {
         deepEqual(_.sortBy(array), expected);
         strictEqual(func(expected, 3), 2);
-        strictEqual(func(expected, undefined), isSortedIndex ? 3 : 4);
-        strictEqual(func(expected, NaN), isSortedIndex ? 4 : 6);
+        strictEqual(func(expected, undefined), isSortedIndex ? 4 : 5);
+        strictEqual(func(expected, NaN), isSortedIndex ? 5 : 7);
       });
     });
 

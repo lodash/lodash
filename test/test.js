@@ -1655,7 +1655,7 @@
 
   QUnit.module('case methods');
 
-  _.each(['camel', 'kebab', 'snake', 'start'], function(caseName) {
+  _.each(['camel', 'kebab', 'pascal', 'snake', 'start'], function(caseName) {
     var methodName = caseName + 'Case',
         func = _[methodName];
 
@@ -1668,6 +1668,7 @@
       switch (caseName) {
         case 'camel': return 'fooBar';
         case 'kebab': return 'foo-bar';
+        case 'pascal': return 'FooBar';
         case 'snake': return 'foo_bar';
         case 'start': return 'Foo Bar';
       }
@@ -1694,7 +1695,11 @@
     test('`_.' + methodName + '` should deburr letters', 1, function() {
       var actual = _.map(burredLetters, function(burred, index) {
         var letter = deburredLetters[index];
-        letter = caseName == 'start' ? _.capitalize(letter) : letter.toLowerCase();
+        if (caseName == 'pascal' || caseName == 'start') {
+          letter = _.capitalize(letter);
+        } else {
+          letter = letter.toLowerCase();
+        }
         return func(burred) === letter;
       });
 
@@ -1733,7 +1738,7 @@
 
   (function() {
     test('should get the original value after cycling through all case methods', 1, function() {
-      var funcs = [_.camelCase, _.kebabCase, _.snakeCase, _.startCase, _.camelCase];
+      var funcs = [_.camelCase, _.kebabCase, _.pascalCase, _.snakeCase, _.startCase, _.camelCase];
 
       var actual = _.reduce(funcs, function(result, func) {
         return func(result);
@@ -17668,6 +17673,7 @@
       'pad',
       'padLeft',
       'padRight',
+      'pascalCase',
       'repeat',
       'snakeCase',
       'trim',

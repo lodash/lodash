@@ -14415,9 +14415,9 @@
       deepEqual(actual, [3, 1, 2]);
     });
 
-    test('should move `undefined` and `NaN` values to the end', 1, function() {
-      var array = [NaN, undefined, 4, 1, undefined, 3, NaN, 2];
-      deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN]);
+    test('should move `undefined`, `null` and `NaN` values to the end', 1, function() {
+      var array = [NaN, undefined, 4, 1, undefined, 3, null, NaN, null,2];
+      deepEqual(_.sortBy(array), [1, 2, 3, 4, undefined, undefined, NaN, NaN, null, null]);
     });
 
     test('should treat number values for `collection` as empty', 1, function() {
@@ -14446,10 +14446,10 @@
 
   (function() {
     var objects = [
-      { 'a': 'x', 'b': 3 },
-      { 'a': 'y', 'b': 4 },
-      { 'a': 'x', 'b': 1 },
-      { 'a': 'y', 'b': 2 }
+      { 'a': 'x', 'b': 3, 'c' : 'z' },
+      { 'a': 'y', 'b': 4, 'c' : null },
+      { 'a': 'x', 'b': 1, 'c' : 'a' },
+      { 'a': 'y', 'b': 2, 'c' : 'b' }
     ];
 
     test('should sort multiple properties by specified orders', 1, function() {
@@ -14460,6 +14460,11 @@
     test('should sort a property in ascending order when its order is not specified', 1, function() {
       var actual = _.sortByOrder(objects, ['a', 'b'], [false]);
       deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+    });
+
+    test('should sort properties with null values correctly', 1, function() {
+      var actual = _.sortByOrder(objects, ['c'], [true]);
+      deepEqual(actual, [objects[2], objects[3], objects[0], objects[1]]);
     });
   }());
 

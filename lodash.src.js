@@ -301,6 +301,9 @@
       var valIsReflexive = value === value,
           othIsReflexive = other === other;
 
+      if (value === null) return 1;
+      if (other === null) return -1;
+
       if (value > other || !valIsReflexive || (value === undefined && othIsReflexive)) {
         return 1;
       }

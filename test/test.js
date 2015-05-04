@@ -7749,15 +7749,26 @@
       strictEqual(_.isEqual('a', 'a', _.noop), true);
     });
 
+    test('should not handle comparisons if `customizer` returns `true`', 3, function() {
+      var customizer = function(value) {
+        return _.isString(value) || undefined;
+      };
+
+      strictEqual(_.isEqual('a', 'b', customizer), true);
+      strictEqual(_.isEqual(['a'], ['b'], customizer), true);
+      strictEqual(_.isEqual({ '0': 'a' }, { '0': 'b' }, customizer), true);
+    });
+
     test('should return a boolean value even if `customizer` does not', 2, function() {
-      var actual = _.isEqual('a', 'a', _.constant('a'));
+      var actual = _.isEqual('a', 'b', _.constant('c'));
       strictEqual(actual, true);
 
-      var expected = _.map(falsey, _.constant(false));
+      var values = _.without(falsey, undefined),
+          expected = _.map(values, _.constant(false));
 
       actual = [];
-      _.each(falsey, function(value) {
-        actual.push(_.isEqual('a', 'b', _.constant(value)));
+      _.each(values, function(value) {
+        actual.push(_.isEqual('a', 'a', _.constant(value)));
       });
 
       deepEqual(actual, expected);

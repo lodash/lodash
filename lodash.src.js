@@ -3928,7 +3928,10 @@
             othValue = other[index],
             result = customizer ? customizer(isLoose ? othValue : arrValue, isLoose ? arrValue : othValue, index) : undefined;
 
-        if (result !== undefined && !result) {
+        if (result !== undefined) {
+          if (result) {
+            continue;
+          }
           return false;
         }
         // Recursively compare arrays (susceptible to call stack limits).

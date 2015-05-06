@@ -923,30 +923,31 @@
      * `filter`, `flatten`, `flattenDeep`, `flow`, `flowRight`, `forEach`,
      * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
      * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
-     * `keysIn`, `map`, `mapValues`, `matches`, `matchesProperty`, `memoize`,
-     * `merge`, `mixin`, `negate`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
-     * `partition`, `pick`, `plant`, `pluck`, `property`, `propertyOf`, `pull`,
-     * `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `reverse`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`, `sortByOrder`, `splice`,
-     * `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-     * `throttle`, `thru`, `times`, `toArray`, `toPlainObject`, `transform`,
-     * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
-     * `without`, `wrap`, `xor`, `zip`, and `zipObject`
+     * `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,
+     * `memoize`, `merge`, `method`, `methodOf`, `mixin`, `negate`, `omit`, `once`,
+     * `pairs`, `partial`, `partialRight`, `partition`, `pick`, `plant`, `pluck`,
+     * `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`, `rearg`,
+     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `set`, `shuffle`,
+     * `slice`, `sort`, `sortBy`, `sortByAll`, `sortByOrder`, `splice`, `spread`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `times`, `toArray`, `toPlainObject`, `transform`, `union`, `uniq`,
+     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `where`, `without`,
+     * `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
      * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
-     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
-     * `identity`, `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`,
-     * `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`
-     * `isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`,
-     * `isPlainObject`, `isRegExp`, `isString`, `isUndefined`, `isTypedArray`,
-     * `join`, `kebabCase`, `last`, `lastIndexOf`, `max`, `min`, `noConflict`,
-     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
-     * `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`, `shift`, `size`,
-     * `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`, `startCase`, `startsWith`,
-     * `sum`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
-     * `uniqueId`, `value`, and `words`
+     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `get`,
+     * `gt`, `gte`, `has`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+     * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`,
+     * `isFinite` `isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`,
+     * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`,
+     * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lt`, `lte`,
+     * `max`, `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`,
+     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`,
+     * `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedLastIndex`, `startCase`, `startsWith`, `sum`, `template`, `trim`,
+     * `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -1569,6 +1570,35 @@
     }
 
     /**
+     * A specialized version of `baseExtremum` for arrays whichs invokes `iteratee`
+     * with one argument: (value).
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {Function} comparator The function used to compare values.
+     * @param {*} exValue The initial extremum value.
+     * @returns {*} Returns the extremum value.
+     */
+    function arrayExtremum(array, iteratee, comparator, exValue) {
+      var index = -1,
+          length = array.length,
+          computed = exValue,
+          result = computed;
+
+      while (++index < length) {
+        var value = array[index],
+            current = +iteratee(value);
+
+        if (comparator(current, computed)) {
+          computed = current;
+          result = value;
+        }
+      }
+      return result;
+    }
+
+    /**
      * A specialized version of `_.filter` for arrays without support for callback
      * shorthands and `this` binding.
      *
@@ -1608,48 +1638,6 @@
 
       while (++index < length) {
         result[index] = iteratee(array[index], index, array);
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.max` for arrays without support for iteratees.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @returns {*} Returns the maximum value.
-     */
-    function arrayMax(array) {
-      var index = -1,
-          length = array.length,
-          result = NEGATIVE_INFINITY;
-
-      while (++index < length) {
-        var value = array[index];
-        if (value > result) {
-          result = value;
-        }
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.min` for arrays without support for iteratees.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @returns {*} Returns the minimum value.
-     */
-    function arrayMin(array) {
-      var index = -1,
-          length = array.length,
-          result = POSITIVE_INFINITY;
-
-      while (++index < length) {
-        var value = array[index];
-        if (value < result) {
-          result = value;
-        }
       }
       return result;
     }
@@ -2087,6 +2075,32 @@
       baseEach(collection, function(value, index, collection) {
         result = !!predicate(value, index, collection);
         return result;
+      });
+      return result;
+    }
+
+    /**
+     * Gets the extremum value of `collection` invoking `iteratee` for each value
+     * in `collection` to generate the criterion by which the value is ranked.
+     * The `iteratee` is invoked with three arguments: (value, index|key, collection).
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @param {Function} comparator The function used to compare values.
+     * @param {*} exValue The initial extremum value.
+     * @returns {*} Returns the extremum value.
+     */
+    function baseExtremum(collection, iteratee, comparator, exValue) {
+      var computed = exValue,
+          result = computed;
+
+      baseEach(collection, function(value, index, collection) {
+        var current = +iteratee(value, index, collection);
+        if (comparator(current, computed) || (current === exValue && current === result)) {
+          computed = current;
+          result = value;
+        }
       });
       return result;
     }
@@ -3427,27 +3441,26 @@
      *  extremum value.
      * @returns {Function} Returns the new extremum function.
      */
-    function createExtremum(arrayFunc, isMin) {
+    function createExtremum(comparator, exValue) {
       return function(collection, iteratee, thisArg) {
         if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
           iteratee = null;
         }
         var callback = getCallback(),
-            noIteratee = iteratee == null;
+            noIteratee = iteratee == null,
+            isArr = isArray(collection);
 
-        if (!(noIteratee && callback === baseCallback)) {
-          noIteratee = false;
-          iteratee = callback(iteratee, thisArg, 3);
-        }
-        if (noIteratee) {
-          var isArr = isArray(collection);
-          if (!isArr && isString(collection)) {
-            iteratee = charAtCallback;
-          } else {
-            return arrayFunc(isArr ? collection : toIterable(collection));
+        iteratee = (noIteratee && callback === baseCallback && !isArr && isString(collection))
+          ? charAtCallback
+          : callback(iteratee, thisArg, 3);
+
+        if (noIteratee || (isArr && iteratee.length == 1)) {
+          var result = arrayExtremum(isArr ? collection : toIterable(collection), iteratee, comparator, exValue);
+          if (noIteratee || !(length && result === exValue)) {
+            return result;
           }
         }
-        return extremumBy(collection, iteratee, isMin);
+        return baseExtremum(collection, iteratee, comparator, exValue);
       };
     }
 
@@ -4043,34 +4056,6 @@
         }
       }
       return true;
-    }
-
-    /**
-     * Gets the extremum value of `collection` invoking `iteratee` for each value
-     * in `collection` to generate the criterion by which the value is ranked.
-     * The `iteratee` is invoked with three arguments: (value, index, collection).
-     *
-     * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {boolean} [isMin] Specify returning the minimum, instead of the
-     *  maximum, extremum value.
-     * @returns {*} Returns the extremum value.
-     */
-    function extremumBy(collection, iteratee, isMin) {
-      var exValue = isMin ? POSITIVE_INFINITY : NEGATIVE_INFINITY,
-          computed = exValue,
-          result = computed;
-
-      baseEach(collection, function(value, index, collection) {
-        var current = iteratee(value, index, collection);
-        if ((isMin ? (current < computed) : (current > computed)) ||
-            (current === exValue && current === result)) {
-          computed = current;
-          result = value;
-        }
-      });
-      return result;
     }
 
     /**
@@ -8609,6 +8594,35 @@
         : baseClone(value, true);
     }
 
+
+    /**
+     * Checks if `value` is greater than `other`.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if `value` is greater than `other`, else `false`.
+     */
+    function gt(value, other) {
+      return value > other;
+    }
+
+    /**
+     * Checks if `value` is greater than or equal to `other`.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if `value` is greater than or equal to `other`, else `false`.
+     */
+    function gte(value, other) {
+      return value >= other;
+    }
+
     /**
      * Checks if `value` is classified as an `arguments` object.
      *
@@ -8776,6 +8790,7 @@
      *
      * @static
      * @memberOf _
+     * @alias eq
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
@@ -9207,6 +9222,34 @@
      */
     function isUndefined(value) {
       return value === undefined;
+    }
+
+    /**
+     * Checks if `value` is less than `other`.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if `value` is less than `other`, else `false`.
+     */
+    function lt(value, other) {
+      return value < other;
+    }
+
+    /**
+     * Checks if `value` is less than or equal to `other`.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if `value` is less than or equal to `other`, else `false`.
+     */
+    function lte(value, other) {
+      return value <= other;
     }
 
     /**
@@ -11822,7 +11865,7 @@
      * _.max(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
-    var max = createExtremum(arrayMax);
+    var max = createExtremum(gt, -Infinity);
 
     /**
      * Gets the minimum value of `collection`. If `collection` is empty or falsey
@@ -11871,7 +11914,7 @@
      * _.min(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var min = createExtremum(arrayMin, true);
+    var min = createExtremum(lt, Infinity);
 
     /**
      * Gets the sum of the values in `collection`.
@@ -12093,6 +12136,8 @@
     lodash.findWhere = findWhere;
     lodash.first = first;
     lodash.get = get;
+    lodash.gt = gt;
+    lodash.gte = gte;
     lodash.has = has;
     lodash.identity = identity;
     lodash.includes = includes;
@@ -12122,6 +12167,8 @@
     lodash.kebabCase = kebabCase;
     lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
+    lodash.lt = lt;
+    lodash.lte = lte;
     lodash.max = max;
     lodash.min = min;
     lodash.noConflict = noConflict;
@@ -12158,6 +12205,7 @@
     lodash.all = every;
     lodash.any = some;
     lodash.contains = includes;
+    lodash.eq = isEqual;
     lodash.detect = find;
     lodash.foldl = reduce;
     lodash.foldr = reduceRight;

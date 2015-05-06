@@ -17816,7 +17816,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 220, function() {
+    test('should accept falsey arguments', 225, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -17982,8 +17982,9 @@
     });
 
     test('should not contain minified method names (test production builds)', 1, function() {
+      var shortNames = ['at', 'eq', 'gt', 'lt'];
       ok(_.every(_.functions(_), function(methodName) {
-        return methodName.length > 2 || methodName === 'at';
+        return methodName.length > 2 || _.includes(shortNames, methodName);
       }));
     });
   }());

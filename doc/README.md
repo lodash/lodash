@@ -2656,7 +2656,7 @@ callback returns `true` for elements that have the properties of the given
 object, else `false`.
 <br>
 <br>
-Many lodash methods are guarded to work as interatees for methods like
+Many lodash methods are guarded to work as iteratees for methods like
 `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
 <br>
 <br>
@@ -2818,7 +2818,7 @@ value. The `iteratee` is bound to `thisArg` and invoked with four arguments:<br>
 (accumulator, value, index|key, collection).
 <br>
 <br>
-Many lodash methods are guarded to work as interatees for methods like
+Many lodash methods are guarded to work as iteratees for methods like
 `_.reduce`, `_.reduceRight`, and `_.transform`.
 <br>
 <br>

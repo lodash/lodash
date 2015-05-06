@@ -10295,11 +10295,10 @@
     });
 
     test('should check cache for own properties', 1, function() {
-      var actual = [],
-          memoized = _.memoize(_.identity);
+      var memoized = _.memoize(_.identity);
 
-      _.each(shadowProps, function(value) {
-        actual.push(memoized(value));
+      var actual = _.map(shadowProps, function(value) {
+        return memoized(value);
       });
 
       deepEqual(actual, shadowProps);
@@ -10307,9 +10306,13 @@
 
     test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 18, function() {
       _.times(2, function(index) {
-        var resolver = index ? _.identity : null,
-            memoized = _.memoize(function(value) { return 'value:' + value; }, resolver),
-            cache = memoized.cache;
+        var resolver = index ? _.identity : null;
+
+        var memoized = _.memoize(function(value) {
+          return 'value:' + value;
+        }, resolver);
+
+        var cache = memoized.cache;
 
         memoized('a');
 
@@ -10349,7 +10352,7 @@
       });
     });
 
-    test('should allow `_.memoize.Cache` to be customized', 4, function() {
+    test('should allow `_.memoize.Cache` to be customized', 5, function() {
       var oldCache = _.memoize.Cache
 
       function Cache() {
@@ -10382,27 +10385,72 @@
         },
         'set': function(key, value) {
           this.__data__.push({ 'key': key, 'value': value });
+          return this;
         }
       };
 
       _.memoize.Cache = Cache;
 
       var memoized = _.memoize(function(object) {
-        return '`id` is "' + object.id + '"';
+        return 'value:' + object.id;
       });
 
-      var actual = memoized({ 'id': 'a' });
-      strictEqual(actual, '`id` is "a"');
+      var cache = memoized.cache,
+          key1 = { 'id': 'a' },
+          key2 = { 'id': 'b' };
 
-      var key = { 'id': 'b' };
-      actual = memoized(key);
-      strictEqual(actual, '`id` is "b"');
+      strictEqual(memoized(key1), 'value:a');
+      strictEqual(cache.has(key1), true);
+
+      strictEqual(memoized(key2), 'value:b');
+      strictEqual(cache.has(key2), true);
+
+      cache['delete'](key2);
+      strictEqual(cache.has(key2), false);
+
+      _.memoize.Cache = oldCache;
+    });
+
+    test('should works with an immutable `_.memoize.Cache` ', 2, function() {
+      var oldCache = _.memoize.Cache
+
+      function Cache() {
+        this.__data__ = [];
+      }
+
+      Cache.prototype = {
+        'get': function(key) {
+          return _.find(this.__data__, function(entry) {
+            return key === entry.key;
+          }).value;
+        },
+        'has': function(key) {
+          return _.some(this.__data__, function(entry) {
+            return key === entry.key;
+          });
+        },
+        'set': function(key, value) {
+          var result = new Cache;
+          result.__data__ = this.__data__.concat({ 'key': key, 'value': value });
+          return result;
+        }
+      };
+
+      _.memoize.Cache = Cache;
+
+      var memoized = _.memoize(function(object) {
+        return object.id;
+      });
+
+      var key1 = { 'id': 'a' },
+          key2 = { 'id': 'b' };
+
+      memoized(key1);
+      memoized(key2);
 
       var cache = memoized.cache;
-      strictEqual(cache.has(key), true);
-
-      cache['delete'](key);
-      strictEqual(cache.has(key), false);
+      strictEqual(cache.has(key1), true);
+      strictEqual(cache.has(key2), true);
 
       _.memoize.Cache = oldCache;
     });

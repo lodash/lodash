@@ -3470,8 +3470,9 @@
           : callback(iteratee, thisArg, 3);
 
         if (noIteratee || (isArr && iteratee.length == 1)) {
-          var result = arrayExtremum(isArr ? collection : toIterable(collection), iteratee, comparator, exValue);
-          if (noIteratee || !(length && result === exValue)) {
+          collection = isArr ? collection : toIterable(collection);
+          var result = arrayExtremum(collection, iteratee, comparator, exValue);
+          if (noIteratee || !(collection.length && result === exValue)) {
             return result;
           }
         }

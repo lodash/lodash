@@ -1,6 +1,9 @@
 module.exports = {
   'clone': require('./lang/clone'),
   'cloneDeep': require('./lang/cloneDeep'),
+  'eq': require('./lang/eq'),
+  'gt': require('./lang/gt'),
+  'gte': require('./lang/gte'),
   'isArguments': require('./lang/isArguments'),
   'isArray': require('./lang/isArray'),
   'isBoolean': require('./lang/isBoolean'),
@@ -22,6 +25,8 @@ module.exports = {
   'isString': require('./lang/isString'),
   'isTypedArray': require('./lang/isTypedArray'),
   'isUndefined': require('./lang/isUndefined'),
+  'lt': require('./lang/lt'),
+  'lte': require('./lang/lte'),
   'toArray': require('./lang/toArray'),
   'toPlainObject': require('./lang/toPlainObject')
 };

@@ -2,7 +2,7 @@ var binaryIndexBy = require('./binaryIndexBy'),
     identity = require('../utility/identity');
 
 /** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+var MAX_ARRAY_LENGTH = 4294967295,
     HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
 /**
@@ -25,7 +25,7 @@ function binaryIndex(array, value, retHighest) {
       var mid = (low + high) >>> 1,
           computed = array[mid];
 
-      if (retHighest ? (computed <= value) : (computed < value)) {
+      if ((retHighest ? (computed <= value) : (computed < value)) && computed !== null) {
         low = mid + 1;
       } else {
         high = mid;

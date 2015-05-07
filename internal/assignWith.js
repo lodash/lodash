@@ -1,11 +1,4 @@
-var getSymbols = require('./getSymbols'),
-    keys = require('../object/keys');
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var push = arrayProto.push;
+var keys = require('../object/keys');
 
 /**
  * A specialized version of `_.assign` for customizing assigned values without
@@ -19,10 +12,8 @@ var push = arrayProto.push;
  * @returns {Object} Returns `object`.
  */
 function assignWith(object, source, customizer) {
-  var props = keys(source);
-  push.apply(props, getSymbols(source));
-
   var index = -1,
+      props = keys(source),
       length = props.length;
 
   while (++index < length) {

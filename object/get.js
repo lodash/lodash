@@ -2,7 +2,7 @@ var baseGet = require('../internal/baseGet'),
     toPath = require('../internal/toPath');
 
 /**
- * Gets the property value of `path` on `object`. If the resolved value is
+ * Gets the property value at `path` of `object`. If the resolved value is
  * `undefined` the `defaultValue` is used in its place.
  *
  * @static

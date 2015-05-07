@@ -20,8 +20,8 @@ var restParam = require('../function/restParam'),
  */
 var zipWith = restParam(function(arrays) {
   var length = arrays.length,
-      iteratee = arrays[length - 2],
-      thisArg = arrays[length - 1];
+      iteratee = length > 2 ? arrays[length - 2] : undefined,
+      thisArg = length > 1 ? arrays[length - 1] : undefined;
 
   if (length > 2 && typeof iteratee == 'function') {
     length -= 2;

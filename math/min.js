@@ -1,5 +1,5 @@
-var arrayMin = require('../internal/arrayMin'),
-    createExtremum = require('../internal/createExtremum');
+var createExtremum = require('../internal/createExtremum'),
+    lt = require('../lang/lt');
 
 /**
  * Gets the minimum value of `collection`. If `collection` is empty or falsey
@@ -48,6 +48,6 @@ var arrayMin = require('../internal/arrayMin'),
  * _.min(users, 'age');
  * // => { 'user': 'barney', 'age': 36 }
  */
-var min = createExtremum(arrayMin, true);
+var min = createExtremum(lt, Infinity);
 
 module.exports = min;

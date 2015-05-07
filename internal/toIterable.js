@@ -3,7 +3,7 @@ var isArrayLike = require('./isArrayLike'),
     values = require('../object/values');
 
 /**
- * Converts `value` to an array-like object if it is not one.
+ * Converts `value` to an array-like object if it's not one.
  *
  * @private
  * @param {*} value The value to process.

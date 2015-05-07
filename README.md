@@ -1,4 +1,4 @@
-# lodash v3.8.0
+# lodash v3.9.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) modules.
 
@@ -28,7 +28,7 @@ var array = require('lodash/array');
 var chunk = require('lodash/array/chunk');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.8.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/3.9.0-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
@@ -39,8 +39,8 @@ Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash b
 lodash is also available in a variety of other builds & module formats.
 
  * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.8.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.8.0-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.8.0-es) build
+ * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.9.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.9.0-amd) builds
+ * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.9.0-es) build
 
 ## Further Reading
 
@@ -75,6 +75,7 @@ lodash is also available in a variety of other builds & module formats.
  * [_.forIn](https://lodash.com/docs#forIn) for iterating all enumerable properties
  * [_.forOwn](https://lodash.com/docs#forOwn) for iterating own properties
  * [_.get](https://lodash.com/docs#get) & [_.set](https://lodash.com/docs#set) for deep property getting & setting
+ * [_.gt](https://lodash.com/docs#gt), [_.gte](https://lodash.com/docs#gte), [_.lt](https://lodash.com/docs#lt), & [_.lte](https://lodash.com/docs#lte) relational methods
  * [_.inRange](https://lodash.com/docs#inRange) for checking whether a number is within a given range
  * [_.isNative](https://lodash.com/docs#isNative) to check for native functions
  * [_.isPlainObject](https://lodash.com/docs#isPlainObject) & [_.toPlainObject](https://lodash.com/docs#toPlainObject) to check for & convert to `Object` objects
@@ -115,5 +116,5 @@ lodash is also available in a variety of other builds & module formats.
 
 ## Support
 
-Tested in Chrome 41-42, Firefox 36-37, IE 6-11, MS Edge, Opera 27-28, Safari 5-8, io.js 1.8.1, Node.js 0.8.28, 0.10.38, & 0.12.2, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7RC5.
+Tested in Chrome 41-42, Firefox 37-38, IE 6-11, MS Edge, Opera 28-29, Safari 5-8, ChakraNode 0.12.2, io.js 2.0.2, Node.js 0.8.28, 0.10.38, & 0.12.3, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7.6
 Automated [browser](https://saucelabs.com/u/lodash) & [CI](https://travis-ci.org/lodash/lodash/) test runs are available. Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.

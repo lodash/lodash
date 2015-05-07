@@ -1,5 +1,5 @@
-var arrayMax = require('../internal/arrayMax'),
-    createExtremum = require('../internal/createExtremum');
+var createExtremum = require('../internal/createExtremum'),
+    gt = require('../lang/gt');
 
 /**
  * Gets the maximum value of `collection`. If `collection` is empty or falsey
@@ -48,6 +48,6 @@ var arrayMax = require('../internal/arrayMax'),
  * _.max(users, 'age');
  * // => { 'user': 'fred', 'age': 40 }
  */
-var max = createExtremum(arrayMax);
+var max = createExtremum(gt, -Infinity);
 
 module.exports = max;

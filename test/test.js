@@ -1494,7 +1494,7 @@
       deepEqual(bound(['b'], 'c'), [object, 'a', ['b'], 'c']);
     });
 
-    test('should rebind functions', 3, function() {
+    test('should not rebind functions', 3, function() {
       var object1 = {},
           object2 = {},
           object3 = {};
@@ -1506,6 +1506,31 @@
       deepEqual(bound1(), [object1]);
       deepEqual(bound2(), [object1, 'a']);
       deepEqual(bound3(), [object1, 'b']);
+    });
+
+    test('should not error when calling bound class constructors', 1, function() {
+      var createCtor = _.attempt(Function, '"use strict";return class A{}');
+      if (typeof createCtor == 'function') {
+        var bound = _.bind(createCtor()),
+            expected = _.times(5, _.constant(true));
+
+        var actual = _.times(5, function(index) {
+          try {
+            switch (index) {
+              case 0: return !!(new bound);
+              case 1: return !!(new bound(1));
+              case 2: return !!(new bound(1, 2));
+              case 3: return !!(new bound(1, 2, 3));
+              case 4: return !!(new bound(1, 2, 3, 4));
+            }
+          } catch(e) {}
+        });
+
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should return a wrapped value when chaining', 2, function() {

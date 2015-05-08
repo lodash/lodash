@@ -460,15 +460,6 @@
     var _now = Date.now;
     setProperty(Date, 'now', _.noop);
 
-    var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
-    setProperty(Object, 'getOwnPropertySymbols', (function() {
-      function getOwnPropertySymbols() {
-        return [];
-      }
-      setProperty(getOwnPropertySymbols, 'toString', createToString('getOwnPropertySymbols'));
-      return getOwnPropertySymbols;
-    }()));
-
     var _getPrototypeOf = Object.getPrototypeOf;
     setProperty(Object, 'getPrototypeOf', _.noop);
 
@@ -561,7 +552,6 @@
     // Restore built-in methods.
     setProperty(Array,  'isArray', _isArray);
     setProperty(Date,   'now', _now);
-    setProperty(Object, 'getOwnPropertySymbols', _getOwnPropertySymbols);
     setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
@@ -708,7 +698,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 13, function() {
+    test('should avoid overwritten native methods', 12, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -733,13 +723,6 @@
           actual = null;
         }
         ok(typeof actual == 'number', message('_.now', 'Date.now'));
-
-        try {
-          actual = lodashBizarro.merge({}, object);
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, object, message('_.merge', 'Object.getOwnPropertySymbols'));
 
         try {
           actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
@@ -809,7 +792,7 @@
         }
       }
       else {
-        skipTest(13);
+        skipTest(12);
       }
     });
   }());
@@ -5860,25 +5843,6 @@
       Foo.prototype.b = 2;
 
       deepEqual(func({}, new Foo), { 'a': 1 });
-    });
-
-    test('`_.' + methodName + '` should assign own symbols', 2, function() {
-      if (Symbol) {
-        var symbol1 = Symbol('a'),
-            symbol2 = Symbol('b');
-
-        var Foo = function() {
-          this[symbol1] = 1;
-        };
-        Foo.prototype[symbol2] = 2;
-
-        var actual = func({}, new Foo);
-        strictEqual(actual[symbol1], 1);
-        strictEqual(actual[symbol2], undefined);
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
@@ -16486,8 +16450,8 @@
     });
 
     test('should work with large arrays of well-known symbols', 1, function() {
+      // See https://people.mozilla.org/~jorendorff/es6-draft.html#sec-well-known-symbols.
       if (Symbol) {
-        // See https://people.mozilla.org/~jorendorff/es6-draft.html#sec-well-known-symbols.
         var expected = [
           Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.iterator,
           Symbol.match, Symbol.replace,  Symbol.search, Symbol.species,

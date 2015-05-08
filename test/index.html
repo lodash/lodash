@@ -90,15 +90,6 @@
 				setProperty(Date, '_now', Date.now);
 				setProperty(Date, 'now', noop);
 
-				setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
-				setProperty(Object, 'getOwnPropertySymbols', (function() {
-					function getOwnPropertySymbols() {
-						return [];
-					}
-					setProperty(getOwnPropertySymbols, 'toString', createToString('getOwnPropertySymbols'));
-					return getOwnPropertySymbols;
-				}()));
-
 				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
 				setProperty(Object, 'getPrototypeOf', noop);
 
@@ -204,11 +195,6 @@
 				} else {
 					delete Date.now;
 				}
-				if (Object._getOwnPropertySymbols) {
-					setProperty(Object, 'getOwnPropertySymbols', Object._getOwnPropertySymbols);
-				} else {
-					delete Object.getOwnPropertySymbols;
-				}
 				if (Object._getPrototypeOf) {
 					setProperty(Object, 'getPrototypeOf', Object._getPrototypeOf);
 				} else {
@@ -255,7 +241,6 @@
 
 				delete Array._isArray;
 				delete Date._now;
-				delete Object._getOwnPropertySymbols;
 				delete Object._getPrototypeOf;
 				delete Object._keys;
 				delete funcProto._method;

@@ -11076,26 +11076,19 @@
       strictEqual(actual, isMax ? 3 : 1);
     });
 
-    test('`_.' + methodName + '` should iterate a string', 2, function() {
-      _.each(['abc', Object('abc')], function(value) {
-        var actual = func(value);
-        strictEqual(actual, isMax ? 'c' : 'a');
-      });
-    });
-
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
       var array = _.range(0, 5e5);
       strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 3, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 2, function() {
       var arrays = [[2, 1], [5, 4], [7, 8]],
           objects = [{ 'a': 2, 'b': 1 }, { 'a': 5, 'b': 4 }, { 'a': 7, 'b': 8 }],
           expected = isMax ? [2, 5, 8] : [1, 4, 7];
 
-      deepEqual(_.map(arrays, func), expected);
-      deepEqual(_.map(objects, func), expected);
-      deepEqual(_.map('abc', func), ['a', 'b', 'c']);
+      _.each([arrays, objects], function(values) {
+        deepEqual(_.map(values, func), expected);
+      });
     });
 
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {

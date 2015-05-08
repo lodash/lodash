@@ -3461,18 +3461,11 @@
         if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
           iteratee = null;
         }
-        var callback = getCallback(),
-            noIteratee = iteratee == null,
-            isArr = isArray(collection);
-
-        iteratee = (noIteratee && callback === baseCallback && !isArr && isString(collection))
-          ? charAtCallback
-          : callback(iteratee, thisArg, 3);
-
-        if (noIteratee || (isArr && iteratee.length == 1)) {
-          collection = isArr ? collection : toIterable(collection);
+        iteratee = getCallback(iteratee, thisArg, 3);
+        if (iteratee.length == 1) {
+          collection = toIterable(collection);
           var result = arrayExtremum(collection, iteratee, comparator, exValue);
-          if (noIteratee || !(collection.length && result === exValue)) {
+          if (!(collection.length && result === exValue)) {
             return result;
           }
         }

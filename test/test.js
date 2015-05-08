@@ -1510,11 +1510,12 @@
 
     test('should not error when calling bound class constructors', 1, function() {
       var createCtor = _.attempt(Function, '"use strict";return class A{}');
+
       if (typeof createCtor == 'function') {
         var bound = _.bind(createCtor()),
-            expected = _.times(5, _.constant(true));
+            expected = _.times(6, _.constant(true));
 
-        var actual = _.times(5, function(index) {
+        var actual = _.times(6, function(index) {
           try {
             switch (index) {
               case 0: return !!(new bound);
@@ -1522,6 +1523,7 @@
               case 2: return !!(new bound(1, 2));
               case 3: return !!(new bound(1, 2, 3));
               case 4: return !!(new bound(1, 2, 3, 4));
+              case 5: return !!(new bound(1, 2, 3, 4, 5));
             }
           } catch(e) {}
         });

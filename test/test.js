@@ -6184,6 +6184,42 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.gt');
+
+  (function() {
+    test('should return `true` if `value` is greater than `other`', 2, function() {
+      strictEqual(_.gt(3, 1), true);
+      strictEqual(_.gt('def', 'abc'), true);
+    });
+
+    test('should return `false` if `value` is less than or equal to `other`', 4, function() {
+      strictEqual(_.gt(1, 3), false);
+      strictEqual(_.gt(3, 3), false);
+      strictEqual(_.gt('abc', 'def'), false);
+      strictEqual(_.gt('def', 'def'), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.gte');
+
+  (function() {
+    test('should return `true` if `value` is greater than or equal to `other`', 4, function() {
+      strictEqual(_.gte(3, 1), true);
+      strictEqual(_.gte(3, 3), true);
+      strictEqual(_.gte('def', 'abc'), true);
+      strictEqual(_.gte('def', 'def'), true);
+    });
+
+    test('should return `false` if `value` is less than `other`', 2, function() {
+      strictEqual(_.gte(1, 3), false);
+      strictEqual(_.gte('abc', 'def'), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.has');
 
   (function() {
@@ -7896,6 +7932,10 @@
         skipTest();
       }
     });
+
+    test('should be aliased', 1, function() {
+      strictEqual(_.eq, _.isEqual);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -9272,6 +9312,42 @@
       else {
         skipTest();
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.lt');
+
+  (function() {
+    test('should return `true` if `value` is less than `other`', 2, function() {
+      strictEqual(_.lt(1, 3), true);
+      strictEqual(_.lt('abc', 'def'), true);
+    });
+
+    test('should return `false` if `value` is greater than or equal to `other`', 4, function() {
+      strictEqual(_.lt(3, 1), false);
+      strictEqual(_.lt(3, 3), false);
+      strictEqual(_.lt('def', 'abc'), false);
+      strictEqual(_.lt('def', 'def'), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.lte');
+
+  (function() {
+    test('should return `true` if `value` is less than or equal to `other`', 4, function() {
+      strictEqual(_.lte(1, 3), true);
+      strictEqual(_.lte(3, 3), true);
+      strictEqual(_.lte('abc', 'def'), true);
+      strictEqual(_.lte('def', 'def'), true);
+    });
+
+    test('should return `false` if `value` is greater than `other`', 2, function() {
+      strictEqual(_.lt(3, 1), false);
+      strictEqual(_.lt('def', 'abc'), false);
     });
   }());
 

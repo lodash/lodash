@@ -928,8 +928,8 @@
      * `isFinite` `isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`,
      * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`,
      * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lt`, `lte`,
-     * `max`, `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`,
-     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`,
+     * `max`, `min`, `next`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`,
+     * `parseInt`, `placeInRange`, `pop`, `previous`, `random`, `reduce`, `reduceRight`, `repeat`, `result`,
      * `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
      * `sortedLastIndex`, `startCase`, `startsWith`, `sum`, `template`, `trim`,
      * `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`, and `words`
@@ -11560,6 +11560,25 @@
     }
 
     /**
+     * Gets the next element in the array after the one provided.
+     * Returns undefined if the current element is the last of the array.
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to query.
+     * @param {*} current The current element of the array.
+     * @returns {*} Returns the next element of `array`.
+     * @example
+     *
+     * _.next([1, 2, 3], 2);
+     * // => 3
+     */
+    function next(array, current) {
+      var indexOfCurrent = indexOf(array, current);
+      return indexOfCurrent === -1 ? undefined : array[indexOfCurrent + 1];
+    }
+
+    /**
      * Reverts the `_` variable to its previous value and returns a reference to
      * the `lodash` function.
      *
@@ -11592,6 +11611,55 @@
      */
     function noop() {
       // No operation performed.
+    }
+
+    /*
+     * Ensures that the value provided falls within the range.
+     * If the value exceeds or falls short of the range, then set to the appropriate
+     * `start` or `end`. Otherwise, we return the value as provided.
+     * @static
+     * @memberOf -
+     * @category Number
+     * @param {number} value The number to check.
+     * @param {number} start The start of the range.
+     * @param {number} end The end of the range.
+     * @returns {number} Returns the number, restricted to the range provided
+     * @example
+     *
+     * _.placeInRange(2, 5, 10);
+     * // => 5
+     *
+     * _.placeInRange(15, 5, 10);
+     * // => 10
+     *
+     * _.placeInRange(8, 5, 10);
+     * // => 8
+     */
+    function placeInRange(value, start, end) {
+      if(inRange(value, start, end)) {
+        return value;
+      } else {
+        return value < start ? start : end;
+      }
+    }
+
+    /**
+     * Gets the previous element in the array after the one provided
+     * Returns undefined if the current element is the last of the array.
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to query.
+     * @param {*} current The current element of the array.
+     * @returns {*} Returns the previous element of `array`.
+     * @example
+     *
+     * _.previous([1, 2, 2]);
+     * // => 1
+     */
+    function previous(array, current) {
+      var indexOfCurrent = indexOf(array, current);
+      return array[indexOfCurrent - 1];
     }
 
     /**
@@ -12023,6 +12091,7 @@
     lodash.methodOf = methodOf;
     lodash.mixin = mixin;
     lodash.negate = negate;
+    lodash.next = next;
     lodash.omit = omit;
     lodash.once = once;
     lodash.pairs = pairs;
@@ -12030,7 +12099,9 @@
     lodash.partialRight = partialRight;
     lodash.partition = partition;
     lodash.pick = pick;
+    lodash.placeInRange = placeInRange;
     lodash.pluck = pluck;
+    lodash.previous = previous;
     lodash.property = property;
     lodash.propertyOf = propertyOf;
     lodash.pull = pull;
@@ -12489,3 +12560,4 @@
     root._ = _;
   }
 }.call(this));
+

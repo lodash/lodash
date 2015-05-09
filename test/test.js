@@ -11334,6 +11334,34 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.next');
+
+  (function() {
+    var animals = ['a', 'b', 'c', 'd'];
+
+    test('should return the next element from the current in a given array', 1, function() {
+      var next = _.next(animals, 'c');
+      strictEqual(next, 'd');
+    });
+
+    test('should return `undefined` if there is no next element', 1, function() {
+      var next = _.next(animals, 'd');
+      strictEqual(next, undefined);
+    });
+
+    test('should return `undefined` when passed an empty array', 1, function() {
+      var next = _.next([], 'b');
+      strictEqual(next, undefined);
+    });
+
+    test('should returned `undefined` when current value does not exist in array', 1, function() {
+      var next = _.next(animals, 'e');
+      strictEqual(next, undefined);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.noop');
 
   (function() {
@@ -12213,6 +12241,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.placeInRange');
+
+  (function() {
+    test('should return the start value when the current value is less than the range', 1, function() {
+      var placed = _.placeInRange(2, 5, 10);
+      strictEqual(placed, 5);
+    });
+
+    test('should return the end value when the current value is greater than the range', 1, function() {
+      var placed = _.placeInRange(15, 5, 10);
+      strictEqual(placed, 10);
+    });
+
+    test('should return the current value if it falls within the range', 1, function() {
+      var placed = _.placeInRange(8, 5, 10);
+      strictEqual(placed, 8);
+    });
+  })();
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.pluck');
 
   (function() {
@@ -12272,6 +12321,34 @@
       else {
         skipTest(2);
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.previous');
+
+  (function() {
+    var animals = ['a', 'b', 'c', 'd'];
+
+    test('should return the previous element from the current in a given array', 1, function() {
+      var previous = _.previous(animals, 'c');
+      strictEqual(previous, 'b');
+    });
+
+    test('should return `undefined` if there is no previous element', 1, function() {
+      var previous = _.previous(animals, 'a');
+      strictEqual(previous, undefined);
+    });
+
+    test('should return `undefined` when passed an empty array', 1, function() {
+      var previous = _.previous([], 'c');
+      strictEqual(previous, undefined);
+    });
+
+    test('should returned `undefined` when current value does not exist in array', 1, function() {
+      var previous = _.previous(animals, 'e');
+      strictEqual(previous, undefined);
     });
   }());
 
@@ -17986,3 +18063,4 @@
     QUnit.load();
   }
 }.call(this));
+

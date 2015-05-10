@@ -1453,9 +1453,34 @@
       var bound = _.bind(Foo, { 'a': 1 }),
           newBound = new bound;
 
-      strictEqual(newBound.a, undefined);
       strictEqual(bound().a, 1);
+      strictEqual(newBound.a, undefined);
       ok(newBound instanceof Foo);
+    });
+
+    test('should handle a number of arguments when called with the `new` operator', 1, function() {
+      function Foo() {
+        return this;
+      }
+
+      var bound = _.bind(Foo, { 'a': 1 }),
+          expected = _.times(7, _.constant(undefined));
+
+      var actual = _.times(7, function(index) {
+        try {
+          switch (index) {
+            case 0: return (new bound).a;
+            case 1: return (new bound(1)).a;
+            case 2: return (new bound(1, 2)).a;
+            case 3: return (new bound(1, 2, 3)).a;
+            case 4: return (new bound(1, 2, 3, 4)).a;
+            case 5: return (new bound(1, 2, 3, 4, 5)).a;
+            case 6: return (new bound(1, 2, 3, 4, 5, 6)).a;
+          }
+        } catch(e) {}
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('ensure `new bound` is an instance of `func`', 2, function() {
@@ -1491,7 +1516,7 @@
       deepEqual(bound3(), [object1, 'b']);
     });
 
-    test('should not error when calling bound class constructors', 1, function() {
+    test('should not error when calling bound class constructors with the `new` operator', 1, function() {
       var createCtor = _.attempt(Function, '"use strict";return class A{}');
 
       if (typeof createCtor == 'function') {
@@ -7772,8 +7797,10 @@
       strictEqual(actual, true);
     });
 
-    test('should handle comparisons if `customizer` returns `undefined`', 1, function() {
+    test('should handle comparisons if `customizer` returns `undefined`', 3, function() {
       strictEqual(_.isEqual('a', 'a', _.noop), true);
+      strictEqual(_.isEqual(['a'], ['a'], _.noop), true);
+      strictEqual(_.isEqual({ '0': 'a' }, { '0': 'a' }, _.noop), true);
     });
 
     test('should not handle comparisons if `customizer` returns `true`', 3, function() {
@@ -7784,6 +7811,16 @@
       strictEqual(_.isEqual('a', 'b', customizer), true);
       strictEqual(_.isEqual(['a'], ['b'], customizer), true);
       strictEqual(_.isEqual({ '0': 'a' }, { '0': 'b' }, customizer), true);
+    });
+
+    test('should not handle comparisons if `customizer` returns `false`', 3, function() {
+      var customizer = function(value) {
+        return _.isString(value) ? false : undefined;
+      };
+
+      strictEqual(_.isEqual('a', 'a', customizer), false);
+      strictEqual(_.isEqual(['a'], ['a'], customizer), false);
+      strictEqual(_.isEqual({ '0': 'a' }, { '0': 'a' }, customizer), false);
     });
 
     test('should return a boolean value even if `customizer` does not', 2, function() {
@@ -8318,7 +8355,7 @@
       deepEqual(actual, [objects[0]]);
     });
 
-    test('should handle a `source` with `undefined` values', 2, function() {
+    test('should handle a `source` with `undefined` values', 3, function() {
       var objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
           source = { 'b': undefined },
           predicate = function(object) { return _.isMatch(object, source); },
@@ -8327,24 +8364,14 @@
 
       deepEqual(actual, expected);
 
-      source = { 'a': { 'c': undefined } };
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      source = { 'a': 1, 'b': undefined };
       actual = _.map(objects, predicate);
 
       deepEqual(actual, expected);
-    });
 
-    test('should handle a `source` with `undefined` values', 2, function() {
-      var matches = _.matches({ 'b': undefined }),
-          objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
-          actual = _.map(objects, matches),
-          expected = [false, false, true];
-
-      deepEqual(actual, expected);
-
-      matches = _.matches({ 'a': { 'c': undefined } });
-      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
-      actual = _.map(objects, matches);
+      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      source = { 'a': { 'c': undefined } };
+      actual = _.map(objects, predicate);
 
       deepEqual(actual, expected);
     });
@@ -9938,16 +9965,21 @@
       deepEqual(actual, [objects[0]]);
     });
 
-    test('should handle a `source` with `undefined` values', 2, function() {
-      var matches = _.matches({ 'b': undefined }),
-          objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+    test('should handle a `source` with `undefined` values', 3, function() {
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+          matches = _.matches({ 'b': undefined }),
           actual = _.map(objects, matches),
           expected = [false, false, true];
 
       deepEqual(actual, expected);
 
-      matches = _.matches({ 'a': { 'c': undefined } });
+      matches = _.matches({ 'a': 1, 'b': undefined });
+      actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
+
       objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      matches = _.matches({ 'a': { 'c': undefined } });
       actual = _.map(objects, matches);
 
       deepEqual(actual, expected);
@@ -10232,18 +10264,24 @@
       deepEqual(actual, [objects[0]]);
     });
 
-    test('should handle a `value` with `undefined` values', 2, function() {
-      var matches = _.matchesProperty('b', undefined),
-          objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
-          actual = _.map(objects, matches);
+    test('should handle a `value` with `undefined` values', 3, function() {
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+          matches = _.matchesProperty('b', undefined),
+          actual = _.map(objects, matches),
+          expected = [false, false, true];
 
-      deepEqual(actual, [false, false, true]);
+      deepEqual(actual, expected);
 
-      matches = _.matchesProperty('a', { 'b': undefined });
       objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 1 } }, { 'a': { 'a': 1, 'b': undefined } }];
+      matches = _.matchesProperty('a', { 'a': 1, 'b': undefined });
       actual = _.map(objects, matches);
 
-      deepEqual(actual, [false, false, true]);
+      deepEqual(actual, expected);
+
+      matches = _.matchesProperty('a', { 'b': undefined });
+      actual = _.map(objects, matches);
+
+      deepEqual(actual, expected);
     });
 
     test('should work with a function for `value`', 1, function() {
@@ -14677,7 +14715,7 @@
       strictEqual(actual, 1);
     });
 
-    test('`_.' + methodName + '` should align with `_.sortBy`', 8, function() {
+    test('`_.' + methodName + '` should align with `_.sortBy`', 10, function() {
       var expected = [1, '2', {}, null, undefined, NaN, NaN];
 
       _.each([
@@ -14686,6 +14724,7 @@
       ], function(array) {
         deepEqual(_.sortBy(array), expected);
         strictEqual(func(expected, 3), 2);
+        strictEqual(func(expected, null), isSortedIndex ? 3 : 4);
         strictEqual(func(expected, undefined), isSortedIndex ? 4 : 5);
         strictEqual(func(expected, NaN), isSortedIndex ? 5 : 7);
       });

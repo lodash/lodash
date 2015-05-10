@@ -135,6 +135,52 @@
   /** Detect if lodash is in strict mode. */
   var isStrict = ui.isStrict;
 
+  /*--------------------------------------------------------------------------*/
+
+  // Exit early if going to run tests in a PhantomJS web page.
+  if (phantom && isModularize) {
+    var page = require('webpage').create();
+
+    page.onCallback = function(details) {
+      var coverage = details.coverage;
+      if (coverage) {
+        var fs = require('fs'),
+            cwd = fs.workingDirectory,
+            sep = fs.separator;
+
+        fs.write([cwd, 'coverage', 'coverage.json'].join(sep), JSON.stringify(coverage));
+      }
+      phantom.exit(details.failed ? 1 : 0);
+    };
+
+    page.onConsoleMessage = function(message) {
+      console.log(message);
+    };
+
+    page.onInitialized = function() {
+      page.evaluate(function() {
+        document.addEventListener('DOMContentLoaded', function() {
+          QUnit.done(function(details) {
+            details.coverage = window.__coverage__;
+            callPhantom(details);
+          });
+        });
+      });
+    };
+
+    page.open(filePath, function(status) {
+      if (status != 'success') {
+        console.log('PhantomJS failed to load page: ' + filePath);
+        phantom.exit(1);
+      }
+    });
+
+    console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
+    return;
+  }
+
+  /*--------------------------------------------------------------------------*/
+
   /** Used to test Web Workers. */
   var Worker = !(ui.isForeign || ui.isSauceLabs || isModularize) && (document && document.origin != 'null') && root.Worker;
 
@@ -172,54 +218,6 @@
       }
     }
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  // Log params provided to `test.js`.
-  if (params) {
-    console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
-  }
-  // Exit early if going to run tests in a PhantomJS web page.
-  if (phantom && isModularize) {
-    var page = require('webpage').create();
-    page.open(filePath, function(status) {
-      if (status != 'success') {
-        console.log('PhantomJS failed to load page: ' + filePath);
-        phantom.exit(1);
-      }
-    });
-
-    page.onCallback = function(details) {
-      var coverage = details.coverage;
-      if (coverage) {
-        var fs = require('fs'),
-            cwd = fs.workingDirectory,
-            sep = fs.separator;
-
-        fs.write([cwd, 'coverage', 'coverage.json'].join(sep), JSON.stringify(coverage));
-      }
-      phantom.exit(details.failed ? 1 : 0);
-    };
-
-    page.onConsoleMessage = function(message) {
-      console.log(message);
-    };
-
-    page.onInitialized = function() {
-      page.evaluate(function() {
-        document.addEventListener('DOMContentLoaded', function() {
-          QUnit.done(function(details) {
-            details.coverage = window.__coverage__;
-            callPhantom(details);
-          });
-        });
-      });
-    };
-
-    return;
-  }
-
-  /*--------------------------------------------------------------------------*/
 
   /** The `lodash` function to test. */
   var _ = root._ || (root._ = (
@@ -636,6 +634,10 @@
   }());
 
   /*--------------------------------------------------------------------------*/
+
+  if (params) {
+    console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
+  }
 
   QUnit.module(basename);
 

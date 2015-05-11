@@ -7178,7 +7178,7 @@
           result[rand] = collection[index];
         }
       } else {
-        var chars = seed.toString().split('');
+        var chars = seed.toString().split(''),
             seedValue = 0,
             tempCollection = clone(collection);
         for(var i in chars){

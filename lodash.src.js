@@ -7180,7 +7180,7 @@
       } else {
         var chars = seed.toString().split('');
             seedValue = 0,
-            tempCollection = _.clone(collection);
+            tempCollection = clone(collection);
         for(var i in chars){
           seedValue += charAtCallback(chars[i]);
         }

@@ -762,7 +762,8 @@
         }
         deepEqual(actual, [6, 8, 10], '`_.parseInt` should work in its bizarro form');
 
-        if (ArrayBuffer) {
+        // Avoid comparing buffers with `deepEqual` in Rhino because it errors.
+        if (ArrayBuffer && !isRhino) {
           try {
             var buffer = new ArrayBuffer(10);
             actual = lodashBizarro.clone(buffer);

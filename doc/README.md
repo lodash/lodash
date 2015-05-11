@@ -2959,7 +2959,7 @@ _.sample([1, 2, 3, 4], 2);
 
 <!-- div -->
 
-### <a id="_shufflecollection"></a>`_.shuffle(collection)`
+### <a id="_shufflecollection"></a>`_.shuffle(collection,seed)`
 <a href="#_shufflecollection">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.8.0/lodash.src.js#L7212 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.shuffle "See the npm package")
 
 Creates an array of shuffled values, using a version of the
@@ -2967,6 +2967,7 @@ Creates an array of shuffled values, using a version of the
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to shuffle.
+2. `seed` *(Number|string)*: The seed to shuffle in a same sequence.
 
 #### Returns
 *(Array)*:  Returns the new shuffled array.
@@ -2975,6 +2976,11 @@ Creates an array of shuffled values, using a version of the
 ```js
 _.shuffle([1, 2, 3, 4]);
 // => [4, 1, 3, 2]
+
+
+// with seed
+_.shuffle([1, 2, 3, 4], 'dog');
+// => [ 3, 4, 1, 2 ]
 ```
 * * *
 

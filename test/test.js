@@ -14109,7 +14109,8 @@
 
   (function() {
     var array = [1, 2, 3],
-        object = { 'a': 1, 'b': 2, 'c': 3 };
+        object = { 'a': 1, 'b': 2, 'c': 3 },
+        seed = 'hello';
 
     test('should return a new array', 1, function() {
       notStrictEqual(_.shuffle(array), array);
@@ -14130,6 +14131,19 @@
 
     test('should treat number values for `collection` as empty', 1, function() {
       deepEqual(_.shuffle(1), []);
+    });
+
+    test('should return a new array with a seed', 1, function() {
+      notStrictEqual(_.shuffle(array,seed), array);
+    });
+
+    test('should output the same random value based on the seed', 1, function() {
+      deepEqual(_.shuffle(array,seed), _.shuffle(array,seed));
+    });
+
+    test('should contain the same elements after a collection is shuffled with a seed', 2, function() {
+      deepEqual(_.shuffle(array,seed).sort(), array);
+      deepEqual(_.shuffle(object,seed).sort(), array);
     });
 
     _.each({

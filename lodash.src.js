@@ -7182,7 +7182,7 @@
             seedValue = 0,
             tempCollection = clone(collection);
         for(var i in chars){
-          seedValue += charAtCallback(chars[i]);
+          seedValue += chars[i].charCodeAt(0);
         }
 
         while (++index < length) {

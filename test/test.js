@@ -190,7 +190,7 @@
   } catch(e) {}
 
   /** Use a single "load" function. */
-  var load = (typeof require == 'function' && !amd)
+  var load = (!amd && typeof require == 'function')
     ? require
     : (isJava ? root.load : noop);
 
@@ -383,46 +383,10 @@
 
   /*--------------------------------------------------------------------------*/
 
-  // Setup values for Node.js.
+  // Add bizarro values.
   (function() {
-    if (amd) {
+    if (document || typeof require != 'function') {
       return;
-    }
-    try {
-      // Add values from a different realm.
-      _.extend(_, require('vm').runInNewContext([
-        '(function() {',
-        ' var object = {',
-        "  '_arguments': (function() { return arguments; }(1, 2, 3)),",
-        "  '_array': [1, 2, 3],",
-        "  '_boolean': Object(false),",
-        "  '_date': new Date,",
-        "  '_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
-        "  '_function': function() {},",
-        "  '_nan': NaN,",
-        "  '_null': null,",
-        "  '_number': Object(0),",
-        "  '_object': { 'a': 1, 'b': 2, 'c': 3 },",
-        "  '_regexp': /x/,",
-        "  '_string': Object('a'),",
-        "  '_undefined': undefined",
-        '  };',
-        '',
-        "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
-        "    var Ctor = Function('return typeof ' + type + \" != 'undefined' && \" + type)()",
-        '    if (Ctor) {',
-        "      object['_' + type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
-        '    }',
-        "  });",
-        '',
-        '  return object;',
-        '}())'
-      ].join('\n')));
-    }
-    catch(e) {
-      if (!phantom) {
-        return;
-      }
     }
     var nativeString = fnToString.call(toString),
         reToString = /toString/g;
@@ -431,15 +395,6 @@
       return _.constant(nativeString.replace(reToString, funcName));
     }
 
-    // Expose internal modules for better code coverage.
-    if (isModularize && !isNpm) {
-      _.each(['baseEach', 'isIndex', 'isIterateeCall', 'isLength'], function(funcName) {
-        var path = require('path'),
-            func = require(path.join(path.dirname(filePath), 'internal', funcName + '.js'));
-
-        _['_' + funcName] = func[funcName] || func['default'] || func;
-      });
-    }
     // Allow bypassing native checks.
     setProperty(funcProto, 'toString', function wrapper() {
       setProperty(funcProto, 'toString', fnToString);
@@ -448,7 +403,7 @@
       return result;
     });
 
-    // Add built-in prototype extensions.
+    // Add prototype extensions.
     funcProto._method = _.noop;
 
     // Set bad shims.
@@ -496,7 +451,8 @@
       return ArrayBuffer;
     }()));
 
-    if (!root.Float64Array) {
+    var _Float64Array = root.Float64Array;
+    if (!_Float64Array) {
       setProperty(root, 'Float64Array', (function() {
         function Float64Array(buffer, byteOffset, length) {
           return arguments.length == 1
@@ -566,6 +522,9 @@
     } else {
       delete root.ArrayBuffer;
     }
+    if (!_Float64Array) {
+      delete root.Float64Array;
+    }
     if (_Set) {
       setProperty(root, 'Set', Set);
     } else {
@@ -581,11 +540,40 @@
     delete funcProto._method;
   }());
 
-  // Add values from an iframe.
-  (function() {
-    if (_._object || !document) {
-      return;
-    }
+  // Add other realm values from the `vm` module.
+  _.attempt(function() {
+    _.extend(_, require('vm').runInNewContext([
+      '(function() {',
+      ' var object = {',
+      "  '_arguments': (function() { return arguments; }(1, 2, 3)),",
+      "  '_array': [1, 2, 3],",
+      "  '_boolean': Object(false),",
+      "  '_date': new Date,",
+      "  '_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
+      "  '_function': function() {},",
+      "  '_nan': NaN,",
+      "  '_null': null,",
+      "  '_number': Object(0),",
+      "  '_object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "  '_regexp': /x/,",
+      "  '_string': Object('a'),",
+      "  '_undefined': undefined",
+      '  };',
+      '',
+      "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
+      "    var Ctor = Function('return typeof ' + type + \" != 'undefined' && \" + type)()",
+      '    if (Ctor) {',
+      "      object['_' + type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
+      '    }',
+      "  });",
+      '',
+      '  return object;',
+      '}())'
+    ].join('\n')));
+  });
+
+  // Add other realm values from an iframe.
+  _.attempt(function() {
     var iframe = document.createElement('iframe');
     iframe.frameBorder = iframe.height = iframe.width = 0;
     body.appendChild(iframe);
@@ -618,20 +606,29 @@
       '<\/script>'
     ].join('\n'));
     idoc.close();
-  }());
+  });
 
   // Add a web worker.
-  (function() {
-    if (!Worker) {
-      return;
-    }
+  _.attempt(function() {
     var worker = new Worker('./asset/worker.js?t=' + (+new Date));
     worker.addEventListener('message', function(e) {
       _._VERSION = e.data || '';
     }, false);
 
     worker.postMessage(ui.buildPath);
-  }());
+  });
+
+  // Expose internal modules for better code coverage.
+  _.attempt(function() {
+    if (isModularize && !(amd || isNpm)) {
+      _.each(['baseEach', 'isIndex', 'isIterateeCall', 'isLength'], function(funcName) {
+        var path = require('path'),
+            func = require(path.join(path.dirname(filePath), 'internal', funcName + '.js'));
+
+        _['_' + funcName] = func[funcName] || func['default'] || func;
+      });
+    }
+  });
 
   /*--------------------------------------------------------------------------*/
 

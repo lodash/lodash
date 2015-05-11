@@ -1075,7 +1075,7 @@
       support.nodeTag = objToString.call(document) != objectTag;
 
       /**
-       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino, Narwhal).
+       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino).
        *
        * @memberOf _.support
        * @type boolean
@@ -12439,7 +12439,7 @@
           retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
 
       // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
-      // IE < 9, Firefox < 10, Narwhal, and RingoJS.
+      // IE < 9, Firefox < 10, and RingoJS.
       var func = !fixObjects ? protoFunc : function() {
         var result = protoFunc.apply(this, arguments);
         if (this.length === 0) {
@@ -12519,7 +12519,7 @@
     if (moduleExports) {
       (freeModule.exports = _)._ = _;
     }
-    // Export for Narwhal or Rhino with CommonJS.
+    // Export for Rhino with CommonJS support.
     else {
       freeExports._ = _;
     }

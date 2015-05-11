@@ -18,7 +18,7 @@
       params = root.arguments,
       system = root.system;
 
-  /** Add `console.log()` support for Narwhal, Rhino, and RingoJS. */
+  /** Add `console.log()` support for Rhino and RingoJS. */
   var console = root.console || (root.console = { 'log': root.print });
 
   /** The file path of the lodash file to test. */
@@ -980,7 +980,7 @@
       )
   );
 
-  // Avoid Underscore induced `OutOfMemoryError` in Rhino, Narwhal, and Ringo.
+  // Avoid Underscore induced `OutOfMemoryError` in Rhino and Ringo.
   if (!isJava) {
     suites.push(
       Benchmark.Suite('`_.find` with `_.matches` shorthand')

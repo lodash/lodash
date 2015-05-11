@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<script>
-			// avoid reporting tests to Sauce Labs when script errors occur
+			// Avoid reporting tests to Sauce Labs when script errors occur.
 			if (location.port == '9001') {
 				window.onerror = function(message) {
 					if (window.QUnit) {
@@ -69,7 +69,7 @@
 				function createToString(funcName) {
 					return constant(nativeString.replace(reToString, funcName));
 				}
-				// allow bypassing native checks
+				// Allow bypassing native checks.
 				setProperty(funcProto, 'toString', (function() {
 					function wrapper() {
 						setProperty(funcProto, 'toString', fnToString);
@@ -80,10 +80,10 @@
 					return wrapper;
 				}()));
 
-				// add extensions
+				// Add prototype extensions.
 				funcProto._method = noop;
 
-				// set bad shims
+				// Set bad shims.
 				setProperty(Array, '_isArray', Array.isArray);
 				setProperty(Array, 'isArray', noop);
 
@@ -167,14 +167,14 @@
 					};
 				}()));
 
-				// fake lack of DOM support
+				// Fake lack of DOM support.
 				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
 				document.createDocumentFragment = noop;
 
-				// fake `WinRTError`
+				// Fake `WinRTError`.
 				setProperty(window, 'WinRTError', Error);
 
-				// fake free variable `global`
+				// Fake free variable `global`.
 				setProperty(window, 'exports', window);
 				setProperty(window, 'global', window);
 				setProperty(window, 'module', {});
@@ -247,20 +247,20 @@
 				delete objectProto._propertyIsEnumerable;
 			}
 
-			// load lodash and expose it to the bad extensions/shims
+			// Load lodash to expose it to the bad extensions/shims.
 			if (!ui.isModularize) {
 				addBizarroMethods();
 				document.write('<script src="' + ui.buildPath + '"><\/script>');
 			}
 		</script>
 		<script>
-			// store lodash to test for bad extensions/shims
+			// Store lodash to test for bad extensions/shims.
 			if (!ui.isModularize) {
 				var lodashBizarro = window._;
 				window._ = undefined;
 				removeBizarroMethods();
 			}
-			// load test scripts
+			// Load test scripts.
 			document.write((ui.isForeign || ui.urlParams.loader == 'none')
 				? '<script src="' + ui.buildPath + '"><\/script><script src="test.js"><\/script>'
 				: '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
@@ -298,7 +298,7 @@
 							'location': basePath + 'test',
 							'main': 'test',
 							'config': {
-								// work around no global being exported
+								// Work around no global being exported.
 								'exports': 'QUnit',
 								'loader': 'curl/loader/legacy'
 							}
@@ -389,7 +389,7 @@
 				}
 			}());
 
-			// set a more readable browser name
+			// Set a more readable browser name.
 			window.onload = function() {
 				var timeoutId = setInterval(function() {
 					var ua = document.getElementById('qunit-userAgent');

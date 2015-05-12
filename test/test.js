@@ -6848,19 +6848,12 @@
       deepEqual(actual, [NaN]);
     });
 
-    test('should work with large arrays of objects', 1, function() {
-      var object = {},
-          largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
-
-      deepEqual(_.intersection([object], largeArray), [object]);
-    });
-
     test('should work with large arrays of objects', 2, function() {
       var object = {},
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
       deepEqual(_.intersection([object], largeArray), [object]);
-      deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), null, [1]), [1]);
+      deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), [1]), [1]);
     });
 
     test('should work with large arrays of `NaN`', 1, function() {
@@ -6868,11 +6861,26 @@
       deepEqual(_.intersection([1, NaN, 3], largeArray), [NaN]);
     });
 
-    test('should ignore values that are not arrays or `arguments` objects', 3, function() {
-      var array = [0, 1, null, 3];
-      deepEqual(_.intersection(array, 3, null, { '0': 1 }), []);
-      deepEqual(_.intersection(null, array, null, [2, 1]), [1]);
-      deepEqual(_.intersection(array, null, args, null), [1, 3]);
+    test('should work with `arguments` objects', 2, function() {
+      var array = [0, 1, null, 3],
+          expected = [1, 3];
+
+      deepEqual(_.intersection(array, args), expected);
+      deepEqual(_.intersection(args, array), expected);
+    });
+
+    test('should work with a single array', 1, function() {
+      var actual = _.intersection([1, 1, 3, 2, 2]);
+      deepEqual(actual, [1, 3, 2]);
+    });
+
+    test('should treat values that are not arrays or `arguments` objects as empty', 3, function() {
+      var array = [0, 1, null, 3],
+          values = [3, null, { '0': 1 }];
+
+      _.each(values, function(value) {
+        deepEqual(_.intersection(array, value), []);
+      });
     });
 
     test('should return a wrapped value when chaining', 2, function() {

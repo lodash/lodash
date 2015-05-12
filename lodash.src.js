@@ -9715,13 +9715,18 @@
         return false;
       }
       var result = hasOwnProperty.call(object, path);
-      if (!result && !isKey(path)) {
-        path = toPath(path);
-        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-        path = last(path);
-        result = object != null && hasOwnProperty.call(object, path);
+      if (result) {
+        return result;
       }
-      return result || (lodash.support.nonEnumStrings && isString(object) && isIndex(path, object.length));
+      if (isKey(path)) {
+        var length = object.length;
+        return isLength(length) &&
+          (isArray(object) || (support.nonEnumStrings && isString(object)) ||
+            (support.nonEnumArgs && isArguments(object))) && isIndex(path, length);
+      }
+      path = toPath(path);
+      object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      return object != null && hasOwnProperty.call(object, last(path));
     }
 
     /**

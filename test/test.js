@@ -6248,6 +6248,8 @@
   QUnit.module('lodash.has');
 
   (function() {
+    var args = arguments;
+
     test('should check for own properties', 2, function() {
       var object = { 'a': 1 };
 
@@ -6311,6 +6313,14 @@
       });
     });
 
+    test('should treat sparse arrays as dense', 1, function() {
+      strictEqual(_.has(Array(1), 0), true);
+    });
+
+    test('should work with `arguments` objects', 1, function() {
+      strictEqual(_.has(args, 1), true);
+    });
+
     test('should check for a key over a path', 2, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
 
@@ -6352,7 +6362,7 @@
         strictEqual(_.has(object, path), false);
       });
     });
-  }());
+  }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
 

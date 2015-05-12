@@ -7154,25 +7154,45 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to shuffle.
+     * @param {String|Number} seed The seed to random shuffle in a algorithm sequence.
      * @returns {Array} Returns the new shuffled array.
      * @example
      *
      * _.shuffle([1, 2, 3, 4]);
      * // => [4, 1, 3, 2]
+     * _.shuffle([1, 2, 3, 4, 5],'hello');
+     * // => [1, 5, 4, 3, 2]
+     * // random sequence based on seed 'hello'
      */
-    function shuffle(collection) {
+    function shuffle(collection,seed) {
       collection = toIterable(collection);
-
       var index = -1,
           length = collection.length,
           result = Array(length);
-
-      while (++index < length) {
-        var rand = baseRandom(0, index);
-        if (index != rand) {
-          result[index] = result[rand];
+      if(!seed){
+        while (++index < length) {
+          var rand = baseRandom(0, index);
+          if (index != rand) {
+            result[index] = result[rand];
+          }
+          result[rand] = collection[index];
         }
-        result[rand] = collection[index];
+      } else {
+        var chars = seed.toString().split(''),
+            seedValue = 0,
+            tempCollection = clone(collection),
+            temp;
+        for(var i in chars){
+          seedValue += chars[i].charCodeAt(0);
+        }
+
+        while (++index < length) {
+          var rand = (seedValue % (index+1) + index) % length;
+          temp=tempCollection[index];
+          tempCollection[index]=tempCollection[rand];
+          tempCollection[rand]=temp;
+        }
+        result = tempCollection;
       }
       return result;
     }

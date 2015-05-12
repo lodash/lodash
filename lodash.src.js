@@ -1009,7 +1009,6 @@
 
     (function(x) {
       var Ctor = function() { this.x = x; },
-          args = arguments,
           object = { '0': x, 'length': x },
           props = [];
 
@@ -1023,7 +1022,7 @@
        * @memberOf _.support
        * @type boolean
        */
-      support.argsTag = objToString.call(args) == argsTag;
+      support.argsTag = objToString.call(arguments) == argsTag;
 
       /**
        * Detect if `name` or `message` properties of `Error.prototype` are
@@ -1137,24 +1136,6 @@
         support.dom = document.createDocumentFragment().nodeType === 11;
       } catch(e) {
         support.dom = false;
-      }
-
-      /**
-       * Detect if `arguments` object indexes are non-enumerable.
-       *
-       * In Firefox < 4, IE < 9, PhantomJS, and Safari < 5.1 `arguments` object
-       * indexes are non-enumerable. Chrome < 25 and Node.js < 0.11.0 treat
-       * `arguments` object indexes as non-enumerable and fail `hasOwnProperty`
-       * checks for indexes that exceed the number of function parameters and
-       * whose associated argument values are `0`.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      try {
-        support.nonEnumArgs = !propertyIsEnumerable.call(args, 1);
-      } catch(e) {
-        support.nonEnumArgs = true;
       }
     }(1, 0));
 
@@ -4586,8 +4567,7 @@
           support = lodash.support;
 
       var allowIndexes = length && isLength(length) &&
-        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
-          (support.nonEnumArgs && isArguments(object)));
+        (isArray(object) || isArguments(object) || (support.nonEnumStrings && isString(object)));
 
       var index = -1,
           result = [];
@@ -9720,9 +9700,8 @@
       }
       if (isKey(path)) {
         var length = object.length;
-        return isLength(length) &&
-          (isArray(object) || (support.nonEnumStrings && isString(object)) ||
-            (support.nonEnumArgs && isArguments(object))) && isIndex(path, length);
+        return isLength(length) && isIndex(path, length) &&
+          (isArray(object) || isArguments(object) || (support.nonEnumStrings && isString(object)));
       }
       path = toPath(path);
       object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
@@ -9848,8 +9827,8 @@
           support = lodash.support;
 
       length = (length && isLength(length) &&
-        (isArray(object) || (support.nonEnumStrings && isString(object)) ||
-          (support.nonEnumArgs && isArguments(object))) && length) || 0;
+        (isArray(object) || isArguments(object) ||
+          (support.nonEnumStrings && isString(object))) && length) || 0;
 
       var Ctor = object.constructor,
           index = -1,

@@ -9666,17 +9666,21 @@
         return false;
       }
       var result = hasOwnProperty.call(object, path);
+      if (!result && !isKey(path)) {
+        path = toPath(path);
+        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+        if (object == null) {
+          return false;
+        }
+        path = last(path);
+        result = hasOwnProperty.call(object, path);
+      }
       if (result) {
         return result;
       }
-      if (isKey(path)) {
-        var length = object.length;
-        return isLength(length) && isIndex(path, length) &&
-          (isArray(object) || isArguments(object) || isString(object));
-      }
-      path = toPath(path);
-      object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-      return object != null && hasOwnProperty.call(object, last(path));
+      var length = object.length;
+      return isLength(length) && isIndex(path, length) &&
+        (isArray(object) || isArguments(object) || isString(object));
     }
 
     /**

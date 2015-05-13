@@ -9675,12 +9675,8 @@
         path = last(path);
         result = hasOwnProperty.call(object, path);
       }
-      if (result) {
-        return result;
-      }
-      var length = object.length;
-      return isLength(length) && isIndex(path, length) &&
-        (isArray(object) || isArguments(object) || isString(object));
+      return result || (isLength(object.length) && isIndex(path, object.length) &&
+        (isArray(object) || isArguments(object) || isString(object)));
     }
 
     /**

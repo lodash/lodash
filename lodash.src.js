@@ -1048,16 +1048,6 @@
       support.enumPrototypes = propertyIsEnumerable.call(Ctor, 'prototype');
 
       /**
-       * Detect if functions can be decompiled by `Function#toString`
-       * (all but Firefox OS certified apps, older Opera mobile browsers, and
-       * the PlayStation 3; forced `false` for Windows 8 apps).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.funcDecomp = /\bthis\b/.test(function() { return this; });
-
-      /**
        * Detect if `Function#name` is supported (all but IE).
        *
        * @memberOf _.support
@@ -1072,14 +1062,6 @@
        * @type boolean
        */
       support.nodeTag = objToString.call(document) != objectTag;
-
-      /**
-       * Detect if string indexes are non-enumerable (IE < 9, RingoJS, Rhino).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumStrings = !propertyIsEnumerable.call('x', 0);
 
       /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
@@ -4563,11 +4545,10 @@
     function shimKeys(object) {
       var props = keysIn(object),
           propsLength = props.length,
-          length = propsLength && object.length,
-          support = lodash.support;
+          length = propsLength && object.length;
 
       var allowIndexes = length && isLength(length) &&
-        (isArray(object) || isArguments(object) || (support.nonEnumStrings && isString(object)));
+        (isArray(object) || isArguments(object) || isString(object));
 
       var index = -1,
           result = [];
@@ -9701,7 +9682,7 @@
       if (isKey(path)) {
         var length = object.length;
         return isLength(length) && isIndex(path, length) &&
-          (isArray(object) || isArguments(object) || (support.nonEnumStrings && isString(object)));
+          (isArray(object) || isArguments(object) || isString(object));
       }
       path = toPath(path);
       object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
@@ -9827,8 +9808,7 @@
           support = lodash.support;
 
       length = (length && isLength(length) &&
-        (isArray(object) || isArguments(object) ||
-          (support.nonEnumStrings && isString(object))) && length) || 0;
+        (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
 
       var Ctor = object.constructor,
           index = -1,

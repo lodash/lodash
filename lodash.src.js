@@ -8932,16 +8932,6 @@
       if (object == null) {
         return false;
       }
-      customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
-      object = toObject(object);
-      if (!customizer && length == 1) {
-        var key = props[0],
-            value = source[key];
-
-        if (isStrictComparable(value)) {
-          return value === object[key] && (value !== undefined || (key in object));
-        }
-      }
       var values = Array(length),
           strictCompareFlags = Array(length);
 
@@ -8949,7 +8939,8 @@
         value = values[length] = source[props[length]];
         strictCompareFlags[length] = isStrictComparable(value);
       }
-      return baseIsMatch(object, props, values, strictCompareFlags, customizer);
+      customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
+      return baseIsMatch(toObject(object), props, values, strictCompareFlags, customizer);
     }
 
     /**

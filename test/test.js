@@ -542,7 +542,7 @@
 
   // Add other realm values from the `vm` module.
   _.attempt(function() {
-    if (process.jsEngine == 'chakra') {
+    if (process.jsEngine === 'chakra') {
       return;
     }
     _.extend(_, require('vm').runInNewContext([

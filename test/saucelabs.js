@@ -159,6 +159,7 @@ if (isBackbone) {
 
     switch (browser) {
       case 'Firefox': return version >= 4;
+      case 'Internet Explorer': return version >= 7;
       case 'iPad': return version >= 5;
       case 'Opera': return version >= 12;
     }

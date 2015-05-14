@@ -8,7 +8,7 @@
 	<body>
 		<div id="qunit"></div>
 		<script>
-			// avoid reporting tests to Sauce Labs when script errors occur
+			// Avoid reporting tests to Sauce Labs when script errors occur.
 			if (location.port == '9001') {
 				window.onerror = function(message) {
 					if (window.QUnit) {
@@ -27,7 +27,7 @@
 			QUnit.config.asyncRetries = 10;
 			QUnit.config.hidepassed = true;
 
-			// excuse tests we intentionally fail or those with problems
+			// Excuse tests we intentionally fail or those with problems.
 			QUnit.config.excused = {
 				'Arrays': {
 					'drop': [
@@ -150,7 +150,7 @@
 				}
 			};
 
-			// only excuse in Sauce Labs (buggy Safari and timers)
+			// Only excuse in Sauce Labs (buggy Safari and timers).
 			if (!ui.isSauceLabs) {
 				delete QUnit.config.excused.Functions['throttle repeatedly with results'];
 				delete QUnit.config.excused.Functions['more throttle does not trigger leading call when leading is set to false'];
@@ -158,7 +158,7 @@
 				delete QUnit.config.excused.Functions['debounce asap'];
 				delete QUnit.config.excused.Utility.now;
 			}
-			// load test scripts
+			// Load test scripts.
 			document.write(ui.urlParams.loader != 'none'
 				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
 				: ([
@@ -199,7 +199,7 @@
 							'name': 'test',
 							'location': '../vendor/underscore/test',
 							'config': {
-								// work around no global being exported
+								// Work around no global being exported.
 								'exports': 'QUnit',
 								'loader': 'curl/loader/legacy'
 							}

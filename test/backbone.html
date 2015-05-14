@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<script>
-			// avoid reporting tests to Sauce Labs when script errors occur
+			// Avoid reporting tests to Sauce Labs when script errors occur.
 			if (location.port == '9001') {
 				window.onerror = function(message) {
 					if (window.QUnit) {
@@ -38,11 +38,7 @@
 			QUnit.config.asyncRetries = 10;
 			QUnit.config.hidepassed = true;
 
-			// load lodash
-			if (!ui.isModularize) {
-				document.write('<script src="' + ui.buildPath + '"><\/script>');
-			}
-			// load test scripts
+			// Load test scripts.
 			document.write(ui.urlParams.loader != 'none'
 				? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
 				: ([
@@ -90,7 +86,7 @@
 							'name': 'test',
 							'location': '../vendor/backbone/test',
 							'config': {
-								// work around no global being exported
+								// Work around no global being exported.
 								'exports': 'QUnit',
 								'loader': 'curl/loader/legacy'
 							}

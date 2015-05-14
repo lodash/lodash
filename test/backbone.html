@@ -6,12 +6,6 @@
 		<link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
 	</head>
 	<body>
-		<div id="qunit"></div>
-		<div id="qunit-fixture">
-			<div id='testElement'>
-				<h1>Test</h1>
-			</div>
-		</div>
 		<script>
 			// avoid reporting tests to Sauce Labs when script errors occur
 			if (location.port == '9001') {
@@ -55,7 +49,8 @@
 					'<script src="' + ui.buildPath + '"><\/script>',
 					'<script src="../node_modules/jquery/dist/jquery.js"><\/script>',
 					'<script src="../vendor/backbone/backbone.js"><\/script>',
-					'<script src="../vendor/backbone/test/environment.js"><\/script>',
+					'<script src="../vendor/backbone/test/setup/dom-setup.js"><\/script>',
+					'<script src="../vendor/backbone/test/setup/environment.js"><\/script>',
 					'<script src="../vendor/backbone/test/noconflict.js"><\/script>',
 					'<script src="../vendor/backbone/test/events.js"><\/script>',
 					'<script src="../vendor/backbone/test/model.js"><\/script>',
@@ -123,7 +118,8 @@
 						window._ = lodash;
 					}
 					require(getConfig(), [
-						'test/environment',
+						'test/setup/dom-setup',
+						'test/setup/environment',
 					        'test/noconflict',
 						'test/events',
 						'test/model',

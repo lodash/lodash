@@ -83,7 +83,7 @@
     doc.collection.url = '/collection/';
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    raises(function() { doc.url(); });
+    throws(function() { doc.url(); });
     doc.collection = collection;
   });
 
@@ -118,6 +118,11 @@
     deepEqual(model.invert(), { 'a': 'foo', 'b': 'bar', 'c': 'baz' });
     deepEqual(model.pick('foo', 'baz'), {'foo': 'a', 'baz': 'c'});
     deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
+  });
+
+  test("chain", function() {
+    var model = new Backbone.Model({ a: 0, b: 1, c: 2 });
+    deepEqual(model.chain().pick("a", "b", "c").values().compact().value(), [1, 2]);
   });
 
   test("clone", 10, function() {
@@ -198,6 +203,32 @@
     strictEqual(model.has('null'), false);
     strictEqual(model.has('undefined'), false);
   });
+
+  test("matches", 4, function() {
+    var model = new Backbone.Model();
+
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), false);
+
+    model.set({name: 'Jonas', 'cool': true});
+
+    strictEqual(model.matches({'name': 'Jonas'}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
+  });
+
+  test("matches with predicate", function() {
+    var model = new Backbone.Model({a: 0});
+
+    strictEqual(model.matches(function(attr) {
+      return attr.a > 1 && attr.b != null;
+    }), false);
+
+    model.set({a: 3, b: true});
+
+    strictEqual(model.matches(function(attr) {
+      return attr.a > 1 && attr.b != null;
+    }), true);
+  })
 
   test("set and unset", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
@@ -310,6 +341,31 @@
     model.unset('_id');
     equal(model.id, undefined);
     equal(model.isNew(), true);
+  });
+
+  test("setting an alternative cid prefix", 4, function() {
+    var Model = Backbone.Model.extend({
+      cidPrefix: 'm'
+    });
+    var model = new Model();
+
+    equal(model.cid.charAt(0), 'm');
+
+    model = new Backbone.Model();
+    equal(model.cid.charAt(0), 'c');
+
+    var Collection = Backbone.Collection.extend({
+      model: Model
+    });
+    var collection = new Collection([{id: 'c5'}, {id: 'c6'}, {id: 'c7'}]);
+
+    equal(collection.get('c6').cid.charAt(0), 'm');
+    collection.set([{id: 'c6', value: 'test'}], {
+      merge: true,
+      add: true,
+      remove: false
+    });
+    ok(collection.get('c6').has('value'));
   });
 
   test("set an empty string", 1, function() {
@@ -460,6 +516,40 @@
     model.destroy();
   });
 
+  test("#3283 - save, fetch, destroy calls success with context", 3, function () {
+    var model = new Backbone.Model();
+    var obj = {};
+    var options = {
+      context: obj,
+      success: function() {
+        equal(this, obj);
+      }
+    };
+    model.sync = function (method, model, options) {
+      options.success.call(options.context);
+    };
+    model.save({data: 2, id: 1}, options);
+    model.fetch(options);
+    model.destroy(options);
+  });
+
+  test("#3283 - save, fetch, destroy calls error with context", 3, function () {
+    var model = new Backbone.Model();
+    var obj = {};
+    var options = {
+      context: obj,
+      error: function() {
+        equal(this, obj);
+      }
+    };
+    model.sync = function (method, model, options) {
+      options.error.call(options.context);
+    };
+    model.save({data: 2, id: 1}, options);
+    model.fetch(options);
+    model.destroy(options);
+  });
+
   test("save with PATCH", function() {
     doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
     doc.save();
@@ -472,6 +562,14 @@
     equal(this.syncArgs.options.attrs.d, 4);
     equal(this.syncArgs.options.attrs.a, undefined);
     equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
+  });
+
+  test("save with PATCH and different attrs", function() {
+    doc.clear().save({b: 2, d: 4}, {patch: true, attrs: {B: 1, D: 3}});
+    equal(this.syncArgs.options.attrs.D, 3);
+    equal(this.syncArgs.options.attrs.d, undefined);
+    equal(this.ajaxSettings.data, "{\"B\":1,\"D\":3}");
+    deepEqual(doc.attributes, {b: 2, d: 4});
   });
 
   test("save in positional style", 1, function() {
@@ -496,10 +594,57 @@
     });
   });
 
+  test("save with wait and supplied id", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: '/collection'
+    });
+    var model = new Model();
+    model.save({id: 42}, {wait: true});
+    equal(this.ajaxSettings.url, '/collection/42');
+  });
+
+  test("save will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      },
+      urlRoot: '/test'
+    });
+
+    var model = new SpecialSyncModel();
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    model.save(null, { success: onSuccess });
+    this.ajaxSettings.success();
+  });
+
   test("fetch", 2, function() {
     doc.fetch();
     equal(this.syncArgs.method, 'read');
     ok(_.isEqual(this.syncArgs.model, doc));
+  });
+
+  test("fetch will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      },
+      urlRoot: '/test'
+    });
+
+    var model = new SpecialSyncModel();
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    model.fetch({ success: onSuccess });
+    this.ajaxSettings.success();
   });
 
   test("destroy", 3, function() {
@@ -509,6 +654,25 @@
 
     var newModel = new Backbone.Model;
     equal(newModel.destroy(), false);
+  });
+
+  test("destroy will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      },
+      urlRoot: '/test'
+    });
+
+    var model = new SpecialSyncModel({ id: 'id' });
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    model.destroy({ success: onSuccess });
+    this.ajaxSettings.success();
   });
 
   test("non-persisted destroy", 1, function() {
@@ -967,11 +1131,14 @@
     model.destroy();
   });
 
-  test("#1365 - Destroy: New models execute success callback.", 2, function() {
+  asyncTest("#1365 - Destroy: New models execute success callback.", 2, function() {
     new Backbone.Model()
     .on('sync', function() { ok(false); })
     .on('destroy', function(){ ok(true); })
-    .destroy({ success: function(){ ok(true); }});
+    .destroy({ success: function(){
+        ok(true);
+        start();
+    }});
   });
 
   test("#1433 - Save: An invalid model cannot be persisted.", 1, function() {

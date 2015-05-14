@@ -131,7 +131,7 @@
 
   test("urlError", 2, function() {
     var model = new Backbone.Model();
-    raises(function() {
+    throws(function() {
       model.fetch();
     });
     model.fetch({url: '/one/two'});
@@ -205,6 +205,17 @@
       }
     });
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
+  });
+
+  test('#2928 - Pass along `textStatus` and `errorThrown`.', 2, function() {
+    var model = new Backbone.Model;
+    model.url = '/test';
+    model.on('error', function(model, xhr, options) {
+      strictEqual(options.textStatus, 'textStatus');
+      strictEqual(options.errorThrown, 'errorThrown');
+    });
+    model.fetch();
+    this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
   });
 
 })();

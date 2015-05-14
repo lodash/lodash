@@ -106,6 +106,19 @@
     b.trigger('event2');
   });
 
+  test("listenToOnce", 2, function() {
+    // Same as the previous test, but we use once rather than having to explicitly unbind
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj, Backbone.Events);
+    var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
+    var incrB = function(){ obj.counterB += 1; };
+    obj.listenToOnce(obj, 'event', incrA);
+    obj.listenToOnce(obj, 'event', incrB);
+    obj.trigger('event');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
   test("listenToOnce and stopListening", 1, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
@@ -152,18 +165,72 @@
     e.trigger("foo");
   });
 
-  test("stopListening cleans up references", 4, function() {
+  test("stopListening cleans up references", 12, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     var fn = function() {};
-    a.listenTo(b, 'all', fn).stopListening();
+    b.on('event', fn);
+    a.listenTo(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    a.listenTo(b, 'all', fn).stopListening(b);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+    a.listenTo(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    a.listenTo(b, 'all', fn).stopListening(null, 'all');
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+    a.listenTo(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    a.listenTo(b, 'all', fn).stopListening(null, null, fn);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+    a.listenTo(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+  });
+
+  test("stopListening cleans up references from listenToOnce", 12, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    b.on('event', fn);
+    a.listenToOnce(b, 'event', fn).stopListening();
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+    a.listenToOnce(b, 'event', fn).stopListening(b);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+    a.listenToOnce(b, 'event', fn).stopListening(b, 'event');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+    a.listenToOnce(b, 'event', fn).stopListening(b, 'event', fn);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events.event), 1);
+    equal(_.size(b._listeners), 0);
+  });
+
+  test("listenTo and off cleaning up references", 8, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    a.listenTo(b, 'event', fn);
+    b.off();
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
+    a.listenTo(b, 'event', fn);
+    b.off('event');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
+    a.listenTo(b, 'event', fn);
+    b.off(null, fn);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
+    a.listenTo(b, 'event', fn);
+    b.off(null, null, a);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
   });
 
   test("listenTo and stopListening cleaning up references", 2, function() {
@@ -174,7 +241,36 @@
     a.listenTo(b, 'other', function(){ ok(false); });
     a.stopListening(b, 'other');
     a.stopListening(b, 'all');
-    equal(_.keys(a._listeningTo).length, 0);
+    equal(_.size(a._listeningTo), 0);
+  });
+
+  test("listenToOnce without context cleans up references after the event has fired", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, 'all', function(){ ok(true); });
+    b.trigger('anything');
+    equal(_.size(a._listeningTo), 0);
+  });
+
+  test("listenToOnce with event maps cleans up references", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, {
+      one: function() { ok(true); },
+      two: function() { ok(false); }
+    });
+    b.trigger('one');
+    equal(_.size(a._listeningTo), 1);
+  });
+
+  test("listenToOnce with event maps binds the correct `this`", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, {
+      one: function() { ok(this === a); },
+      two: function() { ok(false); }
+    });
+    b.trigger('one');
   });
 
   test("listenTo with empty callback doesn't throw an error", 1, function(){
@@ -277,15 +373,14 @@
   test("callback list is not altered during trigger", 2, function () {
     var counter = 0, obj = _.extend({}, Backbone.Events);
     var incr = function(){ counter++; };
-    obj.on('event', function(){ obj.on('event', incr).on('all', incr); })
-    .trigger('event');
-    equal(counter, 0, 'bind does not alter callback list');
-    obj.off()
-    .on('event', function(){ obj.off('event', incr).off('all', incr); })
-    .on('event', incr)
-    .on('all', incr)
-    .trigger('event');
-    equal(counter, 2, 'unbind does not alter callback list');
+    var incrOn = function(){ obj.on('event all', incr); };
+    var incrOff = function(){ obj.off('event all', incr); };
+
+    obj.on('event all', incrOn).trigger('event');
+    equal(counter, 0, 'on does not alter callback list');
+
+    obj.off().on('event', incrOff).on('event all', incr).trigger('event');
+    equal(counter, 2, 'off does not alter callback list');
   });
 
   test("#1282 - 'all' callback list is retrieved after each event.", 1, function() {
@@ -305,7 +400,7 @@
 
   test("if callback is truthy but not a function, `on` should throw an error just like jQuery", 1, function() {
     var view = _.extend({}, Backbone.Events).on('test', 'noop');
-    raises(function() {
+    throws(function() {
       view.trigger('test');
     });
   });
@@ -457,6 +552,11 @@
     _.extend({}, Backbone.Events).once('event').trigger('event');
   });
 
+  test("listenToOnce without a callback is a noop", 0, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.listenToOnce(obj, 'event').trigger('event');
+  });
+
   test("event functions are chainable", function() {
     var obj = _.extend({}, Backbone.Events);
     var obj2 = _.extend({}, Backbone.Events);
@@ -472,6 +572,17 @@
     equal(obj, obj.off('a c'));
     equal(obj, obj.stopListening(obj2, 'a'));
     equal(obj, obj.stopListening());
+  });
+
+  test("#3448 - listenToOnce with space-separated events", 2, function() {
+    var one = _.extend({}, Backbone.Events);
+    var two = _.extend({}, Backbone.Events);
+    var count = 1;
+    one.listenToOnce(two, 'x y', function(n) { ok(n === count++); });
+    two.trigger('x', 1);
+    two.trigger('x', 1);
+    two.trigger('y', 2);
+    two.trigger('y', 2);
   });
 
 })();

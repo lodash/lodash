@@ -331,6 +331,36 @@
     Backbone.history.checkUrl();
   });
 
+  test("No events are triggered if #execute returns false.", 1, function() {
+    var Router = Backbone.Router.extend({
+
+      routes: {
+        foo: function() {
+          ok(true);
+        }
+      },
+
+      execute: function(callback, args) {
+        callback.apply(this, args);
+        return false;
+      }
+
+    });
+
+    var router = new Router;
+
+    router.on('route route:foo', function() {
+      ok(false);
+    });
+
+    Backbone.history.on('route', function() {
+      ok(false);
+    });
+
+    location.replace('http://example.com#foo');
+    Backbone.history.checkUrl();
+  });
+
   test("#933, #908 - leading slash", 2, function() {
     location.replace('http://example.com/root/foo');
 
@@ -343,14 +373,6 @@
     Backbone.history = _.extend(new Backbone.History, {location: location});
     Backbone.history.start({root: '/root/', hashChange: false, silent: true});
     strictEqual(Backbone.history.getFragment(), 'foo');
-  });
-
-  test("#1003 - History is started before navigate is called", 1, function() {
-    Backbone.history.stop();
-    Backbone.history.navigate = function(){ ok(Backbone.History.started); };
-    Backbone.history.start();
-    // If this is not an old IE navigate will not be called.
-    if (!Backbone.history.iframe) ok(true);
   });
 
   test("#967 - Route callback gets passed encoded values.", 3, function() {
@@ -375,7 +397,7 @@
     Backbone.history.navigate('charñ', {trigger: true});
     equal(router.charType, 'UTF');
     Backbone.history.navigate('char%C3%B1', {trigger: true});
-    equal(router.charType, 'escaped');
+    equal(router.charType, 'UTF');
   });
 
   test("#1185 - Use pathname when hashChange is not wanted.", 1, function() {
@@ -543,7 +565,7 @@
     Backbone.history.stop();
     location.replace('http://example.com/root/x/y?a=b');
     location.replace = function(url) {
-      strictEqual(url, '/root/#x/y?a=b');
+      strictEqual(url, '/root#x/y?a=b');
     };
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
@@ -711,6 +733,21 @@
     Backbone.history.navigate('');
   });
 
+  test('#2656 - No trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url){
+          strictEqual(url, '/root?x=1');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, hashChange: false, root: 'root'});
+    Backbone.history.navigate('?x=1');
+  });
+
   test('#2765 - Fragment matching sans query/hash.', 2, function() {
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {
@@ -738,12 +775,12 @@
     var Router = Backbone.Router.extend({
       routes: {
         path: function(params){
-          strictEqual(params, 'x=y%20z');
+          strictEqual(params, 'x=y%3Fz');
         }
       }
     });
     var router = new Router;
-    Backbone.history.navigate('path?x=y%20z', true);
+    Backbone.history.navigate('path?x=y%3Fz', true);
   });
 
   test('Navigate to a hash url.', function() {
@@ -792,6 +829,22 @@
     Backbone.history.start({pushState: true});
   });
 
+  test('unicode pathname with % in a parameter', 1, function() {
+    location.replace('http://example.com/myyjä/foo%20%25%3F%2f%40%25%20bar');
+    location.pathname = '/myyj%C3%A4/foo%20%25%3F%2f%40%25%20bar';
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {
+        'myyjä/:query': function(query) {
+          strictEqual(query, 'foo %?/@% bar');
+        }
+      }
+    });
+    new Router;
+    Backbone.history.start({pushState: true});
+  });
+
   test('newline in route', 1, function() {
     location.replace('http://example.com/stuff%0Anonsense?param=foo%0Abar');
     Backbone.history.stop();
@@ -805,6 +858,141 @@
     });
     new Router;
     Backbone.history.start({pushState: true});
+  });
+
+  test('Router#execute receives callback, args, name.', 3, function() {
+    location.replace('http://example.com#foo/123/bar?x=y');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo/:id/bar': 'foo'},
+      foo: function(){},
+      execute: function(callback, args, name) {
+        strictEqual(callback, this.foo);
+        deepEqual(args, ['123', 'x=y']);
+        strictEqual(name, 'foo');
+      }
+    });
+    var router = new Router;
+    Backbone.history.start();
+  });
+
+  test("pushState to hashChange with only search params.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com?a=b');
+    location.replace = function(url) {
+      strictEqual(url, '/#?a=b');
+    };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: null
+    });
+    Backbone.history.start({pushState: true});
+  });
+
+  test("#3123 - History#navigate decodes before comparison.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/shop/search?keyword=short%20dress');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){ ok(false); },
+        replaceState: function(){ ok(false); }
+      }
+    });
+    Backbone.history.start({pushState: true});
+    Backbone.history.navigate('shop/search?keyword=short%20dress', true);
+    strictEqual(Backbone.history.fragment, 'shop/search?keyword=short dress');
+  });
+
+  test('#3175 - Urls in the params', 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com#login?a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var router = new Backbone.Router;
+    router.route('login', function(params) {
+      strictEqual(params, 'a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
+    });
+    Backbone.history.start();
+  });
+
+  test('#3358 - pushState to hashChange transition with search params', 1, function() {
+    Backbone.history.stop();
+    location.replace('/root?foo=bar');
+    location.replace = function(url) {
+      strictEqual(url, '/root#?foo=bar');
+    };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: undefined,
+        replaceState: undefined
+      }
+    });
+    Backbone.history.start({root: '/root', pushState: true});
+  });
+
+  test("Paths that don't match the root should not match no root", 0, function() {
+    location.replace('http://example.com/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {
+        foo: function(){
+          ok(false, 'should not match unless root matches');
+        }
+      }
+    });
+    var router = new Router;
+    Backbone.history.start({root: 'root', pushState: true});
+  });
+
+  test("Paths that don't match the root should not match roots of the same length", 0, function() {
+    location.replace('http://example.com/xxxx/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {
+        foo: function(){
+          ok(false, 'should not match unless root matches');
+        }
+      }
+    });
+    var router = new Router;
+    Backbone.history.start({root: 'root', pushState: true});
+  });
+
+  test("roots with regex characters", 1, function() {
+    location.replace('http://example.com/x+y.z/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {foo: function(){ ok(true); }}
+    });
+    var router = new Router;
+    Backbone.history.start({root: 'x+y.z', pushState: true});
+  });
+
+  test("roots with unicode characters", 1, function() {
+    location.replace('http://example.com/®ooτ/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {foo: function(){ ok(true); }}
+    });
+    var router = new Router;
+    Backbone.history.start({root: '®ooτ', pushState: true});
+  });
+
+  test("roots without slash", 1, function() {
+    location.replace('http://example.com/®ooτ');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'': function(){ ok(true); }}
+    });
+    var router = new Router;
+    Backbone.history.start({root: '®ooτ', pushState: true});
   });
 
 })();

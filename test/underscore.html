@@ -4,21 +4,9 @@
 		<meta charset="utf-8">
 		<title>Underscore Test Suite</title>
 		<link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
-		<style>
-			iframe {
-				display: none;
-			}
-		</style>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id="qunit-fixture">
-			<div id="map-test">
-				<div id="id1"></div>
-				<div id="id2"></div>
-			</div>
-			<img id="chart_image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-		</div>
 		<script>
 			// avoid reporting tests to Sauce Labs when script errors occur
 			if (location.port == '9001') {
@@ -179,6 +167,7 @@
 					'<script src="../vendor/underscore/test/arrays.js"><\/script>',
 					'<script src="../vendor/underscore/test/functions.js"><\/script>',
 					'<script src="../vendor/underscore/test/objects.js"><\/script>',
+					'<script src="../vendor/underscore/test/cross-document.js"><\/script>',
 					'<script src="../vendor/underscore/test/utility.js"><\/script>',
 					'<script src="../vendor/underscore/test/chaining.js"><\/script>'
 				  ].join('\n'))
@@ -240,6 +229,7 @@
 						'test/arrays',
 						'test/functions',
 						'test/objects',
+						'test/cross-document',
 						'test/utility',
 						'test/chaining'
 					], function() {
@@ -247,12 +237,6 @@
 					});
 				});
 			}());
-		</script>
-		<script type="text/html" id="template">
-			<%
-			// a comment
-			if (data) { data += 12345; }; %>
-			<li><%= data %></li>
 		</script>
 	</body>
 </html>

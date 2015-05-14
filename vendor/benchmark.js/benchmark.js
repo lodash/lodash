@@ -500,7 +500,8 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * A deep clone utility.
+     * A specialized version of `_.cloneDeep` which only clones arrays and plain
+     * objects assigning all other values by reference.
      *
      * @private
      * @param {*} value The value to clone.
@@ -652,7 +653,7 @@
     }
 
     /**
-     * A wrapper around `require()` to suppress `module missing` errors.
+     * A wrapper around `require` to suppress `module missing` errors.
      *
      * @private
      * @param {string} id The module id.
@@ -2861,7 +2862,7 @@
       if (moduleExports) {
         (freeModule.exports = Benchmark).Benchmark = Benchmark;
       }
-      // Export for Narwhal or Rhino -require.
+      // Export for Rhino with CommonJS support.
       else {
         freeExports.Benchmark = Benchmark;
       }

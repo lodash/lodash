@@ -779,7 +779,7 @@
     var getDescriptor = isNative(getDescriptor = Object.getOwnPropertyDescriptor) ? getDescriptor : null,
         setDescriptor = isNative(setDescriptor = Object.defineProperty) ? setDescriptor : null,
         ArrayBuffer = getNative(context, 'ArrayBuffer'),
-        bufferSlice = ArrayBuffer ? getNative(new ArrayBuffer(0), 'slice') : null,
+        bufferSlice = getNative(ArrayBuffer && new ArrayBuffer(0), 'slice'),
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
@@ -4105,7 +4105,7 @@
      * @returns {*} Returns the function if it's native, else `undefined`.
      */
     function getNative(object, key) {
-      var value = object[key];
+      var value = object == null ? undefined : object[key];
       if (isNative(value)) {
         return value;
       }

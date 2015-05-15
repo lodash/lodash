@@ -776,9 +776,7 @@
     );
 
     /** Native method references. */
-    var getDescriptor = isNative(getDescriptor = Object.getOwnPropertyDescriptor) ? getDescriptor : null,
-        setDescriptor = isNative(setDescriptor = Object.defineProperty) ? setDescriptor : null,
-        ArrayBuffer = getNative(context, 'ArrayBuffer'),
+    var ArrayBuffer = getNative(context, 'ArrayBuffer'),
         bufferSlice = getNative(ArrayBuffer && new ArrayBuffer(0), 'slice'),
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
@@ -4105,23 +4103,8 @@
      * @returns {*} Returns the function if it's native, else `undefined`.
      */
     function getNative(object, key) {
-      if (!isObject(object)) {
-        return;
-      }
-      var value = object[key];
-      if (isNative(value)) {
-        return value;
-      }
-      if (getDescriptor && setDescriptor) {
-        var descriptor = getDescriptor(object, key);
-        if (descriptor && delete object[key]) {
-          var other = object[key];
-          setDescriptor(object, key, descriptor);
-        }
-      }
-      if (isNative(other)) {
-        return other;
-      }
+      var value = object == null ? undefined : object[key];
+      return isNative(value) ? value : undefined;
     }
 
     /**
@@ -9109,8 +9092,8 @@
       if (!(value && objToString.call(value) == objectTag) || (!lodash.support.argsTag && isArguments(value))) {
         return false;
       }
-      var valueOf = value.valueOf,
-          objProto = isNative(valueOf) && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
+      var valueOf = getNative(value, 'valueOf'),
+          objProto = valueOf && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
 
       return objProto
         ? (value == objProto || getPrototypeOf(value) == objProto)

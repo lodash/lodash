@@ -4105,7 +4105,10 @@
      * @returns {*} Returns the function if it's native, else `undefined`.
      */
     function getNative(object, key) {
-      var value = object == null ? undefined : object[key];
+      if (!isObject(object)) {
+        return;
+      }
+      var value = object[key];
       if (isNative(value)) {
         return value;
       }

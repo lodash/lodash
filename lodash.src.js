@@ -5457,7 +5457,12 @@
           indexes.push(index);
         }
       }
-      basePullAt(array, indexes);
+
+      length = indexes.length;
+      while (length--) {
+        index = indexes[length];
+        splice.call(array, index, 1);
+      }
       return result;
     }
 

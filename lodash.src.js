@@ -776,20 +776,21 @@
     );
 
     /** Native method references. */
-    var ArrayBuffer = isNative(ArrayBuffer = context.ArrayBuffer) ? ArrayBuffer : null,
-        bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) ? bufferSlice : null,
+    var getDescriptor = isNative(getDescriptor = Object.getOwnPropertyDescriptor) ? getDescriptor : null,
+        setDescriptor = isNative(setDescriptor = Object.defineProperty) ? setDescriptor : null,
+        ArrayBuffer = getNative(context, 'ArrayBuffer'),
+        bufferSlice = ArrayBuffer ? getNative(new ArrayBuffer(0), 'slice') : null,
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
-        getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) ? getPrototypeOf : null,
+        getPrototypeOf = getNative(Object, 'getPrototypeOf'),
         push = arrayProto.push,
-        preventExtensions = isNative(preventExtensions = Object.preventExtensions) ? preventExtensions : null,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
-        Set = isNative(Set = context.Set) ? Set : null,
+        Set = getNative(context, 'Set'),
         setTimeout = context.setTimeout,
         splice = arrayProto.splice,
-        Uint8Array = isNative(Uint8Array = context.Uint8Array) ? Uint8Array : null,
-        WeakMap = isNative(WeakMap = context.WeakMap) ? WeakMap : null;
+        Uint8Array = getNative(context, 'Uint8Array'),
+        WeakMap = getNative(context, 'WeakMap');
 
     /** Used to clone array buffers. */
     var Float64Array = (function() {
@@ -797,21 +798,21 @@
       // where the array buffer's `byteLength` is not a multiple of the typed
       // array's `BYTES_PER_ELEMENT`.
       try {
-        var func = isNative(func = context.Float64Array) && func,
+        var func = getNative(context, 'Float64Array'),
             result = new func(new ArrayBuffer(10), 0, 1) && func;
       } catch(e) {}
       return result || null;
     }());
 
     /* Native method references for those with the same name as other `lodash` methods. */
-    var nativeCreate = isNative(nativeCreate = Object.create) ? nativeCreate : null,
-        nativeIsArray = isNative(nativeIsArray = Array.isArray) ? nativeIsArray : null,
+    var nativeCreate = getNative(Object, 'create'),
+        nativeIsArray = getNative(Array, 'isArray'),
         nativeIsFinite = context.isFinite,
-        nativeKeys = isNative(nativeKeys = Object.keys) ? nativeKeys : null,
+        nativeKeys = getNative(Object, 'keys'),
         nativeMax = Math.max,
         nativeMin = Math.min,
-        nativeNow = isNative(nativeNow = Date.now) ? nativeNow : null,
-        nativeNumIsFinite = isNative(nativeNumIsFinite = Number.isFinite) ? nativeNumIsFinite : null,
+        nativeNow = getNative(Date, 'now'),
+        nativeNumIsFinite = getNative(Number, 'isFinite'),
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
@@ -4094,6 +4095,31 @@
      * @returns {*} Returns the "length" value.
      */
     var getLength = baseProperty('length');
+
+    /**
+     * Gets the native function at `key` of `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {string} key The key of the method to get.
+     * @returns {*} Returns the function if it's native, else `undefined`.
+     */
+    function getNative(object, key) {
+      var value = object[key];
+      if (isNative(value)) {
+        return value;
+      }
+      if (getDescriptor && setDescriptor) {
+        var descriptor = getDescriptor(object, key);
+        if (descriptor && delete object[key]) {
+          var other = object[key];
+          setDescriptor(object, key, descriptor);
+        }
+      }
+      if (isNative(other)) {
+        return other;
+      }
+    }
 
     /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.

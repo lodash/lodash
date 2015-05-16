@@ -3488,7 +3488,7 @@
           if (typeof func != 'function') {
             throw new TypeError(FUNC_ERROR_TEXT);
           }
-          if (!wrapper && getFuncName(func) == 'wrapper') {
+          if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
             wrapper = new LodashWrapper([]);
           }
         }

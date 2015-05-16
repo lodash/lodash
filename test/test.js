@@ -624,9 +624,10 @@
   // Expose internal modules for better code coverage.
   _.attempt(function() {
     if (isModularize && !(amd || isNpm)) {
-      _.each(['baseEach', 'isIndex', 'isIterateeCall', 'isLength'], function(funcName) {
-        var path = require('path'),
-            func = require(path.join(path.dirname(filePath), 'internal', funcName + '.js'));
+      _.each(['internal/baseEach', 'internal/isIndex', 'internal/isIterateeCall',
+              'internal/isLength', 'function/flow', 'function/flowRight'], function(id) {
+        var func = require(id),
+            funcName = _.last(id.split('/'));
 
         _['_' + funcName] = func[funcName] || func['default'] || func;
       });
@@ -2312,9 +2313,9 @@
       notStrictEqual(combined, _.identity);
     });
 
-    test('`_.' + methodName + '` should support shortcut fusion', 3, function() {
-      var filterCount = 0,
-          mapCount = 0;
+    test('`_.' + methodName + '` should support shortcut fusion', 6, function() {
+      var filterCount,
+          mapCount;
 
       var map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2),
           filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2),
@@ -2324,19 +2325,27 @@
           partialFilter = filter(function(value) { filterCount++; return value % 2 == 0; }),
           partialTake = take(2);
 
-      var combined = isFlow
-        ? func(partialMap, partialFilter, _.compact, partialTake)
-        : func(partialTake, _.compact, partialFilter, partialMap);
+      _.times(2, function(index) {
+        var fn = index ? _['_' + methodName] : func;
+        if (!fn) {
+          skipTest(3);
+          return;
+        }
+        var combined = isFlow
+          ? fn(partialMap, partialFilter, _.compact, partialTake)
+          : fn(partialTake, _.compact, partialFilter, partialMap);
 
-      deepEqual(combined(_.range(100)), [4, 16]);
+        filterCount = mapCount = 0;
+        deepEqual(combined(_.range(100)), [4, 16]);
 
-      if (!isNpm && WeakMap && _.support.funcNames) {
-        strictEqual(filterCount, 5, 'filterCount');
-        strictEqual(mapCount, 5, 'mapCount');
-      }
-      else {
-        skipTest(2);
-      }
+        if (!isNpm && WeakMap && _.support.funcNames) {
+          strictEqual(filterCount, 5, 'filterCount');
+          strictEqual(mapCount, 5, 'mapCount');
+        }
+        else {
+          skipTest(2);
+        }
+      });
     });
 
     test('`_.' + methodName + '` should work with curried functions with placeholders', 1, function() {

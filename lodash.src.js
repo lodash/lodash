@@ -8769,9 +8769,6 @@
      */
     function isEqual(value, other, customizer, thisArg) {
       customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
-      if (!customizer && isStrictComparable(value) && isStrictComparable(other)) {
-        return value === other;
-      }
       var result = customizer ? customizer(value, other) : undefined;
       return result === undefined ? baseIsEqual(value, other, customizer) : !!result;
     }

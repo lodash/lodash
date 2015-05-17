@@ -2468,12 +2468,12 @@
      *
      * @private
      * @param {string} path The path of the property to get.
-     * @param {*} value The value to compare.
+     * @param {*} srcValue The value to compare.
      * @returns {Function} Returns the new function.
      */
-    function baseMatchesProperty(path, value) {
+    function baseMatchesProperty(path, srcValue) {
       var isArr = isArray(path),
-          isCommon = isKey(path) && isStrictComparable(value),
+          isCommon = isKey(path) && isStrictComparable(srcValue),
           pathKey = (path + '');
 
       path = toPath(path);
@@ -2491,9 +2491,9 @@
           key = last(path);
           object = toObject(object);
         }
-        return object[key] === value
-          ? (value !== undefined || (key in object))
-          : baseIsEqual(value, object[key], undefined, true);
+        return object[key] === srcValue
+          ? (srcValue !== undefined || (key in object))
+          : baseIsEqual(srcValue, object[key], undefined, true);
       };
     }
 
@@ -11365,7 +11365,7 @@
      * @memberOf _
      * @category Utility
      * @param {Array|string} path The path of the property to get.
-     * @param {*} value The value to match.
+     * @param {*} srcValue The value to match.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -11377,8 +11377,8 @@
      * _.find(users, _.matchesProperty('user', 'fred'));
      * // => { 'user': 'fred' }
      */
-    function matchesProperty(path, value) {
-      return baseMatchesProperty(path, baseClone(value, true));
+    function matchesProperty(path, srcValue) {
+      return baseMatchesProperty(path, baseClone(srcValue, true));
     }
 
     /**

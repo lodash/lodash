@@ -11813,6 +11813,12 @@
       var object = { '0': 'a', '1': 'b', 'length': 2 };
       deepEqual(_.pairs(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
     });
+
+    test('should work with strings', 2, function() {
+      _.each(['xo', Object('xo')], function(string) {
+        deepEqual(_.pairs(string), [['0', 'x'], ['1', 'o']]);
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

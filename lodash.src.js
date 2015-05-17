@@ -2285,9 +2285,7 @@
       if (value === other) {
         return true;
       }
-      // Exit early for unlike primitive values.
-      if ((typeof value != 'object' && typeof other != 'object') || value == null || other == null) {
-        // Return `false` unless both values are `NaN`.
+      if (value == null || other == null || (!isObject(value) && !isObject(other))) {
         return value !== value && other !== other;
       }
       return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
@@ -8771,18 +8769,7 @@
     function isEqual(value, other, customizer, thisArg) {
       customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
       var result = customizer ? customizer(value, other) : undefined;
-      if (result !== undefined) {
-        return !!result;
-      }
-      if (value === other) {
-        return true;
-      }
-      // Exit early for unlike primitive values.
-      if ((typeof value != 'object' && typeof other != 'object') || value == null || other == null) {
-        // Return `false` unless both values are `NaN`.
-        return value !== value && other !== other;
-      }
-      return baseIsEqual(value, other, customizer);
+      return  result === undefined ? baseIsEqual(value, other, customizer) : !!result;
     }
 
     /**

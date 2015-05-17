@@ -2389,6 +2389,7 @@
       if (object == null) {
         return !length;
       }
+      object = toObject(object);
       while (index--) {
         var data = matchData[index];
         if ((noCustomizer && data[2])

@@ -8328,7 +8328,7 @@
     });
 
     test('should work with strings', 4, function() {
-      var pairs = [['hi', Object('h')], [Object('hi'), 'h']];
+      var pairs = [['xo', Object('x')], [Object('xo'), 'x']];
 
       _.each(pairs, function(pair) {
         strictEqual(_.isMatch(pair[0], pair[1]), true);
@@ -10042,7 +10042,7 @@
     });
 
     test('should work with strings', 4, function() {
-      var pairs = [['hi', Object('h')], [Object('hi'), 'h']];
+      var pairs = [['xo', Object('x')], [Object('xo'), 'x']];
 
       _.each(pairs, function(pair) {
         var matches = _.matches(pair[1]);
@@ -10336,7 +10336,7 @@
     });
 
     test('should work with strings', 4, function() {
-      var pairs = [['hi', Object('h')], [Object('hi'), 'h']];
+      var pairs = [['xo', Object('x')], [Object('xo'), 'x']];
 
       _.each(pairs, function(pair) {
         var matches = _.matchesProperty('0', pair[1]);

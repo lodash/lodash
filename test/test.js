@@ -8327,6 +8327,15 @@
       deepEqual(actual, [false, true]);
     });
 
+    test('should work with strings', 4, function() {
+      var pairs = [['hi', Object('h')], [Object('hi'), 'h']];
+
+      _.each(pairs, function(pair) {
+        strictEqual(_.isMatch(pair[0], pair[1]), true);
+        strictEqual(_.isMatch(pair[1], pair[0]), false);
+      });
+    });
+
     test('should return `true` when comparing a `source` of empty arrays and objects', 1, function() {
       var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
           source = { 'a': [], 'b': {} };
@@ -8421,20 +8430,6 @@
           matches = _.matches({ 'a': { 'b': 1 } });
 
       strictEqual(matches(object), true);
-    });
-
-    test('should work with a function for `source`', 1, function() {
-      function source() {}
-
-      source.a = 1;
-      source.b = function() {};
-      source.c = 3;
-
-      var matches = _.matches(source),
-          objects = [{ 'a': 1 }, { 'a': 1, 'b': source.b, 'c': 3 }],
-          actual = _.map(objects, matches);
-
-      deepEqual(actual, [false, true]);
     });
 
     test('should match problem JScript properties (test in IE < 9)', 1, function() {
@@ -10046,6 +10041,18 @@
       deepEqual(actual, [false, true]);
     });
 
+    test('should work with strings', 4, function() {
+      var pairs = [['hi', Object('h')], [Object('hi'), 'h']];
+
+      _.each(pairs, function(pair) {
+        var matches = _.matches(pair[1]);
+        strictEqual(matches(pair[0]), true);
+
+        matches = _.matches(pair[0]);
+        strictEqual(matches(pair[1]), false);
+      });
+    });
+
     test('should match problem JScript properties (test in IE < 9)', 1, function() {
       var matches = _.matches(shadowObject),
           objects = [{}, shadowObject],
@@ -10326,6 +10333,18 @@
           actual = _.map(objects, matches);
 
       deepEqual(actual, [false, true]);
+    });
+
+    test('should work with strings', 4, function() {
+      var pairs = [['hi', Object('h')], [Object('hi'), 'h']];
+
+      _.each(pairs, function(pair) {
+        var matches = _.matchesProperty('0', pair[1]);
+        strictEqual(matches(pair[0]), true);
+
+        matches = _.matchesProperty('0', pair[0]);
+        strictEqual(matches(pair[1]), false);
+      });
     });
 
     test('should match properties when `value` is not a plain object', 1, function() {

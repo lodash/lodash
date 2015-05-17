@@ -2282,16 +2282,11 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
-      // Exit early for identical values.
       if (value === other) {
         return true;
       }
-      var valType = typeof value,
-          othType = typeof other;
-
       // Exit early for unlike primitive values.
-      if ((valType != 'function' && valType != 'object' && othType != 'function' && othType != 'object') ||
-          value == null || other == null) {
+      if ((typeof value != 'object' && typeof other != 'object') || value == null || other == null) {
         // Return `false` unless both values are `NaN`.
         return value !== value && other !== other;
       }
@@ -8775,7 +8770,18 @@
     function isEqual(value, other, customizer, thisArg) {
       customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
       var result = customizer ? customizer(value, other) : undefined;
-      return result === undefined ? baseIsEqual(value, other, customizer) : !!result;
+      if (result !== undefined) {
+        return !!result;
+      }
+      if (value === other) {
+        return true;
+      }
+      // Exit early for unlike primitive values.
+      if ((typeof value != 'object' && typeof other != 'object') || value == null || other == null) {
+        // Return `false` unless both values are `NaN`.
+        return value !== value && other !== other;
+      }
+      return baseIsEqual(value, other, customizer);
     }
 
     /**

@@ -6992,7 +6992,7 @@
       deepEqual(actual, [['a', 'b', 'c']]);
     });
 
-    test('should work with a function `methodName` argument', 1, function() {
+    test('should work with a function for `methodName`', 1, function() {
       var array = ['a', 'b', 'c'];
 
       var actual = _.invoke(array, function(left, right) {
@@ -8303,7 +8303,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should compare a variety of `source` values', 2, function() {
+    test('should compare a variety of `source` property values', 2, function() {
       var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
           object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } };
 
@@ -9893,7 +9893,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should compare a variety of `source` values', 2, function() {
+    test('should compare a variety of `source` property values', 2, function() {
       var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
           object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } },
           matches = _.matches(object1);
@@ -10796,7 +10796,7 @@
       deepEqual(actual, { 'a': [] });
     });
 
-    test('should work with a function `object` value', 2, function() {
+    test('should work with a function for `object`', 2, function() {
       function Foo() {}
 
       var source = { 'a': 1 },

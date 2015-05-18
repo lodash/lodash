@@ -10681,6 +10681,23 @@
       deepEqual(actual, expected);
     });
 
+    test('should skip `undefined` values in arrays if a destination value exists', 2, function() {
+      var array = Array(3);
+      array[0] = 1;
+      array[2] = 3;
+
+      var actual = _.merge([4, 5, 6], array),
+          expected = [1, 5, 3];
+
+      deepEqual(actual, expected);
+
+      array = [1, , 3];
+      array[1] = undefined;
+
+      actual = _.merge([4, 5, 6], array);
+      deepEqual(actual, expected);
+    });
+
     test('should merge `arguments` objects', 3, function() {
       var object1 = { 'value': args },
           object2 = { 'value': { '3': 4 } },

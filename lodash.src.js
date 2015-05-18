@@ -2534,7 +2534,7 @@
           if (isCommon) {
             result = srcValue;
           }
-          if ((isSrcArr || result !== undefined) &&
+          if ((result !== undefined || (isSrcArr && !(key in object))) &&
               (isCommon || (result === result ? (result !== value) : (value === value)))) {
             object[key] = result;
           }

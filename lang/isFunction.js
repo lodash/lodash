@@ -1,5 +1,5 @@
 import baseIsFunction from '../internal/baseIsFunction';
-import isNative from './isNative';
+import getNative from '../internal/getNative';
 import root from '../internal/root';
 
 /** `Object#toString` result references. */
@@ -15,7 +15,7 @@ var objectProto = Object.prototype;
 var objToString = objectProto.toString;
 
 /** Native method references. */
-var Uint8Array = isNative(Uint8Array = root.Uint8Array) && Uint8Array;
+var Uint8Array = getNative(root, 'Uint8Array');
 
 /**
  * Checks if `value` is classified as a `Function` object.

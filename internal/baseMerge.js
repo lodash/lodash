@@ -1,18 +1,11 @@
 import arrayEach from './arrayEach';
 import baseMergeDeep from './baseMergeDeep';
-import getSymbols from './getSymbols';
 import isArray from '../lang/isArray';
 import isArrayLike from './isArrayLike';
 import isObject from '../lang/isObject';
 import isObjectLike from './isObjectLike';
 import isTypedArray from '../lang/isTypedArray';
 import keys from '../object/keys';
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var push = arrayProto.push;
 
 /**
  * The base implementation of `_.merge` without support for argument juggling,
@@ -30,11 +23,9 @@ function baseMerge(object, source, customizer, stackA, stackB) {
   if (!isObject(object)) {
     return object;
   }
-  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
-  if (!isSrcArr) {
-    var props = keys(source);
-    push.apply(props, getSymbols(source));
-  }
+  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
+      props = isSrcArr ? null : keys(source);
+
   arrayEach(props || source, function(srcValue, key) {
     if (props) {
       key = srcValue;
@@ -53,7 +44,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
       if (isCommon) {
         result = srcValue;
       }
-      if ((isSrcArr || result !== undefined) &&
+      if ((result !== undefined || (isSrcArr && !(key in object))) &&
           (isCommon || (result === result ? (result !== value) : (value === value)))) {
         object[key] = result;
       }

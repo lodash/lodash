@@ -1,8 +1,6 @@
 import baseIsMatch from '../internal/baseIsMatch';
 import bindCallback from '../internal/bindCallback';
-import isStrictComparable from '../internal/isStrictComparable';
-import keys from '../object/keys';
-import toObject from '../internal/toObject';
+import getMatchData from '../internal/getMatchData';
 
 /**
  * Performs a deep comparison between `object` and `source` to determine if
@@ -44,33 +42,8 @@ import toObject from '../internal/toObject';
  * // => true
  */
 function isMatch(object, source, customizer, thisArg) {
-  var props = keys(source),
-      length = props.length;
-
-  if (!length) {
-    return true;
-  }
-  if (object == null) {
-    return false;
-  }
-  customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
-  object = toObject(object);
-  if (!customizer && length == 1) {
-    var key = props[0],
-        value = source[key];
-
-    if (isStrictComparable(value)) {
-      return value === object[key] && (value !== undefined || (key in object));
-    }
-  }
-  var values = Array(length),
-      strictCompareFlags = Array(length);
-
-  while (length--) {
-    value = values[length] = source[props[length]];
-    strictCompareFlags[length] = isStrictComparable(value);
-  }
-  return baseIsMatch(object, props, values, strictCompareFlags, customizer);
+  customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
+  return baseIsMatch(object, getMatchData(source), customizer);
 }
 
 export default isMatch;

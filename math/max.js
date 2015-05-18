@@ -1,5 +1,5 @@
-import arrayMax from '../internal/arrayMax';
 import createExtremum from '../internal/createExtremum';
+import gt from '../lang/gt';
 
 /**
  * Gets the maximum value of `collection`. If `collection` is empty or falsey
@@ -48,6 +48,6 @@ import createExtremum from '../internal/createExtremum';
  * _.max(users, 'age');
  * // => { 'user': 'fred', 'age': 40 }
  */
-var max = createExtremum(arrayMax);
+var max = createExtremum(gt, -Infinity);
 
 export default max;

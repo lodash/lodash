@@ -3,7 +3,6 @@ import isArray from '../lang/isArray';
 import isIndex from '../internal/isIndex';
 import isLength from '../internal/isLength';
 import isObject from '../lang/isObject';
-import support from '../support';
 
 /** Used for native method references. */
 var objectProto = Object.prototype;
@@ -42,7 +41,7 @@ function keysIn(object) {
   }
   var length = object.length;
   length = (length && isLength(length) &&
-    (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) || 0;
+    (isArray(object) || isArguments(object)) && length) || 0;
 
   var Ctor = object.constructor,
       index = -1,

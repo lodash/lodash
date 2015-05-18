@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.8.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.9.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -42,7 +42,7 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.8.0';
+var VERSION = '3.9.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -228,6 +228,8 @@ lodash.findLastKey = object.findLastKey;
 lodash.findWhere = collection.findWhere;
 lodash.first = array.first;
 lodash.get = object.get;
+lodash.gt = lang.gt;
+lodash.gte = lang.gte;
 lodash.has = object.has;
 lodash.identity = identity;
 lodash.includes = collection.includes;
@@ -257,6 +259,8 @@ lodash.isUndefined = lang.isUndefined;
 lodash.kebabCase = string.kebabCase;
 lodash.last = last;
 lodash.lastIndexOf = array.lastIndexOf;
+lodash.lt = lang.lt;
+lodash.lte = lang.lte;
 lodash.max = math.max;
 lodash.min = math.min;
 lodash.noop = utility.noop;
@@ -291,6 +295,7 @@ lodash.words = string.words;
 lodash.all = collection.every;
 lodash.any = collection.some;
 lodash.contains = collection.includes;
+lodash.eq = lang.isEqual;
 lodash.detect = collection.find;
 lodash.foldl = collection.reduce;
 lodash.foldr = collection.reduceRight;

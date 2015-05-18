@@ -1,5 +1,5 @@
+import getNative from '../internal/getNative';
 import isLength from '../internal/isLength';
-import isNative from './isNative';
 import isObjectLike from '../internal/isObjectLike';
 
 /** `Object#toString` result references. */
@@ -15,7 +15,7 @@ var objectProto = Object.prototype;
 var objToString = objectProto.toString;
 
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray;
+var nativeIsArray = getNative(Array, 'isArray');
 
 /**
  * Checks if `value` is classified as an `Array` object.

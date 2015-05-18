@@ -1,5 +1,5 @@
-import arrayMin from '../internal/arrayMin';
 import createExtremum from '../internal/createExtremum';
+import lt from '../lang/lt';
 
 /**
  * Gets the minimum value of `collection`. If `collection` is empty or falsey
@@ -48,6 +48,6 @@ import createExtremum from '../internal/createExtremum';
  * _.min(users, 'age');
  * // => { 'user': 'barney', 'age': 36 }
  */
-var min = createExtremum(arrayMin, true);
+var min = createExtremum(lt, Infinity);
 
 export default min;

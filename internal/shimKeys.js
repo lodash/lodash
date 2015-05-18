@@ -3,7 +3,6 @@ import isArray from '../lang/isArray';
 import isIndex from './isIndex';
 import isLength from './isLength';
 import keysIn from '../object/keysIn';
-import support from '../support';
 
 /** Used for native method references. */
 var objectProto = Object.prototype;
@@ -24,8 +23,8 @@ function shimKeys(object) {
       propsLength = props.length,
       length = propsLength && object.length;
 
-  var allowIndexes = length && isLength(length) &&
-    (isArray(object) || (support.nonEnumArgs && isArguments(object)));
+  var allowIndexes = !!length && isLength(length) &&
+    (isArray(object) || isArguments(object));
 
   var index = -1,
       result = [];

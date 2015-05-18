@@ -1,6 +1,10 @@
 import baseGet from '../internal/baseGet';
 import baseSlice from '../internal/baseSlice';
+import isArguments from '../lang/isArguments';
+import isArray from '../lang/isArray';
+import isIndex from '../internal/isIndex';
 import isKey from '../internal/isKey';
+import isLength from '../internal/isLength';
 import last from '../array/last';
 import toPath from '../internal/toPath';
 
@@ -40,10 +44,14 @@ function has(object, path) {
   if (!result && !isKey(path)) {
     path = toPath(path);
     object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+    if (object == null) {
+      return false;
+    }
     path = last(path);
-    result = object != null && hasOwnProperty.call(object, path);
+    result = hasOwnProperty.call(object, path);
   }
-  return result;
+  return result || (isLength(object.length) && isIndex(path, object.length) &&
+    (isArray(object) || isArguments(object)));
 }
 
 export default has;

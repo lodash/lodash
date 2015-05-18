@@ -1,5 +1,8 @@
 import clone from './lang/clone';
 import cloneDeep from './lang/cloneDeep';
+import eq from './lang/eq';
+import gt from './lang/gt';
+import gte from './lang/gte';
 import isArguments from './lang/isArguments';
 import isArray from './lang/isArray';
 import isBoolean from './lang/isBoolean';
@@ -21,12 +24,17 @@ import isRegExp from './lang/isRegExp';
 import isString from './lang/isString';
 import isTypedArray from './lang/isTypedArray';
 import isUndefined from './lang/isUndefined';
+import lt from './lang/lt';
+import lte from './lang/lte';
 import toArray from './lang/toArray';
 import toPlainObject from './lang/toPlainObject';
 
 export default {
   'clone': clone,
   'cloneDeep': cloneDeep,
+  'eq': eq,
+  'gt': gt,
+  'gte': gte,
   'isArguments': isArguments,
   'isArray': isArray,
   'isBoolean': isBoolean,
@@ -48,6 +56,8 @@ export default {
   'isString': isString,
   'isTypedArray': isTypedArray,
   'isUndefined': isUndefined,
+  'lt': lt,
+  'lte': lte,
   'toArray': toArray,
   'toPlainObject': toPlainObject
 };

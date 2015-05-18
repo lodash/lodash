@@ -5,7 +5,7 @@ var floor = Math.floor;
 var nativeMin = Math.min;
 
 /** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
+var MAX_ARRAY_LENGTH = 4294967295,
     MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1;
 
 /**
@@ -27,17 +27,23 @@ function binaryIndexBy(array, value, iteratee, retHighest) {
   var low = 0,
       high = array ? array.length : 0,
       valIsNaN = value !== value,
+      valIsNull = value === null,
       valIsUndef = value === undefined;
 
   while (low < high) {
     var mid = floor((low + high) / 2),
         computed = iteratee(array[mid]),
+        isDef = computed !== undefined,
         isReflexive = computed === computed;
 
     if (valIsNaN) {
       var setLow = isReflexive || retHighest;
+    } else if (valIsNull) {
+      setLow = isReflexive && isDef && (retHighest || computed != null);
     } else if (valIsUndef) {
-      setLow = isReflexive && (retHighest || computed !== undefined);
+      setLow = isReflexive && (retHighest || isDef);
+    } else if (computed == null) {
+      setLow = false;
     } else {
       setLow = retHighest ? (computed <= value) : (computed < value);
     }

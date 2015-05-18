@@ -14,7 +14,7 @@ function baseAt(collection, props) {
   var index = -1,
       isNil = collection == null,
       isArr = !isNil && isArrayLike(collection),
-      length = isArr && collection.length,
+      length = isArr ? collection.length : 0,
       propsLength = props.length,
       result = Array(propsLength);
 

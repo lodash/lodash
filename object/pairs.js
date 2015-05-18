@@ -1,4 +1,5 @@
 import keys from './keys';
+import toObject from '../internal/toObject';
 
 /**
  * Creates a two dimensional array of the key-value pairs for `object`,
@@ -15,6 +16,8 @@ import keys from './keys';
  * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
  */
 function pairs(object) {
+  object = toObject(object);
+
   var index = -1,
       props = keys(object),
       length = props.length,

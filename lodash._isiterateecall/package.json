@@ -1,6 +1,6 @@
 {
   "name": "lodash._isiterateecall",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "The modern build of lodash’s internal `isIterateeCall` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

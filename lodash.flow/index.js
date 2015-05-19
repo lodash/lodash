@@ -1,8 +1,8 @@
 /**
- * lodash 3.2.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
+ * lodash 3.2.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -19,11 +19,8 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  */
 function createFlow(fromRight) {
   return function() {
-    var length = arguments.length;
-    if (!length) {
-      return function() { return arguments[0]; };
-    }
-    var index = fromRight ? length : -1,
+    var length = arguments.length,
+        index = fromRight ? length : -1,
         leftIndex = 0,
         funcs = Array(length);
 
@@ -35,7 +32,7 @@ function createFlow(fromRight) {
     }
     return function() {
       var index = 0,
-          result = funcs[index].apply(this, arguments);
+          result = length ? funcs[index].apply(this, arguments) : arguments[0];
 
       while (++index < length) {
         result = funcs[index].call(this, result);
@@ -46,14 +43,15 @@ function createFlow(fromRight) {
 }
 
 /**
- * Creates a function that returns the result of invoking the provided
- * functions with the `this` binding of the created function, where each
- * successive invocation is supplied the return value of the previous.
+ * Creates a function that returns the result of invoking the given functions
+ * with the `this` binding of the created function, where each successive
+ * invocation is supplied the return value of the previous.
  *
  * @static
  * @memberOf _
- * @category Function
- * @param {...Function} [funcs] Functions to invoke.
+ * @since 3.0.0
+ * @category Util
+ * @param {...(Function|Function[])} [funcs] Functions to invoke.
  * @returns {Function} Returns the new function.
  * @example
  *

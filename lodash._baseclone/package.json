@@ -1,6 +1,6 @@
 {
   "name": "lodash._baseclone",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "The modern build of lodash’s internal `baseClone` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

@@ -1,20 +1,18 @@
-# lodash.isfinite v3.2.0
+# lodash.isfinite v3.2.1
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.isFinite` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [lodash](https://lodash.com/) method `_.isFinite` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash.isfinite
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var isFinite = require('lodash.isfinite');
 ```
 
-See the [documentation](https://lodash.com/docs#isFinite) or [package source](https://github.com/lodash/lodash/blob/3.2.0-npm-packages/lodash.isfinite) for more details.
+See the [documentation](https://lodash.com/docs#isFinite) or [package source](https://github.com/lodash/lodash/blob/3.2.1-npm-packages/lodash.isfinite) for more details.

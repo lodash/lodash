@@ -1,8 +1,8 @@
 /**
- * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -29,7 +29,7 @@ function baseFill(array, value, start, end) {
   if (end < 0) {
     end += length;
   }
-  length = start > end ? 0 : end >>> 0;
+  length = start > end ? 0 : (end >>> 0);
   start >>>= 0;
 
   while (start < length) {
@@ -52,6 +52,19 @@ function baseFill(array, value, start, end) {
  * @param {number} [start=0] The start position.
  * @param {number} [end=array.length] The end position.
  * @returns {Array} Returns `array`.
+ * @example
+ *
+ * var array = [1, 2, 3];
+ *
+ * _.fill(array, 'a');
+ * console.log(array);
+ * // => ['a', 'a', 'a']
+ *
+ * _.fill(Array(3), 2);
+ * // => [2, 2, 2]
+ *
+ * _.fill([4, 6, 8], '*', 1, 2);
+ * // => [4, '*', 8]
  */
 function fill(array, value, start, end) {
   var length = array ? array.length : 0;

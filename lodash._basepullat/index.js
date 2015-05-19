@@ -1,5 +1,5 @@
 /**
- * lodash 3.8.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.8.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,7 +17,7 @@ var splice = arrayProto.splice;
  * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
  * of an array-like value.
  */
-var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+var MAX_SAFE_INTEGER = 9007199254740991;
 
 /**
  * The base implementation of `_.pullAt` without support for individual
@@ -31,7 +31,7 @@ var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 function basePullAt(array, indexes) {
   var length = array ? indexes.length : 0;
   while (length--) {
-    var index = parseFloat(indexes[length]);
+    var index = indexes[length];
     if (index != previous && isIndex(index)) {
       var previous = index;
       splice.call(array, index, 1);
@@ -49,7 +49,7 @@ function basePullAt(array, indexes) {
  * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
  */
 function isIndex(value, length) {
-  value = +value;
+  value = typeof value == 'number' ? value : parseFloat(value);
   length = length == null ? MAX_SAFE_INTEGER : length;
   return value > -1 && value % 1 == 0 && value < length;
 }

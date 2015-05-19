@@ -1,6 +1,6 @@
 {
   "name": "lodash._basepullat",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "The modern build of lodash’s internal `basePullAt` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

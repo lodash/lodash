@@ -189,6 +189,15 @@
     var xml = new ActiveXObject('Microsoft.XMLDOM');
   } catch(e) {}
 
+  /** Poison the free variable `root` in Node.js */
+  try {
+    Object.defineProperty(global.root, 'root', {
+      'configurable': true,
+      'enumerable': false,
+      'get': function() { throw new ReferenceError; }
+    });
+  } catch(e) {}
+
   /** Use a single "load" function. */
   var load = (!amd && typeof require == 'function')
     ? require

@@ -13660,6 +13660,14 @@
       });
     });
 
+    test('`_.' + methodName + '` should be able to return `null` values', 2, function() {
+      var object = { 'a': { 'b': null } };
+
+      _.each(['a.b', ['a', 'b']], function(path) {
+        strictEqual(func(object, path), null);
+      });
+    });
+
     test('`_.' + methodName + '` should follow `path` over non-plain objects', 4, function() {
       var object = { 'a': '' },
           paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];

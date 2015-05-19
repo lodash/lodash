@@ -1,6 +1,6 @@
 {
   "name": "lodash._basesortbyorder",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "The modern build of lodash’s internal `baseSortByOrder` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

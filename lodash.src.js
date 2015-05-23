@@ -7086,8 +7086,21 @@
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
-      var result = shuffle(collection);
-      result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
+      var result = toArray(collection),
+          length = result.length,
+          index = length;
+
+      n = nativeMin(n < 0 ? 0 : (+n || 0), length);
+      var end = length - n;
+      while (index-- > end) {
+        var rand = baseRandom(0, index),
+            othIndex = length - index - 1,
+            othValue = result[othIndex];
+
+        result[othIndex] = result[rand];
+        result[rand] = othValue;
+      }
+      result.length = n;
       return result;
     }
 
@@ -7106,20 +7119,7 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
-      collection = toIterable(collection);
-
-      var index = -1,
-          length = collection.length,
-          result = Array(length);
-
-      while (++index < length) {
-        var rand = baseRandom(0, index);
-        if (index != rand) {
-          result[index] = result[rand];
-        }
-        result[rand] = collection[index];
-      }
-      return result;
+      return sample(collection, Infinity);
     }
 
     /**

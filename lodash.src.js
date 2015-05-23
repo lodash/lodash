@@ -7086,19 +7086,18 @@
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
-      var result = toArray(collection),
+      var index = -1,
+          result = toArray(collection),
           length = result.length,
-          index = length;
+          lastIndex = length - 1;
 
       n = nativeMin(n < 0 ? 0 : (+n || 0), length);
-      var end = length - n;
-      while (index-- > end) {
-        var rand = baseRandom(0, index),
-            othIndex = length - index - 1,
-            othValue = result[othIndex];
+      while (++index < n) {
+        var rand = baseRandom(index, lastIndex),
+            value = result[rand];
 
-        result[othIndex] = result[rand];
-        result[rand] = othValue;
+        result[rand] = result[index];
+        result[index] = value;
       }
       result.length = n;
       return result;

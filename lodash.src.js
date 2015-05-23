@@ -7107,7 +7107,7 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
-      return sample(collection, Infinity);
+      return sample(collection, POSITIVE_INFINITY);
     }
 
     /**
@@ -11796,7 +11796,7 @@
      * _.max(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
-    var max = createExtremum(gt, -Infinity);
+    var max = createExtremum(gt, NEGATIVE_INFINITY);
 
     /**
      * Gets the minimum value of `collection`. If `collection` is empty or falsey
@@ -11845,7 +11845,7 @@
      * _.min(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var min = createExtremum(lt, Infinity);
+    var min = createExtremum(lt, POSITIVE_INFINITY);
 
     /**
      * Gets the sum of the values in `collection`.

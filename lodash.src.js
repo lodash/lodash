@@ -396,17 +396,6 @@
   }
 
   /**
-   * Used by `_.max` and `_.min` as the default callback for string values.
-   *
-   * @private
-   * @param {string} string The string to inspect.
-   * @returns {number} Returns the code unit of the first character of the string.
-   */
-  function charAtCallback(string) {
-    return string.charCodeAt(0);
-  }
-
-  /**
    * Used by `_.trim` and `_.trimLeft` to get the index of the first character
    * of `string` that is not found in `chars`.
    *

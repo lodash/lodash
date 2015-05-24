@@ -2347,7 +2347,7 @@
         filterCount = mapCount = 0;
         deepEqual(combined(_.range(100)), [4, 16]);
 
-        if (!isNpm && WeakMap && _.support.funcNames) {
+        if (!isNpm && WeakMap && WeakMap.name) {
           strictEqual(filterCount, 5, 'filterCount');
           strictEqual(mapCount, 5, 'mapCount');
         }

@@ -1,5 +1,5 @@
 /**
- * lodash 3.4.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -23,6 +23,9 @@
  */
 function add(augend, addend) {
   var result;
+  if (augend === undefined && addend === undefined) {
+    return 0;
+  }
   if (augend !== undefined) {
     result = augend;
   }

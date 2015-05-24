@@ -1,13 +1,12 @@
 /**
- * lodash 3.4.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseEach = require('lodash._baseeach'),
-    baseSortByOrder = require('lodash._basesortbyorder'),
+var baseSortByOrder = require('lodash._basesortbyorder'),
     isIterateeCall = require('lodash._isiterateecall'),
     isArray = require('lodash.isarray');
 

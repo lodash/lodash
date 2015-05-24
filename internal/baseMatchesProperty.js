@@ -9,8 +9,7 @@ var baseGet = require('./baseGet'),
     toPath = require('./toPath');
 
 /**
- * The base implementation of `_.matchesProperty` which does not which does
- * not clone `value`.
+ * The base implementation of `_.matchesProperty` which does not clone `srcValue`.
  *
  * @private
  * @param {string} path The path of the property to get.

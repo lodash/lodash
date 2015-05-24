@@ -2,7 +2,7 @@ var baseGet = require('../internal/baseGet'),
     toPath = require('../internal/toPath');
 
 /**
- * The opposite of `_.property`; this method creates a function which returns
+ * The opposite of `_.property`; this method creates a function that returns
  * the property value at a given path on `object`.
  *
  * @static

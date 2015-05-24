@@ -3,7 +3,7 @@ var baseDifference = require('../internal/baseDifference'),
     isArrayLike = require('../internal/isArrayLike');
 
 /**
- * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+ * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
  * of the provided arrays.
  *
  * @static

@@ -3,7 +3,7 @@ var baseProperty = require('../internal/baseProperty'),
     isKey = require('../internal/isKey');
 
 /**
- * Creates a function which returns the property value at `path` on a
+ * Creates a function that returns the property value at `path` on a
  * given object.
  *
  * @static

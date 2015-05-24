@@ -1,4 +1,4 @@
-# lodash v3.9.1
+# lodash v3.9.2
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) modules.
 
@@ -28,7 +28,7 @@ var array = require('lodash/array');
 var chunk = require('lodash/array/chunk');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.9.1-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/3.9.2-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
@@ -39,8 +39,8 @@ Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash b
 lodash is also available in a variety of other builds & module formats.
 
  * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.9.1-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.9.1-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.9.1-es) build
+ * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.9.2-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.9.2-amd) builds
+ * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.9.2-es) build
 
 ## Further Reading
 

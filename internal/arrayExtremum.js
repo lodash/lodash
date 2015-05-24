@@ -1,5 +1,5 @@
 /**
- * A specialized version of `baseExtremum` for arrays whichs invokes `iteratee`
+ * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
  * with one argument: (value).
  *
  * @private

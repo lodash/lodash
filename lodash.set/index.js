@@ -1,5 +1,5 @@
 /**
- * lodash 3.7.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.7.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -123,13 +123,13 @@ function set(object, path, value) {
 
   var index = -1,
       length = path.length,
-      endIndex = length - 1,
+      lastIndex = length - 1,
       nested = object;
 
   while (nested != null && ++index < length) {
     var key = path[index];
     if (isObject(nested)) {
-      if (index == endIndex) {
+      if (index == lastIndex) {
         nested[key] = value;
       } else if (nested[key] == null) {
         nested[key] = isIndex(path[index + 1]) ? [] : {};

@@ -2326,13 +2326,13 @@
       var filterCount,
           mapCount;
 
-      var map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2),
-          filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2),
+      var filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2),
+          map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2),
           take = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2);
 
-      var partialMap = map(function(value) { mapCount++; return value * value; }),
-          partialFilter = filter(function(value) { filterCount++; return value % 2 == 0; }),
-          partialTake = take(2);
+      var filter2 = filter(function(value) { filterCount++; return value % 2 == 0; }),
+          map2 = map(function(value) { mapCount++; return value * value; }),
+          take2 = take(2);
 
       _.times(2, function(index) {
         var fn = index ? _['_' + methodName] : func;
@@ -2341,8 +2341,8 @@
           return;
         }
         var combined = isFlow
-          ? fn(partialMap, partialFilter, _.compact, partialTake)
-          : fn(partialTake, _.compact, partialFilter, partialMap);
+          ? fn(map2, filter2, _.compact, take2)
+          : fn(take2, _.compact, filter2, map2);
 
         filterCount = mapCount = 0;
         deepEqual(combined(_.range(100)), [4, 16]);

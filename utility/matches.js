@@ -2,7 +2,7 @@ import baseClone from '../internal/baseClone';
 import baseMatches from '../internal/baseMatches';
 
 /**
- * Creates a function which performs a deep comparison between a given object
+ * Creates a function that performs a deep comparison between a given object
  * and `source`, returning `true` if the given object has equivalent property
  * values, else `false`.
  *

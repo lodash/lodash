@@ -3,7 +3,7 @@ import baseUniq from '../internal/baseUniq';
 import isArrayLike from '../internal/isArrayLike';
 
 /**
- * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+ * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
  * of the provided arrays.
  *
  * @static

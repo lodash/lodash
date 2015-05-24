@@ -1,6 +1,9 @@
 import createExtremum from '../internal/createExtremum';
 import gt from '../lang/gt';
 
+/** Used as references for `-Infinity` and `Infinity`. */
+var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
+
 /**
  * Gets the maximum value of `collection`. If `collection` is empty or falsey
  * `-Infinity` is returned. If an iteratee function is provided it is invoked
@@ -48,6 +51,6 @@ import gt from '../lang/gt';
  * _.max(users, 'age');
  * // => { 'user': 'fred', 'age': 40 }
  */
-var max = createExtremum(gt, -Infinity);
+var max = createExtremum(gt, NEGATIVE_INFINITY);
 
 export default max;

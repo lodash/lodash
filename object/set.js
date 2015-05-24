@@ -35,13 +35,13 @@ function set(object, path, value) {
 
   var index = -1,
       length = path.length,
-      endIndex = length - 1,
+      lastIndex = length - 1,
       nested = object;
 
   while (nested != null && ++index < length) {
     var key = path[index];
     if (isObject(nested)) {
-      if (index == endIndex) {
+      if (index == lastIndex) {
         nested[key] = value;
       } else if (nested[key] == null) {
         nested[key] = isIndex(path[index + 1]) ? [] : {};

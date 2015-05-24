@@ -1,5 +1,6 @@
 import baseIsEqualDeep from './baseIsEqualDeep';
 import isObject from '../lang/isObject';
+import isObjectLike from './isObjectLike';
 
 /**
  * The base implementation of `_.isEqual` without support for `this` binding
@@ -18,7 +19,7 @@ function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
   if (value === other) {
     return true;
   }
-  if (value == null || other == null || (!isObject(value) && !isObject(other))) {
+  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
     return value !== value && other !== other;
   }
   return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);

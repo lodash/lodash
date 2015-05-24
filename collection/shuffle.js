@@ -1,5 +1,7 @@
-import baseRandom from '../internal/baseRandom';
-import toIterable from '../internal/toIterable';
+import sample from './sample';
+
+/** Used as references for `-Infinity` and `Infinity`. */
+var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -16,20 +18,7 @@ import toIterable from '../internal/toIterable';
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  collection = toIterable(collection);
-
-  var index = -1,
-      length = collection.length,
-      result = Array(length);
-
-  while (++index < length) {
-    var rand = baseRandom(0, index);
-    if (index != rand) {
-      result[index] = result[rand];
-    }
-    result[rand] = collection[index];
-  }
-  return result;
+  return sample(collection, POSITIVE_INFINITY);
 }
 
 export default shuffle;

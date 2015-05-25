@@ -117,6 +117,9 @@
   /** Used to detect host constructors (Safari > 5). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
+  /** Used to detect unsigned integer values. */
+  var reIsUint = /^\d+$/;
+
   /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
 
@@ -4221,7 +4224,7 @@
      * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
      */
     function isIndex(value, length) {
-      value = typeof value == 'number' ? value : parseFloat(value);
+      value = (typeof value == 'number' || reIsUint.test(value)) ? +value : NaN;
       length = length == null ? MAX_SAFE_INTEGER : length;
       return value > -1 && value % 1 == 0 && value < length;
     }

@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -37,8 +37,12 @@ var objectToString = objectProto.toString;
  * // => false
  */
 function isError(value) {
-  return isObjectLike(value) &&
-    typeof value.message == 'string' && objectToString.call(value) == errorTag;
+  if (!isObjectLike(value)) {
+    return false;
+  }
+  var Ctor = value.constructor;
+  return (objectToString.call(value) == errorTag) ||
+    (typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag);
 }
 
 /**

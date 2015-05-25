@@ -1,13 +1,13 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var arrayCopy = require('lodash._arraycopy'),
-    assign = require('lodash.assign');
+var assign = require('lodash.assign'),
+    restParam = require('lodash.restparam');
 
 /**
  * Used by `_.defaults` to customize its `_.assign` use.
@@ -37,13 +37,13 @@ function assignDefaults(objectValue, sourceValue) {
  * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
  * // => { 'user': 'barney', 'age': 36 }
  */
-function defaults(object) {
+var defaults = restParam(function(args) {
+  var object = args[0];
   if (object == null) {
     return object;
   }
-  var args = arrayCopy(arguments);
   args.push(assignDefaults);
   return assign.apply(undefined, args);
-}
+});
 
 module.exports = defaults;

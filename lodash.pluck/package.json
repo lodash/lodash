@@ -1,6 +1,6 @@
 {
   "name": "lodash.pluck",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.pluck` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -17,7 +17,9 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._baseproperty": "^3.0.0",
+    "lodash._baseget": "^3.0.0",
+    "lodash._topath": "^3.0.0",
+    "lodash.isarray": "^3.0.0",
     "lodash.map": "^3.0.0"
   }
 }

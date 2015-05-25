@@ -1,6 +1,6 @@
 {
   "name": "lodash.sortbyall",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.sortByAll` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -17,10 +17,11 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._basecompareascending": "^3.0.0",
     "lodash._baseeach": "^3.0.0",
     "lodash._baseflatten": "^3.0.0",
-    "lodash._basesortby": "^3.0.0",
-    "lodash._isiterateecall": "^3.0.0"
+    "lodash._basesortbyorder": "^3.0.0",
+    "lodash._isiterateecall": "^3.0.0",
+    "lodash.isarguments": "^3.0.0",
+    "lodash.isarray": "^3.0.0"
   }
 }

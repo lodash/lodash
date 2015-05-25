@@ -1,34 +1,37 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
+var baseGet = require('lodash._baseget'),
+    toPath = require('lodash._topath');
 
 /**
- * The inverse of `_.property`; this method creates a function which returns
- * the property value of a given key on `object`.
+ * The opposite of `_.property`; this method creates a function that returns
+ * the property value at a given path on `object`.
  *
  * @static
  * @memberOf _
  * @category Utility
- * @param {Object} object The object to inspect.
+ * @param {Object} object The object to query.
  * @returns {Function} Returns the new function.
  * @example
  *
- * var object = { 'a': 3, 'b': 1, 'c': 2 };
+ * var array = [0, 1, 2],
+ *     object = { 'a': array, 'b': array, 'c': array };
  *
- * _.map(['a', 'c'], _.propertyOf(object));
- * // => [3, 2]
+ * _.map(['a[2]', 'c[0]'], _.propertyOf(object));
+ * // => [2, 0]
  *
- * _.sortBy(['a', 'b', 'c'], _.propertyOf(object));
- * // => ['b', 'c', 'a']
+ * _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
+ * // => [2, 0]
  */
 function propertyOf(object) {
-  return function(key) {
-    return object == null ? undefined : object[key];
+  return function(path) {
+    return baseGet(object, toPath(path), (path + ''));
   };
 }
 

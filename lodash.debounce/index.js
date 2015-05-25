@@ -1,19 +1,19 @@
 /**
- * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var isNative = require('lodash.isnative');
+var getNative = require('lodash._getnative');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /* Native method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
-    nativeNow = isNative(nativeNow = Date.now) && nativeNow;
+    nativeNow = getNative(Date, 'now');
 
 /**
  * Gets the number of milliseconds that have elapsed since the Unix epoch
@@ -34,12 +34,13 @@ var now = nativeNow || function() {
 };
 
 /**
- * Creates a function that delays invoking `func` until after `wait` milliseconds
- * have elapsed since the last time it was invoked. The created function comes
- * with a `cancel` method to cancel delayed invocations. Provide an options
- * object to indicate that `func` should be invoked on the leading and/or
- * trailing edge of the `wait` timeout. Subsequent calls to the debounced
- * function return the result of the last `func` invocation.
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed invocations. Provide an options object to indicate that `func`
+ * should be invoked on the leading and/or trailing edge of the `wait` timeout.
+ * Subsequent calls to the debounced function return the result of the last
+ * `func` invocation.
  *
  * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
  * on the trailing edge of the timeout only if the the debounced function is
@@ -233,7 +234,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
+  return !!value && (type == 'object' || type == 'function');
 }
 
 module.exports = debounce;

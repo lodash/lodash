@@ -1,14 +1,14 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var arrayCopy = require('lodash._arraycopy'),
     arrayEach = require('lodash._arrayeach'),
-    baseCopy = require('lodash._basecopy'),
+    baseAssign = require('lodash._baseassign'),
     baseFor = require('lodash._basefor'),
     isArray = require('lodash.isarray'),
     isNative = require('lodash.isnative'),
@@ -110,7 +110,7 @@ function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
   if (customizer) {
     result = object ? customizer(value, key, object) : customizer(value);
   }
-  if (typeof result != 'undefined') {
+  if (result !== undefined) {
     return result;
   }
   if (!isObject(value)) {
@@ -129,7 +129,7 @@ function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
       result = initCloneObject(isFunc ? {} : value);
       if (!isDeep) {
-        return baseCopy(value, result, keys(value));
+        return baseAssign(result, value);
       }
     } else {
       return cloneableTags[tag]
@@ -240,7 +240,6 @@ function initCloneObject(object) {
  *
  * **Note:** This function only supports cloning values with tags of
  * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
- *
  *
  * @private
  * @param {Object} object The object to clone.

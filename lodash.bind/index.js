@@ -1,14 +1,14 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseSlice = require('lodash._baseslice'),
-    createWrapper = require('lodash._createwrapper'),
-    replaceHolders = require('lodash._replaceholders');
+var createWrapper = require('lodash._createwrapper'),
+    replaceHolders = require('lodash._replaceholders'),
+    restParam = require('lodash.restparam');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -22,7 +22,7 @@ var BIND_FLAG = 1,
  * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
  * may be used as a placeholder for partially applied arguments.
  *
- * **Note:** Unlike native `Function#bind` this method does not set the `length`
+ * **Note:** Unlike native `Function#bind` this method does not set the "length"
  * property of bound functions.
  *
  * @static
@@ -30,7 +30,7 @@ var BIND_FLAG = 1,
  * @category Function
  * @param {Function} func The function to bind.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} [args] The arguments to be partially applied.
+ * @param {...*} [partials] The arguments to be partially applied.
  * @returns {Function} Returns the new bound function.
  * @example
  *
@@ -49,16 +49,14 @@ var BIND_FLAG = 1,
  * bound('hi');
  * // => 'hi fred!'
  */
-function bind(func, thisArg) {
+var bind = restParam(function(func, thisArg, partials) {
   var bitmask = BIND_FLAG;
-  if (arguments.length > 2) {
-    var partials = baseSlice(arguments, 2),
-        holders = replaceHolders(partials, bind.placeholder);
-
+  if (partials.length) {
+    var holders = replaceHolders(partials, bind.placeholder);
     bitmask |= PARTIAL_FLAG;
   }
   return createWrapper(func, bitmask, thisArg, partials, holders);
-}
+});
 
 // Assign default placeholders.
 bind.placeholder = {};

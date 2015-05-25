@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -33,13 +33,13 @@ var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
  *
  * @private
  * @param {Array} array The array to flatten.
- * @param {boolean} [isDeep] Specify a deep flatten.
- * @param {boolean} [isStrict] Restrict flattening to arrays and `arguments` objects.
- * @param {number} [fromIndex=0] The index to start from.
+ * @param {boolean} isDeep Specify a deep flatten.
+ * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
+ * @param {number} fromIndex The index to start from.
  * @returns {Array} Returns the new flattened array.
  */
 function baseFlatten(array, isDeep, isStrict, fromIndex) {
-  var index = fromIndex == null ? -1 : (fromIndex - 1),
+  var index = fromIndex - 1,
       length = array.length,
       resIndex = -1,
       result = [];
@@ -50,7 +50,7 @@ function baseFlatten(array, isDeep, isStrict, fromIndex) {
     if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
       if (isDeep) {
         // Recursively flatten arrays (susceptible to call stack limits).
-        value = baseFlatten(value, isDeep, isStrict);
+        value = baseFlatten(value, isDeep, isStrict, 0);
       }
       var valIndex = -1,
           valLength = value.length;

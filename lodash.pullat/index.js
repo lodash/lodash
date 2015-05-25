@@ -1,14 +1,15 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseAt = require('lodash._baseat'),
     baseCompareAscending = require('lodash._basecompareascending'),
-    baseFlatten = require('lodash._baseflatten');
+    baseFlatten = require('lodash._baseflatten'),
+    restParam = require('lodash.restparam');
 
 /** Used for native method references. */
 var arrayProto = Array.prototype;
@@ -17,35 +18,10 @@ var arrayProto = Array.prototype;
 var splice = arrayProto.splice;
 
 /**
- * Used as the maximum length of an array-like value.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
- * for more details.
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
-
-/**
- * The base implementation of `_.pullAt` without support for individual
- * index arguments.
- *
- * @private
- * @param {Array} array The array to modify.
- * @param {number[]} indexes The indexes of elements to remove.
- * @returns {Array} Returns the new array of removed elements.
- */
-function basePullAt(array, indexes) {
-  var length = indexes.length,
-      result = baseAt(array, indexes);
-
-  indexes.sort(baseCompareAscending);
-  while (length--) {
-    var index = parseFloat(indexes[length]);
-    if (index != previous && isIndex(index)) {
-      var previous = index;
-      splice.call(array, index, 1);
-    }
-  }
-  return result;
-}
 
 /**
  * Checks if `value` is a valid array-like index.
@@ -86,8 +62,22 @@ function isIndex(value, length) {
  * console.log(evens);
  * // => [10, 20]
  */
-function pullAt(array) {
-  return basePullAt(array || [], baseFlatten(arguments, false, false, 1));
-}
+var pullAt = restParam(function(array, indexes) {
+  array || (array = []);
+  indexes = baseFlatten(indexes);
+
+  var length = indexes.length,
+      result = baseAt(array, indexes);
+
+  indexes.sort(baseCompareAscending);
+  while (length--) {
+    var index = parseFloat(indexes[length]);
+    if (index != previous && isIndex(index)) {
+      var previous = index;
+      splice.call(array, index, 1);
+    }
+  }
+  return result;
+});
 
 module.exports = pullAt;

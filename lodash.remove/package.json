@@ -1,6 +1,6 @@
 {
   "name": "lodash.remove",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.remove` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -17,6 +17,7 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._basecallback": "^3.0.0"
+    "lodash._basecallback": "^3.0.0",
+    "lodash._basepullat": "^3.0.0"
   }
 }

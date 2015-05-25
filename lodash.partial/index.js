@@ -1,17 +1,32 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseSlice = require('lodash._baseslice'),
-    createWrapper = require('lodash._createwrapper'),
-    replaceHolders = require('lodash._replaceholders');
+var createWrapper = require('lodash._createwrapper'),
+    replaceHolders = require('lodash._replaceholders'),
+    restParam = require('lodash.restparam');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var PARTIAL_FLAG = 32;
+
+/**
+ * Creates a `_.partial` or `_.partialRight` function.
+ *
+ * @private
+ * @param {boolean} flag The partial bit flag.
+ * @returns {Function} Returns the new partial function.
+ */
+function createPartial(flag) {
+  var partialFunc = restParam(function(func, partials) {
+    var holders = replaceHolders(partials, partialFunc.placeholder);
+    return createWrapper(func, flag, null, partials, holders);
+  });
+  return partialFunc;
+}
 
 /**
  * Creates a function that invokes `func` with `partial` arguments prepended
@@ -21,14 +36,14 @@ var PARTIAL_FLAG = 32;
  * The `_.partial.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.
  *
- * **Note:** This method does not set the `length` property of partially
+ * **Note:** This method does not set the "length" property of partially
  * applied functions.
  *
  * @static
  * @memberOf _
  * @category Function
  * @param {Function} func The function to partially apply arguments to.
- * @param {...*} [args] The arguments to be partially applied.
+ * @param {...*} [partials] The arguments to be partially applied.
  * @returns {Function} Returns the new partially applied function.
  * @example
  *
@@ -45,12 +60,7 @@ var PARTIAL_FLAG = 32;
  * greetFred('hi');
  * // => 'hi fred'
  */
-function partial(func) {
-  var partials = baseSlice(arguments, 1),
-      holders = replaceHolders(partials, partial.placeholder);
-
-  return createWrapper(func, PARTIAL_FLAG, null, partials, holders);
-}
+var partial = createPartial(PARTIAL_FLAG);
 
 // Assign default placeholders.
 partial.placeholder = {};

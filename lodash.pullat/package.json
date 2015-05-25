@@ -1,6 +1,6 @@
 {
   "name": "lodash.pullat",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.pullAt` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -19,6 +19,7 @@
   "dependencies": {
     "lodash._baseat": "^3.0.0",
     "lodash._basecompareascending": "^3.0.0",
-    "lodash._baseflatten": "^3.0.0"
+    "lodash._baseflatten": "^3.0.0",
+    "lodash.restparam": "^3.0.0"
   }
 }

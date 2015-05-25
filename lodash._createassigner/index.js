@@ -1,13 +1,14 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var bindCallback = require('lodash._bindcallback'),
-    isIterateeCall = require('lodash._isiterateecall');
+    isIterateeCall = require('lodash._isiterateecall'),
+    restParam = require('lodash.restparam');
 
 /**
  * Creates a function that assigns properties of source object(s) to a given
@@ -20,38 +21,32 @@ var bindCallback = require('lodash._bindcallback'),
  * @returns {Function} Returns the new assigner function.
  */
 function createAssigner(assigner) {
-  return function() {
-    var args = arguments,
-        length = args.length,
-        object = args[0];
+  return restParam(function(object, sources) {
+    var index = -1,
+        length = object == null ? 0 : sources.length,
+        customizer = length > 2 && sources[length - 2],
+        guard = length > 2 && sources[2],
+        thisArg = length > 1 && sources[length - 1];
 
-    if (length < 2 || object == null) {
-      return object;
-    }
-    var customizer = args[length - 2],
-        thisArg = args[length - 1],
-        guard = args[3];
-
-    if (length > 3 && typeof customizer == 'function') {
+    if (typeof customizer == 'function') {
       customizer = bindCallback(customizer, thisArg, 5);
       length -= 2;
     } else {
-      customizer = (length > 2 && typeof thisArg == 'function') ? thisArg : null;
+      customizer = typeof thisArg == 'function' ? thisArg : null;
       length -= (customizer ? 1 : 0);
     }
-    if (guard && isIterateeCall(args[1], args[2], guard)) {
-      customizer = length == 3 ? null : customizer;
-      length = 2;
+    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+      customizer = length < 3 ? null : customizer;
+      length = 1;
     }
-    var index = 0;
     while (++index < length) {
-      var source = args[index];
+      var source = sources[index];
       if (source) {
         assigner(object, source, customizer);
       }
     }
     return object;
-  };
+  });
 }
 
 module.exports = createAssigner;

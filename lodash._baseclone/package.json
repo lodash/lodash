@@ -1,6 +1,6 @@
 {
   "name": "lodash._baseclone",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s internal `baseClone` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -18,7 +18,7 @@
   "dependencies": {
     "lodash._arraycopy": "^3.0.0",
     "lodash._arrayeach": "^3.0.0",
-    "lodash._basecopy": "^3.0.0",
+    "lodash._baseassign": "^3.0.0",
     "lodash._basefor": "^3.0.0",
     "lodash.isarray": "^3.0.0",
     "lodash.isnative": "^3.0.0",

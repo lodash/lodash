@@ -1,6 +1,6 @@
 {
   "name": "lodash.reduce",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.reduce` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -20,6 +20,7 @@
     "lodash._basecallback": "^3.0.0",
     "lodash._baseeach": "^3.0.0",
     "lodash._basereduce": "^3.0.0",
-    "lodash.isarray": "^3.0.0"
+    "lodash.isarray": "^3.0.0",
+    "lodash.keys": "^3.0.0"
   }
 }

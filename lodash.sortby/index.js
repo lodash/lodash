@@ -1,8 +1,8 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -10,7 +10,9 @@ var baseCallback = require('lodash._basecallback'),
     baseCompareAscending = require('lodash._basecompareascending'),
     baseEach = require('lodash._baseeach'),
     baseSortBy = require('lodash._basesortby'),
-    isIterateeCall = require('lodash._isiterateecall');
+    isIterateeCall = require('lodash._isiterateecall'),
+    isArray = require('lodash.isarray'),
+    keys = require('lodash.keys');
 
 /**
  * Used by `_.sortBy` to compare transformed elements of a collection and stable
@@ -26,18 +28,15 @@ function compareAscending(object, other) {
 }
 
 /**
- * Used as the maximum length of an array-like value.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
- * for more details.
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on ES `ToLength`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
- * for more details.
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -51,17 +50,17 @@ function isLength(value) {
  * Creates an array of elements, sorted in ascending order by the results of
  * running each element in a collection through `iteratee`. This method performs
  * a stable sort, that is, it preserves the original sort order of equal elements.
- * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+ * The `iteratee` is bound to `thisArg` and invoked with three arguments:
  * (value, index|key, collection).
  *
- * If a property name is provided for `predicate` the created `_.property`
+ * If a property name is provided for `iteratee` the created `_.property`
  * style callback returns the property value of the given element.
  *
  * If a value is also provided for `thisArg` the created `_.matchesProperty`
  * style callback returns `true` for elements that have a matching property
  * value, else `false`.
  *
- * If an object is provided for `predicate` the created `_.matches` style
+ * If an object is provided for `iteratee` the created `_.matches` style
  * callback returns `true` for elements that have the properties of the given
  * object, else `false`.
  *
@@ -97,8 +96,11 @@ function isLength(value) {
  * // => ['barney', 'fred', 'pebbles']
  */
 function sortBy(collection, iteratee, thisArg) {
+  if (collection == null) {
+    return [];
+  }
   var index = -1,
-      length = collection ? collection.length : 0,
+      length = collection.length,
       result = isLength(length) ? Array(length) : [];
 
   if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {

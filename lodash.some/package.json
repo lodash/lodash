@@ -1,6 +1,6 @@
 {
   "name": "lodash.some",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.some` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -19,6 +19,7 @@
   "dependencies": {
     "lodash._basecallback": "^3.0.0",
     "lodash._baseeach": "^3.0.0",
+    "lodash._isiterateecall": "^3.0.0",
     "lodash.isarray": "^3.0.0"
   }
 }

@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -7,13 +7,27 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
+    baseClone = require('lodash._baseclone'),
+    baseMatches = require('lodash._basematches'),
     isIterateeCall = require('lodash._isiterateecall');
 
 /**
- * Creates a function bound to an optional `thisArg`. If `func` is a property
- * name the created callback returns the property value for a given element.
- * If `func` is an object the created callback returns `true` for elements
- * that contain the equivalent object properties, otherwise it returns `false`.
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return (value && typeof value == 'object') || false;
+}
+
+/**
+ * Creates a function that invokes `func` with the `this` binding of `thisArg`
+ * and arguments of the created function. If `func` is a property name the
+ * created callback returns the property value for a given element. If `func`
+ * is an object the created callback returns `true` for elements that contain
+ * the equivalent object properties, otherwise it returns `false`.
  *
  * @static
  * @memberOf _
@@ -37,7 +51,9 @@ var baseCallback = require('lodash._basecallback'),
  *     return callback(func, thisArg);
  *   }
  *   return function(object) {
- *     return match[2] == 'gt' ? object[match[1]] > match[3] : object[match[1]] < match[3];
+ *     return match[2] == 'gt'
+ *       ? object[match[1]] > match[3]
+ *       : object[match[1]] < match[3];
  *   };
  * });
  *
@@ -48,7 +64,38 @@ function callback(func, thisArg, guard) {
   if (guard && isIterateeCall(func, thisArg, guard)) {
     thisArg = null;
   }
-  return baseCallback(func, thisArg);
+  return isObjectLike(func)
+    ? matches(func)
+    : baseCallback(func, thisArg);
+}
+
+/**
+ * Creates a function which performs a deep comparison between a given object
+ * and `source`, returning `true` if the given object has equivalent property
+ * values, else `false`.
+ *
+ * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+ * numbers, `Object` objects, regexes, and strings. Objects are compared by
+ * their own, not inherited, enumerable properties. For comparing a single
+ * own or inherited property value see `_.matchesProperty`.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {Object} source The object of property values to match.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney', 'age': 36, 'active': true },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
+ * ];
+ *
+ * _.filter(users, _.matches({ 'age': 40, 'active': false }));
+ * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
+ */
+function matches(source) {
+  return baseMatches(baseClone(source, true));
 }
 
 module.exports = callback;

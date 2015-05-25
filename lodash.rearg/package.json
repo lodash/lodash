@@ -1,6 +1,6 @@
 {
   "name": "lodash.rearg",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "The modern build of lodash’s `_.rearg` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -18,6 +18,7 @@
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
     "lodash._baseflatten": "^3.0.0",
-    "lodash._createwrapper": "^3.0.0"
+    "lodash._createwrapper": "^3.0.0",
+    "lodash.restparam": "^3.0.0"
   }
 }

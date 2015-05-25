@@ -1,14 +1,16 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
     baseUniq = require('lodash._baseuniq'),
-    isIterateeCall = require('lodash._isiterateecall');
+    isIterateeCall = require('lodash._isiterateecall'),
+    isArray = require('lodash.isarray'),
+    isNative = require('lodash.isnative');
 
 /**
  * An implementation of `_.uniq` optimized for sorted arrays without support
@@ -39,12 +41,14 @@ function sortedUniq(array, iteratee) {
 }
 
 /**
- * Creates a duplicate-value-free version of an array using `SameValueZero`
- * for equality comparisons. Providing `true` for `isSorted` performs a faster
- * search algorithm for sorted arrays. If an iteratee function is provided it
- * is invoked for each value in the array to generate the criterion by which
- * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
- * with three arguments: (value, index, array).
+ * Creates a duplicate-free version of an array, using
+ * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * for equality comparisons, in which only the first occurence of each element
+ * is kept. Providing `true` for `isSorted` performs a faster search algorithm
+ * for sorted arrays. If an iteratee function is provided it is invoked for
+ * each element in the array to generate the criterion by which uniqueness
+ * is computed. The `iteratee` is bound to `thisArg` and invoked with three
+ * arguments: (value, index, array).
  *
  * If a property name is provided for `iteratee` the created `_.property`
  * style callback returns the property value of the given element.
@@ -57,10 +61,6 @@ function sortedUniq(array, iteratee) {
  * callback returns `true` for elements that have the properties of the given
  * object, else `false`.
  *
- * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * comparisons are like strict equality comparisons, e.g. `===`, except that
- * `NaN` matches `NaN`.
- *
  * @static
  * @memberOf _
  * @alias unique
@@ -72,8 +72,8 @@ function sortedUniq(array, iteratee) {
  * @returns {Array} Returns the new duplicate-value-free array.
  * @example
  *
- * _.uniq([1, 2, 1]);
- * // => [1, 2]
+ * _.uniq([2, 1, 2]);
+ * // => [2, 1]
  *
  * // using `isSorted`
  * _.uniq([1, 1, 2], true);

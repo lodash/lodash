@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -8,7 +8,8 @@
  */
 var baseCallback = require('lodash._basecallback'),
     binaryIndex = require('lodash._binaryindex'),
-    binaryIndexBy = require('lodash._binaryindexby');
+    binaryIndexBy = require('lodash._binaryindexby'),
+    isArray = require('lodash.isarray');
 
 /**
  * Creates a `_.sortedIndex` or `_.sortedLastIndex` function.

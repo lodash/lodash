@@ -1,16 +1,17 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseFlatten = require('lodash._baseflatten'),
-    createWrapper = require('lodash._createwrapper');
+    createWrapper = require('lodash._createwrapper'),
+    restParam = require('lodash.restparam');
 
 /** Used to compose bitmasks for wrapper metadata. */
-var REARG_FLAG = 128;
+var REARG_FLAG = 256;
 
 /**
  * Creates a function that invokes `func` with arguments arranged according
@@ -40,9 +41,8 @@ var REARG_FLAG = 128;
  * }, [1, 2, 3]);
  * // => [3, 6, 9]
  */
-function rearg(func) {
-  var indexes = baseFlatten(arguments, false, false, 1);
-  return createWrapper(func, REARG_FLAG, null, null, null, indexes);
-}
+var rearg = restParam(function(func, indexes) {
+  return createWrapper(func, REARG_FLAG, null, null, null, baseFlatten(indexes));
+});
 
 module.exports = rearg;

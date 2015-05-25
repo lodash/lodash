@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,7 +7,7 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseFor = require('lodash._basefor'),
-    isNative = require('lodash.isnative'),
+    getNative = require('lodash._getnative'),
     keysIn = require('lodash.keysin');
 
 /** `Object#toString` result references. */
@@ -37,7 +37,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 var objToString = objectProto.toString;
 
 /** Native method references. */
-var getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf;
+var getPrototypeOf = getNative(Object, 'getPrototypeOf');
 
 /**
  * The base implementation of `_.forIn` without support for callback
@@ -117,8 +117,8 @@ var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
   if (!(value && objToString.call(value) == objectTag)) {
     return false;
   }
-  var valueOf = value.valueOf,
-      objProto = isNative(valueOf) && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
+  var valueOf = getNative(value, 'valueOf'),
+      objProto = valueOf && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
 
   return objProto
     ? (value == objProto || getPrototypeOf(value) == objProto)

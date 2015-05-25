@@ -1,19 +1,20 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var arrayEvery = require('lodash._arrayevery'),
     baseCallback = require('lodash._basecallback'),
     baseEach = require('lodash._baseeach'),
+    isIterateeCall = require('lodash._isiterateecall'),
     isArray = require('lodash.isarray');
 
 /**
  * The base implementation of `_.every` without support for callback
- * shorthands or `this` binding.
+ * shorthands and `this` binding.
  *
  * @private
  * @param {Array|Object|string} collection The collection to iterate over.
@@ -32,7 +33,7 @@ function baseEvery(collection, predicate) {
 
 /**
  * Checks if `predicate` returns truthy for **all** elements of `collection`.
- * The predicate is bound to `thisArg` and invoked with three arguments;
+ * The predicate is bound to `thisArg` and invoked with three arguments:
  * (value, index|key, collection).
  *
  * If a property name is provided for `predicate` the created `_.property`
@@ -80,6 +81,9 @@ function baseEvery(collection, predicate) {
  */
 function every(collection, predicate, thisArg) {
   var func = isArray(collection) ? arrayEvery : baseEvery;
+  if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+    predicate = null;
+  }
   if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
     predicate = baseCallback(predicate, thisArg, 3);
   }

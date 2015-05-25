@@ -1,30 +1,20 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var arrayFilter = require('lodash._arrayfilter'),
     baseCallback = require('lodash._basecallback'),
     baseFilter = require('lodash._basefilter'),
-    isArray = require('lodash.isarray');
+    isArray = require('lodash.isarray'),
+    keys = require('lodash.keys');
 
 /**
  * The opposite of `_.filter`; this method returns the elements of `collection`
  * that `predicate` does **not** return truthy for.
- *
- * If a property name is provided for `predicate` the created `_.property`
- * style callback returns the property value of the given element.
- *
- * If a value is also provided for `thisArg` the created `_.matchesProperty`
- * style callback returns `true` for elements that have a matching property
- * value, else `false`.
- *
- * If an object is provided for `predicate` the created `_.matches` style
- * callback returns `true` for elements that have the properties of the given
- * object, else `false`.
  *
  * @static
  * @memberOf _

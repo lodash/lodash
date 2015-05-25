@@ -1,15 +1,15 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseRandom = require('lodash._baserandom'),
     isIterateeCall = require('lodash._isiterateecall'),
     toIterable = require('lodash._toiterable'),
-    shuffle = require('lodash.shuffle');
+    toArray = require('lodash.toarray');
 
 /* Native method references for those with the same name as other `lodash` methods. */
 var nativeMin = Math.min;
@@ -38,8 +38,20 @@ function sample(collection, n, guard) {
     var length = collection.length;
     return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
   }
-  var result = shuffle(collection);
-  result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
+  var index = -1,
+      result = toArray(collection),
+      length = result.length,
+      lastIndex = length - 1;
+
+  n = nativeMin(n < 0 ? 0 : (+n || 0), length);
+  while (++index < n) {
+    var rand = baseRandom(index, lastIndex),
+        value = result[rand];
+
+    result[rand] = result[index];
+    result[index] = value;
+  }
+  result.length = n;
   return result;
 }
 

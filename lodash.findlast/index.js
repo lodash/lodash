@@ -1,14 +1,35 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
     baseEachRight = require('lodash._baseeachright'),
-    baseFind = require('lodash._basefind');
+    baseFind = require('lodash._basefind'),
+    baseFindIndex = require('lodash._basefindindex'),
+    isArray = require('lodash.isarray');
+
+/**
+ * Creates a `_.find` or `_.findLast` function.
+ *
+ * @private
+ * @param {Function} eachFunc The function to iterate over a collection.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new find function.
+ */
+function createFind(eachFunc, fromRight) {
+  return function(collection, predicate, thisArg) {
+    predicate = baseCallback(predicate, thisArg, 3);
+    if (isArray(collection)) {
+      var index = baseFindIndex(collection, predicate, fromRight);
+      return index > -1 ? collection[index] : undefined;
+    }
+    return baseFind(collection, predicate, eachFunc);
+  }
+}
 
 /**
  * This method is like `_.find` except that it iterates over elements of
@@ -29,9 +50,6 @@ var baseCallback = require('lodash._basecallback'),
  * });
  * // => 3
  */
-function findLast(collection, predicate, thisArg) {
-  predicate = baseCallback(predicate, thisArg, 3);
-  return baseFind(collection, predicate, baseEachRight);
-}
+var findLast = createFind(baseEachRight, true);
 
 module.exports = findLast;

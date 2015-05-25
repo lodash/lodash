@@ -1,12 +1,30 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseCallback = require('lodash._basecallback');
+var baseCallback = require('lodash._basecallback'),
+    baseFindIndex = require('lodash._basefindindex');
+
+/**
+ * Creates a `_.findIndex` or `_.findLastIndex` function.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new find function.
+ */
+function createFindIndex(fromRight) {
+  return function(array, predicate, thisArg) {
+    if (!(array && array.length)) {
+      return -1;
+    }
+    predicate = baseCallback(predicate, thisArg, 3);
+    return baseFindIndex(array, predicate, fromRight);
+  };
+}
 
 /**
  * This method is like `_.findIndex` except that it iterates over elements
@@ -56,15 +74,6 @@ var baseCallback = require('lodash._basecallback');
  * _.findLastIndex(users, 'active');
  * // => 0
  */
-function findLastIndex(array, predicate, thisArg) {
-  var length = array ? array.length : 0;
-  predicate = baseCallback(predicate, thisArg, 3);
-  while (length--) {
-    if (predicate(array[length], length, array)) {
-      return length;
-    }
-  }
-  return -1;
-}
+var findLastIndex = createFindIndex(true);
 
 module.exports = findLastIndex;

@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -12,9 +12,11 @@ var arrayCopy = require('lodash._arraycopy'),
     createAssigner = require('lodash._createassigner'),
     isArguments = require('lodash.isarguments'),
     isArray = require('lodash.isarray'),
+    isNative = require('lodash.isnative'),
     isPlainObject = require('lodash.isplainobject'),
     isTypedArray = require('lodash.istypedarray'),
     keys = require('lodash.keys'),
+    keysIn = require('lodash.keysin'),
     toPlainObject = require('lodash.toplainobject');
 
 /**
@@ -25,13 +27,12 @@ var arrayCopy = require('lodash._arraycopy'),
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  */
 function isObjectLike(value) {
-  return (value && typeof value == 'object') || false;
+  return !!value && typeof value == 'object';
 }
 
 /**
- * Used as the maximum length of an array-like value.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
- * for more details.
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
@@ -120,7 +121,7 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
     if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
       result = isArray(value)
         ? value
-        : (value ? arrayCopy(value) : []);
+        : ((value && value.length) ? arrayCopy(value) : []);
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
       result = isArguments(value)
@@ -147,9 +148,7 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on ES `ToLength`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
- * for more details.
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -160,10 +159,8 @@ function isLength(value) {
 }
 
 /**
- * Checks if `value` is the language type of `Object`.
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * **Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
  *
  * @static
  * @memberOf _
@@ -185,7 +182,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (value && type == 'object') || false;
+  return type == 'function' || (!!value && type == 'object');
 }
 
 /**
@@ -195,7 +192,7 @@ function isObject(value) {
  * provided it is invoked to produce the merged values of the destination and
  * source properties. If `customizer` returns `undefined` merging is handled
  * by the method instead. The `customizer` is bound to `thisArg` and invoked
- * with five arguments; (objectValue, sourceValue, key, object, source).
+ * with five arguments: (objectValue, sourceValue, key, object, source).
  *
  * @static
  * @memberOf _

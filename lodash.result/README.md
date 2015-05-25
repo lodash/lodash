@@ -1,4 +1,4 @@
-# lodash.result v3.0.0
+# lodash.result v3.1.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.result` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var result = require('lodash.result');
 ```
 
-See the [documentation](https://lodash.com/docs#result) or [package source](https://github.com/lodash/lodash/blob/3.0.0-npm-packages/lodash.result) for more details.
+See the [documentation](https://lodash.com/docs#result) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.result) for more details.

@@ -1,13 +1,14 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseIndexOf = require('lodash._baseindexof'),
     baseValues = require('lodash._basevalues'),
+    isIterateeCall = require('lodash._isiterateecall'),
     isArray = require('lodash.isarray'),
     isString = require('lodash.isstring'),
     keys = require('lodash.keys');
@@ -16,18 +17,15 @@ var baseIndexOf = require('lodash._baseindexof'),
 var nativeMax = Math.max;
 
 /**
- * Used as the maximum length of an array-like value.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
- * for more details.
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on ES `ToLength`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
- * for more details.
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -42,10 +40,9 @@ function isLength(value) {
  * comparisons. If `fromIndex` is negative, it is used as the offset from
  * the end of `collection`.
  *
- * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
- * e.g. `===`, except that `NaN` matches `NaN`. See the
- * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
- * for more details.
+ * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * comparisons are like strict equality comparisons, e.g. `===`, except that
+ * `NaN` matches `NaN`.
  *
  * @static
  * @memberOf _
@@ -54,6 +51,7 @@ function isLength(value) {
  * @param {Array|Object|string} collection The collection to search.
  * @param {*} target The value to search for.
  * @param {number} [fromIndex=0] The index to search from.
+ * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
  * @returns {boolean} Returns `true` if a matching element is found, else `false`.
  * @example
  *
@@ -69,7 +67,7 @@ function isLength(value) {
  * _.includes('pebbles', 'eb');
  * // => true
  */
-function includes(collection, target, fromIndex) {
+function includes(collection, target, fromIndex, guard) {
   var length = collection ? collection.length : 0;
   if (!isLength(length)) {
     collection = values(collection);
@@ -78,10 +76,10 @@ function includes(collection, target, fromIndex) {
   if (!length) {
     return false;
   }
-  if (typeof fromIndex == 'number') {
-    fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
-  } else {
+  if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
     fromIndex = 0;
+  } else {
+    fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
   }
   return (typeof collection == 'string' || !isArray(collection) && isString(collection))
     ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)

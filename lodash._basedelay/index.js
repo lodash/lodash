@@ -1,12 +1,11 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseSlice = require('lodash._baseslice');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -18,14 +17,14 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @private
  * @param {Function} func The function to delay.
  * @param {number} wait The number of milliseconds to delay invocation.
- * @param {Object} args The `arguments` object to slice and provide to `func`.
+ * @param {Object} args The arguments provide to `func`.
  * @returns {number} Returns the timer id.
  */
-function baseDelay(func, wait, args, fromIndex) {
+function baseDelay(func, wait, args) {
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);
+  return setTimeout(function() { func.apply(undefined, args); }, wait);
 }
 
 module.exports = baseDelay;

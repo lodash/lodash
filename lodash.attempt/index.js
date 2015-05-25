@@ -1,16 +1,17 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var isError = require('lodash.iserror');
+var baseSlice = require('lodash._baseslice'),
+    isError = require('lodash.iserror');
 
 /**
- * Attempts to invoke `func`, returning either the result or the caught
- * error object.
+ * Attempts to invoke `func`, returning either the result or the caught error
+ * object. Any additional arguments are provided to `func` when it is invoked.
  *
  * @static
  * @memberOf _
@@ -20,9 +21,9 @@ var isError = require('lodash.iserror');
  * @example
  *
  * // avoid throwing errors for invalid selectors
- * var elements = _.attempt(function() {
+ * var elements = _.attempt(function(selector) {
  *   return document.querySelectorAll(selector);
- * });
+ * }, '>_>');
  *
  * if (_.isError(elements)) {
  *   elements = [];
@@ -30,9 +31,9 @@ var isError = require('lodash.iserror');
  */
 function attempt(func) {
   try {
-    return func();
+    return func.apply(undefined, baseSlice(arguments, 1));
   } catch(e) {
-    return isError(e) ? e : Error(e);
+    return isError(e) ? e : new Error(e);
   }
 }
 

@@ -829,15 +829,16 @@
       }
     });
 
-    test('should return `false` for non-indexes', 4, function() {
+    test('should return `false` for non-indexes', 5, function() {
       if (func) {
+        strictEqual(func('1abc'), false);
         strictEqual(func(-1), false);
         strictEqual(func(3, 3), false);
         strictEqual(func(1.1), false);
         strictEqual(func(MAX_SAFE_INTEGER), false);
       }
       else {
-        skipTest(4);
+        skipTest(5);
       }
     });
   }());
@@ -14189,6 +14190,13 @@
       });
 
       delete numberProto.a;
+    });
+
+    test('should not create an array for missing non-index property names that start with numbers', 1, function() {
+      var object = {};
+
+      _.set(object, ['1a', '2b', '3c'], 1);
+      deepEqual(object, { '1a': { '2b': { '3c': 1 } } });
     });
   }());
 

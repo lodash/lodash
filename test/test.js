@@ -829,8 +829,9 @@
       }
     });
 
-    test('should return `false` for non-indexes', 4, function() {
+    test('should return `false` for non-indexes', 5, function() {
       if (func) {
+        strictEqual(func('1string'), false);
         strictEqual(func(-1), false);
         strictEqual(func(3, 3), false);
         strictEqual(func(1.1), false);
@@ -14189,6 +14190,13 @@
       });
 
       delete numberProto.a;
+    });
+
+    test('should allow string indices that start with numbers', 1, function() {
+      var object = {};
+
+      _.set(object, ['a', '1string'], 'myvalue');
+      deepEqual(object, {a: { "1string" : "myvalue" }});
     });
   }());
 

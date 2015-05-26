@@ -1000,15 +1000,6 @@
       for (var key in new Ctor) { props.push(key); }
 
       /**
-       * Detect if the `toStringTag` of `arguments` objects is resolvable
-       * (all but Firefox < 4, IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.argsTag = objToString.call(arguments) == argsTag;
-
-      /**
        * Detect if `name` or `message` properties of `Error.prototype` are
        * enumerable by default (IE < 9, Safari < 5.1).
        *
@@ -4493,10 +4484,8 @@
           support = lodash.support;
 
       // Exit early for non `Object` objects.
-      if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value)) ||
-          (!hasOwnProperty.call(value, 'constructor') &&
-            (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor))) ||
-          (!support.argsTag && isArguments(value))) {
+      if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value) && !isArguments(value)) ||
+          (!hasOwnProperty.call(value, 'constructor') &&  (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
         return false;
       }
       // IE < 9 iterates inherited properties before own properties. If the first
@@ -8574,14 +8563,8 @@
      * // => false
      */
     function isArguments(value) {
-      return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
-    }
-    // Fallback for environments without a `toStringTag` for `arguments` objects.
-    if (!support.argsTag) {
-      isArguments = function(value) {
-        return isObjectLike(value) && isArrayLike(value) &&
-          hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
-      };
+      return isObjectLike(value) && isArrayLike(value) &&
+        hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
     }
 
     /**
@@ -9039,7 +9022,7 @@
      * // => true
      */
     var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
-      if (!(value && objToString.call(value) == objectTag) || (!lodash.support.argsTag && isArguments(value))) {
+      if (!(value && objToString.call(value) == objectTag && !isArguments(value))) {
         return false;
       }
       var valueOf = getNative(value, 'valueOf'),

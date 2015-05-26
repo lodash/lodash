@@ -153,9 +153,9 @@
   var contextProps = [
     'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
-    'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document',
-    'isFinite', 'parseFloat', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
-    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', 'window'
+    'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'isFinite',
+    'parseFloat', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
+    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap'
   ];
 
   /** Used to fix the JScript `[[DontEnum]]` bug. */
@@ -732,9 +732,6 @@
         objectProto = Object.prototype,
         stringProto = String.prototype;
 
-    /** Used to detect DOM support. */
-    var document = (document = context.window) ? document.document : null;
-
     /** Used to resolve the decompiled source of functions. */
     var fnToString = Function.prototype.toString;
 
@@ -1006,14 +1003,6 @@
       support.enumPrototypes = propertyIsEnumerable.call(Ctor, 'prototype');
 
       /**
-       * Detect if the `toStringTag` of DOM nodes is resolvable (all but IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nodeTag = objToString.call(document) != objectTag;
-
-      /**
        * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
        *
        * In IE < 9 an object's own properties, shadowing non-enumerable ones,
@@ -1058,17 +1047,6 @@
        */
       support.unindexedChars = ('x'[0] + Object('x')[0]) != 'xx';
 
-      /**
-       * Detect if the DOM is supported.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      try {
-        support.dom = document.createDocumentFragment().nodeType === 11;
-      } catch(e) {
-        support.dom = false;
-      }
     }(1, 0));
 
     /**
@@ -8574,14 +8552,7 @@
      * // => false
      */
     function isElement(value) {
-      return !!value && value.nodeType === 1 && isObjectLike(value) &&
-        (lodash.support.nodeTag ? (objToString.call(value).indexOf('Element') > -1) : isHostObject(value));
-    }
-    // Fallback for environments without DOM support.
-    if (!support.dom) {
-      isElement = function(value) {
-        return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
-      };
+      return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
     }
 
     /**

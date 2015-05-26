@@ -761,7 +761,6 @@
 
     /** Native method references. */
     var ArrayBuffer = getNative(context, 'ArrayBuffer'),
-        bufferSlice = getNative(ArrayBuffer && new ArrayBuffer(0), 'slice'),
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
@@ -3030,28 +3029,22 @@
      * @param {ArrayBuffer} buffer The array buffer to clone.
      * @returns {ArrayBuffer} Returns the cloned array buffer.
      */
-    function bufferClone(buffer) {
-      return bufferSlice.call(buffer, 0);
-    }
-    if (!bufferSlice) {
-      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`.
-      bufferClone = !(ArrayBuffer && Uint8Array) ? constant(null) : function(buffer) {
-        var byteLength = buffer.byteLength,
-            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
-            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
-            result = new ArrayBuffer(byteLength);
+    var bufferClone = !(ArrayBuffer && Uint8Array) ? constant(null) : function(buffer) {
+      var byteLength = buffer.byteLength,
+          floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
+          offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
+          result = new ArrayBuffer(byteLength);
 
-        if (floatLength) {
-          var view = new Float64Array(result, 0, floatLength);
-          view.set(new Float64Array(buffer, 0, floatLength));
-        }
-        if (byteLength != offset) {
-          view = new Uint8Array(result, offset);
-          view.set(new Uint8Array(buffer, offset));
-        }
-        return result;
-      };
-    }
+      if (floatLength) {
+        var view = new Float64Array(result, 0, floatLength);
+        view.set(new Float64Array(buffer, 0, floatLength));
+      }
+      if (byteLength != offset) {
+        view = new Uint8Array(result, offset);
+        view.set(new Uint8Array(buffer, offset));
+      }
+      return result;
+    };
 
     /**
      * Creates an array that is the composition of partially applied arguments,

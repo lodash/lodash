@@ -7240,7 +7240,7 @@
       this.nodeType = 1;
     }
 
-    test('should use robust check', 7, function() {
+    test('should return `false` for plain objects', 7, function() {
       var element = body || new Element;
 
       strictEqual(_.isElement(element), true);
@@ -7250,20 +7250,6 @@
       strictEqual(_.isElement({ 'nodeType': [1] }), false);
       strictEqual(_.isElement({ 'nodeType': '1' }), false);
       strictEqual(_.isElement({ 'nodeType': '001' }), false);
-    });
-
-    test('should use a stronger check in browsers', 2, function() {
-      var expected = !_.support.dom;
-
-      strictEqual(_.isElement(new Element), expected);
-
-      if (lodashBizarro) {
-        expected = !lodashBizarro.support.dom;
-        strictEqual(lodashBizarro.isElement(new Element), expected);
-      }
-      else {
-        skipTest();
-      }
     });
 
     test('should return `false` for non DOM elements', 13, function() {

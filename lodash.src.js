@@ -1032,7 +1032,6 @@
        * @type boolean
        */
       support.unindexedChars = ('x'[0] + Object('x')[0]) != 'xx';
-
     }(1, 0));
 
     /**

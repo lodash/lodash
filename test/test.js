@@ -419,12 +419,6 @@
     var _isArray = Array.isArray;
     setProperty(Array, 'isArray', _.noop);
 
-    var _now = Date.now;
-    setProperty(Date, 'now', _.noop);
-
-    var _getPrototypeOf = Object.getPrototypeOf;
-    setProperty(Object, 'getPrototypeOf', _.noop);
-
     var _keys = Object.keys;
     setProperty(Object, 'keys', _.noop);
 
@@ -436,72 +430,11 @@
       return _propertyIsEnumerable.call(this, key);
     });
 
-    var _isFinite = Number.isFinite;
-    setProperty(Number, 'isFinite', _.noop);
-
-    var _ArrayBuffer = ArrayBuffer;
-    setProperty(root, 'ArrayBuffer', (function() {
-      function ArrayBuffer(byteLength) {
-        var buffer = new _ArrayBuffer(byteLength);
-        if (!byteLength) {
-          setProperty(buffer, 'slice', buffer.slice ? null : bufferSlice);
-        }
-        return buffer;
-      }
-      function bufferSlice() {
-        var newBuffer = new _ArrayBuffer(this.byteLength),
-            view = new Uint8Array(newBuffer);
-
-        view.set(new Uint8Array(this));
-        return newBuffer;
-      }
-      setProperty(ArrayBuffer, 'toString', createToString('ArrayBuffer'));
-      setProperty(bufferSlice, 'toString', createToString('slice'));
-      return ArrayBuffer;
-    }()));
-
-    var _Float64Array = root.Float64Array;
-    if (!_Float64Array) {
-      setProperty(root, 'Float64Array', (function() {
-        function Float64Array(buffer, byteOffset, length) {
-          return arguments.length == 1
-            ? new Uint8Array(buffer)
-            : new Uint8Array(buffer, byteOffset || 0, length || buffer.byteLength);
-        }
-        setProperty(Float64Array, 'BYTES_PER_ELEMENT', 8);
-        setProperty(Float64Array, 'toString', createToString('Float64Array'));
-        return Float64Array;
-      }()));
-    }
-    var _parseInt = parseInt;
-    setProperty(root, 'parseInt', (function() {
-      var checkStr = whitespace + '08',
-          isFaked = _parseInt(checkStr) != 8,
-          reHexPrefix = /^0[xX]/,
-          reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
-
-      return function(value, radix) {
-        if (value == checkStr && !isFaked) {
-          isFaked = true;
-          return 0;
-        }
-        value = String(value == null ? '' : value).replace(reTrim, '');
-        return _parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
-      };
-    }()));
-
     var _Set = root.Set;
     setProperty(root, 'Set', _.noop);
 
     var _WeakMap = root.WeakMap;
     setProperty(root, 'WeakMap', _.noop);
-
-    // Fake the DOM.
-    setProperty(root, 'window', {});
-    setProperty(root.window, 'document', {});
-    setProperty(root.window.document, 'createDocumentFragment', function() {
-      return { 'nodeType': 11 };
-    });
 
     // Fake `WinRTError`.
     setProperty(root, 'WinRTError', Error);
@@ -514,26 +447,10 @@
 
     // Restore built-in methods.
     setProperty(Array,  'isArray', _isArray);
-    setProperty(Date,   'now', _now);
-    setProperty(Object, 'getPrototypeOf', _getPrototypeOf);
     setProperty(Object, 'keys', _keys);
 
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
-    setProperty(root, 'parseInt', _parseInt);
 
-    if (_isFinite) {
-      setProperty(Number, 'isFinite', _isFinite);
-    } else {
-      delete Number.isFinite;
-    }
-    if (_ArrayBuffer) {
-      setProperty(root, 'ArrayBuffer', _ArrayBuffer);
-    } else {
-      delete root.ArrayBuffer;
-    }
-    if (!_Float64Array) {
-      delete root.Float64Array;
-    }
     if (_Set) {
       setProperty(root, 'Set', Set);
     } else {
@@ -545,7 +462,6 @@
       delete root.WeakMap;
     }
     delete root.WinRTError;
-    delete root.window;
     delete funcProto._method;
   }());
 
@@ -710,7 +626,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 12, function() {
+    test('should avoid overwritten native methods', 6, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -730,32 +646,11 @@
         deepEqual(actual, [true, false], message('_.isArray', 'Array.isArray'));
 
         try {
-          actual = lodashBizarro.now();
-        } catch(e) {
-          actual = null;
-        }
-        ok(typeof actual == 'number', message('_.now', 'Date.now'));
-
-        try {
-          actual = [lodashBizarro.isPlainObject({}), lodashBizarro.isPlainObject([])];
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, [true, false], message('_.isPlainObject', 'Object.getPrototypeOf'));
-
-        try {
           actual = [lodashBizarro.keys(object), lodashBizarro.keys()];
         } catch(e) {
           actual = null;
         }
         deepEqual(actual, [['a'], []], message('_.keys', 'Object.keys'));
-
-        try {
-          actual = [lodashBizarro.isFinite(1), lodashBizarro.isFinite(NaN)];
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, [true, false], message('_.isFinite', 'Number.isFinite'));
 
         try {
           actual = [
@@ -768,27 +663,7 @@
         }
         deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
 
-        try {
-          actual = _.map(['6', '08', '10'], lodashBizarro.parseInt);
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, [6, 8, 10], '`_.parseInt` should work in its bizarro form');
-
         // Avoid comparing buffers with `deepEqual` in Rhino because it errors.
-        if (ArrayBuffer && !isRhino) {
-          try {
-            var buffer = new ArrayBuffer(10);
-            actual = lodashBizarro.clone(buffer);
-          } catch(e) {
-            actual = null;
-          }
-          deepEqual(actual, buffer, message('_.clone', 'ArrayBuffer#slice'));
-          notStrictEqual(actual, buffer, message('_.clone', 'ArrayBuffer#slice'));
-        }
-        else {
-          skipTest(2);
-        }
         if (ArrayBuffer && Uint8Array) {
           try {
             var array = new Uint8Array(new ArrayBuffer(10));
@@ -805,7 +680,7 @@
         }
       }
       else {
-        skipTest(12);
+        skipTest(6);
       }
     });
   }());
@@ -15048,19 +14923,9 @@
 
     test('should not contain minified properties (test production builds)', 1, function() {
       var props = [
-        'argsTag',
-        'argsObject',
-        'dom',
         'enumErrorProps',
         'enumPrototypes',
-        'fastBind',
-        'funcDecomp',
-        'funcNames',
-        'hostObject',
-        'nodeTag',
-        'nonEnumArgs',
         'nonEnumShadows',
-        'nonEnumStrings',
         'ownLast',
         'spliceObjects',
         'unindexedChars'
@@ -17818,7 +17683,7 @@
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 29, function() {
+    test('should work with `arguments` objects', 27, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
@@ -17852,17 +17717,6 @@
       deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
       deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));
-
-      if (_.support.argsTag && _.support.argsObject && !_.support.nonEnumArgs) {
-        _.pull(args, null);
-        deepEqual([args[0], args[1], args[2]], [1, [3], 5], message('pull'));
-
-        _.remove(args, function(value) { return typeof value == 'number'; });
-        ok(args.length === 1 && _.isEqual(args[0], [3]), message('remove'));
-      }
-      else {
-        skipTest(2);
-      }
     });
 
     test('should accept falsey primary arguments', 4, function() {

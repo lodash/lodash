@@ -56,10 +56,8 @@
 				    fnToString = funcProto.toString,
 				    nativeString = fnToString.call(objectProto.toString),
 				    noop = function() {},
-				    parseInt = window.parseInt,
 				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
-				    reToString = /toString/g,
-				    whitespace = ' \t\x0B\f\xA0\ufeff\n\r\u2028\u2029\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+				    reToString = /toString/g;
 
 				function constant(value) {
 					return function() {
@@ -87,12 +85,6 @@
 				setProperty(Array, '_isArray', Array.isArray);
 				setProperty(Array, 'isArray', noop);
 
-				setProperty(Date, '_now', Date.now);
-				setProperty(Date, 'now', noop);
-
-				setProperty(Object, '_getPrototypeOf', Object.getPrototypeOf);
-				setProperty(Object, 'getPrototypeOf', noop);
-
 				setProperty(Object, '_keys', Object.keys);
 				setProperty(Object, 'keys', noop);
 
@@ -107,69 +99,11 @@
 					return propertyIsEnumerable.call(this, key);
 				});
 
-				setProperty(Number, '_isFinite', Number.isFinite);
-				setProperty(Number, 'isFinite', noop);
-
-				setProperty(window, '_ArrayBuffer', window.ArrayBuffer);
-				if (window.ArrayBuffer && window.Uint8Array) {
-					ArrayBuffer = (function(_ArrayBuffer) {
-						function ArrayBuffer(byteLength) {
-							var buffer = new _ArrayBuffer(byteLength);
-							if (!byteLength) {
-								setProperty(buffer, 'slice', buffer.slice ? null : bufferSlice);
-							}
-							return buffer;
-						}
-						function bufferSlice() {
-							var newBuffer = new _ArrayBuffer(this.byteLength),
-							    view = new Uint8Array(newBuffer);
-
-							view.set(new Uint8Array(this));
-							return newBuffer;
-						}
-						setProperty(ArrayBuffer, 'toString', createToString('ArrayBuffer'));
-						setProperty(bufferSlice, 'toString', createToString('slice'));
-						return ArrayBuffer;
-					}(_ArrayBuffer));
-				}
-				if (!window.Float64Array && window.Uint8Array) {
-					Float64Array = (function() {
-						function Float64Array(buffer, byteOffset, length) {
-							return arguments.length == 1
-								? new Uint8Array(buffer)
-								: new Uint8Array(buffer, byteOffset || 0, length || buffer.byteLength);
-						}
-						setProperty(Float64Array, 'BYTES_PER_ELEMENT', 8);
-						setProperty(Float64Array, 'toString', createToString('Float64Array'));
-						return Float64Array;
-					}());
-				}
 				setProperty(window, '_Set', window.Set);
 				setProperty(window, 'Set', noop);
 
 				setProperty(window, '_WeakMap', window.WeakMap);
 				setProperty(window, 'WeakMap', noop);
-
-				setProperty(window, '_parseInt', parseInt);
-				setProperty(window, 'parseInt', (function() {
-					var checkStr = whitespace + '08',
-					    isFaked = parseInt(checkStr) != 8,
-					    reHexPrefix = /^0[xX]/,
-					    reTrim = RegExp('^[' + whitespace + ']+|[' + whitespace + ']+$');
-
-					return function(value, radix) {
-						if (value == checkStr && !isFaked) {
-							isFaked = true;
-							return 0;
-						}
-						value = String(value == null ? '' : value).replace(reTrim, '');
-						return parseInt(value, +radix || (reHexPrefix.test(value) ? 16 : 10));
-					};
-				}()));
-
-				// Fake lack of DOM support.
-				setProperty(document, '_createDocumentFragment', document.createDocumentFragment);
-				document.createDocumentFragment = noop;
 
 				// Fake `WinRTError`.
 				setProperty(window, 'WinRTError', Error);
@@ -190,31 +124,11 @@
 				} else {
 					delete Array.isArray;
 				}
-				if (Date._now) {
-					setProperty(Date, 'now', Date._now);
-				} else {
-					delete Date.now;
-				}
-				if (Object._getPrototypeOf) {
-					setProperty(Object, 'getPrototypeOf', Object._getPrototypeOf);
-				} else {
-					delete Object.getPrototypeOf;
-				}
 				if (Object._keys) {
 					setProperty(Object, 'keys', Object._keys);
 				} else {
 					delete Object.keys;
 				}
-				if (Number._isFinite) {
-					setProperty(Number, 'isFinite', Number._isFinite);
-				} else {
-					delete Number.isFinite;
-				}
-				if (window._ArrayBuffer) {
-					ArrayBuffer = _ArrayBuffer;
-				}
-				setProperty(window, '_ArrayBuffer', undefined);
-
 				if (window._Set) {
 					Set = _Set;
 				}
@@ -225,12 +139,6 @@
 				}
 				setProperty(window, '_WeakMap', undefined);
 
-				setProperty(window, 'parseInt', window._parseInt);
-				setProperty(window, '_parseInt', undefined);
-
-				document.createDocumentFragment = document._createDocumentFragment;
-				setProperty(document, '_createDocumentFragment', undefined);
-
 				setProperty(window, 'WinRTError', undefined);
 
 				setProperty(window, 'exports', undefined);
@@ -240,8 +148,6 @@
 				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
 				delete Array._isArray;
-				delete Date._now;
-				delete Object._getPrototypeOf;
 				delete Object._keys;
 				delete funcProto._method;
 				delete objectProto._propertyIsEnumerable;

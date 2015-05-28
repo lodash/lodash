@@ -8934,7 +8934,7 @@
         result = key;
       });
       return result === undefined || hasOwnProperty.call(value, result);
-    };
+    }
 
     /**
      * Checks if `value` is classified as a `RegExp` object.

@@ -7387,6 +7387,73 @@
       };
     }
 
+
+    /**
+     * Creates a function that runs each argument through a transform function.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to wrap.
+     * @param {...Function} [transforms] The function to transform the corresponding argument.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var square = function(x) {
+     *   return x * x;
+     * };
+     *
+     * var double = function(x) {
+     *   return x * 2;
+     * };
+     *
+     * var fn = _.modArgs(function(x, y) {
+     *   return [x , y];
+     * }, square, double);
+     *
+     * fn(1, 2); // => [1, 4]
+     * fn(5, 10); // => [25, 20]
+     *
+     * // Ensure proper argument types
+     *
+     * var defaultNumber = function(defaultValue, num) {
+     *   return _.isUndefined(num) ? defaultValue : num;
+     * };
+     *
+     * var alwaysArray = function(list) {
+     *   var result = list;
+     *
+     *   if (_.isUndefined(list)) {
+     *     result = [];
+     *   } else if (!_.isArray(list)) {
+     *     result = [list];
+     *   }
+     *
+     *   return result;
+     * };
+     *
+     * var fn = _.modArgs(function(x, y) {
+     *   console.log(x, y);
+     * }, alwaysArray, _.partial(defaultNumber, 0));
+     *
+     * fn(); // => [], 0
+     * fn('hello'); // => ['hello'], 0
+     * fn([true], 15); // => [true], 15
+     */
+    var modArgs = restParam(function(callback, transforms) {
+      var length = transforms.length;
+
+      return function() {
+        var index = -1;
+
+        while (++index < length) {
+          arguments[index] = transforms[index].call(this, arguments[index]);
+        }
+
+        return callback.apply(this, arguments);
+      }
+    });
+
     /**
      * Creates a function that accepts up to `n` arguments ignoring any
      * additional arguments.
@@ -11846,6 +11913,7 @@
     // Add functions that return wrapped values when chaining.
     lodash.after = after;
     lodash.ary = ary;
+    lodash.modArgs = modArgs;
     lodash.assign = assign;
     lodash.at = at;
     lodash.before = before;

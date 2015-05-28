@@ -959,6 +959,52 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.modArgs');
+
+  (function() {
+    function double(x) {
+      return x * 2;
+    }
+
+    function square(x) {
+      return x * x;
+    }
+
+    function fn() {
+      return Array.prototype.slice.call(arguments, 0);
+    }
+
+    test('should transform each argument', 1, function() {
+      var wrapped = _.modArgs(fn, double, square);
+      var actual = wrapped(5, 10);
+
+      deepEqual(actual, [10, 100]);
+    });
+
+    test('should not transform any argument greater than the number of transforms', 1, function() {
+      var wrapped = _.modArgs(fn, double, square);
+      var actual = wrapped(5, 10, 18);
+
+      deepEqual(actual, [10, 100, 18]);
+    });
+
+    test('should not transform any arguments if no transforms are provided', 1, function() {
+      var wrapped = _.modArgs(fn);
+      var actual = wrapped(5, 10, 18);
+
+      deepEqual(actual, [5, 10, 18]);
+    });
+
+    test('should not pass undefined if transforms > arguments', 1, function() {
+      var wrapped = _.modArgs(fn, double, _.identity);
+      var actual = wrapped(5);
+
+      deepEqual(actual, [10]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.ary');
 
   (function() {
@@ -17877,7 +17923,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 225, function() {
+    test('should accept falsey arguments', 226, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

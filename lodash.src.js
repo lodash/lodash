@@ -4527,7 +4527,7 @@
       if (guard ? isIterateeCall(array, size, guard) : size == null) {
         size = 1;
       } else {
-        size = nativeMax(+size || 1, 1);
+        size = nativeMax(floor(size) || 1, 1);
       }
       var index = 0,
           length = array ? array.length : 0,

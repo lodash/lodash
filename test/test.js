@@ -1846,6 +1846,10 @@
       deepEqual(actual, expected);
     });
 
+    test('should floor `size` values', 1, function() {
+      deepEqual(_.chunk(array, array.length / 4), [[0], [1], [2], [3], [4], [5]]);
+    });
+
     test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([[1, 2], [3, 4]], _.chunk);
       deepEqual(actual, [[[1], [2]], [[3], [4]]]);

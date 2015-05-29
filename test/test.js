@@ -2204,15 +2204,18 @@
 
     test('`_.' + methodName + '` should support shortcut fusion', 6, function() {
       var filterCount,
-          mapCount;
+          mapCount,
+          filter = _.filter,
+          map = _.map,
+          take = _.take;
 
-      var filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2),
-          map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2),
-          take = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2);
+      _.filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2);
+      _.map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2);
+      _.take = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2);
 
-      var filter2 = filter(function(value) { filterCount++; return value % 2 == 0; }),
-          map2 = map(function(value) { mapCount++; return value * value; }),
-          take2 = take(2);
+      var filter2 = _.filter(function(value) { filterCount++; return value % 2 == 0; }),
+          map2 = _.map(function(value) { mapCount++; return value * value; }),
+          take2 = _.take(2);
 
       _.times(2, function(index) {
         var fn = index ? _['_' + methodName] : func;
@@ -2235,6 +2238,10 @@
           skipTest(2);
         }
       });
+
+      _.filter = filter;
+      _.map = map;
+      _.take = take;
     });
 
     test('`_.' + methodName + '` should work with curried functions with placeholders', 1, function() {

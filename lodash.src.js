@@ -2031,13 +2031,15 @@
      * @param {Array} array The array to flatten.
      * @param {boolean} [isDeep] Specify a deep flatten.
      * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+     * @param {Array} [result=[]] The initial result value.
      * @returns {Array} Returns the new flattened array.
      */
-    function baseFlatten(array, isDeep, isStrict) {
+    function baseFlatten(array, isDeep, isStrict, result) {
+      result || (result = []);
+
       var index = -1,
           length = array.length,
-          resIndex = -1,
-          result = [];
+          resIndex = result.length - 1;
 
       while (++index < length) {
         var value = array[index];
@@ -2045,13 +2047,14 @@
             (isStrict || isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
-            value = baseFlatten(value, isDeep, isStrict);
-          }
-          var valIndex = -1,
-              valLength = value.length;
+            baseFlatten(value, isDeep, isStrict, result);
+          } else {
+            var valIndex = -1,
+                valLength = value.length;
 
-          while (++valIndex < valLength) {
-            result[++resIndex] = value[valIndex];
+            while (++valIndex < valLength) {
+              result[++resIndex] = value[valIndex];
+            }
           }
         } else if (!isStrict) {
           result[++resIndex] = value;

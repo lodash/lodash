@@ -2048,6 +2048,7 @@
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
             baseFlatten(value, isDeep, isStrict, result);
+            resIndex = result.length - 1;
           } else {
             var valIndex = -1,
                 valLength = value.length;

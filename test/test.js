@@ -5215,12 +5215,12 @@
     });
 
     test('should support flattening of nested arrays', 3, function() {
-      var array = [1, [2], [3, [4]]],
-          expected = [1, 2, 3, [4]];
+      var array = [1, [2, 3], 4, [[5]]],
+          expected = [1, 2, 3, 4, [5]];
 
       deepEqual(_.flatten(array), expected);
 
-      expected = [1, 2, 3, 4];
+      expected = [1, 2, 3, 4, 5];
       deepEqual(_.flatten(array, true), expected);
       deepEqual(_.flattenDeep(array), expected);
     });

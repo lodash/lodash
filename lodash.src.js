@@ -7404,19 +7404,34 @@
      * @category Function
      * @param {Function} func The function to cap arguments for.
      * @param {number} [n=func.length] The arity cap.
+     * @param {boolean} [exact] Create a function with matching arity.
      * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
      * @returns {Function} Returns the new function.
      * @example
      *
      * _.map(['6', '8', '10'], _.ary(parseInt, 1));
      * // => [6, 8, 10]
+     *
+     * _.ary(parseInt, 1, true).length;
+     * // => 1
      */
     function ary(func, n, guard) {
+      var exact = false;
       if (guard && isIterateeCall(func, n, guard)) {
         n = undefined;
       }
+      else {
+        exact = guard;
+      }
       n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
-      return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
+      var wrapper = createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
+      if (exact) {
+        var plist = [];
+        for (var i = 0; i < n; i++) { plist.push('p' + i); }
+        var params = plist.join(',');
+        wrapper = Function('fn', 'return function(' + params + ') { return fn.apply(this, arguments); }')(wrapper);
+      }
+      return wrapper;
     }
 
     /**

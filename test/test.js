@@ -419,6 +419,9 @@
     var _isArray = Array.isArray;
     setProperty(Array, 'isArray', _.noop);
 
+    var _now = Date.now;
+    setProperty(Date, 'now', _.noop);
+
     var _keys = Object.keys;
     setProperty(Object, 'keys', _.noop);
 
@@ -447,6 +450,7 @@
 
     // Restore built-in methods.
     setProperty(Array,  'isArray', _isArray);
+    setProperty(Date,   'now', _now);
     setProperty(Object, 'keys', _keys);
 
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
@@ -626,7 +630,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 6, function() {
+    test('should avoid overwritten native methods', 7, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -644,6 +648,13 @@
           actual = null;
         }
         deepEqual(actual, [true, false], message('_.isArray', 'Array.isArray'));
+
+        try {
+          actual = lodashBizarro.now();
+        } catch(e) {
+          actual = null;
+        }
+        ok(typeof actual == 'number', message('_.now', 'Date.now'));
 
         try {
           actual = [lodashBizarro.keys(object), lodashBizarro.keys()];
@@ -680,7 +691,7 @@
         }
       }
       else {
-        skipTest(6);
+        skipTest(7);
       }
     });
   }());

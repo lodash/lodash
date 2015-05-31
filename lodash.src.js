@@ -751,6 +751,7 @@
         nativeKeys = getNative(Object, 'keys'),
         nativeMax = Math.max,
         nativeMin = Math.min,
+        nativeNow = getNative(Date, 'now'),
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
@@ -7280,9 +7281,9 @@
      * }, _.now());
      * // => logs the number of milliseconds it took for the deferred function to be invoked
      */
-    function now() {
+    var now = nativeNow || function() {
       return new Date().getTime();
-    }
+    };
 
     /*------------------------------------------------------------------------*/
 

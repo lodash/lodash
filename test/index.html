@@ -85,6 +85,9 @@
 				setProperty(Array, '_isArray', Array.isArray);
 				setProperty(Array, 'isArray', noop);
 
+				setProperty(Date, '_now', Date.now);
+				setProperty(Date, 'now', noop);
+
 				setProperty(Object, '_keys', Object.keys);
 				setProperty(Object, 'keys', noop);
 
@@ -124,6 +127,11 @@
 				} else {
 					delete Array.isArray;
 				}
+				if (Date._now) {
+					setProperty(Date, 'now', Date._now);
+				} else {
+					delete Date.now;
+				}
 				if (Object._keys) {
 					setProperty(Object, 'keys', Object._keys);
 				} else {
@@ -148,6 +156,7 @@
 				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
 				delete Array._isArray;
+				delete Date._now;
 				delete Object._keys;
 				delete funcProto._method;
 				delete objectProto._propertyIsEnumerable;

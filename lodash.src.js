@@ -736,7 +736,6 @@
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
         parseFloat = context.parseFloat,
-        push = arrayProto.push,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = getNative(context, 'Set'),
         setTimeout = context.setTimeout,
@@ -1336,6 +1335,30 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Creates a new array joining `array` with `values`.
+     *
+     * @private
+     * @param {Array} array The array to join with `values`.
+     * @param {Array} values The values to join with `array`.
+     * @returns {Array} Returns the new concatenated array.
+     */
+    function arrayConcat(array, values) {
+      var index = -1,
+          length = array.length,
+          valsIndex = -1,
+          valsLength = values.length,
+          result = Array(length + valsLength);
+
+      while (++index < length) {
+        result[index] = array[index];
+      }
+      while (++valsIndex < valsLength) {
+        result[index++] = values[valsIndex];
+      }
+      return result;
+    }
+
+    /**
      * Copies the values of `source` to `array`.
      *
      * @private
@@ -1488,6 +1511,25 @@
         result[index] = iteratee(array[index], index, array);
       }
       return result;
+    }
+
+    /**
+     * Appends the elements of `values` to `array`.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {Array} values The values to append.
+     * @returns {Array} Returns `array`.
+     */
+    function arrayPush(array, values) {
+      var index = -1,
+          length = values.length,
+          offset = array.length;
+
+      while (++index < length) {
+        array[offset + index] = values[index];
+      }
+      return array;
     }
 
     /**
@@ -2039,8 +2081,7 @@
       result || (result = []);
 
       var index = -1,
-          length = array.length,
-          resIndex = result.length - 1;
+          length = array.length;
 
       while (++index < length) {
         var value = array[index];
@@ -2049,17 +2090,11 @@
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
             baseFlatten(value, isDeep, isStrict, result);
-            resIndex = result.length - 1;
           } else {
-            var valIndex = -1,
-                valLength = value.length;
-
-            while (++valIndex < valLength) {
-              result[++resIndex] = value[valIndex];
-            }
+            arrayPush(result, value);
           }
         } else if (!isStrict) {
-          result[++resIndex] = value;
+          result[result.length] = value;
         }
       }
       return result;
@@ -2837,11 +2872,8 @@
           length = actions.length;
 
       while (++index < length) {
-        var args = [result],
-            action = actions[index];
-
-        push.apply(args, action.args);
-        result = action.func.apply(action.thisArg, args);
+        var action = actions[index];
+        result = action.func.apply(action.thisArg, arrayPush([result], action.args));
       }
       return result;
     }
@@ -2992,7 +3024,7 @@
           argsLength = nativeMax(args.length - holdersLength, 0),
           leftIndex = -1,
           leftLength = partials.length,
-          result = Array(argsLength + leftLength);
+          result = Array(leftLength + argsLength);
 
       while (++leftIndex < leftLength) {
         result[leftIndex] = partials[leftIndex];
@@ -3641,7 +3673,7 @@
             argsLength = arguments.length,
             leftIndex = -1,
             leftLength = partials.length,
-            args = Array(argsLength + leftLength);
+            args = Array(leftLength + argsLength);
 
         while (++leftIndex < leftLength) {
           args[leftIndex] = partials[leftIndex];
@@ -4577,7 +4609,7 @@
      * // => [1, 3]
      */
     var difference = restParam(function(array, values) {
-      return isArrayLike(array)
+      return (isObjectLike(array) && isArrayLike(array))
         ? baseDifference(array, baseFlatten(values, false, true))
         : [];
     });
@@ -5792,7 +5824,7 @@
         var array = arguments[index];
         if (isArrayLike(array)) {
           var result = result
-            ? baseDifference(result, array).concat(baseDifference(array, result))
+            ? arrayPush(baseDifference(result, array), baseDifference(array, result))
             : array;
         }
       }
@@ -6032,6 +6064,33 @@
     function wrapperCommit() {
       return new LodashWrapper(this.value(), this.__chain__);
     }
+
+    /**
+     * Creates a new array joining a wrapped array with any additional arrays
+     * and/or values.
+     *
+     * @name concat
+     * @memberOf _
+     * @category Chain
+     * @param {...*} [values] The arrays and/or values to concatenate.
+     * @returns {Array} Returns the new concatenated array.
+     * @example
+     *
+     * var array = [1, 2];
+     * var wrapper = _(array).concat([3, 4]);
+     *
+     * console.log(wrapper.value());
+     * // => [1, 2, 3, 4]
+     *
+     * console.log(array);
+     * // => [1, 2]
+     */
+    var wrapperConcat = restParam(function(values) {
+      values = baseFlatten(values);
+      return this.thru(function(array) {
+        return arrayConcat(isArray(array) ? array : [toObject(array)], values);
+      });
+    });
 
     /**
      * Creates a clone of the chained sequence planting `value` as the wrapped value.
@@ -11371,9 +11430,7 @@
                 result.__chain__ = chainAll;
                 return result;
               }
-              var args = [this.value()];
-              push.apply(args, arguments);
-              return func.apply(object, args);
+              return func.apply(object, arrayPush([this.value()], arguments));
             };
           }(func));
         }
@@ -12195,9 +12252,7 @@
             : lodashFunc.call(lodash, this.value());
         }
         var interceptor = function(value) {
-          var otherArgs = [value];
-          push.apply(otherArgs, args);
-          return lodashFunc.apply(lodash, otherArgs);
+          return lodashFunc.apply(lodash, arrayPush([value], args));
         };
         if (useLazy) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),
@@ -12214,7 +12269,7 @@
     });
 
     // Add `Array` and `String` methods to `lodash.prototype`.
-    arrayEach(['concat', 'join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+    arrayEach(['join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
       var protoFunc = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
           fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
@@ -12262,6 +12317,7 @@
     // Add chaining functions to the `lodash` wrapper.
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
+    lodash.prototype.concat = wrapperConcat;
     lodash.prototype.plant = wrapperPlant;
     lodash.prototype.reverse = wrapperReverse;
     lodash.prototype.toString = wrapperToString;

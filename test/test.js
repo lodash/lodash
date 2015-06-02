@@ -17158,9 +17158,9 @@
 
     test('should track the `__chain__` value of a wrapper', 2, function() {
       if (!isNpm) {
-        var wrapper = _([1]).chain().commit().first();
-        ok(wrapper instanceof _);
-        strictEqual(wrapper.value(), 1);
+        var wrapped = _([1]).chain().commit().first();
+        ok(wrapped instanceof _);
+        strictEqual(wrapped.value(), 1);
       }
       else {
         skipTest(2);
@@ -17395,9 +17395,9 @@
 
     test('should track the `__chain__` value of a wrapper', 2, function() {
       if (!isNpm) {
-        var wrapper = _([1, 2, 3]).chain().reverse().first();
-        ok(wrapper instanceof _);
-        strictEqual(wrapper.value(), 3);
+        var wrapped = _([1, 2, 3]).chain().reverse().first();
+        ok(wrapped instanceof _);
+        strictEqual(wrapped.value(), 3);
       }
       else {
         skipTest(2);

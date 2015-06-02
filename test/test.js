@@ -17173,6 +17173,19 @@
   QUnit.module('lodash(...).concat');
 
   (function() {
+    test('should concat arrays and values', 2, function() {
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _(array).concat(2, [3], [[4]]);
+
+        deepEqual(wrapped.value(), [1, 2, 3, [4]]);
+        deepEqual(array, [1]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
     test('should treat sparse arrays as dense', 3, function() {
       if (!isNpm) {
         var expected = [],

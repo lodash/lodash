@@ -6076,14 +6076,14 @@
      * @returns {Array} Returns the new concatenated array.
      * @example
      *
-     * var array = [1, 2];
-     * var wrapped = _(array).concat([3], 4);
+     * var array = [1];
+     * var wrapped = _(array).concat(2, [3], [[4]]);
      *
      * console.log(wrapped.value());
-     * // => [1, 2, 3, 4]
+     * // => [1, 2, 3, [4]]
      *
      * console.log(array);
-     * // => [1, 2]
+     * // => [1]
      */
     var wrapperConcat = restParam(function(values) {
       values = baseFlatten(values);

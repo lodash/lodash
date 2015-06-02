@@ -6758,6 +6758,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.interleave');
+
+  (function() {
+    test('should interleave two arrays.', 1, function() {
+      var interleaved = _.interleave([1, 2, 3], [4, 5, 6]);
+      deepEqual(interleaved, [1, 4, 2, 5, 3, 6]);
+    });
+
+    test('should interleave multiple arrays.', 1, function() {
+      var interleaved = _.interleave([1, 2], [3, 4], [5, 6], [7, 8]);
+      deepEqual(interleaved, [1, 3, 5, 7, 2, 4, 6, 8]);
+    });
+
+    test('should stop at the shortest array.', 2, function() {
+      var interleaved1 = _.interleave([1, 2], [3, 4, 5]),
+          interleaved2 = _.interleave([1, 2, 3], [4, 5]);
+
+      deepEqual(interleaved1, [1, 3, 2, 4]);
+      deepEqual(interleaved2, [1, 4, 2, 5]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.intersection');
 
   (function() {
@@ -17766,7 +17790,7 @@
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 27, function() {
+    test('should work with `arguments` objects', 28, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
@@ -17788,6 +17812,7 @@
       deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
       deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
       deepEqual(_.initial(args), [1, null, [3], null], message('initial'));
+      deepEqual(_.interleave(args), [1, null, [3], null, 5], message('interleave'));
       deepEqual(_.intersection(args, [1]), [1], message('intersection'));
       deepEqual(_.last(args), 5, message('last'));
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
@@ -17907,6 +17932,7 @@
       'flatten',
       'functions',
       'initial',
+      'interleave',
       'intersection',
       'invoke',
       'keys',
@@ -17938,7 +17964,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 226, function() {
+    test('should accept falsey arguments', 228, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -17980,7 +18006,7 @@
       });
     });
 
-    test('should return an array', 72, function() {
+    test('should return an array', 74, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

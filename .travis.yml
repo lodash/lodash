@@ -19,9 +19,9 @@ env:
     - BIN="ringo"
 matrix:
   include:
-    - node_js: "io.js"
+    - node_js: "iojs"
       env:
-    - node_js: "io.js"
+    - node_js: "iojs"
       env: BUILD="modern"
     - node_js: "0.8"
       env: NPM_VERSION="~1.4.0"

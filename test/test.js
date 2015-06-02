@@ -17173,6 +17173,23 @@
   QUnit.module('lodash(...).concat');
 
   (function() {
+    test('should treat sparse arrays as dense', 3, function() {
+      if (!isNpm) {
+        var expected = [],
+            wrapped = _(Array(1)).concat(Array(1)),
+            actual = wrapped.value();
+
+        expected.push(undefined, undefined);
+
+        ok('0'in actual);
+        ok('1' in actual);
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+
     test('should return a new wrapped array', 3, function() {
       if (!isNpm) {
         var array = [1],

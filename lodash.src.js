@@ -1335,25 +1335,25 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a new array joining `array` with `values`.
+     * Creates a new array joining `array` with `other`.
      *
      * @private
-     * @param {Array} array The array to join with `values`.
-     * @param {Array} values The values to join with `array`.
+     * @param {Array} array The array to join.
+     * @param {Array} other The other array to join.
      * @returns {Array} Returns the new concatenated array.
      */
-    function arrayConcat(array, values) {
+    function arrayConcat(array, other) {
       var index = -1,
           length = array.length,
-          valsIndex = -1,
-          valsLength = values.length,
-          result = Array(length + valsLength);
+          othIndex = -1,
+          othLength = other.length,
+          result = Array(length + othLength);
 
       while (++index < length) {
         result[index] = array[index];
       }
-      while (++valsIndex < valsLength) {
-        result[index++] = values[valsIndex];
+      while (++othIndex < othLength) {
+        result[index++] = other[othIndex];
       }
       return result;
     }
@@ -6072,12 +6072,12 @@
      * @name concat
      * @memberOf _
      * @category Chain
-     * @param {...*} [values] The arrays and/or values to concatenate.
+     * @param {...*} [values] The values to concatenate.
      * @returns {Array} Returns the new concatenated array.
      * @example
      *
      * var array = [1, 2];
-     * var wrapper = _(array).concat([3, 4]);
+     * var wrapper = _(array).concat([3], 4);
      *
      * console.log(wrapper.value());
      * // => [1, 2, 3, 4]

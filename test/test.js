@@ -62,6 +62,7 @@
 
   /** Math helpers. */
   var add = function(x, y) { return x + y; },
+      doubled = function(n) { return n * 2; },
       square = function(n) { return n * n; };
 
   /** Used to set property descriptors. */
@@ -954,52 +955,6 @@
       object.after();
       strictEqual(object.after(), 2);
       strictEqual(object.count, 2);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.modArgs');
-
-  (function() {
-    function double(x) {
-      return x * 2;
-    }
-
-    function square(x) {
-      return x * x;
-    }
-
-    function fn() {
-      return Array.prototype.slice.call(arguments, 0);
-    }
-
-    test('should transform each argument', 1, function() {
-      var wrapped = _.modArgs(fn, double, square);
-      var actual = wrapped(5, 10);
-
-      deepEqual(actual, [10, 100]);
-    });
-
-    test('should not transform any argument greater than the number of transforms', 1, function() {
-      var wrapped = _.modArgs(fn, double, square);
-      var actual = wrapped(5, 10, 18);
-
-      deepEqual(actual, [10, 100, 18]);
-    });
-
-    test('should not transform any arguments if no transforms are provided', 1, function() {
-      var wrapped = _.modArgs(fn);
-      var actual = wrapped(5, 10, 18);
-
-      deepEqual(actual, [5, 10, 18]);
-    });
-
-    test('should not pass undefined if transforms > arguments', 1, function() {
-      var wrapped = _.modArgs(fn, double, _.identity);
-      var actual = wrapped(5);
-
-      deepEqual(actual, [10]);
     });
   }());
 
@@ -11433,6 +11388,36 @@
       else {
         skipTest();
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.modArgs');
+
+  (function() {
+    function fn() {
+      return slice.call(arguments);
+    }
+
+    test('should transform each argument', 1, function() {
+      var modded = _.modArgs(fn, doubled, square);
+      deepEqual(modded(5, 10), [10, 100]);
+    });
+
+    test('should not transform any argument greater than the number of transforms', 1, function() {
+      var modded = _.modArgs(fn, doubled, square);
+      deepEqual(modded(5, 10, 18), [10, 100, 18]);
+    });
+
+    test('should not transform any arguments if no transforms are provided', 1, function() {
+      var modded = _.modArgs(fn);
+      deepEqual(modded(5, 10, 18), [5, 10, 18]);
+    });
+
+    test('should not pass `undefined` if there are more `transforms` than `arguments`', 1, function() {
+      var modded = _.modArgs(fn, doubled, _.identity);
+      deepEqual(modded(5), [10]);
     });
   }());
 

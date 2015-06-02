@@ -5067,6 +5067,54 @@
     }
 
     /**
+     * Creates an array from given arrays and consisting of all the first elements from
+     * said arrays then the second elements etc.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] The arrays to interleave.
+     * @returns {Array} Returns the interleaved array.
+     * @example
+     *
+     * _.interleave([1, 2, 3], [4, 5, 6]);
+     * // => [1, 4, 2, 5, 3, 6]
+     *
+     * // using more than two arrays
+     * _.interleave([1, 2], [3, 4], [5, 6]);
+     * // => [1, 3, 5, 2, 4, 6]
+     *
+     * // the shortest array will stop interleave
+     * _.interleave([1, 2], [3, 4, 5]);
+     * // => [1, 3, 2, 4]
+     */
+    var interleave = restParam(function(arrays) {
+      arrays = compact(arrays);
+
+      var minLength = (arrays[0] || []).length,
+          othLength = arrays.length,
+          othIndex = 0;
+
+      // Retrieving the minimum length of given arrays
+      while (++othIndex < othLength) {
+        minLength = nativeMin(minLength, arrays[othIndex].length);
+      }
+
+      // Interleaving
+      var index = -1,
+          result = Array(othLength * minLength);
+
+      while (++index < minLength) {
+        othIndex = -1;
+        while (++othIndex < othLength) {
+          result[(index * othLength) + othIndex] = arrays[othIndex][index];
+        }
+      }
+
+      return result;
+    });
+
+    /**
      * Creates an array of unique values that are included in all of the provided
      * arrays using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
      * for equality comparisons.
@@ -11926,6 +11974,7 @@
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
     lodash.initial = initial;
+    lodash.interleave = interleave;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;

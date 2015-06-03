@@ -8915,7 +8915,7 @@
       if (value == null) {
         return false;
       }
-      if (objToString.call(value) == funcTag) {
+      if (isFunction(value)) {
         return reIsNative.test(fnToString.call(value));
       }
       return isObjectLike(value) && (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);

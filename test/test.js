@@ -13717,7 +13717,7 @@
       deepEqual(rp(1), [1, undefined, []]);
     });
 
-    test('should work on functions with more than 3 params', 1, function() {
+    test('should work on functions with more than three params', 1, function() {
       var rp = _.restParam(function(a, b, c, d) {
         return slice.call(arguments);
       });

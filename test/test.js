@@ -10274,16 +10274,6 @@
       strictEqual(memoized(1, 3, 5), 9);
     });
 
-    test('should not set a `this` binding', 2, function() {
-      var memoized = _.memoize(function(a, b, c) {
-        return a + this.b + this.c;
-      });
-
-      var object = { 'b': 2, 'c': 3, 'memoized': memoized };
-      strictEqual(object.memoized(1), 6);
-      strictEqual(object.memoized(2), 7);
-    });
-
     test('should throw a TypeError if `resolve` is truthy and not a function', function() {
       raises(function() { _.memoize(_.noop, {}); }, TypeError);
     });
@@ -10300,6 +10290,16 @@
       deepEqual(actual, expected);
     });
 
+    test('should not set a `this` binding', 2, function() {
+      var memoized = _.memoize(function(a, b, c) {
+        return a + this.b + this.c;
+      });
+
+      var object = { 'b': 2, 'c': 3, 'memoized': memoized };
+      strictEqual(object.memoized(1), 6);
+      strictEqual(object.memoized(2), 7);
+    });
+    
     test('should check cache for own properties', 1, function() {
       var memoized = _.memoize(_.identity);
 
@@ -16809,15 +16809,6 @@
       deepEqual(args, [_.noop, 1, 2, 3]);
     });
 
-    test('should not set a `this` binding', 1, function() {
-      var p = _.wrap(_.escape, function(func) {
-        return '<p>' + func(this.text) + '</p>';
-      });
-
-      var object = { 'p': p, 'text': 'fred, barney, & pebbles' };
-      strictEqual(object.p(), '<p>fred, barney, &amp; pebbles</p>');
-    });
-
     test('should use `_.identity` when `wrapper` is nullish', 1, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant('a'));
@@ -16828,6 +16819,15 @@
       });
 
       deepEqual(actual, expected);
+    });
+    
+    test('should not set a `this` binding', 1, function() {
+      var p = _.wrap(_.escape, function(func) {
+        return '<p>' + func(this.text) + '</p>';
+      });
+
+      var object = { 'p': p, 'text': 'fred, barney, & pebbles' };
+      strictEqual(object.p(), '<p>fred, barney, &amp; pebbles</p>');
     });
   }());
 

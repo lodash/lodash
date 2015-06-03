@@ -2506,11 +2506,11 @@
 
   (function() {
     test('should provide arguments to `func`', 3, function() {
-      function fn() {
+      var fn = function() {
         var result = [this];
         push.apply(result, arguments);
         return result;
-      }
+      };
 
       var callback = _.callback(fn),
           actual = callback('a', 'b', 'c', 'd', 'e', 'f');
@@ -2647,11 +2647,11 @@
     });
 
     test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
-      function fn() {
+      var fn = function() {
         var result = [this.a];
         push.apply(result, arguments);
         return result;
-      }
+      };
 
       var expected = [1, 2, 3],
           object = { 'a': 1 },
@@ -11952,16 +11952,16 @@
   QUnit.module('methods using `createWrapper`');
 
   (function() {
+    function fn() {
+      return slice.call(arguments);
+    }
+
     var ph1 = _.bind.placeholder,
         ph2 = _.bindKey.placeholder,
         ph3 = _.partial.placeholder,
         ph4 = _.partialRight.placeholder;
 
     test('combinations of partial functions should work', 1, function() {
-      function fn() {
-        return slice.call(arguments);
-      }
-
       var a = _.partial(fn),
           b = _.partialRight(a, 3),
           c = _.partial(b, 1);
@@ -11970,11 +11970,11 @@
     });
 
     test('combinations of bound and partial functions should work', 3, function() {
-      function fn() {
+      var fn = function() {
         var result = [this.a];
         push.apply(result, arguments);
         return result;
-      }
+      };
 
       var expected = [1, 2, 3, 4],
           object = { 'a': 1, 'fn': fn };
@@ -11999,10 +11999,6 @@
     });
 
     test('combinations of functions with placeholders should work', 3, function() {
-      function fn() {
-        return slice.call(arguments);
-      }
-
       var expected = [1, 2, 3, 4, 5, 6],
           object = { 'fn': fn };
 
@@ -12026,10 +12022,6 @@
     });
 
     test('combinations of functions with overlaping placeholders should work', 3, function() {
-      function fn() {
-        return slice.call(arguments);
-      }
-
       var expected = [1, 2, 3, 4],
           object = { 'fn': fn };
 
@@ -12053,9 +12045,9 @@
     });
 
     test('recursively bound functions should work', 1, function() {
-      function fn() {
+      var fn = function() {
         return this.a;
-      }
+      };
 
       var a = _.bind(fn, { 'a': 1 }),
           b = _.bind(a,  { 'a': 2 }),

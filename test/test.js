@@ -11377,6 +11377,17 @@
       var modded = _.modArgs(fn, doubled, _.identity);
       deepEqual(modded(5), [10]);
     });
+    
+    test('should not set a `this` binding', 1, function() {
+      var modded = _.modArgs(function(x) {
+        return this[x];
+      }, function(x) {
+        return this === x;
+      });
+
+      var object = { 'modded': modded, 'false': 1 };
+      strictEqual(object.modded(object), 1);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

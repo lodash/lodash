@@ -8060,48 +8060,6 @@
       strictEqual(_.isFunction('a'), false);
     });
 
-    test('should work using its fallback', 3, function() {
-      if (!isModularize) {
-        // Simulate native `Uint8Array` constructor with a `toStringTag` of
-        // 'Function' and a `typeof` result of 'object'.
-        var lodash = _.runInContext({
-          'Function': {
-            'prototype': {
-              'toString': function() {
-                return _.has(this, 'toString') ? this.toString() : fnToString.call(this);
-              }
-            }
-          },
-          'Object': _.assign(function(value) {
-            return Object(value);
-          }, {
-            'prototype': {
-              'toString': _.assign(function() {
-                return _.has(this, '@@toStringTag') ? this['@@toStringTag'] : objToString.call(this);
-              }, {
-                'toString': function() {
-                  return String(toString);
-                }
-              })
-            }
-          }),
-          'Uint8Array': {
-            '@@toStringTag': funcTag,
-            'toString': function() {
-              return String(Uint8Array || Array);
-            }
-          }
-        });
-
-        strictEqual(lodash.isFunction(slice), true);
-        strictEqual(lodash.isFunction(/x/), false);
-        strictEqual(lodash.isFunction(Uint8Array), objToString.call(Uint8Array) == funcTag);
-      }
-      else {
-        skipTest(3);
-      }
-    });
-
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {
       // Trigger a Chakra JIT bug.
       // See https://github.com/jashkenas/underscore/issues/1621.

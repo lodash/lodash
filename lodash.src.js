@@ -348,6 +348,20 @@
     }
     return -1;
   }
+  
+  /**
+   * The base implementation of `_.isFunction` without support for environments
+   * with incorrect `typeof` results.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+   */
+  function baseIsFunction(value) {
+    // Avoid a Chakra JIT bug in compatibility modes of IE 11.
+    // See https://github.com/jashkenas/underscore/issues/1621 for more details.
+    return typeof value == 'function' || false;
+  }
 
   /**
    * Converts `value` to a string if it's not one. An empty string is returned
@@ -8033,6 +8047,9 @@
      * // => [25, 20]
      */
     var modArgs = restParam(function(func, transforms) {
+      if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
       var length = transforms.length;
       return restParam(function(args) {
         var index = nativeMin(args.length, length);

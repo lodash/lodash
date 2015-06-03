@@ -17836,6 +17836,7 @@
       'defer',
       'delay',
       'memoize',
+      'modArgs',
       'negate',
       'once',
       'partial',
@@ -17896,7 +17897,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 226, function() {
+    test('should accept falsey arguments', 225, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;
@@ -17962,7 +17963,7 @@
       });
     });
 
-    test('should throw an error for falsey arguments', 24, function() {
+    test('should throw an error for falsey arguments', 25, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

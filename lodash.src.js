@@ -1168,7 +1168,7 @@
     function lazyValue() {
       var array = this.__wrapped__.value();
       if (!isArray(array)) {
-        return baseWrapperValue(array, this.__actions__);
+        return baseWrapperValue(array, this.__actions__ || []);
       }
       var dir = this.__dir__,
           isRight = dir < 0,
@@ -6169,15 +6169,20 @@
      */
     function wrapperReverse() {
       var value = this.__wrapped__;
+
+      var interceptor = function(value) {
+        return value.reverse();
+      };
       if (value instanceof LazyWrapper) {
         if (this.__actions__.length) {
           value = new LazyWrapper(this);
         }
-        return new LodashWrapper(value.reverse(), this.__chain__);
+        value = value.reverse();
+        var actions = value.__actions__ || (value.__actions__ = []);
+        actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+        return new LodashWrapper(value, this.__chain__);
       }
-      return this.thru(function(value) {
-        return value.reverse();
-      });
+      return this.thru(interceptor);
     }
 
     /**
@@ -12283,15 +12288,15 @@
 
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var lodashFunc = lodash[methodName];
+      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
+          retUnwrapped = /^(?:first|last)$/.test(methodName),
+          lodashFunc = lodash[retUnwrapped ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
+
       if (!lodashFunc) {
         return;
       }
-      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
-          retUnwrapped = /^(?:first|last)$/.test(methodName);
-
       lodash.prototype[methodName] = function() {
-        var args = arguments,
+        var args = retUnwrapped ? [1] : arguments,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
@@ -12299,24 +12304,27 @@
             iteratee = args[0],
             useLazy = isLazy || isArray(value);
 
+        var interceptor = function(value) {
+          return lodashFunc.apply(lodash, arrayPush([value], args));
+        };
         if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
-          // avoid lazy use if the iteratee has a "length" value other than `1`
+          // Avoid lazy use if the iteratee has a "length" value other than `1`.
           isLazy = useLazy = false;
         }
         var onlyLazy = isLazy && !isHybrid;
         if (retUnwrapped && !chainAll) {
-          return onlyLazy
-            ? func.call(value)
-            : lodashFunc.call(lodash, this.value());
+          if (onlyLazy) {
+            value = value.clone();
+            var actions = value.__actions__ || (value.__actions__ = []);
+            actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+            return func.call(value);
+          }
+          return lodashFunc.call(lodash, this.value())[0];
         }
-        var interceptor = function(value) {
-          return lodashFunc.apply(lodash, arrayPush([value], args));
-        };
         if (useLazy) {
-          var wrapper = onlyLazy ? value : new LazyWrapper(this),
-              result = func.apply(wrapper, args);
-
-          if (!retUnwrapped && (isHybrid || result.__actions__)) {
+          value = onlyLazy ? value : new LazyWrapper(this);
+          var result = func.apply(value, args);
+          if (!retUnwrapped) {
             var actions = result.__actions__ || (result.__actions__ = []);
             actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
           }

@@ -2240,7 +2240,7 @@
           : fn(take2, _.compact, filter2, map2);
 
         filterCount = mapCount = 0;
-        deepEqual(combined(_.range(100)), [4, 16]);
+        deepEqual(combined(_.range(200)), [4, 16]);
 
         if (!isNpm && WeakMap && WeakMap.name) {
           strictEqual(filterCount, 5, 'filterCount');
@@ -4050,7 +4050,7 @@
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [16]);
+        deepEqual(args, expected);
 
         _(array).map(square).dropRightWhile(function() {
           args = slice.call(arguments);

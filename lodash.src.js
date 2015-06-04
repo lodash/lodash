@@ -348,7 +348,7 @@
     }
     return -1;
   }
-  
+
   /**
    * The base implementation of `_.isFunction` without support for environments
    * with incorrect `typeof` results.

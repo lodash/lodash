@@ -10299,7 +10299,7 @@
       strictEqual(object.memoized(1), 6);
       strictEqual(object.memoized(2), 7);
     });
-    
+
     test('should check cache for own properties', 1, function() {
       var memoized = _.memoize(_.identity);
 
@@ -11377,7 +11377,7 @@
       var modded = _.modArgs(fn, doubled, _.identity);
       deepEqual(modded(5), [10]);
     });
-    
+
     test('should not set a `this` binding', 1, function() {
       var modded = _.modArgs(function(x) {
         return this[x];
@@ -16823,7 +16823,7 @@
 
       deepEqual(actual, expected);
     });
-    
+
     test('should not set a `this` binding', 1, function() {
       var p = _.wrap(_.escape, function(func) {
         return '<p>' + func(this.text) + '</p>';

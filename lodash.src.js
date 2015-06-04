@@ -1105,13 +1105,13 @@
      */
     function LazyWrapper(value) {
       this.__wrapped__ = value;
-      this.__actions__ = null;
+      this.__actions__ = [];
       this.__dir__ = 1;
       this.__dropCount__ = 0;
       this.__filtered__ = false;
-      this.__iteratees__ = null;
+      this.__iteratees__ = [];
       this.__takeCount__ = POSITIVE_INFINITY;
-      this.__views__ = null;
+      this.__views__ = [];
     }
 
     /**
@@ -1123,17 +1123,13 @@
      * @returns {Object} Returns the cloned `LazyWrapper` object.
      */
     function lazyClone() {
-      var actions = this.__actions__,
-          iteratees = this.__iteratees__,
-          views = this.__views__,
-          result = new LazyWrapper(this.__wrapped__);
-
-      result.__actions__ = actions ? arrayCopy(actions) : null;
+      var result = new LazyWrapper(this.__wrapped__);
+      result.__actions__ = arrayCopy(this.__actions__);
       result.__dir__ = this.__dir__;
       result.__filtered__ = this.__filtered__;
-      result.__iteratees__ = iteratees ? arrayCopy(iteratees) : null;
+      result.__iteratees__ = arrayCopy(this.__iteratees__);
       result.__takeCount__ = this.__takeCount__;
-      result.__views__ = views ? arrayCopy(views) : null;
+      result.__views__ = arrayCopy(this.__views__);
       return result;
     }
 
@@ -1168,7 +1164,7 @@
     function lazyValue() {
       var array = this.__wrapped__.value();
       if (!isArray(array)) {
-        return baseWrapperValue(array, this.__actions__ || []);
+        return baseWrapperValue(array, this.__actions__);
       }
       var dir = this.__dir__,
           isRight = dir < 0,
@@ -1179,7 +1175,7 @@
           index = isRight ? end : (start - 1),
           takeCount = nativeMin(length, this.__takeCount__),
           iteratees = this.__iteratees__,
-          iterLength = iteratees ? iteratees.length : 0,
+          iterLength = iteratees.length,
           resIndex = 0,
           result = [];
 
@@ -4038,13 +4034,13 @@
      * @private
      * @param {number} start The start of the view.
      * @param {number} end The end of the view.
-     * @param {Array} [transforms] The transformations to apply to the view.
+     * @param {Array} transforms The transformations to apply to the view.
      * @returns {Object} Returns an object containing the `start` and `end`
      *  positions of the view.
      */
     function getView(start, end, transforms) {
       var index = -1,
-          length = transforms ? transforms.length : 0;
+          length = transforms.length;
 
       while (++index < length) {
         var data = transforms[index],
@@ -6178,8 +6174,7 @@
           value = new LazyWrapper(this);
         }
         value = value.reverse();
-        var actions = value.__actions__ || (value.__actions__ = []);
-        actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+        value.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
         return new LodashWrapper(value, this.__chain__);
       }
       return this.thru(interceptor);
@@ -12179,10 +12174,9 @@
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         var filtered = this.__filtered__,
-            result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
-            iteratees = result.__iteratees__ || (result.__iteratees__ = []);
+            result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone();
 
-        iteratees.push({
+        result.__iteratees__.push({
           'done': false,
           'count': 0,
           'index': 0,
@@ -12212,8 +12206,7 @@
             last(result.__iteratees__).limit = n;
           }
         } else {
-          var views = result.__views__ || (result.__views__ = []);
-          views.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
+          result.__views__.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
         }
         return result;
       };
@@ -12315,8 +12308,7 @@
         if (retUnwrapped && !chainAll) {
           if (onlyLazy) {
             value = value.clone();
-            var actions = value.__actions__ || (value.__actions__ = []);
-            actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+            value.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
             return func.call(value);
           }
           return lodashFunc.call(lodash, this.value())[0];
@@ -12325,8 +12317,7 @@
           value = onlyLazy ? value : new LazyWrapper(this);
           var result = func.apply(value, args);
           if (!retUnwrapped) {
-            var actions = result.__actions__ || (result.__actions__ = []);
-            actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+            result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
           }
           return new LodashWrapper(result, chainAll);
         }

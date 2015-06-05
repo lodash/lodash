@@ -14525,14 +14525,18 @@
       { 'a': 'y', 'b': 2 }
     ];
 
-    test('should sort multiple properties by specified orders', 1, function() {
-      var actual = _.sortByOrder(objects, ['a', 'b'], [false, true]);
-      deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+    test('should sort multiple properties by specified orders', 2, function() {
+      _.each([[false, true], ['desc', 'asc']], function(orders) {
+        var actual = _.sortByOrder(objects, ['a', 'b'], orders);
+        deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+      });
     });
 
-    test('should sort a property in ascending order when its order is not specified', 1, function() {
-      var actual = _.sortByOrder(objects, ['a', 'b'], [false]);
-      deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+    test('should sort a property in ascending order when its order is not specified', 2, function() {
+      _.each([[false], ['desc']], function(orders) {
+        var actual = _.sortByOrder(objects, ['a', 'b'], orders);
+        deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+      });
     });
   }());
 

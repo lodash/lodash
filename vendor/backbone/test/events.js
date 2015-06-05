@@ -66,6 +66,24 @@
     equal(obj.counter, 5);
   });
 
+  test("binding and trigger with event maps context", 2, function() {
+    var obj = { counter: 0 };
+    var context = {};
+    _.extend(obj, Backbone.Events);
+
+    obj.on({
+        a: function() {
+            strictEqual(this, context, 'defaults `context` to `callback` param');
+        }
+    }, context).trigger('a');
+
+    obj.off().on({
+        a: function() {
+            strictEqual(this, context, 'will not override explicit `context` param');
+        }
+    }, this, context).trigger('a');
+  });
+
   test("listenTo and stopListening", 1, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);

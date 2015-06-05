@@ -550,6 +550,21 @@
     model.destroy(options);
   });
 
+  test("#3470 - save and fetch with parse false", 2, function() {
+    var i = 0;
+    var model = new Backbone.Model();
+    model.parse = function() {
+      ok(false);
+    };
+    model.sync = function(method, model, options) {
+      options.success({i: ++i});
+    };
+    model.fetch({parse: false});
+    equal(model.get('i'), i);
+    model.save(null, {parse: false});
+    equal(model.get('i'), i);
+  });
+
   test("save with PATCH", function() {
     doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
     doc.save();

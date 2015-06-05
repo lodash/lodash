@@ -48,6 +48,11 @@
     strictEqual(new View().one, 1);
   });
 
+  test("render", 1, function() {
+    var view = new Backbone.View;
+    equal(view.render(), view, '#render returns the view instance');
+  });
+
   test("delegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;
 
@@ -72,7 +77,7 @@
     equal(counter2, 3);
   });
 
-  test("delegate", 2, function() {
+  test("delegate", 3, function() {
     var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', 'h1', function() {
       ok(true);
@@ -81,6 +86,8 @@
       ok(true);
     });
     view.$('h1').trigger('click');
+
+    equal(view.delegate(), view, '#delegate returns the view instance');
   });
 
   test("delegateEvents allows functions for callbacks", 3, function() {
@@ -112,7 +119,7 @@
     view.$el.trigger('click');
   });
 
-  test("undelegateEvents", 6, function() {
+  test("undelegateEvents", 7, function() {
     var counter1 = 0, counter2 = 0;
 
     var view = new Backbone.View({el: '#testElement'});
@@ -135,9 +142,11 @@
     view.$('h1').trigger('click');
     equal(counter1, 2);
     equal(counter2, 3);
+
+    equal(view.undelegateEvents(), view, '#undelegateEvents returns the view instance');
   });
 
-  test("undelegate", 0, function() {
+  test("undelegate", 1, function() {
     view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { ok(false); });
     view.delegate('click', 'h1', function() { ok(false); });
@@ -146,6 +155,8 @@
 
     view.$('h1').trigger('click');
     view.$el.trigger('click');
+
+    equal(view.undelegate(), view, '#undelegate returns the view instance');
   });
 
   test("undelegate with passed handler", 1, function() {
@@ -387,19 +398,40 @@
     equal(counter, 2);
   });
 
-  test("remove", 1, function() {
+  test("remove", 2, function() {
     var view = new Backbone.View;
     document.body.appendChild(view.el);
 
     view.delegate('click', function() { ok(false); });
     view.listenTo(view, 'all x', function() { ok(false); });
 
-    view.remove();
+    equal(view.remove(), view, '#remove returns the view instance');
     view.$el.trigger('click');
     view.trigger('x');
 
     // In IE8 and below, parentNode still exists but is not document.body.
     notEqual(view.el.parentNode, document.body);
+  });
+
+  test("setElement", 3, function() {
+    var view = new Backbone.View({
+      events: {
+        click: function() { ok(false); }
+      }
+    });
+    view.events = {
+      click: function() { ok(true); }
+    };
+    var oldEl = view.el;
+    var $oldEl = view.$el;
+
+    view.setElement(document.createElement('div'));
+
+    $oldEl.click();
+    view.$el.click();
+
+    notEqual(oldEl, view.el);
+    notEqual($oldEl, view.$el);
   });
 
 })();

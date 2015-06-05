@@ -298,16 +298,12 @@
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  test("remove", 7, function() {
+  test("remove", 10, function() {
     var removed = null;
-    var otherRemoved = null;
     var result = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
       equal(options.index, 3);
-    });
-    otherCol.on('remove', function(model, col, options) {
-      otherRemoved = true;
     });
     result = col.remove(d);
     equal(removed, 'd');
@@ -317,7 +313,13 @@
     strictEqual(result, undefined);
     equal(col.length, 3);
     equal(col.first(), a);
-    equal(otherRemoved, null);
+    col.off();
+    result = col.remove([c, d]);
+    equal(result.length, 1, 'only returns removed models');
+    equal(result[0], c, 'only returns removed models');
+    result = col.remove([c, b]);
+    equal(result.length, 1, 'only returns removed models');
+    equal(result[0], b, 'only returns removed models');
   });
 
   test("add and remove return values", 13, function() {
@@ -557,6 +559,20 @@
     collection.create({}, {success: success});
     this.ajaxSettings.success();
 
+  });
+
+  test("create with wait:true should not call collection.parse", 0, function() {
+    var Collection = Backbone.Collection.extend({
+      url: '/test',
+      parse: function () {
+        ok(false);
+      }
+    });
+
+    var collection = new Collection;
+
+    collection.create({}, {wait: true});
+    this.ajaxSettings.success();
   });
 
   test("a failing create returns model with errors", function() {
@@ -1603,6 +1619,21 @@
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(false); });
     collection.set([{id: 1}, {id: 2}]);
+  });
+
+  test("#3610 - invoke collects arguments", 3, function() {
+    var Model = Backbone.Model.extend({
+        method: function(a, b, c) {
+            equal(a, 1);
+            equal(b, 2);
+            equal(c, 3);
+        }
+    });
+    var Collection = Backbone.Collection.extend({
+        model: Model
+    });
+    var collection = new Collection([{id: 1}]);
+    collection.invoke('method', 1, 2, 3);
   });
 
 })();

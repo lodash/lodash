@@ -1179,7 +1179,7 @@
           resIndex = 0,
           takeCount = nativeMin(length, this.__takeCount__);
 
-      if (!isArr || array.length < LARGE_ARRAY_SIZE || (iterLength < 2 && arrLength == length && takeCount == length)) {
+      if (!isArr || arrLength < LARGE_ARRAY_SIZE || (arrLength == length && takeCount == length)) {
         return baseWrapperValue(isRight ? array.reverse() : array, this.__actions__);
       }
       var result = [];

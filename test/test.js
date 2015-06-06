@@ -4911,34 +4911,34 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, _.map(array, square)];
+            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, _.map(array.slice(1), square)];
 
-        _(array).takeRightWhile(function(value, index, array) {
+        _(array).slice(1).takeRightWhile(function(value, index, array) {
           args = slice.call(arguments)
         }).value();
 
-        deepEqual(args, [LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE - 1, array]);
+        deepEqual(args, [LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE - 1, array.slice(1)]);
 
-        _(array).map(square).takeRightWhile(function(value, index, array) {
-          args = slice.call(arguments)
-        }).value();
-
-        deepEqual(args, expected);
-
-        _(array).map(square).takeRightWhile(function(value, index) {
+        _(array).slice(1).map(square).takeRightWhile(function(value, index, array) {
           args = slice.call(arguments)
         }).value();
 
         deepEqual(args, expected);
 
-        _(array).map(square).takeRightWhile(function(index) {
+        _(array).slice(1).map(square).takeRightWhile(function(value, index) {
+          args = slice.call(arguments)
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).slice(1).map(square).takeRightWhile(function(index) {
           args = slice.call(arguments);
         }).value();
 
         deepEqual(args, [square(LARGE_ARRAY_SIZE)]);
 
-        _(array).map(square).takeRightWhile(function() {
+        _(array).slice(1).map(square).takeRightWhile(function() {
           args = slice.call(arguments);
         }).value();
 
@@ -5036,34 +5036,34 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            expected = [1, 0, _.map(array, square)];
+            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            expected = [1, 0, _.map(array.slice(1), square)];
 
-        _(array).takeWhile(function(value, index, array) {
+        _(array).slice(1).takeWhile(function(value, index, array) {
           args = slice.call(arguments);
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1, 0, array.slice(1)]);
 
-        _(array).map(square).takeWhile(function(value, index, array) {
-          args = slice.call(arguments);
-        }).value();
-
-        deepEqual(args, expected);
-
-        _(array).map(square).takeWhile(function(value, index) {
+        _(array).slice(1).map(square).takeWhile(function(value, index, array) {
           args = slice.call(arguments);
         }).value();
 
         deepEqual(args, expected);
 
-        _(array).map(square).takeWhile(function(value) {
+        _(array).slice(1).map(square).takeWhile(function(value, index) {
+          args = slice.call(arguments);
+        }).value();
+
+        deepEqual(args, expected);
+
+        _(array).slice(1).map(square).takeWhile(function(value) {
           args = slice.call(arguments);
         }).value();
 
         deepEqual(args, [1]);
 
-        _(array).map(square).takeWhile(function() {
+        _(array).slice(1).map(square).takeWhile(function() {
           args = slice.call(arguments);
         }).value();
 
@@ -9418,38 +9418,38 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            expected = [1, 0, _.map(array, square)];
+            array = _.range(0, LARGE_ARRAY_SIZE),
+            expected = [1, 0, _.map(array.slice(1), square)];
 
-        _(array).map(function(value, index, array) {
+        _(array).slice(1).map(function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1, 0, array.slice(1)]);
 
         args = null;
-        _(array).map(square).map(function(value, index, array) {
-          args || (args = slice.call(arguments));
-        }).value();
-
-        deepEqual(args, expected);
-
-        args = null;
-        _(array).map(square).map(function(value, index) {
+        _(array).slice(1).map(square).map(function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
 
         deepEqual(args, expected);
 
         args = null;
-        _(array).map(square).map(function(value) {
+        _(array).slice(1).map(square).map(function(value, index) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+
+        args = null;
+        _(array).slice(1).map(square).map(function(value) {
           args || (args = slice.call(arguments));
         }).value();
 
         deepEqual(args, [1]);
 
         args = null;
-        _(array).map(square).map(function() {
+        _(array).slice(1).map(square).map(function() {
           args || (args = slice.call(arguments));
         }).value();
 
@@ -12273,15 +12273,15 @@
 
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.times(LARGE_ARRAY_SIZE, function(index) {
+        var array = _.times(LARGE_ARRAY_SIZE + 1, function(index) {
           return index ? { 'a': index } : null;
         });
 
-        var actual = _(array).pluck('a').value();
-        deepEqual(actual, _.pluck(array, 'a'));
+        var actual = _(array).slice(1).pluck('a').value();
+        deepEqual(actual, _.pluck(array.slice(1), 'a'));
 
-        actual = _(array).filter().pluck('a').value();
-        deepEqual(actual, _.pluck(_.filter(array), 'a'));
+        actual = _(array).slice(1).filter().pluck('a').value();
+        deepEqual(actual, _.pluck(_.filter(array.slice(1)), 'a'));
       }
       else {
         skipTest(2);
@@ -13184,11 +13184,11 @@
 
     test('`_.' + methodName + '` should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(0, LARGE_ARRAY_SIZE + 1),
             predicate = function(value) { return isFilter ? (value > 6) : (value < 6); },
-            actual = _(array).map(square)[methodName](predicate).value();
+            actual = _(array).slice(1).map(square)[methodName](predicate).value();
 
-        deepEqual(actual, _[methodName](_.map(array, square), predicate));
+        deepEqual(actual, _[methodName](_.map(array.slice(1), square), predicate));
 
         var object = _.zipObject(_.times(LARGE_ARRAY_SIZE, function(index) {
           return ['key' + index, index];
@@ -13205,38 +13205,38 @@
     test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            expected = [1, 0, _.map(array, square)];
+            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            expected = [1, 0, _.map(array.slice(1), square)];
 
-        _(array)[methodName](function(value, index, array) {
+        _(array).slice(1)[methodName](function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
 
-        deepEqual(args, [1, 0, array]);
+        deepEqual(args, [1, 0, array.slice(1)]);
 
         args = null;
-        _(array).map(square)[methodName](function(value, index, array) {
-          args || (args = slice.call(arguments));
-        }).value();
-
-        deepEqual(args, expected);
-
-        args = null;
-        _(array).map(square)[methodName](function(value, index) {
+        _(array).slice(1).map(square)[methodName](function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
 
         deepEqual(args, expected);
 
         args = null;
-        _(array).map(square)[methodName](function(value) {
+        _(array).slice(1).map(square)[methodName](function(value, index) {
+          args || (args = slice.call(arguments));
+        }).value();
+
+        deepEqual(args, expected);
+
+        args = null;
+        _(array).slice(1).map(square)[methodName](function(value) {
           args || (args = slice.call(arguments));
         }).value();
 
         deepEqual(args, [1]);
 
         args = null;
-        _(array).map(square)[methodName](function() {
+        _(array).slice(1).map(square)[methodName](function() {
           args || (args = slice.call(arguments));
         }).value();
 
@@ -15920,17 +15920,17 @@
 
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            actual = _(array).map(String).toArray().value();
+        var array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            actual = _(array).slice(1).map(String).toArray().value();
 
-        deepEqual(actual, _.map(array, String));
+        deepEqual(actual, _.map(array.slice(1), String));
 
         var object = _.zipObject(_.times(LARGE_ARRAY_SIZE, function(index) {
           return ['key' + index, index];
         }));
 
-        actual = _(object).toArray().map(String).value();
-        deepEqual(actual, _.map(_.toArray(object), String));
+        actual = _(object).toArray().slice(1).map(String).value();
+        deepEqual(actual, _.map(_.toArray(object).slice(1), String));
       }
       else {
         skipTest(2);
@@ -16663,12 +16663,12 @@
 
     test('should work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
-        var array = _.times(LARGE_ARRAY_SIZE, function(index) {
+        var array = _.times(LARGE_ARRAY_SIZE + 1, function(index) {
           return index ? { 'a': 1, 'b': index } : { 'a': 3 };
         });
 
-        var actual = _(array).where({ 'a': 1 }).value();
-        deepEqual(actual, _.where(array, { 'a': 1 }));
+        var actual = _(array).slice(1).where({ 'a': 1 }).value();
+        deepEqual(actual, _.where(array.slice(1), { 'a': 1 }));
       }
       else {
         skipTest();
@@ -17285,8 +17285,8 @@
         };
 
         try {
-          var array = _.range(1, LARGE_ARRAY_SIZE).concat(spy),
-              wrapped = _(array).map(String).reverse(),
+          var array = _.range(0, LARGE_ARRAY_SIZE).concat(spy),
+              wrapped = _(array).slice(1).map(String).reverse(),
               actual = wrapped.last();
         } catch(e) {}
 

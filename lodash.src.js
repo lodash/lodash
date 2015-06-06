@@ -33,6 +33,9 @@
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 
+  /** Used as the size to enable large array optimizations. */
+  var LARGE_ARRAY_SIZE = 200;
+
   /** Used to indicate the type of lazy iteratees. */
   var LAZY_DROP_WHILE_FLAG = 0,
       LAZY_FILTER_FLAG = 1,
@@ -1178,7 +1181,7 @@
           resIndex = 0,
           takeCount = nativeMin(length, this.__takeCount__);
 
-      if (!isArr || (iterLength < 2 && arrLength == length && takeCount == length)) {
+      if (!isArr || array.length < LARGE_ARRAY_SIZE || (iterLength < 2 && arrLength == length && takeCount == length)) {
         return baseWrapperValue(isRight ? array.reverse() : array, this.__actions__);
       }
       var result = [];
@@ -1912,7 +1915,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           isCommon = indexOf == baseIndexOf,
-          cache = (isCommon && values.length >= 200) ? createCache(values) : null,
+          cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? createCache(values) : null,
           valuesLength = values.length;
 
       if (cache) {
@@ -2787,7 +2790,7 @@
           indexOf = getIndexOf(),
           length = array.length,
           isCommon = indexOf == baseIndexOf,
-          isLarge = isCommon && length >= 200,
+          isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
           seen = isLarge ? createCache() : null,
           result = [];
 
@@ -3426,7 +3429,7 @@
           var args = arguments,
               value = args[0];
 
-          if (wrapper && args.length == 1 && isArray(value)) {
+          if (wrapper && args.length == 1 && isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
             return wrapper.plant(value).value();
           }
           var index = 0,

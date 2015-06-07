@@ -748,7 +748,7 @@
     );
 
     /** Native method references. */
-    var ArrayBuffer = getNative(context, 'ArrayBuffer'),
+    var ArrayBuffer = context.ArrayBuffer,
         ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
         floor = Math.floor,
@@ -757,7 +757,7 @@
         Set = getNative(context, 'Set'),
         setTimeout = context.setTimeout,
         splice = arrayProto.splice,
-        Uint8Array = getNative(context, 'Uint8Array'),
+        Uint8Array = context.Uint8Array,
         WeakMap = getNative(context, 'WeakMap');
 
     /* Native method references for those with the same name as other `lodash` methods. */
@@ -799,7 +799,7 @@
     ctorByTag[int8Tag] = context.Int8Array;
     ctorByTag[int16Tag] = context.Int16Array;
     ctorByTag[int32Tag] = context.Int32Array;
-    ctorByTag[uint8Tag] = context.Uint8Array;
+    ctorByTag[uint8Tag] = Uint8Array;
     ctorByTag[uint8ClampedTag] = context.Uint8ClampedArray;
     ctorByTag[uint16Tag] = context.Uint16Array;
     ctorByTag[uint32Tag] = context.Uint32Array;
@@ -3001,13 +3001,13 @@
      * @param {ArrayBuffer} buffer The array buffer to clone.
      * @returns {ArrayBuffer} Returns the cloned array buffer.
      */
-    var bufferClone = !(ArrayBuffer && Uint8Array) ? constant(null) : function(buffer) {
+    function bufferClone(buffer) {
       var result = new ArrayBuffer(buffer.byteLength),
           view = new Uint8Array(result);
 
       view.set(new Uint8Array(buffer));
       return result;
-    };
+    }
 
     /**
      * Creates an array that is the composition of partially applied arguments,

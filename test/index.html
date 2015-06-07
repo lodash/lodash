@@ -1,319 +1,319 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>lodash Test Suite</title>
-		<link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
-		<style>
-			#exports {
-				display: none;
-			}
-		</style>
-	</head>
-	<body>
-		<script>
-			// Avoid reporting tests to Sauce Labs when script errors occur.
-			if (location.port == '9001') {
-				window.onerror = function(message) {
-					if (window.QUnit) {
-						QUnit.config.done.length = 0;
-					}
-					global_test_results = { 'message': message };
-				};
-			}
-		</script>
-		<script src="../node_modules/qunitjs/qunit/qunit.js"></script>
-		<script src="../node_modules/qunit-extras/qunit-extras.js"></script>
-		<script src="../node_modules/platform/platform.js"></script>
-		<script src="./asset/set.js"></script>
-		<script src="./asset/weakmap.js"></script>
-		<script src="./asset/test-ui.js"></script>
-		<div id="qunit"></div>
-		<div id="exports"></div>
-		<script>
-			var setProperty = (function() {
-				var _defineProperty = Object.defineProperty;
-				return function(object, key, value) {
-					try {
-						_defineProperty(object, key, {
-							'configurable': true,
-							'enumerable': false,
-							'writable': true,
-							'value': value
-						});
-					} catch(e) {
-						object[key] = value;
-					}
-				};
-			}());
+  <head>
+    <meta charset="utf-8">
+    <title>lodash Test Suite</title>
+    <link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
+    <style>
+      #exports {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Avoid reporting tests to Sauce Labs when script errors occur.
+      if (location.port == '9001') {
+        window.onerror = function(message) {
+          if (window.QUnit) {
+            QUnit.config.done.length = 0;
+          }
+          global_test_results = { 'message': message };
+        };
+      }
+    </script>
+    <script src="../node_modules/qunitjs/qunit/qunit.js"></script>
+    <script src="../node_modules/qunit-extras/qunit-extras.js"></script>
+    <script src="../node_modules/platform/platform.js"></script>
+    <script src="./asset/set.js"></script>
+    <script src="./asset/weakmap.js"></script>
+    <script src="./asset/test-ui.js"></script>
+    <div id="qunit"></div>
+    <div id="exports"></div>
+    <script>
+      var setProperty = (function() {
+        var _defineProperty = Object.defineProperty;
+        return function(object, key, value) {
+          try {
+            _defineProperty(object, key, {
+              'configurable': true,
+              'enumerable': false,
+              'writable': true,
+              'value': value
+            });
+          } catch(e) {
+            object[key] = value;
+          }
+        };
+      }());
 
-			function addBizarroMethods() {
-				var funcProto = Function.prototype,
-				    objectProto = Object.prototype,
-				    stringProto = String.prototype;
+      function addBizarroMethods() {
+        var funcProto = Function.prototype,
+            objectProto = Object.prototype,
+            stringProto = String.prototype;
 
-				var hasOwnProperty = objectProto.hasOwnProperty,
-				    fnToString = funcProto.toString,
-				    nativeString = fnToString.call(objectProto.toString),
-				    noop = function() {},
-				    propertyIsEnumerable = objectProto.propertyIsEnumerable,
-				    reToString = /toString/g;
+        var hasOwnProperty = objectProto.hasOwnProperty,
+            fnToString = funcProto.toString,
+            nativeString = fnToString.call(objectProto.toString),
+            noop = function() {},
+            propertyIsEnumerable = objectProto.propertyIsEnumerable,
+            reToString = /toString/g;
 
-				function constant(value) {
-					return function() {
-						return value;
-					};
-				}
-				function createToString(funcName) {
-					return constant(nativeString.replace(reToString, funcName));
-				}
-				// Allow bypassing native checks.
-				setProperty(funcProto, 'toString', (function() {
-					function wrapper() {
-						setProperty(funcProto, 'toString', fnToString);
-						var result = hasOwnProperty.call(this, 'toString') ? this.toString() : fnToString.call(this);
-						setProperty(funcProto, 'toString', wrapper);
-						return result;
-					}
-					return wrapper;
-				}()));
+        function constant(value) {
+          return function() {
+            return value;
+          };
+        }
+        function createToString(funcName) {
+          return constant(nativeString.replace(reToString, funcName));
+        }
+        // Allow bypassing native checks.
+        setProperty(funcProto, 'toString', (function() {
+          function wrapper() {
+            setProperty(funcProto, 'toString', fnToString);
+            var result = hasOwnProperty.call(this, 'toString') ? this.toString() : fnToString.call(this);
+            setProperty(funcProto, 'toString', wrapper);
+            return result;
+          }
+          return wrapper;
+        }()));
 
-				// Add prototype extensions.
-				funcProto._method = noop;
+        // Add prototype extensions.
+        funcProto._method = noop;
 
-				// Set bad shims.
-				setProperty(Array, '_isArray', Array.isArray);
-				setProperty(Array, 'isArray', noop);
+        // Set bad shims.
+        setProperty(Array, '_isArray', Array.isArray);
+        setProperty(Array, 'isArray', noop);
 
-				setProperty(Date, '_now', Date.now);
-				setProperty(Date, 'now', noop);
+        setProperty(Date, '_now', Date.now);
+        setProperty(Date, 'now', noop);
 
-				setProperty(Object, '_keys', Object.keys);
-				setProperty(Object, 'keys', noop);
+        setProperty(Object, '_keys', Object.keys);
+        setProperty(Object, 'keys', noop);
 
-				setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
-				setProperty(objectProto, 'propertyIsEnumerable', function(key) {
-					if (key == '1' && this && typeof this == 'object' &&
-							hasOwnProperty.call(this, 'callee') &&
-							!propertyIsEnumerable.call(this, 'callee') &&
-							this.length === 2 && this[0] === 1 && this[1] === 0) {
-						throw new Error;
-					}
-					return propertyIsEnumerable.call(this, key);
-				});
+        setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
+        setProperty(objectProto, 'propertyIsEnumerable', function(key) {
+          if (key == '1' && this && typeof this == 'object' &&
+              hasOwnProperty.call(this, 'callee') &&
+              !propertyIsEnumerable.call(this, 'callee') &&
+              this.length === 2 && this[0] === 1 && this[1] === 0) {
+            throw new Error;
+          }
+          return propertyIsEnumerable.call(this, key);
+        });
 
-				setProperty(window, '_Set', window.Set);
-				setProperty(window, 'Set', noop);
+        setProperty(window, '_Set', window.Set);
+        setProperty(window, 'Set', noop);
 
-				setProperty(window, '_WeakMap', window.WeakMap);
-				setProperty(window, 'WeakMap', noop);
+        setProperty(window, '_WeakMap', window.WeakMap);
+        setProperty(window, 'WeakMap', noop);
 
-				// Fake `WinRTError`.
-				setProperty(window, 'WinRTError', Error);
+        // Fake `WinRTError`.
+        setProperty(window, 'WinRTError', Error);
 
-				// Fake free variable `global`.
-				setProperty(window, 'exports', window);
-				setProperty(window, 'global', window);
-				setProperty(window, 'module', {});
-			}
+        // Fake free variable `global`.
+        setProperty(window, 'exports', window);
+        setProperty(window, 'global', window);
+        setProperty(window, 'module', {});
+      }
 
-			function removeBizarroMethods() {
-				var funcProto = Function.prototype,
-				    objectProto = Object.prototype,
-				    stringProto = String.prototype;
+      function removeBizarroMethods() {
+        var funcProto = Function.prototype,
+            objectProto = Object.prototype,
+            stringProto = String.prototype;
 
-				if (Array._isArray) {
-					setProperty(Array, 'isArray', Array._isArray);
-				} else {
-					delete Array.isArray;
-				}
-				if (Date._now) {
-					setProperty(Date, 'now', Date._now);
-				} else {
-					delete Date.now;
-				}
-				if (Object._keys) {
-					setProperty(Object, 'keys', Object._keys);
-				} else {
-					delete Object.keys;
-				}
-				if (window._Set) {
-					Set = _Set;
-				}
-				setProperty(window, '_Set', undefined);
+        if (Array._isArray) {
+          setProperty(Array, 'isArray', Array._isArray);
+        } else {
+          delete Array.isArray;
+        }
+        if (Date._now) {
+          setProperty(Date, 'now', Date._now);
+        } else {
+          delete Date.now;
+        }
+        if (Object._keys) {
+          setProperty(Object, 'keys', Object._keys);
+        } else {
+          delete Object.keys;
+        }
+        if (window._Set) {
+          Set = _Set;
+        }
+        setProperty(window, '_Set', undefined);
 
-				if (window._WeakMap) {
-					WeakMap = _WeakMap;
-				}
-				setProperty(window, '_WeakMap', undefined);
+        if (window._WeakMap) {
+          WeakMap = _WeakMap;
+        }
+        setProperty(window, '_WeakMap', undefined);
 
-				setProperty(window, 'WinRTError', undefined);
+        setProperty(window, 'WinRTError', undefined);
 
-				setProperty(window, 'exports', undefined);
-				setProperty(window, 'global', undefined);
-				setProperty(window, 'module', undefined);
+        setProperty(window, 'exports', undefined);
+        setProperty(window, 'global', undefined);
+        setProperty(window, 'module', undefined);
 
-				setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
+        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
-				delete Array._isArray;
-				delete Date._now;
-				delete Object._keys;
-				delete funcProto._method;
-				delete objectProto._propertyIsEnumerable;
-			}
+        delete Array._isArray;
+        delete Date._now;
+        delete Object._keys;
+        delete funcProto._method;
+        delete objectProto._propertyIsEnumerable;
+      }
 
-			// Load lodash to expose it to the bad extensions/shims.
-			if (!ui.isModularize) {
-				addBizarroMethods();
-				document.write('<script src="' + ui.buildPath + '"><\/script>');
-			}
-		</script>
-		<script>
-			// Store lodash to test for bad extensions/shims.
-			if (!ui.isModularize) {
-				var lodashBizarro = window._;
-				window._ = undefined;
-				removeBizarroMethods();
-			}
-			// Load test scripts.
-			document.write((ui.isForeign || ui.urlParams.loader == 'none')
-				? '<script src="' + ui.buildPath + '"><\/script><script src="test.js"><\/script>'
-				: '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
-			);
-		</script>
-		<script>
-			var lodashModule,
-			    shimmedModule,
-			    underscoreModule;
+      // Load lodash to expose it to the bad extensions/shims.
+      if (!ui.isModularize) {
+        addBizarroMethods();
+        document.write('<script src="' + ui.buildPath + '"><\/script>');
+      }
+    </script>
+    <script>
+      // Store lodash to test for bad extensions/shims.
+      if (!ui.isModularize) {
+        var lodashBizarro = window._;
+        window._ = undefined;
+        removeBizarroMethods();
+      }
+      // Load test scripts.
+      document.write((ui.isForeign || ui.urlParams.loader == 'none')
+        ? '<script src="' + ui.buildPath + '"><\/script><script src="test.js"><\/script>'
+        : '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
+      );
+    </script>
+    <script>
+      var lodashModule,
+          shimmedModule,
+          underscoreModule;
 
-			(function() {
-				if (window.curl) {
-					curl.config({ 'apiName': 'require' });
-				}
-				if (ui.isForeign || !window.require) {
-					return;
-				}
-				var reBasename = /[\w.-]+$/,
-				    basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
-				    modulePath = ui.buildPath.replace(/\.js$/, ''),
-				    moduleMain = modulePath.match(reBasename)[0],
-				    locationPath = modulePath.replace(reBasename, '').replace(/^\/|\/$/g, ''),
-				    shimmedLocationPath = './abc/../' + locationPath,
-				    underscoreLocationPath = './xyz/../' + locationPath,
-				    uid = +new Date;
+      (function() {
+        if (window.curl) {
+          curl.config({ 'apiName': 'require' });
+        }
+        if (ui.isForeign || !window.require) {
+          return;
+        }
+        var reBasename = /[\w.-]+$/,
+            basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
+            modulePath = ui.buildPath.replace(/\.js$/, ''),
+            moduleMain = modulePath.match(reBasename)[0],
+            locationPath = modulePath.replace(reBasename, '').replace(/^\/|\/$/g, ''),
+            shimmedLocationPath = './abc/../' + locationPath,
+            underscoreLocationPath = './xyz/../' + locationPath,
+            uid = +new Date;
 
-				function getConfig() {
-					var result = {
-						'baseUrl': './',
-						'urlArgs': 't=' + uid++,
-						'waitSeconds': 0,
-						'paths': {},
-						'packages': [{
-							'name': 'test',
-							'location': basePath + 'test',
-							'main': 'test',
-							'config': {
-								// Work around no global being exported.
-								'exports': 'QUnit',
-								'loader': 'curl/loader/legacy'
-							}
-						}],
-						'shim': {
-							'shimmed': {
-								'exports': '_'
-							}
-						}
-					};
+        function getConfig() {
+          var result = {
+            'baseUrl': './',
+            'urlArgs': 't=' + uid++,
+            'waitSeconds': 0,
+            'paths': {},
+            'packages': [{
+              'name': 'test',
+              'location': basePath + 'test',
+              'main': 'test',
+              'config': {
+                // Work around no global being exported.
+                'exports': 'QUnit',
+                'loader': 'curl/loader/legacy'
+              }
+            }],
+            'shim': {
+              'shimmed': {
+                'exports': '_'
+              }
+            }
+          };
 
-					if (ui.isModularize) {
-						result.packages.push({
-							'name': 'lodash',
-							'location': locationPath,
-							'main': moduleMain
-						}, {
-							'name': 'shimmed',
-							'location': shimmedLocationPath,
-							'main': moduleMain
-						}, {
-							'name': 'underscore',
-							'location': underscoreLocationPath,
-							'main': moduleMain
-						});
-					} else {
-						result.paths.lodash = modulePath;
-						result.paths.shimmed = shimmedLocationPath + '/' + moduleMain;
-						result.paths.underscore = underscoreLocationPath + '/' + moduleMain;
-					}
-					return result;
-				}
+          if (ui.isModularize) {
+            result.packages.push({
+              'name': 'lodash',
+              'location': locationPath,
+              'main': moduleMain
+            }, {
+              'name': 'shimmed',
+              'location': shimmedLocationPath,
+              'main': moduleMain
+            }, {
+              'name': 'underscore',
+              'location': underscoreLocationPath,
+              'main': moduleMain
+            });
+          } else {
+            result.paths.lodash = modulePath;
+            result.paths.shimmed = shimmedLocationPath + '/' + moduleMain;
+            result.paths.underscore = underscoreLocationPath + '/' + moduleMain;
+          }
+          return result;
+        }
 
-				function loadTests() {
-					require(getConfig(), ['test'], function() {
-						QUnit.start();
-					});
-				}
+        function loadTests() {
+          require(getConfig(), ['test'], function() {
+            QUnit.start();
+          });
+        }
 
-				function loadModulesAndTests() {
-					require(getConfig(), ['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
-						lodashModule = lodash;
-						lodashModule.moduleName = 'lodash';
+        function loadModulesAndTests() {
+          require(getConfig(), ['lodash', 'shimmed', 'underscore'], function(lodash, shimmed, underscore) {
+            lodashModule = lodash;
+            lodashModule.moduleName = 'lodash';
 
-						if (shimmed) {
-							shimmedModule = shimmed.result(shimmed, 'noConflict') || shimmed;
-							shimmedModule.moduleName = 'shimmed';
-						}
-						if (underscore) {
-							underscoreModule = underscore.result(underscore, 'noConflict') || underscore;
-							underscoreModule.moduleName = 'underscore';
-						}
-						if (ui.isModularize) {
-							window._ = lodash;
-						}
-						if (ui.isModularize) {
-							require(getConfig(), [
-								'lodash/internal/baseEach',
-								'lodash/internal/isIndex',
-								'lodash/internal/isIterateeCall',
-								'lodash/internal/isLength'
-							], function(baseEach, isIndex, isIterateeCall, isLength) {
-								lodash._baseEach = baseEach;
-								lodash._isIndex = isIndex;
-								lodash._isIterateeCall = isIterateeCall;
-								lodash._isLength = isLength;
-								loadTests();
-							});
-						} else {
-							loadTests();
-						}
-					});
-				}
+            if (shimmed) {
+              shimmedModule = shimmed.result(shimmed, 'noConflict') || shimmed;
+              shimmedModule.moduleName = 'shimmed';
+            }
+            if (underscore) {
+              underscoreModule = underscore.result(underscore, 'noConflict') || underscore;
+              underscoreModule.moduleName = 'underscore';
+            }
+            if (ui.isModularize) {
+              window._ = lodash;
+            }
+            if (ui.isModularize) {
+              require(getConfig(), [
+                'lodash/internal/baseEach',
+                'lodash/internal/isIndex',
+                'lodash/internal/isIterateeCall',
+                'lodash/internal/isLength'
+              ], function(baseEach, isIndex, isIterateeCall, isLength) {
+                lodash._baseEach = baseEach;
+                lodash._isIndex = isIndex;
+                lodash._isIterateeCall = isIterateeCall;
+                lodash._isLength = isLength;
+                loadTests();
+              });
+            } else {
+              loadTests();
+            }
+          });
+        }
 
-				QUnit.config.autostart = false;
+        QUnit.config.autostart = false;
 
-				if (window.requirejs) {
-					addBizarroMethods();
-					require(getConfig(), ['lodash'], function(lodash) {
-						lodashBizarro = lodash.result(lodash, 'noConflict') || lodash;
-						delete requirejs.s.contexts._;
+        if (window.requirejs) {
+          addBizarroMethods();
+          require(getConfig(), ['lodash'], function(lodash) {
+            lodashBizarro = lodash.result(lodash, 'noConflict') || lodash;
+            delete requirejs.s.contexts._;
 
-						removeBizarroMethods();
-						loadModulesAndTests();
-					});
-				} else {
-					loadModulesAndTests();
-				}
-			}());
+            removeBizarroMethods();
+            loadModulesAndTests();
+          });
+        } else {
+          loadModulesAndTests();
+        }
+      }());
 
-			// Set a more readable browser name.
-			window.onload = function() {
-				var timeoutId = setInterval(function() {
-					var ua = document.getElementById('qunit-userAgent');
-					if (ua) {
-						ua.innerHTML = platform;
-						clearInterval(timeoutId);
-					}
-				}, 16);
-			};
-		</script>
-	</body>
+      // Set a more readable browser name.
+      window.onload = function() {
+        var timeoutId = setInterval(function() {
+          var ua = document.getElementById('qunit-userAgent');
+          if (ua) {
+            ua.innerHTML = platform;
+            clearInterval(timeoutId);
+          }
+        }, 16);
+      };
+    </script>
+  </body>
 </html>

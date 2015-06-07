@@ -6168,7 +6168,7 @@
           wrapped = new LazyWrapper(this);
         }
         wrapped = wrapped.reverse();
-        wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+        wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
         return new LodashWrapper(wrapped, this.__chain__);
       }
       return this.thru(interceptor);
@@ -12281,27 +12281,30 @@
             iteratee = args[0],
             useLazy = isLazy || isArray(value);
 
-        var interceptor = function(value) {
-          return lodashFunc.apply(lodash, arrayPush([value], args));
-        };
         if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
           // Avoid lazy use if the iteratee has a "length" value other than `1`.
           isLazy = useLazy = false;
         }
-        var onlyLazy = isLazy && !isHybrid;
+        var interceptor = function(value) {
+          return lodashFunc.apply(undefined, arrayPush([value], args));
+        };
+
+        var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
+            onlyLazy = isLazy && !isHybrid;
+
         if (retUnwrapped && !chainAll) {
           if (onlyLazy) {
             value = value.clone();
-            value.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+            value.__actions__.push(action);
             return func.call(value);
           }
-          return lodashFunc.call(lodash, this.value())[0];
+          return lodashFunc.call(undefined, this.value())[0];
         }
         if (useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);
           var result = func.apply(value, args);
           if (!retUnwrapped) {
-            result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+            result.__actions__.push(action);
           }
           return new LodashWrapper(result, chainAll);
         }

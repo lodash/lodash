@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" id="index">
+ <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>lodash</title>
+  <meta name="description" content="A JavaScript utility library delivering consistency, modularity, performance, &amp; extras.">
+  <link rel="stylesheet" href="assets/css/main.css?20140609">
+  <link rel="alternate" type="application/atom+xml" href="https://github.com/lodash/lodash/commits/master.atom">
+  <link rel="icon" type="image/png" href="assets/img/favicon.ico">
+  <!--[if lt IE 9]><script src="/_js/html5.js"></script><![endif]-->
+ </head>
+ <body>
+  <header>
+   <h1><a href="/">lodash</a> <span>v3.9.3</span></h1>
+   <h2 class="description">A JavaScript utility library delivering consistency, <a href="https://www.npmjs.com/browse/keyword/lodash-modularized">modularity</a>, <!--<a href="/benchmarks">-->performance<!--</a>-->, &amp; <a href="#features">extras</a>.</h2>
+  </header>
+
+  <pre class="intro"><code>_.<span class="me1">assign</span><span class="br0">&#40;</span><span class="br0">&#123;</span> <span class="st0">'a'</span><span class="sy0">:</span> <span class="nu0">1</span> <span class="br0">&#125;</span><span class="sy0">,</span> <span class="br0">&#123;</span> <span class="st0">'b'</span><span class="sy0">:</span> <span class="nu0">2</span> <span class="br0">&#125;</span><span class="sy0">,</span> <span class="br0">&#123;</span> <span class="st0">'c'</span><span class="sy0">:</span> <span class="nu0">3</span> <span class="br0">&#125;</span><span class="br0">&#41;</span><span class="sy0">;</span><br><span class="co1">// → { 'a': 1, 'b': 2, 'c': 3 }</span><br>_.<span class="me1">map</span><span class="br0">&#40;</span><span class="br0">&#91;</span><span class="nu0">1</span><span class="sy0">,</span> <span class="nu0">2</span><span class="sy0">,</span> <span class="nu0">3</span><span class="br0">&#93;</span><span class="sy0">,</span> <span class="kw2">function</span><span class="br0">&#40;</span>n<span class="br0">&#41;</span> <span class="br0">&#123;</span> <span class="kw1">return</span> n <span class="sy0">*</span> <span class="nu0">3</span><span class="sy0">;</span> <span class="br0">&#125;</span><span class="br0">&#41;</span><span class="sy0">;</span><br><span class="co1">// → [3, 6, 9]</span></code></pre>
+  <p id="social"><iframe style="width:95px; height:25px" allowtransparency frameborder="0" scrolling="no" src="https://ghbtns.com/github-btn.html?user=lodash&repo=lodash&type=star&count=true"></iframe><iframe style="width:95px; height:25px" allowtransparency frameborder="0" scrolling="no" src="https://ghbtns.com/github-btn.html?user=lodash&repo=lodash&type=fork&count=true"></iframe></p>
+
+  <h2 id="docs">Documentation</h2>
+  <ul>
+   <li><a href="docs">API Documentation</a></li>
+   <li><a href="http://devdocs.io/lodash/">DevDocs – <em>a searchable interface for our documentation</em></a></li>
+  </ul>
+
+  <h2 id="download">Download</h2>
+  <p>Review the <a href="https://github.com/lodash/lodash/wiki/build-differences">build differences</a> &amp; pick the one that’s right for you.</p>
+  <ul class="multiline-items">
+   <li><a href="https://raw.github.com/lodash/lodash/3.9.3/lodash.js">Modern build</a> (<a href="https://raw.github.com/lodash/lodash/3.9.3/lodash.min.js">minified</a>)<br>For new environments like Chrome, Firefox, IE ≥ 9, &amp; Safari ≥ 5.1</li>
+   <li><a href="https://raw.github.com/lodash/lodash-compat/3.9.3/lodash.js">Compatibility build</a> (<a href="https://raw.github.com/lodash/lodash-compat/3.9.3/lodash.min.js">minified</a>)<br>For new &amp; old environments like IE ≤ 8 &amp; PhantomJS</li>
+  </ul>
+
+  <h2 id="formats">Module formats</h2>
+  <p>lodash is also available in a variety of other builds &amp; module formats.</p>
+  <ul>
+   <li>npm packages for <a href="https://www.npmjs.com/package/lodash">modern</a>, <a href="https://www.npmjs.com/package/lodash-compat">compatibility</a>, &amp; <a href="https://www.npmjs.com/browse/keyword/lodash-modularized">per method</a> builds</li>
+   <li>AMD modules for <a href="https://github.com/lodash/lodash/tree/3.9.3-amd">modern</a> &amp; <a href="https://github.com/lodash/lodash-compat/tree/3.9.3-amd">compatibility</a> builds</li>
+   <li>ES modules for the <a href="https://github.com/lodash/lodash/tree/3.9.3-es">modern</a> build</li>
+  </ul>
+
+  <p>CDN copies are available on <a href="https://cdnjs.com/">cdnjs</a> &amp; <a href="http://www.jsdelivr.com/">jsDelivr</a>.<br>Create <a href="/custom-builds">custom builds</a> with only the features you need.<br>Looking for more functional usage? Try <a href="https://www.npmjs.com/package/lodash-fp">lodash-fp</a>.</p>
+
+  <h2 id="reference">Dive in</h2>
+  <p>Check out our <!--<a href="/tests">unit tests</a>, <a href="/benchmarks">benchmarks</a>, --><a href="https://github.com/lodash/lodash/wiki/Changelog">changelog</a>, <a href="https://github.com/lodash/lodash/wiki/Roadmap">roadmap</a>, as well as <a href="https://github.com/lodash/lodash/wiki/Resources">community created podcasts, posts, &amp; videos</a>.</p>
+
+  <h2 id="installation">Installation</h2>
+  <p>In a browser:</p>
+  <pre><code><span class="sy0">&lt;</span>script src<span class="sy0">=</span><span class="st0">&quot;lodash.js&quot;</span><span class="sy0">&gt;&lt;/</span>script<span class="sy0">&gt;</span></code></pre>
+  <p>In an AMD loader:</p>
+  <pre><code>require<span class="br0">(</span><span class="br0">[</span><span class="st0">'lodash'</span><span class="br0">]</span><span class="sy0">,</span> <span class="kw2">function</span><span class="br0">(</span>_<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span><span class="br0">)</span><span class="sy0">;</span></code></pre>
+  <p>Using npm:</p>
+  <pre><code>$ {sudo -H} npm i -g npm<br>$ npm i --save lodash</code></pre>
+  <p>In Node.js/io.js:</p>
+  <pre><code><span class="co1">// load the modern build</span><br><span class="kw2">var</span> _ <span class="sy0">=</span> require<span class="br0">(</span><span class="st0">'lodash'</span><span class="br0">)</span><span class="sy0">;</span><br><span class="co1">// or a method category</span><br><span class="kw2">var</span> array <span class="sy0">=</span> require<span class="br0">(</span><span class="st0">'lodash/array'</span><span class="br0">)</span><span class="sy0">;</span><br><span class="co1">// or a method (great for smaller builds with browserify/webpack)</span><br><span class="kw2">var</span> chunk <span class="sy0">=</span> require<span class="br0">(</span><span class="st0">'lodash/array/chunk'</span><span class="br0">)</span><span class="sy0">;</span></code></pre>
+  <p>See the <a href="https://github.com/lodash/lodash/tree/3.0.0-npm">package source</a> for more details.</p>
+  <p><strong>Note:</strong><br>Don’t assign values to the <a href="http://nodejs.org/api/repl.html#repl_repl_features">special variable</a> “<code>_</code>” when in the REPL.<br>Install <a href="https://www.npmjs.com/package/n_">n_</a> for a REPL that includes lodash by default.</p>
+
+  <h2 id="features">Features</h2>
+  <ul class="features-items">
+   <li>~100% <a href="https://coveralls.io/r/lodash">code coverage</a></li>
+   <li>Follows <a href="http://semver.org/">semantic versioning</a> for releases</li>
+   <li><a href="http://filimanjaro.com/blog/2014/introducing-lazy-evaluation/">Lazily evaluated</a> chaining</li>
+   <li><a href="/docs#_">_(…)</a> supports implicit chaining</li>
+   <li><a href="/docs#add">_.add</a> for mathematical composition</li>
+   <li><a href="/docs#ary">_.ary</a> &amp; <a href="/docs#rearg">_.rearg</a> to change function argument limits &amp; order</li>
+   <li><a href="/docs#at">_.at</a> for cherry-picking collection values</li>
+   <li><a href="/docs#attempt">_.attempt</a> to execute functions which may error without a try-catch</li>
+   <li><a href="/docs#before">_.before</a> to complement <a href="/docs#after">_.after</a></li>
+   <li><a href="/docs#bindKey">_.bindKey</a> for binding <a href="http://michaux.ca/articles/lazy-function-definition-pattern"><em>“lazy”</em></a> defined methods</li>
+   <li><a href="/docs#chunk">_.chunk</a> for splitting an array into chunks of a given size</li>
+   <li><a href="/docs#clone">_.clone</a> supports shallow cloning of <code>Date</code> &amp; <code>RegExp</code> objects</li>
+   <li><a href="/docs#cloneDeep">_.cloneDeep</a> for deep cloning arrays &amp; objects</li>
+   <li><a href="/docs#curry">_.curry</a> &amp; <a href="/docs#curryRight">_.curryRight</a> for creating <a href="http://hughfdjackson.com/javascript/why-curry-helps/">curried</a> functions</li>
+   <li><a href="/docs#debounce">_.debounce</a> &amp; <a href="/docs#throttle">_.throttle</a> are cancelable &amp; accept options for more control</li>
+   <li><a href="/docs#fill">_.fill</a> to fill arrays with values</li>
+   <li><a href="/docs#findKey">_.findKey</a> for finding keys</li>
+   <li><a href="/docs#flow">_.flow</a> to complement <a href="/docs#flowRight">_.flowRight</a> (a.k.a <code>_.compose</code>)</li>
+   <li><a href="/docs#forEach">_.forEach</a> supports exiting early</li>
+   <li><a href="/docs#forIn">_.forIn</a> for iterating all enumerable properties</li>
+   <li><a href="/docs#forOwn">_.forOwn</a> for iterating own properties</li>
+   <li><a href="/docs#get">_.get</a> &amp; <a href="/docs#set">_.set</a> for deep property getting &amp; setting</li>
+   <li><a href="/docs#gt">_.gt</a>, <a href="/docs#gte">_.gte</a>, <a href="/docs#lt">_.lt</a>, &amp; <a href="/docs#lte">_.lte</a> relational methods</li>
+   <li><a href="/docs#inRange">_.inRange</a> for checking whether a number is within a given range</li>
+   <li><a href="/docs#isNative">_.isNative</a> to check for native functions</li>
+   <li><a href="/docs#isPlainObject">_.isPlainObject</a> &amp; <a href="/docs#toPlainObject">_.toPlainObject</a> to check for &amp; convert to <code>Object</code> objects</li>
+   <li><a href="/docs#isTypedArray">_.isTypedArray</a> to check for typed arrays</li>
+   <li><a href="/docs#mapKeys">_.mapKeys</a> for mapping keys to an object</li>
+   <li><a href="/docs#matches">_.matches</a> supports deep object comparisons</li>
+   <li><a href="/docs#matchesProperty">_.matchesProperty</a> to complement <a href="/docs#matches">_.matches</a> &amp; <a href="/docs#property">_.property</a></li>
+   <li><a href="/docs#merge">_.merge</a> for a deep <a href="/docs#extend">_.extend</a></li>
+   <li><a href="/docs#method">_.method</a> &amp; <a href="/docs#methodOf">_.methodOf</a> to create functions that invoke methods</li>
+   <li><a href="/docs#parseInt">_.parseInt</a> for consistent cross-environment behavior</li>
+   <li><a href="/docs#pull">_.pull</a>, <a href="/docs#pullAt">_.pullAt</a>, &amp; <a href="/docs#remove">_.remove</a> for mutating arrays</li>
+   <li><a href="/docs#random">_.random</a> supports returning floating-point numbers</li>
+   <li><a href="/docs#restParam">_.restParam</a> &amp; <a href="/docs#spread">_.spread</a> for applying rest parameters &amp; spreading arguments to functions</li>
+   <li><a href="/docs#runInContext">_.runInContext</a> for collisionless mixins &amp; easier mocking</li>
+   <li><a href="/docs#slice">_.slice</a> for creating subsets of array-like values</li>
+   <li><a href="/docs#sortByAll">_.sortByAll</a> &amp; <a href="/docs#sortByOrder">_.sortByOrder</a> for sorting by multiple properties &amp; orders
+   <li><a href="/docs#sum">_.sum</a> to get the sum of values</li>
+   <li><a href="/docs#support">_.support</a> for flagging environment features</li>
+   <li><a href="/docs#template">_.template</a> supports <a href="/docs#templateSettings-imports"><em>“imports”</em></a> options &amp; <a href="http://people.mozilla.org/%7Ejorendorff/es6-draft.html#sec-template-literal-lexical-components">ES template delimiters</a></li>
+   <li><a href="/docs#transform">_.transform</a> as a powerful alternative to <a href="/docs#reduce">_.reduce</a> for transforming objects</li>
+   <li><a href="/docs#unzipWith">_.unzipWith</a> &amp; <a href="/docs#zipWith">_.zipWith</a> to specify how grouped values should be combined</li>
+   <li><a href="/docs#valuesIn">_.valuesIn</a> for getting values of all enumerable properties</li>
+   <li><a href="/docs#xor">_.xor</a> to complement <a href="/docs#difference">_.difference</a>, <a href="/docs#intersection">_.intersection</a>, &amp; <a href="/docs#union">_.union</a></li>
+   <li><a href="/docs#bind">_.bind</a>, <a href="/docs#curry">_.curry</a>, <a href="/docs#partial">_.partial</a>, &amp; <a href="/docs" title="_.bindKey, _.curryRight, _.partialRight">more</a> support customizable argument placeholders</li>
+   <li><a href="/docs#capitalize">_.capitalize</a>, <a href="/docs#trim">_.trim</a>, &amp; <a href="/docs" title="_.camelCase, _.deburr, _.endsWith, _.escapeRegExp, _.kebabCase, _.pad, _.padLeft, _.padRight, _.repeat, _.snakeCase, _.startsWith, _.trimLeft, _.trimRight, _.trunc, _.words">more</a> string methods</li>
+   <li><a href="/docs#clone">_.clone</a>, <a href="/docs#isEqual">_.isEqual</a>, &amp; <a href="/docs" title="_.assign, _.cloneDeep, _.merge">more</a> accept customizer callbacks</li>
+   <li><a href="/docs#dropWhile">_.dropWhile</a>, <a href="/docs#takeWhile">_.takeWhile</a>, &amp; <a href="/docs" title="_.drop, _.dropRight, _.dropRightWhile, _.take, _.takeRight, _.takeRightWhile">more</a> to complement <a href="/docs#first">_.first</a>, <a href="/docs#initial">_.initial</a>, <a href="/docs#last">_.last</a>, &amp; <a href="/docs#rest">_.rest</a></li>
+   <li><a href="/docs#findLast">_.findLast</a>, <a href="/docs#findLastKey">_.findLastKey</a>, &amp; <a href="/docs" title="_.curryRight, _.dropRight, _.dropRightWhile, _.flowRight, _.forEachRight, _.forInRight, _.forOwnRight, _.padRight, partialRight, _.takeRight, _.trimRight, _.takeRightWhile">more</a> right-associative methods</li>
+   <li><a href="/docs#includes">_.includes</a>, <a href="/docs#toArray">_.toArray</a>, &amp; <a href="/docs" title="_.at, _.countBy, _.every, _.filter, _.find, _.findLast, _.findWhere, _.forEach, _.forEachRight, _.groupBy, _.indexBy, _.invoke, _.map, _.max, _.min, _.partition, _.pluck, _.reduce, _.reduceRight, _.reject, _.shuffle, _.size, _.some, _.sortBy, _.sortByAll, _.sortByOrder, _.sum, _.where">more</a> accept strings</li>
+   <li><a href="/docs#thru">_#thru</a> to pass values thru a chain sequence</li>
+   <li><a href="/docs#prototype-commit">_#commit</a> &amp; <a href="/docs#prototype-plant">_#plant</a> for working with chain sequences</li>
+  </ul>
+
+  <h2 id="support">Support</h2>
+  <p>Tested in Chrome 41-42, Firefox 37-38, IE 6-11, MS Edge, Opera 28-29, Safari 5-8, ChakraNode 0.12.2, io.js 2.1.0, Node.js 0.8.28, 0.10.38, &amp; 0.12.4, PhantomJS 1.9.8, RingoJS 0.11, &amp; Rhino 1.7.6</p>
+  <p>Automated <a href="https://saucelabs.com/u/lodash">browser</a> &amp; <a href="https://travis-ci.org/lodash/lodash/">CI</a> test runs are available. Special thanks to <a href="https://saucelabs.com/">Sauce Labs</a> for providing automated browser testing.</p>
+
+  <script>!function(g,f,j,i,h){onload=function(){var n="iframe",m="frameborder=0 scrolling=0 allowtransparency",e="//platform.twitter.com/widgets",d="dnt=true&amp;screen_name="+f+"&amp;show_count=false&amp;size=m",c="dnt=true&amp;counturl=http://"+j+".com&amp;dnt=true&amp;show_count=true&amp;size=m&amp;text="+h+"&amp;url=https://"+j+".com/",b=g.getElementById(i),a=g.createElement("div");a.innerHTML="<"+n+" "+m+' style="width:120px;height:25px" src="'+e+"/follow_button.html?"+encodeURI(d)+'"></'+n+"><"+n+" "+m+' style="width:95px;height:25px" src="'+e+"/tweet_button.html?"+encodeURI(c).replace(/%25/g,'%')+'"></'+n+">";b.appendChild(a.firstChild);b.appendChild(a.firstChild)}}(document,"bestiejs","lodash","social","Check out lodash – A JavaScript utility library delivering consistency, modularity, performance, %26 extras")</script>
+  <footer></footer>
+  <script src="assets/js/lodash.js"></script>
+  <script>_gaq=[['_setAccount','UA-6065217-64'],['_trackPageview']];(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.src='//www.google-analytics.com/ga.js';s.parentNode.insertBefore(g,s)}(document,'script'))</script>
+ </body>
+</html>

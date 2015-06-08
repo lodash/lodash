@@ -13703,6 +13703,14 @@
       strictEqual(actual, isCeil ? 5 : 4);
     });
 
+    test('`_.' + methodName + '` should coerce `precision` values to numbers and `NaN` to `0`', 2, function() {
+      var actual = func(4.006, NaN);
+      strictEqual(actual, isCeil ? 5 : 4);
+
+      actual = func(4.016, '+2');
+      strictEqual(actual, isFloor ? 4.01 : 4.02);
+    });
+
     test('`_.' + methodName + '` should return a rounded number with a positive precision', 1, function() {
       var actual = func(4.016, 2);
       strictEqual(actual, isFloor ? 4.01 : 4.02);

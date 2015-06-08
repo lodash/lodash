@@ -3707,6 +3707,25 @@
     }
 
     /**
+     * Creates a `_.round`, `_.ceil`, or `_.floor` function.
+     *
+     * @private
+     * @param {String} type Specify the Math method to use when rounding.
+     */
+
+    function createRound(type) {
+      var roundFn = Math[type];
+      return function(number, precision) {
+        if (precision) {
+          precision = Math.pow(10, precision);
+          return roundFn(number * precision) / precision;
+        } else {
+          return roundFn(number);
+        }
+      }
+    }
+
+    /**
      * Creates a function that either curries or invokes `func` with optional
      * `this` binding and partially applied arguments.
      *
@@ -11871,6 +11890,72 @@
         : baseSum(collection, iteratee);
     }
 
+    /**
+     * Calculates the result of a number rounded to an optional precision.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} number The number to round.
+     * @param {number} [precision] The precision to round to.
+     * @returns {number} Returns the rounded number.
+     * @example
+     *
+     * _.round(4.006);
+     * // => 4
+     *
+     * _.round(4.006, 2);
+     * // => 4.01
+     *
+     * _.round(4060, -2);
+     * // => 4100
+     */
+    var round = createRound('round');
+
+    /**
+     * Calculates the result of a number rounded down to an optional precision.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} number The number to round down.
+     * @param {number} [precision] The precision to round down to.
+     * @returns {number} Returns the rounded down number.
+     * @example
+     *
+     * _.floor(4.006);
+     * // => 4
+     *
+     * _.floor(0.046, 2);
+     * // => 0.04
+     *
+     * _.floor(4060, -2);
+     * // => 4000
+     */
+    var floor = createRound('floor');
+
+    /**
+     * Calculates the result of a number rounded up to an optional precision.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} number The number to round up.
+     * @param {number} [precision] The precision to round up to.
+     * @returns {number} Returns the rounded up number.
+     * @example
+     *
+     * _.ceil(4.006);
+     * // => 5
+     *
+     * _.ceil(6.004, 2);
+     * // => 6.01
+     *
+     * _.ceil(6040, -2);
+     * // => 6100
+     */
+    var ceil = createRound('ceil');
+
     /*------------------------------------------------------------------------*/
 
     // Ensure wrappers are instances of `baseLodash`.
@@ -12028,6 +12113,7 @@
     lodash.attempt = attempt;
     lodash.camelCase = camelCase;
     lodash.capitalize = capitalize;
+    lodash.ceil = ceil;
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
     lodash.deburr = deburr;
@@ -12043,6 +12129,7 @@
     lodash.findLastKey = findLastKey;
     lodash.findWhere = findWhere;
     lodash.first = first;
+    lodash.floor = floor;
     lodash.get = get;
     lodash.gt = gt;
     lodash.gte = gte;
@@ -12091,6 +12178,7 @@
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
     lodash.result = result;
+    lodash.round = round;
     lodash.runInContext = runInContext;
     lodash.size = size;
     lodash.snakeCase = snakeCase;

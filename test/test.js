@@ -13686,6 +13686,34 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.round, lodash.floor, and lodash.ceil');
+
+  _.each(['round', 'floor', 'ceil'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should return a rounded number without a precision', 1, function() {
+      var actual = func(4.006);
+      equal(actual, methodName === 'ceil' ? 5 : 4);
+    });
+
+    test('`_.' + methodName + '` should return a rounded number with a precision of 0', 1, function() {
+      var actual = func(4.006, 0);
+      equal(actual, methodName === 'ceil' ? 5 : 4);
+    });
+
+    test('`_.' + methodName + '` should return a rounded number with a positive precision', 1, function() {
+      var actual = func(4.016, 2);
+      equal(actual, methodName === 'floor' ? 4.01 : 4.02);
+    });
+
+    test('`_.' + methodName + '` should return a rounded number with a negative precision', 1, function() {
+      var actual = func(4160, -2);
+      equal(actual, methodName === 'floor' ? 4100 : 4200);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.runInContext');
 
   (function() {
@@ -17863,7 +17891,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 225, function() {
+    test('should accept falsey arguments', 228, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
           isExposed = '_' in root,
           oldDash = root._;

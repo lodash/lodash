@@ -13686,29 +13686,31 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.round, lodash.floor, and lodash.ceil');
+  QUnit.module('round methods');
 
-  _.each(['round', 'floor', 'ceil'], function(methodName) {
-    var func = _[methodName];
+  _.each(['ceil', 'floor', 'round'], function(methodName) {
+    var func = _[methodName],
+        isCeil = methodName == 'ceil',
+        isFloor = methodName == 'floor';
 
     test('`_.' + methodName + '` should return a rounded number without a precision', 1, function() {
       var actual = func(4.006);
-      equal(actual, methodName === 'ceil' ? 5 : 4);
+      strictEqual(actual, isCeil ? 5 : 4);
     });
 
-    test('`_.' + methodName + '` should return a rounded number with a precision of 0', 1, function() {
+    test('`_.' + methodName + '` should return a rounded number with a precision of `0`', 1, function() {
       var actual = func(4.006, 0);
-      equal(actual, methodName === 'ceil' ? 5 : 4);
+      strictEqual(actual, isCeil ? 5 : 4);
     });
 
     test('`_.' + methodName + '` should return a rounded number with a positive precision', 1, function() {
       var actual = func(4.016, 2);
-      equal(actual, methodName === 'floor' ? 4.01 : 4.02);
+      strictEqual(actual, isFloor ? 4.01 : 4.02);
     });
 
     test('`_.' + methodName + '` should return a rounded number with a negative precision', 1, function() {
       var actual = func(4160, -2);
-      equal(actual, methodName === 'floor' ? 4100 : 4200);
+      strictEqual(actual, isFloor ? 4100 : 4200);
     });
   });
 

@@ -749,10 +749,9 @@
 
     /** Native method references. */
     var ArrayBuffer = context.ArrayBuffer,
-        ceil = Math.ceil,
         clearTimeout = context.clearTimeout,
-        floor = Math.floor,
         parseFloat = context.parseFloat,
+        pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = getNative(context, 'Set'),
         setTimeout = context.setTimeout,
@@ -761,7 +760,9 @@
         WeakMap = getNative(context, 'WeakMap');
 
     /* Native method references for those with the same name as other `lodash` methods. */
-    var nativeCreate = getNative(Object, 'create'),
+    var nativeCeil = Math.ceil,
+        nativeCreate = getNative(Object, 'create'),
+        nativeFloor = Math.floor,
         nativeIsArray = getNative(Array, 'isArray'),
         nativeIsFinite = context.isFinite,
         nativeKeys = getNative(Object, 'keys'),
@@ -2608,7 +2609,7 @@
      * @returns {number} Returns the random number.
      */
     function baseRandom(min, max) {
-      return min + floor(nativeRandom() * (max - min + 1));
+      return min + nativeFloor(nativeRandom() * (max - min + 1));
     }
 
     /**
@@ -2933,7 +2934,7 @@
           valIsUndef = value === undefined;
 
       while (low < high) {
-        var mid = floor((low + high) / 2),
+        var mid = nativeFloor((low + high) / 2),
             computed = iteratee(array[mid]),
             isDef = computed !== undefined,
             isReflexive = computed === computed;
@@ -3650,7 +3651,7 @@
       }
       var padLength = length - strLength;
       chars = chars == null ? ' ' : (chars + '');
-      return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
+      return repeat(chars, nativeCeil(padLength / chars.length)).slice(0, padLength);
     }
 
     /**
@@ -3691,6 +3692,25 @@
     }
 
     /**
+     * Creates a `_.ceil`, `_.floor`, or `_.round` function.
+     *
+     * @private
+     * @param {string} methodName The name of the `Math` method to use when rounding.
+     * @returns {Function} Returns the new round function.
+     */
+    function createRound(methodName) {
+      var func = Math[methodName];
+      return function(number, precision) {
+        precision = precision === undefined ? 0 : (+precision || 0);
+        if (precision) {
+          precision = pow(10, precision);
+          return func(number * precision) / precision;
+        }
+        return func(number);
+      };
+    }
+
+    /**
      * Creates a `_.sortedIndex` or `_.sortedLastIndex` function.
      *
      * @private
@@ -3704,25 +3724,6 @@
           ? binaryIndex(array, value, retHighest)
           : binaryIndexBy(array, value, callback(iteratee, thisArg, 1), retHighest);
       };
-    }
-
-    /**
-     * Creates a `_.round`, `_.ceil`, or `_.floor` function.
-     *
-     * @private
-     * @param {String} type Specify the Math method to use when rounding.
-     */
-
-    function createRound(type) {
-      var roundFn = Math[type];
-      return function(number, precision) {
-        if (precision) {
-          precision = Math.pow(10, precision);
-          return roundFn(number * precision) / precision;
-        } else {
-          return roundFn(number);
-        }
-      }
     }
 
     /**
@@ -4572,12 +4573,12 @@
       if (guard ? isIterateeCall(array, size, guard) : size == null) {
         size = 1;
       } else {
-        size = nativeMax(floor(size) || 1, 1);
+        size = nativeMax(nativeFloor(size) || 1, 1);
       }
       var index = 0,
           length = array ? array.length : 0,
           resIndex = -1,
-          result = Array(ceil(length / size));
+          result = Array(nativeCeil(length / size));
 
       while (index < length) {
         result[++resIndex] = baseSlice(array, index, (index += size));
@@ -10260,7 +10261,7 @@
      */
     function inRange(value, start, end) {
       start = +start || 0;
-      if (typeof end === 'undefined') {
+      if (end === undefined) {
         end = start;
         start = 0;
       } else {
@@ -10543,8 +10544,8 @@
         return string;
       }
       var mid = (length - strLength) / 2,
-          leftLength = floor(mid),
-          rightLength = ceil(mid);
+          leftLength = nativeFloor(mid),
+          rightLength = nativeCeil(mid);
 
       chars = createPadding('', rightLength, chars);
       return chars.slice(0, leftLength) + string + chars;
@@ -10667,7 +10668,7 @@
         if (n % 2) {
           result += string;
         }
-        n = floor(n / 2);
+        n = nativeFloor(n / 2);
         string += string;
       } while (n);
 
@@ -11644,7 +11645,7 @@
       // Use `Array(length)` so engines like Chakra and V8 avoid slower modes.
       // See https://youtu.be/XAqIpGU8ZZk#t=17m25s for more details.
       var index = -1,
-          length = nativeMax(ceil((end - start) / (step || 1)), 0),
+          length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
           result = Array(length);
 
       while (++index < length) {
@@ -11682,7 +11683,7 @@
      * // => also invokes `mage.castSpell(n)` three times
      */
     function times(n, iteratee, thisArg) {
-      n = floor(n);
+      n = nativeFloor(n);
 
       // Exit early to avoid a JSC JIT bug in Safari 8
       // where `Array(0)` is treated as `Array(1)`.
@@ -11743,6 +11744,50 @@
     function add(augend, addend) {
       return (+augend || 0) + (+addend || 0);
     }
+
+    /**
+     * Calculates `n` rounded up to `precision`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} n The number to round up.
+     * @param {number} [precision=0] The precision to round up to.
+     * @returns {number} Returns the rounded up number.
+     * @example
+     *
+     * _.ceil(4.006);
+     * // => 5
+     *
+     * _.ceil(6.004, 2);
+     * // => 6.01
+     *
+     * _.ceil(6040, -2);
+     * // => 6100
+     */
+    var ceil = createRound('ceil');
+
+    /**
+     * Calculates `n` rounded down to `precision`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} n The number to round down.
+     * @param {number} [precision=0] The precision to round down to.
+     * @returns {number} Returns the rounded down number.
+     * @example
+     *
+     * _.floor(4.006);
+     * // => 4
+     *
+     * _.floor(0.046, 2);
+     * // => 0.04
+     *
+     * _.floor(4060, -2);
+     * // => 4000
+     */
+    var floor = createRound('floor');
 
     /**
      * Gets the maximum value of `collection`. If `collection` is empty or falsey
@@ -11843,6 +11888,28 @@
     var min = createExtremum(lt, POSITIVE_INFINITY);
 
     /**
+     * Calculates `n` rounded to `precision`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} n The number to round.
+     * @param {number} [precision=0] The precision to round to.
+     * @returns {number} Returns the rounded number.
+     * @example
+     *
+     * _.round(4.006);
+     * // => 4
+     *
+     * _.round(4.006, 2);
+     * // => 4.01
+     *
+     * _.round(4060, -2);
+     * // => 4100
+     */
+    var round = createRound('round');
+
+    /**
      * Gets the sum of the values in `collection`.
      *
      * @static
@@ -11889,72 +11956,6 @@
         ? arraySum(isArray(collection) ? collection : toIterable(collection))
         : baseSum(collection, iteratee);
     }
-
-    /**
-     * Calculates the result of a number rounded to an optional precision.
-     *
-     * @static
-     * @memberOf _
-     * @category Math
-     * @param {number} number The number to round.
-     * @param {number} [precision] The precision to round to.
-     * @returns {number} Returns the rounded number.
-     * @example
-     *
-     * _.round(4.006);
-     * // => 4
-     *
-     * _.round(4.006, 2);
-     * // => 4.01
-     *
-     * _.round(4060, -2);
-     * // => 4100
-     */
-    var round = createRound('round');
-
-    /**
-     * Calculates the result of a number rounded down to an optional precision.
-     *
-     * @static
-     * @memberOf _
-     * @category Math
-     * @param {number} number The number to round down.
-     * @param {number} [precision] The precision to round down to.
-     * @returns {number} Returns the rounded down number.
-     * @example
-     *
-     * _.floor(4.006);
-     * // => 4
-     *
-     * _.floor(0.046, 2);
-     * // => 0.04
-     *
-     * _.floor(4060, -2);
-     * // => 4000
-     */
-    var floor = createRound('floor');
-
-    /**
-     * Calculates the result of a number rounded up to an optional precision.
-     *
-     * @static
-     * @memberOf _
-     * @category Math
-     * @param {number} number The number to round up.
-     * @param {number} [precision] The precision to round up to.
-     * @returns {number} Returns the rounded up number.
-     * @example
-     *
-     * _.ceil(4.006);
-     * // => 5
-     *
-     * _.ceil(6.004, 2);
-     * // => 6.01
-     *
-     * _.ceil(6040, -2);
-     * // => 6100
-     */
-    var ceil = createRound('ceil');
 
     /*------------------------------------------------------------------------*/
 
@@ -12256,7 +12257,7 @@
         if (filtered && !index) {
           return new LazyWrapper(this);
         }
-        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+        n = n == null ? 1 : nativeMax(nativeFloor(n) || 0, 0);
 
         var result = this.clone();
         if (filtered) {

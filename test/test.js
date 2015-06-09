@@ -13443,10 +13443,11 @@
     });
 
     test('`_.' + methodName + '` should handle empty paths', 6, function() {
-      _.each([['', ''], [[], []], [[''], ['']]], function(pair, index) {
+      _.each([['', ''], [[], ['']], [[''], []]], function(pair, index) {
         var object = {};
+        var object2 = { '': 3 };
         strictEqual(func(object, pair[0]), index == 2 ? undefined : object);
-        strictEqual(func({ '': 3 }, pair[1]), 3);
+        strictEqual(func(object2, pair[1]), index == 2 ? object2 : 3);
       });
     });
 

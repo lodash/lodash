@@ -9604,7 +9604,8 @@
      * // => 'default'
      */
     function get(object, path, defaultValue) {
-      var result = object == null ? undefined : baseGet(object, toPath(path), path + '');
+      var pathKey = isArray(path) && path.length == 0 ? undefined : path + '';
+      var result = object == null ? defaultValue : baseGet(object, toPath(path), pathKey);
       return result === undefined ? defaultValue : result;
     }
 
@@ -10058,12 +10059,14 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      var result = object == null ? defaultValue : toObject(object)[path];
+      var result = (object == null || isArray(path) && path.length == 0) ? undefined : toObject(object)[path];
       if (result === undefined) {
         if (object != null && (!isKey(path, object) || !hasOwnProperty.call(object, path))) {
           path = toPath(path);
           object = path.length <= 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          result = object == null ? defaultValue : baseGet(object, path.length ? [last(path)] : []);
+          result = object == null ? defaultValue :
+            path.length ? baseGet(object, [last(path)]) :
+            object;
         }
         result = result === undefined ? defaultValue : result;
       }

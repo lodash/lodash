@@ -13442,9 +13442,10 @@
       strictEqual(func(object, 'a[]'), 1);
     });
 
-    test('`_.' + methodName + '` should handle empty paths', 4, function() {
-      _.each([['', ''], [[], ['']]], function(pair) {
-        strictEqual(func({}, pair[0]), undefined);
+    test('`_.' + methodName + '` should handle empty paths', 6, function() {
+      _.each([['', ''], [[], []], [[''], ['']]], function(pair, index) {
+        var object = {};
+        strictEqual(func(object, pair[0]), index == 2 ? undefined : object);
         strictEqual(func({ '': 3 }, pair[1]), 3);
       });
     });

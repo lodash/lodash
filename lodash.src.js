@@ -9604,9 +9604,20 @@
      * // => 'default'
      */
     function get(object, path, defaultValue) {
-      var pathKey = isArray(path) && path.length == 0 ? undefined : path + '';
-      var result = object == null ? defaultValue : baseGet(object, toPath(path), pathKey);
-      return result === undefined ? defaultValue : result;
+      var result = (object == null || isArray(path) && path.length == 0) ? undefined : toObject(object)[path];
+      if (result === undefined) {
+        var resolved = object != null && hasOwnProperty.call(object, path);
+        if (object != null && (!isKey(path, object) || !resolved)) {
+          path = toPath(path);
+          object = path.length <= 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+          result = object == null ? defaultValue :
+            path.length ? toObject(object)[last(path)] :
+            object;
+          resolved = object != null && path.length && hasOwnProperty.call(object, last(path));
+        }
+        result = result === undefined && !resolved ? defaultValue : result;
+      }
+      return result;
     }
 
     /**
@@ -10061,14 +10072,16 @@
     function result(object, path, defaultValue) {
       var result = (object == null || isArray(path) && path.length == 0) ? undefined : toObject(object)[path];
       if (result === undefined) {
-        if (object != null && (!isKey(path, object) || !hasOwnProperty.call(object, path))) {
+        var resolved = object != null && hasOwnProperty.call(object, path);
+        if (object != null && (!isKey(path, object) || !resolved)) {
           path = toPath(path);
           object = path.length <= 1 ? object : baseGet(object, baseSlice(path, 0, -1));
           result = object == null ? defaultValue :
-            path.length ? baseGet(object, [last(path)]) :
+            path.length ? toObject(object)[last(path)] :
             object;
+          resolved = object != null && path.length && hasOwnProperty.call(object, last(path));
         }
-        result = result === undefined ? defaultValue : result;
+        result = result === undefined && !resolved ? defaultValue : result;
       }
       return isFunction(result) ? result.call(object) : result;
     }

@@ -13451,6 +13451,11 @@
       });
     });
 
+    test('`_.' + methodName + '` should return value when path exists', 1, function() {
+      var object = { 'a': undefined };
+      strictEqual(func(object, 'a', {}), undefined);
+    });
+
     test('`_.' + methodName + '` should handle complex paths', 2, function() {
       var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { 'e': { 'f': 6 } } } } } } };
 

@@ -13442,11 +13442,18 @@
       strictEqual(func(object, 'a[]'), 1);
     });
 
-    test('`_.' + methodName + '` should handle empty paths', 4, function() {
-      _.each([['', ''], [[], ['']]], function(pair) {
-        strictEqual(func({}, pair[0]), undefined);
-        strictEqual(func({ '': 3 }, pair[1]), 3);
+    test('`_.' + methodName + '` should handle empty paths', 6, function() {
+      _.each([['', ''], [[], ['']], [[''], []]], function(pair, index) {
+        var object = {};
+        var object2 = { '': 3 };
+        strictEqual(func(object, pair[0]), index == 2 ? undefined : object);
+        strictEqual(func(object2, pair[1]), index == 2 ? object2 : 3);
       });
+    });
+
+    test('`_.' + methodName + '` should return value when path exists', 1, function() {
+      var object = { 'a': undefined };
+      strictEqual(func(object, 'a', {}), undefined);
     });
 
     test('`_.' + methodName + '` should handle complex paths', 2, function() {

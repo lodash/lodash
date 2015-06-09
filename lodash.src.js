@@ -2215,7 +2215,7 @@
       while (object != null && index < length) {
         object = toObject(object)[path[index++]];
       }
-      return (index && index == length) ? object : undefined;
+      return (index == length) ? object : undefined;
     }
 
     /**
@@ -9604,8 +9604,20 @@
      * // => 'default'
      */
     function get(object, path, defaultValue) {
-      var result = object == null ? undefined : baseGet(object, toPath(path), path + '');
-      return result === undefined ? defaultValue : result;
+      var result = (object == null || isArray(path) && path.length == 0) ? undefined : toObject(object)[path];
+      if (result === undefined) {
+        var resolved = object != null && hasOwnProperty.call(object, path);
+        if (object != null && (!isKey(path, object) || !resolved)) {
+          path = toPath(path);
+          object = path.length <= 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+          result = object == null ? defaultValue :
+            path.length ? toObject(object)[last(path)] :
+            object;
+          resolved = object != null && path.length && hasOwnProperty.call(object, last(path));
+        }
+        result = result === undefined && !resolved ? defaultValue : result;
+      }
+      return result;
     }
 
     /**
@@ -10058,14 +10070,18 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      var result = object == null ? undefined : toObject(object)[path];
+      var result = (object == null || isArray(path) && path.length == 0) ? undefined : toObject(object)[path];
       if (result === undefined) {
-        if (object != null && !isKey(path, object)) {
+        var resolved = object != null && hasOwnProperty.call(object, path);
+        if (object != null && (!isKey(path, object) || !resolved)) {
           path = toPath(path);
-          object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          result = object == null ? undefined : toObject(object)[last(path)];
+          object = path.length <= 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+          result = object == null ? defaultValue :
+            path.length ? toObject(object)[last(path)] :
+            object;
+          resolved = object != null && path.length && hasOwnProperty.call(object, last(path));
         }
-        result = result === undefined ? defaultValue : result;
+        result = result === undefined && !resolved ? defaultValue : result;
       }
       return isFunction(result) ? result.call(object) : result;
     }

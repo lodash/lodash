@@ -11171,11 +11171,11 @@
       delete Wrapper.prototype.b;
     });
 
-    test('should not assign inherited `source` properties', 1, function() {
+    test('should not assign inherited `source` methods', 1, function() {
       function Foo() {}
       Foo.prototype.a = _.noop;
 
-      deepEqual(_.mixin({}, new Foo, {}), {});
+      deepEqual(_.mixin({}, new Foo), {});
     });
 
     test('should accept an `options` argument', 16, function() {

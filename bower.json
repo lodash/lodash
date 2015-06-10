@@ -1,6 +1,5 @@
 {
   "name": "lodash",
-  "version": "3.9.3",
   "main": "lodash.js",
   "ignore": [
     ".*",

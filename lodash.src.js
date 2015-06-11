@@ -8036,7 +8036,8 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to wrap.
-     * @param {...Function} [transforms] The function to transform the corresponding argument.
+     * @param {...(Function|Function[])} [transforms] The functions to transform
+     * arguments, specified as individual functions or arrays of functions.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -8059,6 +8060,7 @@
      * // => [25, 20]
      */
     var modArgs = restParam(function(func, transforms) {
+      transforms = baseFlatten(transforms);
       if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }

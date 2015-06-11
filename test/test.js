@@ -11306,6 +11306,11 @@
       deepEqual(modded(5, 10), [10, 100]);
     });
 
+    test('should flatten transforms', 1, function() {
+      var modded = _.modArgs(fn, [doubled, square]);
+      deepEqual(modded(5, 10), [10, 100]);
+    });
+
     test('should not transform any argument greater than the number of transforms', 1, function() {
       var modded = _.modArgs(fn, doubled, square);
       deepEqual(modded(5, 10, 18), [10, 100, 18]);

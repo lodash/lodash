@@ -11306,9 +11306,9 @@
       deepEqual(modded(5, 10), [10, 100]);
     });
 
-    test('should flatten transforms', 1, function() {
-      var modded = _.modArgs(fn, [doubled, square]);
-      deepEqual(modded(5, 10), [10, 100]);
+    test('should flatten `transforms`', 1, function() {
+      var modded = _.modArgs(fn, [doubled, square], String);
+      deepEqual(modded(5, 10, 15), [10, 100, '15']);
     });
 
     test('should not transform any argument greater than the number of transforms', 1, function() {
@@ -11417,20 +11417,16 @@
 
   (function() {
     var args = arguments,
-        object = { 'a': 1, 'b': 2, 'c': 3 },
-        expected = { 'b': 2 };
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
+        expected = { 'b': 2, 'd': 4 };
 
     test('should create an object with omitted properties', 2, function() {
-      deepEqual(_.omit(object, 'a'), { 'b': 2, 'c': 3 });
+      deepEqual(_.omit(object, 'a'), { 'b': 2, 'c': 3, 'd': 4 });
       deepEqual(_.omit(object, 'a', 'c'), expected);
     });
 
-    test('should support picking an array of properties', 1, function() {
-      deepEqual(_.omit(object, ['a', 'c']), expected);
-    });
-
-    test('should support picking an array of properties and individual properties', 1, function() {
-      deepEqual(_.omit(object, ['a'], 'c'), expected);
+    test('should flatten `props`', 1, function() {
+      deepEqual(_.omit(object, ['a', 'd'], 'c'), { 'b': 2 });
     });
 
     test('should iterate over inherited properties', 1, function() {
@@ -11466,15 +11462,15 @@
       delete stringProto.b;
     });
 
-    test('should work with a `predicate` argument', 1, function() {
+    test('should work with a predicate argument', 1, function() {
       var actual = _.omit(object, function(num) {
-        return num != 2;
+        return num != 2 && num != 4;
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should provide the correct `predicate` arguments', 1, function() {
+    test('should provide the correct predicate arguments', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
@@ -11492,8 +11488,8 @@
 
     test('should set the `this` binding', 1, function() {
       var actual = _.omit(object, function(num) {
-        return num != this.b;
-      }, { 'b': 2 });
+        return num != this.b && num != this.d;
+      }, { 'b': 2, 'd': 4 });
 
       deepEqual(actual, expected);
     });
@@ -12152,7 +12148,7 @@
 
   (function() {
     var args = arguments,
-        object = { 'a': 1, 'b': 2, 'c': 3 },
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
         expected = { 'a': 1, 'c': 3 };
 
     test('should create an object of picked properties', 2, function() {
@@ -12160,12 +12156,8 @@
       deepEqual(_.pick(object, 'a', 'c'), expected);
     });
 
-    test('should support picking an array of properties', 1, function() {
-      deepEqual(_.pick(object, ['a', 'c']), expected);
-    });
-
-    test('should support picking an array of properties and individual properties', 1, function() {
-      deepEqual(_.pick(object, ['a'], 'c'), expected);
+    test('should flatten `props`', 1, function() {
+      deepEqual(_.pick(object, ['a', 'd'], 'c'), { 'a': 1, 'c': 3, 'd': 4 });
     });
 
     test('should iterate over inherited properties', 1, function() {
@@ -12193,15 +12185,15 @@
       deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
     });
 
-    test('should work with a `predicate` argument', 1, function() {
+    test('should work with a predicate argument', 1, function() {
       var actual = _.pick(object, function(num) {
-        return num != 2;
+        return num == 1 || num == 3;
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should provide the correct `predicate` arguments', 1, function() {
+    test('should provide the correct predicate arguments', 1, function() {
       var args,
           object = { 'a': 1, 'b': 2 },
           lastKey = _.keys(object).pop();
@@ -12219,8 +12211,8 @@
 
     test('should set the `this` binding', 1, function() {
       var actual = _.pick(object, function(num) {
-        return num != this.b;
-      }, { 'b': 2 });
+        return num == this.a || num == this.c;
+      }, { 'a': 1, 'c': 3 });
 
       deepEqual(actual, expected);
     });

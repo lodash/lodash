@@ -6244,7 +6244,9 @@
       'a string': '1234'
     },
     function(collection, key) {
-      var values = _.toArray(collection);
+      var isStr = typeof collection == 'string',
+          values = _.toArray(collection),
+          length = values.length;
 
       test('should work with ' + key + ' and  return `true` for  matched values', 1, function() {
         strictEqual(_.includes(collection, 3), true);
@@ -6263,7 +6265,7 @@
         _.each([4, 6, Math.pow(2, 32), Infinity], function(fromIndex) {
           strictEqual(_.includes(collection, 1, fromIndex), false);
           strictEqual(_.includes(collection, undefined, fromIndex), false);
-          strictEqual(_.includes(collection, '', fromIndex), false);
+          strictEqual(_.includes(collection, '', fromIndex), (isStr && fromIndex == length));
         });
       });
 

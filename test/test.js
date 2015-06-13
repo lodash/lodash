@@ -1365,9 +1365,10 @@
       }
 
       var bound = _.bind(Foo, { 'a': 1 }),
-          expected = _.times(7, _.constant(undefined));
+          count = 9,
+          expected = _.times(count, _.constant(undefined));
 
-      var actual = _.times(7, function(index) {
+      var actual = _.times(count, function(index) {
         try {
           switch (index) {
             case 0: return (new bound).a;
@@ -1377,6 +1378,8 @@
             case 4: return (new bound(1, 2, 3, 4)).a;
             case 5: return (new bound(1, 2, 3, 4, 5)).a;
             case 6: return (new bound(1, 2, 3, 4, 5, 6)).a;
+            case 7: return (new bound(1, 2, 3, 4, 5, 6, 7)).a;
+            case 8: return (new bound(1, 2, 3, 4, 5, 6, 7, 8)).a;
           }
         } catch(e) {}
       });
@@ -1417,14 +1420,34 @@
       deepEqual(bound3(), [object1, 'b']);
     });
 
+    test('should not error when instantiating bound built-ins', 2, function() {
+      var Ctor = _.bind(Date, null),
+          expected = new Date(2012, 4, 23, 0, 0, 0, 0);
+
+      try {
+        var actual = new Ctor(2012, 4, 23, 0, 0, 0, 0);
+      } catch(e) {}
+
+      deepEqual(actual, expected);
+
+      Ctor = _.bind(Date, null, 2012, 4, 23);
+
+      try {
+        actual = new Ctor(0, 0, 0, 0);
+      } catch(e) {}
+
+      deepEqual(actual, expected);
+    });
+
     test('should not error when calling bound class constructors with the `new` operator', 1, function() {
       var createCtor = _.attempt(Function, '"use strict";return class A{}');
 
       if (typeof createCtor == 'function') {
         var bound = _.bind(createCtor()),
-            expected = _.times(6, _.constant(true));
+            count = 8,
+            expected = _.times(count, _.constant(true));
 
-        var actual = _.times(6, function(index) {
+        var actual = _.times(count, function(index) {
           try {
             switch (index) {
               case 0: return !!(new bound);
@@ -1433,6 +1456,8 @@
               case 3: return !!(new bound(1, 2, 3));
               case 4: return !!(new bound(1, 2, 3, 4));
               case 5: return !!(new bound(1, 2, 3, 4, 5));
+              case 6: return !!(new bound(1, 2, 3, 4, 5, 6));
+              case 7: return !!(new bound(1, 2, 3, 4, 5, 6, 7));
             }
           } catch(e) {}
         });

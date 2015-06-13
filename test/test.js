@@ -829,7 +829,7 @@
     var values = empties.concat(true, 1, 'a'),
         expected = _.map(values, _.constant(true));
 
-    test('creates a new instance when called without the `new` operator', 1, function() {
+    test('should create a new instance when called without the `new` operator', 1, function() {
       if (!isNpm) {
         var actual = _.map(values, function(value) {
           return _(value) instanceof _;
@@ -1387,7 +1387,7 @@
       deepEqual(actual, expected);
     });
 
-    test('ensure `new bound` is an instance of `func`', 2, function() {
+    test('should ensure `new bound` is an instance of `func`', 2, function() {
       function Foo(value) {
         return value && object;
       }
@@ -3199,7 +3199,7 @@
       });
     });
 
-    test('ensure `new curried` is an instance of `func`', 2, function() {
+    test('should ensure `new curried` is an instance of `func`', 2, function() {
       var Foo = function(value) {
         return value && object;
       };
@@ -3302,7 +3302,7 @@
       });
     });
 
-    test('ensure `new curried` is an instance of `func`', 2, function() {
+    test('should ensure `new curried` is an instance of `func`', 2, function() {
       var Foo = function(value) {
         return value && object;
       };
@@ -5273,7 +5273,7 @@
   _.each(['forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
-    test('iterates over the `length` property', 1, function() {
+    test('should iterate over `length` properties', 1, function() {
       var object = { '0': 'zero', '1': 'one', 'length': 2 },
           props = [];
 
@@ -7214,11 +7214,11 @@
       strictEqual(_.isEmpty({ 'length': '0' }), false);
     });
 
-    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEmpty(shadowObject), false);
     });
 
-    test('skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
+    test('should skip the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -7636,7 +7636,7 @@
       strictEqual(_.isEqual(36, '36'), false);
     });
 
-    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEqual(shadowObject, {}), false);
     });
 
@@ -10818,7 +10818,7 @@
   QUnit.module('lodash.methodOf');
 
   (function() {
-    test('hould create a function that calls a method of a given key', 4, function() {
+    test('should create a function that calls a method of a given key', 4, function() {
       var object = { 'a': _.constant(1) };
 
       _.each(['a', ['a']], function(path) {
@@ -11930,7 +11930,7 @@
         ph3 = _.partial.placeholder,
         ph4 = _.partialRight.placeholder;
 
-    test('combinations of partial functions should work', 1, function() {
+    test('should work with combinations of partial functions', 1, function() {
       var a = _.partial(fn),
           b = _.partialRight(a, 3),
           c = _.partial(b, 1);
@@ -11938,7 +11938,7 @@
       deepEqual(c(2), [1, 2, 3]);
     });
 
-    test('combinations of bound and partial functions should work', 3, function() {
+    test('should work with combinations of bound and partial functions', 3, function() {
       var fn = function() {
         var result = [this.a];
         push.apply(result, arguments);
@@ -11967,7 +11967,7 @@
       deepEqual(c(3), expected);
     });
 
-    test('combinations of functions with placeholders should work', 3, function() {
+    test('should work with combinations of functions with placeholders', 3, function() {
       var expected = [1, 2, 3, 4, 5, 6],
           object = { 'fn': fn };
 
@@ -11990,7 +11990,7 @@
       deepEqual(c(3, 5), expected);
     });
 
-    test('combinations of functions with overlaping placeholders should work', 3, function() {
+    test('should work with combinations of functions with overlaping placeholders', 3, function() {
       var expected = [1, 2, 3, 4],
           object = { 'fn': fn };
 
@@ -12013,7 +12013,7 @@
       deepEqual(c(1), expected);
     });
 
-    test('recursively bound functions should work', 1, function() {
+    test('should work with recursively bound functions', 1, function() {
       var fn = function() {
         return this.a;
       };
@@ -14175,7 +14175,7 @@
       strictEqual(_.size({ 'length': '0' }), 1);
     });
 
-    test('fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.size(shadowObject), 7);
     });
 

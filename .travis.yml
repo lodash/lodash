@@ -62,7 +62,7 @@ script:
   - "[ $ISTANBUL == false ]   || cp ./lodash.$BUILD.js ./lodash.js"
   - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN\" ./lodash.js"
   - "[ $ISTANBUL == false ]   || node ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
-  - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls)"
+  - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.$BUILD.js"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../lodash.$BUILD.min.js"

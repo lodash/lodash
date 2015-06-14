@@ -7214,7 +7214,7 @@
       strictEqual(_.isEmpty({ 'length': '0' }), false);
     });
 
-    test('should fixe the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEmpty(shadowObject), false);
     });
 

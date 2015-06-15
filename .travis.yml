@@ -50,7 +50,7 @@ before_install:
   - "npm config set loglevel error"
   - "npm i -g npm@\"$NPM_VERSION\""
   - "[ $SAUCE_LABS == false ] || npm i chalk@\"^1.0.0\" ecstatic@\"0.8.0\" request@\"^2.0.0\" sauce-tunnel@\"2.2.3\""
-  - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.0.0\" && npm i istanbul@\"0.3.14\")"
+  - "[ $ISTANBUL == false ]   || (npm i -g coveralls@\"^2.0.0\" && npm i istanbul@\"0.3.15\")"
   - "[ $BIN != 'rhino' ] || (sudo mkdir /opt/rhino-1.7.6 && sudo wget --no-check-certificate -O $_/js.jar https://lodash.com/_travis/rhino-1.7.6.jar)"
   - "[ $BIN != 'rhino' ] || (echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7.6/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino)"
   - "[ $BIN != 'ringo' ] || (wget --no-check-certificate https://lodash.com/_travis/ringojs-0.11.zip && sudo unzip ringojs-0.11 -d /opt && rm ringojs-0.11.zip)"

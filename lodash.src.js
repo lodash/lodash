@@ -8032,7 +8032,8 @@
     }
 
     /**
-     * Creates a function that runs each argument through a transform function.
+     * Creates a function that runs each argument through a corresponding
+     * transform function.
      *
      * @static
      * @memberOf _
@@ -8052,7 +8053,7 @@
      * }
      *
      * var modded = _.modArgs(function(x, y) {
-     *   return [x , y];
+     *   return [x, y];
      * }, square, doubled);
      *
      * modded(1, 2);

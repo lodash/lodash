@@ -1,8 +1,6 @@
-/** Native method references. */
-var floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeRandom = Math.random;
+var nativeFloor = Math.floor,
+    nativeRandom = Math.random;
 
 /**
  * The base implementation of `_.random` without support for argument juggling
@@ -14,7 +12,7 @@ var nativeRandom = Math.random;
  * @returns {number} Returns the random number.
  */
 function baseRandom(min, max) {
-  return min + floor(nativeRandom() * (max - min + 1));
+  return min + nativeFloor(nativeRandom() * (max - min + 1));
 }
 
 module.exports = baseRandom;

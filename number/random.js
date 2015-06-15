@@ -34,7 +34,7 @@ var nativeMin = Math.min,
  */
 function random(min, max, floating) {
   if (floating && isIterateeCall(min, max, floating)) {
-    max = floating = null;
+    max = floating = undefined;
   }
   var noMin = min == null,
       noMax = max == null;

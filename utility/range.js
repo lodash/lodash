@@ -1,10 +1,8 @@
 var isIterateeCall = require('../internal/isIterateeCall');
 
-/** Native method references. */
-var ceil = Math.ceil;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+var nativeCeil = Math.ceil,
+    nativeMax = Math.max;
 
 /**
  * Creates an array of numbers (positive and/or negative) progressing from
@@ -41,7 +39,7 @@ var nativeMax = Math.max;
  */
 function range(start, end, step) {
   if (step && isIterateeCall(start, end, step)) {
-    end = step = null;
+    end = step = undefined;
   }
   start = +start || 0;
   step = step == null ? 1 : (+step || 0);
@@ -55,7 +53,7 @@ function range(start, end, step) {
   // Use `Array(length)` so engines like Chakra and V8 avoid slower modes.
   // See https://youtu.be/XAqIpGU8ZZk#t=17m25s for more details.
   var index = -1,
-      length = nativeMax(ceil((end - start) / (step || 1)), 0),
+      length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
       result = Array(length);
 
   while (++index < length) {

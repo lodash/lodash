@@ -6,7 +6,7 @@ var baseIndexOf = require('../internal/baseIndexOf'),
 
 /**
  * Creates an array of unique values that are included in all of the provided
- * arrays using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * @static

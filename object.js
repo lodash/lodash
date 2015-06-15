@@ -2,6 +2,7 @@ module.exports = {
   'assign': require('./object/assign'),
   'create': require('./object/create'),
   'defaults': require('./object/defaults'),
+  'defaultsDeep': require('./object/defaultsDeep'),
   'extend': require('./object/extend'),
   'findKey': require('./object/findKey'),
   'findLastKey': require('./object/findLastKey'),

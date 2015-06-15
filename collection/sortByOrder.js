@@ -4,9 +4,9 @@ var baseSortByOrder = require('../internal/baseSortByOrder'),
 
 /**
  * This method is like `_.sortByAll` except that it allows specifying the
- * sort orders of the iteratees to sort by. A truthy value in `orders` will
- * sort the corresponding property name in ascending order while a falsey
- * value will sort it in descending order.
+ * sort orders of the iteratees to sort by. If `orders` is unspecified, all
+ * values are sorted in ascending order. Otherwise, a value is sorted in
+ * ascending order if its corresponding order is "asc", and descending if "desc".
  *
  * If a property name is provided for an iteratee the created `_.property`
  * style callback returns the property value of the given element.
@@ -20,7 +20,7 @@ var baseSortByOrder = require('../internal/baseSortByOrder'),
  * @category Collection
  * @param {Array|Object|string} collection The collection to iterate over.
  * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
- * @param {boolean[]} orders The sort orders of `iteratees`.
+ * @param {boolean[]} [orders] The sort orders of `iteratees`.
  * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
  * @returns {Array} Returns the new sorted array.
  * @example
@@ -33,7 +33,7 @@ var baseSortByOrder = require('../internal/baseSortByOrder'),
  * ];
  *
  * // sort by `user` in ascending order and by `age` in descending order
- * _.map(_.sortByOrder(users, ['user', 'age'], [true, false]), _.values);
+ * _.map(_.sortByOrder(users, ['user', 'age'], ['asc', 'desc']), _.values);
  * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
  */
 function sortByOrder(collection, iteratees, orders, guard) {
@@ -41,7 +41,7 @@ function sortByOrder(collection, iteratees, orders, guard) {
     return [];
   }
   if (guard && isIterateeCall(iteratees, orders, guard)) {
-    orders = null;
+    orders = undefined;
   }
   if (!isArray(iteratees)) {
     iteratees = iteratees == null ? [] : [iteratees];

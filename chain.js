@@ -1,6 +1,7 @@
 module.exports = {
   'chain': require('./chain/chain'),
   'commit': require('./chain/commit'),
+  'concat': require('./chain/concat'),
   'lodash': require('./chain/lodash'),
   'plant': require('./chain/plant'),
   'reverse': require('./chain/reverse'),

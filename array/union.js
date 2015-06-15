@@ -4,7 +4,7 @@ var baseFlatten = require('../internal/baseFlatten'),
 
 /**
  * Creates an array of unique values, in order, from all of the provided arrays
- * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * @static

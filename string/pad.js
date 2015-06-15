@@ -1,12 +1,10 @@
 var baseToString = require('../internal/baseToString'),
     createPadding = require('../internal/createPadding');
 
-/** Native method references. */
-var ceil = Math.ceil,
-    floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeIsFinite = global.isFinite;
+var nativeCeil = Math.ceil,
+    nativeFloor = Math.floor,
+    nativeIsFinite = global.isFinite;
 
 /**
  * Pads `string` on the left and right sides if it's shorter than `length`.
@@ -39,8 +37,8 @@ function pad(string, length, chars) {
     return string;
   }
   var mid = (length - strLength) / 2,
-      leftLength = floor(mid),
-      rightLength = ceil(mid);
+      leftLength = nativeFloor(mid),
+      rightLength = nativeCeil(mid);
 
   chars = createPadding('', rightLength, chars);
   return chars.slice(0, leftLength) + string + chars;

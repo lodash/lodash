@@ -25,10 +25,10 @@ var nativeMax = Math.max;
  */
 function ary(func, n, guard) {
   if (guard && isIterateeCall(func, n, guard)) {
-    n = null;
+    n = undefined;
   }
   n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
-  return createWrapper(func, ARY_FLAG, null, null, null, null, n);
+  return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
 }
 
 module.exports = ary;

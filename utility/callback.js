@@ -43,7 +43,7 @@ var baseCallback = require('../internal/baseCallback'),
  */
 function callback(func, thisArg, guard) {
   if (guard && isIterateeCall(func, thisArg, guard)) {
-    thisArg = null;
+    thisArg = undefined;
   }
   return isObjectLike(func)
     ? matches(func)

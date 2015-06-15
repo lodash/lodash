@@ -1,6 +1,6 @@
 var assign = require('./assign'),
     assignDefaults = require('../internal/assignDefaults'),
-    restParam = require('../function/restParam');
+    createDefaults = require('../internal/createDefaults');
 
 /**
  * Assigns own enumerable properties of source object(s) to the destination
@@ -20,13 +20,6 @@ var assign = require('./assign'),
  * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
  * // => { 'user': 'barney', 'age': 36 }
  */
-var defaults = restParam(function(args) {
-  var object = args[0];
-  if (object == null) {
-    return object;
-  }
-  args.push(assignDefaults);
-  return assign.apply(undefined, args);
-});
+var defaults = createDefaults(assign, assignDefaults);
 
 module.exports = defaults;

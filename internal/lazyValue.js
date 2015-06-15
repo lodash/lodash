@@ -2,9 +2,11 @@ var baseWrapperValue = require('./baseWrapperValue'),
     getView = require('./getView'),
     isArray = require('../lang/isArray');
 
+/** Used as the size to enable large array optimizations. */
+var LARGE_ARRAY_SIZE = 200;
+
 /** Used to indicate the type of lazy iteratees. */
-var LAZY_DROP_WHILE_FLAG = 0,
-    LAZY_FILTER_FLAG = 1,
+var LAZY_FILTER_FLAG = 1,
     LAZY_MAP_FLAG = 2;
 
 /* Native method references for those with the same name as other `lodash` methods. */
@@ -19,22 +21,25 @@ var nativeMin = Math.min;
  * @returns {*} Returns the unwrapped value.
  */
 function lazyValue() {
-  var array = this.__wrapped__.value();
-  if (!isArray(array)) {
-    return baseWrapperValue(array, this.__actions__);
-  }
-  var dir = this.__dir__,
+  var array = this.__wrapped__.value(),
+      dir = this.__dir__,
+      isArr = isArray(array),
       isRight = dir < 0,
-      view = getView(0, array.length, this.__views__),
+      arrLength = isArr ? array.length : 0,
+      view = getView(0, arrLength, this.__views__),
       start = view.start,
       end = view.end,
       length = end - start,
       index = isRight ? end : (start - 1),
-      takeCount = nativeMin(length, this.__takeCount__),
       iteratees = this.__iteratees__,
-      iterLength = iteratees ? iteratees.length : 0,
+      iterLength = iteratees.length,
       resIndex = 0,
-      result = [];
+      takeCount = nativeMin(length, this.__takeCount__);
+
+  if (!isArr || arrLength < LARGE_ARRAY_SIZE || (arrLength == length && takeCount == length)) {
+    return baseWrapperValue((isRight && isArr) ? array.reverse() : array, this.__actions__);
+  }
+  var result = [];
 
   outer:
   while (length-- && resIndex < takeCount) {
@@ -46,30 +51,16 @@ function lazyValue() {
     while (++iterIndex < iterLength) {
       var data = iteratees[iterIndex],
           iteratee = data.iteratee,
-          type = data.type;
+          type = data.type,
+          computed = iteratee(value);
 
-      if (type == LAZY_DROP_WHILE_FLAG) {
-        if (data.done && (isRight ? (index > data.index) : (index < data.index))) {
-          data.count = 0;
-          data.done = false;
-        }
-        data.index = index;
-        if (!data.done) {
-          var limit = data.limit;
-          if (!(data.done = limit > -1 ? (data.count++ >= limit) : !iteratee(value))) {
-            continue outer;
-          }
-        }
-      } else {
-        var computed = iteratee(value);
-        if (type == LAZY_MAP_FLAG) {
-          value = computed;
-        } else if (!computed) {
-          if (type == LAZY_FILTER_FLAG) {
-            continue outer;
-          } else {
-            break outer;
-          }
+      if (type == LAZY_MAP_FLAG) {
+        value = computed;
+      } else if (!computed) {
+        if (type == LAZY_FILTER_FLAG) {
+          continue outer;
+        } else {
+          break outer;
         }
       }
     }

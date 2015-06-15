@@ -1,14 +1,9 @@
 var arrayCopy = require('../internal/arrayCopy'),
+    arrayPush = require('../internal/arrayPush'),
     baseFunctions = require('../internal/baseFunctions'),
     isFunction = require('../lang/isFunction'),
     isObject = require('../lang/isObject'),
     keys = require('../object/keys');
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var push = arrayProto.push;
 
 /**
  * Adds all own enumerable function properties of a source object to the
@@ -76,9 +71,7 @@ function mixin(object, source, options) {
             result.__chain__ = chainAll;
             return result;
           }
-          var args = [this.value()];
-          push.apply(args, arguments);
-          return func.apply(object, args);
+          return func.apply(object, arrayPush([this.value()], arguments));
         };
       }(func));
     }

@@ -15,6 +15,7 @@ module.exports = {
   'flow': require('./function/flow'),
   'flowRight': require('./function/flowRight'),
   'memoize': require('./function/memoize'),
+  'modArgs': require('./function/modArgs'),
   'negate': require('./function/negate'),
   'once': require('./function/once'),
   'partial': require('./function/partial'),

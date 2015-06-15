@@ -39,13 +39,11 @@ var arraySum = require('../internal/arraySum'),
  */
 function sum(collection, iteratee, thisArg) {
   if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-    iteratee = null;
+    iteratee = undefined;
   }
-  var noIteratee = iteratee == null;
-
-  iteratee = noIteratee ? iteratee : baseCallback(iteratee, thisArg, 3);
-  return noIteratee
-    ? arraySum(isArray(collection) ? collection : toIterable(collection))
+  iteratee = baseCallback(iteratee, thisArg, 3);
+  return iteratee.length == 1
+    ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
     : baseSum(collection, iteratee);
 }
 

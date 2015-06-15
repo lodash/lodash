@@ -14,7 +14,7 @@ var arrayEach = require('./arrayEach'),
  * @private
  * @param {Object} object The destination object.
  * @param {Object} source The source object.
- * @param {Function} [customizer] The function to customize merging properties.
+ * @param {Function} [customizer] The function to customize merged values.
  * @param {Array} [stackA=[]] Tracks traversed source objects.
  * @param {Array} [stackB=[]] Associates values with source counterparts.
  * @returns {Object} Returns `object`.
@@ -24,7 +24,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
     return object;
   }
   var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-      props = isSrcArr ? null : keys(source);
+      props = isSrcArr ? undefined : keys(source);
 
   arrayEach(props || source, function(srcValue, key) {
     if (props) {

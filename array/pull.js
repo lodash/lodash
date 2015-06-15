@@ -8,7 +8,7 @@ var splice = arrayProto.splice;
 
 /**
  * Removes all provided values from `array` using
- * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * **Note:** Unlike `_.without`, this method mutates `array`.

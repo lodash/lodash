@@ -14,6 +14,7 @@ import delay from './function/delay';
 import flow from './function/flow';
 import flowRight from './function/flowRight';
 import memoize from './function/memoize';
+import modArgs from './function/modArgs';
 import negate from './function/negate';
 import once from './function/once';
 import partial from './function/partial';
@@ -41,6 +42,7 @@ export default {
   'flow': flow,
   'flowRight': flowRight,
   'memoize': memoize,
+  'modArgs': modArgs,
   'negate': negate,
   'once': once,
   'partial': partial,

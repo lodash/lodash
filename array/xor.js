@@ -1,3 +1,4 @@
+import arrayPush from '../internal/arrayPush';
 import baseDifference from '../internal/baseDifference';
 import baseUniq from '../internal/baseUniq';
 import isArrayLike from '../internal/isArrayLike';
@@ -24,7 +25,7 @@ function xor() {
     var array = arguments[index];
     if (isArrayLike(array)) {
       var result = result
-        ? baseDifference(result, array).concat(baseDifference(array, result))
+        ? arrayPush(baseDifference(result, array), baseDifference(array, result))
         : array;
     }
   }

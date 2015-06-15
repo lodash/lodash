@@ -32,7 +32,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  */
 function invert(object, multiValue, guard) {
   if (guard && isIterateeCall(object, multiValue, guard)) {
-    multiValue = null;
+    multiValue = undefined;
   }
   var index = -1,
       props = keys(object),

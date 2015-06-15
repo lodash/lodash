@@ -4,7 +4,7 @@ import restParam from '../function/restParam';
 
 /**
  * Creates an array excluding all provided values using
- * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * @static

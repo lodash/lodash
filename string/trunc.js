@@ -52,7 +52,7 @@ var reFlags = /\w*$/;
  */
 function trunc(string, options, guard) {
   if (guard && isIterateeCall(string, options, guard)) {
-    options = null;
+    options = undefined;
   }
   var length = DEFAULT_TRUNC_LENGTH,
       omission = DEFAULT_TRUNC_OMISSION;

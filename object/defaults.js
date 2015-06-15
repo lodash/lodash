@@ -1,6 +1,6 @@
 import assign from './assign';
 import assignDefaults from '../internal/assignDefaults';
-import restParam from '../function/restParam';
+import createDefaults from '../internal/createDefaults';
 
 /**
  * Assigns own enumerable properties of source object(s) to the destination
@@ -20,13 +20,6 @@ import restParam from '../function/restParam';
  * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
  * // => { 'user': 'barney', 'age': 36 }
  */
-var defaults = restParam(function(args) {
-  var object = args[0];
-  if (object == null) {
-    return object;
-  }
-  args.push(assignDefaults);
-  return assign.apply(undefined, args);
-});
+var defaults = createDefaults(assign, assignDefaults);
 
 export default defaults;

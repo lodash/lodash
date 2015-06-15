@@ -10,6 +10,9 @@ var CURRY_FLAG = 8,
     ARY_FLAG = 128,
     REARG_FLAG = 256;
 
+/** Used as the size to enable large array optimizations. */
+var LARGE_ARRAY_SIZE = 200;
+
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -34,7 +37,7 @@ function createFlow(fromRight) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
-        wrapper = new LodashWrapper([]);
+        wrapper = new LodashWrapper([], true);
       }
     }
     index = wrapper ? -1 : length;
@@ -42,7 +45,7 @@ function createFlow(fromRight) {
       func = funcs[index];
 
       var funcName = getFuncName(func),
-          data = funcName == 'wrapper' ? getData(func) : null;
+          data = funcName == 'wrapper' ? getData(func) : undefined;
 
       if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
         wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
@@ -51,12 +54,14 @@ function createFlow(fromRight) {
       }
     }
     return function() {
-      var args = arguments;
-      if (wrapper && args.length == 1 && isArray(args[0])) {
-        return wrapper.plant(args[0]).value();
+      var args = arguments,
+          value = args[0];
+
+      if (wrapper && args.length == 1 && isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+        return wrapper.plant(value).value();
       }
       var index = 0,
-          result = length ? funcs[index].apply(this, args) : args[0];
+          result = length ? funcs[index].apply(this, args) : value;
 
       while (++index < length) {
         result = funcs[index].call(this, result);

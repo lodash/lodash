@@ -46,7 +46,7 @@ function transform(object, iteratee, accumulator, thisArg) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : null);
+        accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
       }
     } else {
       accumulator = {};

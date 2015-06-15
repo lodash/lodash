@@ -1,5 +1,4 @@
 import SetCache from './SetCache';
-import constant from '../utility/constant';
 import getNative from './getNative';
 import root from './root';
 
@@ -16,8 +15,8 @@ var nativeCreate = getNative(Object, 'create');
  * @param {Array} [values] The values to cache.
  * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
  */
-var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
-  return new SetCache(values);
-};
+function createCache(values) {
+  return (nativeCreate && Set) ? new SetCache(values) : null;
+}
 
 export default createCache;

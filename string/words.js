@@ -29,7 +29,7 @@ var reWords = (function() {
  */
 function words(string, pattern, guard) {
   if (guard && isIterateeCall(string, pattern, guard)) {
-    pattern = null;
+    pattern = undefined;
   }
   string = baseToString(string);
   return string.match(pattern || reWords) || [];

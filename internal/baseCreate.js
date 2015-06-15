@@ -14,7 +14,7 @@ var baseCreate = (function() {
     if (isObject(prototype)) {
       object.prototype = prototype;
       var result = new object;
-      object.prototype = null;
+      object.prototype = undefined;
     }
     return result || {};
   };

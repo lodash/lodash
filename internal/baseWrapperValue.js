@@ -1,10 +1,5 @@
 import LazyWrapper from './LazyWrapper';
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var push = arrayProto.push;
+import arrayPush from './arrayPush';
 
 /**
  * The base implementation of `wrapperValue` which returns the result of
@@ -25,11 +20,8 @@ function baseWrapperValue(value, actions) {
       length = actions.length;
 
   while (++index < length) {
-    var args = [result],
-        action = actions[index];
-
-    push.apply(args, action.args);
-    result = action.func.apply(action.thisArg, args);
+    var action = actions[index];
+    result = action.func.apply(action.thisArg, arrayPush([result], action.args));
   }
   return result;
 }

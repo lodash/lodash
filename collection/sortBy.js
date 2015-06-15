@@ -57,7 +57,7 @@ function sortBy(collection, iteratee, thisArg) {
     return [];
   }
   if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-    iteratee = null;
+    iteratee = undefined;
   }
   var index = -1;
   iteratee = baseCallback(iteratee, thisArg, 3);

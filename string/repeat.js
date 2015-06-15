@@ -1,11 +1,9 @@
 import baseToString from '../internal/baseToString';
 import root from '../internal/root';
 
-/** Native method references. */
-var floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeIsFinite = root.isFinite;
+var nativeFloor = Math.floor,
+    nativeIsFinite = root.isFinite;
 
 /**
  * Repeats the given string `n` times.
@@ -40,7 +38,7 @@ function repeat(string, n) {
     if (n % 2) {
       result += string;
     }
-    n = floor(n / 2);
+    n = nativeFloor(n / 2);
     string += string;
   } while (n);
 

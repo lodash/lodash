@@ -1,6 +1,6 @@
 {
   "name": "lodash-es",
-  "version": "3.9.3",
+  "version": "3.10.0",
   "description": "The modern build of lodash exported as ES modules.",
   "homepage": "https://lodash.com/custom-builds",
   "license": "MIT",

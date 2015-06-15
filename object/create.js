@@ -39,7 +39,7 @@ import isIterateeCall from '../internal/isIterateeCall';
 function create(prototype, properties, guard) {
   var result = baseCreate(prototype);
   if (guard && isIterateeCall(prototype, properties, guard)) {
-    properties = null;
+    properties = undefined;
   }
   return properties ? baseAssign(result, properties) : result;
 }

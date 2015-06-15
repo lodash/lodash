@@ -1,6 +1,7 @@
 import arrayExtremum from './arrayExtremum';
 import baseCallback from './baseCallback';
 import baseExtremum from './baseExtremum';
+import isArray from '../lang/isArray';
 import isIterateeCall from './isIterateeCall';
 import toIterable from './toIterable';
 
@@ -15,11 +16,11 @@ import toIterable from './toIterable';
 function createExtremum(comparator, exValue) {
   return function(collection, iteratee, thisArg) {
     if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-      iteratee = null;
+      iteratee = undefined;
     }
     iteratee = baseCallback(iteratee, thisArg, 3);
     if (iteratee.length == 1) {
-      collection = toIterable(collection);
+      collection = isArray(collection) ? collection : toIterable(collection);
       var result = arrayExtremum(collection, iteratee, comparator, exValue);
       if (!(collection.length && result === exValue)) {
         return result;

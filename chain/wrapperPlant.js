@@ -11,17 +11,17 @@ import wrapperClone from '../internal/wrapperClone';
  * @example
  *
  * var array = [1, 2];
- * var wrapper = _(array).map(function(value) {
+ * var wrapped = _(array).map(function(value) {
  *   return Math.pow(value, 2);
  * });
  *
  * var other = [3, 4];
- * var otherWrapper = wrapper.plant(other);
+ * var otherWrapped = wrapped.plant(other);
  *
- * otherWrapper.value();
+ * otherWrapped.value();
  * // => [9, 16]
  *
- * wrapper.value();
+ * wrapped.value();
  * // => [1, 4]
  */
 function wrapperPlant(value) {

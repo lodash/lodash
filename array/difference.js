@@ -1,11 +1,12 @@
 import baseDifference from '../internal/baseDifference';
 import baseFlatten from '../internal/baseFlatten';
 import isArrayLike from '../internal/isArrayLike';
+import isObjectLike from '../internal/isObjectLike';
 import restParam from '../function/restParam';
 
 /**
  * Creates an array of unique `array` values not included in the other
- * provided arrays using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * provided arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * @static
@@ -20,7 +21,7 @@ import restParam from '../function/restParam';
  * // => [1, 3]
  */
 var difference = restParam(function(array, values) {
-  return isArrayLike(array)
+  return (isObjectLike(array) && isArrayLike(array))
     ? baseDifference(array, baseFlatten(values, false, true))
     : [];
 });

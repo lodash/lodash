@@ -1,5 +1,6 @@
 import chain from './chain/chain';
 import commit from './chain/commit';
+import concat from './chain/concat';
 import lodash from './chain/lodash';
 import plant from './chain/plant';
 import reverse from './chain/reverse';
@@ -15,6 +16,7 @@ import wrapperChain from './chain/wrapperChain';
 export default {
   'chain': chain,
   'commit': commit,
+  'concat': concat,
   'lodash': lodash,
   'plant': plant,
   'reverse': reverse,

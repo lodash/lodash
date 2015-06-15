@@ -1,11 +1,9 @@
 import bindCallback from '../internal/bindCallback';
 import root from '../internal/root';
 
-/** Native method references. */
-var floor = Math.floor;
-
 /* Native method references for those with the same name as other `lodash` methods. */
-var nativeIsFinite = root.isFinite,
+var nativeFloor = Math.floor,
+    nativeIsFinite = root.isFinite,
     nativeMin = Math.min;
 
 /** Used as references for the maximum length and index of an array. */
@@ -39,7 +37,7 @@ var MAX_ARRAY_LENGTH = 4294967295;
  * // => also invokes `mage.castSpell(n)` three times
  */
 function times(n, iteratee, thisArg) {
-  n = floor(n);
+  n = nativeFloor(n);
 
   // Exit early to avoid a JSC JIT bug in Safari 8
   // where `Array(0)` is treated as `Array(1)`.

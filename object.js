@@ -1,6 +1,7 @@
 import assign from './object/assign';
 import create from './object/create';
 import defaults from './object/defaults';
+import defaultsDeep from './object/defaultsDeep';
 import extend from './object/extend';
 import findKey from './object/findKey';
 import findLastKey from './object/findLastKey';
@@ -31,6 +32,7 @@ export default {
   'assign': assign,
   'create': create,
   'defaults': defaults,
+  'defaultsDeep': defaultsDeep,
   'extend': extend,
   'findKey': findKey,
   'findLastKey': findLastKey,

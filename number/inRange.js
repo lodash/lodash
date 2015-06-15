@@ -35,7 +35,7 @@ var nativeMax = Math.max,
  */
 function inRange(value, start, end) {
   start = +start || 0;
-  if (typeof end === 'undefined') {
+  if (end === undefined) {
     end = start;
     start = 0;
   } else {

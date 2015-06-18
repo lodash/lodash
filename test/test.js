@@ -1016,6 +1016,10 @@
         skipTest();
       }
     });
+
+    test('should produce a function with matching arity', 1, function() {
+      strictEqual(_.ary(fn, 3, true).length, 3);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

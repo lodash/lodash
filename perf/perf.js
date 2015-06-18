@@ -1882,6 +1882,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.sum`')
+      .add(buildName, '\
+        lodash.sum(numbers)'
+      )
+      .add(otherName, '\
+        _.sum(numbers)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.template` (slow path)')
       .add(buildName, {
         'fn': 'lodash.template(tpl)(tplData)',

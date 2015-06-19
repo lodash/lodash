@@ -10492,7 +10492,7 @@
       string = baseToString(string);
       return (string && reHasRegExpChars.test(string))
         ? string.replace(reRegExpChars, '\\$&')
-        : string;
+        : (string || '(?:)');
     }
 
     /**

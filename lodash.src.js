@@ -7816,6 +7816,7 @@
           clearTimeout(maxTimeoutId);
         }
         maxTimeoutId = timeoutId = trailingCall = undefined;
+        lastCalled = 0;
       }
 
       function delayed() {

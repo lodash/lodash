@@ -4222,29 +4222,31 @@
   QUnit.module('lodash.escapeRegExp');
 
   (function() {
+    var escaped = '\\/\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\n\\r\\u2028\\u2029\\\\',
+        unescaped = '/^$.*+?()[]{}|\n\r\u2028\u2029\\';
+
     test('should escape values', 1, function() {
-      var escaped = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\/\\\\',
-          unescaped = '.*+?^${}()|[\]\/\\';
-
-      escaped += escaped;
-      unescaped += unescaped;
-
-      strictEqual(_.escapeRegExp(unescaped), escaped);
+      strictEqual(_.escapeRegExp(unescaped + unescaped), escaped + escaped);
     });
 
     test('should handle strings with nothing to escape', 1, function() {
       strictEqual(_.escapeRegExp('abc'), 'abc');
     });
 
+    test('should return `"(?:)"` when provided nullish or empty string values', 3, function() {
+      strictEqual(_.escapeRegExp(null), '(?:)');
+      strictEqual(_.escapeRegExp(undefined), '(?:)');
+      strictEqual(_.escapeRegExp(''), '(?:)');
+    });
+
     test('should work with `eval` and `Function`', 2, function() {
-      var string = '[lodash](https://lodash.com/)',
-          escaped = _.escapeRegExp(string),
-          regexp = eval('(/' + escaped + '/)');
+      var actual = _.escapeRegExp(unescaped),
+          regexp = eval('(/' + actual + '/)');
 
-      ok(regexp.test(string));
+      ok(regexp.test(unescaped));
 
-      regexp = Function('return /' + escaped + '/')();
-      ok(regexp.test(string));
+      regexp = Function('return /' + actual + '/')();
+      ok(regexp.test(unescaped));
     });
   }());
 
@@ -17819,7 +17821,6 @@
       'camelCase',
       'capitalize',
       'escape',
-      'escapeRegExp',
       'kebabCase',
       'pad',
       'padLeft',

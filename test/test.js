@@ -15889,6 +15889,29 @@
         QUnit.start();
       }
     });
+
+    asyncTest('_.' + methodName + ' should reset `lastCalled` after cancelling', 3, function() {
+      if (!(isRhino && isModularize)) {
+        var callCount = 0;
+
+        var funced = func(function() {
+          return ++callCount;
+        }, 32, { 'leading': true });
+
+        strictEqual(funced(), 1);
+        funced.cancel();
+        strictEqual(funced(), 2);
+
+        setTimeout(function() {
+          strictEqual(callCount, 2);
+          QUnit.start();
+        }, 64);
+      }
+      else {
+        skipTest(3);
+        QUnit.start();
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/

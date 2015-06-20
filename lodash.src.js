@@ -497,7 +497,7 @@
    * @returns {string} Returns the escaped character.
    */
   function escapeStringChar(chr) {
-    return '\\' + stringEscapes[chr];
+    return '\\' + (stringEscapes[chr] || chr);
   }
 
   /**
@@ -10490,7 +10490,7 @@
     function escapeRegExp(string) {
       string = baseToString(string);
       return (string && reHasRegExpChars.test(string))
-        ? string.replace(reRegExpChars, function(chr) { return '\\' + (stringEscapes[chr] || chr); })
+        ? string.replace(reRegExpChars, escapeStringChar)
         : (string || '(?:)');
     }
 

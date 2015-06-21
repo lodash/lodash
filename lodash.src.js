@@ -941,15 +941,37 @@
     /**
      * The base constructor for creating `lodash` wrapper objects.
      *
-     * @private
      * @param {*} value The value to wrap.
      * @param {boolean} [chainAll] Enable chaining for all wrapper methods.
      * @param {Array} [actions=[]] Actions to peform to resolve the unwrapped value.
      */
     function LodashWrapper(value, chainAll, actions) {
+      if (!(this instanceof LodashWrapper)) {
+        return new LodashWrapper(value, chainAll, actions);
+      }
       this.__wrapped__ = value;
       this.__actions__ = actions || [];
       this.__chain__ = !!chainAll;
+    }
+
+    /**
+     * Determine how a value should be wrapped, then wrap the value.
+     *
+     * @private
+     * @param wrapper {Object|Function|Null} an already wrapped value or a factory function for wrapping a value
+     * @param {*} value The value to wrap.
+     * @param {boolean} [chainAll] Enable chaining for all wrapper methods.
+     * @param {Array} [actions=[]] Actions to peform to resolve the unwrapped value.
+     * @returns {Object} Returns the new `lodash` wrapper instance.
+     */
+    function getWrapper(wrapper, value, chainAll, actions) {
+      if (wrapper instanceof LodashWrapper) {
+        return new wrapper.constructor(value, chainAll, actions);
+      }
+      if (isFunction(wrapper)) {
+        return wrapper(value, chainAll, actions);
+      }
+      return new LodashWrapper(value, chainAll, actions);
     }
 
     /**
@@ -4571,7 +4593,7 @@
     function wrapperClone(wrapper) {
       return wrapper instanceof LazyWrapper
         ? wrapper.clone()
-        : new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
+        : getWrapper(wrapper, wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
     }
 
     /*------------------------------------------------------------------------*/
@@ -6112,7 +6134,7 @@
      * // => [1, 2, 3]
      */
     function wrapperCommit() {
-      return new LodashWrapper(this.value(), this.__chain__);
+      return getWrapper(this, this.value(), this.__chain__);
     }
 
     /**
@@ -6216,7 +6238,7 @@
         }
         wrapped = wrapped.reverse();
         wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
-        return new LodashWrapper(wrapped, this.__chain__);
+        return getWrapper(this, wrapped, this.__chain__);
       }
       return this.thru(interceptor);
     }
@@ -11532,7 +11554,7 @@
             return function() {
               var chainAll = this.__chain__;
               if (chain || chainAll) {
-                var result = object(this.__wrapped__),
+                var result = getWrapper(object, this.__wrapped__),
                     actions = result.__actions__ = arrayCopy(this.__actions__);
 
                 actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
@@ -12278,6 +12300,8 @@
      */
     lodash.VERSION = VERSION;
 
+    lodash.LodashWrapper = LodashWrapper;
+
     // Assign default placeholders.
     arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
       lodash[methodName].placeholder = lodash;
@@ -12428,7 +12452,7 @@
           if (!retUnwrapped) {
             result.__actions__.push(action);
           }
-          return new LodashWrapper(result, chainAll);
+          return getWrapper(this, result, chainAll);
         }
         return this.thru(interceptor);
       };

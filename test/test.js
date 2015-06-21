@@ -876,6 +876,36 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash wrapper');
+
+  (function() {
+    function MyWrapper() {
+      _.LodashWrapper.apply(this, arguments);
+      this.interestingProperty = Math.random();
+    }
+    MyWrapper.prototype = _.create(_.LodashWrapper.prototype, {
+      'constructor': MyWrapper
+    });
+    MyWrapper.__proto__ = _.LodashWrapper.prototype;
+
+    test('should create a new instance when called without the `new` operator', 1, function() {
+      var inst = _.LodashWrapper([]);
+      ok(inst instanceof _.LodashWrapper);
+    });
+
+    test('should return a new MyWrapper when MyWrapper inherits from LodashWrapper', 3, function() {
+      var wrapper1 = new MyWrapper([1, 2, 3, 4]);
+      var property1 = wrapper1.interestingProperty;
+      var wrapper2 = wrapper1.filter(function(x) { return x % 2; });
+      var property2 = wrapper2.interestingProperty;
+      ok(wrapper2 instanceof MyWrapper);
+      ok(property1 != property2);
+      deepEqual(wrapper2.value(), [1, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.add');
 
   (function() {
@@ -17874,7 +17904,7 @@
 
   (function() {
     var allMethods = _.reject(_.functions(_).sort(), function(methodName) {
-      return _.startsWith(methodName, '_');
+      return _.startsWith(methodName, '_') || methodName === 'LodashWrapper';
     });
 
     var checkFuncs = [

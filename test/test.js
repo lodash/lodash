@@ -3668,6 +3668,47 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.defaultsDeep');
+
+  (function() {
+    test('should deep assign properties of a source object if missing on the destination object', 1, function() {
+      var object = { 'a': { 'b': 2 }, 'd': 4 },
+          source = { 'a': { 'b': 1, 'c': 3 }, 'e': 5 },
+          expected = { 'a': { 'b': 2, 'c': 3 }, 'd': 4, 'e': 5 };
+
+      deepEqual(_.defaultsDeep(object, source), expected);
+    });
+
+    test('should accept multiple source objects', 2, function() {
+      var source1 = { 'a': { 'b': 3 } },
+          source2 = { 'a': { 'c': 3 } },
+          source3 = { 'a': { 'b': 3, 'c': 3 } },
+          source4 = { 'a': { 'c': 4 } },
+          expected = { 'a': { 'b': 2, 'c': 3 } };
+
+      deepEqual(_.defaultsDeep({ 'a': { 'b': 2 } }, source1, source2), expected);
+      deepEqual(_.defaultsDeep({ 'a': { 'b': 2 } }, source3, source4), expected);
+    });
+
+    test('should not overwrite `null` values', 1, function() {
+      var object = { 'a': { 'b': null } },
+          source = { 'a': { 'b': 2 } },
+          actual = _.defaultsDeep(object, source);
+
+      strictEqual(actual.a.b, null);
+    });
+
+    test('should overwrite `undefined` values', 1, function() {
+      var object = { 'a': { 'b': undefined } },
+          source = { 'a': { 'b': 2 } },
+          actual = _.defaultsDeep(object, source);
+
+      strictEqual(actual.a.b, 2);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.defer');
 
   (function() {

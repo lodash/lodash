@@ -7821,38 +7821,31 @@
         maxTimeoutId = timeoutId = trailingCall = undefined;
       }
 
-      function delayed() {
-        var remaining = wait - (now() - stamp);
-        if (remaining <= 0 || remaining > wait) {
-          if (maxTimeoutId) {
-            clearTimeout(maxTimeoutId);
-          }
-          var isCalled = trailingCall;
-          maxTimeoutId = timeoutId = trailingCall = undefined;
-          if (isCalled) {
-            lastCalled = now();
-            result = func.apply(thisArg, args);
-            if (!timeoutId && !maxTimeoutId) {
-              args = thisArg = undefined;
-            }
-          }
-        } else {
-          timeoutId = setTimeout(delayed, remaining);
-        }
-      }
-
-      function maxDelayed() {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
+      function executeBoundFunction(shouldExecute, clearTimeoutId) {
+        if (clearTimeoutId) {
+          clearTimeout(clearTimeoutId);
         }
         maxTimeoutId = timeoutId = trailingCall = undefined;
-        if (trailing || (maxWait !== wait)) {
+        if (shouldExecute) {
           lastCalled = now();
           result = func.apply(thisArg, args);
           if (!timeoutId && !maxTimeoutId) {
             args = thisArg = undefined;
           }
         }
+      }
+
+      function delayed() {
+        var remaining = wait - (now() - stamp);
+        if (remaining <= 0 || remaining > wait) {
+          executeBoundFunction(trailingCall, maxTimeoutId);
+        } else {
+          timeoutId = setTimeout(delayed, remaining);
+        }
+      }
+
+      function maxDelayed() {
+        executeBoundFunction(trailing || (maxWait !== wait), timeoutId);
       }
 
       function debounced() {

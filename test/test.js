@@ -15953,6 +15953,35 @@
         QUnit.start();
       }
     });
+
+    asyncTest('_.' + methodName + ' should support re-entrant calls', 2, function() {
+      if (!(isRhino && isModularize)) {
+        var sequence = [
+          ['b1', 'b2']
+        ];
+        var value = '';
+        var append = function(arg){
+          value += this + arg;
+          var args = sequence.pop();
+          if (args) {
+            debouncedAppend.call(args[0], args[1]);
+          }
+        };
+        
+        var debouncedAppend = _.debounce(append, 32);
+        debouncedAppend.call('a1', 'a2');
+        equal(value, '');
+        
+        setTimeout(function(){
+          equal(value, 'a1a2b1b2', 'append was debounced successfully');
+          QUnit.start();
+        }, 100);
+      }
+      else {
+        skipTest(2);
+        QUnit.start();
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/

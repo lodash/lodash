@@ -11446,11 +11446,29 @@
     test('should return the `lodash` function', 1, function() {
       if (!isModularize) {
         var oldDash = root._;
-        strictEqual(_.noConflict(), _);
+        strictEqual(_.noConflict(), oldDash);
         root._ = oldDash;
       }
       else {
         skipTest();
+      }
+    });
+
+    test('should work with a `context` of `this`', 2, function() {
+      if (!isModularize && !document && _._object) {
+        var fs = require('fs'),
+            vm = require('vm'),
+            expected = {},
+            context = vm.createContext({ '_': expected }),
+            source = fs.readFileSync(filePath);
+
+        vm.runInContext(source + '\nthis.lodash = this._.noConflict()', context);
+
+        strictEqual(context._, expected);
+        ok(!!context.lodash);
+      }
+      else {
+        skipTest(2);
       }
     });
   }());
@@ -15967,11 +15985,11 @@
             debouncedAppend.call(args[0], args[1]);
           }
         };
-        
+
         var debouncedAppend = _.debounce(append, 32);
         debouncedAppend.call('a1', 'a2');
         equal(value, '');
-        
+
         setTimeout(function(){
           equal(value, 'a1a2b1b2', 'append was debounced successfully');
           QUnit.start();

@@ -9354,12 +9354,13 @@
       deepEqual(actual, expected);
     });
 
-    test('`_.' + methodName + '` should return `-1` for an unmatched value', 4, function() {
+    test('`_.' + methodName + '` should return `-1` for an unmatched value', 5, function() {
       var array = [1, 2, 3],
           empty = [];
 
       strictEqual(func(array, 4), -1);
       strictEqual(func(array, 4, true), -1);
+      strictEqual(func(array, undefined, true), -1);
 
       strictEqual(func(empty, undefined), -1);
       strictEqual(func(empty, undefined, true), -1);

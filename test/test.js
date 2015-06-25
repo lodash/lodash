@@ -18039,7 +18039,6 @@
 
     test('should accept falsey arguments', 229, function() {
       var emptyArrays = _.map(falsey, _.constant([])),
-          isExposed = '_' in root,
           oldDash = root._;
 
       _.each(acceptFalsey, function(methodName) {
@@ -18056,11 +18055,7 @@
         });
 
         if (methodName == 'noConflict') {
-          if (isExposed) {
-            root._ = oldDash;
-          } else {
-            delete root._;
-          }
+          root._ = oldDash;
         }
         else if (methodName == 'pull') {
           expected = falsey;

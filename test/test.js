@@ -11443,23 +11443,30 @@
   QUnit.module('lodash.noConflict');
 
   (function() {
-    test('should return the `lodash` function', 1, function() {
+    test('should return the `lodash` function', 2, function() {
       if (!isModularize) {
         var oldDash = root._;
         strictEqual(_.noConflict(), oldDash);
+
+        if (!(isRhino && typeof require == 'function')) {
+          notStrictEqual(root._, oldDash);
+        }
+        else {
+          skipTest();
+        }
         root._ = oldDash;
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 
-    test('should work with a `context` of `this`', 2, function() {
+    test('should work with a `root` of `this`', 2, function() {
       if (!isModularize && !document && _._object) {
         var fs = require('fs'),
             vm = require('vm'),
             expected = {},
-            context = vm.createContext({ '_': expected }),
+            context = vm.createContext({ '_': expected, 'console': console }),
             source = fs.readFileSync(filePath);
 
         vm.runInContext(source + '\nthis.lodash = this._.noConflict()', context);

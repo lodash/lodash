@@ -15870,9 +15870,8 @@
     asyncTest('_.' + methodName + ' supports recursive calls', 2, function() {
       if (!(isRhino && isModularize)) {
         var actual = [],
-            args = _.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
-            length = isDebounce ? 1 : 2,
-            expected = args.slice(0, length),
+            args = _.map(['a', 'b', 'c'], function(chr) { return [{ 'a': 1 }, chr]; }),
+            expected = args.slice(),
             queue = args.slice();
 
         var funced = func(function() {
@@ -15888,12 +15887,12 @@
 
         var next = queue.shift();
         funced.call(next[0], next[1]);
-        deepEqual(actual, expected.slice(0, length - 1));
+        deepEqual(actual, expected.slice(0, isDebounce ? 0 : 1));
 
         setTimeout(function() {
-          deepEqual(actual, expected);
+          deepEqual(actual, expected.slice(0, isDebounce ? 2 : 3));
           QUnit.start();
-        }, 96);
+        }, 192);
       }
       else {
         skipTest(2);
@@ -15975,35 +15974,6 @@
       }
       else {
         skipTest(3);
-        QUnit.start();
-      }
-    });
-
-    asyncTest('_.' + methodName + ' should support re-entrant calls', 2, function() {
-      if (!(isRhino && isModularize)) {
-        var sequence = [
-          ['b1', 'b2']
-        ];
-        var value = '';
-        var append = function(arg){
-          value += this + arg;
-          var args = sequence.pop();
-          if (args) {
-            debouncedAppend.call(args[0], args[1]);
-          }
-        };
-
-        var debouncedAppend = _.debounce(append, 32);
-        debouncedAppend.call('a1', 'a2');
-        equal(value, '');
-
-        setTimeout(function(){
-          equal(value, 'a1a2b1b2', 'append was debounced successfully');
-          QUnit.start();
-        }, 100);
-      }
-      else {
-        skipTest(2);
         QUnit.start();
       }
     });

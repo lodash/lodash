@@ -3720,7 +3720,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 128);
+        }, 32);
       }
       else {
         skipTest();
@@ -3739,7 +3739,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2]);
           QUnit.start();
-        }, 128);
+        }, 32);
       }
       else {
         skipTest();
@@ -3760,7 +3760,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 128);
+        }, 32);
       }
       else {
         skipTest();
@@ -3777,16 +3777,16 @@
     asyncTest('should delay `func` execution', 2, function() {
       if (!(isRhino && isModularize)) {
         var pass = false;
-        _.delay(function() { pass = true; }, 96);
+        _.delay(function() { pass = true; }, 32);
 
         setTimeout(function() {
           ok(!pass);
-        }, 32);
+        }, 1);
 
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 160);
+        }, 64);
       }
       else {
         skipTest(2);
@@ -3805,7 +3805,7 @@
         setTimeout(function() {
           deepEqual(args, [1, 2]);
           QUnit.start();
-        }, 128);
+        }, 64);
       }
       else {
         skipTest();
@@ -3826,7 +3826,7 @@
         setTimeout(function() {
           ok(pass);
           QUnit.start();
-        }, 128);
+        }, 64);
       }
       else {
         skipTest();
@@ -15712,7 +15712,7 @@
         setTimeout(function() {
           strictEqual(callCount, 2);
           QUnit.start();
-        }, 256);
+        }, 128);
       }
       else {
         skipTest(3);

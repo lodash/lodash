@@ -7820,12 +7820,12 @@
         maxTimeoutId = timeoutId = trailingCall = undefined;
       }
 
-      function executeBoundFunction(shouldExecute, clearTimeoutId) {
-        if (clearTimeoutId) {
-          clearTimeout(clearTimeoutId);
+      function complete(isCalled, id) {
+        if (id) {
+          clearTimeout(id);
         }
         maxTimeoutId = timeoutId = trailingCall = undefined;
-        if (shouldExecute) {
+        if (isCalled) {
           lastCalled = now();
           result = func.apply(thisArg, args);
           if (!timeoutId && !maxTimeoutId) {
@@ -7837,14 +7837,14 @@
       function delayed() {
         var remaining = wait - (now() - stamp);
         if (remaining <= 0 || remaining > wait) {
-          executeBoundFunction(trailingCall, maxTimeoutId);
+          complete(trailingCall, maxTimeoutId);
         } else {
           timeoutId = setTimeout(delayed, remaining);
         }
       }
 
       function maxDelayed() {
-        executeBoundFunction(trailing || (maxWait !== wait), timeoutId);
+        complete(trailing || (maxWait !== wait), timeoutId);
       }
 
       function debounced() {

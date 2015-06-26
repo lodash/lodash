@@ -7844,7 +7844,7 @@
       }
 
       function maxDelayed() {
-        complete(trailing || (maxWait !== wait), timeoutId);
+        complete(trailing, timeoutId);
       }
 
       function debounced() {

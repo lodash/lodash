@@ -15871,7 +15871,7 @@
     asyncTest('_.' + methodName + ' supports recursive calls', 2, function() {
       if (!(isRhino && isModularize)) {
         var actual = [],
-            args = _.map(['a', 'b', 'c'], function(chr) { return [{ 'a': 1 }, chr]; }),
+            args = _.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
             expected = args.slice(),
             queue = args.slice();
 
@@ -15884,16 +15884,16 @@
           if (next) {
             funced.call(next[0], next[1]);
           }
-        }, 64);
+        }, 32);
 
         var next = queue.shift();
         funced.call(next[0], next[1]);
         deepEqual(actual, expected.slice(0, isDebounce ? 0 : 1));
 
         setTimeout(function() {
-          deepEqual(actual, expected.slice(0, isDebounce ? 2 : 3));
+          deepEqual(actual, expected.slice(0, actual.length));
           QUnit.start();
-        }, 192);
+        }, 256);
       }
       else {
         skipTest(2);

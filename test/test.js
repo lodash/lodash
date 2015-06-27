@@ -285,6 +285,15 @@
     new URIError
   ];
 
+  /** Used to check escaped regexp characters. */
+  var regexpEscapes = {
+    '0': 'x30', '1': 'x31', '2': 'x32', '3': 'x33', '4': 'x34',
+    '5': 'x35', '6': 'x36', '7': 'x37', '8': 'x38', '9': 'x39',
+    'A': 'x41', 'B': 'x42', 'C': 'x43', 'D': 'x44', 'E': 'x45', 'F': 'x46',
+    'a': 'x61', 'b': 'x62', 'c': 'x63', 'd': 'x64', 'e': 'x65', 'f': 'x66',
+    'n': 'x6e', 'r': 'x72', 't': 'x74', 'u': 'x75', 'v': 'x76', 'x': 'x78'
+  };
+
   /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug). */
   var shadowProps = [
     'constructor',
@@ -4270,14 +4279,39 @@
       strictEqual(_.escapeRegExp(unescaped + unescaped), escaped + escaped);
     });
 
-    test('should handle strings with nothing to escape', 1, function() {
-      strictEqual(_.escapeRegExp('abc'), 'abc');
+    test('should escape special characters at the start of a string', 1, function() {
+      var chars = [
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'a', 'b', 'c', 'd', 'e', 'f',
+        'A', 'B', 'C', 'D', 'E', 'F',
+        'n', 'r', 't', 'u', 'v', 'x',
+        ':', '!', ','
+      ];
+
+      var expected = _.map(chars, function(chr) {
+        return ['\\' + (regexpEscapes[chr] || chr) + 'z', 'z' + chr];
+      });
+
+      var actual = _.map(chars, function(chr) {
+        return [_.escapeRegExp(chr + 'z'), _.escapeRegExp('z' + chr)];
+      });
+
+      deepEqual(actual, expected);
     });
 
-    test('should return `"(?:)"` when provided nullish or empty string values', 3, function() {
-      strictEqual(_.escapeRegExp(null), '(?:)');
-      strictEqual(_.escapeRegExp(undefined), '(?:)');
-      strictEqual(_.escapeRegExp(''), '(?:)');
+    test('should handle strings with nothing to escape', 1, function() {
+      strictEqual(_.escapeRegExp('ghi'), 'ghi');
+    });
+
+    test('should return `"(?:)"` when provided nullish or empty string values', 1, function() {
+      var values = [, null, undefined, ''],
+          expected = _.map(values, _.constant('(?:)'));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.escapeRegExp(value) : _.escapeRegExp();
+      });
+
+      deepEqual(actual, expected);
     });
 
     test('should work with `eval` and `Function`', 2, function() {

@@ -1,6 +1,6 @@
 {
   "name": "lodash.sum",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "The modern build of lodash’s `_.sum` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -21,6 +21,7 @@
     "lodash._baseeach": "^3.0.0",
     "lodash._isiterateecall": "^3.0.0",
     "lodash._toiterable": "^3.0.0",
-    "lodash.isarray": "^3.0.0"
+    "lodash.isarray": "^3.0.0",
+    "lodash.keys": "^3.0.0"
   }
 }

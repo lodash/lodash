@@ -1,5 +1,5 @@
 /**
- * lodash 3.5.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -10,7 +10,8 @@ var baseCallback = require('lodash._basecallback'),
     baseEach = require('lodash._baseeach'),
     isIterateeCall = require('lodash._isiterateecall'),
     toIterable = require('lodash._toiterable'),
-    isArray = require('lodash.isarray');
+    isArray = require('lodash.isarray'),
+    keys = require('lodash.keys');
 
 /**
  * A specialized version of `_.sum` for arrays without support for iteratees.

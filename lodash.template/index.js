@@ -1,5 +1,5 @@
 /**
- * lodash 3.5.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -12,7 +12,6 @@ var baseCopy = require('lodash._basecopy'),
     isIterateeCall = require('lodash._isiterateecall'),
     reInterpolate = require('lodash._reinterpolate'),
     escape = require('lodash.escape'),
-    isNative = require('lodash.isnative'),
     keys = require('lodash.keys'),
     restParam = require('lodash.restparam'),
     templateSettings = require('lodash.templatesettings');
@@ -68,8 +67,7 @@ function isObjectLike(value) {
 }
 
 /** Used for native method references. */
-var arrayProto = Array.prototype,
-    objectProto = Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
@@ -79,10 +77,6 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * of values.
  */
 var objToString = objectProto.toString;
-
-/** Native method references. */
-var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
-    push = arrayProto.push;
 
 /**
  * Used by `_.template` to customize its `_.assign` use.
@@ -115,10 +109,8 @@ function assignOwnDefaults(objectValue, sourceValue, key, object) {
  * @returns {Object} Returns `object`.
  */
 function assignWith(object, source, customizer) {
-  var props = keys(source);
-  push.apply(props, getSymbols(source));
-
   var index = -1,
+      props = keys(source),
       length = props.length;
 
   while (++index < length) {
@@ -143,32 +135,10 @@ function assignWith(object, source, customizer) {
  * @param {Object} source The source object.
  * @returns {Object} Returns `object`.
  */
-var baseAssign = function(object, source) {
+function baseAssign(object, source) {
   return source == null
     ? object
-    : baseCopy(source, getSymbols(source), baseCopy(source, keys(source), object));
-};
-
-/**
- * Creates an array of the own symbols of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of symbols.
- */
-var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
-  return getOwnPropertySymbols(toObject(object));
-};
-
-/**
- * Converts `value` to an object if it is not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Object} Returns the object.
- */
-function toObject(value) {
-  return isObject(value) ? value : Object(value);
+    : baseCopy(source, keys(source), object);
 }
 
 /**
@@ -190,33 +160,6 @@ function toObject(value) {
  */
 function isError(value) {
   return isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag;
-}
-
-/**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(1);
- * // => false
- */
-function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-  var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
 }
 
 /**
@@ -444,27 +387,5 @@ var attempt = restParam(function(func, args) {
     return isError(e) ? e : new Error(e);
   }
 });
-
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
- *
- * getter() === object;
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
-}
 
 module.exports = template;

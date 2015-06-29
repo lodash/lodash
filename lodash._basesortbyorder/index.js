@@ -1,5 +1,5 @@
 /**
- * lodash 3.5.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.5.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,16 +13,16 @@ var arrayMap = require('lodash._arraymap'),
     baseSortBy = require('lodash._basesortby');
 
 /**
- * Used by `_.sortByOrder` to compare multiple properties of each element
- * in a collection and stable sort them in the following order:
+ * Used by `_.sortByOrder` to compare multiple properties of a value to another
+ * and stable sort them.
  *
- * If `orders` is unspecified, sort in ascending order for all properties.
- * Otherwise, for each property, sort in ascending order if its corresponding value in
- * orders is true, and descending order if false.
+ * If `orders` is unspecified, all valuess are sorted in ascending order. Otherwise,
+ * a value is sorted in ascending order if its corresponding order is "asc", and
+ * descending if "desc".
  *
  * @private
- * @param {Object} object The object to compare to `other`.
- * @param {Object} other The object to compare to `object`.
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
  * @param {boolean[]} orders The order to sort by for each property.
  * @returns {number} Returns the sort order indicator for `object`.
  */
@@ -39,7 +39,8 @@ function compareMultiple(object, other, orders) {
       if (index >= ordersLength) {
         return result;
       }
-      return result * (orders[index] ? 1 : -1);
+      var order = orders[index];
+      return result * ((order === 'asc' || order === true) ? 1 : -1);
     }
   }
   // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -53,7 +54,7 @@ function compareMultiple(object, other, orders) {
 }
 
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -140,7 +141,7 @@ function isArrayLike(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.

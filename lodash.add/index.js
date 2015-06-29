@@ -1,17 +1,41 @@
 /**
- * lodash 3.4.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
+
+/**
+ * Creates a function that performs a mathematical operation on two values.
+ *
+ * @private
+ * @param {Function} operator The function to perform the operation.
+ * @returns {Function} Returns the new mathematical operation function.
+ */
+function createMathOperation(operator) {
+  return function(value, other) {
+    var result;
+    if (value === undefined && other === undefined) {
+      return 0;
+    }
+    if (value !== undefined) {
+      result = value;
+    }
+    if (other !== undefined) {
+      result = result === undefined ? other : operator(result, other);
+    }
+    return result;
+  };
+}
 
 /**
  * Adds two numbers.
  *
  * @static
  * @memberOf _
+ * @since 3.4.0
  * @category Math
  * @param {number} augend The first number in an addition.
  * @param {number} addend The second number in an addition.
@@ -21,18 +45,8 @@
  * _.add(6, 4);
  * // => 10
  */
-function add(augend, addend) {
-  var result;
-  if (augend === undefined && addend === undefined) {
-    return 0;
-  }
-  if (augend !== undefined) {
-    result = augend;
-  }
-  if (addend !== undefined) {
-    result = result === undefined ? addend : (result + addend);
-  }
-  return result;
-}
+var add = createMathOperation(function(augend, addend) {
+  return augend + addend;
+});
 
 module.exports = add;

@@ -1,4 +1,4 @@
-# lodash.sortbyorder v3.4.3
+# lodash.sortbyorder v3.4.4
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.sortByOrder` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var sortByOrder = require('lodash.sortbyorder');
 ```
 
-See the [documentation](https://lodash.com/docs#sortByOrder) or [package source](https://github.com/lodash/lodash/blob/3.4.3-npm-packages/lodash.sortbyorder) for more details.
+See the [documentation](https://lodash.com/docs#sortByOrder) or [package source](https://github.com/lodash/lodash/blob/3.4.4-npm-packages/lodash.sortbyorder) for more details.

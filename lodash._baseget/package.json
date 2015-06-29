@@ -1,15 +1,16 @@
 {
-  "name": "lodash.add",
+  "name": "lodash._baseget",
   "version": "3.7.0",
-  "description": "The lodash method `_.add` exported as a module.",
+  "description": "The modern build of lodash’s internal `baseGet` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
-  "keywords": "lodash-modularized, add",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
+    "Benjamin Tan <demoneaux@gmail.com> (https://d10.github.io/)",
+    "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
+    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",

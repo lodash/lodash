@@ -1,4 +1,4 @@
-# lodash.callback v3.2.0
+# lodash.callback v3.3.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.callback` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var callback = require('lodash.callback');
 ```
 
-See the [documentation](https://lodash.com/docs#callback) or [package source](https://github.com/lodash/lodash/blob/3.2.0-npm-packages/lodash.callback) for more details.
+See the [documentation](https://lodash.com/docs#callback) or [package source](https://github.com/lodash/lodash/blob/3.3.0-npm-packages/lodash.callback) for more details.

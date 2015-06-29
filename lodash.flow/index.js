@@ -1,11 +1,13 @@
 /**
- * lodash 3.2.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
+var baseFlatten = require('lodash._baseflatten'),
+    rest = require('lodash.rest');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -18,15 +20,17 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @returns {Function} Returns the new flow function.
  */
 function createFlow(fromRight) {
-  return function() {
-    var length = arguments.length,
-        index = fromRight ? length : -1,
-        leftIndex = 0,
-        funcs = Array(length);
+  return rest(function(funcs) {
+    funcs = baseFlatten(funcs, 1);
 
-    while ((fromRight ? index-- : ++index < length)) {
-      var func = funcs[leftIndex++] = arguments[index];
-      if (typeof func != 'function') {
+    var length = funcs.length,
+        index = length;
+
+    if (fromRight) {
+      funcs.reverse();
+    }
+    while (index--) {
+      if (typeof funcs[index] != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
     }
@@ -39,7 +43,7 @@ function createFlow(fromRight) {
       }
       return result;
     };
-  };
+  });
 }
 
 /**
@@ -52,7 +56,8 @@ function createFlow(fromRight) {
  * @since 3.0.0
  * @category Util
  * @param {...(Function|Function[])} [funcs] Functions to invoke.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new composite function.
+ * @see _.flowRight
  * @example
  *
  * function square(n) {

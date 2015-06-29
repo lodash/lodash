@@ -1,6 +1,6 @@
 {
   "name": "lodash.unzip",
-  "version": "3.2.3",
+  "version": "3.3.0",
   "description": "The lodash method `_.unzip` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -13,9 +13,5 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
-  "dependencies": {
-    "lodash._arrayfilter": "^3.0.0",
-    "lodash._arraymap": "^3.0.0"
-  }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
 }

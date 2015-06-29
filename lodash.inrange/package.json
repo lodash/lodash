@@ -1,10 +1,11 @@
 {
-  "name": "lodash._basecallback",
+  "name": "lodash.inrange",
   "version": "3.3.0",
-  "description": "The modern build of lodash’s internal `baseCallback` as a module.",
+  "description": "The modern build of lodash’s `_.inRange` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
+  "keywords": "lodash, lodash-modularized, stdlib, util",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
@@ -14,11 +15,5 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
-  "dependencies": {
-    "lodash._baseisequal": "^3.0.0",
-    "lodash._bindcallback": "^3.0.0",
-    "lodash.isarray": "^3.0.0",
-    "lodash.pairs": "^3.0.0"
-  }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
 }

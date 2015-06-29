@@ -1,5 +1,5 @@
 /**
- * lodash 3.2.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -9,9 +9,9 @@
 var arrayCopy = require('lodash._arraycopy'),
     arrayEach = require('lodash._arrayeach'),
     createAssigner = require('lodash._createassigner'),
+    getNative = require('lodash._getnative'),
     isArguments = require('lodash.isarguments'),
     isArray = require('lodash.isarray'),
-    isNative = require('lodash.isnative'),
     isPlainObject = require('lodash.isplainobject'),
     isTypedArray = require('lodash.istypedarray'),
     keys = require('lodash.keys'),
@@ -29,18 +29,11 @@ function isObjectLike(value) {
   return !!value && typeof value == 'object';
 }
 
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
-    push = arrayProto.push;
-
 /**
  * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
  * of an array-like value.
  */
-var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+var MAX_SAFE_INTEGER = 9007199254740991;
 
 /**
  * The base implementation of `_.merge` without support for argument juggling,
@@ -58,11 +51,9 @@ function baseMerge(object, source, customizer, stackA, stackB) {
   if (!isObject(object)) {
     return object;
   }
-  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
-  if (!isSrcArr) {
-    var props = keys(source);
-    push.apply(props, getSymbols(source));
-  }
+  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
+      props = isSrcArr ? null : keys(source);
+
   arrayEach(props || source, function(srcValue, key) {
     if (props) {
       key = srcValue;
@@ -81,7 +72,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
       if (isCommon) {
         result = srcValue;
       }
-      if ((isSrcArr || result !== undefined) &&
+      if ((result !== undefined || (isSrcArr && !(key in object))) &&
           (isCommon || (result === result ? (result !== value) : (value === value)))) {
         object[key] = result;
       }
@@ -174,17 +165,6 @@ function baseProperty(key) {
 var getLength = baseProperty('length');
 
 /**
- * Creates an array of the own symbols of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of symbols.
- */
-var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
-  return getOwnPropertySymbols(toObject(object));
-};
-
-/**
  * Checks if `value` is array-like.
  *
  * @private
@@ -206,17 +186,6 @@ function isArrayLike(value) {
  */
 function isLength(value) {
   return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-}
-
-/**
- * Converts `value` to an object if it is not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Object} Returns the object.
- */
-function toObject(value) {
-  return isObject(value) ? value : Object(value);
 }
 
 /**
@@ -243,7 +212,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
+  return !!value && (type == 'object' || type == 'function');
 }
 
 /**
@@ -295,27 +264,5 @@ function isObject(value) {
  * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
  */
 var merge = createAssigner(baseMerge);
-
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
- *
- * getter() === object;
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
-}
 
 module.exports = merge;

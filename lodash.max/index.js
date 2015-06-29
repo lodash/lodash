@@ -1,90 +1,96 @@
 /**
- * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var arrayMax = require('lodash._arraymax'),
-    baseCallback = require('lodash._basecallback'),
+var baseCallback = require('lodash._basecallback'),
     baseEach = require('lodash._baseeach'),
     isIterateeCall = require('lodash._isiterateecall'),
     toIterable = require('lodash._toiterable'),
-    isArray = require('lodash.isarray'),
-    isString = require('lodash.isstring'),
+    gt = require('lodash.gt'),
     keys = require('lodash.keys');
 
 /**
- * Used by `_.max` and `_.min` as the default callback for string values.
+ * A specialized version of `baseExtremum` for arrays whichs invokes `iteratee`
+ * with one argument: (value).
  *
  * @private
- * @param {string} string The string to inspect.
- * @returns {number} Returns the code unit of the first character of the string.
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} comparator The function used to compare values.
+ * @param {*} exValue The initial extremum value.
+ * @returns {*} Returns the extremum value.
  */
-function charAtCallback(string) {
-  return string.charCodeAt(0);
-}
+function arrayExtremum(array, iteratee, comparator, exValue) {
+  var index = -1,
+      length = array.length,
+      computed = exValue,
+      result = computed;
 
-/** Used as references for `-Infinity` and `Infinity`. */
-var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
-    POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
+  while (++index < length) {
+    var value = array[index],
+        current = +iteratee(value);
 
-/**
- * Creates a `_.max` or `_.min` function.
- *
- * @private
- * @param {Function} arrayFunc The function to get the extremum value from an array.
- * @param {boolean} [isMin] Specify returning the minimum, instead of the maximum,
- *  extremum value.
- * @returns {Function} Returns the new extremum function.
- */
-function createExtremum(arrayFunc, isMin) {
-  return function(collection, iteratee, thisArg) {
-    if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-      iteratee = null;
+    if (comparator(current, computed)) {
+      computed = current;
+      result = value;
     }
-    var noIteratee = iteratee == null;
-
-    iteratee = noIteratee ? iteratee : baseCallback(iteratee, thisArg, 3);
-    if (noIteratee) {
-      var isArr = isArray(collection);
-      if (!isArr && isString(collection)) {
-        iteratee = charAtCallback;
-      } else {
-        return arrayFunc(isArr ? collection : toIterable(collection));
-      }
-    }
-    return extremumBy(collection, iteratee, isMin);
-  };
+  }
+  return result;
 }
 
 /**
  * Gets the extremum value of `collection` invoking `iteratee` for each value
  * in `collection` to generate the criterion by which the value is ranked.
- * The `iteratee` is invoked with three arguments: (value, index, collection).
+ * The `iteratee` is invoked with three arguments: (value, index|key, collection).
  *
  * @private
  * @param {Array|Object|string} collection The collection to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
- * @param {boolean} [isMin] Specify returning the minimum, instead of the
- *  maximum, extremum value.
+ * @param {Function} comparator The function used to compare values.
+ * @param {*} exValue The initial extremum value.
  * @returns {*} Returns the extremum value.
  */
-function extremumBy(collection, iteratee, isMin) {
-  var exValue = isMin ? POSITIVE_INFINITY : NEGATIVE_INFINITY,
-      computed = exValue,
+function baseExtremum(collection, iteratee, comparator, exValue) {
+  var computed = exValue,
       result = computed;
 
   baseEach(collection, function(value, index, collection) {
-    var current = iteratee(value, index, collection);
-    if ((isMin ? (current < computed) : (current > computed)) ||
-        (current === exValue && current === result)) {
+    var current = +iteratee(value, index, collection);
+    if (comparator(current, computed) || (current === exValue && current === result)) {
       computed = current;
       result = value;
     }
   });
   return result;
+}
+
+/**
+ * Creates a `_.max` or `_.min` function.
+ *
+ * @private
+ * @param {Function} comparator The function used to compare values.
+ * @param {*} exValue The initial extremum value.
+ * @returns {Function} Returns the new extremum function.
+ */
+function createExtremum(comparator, exValue) {
+  return function(collection, iteratee, thisArg) {
+    if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
+      iteratee = null;
+    }
+    iteratee = baseCallback(iteratee, thisArg, 3);
+    if (iteratee.length == 1) {
+      collection = toIterable(collection);
+      var result = arrayExtremum(collection, iteratee, comparator, exValue);
+      if (!(collection.length && result === exValue)) {
+        return result;
+      }
+    }
+    return baseExtremum(collection, iteratee, comparator, exValue);
+  };
 }
 
 /**
@@ -134,6 +140,6 @@ function extremumBy(collection, iteratee, isMin) {
  * _.max(users, 'age');
  * // => { 'user': 'fred', 'age': 40 }
  */
-var max = createExtremum(arrayMax);
+var max = createExtremum(gt, -Infinity);
 
 module.exports = max;

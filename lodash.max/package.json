@@ -1,6 +1,6 @@
 {
   "name": "lodash.max",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "The modern build of lodash’s `_.max` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -17,13 +17,11 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arraymax": "^3.0.0",
     "lodash._basecallback": "^3.0.0",
     "lodash._baseeach": "^3.0.0",
     "lodash._isiterateecall": "^3.0.0",
     "lodash._toiterable": "^3.0.0",
-    "lodash.isarray": "^3.0.0",
-    "lodash.isstring": "^3.0.0",
+    "lodash.gt": "^3.0.0",
     "lodash.keys": "^3.0.0"
   }
 }

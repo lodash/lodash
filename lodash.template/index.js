@@ -1,5 +1,5 @@
 /**
- * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -7,10 +7,11 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCopy = require('lodash._basecopy'),
-    baseSlice = require('lodash._baseslice'),
+    baseToString = require('lodash._basetostring'),
     baseValues = require('lodash._basevalues'),
     isIterateeCall = require('lodash._isiterateecall'),
     reInterpolate = require('lodash._reinterpolate'),
+    escape = require('lodash.escape'),
     keys = require('lodash.keys'),
     templateSettings = require('lodash.templatesettings');
 
@@ -44,21 +45,6 @@ var stringEscapes = {
   '\u2028': 'u2028',
   '\u2029': 'u2029'
 };
-
-/**
- * Converts `value` to a string if it is not one. An empty string is returned
- * for `null` or `undefined` values.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {string} Returns the string.
- */
-function baseToString(value) {
-  if (typeof value == 'string') {
-    return value;
-  }
-  return value == null ? '' : (value + '');
-}
 
 /**
  * Used by `_.template` to escape characters for inclusion in compiled
@@ -250,10 +236,10 @@ function isError(value) {
  * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
  * compiled.source;
  * // => function(data) {
- *   var __t, __p = '';
- *   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
- *   return __p;
- * }
+ * //   var __t, __p = '';
+ * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
+ * //   return __p;
+ * // }
  *
  * // using the `source` property to inline compiled templates for meaningful
  * // line numbers in error messages and a stack trace
@@ -385,9 +371,16 @@ function template(string, options, otherOptions) {
  *   elements = [];
  * }
  */
-function attempt(func) {
+function attempt() {
+  var length = arguments.length,
+      func = arguments[0];
+
   try {
-    return func.apply(undefined, baseSlice(arguments, 1));
+    var args = Array(length ? length - 1 : 0);
+    while (--length > 0) {
+      args[length - 1] = arguments[length];
+    }
+    return func.apply(undefined, args);
   } catch(e) {
     return isError(e) ? e : new Error(e);
   }

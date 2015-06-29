@@ -1,6 +1,6 @@
 {
   "name": "lodash.pad",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "description": "The lodash method `_.pad` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,6 +15,7 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
+    "lodash._root": "^3.0.0",
     "lodash.repeat": "^3.0.0"
   }
 }

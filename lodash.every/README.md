@@ -1,4 +1,4 @@
-# lodash.every v3.2.2
+# lodash.every v3.2.3
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.every` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var every = require('lodash.every');
 ```
 
-See the [documentation](https://lodash.com/docs#every) or [package source](https://github.com/lodash/lodash/blob/3.2.2-npm-packages/lodash.every) for more details.
+See the [documentation](https://lodash.com/docs#every) or [package source](https://github.com/lodash/lodash/blob/3.2.3-npm-packages/lodash.every) for more details.

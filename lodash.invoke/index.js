@@ -1,5 +1,5 @@
 /**
- * lodash 3.2.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -16,7 +16,7 @@ var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
     reIsPlainProp = /^\w*$/;
 
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -80,7 +80,7 @@ function isKey(value, object) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -104,7 +104,7 @@ function toObject(value) {
 /**
  * Invokes the method at `path` of each element in `collection`, returning
  * an array of the results of each invoked method. Any additional arguments
- * are provided to each invoked method. If `methodName` is a function it is
+ * are provided to each invoked method. If `methodName` is a function it's
  * invoked for, and `this` bound to, each element in `collection`.
  *
  * @static
@@ -130,7 +130,7 @@ var invoke = restParam(function(collection, path, args) {
       result = isArrayLike(collection) ? Array(collection.length) : [];
 
   baseEach(collection, function(value) {
-    var func = isFunc ? path : ((isProp && value != null) ? value[path] : null);
+    var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
     result[++index] = func ? func.apply(value, args) : invokePath(value, path, args);
   });
   return result;

@@ -1,5 +1,5 @@
 /**
- * lodash 3.2.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -82,7 +82,7 @@ function baseEvery(collection, predicate) {
 function every(collection, predicate, thisArg) {
   var func = isArray(collection) ? arrayEvery : baseEvery;
   if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
-    predicate = null;
+    predicate = undefined;
   }
   if (typeof predicate != 'function' || thisArg !== undefined) {
     predicate = baseCallback(predicate, thisArg, 3);

@@ -1,5 +1,5 @@
 /**
- * lodash 3.6.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -23,7 +23,7 @@ var reEmptyStringLeading = /\b__p \+= '';/g,
     reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
     reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-/** Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components). */
+/** Used to match [ES template delimiters](http://ecma-international.org/ecma-262/6.0/#sec-template-literal-lexical-components). */
 var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
 /** Used to ensure capturing order of template delimiters. */
@@ -43,8 +43,7 @@ var stringEscapes = {
 };
 
 /**
- * Used by `_.template` to escape characters for inclusion in compiled
- * string literals.
+ * Used by `_.template` to escape characters for inclusion in compiled string literals.
  *
  * @private
  * @param {string} chr The matched character to escape.
@@ -72,7 +71,7 @@ var objectProto = Object.prototype;
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objToString = objectProto.toString;
@@ -263,7 +262,7 @@ function template(string, options, otherOptions) {
   var settings = templateSettings.imports._.templateSettings || templateSettings;
 
   if (otherOptions && isIterateeCall(string, options, otherOptions)) {
-    options = otherOptions = null;
+    options = otherOptions = undefined;
   }
   string = baseToString(string);
   options = assignWith(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
@@ -361,7 +360,7 @@ function template(string, options, otherOptions) {
 
 /**
  * Attempts to invoke `func`, returning either the result or the caught error
- * object. Any additional arguments are provided to `func` when it is invoked.
+ * object. Any additional arguments are provided to `func` when it's invoked.
  *
  * @static
  * @memberOf _

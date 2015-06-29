@@ -1,5 +1,5 @@
 /**
- * lodash 3.6.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,18 +13,20 @@ var baseCallback = require('lodash._basecallback'),
     isArray = require('lodash.isarray');
 
 /**
- * A specialized version of `_.sum` for arrays without support for iteratees.
+ * A specialized version of `_.sum` for arrays without support for callback
+ * shorthands and `this` binding..
  *
  * @private
  * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
  * @returns {number} Returns the sum.
  */
-function arraySum(array) {
+function arraySum(array, iteratee) {
   var length = array.length,
       result = 0;
 
   while (length--) {
-    result += +array[length] || 0;
+    result += +iteratee(array[length]) || 0;
   }
   return result;
 }
@@ -80,13 +82,11 @@ function baseSum(collection, iteratee) {
  */
 function sum(collection, iteratee, thisArg) {
   if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-    iteratee = null;
+    iteratee = undefined;
   }
-  var noIteratee = iteratee == null;
-
-  iteratee = noIteratee ? iteratee : baseCallback(iteratee, thisArg, 3);
-  return noIteratee
-    ? arraySum(isArray(collection) ? collection : toIterable(collection))
+  iteratee = baseCallback(iteratee, thisArg, 3);
+  return iteratee.length == 1
+    ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
     : baseSum(collection, iteratee);
 }
 

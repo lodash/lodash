@@ -2248,46 +2248,59 @@
       notStrictEqual(combined, _.identity);
     });
 
-    test('`_.' + methodName + '` should support shortcut fusion', 6, function() {
+    test('`_.' + methodName + '` should support shortcut fusion', 12, function() {
       var filterCount,
-          mapCount,
-          filter = _.filter,
-          map = _.map,
-          take = _.take;
+          mapCount;
 
-      _.filter = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2);
-      _.map = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2);
-      _.take = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2);
+      var iteratee = function(value) {
+        mapCount++;
+        return value * value;
+      };
 
-      var filter2 = _.filter(function(value) { filterCount++; return value % 2 == 0; }),
-          map2 = _.map(function(value) { mapCount++; return value * value; }),
-          take2 = _.take(2);
+      var predicate = function(value) {
+        filterCount++;
+        return value % 2 == 0;
+      };
 
       _.times(2, function(index) {
-        var fn = index ? _['_' + methodName] : func;
-        if (!fn) {
-          skipTest(3);
-          return;
-        }
-        var combined = isFlow
-          ? fn(map2, filter2, _.compact, take2)
-          : fn(take2, _.compact, filter2, map2);
+        var filter1 = _.filter,
+            filter2 = _.curry(_.rearg(_.ary(_.filter, 2), 1, 0), 2),
+            filter3 = (_.filter = index ? filter2 : filter1, filter2(predicate));
 
-        filterCount = mapCount = 0;
-        deepEqual(combined(_.range(200)), [4, 16]);
+        var map1 = _.map,
+            map2 = _.curry(_.rearg(_.ary(_.map, 2), 1, 0), 2),
+            map3 = (_.map = index ? map2 : map1, map2(iteratee));
 
-        if (!isNpm && WeakMap && WeakMap.name) {
-          strictEqual(filterCount, 5, 'filterCount');
-          strictEqual(mapCount, 5, 'mapCount');
-        }
-        else {
-          skipTest(2);
-        }
+        var take1 = _.take,
+            take2 = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2),
+            take3 = (_.take = index ? take2 : take1, take2(2));
+
+        _.times(2, function(index) {
+          var fn = index ? _['_' + methodName] : func;
+          if (!fn) {
+            skipTest(3);
+            return;
+          }
+          var combined = isFlow
+            ? fn(map3, filter3, _.compact, take3)
+            : fn(take3, _.compact, filter3, map3);
+
+          filterCount = mapCount = 0;
+          deepEqual(combined(_.range(200)), [4, 16]);
+
+          if (!isNpm && WeakMap && WeakMap.name) {
+            strictEqual(filterCount, 5, 'filterCount');
+            strictEqual(mapCount, 5, 'mapCount');
+          }
+          else {
+            skipTest(2);
+          }
+        });
+
+        _.filter = filter1;
+        _.map = map1;
+        _.take = take1;
       });
-
-      _.filter = filter;
-      _.map = map;
-      _.take = take;
     });
 
     test('`_.' + methodName + '` should work with curried functions with placeholders', 1, function() {

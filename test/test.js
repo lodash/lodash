@@ -2248,6 +2248,16 @@
       notStrictEqual(combined, _.identity);
     });
 
+    test('`_.' + methodName + '` should work with a curried function and `_.first`', 1, function() {
+      var curried = _.curry(_.identity);
+
+      var combined = isFlow
+        ? func(_.first, curried)
+        : func(curried, _.first);
+
+      strictEqual(combined([1]), 1);
+    });
+
     test('`_.' + methodName + '` should support shortcut fusion', 12, function() {
       var filterCount,
           mapCount;
@@ -4790,6 +4800,16 @@
     test('should return a wrapped value when explicitly chaining', 1, function() {
       if (!isNpm) {
         ok(_(array).chain().first() instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should not execute immediately when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        var wrapped = _(array).chain().first();
+        strictEqual(wrapped.__wrapped__, array);
       }
       else {
         skipTest();
@@ -9255,6 +9275,16 @@
     test('should return a wrapped value when explicitly chaining', 1, function() {
       if (!isNpm) {
         ok(_(array).chain().last() instanceof _);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should not execute immediately when explicitly chaining', 1, function() {
+      if (!isNpm) {
+        var wrapped = _(array).chain().last();
+        strictEqual(wrapped.__wrapped__, array);
       }
       else {
         skipTest();

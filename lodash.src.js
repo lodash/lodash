@@ -1205,7 +1205,7 @@
           takeCount = nativeMin(length, this.__takeCount__);
 
       if (!isArr || arrLength < LARGE_ARRAY_SIZE || (arrLength == length && takeCount == length)) {
-        return baseWrapperValue(isRight ? array.reverse() : array, this.__actions__);
+        return baseWrapperValue((isRight && isArr) ? array.reverse() : array, this.__actions__);
       }
       var result = [];
 
@@ -3433,7 +3433,7 @@
             throw new TypeError(FUNC_ERROR_TEXT);
           }
           if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
-            wrapper = new LodashWrapper([]);
+            wrapper = new LodashWrapper([], true);
           }
         }
         index = wrapper ? -1 : length;
@@ -12428,7 +12428,9 @@
           isLazy = useLazy = false;
         }
         var interceptor = function(value) {
-          return lodashFunc.apply(undefined, arrayPush([value], args));
+          return (retUnwrapped && chainAll)
+            ? lodashFunc(value, 1)[0]
+            : lodashFunc.apply(undefined, arrayPush([value], args));
         };
 
         var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
@@ -12442,12 +12444,10 @@
           }
           return lodashFunc.call(undefined, this.value())[0];
         }
-        if (useLazy) {
+        if (!retUnwrapped && useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);
           var result = func.apply(value, args);
-          if (!retUnwrapped) {
-            result.__actions__.push(action);
-          }
+          result.__actions__.push(action);
           return new LodashWrapper(result, chainAll);
         }
         return this.thru(interceptor);

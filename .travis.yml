@@ -15,7 +15,7 @@ env:
     - BIN="phantomjs"
     - BIN="rhino" OPTION="-opt -1"
     - BIN="rhino" OPTION="-opt -1 -require"
-    - BIN="ringo"
+    - BIN="ringo" OPTION="-o -1"
 matrix:
   include:
     - node_js: "iojs"

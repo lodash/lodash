@@ -138,6 +138,8 @@
     return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
 
+  var reLines = /[^\r?\n|\u2028|\u2029|\u000a|\u000b|\u000c]+/g;
+
   /** Used to assign default `context` object properties. */
   var contextProps = [
     'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
@@ -894,7 +896,7 @@
      * `sortByOrder`, `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`,
      * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`,
      * `transform`, `union`, `uniq`, `unshift`, `unzip`, `unzipWith`, `values`,
-     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
+     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
@@ -910,7 +912,7 @@
      * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
      * `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`, `startCase`,
      * `startsWith`, `sum`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
-     * `unescape`, `uniqueId`, `value`, and `words`
+     * `unescape`, `uniqueId`, `value`, `lines`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -6828,7 +6830,7 @@
      * `drop`, `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`,
      * `parseInt`, `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`,
      * `trimLeft`, `trimRight`, `trunc`, `random`, `range`, `sample`, `some`,
-     * `sum`, `uniq`, and `words`
+     * `sum`, `uniq`, `lines`, and `words`.
      *
      * @static
      * @memberOf _
@@ -11248,6 +11250,29 @@
       return string.match(pattern || reWords) || [];
     }
 
+    /**
+     * Splits `string` into an array of its lines.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to inspect.
+     * @param {RegExp|string} [pattern] The pattern to match lines.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @returns {Array} Returns the lines of `string`.
+     * @example
+     *
+     * _.lines('line 1\nline 2\r\nline3');
+     * // => ['line 1', 'line 2', 'line 3']
+     */
+    function lines(string, pattern, guard) {
+      if (guard && isIterateeCall(string, pattern, guard)) {
+        pattern = undefined;
+      }
+      string = baseToString(string);
+      return string.match(pattern || reLines) || [];
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -12216,6 +12241,7 @@
     lodash.kebabCase = kebabCase;
     lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
+    lodash.lines = lines;
     lodash.lt = lt;
     lodash.lte = lte;
     lodash.max = max;

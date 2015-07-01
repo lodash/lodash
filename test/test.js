@@ -16928,6 +16928,40 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.lines');
+
+  (function() {
+    var lines = [
+      'My my, hey hey',
+      'Rock and roll is here to stay',
+      'It\'s better to burn out',
+      'Than to fade away',
+      'My my, hey hey.'
+    ];
+
+    _.each(['\r\n', '\n', '\u2028', '\u2029', '\u000a', '\u000b', '\u000c'], function(lineFeed) {
+      test('should split lines on ' + _.escapeRegExp(lineFeed), 1, function() {
+        var lyrics = lines.join(lineFeed);
+
+        deepEqual(_.lines(lyrics), lines);
+      });
+    });
+
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
+      var strings = _.map(['a', 'b', 'c'], Object),
+          actual = _.map(strings, _.lines);
+
+      deepEqual(actual, [['a'], ['b'], ['c']]);
+    });
+
+    test('should not split compounded words', 2, function() {
+      deepEqual(_.lines('aeiouAreVowels'), ['aeiouAreVowels']);
+      deepEqual(_.lines('enable 24h format'), ['enable 24h format']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.words');
 
   (function() {

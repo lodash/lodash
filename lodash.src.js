@@ -253,22 +253,25 @@
   };
 
   /** Detect free variable `exports`. */
-  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
 
   /** Detect free variable `module`. */
-  var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
+  var freeModule = (objectTypes[typeof module] && module && !module.nodeType) ? module : null;
 
   /** Detect free variable `global` from Node.js. */
-  var freeGlobal = freeExports && freeModule && typeof global == 'object' && global && global.Object && global;
+  var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
 
   /** Detect free variable `self`. */
-  var freeSelf = objectTypes[typeof self] && self && self.Object && self;
+  var freeSelf = checkGlobal(objectTypes[typeof self] && self);
 
   /** Detect free variable `window`. */
-  var freeWindow = objectTypes[typeof window] && window && window.Object && window;
+  var freeWindow = checkGlobal(objectTypes[typeof window] && window);
 
   /** Detect the popular CommonJS extension `module.exports`. */
-  var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+  var moduleExports = (freeModule && freeModule.exports === freeExports) ? freeExports : null;
+
+  /** Detect `this` as the global object. */
+  var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
 
   /**
    * Used as a reference to the global object.
@@ -276,7 +279,7 @@
    * The `this` value is used if it's the global object to avoid Greasemonkey's
    * restricted `window` object, otherwise the `window` object is used.
    */
-  var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
+  var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal;
 
   /*--------------------------------------------------------------------------*/
 
@@ -416,6 +419,17 @@
 
     while (index-- && chars.indexOf(string.charAt(index)) > -1) {}
     return index;
+  }
+
+  /**
+   * Checks if `value` is a global object.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+   */
+  function checkGlobal(value) {
+    return (objectTypes[typeof value] && value && value.Object) ? value : null;
   }
 
   /**
@@ -12524,14 +12538,13 @@
   // Export lodash.
   var _ = runInContext();
 
+  // Expose lodash on the free variable `window` or `self` when available. This
+  // prevents errors in cases where lodash is loaded by a script tag in the presence
+  // of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch for more details.
+  (freeWindow || freeSelf || {})._ = _;
+
   // Some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // Expose lodash to the global object when an AMD loader is present to avoid
-    // errors in cases where lodash is loaded by a script tag and not intended
-    // as an AMD module. See http://requirejs.org/docs/errors.html#mismatch for
-    // more details.
-    root._ = _;
-
     // Define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module.
     define(function() {

@@ -4768,7 +4768,7 @@
   QUnit.module('lodash.first');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3, 4];
 
     test('should return the first element', 1, function() {
       strictEqual(_.first(array), 1);
@@ -4816,18 +4816,21 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 1, function() {
+    test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1);
+        var largeArray = _.range(1, LARGE_ARRAY_SIZE + 1),
+            smallArray = array;
 
-        var wrapped = _(array).filter(function(value) {
-          return value % 2 == 0;
+        _.times(2, function(index) {
+          var array = index ? largeArray : smallArray,
+              predicate = function(value) { return value % 2; },
+              wrapped = _(array).filter(predicate);
+
+          strictEqual(wrapped.first(), _.first(_.filter(array, predicate)));
         });
-
-        strictEqual(wrapped.first(), 2);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 
@@ -9243,10 +9246,10 @@
   QUnit.module('lodash.last');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2, 3, 4];
 
     test('should return the last element', 1, function() {
-      strictEqual(_.last(array), 3);
+      strictEqual(_.last(array), 4);
     });
 
     test('should return `undefined` when querying empty arrays', 1, function() {
@@ -9265,7 +9268,7 @@
 
     test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
-        strictEqual(_(array).last(), 3);
+        strictEqual(_(array).last(), 4);
       }
       else {
         skipTest();
@@ -9291,16 +9294,21 @@
       }
     });
 
-    test('should work in a lazy chain sequence', 1, function() {
+    test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            predicate = function(value) { return value % 2; },
-            wrapped = _(array).filter(predicate);
+        var largeArray = _.range(1, LARGE_ARRAY_SIZE + 1),
+            smallArray = array;
 
-        strictEqual(wrapped.last(), _.last(_.filter(array, predicate)));
+        _.times(2, function(index) {
+          var array = index ? largeArray : smallArray,
+              predicate = function(value) { return value % 2; },
+              wrapped = _(array).filter(predicate);
+
+          strictEqual(wrapped.last(), _.last(_.filter(array, predicate)));
+        });
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
   }());

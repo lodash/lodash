@@ -236,6 +236,9 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
+  /** Used to restore the `_` reference. */
+  var oldDash = root._;
+
   /** List of latin-1 supplementary letters to basic latin letters. */
   var burredLetters = [
     '\xc0', '\xc1', '\xc2', '\xc3', '\xc4', '\xc5', '\xc6', '\xc7', '\xc8', '\xc9', '\xca', '\xcb', '\xcc', '\xcd', '\xce',
@@ -457,6 +460,7 @@
 
     // Load lodash and expose it to the bad extensions/shims.
     lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
+    root._ = oldDash;
 
     // Restore built-in methods.
     setProperty(Array,  'isArray', _isArray);
@@ -11545,7 +11549,6 @@
   (function() {
     test('should return the `lodash` function', 2, function() {
       if (!isModularize) {
-        var oldDash = root._;
         strictEqual(_.noConflict(), oldDash);
 
         if (!(isRhino && typeof require == 'function')) {
@@ -18141,8 +18144,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     test('should accept falsey arguments', 229, function() {
-      var emptyArrays = _.map(falsey, _.constant([])),
-          oldDash = root._;
+      var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {
         var expected = emptyArrays,

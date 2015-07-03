@@ -887,9 +887,8 @@
      *
      * The wrapper methods that support shortcut fusion are:
      * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
-     * `first`, `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`,
-     * `slice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `toArray`,
-     * and `where`
+     * `first`, `initial`, `last`, `map`, `reject`, `rest`, `reverse`, `slice`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
@@ -902,29 +901,29 @@
      * `invoke`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`,
      * `matchesProperty`, `memoize`, `merge`, `method`, `methodOf`, `mixin`,
      * `modArgs`, `negate`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
-     * `partition`, `pick`, `plant`, `pluck`, `property`, `propertyOf`, `pull`,
-     * `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`,
-     * `reverse`, `set`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`,
-     * `sortByOrder`, `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`,
-     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`,
-     * `transform`, `union`, `uniq`, `unshift`, `unzip`, `unzipWith`, `values`,
-     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
+     * `partition`, `pick`, `plant`, `property`, `propertyOf`, `pull`, `pullAt`,
+     * `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`, `reverse`,
+     * `set`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`, `sortByOrder`,
+     * `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`, `transform`,
+     * `union`, `uniq`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
+     * `without`, `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
      * `deburr`, `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
-     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
-     * `floor`, `get`, `gt`, `gte`, `has`, `identity`, `includes`, `indexOf`,
-     * `inRange`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
-     * `isEmpty`, `isEqual`, `isError`, `isFinite` `isFunction`, `isMatch`,
-     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
-     * `isRegExp`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
-     * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`,
-     * `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
-     * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
-     * `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`, `startCase`,
-     * `startsWith`, `sum`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
-     * `unescape`, `uniqueId`, `value`, and `words`
+     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `first`, `floor`,
+     * `get`, `gt`, `gte`, `has`, `identity`, `includes`, `indexOf`, `inRange`,
+     * `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
+     * `isEqual`, `isError`, `isFinite` `isFunction`, `isMatch`, `isNative`,
+     * `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`,
+     * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
+     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`, `pad`,
+     * `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
+     * `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,`snakeCase`,
+     * `some`, `sortedIndex`, `sortedLastIndex`, `startCase`, `startsWith`, `sum`,
+     * `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
+     * `value`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -4811,15 +4810,15 @@
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.dropRightWhile(users, { 'user': 'pebbles', 'active': false }), 'user');
+     * _.map(_.dropRightWhile(users, { 'user': 'pebbles', 'active': false }), 'user');
      * // => ['barney', 'fred']
      *
      * // using the `_.matchesProperty` callback shorthand
-     * _.pluck(_.dropRightWhile(users, 'active', false), 'user');
+     * _.map(_.dropRightWhile(users, 'active', false), 'user');
      * // => ['barney']
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.dropRightWhile(users, 'active'), 'user');
+     * _.map(_.dropRightWhile(users, 'active'), 'user');
      * // => ['barney', 'fred', 'pebbles']
      */
     function dropRightWhile(array, predicate, thisArg) {
@@ -4866,15 +4865,15 @@
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.dropWhile(users, { 'user': 'barney', 'active': false }), 'user');
+     * _.map(_.dropWhile(users, { 'user': 'barney', 'active': false }), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using the `_.matchesProperty` callback shorthand
-     * _.pluck(_.dropWhile(users, 'active', false), 'user');
+     * _.map(_.dropWhile(users, 'active', false), 'user');
      * // => ['pebbles']
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.dropWhile(users, 'active'), 'user');
+     * _.map(_.dropWhile(users, 'active'), 'user');
      * // => ['barney', 'fred', 'pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
@@ -5635,15 +5634,15 @@
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.takeRightWhile(users, { 'user': 'pebbles', 'active': false }), 'user');
+     * _.map(_.takeRightWhile(users, { 'user': 'pebbles', 'active': false }), 'user');
      * // => ['pebbles']
      *
      * // using the `_.matchesProperty` callback shorthand
-     * _.pluck(_.takeRightWhile(users, 'active', false), 'user');
+     * _.map(_.takeRightWhile(users, 'active', false), 'user');
      * // => ['fred', 'pebbles']
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.takeRightWhile(users, 'active'), 'user');
+     * _.map(_.takeRightWhile(users, 'active'), 'user');
      * // => []
      */
     function takeRightWhile(array, predicate, thisArg) {
@@ -5690,15 +5689,15 @@
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.takeWhile(users, { 'user': 'barney', 'active': false }), 'user');
+     * _.map(_.takeWhile(users, { 'user': 'barney', 'active': false }), 'user');
      * // => ['barney']
      *
      * // using the `_.matchesProperty` callback shorthand
-     * _.pluck(_.takeWhile(users, 'active', false), 'user');
+     * _.map(_.takeWhile(users, 'active', false), 'user');
      * // => ['barney', 'fred']
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.takeWhile(users, 'active'), 'user');
+     * _.map(_.takeWhile(users, 'active'), 'user');
      * // => []
      */
     function takeWhile(array, predicate, thisArg) {
@@ -6462,15 +6461,15 @@
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.filter(users, { 'age': 36, 'active': true }), 'user');
+     * _.map(_.filter(users, { 'age': 36, 'active': true }), 'user');
      * // => ['barney']
      *
      * // using the `_.matchesProperty` callback shorthand
-     * _.pluck(_.filter(users, 'active', false), 'user');
+     * _.map(_.filter(users, 'active', false), 'user');
      * // => ['fred']
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.filter(users, 'active'), 'user');
+     * _.map(_.filter(users, 'active'), 'user');
      * // => ['barney']
      */
     function filter(collection, predicate, thisArg) {
@@ -6551,39 +6550,6 @@
      * // => 3
      */
     var findLast = createFind(baseEachRight, true);
-
-    /**
-     * Performs a deep comparison between each element in `collection` and the
-     * source object, returning the first element that has equivalent property
-     * values.
-     *
-     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
-     * numbers, `Object` objects, regexes, and strings. Objects are compared by
-     * their own, not inherited, enumerable properties. For comparing a single
-     * own or inherited property value see `_.matchesProperty`.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
-     * @param {Object} source The object of property values to match.
-     * @returns {*} Returns the matched element, else `undefined`.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': true },
-     *   { 'user': 'fred',   'age': 40, 'active': false }
-     * ];
-     *
-     * _.result(_.findWhere(users, { 'age': 36, 'active': true }), 'user');
-     * // => 'barney'
-     *
-     * _.result(_.findWhere(users, { 'age': 40, 'active': false }), 'user');
-     * // => 'fred'
-     */
-    function findWhere(collection, source) {
-      return find(collection, baseMatches(source));
-    }
 
     /**
      * Iterates over elements of `collection` invoking `iteratee` for each element.
@@ -6924,7 +6890,7 @@
      * ];
      *
      * var mapper = function(array) {
-     *   return _.pluck(array, 'user');
+     *   return _.map(array, 'user');
      * };
      *
      * // using the `_.matches` callback shorthand
@@ -6942,33 +6908,6 @@
     var partition = createAggregator(function(result, value, key) {
       result[key ? 0 : 1].push(value);
     }, function() { return [[], []]; });
-
-    /**
-     * Gets the property value of `path` from all elements in `collection`.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Array|string} path The path of the property to pluck.
-     * @returns {Array} Returns the property values.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
-     *
-     * _.pluck(users, 'user');
-     * // => ['barney', 'fred']
-     *
-     * var userIndex = _.indexBy(users, 'user');
-     * _.pluck(userIndex, 'age');
-     * // => [36, 40] (iteration order is not guaranteed)
-     */
-    function pluck(collection, path) {
-      return map(collection, property(path));
-    }
 
     /**
      * Reduces `collection` to a value which is the accumulated result of running
@@ -7058,15 +6997,15 @@
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.reject(users, { 'age': 40, 'active': true }), 'user');
+     * _.map(_.reject(users, { 'age': 40, 'active': true }), 'user');
      * // => ['barney']
      *
      * // using the `_.matchesProperty` callback shorthand
-     * _.pluck(_.reject(users, 'active', false), 'user');
+     * _.map(_.reject(users, 'active', false), 'user');
      * // => ['fred']
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.reject(users, 'active'), 'user');
+     * _.map(_.reject(users, 'active'), 'user');
      * // => ['barney']
      */
     function reject(collection, predicate, thisArg) {
@@ -7266,7 +7205,7 @@
      * ];
      *
      * // using the `_.property` callback shorthand
-     * _.pluck(_.sortBy(users, 'user'), 'user');
+     * _.map(_.sortBy(users, 'user'), 'user');
      * // => ['barney', 'fred', 'pebbles']
      */
     function sortBy(collection, iteratee, thisArg) {
@@ -7379,39 +7318,6 @@
         orders = orders == null ? [] : [orders];
       }
       return baseSortByOrder(collection, iteratees, orders);
-    }
-
-    /**
-     * Performs a deep comparison between each element in `collection` and the
-     * source object, returning an array of all elements that have equivalent
-     * property values.
-     *
-     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
-     * numbers, `Object` objects, regexes, and strings. Objects are compared by
-     * their own, not inherited, enumerable properties. For comparing a single
-     * own or inherited property value see `_.matchesProperty`.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
-     * @param {Object} source The object of property values to match.
-     * @returns {Array} Returns the new filtered array.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': false, 'pets': ['hoppy'] },
-     *   { 'user': 'fred',   'age': 40, 'active': true, 'pets': ['baby puss', 'dino'] }
-     * ];
-     *
-     * _.pluck(_.where(users, { 'age': 36, 'active': false }), 'user');
-     * // => ['barney']
-     *
-     * _.pluck(_.where(users, { 'pets': ['dino'] }), 'user');
-     * // => ['fred']
-     */
-    function where(collection, source) {
-      return filter(collection, baseMatches(source));
     }
 
     /*------------------------------------------------------------------------*/
@@ -11635,7 +11541,7 @@
      * _.map(objects, _.property('a.b.c'));
      * // => [2, 1]
      *
-     * _.pluck(_.sortBy(objects, _.property(['a', 'b', 'c'])), 'a.b.c');
+     * _.map(_.sortBy(objects, _.property(['a', 'b', 'c'])), 'a.b.c');
      * // => [1, 2]
      */
     function property(path) {
@@ -12108,7 +12014,6 @@
     lodash.partialRight = partialRight;
     lodash.partition = partition;
     lodash.pick = pick;
-    lodash.pluck = pluck;
     lodash.property = property;
     lodash.propertyOf = propertyOf;
     lodash.pull = pull;
@@ -12143,7 +12048,6 @@
     lodash.unzipWith = unzipWith;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
-    lodash.where = where;
     lodash.without = without;
     lodash.wrap = wrap;
     lodash.xor = xor;
@@ -12179,7 +12083,6 @@
     lodash.findLast = findLast;
     lodash.findLastIndex = findLastIndex;
     lodash.findLastKey = findLastKey;
-    lodash.findWhere = findWhere;
     lodash.first = first;
     lodash.floor = floor;
     lodash.forEach = forEach;
@@ -12349,16 +12252,6 @@
 
       LazyWrapper.prototype[methodName] = function() {
         return this.__filtered__ ? new LazyWrapper(this) : this[dropName](1);
-      };
-    });
-
-    // Add `LazyWrapper` methods for `_.pluck` and `_.where`.
-    arrayEach(['pluck', 'where'], function(methodName, index) {
-      var operationName = index ? 'filter' : 'map',
-          createCallback = index ? baseMatches : property;
-
-      LazyWrapper.prototype[methodName] = function(value) {
-        return this[operationName](createCallback(value));
       };
     });
 

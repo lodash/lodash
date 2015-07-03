@@ -12080,12 +12080,6 @@
     lodash.flattenDeep = flattenDeep;
     lodash.flow = flow;
     lodash.flowRight = flowRight;
-    lodash.forEach = forEach;
-    lodash.forEachRight = forEachRight;
-    lodash.forIn = forIn;
-    lodash.forInRight = forInRight;
-    lodash.forOwn = forOwn;
-    lodash.forOwnRight = forOwnRight;
     lodash.functions = functions;
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
@@ -12189,6 +12183,12 @@
     lodash.findWhere = findWhere;
     lodash.first = first;
     lodash.floor = floor;
+    lodash.forEach = forEach;
+    lodash.forEachRight = forEachRight;
+    lodash.forIn = forIn;
+    lodash.forInRight = forInRight;
+    lodash.forOwn = forOwn;
+    lodash.forOwnRight = forOwnRight;
     lodash.get = get;
     lodash.gt = gt;
     lodash.gte = gte;

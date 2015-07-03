@@ -2303,7 +2303,7 @@
     });
 
     test('`_.' + methodName + '` should work with curried functions with placeholders', 1, function() {
-      var curried = _.curry(_.pluck),
+      var curried = _.curry(_.ary(_.map, 2), 2),
           getProp = curried(curried.placeholder, 'a'),
           objects = [{ 'a': 1 }, { 'a': 2 }, { 'a': 1 }];
 
@@ -4120,46 +4120,6 @@
       }
     }());
   });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.findWhere');
-
-  (function() {
-    var objects = [
-      { 'a': 1 },
-      { 'a': 1 },
-      { 'a': 1, 'b': 2 },
-      { 'a': 2, 'b': 2 },
-      { 'a': 3 }
-    ];
-
-    test('should filter by `source` properties', 6, function() {
-      strictEqual(_.findWhere(objects, { 'a': 1 }), objects[0]);
-      strictEqual(_.findWhere(objects, { 'a': 2 }), objects[3]);
-      strictEqual(_.findWhere(objects, { 'a': 3 }), objects[4]);
-      strictEqual(_.findWhere(objects, { 'b': 1 }), undefined);
-      strictEqual(_.findWhere(objects, { 'b': 2 }), objects[2]);
-      strictEqual(_.findWhere(objects, { 'a': 1, 'b': 2 }), objects[2]);
-    });
-
-    test('should work with a function for `source`', 1, function() {
-      function source() {}
-      source.a = 2;
-
-      strictEqual(_.findWhere(objects, source), objects[3]);
-    });
-
-    test('should match all elements when provided an empty `source`', 1, function() {
-      var expected = _.map(empties, _.constant(true));
-
-      var actual = _.map(empties, function(value) {
-        return _.findWhere(objects, value) === objects[0];
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -12372,72 +12332,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.pluck');
-
-  (function() {
-    test('should return an array of property values from each element of a collection', 1, function() {
-      var objects = [{ 'name': 'barney', 'age': 36 }, { 'name': 'fred', 'age': 40 }];
-      deepEqual(_.pluck(objects, 'name'), ['barney', 'fred']);
-    });
-
-    test('should pluck inherited property values', 1, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      deepEqual(_.pluck([new Foo], 'b'), [2]);
-    });
-
-    test('should work with an object for `collection`', 1, function() {
-      var object = { 'a': [1], 'b': [1, 2], 'c': [1, 2, 3] };
-      deepEqual(_.pluck(object, 'length'), [1, 2, 3]);
-    });
-
-    test('should return `undefined` for undefined properties', 1, function() {
-      var array = [{ 'a': 1 }],
-          actual = [_.pluck(array, 'b'), _.pluck(array, 'c')];
-
-      deepEqual(actual, [[undefined], [undefined]]);
-    });
-
-    test('should work with nullish elements', 1, function() {
-      var objects = [{ 'a': 1 }, null, undefined, { 'a': 4 }];
-      deepEqual(_.pluck(objects, 'a'), [1, undefined, undefined, 4]);
-    });
-
-    test('should coerce `key` to a string', 1, function() {
-      function fn() {}
-      fn.toString = _.constant('fn');
-
-      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}]
-
-      var actual = _.map(objects, function(object, index) {
-        return _.pluck([object], values[index]);
-      });
-
-      deepEqual(actual, [[1], [2], [3], [4]]);
-    });
-
-    test('should work in a lazy chain sequence', 2, function() {
-      if (!isNpm) {
-        var array = _.times(LARGE_ARRAY_SIZE + 1, function(index) {
-          return index ? { 'a': index } : null;
-        });
-
-        var actual = _(array).slice(1).pluck('a').value();
-        deepEqual(actual, _.pluck(array.slice(1), 'a'));
-
-        actual = _(array).slice(1).filter().pluck('a').value();
-        deepEqual(actual, _.pluck(_.filter(array.slice(1)), 'a'));
-      }
-      else {
-        skipTest(2);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.property');
 
   (function() {
@@ -14541,7 +14435,7 @@
     var stableObject = _.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
 
     test('should sort in ascending order', 1, function() {
-      var actual = _.pluck(_.sortBy(objects, function(object) {
+      var actual = _.map(_.sortBy(objects, function(object) {
         return object.b;
       }), 'b');
 
@@ -14589,7 +14483,7 @@
     });
 
     test('should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = _.pluck(_.sortBy(objects.concat(undefined), 'b'), 'b');
+      var actual = _.map(_.sortBy(objects.concat(undefined), 'b'), 'b');
       deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
 
@@ -16808,62 +16702,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.where');
-
-  (function() {
-    test('should filter by `source` properties', 12, function() {
-      var objects = [
-        { 'a': 1 },
-        { 'a': 1 },
-        { 'a': 1, 'b': 2 },
-        { 'a': 2, 'b': 2 },
-        { 'a': 3 }
-      ];
-
-      var pairs = [
-        [{ 'a': 1 }, [{ 'a': 1 }, { 'a': 1 }, { 'a': 1, 'b': 2 }]],
-        [{ 'a': 2 }, [{ 'a': 2, 'b': 2 }]],
-        [{ 'a': 3 }, [{ 'a': 3 }]],
-        [{ 'b': 1 }, []],
-        [{ 'b': 2 }, [{ 'a': 1, 'b': 2 }, { 'a': 2, 'b': 2 }]],
-        [{ 'a': 1, 'b': 2 }, [{ 'a': 1, 'b': 2 }]]
-      ];
-
-      _.each(pairs, function(pair) {
-        var actual = _.where(objects, pair[0]);
-        deepEqual(actual, pair[1]);
-        ok(_.isEmpty(_.difference(actual, objects)));
-      });
-    });
-
-    test('should work with an object for `collection`', 1, function() {
-      var object = {
-        'x': { 'a': 1 },
-        'y': { 'a': 3 },
-        'z': { 'a': 1, 'b': 2 }
-      };
-
-      var actual = _.where(object, { 'a': 1 });
-      deepEqual(actual, [object.x, object.z]);
-    });
-
-    test('should work in a lazy chain sequence', 1, function() {
-      if (!isNpm) {
-        var array = _.times(LARGE_ARRAY_SIZE + 1, function(index) {
-          return index ? { 'a': 1, 'b': index } : { 'a': 3 };
-        });
-
-        var actual = _(array).slice(1).where({ 'a': 1 }).value();
-        deepEqual(actual, _.where(array.slice(1), { 'a': 1 }));
-      }
-      else {
-        skipTest();
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.without');
 
   (function() {
@@ -18042,7 +17880,6 @@
       'keys',
       'map',
       'pairs',
-      'pluck',
       'pull',
       'pullAt',
       'range',
@@ -18060,7 +17897,6 @@
       'union',
       'uniq',
       'values',
-      'where',
       'without',
       'xor',
       'zip'
@@ -18068,7 +17904,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 212, function() {
+    test('should accept falsey arguments', 207, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {
@@ -18104,7 +17940,7 @@
       });
     });
 
-    test('should return an array', 72, function() {
+    test('should return an array', 68, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

@@ -456,7 +456,7 @@
    * @private
    * @param {Object} object The object to compare.
    * @param {Object} other The other object to compare.
-   * @param {boolean[]} orders The order to sort by for each property.
+   * @param {boolean[]|string[]} orders The order to sort by for each property.
    * @returns {number} Returns the sort order indicator for `object`.
    */
   function compareMultiple(object, other, orders) {
@@ -5579,7 +5579,7 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted] Specify the array is sorted.
-     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the new duplicate-value-free array.
      * @example
      *
@@ -5807,7 +5807,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to process.
-     * @param {Function} [iteratee] The function to combine grouped values.
+     * @param {Function} [iteratee=_.identity] The function to combine grouped values.
      * @returns {Array} Returns the new array of grouped elements.
      * @example
      *
@@ -6882,8 +6882,8 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
-     * @param {boolean[]} [orders] The sort orders of `iteratees`.
+     * @param {Function[]|Object[]|string[]} [iteratees=[_.identity]] The iteratees to sort by.
+     * @param {boolean[]|string[]} [orders] The sort orders of `iteratees`.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.
      * @returns {Array} Returns the new sorted array.
      * @example
@@ -11299,7 +11299,7 @@
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {*} Returns the maximum value.
      * @example
      *
@@ -11333,7 +11333,7 @@
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {*} Returns the minimum value.
      * @example
      *
@@ -11386,7 +11386,7 @@
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {number} Returns the sum.
      * @example

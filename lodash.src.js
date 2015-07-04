@@ -2752,17 +2752,21 @@
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
-     * @param {boolean[]} orders The sort orders of `iteratees`.
+     * @param {boolean[]|string[]} orders The sort orders of `iteratees`.
      * @returns {Array} Returns the new sorted array.
      */
     function baseSortByOrder(collection, iteratees, orders) {
-      var callback = getIteratee(),
+      var toIteratee = getIteratee(),
           index = -1;
 
-      iteratees = arrayMap(iteratees, function(iteratee) { return callback(iteratee); });
+      iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
+        return toIteratee(iteratee);
+      });
 
-      var result = baseMap(collection, function(value) {
-        var criteria = arrayMap(iteratees, function(iteratee) { return iteratee(value); });
+      var result = baseMap(collection, function(value, key, collection) {
+        var criteria = arrayMap(iteratees, function(iteratee) {
+          return iteratee(value, key, collection);
+        });
         return { 'criteria': criteria, 'index': ++index, 'value': value };
       });
 
@@ -6822,66 +6826,21 @@
 
     /**
      * Creates an array of elements, sorted in ascending order by the results of
-     * running each element in a collection through `iteratee`. This method performs
-     * a stable sort, that is, it preserves the original sort order of equal elements.
-     * The iteratee is invoked with three arguments: (value, index|key, collection).
+     * running each element in a collection through each iteratee. This method
+     * performs a stable sort, that is, it preserves the original sort order of
+     * equal elements. The iteratee is invoked with three arguments:
+     * (value, index|key, collection).
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new sorted array.
-     * @example
-     *
-     * _.sortBy([1, 2, 3], function(n) {
-     *   return Math.sin(n);
-     * });
-     * // => [3, 1, 2]
-     *
-     * _.sortBy([1, 2, 3], function(n) {
-     *   return this.sin(n);
-     * }, Math);
-     * // => [3, 1, 2]
-     *
-     * var users = [
-     *   { 'user': 'fred' },
-     *   { 'user': 'pebbles' },
-     *   { 'user': 'barney' }
-     * ];
-     *
-     * // using the `_.property` callback shorthand
-     * _.map(_.sortBy(users, 'user'), 'user');
-     * // => ['barney', 'fred', 'pebbles']
-     */
-    function sortBy(collection, iteratee, thisArg) {
-      if (collection == null) {
-        return [];
-      }
-      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-        iteratee = undefined;
-      }
-      var index = -1;
-      iteratee = getIteratee(iteratee, thisArg, 3);
-
-      var result = baseMap(collection, function(value, key, collection) {
-        return { 'criteria': iteratee(value, key, collection), 'index': ++index, 'value': value };
-      });
-      return baseSortBy(result, compareAscending);
-    }
-
-    /**
-     * This method is like `_.sortBy` except that it can sort by multiple iteratees
-     * or property names.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(Function|Function[]|Object|Object[]|string|string[])} iteratees
+     * @param {...(Function|Function[]|Object|Object[]|string|string[])} [iteratees=[_.identity]]
      *  The iteratees to sort by, specified as individual values or arrays of values.
      * @returns {Array} Returns the new sorted array.
      * @example
+     *
+     * var resolve = _.partial(_.map, _, _.values);
      *
      * var users = [
      *   { 'user': 'fred',   'age': 48 },
@@ -6889,8 +6848,6 @@
      *   { 'user': 'fred',   'age': 42 },
      *   { 'user': 'barney', 'age': 34 }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, _.values);
      *
      * resolve( _.sortBy(users, function(o) { return o.user; }) );
      * // => // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
@@ -6907,8 +6864,10 @@
       if (collection == null) {
         return [];
       }
-      var guard = iteratees[2];
-      if (guard && isIterateeCall(iteratees[0], iteratees[1], guard)) {
+      var length = iteratees.length;
+      if (length > 1 && isIterateeCall(collection, iteratees[0], iteratees[1])) {
+        iteratees = [];
+      } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
         iteratees.length = 1;
       }
       return baseSortByOrder(collection, baseFlatten(iteratees), []);
@@ -11560,7 +11519,6 @@
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
-    lodash.sortByAll = sortByAll;
     lodash.sortByOrder = sortByOrder;
     lodash.spread = spread;
     lodash.take = take;

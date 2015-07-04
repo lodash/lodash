@@ -2986,18 +2986,6 @@
     }
 
     /**
-     * A specialized version of `baseIteratee` which only supports `this` binding
-     * and specifying the number of arguments to provide to `func`.
-     *
-     * @private
-     * @param {Function} func The function to bind.
-     * @returns {Function} Returns the callback.
-     */
-    function bindCallback(func) {
-      return typeof func == 'function' ? func : identity;
-    }
-
-    /**
      * Creates a clone of the given array buffer.
      *
      * @private
@@ -3448,7 +3436,7 @@
       return function(collection, iteratee) {
         return (typeof iteratee == 'function' && isArray(collection))
           ? arrayFunc(collection, iteratee)
-          : eachFunc(collection, bindCallback(iteratee));
+          : eachFunc(collection, toFunction(iteratee));
       };
     }
 
@@ -3461,10 +3449,7 @@
      */
     function createForIn(objectFunc) {
       return function(object, iteratee) {
-        if (typeof iteratee != 'function') {
-          iteratee = bindCallback(iteratee);
-        }
-        return objectFunc(object, iteratee, keysIn);
+        return objectFunc(object, toFunction(iteratee), keysIn);
       };
     }
 
@@ -3477,10 +3462,7 @@
      */
     function createForOwn(objectFunc) {
       return function(object, iteratee) {
-        if (typeof iteratee != 'function') {
-          iteratee = bindCallback(iteratee);
-        }
-        return objectFunc(object, iteratee);
+        return objectFunc(object, toFunction(iteratee));
       };
     }
 
@@ -4494,6 +4476,17 @@
         }
       }
       return result;
+    }
+
+    /**
+     * Converts `value` to a function if it's not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Function} Returns the function.
+     */
+    function toFunction(func) {
+      return typeof func == 'function' ? func : identity;
     }
 
     /**
@@ -5694,7 +5687,7 @@
       if (iteratee == null) {
         return result;
       }
-      iteratee = bindCallback(iteratee);
+      iteratee = toFunction(iteratee);
       return arrayMap(result, function(group) {
         return arrayReduce(group, iteratee, undefined, true);
       });
@@ -11247,7 +11240,7 @@
       var index = -1,
           result = Array(nativeMin(n, MAX_ARRAY_LENGTH));
 
-      iteratee = bindCallback(iteratee);
+      iteratee = toFunction(iteratee);
       while (++index < n) {
         if (index < MAX_ARRAY_LENGTH) {
           result[index] = iteratee(index);

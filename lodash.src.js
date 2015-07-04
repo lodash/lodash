@@ -3709,10 +3709,10 @@
      */
     function createSortedIndex(retHighest) {
       return function(array, value, iteratee) {
-        var callback = getIteratee();
-        return (iteratee == null && callback === baseIteratee)
+        var toIteratee = getIteratee();
+        return (iteratee == null && toIteratee === baseIteratee)
           ? binaryIndex(array, value, retHighest)
-          : binaryIndexBy(array, value, callback(iteratee), retHighest);
+          : binaryIndexBy(array, value, toIteratee(iteratee), retHighest);
       };
     }
 
@@ -5612,9 +5612,9 @@
         iteratee = isIterateeCall(array, isSorted, iteratee) ? undefined : isSorted;
         isSorted = false;
       }
-      var callback = getIteratee();
-      if (!(iteratee == null && callback === baseIteratee)) {
-        iteratee = callback(iteratee);
+      var toIteratee = getIteratee();
+      if (!(iteratee == null && toIteratee === baseIteratee)) {
+        iteratee = toIteratee(iteratee);
       }
       return (isSorted && getIndexOf() === baseIndexOf)
         ? sortedUniq(array, iteratee)

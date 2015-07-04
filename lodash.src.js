@@ -4573,7 +4573,7 @@
      * @category Array
      * @param {Array} array The array to process.
      * @param {number} [size=1] The length of each chunk.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the new array containing chunks.
      * @example
      *
@@ -4659,7 +4659,7 @@
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -4694,7 +4694,7 @@
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to drop.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -4950,7 +4950,7 @@
      * @category Array
      * @param {Array} array The array to flatten.
      * @param {boolean} [isDeep] Specify a deep flatten.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the new flattened array.
      * @example
      *
@@ -5401,7 +5401,7 @@
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -5436,7 +5436,7 @@
      * @category Array
      * @param {Array} array The array to query.
      * @param {number} [n=1] The number of elements to take.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
@@ -6172,7 +6172,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`.
      * @example
      *
@@ -6401,7 +6401,7 @@
      * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
      *
@@ -6703,7 +6703,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to sample.
      * @param {number} [n] The number of elements to sample.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {*} Returns the random sample(s).
      * @example
      *
@@ -6791,7 +6791,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {boolean} Returns `true` if any element passes the predicate check, else `false`.
      * @example
      *
@@ -7030,7 +7030,7 @@
      * @category Function
      * @param {Function} func The function to cap arguments for.
      * @param {number} [n=func.length] The arity cap.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -7238,7 +7238,7 @@
      * @category Function
      * @param {Function} func The function to curry.
      * @param {number} [arity=func.length] The arity of `func`.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Function} Returns the new curried function.
      * @example
      *
@@ -7277,7 +7277,7 @@
      * @category Function
      * @param {Function} func The function to curry.
      * @param {number} [arity=func.length] The arity of `func`.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Function} Returns the new curried function.
      * @example
      *
@@ -8935,7 +8935,7 @@
      * @category Object
      * @param {Object} prototype The object to inherit from.
      * @param {Object} [properties] The properties to assign to the object.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -9287,7 +9287,7 @@
      * @category Object
      * @param {Object} object The object to invert.
      * @param {boolean} [multiValue] Allow multiple values per key.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Object} Returns the new inverted object.
      * @example
      *
@@ -10172,7 +10172,7 @@
      * @category String
      * @param {string} string The string to convert.
      * @param {number} [radix] The radix to interpret `value` by.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {number} Returns the converted integer.
      * @example
      *
@@ -10521,7 +10521,7 @@
      * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {string} Returns the trimmed string.
      * @example
      *
@@ -10555,7 +10555,7 @@
      * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {string} Returns the trimmed string.
      * @example
      *
@@ -10585,7 +10585,7 @@
      * @category String
      * @param {string} [string=''] The string to trim.
      * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {string} Returns the trimmed string.
      * @example
      *
@@ -10620,7 +10620,7 @@
      * @param {number} [options.length=30] The maximum string length.
      * @param {string} [options.omission='...'] The string to indicate text is omitted.
      * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {string} Returns the truncated string.
      * @example
      *
@@ -10732,7 +10732,7 @@
      * @category String
      * @param {string} [string=''] The string to inspect.
      * @param {RegExp|string} [pattern] The pattern to match words.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the words of `string`.
      * @example
      *
@@ -11438,7 +11438,7 @@
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {number} Returns the sum.
      * @example
      *
@@ -11453,9 +11453,7 @@
      *   { 'n': 6 }
      * ];
      *
-     * _.sum(objects, function(object) {
-     *   return object.n;
-     * });
+     * _.sum(objects, function(o) { return o.n; });
      * // => 10
      *
      * // using the `_.property` callback shorthand

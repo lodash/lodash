@@ -4734,13 +4734,13 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
+     * var resolve = _.partial(_.map, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney',  'active': true },
      *   { 'user': 'fred',    'active': false },
      *   { 'user': 'pebbles', 'active': false }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, 'user');
      *
      * resolve( _.dropRightWhile(users, function(o) { return !o.active; }) );
      * // => ['barney']
@@ -4776,13 +4776,13 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
+     * var resolve = _.partial(_.map, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney',  'active': false },
      *   { 'user': 'fred',    'active': false },
      *   { 'user': 'pebbles', 'active': true }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, 'user');
      *
      * resolve( _.dropWhile(users, function(o) { return !o.active; }) );
      * // => ['pebbles']
@@ -5470,13 +5470,13 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
+     * var resolve = _.partial(_.map, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney',  'active': true },
      *   { 'user': 'fred',    'active': false },
      *   { 'user': 'pebbles', 'active': false }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, 'user');
      *
      * resolve( _.takeRightWhile(users, function(o) { return !o.active; }) );
      * // => ['fred', 'pebbles']
@@ -5512,13 +5512,13 @@
      * @returns {Array} Returns the slice of `array`.
      * @example
      *
+     * var resolve = _.partial(_.map, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney',  'active': false },
      *   { 'user': 'fred',    'active': false},
      *   { 'user': 'pebbles', 'active': true }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, 'user');
      *
      * resolve( _.takeWhile(users, function(o) { return !o.active; }) );
      * // => ['barney', 'fred']
@@ -6216,12 +6216,12 @@
      * @returns {Array} Returns the new filtered array.
      * @example
      *
+     * var resolve = _.partial(_.map, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney', 'age': 36, 'active': true },
      *   { 'user': 'fred',   'age': 40, 'active': false }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, 'user');
      *
      * resolve( _.filter(users, function(o) { return !o.active; }) );
      * // => ['fred']
@@ -6258,13 +6258,13 @@
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
+     * var resolve = _.partial(_.result, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney',  'age': 36, 'active': true },
      *   { 'user': 'fred',    'age': 40, 'active': false },
      *   { 'user': 'pebbles', 'age': 1,  'active': true }
      * ];
-     *
-     * var resolve = _.partial(_.result, _, 'user');
      *
      * resolve( _.find(users, function(o) { return o.age < 40; }) );
      * // => 'barney'
@@ -6556,15 +6556,15 @@
      * @returns {Array} Returns the array of grouped elements.
      * @example
      *
+     * var resolve = function(result) {
+     *   return _.map(result, function(array) { return _.map(array, 'user'); });
+     * };
+     *
      * var users = [
      *   { 'user': 'barney',  'age': 36, 'active': false },
      *   { 'user': 'fred',    'age': 40, 'active': true },
      *   { 'user': 'pebbles', 'age': 1,  'active': false }
      * ];
-     *
-     * var resolve = function(result) {
-     *   return _.map(result, function(array) { return _.map(array, 'user'); });
-     * };
      *
      * resolve( _.partition(users, function(o) { return o.active; }) );
      * // => [['fred'], ['barney', 'pebbles']]
@@ -6658,12 +6658,12 @@
      * @returns {Array} Returns the new filtered array.
      * @example
      *
+     * var resolve = _.partial(_.map, _, 'user');
+     *
      * var users = [
      *   { 'user': 'barney', 'age': 36, 'active': false },
      *   { 'user': 'fred',   'age': 40, 'active': true }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, 'user');
      *
      * resolve( _.reject(users, function(o) { return !o.active; }) );
      * // => ['fred']
@@ -6929,14 +6929,14 @@
      * @returns {Array} Returns the new sorted array.
      * @example
      *
+     * var resolve = _.partial(_.map, _, _.values);
+     *
      * var users = [
      *   { 'user': 'fred',   'age': 48 },
      *   { 'user': 'barney', 'age': 34 },
      *   { 'user': 'fred',   'age': 42 },
      *   { 'user': 'barney', 'age': 36 }
      * ];
-     *
-     * var resolve = _.partial(_.map, _, _.values);
      *
      * // sort by `user` in ascending order and by `age` in descending order
      * resolve( _.sortByOrder(users, ['user', 'age'], ['asc', 'desc']) );

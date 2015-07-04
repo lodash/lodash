@@ -4384,7 +4384,7 @@
      * @param {Function} predicate The function invoked per iteration.
      * @returns {Object} Returns the new object.
      */
-    function pickByCallback(object, predicate) {
+    function pickByPredicate(object, predicate) {
       var result = {};
       baseForIn(object, function(value, key, object) {
         if (predicate(value, key, object)) {
@@ -9516,7 +9516,7 @@
         return pickByArray(object, baseDifference(keysIn(object), props));
       }
       var predicate = props[0];
-      return pickByCallback(object, function(value, key, object) {
+      return pickByPredicate(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
     });
@@ -9580,7 +9580,7 @@
         return {};
       }
       return typeof props[0] == 'function'
-        ? pickByCallback(object, props[0])
+        ? pickByPredicate(object, props[0])
         : pickByArray(object, baseFlatten(props));
     });
 

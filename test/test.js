@@ -14146,12 +14146,6 @@
   QUnit.module('lodash.sortBy');
 
   (function() {
-    function Pair(a, b, c) {
-      this.a = a;
-      this.b = b;
-      this.c = c;
-    }
-
     var objects = [
       { 'a': 'x', 'b': 3 },
       { 'a': 'y', 'b': 4 },
@@ -14159,37 +14153,12 @@
       { 'a': 'y', 'b': 2 }
     ];
 
-    var stableArray = [
-      new Pair(1, 1, 1), new Pair(1, 2, 1),
-      new Pair(1, 1, 1), new Pair(1, 2, 1),
-      new Pair(1, 3, 1), new Pair(1, 4, 1),
-      new Pair(1, 5, 1), new Pair(1, 6, 1),
-      new Pair(2, 1, 2), new Pair(2, 2, 2),
-      new Pair(2, 3, 2), new Pair(2, 4, 2),
-      new Pair(2, 5, 2), new Pair(2, 6, 2),
-      new Pair(undefined, 1, 1), new Pair(undefined, 2, 1),
-      new Pair(undefined, 3, 1), new Pair(undefined, 4, 1),
-      new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
-    ];
-
-    var stableObject = _.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
-
     test('should sort in ascending order', 1, function() {
       var actual = _.map(_.sortBy(objects, function(object) {
         return object.b;
       }), 'b');
 
       deepEqual(actual, [1, 2, 3, 4]);
-    });
-
-    test('should perform a stable sort (test in V8)', 2, function() {
-      _.each([stableArray, stableObject], function(value, index) {
-        var actual = _.sortBy(value, function(pair) {
-          return pair.a;
-        });
-
-        deepEqual(actual, stableArray, index ? 'object' : 'array');
-      });
     });
 
     test('should provide the correct `iteratee` arguments', 1, function() {
@@ -14286,7 +14255,7 @@
 
   QUnit.module('sortBy methods');
 
-  _.each(['sortByAll', 'sortByOrder'], function(methodName) {
+  _.each(['sortBy', 'sortByOrder'], function(methodName) {
     var func = _[methodName];
 
     function Pair(a, b, c) {
@@ -17548,7 +17517,6 @@
       'sample',
       'shuffle',
       'sortBy',
-      'sortByAll',
       'sortByOrder',
       'take',
       'times',
@@ -17563,7 +17531,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 207, function() {
+    test('should accept falsey arguments', 205, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {
@@ -17599,7 +17567,7 @@
       });
     });
 
-    test('should return an array', 68, function() {
+    test('should return an array', 66, function() {
       var array = [1, 2, 3];
 
       _.each(returnArrays, function(methodName) {

@@ -2476,52 +2476,6 @@
     }
 
     /**
-     * The base implementation of `_.merge` without support for argument juggling,
-     * multiple sources, and `this` binding `customizer` functions.
-     *
-     * @private
-     * @param {Object} object The destination object.
-     * @param {Object} source The source object.
-     * @param {Function} [customizer] The function to customize merged values.
-     * @param {Array} [stackA=[]] Tracks traversed source objects.
-     * @param {Array} [stackB=[]] Associates values with source counterparts.
-     * @returns {Object} Returns `object`.
-     */
-    function baseMerge(object, source, customizer, stackA, stackB) {
-      if (!isObject(object)) {
-        return object;
-      }
-      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-          props = isSrcArr ? undefined : keys(source);
-
-      arrayEach(props || source, function(srcValue, key) {
-        if (props) {
-          key = srcValue;
-          srcValue = source[key];
-        }
-        if (isObjectLike(srcValue)) {
-          stackA || (stackA = []);
-          stackB || (stackB = []);
-          baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
-        }
-        else {
-          var value = object[key],
-              result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-              isCommon = result === undefined;
-
-          if (isCommon) {
-            result = srcValue;
-          }
-          if ((result !== undefined || (isSrcArr && !(key in object))) &&
-              (isCommon || (result === result ? (result !== value) : (value === value)))) {
-            object[key] = result;
-          }
-        }
-      });
-      return object;
-    }
-
-    /**
      * A specialized version of `baseMerge` for arrays and objects which performs
      * deep merges and tracks traversed objects enabling objects with circular
      * references to be merged.
@@ -3097,7 +3051,7 @@
     }
 
     /**
-     * Creates a `_.assign`, `_.defaults`, or `_.merge` function.
+     * Creates a `_.assign` or `_.merge` function.
      *
      * @private
      * @param {Function} assigner The function to assign values.
@@ -3206,8 +3160,7 @@
     }
 
     /**
-     * Creates a function that produces compound words out of the words in a
-     * given string.
+     * Creates a `_.camelCase`, `_.kebabCase`, `_.snakeCase`, or `_.startCase` function.
      *
      * @private
      * @param {Function} callback The function to combine each word.
@@ -3261,57 +3214,6 @@
     }
 
     /**
-     * Creates a `_.curry` or `_.curryRight` function.
-     *
-     * @private
-     * @param {boolean} flag The curry bit flag.
-     * @returns {Function} Returns the new curry function.
-     */
-    function createCurry(flag) {
-      function curryFunc(func, arity, guard) {
-        if (guard && isIterateeCall(func, arity, guard)) {
-          arity = undefined;
-        }
-        var result = createWrapper(func, flag, undefined, undefined, undefined, undefined, undefined, arity);
-        result.placeholder = curryFunc.placeholder;
-        return result;
-      }
-      return curryFunc;
-    }
-
-    /**
-     * Creates a `_.defaults` or `_.defaultsDeep` function.
-     *
-     * @private
-     * @param {Function} assigner The function to assign values.
-     * @param {Function} customizer The function to customize assigned values.
-     * @returns {Function} Returns the new defaults function.
-     */
-    function createDefaults(assigner, customizer) {
-      return restParam(function(args) {
-        var object = args[0];
-        if (object == null) {
-          return object;
-        }
-        args.push(customizer);
-        return assigner.apply(undefined, args);
-      });
-    }
-
-    /**
-     * Creates a `_.max` or `_.min` function.
-     *
-     * @private
-     * @param {Function} extremumBy The function used to get the extremum value.
-     * @returns {Function} Returns the new extremum function.
-     */
-    function createExtremum(extremumBy) {
-      return function(collection) {
-        return extremumBy(collection, identity);
-      };
-    }
-
-    /**
      * Creates a `_.maxBy` or `_.minBy` function.
      *
      * @private
@@ -3336,56 +3238,6 @@
           }
         }
         return baseExtremumBy(collection, iteratee, comparator, exValue);
-      };
-    }
-
-    /**
-     * Creates a `_.find` or `_.findLast` function.
-     *
-     * @private
-     * @param {Function} eachFunc The function to iterate over a collection.
-     * @param {boolean} [fromRight] Specify iterating from right to left.
-     * @returns {Function} Returns the new find function.
-     */
-    function createFind(eachFunc, fromRight) {
-      return function(collection, predicate) {
-        predicate = getIteratee(predicate);
-        if (isArray(collection)) {
-          var index = baseFindIndex(collection, predicate, fromRight);
-          return index > -1 ? collection[index] : undefined;
-        }
-        return baseFind(collection, predicate, eachFunc);
-      };
-    }
-
-    /**
-     * Creates a `_.findIndex` or `_.findLastIndex` function.
-     *
-     * @private
-     * @param {boolean} [fromRight] Specify iterating from right to left.
-     * @returns {Function} Returns the new find function.
-     */
-    function createFindIndex(fromRight) {
-      return function(array, predicate) {
-        if (!(array && array.length)) {
-          return -1;
-        }
-        predicate = getIteratee(predicate);
-        return baseFindIndex(array, predicate, fromRight);
-      };
-    }
-
-    /**
-     * Creates a `_.findKey` or `_.findLastKey` function.
-     *
-     * @private
-     * @param {Function} objectFunc The function to iterate over an object.
-     * @returns {Function} Returns the new find function.
-     */
-    function createFindKey(objectFunc) {
-      return function(object, predicate) {
-        predicate = getIteratee(predicate);
-        return baseFind(object, predicate, objectFunc, true);
       };
     }
 
@@ -3441,116 +3293,6 @@
           }
           return result;
         };
-      };
-    }
-
-    /**
-     * Creates a function for `_.forEach` or `_.forEachRight`.
-     *
-     * @private
-     * @param {Function} arrayFunc The function to iterate over an array.
-     * @param {Function} eachFunc The function to iterate over a collection.
-     * @returns {Function} Returns the new each function.
-     */
-    function createForEach(arrayFunc, eachFunc) {
-      return function(collection, iteratee) {
-        return (typeof iteratee == 'function' && isArray(collection))
-          ? arrayFunc(collection, iteratee)
-          : eachFunc(collection, toFunction(iteratee));
-      };
-    }
-
-    /**
-     * Creates a function for `_.forIn` or `_.forInRight`.
-     *
-     * @private
-     * @param {Function} objectFunc The function to iterate over an object.
-     * @returns {Function} Returns the new each function.
-     */
-    function createForIn(objectFunc) {
-      return function(object, iteratee) {
-        return objectFunc(object, toFunction(iteratee), keysIn);
-      };
-    }
-
-    /**
-     * Creates a function for `_.forOwn` or `_.forOwnRight`.
-     *
-     * @private
-     * @param {Function} objectFunc The function to iterate over an object.
-     * @returns {Function} Returns the new each function.
-     */
-    function createForOwn(objectFunc) {
-      return function(object, iteratee) {
-        return objectFunc(object, toFunction(iteratee));
-      };
-    }
-
-    /**
-     * Creates a function for `_.mapKeys` or `_.mapValues`.
-     *
-     * @private
-     * @param {boolean} [isMapKeys] Specify mapping keys instead of values.
-     * @returns {Function} Returns the new map function.
-     */
-    function createObjectMapper(isMapKeys) {
-      return function(object, iteratee) {
-        var result = {};
-        iteratee = getIteratee(iteratee);
-
-        baseForOwn(object, function(value, key, object) {
-          var mapped = iteratee(value, key, object);
-          key = isMapKeys ? mapped : key;
-          value = isMapKeys ? value : mapped;
-          result[key] = value;
-        });
-        return result;
-      };
-    }
-
-    /**
-     * Creates a function for `_.padLeft` or `_.padRight`.
-     *
-     * @private
-     * @param {boolean} [fromRight] Specify padding from the right.
-     * @returns {Function} Returns the new pad function.
-     */
-    function createPadDir(fromRight) {
-      return function(string, length, chars) {
-        string = baseToString(string);
-        return (fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string);
-      };
-    }
-
-    /**
-     * Creates a `_.partial` or `_.partialRight` function.
-     *
-     * @private
-     * @param {boolean} flag The partial bit flag.
-     * @returns {Function} Returns the new partial function.
-     */
-    function createPartial(flag) {
-      var partialFunc = restParam(function(func, partials) {
-        var holders = replaceHolders(partials, partialFunc.placeholder);
-        return createWrapper(func, flag, undefined, partials, holders);
-      });
-      return partialFunc;
-    }
-
-    /**
-     * Creates a function for `_.reduce` or `_.reduceRight`.
-     *
-     * @private
-     * @param {Function} arrayFunc The function to iterate over an array.
-     * @param {Function} eachFunc The function to iterate over a collection.
-     * @returns {Function} Returns the new each function.
-     */
-    function createReduce(arrayFunc, eachFunc) {
-      return function(collection, iteratee, accumulator) {
-        var initFromArray = arguments.length < 3;
-        return (typeof iteratee == 'function' && isArray(collection))
-          ? arrayFunc(collection, iteratee, accumulator, initFromArray)
-          : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, eachFunc);
       };
     }
 
@@ -3717,22 +3459,6 @@
           return func(number * precision) / precision;
         }
         return func(number);
-      };
-    }
-
-    /**
-     * Creates a `_.sortedIndex` or `_.sortedLastIndex` function.
-     *
-     * @private
-     * @param {boolean} [retHighest] Specify returning the highest qualified index.
-     * @returns {Function} Returns the new index function.
-     */
-    function createSortedIndex(retHighest) {
-      return function(array, value, iteratee) {
-        var toIteratee = getIteratee();
-        return (iteratee == null && toIteratee === baseIteratee)
-          ? binaryIndex(array, value, retHighest)
-          : binaryIndexBy(array, value, toIteratee(iteratee), retHighest);
       };
     }
 
@@ -4899,7 +4625,11 @@
      * _.findIndex(users, 'active');
      * // => 2
      */
-    var findIndex = createFindIndex();
+    function findIndex(array, predicate) {
+      return (array && array.length)
+        ? baseFindIndex(array, getIteratee(predicate))
+        : -1;
+    }
 
     /**
      * This method is like `_.findIndex` except that it iterates over elements
@@ -4934,7 +4664,11 @@
      * _.findLastIndex(users, 'active');
      * // => 0
      */
-    var findLastIndex = createFindIndex(true);
+    function findLastIndex(array, predicate) {
+      return (array && array.length)
+        ? baseFindIndex(array, getIteratee(predicate), true)
+        : -1;
+    }
 
     /**
      * Gets the first element of `array`.
@@ -5386,7 +5120,12 @@
      * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
      * // => 1
      */
-    var sortedIndex = createSortedIndex();
+    function sortedIndex(array, value, iteratee) {
+      var toIteratee = getIteratee();
+      return (iteratee == null && toIteratee === baseIteratee)
+        ? binaryIndex(array, value)
+        : binaryIndexBy(array, value, toIteratee(iteratee));
+    }
 
     /**
      * This method is like `_.sortedIndex` except that it returns the highest
@@ -5405,7 +5144,12 @@
      * _.sortedLastIndex([4, 4, 5, 5], 5);
      * // => 4
      */
-    var sortedLastIndex = createSortedIndex(true);
+    function sortedLastIndex(array, value, iteratee) {
+      var toIteratee = getIteratee();
+      return (iteratee == null && toIteratee === baseIteratee)
+        ? binaryIndex(array, value, true)
+        : binaryIndexBy(array, value, toIteratee(iteratee), true);
+    }
 
     /**
      * Creates a slice of `array` with `n` elements taken from the beginning.
@@ -6302,7 +6046,14 @@
      * resolve( _.find(users, 'active') );
      * // => 'barney'
      */
-    var find = createFind(baseEach);
+    function find(collection, predicate) {
+      predicate = getIteratee(predicate);
+      if (isArray(collection)) {
+        var index = baseFindIndex(collection, predicate);
+        return index > -1 ? collection[index] : undefined;
+      }
+      return baseFind(collection, predicate, baseEach);
+    }
 
     /**
      * This method is like `_.find` except that it iterates over elements of
@@ -6321,7 +6072,14 @@
      * });
      * // => 3
      */
-    var findLast = createFind(baseEachRight, true);
+    function findLast(collection, predicate) {
+      predicate = getIteratee(predicate);
+      if (isArray(collection)) {
+        var index = baseFindIndex(collection, predicate, true);
+        return index > -1 ? collection[index] : undefined;
+      }
+      return baseFind(collection, predicate, baseEachRight);
+    }
 
     /**
      * Iterates over elements of `collection` invoking `iteratee` for each element.
@@ -6351,7 +6109,11 @@
      * });
      * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
      */
-    var forEach = createForEach(arrayEach, baseEach);
+    function forEach(collection, iteratee) {
+      return (typeof iteratee == 'function' && isArray(collection))
+        ? arrayEach(collection, iteratee)
+        : baseEach(collection, toFunction(iteratee));
+    }
 
     /**
      * This method is like `_.forEach` except that it iterates over elements of
@@ -6371,7 +6133,11 @@
      * });
      * // => logs each value from right to left and returns the array
      */
-    var forEachRight = createForEach(arrayEachRight, baseEachRight);
+    function forEachRight(collection, iteratee) {
+      return (typeof iteratee == 'function' && isArray(collection))
+        ? arrayEachRight(collection, iteratee)
+        : baseEachRight(collection, toFunction(iteratee));
+    }
 
     /**
      * Creates an object composed of keys generated from the results of running
@@ -6642,7 +6408,12 @@
      * }, {});
      * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
      */
-    var reduce = createReduce(arrayReduce, baseEach);
+    function reduce(collection, iteratee, accumulator) {
+      var initFromArray = arguments.length < 3;
+      return (typeof iteratee == 'function' && isArray(collection))
+        ? arrayReduce(collection, iteratee, accumulator, initFromArray)
+        : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, baseEach);
+    }
 
     /**
      * This method is like `_.reduce` except that it iterates over elements of
@@ -6665,7 +6436,12 @@
      * }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
-    var reduceRight = createReduce(arrayReduceRight, baseEachRight);
+    function reduceRight(collection, iteratee, accumulator) {
+      var initFromArray = arguments.length < 3;
+      return (typeof iteratee == 'function' && isArray(collection))
+        ? arrayReduceRight(collection, iteratee, accumulator, initFromArray)
+        : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, baseEachRight);
+    }
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
@@ -7237,7 +7013,14 @@
      * curried(1)(_, 3)(2);
      * // => [1, 2, 3]
      */
-    var curry = createCurry(CURRY_FLAG);
+    function curry(func, arity, guard) {
+      if (guard && isIterateeCall(func, arity, guard)) {
+        arity = undefined;
+      }
+      var result = createWrapper(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+      result.placeholder = curry.placeholder;
+      return result;
+    }
 
     /**
      * This method is like `_.curry` except that arguments are applied to `func`
@@ -7276,7 +7059,14 @@
      * curried(3)(1, _)(2);
      * // => [1, 2, 3]
      */
-    var curryRight = createCurry(CURRY_RIGHT_FLAG);
+    function curryRight(func, arity, guard) {
+      if (guard && isIterateeCall(func, arity, guard)) {
+        arity = undefined;
+      }
+      var result = createWrapper(func, CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+      result.placeholder = curryRight.placeholder;
+      return result;
+    }
 
     /**
      * Creates a debounced function that delays invoking `func` until after `wait`
@@ -7734,7 +7524,10 @@
      * greetFred('hi');
      * // => 'hi fred'
      */
-    var partial = createPartial(PARTIAL_FLAG);
+    var partial = restParam(function(func, partials) {
+      var holders = replaceHolders(partials, partial.placeholder);
+      return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
+    });
 
     /**
      * This method is like `_.partial` except that partially applied arguments
@@ -7767,7 +7560,10 @@
      * sayHelloTo('fred');
      * // => 'hello fred'
      */
-    var partialRight = createPartial(PARTIAL_RIGHT_FLAG);
+    var partialRight = restParam(function(func, partials) {
+      var holders = replaceHolders(partials, partialRight.placeholder);
+      return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
+    });
 
     /**
      * Creates a function that invokes `func` with arguments arranged according
@@ -8862,7 +8658,39 @@
      * });
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
      */
-    var merge = createAssigner(baseMerge);
+    var merge = createAssigner(function baseMerge(object, source, customizer, stackA, stackB) {
+      if (!isObject(object)) {
+        return object;
+      }
+      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
+          props = isSrcArr ? undefined : keys(source);
+
+      arrayEach(props || source, function(srcValue, key) {
+        if (props) {
+          key = srcValue;
+          srcValue = source[key];
+        }
+        if (isObjectLike(srcValue)) {
+          stackA || (stackA = []);
+          stackB || (stackB = []);
+          baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+        }
+        else {
+          var value = object[key],
+              result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+              isCommon = result === undefined;
+
+          if (isCommon) {
+            result = srcValue;
+          }
+          if ((result !== undefined || (isSrcArr && !(key in object))) &&
+              (isCommon || (result === result ? (result !== value) : (value === value)))) {
+            object[key] = result;
+          }
+        }
+      });
+      return object;
+    });
 
     /**
      * Assigns own enumerable properties of source object(s) to the destination
@@ -8961,7 +8789,14 @@
      * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var defaults = createDefaults(assign, assignDefaults);
+    var defaults = restParam(function(args) {
+      var object = args[0];
+      if (object == null) {
+        return object;
+      }
+      args.push(assignDefaults);
+      return assign.apply(undefined, args);
+    });
 
     /**
      * This method is like `_.defaults` except that it recursively assigns
@@ -8981,7 +8816,14 @@
      * // => { 'user': { 'name': 'barney', 'age': 36 } }
      *
      */
-    var defaultsDeep = createDefaults(merge, mergeDefaults);
+    var defaultsDeep = restParam(function(args) {
+      var object = args[0];
+      if (object == null) {
+        return object;
+      }
+      args.push(mergeDefaults);
+      return merge.apply(undefined, args);
+    });
 
     /**
      * This method is like `_.find` except that it returns the key of the first
@@ -9016,7 +8858,10 @@
      * _.findKey(users, 'active');
      * // => 'barney'
      */
-    var findKey = createFindKey(baseForOwn);
+    function findKey(object, predicate) {
+      predicate = getIteratee(predicate);
+      return baseFind(object, predicate, baseForOwn, true);
+    }
 
     /**
      * This method is like `_.findKey` except that it iterates over elements of
@@ -9051,7 +8896,10 @@
      * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
-    var findLastKey = createFindKey(baseForOwnRight);
+    function findLastKey(object, predicate) {
+      predicate = getIteratee(predicate);
+      return baseFind(object, predicate, baseForOwnRight, true);
+    }
 
     /**
      * Iterates over own and inherited enumerable properties of an object invoking
@@ -9079,7 +8927,9 @@
      * });
      * // => logs 'a', 'b', and 'c' (iteration order is not guaranteed)
      */
-    var forIn = createForIn(baseFor);
+    function forIn(object, iteratee) {
+      return baseFor(object, toFunction(iteratee), keysIn);
+    }
 
     /**
      * This method is like `_.forIn` except that it iterates over properties of
@@ -9105,7 +8955,9 @@
      * });
      * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
      */
-    var forInRight = createForIn(baseForRight);
+    function forInRight(object, iteratee) {
+      return baseForRight(object, toFunction(iteratee), keysIn);
+    }
 
     /**
      * Iterates over own enumerable properties of an object invoking `iteratee`
@@ -9133,7 +8985,9 @@
      * });
      * // => logs 'a' and 'b' (iteration order is not guaranteed)
      */
-    var forOwn = createForOwn(baseForOwn);
+    function forOwn(object, iteratee) {
+      return baseForOwn(object, toFunction(iteratee));
+    }
 
     /**
      * This method is like `_.forOwn` except that it iterates over properties of
@@ -9159,7 +9013,10 @@
      * });
      * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
      */
-    var forOwnRight = createForOwn(baseForOwnRight);
+    function forOwnRight(object, iteratee) {
+      return baseForOwnRight(object, toFunction(iteratee));
+    }
+
 
     /**
      * Creates an array of function property names from all enumerable properties,
@@ -9432,7 +9289,15 @@
      * });
      * // => { 'a1': 1, 'b2': 2 }
      */
-    var mapKeys = createObjectMapper(true);
+    function mapKeys(object, iteratee) {
+      var result = {};
+      iteratee = getIteratee(iteratee);
+
+      baseForOwn(object, function(value, key, object) {
+        result[iteratee(value, key, object)] = value;
+      });
+      return result;
+    }
 
     /**
      * Creates an object with the same keys as `object` and values generated by
@@ -9459,7 +9324,15 @@
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
-    var mapValues = createObjectMapper();
+    function mapValues(object, iteratee) {
+      var result = {};
+      iteratee = getIteratee(iteratee);
+
+      baseForOwn(object, function(value, key, object) {
+        result[key] = iteratee(value, key, object);
+      });
+      return result;
+    }
 
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
@@ -10103,7 +9976,10 @@
      * _.padLeft('abc', 3);
      * // => 'abc'
      */
-    var padLeft = createPadDir();
+    function padLeft(string, length, chars) {
+      string = baseToString(string);
+      return createPadding(string, length, chars) + string;
+    }
 
     /**
      * Pads `string` on the right side if it's shorter than `length`. Padding
@@ -10127,7 +10003,10 @@
      * _.padRight('abc', 3);
      * // => 'abc'
      */
-    var padRight = createPadDir(true);
+    function padRight(string, length, chars) {
+      string = baseToString(string);
+      return string + createPadding(string, length, chars);
+    }
 
     /**
      * Converts `string` to an integer of the specified radix. If `radix` is
@@ -11307,6 +11186,27 @@
     var floor = createRound('floor');
 
     /**
+     * Gets the maximum value of `collection`. If `collection` is empty or falsey
+     * `-Infinity` is returned.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @returns {*} Returns the maximum value.
+     * @example
+     *
+     * _.max([4, 2, 8, 6]);
+     * // => 8
+     *
+     * _.max([]);
+     * // => -Infinity
+     */
+    function max(collection) {
+      return maxBy(collection, identity);
+    }
+
+    /**
      * This method is like `_.max` except that it accepts an iteratee which is
      * invoked for each value in `collection` to generate the criterion by which
      * the value is ranked. The iteratee is invoked with three arguments:
@@ -11335,23 +11235,25 @@
     var maxBy = createExtremumBy(gt, NEGATIVE_INFINITY);
 
     /**
-     * Gets the maximum value of `collection`. If `collection` is empty or falsey
-     * `-Infinity` is returned.
+     * Gets the minimum value of `collection`. If `collection` is empty or falsey
+     * `Infinity` is returned.
      *
      * @static
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @returns {*} Returns the maximum value.
+     * @returns {*} Returns the minimum value.
      * @example
      *
-     * _.max([4, 2, 8, 6]);
-     * // => 8
+     * _.min([4, 2, 8, 6]);
+     * // => 2
      *
-     * _.max([]);
-     * // => -Infinity
+     * _.min([]);
+     * // => Infinity
      */
-    var max = createExtremum(maxBy);
+    function min(collection) {
+      return minBy(collection, identity);
+    }
 
     /**
      * This method is like `_.min` except that it accepts an iteratee which is
@@ -11380,25 +11282,6 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var minBy = createExtremumBy(lt, POSITIVE_INFINITY);
-
-    /**
-     * Gets the minimum value of `collection`. If `collection` is empty or falsey
-     * `Infinity` is returned.
-     *
-     * @static
-     * @memberOf _
-     * @category Math
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @returns {*} Returns the minimum value.
-     * @example
-     *
-     * _.min([4, 2, 8, 6]);
-     * // => 2
-     *
-     * _.min([]);
-     * // => Infinity
-     */
-    var min = createExtremum(minBy);
 
     /**
      * Calculates `n` rounded to `precision`.

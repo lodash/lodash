@@ -5963,12 +5963,26 @@
       }
     });
 
-    test('`_.uniq` should work with a custom `_.indexOf` method', 6, function() {
-      _.each([false, true, _.identity], function(param) {
+    test('`_.uniq` should work with a custom `_.indexOf` method', 4, function() {
+      _.each([false, true], function(param) {
         if (!isModularize) {
           _.indexOf = custom;
           deepEqual(_.uniq(array, param), array.slice(0, 3));
           deepEqual(_.uniq(largeArray, param), [largeArray[0]]);
+          _.indexOf = indexOf;
+        }
+        else {
+          skipTest(2);
+        }
+      });
+    });
+
+    test('`_.uniqBy` should work with a custom `_.indexOf` method', 6, function() {
+      _.each([[false, _.identity], [true, _.identity], [_.identity]], function(params) {
+        if (!isModularize) {
+          _.indexOf = custom;
+          deepEqual(_.uniqBy.apply(_, [array].concat(params)), array.slice(0, 3));
+          deepEqual(_.uniqBy.apply(_, [largeArray].concat(params)), [largeArray[0]]);
           _.indexOf = indexOf;
         }
         else {
@@ -8790,10 +8804,10 @@
       }
     });
 
-    test('`_.uniq` should use `_.iteratee` internally', 1, function() {
+    test('`_.uniqBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         _.iteratee = getPropB;
-        deepEqual(_.uniq(objects), [objects[0], objects[2]]);
+        deepEqual(_.uniqBy(objects), [objects[0], objects[2]]);
         _.iteratee = iteratee;
       }
       else {
@@ -13831,7 +13845,7 @@
         return _.shuffle([1, 2]);
       });
 
-      deepEqual(_.sortBy(_.uniq(actual, String), '0'), [[1, 2], [2, 1]]);
+      deepEqual(_.sortBy(_.uniqBy(actual, String), '0'), [[1, 2], [2, 1]]);
     });
 
     test('should treat number values for `collection` as empty', 1, function() {
@@ -16077,42 +16091,17 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.uniq');
+  QUnit.module('lodash.uniqBy');
 
   (function() {
     var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
-
-    test('should return unique values of an unsorted array', 1, function() {
-      var array = [2, 3, 1, 2, 3, 1];
-      deepEqual(_.uniq(array), [2, 3, 1]);
-    });
-
-    test('should return unique values of a sorted array', 1, function() {
-      var array = [1, 1, 2, 2, 3];
-      deepEqual(_.uniq(array), [1, 2, 3]);
-    });
-
-    test('should treat object instances as unique', 1, function() {
-      deepEqual(_.uniq(objects), objects);
-    });
-
-    test('should not treat `NaN` as unique', 1, function() {
-      deepEqual(_.uniq([1, NaN, 3, NaN]), [1, NaN, 3]);
-    });
-
-    test('should work with `isSorted`', 3, function() {
-      var expected = [1, 2, 3];
-      deepEqual(_.uniq([1, 2, 3], true), expected);
-      deepEqual(_.uniq([1, 1, 2, 2, 3], true), expected);
-      deepEqual(_.uniq([1, 2, 3, 3, 3, 3, 3], true), expected);
-    });
 
     test('should work with an `iteratee` argument', 2, function() {
       _.each([objects, _.sortBy(objects, 'a')], function(array, index) {
         var isSorted = !!index,
             expected = isSorted ? [objects[2], objects[0], objects[1]] : objects.slice(0, 3);
 
-        var actual = _.uniq(array, isSorted, function(object) {
+        var actual = _.uniqBy(array, isSorted, function(object) {
           return object.a;
         });
 
@@ -16123,7 +16112,7 @@
     test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
-      _.uniq(objects, function() {
+      _.uniqBy(objects, function() {
         args || (args = slice.call(arguments));
       });
 
@@ -16131,7 +16120,7 @@
     });
 
     test('should work with `iteratee` without specifying `isSorted`', 1, function() {
-      var actual = _.uniq(objects, function(object) {
+      var actual = _.uniqBy(objects, function(object) {
         return object.a;
       });
 
@@ -16139,24 +16128,71 @@
     });
 
     test('should work with a "_.property" style `iteratee`', 2, function() {
-      var actual = _.uniq(objects, 'a');
+      var actual = _.uniqBy(objects, 'a');
 
       deepEqual(actual, objects.slice(0, 3));
 
       var arrays = [[2], [3], [1], [2], [3], [1]];
-      actual = _.uniq(arrays, 0);
+      actual = _.uniqBy(arrays, 0);
 
       deepEqual(actual, arrays.slice(0, 3));
     });
 
-    test('should perform an unsorted uniq when used as an iteratee for methods like `_.map`', 1, function() {
+    _.each({
+      'an array': [0, 'a'],
+      'an object': { '0': 'a' },
+      'a number': 0,
+      'a string': '0'
+    },
+    function(iteratee, key) {
+      test('should work with ' + key + ' for `iteratee`', 1, function() {
+        var actual = _.uniqBy([['a'], ['b'], ['a']], iteratee);
+        deepEqual(actual, [['a'], ['b']]);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('uniq methods');
+
+  _.each(['uniq', 'uniqBy'], function(methodName) {
+    var func = _[methodName],
+        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    test('`_.' + methodName + '` should return unique values of an unsorted array', 1, function() {
+      var array = [2, 3, 1, 2, 3, 1];
+      deepEqual(func(array), [2, 3, 1]);
+    });
+
+    test('`_.' + methodName + '` should return unique values of a sorted array', 1, function() {
+      var array = [1, 1, 2, 2, 3];
+      deepEqual(func(array), [1, 2, 3]);
+    });
+
+    test('`_.' + methodName + '` should treat object instances as unique', 1, function() {
+      deepEqual(func(objects), objects);
+    });
+
+    test('`_.' + methodName + '` should not treat `NaN` as unique', 1, function() {
+      deepEqual(func([1, NaN, 3, NaN]), [1, NaN, 3]);
+    });
+
+    test('`_.' + methodName + '` should work with `isSorted`', 3, function() {
+      var expected = [1, 2, 3];
+      deepEqual(func([1, 2, 3], true), expected);
+      deepEqual(func([1, 1, 2, 2, 3], true), expected);
+      deepEqual(func([1, 2, 3, 3, 3, 3, 3], true), expected);
+    });
+
+    test('`_.' + methodName + '` should perform an unsorted uniq when used as an iteratee for methods like `_.map`', 1, function() {
       var array = [[2, 1, 2], [1, 2, 1]],
-          actual = _.map(array, _.uniq);
+          actual = _.map(array, func);
 
       deepEqual(actual, [[2, 1], [1, 2]]);
     });
 
-    test('should work with large arrays', 1, function() {
+    test('`_.' + methodName + '` should work with large arrays', 1, function() {
       var largeArray = [],
           expected = [0, 'a', {}],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
@@ -16165,10 +16201,10 @@
         push.apply(largeArray, expected);
       });
 
-      deepEqual(_.uniq(largeArray), expected);
+      deepEqual(func(largeArray), expected);
     });
 
-    test('should work with large arrays of boolean, `NaN`, and nullish values', 1, function() {
+    test('`_.' + methodName + '` should work with large arrays of boolean, `NaN`, and nullish values', 1, function() {
       var largeArray = [],
           expected = [true, false, NaN, null, undefined],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
@@ -16177,24 +16213,24 @@
         push.apply(largeArray, expected);
       });
 
-      deepEqual(_.uniq(largeArray), expected);
+      deepEqual(func(largeArray), expected);
     });
 
-    test('should work with large arrays of symbols', 1, function() {
+    test('`_.' + methodName + '` should work with large arrays of symbols', 1, function() {
       if (Symbol) {
         var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
           return Symbol();
         });
 
-        deepEqual(_.uniq(largeArray), largeArray);
+        deepEqual(func(largeArray), largeArray);
       }
       else {
         skipTest();
       }
     });
 
-    test('should work with large arrays of well-known symbols', 1, function() {
-      // See https://people.mozilla.org/~jorendorff/es6-draft.html#sec-well-known-symbols.
+    test('`_.' + methodName + '` should work with large arrays of well-known symbols', 1, function() {
+      // See http://www.ecma-international.org/ecma-262/6.0/#sec-well-known-symbols.
       if (Symbol) {
         var expected = [
           Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.iterator,
@@ -16213,14 +16249,14 @@
           push.apply(largeArray, expected);
         });
 
-        deepEqual(_.uniq(largeArray), expected);
+        deepEqual(func(largeArray), expected);
       }
       else {
         skipTest();
       }
     });
 
-    test('should distinguish between numbers and numeric strings', 1, function() {
+    test('`_.' + methodName + '` should distinguish between numbers and numeric strings', 1, function() {
       var array = [],
           expected = ['2', 2, Object('2'), Object(2)],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
@@ -16229,22 +16265,9 @@
         push.apply(array, expected);
       });
 
-      deepEqual(_.uniq(array), expected);
+      deepEqual(func(array), expected);
     });
-
-    _.each({
-      'an array': [0, 'a'],
-      'an object': { '0': 'a' },
-      'a number': 0,
-      'a string': '0'
-    },
-    function(callback, key) {
-      test('should work with ' + key + ' for `iteratee`', 1, function() {
-        var actual = _.uniq([['a'], ['b'], ['a']], callback);
-        deepEqual(actual, [['a'], ['b']]);
-      });
-    });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -17515,7 +17538,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 207, function() {
+    test('should accept falsey arguments', 208, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

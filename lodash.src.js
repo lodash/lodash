@@ -5328,18 +5328,14 @@
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons, in which only the first occurence of each element
      * is kept. Providing `true` for `isSorted` performs a faster search algorithm
-     * for sorted arrays. If an iteratee function is provided it's invoked for
-     * each element in the array to generate the criterion by which uniqueness
-     * is computed. The iteratee is invoked with three arguments: (value, index, array).
+     * for sorted arrays.
      *
      * @static
      * @memberOf _
-     * @alias unique
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {boolean} [isSorted] Specify the array is sorted.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new duplicate-value-free array.
+     * @returns {Array} Returns the new duplicate free array.
      * @example
      *
      * _.uniq([2, 1, 2]);
@@ -5348,18 +5344,42 @@
      * // using `isSorted`
      * _.uniq([1, 1, 2], true);
      * // => [1, 2]
+     */
+    function uniq(array, isSorted) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() == baseIndexOf)
+        ? sortedUniq(array)
+        : baseUniq(array);
+    }
+
+    /**
+     * This method is like `_.uniq` except that it accepts an iteratee which is
+     * invoked for each value in `array` to generate the criterion by which
+     * uniqueness is computed. The iteratee is invoked with three arguments:
+     * (value, index, array).
      *
-     * // using an iteratee function
-     * _.uniq([1, 2.5, 1.5, 2], function(n) {
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {boolean} [isSorted] Specify the array is sorted.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     * @example
+     *
+     * _.uniqBy([1, 2.5, 1.5, 2], function(n) {
      *   return Math.floor(n);
      * });
      * // => [1, 2.5]
      *
      * // using the `_.property` callback shorthand
-     * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
+     * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    function uniq(array, isSorted, iteratee) {
+    function uniqBy(array, isSorted, iteratee) {
       var length = array ? array.length : 0;
       if (!length) {
         return [];
@@ -11444,6 +11464,7 @@
     lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;
+    lodash.uniqBy = uniqBy;
     lodash.unzip = unzip;
     lodash.unzipWith = unzipWith;
     lodash.values = values;

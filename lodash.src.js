@@ -4675,7 +4675,6 @@
      *
      * @static
      * @memberOf _
-     * @alias head
      * @category Array
      * @param {Array} array The array to query.
      * @returns {*} Returns the first element of `array`.
@@ -5049,7 +5048,6 @@
      *
      * @static
      * @memberOf _
-     * @alias tail
      * @category Array
      * @param {Array} array The array to query.
      * @returns {Array} Returns the slice of `array`.
@@ -5527,7 +5525,6 @@
      *
      * @static
      * @memberOf _
-     * @alias object
      * @category Array
      * @param {Array} props The property names.
      * @param {Array} [values=[]] The property values.
@@ -5928,7 +5925,6 @@
      *
      * @static
      * @memberOf _
-     * @alias all
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
@@ -5974,7 +5970,6 @@
      *
      * @static
      * @memberOf _
-     * @alias select
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
@@ -6016,7 +6011,6 @@
      *
      * @static
      * @memberOf _
-     * @alias detect
      * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
@@ -6178,7 +6172,6 @@
      *
      * @static
      * @memberOf _
-     * @alias contains, include
      * @category Collection
      * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to search for.
@@ -6297,7 +6290,6 @@
      *
      * @static
      * @memberOf _
-     * @alias collect
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
@@ -6389,7 +6381,6 @@
      *
      * @static
      * @memberOf _
-     * @alias foldl, inject
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -6421,7 +6412,6 @@
      *
      * @static
      * @memberOf _
-     * @alias foldr
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -6577,7 +6567,6 @@
      *
      * @static
      * @memberOf _
-     * @alias any
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
@@ -7310,7 +7299,6 @@
      *
      * @static
      * @memberOf _
-     * @alias backflow, compose
      * @category Function
      * @param {...Function} [funcs] Functions to invoke.
      * @returns {Function} Returns the new function.
@@ -8704,7 +8692,6 @@
      *
      * @static
      * @memberOf _
-     * @alias extend
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
@@ -9024,7 +9011,6 @@
      *
      * @static
      * @memberOf _
-     * @alias methods
      * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the new array of property names.
@@ -10678,7 +10664,6 @@
      *
      * @static
      * @memberOf _
-     * @alias iteratee
      * @category Utility
      * @param {*} [func=_.identity] The value to convert to a callback.
      * @returns {Function} Returns the callback.

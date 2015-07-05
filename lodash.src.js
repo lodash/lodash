@@ -1987,7 +1987,7 @@
      * @param {*} exValue The initial extremum value.
      * @returns {*} Returns the extremum value.
      */
-    function baseExtremum(collection, iteratee, comparator, exValue) {
+    function baseExtremumBy(collection, iteratee, comparator, exValue) {
       var computed = exValue,
           result = computed;
 
@@ -3302,11 +3302,24 @@
      * Creates a `_.max` or `_.min` function.
      *
      * @private
+     * @param {Function} extremumBy The function used to get the extremum value.
+     * @returns {Function} Returns the new extremum function.
+     */
+    function createExtremum(extremumBy) {
+      return function(collection) {
+        return extremumBy(collection, identity);
+      };
+    }
+
+    /**
+     * Creates a `_.maxBy` or `_.minBy` function.
+     *
+     * @private
      * @param {Function} comparator The function used to compare values.
      * @param {*} exValue The initial extremum value.
      * @returns {Function} Returns the new extremum function.
      */
-    function createExtremum(comparator, exValue) {
+    function createExtremumBy(comparator, exValue) {
       return function(collection, iteratee, guard) {
         if (guard && isIterateeCall(collection, iteratee, guard)) {
           iteratee = undefined;
@@ -3314,12 +3327,15 @@
         iteratee = getIteratee(iteratee);
         if (iteratee.length == 1) {
           collection = isArray(collection) ? collection : toIterable(collection);
+          if (!collection.length) {
+            return exValue;
+          }
           var result = arrayExtremum(collection, iteratee, comparator, exValue);
-          if (!(collection.length && result === exValue)) {
+          if (result !== exValue) {
             return result;
           }
         }
-        return baseExtremum(collection, iteratee, comparator, exValue);
+        return baseExtremumBy(collection, iteratee, comparator, exValue);
       };
     }
 
@@ -11291,10 +11307,10 @@
     var floor = createRound('floor');
 
     /**
-     * Gets the maximum value of `collection`. If `collection` is empty or falsey
-     * `-Infinity` is returned. If an iteratee function is provided it's invoked
-     * for each value in `collection` to generate the criterion by which the value
-     * is ranked. The iteratee is invoked with three arguments: (value, index, collection).
+     * This method is like `_.max` except that it accepts an iteratee which is
+     * invoked for each value in `collection` to generate the criterion by which
+     * the value is ranked. The iteratee is invoked with three arguments:
+     * (value, index, collection).
      *
      * @static
      * @memberOf _
@@ -11304,31 +11320,44 @@
      * @returns {*} Returns the maximum value.
      * @example
      *
-     * _.max([4, 2, 8, 6]);
-     * // => 8
-     *
-     * _.max([]);
-     * // => -Infinity
-     *
      * var users = [
      *   { 'user': 'barney', 'age': 36 },
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * _.max(users, function(o) { return o.age; });
+     * _.maxBy(users, function(o) { return o.age; });
      * // => { 'user': 'fred', 'age': 40 }
      *
      * // using the `_.property` callback shorthand
-     * _.max(users, 'age');
+     * _.maxBy(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
-    var max = createExtremum(gt, NEGATIVE_INFINITY);
+    var maxBy = createExtremumBy(gt, NEGATIVE_INFINITY);
 
     /**
-     * Gets the minimum value of `collection`. If `collection` is empty or falsey
-     * `Infinity` is returned. If an iteratee function is provided it's invoked
-     * for each value in `collection` to generate the criterion by which the value
-     * is ranked. The iteratee is invoked with three arguments: (value, index, collection).
+     * Gets the maximum value of `collection`. If `collection` is empty or falsey
+     * `-Infinity` is returned.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @returns {*} Returns the maximum value.
+     * @example
+     *
+     * _.max([4, 2, 8, 6]);
+     * // => 8
+     *
+     * _.max([]);
+     * // => -Infinity
+     */
+    var max = createExtremum(maxBy);
+
+    /**
+     * This method is like `_.min` except that it accepts an iteratee which is
+     * invoked for each value in `collection` to generate the criterion by which
+     * the value is ranked. The iteratee is invoked with three arguments:
+     * (value, index, collection).
      *
      * @static
      * @memberOf _
@@ -11338,25 +11367,38 @@
      * @returns {*} Returns the minimum value.
      * @example
      *
-     * _.min([4, 2, 8, 6]);
-     * // => 2
-     *
-     * _.min([]);
-     * // => Infinity
-     *
      * var users = [
      *   { 'user': 'barney', 'age': 36 },
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * _.min(users, function(o) { return o.age; });
+     * _.minBy(users, function(o) { return o.age; });
      * // => { 'user': 'barney', 'age': 36 }
      *
      * // using the `_.property` callback shorthand
-     * _.min(users, 'age');
+     * _.minBy(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var min = createExtremum(lt, POSITIVE_INFINITY);
+    var minBy = createExtremumBy(lt, POSITIVE_INFINITY);
+
+    /**
+     * Gets the minimum value of `collection`. If `collection` is empty or falsey
+     * `Infinity` is returned.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @returns {*} Returns the minimum value.
+     * @example
+     *
+     * _.min([4, 2, 8, 6]);
+     * // => 2
+     *
+     * _.min([]);
+     * // => Infinity
+     */
+    var min = createExtremum(minBy);
 
     /**
      * Calculates `n` rounded to `precision`.
@@ -11616,7 +11658,9 @@
     lodash.lt = lt;
     lodash.lte = lte;
     lodash.max = max;
+    lodash.maxBy = maxBy;
     lodash.min = min;
+    lodash.minBy = minBy;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;

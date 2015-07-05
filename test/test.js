@@ -4724,8 +4724,8 @@
       'map',
       'mapKeys',
       'mapValues',
-      'max',
-      'min',
+      'maxBy',
+      'minBy',
       'omit',
       'partition',
       'pick',
@@ -4750,8 +4750,8 @@
       'groupBy',
       'indexBy',
       'map',
-      'max',
-      'min',
+      'maxBy',
+      'minBy',
       'partition',
       'reduce',
       'reduceRight',
@@ -4813,7 +4813,9 @@
       'forOwn',
       'forOwnRight',
       'max',
+      'maxBy',
       'min',
+      'minBy',
       'some'
     ];
 
@@ -8607,10 +8609,10 @@
       }
     });
 
-    test('`_.max` should use `_.iteratee` internally', 1, function() {
+    test('`_.maxBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         _.iteratee = getPropB;
-        deepEqual(_.max(objects), objects[2]);
+        deepEqual(_.maxBy(objects), objects[2]);
         _.iteratee = iteratee;
       }
       else {
@@ -8618,10 +8620,10 @@
       }
     });
 
-    test('`_.min` should use `_.iteratee` internally', 1, function() {
+    test('`_.minBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         _.iteratee = getPropB;
-        deepEqual(_.min(objects), objects[0]);
+        deepEqual(_.minBy(objects), objects[0]);
         _.iteratee = iteratee;
       }
       else {
@@ -10833,73 +10835,16 @@
 
   QUnit.module('extremum methods');
 
-  _.each(['max', 'min'], function(methodName) {
+  _.each(['max', 'maxBy', 'min', 'minBy'], function(methodName) {
     var array = [1, 2, 3],
         func = _[methodName],
-        isMax = methodName == 'max';
+        isMax = /^max/.test(methodName);
 
     test('`_.' + methodName + '` should work with Date objects', 1, function() {
       var curr = new Date,
           past = new Date(0);
 
       strictEqual(func([curr, past]), isMax ? curr : past);
-    });
-
-    test('`_.' + methodName + '` should work with an `iteratee` argument', 1, function() {
-      var actual = func(array, function(num) {
-        return -num;
-      });
-
-      strictEqual(actual, isMax ? 1 : 3);
-    });
-
-    test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', 1, function() {
-      var args;
-
-      func(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [1, 0, array]);
-    });
-
-    test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', 1, function() {
-      var args,
-          object = { 'a': 1, 'b': 2 },
-          firstKey = _.first(_.keys(object));
-
-      var expected = firstKey == 'a'
-        ? [1, 'a', object]
-        : [2, 'b', object];
-
-      func(object, function() {
-        args || (args = slice.call(arguments));
-      }, 0);
-
-      deepEqual(args, expected);
-    });
-
-    test('should work with a "_.property" style `iteratee`', 2, function() {
-      var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
-          actual = func(objects, 'a');
-
-      deepEqual(actual, objects[isMax ? 1 : 2]);
-
-      var arrays = [[2], [3], [1]];
-      actual = func(arrays, 0);
-
-      deepEqual(actual, arrays[isMax ? 1 : 2]);
-    });
-
-    test('`_.' + methodName + '` should work when `iteratee` returns +/-Infinity', 1, function() {
-      var value = isMax ? -Infinity : Infinity,
-          object = { 'a': value };
-
-      var actual = func([object, { 'a': value }], function(object) {
-        return object.a;
-      });
-
-      strictEqual(actual, object);
     });
 
     test('`_.' + methodName + '` should iterate an object', 1, function() {
@@ -10930,6 +10875,43 @@
       else {
         skipTest();
       }
+    });
+  });
+
+  _.each(['maxBy', 'minBy'], function(methodName) {
+    var array = [1, 2, 3],
+        func = _[methodName],
+        isMax = methodName == 'maxBy';
+
+    test('`_.' + methodName + '` should work with an `iteratee` argument', 1, function() {
+      var actual = func(array, function(num) {
+        return -num;
+      });
+
+      strictEqual(actual, isMax ? 1 : 3);
+    });
+
+    test('should work with a "_.property" style `iteratee`', 2, function() {
+      var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
+          actual = func(objects, 'a');
+
+      deepEqual(actual, objects[isMax ? 1 : 2]);
+
+      var arrays = [[2], [3], [1]];
+      actual = func(arrays, 0);
+
+      deepEqual(actual, arrays[isMax ? 1 : 2]);
+    });
+
+    test('`_.' + methodName + '` should work when `iteratee` returns +/-Infinity', 1, function() {
+      var value = isMax ? -Infinity : Infinity,
+          object = { 'a': value };
+
+      var actual = func([object, { 'a': value }], function(object) {
+        return object.a;
+      });
+
+      strictEqual(actual, object);
     });
   });
 
@@ -17318,7 +17300,9 @@
       'join',
       'last',
       'max',
+      'maxBy',
       'min',
+      'minBy',
       'parseInt',
       'pop',
       'shift',
@@ -17531,7 +17515,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 205, function() {
+    test('should accept falsey arguments', 207, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

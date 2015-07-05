@@ -1987,7 +1987,7 @@
      * @param {*} exValue The initial extremum value.
      * @returns {*} Returns the extremum value.
      */
-    function baseExtremumBy(collection, iteratee, comparator, exValue) {
+    function baseExtremum(collection, iteratee, comparator, exValue) {
       var computed = exValue,
           result = computed;
 
@@ -3221,7 +3221,7 @@
      * @param {*} exValue The initial extremum value.
      * @returns {Function} Returns the new extremum function.
      */
-    function createExtremumBy(comparator, exValue) {
+    function createExtremum(comparator, exValue) {
       return function(collection, iteratee, guard) {
         if (guard && isIterateeCall(collection, iteratee, guard)) {
           iteratee = undefined;
@@ -3237,7 +3237,7 @@
             return result;
           }
         }
-        return baseExtremumBy(collection, iteratee, comparator, exValue);
+        return baseExtremum(collection, iteratee, comparator, exValue);
       };
     }
 
@@ -11232,7 +11232,7 @@
      * _.maxBy(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
-    var maxBy = createExtremumBy(gt, NEGATIVE_INFINITY);
+    var maxBy = createExtremum(gt, NEGATIVE_INFINITY);
 
     /**
      * Gets the minimum value of `collection`. If `collection` is empty or falsey
@@ -11281,7 +11281,7 @@
      * _.minBy(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var minBy = createExtremumBy(lt, POSITIVE_INFINITY);
+    var minBy = createExtremum(lt, POSITIVE_INFINITY);
 
     /**
      * Calculates `n` rounded to `precision`.

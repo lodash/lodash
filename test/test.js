@@ -8739,12 +8739,12 @@
       }
     });
 
-    test('`_.sortedIndex` should use `_.iteratee` internally', 1, function() {
+    test('`_.sortedIndexBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         var objects = [{ 'a': 30 }, { 'a': 50 }];
 
         _.iteratee = getPropA;
-        strictEqual(_.sortedIndex(objects, { 'a': 40 }), 1);
+        strictEqual(_.sortedIndexBy(objects, { 'a': 40 }), 1);
         _.iteratee = iteratee;
       }
       else {
@@ -8752,12 +8752,12 @@
       }
     });
 
-    test('`_.sortedLastIndex` should use `_.iteratee` internally', 1, function() {
+    test('`_.sortedLastIndexBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         var objects = [{ 'a': 30 }, { 'a': 50 }];
 
         _.iteratee = getPropA;
-        strictEqual(_.sortedLastIndex(objects, { 'a': 40 }), 1);
+        strictEqual(_.sortedLastIndexBy(objects, { 'a': 40 }), 1);
         _.iteratee = iteratee;
       }
       else {
@@ -14323,13 +14323,12 @@
   QUnit.module('sortedIndex methods');
 
   _.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
-    var array = [30, 50],
-        func = _[methodName],
-        isSortedIndex = methodName == 'sortedIndex',
-        objects = [{ 'x': 30 }, { 'x': 50 }];
+    var func = _[methodName],
+        isSortedIndex = methodName == 'sortedIndex';
 
     test('`_.' + methodName + '` should return the insert index', 1, function() {
-      var values = [30, 40, 50],
+      var array = [30, 50],
+          values = [30, 40, 50],
           expected = isSortedIndex ? [0, 1, 1] : [1, 1, 2];
 
       var actual = _.map(values, function(value) {
@@ -14361,21 +14360,6 @@
       deepEqual(actual, expected);
     });
 
-    test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
-      var args;
-
-      func(array, 40, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [40]);
-    });
-
-    test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = func(objects, { 'x': 40 }, 'x');
-      strictEqual(actual, 1);
-    });
-
     test('`_.' + methodName + '` should align with `_.sortBy`', 10, function() {
       var expected = [1, '2', {}, null, undefined, NaN, NaN];
 
@@ -14390,6 +14374,32 @@
         strictEqual(func(expected, NaN), isSortedIndex ? 5 : 7);
       });
     });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('sortedIndexBy methods');
+
+  _.each(['sortedIndexBy', 'sortedLastIndexBy'], function(methodName) {
+    var func = _[methodName],
+        isSortedIndexBy = methodName == 'sortedIndexBy';
+
+    test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
+      var args;
+
+      func([30, 50], 40, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [40]);
+    });
+
+    test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', 1, function() {
+      var objects = [{ 'x': 30 }, { 'x': 50 }],
+          actual = func(objects, { 'x': 40 }, 'x');
+
+      strictEqual(actual, 1);
+    });
 
     test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', 12, function() {
       _.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length) {
@@ -14402,7 +14412,7 @@
           var steps = 0,
               actual = func(array, value, function(value) { steps++; return value; });
 
-          var expected = (isSortedIndex ? !_.isNaN(value) : _.isFinite(value))
+          var expected = (isSortedIndexBy ? !_.isNaN(value) : _.isFinite(value))
             ? 0
             : Math.min(length, MAX_ARRAY_INDEX);
 
@@ -17347,7 +17357,7 @@
     var args = arguments,
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 27, function() {
+    test('should work with `arguments` objects', 28, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
@@ -17374,6 +17384,7 @@
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
       deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
       deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
+      deepEqual(_.sortedLastIndex(args, 6), 5, message('sortedLastIndex'));
       deepEqual(_.take(args, 2), [1, null], message('take'));
       deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
       deepEqual(_.takeRightWhile(args, _.identity), [5], message('takeRightWhile'));
@@ -17514,7 +17525,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 209, function() {
+    test('should accept falsey arguments', 211, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

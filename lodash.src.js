@@ -5044,10 +5044,30 @@
 
     /**
      * Uses a binary search to determine the lowest index at which `value` should
-     * be inserted into `array` in order to maintain its sort order. If an iteratee
-     * function is provided it's invoked for `value` and each element of `array`
-     * to compute their sort ranking. The iteratee is invoked with one argument:
-     * (value).
+     * be inserted into `array` in order to maintain its sort order.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @example
+     *
+     * _.sortedIndex([30, 50], 40);
+     * // => 1
+     *
+     * _.sortedIndex([4, 5], 4);
+     * // => 0
+     */
+    function sortedIndex(array, value) {
+      return binaryIndex(array, value);
+    }
+
+    /**
+     * This method is like `_.sortedIndex` except that it accepts an iteratee
+     * which is invoked for `value` and each element of `array` to compute their
+     * sort ranking. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -5058,27 +5078,17 @@
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
-     * _.sortedIndex([30, 50], 40);
-     * // => 1
-     *
-     * _.sortedIndex([4, 4, 5, 5], 5);
-     * // => 2
-     *
      * var dict = { 'thirty': 30, 'forty': 40, 'fifty': 50 };
      *
-     * // using an iteratee function
-     * _.sortedIndex(['thirty', 'fifty'], 'forty', _.propertyOf(dict));
+     * _.sortedIndexBy(['thirty', 'fifty'], 'forty', _.propertyOf(dict));
      * // => 1
      *
      * // using the `_.property` callback shorthand
-     * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
-     * // => 1
+     * _.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+     * // => 0
      */
-    function sortedIndex(array, value, iteratee) {
-      var toIteratee = getIteratee();
-      return (iteratee == null && toIteratee === baseIteratee)
-        ? binaryIndex(array, value)
-        : binaryIndexBy(array, value, toIteratee(iteratee));
+    function sortedIndexBy(array, value, iteratee) {
+      return binaryIndexBy(array, value, getIteratee(iteratee));
     }
 
     /**
@@ -5091,18 +5101,36 @@
      * @category Array
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @example
+     *
+     * _.sortedLastIndex([4, 5], 4);
+     * // => 1
+     */
+    function sortedLastIndex(array, value) {
+      return binaryIndex(array, value, true);
+    }
+
+    /**
+     * This method is like `_.sortedLastIndex` except that it accepts an iteratee
+     * which is invoked for `value` and each element of `array` to compute their
+     * sort ranking. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
-     * _.sortedLastIndex([4, 4, 5, 5], 5);
-     * // => 4
+     * // using the `_.property` callback shorthand
+     * _.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+     * // => 1
      */
-    function sortedLastIndex(array, value, iteratee) {
-      var toIteratee = getIteratee();
-      return (iteratee == null && toIteratee === baseIteratee)
-        ? binaryIndex(array, value, true)
-        : binaryIndexBy(array, value, toIteratee(iteratee), true);
+    function sortedLastIndexBy(array, value, iteratee) {
+      return binaryIndexBy(array, value, getIteratee(iteratee), true);
     }
 
     /**
@@ -11526,7 +11554,9 @@
     lodash.snakeCase = snakeCase;
     lodash.some = some;
     lodash.sortedIndex = sortedIndex;
+    lodash.sortedIndexBy = sortedIndexBy;
     lodash.sortedLastIndex = sortedLastIndex;
+    lodash.sortedLastIndexBy = sortedLastIndexBy;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
     lodash.sum = sum;

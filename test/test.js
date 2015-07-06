@@ -3379,6 +3379,20 @@
         fn = function(a, b) { return slice.call(arguments); },
         isCurry = methodName == 'curry';
 
+    test('`_.' + methodName + '` should not error on functions with the same name as lodash methods', 1, function() {
+      function run(a, b) {
+        return a + b;
+      }
+
+      var curried = func(run);
+
+      try {
+        var actual = curried(1)(2);
+      } catch(e) {}
+
+      strictEqual(actual, 3);
+    });
+
     test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 2, function() {
       var array = [fn, fn, fn],
           object = { 'a': fn, 'b': fn, 'c': fn };

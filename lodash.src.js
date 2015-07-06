@@ -3998,7 +3998,7 @@
      * @returns {*} Returns the metadata for `func`.
      */
     var getData = !metaMap ? noop : function(func) {
-      return metaMap.get(func);
+      return typeof func == 'function' ? metaMap.get(func) : undefined;
     };
 
     /**

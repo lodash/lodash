@@ -5976,10 +5976,7 @@
       if (guard && isIterateeCall(collection, predicate, guard)) {
         predicate = undefined;
       }
-      if (typeof predicate != 'function') {
-        predicate = getIteratee(predicate);
-      }
-      return func(collection, predicate);
+      return func(collection, getIteratee(predicate));
     }
 
     /**
@@ -6019,8 +6016,7 @@
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      predicate = getIteratee(predicate);
-      return func(collection, predicate);
+      return func(collection, getIteratee(predicate));
     }
 
     /**
@@ -6336,8 +6332,7 @@
      */
     function map(collection, iteratee) {
       var func = isArray(collection) ? arrayMap : baseMap;
-      iteratee = getIteratee(iteratee);
-      return func(collection, iteratee);
+      return func(collection, getIteratee(iteratee));
     }
 
     /**
@@ -6618,10 +6613,7 @@
       if (guard && isIterateeCall(collection, predicate, guard)) {
         predicate = undefined;
       }
-      if (typeof predicate != 'function') {
-        predicate = getIteratee(predicate);
-      }
-      return func(collection, predicate);
+      return func(collection, getIteratee(predicate));
     }
 
     /**
@@ -8865,8 +8857,7 @@
      * // => 'barney'
      */
     function findKey(object, predicate) {
-      predicate = getIteratee(predicate);
-      return baseFind(object, predicate, baseForOwn, true);
+      return baseFind(object, getIteratee(predicate), baseForOwn, true);
     }
 
     /**
@@ -8903,8 +8894,7 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate) {
-      predicate = getIteratee(predicate);
-      return baseFind(object, predicate, baseForOwnRight, true);
+      return baseFind(object, getIteratee(predicate), baseForOwnRight, true);
     }
 
     /**

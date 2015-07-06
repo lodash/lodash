@@ -1068,10 +1068,6 @@
       var expected = { 'a': undefined };
       deepEqual(_.assign({}, expected, _.identity), expected);
     });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.extend, _.assign);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -2212,17 +2208,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.flowRight');
-
-  (function() {
-    test('should be aliased', 2, function() {
-      strictEqual(_.backflow, _.flowRight);
-      strictEqual(_.compose, _.flowRight);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('flow methods');
 
   _.each(['flow', 'flowRight'], function(methodName) {
@@ -2562,598 +2547,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.callback');
-
-  (function() {
-    test('should provide arguments to `func`', 3, function() {
-      var fn = function() {
-        var result = [this];
-        push.apply(result, arguments);
-        return result;
-      };
-
-      var callback = _.callback(fn),
-          actual = callback('a', 'b', 'c', 'd', 'e', 'f');
-
-      ok(actual[0] === null || actual[0] && actual[0].Array);
-      deepEqual(actual.slice(1), ['a', 'b', 'c', 'd', 'e', 'f']);
-
-      var object = {};
-      callback = _.callback(fn, object);
-      actual = callback('a', 'b');
-
-      deepEqual(actual, [object, 'a', 'b']);
-    });
-
-    test('should return `_.identity` when `func` is nullish', 1, function() {
-      var object = {},
-          values = [, null, undefined],
-          expected = _.map(values, _.constant([!isNpm && _.identity, object]));
-
-      var actual = _.map(values, function(value, index) {
-        var identity = index ? _.callback(value) : _.callback();
-        return [!isNpm && identity, identity(object)];
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should not error when `func` is nullish and a `thisArg` is provided', 2, function() {
-      var object = {};
-
-      _.each([null, undefined], function(value) {
-        try {
-          var callback = _.callback(value, {});
-          strictEqual(callback(object), object);
-        } catch(e) {
-          ok(false, e.message);
-        }
-      });
-    });
-
-    test('should create a callback with a falsey `thisArg`', 1, function() {
-      var fn = function() { return this; },
-          object = {};
-
-      var expected = _.map(falsey, function(value) {
-        var result = fn.call(value);
-        return (result && result.Array) ? object : result;
-      });
-
-      var actual = _.map(falsey, function(value) {
-        var callback = _.callback(fn, value),
-            result = callback();
-
-        return (result && result.Array) ? object : result;
-      });
-
-      ok(_.isEqual(actual, expected));
-    });
-
-    test('should return a callback created by `_.matches` when `func` is an object', 2, function() {
-      var matches = _.callback({ 'a': 1, 'b': 2 });
-      strictEqual(matches({ 'a': 1, 'b': 2, 'c': 3 }), true);
-      strictEqual(matches({ 'b': 2 }), false);
-    });
-
-    test('should return a callback created by `_.matches` when `func` is an array', 2, function() {
-      var matches = _.callback(['a', 'b']);
-      strictEqual(matches({ '0': 'a', '1': 'b', '2': 'c' }), true);
-      strictEqual(matches({ '1': 'b' }), false);
-    });
-
-    test('should not change match behavior if `source` is augmented', 9, function() {
-      var sources = [
-        { 'a': { 'b': 2, 'c': 3 } },
-        { 'a': 1, 'b': 2 },
-        { 'a': 1 }
-      ];
-
-      _.each(sources, function(source, index) {
-        var object = _.cloneDeep(source),
-            matches = _.callback(source);
-
-        strictEqual(matches(object), true);
-
-        if (index) {
-          source.a = 2;
-          source.b = 1;
-          source.c = 3;
-        } else {
-          source.a.b = 1;
-          source.a.c = 2;
-          source.a.d = 3;
-        }
-        strictEqual(matches(object), true);
-        strictEqual(matches(source), false);
-      });
-    });
-
-    test('should return a callback created by `_.matchesProperty` when `func` is a number or string and `thisArg` is not `undefined`', 3, function() {
-      var array = ['a'],
-          matches = _.callback(0, 'a');
-
-      strictEqual(matches(array), true);
-
-      matches = _.callback('0', 'a');
-      strictEqual(matches(array), true);
-
-      matches = _.callback(1, undefined);
-      strictEqual(matches(array), undefined);
-    });
-
-    test('should support deep paths for `_.matchesProperty` shorthands', 1, function() {
-      var object = { 'a': { 'b': { 'c': { 'd': 1, 'e': 2 } } } },
-          matches = _.callback('a.b.c', { 'e': 2 });
-
-      strictEqual(matches(object), true);
-    });
-
-    test('should return a callback created by `_.property` when `func` is a number or string', 2, function() {
-      var array = ['a'],
-          prop = _.callback(0);
-
-      strictEqual(prop(array), 'a');
-
-      prop = _.callback('0');
-      strictEqual(prop(array), 'a');
-    });
-
-    test('should support deep paths for `_.property` shorthands', 1, function() {
-      var object = { 'a': { 'b': { 'c': 3 } } },
-          prop = _.callback('a.b.c');
-
-      strictEqual(prop(object), 3);
-    });
-
-    test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
-      var fn = function() {
-        var result = [this.a];
-        push.apply(result, arguments);
-        return result;
-      };
-
-      var expected = [1, 2, 3],
-          object = { 'a': 1 },
-          callback = _.callback(_.partial(fn, 2), object);
-
-      deepEqual(callback(3), expected);
-
-      callback = _.callback(_.partialRight(fn, 3), object);
-      deepEqual(callback(2), expected);
-    });
-
-    test('should support binding built-in methods', 2, function() {
-      var fn = function() {},
-          object = { 'a': 1 },
-          bound = fn.bind && fn.bind(object),
-          callback = _.callback(hasOwnProperty, object);
-
-      strictEqual(callback('a'), true);
-
-      if (bound) {
-        callback = _.callback(bound, object);
-        notStrictEqual(callback, bound);
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should work as an iteratee for methods like `_.map`', 1, function() {
-      var fn = function() { return this instanceof Number; },
-          array = [fn, fn, fn],
-          callbacks = _.map(array, _.callback),
-          expected = _.map(array, _.constant(false));
-
-      var actual = _.map(callbacks, function(callback) {
-        return callback();
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.iteratee, _.callback);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('custom `_.callback` methods');
-
-  (function() {
-    var array = ['one', 'two', 'three'],
-        callback = _.callback,
-        getPropA = _.partial(_.property, 'a'),
-        getPropB = _.partial(_.property, 'b'),
-        getLength = _.partial(_.property, 'length');
-
-    var getSum = function() {
-      return function(result, object) {
-        return result + object.a;
-      };
-    };
-
-    var objects = [
-      { 'a': 0, 'b': 0 },
-      { 'a': 1, 'b': 0 },
-      { 'a': 1, 'b': 1 }
-    ];
-
-    test('`_.countBy` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getLength;
-        deepEqual(_.countBy(array), { '3': 2, '5': 1 });
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.dropRightWhile` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.dropRightWhile(objects), objects.slice(0, 2));
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.dropWhile` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.dropWhile(objects.reverse()).reverse(), objects.reverse().slice(0, 2));
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.every` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        strictEqual(_.every(objects.slice(1)), true);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.filter` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        var objects = [{ 'a': 0 }, { 'a': 1 }];
-
-        _.callback = getPropA;
-        deepEqual(_.filter(objects), [objects[1]]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.find` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        strictEqual(_.find(objects), objects[1]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.findIndex` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        strictEqual(_.findIndex(objects), 1);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.findLast` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        strictEqual(_.findLast(objects), objects[2]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.findLastIndex` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        strictEqual(_.findLastIndex(objects), 2);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.findLastKey` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        strictEqual(_.findKey(objects), '2');
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.findKey` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        strictEqual(_.findLastKey(objects), '2');
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.groupBy` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getLength;
-        deepEqual(_.groupBy(array), { '3': ['one', 'two'], '5': ['three'] });
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.indexBy` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getLength;
-        deepEqual(_.indexBy(array), { '3': 'two', '5': 'three' });
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.map` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        deepEqual(_.map(objects), [0, 1, 1]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.mapKeys` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.mapKeys({ 'a': { 'b': 1 } }), { '1':  { 'b': 1 } });
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.mapValues` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.mapValues({ 'a': { 'b': 1 } }), { 'a': 1 });
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.max` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.max(objects), objects[2]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.min` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.min(objects), objects[0]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.partition` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }];
-
-        _.callback = getPropA;
-        deepEqual(_.partition(objects), [objects.slice(0, 2), objects.slice(2)]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.reduce` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getSum;
-        strictEqual(_.reduce(objects, undefined, 0), 2);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.reduceRight` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getSum;
-        strictEqual(_.reduceRight(objects, undefined, 0), 2);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.reject` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        var objects = [{ 'a': 0 }, { 'a': 1 }];
-
-        _.callback = getPropA;
-        deepEqual(_.reject(objects), [objects[0]]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.remove` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        var objects = [{ 'a': 0 }, { 'a': 1 }];
-
-        _.callback = getPropA;
-        _.remove(objects);
-        deepEqual(objects, [{ 'a': 0 }]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.some` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        strictEqual(_.some(objects), true);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.sortBy` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropA;
-        deepEqual(_.sortBy(objects.slice().reverse()), [objects[0], objects[2], objects[1]]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.sortedIndex` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        var objects = [{ 'a': 30 }, { 'a': 50 }];
-
-        _.callback = getPropA;
-        strictEqual(_.sortedIndex(objects, { 'a': 40 }), 1);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.sortedLastIndex` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        var objects = [{ 'a': 30 }, { 'a': 50 }];
-
-        _.callback = getPropA;
-        strictEqual(_.sortedLastIndex(objects, { 'a': 40 }), 1);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.sum` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        strictEqual(_.sum(objects), 1);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.takeRightWhile` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.takeRightWhile(objects), objects.slice(2));
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.takeWhile` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.takeWhile(objects.reverse()), objects.reverse().slice(2));
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.transform` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = function() {
-          return function(result, object) {
-            result.sum += object.a;
-          };
-        };
-
-        deepEqual(_.transform(objects, undefined, { 'sum': 0 }), { 'sum': 2 });
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('`_.uniq` should use `_.callback` internally', 1, function() {
-      if (!isModularize) {
-        _.callback = getPropB;
-        deepEqual(_.uniq(objects), [objects[0], objects[2]]);
-        _.callback = callback;
-      }
-      else {
-        skipTest();
-      }
     });
   }());
 
@@ -4431,10 +3824,6 @@
       var actual = _.map([[1]], _.every);
       deepEqual(actual, [true]);
     });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.all, _.every);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -4630,10 +4019,6 @@
 
       strictEqual(counter, 3);
     });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.select, _.filter);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -4731,11 +4116,6 @@
           });
 
           strictEqual(actual, expected);
-        });
-      }
-      if (methodName == 'find') {
-        test('should be aliased', 1, function() {
-          strictEqual(_.detect, func);
         });
       }
     }());
@@ -4850,10 +4230,6 @@
       else {
         skipTest(2);
       }
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.head, _.first);
     });
   }());
 
@@ -6125,10 +5501,6 @@
       Foo.prototype.c = _.noop;
       deepEqual(_.functions(new Foo).sort(), ['a', 'c']);
     });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.methods, _.functions);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -6510,11 +5882,6 @@
           array2 = [2, 3, 1];
 
       ok(_.every(array1, _.partial(_.includes, array2)));
-    });
-
-    test('should be aliased', 2, function() {
-      strictEqual(_.contains, _.includes);
-      strictEqual(_.include, _.includes);
     });
   }(1, 2, 3, 4));
 
@@ -9062,6 +8429,594 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.iteratee');
+
+  (function() {
+    test('should provide arguments to `func`', 3, function() {
+      var fn = function() {
+        var result = [this];
+        push.apply(result, arguments);
+        return result;
+      };
+
+      var iteratee = _.iteratee(fn),
+          actual = iteratee('a', 'b', 'c', 'd', 'e', 'f');
+
+      ok(actual[0] === null || actual[0] && actual[0].Array);
+      deepEqual(actual.slice(1), ['a', 'b', 'c', 'd', 'e', 'f']);
+
+      var object = {};
+      iteratee = _.iteratee(fn, object);
+      actual = iteratee('a', 'b');
+
+      deepEqual(actual, [object, 'a', 'b']);
+    });
+
+    test('should return `_.identity` when `func` is nullish', 1, function() {
+      var object = {},
+          values = [, null, undefined],
+          expected = _.map(values, _.constant([!isNpm && _.identity, object]));
+
+      var actual = _.map(values, function(value, index) {
+        var identity = index ? _.iteratee(value) : _.iteratee();
+        return [!isNpm && identity, identity(object)];
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should not error when `func` is nullish and a `thisArg` is provided', 2, function() {
+      var object = {};
+
+      _.each([null, undefined], function(value) {
+        try {
+          var iteratee = _.iteratee(value, {});
+          strictEqual(iteratee(object), object);
+        } catch(e) {
+          ok(false, e.message);
+        }
+      });
+    });
+
+    test('should create an iteratee with a falsey `thisArg`', 1, function() {
+      var fn = function() { return this; },
+          object = {};
+
+      var expected = _.map(falsey, function(value) {
+        var result = fn.call(value);
+        return (result && result.Array) ? object : result;
+      });
+
+      var actual = _.map(falsey, function(value) {
+        var iteratee = _.iteratee(fn, value),
+            result = iteratee();
+
+        return (result && result.Array) ? object : result;
+      });
+
+      ok(_.isEqual(actual, expected));
+    });
+
+    test('should return an iteratee created by `_.matches` when `func` is an object', 2, function() {
+      var matches = _.iteratee({ 'a': 1, 'b': 2 });
+      strictEqual(matches({ 'a': 1, 'b': 2, 'c': 3 }), true);
+      strictEqual(matches({ 'b': 2 }), false);
+    });
+
+    test('should return an iteratee created by `_.matches` when `func` is an array', 2, function() {
+      var matches = _.iteratee(['a', 'b']);
+      strictEqual(matches({ '0': 'a', '1': 'b', '2': 'c' }), true);
+      strictEqual(matches({ '1': 'b' }), false);
+    });
+
+    test('should not change match behavior if `source` is augmented', 9, function() {
+      var sources = [
+        { 'a': { 'b': 2, 'c': 3 } },
+        { 'a': 1, 'b': 2 },
+        { 'a': 1 }
+      ];
+
+      _.each(sources, function(source, index) {
+        var object = _.cloneDeep(source),
+            matches = _.iteratee(source);
+
+        strictEqual(matches(object), true);
+
+        if (index) {
+          source.a = 2;
+          source.b = 1;
+          source.c = 3;
+        } else {
+          source.a.b = 1;
+          source.a.c = 2;
+          source.a.d = 3;
+        }
+        strictEqual(matches(object), true);
+        strictEqual(matches(source), false);
+      });
+    });
+
+    test('should return an iteratee created by `_.matchesProperty` when `func` is a number or string and `thisArg` is not `undefined`', 3, function() {
+      var array = ['a'],
+          matches = _.iteratee(0, 'a');
+
+      strictEqual(matches(array), true);
+
+      matches = _.iteratee('0', 'a');
+      strictEqual(matches(array), true);
+
+      matches = _.iteratee(1, undefined);
+      strictEqual(matches(array), undefined);
+    });
+
+    test('should support deep paths for `_.matchesProperty` shorthands', 1, function() {
+      var object = { 'a': { 'b': { 'c': { 'd': 1, 'e': 2 } } } },
+          matches = _.iteratee('a.b.c', { 'e': 2 });
+
+      strictEqual(matches(object), true);
+    });
+
+    test('should return an iteratee created by `_.property` when `func` is a number or string', 2, function() {
+      var array = ['a'],
+          prop = _.iteratee(0);
+
+      strictEqual(prop(array), 'a');
+
+      prop = _.iteratee('0');
+      strictEqual(prop(array), 'a');
+    });
+
+    test('should support deep paths for `_.property` shorthands', 1, function() {
+      var object = { 'a': { 'b': { 'c': 3 } } },
+          prop = _.iteratee('a.b.c');
+
+      strictEqual(prop(object), 3);
+    });
+
+    test('should work with functions created by `_.partial` and `_.partialRight`', 2, function() {
+      var fn = function() {
+        var result = [this.a];
+        push.apply(result, arguments);
+        return result;
+      };
+
+      var expected = [1, 2, 3],
+          object = { 'a': 1 },
+          iteratee = _.iteratee(_.partial(fn, 2), object);
+
+      deepEqual(iteratee(3), expected);
+
+      iteratee = _.iteratee(_.partialRight(fn, 3), object);
+      deepEqual(iteratee(2), expected);
+    });
+
+    test('should support binding built-in methods', 2, function() {
+      var fn = function() {},
+          object = { 'a': 1 },
+          bound = fn.bind && fn.bind(object),
+          iteratee = _.iteratee(hasOwnProperty, object);
+
+      strictEqual(iteratee('a'), true);
+
+      if (bound) {
+        iteratee = _.iteratee(bound, object);
+        notStrictEqual(iteratee, bound);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should work as an iteratee for methods like `_.map`', 1, function() {
+      var fn = function() { return this instanceof Number; },
+          array = [fn, fn, fn],
+          iteratees = _.map(array, _.iteratee),
+          expected = _.map(array, _.constant(false));
+
+      var actual = _.map(iteratees, function(iteratee) {
+        return iteratee();
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('custom `_.iteratee` methods');
+
+  (function() {
+    var array = ['one', 'two', 'three'],
+        getPropA = _.partial(_.property, 'a'),
+        getPropB = _.partial(_.property, 'b'),
+        getLength = _.partial(_.property, 'length'),
+        iteratee = _.iteratee;
+
+    var getSum = function() {
+      return function(result, object) {
+        return result + object.a;
+      };
+    };
+
+    var objects = [
+      { 'a': 0, 'b': 0 },
+      { 'a': 1, 'b': 0 },
+      { 'a': 1, 'b': 1 }
+    ];
+
+    test('`_.countBy` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getLength;
+        deepEqual(_.countBy(array), { '3': 2, '5': 1 });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.dropRightWhile` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.dropRightWhile(objects), objects.slice(0, 2));
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.dropWhile` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.dropWhile(objects.reverse()).reverse(), objects.reverse().slice(0, 2));
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.every` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        strictEqual(_.every(objects.slice(1)), true);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.filter` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 0 }, { 'a': 1 }];
+
+        _.iteratee = getPropA;
+        deepEqual(_.filter(objects), [objects[1]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.find` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        strictEqual(_.find(objects), objects[1]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findIndex` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        strictEqual(_.findIndex(objects), 1);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findLast` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        strictEqual(_.findLast(objects), objects[2]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findLastIndex` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        strictEqual(_.findLastIndex(objects), 2);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findLastKey` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        strictEqual(_.findKey(objects), '2');
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.findKey` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        strictEqual(_.findLastKey(objects), '2');
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.groupBy` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getLength;
+        deepEqual(_.groupBy(array), { '3': ['one', 'two'], '5': ['three'] });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.indexBy` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getLength;
+        deepEqual(_.indexBy(array), { '3': 'two', '5': 'three' });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.map` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        deepEqual(_.map(objects), [0, 1, 1]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.mapKeys` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.mapKeys({ 'a': { 'b': 1 } }), { '1':  { 'b': 1 } });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.mapValues` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.mapValues({ 'a': { 'b': 1 } }), { 'a': 1 });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.max` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.max(objects), objects[2]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.min` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.min(objects), objects[0]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.partition` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }];
+
+        _.iteratee = getPropA;
+        deepEqual(_.partition(objects), [objects.slice(0, 2), objects.slice(2)]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.reduce` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getSum;
+        strictEqual(_.reduce(objects, undefined, 0), 2);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.reduceRight` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getSum;
+        strictEqual(_.reduceRight(objects, undefined, 0), 2);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.reject` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 0 }, { 'a': 1 }];
+
+        _.iteratee = getPropA;
+        deepEqual(_.reject(objects), [objects[0]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.remove` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 0 }, { 'a': 1 }];
+
+        _.iteratee = getPropA;
+        _.remove(objects);
+        deepEqual(objects, [{ 'a': 0 }]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.some` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        strictEqual(_.some(objects), true);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sortBy` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        deepEqual(_.sortBy(objects.slice().reverse()), [objects[0], objects[2], objects[1]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sortedIndex` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 30 }, { 'a': 50 }];
+
+        _.iteratee = getPropA;
+        strictEqual(_.sortedIndex(objects, { 'a': 40 }), 1);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sortedLastIndex` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        var objects = [{ 'a': 30 }, { 'a': 50 }];
+
+        _.iteratee = getPropA;
+        strictEqual(_.sortedLastIndex(objects, { 'a': 40 }), 1);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.sum` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        strictEqual(_.sum(objects), 1);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.takeRightWhile` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.takeRightWhile(objects), objects.slice(2));
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.takeWhile` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.takeWhile(objects.reverse()), objects.reverse().slice(2));
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.transform` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = function() {
+          return function(result, object) {
+            result.sum += object.a;
+          };
+        };
+
+        deepEqual(_.transform(objects, undefined, { 'sum': 0 }), { 'sum': 2 });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('`_.uniq` should use `_.iteratee` internally', 1, function() {
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        deepEqual(_.uniq(objects), [objects[0], objects[2]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('keys methods');
 
   _.each(['keys', 'keysIn'], function(methodName) {
@@ -9632,10 +9587,6 @@
       else {
         skipTest(5);
       }
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.collect, _.map);
     });
   }());
   /*--------------------------------------------------------------------------*/
@@ -13140,11 +13091,6 @@
         strictEqual(actual, 'abc');
       });
     });
-
-    test('should be aliased', 2, function() {
-      strictEqual(_.foldl, _.reduce);
-      strictEqual(_.inject, _.reduce);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -13218,10 +13164,6 @@
         deepEqual(args, ['c', 'b', 1, collection]);
         strictEqual(actual, 'cba');
       });
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.foldr, _.reduceRight);
     });
   }());
 
@@ -13818,10 +13760,6 @@
       else {
         skipTest(4);
       }
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.tail, _.rest);
     });
   }());
 
@@ -14565,10 +14503,6 @@
     test('should work as an iteratee for methods like `_.map`', 1, function() {
       var actual = _.map([[1]], _.some);
       deepEqual(actual, [true]);
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.any, _.some);
     });
   }());
 
@@ -16789,10 +16723,6 @@
         deepEqual(actual, [['a'], ['b']]);
       });
     });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.unique, _.uniq);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -17172,10 +17102,6 @@
       else {
         skipTest();
       }
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.object, _.zipObject);
     });
   }());
 
@@ -17899,11 +17825,11 @@
   (function() {
     var funcs = [
       'clone',
-      'contains',
       'every',
       'find',
       'first',
       'has',
+      'includes',
       'isArguments',
       'isArray',
       'isBoolean',
@@ -18094,8 +18020,6 @@
     ];
 
     var rejectFalsey = [
-      'backflow',
-      'compose',
       'flow',
       'flowRight',
       'tap',
@@ -18143,7 +18067,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 229, function() {
+    test('should accept falsey arguments', 212, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {
@@ -18203,7 +18127,7 @@
       });
     });
 
-    test('should throw an error for falsey arguments', 25, function() {
+    test('should throw an error for falsey arguments', 23, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

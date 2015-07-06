@@ -6064,15 +6064,15 @@
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
-     * _([1, 2]).forEach(function(n) {
-     *   console.log(n);
+     * _([1, 2]).forEach(function(value) {
+     *   console.log(value);
      * });
-     * // => logs each value from left to right and returns the array
+     * // => logs `1` then `2`
      *
-     * _.forEach({ 'a': 1, 'b': 2 }, function(n, key) {
-     *   console.log(n, key);
+     * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
+     *   console.log(key);
      * });
-     * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
+     * // => logs 'a' then 'b' (iteration order is not guaranteed)
      */
     function forEach(collection, iteratee) {
       return (typeof iteratee == 'function' && isArray(collection))
@@ -6093,10 +6093,10 @@
      * @returns {Array|Object|string} Returns `collection`.
      * @example
      *
-     * _.forEachRight([1, 2], function(n) {
-     *   console.log(n);
+     * _.forEachRight([1, 2], function(value) {
+     *   console.log(value);
      * });
-     * // => logs each value from right to left and returns the array
+     * // => logs `2` then `1`
      */
     function forEachRight(collection, iteratee) {
       return (typeof iteratee == 'function' && isArray(collection))
@@ -8835,7 +8835,7 @@
      * };
      *
      * _.findLastKey(users, function(o) { return o.age < 40; });
-     * // => returns `pebbles` assuming `_.findKey` returns `barney`
+     * // => returns 'pebbles' assuming `_.findKey` returns 'barney'
      *
      * // using the `_.matches` callback shorthand
      * _.findLastKey(users, { 'age': 36, 'active': true });
@@ -8877,7 +8877,7 @@
      * _.forIn(new Foo, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'a', 'b', and 'c' (iteration order is not guaranteed)
+     * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
      */
     function forIn(object, iteratee) {
       return baseFor(object, toFunction(iteratee), keysIn);
@@ -8905,7 +8905,7 @@
      * _.forInRight(new Foo, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
+     * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
      */
     function forInRight(object, iteratee) {
       return baseForRight(object, toFunction(iteratee), keysIn);
@@ -8935,7 +8935,7 @@
      * _.forOwn(new Foo, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'a' and 'b' (iteration order is not guaranteed)
+     * // => logs 'a' then 'b' (iteration order is not guaranteed)
      */
     function forOwn(object, iteratee) {
       return baseForOwn(object, toFunction(iteratee));
@@ -8963,12 +8963,11 @@
      * _.forOwnRight(new Foo, function(value, key) {
      *   console.log(key);
      * });
-     * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
+     * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
      */
     function forOwnRight(object, iteratee) {
       return baseForOwnRight(object, toFunction(iteratee));
     }
-
 
     /**
      * Creates an array of function property names from all enumerable properties,

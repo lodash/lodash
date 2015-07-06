@@ -10,6 +10,7 @@ $ lodash modern -o ./lodash.js
 ## Community
 
 [![Join the chat at https://gitter.im/lodash/lodash](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lodash/lodash)
+[![Pair on This](https://tf-assets-staging.s3.amazonaws.com/badges/thinkful_repo_badge.svg)](http://start.thinkful.com/node/?utm_source=github&utm_medium=badge&utm_campaign=lodash)
 
 ## Module formats
 

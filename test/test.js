@@ -14550,9 +14550,7 @@
   QUnit.module('lodash.sum');
 
   (function() {
-    var array = [6, 4, 2],
-        object = { 'a': 2, 'b': 3, 'c': 1 },
-        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+    var array = [6, 4, 2];
 
     test('should return the sum of an array of numbers', 1, function() {
       strictEqual(_.sum(array), 12);
@@ -14571,51 +14569,43 @@
     test('should coerce values to numbers and `NaN` to `0`', 1, function() {
       strictEqual(_.sum(['1', NaN, '2']), 3);
     });
+  }());
 
-    test('should iterate an object', 1, function() {
-      strictEqual(_.sum(object), 6);
-    });
+  /*--------------------------------------------------------------------------*/
 
-    test('should iterate a string', 2, function() {
-      _.each(['123', Object('123')], function(value) {
-        strictEqual(_.sum(value), 6);
-      });
-    });
+  QUnit.module('lodash.sumBy');
+
+  (function() {
+    var array = [6, 4, 2],
+        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
     test('should work with an `iteratee` argument', 1, function() {
-      var actual = _.sum(objects, function(object) {
+      var actual = _.sumBy(objects, function(object) {
         return object.a;
       });
 
       deepEqual(actual, 6);
     });
 
-    test('should provide the correct `iteratee` arguments', 2, function() {
+    test('should provide the correct `iteratee` arguments', 1, function() {
       var args;
 
-      _.sum(array, function() {
+      _.sumBy(array, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [6, 0, array]);
-
-      args = null;
-      _.sum(object, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [2, 'a', object]);
+      deepEqual(args, [6]);
     });
 
     test('should work with a "_.property" style `iteratee`', 2, function() {
       var arrays = [[2], [3], [1]];
-      strictEqual(_.sum(arrays, 0), 6);
-      strictEqual(_.sum(objects, 'a'), 6);
+      strictEqual(_.sumBy(arrays, 0), 6);
+      strictEqual(_.sumBy(objects, 'a'), 6);
     });
 
     test('should perform basic sum when used as an iteratee for methods like `_.map`', 1, function() {
-      var actual = _.map([array, object], _.sum);
-      deepEqual(actual, [12, 6]);
+      var actual = _.map([array, array], _.sumBy);
+      deepEqual(actual, [12, 12]);
     });
   }());
 
@@ -17538,7 +17528,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 208, function() {
+    test('should accept falsey arguments', 209, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

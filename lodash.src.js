@@ -1906,7 +1906,7 @@
       }
       var index = -1,
           indexOf = getIndexOf(),
-          isCommon = indexOf == baseIndexOf,
+          isCommon = indexOf === baseIndexOf,
           cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? createCache(values) : null,
           valuesLength = values.length;
 
@@ -2759,7 +2759,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,
-          isCommon = indexOf == baseIndexOf,
+          isCommon = indexOf === baseIndexOf,
           isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
           seen = isLarge ? createCache() : null,
           result = [];
@@ -4818,7 +4818,7 @@
           othIndex = othLength,
           caches = Array(length),
           indexOf = getIndexOf(),
-          isCommon = indexOf == baseIndexOf,
+          isCommon = indexOf === baseIndexOf,
           result = [];
 
       while (othIndex--) {
@@ -5350,7 +5350,7 @@
       if (!length) {
         return [];
       }
-      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() == baseIndexOf)
+      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() === baseIndexOf)
         ? sortedUniq(array)
         : baseUniq(array);
     }
@@ -5392,7 +5392,7 @@
       if (!(iteratee == null && toIteratee === baseIteratee)) {
         iteratee = toIteratee(iteratee);
       }
-      return (isSorted && getIndexOf() == baseIndexOf)
+      return (isSorted && getIndexOf() === baseIndexOf)
         ? sortedUniq(array, iteratee)
         : baseUniq(array, iteratee);
     }

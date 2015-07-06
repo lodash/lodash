@@ -1787,34 +1787,6 @@
     }
 
     /**
-     * The base implementation of `_.callback` which supports specifying the
-     * number of arguments to provide to `func`.
-     *
-     * @private
-     * @param {*} [func=_.identity] The value to convert to a callback.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @param {number} [argCount] The number of arguments to provide to `func`.
-     * @returns {Function} Returns the callback.
-     */
-    function baseCallback(func, thisArg, argCount) {
-      var type = typeof func;
-      if (type == 'function') {
-        return thisArg === undefined
-          ? func
-          : bindCallback(func, thisArg, argCount);
-      }
-      if (func == null) {
-        return identity;
-      }
-      if (type == 'object') {
-        return baseMatches(func);
-      }
-      return thisArg === undefined
-        ? property(func)
-        : baseMatchesProperty(func, thisArg);
-    }
-
-    /**
      * The base implementation of `_.clone` without support for argument juggling
      * and `this` binding `customizer` functions.
      *
@@ -2140,6 +2112,34 @@
         }
       }
       return result;
+    }
+
+    /**
+     * The base implementation of `_.iteratee` which supports specifying the
+     * number of arguments to provide to `func`.
+     *
+     * @private
+     * @param {*} [func=_.identity] The value to convert to an iteratee.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {number} [argCount] The number of arguments to provide to `func`.
+     * @returns {Function} Returns the iteratee.
+     */
+    function baseIteratee(func, thisArg, argCount) {
+      var type = typeof func;
+      if (type == 'function') {
+        return thisArg === undefined
+          ? func
+          : bindCallback(func, thisArg, argCount);
+      }
+      if (func == null) {
+        return identity;
+      }
+      if (type == 'object') {
+        return baseMatches(func);
+      }
+      return thisArg === undefined
+        ? property(func)
+        : baseMatchesProperty(func, thisArg);
     }
 
     /**
@@ -2769,7 +2769,7 @@
      * @returns {Array} Returns the new sorted array.
      */
     function baseSortByOrder(collection, iteratees, orders) {
-      var callback = getCallback(),
+      var callback = getIteratee(),
           index = -1;
 
       iteratees = arrayMap(iteratees, function(iteratee) { return callback(iteratee); });
@@ -3000,7 +3000,7 @@
     }
 
     /**
-     * A specialized version of `baseCallback` which only supports `this` binding
+     * A specialized version of `baseIteratee` which only supports `this` binding
      * and specifying the number of arguments to provide to `func`.
      *
      * @private
@@ -3123,7 +3123,7 @@
     function createAggregator(setter, initializer) {
       return function(collection, iteratee, thisArg) {
         var result = initializer ? initializer() : {};
-        iteratee = getCallback(iteratee, thisArg, 3);
+        iteratee = getIteratee(iteratee, thisArg, 3);
 
         if (isArray(collection)) {
           var index = -1,
@@ -3364,7 +3364,7 @@
         if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
           iteratee = undefined;
         }
-        iteratee = getCallback(iteratee, thisArg, 3);
+        iteratee = getIteratee(iteratee, thisArg, 3);
         if (iteratee.length == 1) {
           collection = isArray(collection) ? collection : toIterable(collection);
           var result = arrayExtremum(collection, iteratee, comparator, exValue);
@@ -3386,7 +3386,7 @@
      */
     function createFind(eachFunc, fromRight) {
       return function(collection, predicate, thisArg) {
-        predicate = getCallback(predicate, thisArg, 3);
+        predicate = getIteratee(predicate, thisArg, 3);
         if (isArray(collection)) {
           var index = baseFindIndex(collection, predicate, fromRight);
           return index > -1 ? collection[index] : undefined;
@@ -3407,7 +3407,7 @@
         if (!(array && array.length)) {
           return -1;
         }
-        predicate = getCallback(predicate, thisArg, 3);
+        predicate = getIteratee(predicate, thisArg, 3);
         return baseFindIndex(array, predicate, fromRight);
       };
     }
@@ -3421,7 +3421,7 @@
      */
     function createFindKey(objectFunc) {
       return function(object, predicate, thisArg) {
-        predicate = getCallback(predicate, thisArg, 3);
+        predicate = getIteratee(predicate, thisArg, 3);
         return baseFind(object, predicate, objectFunc, true);
       };
     }
@@ -3539,7 +3539,7 @@
     function createObjectMapper(isMapKeys) {
       return function(object, iteratee, thisArg) {
         var result = {};
-        iteratee = getCallback(iteratee, thisArg, 3);
+        iteratee = getIteratee(iteratee, thisArg, 3);
 
         baseForOwn(object, function(value, key, object) {
           var mapped = iteratee(value, key, object);
@@ -3593,7 +3593,7 @@
         var initFromArray = arguments.length < 3;
         return (typeof iteratee == 'function' && thisArg === undefined && isArray(collection))
           ? arrayFunc(collection, iteratee, accumulator, initFromArray)
-          : baseReduce(collection, getCallback(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
+          : baseReduce(collection, getIteratee(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
       };
     }
 
@@ -3772,8 +3772,8 @@
      */
     function createSortedIndex(retHighest) {
       return function(array, value, iteratee, thisArg) {
-        var callback = getCallback(iteratee);
-        return (iteratee == null && callback === baseCallback)
+        var callback = getIteratee(iteratee);
+        return (iteratee == null && callback === baseIteratee)
           ? binaryIndex(array, value, retHighest)
           : binaryIndexBy(array, value, callback(iteratee, thisArg, 1), retHighest);
       };
@@ -3990,21 +3990,6 @@
     }
 
     /**
-     * Gets the appropriate "callback" function. If the `_.callback` method is
-     * customized this function returns the custom method, otherwise it returns
-     * the `baseCallback` function. If arguments are provided the chosen function
-     * is invoked with them and its result is returned.
-     *
-     * @private
-     * @returns {Function} Returns the chosen function or its result.
-     */
-    function getCallback(func, thisArg, argCount) {
-      var result = lodash.callback || callback;
-      result = result === callback ? baseCallback : result;
-      return argCount ? result(func, thisArg, argCount) : result;
-    }
-
-    /**
      * Gets metadata for `func`.
      *
      * @private
@@ -4050,6 +4035,21 @@
       var result = lodash.indexOf || indexOf;
       result = result === indexOf ? baseIndexOf : result;
       return collection ? result(collection, target, fromIndex) : result;
+    }
+
+    /**
+     * Gets the appropriate "iteratee" function. If the `_.iteratee` method is
+     * customized this function returns the custom method, otherwise it returns
+     * the `baseIteratee` function. If arguments are provided the chosen function
+     * is invoked with them and its result is returned.
+     *
+     * @private
+     * @returns {Function} Returns the chosen function or its result.
+     */
+    function getIteratee(func, thisArg, argCount) {
+      var result = lodash.iteratee || iteratee;
+      result = result === iteratee ? baseIteratee : result;
+      return argCount ? result(func, thisArg, argCount) : result;
     }
 
     /**
@@ -4824,7 +4824,7 @@
      */
     function dropRightWhile(array, predicate, thisArg) {
       return (array && array.length)
-        ? baseWhile(array, getCallback(predicate, thisArg, 3), true, true)
+        ? baseWhile(array, getIteratee(predicate, thisArg, 3), true, true)
         : [];
     }
 
@@ -4879,7 +4879,7 @@
      */
     function dropWhile(array, predicate, thisArg) {
       return (array && array.length)
-        ? baseWhile(array, getCallback(predicate, thisArg, 3), true)
+        ? baseWhile(array, getIteratee(predicate, thisArg, 3), true)
         : [];
     }
 
@@ -5398,7 +5398,7 @@
           indexes = [],
           length = array.length;
 
-      predicate = getCallback(predicate, thisArg, 3);
+      predicate = getIteratee(predicate, thisArg, 3);
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
@@ -5648,7 +5648,7 @@
      */
     function takeRightWhile(array, predicate, thisArg) {
       return (array && array.length)
-        ? baseWhile(array, getCallback(predicate, thisArg, 3), false, true)
+        ? baseWhile(array, getIteratee(predicate, thisArg, 3), false, true)
         : [];
     }
 
@@ -5703,7 +5703,7 @@
      */
     function takeWhile(array, predicate, thisArg) {
       return (array && array.length)
-        ? baseWhile(array, getCallback(predicate, thisArg, 3))
+        ? baseWhile(array, getIteratee(predicate, thisArg, 3))
         : [];
     }
 
@@ -5785,8 +5785,8 @@
         iteratee = isIterateeCall(array, isSorted, thisArg) ? undefined : isSorted;
         isSorted = false;
       }
-      var callback = getCallback();
-      if (!(iteratee == null && callback === baseCallback)) {
+      var callback = getIteratee();
+      if (!(iteratee == null && callback === baseIteratee)) {
         iteratee = callback(iteratee, thisArg, 3);
       }
       return (isSorted && getIndexOf() == baseIndexOf)
@@ -6419,7 +6419,7 @@
         predicate = undefined;
       }
       if (typeof predicate != 'function' || thisArg !== undefined) {
-        predicate = getCallback(predicate, thisArg, 3);
+        predicate = getIteratee(predicate, thisArg, 3);
       }
       return func(collection, predicate);
     }
@@ -6475,7 +6475,7 @@
      */
     function filter(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      predicate = getCallback(predicate, thisArg, 3);
+      predicate = getIteratee(predicate, thisArg, 3);
       return func(collection, predicate);
     }
 
@@ -6876,7 +6876,7 @@
      */
     function map(collection, iteratee, thisArg) {
       var func = isArray(collection) ? arrayMap : baseMap;
-      iteratee = getCallback(iteratee, thisArg, 3);
+      iteratee = getIteratee(iteratee, thisArg, 3);
       return func(collection, iteratee);
     }
 
@@ -7071,7 +7071,7 @@
      */
     function reject(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      predicate = getCallback(predicate, thisArg, 3);
+      predicate = getIteratee(predicate, thisArg, 3);
       return func(collection, function(value, index, collection) {
         return !predicate(value, index, collection);
       });
@@ -7216,7 +7216,7 @@
         predicate = undefined;
       }
       if (typeof predicate != 'function' || thisArg !== undefined) {
-        predicate = getCallback(predicate, thisArg, 3);
+        predicate = getIteratee(predicate, thisArg, 3);
       }
       return func(collection, predicate);
     }
@@ -7277,7 +7277,7 @@
         iteratee = undefined;
       }
       var index = -1;
-      iteratee = getCallback(iteratee, thisArg, 3);
+      iteratee = getIteratee(iteratee, thisArg, 3);
 
       var result = baseMap(collection, function(value, key, collection) {
         return { 'criteria': iteratee(value, key, collection), 'index': ++index, 'value': value };
@@ -10222,7 +10222,7 @@
      */
     function transform(object, iteratee, accumulator, thisArg) {
       var isArr = isArray(object) || isTypedArray(object);
-      iteratee = getCallback(iteratee, thisArg, 4);
+      iteratee = getIteratee(iteratee, thisArg, 4);
 
       if (accumulator == null) {
         if (isArr || isObject(object)) {
@@ -11293,53 +11293,6 @@
     });
 
     /**
-     * Creates a function that invokes `func` with the `this` binding of `thisArg`
-     * and arguments of the created function. If `func` is a property name the
-     * created callback returns the property value for a given element. If `func`
-     * is an object the created callback returns `true` for elements that contain
-     * the equivalent object properties, otherwise it returns `false`.
-     *
-     * @static
-     * @memberOf _
-     * @alias iteratee
-     * @category Utility
-     * @param {*} [func=_.identity] The value to convert to a callback.
-     * @param {*} [thisArg] The `this` binding of `func`.
-     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
-     * @returns {Function} Returns the callback.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
-     *
-     * // wrap to create custom callback shorthands
-     * _.callback = _.wrap(_.callback, function(callback, func, thisArg) {
-     *   var match = /^(.+?)__([gl]t)(.+)$/.exec(func);
-     *   if (!match) {
-     *     return callback(func, thisArg);
-     *   }
-     *   return function(object) {
-     *     return match[2] == 'gt'
-     *       ? object[match[1]] > match[3]
-     *       : object[match[1]] < match[3];
-     *   };
-     * });
-     *
-     * _.filter(users, 'age__gt36');
-     * // => [{ 'user': 'fred', 'age': 40 }]
-     */
-    function callback(func, thisArg, guard) {
-      if (guard && isIterateeCall(func, thisArg, guard)) {
-        thisArg = undefined;
-      }
-      return isObjectLike(func)
-        ? matches(func)
-        : baseCallback(func, thisArg);
-    }
-
-    /**
      * Creates a function that returns `value`.
      *
      * @static
@@ -11378,6 +11331,53 @@
      */
     function identity(value) {
       return value;
+    }
+
+    /**
+     * Creates a function that invokes `func` with the `this` binding of `thisArg`
+     * and arguments of the created function. If `func` is a property name the
+     * created callback returns the property value for a given element. If `func`
+     * is an object the created callback returns `true` for elements that contain
+     * the equivalent object properties, otherwise it returns `false`.
+     *
+     * @static
+     * @memberOf _
+     * @alias iteratee
+     * @category Utility
+     * @param {*} [func=_.identity] The value to convert to a callback.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+     * @returns {Function} Returns the callback.
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
+     * ];
+     *
+     * // wrap to create custom callback shorthands
+     * _.iteratee = _.wrap(_.iteratee, function(callback, func, thisArg) {
+     *   var match = /^(.+?)__([gl]t)(.+)$/.exec(func);
+     *   if (!match) {
+     *     return callback(func, thisArg);
+     *   }
+     *   return function(object) {
+     *     return match[2] == 'gt'
+     *       ? object[match[1]] > match[3]
+     *       : object[match[1]] < match[3];
+     *   };
+     * });
+     *
+     * _.filter(users, 'age__gt36');
+     * // => [{ 'user': 'fred', 'age': 40 }]
+     */
+    function iteratee(func, thisArg, guard) {
+      if (guard && isIterateeCall(func, thisArg, guard)) {
+        thisArg = undefined;
+      }
+      return isObjectLike(func)
+        ? matches(func)
+        : baseIteratee(func, thisArg);
     }
 
     /**
@@ -12017,7 +12017,7 @@
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
         iteratee = undefined;
       }
-      iteratee = getCallback(iteratee, thisArg, 3);
+      iteratee = getIteratee(iteratee, thisArg, 3);
       return iteratee.length == 1
         ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
         : baseSum(collection, iteratee);
@@ -12055,7 +12055,6 @@
     lodash.bind = bind;
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
-    lodash.callback = callback;
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
@@ -12093,6 +12092,7 @@
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;
+    lodash.iteratee = iteratee;
     lodash.keys = keys;
     lodash.keysIn = keysIn;
     lodash.map = map;
@@ -12158,18 +12158,8 @@
     lodash.zipWith = zipWith;
 
     // Add aliases.
-    lodash.backflow = flowRight;
-    lodash.collect = map;
-    lodash.compose = flowRight;
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
-    lodash.extend = assign;
-    lodash.iteratee = callback;
-    lodash.methods = functions;
-    lodash.object = zipObject;
-    lodash.select = filter;
-    lodash.tail = rest;
-    lodash.unique = uniq;
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);
@@ -12265,17 +12255,8 @@
     lodash.uniqueId = uniqueId;
     lodash.words = words;
 
-    // Add aliases.
-    lodash.all = every;
-    lodash.any = some;
-    lodash.contains = includes;
+    // Add aliases
     lodash.eq = isEqual;
-    lodash.detect = find;
-    lodash.foldl = reduce;
-    lodash.foldr = reduceRight;
-    lodash.head = first;
-    lodash.include = includes;
-    lodash.inject = reduce;
 
     mixin(lodash, (function() {
       var source = {};
@@ -12347,7 +12328,7 @@
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
         var result = this.clone();
-        result.__iteratees__.push({ 'iteratee': getCallback(iteratee, thisArg, 1), 'type': type });
+        result.__iteratees__.push({ 'iteratee': getIteratee(iteratee, thisArg, 1), 'type': type });
         result.__filtered__ = result.__filtered__ || isFilter;
         return result;
       };
@@ -12386,7 +12367,7 @@
     };
 
     LazyWrapper.prototype.reject = function(predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 1);
+      predicate = getIteratee(predicate, thisArg, 1);
       return this.filter(function(value) {
         return !predicate(value);
       });
@@ -12522,12 +12503,6 @@
     lodash.prototype.reverse = wrapperReverse;
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.run = lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
-
-    // Add function aliases to the `lodash` wrapper.
-    lodash.prototype.collect = lodash.prototype.map;
-    lodash.prototype.head = lodash.prototype.first;
-    lodash.prototype.select = lodash.prototype.filter;
-    lodash.prototype.tail = lodash.prototype.rest;
 
     return lodash;
   }

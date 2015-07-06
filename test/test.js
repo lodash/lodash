@@ -4735,7 +4735,9 @@
 
     var arrayMethods = [
       'findIndex',
-      'findLastIndex'
+      'findLastIndex',
+      'maxBy',
+      'minBy'
     ];
 
     var collectionMethods = [
@@ -4750,8 +4752,6 @@
       'groupBy',
       'indexBy',
       'map',
-      'maxBy',
-      'minBy',
       'partition',
       'reduce',
       'reduceRight',
@@ -4822,6 +4822,7 @@
     _.each(methods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName],
+          isExtremum = /^(?:max|min)/.test(methodName),
           isFind = /^find/.test(methodName),
           isSome = methodName == 'some';
 
@@ -4841,6 +4842,9 @@
           if (_.includes(objectMethods, methodName)) {
             expected[1] += '';
           }
+          if (isExtremum) {
+            expected.length = 1;
+          }
           deepEqual(args, expected);
         }
         else {
@@ -4854,6 +4858,12 @@
           array[2] = 3;
 
           var expected = [[1, 0, array], [undefined, 1, array], [3, 2, array]];
+
+          if (isExtremum) {
+            expected = _.map(expected, function(args) {
+              return args.slice(0, 1);
+            });
+          }
           if (_.includes(objectMethods, methodName)) {
             expected = _.map(expected, function(args) {
               args[1] += '';
@@ -10059,11 +10069,12 @@
     });
 
     test('should return `-Infinity` for empty collections', 1, function() {
-      var expected = _.map(empties, _.constant(-Infinity));
+      var values = falsey.concat([[]]),
+          expected = _.map(values, _.constant(-Infinity));
 
-      var actual = _.map(empties, function(value) {
+      var actual = _.map(values, function(value, index) {
         try {
-          return _.max(value);
+          return index ? _.max(value) : _.max();
         } catch(e) {}
       });
 
@@ -10071,16 +10082,7 @@
     });
 
     test('should return `-Infinity` for non-numeric collection values', 1, function() {
-      var collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
-          expected = _.map(collections, _.constant(-Infinity));
-
-      var actual = _.map(collections, function(value) {
-        try {
-          return _.max(value);
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
+      strictEqual(_.max(['a', 'b']), -Infinity);
     });
   }());
 
@@ -10820,11 +10822,12 @@
     });
 
     test('should return `Infinity` for empty collections', 1, function() {
-      var expected = _.map(empties, _.constant(Infinity));
+      var values = falsey.concat([[]]),
+          expected = _.map(values, _.constant(Infinity));
 
-      var actual = _.map(empties, function(value) {
+      var actual = _.map(values, function(value, index) {
         try {
-          return _.min(value);
+          return index ? _.min(value) : _.min();
         } catch(e) {}
       });
 
@@ -10832,16 +10835,7 @@
     });
 
     test('should return `Infinity` for non-numeric collection values', 1, function() {
-      var collections = [['a', 'b'], { 'a': 'a', 'b': 'b' }],
-          expected = _.map(collections, _.constant(Infinity));
-
-      var actual = _.map(collections, function(value) {
-        try {
-          return _.min(value);
-        } catch(e) {}
-      });
-
-      deepEqual(actual, expected);
+      strictEqual(_.min(['a', 'b']), Infinity);
     });
   }());
 
@@ -10861,24 +10855,16 @@
       strictEqual(func([curr, past]), isMax ? curr : past);
     });
 
-    test('`_.' + methodName + '` should iterate an object', 1, function() {
-      var actual = func({ 'a': 1, 'b': 2, 'c': 3 });
-      strictEqual(actual, isMax ? 3 : 1);
-    });
-
     test('`_.' + methodName + '` should work with extremely large arrays', 1, function() {
       var array = _.range(0, 5e5);
       strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 2, function() {
+    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 1, function() {
       var arrays = [[2, 1], [5, 4], [7, 8]],
-          objects = [{ 'a': 2, 'b': 1 }, { 'a': 5, 'b': 4 }, { 'a': 7, 'b': 8 }],
           expected = isMax ? [2, 5, 8] : [1, 4, 7];
 
-      _.each([arrays, objects], function(values) {
-        deepEqual(_.map(values, func), expected);
-      });
+      deepEqual(_.map(arrays, func), expected);
     });
 
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
@@ -16106,7 +16092,7 @@
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [objects[0], 0, objects]);
+      deepEqual(args, [objects[0]]);
     });
 
     test('should work with `iteratee` without specifying `isSorted`', 1, function() {

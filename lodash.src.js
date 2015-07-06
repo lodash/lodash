@@ -1647,11 +1647,12 @@
      * @returns {number} Returns the sum.
      */
     function arraySum(array, iteratee) {
-      var length = array.length,
+      var index = -1,
+          length = array.length,
           result = 0;
 
-      while (length--) {
-        result += +iteratee(array[length]) || 0;
+      while (++index < length) {
+        result += +iteratee(array[index]) || 0;
       }
       return result;
     }
@@ -1971,32 +1972,6 @@
       baseEach(collection, function(value, index, collection) {
         result = !!predicate(value, index, collection);
         return result;
-      });
-      return result;
-    }
-
-    /**
-     * Gets the extremum value of `collection` invoking `iteratee` for each value
-     * in `collection` to generate the criterion by which the value is ranked.
-     * The iteratee is invoked with three arguments: (value, index|key, collection).
-     *
-     * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {Function} comparator The function used to compare values.
-     * @param {*} exValue The initial extremum value.
-     * @returns {*} Returns the extremum value.
-     */
-    function baseExtremum(collection, iteratee, comparator, exValue) {
-      var computed = exValue,
-          result = computed;
-
-      baseEach(collection, function(value, index, collection) {
-        var current = +iteratee(value, index, collection);
-        if (comparator(current, computed) || (current === exValue && current === result)) {
-          computed = current;
-          result = value;
-        }
       });
       return result;
     }
@@ -2730,23 +2705,6 @@
     }
 
     /**
-     * The base implementation of `_.sum` without support for callback shorthands
-     * and `this` binding.
-     *
-     * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {number} Returns the sum.
-     */
-    function baseSum(collection, iteratee) {
-      var result = 0;
-      baseEach(collection, function(value, index, collection) {
-        result += +iteratee(value, index, collection) || 0;
-      });
-      return result;
-    }
-
-    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -3222,22 +3180,13 @@
      * @returns {Function} Returns the new extremum function.
      */
     function createExtremum(comparator, exValue) {
-      return function(collection, iteratee, guard) {
-        if (guard && isIterateeCall(collection, iteratee, guard)) {
+      return function(array, iteratee, guard) {
+        if (guard && isIterateeCall(array, iteratee, guard)) {
           iteratee = undefined;
         }
-        iteratee = getIteratee(iteratee);
-        if (iteratee.length == 1) {
-          collection = isArray(collection) ? collection : toIterable(collection);
-          if (!collection.length) {
-            return exValue;
-          }
-          var result = arrayExtremum(collection, iteratee, comparator, exValue);
-          if (result !== exValue) {
-            return result;
-          }
-        }
-        return baseExtremum(collection, iteratee, comparator, exValue);
+        return (array && array.length)
+          ? arrayExtremum(array, getIteratee(iteratee), comparator, exValue)
+          : exValue;
       };
     }
 
@@ -11301,14 +11250,12 @@
     var round = createRound('round');
 
     /**
-     * Gets the sum of the values in `collection`.
+     * Gets the sum of the values in `array`.
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+     * @param {Array} array The array to iterate over.
      * @returns {number} Returns the sum.
      * @example
      *
@@ -11317,6 +11264,24 @@
      *
      * _.sum({ 'a': 4, 'b': 6 });
      * // => 10
+     */
+    function sum(array) {
+      return sumBy(array, identity);
+    }
+
+    /**
+     * This method is like `_.sum` except that it accepts an iteratee which is
+     * invoked for each element in `array` to generate the value to be summed.
+     * The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array} array The array to iterate over.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+     * @returns {number} Returns the sum.
+     * @example
      *
      * var objects = [
      *   { 'n': 4 },
@@ -11330,14 +11295,14 @@
      * _.sum(objects, 'n');
      * // => 10
      */
-    function sum(collection, iteratee, guard) {
-      if (guard && isIterateeCall(collection, iteratee, guard)) {
+    function sumBy(array, iteratee, guard) {
+      if (!(array && array.length)) {
+        return 0;
+      }
+      if (guard && isIterateeCall(array, iteratee, guard)) {
         iteratee = undefined;
       }
-      iteratee = getIteratee(iteratee);
-      return iteratee.length == 1
-        ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
-        : baseSum(collection, iteratee);
+      return arraySum(array, getIteratee(iteratee));
     }
 
     /*------------------------------------------------------------------------*/
@@ -11562,6 +11527,7 @@
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
     lodash.sum = sum;
+    lodash.sumBy = sumBy;
     lodash.template = template;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;

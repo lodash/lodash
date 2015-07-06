@@ -1504,6 +1504,13 @@
           result = value;
         }
       }
+      index = result === exValue ? -1 : index;
+      while (++index < length) {
+        value = array[index];
+        if (+iteratee(value) === exValue) {
+          return value;
+        }
+      }
       return result;
     }
 
@@ -2732,7 +2739,7 @@
       outer:
       while (++index < length) {
         var value = array[index],
-            computed = iteratee ? iteratee(value, index, array) : value;
+            computed = iteratee ? iteratee(value) : value;
 
         if (isCommon && value === value) {
           var seenIndex = seen.length;
@@ -5306,9 +5313,8 @@
 
     /**
      * This method is like `_.uniq` except that it accepts an iteratee which is
-     * invoked for each value in `array` to generate the criterion by which
-     * uniqueness is computed. The iteratee is invoked with three arguments:
-     * (value, index, array).
+     * invoked for each element in `array` to generate the criterion by which
+     * uniqueness is computed. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -11136,7 +11142,7 @@
      * @static
      * @memberOf _
      * @category Math
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array} array The array to iterate over.
      * @returns {*} Returns the maximum value.
      * @example
      *
@@ -11146,20 +11152,19 @@
      * _.max([]);
      * // => -Infinity
      */
-    function max(collection) {
-      return maxBy(collection, identity);
+    function max(array) {
+      return maxBy(array, identity);
     }
 
     /**
      * This method is like `_.max` except that it accepts an iteratee which is
-     * invoked for each value in `collection` to generate the criterion by which
-     * the value is ranked. The iteratee is invoked with three arguments:
-     * (value, index, collection).
+     * invoked for each element in `array` to generate the criterion by which
+     * the value is ranked. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array} array The array to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {*} Returns the maximum value.
      * @example
@@ -11179,13 +11184,13 @@
     var maxBy = createExtremum(gt, NEGATIVE_INFINITY);
 
     /**
-     * Gets the minimum value of `collection`. If `collection` is empty or falsey
+     * Gets the minimum value of `array`. If `array` is empty or falsey
      * `Infinity` is returned.
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array} array The array to iterate over.
      * @returns {*} Returns the minimum value.
      * @example
      *
@@ -11195,20 +11200,19 @@
      * _.min([]);
      * // => Infinity
      */
-    function min(collection) {
-      return minBy(collection, identity);
+    function min(array) {
+      return minBy(array, identity);
     }
 
     /**
      * This method is like `_.min` except that it accepts an iteratee which is
-     * invoked for each value in `collection` to generate the criterion by which
-     * the value is ranked. The iteratee is invoked with three arguments:
-     * (value, index, collection).
+     * invoked for each element in `array` to generate the criterion by which
+     * the value is ranked. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array} array The array to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {*} Returns the minimum value.
      * @example

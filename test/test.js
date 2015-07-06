@@ -1114,9 +1114,9 @@
     test('should work with a falsey `collection` argument when keys are provided', 1, function() {
       var expected = _.map(falsey, _.constant(Array(4)));
 
-      var actual = _.map(falsey, function(value) {
+      var actual = _.map(falsey, function(collection) {
         try {
-          return _.at(value, 0, 1, 'pop', 'push');
+          return _.at(collection, 0, 1, 'pop', 'push');
         } catch(e) {}
       });
 
@@ -2503,8 +2503,8 @@
     test('should accept a falsey `prototype` argument', 1, function() {
       var expected = _.map(falsey, _.constant({}));
 
-      var actual = _.map(falsey, function(value, index) {
-        return index ? _.create(value) : _.create();
+      var actual = _.map(falsey, function(prototype, index) {
+        return index ? _.create(prototype) : _.create();
       });
 
       deepEqual(actual, expected);
@@ -5142,8 +5142,8 @@
         isDefaults = methodName == 'defaults';
 
     test('`_.' + methodName + '` should pass thru falsey `object` values', 1, function() {
-      var actual = _.map(falsey, function(value, index) {
-        return index ? func(value) : func();
+      var actual = _.map(falsey, function(object, index) {
+        return index ? func(object) : func();
       });
 
       deepEqual(actual, falsey);
@@ -6012,9 +6012,9 @@
     test('should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(array, index) {
         try {
-          return index ? _.initial(value) : _.initial();
+          return index ? _.initial(array) : _.initial();
         } catch(e) {}
       });
 
@@ -9214,9 +9214,9 @@
     test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant(-1));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(array, index) {
         try {
-          return index ? func(value) : func();
+          return index ? func(array) : func();
         } catch(e) {}
       });
 
@@ -9323,9 +9323,9 @@
     test('should accept a falsey `collection` argument', 1, function() {
       var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(collection, index) {
         try {
-          return index ? _.map(value) : _.map();
+          return index ? _.map(collection) : _.map();
         } catch(e) {}
       });
 
@@ -9469,9 +9469,9 @@
     test('should accept a falsey `object` argument', 1, function() {
       var expected = _.map(falsey, _.constant({}));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(object, index) {
         try {
-          return index ? func(value) : func();
+          return index ? func(object) : func();
         } catch(e) {}
       });
 
@@ -10112,12 +10112,12 @@
       raises(function() { _.memoize(_.noop, {}); }, TypeError);
     });
 
-    test('should not error if `resolve` is falsey', function() {
+    test('should not error if `resolver` is falsey', function() {
       var expected = _.map(falsey, _.constant(true));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(resolver, index) {
         try {
-          return _.isFunction(index ? _.memoize(_.noop, value) : _.memoize(_.noop));
+          return _.isFunction(index ? _.memoize(_.noop, resolver) : _.memoize(_.noop));
         } catch(e) {}
       });
 
@@ -12430,9 +12430,9 @@
     test('should work with a falsey `array` argument when keys are provided', 1, function() {
       var expected = _.map(falsey, _.constant(Array(4)));
 
-      var actual = _.map(falsey, function(value) {
+      var actual = _.map(falsey, function(array) {
         try {
-          return _.pullAt(value, 0, 1, 'pop', 'push');
+          return _.pullAt(array, 0, 1, 'pop', 'push');
         } catch(e) {}
       });
 
@@ -13303,9 +13303,9 @@
     test('should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(array, index) {
         try {
-          return index ? _.rest(value) : _.rest();
+          return index ? _.rest(array) : _.rest();
         } catch(e) {}
       });
 
@@ -13869,9 +13869,9 @@
     test('should accept a falsey `object` argument', 1, function() {
       var expected = _.map(falsey, _.constant(0));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(object, index) {
         try {
-          return index ? _.size(value) : _.size();
+          return index ? _.size(object) : _.size();
         } catch(e) {}
       });
 
@@ -15861,8 +15861,8 @@
     test('should create an empty object when provided a falsey `object` argument', 1, function() {
       var expected = _.map(falsey, _.constant({}));
 
-      var actual = _.map(falsey, function(value, index) {
-        return index ? _.transform(value) : _.transform();
+      var actual = _.map(falsey, function(object, index) {
+        return index ? _.transform(object) : _.transform();
       });
 
       deepEqual(actual, expected);
@@ -16541,9 +16541,9 @@
     test('should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant({}));
 
-      var actual = _.map(falsey, function(value, index) {
+      var actual = _.map(falsey, function(array, index) {
         try {
-          return index ? _.zipObject(value) : _.zipObject();
+          return index ? _.zipObject(array) : _.zipObject();
         } catch(e) {}
       });
 

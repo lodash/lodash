@@ -3998,7 +3998,7 @@
      * @returns {*} Returns the metadata for `func`.
      */
     var getData = !metaMap ? noop : function(func) {
-      return typeof func == 'function' ? metaMap.get(func) : undefined;
+      return metaMap.get(func);
     };
 
     /**
@@ -4280,11 +4280,12 @@
      * @returns {boolean} Returns `true` if `func` has a lazy counterpart, else `false`.
      */
     function isLaziable(func) {
-      var funcName = getFuncName(func);
-      if (!(funcName in LazyWrapper.prototype)) {
+      var funcName = getFuncName(func),
+          other = lodash[funcName];
+
+      if (typeof other != 'function' || !(funcName in LazyWrapper.prototype)) {
         return false;
       }
-      var other = lodash[funcName];
       if (func === other) {
         return true;
       }

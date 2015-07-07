@@ -4647,31 +4647,21 @@
     }
 
     /**
-     * Flattens a nested array. If `isDeep` is `true` the array is recursively
-     * flattened, otherwise it's only flattened a single level.
+     * Flattens a nested array a single level.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isDeep] Specify a deep flatten.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Array} Returns the new flattened array.
      * @example
      *
      * _.flatten([1, [2, 3, [4]]]);
      * // => [1, 2, 3, [4]]
-     *
-     * // using `isDeep`
-     * _.flatten([1, [2, 3, [4]]], true);
-     * // => [1, 2, 3, 4]
      */
-    function flatten(array, isDeep, guard) {
+    function flatten(array) {
       var length = array ? array.length : 0;
-      if (guard && isIterateeCall(array, isDeep, guard)) {
-        isDeep = false;
-      }
-      return length ? baseFlatten(array, isDeep) : [];
+      return length ? baseFlatten(array) : [];
     }
 
     /**
@@ -6281,11 +6271,10 @@
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`,
-     * `drop`, `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`,
-     * `parseInt`, `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`,
-     * `trimLeft`, `trimRight`, `trunc`, `random`, `range`, `sample`, `some`,
-     * `sum`, `uniq`, and `words`
+     * `ary`, `callback`, `chunk`, `create`, `curry`, `curryRight`, `drop`,
+     * `dropRight`, `every`, `fill`, `invert`, `parseInt`, `random`, `range`,
+     * `sample`, `slice`, `some`, `sortBy`, `sumBy`, `take`, `takeRight`,
+     * `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `uniqBy`, and `words`
      *
      * @static
      * @memberOf _
@@ -7755,11 +7744,10 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
-     * otherwise they are assigned by reference. If `customizer` is provided it's
-     * invoked to produce the cloned values. If `customizer` returns `undefined`
-     * cloning is handled by the method instead. The `customizer` is invoked with
-     * up to three argument; (value [, index|key, object]).
+     * Creates a clone of `value`. If `customizer` is provided it's invoked to
+     * produce the cloned values. If `customizer` returns `undefined` cloning is
+     * handled by the method instead. The `customizer` is invoked with up to
+     * three arguments; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the
      * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
@@ -7772,7 +7760,6 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to clone.
-     * @param {boolean} [isDeep] Specify a deep clone.
      * @param {Function} [customizer] The function to customize cloning values.
      * @returns {*} Returns the cloned value.
      * @example
@@ -7785,10 +7772,6 @@
      * var shallow = _.clone(users);
      * shallow[0] === users[0];
      * // => true
-     *
-     * var deep = _.clone(users, true);
-     * deep[0] === users[0];
-     * // => false
      *
      * // using a customizer callback
      * var el = _.clone(document.body, function(value) {
@@ -7804,24 +7787,17 @@
      * el.childNodes.length;
      * // => 0
      */
-    function clone(value, isDeep, customizer) {
-      if (isDeep && typeof isDeep != 'boolean' && isIterateeCall(value, isDeep, customizer)) {
-        isDeep = false;
-      }
-      else if (typeof isDeep == 'function') {
-        customizer = isDeep;
-        isDeep = false;
-      }
+    function clone(value, customizer) {
       return typeof customizer == 'function'
-        ? baseClone(value, isDeep, customizer)
-        : baseClone(value, isDeep);
+        ? baseClone(value, false, customizer)
+        : baseClone(value);
     }
 
     /**
      * Creates a deep clone of `value`. If `customizer` is provided it's invoked
      * to produce the cloned values. If `customizer` returns `undefined` cloning
      * is handled by the method instead. The `customizer` is invoked with up to
-     * three argument; (value [, index|key, object]).
+     * three arguments; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the
      * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).

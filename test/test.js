@@ -1949,17 +1949,6 @@
       ok(actual !== array && actual[0] === array[0]);
     });
 
-    test('`_.clone` should work with `isDeep`', 8, function() {
-      var array = [{ 'a': 0 }, { 'b': 1 }],
-          values = [true, 1, {}, '1'];
-
-      _.each(values, function(isDeep) {
-        var actual = _.clone(array, isDeep);
-        deepEqual(actual, array);
-        ok(actual !== array && actual[0] !== array[0]);
-      });
-    });
-
     test('`_.cloneDeep` should deep clone objects with circular references', 1, function() {
       var object = {
         'foo': { 'b': { 'c': { 'd': {} } } },
@@ -4527,30 +4516,11 @@
       deepEqual(_.flatten(array), [['a'], ['b']]);
     });
 
-    test('should work with `isDeep`', 2, function() {
-      var array = [[['a']], [['b']]],
-          expected = ['a', 'b'];
+    test('should flatten `arguments` objects', 2, function() {
+      var array = [args, [args]];
 
-      deepEqual(_.flatten(array, true), expected);
-      deepEqual(_.flattenDeep(array), expected);
-    });
-
-    test('should flatten `arguments` objects', 3, function() {
-      var array = [args, [args]],
-          expected = [1, 2, 3, args];
-
-      deepEqual(_.flatten(array), expected);
-
-      expected = [1, 2, 3, 1, 2, 3];
-      deepEqual(_.flatten(array, true), expected);
-      deepEqual(_.flattenDeep(array), expected);
-    });
-
-    test('should work as an iteratee for methods like `_.map`', 2, function() {
-      var array = [[[['a']]], [[['b']]]];
-
-      deepEqual(_.map(array, _.flatten), [[['a']], [['b']]]);
-      deepEqual(_.map(array, _.flattenDeep), [['a'], ['b']]);
+      deepEqual(_.flatten(array), [1, 2, 3, args]);
+      deepEqual(_.flattenDeep(array), [1, 2, 3, 1, 2, 3]);
     });
 
     test('should treat sparse arrays as dense', 6, function() {
@@ -4588,26 +4558,18 @@
       });
     });
 
-    test('should work with empty arrays', 3, function() {
-      var array = [[], [[]], [[], [[[]]]]],
-          expected = [[], [], [[[]]]];
+    test('should work with empty arrays', 2, function() {
+      var array = [[], [[]], [[], [[[]]]]];
 
-      deepEqual(_.flatten(array), expected);
-
-      expected = [];
-      deepEqual(_.flatten(array, true), expected);
-      deepEqual(_.flattenDeep(array), expected);
+      deepEqual(_.flatten(array), [[], [], [[[]]]]);
+      deepEqual(_.flattenDeep(array), []);
     });
 
-    test('should support flattening of nested arrays', 3, function() {
-      var array = [1, [2, 3], 4, [[5]]],
-          expected = [1, 2, 3, 4, [5]];
+    test('should support flattening of nested arrays', 2, function() {
+      var array = [1, [2, 3], 4, [[5]]];
 
-      deepEqual(_.flatten(array), expected);
-
-      expected = [1, 2, 3, 4, 5];
-      deepEqual(_.flatten(array, true), expected);
-      deepEqual(_.flattenDeep(array), expected);
+      deepEqual(_.flatten(array), [1, 2, 3, 4, [5]]);
+      deepEqual(_.flattenDeep(array), [1, 2, 3, 4, 5]);
     });
 
     test('should return an empty array for non array-like objects', 3, function() {
@@ -4618,28 +4580,21 @@
       deepEqual(_.flattenDeep({ 'a': 1 }), expected);
     });
 
-    test('should return a wrapped value when chaining', 6, function() {
+    test('should return a wrapped value when chaining', 4, function() {
       if (!isNpm) {
         var wrapped = _([1, [2], [3, [4]]]),
-            actual = wrapped.flatten(),
-            expected = [1, 2, 3, [4]];
+            actual = wrapped.flatten();
 
         ok(actual instanceof _);
-        deepEqual(actual.value(), expected);
-
-        expected = [1, 2, 3, 4];
-        actual = wrapped.flatten(true);
-
-        ok(actual instanceof _);
-        deepEqual(actual.value(), expected);
+        deepEqual(actual.value(), [1, 2, 3, [4]]);
 
         actual = wrapped.flattenDeep();
 
         ok(actual instanceof _);
-        deepEqual(actual.value(), expected);
+        deepEqual(actual.value(), [1, 2, 3, 4]);
       }
       else {
-        skipTest(6);
+        skipTest(4);
       }
     });
   }(1, 2, 3));

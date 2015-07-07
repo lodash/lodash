@@ -8271,7 +8271,7 @@
      * Creates a function that invokes `func` with the `this` binding of the
      * created function and arguments from `start` and beyond provided as an array.
      *
-     * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+     * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
      *
      * @static
      * @memberOf _
@@ -8322,7 +8322,7 @@
      * Creates a function that invokes `func` with the `this` binding of the created
      * function and an array of arguments much like [`Function#apply`](https://es5.github.io/#x15.3.4.3).
      *
-     * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator).
+     * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/Web/JavaScript/Reference/Operators/Spread_operator).
      *
      * @static
      * @memberOf _

@@ -1796,7 +1796,7 @@
      * @private
      * @param {*} value The value to clone.
      * @param {boolean} [isDeep] Specify a deep clone.
-     * @param {Function} [customizer] The function to customize cloning values.
+     * @param {Function} [customizer] The function to customize cloning.
      * @param {string} [key] The key of `value`.
      * @param {Object} [object] The object `value` belongs to.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
@@ -2236,7 +2236,7 @@
      * @private
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
-     * @param {Function} [customizer] The function to customize comparing values.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
@@ -2261,7 +2261,7 @@
      * @param {Object} object The object to compare.
      * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
-     * @param {Function} [customizer] The function to customize comparing objects.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
@@ -2337,7 +2337,7 @@
      * @private
      * @param {Object} object The object to inspect.
      * @param {Array} matchData The propery names, values, and compare flags to match.
-     * @param {Function} [customizer] The function to customize comparing objects.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
     function baseIsMatch(object, matchData, customizer) {
@@ -2467,7 +2467,7 @@
      * @param {Object} source The source object.
      * @param {string} key The key of the value to merge.
      * @param {Function} mergeFunc The function to merge values.
-     * @param {Function} [customizer] The function to customize merged values.
+     * @param {Function} [customizer] The function to customize assigned values.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
@@ -3491,7 +3491,7 @@
      * @param {Array} array The array to compare.
      * @param {Array} other The other array to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
-     * @param {Function} [customizer] The function to customize comparing arrays.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
@@ -3578,7 +3578,7 @@
      * @param {Object} object The object to compare.
      * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
-     * @param {Function} [customizer] The function to customize comparing values.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
@@ -4647,7 +4647,7 @@
     }
 
     /**
-     * Flattens a nested array a single level.
+     * Flattens `array` a single level.
      *
      * @static
      * @memberOf _
@@ -4665,7 +4665,7 @@
     }
 
     /**
-     * Recursively flattens a nested array.
+     * This method is like `_.flatten` except that it recursively flattens `array`.
      *
      * @static
      * @memberOf _
@@ -7744,9 +7744,9 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a clone of `value`. If `customizer` is provided it's invoked to
-     * produce the cloned values. If `customizer` returns `undefined` cloning is
-     * handled by the method instead. The `customizer` is invoked with up to
+     * Creates a shallow clone of `value`. If `customizer` is provided it's invoked
+     * to produce the cloned value. If `customizer` returns `undefined` cloning
+     * is handled by the method instead. The `customizer` is invoked with up to
      * three arguments; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the
@@ -7760,7 +7760,7 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to clone.
-     * @param {Function} [customizer] The function to customize cloning values.
+     * @param {Function} [customizer] The function to customize cloning.
      * @returns {*} Returns the cloned value.
      * @example
      *
@@ -7794,23 +7794,13 @@
     }
 
     /**
-     * Creates a deep clone of `value`. If `customizer` is provided it's invoked
-     * to produce the cloned values. If `customizer` returns `undefined` cloning
-     * is handled by the method instead. The `customizer` is invoked with up to
-     * three arguments; (value [, index|key, object]).
-     *
-     * **Note:** This method is loosely based on the
-     * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
-     * The enumerable properties of `arguments` objects and objects created by
-     * constructors other than `Object` are cloned to plain `Object` objects. An
-     * empty object is returned for uncloneable values such as functions, DOM nodes,
-     * Maps, Sets, and WeakMaps.
+     * This method is like `_.clone` except that it recursively clones `value`.
      *
      * @static
      * @memberOf _
      * @category Lang
-     * @param {*} value The value to deep clone.
-     * @param {Function} [customizer] The function to customize cloning values.
+     * @param {*} value The value to recursively clone.
+     * @param {Function} [customizer] The function to customize cloning.
      * @returns {*} Returns the deep cloned value.
      * @example
      *
@@ -8049,7 +8039,7 @@
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
-     * @param {Function} [customizer] The function to customize value comparisons.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
@@ -8198,7 +8188,7 @@
      * @category Lang
      * @param {Object} object The object to inspect.
      * @param {Object} source The object of property values to match.
-     * @param {Function} [customizer] The function to customize value comparisons.
+     * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      * @example
      *
@@ -8655,8 +8645,7 @@
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
      * If `customizer` is provided it's invoked to produce the assigned values.
-     * The `customizer` is invoked with five arguments:
-     * (objectValue, sourceValue, key, object, source).
+     * The `customizer` is invoked with five arguments: (objectValue, sourceValue, key, object, source).
      *
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).

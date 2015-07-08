@@ -9588,7 +9588,7 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(0, LARGE_ARRAY_SIZE),
+            array = _.range(0, LARGE_ARRAY_SIZE + 1),
             expected = [1, 0, _.map(array.slice(1), square)];
 
         _(array).slice(1).map(function(value, index, array) {
@@ -17092,14 +17092,14 @@
 
     test('should work when in a lazy chain sequence before `first` or `last`', 1, function() {
       if (!isNpm) {
-        var array = _.range(0, LARGE_ARRAY_SIZE),
-            wrapped = _(array).slice(1).xor([LARGE_ARRAY_SIZE - 1, LARGE_ARRAY_SIZE]);
+        var array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            wrapped = _(array).slice(1).xor([LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE + 1]);
 
         var actual = _.map(['first', 'last'], function(methodName) {
           return wrapped[methodName]();
         });
 
-        deepEqual(actual, [1, LARGE_ARRAY_SIZE]);
+        deepEqual(actual, [1, LARGE_ARRAY_SIZE + 1]);
       }
       else {
         skipTest();
@@ -17501,65 +17501,36 @@
   QUnit.module('lodash(...).reverse');
 
   (function() {
-    test('should return the wrapped reversed `array`', 3, function() {
-      if (!isNpm) {
-        var array = [1, 2, 3],
-            wrapped = _(array).reverse(),
-            actual = wrapped.value();
+    var largeArray = _.range(0, LARGE_ARRAY_SIZE).concat(null),
+        smallArray = [0, 1, 2, null];
 
-        ok(wrapped instanceof _);
-        strictEqual(actual, array);
-        deepEqual(actual, [3, 2, 1]);
+    test('should return the wrapped reversed `array`', 6, function() {
+      if (!isNpm) {
+        _.times(2, function(index) {
+          var array = (index ? largeArray : smallArray).slice(),
+              clone = array.slice(),
+              wrapped = _(array).reverse(),
+              actual = wrapped.value();
+
+          ok(wrapped instanceof _);
+          strictEqual(actual, array);
+          deepEqual(actual, clone.slice().reverse());
+        });
       }
       else {
-        skipTest(3);
+        skipTest(6);
       }
     });
 
-    test('should work in a lazy chain sequence', 1, function() {
+    test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = _.range(0, LARGE_ARRAY_SIZE).concat(null),
-            actual = _(array).slice(1).reverse().value();
+        _.times(2, function(index) {
+          var array = (index ? largeArray : smallArray).slice(),
+              expected = array.slice(),
+              actual = _(array).slice(1).reverse().value();
 
-        deepEqual(actual, array.slice(1).reverse());
-      }
-      else {
-        skipTest();
-      }
-    });
-
-    test('should be lazy when in a lazy chain sequence', 2, function() {
-      if (!isNpm) {
-        var spy = {
-          'toString': function() {
-            throw new Error('spy was revealed');
-          }
-        };
-
-        try {
-          var array = _.range(0, LARGE_ARRAY_SIZE).concat(spy),
-              wrapped = _(array).slice(1).map(String).reverse(),
-              actual = wrapped.last();
-        } catch(e) {}
-
-        ok(wrapped instanceof _);
-        strictEqual(actual, '1');
-      }
-      else {
-        skipTest(2);
-      }
-    });
-
-    test('should work in a hybrid chain sequence', 4, function() {
-      if (!isNpm) {
-        var array = [1, 2, 3, null];
-
-        _.each(['map', 'filter'], function(methodName) {
-          var actual = _(array)[methodName](_.identity).thru(_.compact).reverse().value();
-          deepEqual(actual, [3, 2, 1]);
-
-          actual = _(array).thru(_.compact)[methodName](_.identity).pull(1).push(4).reverse().value();
-          deepEqual(actual, [4, 3, 2]);
+          deepEqual(actual, expected.slice(1).reverse());
+          deepEqual(array, expected);
         });
       }
       else {
@@ -17567,14 +17538,69 @@
       }
     });
 
-    test('should track the `__chain__` value of a wrapper', 2, function() {
+    test('should be lazy when in a lazy chain sequence', 3, function() {
       if (!isNpm) {
-        var wrapped = _([1, 2, 3]).chain().reverse().first();
+        var spy = {
+          'toString': function() {
+            throw new Error('spy was revealed');
+          }
+        };
+
+        var array = largeArray.concat(spy),
+            expected = array.slice();
+
+        try {
+          var wrapped = _(array).slice(1).map(String).reverse(),
+              actual = wrapped.last();
+        } catch(e) {}
+
         ok(wrapped instanceof _);
-        strictEqual(wrapped.value(), 3);
+        strictEqual(actual, '1');
+        deepEqual(array, expected);
       }
       else {
-        skipTest(2);
+        skipTest(3);
+      }
+    });
+
+    test('should work in a hybrid chain sequence', 8, function() {
+      if (!isNpm) {
+        _.times(2, function(index) {
+          var clone = (index ? largeArray : smallArray).slice();
+
+          _.each(['map', 'filter'], function(methodName) {
+            var array = clone.slice(),
+                expected = clone.slice(1, -1).reverse(),
+                actual = _(array)[methodName](_.identity).thru(_.compact).reverse().value();
+
+            deepEqual(actual, expected);
+
+            array = clone.slice();
+            actual = _(array).thru(_.compact)[methodName](_.identity).pull(1).push(3).reverse().value();
+
+            deepEqual(actual, [3].concat(expected.slice(0, -1)));
+          });
+        });
+      }
+      else {
+        skipTest(8);
+      }
+    });
+
+    test('should track the `__chain__` value of a wrapper', 6, function() {
+      if (!isNpm) {
+        _.times(2, function(index) {
+          var array = (index ? largeArray : smallArray).slice(),
+              expected = array.slice().reverse(),
+              wrapped = _(array).chain().reverse().first();
+
+          ok(wrapped instanceof _);
+          strictEqual(wrapped.value(), _.first(expected));
+          deepEqual(array, expected);
+        });
+      }
+      else {
+        skipTest(6);
       }
     });
   }());

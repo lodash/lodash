@@ -1205,7 +1205,7 @@
           takeCount = nativeMin(length, this.__takeCount__);
 
       if (!isArr || arrLength < LARGE_ARRAY_SIZE || (arrLength == length && takeCount == length)) {
-        return baseWrapperValue((isRight && isArr) ? array.reverse() : array, this.__actions__);
+        return baseWrapperValue(array, this.__actions__);
       }
       var result = [];
 
@@ -6230,7 +6230,7 @@
       var value = this.__wrapped__;
 
       var interceptor = function(value) {
-        return (wrapped && wrapped.__dir__ < 0) ? value : value.reverse();
+        return value.reverse();
       };
       if (value instanceof LazyWrapper) {
         var wrapped = value;

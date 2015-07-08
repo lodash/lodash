@@ -114,8 +114,6 @@ var platforms = [
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],
   ['Windows 7', 'internet explorer', '8'],
-  ['Windows XP', 'internet explorer', '7'],
-  ['Windows XP', 'internet explorer', '6'],
   ['OS X 10.9', 'ipad', '8.1'],
   ['OS X 10.6', 'ipad', '4'],
   ['OS X 10.10', 'safari', '8'],

@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.10.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.11.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -o ./lodash.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.10.0';
+  var VERSION = '3.11.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -248,22 +248,25 @@
   };
 
   /** Detect free variable `exports`. */
-  var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
 
   /** Detect free variable `module`. */
-  var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
+  var freeModule = (objectTypes[typeof module] && module && !module.nodeType) ? module : null;
 
   /** Detect free variable `global` from Node.js. */
-  var freeGlobal = freeExports && freeModule && typeof global == 'object' && global && global.Object && global;
+  var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
 
   /** Detect free variable `self`. */
-  var freeSelf = objectTypes[typeof self] && self && self.Object && self;
+  var freeSelf = checkGlobal(objectTypes[typeof self] && self);
 
   /** Detect free variable `window`. */
-  var freeWindow = objectTypes[typeof window] && window && window.Object && window;
+  var freeWindow = checkGlobal(objectTypes[typeof window] && window);
 
   /** Detect the popular CommonJS extension `module.exports`. */
-  var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+  var moduleExports = (freeModule && freeModule.exports === freeExports) ? freeExports : null;
+
+  /** Detect `this` as the global object. */
+  var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
 
   /**
    * Used as a reference to the global object.
@@ -271,7 +274,7 @@
    * The `this` value is used if it's the global object to avoid Greasemonkey's
    * restricted `window` object, otherwise the `window` object is used.
    */
-  var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
+  var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal;
 
   /*--------------------------------------------------------------------------*/
 
@@ -411,6 +414,17 @@
 
     while (index-- && chars.indexOf(string.charAt(index)) > -1) {}
     return index;
+  }
+
+  /**
+   * Checks if `value` is a global object.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+   */
+  function checkGlobal(value) {
+    return (objectTypes[typeof value] && value && value.Object) ? value : null;
   }
 
   /**
@@ -1074,7 +1088,7 @@
           takeCount = nativeMin(length, this.__takeCount__);
 
       if (!isArr || arrLength < LARGE_ARRAY_SIZE || (arrLength == length && takeCount == length)) {
-        return baseWrapperValue((isRight && isArr) ? array.reverse() : array, this.__actions__);
+        return baseWrapperValue(array, this.__actions__);
       }
       var result = [];
 
@@ -3873,7 +3887,7 @@
      * @returns {string} Returns the function name.
      */
     function getFuncName(func) {
-      var result = func.name,
+      var result = (func.name + ''),
           array = realNames[result],
           length = array ? array.length : 0;
 
@@ -4140,11 +4154,12 @@
      * @returns {boolean} Returns `true` if `func` has a lazy counterpart, else `false`.
      */
     function isLaziable(func) {
-      var funcName = getFuncName(func);
-      if (!(funcName in LazyWrapper.prototype)) {
+      var funcName = getFuncName(func),
+          other = lodash[funcName];
+
+      if (typeof other != 'function' || !(funcName in LazyWrapper.prototype)) {
         return false;
       }
-      var other = lodash[funcName];
       if (func === other) {
         return true;
       }
@@ -4879,7 +4894,7 @@
 
     /**
      * Flattens a nested array. If `isDeep` is `true` the array is recursively
-     * flattened, otherwise it is only flattened a single level.
+     * flattened, otherwise it's only flattened a single level.
      *
      * @static
      * @memberOf _
@@ -4926,7 +4941,7 @@
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
+     * for equality comparisons. If `fromIndex` is negative, it's used as the offset
      * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
      * performs a faster binary search.
      *
@@ -5290,7 +5305,7 @@
     /**
      * Uses a binary search to determine the lowest index at which `value` should
      * be inserted into `array` in order to maintain its sort order. If an iteratee
-     * function is provided it is invoked for `value` and each element of `array`
+     * function is provided it's invoked for `value` and each element of `array`
      * to compute their sort ranking. The iteratee is bound to `thisArg` and
      * invoked with one argument; (value).
      *
@@ -5564,7 +5579,7 @@
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons, in which only the first occurence of each element
      * is kept. Providing `true` for `isSorted` performs a faster search algorithm
-     * for sorted arrays. If an iteratee function is provided it is invoked for
+     * for sorted arrays. If an iteratee function is provided it's invoked for
      * each element in the array to generate the criterion by which uniqueness
      * is computed. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments: (value, index, array).
@@ -6077,7 +6092,7 @@
       var value = this.__wrapped__;
 
       var interceptor = function(value) {
-        return (wrapped && wrapped.__dir__ < 0) ? value : value.reverse();
+        return value.reverse();
       };
       if (value instanceof LazyWrapper) {
         var wrapped = value;
@@ -6521,7 +6536,7 @@
     /**
      * Checks if `value` is in `collection` using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
+     * for equality comparisons. If `fromIndex` is negative, it's used as the offset
      * from the end of `collection`.
      *
      * @static
@@ -6616,7 +6631,7 @@
     /**
      * Invokes the method at `path` of each element in `collection`, returning
      * an array of the results of each invoked method. Any additional arguments
-     * are provided to each invoked method. If `methodName` is a function it is
+     * are provided to each invoked method. If `methodName` is a function it's
      * invoked for, and `this` bound to, each element in `collection`.
      *
      * @static
@@ -7268,7 +7283,7 @@
 
     /**
      * The opposite of `_.before`; this method creates a function that invokes
-     * `func` once it is called `n` or more times.
+     * `func` once it's called `n` or more times.
      *
      * @static
      * @memberOf _
@@ -7333,7 +7348,7 @@
 
     /**
      * Creates a function that invokes `func`, with the `this` binding and arguments
-     * of the created function, while it is called less than `n` times. Subsequent
+     * of the created function, while it's called less than `n` times. Subsequent
      * calls to the created function return the result of the last `func` invocation.
      *
      * @static
@@ -7613,7 +7628,7 @@
      * @param {boolean} [options.leading=false] Specify invoking on the leading
      *  edge of the timeout.
      * @param {number} [options.maxWait] The maximum time `func` is allowed to be
-     *  delayed before it is invoked.
+     *  delayed before it's invoked.
      * @param {boolean} [options.trailing=true] Specify invoking on the trailing
      *  edge of the timeout.
      * @returns {Function} Returns the new debounced function.
@@ -7761,7 +7776,7 @@
 
     /**
      * Defers invoking the `func` until the current call stack has cleared. Any
-     * additional arguments are provided to `func` when it is invoked.
+     * additional arguments are provided to `func` when it's invoked.
      *
      * @static
      * @memberOf _
@@ -7782,7 +7797,7 @@
 
     /**
      * Invokes `func` after `wait` milliseconds. Any additional arguments are
-     * provided to `func` when it is invoked.
+     * provided to `func` when it's invoked.
      *
      * @static
      * @memberOf _
@@ -8115,7 +8130,7 @@
      * Creates a function that invokes `func` with the `this` binding of the
      * created function and arguments from `start` and beyond provided as an array.
      *
-     * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+     * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
      *
      * @static
      * @memberOf _
@@ -8166,7 +8181,7 @@
      * Creates a function that invokes `func` with the `this` binding of the created
      * function and an array of arguments much like [`Function#apply`](https://es5.github.io/#x15.3.4.3).
      *
-     * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator).
+     * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/Web/JavaScript/Reference/Operators/Spread_operator).
      *
      * @static
      * @memberOf _
@@ -8287,7 +8302,7 @@
 
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
-     * otherwise they are assigned by reference. If `customizer` is provided it is
+     * otherwise they are assigned by reference. If `customizer` is provided it's
      * invoked to produce the cloned values. If `customizer` returns `undefined`
      * cloning is handled by the method instead. The `customizer` is bound to
      * `thisArg` and invoked with two argument; (value [, index|key, object]).
@@ -8351,7 +8366,7 @@
     }
 
     /**
-     * Creates a deep clone of `value`. If `customizer` is provided it is invoked
+     * Creates a deep clone of `value`. If `customizer` is provided it's invoked
      * to produce the cloned values. If `customizer` returns `undefined` cloning
      * is handled by the method instead. The `customizer` is bound to `thisArg`
      * and invoked with two argument; (value [, index|key, object]).
@@ -8551,7 +8566,7 @@
     }
 
     /**
-     * Checks if `value` is empty. A value is considered empty unless it is an
+     * Checks if `value` is empty. A value is considered empty unless it's an
      * `arguments` object, array, string, or jQuery-like collection with a length
      * greater than `0` or an object with own enumerable properties.
      *
@@ -8590,7 +8605,7 @@
 
     /**
      * Performs a deep comparison between two values to determine if they are
-     * equivalent. If `customizer` is provided it is invoked to compare values.
+     * equivalent. If `customizer` is provided it's invoked to compare values.
      * If `customizer` returns `undefined` comparisons are handled by the method
      * instead. The `customizer` is bound to `thisArg` and invoked with three
      * arguments: (value, other [, index|key]).
@@ -8709,7 +8724,7 @@
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
       // in older versions of Chrome and Safari which return 'function' for regexes
-      // and Safari 8 equivalents which return 'object' for typed array constructors.
+      // and Safari 8 which returns 'object' for typed array constructors.
       return isObject(value) && objToString.call(value) == funcTag;
     }
 
@@ -8743,7 +8758,7 @@
     /**
      * Performs a deep comparison between `object` and `source` to determine if
      * `object` contains equivalent property values. If `customizer` is provided
-     * it is invoked to compare values. If `customizer` returns `undefined`
+     * it's invoked to compare values. If `customizer` returns `undefined`
      * comparisons are handled by the method instead. The `customizer` is bound
      * to `thisArg` and invoked with three arguments: (value, other, index|key).
      *
@@ -9125,7 +9140,7 @@
      * Recursively merges own enumerable properties of the source object(s), that
      * don't resolve to `undefined` into the destination object. Subsequent sources
      * overwrite property assignments of previous sources. If `customizer` is
-     * provided it is invoked to produce the merged values of the destination and
+     * provided it's invoked to produce the merged values of the destination and
      * source properties. If `customizer` returns `undefined` merging is handled
      * by the method instead. The `customizer` is bound to `thisArg` and invoked
      * with five arguments: (objectValue, sourceValue, key, object, source).
@@ -9174,7 +9189,7 @@
     /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
-     * If `customizer` is provided it is invoked to produce the assigned values.
+     * If `customizer` is provided it's invoked to produce the assigned values.
      * The `customizer` is bound to `thisArg` and invoked with five arguments:
      * (objectValue, sourceValue, key, object, source).
      *
@@ -9547,7 +9562,7 @@
      * // => 'default'
      */
     function get(object, path, defaultValue) {
-      var result = object == null ? undefined : baseGet(object, toPath(path), path + '');
+      var result = object == null ? undefined : baseGet(object, toPath(path), (path + ''));
       return result === undefined ? defaultValue : result;
     }
 
@@ -9862,7 +9877,7 @@
     /**
      * Creates an object composed of the picked `object` properties. Property
      * names may be specified as individual arguments or as arrays of property
-     * names. If `predicate` is provided it is invoked for each property of `object`
+     * names. If `predicate` is provided it's invoked for each property of `object`
      * picking the properties `predicate` returns truthy for. The predicate is
      * bound to `thisArg` and invoked with three arguments: (value, key, object).
      *
@@ -9896,7 +9911,7 @@
 
     /**
      * This method is like `_.get` except that if the resolved value is a function
-     * it is invoked with the `this` binding of its parent object and its result
+     * it's invoked with the `this` binding of its parent object and its result
      * is returned.
      *
      * @static
@@ -9937,7 +9952,7 @@
 
     /**
      * Sets the property value of `path` on `object`. If a portion of `path`
-     * does not exist it is created.
+     * does not exist it's created.
      *
      * @static
      * @memberOf _
@@ -10095,7 +10110,7 @@
 
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
-     * `end` is not specified it is set to `start` with `start` then set to `0`.
+     * `end` is not specified it's set to `start` with `start` then set to `0`.
      *
      * @static
      * @memberOf _
@@ -11059,7 +11074,7 @@
 
     /**
      * Attempts to invoke `func`, returning either the result or the caught error
-     * object. Any additional arguments are provided to `func` when it is invoked.
+     * object. Any additional arguments are provided to `func` when it's invoked.
      *
      * @static
      * @memberOf _
@@ -11457,13 +11472,13 @@
      */
     function propertyOf(object) {
       return function(path) {
-        return baseGet(object, toPath(path), path + '');
+        return baseGet(object, toPath(path), (path + ''));
       };
     }
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to, but not including, `end`. If `end` is not specified it is
+     * `start` up to, but not including, `end`. If `end` is not specified it's
      * set to `start` with `start` then set to `0`. If `end` is less than `start`
      * a zero-length range is created unless a negative `step` is specified.
      *
@@ -11656,7 +11671,7 @@
 
     /**
      * Gets the maximum value of `collection`. If `collection` is empty or falsey
-     * `-Infinity` is returned. If an iteratee function is provided it is invoked
+     * `-Infinity` is returned. If an iteratee function is provided it's invoked
      * for each value in `collection` to generate the criterion by which the value
      * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments: (value, index, collection).
@@ -11705,7 +11720,7 @@
 
     /**
      * Gets the minimum value of `collection`. If `collection` is empty or falsey
-     * `Infinity` is returned. If an iteratee function is provided it is invoked
+     * `Infinity` is returned. If an iteratee function is provided it's invoked
      * for each value in `collection` to generate the criterion by which the value
      * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
      * arguments: (value, index, collection).
@@ -12282,7 +12297,7 @@
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName];
       if (lodashFunc) {
-        var key = lodashFunc.name,
+        var key = (lodashFunc.name + ''),
             names = realNames[key] || (realNames[key] = []);
 
         names.push({ 'name': methodName, 'func': lodashFunc });
@@ -12319,14 +12334,13 @@
   // Export lodash.
   var _ = runInContext();
 
+  // Expose lodash on the free variable `window` or `self` when available. This
+  // prevents errors in cases where lodash is loaded by a script tag in the presence
+  // of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch for more details.
+  (freeWindow || freeSelf || {})._ = _;
+
   // Some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // Expose lodash to the global object when an AMD loader is present to avoid
-    // errors in cases where lodash is loaded by a script tag and not intended
-    // as an AMD module. See http://requirejs.org/docs/errors.html#mismatch for
-    // more details.
-    root._ = _;
-
     // Define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module.
     define(function() {

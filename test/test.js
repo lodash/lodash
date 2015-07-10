@@ -1033,30 +1033,32 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.assign');
+  QUnit.module('lodash.assign and lodash.extend');
 
-  (function() {
-    test('should assign properties of a source object to the destination object', 1, function() {
+  _.each(['assign', 'extend'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should assign properties of a source object to the destination object', 1, function() {
       deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
-    test('should accept multiple source objects', 2, function() {
+    test('`_.' + methodName + '` should accept multiple source objects', 2, function() {
       var expected = { 'a': 1, 'b': 2, 'c': 3 };
       deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }, { 'c': 3 }), expected);
       deepEqual(_.assign({ 'a': 1 }, { 'b': 2, 'c': 2 }, { 'c': 3 }), expected);
     });
 
-    test('should overwrite destination properties', 1, function() {
+    test('`_.' + methodName + '` should overwrite destination properties', 1, function() {
       var expected = { 'a': 3, 'b': 2, 'c': 1 };
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
-    test('should assign source properties with nullish values', 1, function() {
+    test('`_.' + methodName + '` should assign source properties with nullish values', 1, function() {
       var expected = { 'a': null, 'b': undefined, 'c': null };
       deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
-    test('should work with a `customizer` callback', 1, function() {
+    test('`_.' + methodName + '` should work with a `customizer` callback', 1, function() {
       var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
         return typeof a == 'undefined' ? b : a;
       });
@@ -1064,11 +1066,11 @@
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
 
-    test('should work with a `customizer` that returns `undefined`', 1, function() {
+    test('`_.' + methodName + '` should work with a `customizer` that returns `undefined`', 1, function() {
       var expected = { 'a': undefined };
       deepEqual(_.assign({}, expected, _.identity), expected);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -2829,7 +2831,7 @@
 
     asyncTest('subsequent "immediate" debounced calls return the last `func` result', 2, function() {
       if (!(isRhino && isModularize)) {
-        var debounced = _.debounce(_.identity, 32, true),
+        var debounced = _.debounce(_.identity, 32, { 'leading': true, 'trailing': false }),
             result = [debounced('x'), debounced('y')];
 
         deepEqual(result, ['x', 'x']);
@@ -3787,21 +3789,17 @@
 
   QUnit.module('strict mode checks');
 
-  _.each(['assign', 'bindAll', 'defaults'], function(methodName) {
-    var func = _[methodName];
+  _.each(['assign', 'extend', 'bindAll', 'defaults'], function(methodName) {
+    var func = _[methodName],
+        isBindAll = methodName == 'bindAll';
 
     test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', 1, function() {
       if (freeze) {
-        var object = { 'a': undefined, 'b': function() {} },
+        var object = freeze({ 'a': undefined, 'b': function() {} }),
             pass = !isStrict;
 
-        freeze(object);
         try {
-          if (methodName == 'bindAll') {
-            func(object);
-          } else {
-            func(object, { 'a': 1 });
-          }
+          func(object, isBindAll ? 'b' : { 'a': 1 });
         } catch(e) {
           pass = !pass;
         }
@@ -5092,8 +5090,9 @@
 
   QUnit.module('object assignments');
 
-  _.each(['assign', 'defaults', 'merge'], function(methodName) {
+  _.each(['assign', 'defaults', 'extend', 'merge'], function(methodName) {
     var func = _[methodName],
+        isAssign = methodName == 'assign',
         isDefaults = methodName == 'defaults';
 
     test('`_.' + methodName + '` should pass thru falsey `object` values', 1, function() {
@@ -5104,13 +5103,14 @@
       deepEqual(actual, falsey);
     });
 
-    test('`_.' + methodName + '` should assign own source properties', 1, function() {
+    test('`_.' + methodName + '` should assign own ' + (isAssign ? '' : 'and inherited ') + 'source properties', 1, function() {
       function Foo() {
         this.a = 1;
       }
       Foo.prototype.b = 2;
 
-      deepEqual(func({}, new Foo), { 'a': 1 });
+      var expected = isAssign ? { 'a': 1 } : { 'a': 1, 'b': 2 };
+      deepEqual(func({}, new Foo), expected);
     });
 
     test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
@@ -5189,7 +5189,7 @@
     });
   });
 
-  _.each(['assign', 'merge'], function(methodName) {
+  _.each(['assign', 'extend', 'merge'], function(methodName) {
     var func = _[methodName],
         isMerge = methodName == 'merge';
 
@@ -17476,7 +17476,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 211, function() {
+    test('should accept falsey arguments', 212, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

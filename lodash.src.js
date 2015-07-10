@@ -318,7 +318,7 @@
 
   /**
    * The base implementation of `_.findIndex` and `_.findLastIndex` without
-   * support for callback shorthands and `this` binding.
+   * support for callback shorthands.
    *
    * @private
    * @param {Array} array The array to search.
@@ -1777,8 +1777,8 @@
     }());
 
     /**
-     * The base implementation of `_.delay` and `_.defer` which accepts an index
-     * of where to slice the arguments to provide to `func`.
+     * The base implementation of `_.delay` and `_.defer` which accepts an array
+     * of `func` arguments.
      *
      * @private
      * @param {Function} func The function to delay.
@@ -1841,8 +1841,7 @@
     }
 
     /**
-     * The base implementation of `_.forEach` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.forEach` without support for callback shorthands.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1852,8 +1851,7 @@
     var baseEach = createBaseEach(baseForOwn);
 
     /**
-     * The base implementation of `_.forEachRight` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.forEachRight` without support for callback shorthands.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1863,8 +1861,7 @@
     var baseEachRight = createBaseEach(baseForOwnRight, true);
 
     /**
-     * The base implementation of `_.every` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.every` without support for callback shorthands.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1911,8 +1908,7 @@
     }
 
     /**
-     * The base implementation of `_.filter` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.filter` without support for callback shorthands.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -1931,8 +1927,8 @@
 
     /**
      * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`,
-     * without support for callback shorthands and `this` binding, which iterates
-     * over `collection` using the provided `eachFunc`.
+     * without support for callback shorthands, which iterates over `collection`
+     * using the provided `eachFunc`.
      *
      * @private
      * @param {Array|Object|string} collection The collection to search.
@@ -1953,8 +1949,7 @@
     }
 
     /**
-     * The base implementation of `_.flatten` with added support for restricting
-     * flattening and specifying the start index.
+     * The base implementation of `_.flatten` with support for restricting flattening.
      *
      * @private
      * @param {Array} array The array to flatten.
@@ -1987,8 +1982,7 @@
     }
 
     /**
-     * The base implementation of `_.iteratee` which supports specifying the
-     * number of arguments to provide to `func`.
+     * The base implementation of `_.iteratee`.
      *
      * @private
      * @param {*} [func=_.identity] The value to convert to an iteratee.
@@ -2037,8 +2031,7 @@
     var baseForRight = createBaseFor(true);
 
     /**
-     * The base implementation of `_.forIn` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.forIn` without support for callback shorthands.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -2050,8 +2043,7 @@
     }
 
     /**
-     * The base implementation of `_.forOwn` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.forOwn` without support for callback shorthands.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -2063,8 +2055,7 @@
     }
 
     /**
-     * The base implementation of `_.forOwnRight` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.forOwnRight` without support for callback shorthands.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -2100,8 +2091,7 @@
     }
 
     /**
-     * The base implementation of `get` without support for string paths
-     * and default values.
+     * The base implementation of `get` without support for string paths and default values.
      *
      * @private
      * @param {Object} object The object to query.
@@ -2127,8 +2117,8 @@
     }
 
     /**
-     * The base implementation of `_.isEqual` without support for `this` binding
-     * `customizer` functions.
+     * The base implementation of `_.isEqual` which supports partial comparisons
+     * and tracks traversed objects.
      *
      * @private
      * @param {*} value The value to compare.
@@ -2228,8 +2218,7 @@
     }
 
     /**
-     * The base implementation of `_.isMatch` without support for callback
-     * shorthands and `this` binding.
+     * The base implementation of `_.isMatch` without support for callback shorthands.
      *
      * @private
      * @param {Object} object The object to inspect.
@@ -2276,8 +2265,7 @@
     }
 
     /**
-     * The base implementation of `_.map` without support for callback shorthands
-     * and `this` binding.
+     * The base implementation of `_.map` without support for callback shorthands.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2462,8 +2450,8 @@
     }
 
     /**
-     * The base implementation of `_.random` without support for argument juggling
-     * and returning floating-point numbers.
+     * The base implementation of `_.random` without support for returning
+     * floating-point numbers.
      *
      * @private
      * @param {number} min The minimum possible value.
@@ -2476,8 +2464,8 @@
 
     /**
      * The base implementation of `_.reduce` and `_.reduceRight` without support
-     * for callback shorthands and `this` binding, which iterates over `collection`
-     * using the provided `eachFunc`.
+     * for callback shorthands, which iterates over `collection` using the provided
+     * `eachFunc`.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2541,8 +2529,7 @@
     }
 
     /**
-     * The base implementation of `_.some` without support for callback shorthands
-     * and `this` binding.
+     * The base implementation of `_.some` without support for callback shorthands.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2609,8 +2596,8 @@
     }
 
     /**
-     * The base implementation of `_.uniq` without support for callback shorthands
-     * and `this` binding.
+     * The base implementation of `_.uniq` and `_.uniqBy` without support for
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to inspect.
@@ -2683,7 +2670,7 @@
 
     /**
      * The base implementation of `_.dropRightWhile`, `_.dropWhile`, `_.takeRightWhile`,
-     * and `_.takeWhile` without support for callback shorthands and `this` binding.
+     * and `_.takeWhile` without support for callback shorthands.
      *
      * @private
      * @param {Array} array The array to query.

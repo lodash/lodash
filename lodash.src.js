@@ -1655,7 +1655,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseAssign(object, source) {
-      return source == null ? object : copyObject(source, keys(source), object);
+      return object && copyObject(source, keys(source), object);
     }
 
     /**
@@ -2039,7 +2039,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseForIn(object, iteratee) {
-      return baseFor(object, iteratee, keysIn);
+      return object == null ? object : baseFor(object, iteratee, keysIn);
     }
 
     /**
@@ -2051,7 +2051,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseForOwn(object, iteratee) {
-      return baseFor(object, iteratee, keys);
+      return object && baseFor(object, iteratee, keys);
     }
 
     /**
@@ -2063,7 +2063,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseForOwnRight(object, iteratee) {
-      return baseForRight(object, iteratee, keys);
+      return object && baseForRight(object, iteratee, keys);
     }
 
     /**
@@ -4128,15 +4128,17 @@
      * @returns {Array} Returns the array of property names.
      */
     function shimKeys(object) {
-      var props = keysIn(object),
+      var result = [];
+      if (!object) {
+        return result;
+      }
+      var index = -1,
+          props = keysIn(object),
           propsLength = props.length,
           length = propsLength && object.length;
 
       var allowIndexes = !!length && isLength(length) &&
         (isArray(object) || isArguments(object) || isString(object));
-
-      var index = -1,
-          result = [];
 
       while (++index < propsLength) {
         var key = props[index];
@@ -6509,8 +6511,10 @@
      * // => 7
      */
     function size(collection) {
-      var length = collection ? getLength(collection) : 0;
-      return isLength(length) ? length : keys(collection).length;
+      if (collection == null) {
+        return 0;
+      }
+      return isArrayLike(collection) ? collection.length : keys(collection).length;
     }
 
     /**
@@ -8860,7 +8864,7 @@
      * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
      */
     function forIn(object, iteratee) {
-      return baseFor(object, toFunction(iteratee), keysIn);
+      return object == null ? object : baseFor(object, toFunction(iteratee), keysIn);
     }
 
     /**
@@ -8888,7 +8892,7 @@
      * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
      */
     function forInRight(object, iteratee) {
-      return baseForRight(object, toFunction(iteratee), keysIn);
+      return object == null ? object : baseForRight(object, toFunction(iteratee), keysIn);
     }
 
     /**
@@ -8918,7 +8922,7 @@
      * // => logs 'a' then 'b' (iteration order is not guaranteed)
      */
     function forOwn(object, iteratee) {
-      return baseForOwn(object, toFunction(iteratee));
+      return object && baseForOwn(object, toFunction(iteratee));
     }
 
     /**
@@ -8946,7 +8950,7 @@
      * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
      */
     function forOwnRight(object, iteratee) {
-      return baseForOwnRight(object, toFunction(iteratee));
+      return object && baseForOwnRight(object, toFunction(iteratee));
     }
 
     /**
@@ -8964,7 +8968,7 @@
      * // => ['after', 'ary', 'assign', ...]
      */
     function functions(object) {
-      return baseFunctions(object, keysIn(object));
+      return object == null ? [] : baseFunctions(object, keysIn(object));
     }
 
     /**
@@ -9114,7 +9118,10 @@
      * // => ['0', '1']
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      var Ctor = object == null ? undefined : object.constructor;
+      if (!object) {
+        return [];
+      }
+      var Ctor = object.constructor;
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
           (typeof object == 'function' ? lodash.support.enumPrototypes : isArrayLike(object))) {
         return shimKeys(object);
@@ -9529,7 +9536,7 @@
      * // => ['h', 'i']
      */
     function values(object) {
-      return baseValues(object, keys(object));
+      return object ? baseValues(object, keys(object)) : [];
     }
 
     /**
@@ -9556,7 +9563,7 @@
      * // => [1, 2, 3] (iteration order is not guaranteed)
      */
     function valuesIn(object) {
-      return baseValues(object, keysIn(object));
+      return object == null ? baseValues(object, keysIn(object)) : [];
     }
 
     /*------------------------------------------------------------------------*/

@@ -2841,48 +2841,40 @@
       }
     });
 
-    asyncTest('should support a `leading` option', 7, function() {
+    asyncTest('should support a `leading` option', 5, function() {
       if (!(isRhino && isModularize)) {
-        var withLeading,
-            callCounts = [0, 0, 0];
+        var callCounts = [0, 0];
 
-        _.each([true, { 'leading': true }], function(options, index) {
-          var debounced = _.debounce(function(value) {
-            callCounts[index]++;
-            return value;
-          }, 32, options);
+        var withLeading = _.debounce(function(value) {
+          callCounts[0]++;
+          return value;
+        }, 32, { 'leading': true });
 
-          if (index == 1) {
-            withLeading = debounced;
-          }
-          strictEqual(debounced('x'), 'x');
-        });
+        strictEqual(withLeading('x'), 'x');
 
-        _.each([false, { 'leading': false }], function(options) {
-          var withoutLeading = _.debounce(_.identity, 32, options);
-          strictEqual(withoutLeading('x'), undefined);
-        });
+        var withoutLeading = _.debounce(_.identity, 32, { 'leading': false });
+        strictEqual(withoutLeading('x'), undefined);
 
         var withLeadingAndTrailing = _.debounce(function() {
-          callCounts[2]++;
+          callCounts[1]++;
         }, 32, { 'leading': true });
 
         withLeadingAndTrailing();
         withLeadingAndTrailing();
 
-        strictEqual(callCounts[2], 1);
+        strictEqual(callCounts[1], 1);
 
         setTimeout(function() {
-          deepEqual(callCounts, [1, 1, 2]);
+          deepEqual(callCounts, [1, 2]);
 
           withLeading('x');
-          strictEqual(callCounts[1], 2);
+          strictEqual(callCounts[0], 2);
 
           QUnit.start();
         }, 64);
       }
       else {
-        skipTest(7);
+        skipTest(5);
         QUnit.start();
       }
     });
@@ -15225,26 +15217,17 @@
       }
     });
 
-    test('should support a `leading` option', 4, function() {
-      _.each([true, { 'leading': true }], function(options) {
-        if (!(isRhino && isModularize)) {
-          var withLeading = _.throttle(_.identity, 32, options);
-          strictEqual(withLeading('a'), 'a');
-        }
-        else {
-          skipTest();
-        }
-      });
+    test('should support a `leading` option', 2, function() {
+      if (!(isRhino && isModularize)) {
+        var withLeading = _.throttle(_.identity, 32, { 'leading': true });
+        strictEqual(withLeading('a'), 'a');
 
-      _.each([false, { 'leading': false }], function(options) {
-        if (!(isRhino && isModularize)) {
-          var withoutLeading = _.throttle(_.identity, 32, options);
-          strictEqual(withoutLeading('a'), undefined);
-        }
-        else {
-          skipTest();
-        }
-      });
+        var withoutLeading = _.throttle(_.identity, 32, { 'leading': false });
+        strictEqual(withoutLeading('a'), undefined);
+      }
+      else {
+        skipTest(2);
+      }
     });
 
     asyncTest('should support a `trailing` option', 6, function() {

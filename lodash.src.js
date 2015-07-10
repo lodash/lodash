@@ -7093,6 +7093,7 @@
           timeoutId,
           trailingCall,
           lastCalled = 0,
+          leading = false,
           maxWait = false,
           trailing = true;
 
@@ -7100,10 +7101,7 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       wait = wait < 0 ? 0 : (+wait || 0);
-      if (options === true) {
-        var leading = true;
-        trailing = false;
-      } else if (isObject(options)) {
+      if (isObject(options)) {
         leading = !!options.leading;
         maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
         trailing = 'trailing' in options ? !!options.trailing : trailing;
@@ -7686,9 +7684,7 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      if (options === false) {
-        leading = false;
-      } else if (isObject(options)) {
+      if (isObject(options)) {
         leading = 'leading' in options ? !!options.leading : leading;
         trailing = 'trailing' in options ? !!options.trailing : trailing;
       }

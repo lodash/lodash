@@ -10804,52 +10804,43 @@
      * // => ['e']
      */
     function mixin(object, source, options) {
-      if (options == null) {
-        var isObj = isObject(source),
-            props = isObj ? keys(source) : undefined,
-            methodNames = (props && props.length) ? baseFunctions(source, props) : undefined;
+      var props = keys(source),
+          methodNames = baseFunctions(source, props);
 
-        if (!(methodNames ? methodNames.length : isObj)) {
-          methodNames = false;
-          options = source;
-          source = object;
-          object = this;
-        }
-      }
-      if (!methodNames) {
+      if (options == null &&
+          !(isObject(source) && (methodNames.length || !props.length))) {
+        options = source;
+        source = object;
+        object = this;
         methodNames = baseFunctions(source, keys(source));
       }
-      var chain = true,
+      var chain = (isObject(options) && 'chain' in options) ? options.chain : true,
           index = -1,
           isFunc = isFunction(object),
           length = methodNames.length;
 
-      if (options === false) {
-        chain = false;
-      } else if (isObject(options) && 'chain' in options) {
-        chain = options.chain;
-      }
       while (++index < length) {
         var methodName = methodNames[index],
             func = source[methodName];
 
-        object[methodName] = func;
-        if (isFunc) {
-          object.prototype[methodName] = (function(func) {
-            return function() {
-              var chainAll = this.__chain__;
-              if (chain || chainAll) {
-                var result = object(this.__wrapped__),
-                    actions = result.__actions__ = arrayCopy(this.__actions__);
+        (function(func) {
+          object[methodName] = func;
+          if (!isFunc) {
+            return;
+          }
+          object.prototype[methodName] = function() {
+            var chainAll = this.__chain__;
+            if (chain || chainAll) {
+              var result = object(this.__wrapped__),
+                  actions = result.__actions__ = copyArray(this.__actions__);
 
-                actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
-                result.__chain__ = chainAll;
-                return result;
-              }
-              return func.apply(object, arrayPush([this.value()], arguments));
-            };
-          }(func));
-        }
+              actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
+              result.__chain__ = chainAll;
+              return result;
+            }
+            return func.apply(object, arrayPush([this.value()], arguments));
+          };
+        }(func));
       }
       return object;
     }
@@ -11547,7 +11538,7 @@
         }
       });
       return source;
-    }()), false);
+    }()), { 'chain': false });
 
     /*------------------------------------------------------------------------*/
 

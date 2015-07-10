@@ -4021,8 +4021,8 @@
     }
 
     /**
-     * A specialized version of `_.pick` which picks `object` properties specified
-     * by `props`.
+     * A specialized version of `_.pick` which picks `object` properties
+     * specified by `props`.
      *
      * @private
      * @param {Object} object The source object.
@@ -4046,8 +4046,8 @@
     }
 
     /**
-     * A specialized version of `_.pick` which picks `object` properties `predicate`
-     * returns truthy for.
+     * A specialized version of `_.pick` which picks `object` properties
+     * `predicate` returns truthy for.
      *
      * @private
      * @param {Object} object The source object.

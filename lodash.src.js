@@ -5302,7 +5302,7 @@
       if (!length) {
         return [];
       }
-      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() == baseIndexOf)
+      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() === baseIndexOf)
         ? sortedUniq(array)
         : baseUniq(array);
     }

@@ -6844,7 +6844,7 @@
      * @memberOf _
      * @category Function
      * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {...(string|string[])} [methodNames] The object method names to bind,
+     * @param {...(string|string[])} methodNames The object method names to bind,
      *  specified as individual method names or arrays of method names.
      * @returns {Object} Returns `object`.
      * @example
@@ -6856,12 +6856,12 @@
      *   }
      * };
      *
-     * _.bindAll(view);
+     * _.bindAll(view, 'onClick');
      * jQuery('#docs').on('click', view.onClick);
      * // => logs 'clicked docs' when the element is clicked
      */
     var bindAll = restParam(function(object, methodNames) {
-      methodNames = methodNames.length ? baseFlatten(methodNames) : functions(object);
+      methodNames = baseFlatten(methodNames);
 
       var index = -1,
           length = methodNames.length;

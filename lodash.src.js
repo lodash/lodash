@@ -5437,9 +5437,7 @@
      * // => [3]
      */
     var without = restParam(function(array, values) {
-      return isArrayLike(array)
-        ? baseDifference(array, values)
-        : [];
+      return isArrayLike(array) ? baseDifference(array, values) : [];
     });
 
     /**

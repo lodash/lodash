@@ -1646,68 +1646,8 @@
     }
 
     /**
-     * Used by `_.defaults` to customize its `_.assign` use.
-     *
-     * @private
-     * @param {*} objectValue The destination object property value.
-     * @param {*} sourceValue The source object property value.
-     * @returns {*} Returns the value to assign to the destination object.
-     */
-    function assignDefaults(objectValue, sourceValue) {
-      return objectValue === undefined ? sourceValue : objectValue;
-    }
-
-    /**
-     * Used by `_.template` to customize its `_.assign` use.
-     *
-     * **Note:** This function is like `assignDefaults` except that it ignores
-     * inherited property values when checking if a property is `undefined`.
-     *
-     * @private
-     * @param {*} objectValue The destination object property value.
-     * @param {*} sourceValue The source object property value.
-     * @param {string} key The key associated with the object and source values.
-     * @param {Object} object The destination object.
-     * @returns {*} Returns the value to assign to the destination object.
-     */
-    function assignOwnDefaults(objectValue, sourceValue, key, object) {
-      return (objectValue === undefined || !hasOwnProperty.call(object, key))
-        ? sourceValue
-        : objectValue;
-    }
-
-    /**
-     * A specialized version of `_.assign` for customizing assigned values without
-     * support for argument juggling, multiple sources, and `this` binding `customizer`
-     * functions.
-     *
-     * @private
-     * @param {Object} object The destination object.
-     * @param {Object} source The source object.
-     * @param {Function} customizer The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     */
-    function assignWith(object, source, customizer) {
-      var index = -1,
-          props = keys(source),
-          length = props.length;
-
-      while (++index < length) {
-        var key = props[index],
-            value = object[key],
-            result = customizer(value, source[key], key, object, source);
-
-        if ((result === result ? (result !== value) : (value === value)) ||
-            (value === undefined && !(key in object))) {
-          object[key] = result;
-        }
-      }
-      return object;
-    }
-
-    /**
-     * The base implementation of `_.assign` without support for argument juggling,
-     * multiple sources, and `customizer` functions.
+     * The base implementation of `_.assign` without support for multiple sources
+     * and `customizer` functions.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1715,9 +1655,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseAssign(object, source) {
-      return source == null
-        ? object
-        : baseCopy(source, keys(source), object);
+      return source == null ? object : copyObject(source, keys(source), object);
     }
 
     /**
@@ -3656,6 +3594,18 @@
         }
       }
       return true;
+    }
+
+    /**
+     * Used by `_.defaults` to customize its `_.assign` use.
+     *
+     * @private
+     * @param {*} objectValue The destination object property value.
+     * @param {*} sourceValue The source object property value.
+     * @returns {*} Returns the value to assign to the destination object.
+     */
+    function extendDefaults(objectValue, sourceValue) {
+      return objectValue === undefined ? sourceValue : objectValue;
     }
 
     /**
@@ -8642,7 +8592,7 @@
         return object;
       }
       var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-          props = isSrcArr ? undefined : keys(source);
+          props = isSrcArr ? undefined : keysIn(source);
 
       arrayEach(props || source, function(srcValue, key) {
         if (props) {
@@ -8701,9 +8651,10 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var assign = createAssigner(function(object, source, customizer) {
+      var props = keys(source);
       return customizer
-        ? assignWith(object, source, customizer)
-        : baseAssign(object, source);
+        ? copyObjectWith(source, props, customizer, object)
+        : copyObject(source, props, object)
     });
 
     /**
@@ -8771,8 +8722,8 @@
       if (object == null) {
         return object;
       }
-      args.push(assignDefaults);
-      return assign.apply(undefined, args);
+      args.push(extendDefaults);
+      return extend.apply(undefined, args);
     });
 
     /**
@@ -8800,6 +8751,29 @@
       }
       args.push(mergeDefaults);
       return merge.apply(undefined, args);
+    });
+
+    /**
+     * This method is like `_.assign` except that it iterates over own and
+     * inherited source properties.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} [sources] The source objects.
+     * @param {Function} [customizer] The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * _.extend({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
+     * // => { 'user': 'fred', 'age': 40 }
+     */
+    var extend = createAssigner(function(object, source, customizer) {
+      var props = keysIn(source);
+      return customizer
+        ? copyObjectWith(source, props, customizer, object)
+        : copyObject(source, props, object)
     });
 
     /**
@@ -10238,9 +10212,9 @@
         options = otherOptions = undefined;
       }
       string = baseToString(string);
-      options = assignWith(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
+      options = defaults({}, otherOptions || options, settings);
 
-      var imports = assignWith(baseAssign({}, options.imports), settings.imports, assignOwnDefaults),
+      var imports = defaults({}, options.imports, settings.imports),
           importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
 
@@ -11381,6 +11355,7 @@
     lodash.dropRight = dropRight;
     lodash.dropRightWhile = dropRightWhile;
     lodash.dropWhile = dropWhile;
+    lodash.extend = extend;
     lodash.fill = fill;
     lodash.filter = filter;
     lodash.flatten = flatten;

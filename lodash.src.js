@@ -473,7 +473,7 @@
           return result;
         }
         var order = orders[index];
-        return result * ((order === 'asc' || order === true) ? 1 : -1);
+        return result * (order === 'asc' ? 1 : -1);
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -2647,7 +2647,7 @@
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
-     * @param {boolean[]|string[]} orders The sort orders of `iteratees`.
+     * @param {string[]} orders The sort orders of `iteratees`.
      * @returns {Array} Returns the new sorted array.
      */
     function baseSortByOrder(collection, iteratees, orders) {
@@ -6679,7 +6679,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {Function[]|Object[]|string[]} [iteratees=[_.identity]] The iteratees to sort by.
-     * @param {boolean[]|string[]} [orders] The sort orders of `iteratees`.
+     * @param {string[]} [orders] The sort orders of `iteratees`.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.
      * @returns {Array} Returns the new sorted array.
      * @example

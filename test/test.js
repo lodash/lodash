@@ -10943,16 +10943,17 @@
       function Foo() {}
       Foo.prototype.a = _.noop;
 
-      deepEqual(_.mixin({}, new Foo), {});
+      var object = {};
+      strictEqual(_.mixin(object, new Foo), object);
     });
 
-    test('should accept an `options` argument', 16, function() {
+    test('should accept an `options` argument', 8, function() {
       function message(func, chain) {
         return (func === _ ? 'lodash' : 'provided') + ' function should ' + (chain ? '' : 'not ') + 'chain';
       }
 
       _.each([_, Wrapper], function(func) {
-        _.each([false, true, { 'chain': false }, { 'chain': true }], function(options) {
+        _.each([{ 'chain': false }, { 'chain': true }], function(options) {
           if (!isNpm) {
             if (func === _) {
               _.mixin(source, options);
@@ -10962,7 +10963,7 @@
             var wrapped = func(array),
                 actual = wrapped.a();
 
-            if (options === true || (options && options.chain)) {
+            if (options.chain) {
               strictEqual(actual.value(), 'a', message(func, true));
               ok(actual instanceof func, message(func, true));
             } else {

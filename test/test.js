@@ -1503,37 +1503,22 @@
   (function() {
     var args = arguments;
 
-    test('should bind all methods of `object`', 1, function() {
-      function Foo() {
-        this._a = 1;
-        this._b = 2;
-        this.a = function() { return this._a; };
-      }
-      Foo.prototype.b = function() { return this._b; };
-
-      var object = new Foo;
-      _.bindAll(object);
-
-      var actual = _.map(_.functions(object).sort(), function(methodName) {
-        return object[methodName].call({});
-      });
-
-      deepEqual(actual, [1, 2]);
-    });
+    var source = {
+      '_a': 1,
+      '_b': 2,
+      '_c': 3,
+      '_d': 4,
+      'a': function() { return this._a; },
+      'b': function() { return this._b; },
+      'c': function() { return this._c; },
+      'd': function() { return this._d; }
+    };
 
     test('should accept individual method names', 1, function() {
-      var object = {
-        '_a': 1,
-        '_b': 2,
-        '_c': 3,
-        'a': function() { return this._a; },
-        'b': function() { return this._b; },
-        'c': function() { return this._c; }
-      };
-
+      var object = _.clone(source);
       _.bindAll(object, 'a', 'b');
 
-      var actual = _.map(_.functions(object).sort(), function(methodName) {
+      var actual = _.map(['a', 'b', 'c'], function(methodName) {
         return object[methodName].call({});
       });
 
@@ -1541,20 +1526,10 @@
     });
 
     test('should accept arrays of method names', 1, function() {
-      var object = {
-        '_a': 1,
-        '_b': 2,
-        '_c': 3,
-        '_d': 4,
-        'a': function() { return this._a; },
-        'b': function() { return this._b; },
-        'c': function() { return this._c; },
-        'd': function() { return this._d; }
-      };
-
+      var object = _.clone(source);
       _.bindAll(object, ['a', 'b'], ['c']);
 
-      var actual = _.map(_.functions(object).sort(), function(methodName) {
+      var actual = _.map(['a', 'b', 'c', 'd'], function(methodName) {
         return object[methodName].call({});
       });
 
@@ -1568,14 +1543,10 @@
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
-      var object = {
-        '_a': 1,
-        'a': function() { return this._a; }
-      };
-
+      var object = _.clone(source);
       _.bindAll(object, args);
 
-      var actual = _.map(_.functions(object).sort(), function(methodName) {
+      var actual = _.map(args, function(methodName) {
         return object[methodName].call({});
       });
 

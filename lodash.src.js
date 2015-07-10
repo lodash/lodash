@@ -2989,6 +2989,7 @@
           customizer = length < 3 ? undefined : customizer;
           length = 1;
         }
+        object = toObject(object);
         while (++index < length) {
           var source = sources[index];
           if (source) {
@@ -4017,7 +4018,12 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function mergeDefaults(objectValue, sourceValue) {
-      return objectValue === undefined ? sourceValue : merge(objectValue, sourceValue, mergeDefaults);
+      if (objectValue === undefined) {
+        return sourceValue;
+      }
+      return isObject(objectValue)
+        ? merge(objectValue, sourceValue, mergeDefaults)
+        : objectValue;
     }
 
     /**
@@ -8575,9 +8581,6 @@
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
      */
     var merge = createAssigner(function baseMerge(object, source, customizer, stackA, stackB) {
-      if (!isObject(object)) {
-        return object;
-      }
       var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
           props = isSrcArr ? undefined : keysIn(source);
 
@@ -8639,9 +8642,11 @@
      */
     var assign = createAssigner(function(object, source, customizer) {
       var props = keys(source);
-      return customizer
-        ? copyObjectWith(source, props, customizer, object)
-        : copyObject(source, props, object)
+      if (customizer) {
+        copyObjectWith(source, props, customizer, object);
+      } else {
+        copyObject(source, props, object);
+      }
     });
 
     /**
@@ -8705,11 +8710,7 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var defaults = restParam(function(args) {
-      var object = args[0];
-      if (object == null) {
-        return object;
-      }
-      args.push(extendDefaults);
+      args.push(undefined, extendDefaults);
       return extend.apply(undefined, args);
     });
 
@@ -8732,11 +8733,7 @@
      *
      */
     var defaultsDeep = restParam(function(args) {
-      var object = args[0];
-      if (object == null) {
-        return object;
-      }
-      args.push(mergeDefaults);
+      args.push(undefined, mergeDefaults);
       return merge.apply(undefined, args);
     });
 
@@ -8758,9 +8755,11 @@
      */
     var extend = createAssigner(function(object, source, customizer) {
       var props = keysIn(source);
-      return customizer
-        ? copyObjectWith(source, props, customizer, object)
-        : copyObject(source, props, object)
+      if (customizer) {
+        copyObjectWith(source, props, customizer, object);
+      } else {
+        copyObject(source, props, object);
+      }
     });
 
     /**

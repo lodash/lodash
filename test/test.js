@@ -5058,12 +5058,15 @@
         isAssign = methodName == 'assign',
         isDefaults = methodName == 'defaults';
 
-    test('`_.' + methodName + '` should pass thru falsey `object` values', 1, function() {
+    test('`_.' + methodName + '` should coerce primitives to objects', 1, function() {
+      var expected = _.map(falsey, _.constant(true));
+
       var actual = _.map(falsey, function(object, index) {
-        return index ? func(object) : func();
+        var result = index ? func(object) : func();
+        return _.isEqual(result, Object(object));
       });
 
-      deepEqual(actual, falsey);
+      deepEqual(actual, expected);
     });
 
     test('`_.' + methodName + '` should assign own ' + (isAssign ? '' : 'and inherited ') + 'source properties', 1, function() {
@@ -5122,7 +5125,7 @@
 
       var actual = _.map([null, undefined], function(value) {
         try {
-          return _.isEqual(func(value, { 'a': 1 }), value);
+          return _.isEqual(func(value, { 'a': 1 }), {});
         } catch(e) {
           return false;
         }
@@ -11667,7 +11670,7 @@
           expected = { 'a': { 'b': 1, 'c': 3 } };
 
       var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
-        return _.merge(value, other, deep);
+        return _.isObject(value) ? _.merge(value, other, deep) : value;
       });
 
       deepEqual(defaultsDeep(object, source), expected);

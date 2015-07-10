@@ -3010,11 +3010,14 @@
      */
     function createBaseEach(eachFunc, fromRight) {
       return function(collection, iteratee) {
-        var length = collection ? getLength(collection) : 0;
-        if (!isLength(length)) {
+        if (collection == null) {
+          return collection;
+        }
+        if (!isArrayLike(collection)) {
           return eachFunc(collection, iteratee);
         }
-        var index = fromRight ? length : -1,
+        var length = collection.length,
+            index = fromRight ? length : -1,
             iterable = toObject(collection);
 
         while ((fromRight ? index-- : ++index < length)) {
@@ -3833,7 +3836,7 @@
      * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
      */
     function isArrayLike(value) {
-      return value != null && isLength(getLength(value));
+      return value != null && typeof value != 'function' && isLength(getLength(value));
     }
 
     /**
@@ -6157,11 +6160,8 @@
      * // => true
      */
     function includes(collection, target, fromIndex, guard) {
-      var length = collection ? getLength(collection) : 0;
-      if (!isLength(length)) {
-        collection = values(collection);
-        length = collection.length;
-      }
+      collection = isArrayLike(collection) ? collection : values(collection);
+      var length = collection.length;
       if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
         fromIndex = 0;
       } else {
@@ -8492,11 +8492,10 @@
      * // => [2, 3]
      */
     function toArray(value) {
-      var length = value ? getLength(value) : 0;
-      if (!isLength(length)) {
+      if (!isArrayLike(value)) {
         return values(value);
       }
-      if (!length) {
+      if (!value.length) {
         return [];
       }
       return (lodash.support.unindexedChars && isString(value))

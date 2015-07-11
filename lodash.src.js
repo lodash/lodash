@@ -9567,6 +9567,8 @@
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
      * `end` is not specified it's set to `start` with `start` then set to `0`.
+     * If `start` is greater than `end` the params are swapped to support
+     * negative ranges.
      *
      * @static
      * @memberOf _
@@ -9594,6 +9596,9 @@
      *
      * _.inRange(5.2, 4);
      * // => false
+     *
+     * _.inRange(-3, -2, -6);
+     * // => true
      */
     function inRange(value, start, end) {
       start = +start || 0;

@@ -4,15 +4,14 @@
 root = true
 
 [*]
-end_of_line = lf
 charset = utf-8
+end_of_line = lf
+indent_size = 2
+indent_style = space
 trim_trailing_whitespace = true
 
 [**.{js,json,md}]
-indent_style = space
-indent_size = 2
 insert_final_newline = true
 
 [**.html]
-indent_style = tab
 insert_final_newline = false

@@ -429,7 +429,7 @@
    * @returns {null|Object} Returns `value` if it's a global object, else `null`.
    */
   function checkGlobal(value) {
-    return (objectTypes[typeof value] && value && value.Object) ? value : null;
+    return (value && value.Object) ? value : null;
   }
 
   /**

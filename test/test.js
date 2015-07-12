@@ -4642,9 +4642,9 @@
       'mapValues',
       'maxBy',
       'minBy',
-      'omit',
+      'omitBy',
       'partition',
-      'pick',
+      'pickBy',
       'reject',
       'some'
     ];
@@ -4678,8 +4678,8 @@
     var forInMethods = [
       'forIn',
       'forInRight',
-      'omit',
-      'pick'
+      'omitBy',
+      'pickBy'
     ];
 
     var iterationMethods = [
@@ -4701,8 +4701,8 @@
       'forOwnRight',
       'mapKeys',
       'mapValues',
-      'omit',
-      'pick'
+      'omitBy',
+      'pickBy'
     ];
 
     var rightMethods = [
@@ -4742,7 +4742,7 @@
           isFind = /^find/.test(methodName),
           isSome = methodName == 'some';
 
-      test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
+      test('`_.' + methodName + '` should provide the correct iteratee arguments', 1, function() {
         if (func) {
           var args,
               expected = [1, 0, array];
@@ -11211,39 +11211,11 @@
 
   (function() {
     var args = arguments,
-        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-        expected = { 'b': 2, 'd': 4 };
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
 
-    test('should create an object with omitted properties', 2, function() {
-      deepEqual(_.omit(object, 'a'), { 'b': 2, 'c': 3, 'd': 4 });
-      deepEqual(_.omit(object, 'a', 'c'), expected);
-    });
-
-    test('should flatten `props`', 1, function() {
+    test('should flatten `props`', 2, function() {
+      deepEqual(_.omit(object, 'a', 'c'), { 'b': 2, 'd': 4 });
       deepEqual(_.omit(object, ['a', 'd'], 'c'), { 'b': 2 });
-    });
-
-    test('should iterate over inherited properties', 1, function() {
-      function Foo() {}
-      Foo.prototype = object;
-
-      deepEqual(_.omit(new Foo, 'a', 'c'), expected);
-    });
-
-    test('should return an empty object when `object` is nullish', 2, function() {
-      objectProto.a = 1;
-      _.each([null, undefined], function(value) {
-        deepEqual(_.omit(value, 'valueOf'), {});
-      });
-      delete objectProto.a;
-    });
-
-    test('should work with `arguments` objects as secondary arguments', 1, function() {
-      deepEqual(_.omit(object, args), expected);
-    });
-
-    test('should work with an array `object` argument', 1, function() {
-      deepEqual(_.omit([1, 2, 3], '0', '2'), { '1': 2 });
     });
 
     test('should work with a primitive `object` argument', 1, function() {
@@ -11256,34 +11228,71 @@
       delete stringProto.b;
     });
 
-    test('should work with a predicate argument', 1, function() {
-      var actual = _.omit(object, function(num) {
-        return num != 2 && num != 4;
+    test('should return an empty object when `object` is nullish', 2, function() {
+      objectProto.a = 1;
+      _.each([null, undefined], function(value) {
+        deepEqual(_.omit(value, 'valueOf'), {});
       });
-
-      deepEqual(actual, expected);
+      delete objectProto.a;
     });
 
-    test('should provide the correct predicate arguments', 1, function() {
-      var args,
-          object = { 'a': 1, 'b': 2 },
-          lastKey = _.keys(object).pop();
-
-      var expected = lastKey == 'b'
-        ? [1, 'a', object]
-        : [2, 'b', object];
-
-      _.omit(object, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, expected);
+    test('should work with `arguments` objects as secondary arguments', 1, function() {
+      deepEqual(_.omit(object, args), { 'b': 2, 'd': 4 });
     });
 
     test('should coerce property names to strings', 1, function() {
       deepEqual(_.omit({ '0': 'a' }, 0), {});
     });
   }('a', 'c'));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.omitBy');
+
+  (function() {
+    test('should work with a predicate argument', 1, function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
+
+      var actual = _.omitBy(object, function(num) {
+        return num != 2 && num != 4;
+      });
+
+      deepEqual(actual, { 'b': 2, 'd': 4 });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('omit methods');
+
+  _.each(['omit', 'omitBy'], function(methodName) {
+    var expected = { 'b': 2, 'd': 4 },
+        func = _[methodName],
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
+
+    var prop = methodName == 'omit' ? _.identity : function(props) {
+      props = typeof props == 'string' ? [props] : props;
+      return function(value, key) {
+        return _.includes(props, key);
+      };
+    };
+
+    test('`_.' + methodName + '` should create an object with omitted properties', 2, function() {
+      deepEqual(func(object, prop('a')), { 'b': 2, 'c': 3, 'd': 4 });
+      deepEqual(func(object, prop(['a', 'c'])), expected);
+    });
+
+    test('`_.' + methodName + '` should iterate over inherited properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = object;
+
+      deepEqual(func(new Foo, prop(['a', 'c'])), expected);
+    });
+
+    test('`_.' + methodName + '` should work with an array `object` argument', 1, function() {
+      deepEqual(func([1, 2, 3], prop(['0', '2'])), { '1': 2 });
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -11926,24 +11935,17 @@
 
   (function() {
     var args = arguments,
-        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-        expected = { 'a': 1, 'c': 3 };
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
 
-    test('should create an object of picked properties', 2, function() {
-      deepEqual(_.pick(object, 'a'), { 'a': 1 });
-      deepEqual(_.pick(object, 'a', 'c'), expected);
-    });
-
-    test('should flatten `props`', 1, function() {
+    test('should flatten `props`', 2, function() {
+      deepEqual(_.pick(object, 'a', 'c'), { 'a': 1, 'c': 3 });
       deepEqual(_.pick(object, ['a', 'd'], 'c'), { 'a': 1, 'c': 3, 'd': 4 });
     });
 
-    test('should iterate over inherited properties', 1, function() {
-      function Foo() {}
-      Foo.prototype = object;
-
-      deepEqual(_.pick(new Foo, 'a', 'c'), expected);
+    test('should work with a primitive `object` argument', 1, function() {
+      deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
     });
+
 
     test('should return an empty object when `object` is nullish', 2, function() {
       _.each([null, undefined], function(value) {
@@ -11952,45 +11954,62 @@
     });
 
     test('should work with `arguments` objects as secondary arguments', 1, function() {
-      deepEqual(_.pick(object, args), expected);
-    });
-
-    test('should work with an array `object` argument', 1, function() {
-      deepEqual(_.pick([1, 2, 3], '1'), { '1': 2 });
-    });
-
-    test('should work with a primitive `object` argument', 1, function() {
-      deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
-    });
-
-    test('should work with a predicate argument', 1, function() {
-      var actual = _.pick(object, function(num) {
-        return num == 1 || num == 3;
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should provide the correct predicate arguments', 1, function() {
-      var args,
-          object = { 'a': 1, 'b': 2 },
-          lastKey = _.keys(object).pop();
-
-      var expected = lastKey == 'b'
-        ? [1, 'a', object]
-        : [2, 'b', object];
-
-      _.pick(object, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, expected);
+      deepEqual(_.pick(object, args), { 'a': 1, 'c': 3 });
     });
 
     test('should coerce property names to strings', 1, function() {
       deepEqual(_.pick({ '0': 'a', '1': 'b' }, 0), { '0': 'a' });
     });
   }('a', 'c'));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.pickBy');
+
+  (function() {
+    test('should work with a predicate argument', 1, function() {
+      var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
+
+      var actual = _.pickBy(object, function(num) {
+        return num == 1 || num == 3;
+      });
+
+      deepEqual(actual, { 'a': 1, 'c': 3 });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('pick methods');
+
+  _.each(['pick', 'pickBy'], function(methodName) {
+    var expected = { 'a': 1, 'c': 3 },
+        func = _[methodName],
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
+
+    var prop = methodName == 'pick' ? _.identity : function(props) {
+      props = typeof props == 'string' ? [props] : props;
+      return function(value, key) {
+        return _.includes(props, key);
+      };
+    };
+
+    test('`_.' + methodName + '` should create an object of picked properties', 2, function() {
+      deepEqual(func(object, prop('a')), { 'a': 1 });
+      deepEqual(func(object, prop(['a', 'c'])), expected);
+    });
+
+    test('`_.' + methodName + '` should iterate over inherited properties', 1, function() {
+      function Foo() {}
+      Foo.prototype = object;
+
+      deepEqual(func(new Foo, prop(['a', 'c'])), expected);
+    });
+
+    test('`_.' + methodName + '` should work with an array `object` argument', 1, function() {
+      deepEqual(func([1, 2, 3], prop('1')), { '1': 2 });
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -17434,7 +17453,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 212, function() {
+    test('should accept falsey arguments', 214, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

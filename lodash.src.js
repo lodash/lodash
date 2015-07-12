@@ -2401,6 +2401,48 @@
     }
 
     /**
+     * The base implementation of `_.pick` without support for individual property names.
+     *
+     * @private
+     * @param {Object} object The source object.
+     * @param {string[]} props The property names to pick.
+     * @returns {Object} Returns the new object.
+     */
+    function basePick(object, props) {
+      object = toObject(object);
+
+      var index = -1,
+          length = props.length,
+          result = {};
+
+      while (++index < length) {
+        var key = props[index];
+        if (key in object) {
+          result[key] = object[key];
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of  `_.pickBy` without support for callback shorthands.
+     *
+     * @private
+     * @param {Object} object The source object.
+     * @param {Function} predicate The function invoked per iteration.
+     * @returns {Object} Returns the new object.
+     */
+    function basePickBy(object, predicate) {
+      var result = {};
+      baseForIn(object, function(value, key, object) {
+        if (predicate(value, key, object)) {
+          result[key] = value;
+        }
+      });
+      return result;
+    }
+
+    /**
      * The base implementation of `_.property` without support for deep paths.
      *
      * @private
@@ -4027,50 +4069,6 @@
       return isObject(objectValue)
         ? merge(objectValue, sourceValue, mergeDefaults)
         : objectValue;
-    }
-
-    /**
-     * A specialized version of `_.pick` which picks `object` properties
-     * specified by `props`.
-     *
-     * @private
-     * @param {Object} object The source object.
-     * @param {string[]} props The property names to pick.
-     * @returns {Object} Returns the new object.
-     */
-    function pickByArray(object, props) {
-      object = toObject(object);
-
-      var index = -1,
-          length = props.length,
-          result = {};
-
-      while (++index < length) {
-        var key = props[index];
-        if (key in object) {
-          result[key] = object[key];
-        }
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.pick` which picks `object` properties
-     * `predicate` returns truthy for.
-     *
-     * @private
-     * @param {Object} object The source object.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {Object} Returns the new object.
-     */
-    function pickByPredicate(object, predicate) {
-      var result = {};
-      baseForIn(object, function(value, key, object) {
-        if (predicate(value, key, object)) {
-          result[key] = value;
-        }
-      });
-      return result;
     }
 
     /**
@@ -9275,9 +9273,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {Function|...(string|string[])} [predicate] The function invoked per
-     *  iteration or property names to omit, specified as individual property
-     *  names or arrays of property names.
+     * @param {string|string[]} [props] The property names to omit, specified as
+     *  individual property names or arrays of property names.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -9285,23 +9282,39 @@
      *
      * _.omit(object, 'age');
      * // => { 'user': 'fred' }
-     *
-     * _.omit(object, _.isNumber);
-     * // => { 'user': 'fred' }
      */
     var omit = restParam(function(object, props) {
       if (object == null) {
         return {};
       }
-      if (typeof props[0] != 'function') {
-        var props = arrayMap(baseFlatten(props), String);
-        return pickByArray(object, baseDifference(keysIn(object), props));
-      }
-      var predicate = props[0];
-      return pickByPredicate(object, function(value, key, object) {
+      var props = arrayMap(baseFlatten(props), String);
+      return basePick(object, baseDifference(keysIn(object), props));
+    });
+
+    /**
+     * The opposite of `_.pickBy`; this method creates an object composed of the
+     * own and inherited enumerable properties of `object` that `predicate` does
+     * not return truthy for.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The source object.
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+     * @returns {Object} Returns the new object.
+     * @example
+     *
+     * var object = { 'user': 'fred', 'age': 40 };
+     *
+     * _.omitBy(object, _.isNumber);
+     * // => { 'user': 'fred' }
+     */
+    function omitBy(object, predicate) {
+      predicate = getIteratee(predicate);
+      return basePickBy(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
-    });
+    }
 
     /**
      * Creates a two dimensional array of the key-value pairs for `object`,
@@ -9333,19 +9346,14 @@
     }
 
     /**
-     * Creates an object composed of the picked `object` properties. Property
-     * names may be specified as individual arguments or as arrays of property
-     * names. If `predicate` is provided it's invoked for each property of `object`
-     * picking the properties `predicate` returns truthy for. The predicate is
-     * invoked with three arguments: (value, key, object).
+     * Creates an object composed of the picked `object` properties.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {Function|...(string|string[])} [predicate] The function invoked per
-     *  iteration or property names to pick, specified as individual property
-     *  names or arrays of property names.
+     * @param {string|string[]} [props] The property names to pick, specified as
+     *  individual property names or arrays of property names.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -9353,18 +9361,31 @@
      *
      * _.pick(object, 'user');
      * // => { 'user': 'fred' }
-     *
-     * _.pick(object, _.isString);
-     * // => { 'user': 'fred' }
      */
     var pick = restParam(function(object, props) {
-      if (object == null) {
-        return {};
-      }
-      return typeof props[0] == 'function'
-        ? pickByPredicate(object, props[0])
-        : pickByArray(object, baseFlatten(props));
+      return object == null ? {} : basePick(object, baseFlatten(props));
     });
+
+    /**
+     * Creates an object composed of the `object` properties `predicate` returns
+     * truthy for. The predicate is invoked with three arguments: (value, key, object).
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The source object.
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+     * @returns {Object} Returns the new object.
+     * @example
+     *
+     * var object = { 'user': 'fred', 'age': 40 };
+     *
+     * _.pickBy(object, _.isString);
+     * // => { 'user': 'fred' }
+     */
+    function pickBy(object, predicate) {
+      return object == null ? {} : basePickBy(object, getIteratee(predicate));
+    }
 
     /**
      * This method is like `_.get` except that if the resolved value is a function
@@ -11367,12 +11388,14 @@
     lodash.modArgs = modArgs;
     lodash.negate = negate;
     lodash.omit = omit;
+    lodash.omitBy = omitBy;
     lodash.once = once;
     lodash.pairs = pairs;
     lodash.partial = partial;
     lodash.partialRight = partialRight;
     lodash.partition = partition;
     lodash.pick = pick;
+    lodash.pickBy = pickBy;
     lodash.property = property;
     lodash.propertyOf = propertyOf;
     lodash.pull = pull;

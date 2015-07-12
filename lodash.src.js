@@ -8111,7 +8111,9 @@
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
       // in older versions of Chrome and Safari which return 'function' for regexes
-      // and Safari 8 which returns 'object' for typed array constructors.
+      // and Safari 8 which returns 'object' for typed array constructors. This further
+      // avoids issues with instances of `NodeList` being considered functions in
+      // PhantomJS 1.9.
       return isObject(value) && objToString.call(value) == funcTag;
     }
 

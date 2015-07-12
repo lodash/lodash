@@ -7203,7 +7203,7 @@
      * // logs 'deferred' after one or more milliseconds
      */
     var defer = restParam(function(func, args) {
-      return baseDelay(func, 1, args);
+      return baseDelay(func, 0, args);
     });
 
     /**

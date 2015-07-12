@@ -887,8 +887,9 @@
      *
      * The wrapper methods that support shortcut fusion are:
      * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
-     * `first`, `initial`, `last`, `map`, `reject`, `rest`, `reverse`, `slice`,
-     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
+     * `find`, `findLast`, `first`, `initial`, `last`, `map`, `reject`, `rest`,
+     * `reverse`, `slice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * and `toArray`
      *
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
@@ -11630,6 +11631,14 @@
       });
     };
 
+    LazyWrapper.prototype.find = function(predicate) {
+      return this.filter(predicate).first();
+    };
+
+    LazyWrapper.prototype.findLast = function(predicate) {
+      return this.reverse().find(predicate);
+    };
+
     LazyWrapper.prototype.slice = function(start, end) {
       start = start == null ? 0 : (+start || 0);
 
@@ -11660,14 +11669,15 @@
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
-          retUnwrapped = /^(?:first|last)$/.test(methodName),
-          lodashFunc = lodash[retUnwrapped ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
+          isTaker = /^(?:first|last)$/.test(methodName),
+          retUnwrapped = isTaker || /^find/.test(methodName),
+          lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
 
       if (!lodashFunc) {
         return;
       }
       lodash.prototype[methodName] = function() {
-        var args = retUnwrapped ? [1] : arguments,
+        var args = isTaker ? [1] : arguments,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
@@ -11681,7 +11691,7 @@
         }
         var interceptor = function(value) {
           var result = lodashFunc.apply(lodash, arrayPush([value], args));
-          return (retUnwrapped && chainAll) ? result[0] : result;
+          return (isTaker && chainAll) ? result[0] : result;
         };
 
         var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
@@ -11694,7 +11704,7 @@
             return func.apply(this, args);
           }
           var result = lodashFunc.apply(lodash, arrayPush([this.value()], args));
-          return result[0];
+          return isTaker ? result[0] : result;
         }
         if (!retUnwrapped && useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);

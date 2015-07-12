@@ -7338,7 +7338,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for non-functions', 11, function() {
+    test('should return `false` for non-functions', 12, function() {
       var expected = _.map(falsey, _.constant(false));
 
       var actual = _.map(falsey, function(value, index) {
@@ -7357,6 +7357,12 @@
       strictEqual(_.isFunction(NaN), false);
       strictEqual(_.isFunction(/x/), false);
       strictEqual(_.isFunction('a'), false);
+
+      if (document) {
+        strictEqual(_.isFunction(document.getElementsByTagName('body')), false);
+      } else {
+        skipTest();
+      }
     });
 
     test('should work with host objects in IE 8 document mode (test in IE 11)', 2, function() {

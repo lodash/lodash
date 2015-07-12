@@ -11680,9 +11680,8 @@
           isLazy = useLazy = false;
         }
         var interceptor = function(value) {
-          return (retUnwrapped && chainAll)
-            ? lodashFunc(value, 1)[0]
-            : lodashFunc.apply(undefined, arrayPush([value], args));
+          var result = lodashFunc.apply(lodash, arrayPush([value], args));
+          return (retUnwrapped && chainAll) ? result[0] : result;
         };
 
         var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
@@ -11692,13 +11691,14 @@
           if (onlyLazy) {
             value = value.clone();
             value.__actions__.push(action);
-            return func.call(value);
+            return func.apply(this, args);
           }
-          return lodashFunc.call(undefined, this.value())[0];
+          var result = lodashFunc.apply(lodash, arrayPush([this.value()], args));
+          return result[0];
         }
         if (!retUnwrapped && useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);
-          var result = func.apply(value, args);
+          result = func.apply(value, args);
           result.__actions__.push(action);
           return new LodashWrapper(result, chainAll);
         }

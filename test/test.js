@@ -3977,6 +3977,44 @@
 
         deepEqual(actual, expecting);
       });
+
+      if (!/(Index|Key)/.test(methodName)) {
+        test('should enable shortcut fusion in chaining', 2, function() {
+          if (!isNpm) {
+            var callCount = 0;
+            var items = _.range(0, LARGE_ARRAY_SIZE + 1);
+            var expectedCalls = LARGE_ARRAY_SIZE / 2 + 1;
+            var expected = LARGE_ARRAY_SIZE / 2 - 25;
+            var result = _(items).map(function(x) {
+              callCount++;
+              return x - 25;
+            })[methodName](function(x) {
+              return x === expected;
+            });
+            strictEqual(callCount, expectedCalls);
+            strictEqual(result, expected);
+          } else {
+            skipTest(2);
+          }
+        });
+
+        test('should function when the only action in chaining', 2, function() {
+          if (!isNpm) {
+            var callCount = 0;
+            var items = _.range(0, LARGE_ARRAY_SIZE + 1);
+            var expectedCalls = LARGE_ARRAY_SIZE / 2 + 1;
+            var expected = LARGE_ARRAY_SIZE / 2;
+            var result = _(items)[methodName](function(x) {
+              callCount++;
+              return x === expected;
+            });
+            strictEqual(callCount, expectedCalls);
+            strictEqual(result, expected);
+          } else {
+            skipTest(2);
+          }
+        });
+      }
     }());
 
     (function() {

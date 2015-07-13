@@ -5074,7 +5074,7 @@
     }
 
     /**
-     * This method is like `_.sortedIndex` except that it accepts an iteratee
+     * This method is like `_.sortedIndex` except that it accepts `iteratee`
      * which is invoked for `value` and each element of `array` to compute their
      * sort ranking. The iteratee is invoked with one argument: (value).
      *
@@ -5121,7 +5121,7 @@
     }
 
     /**
-     * This method is like `_.sortedLastIndex` except that it accepts an iteratee
+     * This method is like `_.sortedLastIndex` except that it accepts `iteratee`
      * which is invoked for `value` and each element of `array` to compute their
      * sort ranking. The iteratee is invoked with one argument: (value).
      *
@@ -5349,7 +5349,7 @@
     }
 
     /**
-     * This method is like `_.uniq` except that it accepts an iteratee which is
+     * This method is like `_.uniq` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the criterion by which
      * uniqueness is computed. The iteratee is invoked with one argument: (value).
      *
@@ -5428,7 +5428,7 @@
     }
 
     /**
-     * This method is like `_.unzip` except that it accepts an iteratee to specify
+     * This method is like `_.unzip` except that it accepts `iteratee` to specify
      * how regrouped values should be combined. The iteratee is invoked with four
      * arguments: (accumulator, value, index, group).
      *
@@ -5567,7 +5567,7 @@
     }
 
     /**
-     * This method is like `_.zip` except that it accepts an iteratee to specify
+     * This method is like `_.zip` except that it accepts `iteratee` to specify
      * how grouped values should be combined. The iteratee is invoked with four
      * arguments: (accumulator, value, index, group).
      *
@@ -11265,7 +11265,7 @@
     }
 
     /**
-     * This method is like `_.max` except that it accepts an iteratee which is
+     * This method is like `_.max` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the criterion by which
      * the value is ranked. The iteratee is invoked with one argument: (value).
      *
@@ -11313,7 +11313,7 @@
     }
 
     /**
-     * This method is like `_.min` except that it accepts an iteratee which is
+     * This method is like `_.min` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the criterion by which
      * the value is ranked. The iteratee is invoked with one argument: (value).
      *
@@ -11382,7 +11382,7 @@
     }
 
     /**
-     * This method is like `_.sum` except that it accepts an iteratee which is
+     * This method is like `_.sum` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the value to be summed.
      * The iteratee is invoked with one argument: (value).
      *

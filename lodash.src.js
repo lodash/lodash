@@ -279,9 +279,7 @@
    * The `this` value is used if it's the global object to avoid Greasemonkey's
    * restricted `window` object, otherwise the `window` object is used.
    */
-  var freeRoot = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal;
-  
-  var root = freeRoot.Math === Math ? freeRoot : Function('return this')();
+  var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal || Function('return this')();
 
   /*--------------------------------------------------------------------------*/
 
@@ -431,7 +429,7 @@
    * @returns {null|Object} Returns `value` if it's a global object, else `null`.
    */
   function checkGlobal(value) {
-    return (value && value.Object) ? value : null;
+    return (value && value.Object === Object) ? value : null;
   }
 
   /**

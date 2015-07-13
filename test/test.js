@@ -1039,27 +1039,35 @@
     var func = _[methodName];
 
     test('`_.' + methodName + '` should assign properties of a source object to the destination object', 1, function() {
-      deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
+      deepEqual(func({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
     test('`_.' + methodName + '` should accept multiple source objects', 2, function() {
       var expected = { 'a': 1, 'b': 2, 'c': 3 };
-      deepEqual(_.assign({ 'a': 1 }, { 'b': 2 }, { 'c': 3 }), expected);
-      deepEqual(_.assign({ 'a': 1 }, { 'b': 2, 'c': 2 }, { 'c': 3 }), expected);
+      deepEqual(func({ 'a': 1 }, { 'b': 2 }, { 'c': 3 }), expected);
+      deepEqual(func({ 'a': 1 }, { 'b': 2, 'c': 2 }, { 'c': 3 }), expected);
     });
 
     test('`_.' + methodName + '` should overwrite destination properties', 1, function() {
       var expected = { 'a': 3, 'b': 2, 'c': 1 };
-      deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
+      deepEqual(func({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
     test('`_.' + methodName + '` should assign source properties with nullish values', 1, function() {
       var expected = { 'a': null, 'b': undefined, 'c': null };
-      deepEqual(_.assign({ 'a': 1, 'b': 2 }, expected), expected);
+      deepEqual(func({ 'a': 1, 'b': 2 }, expected), expected);
     });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.assignWith and lodash.extendWith');
+
+  _.each(['assignWith', 'extendWith'], function(methodName) {
+    var func = _[methodName];
 
     test('`_.' + methodName + '` should work with a `customizer` callback', 1, function() {
-      var actual = _.assign({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
+      var actual = func({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
         return typeof a == 'undefined' ? b : a;
       });
 
@@ -1068,7 +1076,7 @@
 
     test('`_.' + methodName + '` should work with a `customizer` that returns `undefined`', 1, function() {
       var expected = { 'a': undefined };
-      deepEqual(_.assign({}, expected, _.identity), expected);
+      deepEqual(func({}, expected, _.identity), expected);
     });
   });
 
@@ -1963,23 +1971,6 @@
           var expected = typeof value == 'function' ? { 'c': Foo.c } : (value && {});
           deepEqual(func(value), expected);
         });
-
-        test('`_.' + methodName + '` should work with a `customizer` callback and ' + key, 4, function() {
-          var customizer = function(value) {
-            return _.isPlainObject(value) ? undefined : value;
-          };
-
-          var actual = func(value, customizer);
-
-          deepEqual(actual, value);
-          strictEqual(actual, value);
-
-          var object = { 'a': value, 'b': { 'c': value } };
-          actual = func(object, customizer);
-
-          deepEqual(actual, object);
-          notStrictEqual(actual, object);
-        });
       });
 
       test('`_.' + methodName + '` should clone array buffers', 2, function() {
@@ -2022,22 +2013,6 @@
         var actual = func(shadowObject);
         deepEqual(actual, shadowObject);
         notStrictEqual(actual, shadowObject);
-      });
-
-      test('`_.' + methodName + '` should provide the correct `customizer` arguments', 1, function() {
-        var argsList = [],
-            foo = new Foo;
-
-        func(foo, function() {
-          argsList.push(slice.call(arguments));
-        });
-
-        deepEqual(argsList, isDeep ? [[foo], [1, 'a', foo]] : [[foo]]);
-      });
-
-      test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', 1, function() {
-        var actual = func({ 'a': { 'b': 'c' } }, _.noop);
-        deepEqual(actual, { 'a': { 'b': 'c' } });
       });
 
       test('`_.' + methodName + '` should clone `index` and `input` array properties', 2, function() {
@@ -2120,6 +2095,46 @@
         else {
           skipTest(2);
         }
+      });
+    });
+
+    _.each(['cloneWith', 'cloneDeepWith'], function(methodName) {
+      var func = _[methodName],
+          isDeepWith = methodName == 'cloneDeepWith';
+
+      test('`_.' + methodName + '` should provide the correct `customizer` arguments', 1, function() {
+        var argsList = [],
+            foo = new Foo;
+
+        func(foo, function() {
+          argsList.push(slice.call(arguments));
+        });
+
+        deepEqual(argsList, isDeepWith ? [[foo], [1, 'a', foo]] : [[foo]]);
+      });
+
+      test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', 1, function() {
+        var actual = func({ 'a': { 'b': 'c' } }, _.noop);
+        deepEqual(actual, { 'a': { 'b': 'c' } });
+      });
+
+      _.forOwn(uncloneable, function(value, key) {
+        test('`_.' + methodName + '` should work with a `customizer` callback and ' + key, 4, function() {
+          var customizer = function(value) {
+            return _.isPlainObject(value) ? undefined : value;
+          };
+
+          var actual = func(value, customizer);
+
+          deepEqual(actual, value);
+          strictEqual(actual, value);
+
+          var object = { 'a': value, 'b': { 'c': value } };
+          actual = func(object, customizer);
+
+          deepEqual(actual, object);
+          notStrictEqual(actual, object);
+        });
       });
     });
   }(1, 2, 3));
@@ -5156,8 +5171,20 @@
   });
 
   _.each(['assign', 'extend', 'merge'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should not treat `object` as `source`', 1, function() {
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      var actual = func(new Foo, { 'b': 2 });
+      ok(!_.has(actual, 'a'));
+    });
+  });
+
+  _.each(['assignWith', 'extendWith', 'mergeWith'], function(methodName) {
     var func = _[methodName],
-        isMerge = methodName == 'merge';
+        isMergeWith = methodName == 'mergeWith';
 
     test('`_.' + methodName + '` should provide the correct `customizer` arguments', 3, function() {
       var args,
@@ -5192,18 +5219,10 @@
       });
 
       var expected = [[objectValue, sourceValue, 'a', object, source]];
-      if (isMerge) {
+      if (isMergeWith) {
         expected.push([undefined, 2, 'b', sourceValue, sourceValue]);
       }
       deepEqual(argsList, expected, 'object property values');
-    });
-
-    test('`_.' + methodName + '` should not treat `object` as `source`', 1, function() {
-      function Foo() {}
-      Foo.prototype.a = 1;
-
-      var actual = func(new Foo, { 'b': 2 });
-      ok(!_.has(actual, 'a'));
     });
 
     test('`_.' + methodName + '` should not treat the second argument as a `customizer` callback', 2, function() {
@@ -6968,82 +6987,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should provide the correct `customizer` arguments', 1, function() {
-      var argsList = [],
-          object1 = { 'a': [1, 2], 'b': null },
-          object2 = { 'a': [1, 2], 'b': null };
-
-      object1.b = object2;
-      object2.b = object1;
-
-      var expected = [
-        [object1, object2],
-        [object1.a, object2.a, 'a'],
-        [object1.a[0], object2.a[0], 0],
-        [object1.a[1], object2.a[1], 1],
-        [object1.b, object2.b, 'b'],
-        [object1.b.a, object2.b.a, 'a'],
-        [object1.b.a[0], object2.b.a[0], 0],
-        [object1.b.a[1], object2.b.a[1], 1],
-        [object1.b.b, object2.b.b, 'b']
-      ];
-
-      _.isEqual(object1, object2, function() {
-        argsList.push(slice.call(arguments));
-      });
-
-      deepEqual(argsList, expected);
-    });
-
-    test('should handle comparisons if `customizer` returns `undefined`', 3, function() {
-      strictEqual(_.isEqual('a', 'a', _.noop), true);
-      strictEqual(_.isEqual(['a'], ['a'], _.noop), true);
-      strictEqual(_.isEqual({ '0': 'a' }, { '0': 'a' }, _.noop), true);
-    });
-
-    test('should not handle comparisons if `customizer` returns `true`', 3, function() {
-      var customizer = function(value) {
-        return _.isString(value) || undefined;
-      };
-
-      strictEqual(_.isEqual('a', 'b', customizer), true);
-      strictEqual(_.isEqual(['a'], ['b'], customizer), true);
-      strictEqual(_.isEqual({ '0': 'a' }, { '0': 'b' }, customizer), true);
-    });
-
-    test('should not handle comparisons if `customizer` returns `false`', 3, function() {
-      var customizer = function(value) {
-        return _.isString(value) ? false : undefined;
-      };
-
-      strictEqual(_.isEqual('a', 'a', customizer), false);
-      strictEqual(_.isEqual(['a'], ['a'], customizer), false);
-      strictEqual(_.isEqual({ '0': 'a' }, { '0': 'a' }, customizer), false);
-    });
-
-    test('should return a boolean value even if `customizer` does not', 2, function() {
-      var actual = _.isEqual('a', 'b', _.constant('c'));
-      strictEqual(actual, true);
-
-      var values = _.without(falsey, undefined),
-          expected = _.map(values, _.constant(false));
-
-      actual = [];
-      _.each(values, function(value) {
-        actual.push(_.isEqual('a', 'a', _.constant(value)));
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should ensure `customizer` is a function', 1, function() {
-      var array = [1, 2, 3],
-          eq = _.partial(_.isEqual, array),
-          actual = _.map([array, [1, 0, 3]], eq);
-
-      deepEqual(actual, [true, false]);
-    });
-
     test('should work as an iteratee for `_.every`', 1, function() {
       var actual = _.every([1, 1, 1], _.partial(_.isEqual, 1));
       ok(actual);
@@ -7170,6 +7113,88 @@
 
     test('should be aliased', 1, function() {
       strictEqual(_.eq, _.isEqual);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isEqualWith');
+
+  (function() {
+    test('should provide the correct `customizer` arguments', 1, function() {
+      var argsList = [],
+          object1 = { 'a': [1, 2], 'b': null },
+          object2 = { 'a': [1, 2], 'b': null };
+
+      object1.b = object2;
+      object2.b = object1;
+
+      var expected = [
+        [object1, object2],
+        [object1.a, object2.a, 'a'],
+        [object1.a[0], object2.a[0], 0],
+        [object1.a[1], object2.a[1], 1],
+        [object1.b, object2.b, 'b'],
+        [object1.b.a, object2.b.a, 'a'],
+        [object1.b.a[0], object2.b.a[0], 0],
+        [object1.b.a[1], object2.b.a[1], 1],
+        [object1.b.b, object2.b.b, 'b']
+      ];
+
+      _.isEqualWith(object1, object2, function() {
+        argsList.push(slice.call(arguments));
+      });
+
+      deepEqual(argsList, expected);
+    });
+
+    test('should handle comparisons if `customizer` returns `undefined`', 3, function() {
+      strictEqual(_.isEqualWith('a', 'a', _.noop), true);
+      strictEqual(_.isEqualWith(['a'], ['a'], _.noop), true);
+      strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'a' }, _.noop), true);
+    });
+
+    test('should not handle comparisons if `customizer` returns `true`', 3, function() {
+      var customizer = function(value) {
+        return _.isString(value) || undefined;
+      };
+
+      strictEqual(_.isEqualWith('a', 'b', customizer), true);
+      strictEqual(_.isEqualWith(['a'], ['b'], customizer), true);
+      strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'b' }, customizer), true);
+    });
+
+    test('should not handle comparisons if `customizer` returns `false`', 3, function() {
+      var customizer = function(value) {
+        return _.isString(value) ? false : undefined;
+      };
+
+      strictEqual(_.isEqualWith('a', 'a', customizer), false);
+      strictEqual(_.isEqualWith(['a'], ['a'], customizer), false);
+      strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'a' }, customizer), false);
+    });
+
+    test('should return a boolean value even if `customizer` does not', 2, function() {
+      var actual = _.isEqualWith('a', 'b', _.constant('c'));
+      strictEqual(actual, true);
+
+      var values = _.without(falsey, undefined),
+          expected = _.map(values, _.constant(false));
+
+      actual = [];
+      _.each(values, function(value) {
+        actual.push(_.isEqualWith('a', 'a', _.constant(value)));
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should ensure `customizer` is a function', 1, function() {
+      var array = [1, 2, 3],
+          eq = _.partial(_.isEqualWith, array),
+          actual = _.map([array, [1, 0, 3]], eq);
+
+      deepEqual(actual, [true, false]);
     });
   }());
 
@@ -7567,7 +7592,13 @@
 
       deepEqual(actual, [false, true]);
     });
+  }());
 
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isMatchWith');
+
+  (function() {
     test('should provide the correct `customizer` arguments', 1, function() {
       var argsList = [],
           object1 = { 'a': [1, 2], 'b': null },
@@ -7591,7 +7622,7 @@
         [object1.b.b.b, object2.b.b.b, 'b']
       ];
 
-      _.isMatch(object1, object2, function() {
+      _.isMatchWith(object1, object2, function() {
         argsList.push(slice.call(arguments));
       });
 
@@ -7599,12 +7630,12 @@
     });
 
     test('should handle comparisons if `customizer` returns `undefined`', 1, function() {
-      strictEqual(_.isMatch({ 'a': 1 }, { 'a': 1 }, _.noop), true);
+      strictEqual(_.isMatchWith({ 'a': 1 }, { 'a': 1 }, _.noop), true);
     });
 
     test('should return a boolean value even if `customizer` does not', 2, function() {
       var object = { 'a': 1 },
-          actual = _.isMatch(object, { 'a': 1 }, _.constant('a'));
+          actual = _.isMatchWith(object, { 'a': 1 }, _.constant('a'));
 
       strictEqual(actual, true);
 
@@ -7612,7 +7643,7 @@
 
       actual = [];
       _.each(falsey, function(value) {
-        actual.push(_.isMatch(object, { 'a': 2 }, _.constant(value)));
+        actual.push(_.isMatchWith(object, { 'a': 2 }, _.constant(value)));
       });
 
       deepEqual(actual, expected);
@@ -7620,7 +7651,7 @@
 
     test('should ensure `customizer` is a function', 1, function() {
       var object = { 'a': 1 },
-          matches = _.partial(_.isMatch, object),
+          matches = _.partial(_.isMatchWith, object),
           actual = _.map([object, { 'a': 2 }], matches);
 
       deepEqual(actual, [true, false]);
@@ -10450,23 +10481,29 @@
 
       deepEqual(actual, values);
     });
+  }(1, 2, 3));
 
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.mergeWith');
+
+  (function() {
     test('should handle merging if `customizer` returns `undefined`', 2, function() {
-      var actual = _.merge({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
+      var actual = _.mergeWith({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, _.noop);
       deepEqual(actual, { 'a': { 'b': [0, 1] } });
 
-      actual = _.merge([], [undefined], _.identity);
+      actual = _.mergeWith([], [undefined], _.identity);
       deepEqual(actual, [undefined]);
     });
 
     test('should defer to `customizer` when it returns a value other than `undefined`', 1, function() {
-      var actual = _.merge({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {
+      var actual = _.mergeWith({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {
         return _.isArray(a) ? a.concat(b) : undefined;
       });
 
       deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
     });
-  }(1, 2, 3));
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -11678,8 +11715,8 @@
           source = { 'a': { 'b': 2, 'c': 3 } },
           expected = { 'a': { 'b': 1, 'c': 3 } };
 
-      var defaultsDeep = _.partialRight(_.merge, function deep(value, other) {
-        return _.isObject(value) ? _.merge(value, other, deep) : value;
+      var defaultsDeep = _.partialRight(_.mergeWith, function deep(value, other) {
+        return _.isObject(value) ? _.mergeWith(value, other, deep) : value;
       });
 
       deepEqual(defaultsDeep(object, source), expected);
@@ -17453,7 +17490,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 214, function() {
+    test('should accept falsey arguments', 221, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

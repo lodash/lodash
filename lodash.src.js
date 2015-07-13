@@ -262,10 +262,10 @@
   var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
 
   /** Detect free variable `self`. */
-  var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+  var freeSelf = checkGlobal(objectTypes[typeof self] && self.self === self && self);
 
   /** Detect free variable `window`. */
-  var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+  var freeWindow = checkGlobal(objectTypes[typeof window] && window.window === window && window);
 
   /** Detect the popular CommonJS extension `module.exports`. */
   var moduleExports = (freeModule && freeModule.exports === freeExports) ? freeExports : null;
@@ -275,11 +275,8 @@
 
   /**
    * Used as a reference to the global object.
-   *
-   * The `this` value is used if it's the global object to avoid Greasemonkey's
-   * restricted `window` object, otherwise the `window` object is used.
    */
-  var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal;
+  var root = freeGlobal || freeWindow || freeSelf || thisGlobal;
 
   /*--------------------------------------------------------------------------*/
 

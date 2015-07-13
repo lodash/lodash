@@ -2343,6 +2343,48 @@
     }
 
     /**
+     * The base implementation of `_.merge` without support multiple sources.
+     *
+     * @private
+     * @param {Object} object The destination object.
+     * @param {Object} source The source object.
+     * @param {Function} [customizer] The function to customize merged values.
+     * @param {Array} [stackA=[]] Tracks traversed source objects.
+     * @param {Array} [stackB=[]] Associates values with source counterparts.
+     * @returns {Object} Returns `object`.
+     */
+    function baseMerge(object, source, customizer, stackA, stackB) {
+      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
+          props = isSrcArr ? undefined : keysIn(source);
+
+      arrayEach(props || source, function(srcValue, key) {
+        if (props) {
+          key = srcValue;
+          srcValue = source[key];
+        }
+        if (isObjectLike(srcValue)) {
+          stackA || (stackA = []);
+          stackB || (stackB = []);
+          baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+        }
+        else {
+          var value = object[key],
+              result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+              isCommon = result === undefined;
+
+          if (isCommon) {
+            result = srcValue;
+          }
+          if ((result !== undefined || (isSrcArr && !(key in object))) &&
+              (isCommon || (result === result ? (result !== value) : (value === value)))) {
+            object[key] = result;
+          }
+        }
+      });
+      return object;
+    }
+
+    /**
      * A specialized version of `baseMerge` for arrays and objects which performs
      * deep merges and tracks traversed objects enabling objects with circular
      * references to be merged.
@@ -2959,7 +3001,7 @@
      * @private
      * @param {Object} source The object to copy properties from.
      * @param {Array} props The property names to copy.
-     * @param {Function} customizer The function to customize copied values.
+     * @param {Function} [customizer] The function to customize copied values.
      * @param {Object} [object={}] The object to copy properties to.
      * @returns {Object} Returns `object`.
      */
@@ -2972,9 +3014,10 @@
       while (++index < length) {
         var key = props[index],
             value = object[key],
-            result = customizer(value, source[key], key, object, source);
+            result = customizer ? customizer(value, source[key], key, object, source) : source[key];
 
-        if ((result === result ? (result !== value) : (value === value)) ||
+        if (!customizer ||
+            (result === result ? (result !== value) : (value === value)) ||
             (value === undefined && !(key in object))) {
           object[key] = result;
         }
@@ -4067,7 +4110,7 @@
         return sourceValue;
       }
       return isObject(objectValue)
-        ? merge(objectValue, sourceValue, mergeDefaults)
+        ? mergeWith(objectValue, sourceValue, mergeDefaults)
         : objectValue;
     }
 
@@ -7713,10 +7756,7 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a shallow clone of `value`. If `customizer` is provided it's invoked
-     * to produce the cloned value. If `customizer` returns `undefined` cloning
-     * is handled by the method instead. The `customizer` is invoked with up to
-     * three arguments; (value [, index|key, object]).
+     * Creates a shallow clone of `value`.
      *
      * **Note:** This method is loosely based on the
      * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
@@ -7729,7 +7769,6 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to clone.
-     * @param {Function} [customizer] The function to customize cloning.
      * @returns {*} Returns the cloned value.
      * @example
      *
@@ -7741,8 +7780,25 @@
      * var shallow = _.clone(users);
      * shallow[0] === users[0];
      * // => true
+     */
+    function clone(value) {
+      return baseClone(value);
+    }
+
+    /**
+     * This method is like `_.clone` except that it accepts `customizer` which
+     * is invoked to produce the cloned value. If `customizer` returns `undefined`
+     * cloning is handled by the method instead. The `customizer` is invoked with
+     * up to three arguments; (value [, index|key, object]).
      *
-     * // using a customizer callback
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to clone.
+     * @param {Function} [customizer] The function to customize cloning.
+     * @returns {*} Returns the cloned value.
+     * @example
+     *
      * var el = _.clone(document.body, function(value) {
      *   if (_.isElement(value)) {
      *     return value.cloneNode(false);
@@ -7756,10 +7812,8 @@
      * el.childNodes.length;
      * // => 0
      */
-    function clone(value, customizer) {
-      return typeof customizer == 'function'
-        ? baseClone(value, false, customizer)
-        : baseClone(value);
+    function cloneWith(value, customizer) {
+      return baseClone(value, false, customizer);
     }
 
     /**
@@ -7769,7 +7823,6 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to recursively clone.
-     * @param {Function} [customizer] The function to customize cloning.
      * @returns {*} Returns the deep cloned value.
      * @example
      *
@@ -7781,8 +7834,22 @@
      * var deep = _.cloneDeep(users);
      * deep[0] === users[0];
      * // => false
+     */
+    function cloneDeep(value) {
+      return baseClone(value, true);
+    }
+
+    /**
+     * This method is like `_.cloneWith` except that it recursively clones `value`.
      *
-     * // using a customizer callback
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to recursively clone.
+     * @param {Function} [customizer] The function to customize cloning.
+     * @returns {*} Returns the deep cloned value.
+     * @example
+     *
      * var el = _.cloneDeep(document.body, function(value) {
      *   if (_.isElement(value)) {
      *     return value.cloneNode(true);
@@ -7796,10 +7863,8 @@
      * el.childNodes.length;
      * // => 20
      */
-    function cloneDeep(value, customizer) {
-      return typeof customizer == 'function'
-        ? baseClone(value, true, customizer)
-        : baseClone(value, true);
+    function cloneDeepWith(value, customizer) {
+      return baseClone(value, true, customizer);
     }
 
     /**
@@ -7991,16 +8056,12 @@
 
     /**
      * Performs a deep comparison between two values to determine if they are
-     * equivalent. If `customizer` is provided it's invoked to compare values.
-     * If `customizer` returns `undefined` comparisons are handled by the method
-     * instead. The `customizer` is invoked with up to three arguments:
-     * (value, other [, index|key]).
+     * equivalent.
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Objects are compared by
      * their own, not inherited, enumerable properties. Functions and DOM nodes
-     * are **not** supported. Provide a customizer function to extend support
-     * for comparing other values.
+     * are **not** supported.
      *
      * @static
      * @memberOf _
@@ -8008,7 +8069,6 @@
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
-     * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
@@ -8020,19 +8080,38 @@
      *
      * _.isEqual(object, other);
      * // => true
+     */
+    function isEqual(value, other) {
+      return baseIsEqual(value, other);
+    }
+
+    /**
+     * This method is like `_.isEqual` except that it accepts `customizer` which
+     * is invoked to compare values. If `customizer` returns `undefined` comparisons
+     * are handled by the method instead. The `customizer` is invoked with up to
+     * three arguments: (value, other [, index|key]).
      *
-     * // using a customizer callback
+     * @static
+     * @memberOf _
+     * @alias eq
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @param {Function} [customizer] The function to customize comparisons.
+     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+     * @example
+     *
      * var array = ['hello', 'goodbye'];
      * var other = ['hi', 'goodbye'];
      *
-     * _.isEqual(array, other, function(value, other) {
+     * _.isEqualWith(array, other, function(value, other) {
      *   if (_.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/)) {
      *     return true;
      *   }
      * });
      * // => true
      */
-    function isEqual(value, other, customizer) {
+    function isEqualWith(value, other, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
       var result = customizer ? customizer(value, other) : undefined;
       return result === undefined ? baseIsEqual(value, other, customizer) : !!result;
@@ -8142,10 +8221,7 @@
 
     /**
      * Performs a deep comparison between `object` and `source` to determine if
-     * `object` contains equivalent property values. If `customizer` is provided
-     * it's invoked to compare values. If `customizer` returns `undefined`
-     * comparisons are handled by the method instead. The `customizer` is invoked
-     * with three arguments: (value, other, index|key).
+     * `object` contains equivalent property values.
      *
      * **Note:** This method supports comparing properties of arrays, booleans,
      * `Date` objects, numbers, `Object` objects, regexes, and strings. Functions
@@ -8157,7 +8233,6 @@
      * @category Lang
      * @param {Object} object The object to inspect.
      * @param {Object} source The object of property values to match.
-     * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      * @example
      *
@@ -8168,8 +8243,26 @@
      *
      * _.isMatch(object, { 'age': 36 });
      * // => false
+     */
+    function isMatch(object, source) {
+      return baseIsMatch(object, getMatchData(source));
+    }
+
+    /**
+     * This method is like `_.isMatch` except that it accepts `customizer` which
+     * is invoked to compare values. If `customizer` returns `undefined` comparisons
+     * are handled by the method instead. The `customizer` is invoked with three
+     * arguments: (value, other, index|key).
      *
-     * // using a customizer callback
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {Object} object The object to inspect.
+     * @param {Object} source The object of property values to match.
+     * @param {Function} [customizer] The function to customize comparisons.
+     * @returns {boolean} Returns `true` if `object` is a match, else `false`.
+     * @example
+     *
      * var object = { 'greeting': 'hello' };
      * var source = { 'greeting': 'hi' };
      *
@@ -8178,7 +8271,7 @@
      * });
      * // => true
      */
-    function isMatch(object, source, customizer) {
+    function isMatchWith(object, source, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
       return baseIsMatch(object, getMatchData(source), customizer);
     }
@@ -8529,88 +8622,8 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Recursively merges own enumerable properties of the source object(s), that
-     * don't resolve to `undefined` into the destination object. Subsequent sources
-     * overwrite property assignments of previous sources. If `customizer` is
-     * provided it's invoked to produce the merged values of the destination and
-     * source properties. If `customizer` returns `undefined` merging is handled
-     * by the method instead. The `customizer` is invoked with five arguments:
-     * (objectValue, sourceValue, key, object, source).
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @param {Function} [customizer] The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var users = {
-     *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
-     * };
-     *
-     * var ages = {
-     *   'data': [{ 'age': 36 }, { 'age': 40 }]
-     * };
-     *
-     * _.merge(users, ages);
-     * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
-     *
-     * // using a customizer callback
-     * var object = {
-     *   'fruits': ['apple'],
-     *   'vegetables': ['beet']
-     * };
-     *
-     * var other = {
-     *   'fruits': ['banana'],
-     *   'vegetables': ['carrot']
-     * };
-     *
-     * _.merge(object, other, function(a, b) {
-     *   if (_.isArray(a)) {
-     *     return a.concat(b);
-     *   }
-     * });
-     * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
-     */
-    var merge = createAssigner(function baseMerge(object, source, customizer, stackA, stackB) {
-      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-          props = isSrcArr ? undefined : keysIn(source);
-
-      arrayEach(props || source, function(srcValue, key) {
-        if (props) {
-          key = srcValue;
-          srcValue = source[key];
-        }
-        if (isObjectLike(srcValue)) {
-          stackA || (stackA = []);
-          stackB || (stackB = []);
-          baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
-        }
-        else {
-          var value = object[key],
-              result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-              isCommon = result === undefined;
-
-          if (isCommon) {
-            result = srcValue;
-          }
-          if ((result !== undefined || (isSrcArr && !(key in object))) &&
-              (isCommon || (result === result ? (result !== value) : (value === value)))) {
-            object[key] = result;
-          }
-        }
-      });
-      return object;
-    });
-
-    /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
-     * If `customizer` is provided it's invoked to produce the assigned values.
-     * The `customizer` is invoked with five arguments: (objectValue, sourceValue, key, object, source).
      *
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
@@ -8620,28 +8633,41 @@
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
-     * @param {Function} [customizer] The function to customize assigned values.
      * @returns {Object} Returns `object`.
      * @example
      *
      * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
      * // => { 'user': 'fred', 'age': 40 }
+     */
+    var assign = createAssigner(function(object, source) {
+      copyObject(source, keys(source), object);
+    });
+
+    /**
+     * This method is like `_.assign` except that it accepts `customizer` which
+     * is invoked to produce the assigned values. The `customizer` is invoked
+     * with five arguments: (objectValue, sourceValue, key, object, source).
      *
-     * // using a customizer callback
-     * var defaults = _.partialRight(_.assign, function(value, other) {
+     * **Note:** This method mutates `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} sources The source objects.
+     * @param {Function} [customizer] The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var defaults = _.partialRight(_.assignWith, function(value, other) {
      *   return _.isUndefined(value) ? other : value;
      * });
      *
      * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var assign = createAssigner(function(object, source, customizer) {
-      var props = keys(source);
-      if (customizer) {
-        copyObjectWith(source, props, customizer, object);
-      } else {
-        copyObject(source, props, object);
-      }
+    var assignWith = createAssigner(function(object, source, customizer) {
+      copyObjectWith(source, keys(source), customizer, object);
     });
 
     /**
@@ -8706,7 +8732,7 @@
      */
     var defaults = restParam(function(args) {
       args.push(undefined, extendDefaults);
-      return extend.apply(undefined, args);
+      return extendWith.apply(undefined, args);
     });
 
     /**
@@ -8729,7 +8755,7 @@
      */
     var defaultsDeep = restParam(function(args) {
       args.push(undefined, mergeDefaults);
-      return merge.apply(undefined, args);
+      return mergeWith.apply(undefined, args);
     });
 
     /**
@@ -8741,20 +8767,38 @@
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
-     * @param {Function} [customizer] The function to customize assigned values.
      * @returns {Object} Returns `object`.
      * @example
      *
      * _.extend({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
      * // => { 'user': 'fred', 'age': 40 }
      */
-    var extend = createAssigner(function(object, source, customizer) {
-      var props = keysIn(source);
-      if (customizer) {
-        copyObjectWith(source, props, customizer, object);
-      } else {
-        copyObject(source, props, object);
-      }
+    var extend = createAssigner(function(object, source) {
+      copyObject(source, keysIn(source), object);
+    });
+
+    /**
+     * This method is like `_.assignWith` except that it iterates over own and
+     * inherited source properties.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} sources The source objects.
+     * @param {Function} [customizer] The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var defaults = _.partialRight(_.extendWith, function(value, other) {
+     *   return _.isUndefined(value) ? other : value;
+     * });
+     *
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+     * // => { 'user': 'barney', 'age': 36 }
+     */
+    var extendWith = createAssigner(function(object, source, customizer) {
+      copyObjectWith(source, keysIn(source), customizer, object);
     });
 
     /**
@@ -9264,6 +9308,71 @@
       });
       return result;
     }
+
+    /**
+     * Recursively merges own enumerable properties of the source object(s), that
+     * don't resolve to `undefined` into the destination object. Subsequent sources
+     * overwrite property assignments of previous sources.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} [sources] The source objects.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var users = {
+     *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
+     * };
+     *
+     * var ages = {
+     *   'data': [{ 'age': 36 }, { 'age': 40 }]
+     * };
+     *
+     * _.merge(users, ages);
+     * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
+     */
+    var merge = createAssigner(function(object, source) {
+      baseMerge(object, source);
+    });
+
+    /**
+     * This method is like `_.merge` except that it accepts `customizer` which
+     * is invoked to produce the merged values of the destination and source
+     * properties. If `customizer` returns `undefined` merging is handled by the
+     * method instead. The `customizer` is invoked with five arguments:
+     * (objectValue, sourceValue, key, object, source).
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} sources The source objects.
+     * @param {Function} customizer The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var object = {
+     *   'fruits': ['apple'],
+     *   'vegetables': ['beet']
+     * };
+     *
+     * var other = {
+     *   'fruits': ['banana'],
+     *   'vegetables': ['carrot']
+     * };
+     *
+     * _.mergeWith(object, other, function(a, b) {
+     *   if (_.isArray(a)) {
+     *     return a.concat(b);
+     *   }
+     * });
+     * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
+     */
+    var mergeWith = createAssigner(function(object, source, customizer) {
+      baseMerge(object, source, customizer);
+    });
 
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
@@ -11335,6 +11444,7 @@
     lodash.after = after;
     lodash.ary = ary;
     lodash.assign = assign;
+    lodash.assignWith = assignWith;
     lodash.at = at;
     lodash.before = before;
     lodash.bind = bind;
@@ -11359,6 +11469,7 @@
     lodash.dropRightWhile = dropRightWhile;
     lodash.dropWhile = dropWhile;
     lodash.extend = extend;
+    lodash.extendWith = extendWith;
     lodash.fill = fill;
     lodash.filter = filter;
     lodash.flatten = flatten;
@@ -11382,6 +11493,7 @@
     lodash.matchesProperty = matchesProperty;
     lodash.memoize = memoize;
     lodash.merge = merge;
+    lodash.mergeWith = mergeWith;
     lodash.method = method;
     lodash.methodOf = methodOf;
     lodash.mixin = mixin;
@@ -11454,6 +11566,8 @@
     lodash.ceil = ceil;
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
+    lodash.cloneDeepWith = cloneDeepWith;
+    lodash.cloneWith = cloneWith;
     lodash.deburr = deburr;
     lodash.endsWith = endsWith;
     lodash.escape = escape;
@@ -11488,10 +11602,12 @@
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;
+    lodash.isEqualWith = isEqualWith;
     lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isMatch = isMatch;
+    lodash.isMatchWith = isMatchWith;
     lodash.isNaN = isNaN;
     lodash.isNative = isNative;
     lodash.isNull = isNull;

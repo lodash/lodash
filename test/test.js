@@ -428,24 +428,6 @@
     // Add prototype extensions.
     funcProto._method = _.noop;
 
-    // Set bad shims.
-    var _isArray = Array.isArray;
-    setProperty(Array, 'isArray', _.noop);
-
-    var _now = Date.now;
-    setProperty(Date, 'now', _.noop);
-
-    var _keys = Object.keys;
-    setProperty(Object, 'keys', _.noop);
-
-    var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
-    setProperty(objectProto, 'propertyIsEnumerable', function(key) {
-      if (key == '1' && _.isArguments(this) && _.isEqual(_.values(this), [1, 0])) {
-        throw new Error;
-      }
-      return _propertyIsEnumerable.call(this, key);
-    });
-
     var _Set = root.Set;
     setProperty(root, 'Set', _.noop);
 
@@ -463,12 +445,6 @@
     root._ = oldDash;
 
     // Restore built-in methods.
-    setProperty(Array,  'isArray', _isArray);
-    setProperty(Date,   'now', _now);
-    setProperty(Object, 'keys', _keys);
-
-    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
-
     if (_Set) {
       setProperty(root, 'Set', Set);
     } else {
@@ -644,7 +620,7 @@
       }
     });
 
-    test('should avoid overwritten native methods', 7, function() {
+    test('should avoid overwritten native methods', 1, function() {
       function Foo() {}
 
       function message(lodashMethod, nativeMethod) {
@@ -657,28 +633,7 @@
 
       if (lodashBizarro) {
         try {
-          var actual = [lodashBizarro.isArray([]), lodashBizarro.isArray({ 'length': 0 })];
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, [true, false], message('_.isArray', 'Array.isArray'));
-
-        try {
-          actual = lodashBizarro.now();
-        } catch(e) {
-          actual = null;
-        }
-        ok(typeof actual == 'number', message('_.now', 'Date.now'));
-
-        try {
-          actual = [lodashBizarro.keys(object), lodashBizarro.keys()];
-        } catch(e) {
-          actual = null;
-        }
-        deepEqual(actual, [['a'], []], message('_.keys', 'Object.keys'));
-
-        try {
-          actual = [
+          var actual = [
             lodashBizarro.difference([object, otherObject], largeArray),
             lodashBizarro.intersection(largeArray, [object]),
             lodashBizarro.uniq(largeArray)
@@ -687,25 +642,9 @@
           actual = null;
         }
         deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
-
-        // Avoid comparing buffers with `deepEqual` in Rhino because it errors.
-        if (ArrayBuffer && Uint8Array) {
-          try {
-            var array = new Uint8Array(new ArrayBuffer(10));
-            actual = lodashBizarro.cloneDeep(array);
-          } catch(e) {
-            actual = null;
-          }
-          deepEqual(actual, array, message('_.cloneDeep', 'Float64Array'));
-          notStrictEqual(actual && actual.buffer, array.buffer, message('_.cloneDeep', 'Float64Array'));
-          notStrictEqual(actual, array, message('_.cloneDeep', 'Float64Array'));
-        }
-        else {
-          skipTest(3);
-        }
       }
       else {
-        skipTest(7);
+        skipTest();
       }
     });
   }());
@@ -8800,15 +8739,10 @@
     test('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', 2, function() {
       deepEqual(func('abc').sort(), ['0', '1', '2']);
 
-      if (!isKeys) {
-        // IE 9 doesn't box numbers in for-in loops.
-        Number.prototype.a = 1;
-        deepEqual(func(0).sort(), ['a']);
-        delete Number.prototype.a;
-      }
-      else {
-        skipTest();
-      }
+      // IE 9 doesn't box numbers in for-in loops.
+      Number.prototype.a = 1;
+      deepEqual(func(0).sort(), isKeys ? [] : ['a']);
+      delete Number.prototype.a;
     });
 
     test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
@@ -8818,10 +8752,10 @@
       deepEqual(func(array).sort(), ['0', '1', '2']);
     });
 
-    test('`_.' + methodName + '` should return an empty array for nullish values', 2, function() {
+    test('`_.' + methodName + '` should coerce nullish values to objects', 2, function() {
       objectProto.a = 1;
       _.each([null, undefined], function(value) {
-        deepEqual(func(value), []);
+        deepEqual(func(value), isKeys ? [] : ['a']);
       });
       delete objectProto.a;
     });
@@ -15188,9 +15122,11 @@
         };
 
         var lodash = _.runInContext(_.assign({}, root, {
-          'Date': function() {
+          'Date': _.assign(function() {
             return { 'getTime': getTime };
-          }
+          }, {
+            'now': Date.now
+          })
         }));
 
         var throttled = lodash.throttle(function() {
@@ -15465,9 +15401,11 @@
         };
 
         var lodash = _.runInContext(_.assign({}, root, {
-          'Date': function() {
+          'Date': _.assign(function() {
             return { 'getTime': getTime, 'valueOf': getTime };
-          }
+          }, {
+            'now': Date.now
+          })
         }));
 
         var funced = lodash[methodName](function() {

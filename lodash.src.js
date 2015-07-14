@@ -147,12 +147,6 @@
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap'
   ];
 
-  /** Used to fix the JScript `[[DontEnum]]` bug. */
-  var shadowProps = [
-    'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable',
-    'toLocaleString', 'toString', 'valueOf'
-  ];
-
   /** Used to make template sourceURLs easier to identify. */
   var templateCounter = -1;
 
@@ -755,7 +749,6 @@
 
     /** Used for native method references. */
     var arrayProto = Array.prototype,
-        errorProto = Error.prototype,
         objectProto = Object.prototype,
         stringProto = String.prototype;
 
@@ -774,6 +767,9 @@
      */
     var objToString = objectProto.toString;
 
+    /** Used to infer the `Object` constructor. */
+    var objCtorString = fnToString.call(Object);
+
     /** Used to restore the original `_` reference in `_.noConflict`. */
     var oldDash = root._;
 
@@ -786,6 +782,7 @@
     /** Native method references. */
     var ArrayBuffer = context.ArrayBuffer,
         clearTimeout = context.clearTimeout,
+        getPrototypeOf = Object.getPrototypeOf,
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -799,12 +796,10 @@
     var nativeCeil = Math.ceil,
         nativeCreate = getNative(Object, 'create'),
         nativeFloor = Math.floor,
-        nativeIsArray = getNative(Array, 'isArray'),
         nativeIsFinite = context.isFinite,
-        nativeKeys = getNative(Object, 'keys'),
+        nativeKeys = Object.keys,
         nativeMax = Math.max,
         nativeMin = Math.min,
-        nativeNow = getNative(Date, 'now'),
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
 
@@ -828,34 +823,6 @@
 
     /** Used to lookup unminified function names. */
     var realNames = {};
-
-    /** Used to lookup a type array constructors by `toStringTag`. */
-    var ctorByTag = {};
-    ctorByTag[float32Tag] = context.Float32Array;
-    ctorByTag[float64Tag] = context.Float64Array;
-    ctorByTag[int8Tag] = context.Int8Array;
-    ctorByTag[int16Tag] = context.Int16Array;
-    ctorByTag[int32Tag] = context.Int32Array;
-    ctorByTag[uint8Tag] = Uint8Array;
-    ctorByTag[uint8ClampedTag] = context.Uint8ClampedArray;
-    ctorByTag[uint16Tag] = context.Uint16Array;
-    ctorByTag[uint32Tag] = context.Uint32Array;
-
-    /** Used to avoid iterating over non-enumerable properties in IE < 9. */
-    var nonEnumProps = {};
-    nonEnumProps[arrayTag] = nonEnumProps[dateTag] = nonEnumProps[numberTag] = { 'constructor': true, 'toLocaleString': true, 'toString': true, 'valueOf': true };
-    nonEnumProps[boolTag] = nonEnumProps[stringTag] = { 'constructor': true, 'toString': true, 'valueOf': true };
-    nonEnumProps[errorTag] = nonEnumProps[funcTag] = nonEnumProps[regexpTag] = { 'constructor': true, 'toString': true };
-    nonEnumProps[objectTag] = { 'constructor': true };
-
-    arrayEach(shadowProps, function(key) {
-      for (var tag in nonEnumProps) {
-        if (hasOwnProperty.call(nonEnumProps, tag)) {
-          var props = nonEnumProps[tag];
-          props[key] = hasOwnProperty.call(props, key);
-        }
-      }
-    });
 
     /*------------------------------------------------------------------------*/
 
@@ -988,92 +955,6 @@
       this.__actions__ = actions || [];
       this.__chain__ = !!chainAll;
     }
-
-    /**
-     * An object environment feature flags.
-     *
-     * @static
-     * @memberOf _
-     * @type Object
-     */
-    var support = lodash.support = {};
-
-    (function(x) {
-      var Ctor = function() { this.x = x; },
-          object = { '0': x, 'length': x },
-          props = [];
-
-      Ctor.prototype = { 'valueOf': x, 'y': x };
-      for (var key in new Ctor) { props.push(key); }
-
-      /**
-       * Detect if `name` or `message` properties of `Error.prototype` are
-       * enumerable by default (IE < 9, Safari < 5.1).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.enumErrorProps = propertyIsEnumerable.call(errorProto, 'message') ||
-        propertyIsEnumerable.call(errorProto, 'name');
-
-      /**
-       * Detect if `prototype` properties are enumerable by default.
-       *
-       * Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1
-       * (if the prototype or a property on the prototype has been set)
-       * incorrectly set the `[[Enumerable]]` value of a function's `prototype`
-       * property to `true`.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.enumPrototypes = propertyIsEnumerable.call(Ctor, 'prototype');
-
-      /**
-       * Detect if properties shadowing those on `Object.prototype` are non-enumerable.
-       *
-       * In IE < 9 an object's own properties, shadowing non-enumerable ones,
-       * are made non-enumerable as well (a.k.a the JScript `[[DontEnum]]` bug).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.nonEnumShadows = !/valueOf/.test(props);
-
-      /**
-       * Detect if own properties are iterated after inherited properties (IE < 9).
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.ownLast = props[0] != 'x';
-
-      /**
-       * Detect if `Array#shift` and `Array#splice` augment array-like objects
-       * correctly.
-       *
-       * Firefox < 10, compatibility modes of IE 8, and IE < 9 have buggy Array
-       * `shift()` and `splice()` functions that fail to remove the last element,
-       * `value[0]`, of array-like objects even though the "length" property is
-       * set to `0`. The `shift()` method is buggy in compatibility modes of IE 8,
-       * while `splice()` is buggy regardless of mode in IE < 9.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.spliceObjects = (splice.call(object, 0, 1), !object[0]);
-
-      /**
-       * Detect lack of support for accessing string characters by index.
-       *
-       * IE < 8 can't access characters by index. IE 8 can only access characters
-       * by index on string literals, not string objects.
-       *
-       * @memberOf _.support
-       * @type boolean
-       */
-      support.unindexedChars = ('x'[0] + Object('x')[0]) != 'xx';
-    }(1, 0));
 
     /**
      * By default, the template delimiters used by lodash are like those in
@@ -3845,10 +3726,7 @@
      */
     function initCloneObject(object) {
       var Ctor = object.constructor;
-      if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
-        Ctor = Object;
-      }
-      return new Ctor;
+      return (typeof Ctor == 'function' && Ctor instanceof Ctor) ? new Ctor : {};
     }
 
     /**
@@ -3876,10 +3754,6 @@
         case float32Tag: case float64Tag:
         case int8Tag: case int16Tag: case int32Tag:
         case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
-          // Safari 5 mobile incorrectly has `Object` as the constructor of typed arrays.
-          if (Ctor instanceof Ctor) {
-            Ctor = ctorByTag[tag];
-          }
           var buffer = object.buffer;
           return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
 
@@ -4170,36 +4044,6 @@
     }());
 
     /**
-     * A fallback implementation of `Object.keys` which creates an array of the
-     * own enumerable property names of `object`.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the array of property names.
-     */
-    function shimKeys(object) {
-      var result = [];
-      if (!object) {
-        return result;
-      }
-      var index = -1,
-          props = keysIn(object),
-          propsLength = props.length,
-          length = propsLength && object.length;
-
-      var allowIndexes = !!length && isLength(length) &&
-        (isArray(object) || isArguments(object) || isString(object));
-
-      while (++index < propsLength) {
-        var key = props[index];
-        if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
-          result.push(key);
-        }
-      }
-      return result;
-    }
-
-    /**
      * Converts `value` to a function if it's not one.
      *
      * @private
@@ -4224,7 +4068,7 @@
       if (!isArrayLike(value)) {
         return values(value);
       }
-      if (lodash.support.unindexedChars && isString(value)) {
+      if (isString(value)) {
         return value.split('');
       }
       return isObject(value) ? value : Object(value);
@@ -4238,7 +4082,7 @@
      * @returns {Object} Returns the object.
      */
     function toObject(value) {
-      if (lodash.support.unindexedChars && isString(value)) {
+      if (isString(value)) {
         var index = -1,
             length = value.length,
             result = Object(value);
@@ -5897,9 +5741,7 @@
      * // => ['barney', 'pebbles']
      */
     var at = restParam(function(collection, props) {
-      if (isArrayLike(collection)) {
-        collection = toIterable(collection);
-      }
+      collection = isArrayLike(collection) ? toIterable(collection) : collection;
       return baseAt(collection, baseFlatten(props));
     });
 
@@ -6707,6 +6549,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Date
      * @example
      *
@@ -6715,9 +6558,7 @@
      * }, _.now());
      * // => logs the number of milliseconds it took for the deferred function to be invoked
      */
-    var now = nativeNow || function() {
-      return new Date().getTime();
-    };
+    var now = Date.now;
 
     /*------------------------------------------------------------------------*/
 
@@ -7941,6 +7782,7 @@
      *
      * @static
      * @memberOf _
+     * @type Function
      * @category Lang
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
@@ -7952,9 +7794,7 @@
      * _.isArray(function() { return arguments; }());
      * // => false
      */
-    var isArray = nativeIsArray || function(value) {
-      return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
-    };
+    var isArray = Array.isArray;
 
     /**
      * Checks if `value` is classified as a boolean primitive or object.
@@ -8411,32 +8251,17 @@
      * // => true
      */
     function isPlainObject(value) {
-      var Ctor;
-
-      // Exit early for non `Object` objects.
-      if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value) && !isArguments(value)) ||
-          (!hasOwnProperty.call(value, 'constructor') && (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
+      if (!(value && objToString.call(value) == objectTag)) {
         return false;
       }
-      // IE < 9 iterates inherited properties before own properties. If the first
-      // iterated property is an object's own property then there are no inherited
-      // enumerable properties.
-      var result;
-      if (lodash.support.ownLast) {
-        baseForIn(value, function(subValue, key, object) {
-          result = hasOwnProperty.call(object, key);
-          return false;
-        });
-        return result !== false;
+      var proto = getPrototypeOf(value);
+      if (proto === null) {
+        return true;
       }
-      // In most environments an object's own properties are iterated before
-      // its inherited properties. If the last iterated property is an object's
-      // own property then there are no inherited enumerable properties.
-      baseForIn(value, function(subValue, key) {
-        result = key;
-      });
-      return result === undefined || hasOwnProperty.call(value, result);
-    }
+      var Ctor = proto.constructor;
+      return (typeof Ctor == 'function' &&
+        Ctor instanceof Ctor && fnToString.call(Ctor) == objCtorString);
+    };
 
     /**
      * Checks if `value` is classified as a `RegExp` object.
@@ -8588,9 +8413,7 @@
       if (!value.length) {
         return [];
       }
-      return (lodash.support.unindexedChars && isString(value))
-        ? value.split('')
-        : copyArray(value);
+      return copyArray(toObject(value));
     }
 
     /**
@@ -9156,17 +8979,30 @@
      * _.keys('hi');
      * // => ['0', '1']
      */
-    var keys = !nativeKeys ? shimKeys : function(object) {
-      if (!object) {
-        return [];
+    function keys(object) {
+      object = toObject(object);
+      if (!isArrayLike(object)) {
+        return nativeKeys(object);
       }
-      var Ctor = object.constructor;
-      if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-          (typeof object == 'function' ? lodash.support.enumPrototypes : isArrayLike(object))) {
-        return shimKeys(object);
+      var length = object.length;
+      length = (length && isLength(length) &&
+        (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
+
+      var index = -1,
+          skipIndexes = length > 0,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = (index + '');
       }
-      return isObject(object) ? nativeKeys(object) : [];
-    };
+      for (var key in object) {
+        if (hasOwnProperty.call(object, key) &&
+            !(skipIndexes && isIndex(key, length))) {
+          result.push(key);
+        }
+      }
+      return result;
+    }
 
     /**
      * Creates an array of the own and inherited enumerable property names of `object`.
@@ -9191,58 +9027,24 @@
      * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
-      if (object == null) {
-        return [];
-      }
-      if (!isObject(object)) {
-        object = Object(object);
-      }
-      var length = object.length,
-          support = lodash.support;
+      object = toObject(object);
 
-      length = (length && isLength(length) &&
-        (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
+      var cache = {},
+          result = [];
 
-      var Ctor = object.constructor,
-          index = -1,
-          proto = (isFunction(Ctor) && Ctor.prototype) || objectProto,
-          isProto = proto === object,
-          result = Array(length),
-          skipIndexes = length > 0,
-          skipErrorProps = support.enumErrorProps && (object === errorProto || object instanceof Error),
-          skipProto = support.enumPrototypes && isFunction(object);
+      while (object) {
+        var index = -1,
+            props = keys(object),
+            length = props.length;
 
-      while (++index < length) {
-        result[index] = (index + '');
-      }
-      // lodash skips the `constructor` property when it infers it's iterating
-      // over a `prototype` object because IE < 9 can't set the `[[Enumerable]]`
-      // attribute of an existing property and the `constructor` property of a
-      // prototype defaults to non-enumerable.
-      for (var key in object) {
-        if (!(skipProto && key == 'prototype') &&
-            !(skipErrorProps && (key == 'message' || key == 'name')) &&
-            !(skipIndexes && isIndex(key, length)) &&
-            !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-          result.push(key);
-        }
-      }
-      if (support.nonEnumShadows && object !== objectProto) {
-        var tag = object === stringProto ? stringTag : (object === errorProto ? errorTag : objToString.call(object)),
-            nonEnums = nonEnumProps[tag] || nonEnumProps[objectTag];
-
-        if (tag == objectTag) {
-          proto = objectProto;
-        }
-        length = shadowProps.length;
-        while (length--) {
-          key = shadowProps[length];
-          var nonEnum = nonEnums[key];
-          if (!(isProto && nonEnum) &&
-              (nonEnum ? hasOwnProperty.call(object, key) : object[key] !== proto[key])) {
+        while (++index < length) {
+          var key = props[index];
+          if (cache[key] !== cache) {
             result.push(key);
+            cache[key] = cache;
           }
         }
+        object = getPrototypeOf(object);
       }
       return result;
     }
@@ -11848,20 +11650,9 @@
 
     // Add `Array` and `String` methods to `lodash.prototype`.
     arrayEach(['join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
-      var protoFunc = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
+      var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-          fixObjects = !support.spliceObjects && /^(?:pop|shift|splice)$/.test(methodName),
           retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
-
-      // Avoid array-like object bugs with `Array#shift` and `Array#splice` in
-      // IE < 9, Firefox < 10, and RingoJS.
-      var func = !fixObjects ? protoFunc : function() {
-        var result = protoFunc.apply(this, arguments);
-        if (this.length === 0) {
-          delete this[0];
-        }
-        return result;
-      };
 
       lodash.prototype[methodName] = function() {
         var args = arguments;

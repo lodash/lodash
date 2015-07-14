@@ -49,8 +49,7 @@
 
       function addBizarroMethods() {
         var funcProto = Function.prototype,
-            objectProto = Object.prototype,
-            stringProto = String.prototype;
+            objectProto = Object.prototype;
 
         var hasOwnProperty = objectProto.hasOwnProperty,
             fnToString = funcProto.toString,
@@ -82,26 +81,6 @@
         funcProto._method = noop;
 
         // Set bad shims.
-        setProperty(Array, '_isArray', Array.isArray);
-        setProperty(Array, 'isArray', noop);
-
-        setProperty(Date, '_now', Date.now);
-        setProperty(Date, 'now', noop);
-
-        setProperty(Object, '_keys', Object.keys);
-        setProperty(Object, 'keys', noop);
-
-        setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
-        setProperty(objectProto, 'propertyIsEnumerable', function(key) {
-          if (key == '1' && this && typeof this == 'object' &&
-              hasOwnProperty.call(this, 'callee') &&
-              !propertyIsEnumerable.call(this, 'callee') &&
-              this.length === 2 && this[0] === 1 && this[1] === 0) {
-            throw new Error;
-          }
-          return propertyIsEnumerable.call(this, key);
-        });
-
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
 
@@ -118,25 +97,8 @@
       }
 
       function removeBizarroMethods() {
-        var funcProto = Function.prototype,
-            objectProto = Object.prototype,
-            stringProto = String.prototype;
+        var funcProto = Function.prototype;
 
-        if (Array._isArray) {
-          setProperty(Array, 'isArray', Array._isArray);
-        } else {
-          delete Array.isArray;
-        }
-        if (Date._now) {
-          setProperty(Date, 'now', Date._now);
-        } else {
-          delete Date.now;
-        }
-        if (Object._keys) {
-          setProperty(Object, 'keys', Object._keys);
-        } else {
-          delete Object.keys;
-        }
         if (window._Set) {
           Set = _Set;
         }
@@ -153,13 +115,7 @@
         setProperty(window, 'global', undefined);
         setProperty(window, 'module', undefined);
 
-        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
-
-        delete Array._isArray;
-        delete Date._now;
-        delete Object._keys;
         delete funcProto._method;
-        delete objectProto._propertyIsEnumerable;
       }
 
       // Load lodash to expose it to the bad extensions/shims.

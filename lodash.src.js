@@ -4941,8 +4941,8 @@
     /**
      * Creates a slice of `array` from `start` up to, but not including, `end`.
      *
-     * **Note:** This method is used instead of `Array#slice` to support node
-     * lists in IE < 9 and to ensure dense arrays are returned.
+     * **Note:** This method is used instead of `Array#slice` to ensure dense
+     * arrays are returned.
      *
      * @static
      * @memberOf _
@@ -9799,7 +9799,6 @@
      * // => 'fred, barney, &amp; pebbles'
      */
     function escape(string) {
-      // Reset `lastIndex` because in IE < 9 `String#replace` does not.
       string = baseToString(string);
       return (string && reHasUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)

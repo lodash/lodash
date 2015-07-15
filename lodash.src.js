@@ -9087,9 +9087,9 @@
     }
 
     /**
-     * Recursively merges own enumerable properties of the source object(s), that
-     * don't resolve to `undefined` into the destination object. Subsequent sources
-     * overwrite property assignments of previous sources.
+     * Recursively merges own enumerable properties of the source object(s) into the
+     * destination object, for source properties which don't resolve to `undefined`.
+     * Subsequent sources overwrite property assignments of previous sources.
      *
      * @static
      * @memberOf _

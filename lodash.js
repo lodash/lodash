@@ -8972,6 +8972,9 @@
      * _.isString('abc');
      * // => true
      *
+     * _.isString('');
+     * // => true
+     *
      * _.isString(1);
      * // => false
      */

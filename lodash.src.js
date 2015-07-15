@@ -144,7 +144,7 @@
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
     'Object', 'Reflect', 'RegExp', 'Set', 'String', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
-    'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout',
+    'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout'
   ];
 
   /** Used to make template sourceURLs easier to identify. */

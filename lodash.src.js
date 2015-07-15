@@ -142,9 +142,9 @@
   var contextProps = [
     'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
-    'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'isFinite',
-    'parseFloat', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
-    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap'
+    'Object', 'Reflect', 'RegExp', 'Set', 'String', 'TypeError', 'Uint8Array',
+    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
+    'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout',
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -743,6 +743,7 @@
         Math = context.Math,
         Number = context.Number,
         Object = context.Object,
+        Reflect = context.Reflect,
         RegExp = context.RegExp,
         String = context.String,
         TypeError = context.TypeError;
@@ -782,6 +783,7 @@
     /** Native method references. */
     var ArrayBuffer = context.ArrayBuffer,
         clearTimeout = context.clearTimeout,
+        enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
         parseFloat = context.parseFloat,
         pow = Math.pow,
@@ -1863,29 +1865,6 @@
     }
 
     /**
-     * The base implementation of `_.iteratee`.
-     *
-     * @private
-     * @param {*} [func=_.identity] The value to convert to an iteratee.
-     * @returns {Function} Returns the iteratee.
-     */
-    function baseIteratee(func) {
-      var type = typeof func;
-      if (type == 'function') {
-        return func;
-      }
-      if (func == null) {
-        return identity;
-      }
-      if (type == 'object') {
-        return isArray(func)
-          ? baseMatchesProperty(func[0], func[1])
-          : baseMatches(func);
-      }
-      return property(func);
-    }
-
-    /**
      * The base implementation of `baseForIn` and `baseForOwn` which iterates
      * over `object` properties returned by `keysFunc` invoking `iteratee` for
      * each property. Iteratee functions may exit iteration early by explicitly
@@ -2143,6 +2122,59 @@
         }
       }
       return true;
+    }
+
+    /**
+     * The base implementation of `_.iteratee`.
+     *
+     * @private
+     * @param {*} [func=_.identity] The value to convert to an iteratee.
+     * @returns {Function} Returns the iteratee.
+     */
+    function baseIteratee(func) {
+      var type = typeof func;
+      if (type == 'function') {
+        return func;
+      }
+      if (func == null) {
+        return identity;
+      }
+      if (type == 'object') {
+        return isArray(func)
+          ? baseMatchesProperty(func[0], func[1])
+          : baseMatches(func);
+      }
+      return property(func);
+    }
+
+    /**
+     * The base implementation of `_.keysIn` which does not skip the constructor
+     * property of prototypes or treat sparse arrays as dense.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of property names.
+     */
+    function baseKeysIn(object) {
+      var result = [];
+      for (var key in object) {
+        result.push(key);
+      }
+      return result;
+    }
+
+    // An alternative implementation intended for IE < 9 with es6-shim.
+    if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
+      var baseKeysIn = function(object) {
+        var data,
+            iterator = enumerate(object),
+            result = [];
+
+        while (!(data = iterator.next()).done) {
+          result.push(data.value);
+        }
+        return result;
+      };
     }
 
     /**
@@ -3769,6 +3801,29 @@
     }
 
     /**
+     * Initializes an array of property names based on `object`. If `object` is
+     * an array, `arguments` object, or `string` its index keys are returned,
+     * otherwise an empty array is returned.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the initialized array of property names.
+     */
+    function initKeys(object) {
+      var length = object.length;
+      length = (length && isLength(length) &&
+        (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
+
+      var index = -1,
+          result = Array(length);
+
+      while (++index < length) {
+        result[index] = (index + '');
+      }
+      return result;
+    }
+
+    /**
      * Invokes the method at `path` on `object`.
      *
      * @private
@@ -3887,6 +3942,20 @@
      */
     function isLength(value) {
       return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+    }
+
+    /**
+     * Checks if `value` is a prototype.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+     */
+    function isPrototype(value) {
+      var Ctor = !!value && value.constructor,
+          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+      return value === proto;
     }
 
     /**
@@ -8981,23 +9050,19 @@
      */
     function keys(object) {
       object = toObject(object);
-      if (!isArrayLike(object)) {
+
+      var isProto = isPrototype(object);
+      if (!(isProto || isArrayLike(object))) {
         return nativeKeys(object);
       }
-      var length = object.length;
-      length = (length && isLength(length) &&
-        (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
+      var result = initKeys(object),
+          length = result.length,
+          skipIndexes = !!length;
 
-      var index = -1,
-          skipIndexes = length > 0,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = (index + '');
-      }
       for (var key in object) {
         if (hasOwnProperty.call(object, key) &&
-            !(skipIndexes && isIndex(key, length))) {
+            !(skipIndexes && isIndex(key, length)) &&
+            !(isProto && key == 'constructor')) {
           result.push(key);
         }
       }
@@ -9029,22 +9094,20 @@
     function keysIn(object) {
       object = toObject(object);
 
-      var cache = {},
-          result = [];
+      var index = -1,
+          isProto = isPrototype(object),
+          props = baseKeysIn(object),
+          propsLength = props.length,
+          result = initKeys(object),
+          length = result.length,
+          skipIndexes = !!length;
 
-      while (object) {
-        var index = -1,
-            props = keys(object),
-            length = props.length;
-
-        while (++index < length) {
-          var key = props[index];
-          if (cache[key] !== cache) {
-            result.push(key);
-            cache[key] = cache;
-          }
+      while (++index < propsLength) {
+        var key = props[index];
+        if (!(skipIndexes && isIndex(key, length)) &&
+            !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+          result.push(key);
         }
-        object = getPrototypeOf(object);
       }
       return result;
     }

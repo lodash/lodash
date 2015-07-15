@@ -1963,15 +1963,14 @@
       if (object == null) {
         return;
       }
-      object = toObject(object);
-      if (pathKey !== undefined && pathKey in object) {
+      if (pathKey !== undefined && pathKey in Object(object)) {
         path = [pathKey];
       }
       var index = 0,
           length = path.length;
 
       while (object != null && index < length) {
-        object = toObject(object)[path[index++]];
+        object = object[path[index++]];
       }
       return (index && index == length) ? object : undefined;
     }
@@ -2094,7 +2093,7 @@
       if (object == null) {
         return !length;
       }
-      object = toObject(object);
+      object = Object(object);
       while (index--) {
         var data = matchData[index];
         if ((noCustomizer && data[2])
@@ -2212,8 +2211,7 @@
           if (object == null) {
             return false;
           }
-          object = toObject(object);
-          return object[key] === value && (value !== undefined || (key in object));
+          return object[key] === value && (value !== undefined || (key in Object(object)));
         };
       }
       return function(object) {
@@ -2240,17 +2238,15 @@
           return false;
         }
         var key = pathKey;
-        object = toObject(object);
-        if ((isArr || !isCommon) && !(key in object)) {
+        if ((isArr || !isCommon) && !(key in Object(object))) {
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
           if (object == null) {
             return false;
           }
           key = last(path);
-          object = toObject(object);
         }
         return object[key] === srcValue
-          ? (srcValue !== undefined || (key in object))
+          ? (srcValue !== undefined || (key in Object(object)))
           : baseIsEqual(srcValue, object[key], undefined, true);
       };
     }
@@ -2364,7 +2360,7 @@
      * @returns {Object} Returns the new object.
      */
     function basePick(object, props) {
-      object = toObject(object);
+      object = Object(object);
 
       var index = -1,
           length = props.length,
@@ -2406,7 +2402,7 @@
      */
     function baseProperty(key) {
       return function(object) {
-        return object == null ? undefined : toObject(object)[key];
+        return object == null ? undefined : object[key];
       };
     }
 
@@ -2987,7 +2983,7 @@
           customizer = length < 3 ? undefined : customizer;
           length = 1;
         }
-        object = toObject(object);
+        object = Object(object);
         while (++index < length) {
           var source = sources[index];
           if (source) {
@@ -3016,7 +3012,7 @@
         }
         var length = collection.length,
             index = fromRight ? length : -1,
-            iterable = toObject(collection);
+            iterable = Object(collection);
 
         while ((fromRight ? index-- : ++index < length)) {
           if (iteratee(iterable[index], index, iterable) === false) {
@@ -3036,7 +3032,7 @@
      */
     function createBaseFor(fromRight) {
       return function(object, iteratee, keysFunc) {
-        var iterable = toObject(object),
+        var iterable = Object(object),
             props = keysFunc(object),
             length = props.length,
             index = fromRight ? length : -1;
@@ -3907,7 +3903,7 @@
         return false;
       }
       var result = !reIsDeepProp.test(value);
-      return result || (object != null && value in toObject(object));
+      return result || (object != null && value in Object(object));
     }
 
     /**
@@ -4121,47 +4117,6 @@
      */
     function toFunction(func) {
       return typeof func == 'function' ? func : identity;
-    }
-
-    /**
-     * Converts `value` to an array-like object if it's not one.
-     *
-     * @private
-     * @param {*} value The value to process.
-     * @returns {Array|Object} Returns the array-like object.
-     */
-    function toIterable(value) {
-      if (value == null) {
-        return [];
-      }
-      if (!isArrayLike(value)) {
-        return values(value);
-      }
-      if (isString(value)) {
-        return value.split('');
-      }
-      return isObject(value) ? value : Object(value);
-    }
-
-    /**
-     * Converts `value` to an object if it's not one.
-     *
-     * @private
-     * @param {*} value The value to process.
-     * @returns {Object} Returns the object.
-     */
-    function toObject(value) {
-      if (isString(value)) {
-        var index = -1,
-            length = value.length,
-            result = Object(value);
-
-        while (++index < length) {
-          result[index] = value.charAt(index);
-        }
-        return result;
-      }
-      return isObject(value) ? value : Object(value);
     }
 
     /**
@@ -5671,7 +5626,7 @@
     var wrapperConcat = restParam(function(values) {
       values = baseFlatten(values);
       return this.thru(function(array) {
-        return arrayConcat(isArray(array) ? array : [toObject(array)], values);
+        return arrayConcat(isArray(array) ? array : [Object(array)], values);
       });
     });
 
@@ -5810,7 +5765,6 @@
      * // => ['barney', 'pebbles']
      */
     var at = restParam(function(collection, props) {
-      collection = isArrayLike(collection) ? toIterable(collection) : collection;
       return baseAt(collection, baseFlatten(props));
     });
 
@@ -6407,7 +6361,7 @@
      */
     function sample(collection, n, guard) {
       if (guard ? isIterateeCall(collection, n, guard) : n == null) {
-        collection = toIterable(collection);
+        collection = isArrayLike(collection) ? collection : values(collection);
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
@@ -8479,10 +8433,7 @@
       if (!isArrayLike(value)) {
         return values(value);
       }
-      if (!value.length) {
-        return [];
-      }
-      return copyArray(toObject(value));
+      return value.length ? copyArray(value) : [];
     }
 
     /**
@@ -9049,7 +9000,7 @@
      * // => ['0', '1']
      */
     function keys(object) {
-      object = toObject(object);
+      object = Object(object);
 
       var isProto = isPrototype(object);
       if (!(isProto || isArrayLike(object))) {
@@ -9092,7 +9043,7 @@
      * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
-      object = toObject(object);
+      object = Object(object);
 
       var index = -1,
           isProto = isPrototype(object),
@@ -9306,7 +9257,7 @@
      * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
      */
     function pairs(object) {
-      object = toObject(object);
+      object = Object(object);
 
       var index = -1,
           props = keys(object),
@@ -9391,12 +9342,12 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      var result = object == null ? undefined : toObject(object)[path];
+      var result = object == null ? undefined : object[path];
       if (result === undefined) {
         if (object != null && !isKey(path, object)) {
           path = toPath(path);
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          result = object == null ? undefined : toObject(object)[last(path)];
+          result = object == null ? undefined : object[last(path)];
         }
         result = result === undefined ? defaultValue : result;
       }

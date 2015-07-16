@@ -8256,7 +8256,10 @@
       if (!(value && objToString.call(value) == objectTag)) {
         return false;
       }
-      var proto = getPrototypeOf(value);
+      var proto = typeof value.constructor == 'function'
+        ? getPrototypeOf(value)
+        : objectProto;
+
       if (proto === null) {
         return true;
       }

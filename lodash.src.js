@@ -3113,25 +3113,6 @@
     }
 
     /**
-     * Creates a `_.maxBy` or `_.minBy` function.
-     *
-     * @private
-     * @param {Function} comparator The function used to compare values.
-     * @param {*} exValue The initial extremum value.
-     * @returns {Function} Returns the new extremum function.
-     */
-    function createExtremum(comparator, exValue) {
-      return function(array, iteratee, guard) {
-        if (guard && isIterateeCall(array, iteratee, guard)) {
-          iteratee = undefined;
-        }
-        return (array && array.length)
-          ? arrayExtremum(array, getIteratee(iteratee), comparator, exValue)
-          : exValue;
-      };
-    }
-
-    /**
      * Creates a `_.flow` or `_.flowRight` function.
      *
      * @private
@@ -11082,7 +11063,14 @@
      * _.maxBy(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
-    var maxBy = createExtremum(gt, NEGATIVE_INFINITY);
+    function maxBy(array, iteratee, guard) {
+      if (guard && isIterateeCall(array, iteratee, guard)) {
+        iteratee = undefined;
+      }
+      return (array && array.length)
+        ? arrayExtremum(array, getIteratee(iteratee), gt, NEGATIVE_INFINITY)
+        : NEGATIVE_INFINITY;
+    }
 
     /**
      * Gets the minimum value of `array`. If `array` is empty or falsey
@@ -11130,7 +11118,14 @@
      * _.minBy(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var minBy = createExtremum(lt, POSITIVE_INFINITY);
+    function minBy(array, iteratee, guard) {
+      if (guard && isIterateeCall(array, iteratee, guard)) {
+        iteratee = undefined;
+      }
+      return (array && array.length)
+        ? arrayExtremum(array, getIteratee(iteratee), lt, POSITIVE_INFINITY)
+        : POSITIVE_INFINITY;
+    }
 
     /**
      * Calculates `n` rounded to `precision`.

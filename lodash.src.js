@@ -567,8 +567,8 @@
       return function() { return false; };
     }
     return function(value) {
-      // IE < 9 presents many host objects as `Object` objects that can coerce
-      // to strings despite having improperly defined `toString` methods.
+      // Many host objects are `Object` objects that can coerce to strings
+      // despite having improperly defined `toString` methods.
       return typeof value.toString != 'function' && typeof (value + '') == 'string';
     };
   }());
@@ -2147,7 +2147,7 @@
     }
 
     /**
-     * The base implementation of `_.keysIn` which does not skip the constructor
+     * The base implementation of `_.keysIn` which doesn't skip the constructor
      * property of prototypes or treat sparse arrays as dense.
      *
      * @private
@@ -2195,7 +2195,7 @@
     }
 
     /**
-     * The base implementation of `_.matches` which does not clone `source`.
+     * The base implementation of `_.matches` which doesn't clone `source`.
      *
      * @private
      * @param {Object} source The object of property values to match.
@@ -4120,7 +4120,7 @@
     }
 
     /**
-     * Converts `value` to property path array if it's not one.
+     * Converts `value` to a property path array if it's not one.
      *
      * @private
      * @param {*} value The value to process.
@@ -4798,8 +4798,7 @@
 
     /**
      * Removes elements from `array` corresponding to the given indexes and returns
-     * an array of the removed elements. Indexes may be specified as an array of
-     * indexes or as individual arguments.
+     * an array of the removed elements.
      *
      * **Note:** Unlike `_.at`, this method mutates `array`.
      *
@@ -4808,7 +4807,7 @@
      * @category Array
      * @param {Array} array The array to modify.
      * @param {...(number|number[])} [indexes] The indexes of elements to remove,
-     *  specified as individual indexes or arrays of indexes.
+     *  specified individually or in arrays.
      * @returns {Array} Returns the new array of removed elements.
      * @example
      *
@@ -6117,7 +6116,8 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Array|Function|string} path The path of the method to invoke or the function invoked per iteration.
+     * @param {Array|Function|string} path The path of the method to invoke or
+     *  the function invoked per iteration.
      * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Array} Returns the array of results.
      * @example
@@ -6429,7 +6429,7 @@
 
     /**
      * Checks if `predicate` returns truthy for **any** element of `collection`.
-     * The function returns as soon as it finds a passing value and does not iterate
+     * The function returns as soon as it finds a passing value and doesn't iterate
      * over the entire collection. The predicate is invoked with three arguments:
      * (value, index|key, collection).
      *
@@ -6482,7 +6482,7 @@
      * @category Collection
      * @param {Array|Object|string} collection The collection to iterate over.
      * @param {...(Function|Function[]|Object|Object[]|string|string[])} [iteratees=[_.identity]]
-     *  The iteratees to sort by, specified as individual values or arrays of values.
+     *  The iteratees to sort by, specified individually or in arrays.
      * @returns {Array} Returns the new sorted array.
      * @example
      *
@@ -6696,7 +6696,7 @@
      * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
      * may be used as a placeholder for partially applied arguments.
      *
-     * **Note:** Unlike native `Function#bind` this method does not set the "length"
+     * **Note:** Unlike native `Function#bind` this method doesn't set the "length"
      * property of bound functions.
      *
      * @static
@@ -6734,18 +6734,16 @@
 
     /**
      * Binds methods of an object to the object itself, overwriting the existing
-     * method. Method names may be specified as individual arguments or as arrays
-     * of method names. If no method names are provided all enumerable function
-     * properties, own and inherited, of `object` are bound.
+     * method.
      *
-     * **Note:** This method does not set the "length" property of bound functions.
+     * **Note:** This method doesn't set the "length" property of bound functions.
      *
      * @static
      * @memberOf _
      * @category Function
      * @param {Object} object The object to bind and assign the bound methods to.
      * @param {...(string|string[])} methodNames The object method names to bind,
-     *  specified as individual method names or arrays of method names.
+     *  specified individually or in arrays.
      * @returns {Object} Returns `object`.
      * @example
      *
@@ -6836,7 +6834,7 @@
      * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
      * may be used as a placeholder for provided arguments.
      *
-     * **Note:** This method does not set the "length" property of curried functions.
+     * **Note:** This method doesn't set the "length" property of curried functions.
      *
      * @static
      * @memberOf _
@@ -6882,7 +6880,7 @@
      * The `_.curryRight.placeholder` value, which defaults to `_` in monolithic
      * builds, may be used as a placeholder for provided arguments.
      *
-     * **Note:** This method does not set the "length" property of curried functions.
+     * **Note:** This method doesn't set the "length" property of curried functions.
      *
      * @static
      * @memberOf _
@@ -7256,7 +7254,7 @@
      * @category Function
      * @param {Function} func The function to wrap.
      * @param {...(Function|Function[])} [transforms] The functions to transform
-     * arguments, specified as individual functions or arrays of functions.
+     * arguments, specified individually or in arrays.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -7350,7 +7348,7 @@
      * The `_.partial.placeholder` value, which defaults to `_` in monolithic
      * builds, may be used as a placeholder for partially applied arguments.
      *
-     * **Note:** This method does not set the "length" property of partially
+     * **Note:** This method doesn't set the "length" property of partially
      * applied functions.
      *
      * @static
@@ -7386,7 +7384,7 @@
      * The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
      * builds, may be used as a placeholder for partially applied arguments.
      *
-     * **Note:** This method does not set the "length" property of partially
+     * **Note:** This method doesn't set the "length" property of partially
      * applied functions.
      *
      * @static
@@ -7426,7 +7424,7 @@
      * @category Function
      * @param {Function} func The function to rearrange arguments for.
      * @param {...(number|number[])} indexes The arranged argument indexes,
-     *  specified as individual indexes or arrays of indexes.
+     *  specified individually or in arrays.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -8050,9 +8048,8 @@
      */
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
-      // in older versions of Chrome and Safari which return 'function' for regexes,
-      // Safari 8 which returns 'object' for typed array constructors, and PhantomJS 1.9
-      // which returns 'function' for `NodeList` instances.
+      // in Safari 8 which returns 'object' for typed array constructors, and
+      // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
       return isObject(value) && objToString.call(value) == funcTag;
     }
 
@@ -8167,7 +8164,7 @@
      */
     function isNaN(value) {
       // An `NaN` primitive is the only value that is not equal to itself.
-      // Perform the `toStringTag` check first to avoid errors with some host objects in IE.
+      // Perform the `toStringTag` check first to avoid errors with some ActiveX objects in IE.
       return isNumber(value) && value != +value;
     }
 
@@ -8246,9 +8243,6 @@
     /**
      * Checks if `value` is a plain object, that is, an object created by the
      * `Object` constructor or one with a `[[Prototype]]` of `null`.
-     *
-     * **Note:** This method assumes objects created by the `Object` constructor
-     * have no inherited enumerable properties.
      *
      * @static
      * @memberOf _
@@ -9199,8 +9193,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {string|string[]} [props] The property names to omit, specified as
-     *  individual property names or arrays of property names.
+     * @param {string|string[]} [props] The property names to omit, specified
+     *  individually or in arrays..
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -9219,8 +9213,8 @@
 
     /**
      * The opposite of `_.pickBy`; this method creates an object composed of the
-     * own and inherited enumerable properties of `object` that `predicate` does
-     * not return truthy for.
+     * own and inherited enumerable properties of `object` that `predicate`
+     * doesn't return truthy for.
      *
      * @static
      * @memberOf _
@@ -9278,8 +9272,8 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {string|string[]} [props] The property names to pick, specified as
-     *  individual property names or arrays of property names.
+     * @param {string|string[]} [props] The property names to pick, specified
+     *  individually or in arrays.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -9356,7 +9350,7 @@
 
     /**
      * Sets the property value of `path` on `object`. If a portion of `path`
-     * does not exist it's created.
+     * doesn't exist it's created.
      *
      * @static
      * @memberOf _
@@ -9916,7 +9910,6 @@
      * // => [6, 8, 10]
      */
     function parseInt(string, radix, guard) {
-      // Firefox < 21 and Opera < 15 follow ES3 for `parseInt`.
       // Chrome fails to trim leading <BOM> whitespace characters.
       // See https://code.google.com/p/v8/issues/detail?id=3109 for more details.
       if (guard ? isIterateeCall(string, radix, guard) : radix == null) {

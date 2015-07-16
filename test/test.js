@@ -4906,23 +4906,30 @@
     _.each(collectionMethods, function(methodName) {
       var func = _[methodName];
 
-      test('`_.' + methodName + '` should use `isLength` to determine whether a value is array-like', 2, function() {
+      test('`_.' + methodName + '` should use `isArrayLike` to determine whether a value is array-like', 3, function() {
         if (func) {
-          var isIteratedAsObject = function(length) {
+          var isIteratedAsObject = function(object) {
             var result = false;
-            func({ 'length': length }, function() { result = true; }, 0);
+            func(object, function() { result = true; }, 0);
             return result;
           };
 
           var values = [-1, '1', 1.1, Object(1), MAX_SAFE_INTEGER + 1],
-              expected = _.map(values, _.constant(true)),
-              actual = _.map(values, isIteratedAsObject);
+              expected = _.map(values, _.constant(true));
+
+          var actual = _.map(values, function(length) {
+            return isIteratedAsObject({ 'length': length });
+          });
+
+          var Foo = function(a) {};
+          Foo.a = 1;
 
           deepEqual(actual, expected);
-          ok(!isIteratedAsObject(0));
+          ok(isIteratedAsObject(Foo));
+          ok(!isIteratedAsObject({ 'length': 0 }));
         }
         else {
-          skipTest(2);
+          skipTest(3);
         }
       });
     });

@@ -2220,7 +2220,7 @@
     }
 
     /**
-     * The base implementation of `_.matchesProperty` which does not clone `srcValue`.
+     * The base implementation of `_.matchesProperty` which doesn't clone `srcValue`.
      *
      * @private
      * @param {string} path The path of the property to get.
@@ -2228,8 +2228,7 @@
      * @returns {Function} Returns the new function.
      */
     function baseMatchesProperty(path, srcValue) {
-      var isArr = isArray(path),
-          isCommon = isKey(path) && isStrictComparable(srcValue),
+      var isCommon = isKey(path) && isStrictComparable(srcValue),
           pathKey = (path + '');
 
       path = toPath(path);
@@ -2238,7 +2237,7 @@
           return false;
         }
         var key = pathKey;
-        if ((isArr || !isCommon) && !(key in Object(object))) {
+        if (!isCommon && !(key in Object(object))) {
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
           if (object == null) {
             return false;

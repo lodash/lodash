@@ -8740,9 +8740,9 @@
       deepEqual(func('abc').sort(), ['0', '1', '2']);
 
       // IE 9 doesn't box numbers in for-in loops.
-      Number.prototype.a = 1;
+      numberProto.a = 1;
       deepEqual(func(0).sort(), isKeys ? [] : ['a']);
-      delete Number.prototype.a;
+      delete numberProto.a;
     });
 
     test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
@@ -8848,7 +8848,7 @@
         'Error': errorProto,
         'Function': funcProto,
         'Object': objectProto,
-        'Number': Number.prototype,
+        'Number': numberProto,
         'TypeError': TypeError.prototype,
         'RegExp': RegExp.prototype,
         'String': stringProto

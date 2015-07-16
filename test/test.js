@@ -9596,6 +9596,33 @@
       deepEqual(actual, expected);
     });
 
+    test('should handle a primitive `object` and a `source` with `undefined` values', 3, function() {
+      numberProto.a = 1;
+      numberProto.b = undefined;
+
+      try {
+        var matches = _.matches({ 'b': undefined });
+        strictEqual(matches(1), true);
+      } catch(e) {
+        ok(false, e.message);
+      }
+      try {
+        matches = _.matches({ 'a': 1, 'b': undefined });
+        strictEqual(matches(1), true);
+      } catch(e) {
+        ok(false, e.message);
+      }
+      numberProto.a = { 'b': 1, 'c': undefined };
+      try {
+        matches = _.matches({ 'a': { 'c': undefined } });
+        strictEqual(matches(1), true);
+      } catch(e) {
+        ok(false, e.message);
+      }
+      delete numberProto.a;
+      delete numberProto.b;
+    });
+
     test('should match properties when `value` is a function', 1, function() {
       function Foo() {}
       Foo.a = { 'b': 1, 'c': 2 };
@@ -9887,7 +9914,7 @@
       deepEqual(actual, [objects[0]]);
     });
 
-    test('should handle a `value` with `undefined` values', 3, function() {
+    test('should handle a `value` with `undefined` values', 2, function() {
       var objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
           matches = _.matchesProperty('b', undefined),
           actual = _.map(objects, matches),
@@ -9896,15 +9923,31 @@
       deepEqual(actual, expected);
 
       objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 1 } }, { 'a': { 'a': 1, 'b': undefined } }];
-      matches = _.matchesProperty('a', { 'a': 1, 'b': undefined });
-      actual = _.map(objects, matches);
-
-      deepEqual(actual, expected);
-
       matches = _.matchesProperty('a', { 'b': undefined });
       actual = _.map(objects, matches);
 
       deepEqual(actual, expected);
+    });
+
+    test('should handle a primitive `object` and a `source` with `undefined` values', 2, function() {
+      numberProto.a = 1;
+      numberProto.b = undefined;
+
+      try {
+        var matches = _.matchesProperty('b', undefined);
+        strictEqual(matches(1), true);
+      } catch(e) {
+        ok(false, e.message);
+      }
+      numberProto.a = { 'b': 1, 'c': undefined };
+      try {
+        matches = _.matchesProperty('a', { 'c': undefined });
+        strictEqual(matches(1), true);
+      } catch(e) {
+        ok(false, e.message);
+      }
+      delete numberProto.a;
+      delete numberProto.b;
     });
 
     test('should work with a function for `value`', 1, function() {

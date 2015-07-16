@@ -1528,29 +1528,21 @@
     }
 
     /**
-     * The base implementation of `_.at` without support for string collections
-     * and individual key arguments.
+     * The base implementation of `_.at` without support for individual path arguments.
      *
      * @private
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {number[]|string[]} props The property names or indexes of elements to pick.
+     * @param {Object} object The object to iterate over.
+     * @param {string[]} paths The property paths of elements to pick.
      * @returns {Array} Returns the new array of picked elements.
      */
-    function baseAt(collection, props) {
+    function baseAt(object, paths) {
       var index = -1,
-          isNil = collection == null,
-          isArr = !isNil && isArrayLike(collection),
-          length = isArr ? collection.length : 0,
-          propsLength = props.length,
-          result = Array(propsLength);
+          isNil = object == null,
+          length = paths.length,
+          result = Array(length);
 
-      while(++index < propsLength) {
-        var key = props[index];
-        if (isArr) {
-          result[index] = isIndex(key, length) ? collection[key] : undefined;
-        } else {
-          result[index] = isNil ? undefined : collection[key];
-        }
+      while(++index < length) {
+        result[index] = isNil ? undefined : get(object, paths[index]);
       }
       return result;
     }
@@ -2419,9 +2411,13 @@
       var length = array ? indexes.length : 0;
       while (length--) {
         var index = indexes[length];
-        if (index != previous && isIndex(index)) {
+        if (index != previous) {
           var previous = index;
-          splice.call(array, index, 1);
+          if (isIndex(index)) {
+            splice.call(array, index, 1);
+          } else {
+            delete array[index];
+          }
         }
       }
       return array;
@@ -4783,8 +4779,8 @@
     }
 
     /**
-     * Removes elements from `array` corresponding to the given indexes and returns
-     * an array of the removed elements.
+     * Removes elements from `array` corresponding to `indexes` and returns an
+     * array of removed elements.
      *
      * **Note:** Unlike `_.at`, this method mutates `array`.
      *
@@ -5728,30 +5724,6 @@
     }
 
     /*------------------------------------------------------------------------*/
-
-    /**
-     * Creates an array of elements corresponding to the given keys, or indexes,
-     * of `collection`. Keys may be specified as individual arguments or as arrays
-     * of keys.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {...(number|number[]|string|string[])} [props] The property names
-     *  or indexes of elements to pick, specified individually or in arrays.
-     * @returns {Array} Returns the new array of picked elements.
-     * @example
-     *
-     * _.at(['a', 'b', 'c'], [0, 2]);
-     * // => ['a', 'c']
-     *
-     * _.at(['barney', 'fred', 'pebbles'], 0, 2);
-     * // => ['barney', 'pebbles']
-     */
-    var at = restParam(function(collection, props) {
-      return baseAt(collection, baseFlatten(props));
-    });
 
     /**
      * Creates an object composed of keys generated from the results of running
@@ -8495,6 +8467,30 @@
      */
     var assignWith = createAssigner(function(object, source, customizer) {
       copyObjectWith(source, keys(source), customizer, object);
+    });
+
+    /**
+     * Creates an array of values corresponding to `paths` of `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to iterate over.
+     * @param {...(string|string[])} [paths] The property paths of elements to pick,
+     *  specified individually or in arrays.
+     * @returns {Array} Returns the new array of picked elements.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
+     *
+     * _.at(object, ['a[0].b.c', 'a[1]']);
+     * // => [3, 4]
+     *
+     * _.at(['a', 'b', 'c'], 0, 2);
+     * // => ['a', 'c']
+     */
+    var at = restParam(function(object, paths) {
+      return baseAt(object, baseFlatten(paths));
     });
 
     /**

@@ -1027,6 +1027,12 @@
     var args = arguments,
         array = ['a', 'b', 'c'];
 
+    _.each(empties, function(value) {
+      if (value !== 0) {
+        array[value] = 1;
+      }
+    });
+
     array['1.1'] = array['-1'] = 1;
 
     test('should return the elements corresponding to the specified keys', 1, function() {
@@ -1039,12 +1045,12 @@
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
-    test('should use `undefined` for non-index keys on array-like values', 1, function() {
+    test('should work with non-index keys on array-like values', 1, function() {
       var values = _.reject(empties, function(value) {
         return value === 0 || _.isArray(value);
       }).concat(-1, 1.1);
 
-      var expected = _.map(values, _.constant(undefined)),
+      var expected = _.map(values, _.constant(1)),
           actual = _.at(array, values);
 
       deepEqual(actual, expected);
@@ -1060,19 +1066,19 @@
       deepEqual(actual, ['d', 'a', 'c']);
     });
 
-    test('should work with a falsey `collection` argument when keys are provided', 1, function() {
+    test('should work with a falsey `object` argument when keys are provided', 1, function() {
       var expected = _.map(falsey, _.constant(Array(4)));
 
-      var actual = _.map(falsey, function(collection) {
+      var actual = _.map(falsey, function(object) {
         try {
-          return _.at(collection, 0, 1, 'pop', 'push');
+          return _.at(object, 0, 1, 'pop', 'push');
         } catch(e) {}
       });
 
       deepEqual(actual, expected);
     });
 
-    test('should work with an `arguments` object for `collection`', 1, function() {
+    test('should work with an `arguments` object for `object`', 1, function() {
       var actual = _.at(args, [2, 0]);
       deepEqual(actual, [3, 1]);
     });
@@ -1082,7 +1088,7 @@
       deepEqual(actual, [2, 3, 4]);
     });
 
-    test('should work with an object for `collection`', 1, function() {
+    test('should work with an object for `object`', 1, function() {
       var actual = _.at({ 'a': 1, 'b': 2, 'c': 3 }, ['c', 'a']);
       deepEqual(actual, [3, 1]);
     });
@@ -1099,9 +1105,9 @@
       'literal': 'abc',
       'object': Object('abc')
     },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection`', 1, function() {
-        deepEqual(_.at(collection, [2, 0]), ['c', 'a']);
+    function(object, key) {
+      test('should work with a string ' + key + ' for `object`', 1, function() {
+        deepEqual(_.at(object, [2, 0]), ['c', 'a']);
       });
     });
   }(1, 2, 3));
@@ -12340,23 +12346,6 @@
 
       deepEqual(array, ['b']);
       deepEqual(actual, ['c', undefined, 'a']);
-    });
-
-    test('should ignore non-index keys', 2, function() {
-      var array = ['a', 'b', 'c'],
-          clone = array.slice();
-
-      array['1.1'] = array['-1'] = 1;
-
-      var values = _.reject(empties, function(value) {
-        return value === 0 || _.isArray(value);
-      }).concat(-1, 1.1, 'pop', 'push');
-
-      var expected = _.map(values, _.constant(undefined)),
-          actual = _.pullAt(array, values);
-
-      deepEqual(actual, expected);
-      deepEqual(array, clone);
     });
 
     test('should return an empty array when no indexes are provided', 4, function() {

@@ -3831,7 +3831,8 @@
      * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
      */
     function isArrayLike(value) {
-      return value != null && typeof value != 'function' && isLength(getLength(value));
+      return value != null &&
+        !(typeof value == 'function' && objToString.call(value) == funcTag) && isLength(getLength(value));
     }
 
     /**

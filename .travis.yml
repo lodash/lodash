@@ -55,8 +55,7 @@ before_install:
 #  - "[ $BIN != 'rhino' ] || (echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7.6/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino)"
 #  - "[ $BIN != 'ringo' ] || (wget --no-check-certificate https://lodash.com/_travis/ringojs-0.11.zip && sudo unzip ringojs-0.11 -d /opt && rm ringojs-0.11.zip)"
 #  - "[ $BIN != 'ringo' ] || (sudo ln -s /opt/ringojs-0.11/bin/ringo /usr/local/bin/ringo && sudo chmod +x $_)"
-  - "perl -pi -e 's|\"lodash\"|\"lodash-compat\"|' ./package.json"
-  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash-compat && cd ../ && npm i && cd ../../"
+  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
   - "node ./node_modules/lodash-cli/bin/lodash $BUILD -o ./lodash.$BUILD.js"
 script:
   - "[ $ISTANBUL == false ]   || cp ./lodash.$BUILD.js ./lodash.js"

@@ -17,7 +17,7 @@ var EventEmitter = require('events').EventEmitter,
     util = require('util');
 
 /** Load other modules. */
-var _ = require('../lodash.src.js'),
+var _ = require('../lodash.js'),
     chalk = require('chalk'),
     ecstatic = require('ecstatic'),
     request = require('request'),

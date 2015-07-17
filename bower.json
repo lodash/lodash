@@ -7,7 +7,6 @@
     "*.log",
     "*.map",
     "*.md",
-    "lodash.src.js",
     "component.json",
     "package.json",
     "doc",

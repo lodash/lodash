@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "3.10.1",
-  "main": "lodash.src.js",
+  "main": "lodash.js",
   "private": true,
   "devDependencies": {
     "curl-amd": "0.8.12",
@@ -20,7 +20,6 @@
       "*.log",
       "*.map",
       "*.md",
-      "lodash.src.js",
       "bower.json",
       "component.json",
       "doc",

@@ -38,7 +38,7 @@
   /** Detect free variable `require`. */
   var freeRequire = typeof require == 'function' && require;
 
-  /** Used to assign each benchmark an incrimented id. */
+  /** Used to assign each benchmark an incremented id. */
   var counter = 0;
 
   /** Detect the popular CommonJS extension `module.exports`. */
@@ -124,7 +124,7 @@
    */
   function runInContext(context) {
     // Exit early if unable to acquire lodash.
-    var _ = context && context._ || req('lodash') || root._;
+    var _ = context && context._ || req('lodash-compat') || req('lodash') || root._;
     if (!_) {
       Benchmark.runInContext = runInContext;
       return Benchmark;
@@ -1440,7 +1440,7 @@
       function getZ(u) {
         return (u - ((size1 * size2) / 2)) / sqrt((size1 * size2 * (size1 + size2 + 1)) / 12);
       }
-      // Reject the null hyphothesis the two samples come from the
+      // Reject the null hypothesis the two samples come from the
       // same population (i.e. have the same median) if...
       if (size1 + size2 > 30) {
         // ...the z-stat is greater than 1.96 or less than -1.96
@@ -1818,8 +1818,8 @@
       /*----------------------------------------------------------------------*/
 
       // Detect nanosecond support from a Java applet.
-      _.each(doc && doc.applets || [], function(element) {
-        return !(timer.ns = applet = 'nanoTime' in element && element);
+      _.find(doc && _.union(doc.applets, doc.embeds, doc.getElementsByTagName('object')) || [], function(element) {
+        return timer.ns = applet = 'nanoTime' in element && element;
       });
 
       // Check type in case Safari returns an object instead of a number.
@@ -1847,7 +1847,7 @@
         timers.push({ 'ns': timer.ns,  'res': getRes('us'), 'unit': 'us' });
       }
       // Pick timer with highest resolution.
-      timer = _.min(timers, 'res');
+      timer = (_.minBy || _.min)(timers, 'res');
 
       // Remove unused applet.
       if (timer.unit != 'ns' && applet) {
@@ -2085,7 +2085,7 @@
           if (!clocked && (divisor = divisors[clone.cycles]) != null) {
             count = floor(4e6 / divisor);
           }
-          // Calculate how many more iterations it will take to achive the `minTime`.
+          // Calculate how many more iterations it will take to achieve the `minTime`.
           if (count <= clone.count) {
             count += Math.ceil((minTime - clocked) / period);
           }
@@ -2811,23 +2811,6 @@
       };
     });
 
-    // Avoid array-like object bugs with `Array#shift` and `Array#splice`
-    // in Firefox < 10 and IE < 9.
-    if (!_.support.spliceObjects) {
-      _.each(['pop', 'shift', 'splice'], function(methodName) {
-        var func = arrayRef[methodName];
-
-        Suite.prototype[methodName] = function() {
-          var value = this,
-              result = func.apply(value, arguments);
-
-          if (value.length === 0) {
-            delete value[0];
-          }
-          return result;
-        };
-      });
-    }
     // Avoid buggy `Array#unshift` in IE < 8 which doesn't return the new
     // length of the array.
     if (!support.unshiftResult) {

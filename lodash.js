@@ -729,7 +729,6 @@
         Math = context.Math,
         Number = context.Number,
         Object = context.Object,
-        Reflect = context.Reflect,
         RegExp = context.RegExp,
         String = context.String,
         TypeError = context.TypeError;
@@ -766,19 +765,20 @@
       .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
-    /** Native method references. */
+    /** Native method and object references. */
     var ArrayBuffer = context.ArrayBuffer,
+        Reflect = context.Reflect,
+        Set = getNative(context, 'Set'),
+        Uint8Array = context.Uint8Array,
+        WeakMap = getNative(context, 'WeakMap'),
         clearTimeout = context.clearTimeout,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
-        Set = getNative(context, 'Set'),
         setTimeout = context.setTimeout,
-        splice = arrayProto.splice,
-        Uint8Array = context.Uint8Array,
-        WeakMap = getNative(context, 'WeakMap');
+        splice = arrayProto.splice;
 
     /* Native method references for those with the same name as other `lodash` methods. */
     var nativeCeil = Math.ceil,

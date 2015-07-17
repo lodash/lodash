@@ -2144,7 +2144,7 @@
 
     // An alternative implementation intended for IE < 9 with es6-shim.
     if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
-      var baseKeysIn = function(object) {
+      baseKeysIn = function(object) {
         var data,
             iterator = enumerate(object),
             result = [];

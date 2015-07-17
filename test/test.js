@@ -3557,6 +3557,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.eq');
+
+  (function() {
+    test('should perform a `SameValueZero` comparison of two values', 11, function() {
+      strictEqual(_.eq(), true);
+      strictEqual(_.eq(undefined), true);
+      strictEqual(_.eq(0, -0), true);
+      strictEqual(_.eq(NaN, NaN), true);
+      strictEqual(_.eq(1, 1), true);
+
+      strictEqual(_.eq(null, undefined), false);
+      strictEqual(_.eq(1, Object(1)), false);
+      strictEqual(_.eq(1, '1'), false);
+      strictEqual(_.eq(1, '1'), false);
+
+      var object = { 'a': 1 };
+      strictEqual(_.eq(object, object), true);
+      strictEqual(_.eq(object, { 'a': 1 }), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.escape');
 
   (function() {
@@ -7061,10 +7084,6 @@
       else {
         skipTest();
       }
-    });
-
-    test('should be aliased', 1, function() {
-      strictEqual(_.eq, _.isEqual);
     });
   }());
 

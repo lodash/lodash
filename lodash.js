@@ -867,20 +867,21 @@
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
-     * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `escape`, `escapeRegExp`,
-     * `every`, `find`, `findIndex`, `findKey`, `findLast`, `findLastIndex`,
-     * `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`, `has`, `identity`,
-     * `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`, `isBoolean`,
-     * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`,
-     * `isFinite` `isFunction`, `isMatch`, `isMatchWith`, `isNative`, `isNaN`,
-     * `isNull`, `isNumber`, `isObject`, `isPlainObject`, `isRegExp`, `isString`,
-     * `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`,
-     * `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`,
-     * `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
-     * `result`, `round`, `runInContext`, `shift`, `size`, `snakeCase`, `some`,
-     * `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`,
-     * `startCase`, `startsWith`, `sum`, `sumBy`, `template`, `trim`, `trimLeft`,
-     * `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`, and `words`
+     * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
+     * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
+     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
+     * `has`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+     * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
+     * `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`, `isMatchWith`,
+     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+     * `isRegExp`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
+     * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`,
+     * `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
+     * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
+     * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
+     * `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`, `sumBy`, `template`,
+     * `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`,
+     * and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -7666,6 +7667,40 @@
     }
 
     /**
+     * Performs a [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * comparison between two values to determine if they are equivalent.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+     * @example
+     *
+     * var object = { 'user': 'fred' };
+     * var other = { 'user': 'fred' };
+     *
+     * _.eq(object, object);
+     * // => true
+     *
+     * _.eq(object, other);
+     * // => false
+     *
+     * _.eq('a', 'a');
+     * // => true
+     *
+     * _.eq('a', Object('a'));
+     * // => false
+     *
+     * _.eq(NaN, NaN);
+     * // => true
+     */
+    function eq(value, other) {
+      return value === other || (value !== value && other !== other);
+    }
+
+    /**
      * Checks if `value` is greater than `other`.
      *
      * @static
@@ -7862,7 +7897,6 @@
      *
      * @static
      * @memberOf _
-     * @alias eq
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
@@ -7890,7 +7924,6 @@
      *
      * @static
      * @memberOf _
-     * @alias eq
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
@@ -11359,6 +11392,7 @@
     lodash.cloneWith = cloneWith;
     lodash.deburr = deburr;
     lodash.endsWith = endsWith;
+    lodash.eq = eq;
     lodash.escape = escape;
     lodash.escapeRegExp = escapeRegExp;
     lodash.every = every;
@@ -11449,9 +11483,6 @@
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
     lodash.words = words;
-
-    // Add aliases
-    lodash.eq = isEqual;
 
     mixin(lodash, (function() {
       var source = {};

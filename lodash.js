@@ -8222,7 +8222,7 @@
       var Ctor = proto.constructor;
       return (typeof Ctor == 'function' &&
         Ctor instanceof Ctor && fnToString.call(Ctor) == objCtorString);
-    };
+    }
 
     /**
      * Checks if `value` is classified as a `RegExp` object.

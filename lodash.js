@@ -11037,7 +11037,9 @@
      * // => -Infinity
      */
     function max(array) {
-      return maxBy(array, identity);
+      return (array && array.length)
+        ? arrayExtremum(array, identity, gt, NEGATIVE_INFINITY)
+        : NEGATIVE_INFINITY;
     }
 
     /**
@@ -11092,7 +11094,9 @@
      * // => Infinity
      */
     function min(array) {
-      return minBy(array, identity);
+      return (array && array.length)
+        ? arrayExtremum(array, identity, lt, POSITIVE_INFINITY)
+        : POSITIVE_INFINITY;
     }
 
     /**

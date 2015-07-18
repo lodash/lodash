@@ -4230,8 +4230,7 @@
      * // => [1, 2, 3]
      */
     function drop(array, n, guard) {
-      var length = array ? array.length : 0;
-      if (!length) {
+      if (!(array && array.length)) {
         return [];
       }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
@@ -4999,8 +4998,7 @@
      * // => []
      */
     function take(array, n, guard) {
-      var length = array ? array.length : 0;
-      if (!length) {
+      if (!(array && array.length)) {
         return [];
       }
       if (guard ? isIterateeCall(array, n, guard) : n == null) {
@@ -5171,8 +5169,7 @@
      * // => [1, 2]
      */
     function uniq(array, isSorted) {
-      var length = array ? array.length : 0;
-      if (!length) {
+      if (!(array && array.length)) {
         return [];
       }
       return (isSorted && typeof isSorted == 'boolean' && getIndexOf() === baseIndexOf)
@@ -5204,8 +5201,7 @@
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
     function uniqBy(array, isSorted, iteratee) {
-      var length = array ? array.length : 0;
-      if (!length) {
+      if (!(array && array.length)) {
         return [];
       }
       if (isSorted != null && typeof isSorted != 'boolean') {
@@ -5279,8 +5275,7 @@
      * // => [3, 30, 300]
      */
     function unzipWith(array, iteratee) {
-      var length = array ? array.length : 0;
-      if (!length) {
+      if (!(array && array.length)) {
         return [];
       }
       var result = unzip(array);

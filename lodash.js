@@ -11627,7 +11627,7 @@
 
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
+      var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
           isTaker = /^(?:first|last)$/.test(methodName),
           retUnwrapped = isTaker || /^find/.test(methodName),
           lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
@@ -11637,41 +11637,37 @@
       }
       lodash.prototype[methodName] = function() {
         var args = isTaker ? [1] : arguments,
-            chainAll = this.__chain__,
             value = this.__wrapped__,
-            isHybrid = !!this.__actions__.length,
             isLazy = value instanceof LazyWrapper,
             iteratee = args[0],
             useLazy = isLazy || isArray(value);
 
-        if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
-          // Avoid lazy use if the iteratee has a "length" value other than `1`.
-          isLazy = useLazy = false;
-        }
         var interceptor = function(value) {
           var result = lodashFunc.apply(lodash, arrayPush([value], args));
           return (isTaker && chainAll) ? result[0] : result;
         };
 
+        if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
+          // Avoid lazy use if the iteratee has a "length" value other than `1`.
+          isLazy = useLazy = false;
+        }
         var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
+            chainAll = this.__chain__,
+            isHybrid = !!this.__actions__.length,
+            isUnwrapped = retUnwrapped && !chainAll,
             onlyLazy = isLazy && !isHybrid;
 
-        if (retUnwrapped && !chainAll) {
-          if (onlyLazy) {
-            value = value.clone();
-            value.__actions__.push(action);
-            return func.apply(this, args);
-          }
-          var result = lodashFunc.apply(lodash, arrayPush([this.value()], args));
-          return isTaker ? result[0] : result;
-        }
         if (!retUnwrapped && useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);
-          result = func.apply(value, args);
+          var result = func.apply(value, args);
           result.__actions__.push(action);
           return new LodashWrapper(result, chainAll);
         }
-        return this.thru(interceptor);
+        if (isUnwrapped && onlyLazy) {
+          return func.apply(this, args);
+        }
+        result = this.thru(interceptor);
+        return isUnwrapped ? (isTaker ? result.value()[0] : result.value()) : result;
       };
     });
 

@@ -2199,7 +2199,7 @@
             : fn(take3, _.compact, filter3, map3);
 
           filterCount = mapCount = 0;
-          deepEqual(combined(_.range(200)), [4, 16]);
+          deepEqual(combined(_.range(LARGE_ARRAY_SIZE)), [4, 16]);
 
           if (!isNpm && WeakMap && WeakMap.name) {
             strictEqual(filterCount, 5, 'filterCount');
@@ -3927,7 +3927,8 @@
   _.each(['find', 'findLast', 'findIndex', 'findLastIndex', 'findKey', 'findLastKey'], function(methodName) {
     QUnit.module('lodash.' + methodName);
 
-    var func = _[methodName];
+    var func = _[methodName],
+        isFindKey = /Key$/.test(methodName);
 
     (function() {
       var objects = [
@@ -3977,44 +3978,65 @@
 
         deepEqual(actual, expecting);
       });
+    }());
 
-      if (!/(Index|Key)/.test(methodName)) {
-        test('should enable shortcut fusion in chaining', 2, function() {
-          if (!isNpm) {
-            var callCount = 0;
-            var items = _.range(0, LARGE_ARRAY_SIZE + 1);
-            var expectedCalls = LARGE_ARRAY_SIZE / 2 + 1;
-            var expected = LARGE_ARRAY_SIZE / 2 - 25;
-            var result = _(items).map(function(x) {
-              callCount++;
-              return x - 25;
-            })[methodName](function(x) {
-              return x === expected;
-            });
-            strictEqual(callCount, expectedCalls);
-            strictEqual(result, expected);
-          } else {
-            skipTest(2);
-          }
-        });
+    (function() {
+      var array = [1, 2, 3, 4];
 
-        test('should function when the only action in chaining', 2, function() {
-          if (!isNpm) {
-            var callCount = 0;
-            var items = _.range(0, LARGE_ARRAY_SIZE + 1);
-            var expectedCalls = LARGE_ARRAY_SIZE / 2 + 1;
-            var expected = LARGE_ARRAY_SIZE / 2;
-            var result = _(items)[methodName](function(x) {
-              callCount++;
-              return x === expected;
-            });
-            strictEqual(callCount, expectedCalls);
-            strictEqual(result, expected);
-          } else {
-            skipTest(2);
-          }
-        });
-      }
+      var expected = ({
+        'find': 1,
+        'findLast': 4,
+        'findIndex': 0,
+        'findLastIndex': 3,
+        'findKey': '0',
+        'findLastKey': '3'
+      })[methodName];
+
+      test('should return an unwrapped value when implicitly chaining', 1, function() {
+        if (!isNpm) {
+          strictEqual(_(array)[methodName](), expected);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test('should return a wrapped value when explicitly chaining', 1, function() {
+        if (!isNpm) {
+          ok(_(array).chain()[methodName]() instanceof _);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test('should not execute immediately when explicitly chaining', 1, function() {
+        if (!isNpm) {
+          var wrapped = _(array).chain()[methodName]();
+          strictEqual(wrapped.__wrapped__, array);
+        }
+        else {
+          skipTest();
+        }
+      });
+
+      test('should work in a lazy chain sequence', 2, function() {
+        if (!isNpm) {
+          var largeArray = _.range(1, LARGE_ARRAY_SIZE + 1),
+              smallArray = array;
+
+          _.times(2, function(index) {
+            var array = index ? largeArray : smallArray,
+                predicate = function(value) { return value % 2; },
+                wrapped = _(array).filter(predicate);
+
+            strictEqual(wrapped[methodName](), func(_.filter(array, predicate)));
+          });
+        }
+        else {
+          skipTest(2);
+        }
+      });
     }());
 
     (function() {
@@ -4054,6 +4076,41 @@
         });
       }
     }());
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.find and lodash.findLast');
+
+  _.each(['find', 'findLast'], function(methodName) {
+    var isFind = methodName == 'find';
+
+    test('`_.' + methodName + '` should support shortcut fusion', 3, function() {
+      if (!isNpm) {
+        var findCount = 0,
+            mapCount = 0;
+
+        var iteratee = function(value) {
+          mapCount++;
+          return value * value;
+        };
+
+        var predicate = function(value) {
+          findCount++;
+          return value % 2 == 0;
+        };
+
+        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            result = _(array).map(iteratee)[methodName](predicate);
+
+        strictEqual(findCount, isFind ? 2 : 1);
+        strictEqual(mapCount, isFind ? 2 : 1);
+        strictEqual(result, isFind ? 4 : square(LARGE_ARRAY_SIZE));
+      }
+      else {
+        skipTest(3);
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/

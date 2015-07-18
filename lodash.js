@@ -7872,11 +7872,11 @@
      * var object = { 'user': 'fred' };
      * var other = { 'user': 'fred' };
      *
-     * object == other;
-     * // => false
-     *
      * _.isEqual(object, other);
      * // => true
+     *
+     * object == other;
+     * // => false
      */
     function isEqual(value, other) {
       return baseIsEqual(value, other);

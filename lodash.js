@@ -747,14 +747,14 @@
     /** Used to generate unique IDs. */
     var idCounter = 0;
 
+    /** Used to infer the `Object` constructor. */
+    var objCtorString = fnToString.call(Object);
+
     /**
      * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
      * of values.
      */
     var objToString = objectProto.toString;
-
-    /** Used to infer the `Object` constructor. */
-    var objCtorString = fnToString.call(Object);
 
     /** Used to restore the original `_` reference in `_.noConflict`. */
     var oldDash = root._;
@@ -6515,13 +6515,14 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Gets the number of milliseconds that have elapsed since the Unix epoch
-     * (1 January 1970 00:00:00 UTC).
+     * Gets the timestamp of the number of milliseconds that have elapsed since
+     * the Unix epoch (1 January 1970 00:00:00 UTC).
      *
      * @static
      * @memberOf _
      * @type Function
      * @category Date
+     * @returns {number} Returns the timestamp.
      * @example
      *
      * _.defer(function(stamp) {

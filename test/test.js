@@ -8708,10 +8708,10 @@
       }
     });
 
-    test('`_.sum` should use `_.iteratee` internally', 1, function() {
+    test('`_.sumBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         _.iteratee = getPropB;
-        strictEqual(_.sum(objects), 1);
+        strictEqual(_.sumBy(objects), 1);
         _.iteratee = iteratee;
       }
       else {

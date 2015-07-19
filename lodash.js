@@ -11200,7 +11200,7 @@
      * // => 10
      */
     function sum(array) {
-      return sumBy(array, identity);
+      return array ? arraySum(array, identity) : 0;
     }
 
     /**

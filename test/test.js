@@ -8784,7 +8784,7 @@
 
       // IE 9 doesn't box numbers in for-in loops.
       numberProto.a = 1;
-      deepEqual(func(0).sort(), isKeys ? [] : ['a']);
+      deepEqual(func(0), isKeys ? [] : ['a']);
       delete numberProto.a;
     });
 
@@ -8930,10 +8930,10 @@
       Foo.prototype.b = 2;
 
       var expected = ['a'];
-      deepEqual(func(Foo).sort(), expected);
+      deepEqual(func(Foo), expected);
 
       Foo.prototype = { 'b': 2 };
-      deepEqual(func(Foo).sort(), expected);
+      deepEqual(func(Foo), expected);
     });
 
     test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 3, function() {

@@ -5085,9 +5085,7 @@
     });
 
     test('`_.' + methodName + '` should assign own ' + (isAssign ? '' : 'and inherited ') + 'source properties', 1, function() {
-      function Foo() {
-        this.a = 1;
-      }
+      function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 
       var expected = isAssign ? { 'a': 1 } : { 'a': 1, 'b': 2 };
@@ -6729,18 +6727,16 @@
     });
 
     test('should perform comparisons between object instances', 4, function() {
-      function Foo() { this.value = 1; }
-      Foo.prototype.value = 1;
+      function Foo() { this.a = 1; }
+      Foo.prototype.a = 1;
 
-      function Bar() {
-        this.value = 1;
-      }
-      Bar.prototype.value = 2;
+      function Bar() { this.a = 1; }
+      Bar.prototype.a = 2;
 
       strictEqual(_.isEqual(new Foo, new Foo), true);
       strictEqual(_.isEqual(new Foo, new Bar), false);
-      strictEqual(_.isEqual({ 'value': 1 }, new Foo), false);
-      strictEqual(_.isEqual({ 'value': 2 }, new Bar), false);
+      strictEqual(_.isEqual({ 'a': 1 }, new Foo), false);
+      strictEqual(_.isEqual({ 'a': 2 }, new Bar), false);
     });
 
     test('should perform comparisons between objects with constructor properties', 5, function() {

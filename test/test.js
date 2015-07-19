@@ -48,7 +48,6 @@
       create = Object.create,
       fnToString = funcProto.toString,
       freeze = Object.freeze,
-      hasOwnProperty = objectProto.hasOwnProperty,
       JSON = root.JSON,
       objToString = objectProto.toString,
       noop = function() {},
@@ -428,6 +427,12 @@
     // Add prototype extensions.
     funcProto._method = _.noop;
 
+    // Set bad shims.
+    var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
+    setProperty(objectProto, 'propertyIsEnumerable', function(key) {
+      return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
+    });
+
     var _Set = root.Set;
     setProperty(root, 'Set', _.noop);
 
@@ -445,6 +450,8 @@
     root._ = oldDash;
 
     // Restore built-in methods.
+    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
+
     if (_Set) {
       setProperty(root, 'Set', Set);
     } else {
@@ -620,12 +627,13 @@
       }
     });
 
-    test('should avoid overwritten native methods', 1, function() {
-      function Foo() {}
-
+    test('should avoid overwritten native methods', 2, function() {
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
       }
+
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
 
       var object = { 'a': 1 },
           otherObject = { 'b': 2 },
@@ -633,7 +641,14 @@
 
       if (lodashBizarro) {
         try {
-          var actual = [
+          var actual = _.keysIn(new Foo).sort();
+        } catch(e) {
+          actual = null;
+        }
+        deepEqual(actual, ['a', 'b'], message('_.keysIn', 'Object#propertyIsEnumerable'));
+
+        try {
+          actual = [
             lodashBizarro.difference([object, otherObject], largeArray),
             lodashBizarro.intersection(largeArray, [object]),
             lodashBizarro.uniq(largeArray)
@@ -644,7 +659,7 @@
         deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
   }());

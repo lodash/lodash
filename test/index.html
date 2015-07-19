@@ -81,6 +81,11 @@
         funcProto._method = noop;
 
         // Set bad shims.
+        setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
+        setProperty(objectProto, 'propertyIsEnumerable', function(key) {
+          return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
+        });
+
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
 
@@ -97,7 +102,8 @@
       }
 
       function removeBizarroMethods() {
-        var funcProto = Function.prototype;
+        var funcProto = Function.prototype,
+            objectProto = Object.prototype;
 
         if (window._Set) {
           Set = _Set;
@@ -115,7 +121,10 @@
         setProperty(window, 'global', undefined);
         setProperty(window, 'module', undefined);
 
+        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
+
         delete funcProto._method;
+        delete objectProto._propertyIsEnumerable;
       }
 
       // Load lodash to expose it to the bad extensions/shims.

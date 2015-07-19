@@ -1353,7 +1353,7 @@
       strictEqual(new bound(true), object);
     });
 
-    test('should append array arguments to partially applied arguments (test in IE < 9)', 1, function() {
+    test('should append array arguments to partially applied arguments', 1, function() {
       var object = {},
           bound = _.bind(fn, object, 'a');
 
@@ -5131,7 +5131,7 @@
       deepEqual(func({}, Foo), expected);
     });
 
-    test('`_.' + methodName + '` should not error on nullish sources (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` should not error on nullish sources', 1, function() {
       try {
         deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
       } catch(e) {
@@ -6516,7 +6516,7 @@
       strictEqual(_.isEmpty({ 'length': 0 }), false);
     });
 
-    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
+    test('should work with `arguments` objects', 1, function() {
       strictEqual(_.isEmpty(args), false);
     });
 
@@ -6862,7 +6862,7 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
-    test('should work with `arguments` objects (test in IE < 9)', 2, function() {
+    test('should work with `arguments` objects', 2, function() {
       var args1 = (function() { return arguments; }(1, 2, 3)),
           args2 = (function() { return arguments; }(1, 2, 3)),
           args3 = (function() { return arguments; }(1, 2));
@@ -8821,7 +8821,7 @@
       delete arrayProto.a;
     });
 
-    test('`_.' + methodName + '` should work with `arguments` objects (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` should work with `arguments` objects', 1, function() {
       if (!isStrict) {
         deepEqual(func(args).sort(), ['0', '1', '2']);
       }
@@ -13747,7 +13747,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should work with `arguments` objects (test in IE < 9)', 1, function() {
+    test('should work with `arguments` objects', 1, function() {
       strictEqual(_.size(args), 3);
     });
 

@@ -16992,28 +16992,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('splice objects');
-
-  _.each(['pop', 'shift', 'splice'], function(methodName) {
-    test('`_(...).' + methodName + '` should remove the value at index `0` when length is `0` (test in IE 8 compatibility mode)', 2, function() {
-      if (!isNpm) {
-        var wrapped = _({ '0': 1, 'length': 1 });
-        if (methodName == 'splice') {
-          wrapped.splice(0, 1).value();
-        } else {
-          wrapped[methodName]();
-        }
-        deepEqual(wrapped.keys().value(), ['length']);
-        strictEqual(wrapped.first(), undefined);
-      }
-      else {
-        skipTest(2);
-      }
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash(...).toString');
 
   (function() {

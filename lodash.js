@@ -5284,7 +5284,6 @@
       if (iteratee == null) {
         return result;
       }
-      iteratee = toFunction(iteratee);
       return arrayMap(result, function(group) {
         return arrayReduce(group, iteratee, undefined, true);
       });

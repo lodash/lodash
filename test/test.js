@@ -4964,6 +4964,17 @@
           skipTest();
         }
       });
+
+      test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
+        if (func) {
+          var props = [];
+          func(shadowObject, function(value, prop) { props.push(prop); });
+          deepEqual(props.sort(), shadowProps);
+        }
+        else {
+          skipTest();
+        }
+      });
     });
 
     _.each(collectionMethods, function(methodName) {
@@ -5051,36 +5062,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('collection iteration bugs');
-
-  _.each(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
-    var func = _[methodName];
-
-    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      var props = [];
-      func(shadowObject, function(value, prop) { props.push(prop); });
-      deepEqual(props.sort(), shadowProps);
-    });
-
-    test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
-      function Foo() {}
-      Foo.prototype.a = 1;
-
-      var props = [];
-      function callback(value, prop) { props.push(prop); }
-
-      func(Foo, callback);
-      deepEqual(props, []);
-      props.length = 0;
-
-      Foo.prototype = { 'a': 1 };
-      func(Foo, callback);
-      deepEqual(props, []);
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('object assignments');
 
   _.each(['assign', 'defaults', 'extend', 'merge'], function(methodName) {
@@ -5126,18 +5107,6 @@
       };
 
       deepEqual(func(object, source), shadowObject);
-    });
-
-    test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
-      function Foo() {}
-      Foo.a = 1;
-      Foo.prototype.b = 2;
-
-      var expected = { 'a': 1 };
-      deepEqual(func({}, Foo), expected);
-
-      Foo.prototype = { 'b': 2 };
-      deepEqual(func({}, Foo), expected);
     });
 
     test('`_.' + methodName + '` should not error on nullish sources', 1, function() {
@@ -6556,16 +6525,6 @@
 
     test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.isEmpty(shadowObject), false);
-    });
-
-    test('should skip the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
-      function Foo() {}
-      Foo.prototype.a = 1;
-
-      strictEqual(_.isEmpty(Foo), true);
-
-      Foo.prototype = { 'a': 1 };
-      strictEqual(_.isEmpty(Foo), true);
     });
 
     test('should return an unwrapped value when implicitly chaining', 1, function() {
@@ -8942,18 +8901,6 @@
           }
         });
       });
-    });
-
-    test('`_.' + methodName + '` skips the prototype property of functions (test in Firefox < 3.6, Opera > 9.50 - Opera < 11.60, and Safari < 5.1)', 2, function() {
-      function Foo() {}
-      Foo.a = 1;
-      Foo.prototype.b = 2;
-
-      var expected = ['a'];
-      deepEqual(func(Foo), expected);
-
-      Foo.prototype = { 'b': 2 };
-      deepEqual(func(Foo), expected);
     });
 
     test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 3, function() {

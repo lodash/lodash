@@ -12372,9 +12372,10 @@
     });
 
     test('should work with a falsey `array` argument when keys are provided', 1, function() {
-      var expected = _.map(falsey, _.constant(Array(4)));
+      var values = falsey.slice(),
+          expected = _.map(values, _.constant(Array(4)));
 
-      var actual = _.map(falsey, function(array) {
+      var actual = _.map(values, function(array) {
         try {
           return _.pullAt(array, 0, 1, 'pop', 'push');
         } catch(e) {}

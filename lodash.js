@@ -765,7 +765,7 @@
       .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
-    /** Native method and object references. */
+    /** Native value references. */
     var ArrayBuffer = context.ArrayBuffer,
         Reflect = context.Reflect,
         Set = getNative(context, 'Set'),
@@ -2412,14 +2412,25 @@
      * @returns {Array} Returns `array`.
      */
     function basePullAt(array, indexes) {
-      var length = array ? indexes.length : 0;
+      var length = array ? indexes.length : 0,
+          lastIndex = length - 1;
+
       while (length--) {
         var index = indexes[length];
-        if (index != previous) {
+        if (lastIndex == length || index != previous) {
           var previous = index;
           if (isIndex(index)) {
             splice.call(array, index, 1);
-          } else {
+          }
+          else if (!isKey(index, array)) {
+            var path = toPath(index),
+                object = path.length == 1 ? array : baseGet(array, baseSlice(path, 0, -1));
+
+            if (object != null) {
+              delete object[last(path)];
+            }
+          }
+          else {
             delete array[index];
           }
         }
@@ -4787,7 +4798,7 @@
      * // => [10, 20]
      */
     var pullAt = restParam(function(array, indexes) {
-      indexes = baseFlatten(indexes);
+      indexes = arrayMap(baseFlatten(indexes), String);
 
       var result = baseAt(array, indexes);
       basePullAt(array, indexes.sort(compareAscending));

@@ -3,7 +3,8 @@ node_js:
   - "0.12"
 env:
   global:
-    - PATTERN1="s|\s*else\s*\{\s*iteratee\(index\);\s*\}||"
+    - PATTERN1="s|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)||"
+    - PATTERN2="s|\s*else\s*\{\s*iteratee\(index\);\s*\}||"
     - BIN="node" ISTANBUL=false OPTION=""
     - NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
@@ -47,8 +48,8 @@ before_install:
 #  - "[ $BIN != 'ringo' ] || (sudo ln -s /opt/ringojs-0.11/bin/ringo /usr/local/bin/ringo && sudo chmod +x $_)"
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
   - "node ./node_modules/lodash-cli/bin/lodash -o ./lodash.js"
+  - "[ $ISTANBUL == false ]   || (perl -0pi -e \"$PATTERN1\" ./lodash.js && perl -0pi -e \"$PATTERN2\" ./lodash.js)"
 script:
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN\" ./lodash.js"
   - "[ $ISTANBUL == false ]   || node ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"

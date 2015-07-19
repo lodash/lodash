@@ -1027,14 +1027,6 @@
     var args = arguments,
         array = ['a', 'b', 'c'];
 
-    _.each(empties, function(value) {
-      if (value !== 0) {
-        array[value] = 1;
-      }
-    });
-
-    array['1.1'] = array['-1'] = 1;
-
     test('should return the elements corresponding to the specified keys', 1, function() {
       var actual = _.at(array, [0, 2]);
       deepEqual(actual, ['a', 'c']);
@@ -1045,10 +1037,14 @@
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
-    test('should work with non-index keys on array-like values', 1, function() {
+    test('should work with non-index keys on array values', 1, function() {
       var values = _.reject(empties, function(value) {
         return value === 0 || _.isArray(value);
       }).concat(-1, 1.1);
+
+      var array = _.transform(values, function(result, value) {
+        result[value] = 1;
+      }, []);
 
       var expected = _.map(values, _.constant(1)),
           actual = _.at(array, values);
@@ -7941,11 +7937,16 @@
       strictEqual(_.isPlainObject(new Foo(1)), false);
     });
 
-    test('should return `true` for objects with a `[[Prototype]]` of `null`', 1, function() {
+    test('should return `true` for objects with a `[[Prototype]]` of `null`', 2, function() {
       if (create) {
-        strictEqual(_.isPlainObject(create(null)), true);
-      } else {
-        skipTest();
+        var object = create(null);
+        strictEqual(_.isPlainObject(object), true);
+
+        object.constructor = objectProto.constructor;
+        strictEqual(_.isPlainObject(object), true);
+      }
+      else {
+        skipTest(2);
       }
     });
 
@@ -12342,6 +12343,16 @@
       deepEqual(actual, ['c', undefined, 'a']);
     });
 
+    test('should flatten `indexes`', 4, function() {
+      var array = ['a', 'b', 'c'];
+      deepEqual(_.pullAt(array, 2, 0), ['c', 'a']);
+      deepEqual(array, ['b']);
+
+      array = ['a', 'b', 'c', 'd'];
+      deepEqual(_.pullAt(array, [3, 0], 2), ['d', 'a', 'c']);
+      deepEqual(array, ['b']);
+    });
+
     test('should return an empty array when no indexes are provided', 4, function() {
       var array = ['a', 'b', 'c'],
           actual = _.pullAt(array);
@@ -12355,20 +12366,34 @@
       deepEqual(actual, []);
     });
 
-    test('should accept multiple index arguments', 2, function() {
-      var array = ['a', 'b', 'c', 'd'],
-          actual = _.pullAt(array, 3, 0, 2);
+    test('should work with non-index paths', 2, function() {
+      var values = _.reject(empties, function(value) {
+        return value === 0 || _.isArray(value);
+      }).concat(-1, 1.1);
 
-      deepEqual(array, ['b']);
-      deepEqual(actual, ['d', 'a', 'c']);
+      var array = _.transform(values, function(result, value) {
+        result[value] = 1;
+      }, []);
+
+      var expected = _.map(values, _.constant(1)),
+          actual = _.pullAt(array, values);
+
+      deepEqual(actual, expected);
+
+      expected = _.map(values, _.constant(undefined)),
+      actual = _.at(array, values);
+
+      deepEqual(actual, expected);
     });
 
-    test('should accept multiple arrays of indexes', 2, function() {
-      var array = ['a', 'b', 'c', 'd'],
-          actual = _.pullAt(array, [3], [0, 2]);
+    test('should work with deep paths', 2, function() {
+      var array = [];
+      array.a = { 'b': { 'c': 3 } };
 
-      deepEqual(array, ['b']);
-      deepEqual(actual, ['d', 'a', 'c']);
+      var actual = _.pullAt(array, 'a.b.c');
+
+      deepEqual(actual, [3]);
+      deepEqual(array.a, { 'b': {} });
     });
 
     test('should work with a falsey `array` argument when keys are provided', 1, function() {

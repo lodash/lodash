@@ -1709,9 +1709,9 @@
      * The base implementation of `_.forEach` without support for callback shorthands.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array|Object|string} Returns `collection`.
+     * @returns {Array|Object} Returns `collection`.
      */
     var baseEach = createBaseEach(baseForOwn);
 
@@ -1719,9 +1719,9 @@
      * The base implementation of `_.forEachRight` without support for callback shorthands.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array|Object|string} Returns `collection`.
+     * @returns {Array|Object} Returns `collection`.
      */
     var baseEachRight = createBaseEach(baseForOwnRight, true);
 
@@ -1729,7 +1729,7 @@
      * The base implementation of `_.every` without support for callback shorthands.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
      * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`
      */
@@ -1776,7 +1776,7 @@
      * The base implementation of `_.filter` without support for callback shorthands.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
      * @returns {Array} Returns the new filtered array.
      */
@@ -1796,7 +1796,7 @@
      * using the provided `eachFunc`.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object} collection The collection to search.
      * @param {Function} predicate The function invoked per iteration.
      * @param {Function} eachFunc The function to iterate over `collection`.
      * @param {boolean} [retKey] Specify returning the key of the found element instead of the element itself.
@@ -2162,7 +2162,7 @@
      * The base implementation of `_.map` without support for callback shorthands.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
      * @returns {Array} Returns the new mapped array.
      */
@@ -2446,7 +2446,7 @@
      * `eachFunc`.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} iteratee The function invoked per iteration.
      * @param {*} accumulator The initial value.
      * @param {boolean} initFromCollection Specify using the first or last element of `collection` as the initial value.
@@ -2510,7 +2510,7 @@
      * The base implementation of `_.some` without support for callback shorthands.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} predicate The function invoked per iteration.
      * @returns {boolean} Returns `true` if any element passes the predicate check, else `false`.
      */
@@ -2548,7 +2548,7 @@
      * The base implementation of `_.sortByOrder` without param guards.
      *
      * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
      * @param {string[]} orders The sort orders of `iteratees`.
      * @returns {Array} Returns the new sorted array.
@@ -5714,7 +5714,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -5738,7 +5738,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`.
@@ -5780,7 +5780,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -5820,7 +5820,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object} collection The collection to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
@@ -5864,7 +5864,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object} collection The collection to search.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
@@ -5896,9 +5896,9 @@
      * @memberOf _
      * @alias each
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array|Object|string} Returns `collection`.
+     * @returns {Array|Object} Returns `collection`.
      * @example
      *
      * _([1, 2]).forEach(function(value) {
@@ -5925,9 +5925,9 @@
      * @memberOf _
      * @alias eachRight
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array|Object|string} Returns `collection`.
+     * @returns {Array|Object} Returns `collection`.
      * @example
      *
      * _.forEachRight([1, 2], function(value) {
@@ -5950,7 +5950,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -5981,7 +5981,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to search.
+     * @param {Array|Object} collection The collection to search.
      * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.
@@ -6022,7 +6022,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns the composed aggregate object.
      * @example
@@ -6053,7 +6053,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Array|Function|string} path The path of the method to invoke or
      *  the function invoked per iteration.
      * @param {...*} [args] The arguments to invoke the method with.
@@ -6096,7 +6096,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the new mapped array.
      * @example
@@ -6134,7 +6134,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the array of grouped elements.
      * @example
@@ -6186,7 +6186,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
      * @returns {*} Returns the accumulated value.
@@ -6217,7 +6217,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
      * @returns {*} Returns the accumulated value.
@@ -6244,7 +6244,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the new filtered array.
      * @example
@@ -6285,7 +6285,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to sample.
+     * @param {Array|Object} collection The collection to sample.
      * @param {number} [n] The number of elements to sample.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {*} Returns the random sample(s).
@@ -6327,7 +6327,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to shuffle.
+     * @param {Array|Object} collection The collection to shuffle.
      * @returns {Array} Returns the new shuffled array.
      * @example
      *
@@ -6345,7 +6345,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to inspect.
+     * @param {Array|Object} collection The collection to inspect.
      * @returns {number} Returns the size of `collection`.
      * @example
      *
@@ -6374,7 +6374,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {boolean} Returns `true` if any element passes the predicate check, else `false`.
@@ -6418,7 +6418,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {...(Function|Function[]|Object|Object[]|string|string[])} [iteratees=[_.identity]]
      *  The iteratees to sort by, specified individually or in arrays.
      * @returns {Array} Returns the new sorted array.
@@ -6466,7 +6466,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Array|Object} collection The collection to iterate over.
      * @param {Function[]|Object[]|string[]} [iteratees=[_.identity]] The iteratees to sort by.
      * @param {string[]} [orders] The sort orders of `iteratees`.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.

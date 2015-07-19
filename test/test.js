@@ -1100,16 +1100,6 @@
       var actual = _.at(new Foo, 'b');
       deepEqual(actual, [2]);
     });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(object, key) {
-      test('should work with a string ' + key + ' for `object`', 1, function() {
-        deepEqual(_.at(object, [2, 0]), ['c', 'a']);
-      });
-    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -4057,25 +4047,6 @@
         });
       }
     }());
-
-    (function() {
-      var expected = ({
-        'find': 'a',
-        'findLast': 'b',
-        'findIndex': 0,
-        'findLastIndex': 1
-      })[methodName];
-
-      if (expected != null) {
-        test('should work with a string for `collection`', 1, function() {
-          var actual = func('abc', function(chr, index) {
-            return index < 2;
-          });
-
-          strictEqual(actual, expected);
-        });
-      }
-    }());
   });
 
   /*--------------------------------------------------------------------------*/
@@ -4982,43 +4953,6 @@
           skipTest();
         }
       });
-
-      _.each({
-        'literal': 'abc',
-        'object': Object('abc')
-      },
-      function(collection, key) {
-        test('`_.' + methodName + '` should work with a string ' + key + ' for `collection` (test in IE < 9)', 6, function() {
-          if (func) {
-            var args,
-                values = [],
-                expectedChars = ['a', 'b', 'c'];
-
-            var expectedArgs = isObject
-              ? (isRight ? ['c', '2', collection] : ['a', '0', collection])
-              : (isRight ? ['c',  2,  collection] : ['a',  0,  collection]);
-
-            var actual = func(collection, function(value) {
-              args || (args = slice.call(arguments));
-              values.push(value);
-            });
-
-            var stringObject = args[2];
-
-            ok(_.isString(stringObject));
-            ok(_.isObject(stringObject));
-
-            deepEqual([stringObject[0], stringObject[1], stringObject[2]], expectedChars);
-            deepEqual(args, expectedArgs);
-            deepEqual(values, isRight ? ['c', 'b', 'a'] : expectedChars);
-
-            strictEqual(actual, collection);
-          }
-          else {
-            skipTest(6);
-          }
-        });
-      });
     });
 
     _.each(collectionMethods, function(methodName) {
@@ -5588,12 +5522,6 @@
 
       _.each(['a', ['a']], function(path) {
         strictEqual(_.has(new Foo, path), false);
-      });
-    });
-
-    test('should return `true` for string indexes (test in IE < 9)', 2, function() {
-      _.each([1, [1]], function(path) {
-        strictEqual(_.has('xo', path), true);
       });
     });
 
@@ -7550,15 +7478,6 @@
       deepEqual(actual, [false, true]);
     });
 
-    test('should work with strings', 4, function() {
-      var pairs = [['xo', Object('x')], [Object('xo'), 'x']];
-
-      _.each(pairs, function(pair) {
-        strictEqual(_.isMatch(pair[0], pair[1]), true);
-        strictEqual(_.isMatch(pair[1], pair[0]), false);
-      });
-    });
-
     test('should return `true` when comparing a `source` of empty arrays and objects', 1, function() {
       var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
           source = { 'a': [], 'b': {} };
@@ -8935,7 +8854,7 @@
       }
     });
 
-    test('`_.' + methodName + '` should work with string objects (test in IE < 9)', 1, function() {
+    test('`_.' + methodName + '` should work with string objects', 1, function() {
       deepEqual(func(Object('abc')).sort(), ['0', '1', '2']);
     });
 
@@ -9781,18 +9700,6 @@
       deepEqual(actual, [false, true]);
     });
 
-    test('should work with strings', 4, function() {
-      var pairs = [['xo', Object('x')], [Object('xo'), 'x']];
-
-      _.each(pairs, function(pair) {
-        var matches = _.matches(pair[1]);
-        strictEqual(matches(pair[0]), true);
-
-        matches = _.matches(pair[0]);
-        strictEqual(matches(pair[1]), false);
-      });
-    });
-
     test('should match problem JScript properties (test in IE < 9)', 1, function() {
       var matches = _.matches(shadowObject),
           objects = [{}, shadowObject],
@@ -9858,13 +9765,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should match characters of string indexes (test in IE < 9)', 2, function() {
-      var matches = _.matchesProperty(1, 'o');
-      _.each(['xo', Object('xo')], function(string) {
-        strictEqual(matches(string), true);
-      });
     });
 
     test('should match a key over a path', 2, function() {
@@ -10089,18 +9989,6 @@
           actual = _.map(objects, matches);
 
       deepEqual(actual, [false, true]);
-    });
-
-    test('should work with strings', 4, function() {
-      var pairs = [['xo', Object('x')], [Object('xo'), 'x']];
-
-      _.each(pairs, function(pair) {
-        var matches = _.matchesProperty('0', pair[1]);
-        strictEqual(matches(pair[0]), true);
-
-        matches = _.matchesProperty('0', pair[0]);
-        strictEqual(matches(pair[1]), false);
-      });
     });
 
     test('should match properties when `value` is not a plain object', 1, function() {
@@ -12220,13 +12108,6 @@
       });
     });
 
-    test('should pluck string indexes (test in IE < 9)', 2, function() {
-      _.each([1, [1]], function(path) {
-        var prop = _.property(path);
-        strictEqual(prop('xo'), 'o');
-      });
-    });
-
     test('should pluck a key over a path', 2, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
 
@@ -12336,14 +12217,6 @@
 
       _.each(['b', ['b']], function(path) {
         strictEqual(propOf(path), 2);
-      });
-    });
-
-    test('should pluck string indexes (test in IE < 9)', 2, function() {
-      var propOf = _.propertyOf('xo');
-
-      _.each([1, [1]], function(path) {
-        strictEqual(propOf(path), 'o');
       });
     });
 
@@ -12779,24 +12652,6 @@
 
       deepEqual(args, expected);
     });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection` (test in IE < 9)', 2, function() {
-        var args;
-
-        var actual = _.reduce(collection, function(accumulator, value) {
-          args || (args = slice.call(arguments));
-          return accumulator + value;
-        });
-
-        deepEqual(args, ['a', 'b', 1, collection]);
-        strictEqual(actual, 'abc');
-      });
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -12852,24 +12707,6 @@
       });
 
       deepEqual(args, expected);
-    });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection` (test in IE < 9)', 2, function() {
-        var args;
-
-        var actual = _.reduceRight(collection, function(accumulator, value) {
-          args || (args = slice.call(arguments));
-          return accumulator + value;
-        });
-
-        deepEqual(args, ['c', 'b', 1, collection]);
-        strictEqual(actual, 'cba');
-      });
     });
   }());
 
@@ -13232,20 +13069,6 @@
 
       _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
         strictEqual(func(object, path), 3);
-      });
-    });
-
-    test('`_.' + methodName + '` should get characters of string indexes (test in IE < 9)', 8, function() {
-      _.each([1, [1]], function(path) {
-        _.each(['xo', Object('xo')], function(string) {
-          strictEqual(func(string, path), 'o');
-        });
-      });
-
-      _.each([{ 'a': 'xo' }, { 'a': Object('xo') }], function(object) {
-        _.each(['a[1]', ['a', '1']], function(path) {
-          strictEqual(func(object, path), 'o');
-        });
       });
     });
 
@@ -13719,20 +13542,6 @@
         skipTest(2);
       }
     });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection`', 2, function() {
-        var actual = _.sample(collection);
-        ok(_.includes(collection, actual));
-
-        actual = _.sample(collection, 2);
-        ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(collection, actual[0]) && _.includes(collection, actual[1]));
-      });
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -13908,17 +13717,6 @@
     test('should treat number values for `collection` as empty', 1, function() {
       deepEqual(_.shuffle(1), []);
     });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection`', 1, function() {
-        var actual = _.shuffle(collection);
-        deepEqual(actual.sort(), ['a','b', 'c']);
-      });
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -13974,16 +13772,6 @@
 
     test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
       strictEqual(_.size(shadowObject), 7);
-    });
-
-    _.each({
-      'literal': 'abc',
-      'object': Object('abc')
-    },
-    function(collection, key) {
-      test('should work with a string ' + key + ' for `collection`', 1, function() {
-        deepEqual(_.size(collection), 3);
-      });
     });
   }(1, 2, 3));
 
@@ -15701,7 +15489,7 @@
       deepEqual(_.toArray(object), array);
     });
 
-    test('should work with a string for `collection` (test in Opera < 10.52)', 2, function() {
+    test('should work with a string for `collection`', 2, function() {
       deepEqual(_.toArray('ab'), ['a', 'b']);
       deepEqual(_.toArray(Object('ab')), ['a', 'b']);
     });

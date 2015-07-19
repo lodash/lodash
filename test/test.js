@@ -14499,31 +14499,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.support');
-
-  (function() {
-    test('should contain properties with boolean values', 1, function() {
-      ok(_.every(_.values(_.support), function(value) {
-        return value === true || value === false;
-      }));
-    });
-
-    test('should not contain minified properties (test production builds)', 1, function() {
-      var props = [
-        'enumErrorProps',
-        'enumPrototypes',
-        'nonEnumShadows',
-        'ownLast',
-        'spliceObjects',
-        'unindexedChars'
-      ];
-
-      ok(_.isEmpty(_.difference(_.keys(_.support), props)));
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.tap');
 
   (function() {

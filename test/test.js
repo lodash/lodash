@@ -6651,12 +6651,17 @@
       strictEqual(_.isEqual(array1, array2), false);
     });
 
-    test('should treat arrays with identical values but different non-numeric properties as equal', 3, function() {
+    test('should treat arrays with identical values but different non-index properties as equal', 3, function() {
       var array1 = [1, 2, 3],
           array2 = [1, 2, 3];
 
-      array1.every = array1.filter = array1.forEach = array1.indexOf = array1.lastIndexOf = array1.map = array1.some = array1.reduce = array1.reduceRight = null;
-      array2.concat = array2.join = array2.pop = array2.reverse = array2.shift = array2.slice = array2.sort = array2.splice = array2.unshift = null;
+      array1.every = array1.filter = array1.forEach =
+      array1.indexOf = array1.lastIndexOf = array1.map =
+      array1.some = array1.reduce = array1.reduceRight = null;
+
+      array2.concat = array2.join = array2.pop =
+      array2.reverse = array2.shift = array2.slice =
+      array2.sort = array2.splice = array2.unshift = null;
 
       strictEqual(_.isEqual(array1, array2), true);
 

@@ -296,20 +296,6 @@
     'n': 'x6e', 'r': 'x72', 't': 'x74', 'u': 'x75', 'v': 'x76', 'x': 'x78'
   };
 
-  /** Used to check problem JScript properties (a.k.a. the `[[DontEnum]]` bug). */
-  var shadowProps = [
-    'constructor',
-    'hasOwnProperty',
-    'isPrototypeOf',
-    'propertyIsEnumerable',
-    'toLocaleString',
-    'toString',
-    'valueOf'
-  ];
-
-  /** Used to check problem JScript properties too. */
-  var shadowObject = _.invert(shadowProps);
-
   /** Used to check whether methods support typed arrays. */
   var typedArrays = [
     'Float32Array',
@@ -1953,12 +1939,6 @@
             }
           });
         });
-      });
-
-      test('`_.' + methodName + '` should clone problem JScript properties (test in IE < 9)', 2, function() {
-        var actual = func(shadowObject);
-        deepEqual(actual, shadowObject);
-        notStrictEqual(actual, shadowObject);
       });
 
       test('`_.' + methodName + '` should clone `index` and `input` array properties', 2, function() {
@@ -4951,25 +4931,11 @@
 
     _.each(iterationMethods, function(methodName) {
       var array = [1, 2, 3],
-          func = _[methodName],
-          isBaseEach = methodName == '_baseEach',
-          isObject = _.includes(objectMethods, methodName),
-          isRight = _.includes(rightMethods, methodName);
+          func = _[methodName];
 
       test('`_.' + methodName + '` should return the collection', 1, function() {
         if (func) {
           strictEqual(func(array, Boolean), array);
-        }
-        else {
-          skipTest();
-        }
-      });
-
-      test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-        if (func) {
-          var props = [];
-          func(shadowObject, function(value, prop) { props.push(prop); });
-          deepEqual(props.sort(), shadowProps);
         }
         else {
           skipTest();
@@ -5086,27 +5052,6 @@
 
       var expected = isAssign ? { 'a': 1 } : { 'a': 1, 'b': 2 };
       deepEqual(func({}, new Foo), expected);
-    });
-
-    test('`_.' + methodName + '` should assign problem JScript properties (test in IE < 9)', 1, function() {
-      var object = {
-        'constructor': '0',
-        'hasOwnProperty': '1',
-        'isPrototypeOf': '2',
-        'propertyIsEnumerable': undefined,
-        'toLocaleString': undefined,
-        'toString': undefined,
-        'valueOf': undefined
-      };
-
-      var source = {
-        'propertyIsEnumerable': '3',
-        'toLocaleString': '4',
-        'toString': '5',
-        'valueOf': '6'
-      };
-
-      deepEqual(func(object, source), shadowObject);
     });
 
     test('`_.' + methodName + '` should not error on nullish sources', 1, function() {
@@ -6523,10 +6468,6 @@
       strictEqual(_.isEmpty({ 'length': '0' }), false);
     });
 
-    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.isEmpty(shadowObject), false);
-    });
-
     test('should return an unwrapped value when implicitly chaining', 1, function() {
       if (!isNpm) {
         strictEqual(_({}).isEmpty(), true);
@@ -6936,10 +6877,6 @@
       strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
       strictEqual(_.isEqual('36', 36), false);
       strictEqual(_.isEqual(36, '36'), false);
-    });
-
-    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.isEqual(shadowObject, {}), false);
     });
 
     test('should return `false` for objects with custom `toString` methods', 1, function() {
@@ -7543,16 +7480,6 @@
           matches = _.matches({ 'a': { 'b': 1 } });
 
       strictEqual(matches(object), true);
-    });
-
-    test('should match problem JScript properties (test in IE < 9)', 1, function() {
-      var objects = [{}, shadowObject];
-
-      var actual = _.map(objects, function(object) {
-        return _.isMatch(object, shadowObject);
-      });
-
-      deepEqual(actual, [false, true]);
     });
   }());
 
@@ -8849,60 +8776,6 @@
       delete stringProto.a;
     });
 
-    test('`_.' + methodName + '` fixes the JScript `[[DontEnum]]` bug (test in IE < 9)', 3, function() {
-      function Foo() {}
-      Foo.prototype = _.create(shadowObject);
-
-      deepEqual(func(shadowObject).sort(), shadowProps);
-
-      var actual = isKeys ? [] : _.without(shadowProps, 'constructor');
-      deepEqual(func(new Foo).sort(), actual);
-
-      Foo.prototype.constructor = Foo;
-      deepEqual(func(new Foo).sort(), actual);
-    });
-
-    test('`_.' + methodName + '` skips non-enumerable properties (test in IE < 9)', 50, function() {
-      _.forOwn({
-        'Array': arrayProto,
-        'Boolean': Boolean.prototype,
-        'Date': Date.prototype,
-        'Error': errorProto,
-        'Function': funcProto,
-        'Object': objectProto,
-        'Number': numberProto,
-        'TypeError': TypeError.prototype,
-        'RegExp': RegExp.prototype,
-        'String': stringProto
-      },
-      function(proto, key) {
-        _.each([proto, _.create(proto)], function(object, index) {
-          var actual = func(proto),
-              isErr = _.endsWith(key, 'Error'),
-              message = 'enumerable properties ' + (index ? 'inherited from' : 'on') + ' `' + key + '.prototype`',
-              props = isErr ? ['constructor', 'toString'] : ['constructor'];
-
-          actual = isErr ? _.difference(props, actual) : actual;
-          strictEqual(_.isEmpty(actual), !isErr, 'skips non-' + message);
-
-          proto.a = 1;
-          actual = func(object);
-          delete proto.a;
-
-          strictEqual(_.includes(actual, 'a'), !(isKeys && index), 'includes ' + message);
-
-          if (index) {
-            object.constructor = 1;
-            if (isErr) {
-              object.toString = 2;
-            }
-            actual = func(object);
-            ok(_.isEmpty(_.difference(props, actual)), 'includes properties on objects that shadow those on `' + key + '.prototype`');
-          }
-        });
-      });
-    });
-
     test('`_.' + methodName + '` skips the `constructor` property on prototype objects', 3, function() {
       function Foo() {}
       Foo.prototype.a = 1;
@@ -9663,14 +9536,6 @@
 
       deepEqual(actual, [false, true]);
     });
-
-    test('should match problem JScript properties (test in IE < 9)', 1, function() {
-      var matches = _.matches(shadowObject),
-          objects = [{}, shadowObject],
-          actual = _.map(objects, matches);
-
-      deepEqual(actual, [false, true]);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -9963,14 +9828,6 @@
 
       strictEqual(matches(object), true);
     });
-
-    test('should match problem JScript properties (test in IE < 9)', 1, function() {
-      var matches = _.matchesProperty('a', shadowObject),
-          objects = [{ 'a': {} }, { 'a': shadowObject }],
-          actual = _.map(objects, matches);
-
-      deepEqual(actual, [false, true]);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -10049,13 +9906,23 @@
     });
 
     test('should check cache for own properties', 1, function() {
+      var props = [
+        'constructor',
+        'hasOwnProperty',
+        'isPrototypeOf',
+        'propertyIsEnumerable',
+        'toLocaleString',
+        'toString',
+        'valueOf'
+      ];
+
       var memoized = _.memoize(_.identity);
 
-      var actual = _.map(shadowProps, function(value) {
+      var actual = _.map(props, function(value) {
         return memoized(value);
       });
 
-      deepEqual(actual, shadowProps);
+      deepEqual(actual, props);
     });
 
     test('should expose a `cache` object on the `memoized` function which implements `Map` interface', 18, function() {
@@ -13758,10 +13625,6 @@
     test('should not treat objects with non-number lengths as array-like', 1, function() {
       strictEqual(_.size({ 'length': '0' }), 1);
     });
-
-    test('should fix the JScript `[[DontEnum]]` bug (test in IE < 9)', 1, function() {
-      strictEqual(_.size(shadowObject), 7);
-    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -15510,7 +15373,7 @@
       notStrictEqual(actual, array);
     });
 
-    test('should work with a node list for `collection` (test in IE < 9)', 1, function() {
+    test('should work with a node list for `collection`', 1, function() {
       if (document) {
         try {
           var actual = func(document.getElementsByTagName('body'));

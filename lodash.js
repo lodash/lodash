@@ -5990,7 +5990,7 @@
      * @static
      * @memberOf _
      * @category Collection
-     * @param {Array|Object} collection The collection to search.
+     * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.

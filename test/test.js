@@ -2073,14 +2073,6 @@
         deepEqual(argsList, isDeep ? [[foo], [1, 'a', foo]] : [[foo]]);
       });
 
-      test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
-        var actual = func('a', function(value) {
-          return this[value];
-        }, { 'a': 'A' });
-
-        strictEqual(actual, 'A');
-      });
-
       test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', 1, function() {
         var actual = func({ 'a': { 'b': 'c' } }, _.noop);
         deepEqual(actual, { 'a': { 'b': 'c' } });
@@ -2409,14 +2401,6 @@
       });
 
       deepEqual(args, [4.2, 0, array]);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.countBy(array, function(num) {
-        return this.floor(num);
-      }, Math);
-
-      deepEqual(actual, { '4': 1, '6': 2 });
     });
 
     test('should work with a "_.property" style `iteratee`', 1, function() {
@@ -3502,20 +3486,12 @@
       deepEqual(args, [4, 3, array]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.dropRightWhile(array, function(num, index) {
-        return this[index] > 2;
-      }, array);
-
-      deepEqual(actual, [1, 2]);
-    });
-
     test('should work with a "_.matches" style `predicate`', 1, function() {
       deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
     });
 
     test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
-      deepEqual(_.dropRightWhile(objects, 'b', 2), objects.slice(0, 2));
+      deepEqual(_.dropRightWhile(objects, ['b', 2]), objects.slice(0, 2));
     });
 
     test('should work with a "_.property" style `predicate`', 1, function() {
@@ -3568,20 +3544,12 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.dropWhile(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
-
-      deepEqual(actual, [3, 4]);
-    });
-
     test('should work with a "_.matches" style `predicate`', 1, function() {
       deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
     });
 
     test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
-      deepEqual(_.dropWhile(objects, 'b', 2), objects.slice(1));
+      deepEqual(_.dropWhile(objects, ['b', 2]), objects.slice(1));
     });
 
     test('should work with a "_.property" style `predicate`', 1, function() {
@@ -4048,10 +4016,6 @@
         strictEqual(func(objects, function(object) { return object.a; }), expected[0]);
       });
 
-      test('should work with a `thisArg`', 1, function() {
-        strictEqual(func(objects, function(object, index) { return this[index].a; }, objects), expected[0]);
-      });
-
       test('should return `' + expected[1] + '` if value is not found', 1, function() {
         strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
       });
@@ -4061,7 +4025,7 @@
       });
 
       test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
-        strictEqual(func(objects, 'b', 2), expected[2]);
+        strictEqual(func(objects, ['b', 2]), expected[2]);
       });
 
       test('should work with a "_.property" style `predicate`', 1, function() {
@@ -4364,20 +4328,12 @@
       deepEqual(args, [4, 3, array]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.takeRightWhile(array, function(num, index) {
-        return this[index] > 2;
-      }, array);
-
-      deepEqual(actual, [3, 4]);
-    });
-
     test('should work with a "_.matches" style `predicate`', 1, function() {
       deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
     });
 
     test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
-      deepEqual(_.takeRightWhile(objects, 'b', 2), objects.slice(2));
+      deepEqual(_.takeRightWhile(objects, ['b', 2]), objects.slice(2));
     });
 
     test('should work with a "_.property" style `predicate`', 1, function() {
@@ -4473,20 +4429,12 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.takeWhile(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
-
-      deepEqual(actual, [1, 2]);
-    });
-
     test('should work with a "_.matches" style `predicate`', 1, function() {
       deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
     });
 
     test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
-      deepEqual(_.takeWhile(objects, 'b', 2), objects.slice(0, 1));
+      deepEqual(_.takeWhile(objects, ['b', 2]), objects.slice(0, 1));
     });
     test('should work with a "_.property" style `predicate`', 1, function() {
       deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
@@ -4895,22 +4843,6 @@
         }
         else {
           skipTest();
-        }
-      });
-
-      test('`_.' + methodName + '` should support the `thisArg` argument', 2, function() {
-        if (methodName != '_baseEach') {
-          var actual,
-              callback = function(num, index) { actual = this[index]; };
-
-          func([1], callback, [2]);
-          strictEqual(actual, 2);
-
-          func({ 'a': 1 }, callback, { 'a': 2 });
-          strictEqual(actual, 2);
-        }
-        else {
-          skipTest(2);
         }
       });
 
@@ -5333,14 +5265,6 @@
       deepEqual(argsList, expected, 'object property values');
     });
 
-    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
-      var actual = func({}, { 'a': 0 }, function(a, b) {
-        return this[b];
-      }, [2]);
-
-      deepEqual(actual, { 'a': 2 });
-    });
-
     test('`_.' + methodName + '` should not treat `object` as `source`', 1, function() {
       function Foo() {}
       Foo.prototype.a = 1;
@@ -5491,14 +5415,6 @@
       });
 
       deepEqual(args, [4.2, 0, array]);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.groupBy(array, function(num) {
-        return this.floor(num);
-      }, Math);
-
-      deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
     test('should work with a "_.property" style `iteratee`', 1, function() {
@@ -5861,14 +5777,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.indexBy([4.2, 6.1, 6.4], function(num) {
-        return this.floor(num);
-      }, Math);
-
-      deepEqual(actual, { '4': 4.2, '6': 6.4 });
     });
 
     test('should work with a "_.property" style `iteratee`', 1, function() {
@@ -7140,14 +7048,6 @@
       deepEqual(argsList, expected);
     });
 
-    test('should set the `this` binding', 1, function() {
-      var actual = _.isEqual('a', 'b', function(a, b) {
-        return this[a] == this[b];
-      }, { 'a': 1, 'b': 1 });
-
-      strictEqual(actual, true);
-    });
-
     test('should handle comparisons if `customizer` returns `undefined`', 3, function() {
       strictEqual(_.isEqual('a', 'a', _.noop), true);
       strictEqual(_.isEqual(['a'], ['a'], _.noop), true);
@@ -7749,14 +7649,6 @@
       });
 
       deepEqual(argsList, expected);
-    });
-
-    test('should set the `this` binding', 1, function() {
-      var actual = _.isMatch({ 'a': 1 }, { 'a': 2 }, function(a, b) {
-        return this[a] == this[b];
-      }, { 'a': 1, 'b': 1 });
-
-      strictEqual(actual, true);
     });
 
     test('should handle comparisons if `customizer` returns `undefined`', 1, function() {
@@ -8393,24 +8285,12 @@
   QUnit.module('lodash.iteratee');
 
   (function() {
-    test('should provide arguments to `func`', 3, function() {
-      var fn = function() {
-        var result = [this];
-        push.apply(result, arguments);
-        return result;
-      };
-
-      var iteratee = _.iteratee(fn),
+    test('should provide arguments to `func`', 1, function() {
+      var fn = function() { return slice.call(arguments); },
+          iteratee = _.iteratee(fn),
           actual = iteratee('a', 'b', 'c', 'd', 'e', 'f');
 
-      ok(actual[0] === null || actual[0] && actual[0].Array);
-      deepEqual(actual.slice(1), ['a', 'b', 'c', 'd', 'e', 'f']);
-
-      var object = {};
-      iteratee = _.iteratee(fn, object);
-      actual = iteratee('a', 'b');
-
-      deepEqual(actual, [object, 'a', 'b']);
+      deepEqual(actual, ['a', 'b', 'c', 'd', 'e', 'f']);
     });
 
     test('should return `_.identity` when `func` is nullish', 1, function() {
@@ -8426,48 +8306,10 @@
       deepEqual(actual, expected);
     });
 
-    test('should not error when `func` is nullish and a `thisArg` is provided', 2, function() {
-      var object = {};
-
-      _.each([null, undefined], function(value) {
-        try {
-          var iteratee = _.iteratee(value, {});
-          strictEqual(iteratee(object), object);
-        } catch(e) {
-          ok(false, e.message);
-        }
-      });
-    });
-
-    test('should create an iteratee with a falsey `thisArg`', 1, function() {
-      var fn = function() { return this; },
-          object = {};
-
-      var expected = _.map(falsey, function(value) {
-        var result = fn.call(value);
-        return (result && result.Array) ? object : result;
-      });
-
-      var actual = _.map(falsey, function(value) {
-        var iteratee = _.iteratee(fn, value),
-            result = iteratee();
-
-        return (result && result.Array) ? object : result;
-      });
-
-      ok(_.isEqual(actual, expected));
-    });
-
     test('should return an iteratee created by `_.matches` when `func` is an object', 2, function() {
       var matches = _.iteratee({ 'a': 1, 'b': 2 });
       strictEqual(matches({ 'a': 1, 'b': 2, 'c': 3 }), true);
       strictEqual(matches({ 'b': 2 }), false);
-    });
-
-    test('should return an iteratee created by `_.matches` when `func` is an array', 2, function() {
-      var matches = _.iteratee(['a', 'b']);
-      strictEqual(matches({ '0': 'a', '1': 'b', '2': 'c' }), true);
-      strictEqual(matches({ '1': 'b' }), false);
     });
 
     test('should not change match behavior if `source` is augmented', 9, function() {
@@ -8497,22 +8339,22 @@
       });
     });
 
-    test('should return an iteratee created by `_.matchesProperty` when `func` is a number or string and `thisArg` is not `undefined`', 3, function() {
-      var array = ['a'],
-          matches = _.iteratee(0, 'a');
+    test('should return an iteratee created by `_.matchesProperty` when `func` is a number or string and a value is provided', 3, function() {
+      var array = ['a', undefined],
+          matches = _.iteratee([0, 'a']);
 
       strictEqual(matches(array), true);
 
-      matches = _.iteratee('0', 'a');
+      matches = _.iteratee(['0', 'a']);
       strictEqual(matches(array), true);
 
-      matches = _.iteratee(1, undefined);
-      strictEqual(matches(array), undefined);
+      matches = _.iteratee([1, undefined]);
+      strictEqual(matches(array), true);
     });
 
-    test('should support deep paths for `_.matchesProperty` shorthands', 1, function() {
+    test('should support deep paths for "_.matchesProperty" shorthands', 1, function() {
       var object = { 'a': { 'b': { 'c': { 'd': 1, 'e': 2 } } } },
-          matches = _.iteratee('a.b.c', { 'e': 2 });
+          matches = _.iteratee(['a.b.c', { 'e': 2 }]);
 
       strictEqual(matches(object), true);
     });
@@ -8527,7 +8369,7 @@
       strictEqual(prop(array), 'a');
     });
 
-    test('should support deep paths for `_.property` shorthands', 1, function() {
+    test('should support deep paths for "_.property" shorthands', 1, function() {
       var object = { 'a': { 'b': { 'c': 3 } } },
           prop = _.iteratee('a.b.c');
 
@@ -8542,30 +8384,12 @@
       };
 
       var expected = [1, 2, 3],
-          object = { 'a': 1 },
-          iteratee = _.iteratee(_.partial(fn, 2), object);
+          object = { 'a': 1 , 'iteratee': _.iteratee(_.partial(fn, 2)) };
 
-      deepEqual(iteratee(3), expected);
+      deepEqual(object.iteratee(3), expected);
 
-      iteratee = _.iteratee(_.partialRight(fn, 3), object);
-      deepEqual(iteratee(2), expected);
-    });
-
-    test('should support binding built-in methods', 2, function() {
-      var fn = function() {},
-          object = { 'a': 1 },
-          bound = fn.bind && fn.bind(object),
-          iteratee = _.iteratee(hasOwnProperty, object);
-
-      strictEqual(iteratee('a'), true);
-
-      if (bound) {
-        iteratee = _.iteratee(bound, object);
-        notStrictEqual(iteratee, bound);
-      }
-      else {
-        skipTest();
-      }
+      object.iteratee = _.iteratee(_.partialRight(fn, 3));
+      deepEqual(object.iteratee(2), expected);
     });
 
     test('should work as an iteratee for methods like `_.map`', 1, function() {
@@ -9432,16 +9256,6 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('should support the `thisArg` argument', 2, function() {
-      var callback = function(num, index) { return this[index] + num; },
-          actual = _.map([1], callback, [2]);
-
-      deepEqual(actual, [3]);
-
-      actual = _.map({ 'a': 1 }, callback, { 'a': 2 });
-      deepEqual(actual, [3]);
-    });
-
     test('should work with a "_.property" style `iteratee`', 1, function() {
       var objects = [{ 'a': 'x' }, { 'a': 'y' }];
       deepEqual(_.map(objects, 'a'), ['x', 'y']);
@@ -9568,18 +9382,6 @@
       deepEqual(actual, { '1': 1, '2': 2 });
     });
 
-    test('should support the `thisArg` argument', 2, function() {
-      function callback(num, key) {
-        return this[key] + num
-      }
-
-      var actual = _.mapKeys({ 'a': 1 }, callback, { 'a': 2 });
-      deepEqual(actual, { '3': 1 });
-
-      actual = _.mapKeys([2], callback, [1]);
-      deepEqual(actual, { '3': 2 });
-    });
-
     test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.mapKeys({ 'a': { 'b': 'c' } }, 'b');
       deepEqual(actual, { 'c': { 'b': 'c' } });
@@ -9607,18 +9409,6 @@
     test('should treat arrays like objects', 1, function() {
       var actual = _.mapValues(array, String);
       deepEqual(actual, { '0': '1', '1': '2' });
-    });
-
-    test('should support the `thisArg` argument', 2, function() {
-      function callback(num, key) {
-        return this[key] + num;
-      }
-
-      var actual = _.mapValues({ 'a': 1 }, callback, { 'a': 2 });
-      deepEqual(actual, { 'a': 3 });
-
-      actual = _.mapValues([2], callback, [1]);
-      deepEqual(actual, { '0': 3 });
     });
 
     test('should work with a "_.property" style `iteratee`', 1, function() {
@@ -11089,14 +10879,6 @@
       deepEqual(args, expected);
     });
 
-    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
-      var actual = func(array, function(num, index) {
-        return -this[index];
-      }, array);
-
-      strictEqual(actual, isMax ? 1 : 3);
-    });
-
     test('should work with a "_.property" style `iteratee`', 2, function() {
       var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
           actual = func(objects, 'a');
@@ -11592,14 +11374,6 @@
       });
 
       deepEqual(args, expected);
-    });
-
-    test('should set the `this` binding', 1, function() {
-      var actual = _.omit(object, function(num) {
-        return num != this.b && num != this.d;
-      }, { 'b': 2, 'd': 4 });
-
-      deepEqual(actual, expected);
     });
 
     test('should coerce property names to strings', 1, function() {
@@ -12215,14 +11989,6 @@
       deepEqual(args, [1, 0, array]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.partition([1.1, 0.2, 1.3], function(num) {
-        return this.floor(num);
-      }, Math);
-
-      deepEqual(actual, [[1.1, 1.3], [0.2]]);
-    });
-
     test('should work with a "_.property" style `predicate`', 1, function() {
       var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
           actual = _.partition(objects, 'a');
@@ -12315,14 +12081,6 @@
       });
 
       deepEqual(args, expected);
-    });
-
-    test('should set the `this` binding', 1, function() {
-      var actual = _.pick(object, function(num) {
-        return num == this.a || num == this.c;
-      }, { 'a': 1, 'c': 3 });
-
-      deepEqual(actual, expected);
     });
 
     test('should coerce property names to strings', 1, function() {
@@ -13079,14 +12837,6 @@
       strictEqual(actual, isReduce ? 'abc' : 'cba');
     });
 
-    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
-      var actual = func(array, function(sum, num, index) {
-        return sum + this[index];
-      }, 0, array);
-
-      deepEqual(actual, 6);
-    });
-
     test('`_.' + methodName + '` should support empty collections without an initial `accumulator` value', 1, function() {
       var actual = [],
           expected = _.map(empties, _.constant());
@@ -13311,16 +13061,6 @@
       deepEqual(argsList, [[1, 0, clone], [2, 1, clone], [3, 2, clone]]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var array = [1, 2, 3];
-
-      var actual = _.remove(array, function(num, index) {
-        return this[index] < 3;
-      }, array);
-
-      deepEqual(actual, [1, 2]);
-    });
-
     test('should work with a "_.matches" style `predicate`', 1, function() {
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
       _.remove(objects, { 'a': 1 });
@@ -13329,7 +13069,7 @@
 
     test('should work with a "_.matchesProperty" style `predicate`', 1, function() {
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
-      _.remove(objects, 'a', 1);
+      _.remove(objects, ['a', 1]);
       deepEqual(objects, [{ 'a': 0, 'b': 1 }]);
     });
 
@@ -14462,14 +14202,6 @@
       deepEqual(args, [objects[0], 0, objects]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.sortBy([1, 2, 3], function(num) {
-        return this.sin(num);
-      }, Math);
-
-      deepEqual(actual, [3, 1, 2]);
-    });
-
     test('should use `_.identity` when `iteratee` is nullish', 1, function() {
       var array = [3, 2, 1],
           values = [, null, undefined],
@@ -14686,14 +14418,6 @@
       });
 
       deepEqual(args, [40]);
-    });
-
-    test('`_.' + methodName + '` should support the `thisArg` argument', 1, function() {
-      var actual = func(array, 40, function(num) {
-        return this[num];
-      }, { '30': 30, '40': 40, '50': 50 });
-
-      strictEqual(actual, 1);
     });
 
     test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', 1, function() {
@@ -14918,14 +14642,6 @@
       deepEqual(args, [2, 'a', object]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.sum([6.8, 4.5, 2.6], function(num) {
-        return this.floor(num);
-      }, Math);
-
-      strictEqual(actual, 12);
-    });
-
     test('should work with a "_.property" style `iteratee`', 2, function() {
       var arrays = [[2], [3], [1]];
       strictEqual(_.sum(arrays, 0), 6);
@@ -15002,21 +14718,6 @@
       }
       else {
         skipTest(2);
-      }
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      if (!isNpm) {
-        var array = [1, 2];
-
-        var wrapped = _(array.slice()).tap(function(value) {
-          value.push(this[0]);
-        }, array);
-
-        deepEqual(wrapped.value(), [1, 2, 1]);
-      }
-      else {
-        skipTest();
       }
     });
   }());
@@ -15937,16 +15638,6 @@
       deepEqual(args, [0]);
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var expect = [1, 2, 3];
-
-      var actual = _.times(3, function(num) {
-        return this[num];
-      }, expect);
-
-      deepEqual(actual, expect);
-    });
-
     test('should use `_.identity` when `iteratee` is nullish', 1, function() {
       var values = [, null, undefined],
           expected = _.map(values, _.constant([0, 1, 2]));
@@ -16247,15 +15938,6 @@
           deepEqual(args, [first, 1, 'a', object]);
         }
       });
-
-      test('should support the `thisArg` argument when transforming an ' + key, 2, function() {
-        var actual = _.transform(object, function(result, value, key) {
-          result[key] = this[key];
-        }, null, object);
-
-        deepEqual(actual, object);
-        notStrictEqual(actual, object);
-      });
     });
 
     test('should create an object from the same realm as `object`', 1, function() {
@@ -16505,14 +16187,6 @@
       deepEqual(actual, objects.slice(0, 3));
     });
 
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.uniq([1, 2, 1.5, 3, 2.5], function(num) {
-        return this.floor(num);
-      }, Math);
-
-      deepEqual(actual, [1, 2, 3]);
-    });
-
     test('should work with a "_.property" style `iteratee`', 2, function() {
       var actual = _.uniq(objects, 'a');
 
@@ -16608,7 +16282,8 @@
     });
 
     _.each({
-      'an object': ['a'],
+      'an array': [0, 'a'],
+      'an object': { '0': 'a' },
       'a number': 0,
       'a string': '0'
     },
@@ -16661,14 +16336,6 @@
       });
 
       deepEqual(args, [1, 2, 1, [1, 2]]);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.unzipWith([[1.2, 3.4], [2.3, 4.5]], function(a, b) {
-        return this.floor(a) + this.floor(b);
-      }, Math);
-
-      deepEqual(actual, [3, 7]);
     });
 
     test('should perform a basic unzip when `iteratee` is nullish', 1, function() {
@@ -16965,14 +16632,6 @@
       });
 
       deepEqual(args, [1, 3, 1, [1, 3, 5]]);
-    });
-
-    test('should support the `thisArg` argument', 1, function() {
-      var actual = _.zipWith([1.2, 2.3], [3.4, 4.5], function(a, b) {
-        return this.floor(a) + this.floor(b);
-      }, Math);
-
-      deepEqual(actual, [4, 6]);
     });
 
     test('should perform a basic zip when `iteratee` is nullish', 1, function() {
@@ -17983,83 +17642,6 @@
         });
 
         deepEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
-      });
-    });
-
-    test('should handle `null` `thisArg` arguments', 44, function() {
-      var expected = (function() { return this; }).call(null);
-
-      var funcs = [
-        'assign',
-        'clone',
-        'cloneDeep',
-        'countBy',
-        'dropWhile',
-        'dropRightWhile',
-        'every',
-        'filter',
-        'find',
-        'findIndex',
-        'findKey',
-        'findLast',
-        'findLastIndex',
-        'findLastKey',
-        'forEach',
-        'forEachRight',
-        'forIn',
-        'forInRight',
-        'forOwn',
-        'forOwnRight',
-        'groupBy',
-        'isEqual',
-        'map',
-        'mapValues',
-        'max',
-        'merge',
-        'min',
-        'omit',
-        'partition',
-        'pick',
-        'reduce',
-        'reduceRight',
-        'reject',
-        'remove',
-        'some',
-        'sortBy',
-        'sortedIndex',
-        'takeWhile',
-        'takeRightWhile',
-        'tap',
-        'times',
-        'transform',
-        'thru',
-        'uniq'
-      ];
-
-      _.each(funcs, function(methodName) {
-        var actual,
-            array = ['a'],
-            callback = function() { actual = this; },
-            func = _[methodName],
-            message = '`_.' + methodName + '` handles `null` `thisArg` arguments';
-
-        if (func) {
-          if (_.startsWith(methodName, 'reduce') || methodName == 'transform') {
-            func(array, callback, 0, null);
-          } else if (_.includes(['assign', 'merge'], methodName)) {
-            func(array, array, callback, null);
-          } else if (_.includes(['isEqual', 'sortedIndex'], methodName)) {
-            func(array, 'a', callback, null);
-          } else if (methodName == 'times') {
-            func(1, callback, null);
-          } else {
-            func(array, callback, null);
-          }
-          strictEqual(actual, expected, message);
-        }
-        else {
-          skipTest();
-        }
       });
     });
 

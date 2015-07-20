@@ -1,5 +1,6 @@
 {
   "name": "lodash",
+  "license": "MIT",
   "main": "lodash.js",
   "ignore": [
     ".*",

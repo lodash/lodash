@@ -8249,7 +8249,7 @@
      * // => true
      */
     function isPlainObject(value) {
-      if (!(value && objToString.call(value) == objectTag)) {
+      if (!isObjectLike(value) || objToString.call(value) != objectTag || isHostObject(value)) {
         return false;
       }
       var proto = typeof value.constructor == 'function'

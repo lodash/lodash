@@ -1973,7 +1973,7 @@
         }
       });
 
-      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for methods like `_.map`', 3, function() {
+      test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for methods like `_.map`', 2, function() {
         var expected = [{ 'a': [0] }, { 'b': [1] }],
             actual = _.map(expected, func);
 
@@ -1984,8 +1984,6 @@
         } else {
           ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
         }
-        actual = _.map(isDeep ? Object('abc') : 'abc', func);
-        deepEqual(actual, ['a', 'b', 'c']);
       });
 
       test('`_.' + methodName + '` should create an object from the same realm as `value`', 1, function() {

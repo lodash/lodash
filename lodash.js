@@ -546,18 +546,17 @@
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
    */
-  var isHostObject = (function() {
-    try {
-      Object({ 'toString': 0 } + '');
-    } catch(e) {
-      return function() { return false; };
+  function isHostObject(value) {
+    // Many host objects are `Object` objects that can coerce to strings
+    // despite having improperly defined `toString` methods.
+    var result = false;
+    if (value != null && typeof value.toString != 'function') {
+      try {
+        result = !!(value + '');
+      } catch(e) {}
     }
-    return function(value) {
-      // Many host objects are `Object` objects that can coerce to strings
-      // despite having improperly defined `toString` methods.
-      return typeof value.toString != 'function' && typeof (value + '') == 'string';
-    };
-  }());
+    return result;
+  }
 
   /**
    * Checks if `value` is object-like.

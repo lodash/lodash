@@ -8447,7 +8447,7 @@
      * otherwise they are assigned by reference. If `customizer` is provided it's
      * invoked to produce the cloned values. If `customizer` returns `undefined`
      * cloning is handled by the method instead. The `customizer` is bound to
-     * `thisArg` and invoked with two argument; (value [, index|key, object]).
+     * `thisArg` and invoked with up to three argument; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the
      * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
@@ -8503,7 +8503,7 @@
         isDeep = false;
       }
       return typeof customizer == 'function'
-        ? baseClone(value, isDeep, bindCallback(customizer, thisArg, 1))
+        ? baseClone(value, isDeep, bindCallback(customizer, thisArg, 3))
         : baseClone(value, isDeep);
     }
 
@@ -8511,7 +8511,7 @@
      * Creates a deep clone of `value`. If `customizer` is provided it's invoked
      * to produce the cloned values. If `customizer` returns `undefined` cloning
      * is handled by the method instead. The `customizer` is bound to `thisArg`
-     * and invoked with two argument; (value [, index|key, object]).
+     * and invoked with up to three argument; (value [, index|key, object]).
      *
      * **Note:** This method is loosely based on the
      * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
@@ -8554,7 +8554,7 @@
      */
     function cloneDeep(value, customizer, thisArg) {
       return typeof customizer == 'function'
-        ? baseClone(value, true, bindCallback(customizer, thisArg, 1))
+        ? baseClone(value, true, bindCallback(customizer, thisArg, 3))
         : baseClone(value, true);
     }
 
@@ -8749,8 +8749,8 @@
      * Performs a deep comparison between two values to determine if they are
      * equivalent. If `customizer` is provided it's invoked to compare values.
      * If `customizer` returns `undefined` comparisons are handled by the method
-     * instead. The `customizer` is bound to `thisArg` and invoked with three
-     * arguments: (value, other [, index|key]).
+     * instead. The `customizer` is bound to `thisArg` and invoked with up to
+     * three arguments: (value, other [, index|key]).
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Objects are compared by

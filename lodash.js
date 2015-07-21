@@ -2930,7 +2930,7 @@
     }
 
     /**
-     * Creates a `_.countBy`, `_.groupBy`, `_.indexBy`, or `_.partition` function.
+     * Creates a function like `_.groupBy`.
      *
      * @private
      * @param {Function} setter The function to set keys and values of the accumulator object.
@@ -2960,7 +2960,7 @@
     }
 
     /**
-     * Creates a `_.assign` or `_.merge` function.
+     * Creates a function like `_.assign`.
      *
      * @private
      * @param {Function} assigner The function to assign values.
@@ -3019,7 +3019,7 @@
     }
 
     /**
-     * Creates a base function for `_.forIn` or `_.forInRight`.
+     * Creates a base function for methods like `_.forIn`.
      *
      * @private
      * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -3073,7 +3073,7 @@
     }
 
     /**
-     * Creates a `_.camelCase`, `_.kebabCase`, `_.snakeCase`, or `_.startCase` function.
+     * Creates a function like `_.camelCase`.
      *
      * @private
      * @param {Function} callback The function to combine each word.
@@ -3329,7 +3329,7 @@
     }
 
     /**
-     * Creates a `_.ceil`, `_.floor`, or `_.round` function.
+     * Creates a function like `_.round`.
      *
      * @private
      * @param {string} methodName The name of the `Math` method to use when rounding.

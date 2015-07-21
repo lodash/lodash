@@ -1,5 +1,10 @@
 # lodash v3.10.1
 
+[![NPM](https://nodei.co/npm/lodash.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/lodash/)
+
+[![Dependency Status](https://david-dm.org/lodash/lodash.svg)](https://david-dm.org/lodash/lodash)
+[![devDependency Status](https://david-dm.org/lodash/lodash/dev-status.svg)](https://david-dm.org/lodash/lodash#info=devDependencies)
+
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) with packages for [Bower](http://bower.io/), [Component](http://component.github.io/), & [Volo](http://volojs.org/).
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):

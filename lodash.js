@@ -9214,7 +9214,7 @@
       if (object == null) {
         return {};
       }
-      var props = arrayMap(baseFlatten(props), String);
+      props = arrayMap(baseFlatten(props), String);
       return basePick(object, baseDifference(keysIn(object), props));
     });
 

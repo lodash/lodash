@@ -608,7 +608,7 @@
 
   /**
    * An implementation of `_.uniq` optimized for sorted arrays without support
-   * for callback shorthands and `this` binding.
+   * for callback shorthands.
    *
    * @private
    * @param {Array} array The array to inspect.
@@ -1270,8 +1270,8 @@
     }
 
     /**
-     * A specialized version of `_.forEach` for arrays without support for callback
-     * shorthands and `this` binding.
+     * A specialized version of `_.forEach` for arrays without support for
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1292,7 +1292,7 @@
 
     /**
      * A specialized version of `_.forEachRight` for arrays without support for
-     * callback shorthands and `this` binding.
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1311,8 +1311,8 @@
     }
 
     /**
-     * A specialized version of `_.every` for arrays without support for callback
-     * shorthands and `this` binding.
+     * A specialized version of `_.every` for arrays without support for
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1368,8 +1368,8 @@
     }
 
     /**
-     * A specialized version of `_.filter` for arrays without support for callback
-     * shorthands and `this` binding.
+     * A specialized version of `_.filter` for arrays without support for
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1393,7 +1393,7 @@
 
     /**
      * A specialized version of `_.map` for arrays without support for callback
-     * shorthands and `this` binding.
+     * shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1431,8 +1431,8 @@
     }
 
     /**
-     * A specialized version of `_.reduce` for arrays without support for callback
-     * shorthands and `this` binding.
+     * A specialized version of `_.reduce` for arrays without support for
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1456,7 +1456,7 @@
 
     /**
      * A specialized version of `_.reduceRight` for arrays without support for
-     * callback shorthands and `this` binding.
+     * callback shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1478,7 +1478,7 @@
 
     /**
      * A specialized version of `_.some` for arrays without support for callback
-     * shorthands and `this` binding.
+     * shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1499,7 +1499,7 @@
 
     /**
      * A specialized version of `_.sum` for arrays without support for callback
-     * shorthands and `this` binding..
+     * shorthands.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1519,7 +1519,7 @@
 
     /**
      * The base implementation of `_.assign` without support for multiple sources
-     * and `customizer` functions.
+     * or `customizer` functions.
      *
      * @private
      * @param {Object} object The destination object.
@@ -1790,9 +1790,9 @@
     }
 
     /**
-     * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`,
-     * without support for callback shorthands, which iterates over `collection`
-     * using the provided `eachFunc`.
+     * The base implementation of methods like `_.find` and `_.findKey` without
+     * support for callback shorthands, which iterates over `collection` using
+     * the provided `eachFunc`.
      *
      * @private
      * @param {Array|Object} collection The collection to search.
@@ -2332,7 +2332,8 @@
     }
 
     /**
-     * The base implementation of `_.pick` without support for individual property names.
+     * The base implementation of `_.pick` without support for individual
+     * property names.
      *
      * @private
      * @param {Object} object The source object.
@@ -2403,7 +2404,7 @@
 
     /**
      * The base implementation of `_.pullAt` without support for individual
-     * index arguments and capturing the removed elements.
+     * index arguments or capturing the removed elements.
      *
      * @private
      * @param {Array} array The array to modify.
@@ -2657,8 +2658,8 @@
     }
 
     /**
-     * The base implementation of `_.dropRightWhile`, `_.dropWhile`, `_.takeRightWhile`,
-     * and `_.takeWhile` without support for callback shorthands.
+     * The base implementation of methods like `_.dropWhile` and `_.takeWhile`
+     * without support for callback shorthands.
      *
      * @private
      * @param {Array} array The array to query.

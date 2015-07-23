@@ -859,9 +859,9 @@
      * `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`,
      * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAt`,
      * `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`, `reverse`,
-     * `set`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`,
-     * `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-     * `throttle`, `thru`, `times`, `toArray`, `toPlainObject`, `transform`,
+     * `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`,
+     * `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`, `transform`,
      * `union`, `uniq`, `uniqBy`, `unshift`, `unzip`, `unzipWith`, `values`,
      * `valuesIn`, `without`, `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
      *
@@ -1932,21 +1932,19 @@
     }
 
     /**
-     * The base implementation of `get` without support for string paths and default values.
+     * The base implementation of `_.get` without support for default values or
+     * nullish `object` values.
      *
      * @private
      * @param {Object} object The object to query.
-     * @param {Array} path The path of the property to get.
+     * @param {Array|string} path The path of the property to get.
      * @param {string} [pathKey] The key representation of path.
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path, pathKey) {
-      if (object == null) {
-        return;
-      }
-      if (pathKey !== undefined && pathKey in Object(object)) {
-        path = [pathKey];
-      }
+      pathKey = pathKey == null ? (path + '') : pathKey;
+      path = isKey(pathKey, object) ? [pathKey] : toPath(path);
+
       var index = 0,
           length = path.length;
 
@@ -2471,6 +2469,44 @@
           : iteratee(accumulator, value, index, collection);
       });
       return accumulator;
+    }
+
+    /**
+     * The base implementation of `_.set` without support for nullish `object` values.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the property to get.
+     * @param {Function} [customizer] The function to customize cloning.
+     * @returns {*} Returns the resolved value.
+     */
+    function baseSet(object, path, value, customizer) {
+      path = isKey(path, object) ? [path + ''] : toPath(path);
+
+      var index = -1,
+          length = path.length,
+          lastIndex = length - 1,
+          nested = object;
+
+      while (nested != null && ++index < length) {
+        var key = path[index];
+        if (isObject(nested)) {
+          if (index == lastIndex) {
+            nested[key] = value;
+          }
+          else {
+            var other = nested[key],
+                result = customizer ? customizer(other, key, nested) : undefined;
+
+            if (result === undefined) {
+              result = other == null ? (isIndex(path[index + 1]) ? [] : {}) : other;
+            }
+            nested[key] = result;
+          }
+        }
+        nested = nested[key];
+      }
+      return object;
     }
 
     /**
@@ -8880,7 +8916,7 @@
      * // => 'default'
      */
     function get(object, path, defaultValue) {
-      var result = object == null ? undefined : baseGet(object, toPath(path), (path + ''));
+      var result = object == null ? undefined : baseGet(object, path);
       return result === undefined ? defaultValue : result;
     }
 
@@ -9380,29 +9416,30 @@
      * // => 5
      */
     function set(object, path, value) {
-      if (object == null) {
-        return object;
-      }
-      var pathKey = (path + '');
-      path = (object[pathKey] != null || isKey(path, object)) ? [pathKey] : toPath(path);
+      return object == null ? object : baseSet(object, path, value);
+    }
 
-      var index = -1,
-          length = path.length,
-          lastIndex = length - 1,
-          nested = object;
-
-      while (nested != null && ++index < length) {
-        var key = path[index];
-        if (isObject(nested)) {
-          if (index == lastIndex) {
-            nested[key] = value;
-          } else if (nested[key] == null) {
-            nested[key] = isIndex(path[index + 1]) ? [] : {};
-          }
-        }
-        nested = nested[key];
-      }
-      return object;
+    /**
+     * This method is like `_.set` except that it accepts `customizer` which
+     * is invoked to produce the namespace objects of `path`. The `customizer`
+     * is invoked with three arguments: (nsValue, key, nsObject).
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to augment.
+     * @param {Array|string} path The path of the property to set.
+     * @param {*} value The value to set.
+     * @param {Function} [customizer] The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * _.setWith({}, '[0][1][2]', 3, Object);
+     * // => { '0': { '1': { '2': 3 } } }
+     */
+    function setWith(object, path, value, customizer) {
+      customizer = typeof customizer == 'function' ? customizer : undefined;
+      return object == null ? object : baseSet(object, path, value, customizer);
     }
 
     /**
@@ -10869,7 +10906,7 @@
      */
     function propertyOf(object) {
       return function(path) {
-        return baseGet(object, toPath(path), (path + ''));
+        return object == null ? undefined : baseGet(object, path);
       };
     }
 
@@ -11353,6 +11390,7 @@
     lodash.rest = rest;
     lodash.restParam = restParam;
     lodash.set = set;
+    lodash.setWith = setWith;
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;

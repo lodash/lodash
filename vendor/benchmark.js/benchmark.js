@@ -1,5 +1,5 @@
 /*!
- * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
+ * Benchmark.js v2.0.0 <http://benchmarkjs.com/>
  * Copyright 2010-2015 Mathias Bynens <http://mths.be/>
  * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
  * Modified by John-David Dalton <http://allyoucanleet.com/>
@@ -216,14 +216,6 @@
        * @type boolean
        */
       support.timeout = isHostType(context, 'setTimeout') && isHostType(context, 'clearTimeout');
-
-      /**
-       * Detect if `Array#unshift` returns the new length of the array (all but IE < 8).
-       *
-       * @memberOf Benchmark.support
-       * @type boolean
-       */
-      support.unshiftResult = !![].unshift(1);
 
       /**
        * Detect if function decompilation is support.
@@ -2341,7 +2333,7 @@
        * @memberOf Benchmark
        * @type string
        */
-      'version': '2.0.0-pre'
+      'version': '2.0.0'
     });
 
     _.assign(Benchmark, {
@@ -2811,15 +2803,30 @@
       };
     });
 
+    // Avoid array-like object bugs with `Array#shift` and `Array#splice`
+    // in Firefox < 10 and IE < 9.
+    _.each(['pop', 'shift', 'splice'], function(methodName) {
+      var func = arrayRef[methodName];
+
+      Suite.prototype[methodName] = function() {
+        var value = this,
+            result = func.apply(value, arguments);
+
+        if (value.length === 0) {
+          delete value[0];
+        }
+        return result;
+      };
+    });
+
     // Avoid buggy `Array#unshift` in IE < 8 which doesn't return the new
     // length of the array.
-    if (!support.unshiftResult) {
-      Suite.prototype.unshift = function() {
-        var value = this;
-        unshift.apply(value, arguments);
-        return value.length;
-      };
-    }
+    Suite.prototype.unshift = function() {
+      var value = this;
+      unshift.apply(value, arguments);
+      return value.length;
+    };
+
     return Benchmark;
   }
 

@@ -623,7 +623,7 @@
     equal(coll.findWhere({a: 4}), void 0);
   });
 
-  test("Underscore methods", 16, function() {
+  test("Underscore methods", 19, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
@@ -644,7 +644,42 @@
     deepEqual(col.difference([c, d]), [a, b]);
     ok(col.include(col.sample()));
     var first = col.first();
+    deepEqual(col.groupBy(function(model){ return model.id; })[first.id], [first]);
+    deepEqual(col.countBy(function(model){ return model.id; }), {0: 1, 1: 1, 2: 1, 3: 1});
+    deepEqual(col.sortBy(function(model){ return model.id; })[0], col.at(3));
     ok(col.indexBy('id')[first.id] === first);
+  });
+
+  test("Underscore methods with object-style and property-style iteratee", 22, function () {
+    var model = new Backbone.Model({a: 4, b: 1, e: 3});
+    var coll = new Backbone.Collection([
+      {a: 1, b: 1},
+      {a: 2, b: 1, c: 1},
+      {a: 3, b: 1},
+      model
+    ]);
+    equal(coll.find({a: 0}), undefined);
+    deepEqual(coll.find({a: 4}), model);
+    equal(coll.find('d'), undefined);
+    deepEqual(coll.find('e'), model);
+    equal(coll.filter({a: 0}), false);
+    deepEqual(coll.filter({a: 4}), [model]);
+    equal(coll.some({a: 0}), false);
+    equal(coll.some({a: 1}), true);
+    equal(coll.reject({a: 0}).length, 4);
+    deepEqual(coll.reject({a: 4}), _.without(coll.models, model));
+    equal(coll.every({a: 0}), false);
+    equal(coll.every({b: 1}), true);
+    deepEqual(coll.partition({a: 0})[0], []);
+    deepEqual(coll.partition({a: 0})[1], coll.models);
+    deepEqual(coll.partition({a: 4})[0], [model]);
+    deepEqual(coll.partition({a: 4})[1], _.without(coll.models, model));
+    deepEqual(coll.map({a: 2}), [false, true, false, false]);
+    deepEqual(coll.map('a'), [1, 2, 3, 4]);
+    deepEqual(coll.max('a'), model);
+    deepEqual(coll.min('e'), model);
+    deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
+    deepEqual(coll.countBy('d'), {'undefined': 4});
   });
 
   test("reset", 16, function() {
@@ -1591,13 +1626,13 @@
     collection.add([{id: 3}], {at: '1'});
     deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
-  test("adding multiple models triggers `set` event once", 1, function() {
+  test("adding multiple models triggers `update` event once", 1, function() {
     var collection = new Backbone.Collection;
     collection.on('update', function() { ok(true); });
     collection.add([{id: 1}, {id: 2}, {id: 3}]);
   });
 
-  test("removing models triggers `set` event once", 1, function() {
+  test("removing models triggers `update` event once", 1, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('update', function() { ok(true); });
     collection.remove([{id: 1}, {id: 2}]);
@@ -1615,7 +1650,7 @@
     collection.set([{id: 1}, {id: 3}]);
   });
 
-  test("set does not trigger `set` event when nothing added nor removed", 0, function() {
+  test("set does not trigger `update` event when nothing added nor removed", 0, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(false); });
     collection.set([{id: 1}, {id: 2}]);

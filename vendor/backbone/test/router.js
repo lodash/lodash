@@ -67,7 +67,7 @@
       this.value = value;
     }
   };
-  _.bindAll(ExternalObject, 'routingFunction');
+  ExternalObject.routingFunction = _.bind(ExternalObject.routingFunction, ExternalObject);
 
   var Router = Backbone.Router.extend({
 

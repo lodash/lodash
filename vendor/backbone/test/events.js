@@ -66,6 +66,34 @@
     equal(obj.counter, 5);
   });
 
+  test("binding and triggering multiple event names with event maps", function() {
+    var obj = { counter: 0 };
+    _.extend(obj, Backbone.Events);
+
+    var increment = function() {
+      this.counter += 1;
+    };
+
+    obj.on({
+      'a b c': increment
+    });
+
+    obj.trigger('a');
+    equal(obj.counter, 1);
+
+    obj.trigger('a b');
+    equal(obj.counter, 3);
+
+    obj.trigger('c');
+    equal(obj.counter, 4);
+
+    obj.off({
+      'a c': increment
+    });
+    obj.trigger('a b c');
+    equal(obj.counter, 5);
+  });
+
   test("binding and trigger with event maps context", 2, function() {
     var obj = { counter: 0 };
     var context = {};

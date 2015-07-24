@@ -8498,7 +8498,8 @@
 
     /**
      * This method is like `_.assign` except that it accepts `customizer` which
-     * is invoked to produce the assigned values. The `customizer` is invoked
+     * is invoked to produce the assigned values. If `customizer` returns `undefined`
+     * assignment is handled by the method instead. The `customizer` is invoked
      * with five arguments: (objectValue, sourceValue, key, object, source).
      *
      * **Note:** This method mutates `object`.
@@ -9418,8 +9419,9 @@
 
     /**
      * This method is like `_.set` except that it accepts `customizer` which
-     * is invoked to produce the namespace objects of `path`. The `customizer`
-     * is invoked with three arguments: (nsValue, key, nsObject).
+     * is invoked to produce the namespace objects of `path`.  If `customizer`
+     * returns `undefined` namespace creation is handled by the method instead.
+     * The `customizer` is invoked with three arguments: (nsValue, key, nsObject).
      *
      * @static
      * @memberOf _
@@ -9431,7 +9433,9 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.setWith({}, '[0][1][2]', 3, Object);
+     * _.setWith({ '0': {} }, '[0][1][2]', 3, function(value) {
+     *   return _.isObject(value) ? value : {};
+     * });
      * // => { '0': { '1': { '2': 3 } } }
      */
     function setWith(object, path, value, customizer) {

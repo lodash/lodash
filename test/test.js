@@ -12934,9 +12934,9 @@
       });
     });
 
-    test('`_.' + methodName + '` should coerce array paths to strings', 1, function() {
+    test('`_.' + methodName + '` should not coerce array paths to strings', 1, function() {
       var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 4 } } };
-      strictEqual(func(object, ['a', 'b', 'c']), 3);
+      strictEqual(func(object, ['a', 'b', 'c']), 4);
     });
 
     test('`_.' + methodName + '` should ignore empty brackets', 1, function() {
@@ -13436,10 +13436,10 @@
       });
     });
 
-    test('should coerce array paths to strings', 1, function() {
+    test('should not coerce array paths to strings', 1, function() {
       var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 3 } } };
       _.set(object, ['a', 'b', 'c'], 4);
-      deepEqual(object, { 'a,b,c': 4, 'a': { 'b': { 'c': 3 } } });
+      strictEqual(object.a.b.c, 4);
     });
 
     test('should ignore empty brackets', 1, function() {

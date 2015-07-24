@@ -1932,18 +1932,15 @@
     }
 
     /**
-     * The base implementation of `_.get` without support for default values or
-     * nullish `object` values.
+     * The base implementation of `_.get` without support for default values.
      *
      * @private
      * @param {Object} object The object to query.
      * @param {Array|string} path The path of the property to get.
-     * @param {string} [pathKey] The key representation of path.
      * @returns {*} Returns the resolved value.
      */
-    function baseGet(object, path, pathKey) {
-      pathKey = pathKey == null ? (path + '') : pathKey;
-      path = isKey(pathKey, object) ? [pathKey] : toPath(path);
+    function baseGet(object, path) {
+      path = isKey(path, object) ? [path + ''] : toPath(path);
 
       var index = 0,
           length = path.length;
@@ -2393,10 +2390,8 @@
      * @returns {Function} Returns the new function.
      */
     function basePropertyDeep(path) {
-      var pathKey = (path + '');
-      path = toPath(path);
       return function(object) {
-        return baseGet(object, path, pathKey);
+        return baseGet(object, path);
       };
     }
 
@@ -2472,7 +2467,7 @@
     }
 
     /**
-     * The base implementation of `_.set` without support for nullish `object` values.
+     * The base implementation of `_.set`.
      *
      * @private
      * @param {Object} object The object to query.
@@ -9380,9 +9375,11 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      var result = object == null ? undefined : object[path];
+      var isPath = !isKey(path, object),
+          result = (isPath || object == null) ? undefined : object[path];
+
       if (result === undefined) {
-        if (object != null && !isKey(path, object)) {
+        if (object != null && isPath) {
           path = toPath(path);
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
           result = object == null ? undefined : object[last(path)];

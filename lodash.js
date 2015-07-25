@@ -6408,9 +6408,8 @@
 
     /**
      * Checks if `predicate` returns truthy for **any** element of `collection`.
-     * The function returns as soon as it finds a passing value and doesn't iterate
-     * over the entire collection. The predicate is invoked with three arguments:
-     * (value, index|key, collection).
+     * Iteration is stopped once `predicate` returns truthy. The predicate is
+     * invoked with three arguments: (value, index|key, collection).
      *
      * @static
      * @memberOf _

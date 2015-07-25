@@ -7978,7 +7978,8 @@
      * var other = ['hi', 'goodbye'];
      *
      * _.isEqualWith(array, other, function(value, other) {
-     *   if (_.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/)) {
+     *   var reHello = /^h(?:i|ello)$/;
+     *   if (reHello.test(value) && reHello.test(other)) {
      *     return true;
      *   }
      * });
@@ -8139,8 +8140,11 @@
      * var object = { 'greeting': 'hello' };
      * var source = { 'greeting': 'hi' };
      *
-     * _.isMatch(object, source, function(value, other) {
-     *   return _.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/) || undefined;
+     * _.isMatchWith(object, source, function(value, other) {
+     *   var reHello = /^h(?:i|ello)$/;
+     *   if (reHello.test(value) && reHello.test(other)) {
+     *     return true;
+     *   }
      * });
      * // => true
      */
@@ -9418,10 +9422,10 @@
     }
 
     /**
-     * This method is like `_.set` except that it accepts `customizer` which
-     * is invoked to produce the namespace objects of `path`.  If `customizer`
-     * returns `undefined` namespace creation is handled by the method instead.
-     * The `customizer` is invoked with three arguments: (nsValue, key, nsObject).
+     * This method is like `_.set` except that it accepts `customizer` which is
+     * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
+     * path creation is handled by the method instead. The `customizer` is invoked
+     * with three arguments: (nsValue, key, nsObject).
      *
      * @static
      * @memberOf _
@@ -9434,7 +9438,9 @@
      * @example
      *
      * _.setWith({ '0': {} }, '[0][1][2]', 3, function(value) {
-     *   return _.isObject(value) ? value : {};
+     *   if (!_.isObject(value)) {
+     *     return {};
+     *   }
      * });
      * // => { '0': { '1': { '2': 3 } } }
      */

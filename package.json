@@ -12,6 +12,7 @@
     "qunitjs": "~1.18.0",
     "requirejs": "~2.1.0"
   },
+  "scripts": { "test": "node test/test" },
   "volo": {
     "type": "directory",
     "ignore": [

@@ -28,5 +28,8 @@
       "test",
       "vendor"
     ]
+  },
+  "scripts": {
+    "test": "node test/test"
   }
 }

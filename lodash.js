@@ -10194,9 +10194,9 @@
         options = otherOptions = undefined;
       }
       string = baseToString(string);
-      options = defaults({}, otherOptions || options, settings);
+      options = extendWith({}, otherOptions || options, settings, extendDefaults);
 
-      var imports = defaults({}, options.imports, settings.imports),
+      var imports = extendWith({}, options.imports, settings.imports, extendDefaults),
           importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
 

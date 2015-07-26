@@ -5121,7 +5121,7 @@
             'set': function() { pass = false; }
           });
 
-          func(object, { 'a': value }, _.identity);
+          func(object, { 'a': value });
           ok(pass, value);
         }
         else {
@@ -13404,67 +13404,69 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.set');
+  QUnit.module('set methods');
 
-  (function() {
-    test('should set property values', 4, function() {
+  _.each(['set', 'setWith'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should set property values', 4, function() {
       var object = { 'a': 1 };
 
       _.each(['a', ['a']], function(path) {
-        var actual = _.set(object, path, 2);
+        var actual = func(object, path, 2);
         strictEqual(actual, object);
         strictEqual(object.a, 2);
         object.a = 1;
       });
     });
 
-    test('should set deep property values', 4, function() {
+    test('`_.' + methodName + '` should set deep property values', 4, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
 
       _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-        var actual = _.set(object, path, 4);
+        var actual = func(object, path, 4);
         strictEqual(actual, object);
         strictEqual(object.a.b.c, 4);
         object.a.b.c = 3;
       });
     });
 
-    test('should set a key over a path', 4, function() {
+    test('`_.' + methodName + '` should set a key over a path', 4, function() {
       var object = { 'a.b.c': 3 };
 
       _.each(['a.b.c', ['a.b.c']], function(path) {
-        var actual = _.set(object, path, 4);
+        var actual = func(object, path, 4);
         strictEqual(actual, object);
         deepEqual(object, { 'a.b.c': 4 });
         object['a.b.c'] = 3;
       });
     });
 
-    test('should not coerce array paths to strings', 1, function() {
+    test('`_.' + methodName + '` should not coerce array paths to strings', 1, function() {
       var object = { 'a,b,c': 3, 'a': { 'b': { 'c': 3 } } };
-      _.set(object, ['a', 'b', 'c'], 4);
+      func(object, ['a', 'b', 'c'], 4);
       strictEqual(object.a.b.c, 4);
     });
 
-    test('should ignore empty brackets', 1, function() {
+    test('`_.' + methodName + '` should ignore empty brackets', 1, function() {
       var object = {};
-      _.set(object, 'a[]', 1);
+      func(object, 'a[]', 1);
       deepEqual(object, { 'a': 1 });
     });
 
-    test('should handle empty paths', 4, function() {
+    test('`_.' + methodName + '` should handle empty paths', 4, function() {
       _.each([['', ''], [[], ['']]], function(pair, index) {
         var object = {};
 
-        _.set(object, pair[0], 1);
+        func(object, pair[0], 1);
         deepEqual(object, index ? {} : { '': 1 });
 
-        _.set(object, pair[1], 2);
+        func(object, pair[1], 2);
         deepEqual(object, { '': 2 });
       });
     });
 
-    test('should handle complex paths', 2, function() {
+    test('`_.' + methodName + '` should handle complex paths', 2, function() {
       var object = { 'a': { '1.23': { '["b"]': { 'c': { "['d']": { 'e': { 'f': 6 } } } } } } };
 
       var paths = [
@@ -13473,17 +13475,17 @@
       ];
 
       _.each(paths, function(path) {
-        _.set(object, path, 7);
+        func(object, path, 7);
         strictEqual(object.a[-1.23]['["b"]'].c["['d']"].e.f, 7);
         object.a[-1.23]['["b"]'].c["['d']"].e.f = 6;
       });
     });
 
-    test('should create parts of `path` that are missing', 6, function() {
+    test('`_.' + methodName + '` should create parts of `path` that are missing', 6, function() {
       var object = {};
 
       _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
-        var actual = _.set(object, path, 4);
+        var actual = func(object, path, 4);
         strictEqual(actual, object);
         deepEqual(actual, { 'a': [undefined, { 'b': { 'c': 4 } }] });
         ok(!(0 in object.a));
@@ -13491,13 +13493,13 @@
       });
     });
 
-    test('should not error when `object` is nullish', 1, function() {
+    test('`_.' + methodName + '` should not error when `object` is nullish', 1, function() {
       var values = [null, undefined],
           expected = [[null, null], [undefined, undefined]];
 
       var actual = _.map(values, function(value) {
         try {
-          return [_.set(value, 'a.b', 1), _.set(value, ['a', 'b'], 1)];
+          return [func(value, 'a.b', 1), func(value, ['a', 'b'], 1)];
         } catch(e) {
           return e.message;
         }
@@ -13506,29 +13508,29 @@
       deepEqual(actual, expected);
     });
 
-    test('should follow `path` over non-plain objects', 4, function() {
+    test('`_.' + methodName + '` should follow `path` over non-plain objects', 4, function() {
       var object = { 'a': '' },
           paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
 
       _.each(paths, function(path) {
-        _.set(0, path, 1);
+        func(0, path, 1);
         strictEqual(0..a, 1);
         delete numberProto.a;
       });
 
       _.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
-        _.set(object, path, 1);
+        func(object, path, 1);
         strictEqual(stringProto.replace.b, 1);
         delete stringProto.replace.b;
       });
     });
 
-    test('should not error on paths over primitive values in strict mode', 2, function() {
+    test('`_.' + methodName + '` should not error on paths over primitive values in strict mode', 2, function() {
       numberProto.a = 0;
 
       _.each(['a', 'a.a.a'], function(path) {
         try {
-          _.set(0, path, 1);
+          func(0, path, 1);
           strictEqual(0..a, 0);
         } catch(e) {
           ok(false, e.message);
@@ -13539,13 +13541,33 @@
       delete numberProto.a;
     });
 
-    test('should not create an array for missing non-index property names that start with numbers', 1, function() {
+    test('`_.' + methodName + '` should not create an array for missing non-index property names that start with numbers', 1, function() {
       var object = {};
 
-      _.set(object, ['1a', '2b', '3c'], 1);
+      func(object, ['1a', '2b', '3c'], 1);
       deepEqual(object, { '1a': { '2b': { '3c': 1 } } });
     });
-  }());
+
+    test('`_.' + methodName + '` should not assign values that are the same as their destinations', 4, function() {
+      _.each(['a', ['a'], { 'a': 1 }, NaN], function(value) {
+        if (defineProperty) {
+          var object = {},
+              pass = true;
+
+          defineProperty(object, 'a', {
+            'get': _.constant(value),
+            'set': function() { pass = false; }
+          });
+
+          func(object, 'a', value);
+          ok(pass, value);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

@@ -2511,18 +2511,15 @@
       while (nested != null && ++index < length) {
         var key = path[index];
         if (isObject(nested)) {
-          if (index == lastIndex) {
-            nested[key] = value;
-          }
-          else {
-            var oldValue = nested[key],
-                newValue = customizer ? customizer(oldValue, key, nested) : undefined;
-
+          var newValue = value;
+          if (index != lastIndex) {
+            var oldValue = nested[key];
+            newValue = customizer ? customizer(oldValue, key, nested) : undefined;
             if (newValue === undefined) {
               newValue = oldValue == null ? (isIndex(path[index + 1]) ? [] : {}) : oldValue;
             }
-            assignValue(nested, key, newValue);
           }
+          assignValue(nested, key, newValue);
         }
         nested = nested[key];
       }

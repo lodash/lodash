@@ -5,7 +5,7 @@ var baseIsMatch = require('../internal/baseIsMatch'),
 /**
  * Performs a deep comparison between `object` and `source` to determine if
  * `object` contains equivalent property values. If `customizer` is provided
- * it is invoked to compare values. If `customizer` returns `undefined`
+ * it's invoked to compare values. If `customizer` returns `undefined`
  * comparisons are handled by the method instead. The `customizer` is bound
  * to `thisArg` and invoked with three arguments: (value, other, index|key).
  *

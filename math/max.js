@@ -6,7 +6,7 @@ var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
 
 /**
  * Gets the maximum value of `collection`. If `collection` is empty or falsey
- * `-Infinity` is returned. If an iteratee function is provided it is invoked
+ * `-Infinity` is returned. If an iteratee function is provided it's invoked
  * for each value in `collection` to generate the criterion by which the value
  * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
  * arguments: (value, index, collection).

@@ -6,7 +6,7 @@ var nativeIsFinite = global.isFinite;
 
 /**
  * The opposite of `_.before`; this method creates a function that invokes
- * `func` once it is called `n` or more times.
+ * `func` once it's called `n` or more times.
  *
  * @static
  * @memberOf _

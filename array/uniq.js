@@ -8,7 +8,7 @@ var baseCallback = require('../internal/baseCallback'),
  * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons, in which only the first occurence of each element
  * is kept. Providing `true` for `isSorted` performs a faster search algorithm
- * for sorted arrays. If an iteratee function is provided it is invoked for
+ * for sorted arrays. If an iteratee function is provided it's invoked for
  * each element in the array to generate the criterion by which uniqueness
  * is computed. The `iteratee` is bound to `thisArg` and invoked with three
  * arguments: (value, index, array).

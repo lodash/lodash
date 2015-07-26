@@ -10,9 +10,9 @@ var baseIndexOf = require('../internal/baseIndexOf'),
 var nativeMax = Math.max;
 
 /**
- * Checks if `value` is in `collection` using
+ * Checks if `target` is in `collection` using
  * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
- * for equality comparisons. If `fromIndex` is negative, it is used as the offset
+ * for equality comparisons. If `fromIndex` is negative, it's used as the offset
  * from the end of `collection`.
  *
  * @static

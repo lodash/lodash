@@ -3,7 +3,7 @@ var createSortedIndex = require('../internal/createSortedIndex');
 /**
  * Uses a binary search to determine the lowest index at which `value` should
  * be inserted into `array` in order to maintain its sort order. If an iteratee
- * function is provided it is invoked for `value` and each element of `array`
+ * function is provided it's invoked for `value` and each element of `array`
  * to compute their sort ranking. The iteratee is bound to `thisArg` and
  * invoked with one argument; (value).
  *

@@ -4,7 +4,7 @@ var nativeMax = Math.max,
 
 /**
  * Checks if `n` is between `start` and up to but not including, `end`. If
- * `end` is not specified it is set to `start` with `start` then set to `0`.
+ * `end` is not specified it's set to `start` with `start` then set to `0`.
  *
  * @static
  * @memberOf _

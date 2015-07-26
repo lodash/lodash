@@ -7,7 +7,7 @@ var baseGet = require('../internal/baseGet'),
 
 /**
  * This method is like `_.get` except that if the resolved value is a function
- * it is invoked with the `this` binding of its parent object and its result
+ * it's invoked with the `this` binding of its parent object and its result
  * is returned.
  *
  * @static

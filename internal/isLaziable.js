@@ -11,11 +11,12 @@ var LazyWrapper = require('./LazyWrapper'),
  * @returns {boolean} Returns `true` if `func` has a lazy counterpart, else `false`.
  */
 function isLaziable(func) {
-  var funcName = getFuncName(func);
-  if (!(funcName in LazyWrapper.prototype)) {
+  var funcName = getFuncName(func),
+      other = lodash[funcName];
+
+  if (typeof other != 'function' || !(funcName in LazyWrapper.prototype)) {
     return false;
   }
-  var other = lodash[funcName];
   if (func === other) {
     return true;
   }

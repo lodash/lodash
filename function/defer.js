@@ -3,7 +3,7 @@ var baseDelay = require('../internal/baseDelay'),
 
 /**
  * Defers invoking the `func` until the current call stack has cleared. Any
- * additional arguments are provided to `func` when it is invoked.
+ * additional arguments are provided to `func` when it's invoked.
  *
  * @static
  * @memberOf _

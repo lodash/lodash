@@ -1,4 +1,4 @@
-# lodash v3.10.0
+# lodash v3.10.1
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) modules.
 
@@ -28,7 +28,7 @@ var array = require('lodash/array');
 var chunk = require('lodash/array/chunk');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.10.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/3.10.1-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
@@ -39,8 +39,8 @@ Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash b
 lodash is also available in a variety of other builds & module formats.
 
  * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.10.0-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.10.0-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.10.0-es) build
+ * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.10.1-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.10.1-amd) builds
+ * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.10.1-es) build
 
 ## Further Reading
 
@@ -117,5 +117,5 @@ lodash is also available in a variety of other builds & module formats.
 
 ## Support
 
-Tested in Chrome 42-43, Firefox 37-38, IE 6-11, MS Edge, Opera 28-29, Safari 5-8, ChakraNode 0.12.2, io.js 2.3.1, Node.js 0.8.28, 0.10.38, & 0.12.5, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7.6.
+Tested in Chrome 43-44, Firefox 38-39, IE 6-11, MS Edge, Safari 5-8, ChakraNode 0.12.2, io.js 2.5.0, Node.js 0.8.28, 0.10.40, & 0.12.7, PhantomJS 1.9.8, RingoJS 0.11, & Rhino 1.7.6.
 Automated [browser](https://saucelabs.com/u/lodash) & [CI](https://travis-ci.org/lodash/lodash/) test runs are available. Special thanks to [Sauce Labs](https://saucelabs.com/) for providing automated browser testing.

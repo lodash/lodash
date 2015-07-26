@@ -5,7 +5,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * Creates a function that invokes `func` with the `this` binding of the created
  * function and an array of arguments much like [`Function#apply`](https://es5.github.io/#x15.3.4.3).
  *
- * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator).
+ * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/Web/JavaScript/Reference/Operators/Spread_operator).
  *
  * @static
  * @memberOf _

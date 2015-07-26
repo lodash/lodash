@@ -8,7 +8,7 @@ var realNames = require('./realNames');
  * @returns {string} Returns the function name.
  */
 function getFuncName(func) {
-  var result = func.name,
+  var result = (func.name + ''),
       array = realNames[result],
       length = array ? array.length : 0;
 

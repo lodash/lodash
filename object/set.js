@@ -5,7 +5,7 @@ var isIndex = require('../internal/isIndex'),
 
 /**
  * Sets the property value of `path` on `object`. If a portion of `path`
- * does not exist it is created.
+ * does not exist it's created.
  *
  * @static
  * @memberOf _

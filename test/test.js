@@ -5107,6 +5107,30 @@
     });
   });
 
+  _.each(['assign', 'assignWith', 'defaults', 'extend', 'extendWith', 'merge', 'mergeWith'], function(methodName) {
+    var func = _[methodName];
+
+    test('`_.' + methodName + '` should not assign values that are the same as their destinations', 4, function() {
+      _.each(['a', ['a'], { 'a': 1 }, NaN], function(value) {
+        if (defineProperty) {
+          var object = {},
+              pass = true;
+
+          defineProperty(object, 'a', {
+            'get': _.constant(value),
+            'set': function() { pass = false; }
+          });
+
+          func(object, { 'a': value }, _.identity);
+          ok(pass, value);
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
+  });
+
   _.each(['assignWith', 'extendWith', 'mergeWith'], function(methodName) {
     var func = _[methodName],
         isMergeWith = methodName == 'mergeWith';
@@ -5159,26 +5183,6 @@
 
       actual = func({ 'a': 1 }, callback, { 'c': 3 });
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
-    });
-
-    test('`_.' + methodName + '` should not assign the `customizer` result if it is the same as the destination value', 4, function() {
-      _.each(['a', ['a'], { 'a': 1 }, NaN], function(value) {
-        if (defineProperty) {
-          var object = {},
-              pass = true;
-
-          defineProperty(object, 'a', {
-            'get': _.constant(value),
-            'set': function() { pass = false; }
-          });
-
-          func(object, { 'a': value }, _.identity);
-          ok(pass);
-        }
-        else {
-          skipTest();
-        }
-      });
     });
   });
 

@@ -1518,6 +1518,42 @@
     }
 
     /**
+     * Assigns `value` to `key` of `object` if the existing value is not equivalent
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * for equality comparisons.
+     *
+     * @private
+     * @param {Object} object The object to augment.
+     * @param {string} key The key of the property to assign.
+     * @param {*} value The value to assign.
+     */
+    function assignValue(object, key, value) {
+      var oldValue = object[key];
+      if ((value === value ? (value !== oldValue) : (oldValue === oldValue)) ||
+          (value === undefined && !(key in object))) {
+        object[key] = value;
+      }
+    }
+
+    /**
+     * This function is like `assignValue` except that it doesn't assign `undefined` values.
+     *
+     * @private
+     * @param {Object} object The object to augment.
+     * @param {string} key The key of the property to assign.
+     * @param {*} value The value to assign.
+     */
+    function assignMergeValue(object, key, value) {
+      var oldValue = object[key];
+      if ((value !== undefined &&
+            (value === value ? (value !== oldValue) : (oldValue === oldValue))) ||
+          (typeof key == 'number' &&
+            value === undefined && !(key in object))) {
+        object[key] = value;
+      }
+    }
+
+    /**
      * The base implementation of `_.assign` without support for multiple sources
      * or `customizer` functions.
      *
@@ -2235,12 +2271,9 @@
      * @param {Function} [customizer] The function to customize merged values.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates values with source counterparts.
-     * @returns {Object} Returns `object`.
      */
     function baseMerge(object, source, customizer, stackA, stackB) {
-      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-          props = isSrcArr ? undefined : keysIn(source);
-
+      var props = (isArray(source) || isTypedArray(source)) ? undefined : keysIn(source);
       arrayEach(props || source, function(srcValue, key) {
         if (props) {
           key = srcValue;
@@ -2252,20 +2285,13 @@
           baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
         }
         else {
-          var value = object[key],
-              result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-              isCommon = result === undefined;
-
-          if (isCommon) {
-            result = srcValue;
+          var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source) : undefined;
+          if (newValue === undefined) {
+            newValue = srcValue;
           }
-          if ((result !== undefined || (isSrcArr && !(key in object))) &&
-              (isCommon || (result === result ? (result !== value) : (value === value)))) {
-            object[key] = result;
-          }
+          assignMergeValue(object, key, newValue);
         }
       });
-      return object;
     }
 
     /**
@@ -2281,33 +2307,32 @@
      * @param {Function} [customizer] The function to customize assigned values.
      * @param {Array} [stackA=[]] Tracks traversed source objects.
      * @param {Array} [stackB=[]] Associates values with source counterparts.
-     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stackB) {
       var length = stackA.length,
+          oldValue = object[key],
           srcValue = source[key];
 
       while (length--) {
         if (stackA[length] == srcValue) {
-          object[key] = stackB[length];
+          assignMergeValue(object, key, stackB[length]);
           return;
         }
       }
-      var value = object[key],
-          result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-          isCommon = result === undefined;
+      var newValue = customizer ? customizer(oldValue, srcValue, (key + ''), object, source) : undefined,
+          isCommon = newValue === undefined;
 
       if (isCommon) {
-        result = srcValue;
-        if (isArrayLike(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
-          result = isArray(value)
-            ? value
-            : (isArrayLike(value) ? copyArray(value) : []);
+        newValue = srcValue;
+        if (isArray(srcValue) || isTypedArray(srcValue)) {
+          newValue = isArray(oldValue)
+            ? oldValue
+            : (isArrayLike(oldValue) ? copyArray(oldValue) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-          result = isArguments(value)
-            ? toPlainObject(value)
-            : (isPlainObject(value) ? value : {});
+          newValue = isArguments(oldValue)
+            ? toPlainObject(oldValue)
+            : (isPlainObject(oldValue) ? oldValue : {});
         }
         else {
           isCommon = false;
@@ -2316,14 +2341,13 @@
       // Add the source value to the stack of traversed objects and associate
       // it with its merged value.
       stackA.push(srcValue);
-      stackB.push(result);
+      stackB.push(newValue);
 
       if (isCommon) {
         // Recursively merge objects and arrays (susceptible to call stack limits).
-        object[key] = mergeFunc(result, srcValue, customizer, stackA, stackB);
-      } else if (result === result ? (result !== value) : (value === value)) {
-        object[key] = result;
+        mergeFunc(newValue, srcValue, customizer, stackA, stackB);
       }
+      assignMergeValue(object, key, newValue);
     }
 
     /**
@@ -2471,9 +2495,10 @@
      *
      * @private
      * @param {Object} object The object to query.
-     * @param {Array|string} path The path of the property to get.
-     * @param {Function} [customizer] The function to customize cloning.
-     * @returns {*} Returns the resolved value.
+     * @param {Array|string} path The path of the property to set.
+     * @param {*} value The value to set.
+     * @param {Function} [customizer] The function to customize path creation.
+     * @returns {Object} Returns `object`.
      */
     function baseSet(object, path, value, customizer) {
       path = isKey(path, object) ? [path + ''] : toPath(path);
@@ -2490,13 +2515,13 @@
             nested[key] = value;
           }
           else {
-            var other = nested[key],
-                result = customizer ? customizer(other, key, nested) : undefined;
+            var oldValue = nested[key],
+                newValue = customizer ? customizer(oldValue, key, nested) : undefined;
 
-            if (result === undefined) {
-              result = other == null ? (isIndex(path[index + 1]) ? [] : {}) : other;
+            if (newValue === undefined) {
+              newValue = oldValue == null ? (isIndex(path[index + 1]) ? [] : {}) : oldValue;
             }
-            nested[key] = result;
+            assignValue(nested, key, newValue);
           }
         }
         nested = nested[key];
@@ -2925,7 +2950,7 @@
 
       while (++index < length) {
         var key = props[index];
-        object[key] = source[key];
+        assignValue(object, key, source[key], object[key]);
       }
       return object;
     }
@@ -2949,14 +2974,9 @@
 
       while (++index < length) {
         var key = props[index],
-            value = object[key],
-            result = customizer ? customizer(value, source[key], key, object, source) : source[key];
+            newValue = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
 
-        if (!customizer ||
-            (result === result ? (result !== value) : (value === value)) ||
-            (value === undefined && !(key in object))) {
-          object[key] = result;
-        }
+        assignValue(object, key, newValue);
       }
       return object;
     }

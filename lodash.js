@@ -9453,12 +9453,12 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.setWith({ '0': {} }, '[0][1][2]', 3, function(value) {
+     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, function(value) {
      *   if (!_.isObject(value)) {
      *     return {};
      *   }
      * });
-     * // => { '0': { '1': { '2': 3 } } }
+     * // => { '0': { '1': { '2': 3 }, 'length': 2 } }
      */
     function setWith(object, path, value, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;

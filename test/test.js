@@ -1016,7 +1016,7 @@
 
     test('`_.' + methodName + '` should work with a `customizer` that returns `undefined`', 1, function() {
       var expected = { 'a': undefined };
-      deepEqual(func({}, expected, _.identity), expected);
+      deepEqual(func({}, expected, _.constant(undefined)), expected);
     });
   });
 
@@ -13399,6 +13399,27 @@
       else {
         skipTest(2);
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.setWith');
+
+  (function() {
+    test('should work with a `customizer` callback', 1, function() {
+      var actual = _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, function(value) {
+        if (!_.isObject(value)) {
+          return {};
+        }
+      });
+
+      deepEqual(actual, { '0': { '1': { '2': 3 }, 'length': 2 } });
+    });
+
+    test('should work with a `customizer` that returns `undefined`', 1, function() {
+      var actual = _.setWith({}, 'a[0].b.c', 4, _.constant(undefined));
+      deepEqual(actual, { 'a': [{ 'b': { 'c': 4 } }] });
     });
   }());
 

@@ -4187,8 +4187,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to process.
-     * @param {number} [size=1] The length of each chunk.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+     * @param {number} [size=0] The length of each chunk.
      * @returns {Array} Returns the new array containing chunks.
      * @example
      *
@@ -4198,11 +4197,10 @@
      * _.chunk(['a', 'b', 'c', 'd'], 3);
      * // => [['a', 'b', 'c'], ['d']]
      */
-    function chunk(array, size, guard) {
-      if (guard ? isIterateeCall(array, size, guard) : size == null) {
-        size = 1;
-      } else {
-        size = nativeMax(nativeFloor(size) || 1, 1);
+    function chunk(array, size) {
+      size = nativeMax(nativeFloor(size) || 0, 0);
+      if (size < 1) {
+        return [];
       }
       var index = 0,
           length = array ? array.length : 0,
@@ -6146,10 +6144,10 @@
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `chunk`, `create`, `curry`, `curryRight`, `drop`,
-     * `dropRight`, `every`, `fill`, `invert`, `parseInt`, `random`, `range`,
-     * `sample`, `slice`, `some`, `sortBy`, `sumBy`, `take`, `takeRight`,
-     * `template`, `trim`, `trimLeft`, `trimRight`, `trunc`, `uniqBy`, and `words`
+     * `ary`, `callback`, `create`, `curry`, `curryRight`, `drop`, `dropRight`,
+     * `every`, `fill`, `invert`, `parseInt`, `random`, `range`, `sample`,
+     * `slice`, `some`, `sortBy`, `sumBy`, `take`, `takeRight`, `template`,
+     * `trim`, `trimLeft`, `trimRight`, `trunc`, `uniqBy`, and `words`
      *
      * @static
      * @memberOf _

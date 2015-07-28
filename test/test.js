@@ -1794,9 +1794,9 @@
       deepEqual(actual, [[0, 1, 2, 3], [4, 5]]);
     });
 
-    test('should ensure the minimum `chunkSize` is `1`', 1, function() {
+    test('should ensure the minimum `size` is `0`', 1, function() {
       var values = falsey.concat(-1, -Infinity),
-          expected = _.map(values, _.constant([[0], [1], [2], [3], [4], [5]]));
+          expected = _.map(values, _.constant([]));
 
       var actual = _.map(values, function(value, index) {
         return index ? _.chunk(array, value) : _.chunk(array);
@@ -1807,11 +1807,6 @@
 
     test('should floor `size` values', 1, function() {
       deepEqual(_.chunk(array, array.length / 4), [[0], [1], [2], [3], [4], [5]]);
-    });
-
-    test('should work as an iteratee for methods like `_.map`', 1, function() {
-      var actual = _.map([[1, 2], [3, 4]], _.chunk);
-      deepEqual(actual, [[[1], [2]], [[3], [4]]]);
     });
   }());
 

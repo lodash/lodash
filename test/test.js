@@ -3602,11 +3602,12 @@
       ];
 
       var expected = _.map(chars, function(chr) {
-        return ['\\' + (regexpEscapes[chr] || chr) + 'z', 'z' + chr];
+        var escaped = '\\' + (regexpEscapes[chr] || chr);
+        return [escaped, escaped + 'z', 'z' + chr];
       });
 
       var actual = _.map(chars, function(chr) {
-        return [_.escapeRegExp(chr + 'z'), _.escapeRegExp('z' + chr)];
+        return [_.escapeRegExp(chr), _.escapeRegExp(chr + 'z'), _.escapeRegExp('z' + chr)];
       });
 
       deepEqual(actual, expected);

@@ -4972,7 +4972,8 @@
       var array = [1, 2, 3],
           func = _[methodName],
           isFind = /^find/.test(methodName),
-          isSome = methodName == 'some';
+          isSome = methodName == 'some',
+          isReduce = /^reduce/.test(methodName);
 
       test('`_.' + methodName + '` should ignore changes to `array.length`', 1, function() {
         if (func) {
@@ -4984,7 +4985,7 @@
               array.push(2);
             }
             return !(isFind || isSome);
-          }, array);
+          }, isReduce ? array : null);
 
           strictEqual(count, 1);
         }
@@ -4997,7 +4998,8 @@
     _.each(_.difference(_.union(methods, collectionMethods), arrayMethods), function(methodName) {
       var func = _[methodName],
           isFind = /^find/.test(methodName),
-          isSome = methodName == 'some';
+          isSome = methodName == 'some',
+          isReduce = /^reduce/.test(methodName);
 
       test('`_.' + methodName + '` should ignore added `object` properties', 1, function() {
         if (func) {
@@ -5009,7 +5011,7 @@
               object.b = 2;
             }
             return !(isFind || isSome);
-          }, object);
+          }, isReduce ? object : null);
 
           strictEqual(count, 1);
         }
@@ -10645,13 +10647,6 @@
       strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', 1, function() {
-      var arrays = [[2, 1], [5, 4], [7, 8]],
-          expected = isMax ? [2, 5, 8] : [1, 4, 7];
-
-      deepEqual(_.map(arrays, func), expected);
-    });
-
     test('`_.' + methodName + '` should work when chaining on an array with only one value', 1, function() {
       if (!isNpm) {
         var actual = _([40])[methodName]();
@@ -14346,11 +14341,6 @@
       strictEqual(_.sumBy(arrays, 0), 6);
       strictEqual(_.sumBy(objects, 'a'), 6);
     });
-
-    test('should perform basic sum when used as an iteratee for methods like `_.map`', 1, function() {
-      var actual = _.map([array, array], _.sumBy);
-      deepEqual(actual, [12, 12]);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -15793,6 +15783,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.uniq');
+
+  (function() {
+    test('should perform an unsorted uniq when used as an iteratee for methods like `_.map`', 1, function() {
+      var array = [[2, 1, 2], [1, 2, 1]],
+          actual = _.map(array, _.uniq);
+
+      deepEqual(actual, [[2, 1], [1, 2]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.uniqBy');
 
   (function() {
@@ -15885,13 +15888,6 @@
       deepEqual(func([1, 2, 3], true), expected);
       deepEqual(func([1, 1, 2, 2, 3], true), expected);
       deepEqual(func([1, 2, 3, 3, 3, 3, 3], true), expected);
-    });
-
-    test('`_.' + methodName + '` should perform an unsorted uniq when used as an iteratee for methods like `_.map`', 1, function() {
-      var array = [[2, 1, 2], [1, 2, 1]],
-          actual = _.map(array, func);
-
-      deepEqual(actual, [[2, 1], [1, 2]]);
     });
 
     test('`_.' + methodName + '` should work with large arrays', 1, function() {

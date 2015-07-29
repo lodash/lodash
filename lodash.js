@@ -4293,9 +4293,7 @@
       if (!(array && array.length)) {
         return [];
       }
-      if (guard ? isIterateeCall(array, n, guard) : n == null) {
-        n = 1;
-      }
+      n = (guard || n == null) ? 1 : n;
       return baseSlice(array, n < 0 ? 0 : n);
     }
 
@@ -4328,9 +4326,7 @@
       if (!length) {
         return [];
       }
-      if (guard ? isIterateeCall(array, n, guard) : n == null) {
-        n = 1;
-      }
+      n = (guard || n == null) ? 1 : n;
       n = length - (+n || 0);
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
@@ -5061,9 +5057,7 @@
       if (!(array && array.length)) {
         return [];
       }
-      if (guard ? isIterateeCall(array, n, guard) : n == null) {
-        n = 1;
-      }
+      n = (guard || n == null) ? 1 : n;
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -5096,9 +5090,7 @@
       if (!length) {
         return [];
       }
-      if (guard ? isIterateeCall(array, n, guard) : n == null) {
-        n = 1;
-      }
+      n = (guard || n == null) ? 1 : n;
       n = length - (+n || 0);
       return baseSlice(array, n < 0 ? 0 : n);
     }
@@ -5265,7 +5257,7 @@
         return [];
       }
       if (isSorted != null && typeof isSorted != 'boolean') {
-        iteratee = isIterateeCall(array, isSorted, iteratee) ? undefined : isSorted;
+        iteratee = isSorted;
         isSorted = false;
       }
       var toIteratee = getIteratee();
@@ -5823,9 +5815,7 @@
      */
     function every(collection, predicate, guard) {
       var func = isArray(collection) ? arrayEvery : baseEvery;
-      if (guard && isIterateeCall(collection, predicate, guard)) {
-        predicate = undefined;
-      }
+      predicate = guard ? undefined : predicate;
       return func(collection, getIteratee(predicate));
     }
 
@@ -6060,7 +6050,7 @@
     function includes(collection, target, fromIndex, guard) {
       collection = isArrayLike(collection) ? collection : values(collection);
       var length = collection.length;
-      if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
+      if (guard || typeof fromIndex != 'number') {
         fromIndex = 0;
       } else {
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
@@ -6145,10 +6135,10 @@
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `create`, `curry`, `curryRight`, `drop`, `dropRight`,
-     * `every`, `fill`, `invert`, `parseInt`, `random`, `range`, `sample`,
-     * `slice`, `some`, `sortBy`, `sumBy`, `take`, `takeRight`, `template`,
-     * `trim`, `trimLeft`, `trimRight`, `trunc`, `uniqBy`, and `words`
+     * `ary`, `callback`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
+     * `fill`, `invert`, `parseInt`, `random`, `range`, `sample`, `slice`, `some`,
+     * `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`, `trimRight`,
+     * `uniq`, and `words`
      *
      * @static
      * @memberOf _
@@ -6355,7 +6345,7 @@
      * // => [3, 1]
      */
     function sample(collection, n, guard) {
-      if (guard ? isIterateeCall(collection, n, guard) : n == null) {
+      if (guard || n == null) {
         collection = isArrayLike(collection) ? collection : values(collection);
         var length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
@@ -6458,9 +6448,7 @@
      */
     function some(collection, predicate, guard) {
       var func = isArray(collection) ? arraySome : baseSome;
-      if (guard && isIterateeCall(collection, predicate, guard)) {
-        predicate = undefined;
-      }
+      predicate = guard ? undefined : predicate;
       return func(collection, getIteratee(predicate));
     }
 
@@ -6546,12 +6534,10 @@
       if (collection == null) {
         return [];
       }
-      if (guard && isIterateeCall(iteratees, orders, guard)) {
-        orders = undefined;
-      }
       if (!isArray(iteratees)) {
         iteratees = iteratees == null ? [] : [iteratees];
       }
+      orders = guard ? undefined : orders;
       if (!isArray(orders)) {
         orders = orders == null ? [] : [orders];
       }
@@ -6638,9 +6624,7 @@
      * // => [6, 8, 10]
      */
     function ary(func, n, guard) {
-      if (guard && isIterateeCall(func, n, guard)) {
-        n = undefined;
-      }
+      n = guard ? undefined : n;
       n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
       return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
     }
@@ -6860,9 +6844,7 @@
      * // => [1, 2, 3]
      */
     function curry(func, arity, guard) {
-      if (guard && isIterateeCall(func, arity, guard)) {
-        arity = undefined;
-      }
+      arity = guard ? undefined : arity;
       var result = createWrapper(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
       result.placeholder = curry.placeholder;
       return result;
@@ -6906,9 +6888,7 @@
      * // => [1, 2, 3]
      */
     function curryRight(func, arity, guard) {
-      if (guard && isIterateeCall(func, arity, guard)) {
-        arity = undefined;
-      }
+      arity = guard ? undefined : arity;
       var result = createWrapper(func, CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
       result.placeholder = curryRight.placeholder;
       return result;
@@ -8577,7 +8557,6 @@
      * @category Object
      * @param {Object} prototype The object to inherit from.
      * @param {Object} [properties] The properties to assign to the object.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -8601,11 +8580,8 @@
      * circle instanceof Shape;
      * // => true
      */
-    function create(prototype, properties, guard) {
+    function create(prototype, properties) {
       var result = baseCreate(prototype);
-      if (guard && isIterateeCall(prototype, properties, guard)) {
-        properties = undefined;
-      }
       return properties ? baseAssign(result, properties) : result;
     }
 
@@ -8985,7 +8961,6 @@
      * @category Object
      * @param {Object} object The object to invert.
      * @param {boolean} [multiValue] Allow multiple values per key.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Object} Returns the new inverted object.
      * @example
      *
@@ -8998,10 +8973,9 @@
      * _.invert(object, true);
      * // => { '1': ['a', 'c'], '2': ['b'] }
      */
-    function invert(object, multiValue, guard) {
-      if (guard && isIterateeCall(object, multiValue, guard)) {
-        multiValue = undefined;
-      }
+    function invert(object, multiValue) {
+      multiValue = typeof multiValue == 'boolean' && multiValue;
+
       var index = -1,
           props = keys(object),
           length = props.length,
@@ -9979,7 +9953,7 @@
     function parseInt(string, radix, guard) {
       // Chrome fails to trim leading <BOM> whitespace characters.
       // See https://code.google.com/p/v8/issues/detail?id=3109 for more details.
-      if (guard ? isIterateeCall(string, radix, guard) : radix == null) {
+      if (guard || radix == null) {
         radix = 0;
       } else if (radix) {
         radix = +radix;
@@ -10333,7 +10307,7 @@
       if (!string) {
         return string;
       }
-      if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
+      if (guard || chars == null) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = (chars + '');
@@ -10364,7 +10338,7 @@
       if (!string) {
         return string;
       }
-      if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
+      if (guard || chars == null) {
         return string.slice(trimmedLeftIndex(string));
       }
       return string.slice(charsLeftIndex(string, (chars + '')));
@@ -10394,7 +10368,7 @@
       if (!string) {
         return string;
       }
-      if (guard ? isIterateeCall(value, chars, guard) : chars == null) {
+      if (guard || chars == null) {
         return string.slice(0, trimmedRightIndex(string) + 1);
       }
       return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
@@ -10525,10 +10499,8 @@
      * // => ['fred', 'barney', '&', 'pebbles']
      */
     function words(string, pattern, guard) {
-      if (guard && isIterateeCall(string, pattern, guard)) {
-        pattern = undefined;
-      }
       string = baseToString(string);
+      pattern = guard ? undefined : guard;
       return string.match(pattern || reWords) || [];
     }
 
@@ -11155,10 +11127,7 @@
      * _.maxBy(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
-    function maxBy(array, iteratee, guard) {
-      if (guard && isIterateeCall(array, iteratee, guard)) {
-        iteratee = undefined;
-      }
+    function maxBy(array, iteratee) {
       return (array && array.length)
         ? arrayExtremum(array, getIteratee(iteratee), gt, NEGATIVE_INFINITY)
         : NEGATIVE_INFINITY;
@@ -11212,10 +11181,7 @@
      * _.minBy(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
-    function minBy(array, iteratee, guard) {
-      if (guard && isIterateeCall(array, iteratee, guard)) {
-        iteratee = undefined;
-      }
+    function minBy(array, iteratee) {
       return (array && array.length)
         ? arrayExtremum(array, getIteratee(iteratee), lt, POSITIVE_INFINITY)
         : POSITIVE_INFINITY;
@@ -11273,7 +11239,6 @@
      * @category Math
      * @param {Array} array The array to iterate over.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {number} Returns the sum.
      * @example
      *
@@ -11289,14 +11254,10 @@
      * _.sum(objects, 'n');
      * // => 10
      */
-    function sumBy(array, iteratee, guard) {
-      if (!(array && array.length)) {
-        return 0;
-      }
-      if (guard && isIterateeCall(array, iteratee, guard)) {
-        iteratee = undefined;
-      }
-      return arraySum(array, getIteratee(iteratee));
+    function sumBy(array, iteratee) {
+      return (array && array.length)
+        ? arraySum(array, getIteratee(iteratee))
+        : 0;
     }
 
     /*------------------------------------------------------------------------*/

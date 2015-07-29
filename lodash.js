@@ -4199,11 +4199,12 @@
      */
     function chunk(array, size) {
       size = nativeMax(nativeFloor(size) || 0, 0);
-      if (size < 1) {
+
+      var length = array ? array.length : 0;
+      if (!length || size < 1) {
         return [];
       }
       var index = 0,
-          length = array ? array.length : 0,
           resIndex = -1,
           result = Array(nativeCeil(length / size));
 

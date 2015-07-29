@@ -10409,19 +10409,15 @@
      * @memberOf _
      * @category String
      * @param {string} [string=''] The string to truncate.
-     * @param {Object|number} [options] The options object or maximum string length.
+     * @param {Object} [options] The options object.
      * @param {number} [options.length=30] The maximum string length.
      * @param {string} [options.omission='...'] The string to indicate text is omitted.
      * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {string} Returns the truncated string.
      * @example
      *
      * _.trunc('hi-diddly-ho there, neighborino');
      * // => 'hi-diddly-ho there, neighbo...'
-     *
-     * _.trunc('hi-diddly-ho there, neighborino', 24);
-     * // => 'hi-diddly-ho there, n...'
      *
      * _.trunc('hi-diddly-ho there, neighborino', {
      *   'length': 24,
@@ -10441,20 +10437,13 @@
      * // => 'hi-diddly-ho there, neig [...]'
      */
     function trunc(string, options, guard) {
-      if (guard && isIterateeCall(string, options, guard)) {
-        options = undefined;
-      }
       var length = DEFAULT_TRUNC_LENGTH,
           omission = DEFAULT_TRUNC_OMISSION;
 
-      if (options != null) {
-        if (isObject(options)) {
-          var separator = 'separator' in options ? options.separator : separator;
-          length = 'length' in options ? (+options.length || 0) : length;
-          omission = 'omission' in options ? baseToString(options.omission) : omission;
-        } else {
-          length = +options || 0;
-        }
+      if (isObject(options)) {
+        var separator = 'separator' in options ? options.separator : separator;
+        length = 'length' in options ? (+options.length || 0) : length;
+        omission = 'omission' in options ? baseToString(options.omission) : omission;
       }
       string = baseToString(string);
       if (length >= string.length) {

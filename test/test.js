@@ -14821,12 +14821,12 @@
     });
 
     test('should not truncate if `string` is <= `length`', 2, function() {
-      strictEqual(_.trunc(string, string.length), string);
-      strictEqual(_.trunc(string, string.length + 2), string);
+      strictEqual(_.trunc(string, { 'length': string.length }), string);
+      strictEqual(_.trunc(string, { 'length': string.length + 2 }), string);
     });
 
     test('should truncate string the given length', 1, function() {
-      strictEqual(_.trunc(string, 24), 'hi-diddly-ho there, n...');
+      strictEqual(_.trunc(string, { 'length': 24 }), 'hi-diddly-ho there, n...');
     });
 
     test('should support a `omission` option', 1, function() {
@@ -14842,24 +14842,22 @@
       strictEqual(_.trunc(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
     });
 
-    test('should treat negative `length` as `0`', 4, function() {
+    test('should treat negative `length` as `0`', 2, function() {
       _.each([0, -2], function(length) {
-        strictEqual(_.trunc(string, length), '...');
         strictEqual(_.trunc(string, { 'length': length }), '...');
       });
     });
 
-    test('should coerce `length` to an integer', 8, function() {
+    test('should coerce `length` to an integer', 4, function() {
       _.each(['', NaN, 4.5, '4'], function(length, index) {
         var actual = index > 1 ? 'h...' : '...';
-        strictEqual(_.trunc(string, length), actual);
         strictEqual(_.trunc(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
       });
     });
 
     test('should coerce `string` to a string', 2, function() {
-      strictEqual(_.trunc(Object(string), 4), 'h...');
-      strictEqual(_.trunc({ 'toString': _.constant(string) }, 5), 'hi...');
+      strictEqual(_.trunc(Object(string), { 'length': 4 }), 'h...');
+      strictEqual(_.trunc({ 'toString': _.constant(string) }, { 'length': 5 }), 'hi...');
     });
 
     test('should work as an iteratee for methods like `_.map`', 1, function() {

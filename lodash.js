@@ -5417,7 +5417,8 @@
      * The inverse of `_.pairs`; this method returns an object composed from arrays
      * of property names and values. Provide either a single two dimensional array,
      * e.g. `[[key1, value1], [key2, value2]]` or two arrays, one of property names
-     * and one of corresponding values.
+     * and one of corresponding values. If key is repeated, value of property is an
+     * array with values of the repeat keys.
      *
      * @static
      * @memberOf _
@@ -5441,14 +5442,23 @@
       if (length && !values && !isArray(props[0])) {
         values = [];
       }
+
       while (++index < length) {
-        var key = props[index];
-        if (values) {
-          result[key] = values[index];
-        } else if (key) {
-          result[key[0]] = key[1];
+        var key = props[index],
+            resultProp,
+            resultValue;
+
+        resultProp = values ? key: key[0];
+        resultValue = values ? values[index]: key[1];
+
+        if (result[resultProp]) {
+          result[resultProp] = Array.isArray(result[resultProp]) ? result[resultProp]: [result[resultProp]];
+          result[resultProp].push(resultValue);
+        } else {
+          result[resultProp] = resultValue;
         }
       }
+
       return result;
     }
 

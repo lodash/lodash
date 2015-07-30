@@ -1866,7 +1866,7 @@
 
       while (++index < length) {
         var value = array[index];
-        if (isObjectLike(value) && isArrayLike(value) &&
+        if (isObject(value) && isArrayLike(value) &&
             (isStrict || isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
@@ -2327,7 +2327,7 @@
         if (isArray(srcValue) || isTypedArray(srcValue)) {
           newValue = isArray(oldValue)
             ? oldValue
-            : ((isObjectLike(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : []);
+            : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
@@ -4260,7 +4260,7 @@
      * // => [1, 3]
      */
     var difference = restParam(function(array, values) {
-      return (isObjectLike(array) && isArrayLike(array))
+      return (isObject(array) && isArrayLike(array))
         ? baseDifference(array, baseFlatten(values, false, true))
         : [];
     });
@@ -5295,7 +5295,7 @@
           length = 0;
 
       array = arrayFilter(array, function(group) {
-        if (isArrayLike(group)) {
+        if (isObject(group) && isArrayLike(group)) {
           length = nativeMax(group.length, length);
           return true;
         }
@@ -5356,7 +5356,9 @@
      * // => [3]
      */
     var without = restParam(function(array, values) {
-      return isArrayLike(array) ? baseDifference(array, values) : [];
+      return (isObject(array) && isArrayLike(array))
+        ? baseDifference(array, values)
+        : [];
     });
 
     /**
@@ -5379,7 +5381,7 @@
 
       while (++index < length) {
         var array = arguments[index];
-        if (isArrayLike(array)) {
+        if (isObject(array) && isArrayLike(array)) {
           var result = result
             ? arrayPush(baseDifference(result, array), baseDifference(array, result))
             : array;

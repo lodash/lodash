@@ -1190,18 +1190,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should allow `func` as the first argument', 1, function() {
-      var count = 0;
-
-      try {
-        var before = _.before(function() { count++; }, 2);
-        before();
-        before();
-      } catch(e) {}
-
-      strictEqual(count, 1);
-    });
-
     test('should not set a `this` binding', 2, function() {
       var before = _.before(2, function() { return ++this.count; }),
           object = { 'count': 0, 'before': before };

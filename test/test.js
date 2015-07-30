@@ -10258,7 +10258,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should convert values to an array when merging with arrays of `source`', 2, function() {
+    test('should convert values to arrays when merging with arrays of `source`', 2, function() {
       var object = { 'a': { '1': 'y', 'b': 'z', 'length': 2 } },
           actual = _.merge(object, { 'a': ['x'] });
 
@@ -10266,6 +10266,13 @@
 
       actual = _.merge({ 'a': {} }, { 'a': [] });
       deepEqual(actual, { 'a': [] });
+    });
+
+    test('should not convert strings to arrays when merging with arrays of `source`', 1, function() {
+      var object = { 'a': 'abcdef' },
+          actual = _.merge(object, { 'a': ['x', 'y', 'z'] });
+
+      deepEqual(actual, { 'a': ['x', 'y', 'z'] });
     });
 
     test('should work with a function for `object`', 2, function() {

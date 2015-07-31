@@ -917,7 +917,7 @@
         if (value instanceof LodashWrapper) {
           return value;
         }
-        if (hasOwnProperty.call(value, '__chain__') && hasOwnProperty.call(value, '__wrapped__')) {
+        if (hasOwnProperty.call(value, '__wrapped__')) {
           return wrapperClone(value);
         }
       }

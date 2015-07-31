@@ -943,6 +943,18 @@
       deepEqual(actual, []);
     });
 
+    test('should coerce `n` to an integer', 1, function() {
+      var values = ['1', 1.6, 'xyz'],
+          expected = [['a'], ['a'], []];
+
+      var actual = _.map(values, function(n) {
+        var capped = _.ary(fn, n);
+        return capped('a', 'b');
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should work when provided less than the capped numer of arguments', 1, function() {
       var capped = _.ary(fn, 3);
       deepEqual(capped('a'), ['a']);
@@ -1793,7 +1805,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should floor `size` values', 1, function() {
+    test('should coerce `size` to an integer', 1, function() {
       deepEqual(_.chunk(array, array.length / 4), [[0], [1], [2], [3], [4], [5]]);
     });
   }());
@@ -2445,8 +2457,8 @@
       deepEqual(curried(1, 2, 3), expected);
     });
 
-    test('should coerce `arity` to a number', 2, function() {
-      var values = ['0', 'xyz'],
+    test('should coerce `arity` to an integer', 2, function() {
+      var values = ['0', 0.6, 'xyz'],
           expected = _.map(values, _.constant([]));
 
       var actual = _.map(values, function(arity) {
@@ -2465,19 +2477,6 @@
       deepEqual(curried(ph, 2)(1)(ph, 4)(3), [1, 2, 3, 4]);
       deepEqual(curried(ph, ph, 3)(ph, 2)(ph, 4)(1), [1, 2, 3, 4]);
       deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
-    });
-
-    test('should work with partialed methods', 2, function() {
-      var curried = _.curry(fn),
-          expected = [1, 2, 3, 4];
-
-      var a = _.partial(curried, 1),
-          b = _.bind(a, null, 2),
-          c = _.partialRight(b, 4),
-          d = _.partialRight(b(3), 4);
-
-      deepEqual(c(3), expected);
-      deepEqual(d(), expected);
     });
 
     test('should provide additional arguments after reaching the target arity', 3, function() {
@@ -2530,6 +2529,19 @@
       deepEqual(object.curried('a', 'b')('c'), Array(3));
       deepEqual(object.curried('a', 'b', 'c'), expected);
     });
+
+    test('should work with partialed methods', 2, function() {
+      var curried = _.curry(fn),
+          expected = [1, 2, 3, 4];
+
+      var a = _.partial(curried, 1),
+          b = _.bind(a, null, 2),
+          c = _.partialRight(b, 4),
+          d = _.partialRight(b(3), 4);
+
+      deepEqual(c(3), expected);
+      deepEqual(d(), expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -2559,17 +2571,16 @@
       deepEqual(curried(1, 2, 3), expected);
     });
 
-    test('should work with partialed methods', 2, function() {
-      var curried = _.curryRight(fn),
-          expected = [1, 2, 3, 4];
+    test('should coerce `arity` to an integer', 2, function() {
+      var values = ['0', 0.6, 'xyz'],
+          expected = _.map(values, _.constant([]));
 
-      var a = _.partialRight(curried, 4),
-          b = _.partialRight(a, 3),
-          c = _.bind(b, null, 1),
-          d = _.partial(b(2), 1);
+      var actual = _.map(values, function(arity) {
+        return _.curryRight(fn, arity)();
+      });
 
-      deepEqual(c(2), expected);
-      deepEqual(d(), expected);
+      deepEqual(actual, expected);
+      deepEqual(_.curryRight(fn, '2')(1)(2), [2, 1]);
     });
 
     test('should support placeholders', 4, function() {
@@ -2632,6 +2643,19 @@
       deepEqual(object.curried('c')('b')('a'), Array(3));
       deepEqual(object.curried('b', 'c')('a'), Array(3));
       deepEqual(object.curried('a', 'b', 'c'), expected);
+    });
+
+    test('should work with partialed methods', 2, function() {
+      var curried = _.curryRight(fn),
+          expected = [1, 2, 3, 4];
+
+      var a = _.partialRight(curried, 4),
+          b = _.partialRight(a, 3),
+          c = _.bind(b, null, 1),
+          d = _.partial(b(2), 1);
+
+      deepEqual(c(2), expected);
+      deepEqual(d(), expected);
     });
   }());
 
@@ -3226,6 +3250,10 @@
       });
     });
 
+    test('should coerce `n` to an integer', 1, function() {
+      deepEqual(_.drop(array, 1.2), [2, 3]);
+    });
+
     test('should work as an iteratee for methods like `_.map`', 1, function() {
       var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
           actual = _.map(array, _.drop);
@@ -3294,6 +3322,10 @@
       _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.dropRight(array, n), []);
       });
+    });
+
+    test('should coerce `n` to an integer', 1, function() {
+      deepEqual(_.dropRight(array, 1.2), [1, 2]);
     });
 
     test('should work as an iteratee for methods like `_.map`', 1, function() {
@@ -3508,6 +3540,10 @@
         }));
         strictEqual(_.endsWith(string, '', position), true);
       });
+    });
+
+    test('should coerce `position` to an integer', 1, function() {
+      strictEqual(_.endsWith(string, 'ab', 2.2), true);
     });
 
     test('should return `true` when `target` is an empty string regardless of `position`', 1, function() {
@@ -3818,7 +3854,7 @@
     });
 
     test('should coerce `start` and `end` to integers', 1, function() {
-      var positions = [[0.1, 1.1], ['0', 1], [0, '1'], ['1'], [NaN, 1], [1, NaN]];
+      var positions = [[0.1, 1.6], ['0', 1], [0, '1'], ['1'], [NaN, 1], [1, NaN]];
 
       var actual = _.map(positions, function(pos) {
         var array = [1, 2, 3];
@@ -5560,6 +5596,10 @@
         });
       });
 
+      test('should work with ' + key + ' and floor `position` values', 1, function() {
+        strictEqual(_.includes(collection, 2, 1.2), true);
+      });
+
       test('should work with ' + key + ' and return an unwrapped value implicitly when chaining', 1, function() {
         if (!isNpm) {
           strictEqual(_(collection).includes(3), true);
@@ -5721,28 +5761,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should treat falsey `fromIndex` values as `0`', 1, function() {
-      var expected = _.map(falsey, _.constant(0));
-
-      var actual = _.map(falsey, function(fromIndex) {
-        return _.indexOf(array, 1, fromIndex);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
-      var sorted = [4, 4, 5, 5, 6, 6],
-          values = [true, '1', {}],
-          expected = _.map(values, _.constant(2));
-
-      var actual = _.map(values, function(value) {
-        return _.indexOf(sorted, 5, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-
     test('should work with a negative `fromIndex`', 1, function() {
       strictEqual(_.indexOf(array, 2, -3), 4);
     });
@@ -5753,6 +5771,32 @@
 
       var actual = _.map(values, function(fromIndex) {
         return _.indexOf(array, 1, fromIndex);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should treat falsey `fromIndex` values as `0`', 1, function() {
+      var expected = _.map(falsey, _.constant(0));
+
+      var actual = _.map(falsey, function(fromIndex) {
+        return _.indexOf(array, 1, fromIndex);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should coerce `fromIndex` to an integer', 1, function() {
+      strictEqual(_.indexOf(array, 2, 1.2), 1);
+    });
+
+    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
+      var sorted = [4, 4, 5, 5, 6, 6],
+          values = [true, '1', {}],
+          expected = _.map(values, _.constant(2));
+
+      var actual = _.map(values, function(value) {
+        return _.indexOf(sorted, 5, value);
       });
 
       deepEqual(actual, expected);
@@ -8926,6 +8970,21 @@
       deepEqual(actual, expected);
     });
 
+    test('should work with a negative `fromIndex`', 1, function() {
+      strictEqual(_.lastIndexOf(array, 2, -3), 1);
+    });
+
+    test('should work with a negative `fromIndex` <= `-array.length`', 1, function() {
+      var values = [-6, -8, -Infinity],
+          expected = _.map(values, _.constant(0));
+
+      var actual = _.map(values, function(fromIndex) {
+        return _.lastIndexOf(array, 1, fromIndex);
+      });
+
+      deepEqual(actual, expected);
+    });
+
     test('should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`', 1, function() {
       var expected = _.map(falsey, function(value) {
         return typeof value == 'number' ? -1 : 5;
@@ -8938,6 +8997,10 @@
       deepEqual(actual, expected);
     });
 
+    test('should coerce `fromIndex` to an integer', 1, function() {
+      strictEqual(_.lastIndexOf(array, 2, 4.2), 4);
+    });
+
     test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
       var sorted = [4, 4, 5, 5, 6, 6],
           values = [true, '1', {}],
@@ -8945,21 +9008,6 @@
 
       var actual = _.map(values, function(value) {
         return _.lastIndexOf(sorted, 5, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should work with a negative `fromIndex`', 1, function() {
-      strictEqual(_.lastIndexOf(array, 2, -3), 1);
-    });
-
-    test('should work with a negative `fromIndex` <= `-array.length`', 1, function() {
-      var values = [-6, -8, -Infinity],
-          expected = _.map(values, _.constant(0));
-
-      var actual = _.map(values, function(fromIndex) {
-        return _.lastIndexOf(array, 1, fromIndex);
       });
 
       deepEqual(actual, expected);
@@ -13149,6 +13197,11 @@
       deepEqual(actual, expected);
     });
 
+    test('should coerce `start` to an integer', 1, function() {
+      var rp = _.restParam(fn, 1.6);
+      deepEqual(rp(1, 2, 3), [1, [2, 3]])
+    });
+
     test('should use an empty array when `start` is not reached', 1, function() {
       var rp = _.restParam(fn);
       deepEqual(rp(1), [1, undefined, []]);
@@ -13191,12 +13244,17 @@
       strictEqual(actual, isCeil ? 5 : 4);
     });
 
-    test('`_.' + methodName + '` should coerce `precision` values to numbers and `NaN` to `0`', 2, function() {
+    test('`_.' + methodName + '` should coerce `precision` to an integer', 3, function() {
       var actual = func(4.006, NaN);
       strictEqual(actual, isCeil ? 5 : 4);
 
+      var expected = isFloor ? 4.01 : 4.02;
+
+      actual = func(4.016, 2.6);
+      strictEqual(actual, expected);
+
       actual = func(4.016, '+2');
-      strictEqual(actual, isFloor ? 4.01 : 4.02);
+      strictEqual(actual, expected);
     });
 
     test('`_.' + methodName + '` should return a rounded number with a positive precision', 1, function() {
@@ -13295,6 +13353,11 @@
       _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
         deepEqual(_.sample(array, n).sort(), array);
       });
+    });
+
+    test('should coerce `n` to an integer', 1, function() {
+      var actual = _.sample(array, 1.6);
+      strictEqual(actual.length, 1);
     });
 
     test('should return `undefined` when sampling an empty array', 1, function() {
@@ -13741,7 +13804,7 @@
     });
 
     test('should coerce `start` and `end` to integers', 1, function() {
-      var positions = [[0.1, 1.1], ['0', 1], [0, '1'], ['1'], [NaN, 1], [1, NaN]];
+      var positions = [[0.1, 1.6], ['0', 1], [0, '1'], ['1'], [NaN, 1], [1, NaN]];
 
       var actual = _.map(positions, function(pos) {
         return _.slice.apply(_, [array].concat(pos));
@@ -14242,6 +14305,10 @@
         strictEqual(_.startsWith(string, 'a', position), true);
         strictEqual(_.startsWith(string, 'b', position), false);
       });
+    });
+
+    test('should coerce `position` to an integer', 1, function() {
+      strictEqual(_.startsWith(string, 'bc', 1.2), true);
     });
 
     test('should return `true` when `target` is an empty string regardless of `position`', 1, function() {
@@ -14834,7 +14901,7 @@
     });
 
     test('should coerce `length` to an integer', 4, function() {
-      _.each(['', NaN, 4.5, '4'], function(length, index) {
+      _.each(['', NaN, 4.6, '4'], function(length, index) {
         var actual = index > 1 ? 'h...' : '...';
         strictEqual(_.trunc(string, { 'length': { 'valueOf': _.constant(length) } }), actual);
       });
@@ -15275,7 +15342,7 @@
       });
     });
 
-    test('should floor `n` float values', 1, function() {
+    test('should coerce `n` to an integer', 1, function() {
       var actual = _.times(2.4, _.indentify);
       deepEqual(actual, [0, 1]);
     });

@@ -1790,11 +1790,11 @@
     function baseFill(array, value, start, end) {
       var length = array.length;
 
-      start = start == null ? 0 : (+start || 0);
+      start = start == null ? 0 : toInteger(start);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (end === undefined || end > length) ? length : (+end || 0);
+      end = (end === undefined || end > length) ? length : toInteger(end);
       if (end < 0) {
         end += length;
       }
@@ -2552,11 +2552,11 @@
       var index = -1,
           length = array.length;
 
-      start = start == null ? 0 : (+start || 0);
+      start = start == null ? 0 : toInteger(start);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (end === undefined || end > length) ? length : (+end || 0);
+      end = (end === undefined || end > length) ? length : toInteger(end);
       if (end < 0) {
         end += length;
       }
@@ -3387,7 +3387,7 @@
     function createRound(methodName) {
       var func = Math[methodName];
       return function(number, precision) {
-        precision = precision === undefined ? 0 : (+precision || 0);
+        precision = precision === undefined ? 0 : toInteger(precision);
         if (precision) {
           precision = pow(10, precision);
           return func(number * precision) / precision;
@@ -3438,6 +3438,9 @@
 
         partials = holders = undefined;
       }
+      ary = ary == null ? ary : nativeMax(toInteger(ary), 0);
+      arity = arity == null ? arity : toInteger(arity);
+
       var data = isBindKey ? undefined : getData(func),
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 
@@ -3448,7 +3451,7 @@
       }
       newData[9] = arity == null
         ? (isBindKey ? 0 : func.length)
-        : (nativeMax(arity - length, 0) || 0);
+        : nativeMax(arity - length, 0);
 
       if (bitmask == BIND_FLAG) {
         var result = createBindWrapper(newData[0], newData[2]);
@@ -4141,8 +4144,19 @@
      * @param {*} value The value to process.
      * @returns {Function} Returns the function.
      */
-    function toFunction(func) {
-      return typeof func == 'function' ? func : identity;
+    function toFunction(value) {
+      return typeof value == 'function' ? value : identity;
+    }
+
+    /**
+     * Converts `value` to an integer.
+     *
+     * @private
+     * @param {*} value The value to convert.
+     * @returns {number} Returns the integer.
+     */
+    function toInteger(value) {
+      return nativeFloor(value) || 0;
     }
 
     /**
@@ -4198,7 +4212,7 @@
      * // => [['a', 'b', 'c'], ['d']]
      */
     function chunk(array, size) {
-      size = nativeMax(nativeFloor(size) || 0, 0);
+      size = nativeMax(toInteger(size), 0);
 
       var length = array ? array.length : 0;
       if (!length || size < 1) {
@@ -4326,8 +4340,8 @@
       if (!length) {
         return [];
       }
-      n = (guard || n == null) ? 1 : n;
-      n = length - (+n || 0);
+      n = (guard || n == null) ? 1 : toInteger(n);
+      n = length - n;
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -4623,6 +4637,7 @@
         return -1;
       }
       if (typeof fromIndex == 'number') {
+        fromIndex = toInteger(fromIndex);
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
       } else if (fromIndex) {
         var index = binaryIndex(array, value);
@@ -4753,7 +4768,8 @@
       }
       var index = length;
       if (typeof fromIndex == 'number') {
-        index = (fromIndex < 0 ? nativeMax(length + fromIndex, 0) : nativeMin(fromIndex || 0, length - 1)) + 1;
+        index = toInteger(fromIndex);
+        index = (index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1)) + 1;
       } else if (fromIndex) {
         index = binaryIndex(array, value, true) - 1;
         var other = array[index];
@@ -5090,8 +5106,8 @@
       if (!length) {
         return [];
       }
-      n = (guard || n == null) ? 1 : n;
-      n = length - (+n || 0);
+      n = (guard || n == null) ? 1 : toInteger(n);
+      n = length - n;
       return baseSlice(array, n < 0 ? 0 : n);
     }
 
@@ -6055,7 +6071,8 @@
       if (guard || typeof fromIndex != 'number') {
         fromIndex = 0;
       } else {
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
+        fromIndex = toInteger(fromIndex);
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
       }
       return (typeof collection == 'string' || !isArray(collection) && isString(collection))
         ? (fromIndex <= length && collection.indexOf(target, fromIndex) > -1)
@@ -6357,7 +6374,7 @@
           length = result.length,
           lastIndex = length - 1;
 
-      n = nativeMin(n < 0 ? 0 : (+n || 0), length);
+      n = nativeMin(n < 0 ? 0 : toInteger(n), length);
       while (++index < n) {
         var rand = baseRandom(index, lastIndex),
             value = result[rand];
@@ -6627,7 +6644,7 @@
      */
     function ary(func, n, guard) {
       n = guard ? undefined : n;
-      n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
+      n = (func && n == null) ? func.length : n;
       return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
     }
 
@@ -7442,7 +7459,7 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+      start = nativeMax(start === undefined ? (func.length - 1) : toInteger(start), 0);
       return function() {
         var args = arguments,
             index = -1,
@@ -9742,7 +9759,7 @@
       var length = string.length;
       position = position === undefined
         ? length
-        : nativeMin(position < 0 ? 0 : (+position || 0), length);
+        : nativeMin(position < 0 ? 0 : toInteger(position), length);
 
       position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
@@ -10069,7 +10086,7 @@
       string = baseToString(string);
       position = position == null
         ? 0
-        : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+        : nativeMin(position < 0 ? 0 : toInteger(position), string.length);
 
       return string.lastIndexOf(target, position) == position;
     }
@@ -10412,7 +10429,7 @@
 
       if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
-        length = 'length' in options ? (+options.length || 0) : length;
+        length = 'length' in options ? toInteger(options.length) : length;
         omission = 'omission' in options ? baseToString(options.omission) : omission;
       }
       string = baseToString(string);
@@ -11549,7 +11566,7 @@
         if (filtered && !index) {
           return new LazyWrapper(this);
         }
-        n = n == null ? 1 : nativeMax(nativeFloor(n) || 0, 0);
+        n = n == null ? 1 : nativeMax(toInteger(n), 0);
 
         var result = this.clone();
         if (filtered) {
@@ -11616,7 +11633,7 @@
     };
 
     LazyWrapper.prototype.slice = function(start, end) {
-      start = start == null ? 0 : (+start || 0);
+      start = start == null ? 0 : toInteger(start);
 
       var result = this;
       if (result.__filtered__ && (start > 0 || end < 0)) {
@@ -11628,7 +11645,7 @@
         result = result.drop(start);
       }
       if (end !== undefined) {
-        end = (+end || 0);
+        end = toInteger(end);
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
       }
       return result;

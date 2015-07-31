@@ -15708,7 +15708,7 @@
       strictEqual(func(string, object), expected);
     });
 
-    test('`_.' + methodName + '` should return an empty string when provided nullish or empty string values and `chars`', 6, function() {
+    test('`_.' + methodName + '` should return an empty string for empty values and `chars`', 6, function() {
       _.each([null, '_-'], function(chars) {
         strictEqual(func(null, chars), '');
         strictEqual(func(undefined, chars), '');
@@ -17163,7 +17163,7 @@
     _.each(stringMethods, function(methodName) {
       var func = _[methodName];
 
-      test('`_.' + methodName + '` should return an empty string when provided nullish or empty string values', 3, function() {
+      test('`_.' + methodName + '` should return an empty string for empty values', 3, function() {
         strictEqual(func(null), '');
         strictEqual(func(undefined), '');
         strictEqual(func(''), '');

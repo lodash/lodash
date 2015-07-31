@@ -6474,7 +6474,7 @@
      * Creates an array of elements, sorted in ascending order by the results of
      * running each element in a collection through each iteratee. This method
      * performs a stable sort, that is, it preserves the original sort order of
-     * equal elements. The iteratee is invoked with three arguments:
+     * equal elements. The iteratees are invoked with three arguments:
      * (value, index|key, collection).
      *
      * @static

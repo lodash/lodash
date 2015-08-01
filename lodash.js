@@ -6427,7 +6427,8 @@
       if (collection == null) {
         return 0;
       }
-      return isArrayLike(collection) ? collection.length : keys(collection).length;
+      collection = isArrayLike(collection) ? collection : keys(collection);
+      return collection.length;
     }
 
     /**
@@ -7926,14 +7927,9 @@
      * // => false
      */
     function isEmpty(value) {
-      if (value == null) {
-        return true;
-      }
-      if (isArrayLike(value) && (isArray(value) || isString(value) || isArguments(value) ||
-          (isObjectLike(value) && isFunction(value.splice)))) {
-        return !value.length;
-      }
-      return !keys(value).length;
+      return (!isObjectLike(value) || isFunction(value.splice))
+        ? !size(value)
+        : !keys(value).length;
     }
 
     /**

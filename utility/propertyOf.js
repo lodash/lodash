@@ -23,7 +23,7 @@ import toPath from '../internal/toPath';
  */
 function propertyOf(object) {
   return function(path) {
-    return baseGet(object, toPath(path), path + '');
+    return baseGet(object, toPath(path), (path + ''));
   };
 }
 

@@ -3,7 +3,7 @@ import restParam from './restParam';
 
 /**
  * Invokes `func` after `wait` milliseconds. Any additional arguments are
- * provided to `func` when it is invoked.
+ * provided to `func` when it's invoked.
  *
  * @static
  * @memberOf _

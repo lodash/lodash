@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 3.10.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.10.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize modern exports="es" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -43,7 +43,7 @@ import support from './support';
 import thru from './chain/thru';
 
 /** Used as the semantic version number. */
-var VERSION = '3.10.0';
+var VERSION = '3.10.1';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -519,7 +519,7 @@ arrayEach(['join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split',
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   var lodashFunc = lodash[methodName];
   if (lodashFunc) {
-    var key = lodashFunc.name,
+    var key = (lodashFunc.name + ''),
         names = realNames[key] || (realNames[key] = []);
 
     names.push({ 'name': methodName, 'func': lodashFunc });

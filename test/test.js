@@ -7561,7 +7561,7 @@
       strictEqual(_.isNaN(Object(NaN)), true);
     });
 
-    test('should return `false` for non-NaNs', 12, function() {
+    test('should return `false` for non-NaNs', 13, function() {
       var expected = _.map(falsey, function(value) { return value !== value; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -7579,6 +7579,7 @@
       strictEqual(_.isNaN(slice), false);
       strictEqual(_.isNaN({ 'a': 1 }), false);
       strictEqual(_.isNaN(1), false);
+      strictEqual(_.isNaN(Object(1)), false);
       strictEqual(_.isNaN(/x/), false);
       strictEqual(_.isNaN('a'), false);
     });

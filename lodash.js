@@ -10784,19 +10784,12 @@
         methodNames = baseFunctions(source, keys(source));
       }
       var chain = (isObject(options) && 'chain' in options) ? options.chain : true,
-          index = -1,
-          isFunc = isFunction(object),
-          length = methodNames.length;
+          isFunc = isFunction(object);
 
-      while (++index < length) {
-        var methodName = methodNames[index],
-            func = source[methodName];
-
-        (function(func) {
-          object[methodName] = func;
-          if (!isFunc) {
-            return;
-          }
+      arrayEach(methodNames, function(methodName) {
+        var func = source[methodName];
+        object[methodName] = func;
+        if (isFunc) {
           object.prototype[methodName] = function() {
             var chainAll = this.__chain__;
             if (chain || chainAll) {
@@ -10809,8 +10802,9 @@
             }
             return func.apply(object, arrayPush([this.value()], arguments));
           };
-        }(func));
-      }
+        }
+      });
+
       return object;
     }
 

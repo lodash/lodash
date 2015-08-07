@@ -13608,6 +13608,17 @@
         }
       });
     });
+
+    test('`_.' + methodName + '` should delete the key if the value is undefined', 4, function() {
+      var object = { 'a': 1 };
+
+      _.each(['a', ['a']], function(path) {
+        var actual = func(object, path, undefined);
+        strictEqual(actual, object);
+        strictEqual("a" in object, false);
+        object.a = 1;
+      });
+    });
   });
 
   /*--------------------------------------------------------------------------*/

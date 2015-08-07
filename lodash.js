@@ -2518,7 +2518,11 @@
               newValue = oldValue == null ? (isIndex(path[index + 1]) ? [] : {}) : oldValue;
             }
           }
-          assignValue(nested, key, newValue);
+          if (newValue === undefined) {
+            delete nested[key];
+          } else {
+            assignValue(nested, key, newValue);
+          }
         }
         nested = nested[key];
       }

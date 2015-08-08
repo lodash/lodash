@@ -5,7 +5,7 @@
   QUnit.config.asyncRetries = 3;
 
   test('bind', function() {
-    var context = {name : 'moe'};
+    var context = {name: 'moe'};
     var func = function(arg) { return 'name: ' + (this.name || arg); };
     var bound = _.bind(func, context);
     equal(bound(), 'name: moe', 'can bind a function to a context');
@@ -29,18 +29,18 @@
     func = _.bind(func, this, 'hello', 'moe', 'curly');
     equal(func(), 'hello: moe curly', 'the function was partially applied in advance and can accept multiple arguments');
 
-    func = function(context, message) { equal(this, context, message); };
+    func = function(ctx, message) { equal(this, ctx, message); };
     _.bind(func, 0, 0, 'can bind a function to `0`')();
     _.bind(func, '', '', 'can bind a function to an empty string')();
     _.bind(func, false, false, 'can bind a function to `false`')();
 
     // These tests are only meaningful when using a browser without a native bind function
     // To test this with a modern browser, set underscore's nativeBind to undefined
-    var F = function () { return this; };
+    var F = function() { return this; };
     var boundf = _.bind(F, {hello: 'moe curly'});
     var Boundf = boundf; // make eslint happy.
     var newBoundf = new Boundf();
-    equal(newBoundf.hello, undefined, 'function should not be bound to the context, to comply with ECMAScript 5');
+    equal(newBoundf.hello, void 0, 'function should not be bound to the context, to comply with ECMAScript 5');
     equal(boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
     ok(newBoundf instanceof F, 'a bound instance is an instance of the original function');
 
@@ -77,13 +77,23 @@
     ok(widget instanceof MyWidget, 'Can partially bind a constructor');
     equal(widget.get(), 'foo', 'keeps prototype');
     deepEqual(widget.options, {a: 1});
+
+    _.partial.placeholder = obj;
+    func = _.partial(function() { return arguments.length; }, obj, 'b', obj, 'd');
+    equal(func('a'), 4, 'allows the placeholder to be swapped out');
+
+    _.partial.placeholder = {};
+    func = _.partial(function() { return arguments.length; }, obj, 'b', obj, 'd');
+    equal(func('a'), 5, 'swapping the placeholder preserves previously bound arguments');
+
+    _.partial.placeholder = _;
   });
 
   test('bindAll', function() {
-    var curly = {name : 'curly'}, moe = {
-      name    : 'moe',
-      getName : function() { return 'name: ' + this.name; },
-      sayHi   : function() { return 'hi: ' + this.name; }
+    var curly = {name: 'curly'}, moe = {
+      name: 'moe',
+      getName: function() { return 'name: ' + this.name; },
+      sayHi: function() { return 'hi: ' + this.name; }
     };
     curly.getName = moe.getName;
     _.bindAll(moe, 'getName', 'sayHi');
@@ -91,12 +101,12 @@
     equal(curly.getName(), 'name: curly', 'unbound function is bound to current object');
     equal(curly.sayHi(), 'hi: moe', 'bound function is still bound to original object');
 
-    curly = {name : 'curly'};
+    curly = {name: 'curly'};
     moe = {
-      name    : 'moe',
-      getName : function() { return 'name: ' + this.name; },
-      sayHi   : function() { return 'hi: ' + this.name; },
-      sayLast : function() { return this.sayHi(_.last(arguments)); }
+      name: 'moe',
+      getName: function() { return 'name: ' + this.name; },
+      sayHi: function() { return 'hi: ' + this.name; },
+      sayLast: function() { return this.sayHi(_.last(arguments)); }
     };
 
     throws(function() { _.bindAll(moe); }, Error, 'throws an error for bindAll with no functions named');
@@ -109,6 +119,10 @@
 
     var sayLast = moe.sayLast;
     equal(sayLast(1, 2, 3, 4, 5, 6, 7, 'Tom'), 'hi: moe', 'createCallback works with any number of arguments');
+
+    _.bindAll(moe, ['getName']);
+    var getName = moe.getName;
+    equal(getName(), 'name: moe', 'flattens arguments into a single list');
   });
 
   test('memoize', function() {
@@ -145,7 +159,7 @@
       return key.toUpperCase();
     });
     hashed('yep');
-    deepEqual(hashed.cache, {'YEP': 'yep'}, 'takes a hasher');
+    deepEqual(hashed.cache, {YEP: 'yep'}, 'takes a hasher');
 
     // Test that the hash function can be used to swizzle the key.
     var objCacher = _.memoize(function(value, key) {
@@ -155,7 +169,7 @@
     });
     var myObj = objCacher('a', 'alpha');
     var myObjAlias = objCacher('b', 'alpha');
-    notStrictEqual(myObj, undefined, 'object is created if second argument used as key');
+    notStrictEqual(myObj, void 0, 'object is created if second argument used as key');
     strictEqual(myObj, myObjAlias, 'object is cached if second argument used as key');
     strictEqual(myObj.value, 'a', 'object is not modified if second argument used as key');
   });
@@ -346,7 +360,7 @@
 
     throttledIncr();
     equal(counter, 1);
-    _.now = function () {
+    _.now = function() {
       return new Date(2013, 0, 1, 1, 1, 1);
     };
 
@@ -427,7 +441,7 @@
     debouncedIncr();
     equal(counter, 1, 'incr was called immediately');
 
-    _.now = function () {
+    _.now = function() {
       return new Date(2013, 0, 1, 1, 1, 1);
     };
 
@@ -485,13 +499,13 @@
     equal(backwards('moe'), 'hi: moe eom', 'wrapped the salutation function');
 
     var inner = function(){ return 'Hello '; };
-    var obj   = {name : 'Moe'};
-    obj.hi    = _.wrap(inner, function(fn){ return fn() + this.name; });
+    var obj = {name: 'Moe'};
+    obj.hi = _.wrap(inner, function(fn){ return fn() + this.name; });
     equal(obj.hi(), 'Hello Moe');
 
-    var noop    = function(){};
+    var noop = function(){};
     var wrapped = _.wrap(noop, function(){ return Array.prototype.slice.call(arguments, 0); });
-    var ret     = wrapped(['whats', 'your'], 'vector', 'victor');
+    var ret = wrapped(['whats', 'your'], 'vector', 'victor');
     deepEqual(ret, [noop, ['whats', 'your'], 'vector', 'victor']);
   });
 
@@ -575,7 +589,35 @@
       deepEqual(_.toArray(cb(1, 2, 3)), _.range(1, 4));
       deepEqual(_.toArray(cb(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)), _.range(1, 11));
     });
-    
+
+  });
+
+  test('restArgs', 10, function() {
+    _.restArgs(function(a, args) {
+      strictEqual(a, 1);
+      deepEqual(args, [2, 3], 'collects rest arguments into an array');
+    })(1, 2, 3);
+
+    _.restArgs(function(a, args) {
+      strictEqual(a, void 0);
+      deepEqual(args, [], 'passes empty array if there are not enough arguments');
+    })();
+
+    _.restArgs(function(a, b, c, args) {
+      strictEqual(arguments.length, 4);
+      deepEqual(args, [4, 5], 'works on functions with many named parameters');
+    })(1, 2, 3, 4, 5);
+
+    var obj = {};
+    _.restArgs(function() {
+      strictEqual(this, obj, 'invokes function with this context');
+    }).call(obj);
+
+    _.restArgs(function(array, iteratee, context) {
+      deepEqual(array, [1, 2, 3, 4], 'startIndex can be used manually specify index of rest parameter');
+      strictEqual(iteratee, void 0);
+      strictEqual(context, void 0);
+    }, 0)(1, 2, 3, 4);
   });
 
 }());

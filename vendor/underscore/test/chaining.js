@@ -17,7 +17,8 @@
         hash[l] = hash[l] || 0;
         hash[l]++;
         return hash;
-    }, {}).value();
+      }, {})
+      .value();
     equal(counts.a, 16, 'counted all the letters in the song');
     equal(counts.e, 10, 'counted all the letters in the song');
   });

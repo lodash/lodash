@@ -14,6 +14,37 @@
 
   });
 
+  if (typeof this == 'object') {
+    test('noConflict', function() {
+      var underscore = _.noConflict();
+      equal(underscore.identity(1), 1);
+      if (typeof require != 'function') {
+        equal(this._, void 0, 'global underscore is removed');
+        this._ = underscore;
+      }
+    });
+  }
+
+  if (typeof require == 'function') {
+    asyncTest('noConflict (node vm)', 2, function() {
+      var fs = require('fs');
+      var vm = require('vm');
+      var filename = __dirname + '/../underscore.js';
+      fs.readFile(filename, function(err, content){
+        var sandbox = vm.createScript(
+          content + 'this.underscore = this._.noConflict();',
+          filename
+        );
+        var context = {_: 'oldvalue'};
+        sandbox.runInNewContext(context);
+        equal(context._, 'oldvalue');
+        equal(context.underscore.VERSION, _.VERSION);
+
+        start();
+      });
+    });
+  }
+
   test('#750 - Return _ instance.', 2, function() {
     var instance = _([]);
     ok(_(instance) === instance);
@@ -21,42 +52,42 @@
   });
 
   test('identity', function() {
-    var stooge = {name : 'moe'};
+    var stooge = {name: 'moe'};
     equal(_.identity(stooge), stooge, 'stooge is the same as his identity');
   });
 
   test('constant', function() {
-    var stooge = {name : 'moe'};
+    var stooge = {name: 'moe'};
     equal(_.constant(stooge)(), stooge, 'should create a function that returns stooge');
   });
 
   test('noop', function() {
-    strictEqual(_.noop('curly', 'larry', 'moe'), undefined, 'should always return undefined');
+    strictEqual(_.noop('curly', 'larry', 'moe'), void 0, 'should always return undefined');
   });
 
   test('property', function() {
-    var stooge = {name : 'moe'};
+    var stooge = {name: 'moe'};
     equal(_.property('name')(stooge), 'moe', 'should return the property with the given name');
-    equal(_.property('name')(null), undefined, 'should return undefined for null values');
-    equal(_.property('name')(undefined), undefined, 'should return undefined for undefined values');
+    equal(_.property('name')(null), void 0, 'should return undefined for null values');
+    equal(_.property('name')(void 0), void 0, 'should return undefined for undefined values');
   });
-  
+
   test('propertyOf', function() {
     var stoogeRanks = _.propertyOf({curly: 2, moe: 1, larry: 3});
     equal(stoogeRanks('curly'), 2, 'should return the property with the given name');
-    equal(stoogeRanks(null), undefined, 'should return undefined for null values');
-    equal(stoogeRanks(undefined), undefined, 'should return undefined for undefined values');
-    
+    equal(stoogeRanks(null), void 0, 'should return undefined for null values');
+    equal(stoogeRanks(void 0), void 0, 'should return undefined for undefined values');
+
     function MoreStooges() { this.shemp = 87; }
     MoreStooges.prototype = {curly: 2, moe: 1, larry: 3};
     var moreStoogeRanks = _.propertyOf(new MoreStooges());
     equal(moreStoogeRanks('curly'), 2, 'should return properties from further up the prototype chain');
-    
+
     var nullPropertyOf = _.propertyOf(null);
-    equal(nullPropertyOf('curly'), undefined, 'should return undefined when obj is null');
-    
-    var undefPropertyOf = _.propertyOf(undefined);
-    equal(undefPropertyOf('curly'), undefined, 'should return undefined when obj is undefined');
+    equal(nullPropertyOf('curly'), void 0, 'should return undefined when obj is null');
+
+    var undefPropertyOf = _.propertyOf(void 0);
+    equal(undefPropertyOf('curly'), void 0, 'should return undefined when obj is undefined');
   });
 
   test('random', function() {
@@ -86,7 +117,7 @@
 
   test('times', function() {
     var vals = [];
-    _.times(3, function (i) { vals.push(i); });
+    _.times(3, function(i) { vals.push(i); });
     deepEqual(vals, [0, 1, 2], 'is 0 indexed');
     //
     vals = [];
@@ -127,16 +158,16 @@
     var escapeCharacters = ['<', '>', '"', '\'', '`'];
 
     _.each(escapeCharacters, function(escapeChar) {
-      var str = 'a ' + escapeChar + ' string escaped';
-      var escaped = _.escape(str);
-      notEqual(str, escaped, escapeChar + ' is escaped');
-      equal(str, _.unescape(escaped), escapeChar + ' can be unescaped');
+      var s = 'a ' + escapeChar + ' string escaped';
+      var e = _.escape(s);
+      notEqual(s, e, escapeChar + ' is escaped');
+      equal(s, _.unescape(e), escapeChar + ' can be unescaped');
 
-      str = 'a ' + escapeChar + escapeChar + escapeChar + 'some more string' + escapeChar;
-      escaped = _.escape(str);
+      s = 'a ' + escapeChar + escapeChar + escapeChar + 'some more string' + escapeChar;
+      e = _.escape(s);
 
-      equal(escaped.indexOf(escapeChar), -1, 'can escape multiple occurances of ' + escapeChar);
-      equal(_.unescape(escaped), str, 'multiple occurrences of ' + escapeChar + ' can be unescaped');
+      equal(e.indexOf(escapeChar), -1, 'can escape multiple occurances of ' + escapeChar);
+      equal(_.unescape(e), s, 'multiple occurrences of ' + escapeChar + ' can be unescaped');
     });
 
     // handles multiple escape characters at once
@@ -158,7 +189,7 @@
 
   test('template', function() {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");
-    var result = basicTemplate({thing : 'This'});
+    var result = basicTemplate({thing: 'This'});
     equal(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
 
     var sansSemicolonTemplate = _.template('A <% this %> B');
@@ -173,7 +204,7 @@
     var fancyTemplate = _.template('<ul><% ' +
     '  for (var key in people) { ' +
     '%><li><%= people[key] %></li><% } %></ul>');
-    result = fancyTemplate({people : {moe : 'Moe', larry : 'Larry', curly : 'Curly'}});
+    result = fancyTemplate({people: {moe: 'Moe', larry: 'Larry', curly: 'Curly'}});
     equal(result, '<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>', 'can run arbitrary javascript in templates');
 
     var escapedCharsInJavascriptTemplate = _.template('<ul><% _.each(numbers.split("\\n"), function(item) { %><li><%= item %></li><% }) %></ul>');
@@ -222,15 +253,15 @@
     '  if (data) { data += 12345; }; %>\n ' +
     '  <li><%= data %></li>\n '
     );
-    equal(template({data : 12345}).replace(/\s/g, ''), '<li>24690</li>');
+    equal(template({data: 12345}).replace(/\s/g, ''), '<li>24690</li>');
 
     _.templateSettings = {
-      evaluate    : /\{\{([\s\S]+?)\}\}/g,
-      interpolate : /\{\{=([\s\S]+?)\}\}/g
+      evaluate: /\{\{([\s\S]+?)\}\}/g,
+      interpolate: /\{\{=([\s\S]+?)\}\}/g
     };
 
     var custom = _.template('<ul>{{ for (var key in people) { }}<li>{{= people[key] }}</li>{{ } }}</ul>');
-    result = custom({people : {moe : 'Moe', larry : 'Larry', curly : 'Curly'}});
+    result = custom({people: {moe: 'Moe', larry: 'Larry', curly: 'Curly'}});
     equal(result, '<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>', 'can run arbitrary javascript in templates');
 
     var customQuote = _.template("It's its, not it's");
@@ -240,12 +271,12 @@
     equal(quoteInStatementAndBody({foo: 'bar'}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      evaluate    : /<\?([\s\S]+?)\?>/g,
-      interpolate : /<\?=([\s\S]+?)\?>/g
+      evaluate: /<\?([\s\S]+?)\?>/g,
+      interpolate: /<\?=([\s\S]+?)\?>/g
     };
 
     var customWithSpecialChars = _.template('<ul><? for (var key in people) { ?><li><?= people[key] ?></li><? } ?></ul>');
-    result = customWithSpecialChars({people : {moe : 'Moe', larry : 'Larry', curly : 'Curly'}});
+    result = customWithSpecialChars({people: {moe: 'Moe', larry: 'Larry', curly: 'Curly'}});
     equal(result, '<ul><li>Moe</li><li>Larry</li><li>Curly</li></ul>', 'can run arbitrary javascript in templates');
 
     var customWithSpecialCharsQuote = _.template("It's its, not it's");
@@ -255,21 +286,22 @@
     equal(quoteInStatementAndBody({foo: 'bar'}), "Statement quotes and 'quotes'.");
 
     _.templateSettings = {
-      interpolate : /\{\{(.+?)\}\}/g
+      interpolate: /\{\{(.+?)\}\}/g
     };
 
     var mustache = _.template('Hello {{planet}}!');
-    equal(mustache({planet : 'World'}), 'Hello World!', 'can mimic mustache.js');
+    equal(mustache({planet: 'World'}), 'Hello World!', 'can mimic mustache.js');
 
     var templateWithNull = _.template('a null undefined {{planet}}');
-    equal(templateWithNull({planet : 'world'}), 'a null undefined world', 'can handle missing escape and evaluate settings');
+    equal(templateWithNull({planet: 'world'}), 'a null undefined world', 'can handle missing escape and evaluate settings');
   });
 
   test('_.template provides the generated function source, when a SyntaxError occurs', function() {
+    var source;
     try {
       _.template('<b><%= if x %></b>');
     } catch (ex) {
-      var source = ex.source;
+      source = ex.source;
     }
     ok(/__p/.test(source));
   });
@@ -284,13 +316,13 @@
     strictEqual(_.result(obj, 'w'), '');
     strictEqual(_.result(obj, 'x'), 'x');
     strictEqual(_.result(obj, 'y'), 'x');
-    strictEqual(_.result(obj, 'z'), undefined);
-    strictEqual(_.result(null, 'x'), undefined);
+    strictEqual(_.result(obj, 'z'), void 0);
+    strictEqual(_.result(null, 'x'), void 0);
   });
 
   test('result returns a default value if object is null or undefined', function() {
     strictEqual(_.result(null, 'b', 'default'), 'default');
-    strictEqual(_.result(undefined, 'c', 'default'), 'default');
+    strictEqual(_.result(void 0, 'c', 'default'), 'default');
     strictEqual(_.result(''.match('missing'), 1, 'default'), 'default');
   });
 
@@ -301,7 +333,7 @@
 
   test('result only returns the default value if the object does not have the property or is undefined', function() {
     strictEqual(_.result({}, 'b', 'default'), 'default');
-    strictEqual(_.result({d: undefined}, 'd', 'default'), 'default');
+    strictEqual(_.result({d: void 0}, 'd', 'default'), 'default');
   });
 
   test('result does not return the default if the property of an object is found in the prototype', function() {
@@ -312,7 +344,7 @@
 
   test('result does use the fallback when the result of invoking the property is undefined', function() {
     var obj = {a: function() {}};
-    strictEqual(_.result(obj, 'a', 'failed'), undefined);
+    strictEqual(_.result(obj, 'a', 'failed'), void 0);
   });
 
   test('result fallback can use a function', function() {
@@ -341,11 +373,11 @@
   test('#556 - undefined template variables.', function() {
     var template = _.template('<%=x%>');
     strictEqual(template({x: null}), '');
-    strictEqual(template({x: undefined}), '');
+    strictEqual(template({x: void 0}), '');
 
     var templateEscaped = _.template('<%-x%>');
     strictEqual(templateEscaped({x: null}), '');
-    strictEqual(templateEscaped({x: undefined}), '');
+    strictEqual(templateEscaped({x: void 0}), '');
 
     var templateWithProperty = _.template('<%=x.foo%>');
     strictEqual(templateWithProperty({x: {}}), '');

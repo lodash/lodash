@@ -38,12 +38,20 @@
             '[1,2]',
             '0'
           ],
+          'findIndex': [
+            'called with context'
+          ],
+          'findLastIndex': [
+            'called with context'
+          ],
           'flatten': [
             'Flattens empty arrays',
             'can flatten nested arrays',
-            'can shallowly flatten nested arrays',
             'works on an arguments object',
-            'can shallowly flatten arrays containing only other arrays'
+            'Flatten can handle very deep arrays'
+          ],
+          'head': [
+            'alias for first'
           ],
           'initial': [
             'initial can take an index',
@@ -65,8 +73,25 @@
             'rest can take an index',
             'works on arguments object'
           ],
+          'sortedIndex': [
+            '2',
+            '3'
+          ],
+          'tail': [
+            'alias for rest'
+          ],
           'take': [
             'alias for first'
+          ],
+          'uniq': [
+            'can find the unique values of an array using a custom iterator',
+            'can find the unique values of an array using a custom iterator without specifying whether array is sorted',
+            'string iterator works with sorted array',
+            'can use pluck like iterator',
+            'can use falsey pluck like iterator'
+          ],
+          'unique': [
+            'alias for uniq'
           ]
         },
         'Chaining': {
@@ -78,20 +103,104 @@
           ]
         },
         'Collections': {
+          'lookupIterator with contexts': true,
+          'Iterating objects with sketchy length properties': true,
+          'Resistant to collection length and properties changing while iterating': true,
+          'all': [
+            'alias for all'
+          ],
+          'any': [
+            'alias for any'
+          ],
+          'collect': [
+            'alias for map'
+          ],
+          'countBy': [
+            'true'
+          ],
+          'detect': [
+            'alias for detect'
+          ],
+          'each': [
+            'context object property accessed'
+          ],
+          'every': [
+            'context works'
+          ],
           'filter': [
+            'given context',
             'OO-filter'
+          ],
+          'find': [
+            'called with context'
+          ],
+          'findWhere': [
+            'checks properties given function'
+          ],
+          'foldl': [
+            'alias for reduce'
+          ],
+          'foldr': [
+            'alias for reduceRight'
+          ],
+          'groupBy': [
+            'true'
           ],
           'invoke': [
             'handles null & undefined'
           ],
           'map': [
+            'tripled numbers with context',
             'OO-style doubled numbers'
           ],
-          'Resistant to collection length and properties changing while iterating': [
-            'Died on test #50'
+          'max': [
+            'can perform a computation-based max',
+            'Respects iterator return value of -Infinity',
+            'String keys use property iterator',
+            'Lookup falsy iterator'
+          ],
+          'min': [
+            'can perform a computation-based min',
+            'Respects iterator return value of Infinity',
+            'String keys use property iterator',
+            'Iterator context',
+            'Lookup falsy iterator'
+          ],
+          'partition': [
+            'partition takes a context argument',
+            'function(a){[code]}'
+          ],
+          'pluck': [
+            '[1]'
+          ],
+          'reduce': [
+            'can reduce with a context object'
+          ],
+          'reject': [
+            'Returns empty list given empty array'
+          ],
+          'some': [
+            'context works'
+          ],
+          'where': [
+            'checks properties given function'
+          ],
+          'Can use various collection methods on NodeLists': [
+            '<span id="id2"></span>',
+            '<span id="id1"></span>'
           ]
         },
         'Functions': {
+          'debounce asap': true,
+          'debounce after system time is set backwards': true,
+          'debounce asap recursively': true,
+          'throttle repeatedly with results': true,
+          'more throttle does not trigger leading call when leading is set to false': true,
+          'throttle does not trigger trailing call when trailing is set to false': true,
+          'before': [
+            'stores a memo to the last value',
+            'provides context'
+          ],
           'bind': [
             'Died on test #2'
           ],
@@ -101,46 +210,65 @@
           'memoize': [
             '{"bar":"BAR","foo":"FOO"}',
             'Died on test #8'
-          ],
-          'throttle repeatedly with results': true,
-          'more throttle does not trigger leading call when leading is set to false': true,
-          'throttle does not trigger trailing call when trailing is set to false': true,
-          'debounce asap': true
+          ]
         },
         'Objects': {
           '#1929 Typed Array constructors are functions': true,
-          'allKeys': true,
-          'extendOwn': true,
-          'mapObject': true,
-          'matcher': true,
-          'matcher ': true,
+          'allKeys': [
+            'is not fooled by sparse arrays; see issue #95',
+            'is not fooled by sparse arrays with additional properties',
+            '[]'
+          ],
+          'defaults': [
+            'defaults skips nulls',
+            'defaults skips undefined'
+          ],
           'extend': [
-            'extend copies all properties from source'
+            'extending null results in null',
+            'extending undefined results in undefined'
+          ],
+          'extendOwn': [
+            'assigning non-objects results in returning the non-object value',
+            'assigning undefined results in undefined'
           ],
           'isEqual': [
             '`0` is not equal to `-0`',
             'Commutative equality is implemented for `0` and `-0`',
             '`new Number(0)` and `-0` are not equal',
-            'Commutative equality is implemented for `new Number(0)` and `-0`'
+            'Commutative equality is implemented for `new Number(0)` and `-0`',
+            'false'
           ],
           'isFinite': [
             'Numeric strings are numbers',
             'Number instances can be finite'
           ],
-          'isMatch': [
-            'inherited and own properties are checked on the test object',
-            'doesnt falsey match constructor on undefined/null'
+          'findKey': [
+            'called with context'
           ],
           'keys': [
             'is not fooled by sparse arrays; see issue #95',
             '[]'
           ],
-          'matches': [
-            'inherited and own properties are checked on the test object',
-            'doesnt fasley match constructor on undefined/null'
+          'mapObject': [
+            'keep context',
+            'called with context',
+            'mapValue identity'
+          ],
+          'matcher': [
+            'null matches null',
+            'treats primitives as empty'
+          ],
+          'omit': [
+            'can accept a predicate',
+            'function is given context'
+          ],
+          'pick': [
+            'can accept a predicate and context',
+            'function is given context'
           ]
         },
         'Utility': {
+          'noConflict (node vm)': true,
           'now': [
             'Produces the correct time in milliseconds'
           ],
@@ -155,14 +283,38 @@
         delete QUnit.config.excused.Functions['throttle repeatedly with results'];
         delete QUnit.config.excused.Functions['more throttle does not trigger leading call when leading is set to false'];
         delete QUnit.config.excused.Functions['throttle does not trigger trailing call when trailing is set to false'];
-        delete QUnit.config.excused.Functions['debounce asap'];
         delete QUnit.config.excused.Utility.now;
       }
       // Load test scripts.
-      document.write(ui.urlParams.loader != 'none'
-        ? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
-        : ([
-          '<script src="' + ui.buildPath + '"><\/script>',
+      document.write(ui.urlParams.loader == 'none'
+        ? '<script src="' + ui.buildPath + '"><\/script>'
+        : '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
+      );
+    </script>
+    <script>
+      function mixinPrereqs(_) {
+        _.mixin({
+          'allKeys': _.keysIn,
+          'compose': _.flowRight,
+          'contains': _.includes,
+          'extendOwn': _.assign,
+          'findWhere': _.find,
+          'include': _.includes,
+          'inject': _.reduce,
+          'mapObject': _.mapValues,
+          'matcher': _.matches,
+          'methods': _.functions,
+          'object': _.zipObject,
+          'pluck': _.map,
+          'restArgs': _.restParam,
+          'select': _.filter,
+          'where': _.filter
+        });
+      }
+
+      if (ui.urlParams.loader == 'none') {
+        mixinPrereqs(_);
+        document.write([
           '<script src="../vendor/underscore/test/collections.js"><\/script>',
           '<script src="../vendor/underscore/test/arrays.js"><\/script>',
           '<script src="../vendor/underscore/test/functions.js"><\/script>',
@@ -170,8 +322,8 @@
           '<script src="../vendor/underscore/test/cross-document.js"><\/script>',
           '<script src="../vendor/underscore/test/utility.js"><\/script>',
           '<script src="../vendor/underscore/test/chaining.js"><\/script>'
-          ].join('\n'))
-      );
+        ].join('\n'));
+      }
     </script>
     <script>
       (function() {
@@ -181,6 +333,13 @@
         if (!window.require) {
           return;
         }
+        // Wrap to work around tests assuming Node `require` use.
+        require = (function(func) {
+          return function() {
+            return arguments[0] === '..' ? window._ : func.apply(null, arguments);
+          };
+        }(require));
+
         var reBasename = /[\w.-]+$/,
             basePath = ('//' + location.host + location.pathname.replace(reBasename, '')).replace(/\btest\/$/, ''),
             modulePath = ui.buildPath.replace(/\.js$/, ''),
@@ -221,6 +380,8 @@
         QUnit.config.autostart = false;
 
         require(getConfig(), [moduleId], function(lodash) {
+          mixinPrereqs(lodash);
+
           if (ui.isModularize) {
             window._ = lodash;
           }

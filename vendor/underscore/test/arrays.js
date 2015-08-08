@@ -16,7 +16,7 @@
     result = (function() { return _.first([1, 2, 3], 2); }());
     deepEqual(result, [1, 2]);
 
-    equal(_.first(null), undefined, 'handles nulls');
+    equal(_.first(null), void 0, 'handles nulls');
     strictEqual(_.first([1, 2, 3], -1).length, 0);
   });
 
@@ -69,7 +69,7 @@
     result = _.map([[1, 2, 3], [1, 2, 3]], _.last);
     deepEqual(result, [3, 3], 'works well with _.map');
 
-    equal(_.last(null), undefined, 'handles nulls');
+    equal(_.last(null), void 0, 'handles nulls');
     strictEqual(_.last([1, 2, 3], -1).length, 0);
   });
 
@@ -98,6 +98,11 @@
     equal(_.flatten([_.range(10), _.range(10), 5, 1, 3]).length, 23);
     equal(_.flatten([new Array(1000000), _.range(56000), 5, 1, 3]).length, 1056003, 'Flatten can handle massive collections');
     equal(_.flatten([new Array(1000000), _.range(56000), 5, 1, 3], true).length, 1056003, 'Flatten can handle massive collections');
+
+    var x = _.range(100000);
+    for (var i = 0; i < 1000; i++) x = [x];
+    deepEqual(_.flatten(x), _.range(100000), 'Flatten can handle very deep arrays');
+    deepEqual(_.flatten(x, true), x[0], 'Flatten can handle very deep arrays with shallow');
   });
 
   test('without', function() {
@@ -106,8 +111,8 @@
     var result = (function(){ return _.without(arguments, 0, 1); }(1, 2, 1, 0, 3, 1, 4));
     deepEqual(result, [2, 3, 4], 'works on an arguments object');
 
-    list = [{one : 1}, {two : 2}];
-    equal(_.without(list, {one : 1}).length, 2, 'uses real object identity for comparisons.');
+    list = [{one: 1}, {two: 2}];
+    equal(_.without(list, {one: 1}).length, 2, 'uses real object identity for comparisons.');
     equal(_.without(list, list[0]).length, 1, 'ditto.');
   });
 
@@ -242,8 +247,8 @@
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     deepEqual(_.zip(names, ages, leaders), [
       ['moe', 30, true],
-      ['larry', 40, undefined],
-      ['curly', 50, undefined]
+      ['larry', 40, void 0],
+      ['curly', 50, void 0]
     ], 'zipped together arrays of different lengths');
 
     var stooges = _.zip(['moe', 30, 'stooge 1'], ['larry', 40, 'stooge 2'], ['curly', 50, 'stooge 3']);
@@ -252,7 +257,7 @@
     // In the case of difference lengths of the tuples undefineds
     // should be used as placeholder
     stooges = _.zip(['moe', 30], ['larry', 40], ['curly', 50, 'extra data']);
-    deepEqual(stooges, [['moe', 'larry', 'curly'], [30, 40, 50], [undefined, undefined, 'extra data']], 'zipped pairs with empties');
+    deepEqual(stooges, [['moe', 'larry', 'curly'], [30, 40, 50], [void 0, void 0, 'extra data']], 'zipped pairs with empties');
 
     var empty = _.zip([]);
     deepEqual(empty, [], 'unzipped empty');
@@ -324,7 +329,7 @@
     index = _.indexOf(numbers, 2, 5);
     equal(index, 7, 'supports the fromIndex argument');
 
-    index = _.indexOf([,,,], undefined);
+    index = _.indexOf([,,, 0], void 0);
     equal(index, 0, 'treats sparse arrays as if they were dense');
 
     var array = [1, 2, 3, 1, 2, 3];
@@ -336,7 +341,7 @@
     });
     strictEqual(_.indexOf([1, 2, 3], 1, true), 0);
 
-    index = _.indexOf([], undefined, true);
+    index = _.indexOf([], void 0, true);
     equal(index, -1, 'empty array with truthy `isSorted` returns -1');
   });
 
@@ -361,7 +366,7 @@
 
   test('lastIndexOf', function() {
     var numbers = [1, 0, 1];
-    var falsey = [void 0, '', 0, false, NaN, null, undefined];
+    var falsey = [void 0, '', 0, false, NaN, null, void 0];
     equal(_.lastIndexOf(numbers, 1), 2);
 
     numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0];
@@ -392,7 +397,7 @@
     strictEqual(_.lastIndexOf(array, 1, 2), 0, 'should work with a positive `fromIndex`');
 
     _.each([6, 8, Math.pow(2, 32), Infinity], function(fromIndex) {
-      strictEqual(_.lastIndexOf(array, undefined, fromIndex), -1);
+      strictEqual(_.lastIndexOf(array, void 0, fromIndex), -1);
       strictEqual(_.lastIndexOf(array, 1, fromIndex), 3);
       strictEqual(_.lastIndexOf(array, '', fromIndex), -1);
     });
@@ -439,10 +444,10 @@
 
   test('findIndex', function() {
     var objects = [
-      {'a': 0, 'b': 0},
-      {'a': 1, 'b': 1},
-      {'a': 2, 'b': 2},
-      {'a': 0, 'b': 0}
+      {a: 0, b: 0},
+      {a: 1, b: 1},
+      {a: 2, b: 2},
+      {a: 0, b: 0}
     ];
 
     equal(_.findIndex(objects, function(obj) {
@@ -470,7 +475,7 @@
     }, objects);
 
     var sparse = [];
-    sparse[20] = {'a': 2, 'b': 2};
+    sparse[20] = {a: 2, b: 2};
     equal(_.findIndex(sparse, function(obj) {
       return obj && obj.b * obj.a === 4;
     }), 20, 'Works with sparse arrays');
@@ -482,10 +487,10 @@
 
   test('findLastIndex', function() {
     var objects = [
-      {'a': 0, 'b': 0},
-      {'a': 1, 'b': 1},
-      {'a': 2, 'b': 2},
-      {'a': 0, 'b': 0}
+      {a: 0, b: 0},
+      {a: 1, b: 1},
+      {a: 2, b: 2},
+      {a: 0, b: 0}
     ];
 
     equal(_.findLastIndex(objects, function(obj) {
@@ -513,7 +518,7 @@
     }, objects);
 
     var sparse = [];
-    sparse[20] = {'a': 2, 'b': 2};
+    sparse[20] = {a: 2, b: 2};
     equal(_.findLastIndex(sparse, function(obj) {
       return obj && obj.b * obj.a === 4;
     }), 20, 'Works with sparse arrays');
@@ -534,4 +539,19 @@
     deepEqual(_.range(0, -10, -1), [0, -1, -2, -3, -4, -5, -6, -7, -8, -9], 'final example in the Python docs');
   });
 
+  test('chunk', function() {
+    deepEqual(_.chunk([], 2), [], 'chunk for empty array returns an empty array');
+
+    deepEqual(_.chunk([1, 2, 3], 0), [], 'chunk into parts of 0 elements returns empty array');
+    deepEqual(_.chunk([1, 2, 3], -1), [], 'chunk into parts of negative amount of elements returns an empty array');
+    deepEqual(_.chunk([1, 2, 3]), [], 'defaults to empty array (chunk size 0)');
+
+    deepEqual(_.chunk([1, 2, 3], 1), [[1], [2], [3]], 'chunk into parts of 1 elements returns original array');
+
+    deepEqual(_.chunk([1, 2, 3], 3), [[1, 2, 3]], 'chunk into parts of current array length elements returns the original array');
+    deepEqual(_.chunk([1, 2, 3], 5), [[1, 2, 3]], 'chunk into parts of more then current array length elements returns the original array');
+
+    deepEqual(_.chunk([10, 20, 30, 40, 50, 60, 70], 2), [[10, 20], [30, 40], [50, 60], [70]], 'chunk into parts of less then current array length elements');
+    deepEqual(_.chunk([10, 20, 30, 40, 50, 60, 70], 3), [[10, 20, 30], [40, 50, 60], [70]], 'chunk into parts of less then current array length elements');
+  });
 }());

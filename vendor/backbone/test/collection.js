@@ -625,24 +625,26 @@
 
   test("Underscore methods", 19, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
-    equal(col.any(function(model){ return model.id === 100; }), false);
-    equal(col.any(function(model){ return model.id === 0; }), true);
+    equal(col.some(function(model){ return model.id === 100; }), false);
+    equal(col.some(function(model){ return model.id === 0; }), true);
     equal(col.indexOf(b), 1);
     equal(col.size(), 4);
     equal(col.rest().length, 3);
-    ok(!_.include(col.rest(), a));
-    ok(_.include(col.rest(), d));
+    ok(!_.includes(col.rest(), a));
+    ok(_.includes(col.rest(), d));
     ok(!col.isEmpty());
-    ok(!_.include(col.without(d), d));
-    equal(col.max(function(model){ return model.id; }).id, 3);
-    equal(col.min(function(model){ return model.id; }).id, 0);
-    deepEqual(col.chain()
+    ok(!_.includes(col.without(d), d));
+
+    var wrapped = col.chain();
+    equal(wrapped.map('id').max().value(), 3);
+    equal(wrapped.map('id').min().value(), 0);
+    deepEqual(wrapped
             .filter(function(o){ return o.id % 2 === 0; })
             .map(function(o){ return o.id * 2; })
             .value(),
-         [4, 0]);
+          [4, 0]);
     deepEqual(col.difference([c, d]), [a, b]);
-    ok(col.include(col.sample()));
+    ok(col.includes(col.sample()));
     var first = col.first();
     deepEqual(col.groupBy(function(model){ return model.id; })[first.id], [first]);
     deepEqual(col.countBy(function(model){ return model.id; }), {0: 1, 1: 1, 2: 1, 3: 1});
@@ -676,8 +678,8 @@
     deepEqual(coll.partition({a: 4})[1], _.without(coll.models, model));
     deepEqual(coll.map({a: 2}), [false, true, false, false]);
     deepEqual(coll.map('a'), [1, 2, 3, 4]);
-    deepEqual(coll.max('a'), model);
-    deepEqual(coll.min('e'), model);
+    deepEqual(coll.sortBy('a')[3], model);
+    deepEqual(coll.sortBy('e')[0], model);
     deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
     deepEqual(coll.countBy('d'), {'undefined': 4});
   });
@@ -1175,7 +1177,7 @@
     var Model = Backbone.Model.extend({});
     var Collection = Backbone.Collection.extend({
       model: Model,
-      parse: function (res) { return _.pluck(res.models, 'model'); }
+      parse: function (res) { return _.map(res.models, 'model'); }
     });
     var model = new Model({id: 1});
     var collection = new Collection(model);

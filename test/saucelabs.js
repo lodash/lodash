@@ -102,23 +102,20 @@ var browserNameMap = {
 
 /** List of platforms to load the runner on. */
 var platforms = [
-  ['Linux', 'android', '5.0'],
-  ['Linux', 'android', '4.4'],
-  ['Linux', 'android', '4.0'],
-  ['Windows 8.1', 'firefox', '38'],
-  ['Windows 8.1', 'firefox', '37'],
-  ['Windows 8.1', 'firefox', '20'],
-  ['Windows 8.1', 'chrome', '43'],
-  ['Windows 8.1', 'chrome', '42'],
-  ['Windows 8.1', 'internet explorer', '11'],
+  ['Linux', 'android', '5.1'],
+  //['Linux', 'android', '4.4'],
+  //['Linux', 'android', '4.0'],
+  ['Windows 10', 'firefox', '39'],
+  ['Windows 10', 'firefox', '38'],
+  ['Windows 10', 'chrome', '44'],
+  ['Windows 10', 'chrome', '43'],
+  ['Windows 10', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],
-  ['Windows 7', 'internet explorer', '8'],
-  ['OS X 10.9', 'ipad', '8.1'],
-  ['OS X 10.10', 'safari', '8'],
-  ['OS X 10.9', 'safari', '7'],
-  ['OS X 10.8', 'safari', '6'],
-  ['OS X 10.6', 'safari', '5']
+  //['Windows 7', 'internet explorer', '8'],
+  ['OS X 10.10', 'ipad', '8.4'],
+  ['OS X 10.11', 'safari', '8.1'],
+  ['OS X 10.10', 'safari', '8']
 ];
 
 /** Used to tailor the `platforms` array. */
@@ -129,7 +126,7 @@ var isAMD = _.includes(tags, 'amd'),
 // The platforms to test IE compatibility modes.
 if (compatMode) {
   platforms = [
-    ['Windows 8.1', 'internet explorer', '11'],
+    ['Windows 10', 'internet explorer', '11'],
     ['Windows 8', 'internet explorer', '10'],
     ['Windows 7', 'internet explorer', '9'],
     ['Windows 7', 'internet explorer', '8']

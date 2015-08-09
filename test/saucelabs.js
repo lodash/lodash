@@ -270,7 +270,7 @@ function isJobId(value) {
  */
 function logInline(text) {
   var blankLine = _.repeat(' ', _.size(prevLine));
-  prevLine = text = _.trunc(text, 40);
+  prevLine = text = _.trunc(text, { 'length': 40 });
   process.stdout.write(text + blankLine.slice(text.length) + '\r');
 }
 
@@ -554,7 +554,7 @@ util.inherits(Job, EventEmitter);
  * @param {Object} Returns the job instance.
  */
 Job.prototype.remove = function(callback) {
-  this.once('remove', _.callback(callback));
+  this.once('remove', _.iteratee(callback));
   if (this.removing) {
     return this;
   }
@@ -579,7 +579,7 @@ Job.prototype.remove = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.reset = function(callback) {
-  this.once('reset', _.callback(callback));
+  this.once('reset', _.iteratee(callback));
   if (this.resetting) {
     return this;
   }
@@ -595,7 +595,7 @@ Job.prototype.reset = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.restart = function(callback) {
-  this.once('restart', _.callback(callback));
+  this.once('restart', _.iteratee(callback));
   if (this.restarting) {
     return this;
   }
@@ -620,7 +620,7 @@ Job.prototype.restart = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.start = function(callback) {
-  this.once('start', _.callback(callback));
+  this.once('start', _.iteratee(callback));
   if (this.starting || this.running) {
     return this;
   }
@@ -641,7 +641,7 @@ Job.prototype.start = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.status = function(callback) {
-  this.once('status', _.callback(callback));
+  this.once('status', _.iteratee(callback));
   if (this.checking || this.removing || this.resetting || this.restarting || this.starting || this.stopping) {
     return this;
   }
@@ -663,7 +663,7 @@ Job.prototype.status = function(callback) {
  * @param {Object} Returns the job instance.
  */
 Job.prototype.stop = function(callback) {
-  this.once('stop', _.callback(callback));
+  this.once('stop', _.iteratee(callback));
   if (this.stopping) {
     return this;
   }
@@ -701,14 +701,14 @@ function Tunnel(properties) {
   var active = [],
       queue = [];
 
-  var all = _.map(this.platforms, function(platform) {
+  var all = _.map(this.platforms, _.bind(function(platform) {
     return new Job(_.merge({
       'user': this.user,
       'pass': this.pass,
       'tunnel': this,
       'options': { 'platforms': [platform] }
     }, this.job));
-  }, this);
+  }, this));
 
   var completed = 0,
       restarted = [],
@@ -762,7 +762,7 @@ util.inherits(Tunnel, EventEmitter);
  * @param {Function} callback The function called once the tunnel is restarted.
  */
 Tunnel.prototype.restart = function(callback) {
-  this.once('restart', _.callback(callback));
+  this.once('restart', _.iteratee(callback));
   if (this.restarting) {
     return this;
   }
@@ -804,7 +804,7 @@ Tunnel.prototype.restart = function(callback) {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.start = function(callback) {
-  this.once('start', _.callback(callback));
+  this.once('start', _.iteratee(callback));
   if (this.starting || this.running) {
     return this;
   }
@@ -847,7 +847,7 @@ Tunnel.prototype.dequeue = function() {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.stop = function(callback) {
-  this.once('stop', _.callback(callback));
+  this.once('stop', _.iteratee(callback));
   if (this.stopping) {
     return this;
   }

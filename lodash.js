@@ -6262,11 +6262,11 @@
      * });
      * // => 3
      *
-     * _.reduce({ 'a': 1, 'b': 2 }, function(result, n, key) {
-     *   result[key] = n * 3;
+     * _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
+     *   (result[value] || (result[value] = [])).push(key);
      *   return result;
      * }, {});
-     * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
+     * // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
      */
     function reduce(collection, iteratee, accumulator) {
       var initFromArray = arguments.length < 3;
@@ -9469,10 +9469,10 @@
      * });
      * // => [4, 9]
      *
-     * _.transform({ 'a': 1, 'b': 2 }, function(result, n, key) {
-     *   result[key] = n * 3;
+     * _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
+     *   (result[value] || (result[value] = [])).push(key);
      * });
-     * // => { 'a': 3, 'b': 6 }
+     * // => { '1': ['a', 'c'], '2': ['b'] }
      */
     function transform(object, iteratee, accumulator) {
       var isArr = isArray(object) || isTypedArray(object);

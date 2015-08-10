@@ -21,28 +21,32 @@
     <script src="../node_modules/qunit-extras/qunit-extras.js"></script>
     <script src="../vendor/json-js/json2.js"></script>
     <script src="../node_modules/platform/platform.js"></script>
+    <script src="./asset/shims.js"></script>
     <script src="./asset/test-ui.js"></script>
     <script src="../lodash.js"></script>
     <script>
-      var mixinPrereqs = (function() {
-        var lodash = _.noConflict();
-        return function(_) {
-          _.mixin({
-            'debounce': _.debounce || lodash.debounce,
-            'defer': _.defer || lodash.defer,
-            'pluck': _.pluck || lodash.pluck
-          });
-        };
-      }());
-
       QUnit.config.asyncRetries = 10;
       QUnit.config.hidepassed = true;
 
-      // Load test scripts.
-      document.write(ui.urlParams.loader != 'none'
-        ? '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
-        : ([
-          '<script src="' + ui.buildPath + '"><\/script>',
+      var mixinPrereqs = (function() {
+        var lodash = _.noConflict();
+
+        return function(_) {
+          lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
+          lodash.mixin(_, lodash.pick(lodash, lodash.difference(lodash.functions(lodash), lodash.functions(_))));
+        };
+      }());
+
+      // Load prerequisite scripts.
+      document.write(ui.urlParams.loader == 'none'
+        ? '<script src="' + ui.buildPath + '"><\/script>'
+        : '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
+      );
+    </script>
+    <script>
+      if (ui.urlParams.loader == 'none') {
+        mixinPrereqs(_);
+        document.write([
           '<script src="../node_modules/jquery/dist/jquery.js"><\/script>',
           '<script src="../vendor/backbone/backbone.js"><\/script>',
           '<script src="../vendor/backbone/test/setup/dom-setup.js"><\/script>',
@@ -54,8 +58,8 @@
           '<script src="../vendor/backbone/test/router.js"><\/script>',
           '<script src="../vendor/backbone/test/view.js"><\/script>',
           '<script src="../vendor/backbone/test/sync.js"><\/script>'
-          ].join('\n'))
-      );
+        ].join('\n'));
+      }
     </script>
     <script>
       (function() {
@@ -63,7 +67,6 @@
           curl.config({ 'apiName': 'require' });
         }
         if (!window.require) {
-          mixinPrereqs(_);
           return;
         }
         var reBasename = /[\w.-]+$/,
@@ -116,7 +119,7 @@
           require(getConfig(), [
             'test/setup/dom-setup',
             'test/setup/environment',
-                  'test/noconflict',
+            'test/noconflict',
             'test/events',
             'test/model',
             'test/collection',

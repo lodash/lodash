@@ -65,8 +65,10 @@
       buildList.selectedIndex = (function() {
         switch (build) {
           case 'lodash':            return 1;
-          case 'lodash-custom-dev': return 2;
-          case 'lodash-custom':     return 3;
+          case 'lodash-core-dev':   return 2;
+          case 'lodash-core':       return 3;
+          case 'lodash-custom-dev': return 4;
+          case 'lodash-custom':     return 5;
           case 'lodash-dev':
           case null:                return 0;
         }
@@ -95,6 +97,8 @@
       '<select id="qunit-build">' +
       '<option value="lodash-dev">lodash (development)</option>' +
       '<option value="lodash">lodash (production)</option>' +
+      '<option value="lodash-core-dev">lodash-core (development)</option>' +
+      '<option value="lodash-core">lodash-core (production)</option>' +
       '<option value="lodash-custom-dev">lodash (custom development)</option>' +
       '<option value="lodash-custom">lodash (custom production)</option>' +
       '</select>';
@@ -120,23 +124,13 @@
     init();
   });
 
-  // Used to indicate testing a foreign file.
-  ui.isForeign = RegExp('^(\\w+:)?//').test(build);
-
-  // Used to indicate testing a modularized build.
-  ui.isModularize = /\b(?:amd|commonjs|es6?|node|npm|(index|main)\.js)\b/.test([location.pathname, location.search]);
-
-  // Used to indicate testing in Sauce Labs' automated test cloud.
-  ui.isSauceLabs = location.port == '9001';
-
-  // Used to indicate that lodash is in strict mode.
-  ui.isStrict = /\bes6?\b/.test([location.pathname, location.search]);
-
   // The lodash build file path.
   ui.buildPath = (function() {
     var result;
     switch (build) {
       case 'lodash':            result = 'lodash.min.js'; break;
+      case 'lodash-core-dev':   result = 'lodash.core.js'; break;
+      case 'lodash-core':       result = 'lodash.core.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case null:                build  = 'lodash-dev';
@@ -158,6 +152,21 @@
     }
     return basePath + result;
   }());
+
+  // Used to indicate testing a core build.
+  ui.isCore = /\bcore(\.min)?\.js\b/.test(ui.buildPath);
+
+  // Used to indicate testing a foreign file.
+  ui.isForeign = RegExp('^(\\w+:)?//').test(build);
+
+  // Used to indicate testing a modularized build.
+  ui.isModularize = /\b(?:amd|commonjs|es6?|node|npm|(index|main)\.js)\b/.test([location.pathname, location.search]);
+
+  // Used to indicate testing in Sauce Labs' automated test cloud.
+  ui.isSauceLabs = location.port == '9001';
+
+  // Used to indicate that lodash is in strict mode.
+  ui.isStrict = /\bes6?\b/.test([location.pathname, location.search]);
 
   ui.urlParams = { 'build': build, 'loader': loader };
   ui.timing = { 'loadEventEnd': 0 };

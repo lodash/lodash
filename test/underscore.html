@@ -23,11 +23,10 @@
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script src="../node_modules/platform/platform.js"></script>
     <script src="./asset/test-ui.js"></script>
+    <script src="../lodash.js"></script>
     <script>
       QUnit.config.asyncRetries = 10;
       QUnit.config.hidepassed = true;
-
-      // Excuse tests we intentionally fail or those with problems.
       QUnit.config.excused = {
         'Arrays': {
           'drop': [
@@ -52,6 +51,10 @@
           ],
           'head': [
             'alias for first'
+          ],
+          'indexOf': [
+            "sorted indexOf doesn't uses binary search",
+            'non-nums as fromIndex make indexOf assume sorted'
           ],
           'initial': [
             'initial can take an index',
@@ -125,13 +128,22 @@
             'context object property accessed'
           ],
           'every': [
+            'Can be called with object',
             'context works'
           ],
           'filter': [
             'given context',
+            '[{"a":1,"b":2},{"a":1,"b":3},{"a":1,"b":4}]',
+            '[{"a":1,"b":2},{"a":2,"b":2}]',
+            'Empty object accepts all items',
             'OO-filter'
           ],
           'find': [
+            '{"a":1,"b":4}',
+            'undefined when not found',
+            'undefined when searching empty list',
+            'works on objects',
+            'undefined',
             'called with context'
           ],
           'findWhere': [
@@ -180,6 +192,7 @@
             'Returns empty list given empty array'
           ],
           'some': [
+            'Can be called with object',
             'context works'
           ],
           'where': [
@@ -210,6 +223,14 @@
           'memoize': [
             '{"bar":"BAR","foo":"FOO"}',
             'Died on test #8'
+          ],
+          'partial':[
+            'can partially apply with placeholders',
+            'accepts more arguments than the number of placeholders',
+            'accepts fewer arguments than the number of placeholders',
+            'unfilled placeholders are undefined',
+            'keeps prototype',
+            'allows the placeholder to be swapped out'
           ]
         },
         'Objects': {
@@ -241,6 +262,9 @@
           'isFinite': [
             'Numeric strings are numbers',
             'Number instances can be finite'
+          ],
+          'isMatch': [
+            'doesnt falsey match constructor on undefined/null'
           ],
           'findKey': [
             'called with context'
@@ -278,40 +302,55 @@
         }
       };
 
-      // Only excuse in Sauce Labs (buggy Safari and timers).
+      var mixinPrereqs = (function() {
+        var aliasToReal = {
+          'allKeys': 'keysIn',
+          'compose': 'flowRight',
+          'contains': 'includes',
+          'extendOwn': 'assign',
+          'findWhere': 'find',
+          'include': 'includes',
+          'inject': 'reduce',
+          'mapObject': 'mapValues',
+          'matcher': 'matches',
+          'methods': 'functions',
+          'object': 'zipObject',
+          'pluck': 'map',
+          'restArgs': 'restParam',
+          'select': 'filter',
+          'where': 'filter'
+        };
+
+        var lodash = _.noConflict();
+
+        return function(_) {
+          lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
+          lodash.mixin(_, lodash.pick(lodash, lodash.difference(lodash.functions(lodash), lodash.functions(_))));
+          lodash.forOwn(aliasToReal, function(realName, alias) {
+            _[alias] = _[realName];
+            _.prototype[alias] = _.prototype[realName];
+          });
+        };
+      }());
+
+      // Only excuse for core builds.
+      if (!ui.isCore) {
+        delete QUnit.config.excused.Arrays.indexOf;
+      }
+      // Only excuse in Sauce Labs.
       if (!ui.isSauceLabs) {
         delete QUnit.config.excused.Functions['throttle repeatedly with results'];
         delete QUnit.config.excused.Functions['more throttle does not trigger leading call when leading is set to false'];
         delete QUnit.config.excused.Functions['throttle does not trigger trailing call when trailing is set to false'];
         delete QUnit.config.excused.Utility.now;
       }
-      // Load test scripts.
+      // Load prerequisite scripts.
       document.write(ui.urlParams.loader == 'none'
         ? '<script src="' + ui.buildPath + '"><\/script>'
         : '<script data-dojo-config="async:1" src="' + ui.loaderPath + '"><\/script>'
       );
     </script>
     <script>
-      function mixinPrereqs(_) {
-        _.mixin({
-          'allKeys': _.keysIn,
-          'compose': _.flowRight,
-          'contains': _.includes,
-          'extendOwn': _.assign,
-          'findWhere': _.find,
-          'include': _.includes,
-          'inject': _.reduce,
-          'mapObject': _.mapValues,
-          'matcher': _.matches,
-          'methods': _.functions,
-          'object': _.zipObject,
-          'pluck': _.map,
-          'restArgs': _.restParam,
-          'select': _.filter,
-          'where': _.filter
-        });
-      }
-
       if (ui.urlParams.loader == 'none') {
         mixinPrereqs(_);
         document.write([

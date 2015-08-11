@@ -2278,13 +2278,13 @@
           key = srcValue;
           srcValue = source[key];
         }
-        if (isObjectLike(srcValue)) {
+        if (isObject(srcValue)) {
           stackA || (stackA = []);
           stackB || (stackB = []);
           baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
         }
         else {
-          var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source) : undefined;
+          var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stackA, stackB) : undefined;
           if (newValue === undefined) {
             newValue = srcValue;
           }
@@ -2318,7 +2318,7 @@
           return;
         }
       }
-      var newValue = customizer ? customizer(oldValue, srcValue, (key + ''), object, source) : undefined,
+      var newValue = customizer ? customizer(oldValue, srcValue, (key + ''), object, source, stackA, stackB) : undefined,
           isCommon = newValue === undefined;
 
       if (isCommon) {
@@ -2334,7 +2334,7 @@
             : (isPlainObject(oldValue) ? oldValue : {});
         }
         else {
-          isCommon = false;
+          isCommon = isFunction(srcValue);
         }
       }
       // Add the source value to the stack of traversed objects and associate
@@ -4072,13 +4072,16 @@
      * @param {*} sourceValue The source object property value.
      * @returns {*} Returns the value to assign to the destination object.
      */
-    function mergeDefaults(objectValue, sourceValue) {
+    function mergeDefaults(objectValue, sourceValue, key, object, source, stackA, stackB) {
       if (objectValue === undefined) {
         return sourceValue;
       }
-      return isObject(objectValue)
-        ? mergeWith(objectValue, sourceValue, mergeDefaults)
-        : objectValue;
+      if (isObject(objectValue)) {
+        stackA.push(objectValue);
+        stackB.push(objectValue);
+        return baseMerge(objectValue, sourceValue, mergeDefaults, stackA, stackB);
+      }
+      return objectValue;
     }
 
     /**
@@ -9193,8 +9196,8 @@
      * This method is like `_.merge` except that it accepts `customizer` which
      * is invoked to produce the merged values of the destination and source
      * properties. If `customizer` returns `undefined` merging is handled by the
-     * method instead. The `customizer` is invoked with five arguments:
-     * (objectValue, sourceValue, key, object, source).
+     * method instead. The `customizer` is invoked with seven arguments:
+     * (objectValue, sourceValue, key, object, source, stackA, stackB).
      *
      * @static
      * @memberOf _

@@ -8,7 +8,6 @@
     "*.log",
     "*.map",
     "*.md",
-    "component.json",
     "package.json",
     "doc",
     "node_modules",

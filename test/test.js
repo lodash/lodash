@@ -1031,6 +1031,11 @@
     var args = arguments,
         array = ['a', 'b', 'c'];
 
+    test('should find elements in reverse order with negative keys', 1, function() {
+      var actual = _.at(array, -1);
+      deepEqual(actual, ['c']);
+    });
+
     test('should return the elements corresponding to the specified keys', 1, function() {
       var actual = _.at(array, [0, 2]);
       deepEqual(actual, ['a', 'c']);
@@ -12924,6 +12929,14 @@
 
       _.each(['a', ['a']], function(path) {
         strictEqual(func(object, path), 1);
+      });
+    });
+
+    test('`_.' + methodName + '` should get negative indices', 2, function() {
+      var array = ['a','b','c']
+
+      _.each([-1, -2], function(path) {
+        strictEqual(func(array, path), array[array.length + path]);
       });
     });
 

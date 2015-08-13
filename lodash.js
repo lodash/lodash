@@ -2313,7 +2313,8 @@
           srcValue = source[key];
 
       while (length--) {
-        if (stackA[length] == srcValue) {
+        var stacked = stackA[length];
+        if (stacked == srcValue || stacked == oldValue) {
           assignMergeValue(object, key, stackB[length]);
           return;
         }
@@ -4073,15 +4074,12 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function mergeDefaults(objectValue, sourceValue, key, object, source, stackA, stackB) {
-      if (objectValue === undefined) {
-        return sourceValue;
-      }
       if (isObject(objectValue)) {
         stackA.push(objectValue);
         stackB.push(objectValue);
-        return baseMerge(objectValue, sourceValue, mergeDefaults, stackA, stackB);
+        baseMerge(objectValue, sourceValue, mergeDefaults, stackA, stackB);
       }
-      return objectValue;
+      return objectValue === undefined ? sourceValue : objectValue;
     }
 
     /**

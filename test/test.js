@@ -3023,6 +3023,26 @@
 
       strictEqual(actual.a.b, 2);
     });
+
+    test('should merge sources containing circular references', 1, function() {
+      var object = {
+        'foo': { 'b': { 'c': { 'd': {} } } },
+        'bar': { 'a': 2 }
+      };
+
+      var source = {
+        'foo': { 'b': { 'c': { 'd': {} } } },
+        'bar': {}
+      };
+
+      object.foo.b.c.d = object;
+      source.foo.b.c.d = source;
+      source.bar.b = source.foo.b;
+
+      var actual = _.defaultsDeep(object, source);
+      console.log(actual.bar.b === actual.foo.b , actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+      ok(actual.bar.b === source.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

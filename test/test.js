@@ -2020,7 +2020,7 @@
           argsList.push(slice.call(arguments));
         });
 
-        deepEqual(argsList, isDeepWith ? [[foo], [1, 'a', foo]] : [[foo]]);
+        deepEqual(argsList, isDeepWith ? [[foo], [1, 'a', foo, [foo], [{ 'a': 1 }]]] : [[foo]]);
       });
 
       test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', 1, function() {
@@ -5150,13 +5150,17 @@
     test('`_.' + methodName + '` should provide the correct `customizer` arguments', 3, function() {
       var args,
           object = { 'a': 1 },
-          source = { 'a': 2 };
+          source = { 'a': 2 },
+          expected = [1, 2, 'a', object, source];
 
       func(object, source, function() {
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [1, 2, 'a', object, source], 'primitive property values');
+      if (isMergeWith) {
+        expected.push(undefined, undefined);
+      }
+      deepEqual(args, expected, 'primitive property values');
 
       args = null;
       object = { 'a': 1 };
@@ -5166,7 +5170,11 @@
         args || (args = slice.call(arguments));
       });
 
-      deepEqual(args, [undefined, 2, 'b', object, source], 'missing destination property');
+      expected = [undefined, 2, 'b', object, source];
+      if (isMergeWith) {
+        expected.push(undefined, undefined);
+      }
+      deepEqual(args, expected, 'missing destination property');
 
       var argsList = [],
           objectValue = [1, 2],
@@ -5179,9 +5187,10 @@
         argsList.push(slice.call(arguments));
       });
 
-      var expected = [[objectValue, sourceValue, 'a', object, source]];
+      expected = [[objectValue, sourceValue, 'a', object, source]];
       if (isMergeWith) {
-        expected.push([undefined, 2, 'b', sourceValue, sourceValue]);
+        expected[0].push([sourceValue], [sourceValue]);
+        expected.push([undefined, 2, 'b', sourceValue, sourceValue, [sourceValue], [sourceValue]]);
       }
       deepEqual(argsList, expected, 'object property values');
     });
@@ -7055,14 +7064,14 @@
 
       var expected = [
         [object1, object2],
-        [object1.a, object2.a, 'a'],
-        [object1.a[0], object2.a[0], 0],
-        [object1.a[1], object2.a[1], 1],
-        [object1.b, object2.b, 'b'],
-        [object1.b.a, object2.b.a, 'a'],
-        [object1.b.a[0], object2.b.a[0], 0],
-        [object1.b.a[1], object2.b.a[1], 1],
-        [object1.b.b, object2.b.b, 'b']
+        [object1.a, object2.a, 'a', object1, object2, [], []],
+        [object1.a[0], object2.a[0], 0, object1.a, object2.a, [], []],
+        [object1.a[1], object2.a[1], 1, object1.a, object2.a, [], []],
+        [object1.b, object2.b, 'b', object1.b, object2.b, [], []],
+        [object1.b.a, object2.b.a, 'a', object1.b, object2.b, [], []],
+        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a, [], []],
+        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a, [], []],
+        [object1.b.b, object2.b.b, 'b', object1.b.b, object2.b.b, [], []]
       ];
 
       _.isEqualWith(object1, object2, function() {
@@ -7519,18 +7528,18 @@
       object2.b = object1;
 
       var expected = [
-        [object1.a, object2.a, 'a'],
-        [object1.a[0], object2.a[0], 0],
-        [object1.a[1], object2.a[1], 1],
-        [object1.b, object2.b, 'b'],
-        [object1.b.a, object2.b.a, 'a'],
-        [object1.b.a[0], object2.b.a[0], 0],
-        [object1.b.a[1], object2.b.a[1], 1],
-        [object1.b.b, object2.b.b, 'b'],
-        [object1.b.b.a, object2.b.b.a, 'a'],
-        [object1.b.b.a[0], object2.b.b.a[0], 0],
-        [object1.b.b.a[1], object2.b.b.a[1], 1],
-        [object1.b.b.b, object2.b.b.b, 'b']
+        [object1.a, object2.a, 'a', object1, object2, [], []],
+        [object1.a[0], object2.a[0], 0, object1.a, object2.a, [], []],
+        [object1.a[1], object2.a[1], 1, object1.a, object2.a, [], []],
+        [object1.b, object2.b, 'b', object1, object2, [], []],
+        [object1.b.a, object2.b.a, 'a', object1.b, object2.b, [], []],
+        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a, [], []],
+        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a, [], []],
+        [object1.b.b, object2.b.b, 'b', object1.b, object2.b, [], []],
+        [object1.b.b.a, object2.b.b.a, 'a', object1.b.b, object2.b.b, [], []],
+        [object1.b.b.a[0], object2.b.b.a[0], 0, object1.b.b.a, object2.b.b.a, [], []],
+        [object1.b.b.a[1], object2.b.b.a[1], 1, object1.b.b.a, object2.b.b.a, [], []],
+        [object1.b.b.b, object2.b.b.b, 'b', object1.b.b, object2.b.b, [], []]
       ];
 
       _.isMatchWith(object1, object2, function() {

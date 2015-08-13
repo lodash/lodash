@@ -1602,7 +1602,7 @@
     function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
       var result;
       if (customizer) {
-        result = object ? customizer(value, key, object) : customizer(value);
+        result = object ? customizer(value, key, object, stackA, stackB) : customizer(value);
       }
       if (result !== undefined) {
         return result;
@@ -3489,9 +3489,13 @@
       // Ignore non-index properties.
       while (++index < arrLength) {
         var arrValue = array[index],
-            othValue = other[index],
-            result = customizer ? customizer(isLoose ? othValue : arrValue, isLoose ? arrValue : othValue, index) : undefined;
+            othValue = other[index];
 
+        if (customizer) {
+          var result = isLoose
+            ? customizer(othValue, arrValue, index, other, array, stackA, stackB)
+            : customizer(arrValue, othValue, index, array, other, stackA, stackB);
+        }
         if (result !== undefined) {
           if (result) {
             continue;
@@ -3585,9 +3589,13 @@
       while (++index < objLength) {
         key = objProps[index];
         var objValue = object[key],
-            othValue = other[key],
-            result = customizer ? customizer(isLoose ? othValue : objValue, isLoose? objValue : othValue, key) : undefined;
+            othValue = other[key];
 
+        if (customizer) {
+          var result = isLoose
+            ? customizer(othValue, objValue, key, other, object, stackA, stackB)
+            : customizer(objValue, othValue, key, object, other, stackA, stackB);
+        }
         // Recursively compare objects (susceptible to call stack limits).
         if (!(result === undefined ? equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB) : result)) {
           return false;
@@ -7640,7 +7648,7 @@
      * This method is like `_.clone` except that it accepts `customizer` which
      * is invoked to produce the cloned value. If `customizer` returns `undefined`
      * cloning is handled by the method instead. The `customizer` is invoked with
-     * up to three arguments; (value [, index|key, object]).
+     * up to five arguments; (value [, index|key, object, stackA, stackB]).
      *
      * @static
      * @memberOf _
@@ -7964,10 +7972,10 @@
     }
 
     /**
-     * This method is like `_.isEqual` except that it accepts `customizer` which
-     * is invoked to compare values. If `customizer` returns `undefined` comparisons
-     * are handled by the method instead. The `customizer` is invoked with up to
-     * three arguments: (value, other [, index|key]).
+     * This method is like `_.isEqual` except that it accepts `customizer` which is
+     * invoked to compare values. If `customizer` returns `undefined` comparisons are
+     * handled by the method instead. The `customizer` is invoked with up to seven arguments:
+     * (objectValue, otherValue [, index|key, object, other, stackA, stackB]).
      *
      * @static
      * @memberOf _

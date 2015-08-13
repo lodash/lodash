@@ -1978,10 +1978,16 @@
       path = isKey(path, object) ? [path + ''] : toPath(path);
 
       var index = 0,
+          part,
           length = path.length;
 
       while (object != null && index < length) {
-        object = object[path[index++]];
+        part = path[index++];
+        if (isArrayLike(object) && /^-\d+$/.test(part)) {
+          part = object.length + (+part);
+        }
+
+        object = object[part];
       }
       return (index && index == length) ? object : undefined;
     }
@@ -9381,13 +9387,13 @@
      */
     function result(object, path, defaultValue) {
       var isPath = !isKey(path, object),
-          result = (isPath || object == null) ? undefined : object[path];
+          result = (isPath || object == null) ? undefined : baseGet(object, [path]);
 
       if (result === undefined) {
         if (object != null && isPath) {
           path = toPath(path);
           object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          result = object == null ? undefined : object[last(path)];
+          result = object == null ? undefined : baseGet(object,[last(path)]);
         }
         result = result === undefined ? defaultValue : result;
       }

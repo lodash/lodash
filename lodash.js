@@ -3622,12 +3622,12 @@
      * Used by `_.defaults` to customize its `_.assign` use.
      *
      * @private
-     * @param {*} objectValue The destination object property value.
-     * @param {*} sourceValue The source object property value.
+     * @param {*} objValue The destination object property value.
+     * @param {*} srcValue The source object property value.
      * @returns {*} Returns the value to assign to the destination object.
      */
-    function extendDefaults(objectValue, sourceValue) {
-      return objectValue === undefined ? sourceValue : objectValue;
+    function extendDefaults(objValue, srcValue) {
+      return objValue === undefined ? srcValue : objValue;
     }
 
     /**
@@ -4078,17 +4078,17 @@
      * Used by `_.defaultsDeep` to customize its `_.merge` use.
      *
      * @private
-     * @param {*} objectValue The destination object property value.
-     * @param {*} sourceValue The source object property value.
+     * @param {*} objValue The destination object property value.
+     * @param {*} srcValue The source object property value.
      * @returns {*} Returns the value to assign to the destination object.
      */
-    function mergeDefaults(objectValue, sourceValue, key, object, source, stackA, stackB) {
-      if (isObject(objectValue)) {
-        stackA.push(objectValue);
-        stackB.push(objectValue);
-        baseMerge(objectValue, sourceValue, mergeDefaults, stackA, stackB);
+    function mergeDefaults(objValue, srcValue, key, object, source, stackA, stackB) {
+      if (isObject(objValue)) {
+        stackA.push(objValue);
+        stackB.push(objValue);
+        baseMerge(objValue, srcValue, mergeDefaults, stackA, stackB);
       }
-      return objectValue === undefined ? sourceValue : objectValue;
+      return objValue === undefined ? srcValue : objValue;
     }
 
     /**
@@ -7976,7 +7976,7 @@
      * This method is like `_.isEqual` except that it accepts `customizer` which is
      * invoked to compare values. If `customizer` returns `undefined` comparisons are
      * handled by the method instead. The `customizer` is invoked with up to seven arguments:
-     * (objectValue, otherValue [, index|key, object, other, stackA, stackB]).
+     * (objValue, othValue [, index|key, object, other, stackA, stackB]).
      *
      * @static
      * @memberOf _
@@ -8517,7 +8517,7 @@
      * This method is like `_.assign` except that it accepts `customizer` which
      * is invoked to produce the assigned values. If `customizer` returns `undefined`
      * assignment is handled by the method instead. The `customizer` is invoked
-     * with five arguments: (objectValue, sourceValue, key, object, source).
+     * with five arguments: (objValue, srcValue, key, object, source).
      *
      * **Note:** This method mutates `object`.
      *
@@ -9204,7 +9204,7 @@
      * is invoked to produce the merged values of the destination and source
      * properties. If `customizer` returns `undefined` merging is handled by the
      * method instead. The `customizer` is invoked with seven arguments:
-     * (objectValue, sourceValue, key, object, source, stackA, stackB).
+     * (objValue, srcValue, key, object, source, stackA, stackB).
      *
      * @static
      * @memberOf _

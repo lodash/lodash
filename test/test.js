@@ -3040,7 +3040,6 @@
       source.bar.b = source.foo.b;
 
       var actual = _.defaultsDeep(object, source);
-      console.log(actual.bar.b === actual.foo.b , actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
       ok(actual.bar.b === source.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
     });
   }());

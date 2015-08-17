@@ -2092,11 +2092,12 @@
      *
      * @private
      * @param {Object} object The object to inspect.
+     * @param {Object} source The object of property values to match.
      * @param {Array} matchData The propery names, values, and compare flags to match.
      * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
-    function baseIsMatch(object, matchData, customizer) {
+    function baseIsMatch(object, source, matchData, customizer) {
       var index = matchData.length,
           length = index,
           noCustomizer = !customizer;
@@ -2125,7 +2126,7 @@
             return false;
           }
         } else {
-          var result = customizer ? customizer(objValue, srcValue, key) : undefined;
+          var result = customizer ? customizer(objValue, srcValue, key, object, source) : undefined;
           if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, true) : result)) {
             return false;
           }
@@ -2226,7 +2227,7 @@
         };
       }
       return function(object) {
-        return baseIsMatch(object, matchData);
+        return baseIsMatch(object, source, matchData);
       };
     }
 
@@ -8131,14 +8132,14 @@
      * // => false
      */
     function isMatch(object, source) {
-      return baseIsMatch(object, getMatchData(source));
+      return baseIsMatch(object, source, getMatchData(source));
     }
 
     /**
      * This method is like `_.isMatch` except that it accepts `customizer` which
      * is invoked to compare values. If `customizer` returns `undefined` comparisons
      * are handled by the method instead. The `customizer` is invoked with three
-     * arguments: (value, other, index|key).
+     * arguments: (objValue, srcValue, index|key, object, source).
      *
      * @static
      * @memberOf _
@@ -8162,7 +8163,7 @@
      */
     function isMatchWith(object, source, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
-      return baseIsMatch(object, getMatchData(source), customizer);
+      return baseIsMatch(object, source, getMatchData(source), customizer);
     }
 
     /**

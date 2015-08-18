@@ -6375,7 +6375,7 @@
     function sample(collection, n, guard) {
       if (guard || n == null) {
         collection = isArrayLike(collection) ? collection : values(collection);
-        var length = collection.length;
+        length = collection.length;
         return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
       }
       var index = -1,

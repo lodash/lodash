@@ -3640,16 +3640,6 @@
 
       deepEqual(actual, expected);
     });
-
-    test('should work with `eval` and `Function`', 2, function() {
-      var actual = _.escapeRegExp(unescaped),
-          regexp = eval('(/' + actual + '/)');
-
-      ok(regexp.test(unescaped));
-
-      regexp = Function('return /' + actual + '/')();
-      ok(regexp.test(unescaped));
-    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -12989,15 +12989,15 @@
     });
 
     test('`_.' + methodName + '` should handle complex paths', 2, function() {
-      var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { 'e': { 'f': 6 } } } } } } };
+      var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { '\ne\n': { 'f': { 'g': 8 } } } } } } } };
 
       var paths = [
-        'a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][e].f',
-        ['a', '-1.23', '["b"]', 'c', "['d']", 'e', 'f']
+        'a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][\ne\n][f].g',
+        ['a', '-1.23', '["b"]', 'c', "['d']", '\ne\n', 'f', 'g']
       ];
 
       _.each(paths, function(path) {
-        strictEqual(func(object, path), 6);
+        strictEqual(func(object, path), 8);
       });
     });
 
@@ -13536,17 +13536,17 @@
     });
 
     test('`_.' + methodName + '` should handle complex paths', 2, function() {
-      var object = { 'a': { '1.23': { '["b"]': { 'c': { "['d']": { 'e': { 'f': 6 } } } } } } };
+      var object = { 'a': { '1.23': { '["b"]': { 'c': { "['d']": { '\ne\n': { 'f': { 'g': 8 } } } } } } } };
 
       var paths = [
-        'a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][e].f',
-        ['a', '-1.23', '["b"]', 'c', "['d']", 'e', 'f']
+        'a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][\ne\n][f].g',
+        ['a', '-1.23', '["b"]', 'c', "['d']", '\ne\n', 'f', 'g']
       ];
 
       _.each(paths, function(path) {
-        func(object, path, 7);
-        strictEqual(object.a[-1.23]['["b"]'].c["['d']"].e.f, 7);
-        object.a[-1.23]['["b"]'].c["['d']"].e.f = 6;
+        func(object, path, 10);
+        strictEqual(object.a[-1.23]['["b"]'].c["['d']"]['\ne\n'].f.g, 10);
+        object.a[-1.23]['["b"]'].c["['d']"]['\ne\n'].f.g = 8;
       });
     });
 

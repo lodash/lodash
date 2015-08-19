@@ -3786,7 +3786,6 @@
       if (object == null) {
         return false;
       }
-      object = Object(object);
       var result = hasFunc(object, path);
       if (!result && !isKey(path)) {
         path = toPath(path);

@@ -1987,6 +1987,30 @@
     }
 
     /**
+     * The base implementation of `_.has` without support for deep paths.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} key The key to check.
+     * @returns {boolean} Returns `true` if `key` is a property, else `false`.
+     */
+    function baseHas(object, key) {
+      return object != null && hasOwnProperty.call(object, key);
+    }
+
+    /**
+     * The base implementation of `_.hasIn` without support for deep paths.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} key The key to check.
+     * @returns {boolean} Returns `true` if `key` is a property, else `false`.
+     */
+    function baseHasIn(object, key) {
+      return object != null && key in Object(object);
+    }
+
+    /**
      * The base implementation of `_.isEqual` which supports partial comparisons
      * and tracks traversed objects.
      *
@@ -2240,25 +2264,11 @@
      * @returns {Function} Returns the new function.
      */
     function baseMatchesProperty(path, srcValue) {
-      var isCommon = isKey(path) && isStrictComparable(srcValue),
-          pathKey = (path + '');
-
-      path = toPath(path);
       return function(object) {
-        if (object == null) {
-          return false;
-        }
-        var key = pathKey;
-        if (!isCommon && !(key in Object(object))) {
-          object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          if (object == null) {
-            return false;
-          }
-          key = last(path);
-        }
-        return object[key] === srcValue
-          ? (srcValue !== undefined || (key in Object(object)))
-          : baseIsEqual(srcValue, object[key], undefined, true);
+        var objValue = get(object, path);
+        return (objValue === undefined && objValue === srcValue)
+          ? hasIn(object, path)
+          : baseIsEqual(srcValue, objValue, undefined, true);
       };
     }
 
@@ -2442,7 +2452,7 @@
           }
           else if (!isKey(index, array)) {
             var path = toPath(index),
-                object = path.length == 1 ? array : baseGet(array, baseSlice(path, 0, -1));
+                object = parent(array, path);
 
             if (object != null) {
               delete object[last(path)];
@@ -3764,6 +3774,33 @@
     }
 
     /**
+     * Checks if `path` exists on `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path to check.
+     * @param {Function} hasFunc The function to check properties.
+     * @returns {boolean} Returns `true` if `path` exists, else `false`.
+     */
+    function hasPath(object, path, hasFunc) {
+      if (object == null) {
+        return false;
+      }
+      object = Object(object);
+      var result = hasFunc(object, path);
+      if (!result && !isKey(path)) {
+        path = toPath(path);
+        object = parent(object, path);
+        if (object != null) {
+          path = last(path);
+          result = hasFunc(object, path);
+        }
+      }
+      return result || (isLength(object && object.length) && isIndex(path, object.length) &&
+        (isArray(object) || isArguments(object) || isString(object)));
+    }
+
+    /**
      * Initializes an array clone.
      *
      * @private
@@ -3866,9 +3903,9 @@
      * @returns {*} Returns the result of the invoked method.
      */
     function invokePath(object, path, args) {
-      if (object != null && !isKey(path, object)) {
+      if (!isKey(path, object)) {
         path = toPath(path);
-        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+        object = parent(object, path);
         path = last(path);
       }
       var func = object == null ? object : object[path];
@@ -3933,15 +3970,12 @@
      * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
      */
     function isKey(value, object) {
-      var type = typeof value;
-      if ((type == 'string' && reIsPlainProp.test(value)) || type == 'number') {
+      if (typeof value == 'number') {
         return true;
       }
-      if (isArray(value)) {
-        return false;
-      }
-      var result = !reIsDeepProp.test(value);
-      return result || (object != null && value in Object(object));
+      return !isArray(value) &&
+        (reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+          (object != null && value in Object(object)));
     }
 
     /**
@@ -4089,6 +4123,18 @@
         baseMerge(objValue, srcValue, mergeDefaults, stackA, stackB);
       }
       return objValue === undefined ? srcValue : objValue;
+    }
+
+    /**
+     * Gets the parent value at `path` of `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array} path The path to get the parent value of.
+     * @returns {*} Returns the parent value.
+     */
+    function parent(object, path) {
+      return path.length == 1 ? object : get(object, baseSlice(path, 0, -1));
     }
 
     /**
@@ -8930,17 +8976,18 @@
     }
 
     /**
-     * Checks if `path` is a direct property.
+     * Checks if `path` is a direct property of `object`.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {Object} object The object to query.
      * @param {Array|string} path The path to check.
-     * @returns {boolean} Returns `true` if `path` is a direct property, else `false`.
+     * @returns {boolean} Returns `true` if `path` exists, else `false`.
      * @example
      *
-     * var object = { 'a': { 'b': { 'c': 3 } } };
+     * var object = { 'a': { 'b': { 'c': 3 } } },
+     *     other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
      *
      * _.has(object, 'a');
      * // => true
@@ -8950,23 +8997,41 @@
      *
      * _.has(object, ['a', 'b', 'c']);
      * // => true
+     *
+     * _.has(other, 'a');
+     * // => false
      */
     function has(object, path) {
-      if (object == null) {
-        return false;
-      }
-      var result = hasOwnProperty.call(object, path);
-      if (!result && !isKey(path)) {
-        path = toPath(path);
-        object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-        if (object == null) {
-          return false;
-        }
-        path = last(path);
-        result = hasOwnProperty.call(object, path);
-      }
-      return result || (isLength(object.length) && isIndex(path, object.length) &&
-        (isArray(object) || isArguments(object) || isString(object)));
+      return hasPath(object, path, baseHas);
+    }
+
+    /**
+     * Checks if `path` is a direct or inherited property of `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path to check.
+     * @returns {boolean} Returns `true` if `path` exists, else `false`.
+     * @example
+     *
+     * var object = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+     *
+     * _.hasIn(object, 'a');
+     * // => true
+     *
+     * _.hasIn(object, 'a.b.c');
+     * // => true
+     *
+     * _.hasIn(object, ['a', 'b', 'c']);
+     * // => true
+     *
+     * _.hasIn(object, 'b');
+     * // => false
+     */
+    function hasIn(object, path) {
+      return hasPath(object, path, baseHasIn);
     }
 
     /**
@@ -9387,23 +9452,22 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      var isPath = !isKey(path, object),
-          result = (isPath || object == null) ? undefined : object[path];
-
+      if (!isKey(path, object)) {
+        path = toPath(path);
+        var result = get(object, path);
+        object = parent(object, path);
+      } else {
+        result = object == null ? undefined : object[path];
+      }
       if (result === undefined) {
-        if (object != null && isPath) {
-          path = toPath(path);
-          object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
-          result = object == null ? undefined : object[last(path)];
-        }
-        result = result === undefined ? defaultValue : result;
+        result = defaultValue;
       }
       return isFunction(result) ? result.call(object) : result;
     }
 
     /**
-     * Sets the property value of `path` on `object`. If a portion of `path`
-     * doesn't exist it's created.
+     * Sets the value at `path` of `object`. If a portion of `path` doesn't
+     * exist it's created.
      *
      * @static
      * @memberOf _
@@ -10663,8 +10727,8 @@
     }
 
     /**
-     * Creates a function that compares the property value of `path` on a given
-     * object to `srcValue`.
+     * Creates a function that compares the value at `path` on a given object
+     * to `srcValue`.
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings.
@@ -10854,8 +10918,7 @@
     }
 
     /**
-     * Creates a function that returns the property value at `path` on a
-     * given object.
+     * Creates a function that returns the value at `path` on a given object.
      *
      * @static
      * @memberOf _
@@ -11448,6 +11511,7 @@
     lodash.gt = gt;
     lodash.gte = gte;
     lodash.has = has;
+    lodash.hasIn = hasIn;
     lodash.identity = identity;
     lodash.includes = includes;
     lodash.indexOf = indexOf;

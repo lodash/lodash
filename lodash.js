@@ -3894,7 +3894,7 @@
     }
 
     /**
-     * Invokes the method at `path` on `object`.
+     * Invokes the method at `path` of `object`.
      *
      * @private
      * @param {Object} object The object to query.
@@ -8947,7 +8947,7 @@
     }
 
     /**
-     * Gets the property value at `path` of `object`. If the resolved value is
+     * Gets the value at `path` of `object`. If the resolved value is
      * `undefined` the `defaultValue` is used in its place.
      *
      * @static
@@ -10727,7 +10727,7 @@
     }
 
     /**
-     * Creates a function that compares the value at `path` on a given object
+     * Creates a function that compares the value at `path` of a given object
      * to `srcValue`.
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
@@ -10754,7 +10754,7 @@
     }
 
     /**
-     * Creates a function that invokes the method at `path` on a given object.
+     * Creates a function that invokes the method at `path` of a given object.
      * Any additional arguments are provided to the invoked method.
      *
      * @static
@@ -10784,7 +10784,7 @@
 
     /**
      * The opposite of `_.method`; this method creates a function that invokes
-     * the method at a given path on `object`. Any additional arguments are
+     * the method at a given path of `object`. Any additional arguments are
      * provided to the invoked method.
      *
      * @static
@@ -10918,7 +10918,7 @@
     }
 
     /**
-     * Creates a function that returns the value at `path` on a given object.
+     * Creates a function that returns the value at `path` of a given object.
      *
      * @static
      * @memberOf _
@@ -10944,7 +10944,7 @@
 
     /**
      * The opposite of `_.property`; this method creates a function that returns
-     * the property value at a given path on `object`.
+     * the value at a given path of `object`.
      *
      * @static
      * @memberOf _

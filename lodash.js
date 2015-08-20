@@ -851,7 +851,7 @@
      * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
      * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
      * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
-     * `has`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+     * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
      * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
      * `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`, `isMatchWith`,
      * `isNative`, `isNaN`, `isNil`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,

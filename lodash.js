@@ -8286,16 +8286,10 @@
      * _.isNil(null);
      * // => true
      *
-     * _.isNil();
-     * // => true
-     *
-     * _.isNil(undefined);
+     * _.isNil(void 0);
      * // => true
      *
      * _.isNil(NaN);
-     * // => false
-     *
-     * _.isNil(void 0);
      * // => false
      */
     function isNil(value) {

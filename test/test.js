@@ -7684,11 +7684,11 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for nulls', 1, function() {
+    test('should return `true` for `null` values', 1, function() {
       strictEqual(_.isNull(null), true);
     });
 
-    test('should return `false` for non-nulls', 13, function() {
+    test('should return `false` for non `null` values', 13, function() {
       var expected = _.map(falsey, function(value) { return value === null; });
 
       var actual = _.map(falsey, function(value, index) {
@@ -7728,38 +7728,35 @@
   (function() {
     var args = arguments;
 
-    test('should return `true` for nulls', 1, function() {
+    test('should return `true` for nullish values', 3, function() {
       strictEqual(_.isNil(null), true);
-    });
-
-    test('should return `true` for undefinitions', 2, function() {
       strictEqual(_.isNil(), true);
       strictEqual(_.isNil(undefined), true);
     });
 
-    test('should return `false` for non-nils', 13, function() {
+    test('should return `false` for non-nullish values', 13, function() {
       var expected = _.map(falsey, function(value) {
-        return undefined === value || null === value;
+        return value == null;
       });
 
-      var actual = _.map(falsey, function(value) {
-        return _.isNil(value);
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isNil(value) : _.isNil();
       });
 
       deepEqual(actual, expected);
 
-      strictEqual(_.isNull(args), false);
-      strictEqual(_.isNull([1, 2, 3]), false);
-      strictEqual(_.isNull(true), false);
-      strictEqual(_.isNull(new Date), false);
-      strictEqual(_.isNull(new Error), false);
-      strictEqual(_.isNull(_), false);
-      strictEqual(_.isNull(slice), false);
-      strictEqual(_.isNull({ 'a': 1 }), false);
-      strictEqual(_.isNull(1), false);
-      strictEqual(_.isNull(NaN), false);
-      strictEqual(_.isNull(/x/), false);
-      strictEqual(_.isNull('a'), false);
+      strictEqual(_.isNil(args), false);
+      strictEqual(_.isNil([1, 2, 3]), false);
+      strictEqual(_.isNil(true), false);
+      strictEqual(_.isNil(new Date), false);
+      strictEqual(_.isNil(new Error), false);
+      strictEqual(_.isNil(_), false);
+      strictEqual(_.isNil(slice), false);
+      strictEqual(_.isNil({ 'a': 1 }), false);
+      strictEqual(_.isNil(1), false);
+      strictEqual(_.isNil(NaN), false);
+      strictEqual(_.isNil(/x/), false);
+      strictEqual(_.isNil('a'), false);
     });
 
     test('should work with nulls from another realm', 2, function() {
@@ -8202,11 +8199,11 @@
       });
     });
 
-    test('should not error on host objects (test in IE)', 15, function() {
+    test('should not error on host objects (test in IE)', 16, function() {
       var funcs = [
         'isArguments', 'isArray', 'isBoolean', 'isDate', 'isElement',
-        'isError', 'isFinite', 'isFunction', 'isNaN', 'isNull', 'isNumber',
-        'isObject', 'isRegExp', 'isString', 'isUndefined'
+        'isError', 'isFinite', 'isFunction', 'isNaN', 'isNil', 'isNull',
+        'isNumber', 'isObject', 'isRegExp', 'isString', 'isUndefined'
       ];
 
       _.each(funcs, function(methodName) {

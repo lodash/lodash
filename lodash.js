@@ -854,7 +854,7 @@
      * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
      * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
      * `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`, `isMatchWith`,
-     * `isNative`, `isNaN`, `isNil`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+     * `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
      * `isRegExp`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
      * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`,
      * `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,

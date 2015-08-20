@@ -17092,6 +17092,7 @@
       'isFinite',
       'isFunction',
       'isNaN',
+      'isNative',
       'isNil',
       'isNull',
       'isNumber',

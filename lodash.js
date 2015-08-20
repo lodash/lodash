@@ -854,7 +854,7 @@
      * `has`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
      * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
      * `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`, `isMatchWith`,
-     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+     * `isNative`, `isNaN`, `isNil`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
      * `isRegExp`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
      * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`,
      * `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
@@ -8274,6 +8274,35 @@
     }
 
     /**
+     * Checks if `value` is `null` or `undefined`.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is `null` or `undefined`, else `false`.
+     * @example
+     *
+     * _.isNil(null);
+     * // => true
+     *
+     * _.isNil();
+     * // => true
+     *
+     * _.isNil(undefined);
+     * // => true
+     *
+     * _.isNil(NaN);
+     * // => false
+     *
+     * _.isNil(void 0);
+     * // => false
+     */
+    function isNil(value) {
+      return value == null;
+    }
+
+    /**
      * Checks if `value` is classified as a `Number` primitive or object.
      *
      * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
@@ -11515,6 +11544,7 @@
     lodash.isMatchWith = isMatchWith;
     lodash.isNaN = isNaN;
     lodash.isNative = isNative;
+    lodash.isNil = isNil;
     lodash.isNull = isNull;
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;

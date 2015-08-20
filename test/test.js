@@ -7723,6 +7723,58 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isNil');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for nulls', 1, function() {
+      strictEqual(_.isNil(null), true);
+    });
+
+    test('should return `true` for undefinitions', 2, function() {
+      strictEqual(_.isNil(), true);
+      strictEqual(_.isNil(undefined), true);
+    });
+
+    test('should return `false` for non-nils', 13, function() {
+      var expected = _.map(falsey, function(value) {
+        return undefined === value || null === value;
+      });
+
+      var actual = _.map(falsey, function(value) {
+        return _.isNil(value);
+      });
+
+      deepEqual(actual, expected);
+
+      strictEqual(_.isNull(args), false);
+      strictEqual(_.isNull([1, 2, 3]), false);
+      strictEqual(_.isNull(true), false);
+      strictEqual(_.isNull(new Date), false);
+      strictEqual(_.isNull(new Error), false);
+      strictEqual(_.isNull(_), false);
+      strictEqual(_.isNull(slice), false);
+      strictEqual(_.isNull({ 'a': 1 }), false);
+      strictEqual(_.isNull(1), false);
+      strictEqual(_.isNull(NaN), false);
+      strictEqual(_.isNull(/x/), false);
+      strictEqual(_.isNull('a'), false);
+    });
+
+    test('should work with nulls from another realm', 2, function() {
+      if (_._object) {
+        strictEqual(_.isNil(_._null), true);
+        strictEqual(_.isNil(_._undefined), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isNumber');
 
   (function() {
@@ -17043,6 +17095,7 @@
       'isFinite',
       'isFunction',
       'isNaN',
+      'isNil',
       'isNull',
       'isNumber',
       'isObject',
@@ -17269,7 +17322,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 223, function() {
+    test('should accept falsey arguments', 224, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

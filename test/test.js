@@ -5398,41 +5398,43 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.has');
+  QUnit.module('has methods');
 
-  (function() {
-    var args = arguments;
+  _.each(['has', 'hasIn'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName],
+        isHas = methodName == 'has';
 
-    test('should check for own properties', 2, function() {
+    test('`_.' + methodName + '` should check for own properties', 2, function() {
       var object = { 'a': 1 };
 
       _.each(['a', ['a']], function(path) {
-        strictEqual(_.has(object, path), true);
+        strictEqual(func(object, path), true);
       });
     });
 
-    test('should not use the `hasOwnProperty` method of the object', 1, function() {
+    test('`_.' + methodName + '` should not use the `hasOwnProperty` method of the object', 1, function() {
       var object = { 'hasOwnProperty': null, 'a': 1 };
-      strictEqual(_.has(object, 'a'), true);
+      strictEqual(func(object, 'a'), true);
     });
 
-    test('should support deep paths', 2, function() {
+    test('`_.' + methodName + '` should support deep paths', 2, function() {
       var object = { 'a': { 'b': { 'c': 3 } } };
 
       _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-        strictEqual(_.has(object, path), true);
+        strictEqual(func(object, path), true);
       });
     });
 
-    test('should work with non-string `path` arguments', 2, function() {
+    test('`_.' + methodName + '` should work with non-string `path` arguments', 2, function() {
       var array = [1, 2, 3];
 
       _.each([1, [1]], function(path) {
-        strictEqual(_.has(array, path), true);
+        strictEqual(func(array, path), true);
       });
     });
 
-    test('should coerce key to a string', 1, function() {
+    test('`_.' + methodName + '` should coerce key to a string', 1, function() {
       function fn() {}
       fn.toString = _.constant('fn');
 
@@ -5451,65 +5453,65 @@
       deepEqual(actual, expected);
     });
 
-    test('should return `false` for inherited properties', 2, function() {
+    test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for inherited properties', 2, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
       _.each(['a', ['a']], function(path) {
-        strictEqual(_.has(new Foo, path), false);
+        strictEqual(func(new Foo, path), !isHas);
       });
     });
 
-    test('should treat sparse arrays as dense', 1, function() {
-      strictEqual(_.has(Array(1), 0), true);
+    test('`_.' + methodName + '` should treat sparse arrays as dense', 1, function() {
+      strictEqual(func(Array(1), 0), true);
     });
 
-    test('should work with `arguments` objects', 1, function() {
-      strictEqual(_.has(args, 1), true);
+    test('`_.' + methodName + '` should work with `arguments` objects', 1, function() {
+      strictEqual(func(args, 1), true);
     });
 
-    test('should check for a key over a path', 2, function() {
+    test('`_.' + methodName + '` should check for a key over a path', 2, function() {
       var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
 
       _.each(['a.b.c', ['a.b.c']], function(path) {
-        strictEqual(_.has(object, path), true);
+        strictEqual(func(object, path), true);
       });
     });
 
-    test('should return `false` when `object` is nullish', 2, function() {
+    test('`_.' + methodName + '` should return `false` when `object` is nullish', 2, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(false));
 
       _.each(['constructor', ['constructor']], function(path) {
         var actual = _.map(values, function(value) {
-          return _.has(value, path);
+          return func(value, path);
         });
 
         deepEqual(actual, expected);
       });
     });
 
-    test('should return `false` with deep paths when `object` is nullish', 2, function() {
+    test('`_.' + methodName + '` should return `false` with deep paths when `object` is nullish', 2, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(false));
 
       _.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var actual = _.map(values, function(value) {
-          return _.has(value, path);
+          return func(value, path);
         });
 
         deepEqual(actual, expected);
       });
     });
 
-    test('should return `false` if parts of `path` are missing', 4, function() {
+    test('`_.' + methodName + '` should return `false` if parts of `path` are missing', 4, function() {
       var object = {};
 
       _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
-        strictEqual(_.has(object, path), false);
+        strictEqual(func(object, path), false);
       });
     });
-  }(1, 2, 3));
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -17028,6 +17030,7 @@
       'find',
       'first',
       'has',
+      'hasIn',
       'includes',
       'isArguments',
       'isArray',

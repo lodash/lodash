@@ -2150,8 +2150,11 @@
             return false;
           }
         } else {
-          var result = customizer ? customizer(objValue, srcValue, key, object, source) : undefined;
-          if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, true) : result)) {
+          var stackA = [],
+              stackB = [],
+              result = customizer ? customizer(objValue, srcValue, key, object, source, stackA, stackB) : undefined;
+
+          if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, true, stackA, stackB) : result)) {
             return false;
           }
         }

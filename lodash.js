@@ -4493,8 +4493,8 @@
      * _.fill(Array(3), 2);
      * // => [2, 2, 2]
      *
-     * _.fill([4, 6, 8], '*', 1, 2);
-     * // => [4, '*', 8]
+     * _.fill([4, 6, 8, 10], '*', 1, 3);
+     * // => [4, '*', '*', 10]
      */
     function fill(array, value, start, end) {
       var length = array ? array.length : 0;

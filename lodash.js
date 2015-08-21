@@ -8280,7 +8280,7 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is `null` or `undefined`, else `false`.
+     * @returns {boolean} Returns `true` if `value` is nullish, else `false`.
      * @example
      *
      * _.isNil(null);

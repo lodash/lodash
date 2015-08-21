@@ -2168,6 +2168,19 @@
     }
 
     /**
+     * The base implementation of `_.keys` which doesn't skip the constructor
+     * property of prototypes or treat sparse arrays as dense.
+     *
+     * @private
+     * @type Function
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of property names.
+     */
+    function baseKeys(object) {
+      return nativeKeys(Object(object));
+    }
+
+    /**
      * The base implementation of `_.keysIn` which doesn't skip the constructor
      * property of prototypes or treat sparse arrays as dense.
      *
@@ -9117,11 +9130,9 @@
      * // => ['0', '1']
      */
     function keys(object) {
-      object = Object(object);
-
       var isProto = isPrototype(object);
       if (!(isProto || isArrayLike(object))) {
-        return nativeKeys(object);
+        return baseKeys(object);
       }
       var result = initKeys(object),
           length = result.length,

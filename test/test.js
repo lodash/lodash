@@ -8773,10 +8773,10 @@
       deepEqual(func(array).sort(), ['0', '1', '2']);
     });
 
-    test('`_.' + methodName + '` should coerce nullish values to objects', 2, function() {
+    test('`_.' + methodName + '` should not coerce nullish values to objects', 2, function() {
       objectProto.a = 1;
       _.each([null, undefined], function(value) {
-        deepEqual(func(value), isKeys ? [] : ['a']);
+        deepEqual(func(value), []);
       });
       delete objectProto.a;
     });

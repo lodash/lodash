@@ -3877,7 +3877,7 @@
      * @returns {Array} Returns the initialized array of property names.
      */
     function initKeys(object) {
-      var length = object.length;
+      var length = object ? object.length : 0;
       length = (length && isLength(length) &&
         (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
 
@@ -9171,8 +9171,6 @@
      * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
-      object = Object(object);
-
       var index = -1,
           isProto = isPrototype(object),
           props = baseKeysIn(object),

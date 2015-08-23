@@ -2189,6 +2189,8 @@
      * @returns {Array} Returns the array of property names.
      */
     function baseKeysIn(object) {
+      object = object == null ? object : Object(object);
+
       var result = [];
       for (var key in object) {
         result.push(key);

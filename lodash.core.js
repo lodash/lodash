@@ -283,10 +283,10 @@
    * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
    * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
    * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
-   * `has`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+   * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
    * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
    * `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`, `isMatchWith`,
-   * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+   * `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
    * `isRegExp`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
    * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`,
    * `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
@@ -403,7 +403,14 @@
    * @returns {Array} Returns `array`.
    */
   function arrayPush(array, values) {
-    return array.push.apply(array, values);
+    var index = -1,
+        length = values.length,
+        offset = array.length;
+
+    while (++index < length) {
+      array[offset + index] = values[index];
+    }
+    return array;
   }
 
   /**
@@ -727,6 +734,19 @@
   }
 
   /**
+   * The base implementation of `_.keys` which doesn't skip the constructor
+   * property of prototypes or treat sparse arrays as dense.
+   *
+   * @private
+   * @type Function
+   * @param {Object} object The object to query.
+   * @returns {Array} Returns the array of property names.
+   */
+  function baseKeys(object) {
+    return nativeKeys(Object(object));
+  }
+
+  /**
    * The base implementation of `_.keysIn` which doesn't skip the constructor
    * property of prototypes or treat sparse arrays as dense.
    *
@@ -735,6 +755,8 @@
    * @returns {Array} Returns the array of property names.
    */
   function baseKeysIn(object) {
+    object = object == null ? object : Object(object);
+
     var result = [];
     for (var key in object) {
       result.push(key);
@@ -782,10 +804,10 @@
    * @returns {Function} Returns the new function.
    */
   function baseMatches(source) {
-    return function(object) {
-      var props = keys(object),
-          length = props.length;
+    var props = keys(source),
+        length = props.length;
 
+    return function(object) {
       if (object == null) {
         return !length;
       }
@@ -960,16 +982,7 @@
    * @param {Array} [array=[]] The array to copy values to.
    * @returns {Array} Returns `array`.
    */
-  function copyArray(source, array) {
-    var index = -1,
-        length = source.length;
-
-    array || (array = Array(length));
-    while (++index < length) {
-      array[index] = source[index];
-    }
-    return array;
-  }
+  var copyArray = baseSlice;
 
   /**
    * Copies properties of `source` to `object`.
@@ -981,16 +994,7 @@
    * @returns {Object} Returns `object`.
    */
   function copyObject(source, props, object) {
-    object || (object = {});
-
-    var index = -1,
-        length = props.length;
-
-    while (++index < length) {
-      var key = props[index];
-      assignValue(object, key, source[key], object[key]);
-    }
-    return object;
+    return copyObjectWith(source, props, object);
   }
 
   /**
@@ -1000,11 +1004,11 @@
    * @private
    * @param {Object} source The object to copy properties from.
    * @param {Array} props The property names to copy.
-   * @param {Function} [customizer] The function to customize copied values.
    * @param {Object} [object={}] The object to copy properties to.
+   * @param {Function} [customizer] The function to customize copied values.
    * @returns {Object} Returns `object`.
    */
-  function copyObjectWith(source, props, customizer, object) {
+  function copyObjectWith(source, props, object, customizer) {
     object || (object = {});
 
     var index = -1,
@@ -1195,8 +1199,7 @@
     // Ignore non-index properties.
     while (++index < arrLength) {
       var arrValue = array[index],
-          othValue = other[index],
-          result = customizer ? customizer(isLoose ? othValue : arrValue, isLoose ? arrValue : othValue, index) : undefined;
+          othValue = other[index];
 
       if (result !== undefined) {
         if (result) {
@@ -1291,8 +1294,7 @@
     while (++index < objLength) {
       key = objProps[index];
       var objValue = object[key],
-          othValue = other[key],
-          result = customizer ? customizer(isLoose ? othValue : objValue, isLoose? objValue : othValue, key) : undefined;
+          othValue = other[key];
 
       // Recursively compare objects (susceptible to call stack limits).
       if (!(result === undefined ? equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB) : result)) {
@@ -1319,12 +1321,12 @@
    * Used by `_.defaults` to customize its `_.assign` use.
    *
    * @private
-   * @param {*} objectValue The destination object property value.
-   * @param {*} sourceValue The source object property value.
+   * @param {*} objValue The destination object property value.
+   * @param {*} srcValue The source object property value.
    * @returns {*} Returns the value to assign to the destination object.
    */
-  function extendDefaults(objectValue, sourceValue) {
-    return objectValue === undefined ? sourceValue : objectValue;
+  function extendDefaults(objValue, srcValue) {
+    return objValue === undefined ? srcValue : objValue;
   }
 
   /**
@@ -1349,7 +1351,7 @@
    * @returns {Array} Returns the initialized array of property names.
    */
   function initKeys(object) {
-    var length = object.length;
+    var length = object ? object.length : 0;
     length = (length && isLength(length) &&
       (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
 
@@ -1556,6 +1558,8 @@
     var length = array ? array.length : 0;
     if (typeof fromIndex == 'number') {
       fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
+    } else {
+      fromIndex = 0;
     }
     var index = (fromIndex || 0) - 1,
         isReflexive = value === value;
@@ -2037,11 +2041,11 @@
    * });
    * // => 3
    *
-   * _.reduce({ 'a': 1, 'b': 2 }, function(result, n, key) {
-   *   result[key] = n * 3;
+   * _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
+   *   (result[value] || (result[value] = [])).push(key);
    *   return result;
    * }, {});
-   * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
+   * // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
    */
   function reduce(collection, iteratee, accumulator) {
     return baseReduce(collection, baseIteratee(iteratee), accumulator, arguments.length < 3, baseEach);
@@ -2347,42 +2351,6 @@
   }
 
   /**
-   * Creates a function that invokes `func` with `partial` arguments prepended
-   * to those provided to the new function. This method is like `_.bind` except
-   * it does **not** alter the `this` binding.
-   *
-   * The `_.partial.placeholder` value, which defaults to `_` in monolithic
-   * builds, may be used as a placeholder for partially applied arguments.
-   *
-   * **Note:** This method doesn't set the "length" property of partially
-   * applied functions.
-   *
-   * @static
-   * @memberOf _
-   * @category Function
-   * @param {Function} func The function to partially apply arguments to.
-   * @param {...*} [partials] The arguments to be partially applied.
-   * @returns {Function} Returns the new partially applied function.
-   * @example
-   *
-   * var greet = function(greeting, name) {
-   *   return greeting + ' ' + name;
-   * };
-   *
-   * var sayHelloTo = _.partial(greet, 'hello');
-   * sayHelloTo('fred');
-   * // => 'hello fred'
-   *
-   * // using placeholders
-   * var greetFred = _.partial(greet, _, 'fred');
-   * greetFred('hi');
-   * // => 'hi fred'
-   */
-  var partial = restParam(function(func, partials) {
-    return createPartialWrapper(func, PARTIAL_FLAG, undefined, partials);
-  });
-
-  /**
    * Creates a function that invokes `func` with the `this` binding of the
    * created function and arguments from `start` and beyond provided as an array.
    *
@@ -2426,32 +2394,6 @@
       otherArgs[start] = rest;
       return func.apply(this, otherArgs);
     };
-  }
-
-  /**
-   * Creates a function that provides `value` to the wrapper function as its
-   * first argument. Any additional arguments provided to the function are
-   * appended to those provided to the wrapper function. The wrapper is invoked
-   * with the `this` binding of the created function.
-   *
-   * @static
-   * @memberOf _
-   * @category Function
-   * @param {*} value The value to wrap.
-   * @param {Function} wrapper The wrapper function.
-   * @returns {Function} Returns the new function.
-   * @example
-   *
-   * var p = _.wrap(_.escape, function(func, text) {
-   *   return '<p>' + func(text) + '</p>';
-   * });
-   *
-   * p('fred, barney, & pebbles');
-   * // => '<p>fred, barney, &amp; pebbles</p>'
-   */
-  function wrap(value, wrapper) {
-    wrapper = wrapper == null ? identity : wrapper;
-    return partial(wrapper, value);
   }
 
   /*------------------------------------------------------------------------*/
@@ -2868,7 +2810,7 @@
    * // => { 'user': 'barney', 'age': 36 }
    */
   var extendWith = createAssigner(function(object, source, customizer) {
-    copyObjectWith(source, keysIn(source), customizer, object);
+    copyObjectWith(source, keysIn(source), object, customizer);
   });
 
   /**
@@ -2890,17 +2832,18 @@
   }
 
   /**
-   * Checks if `path` is a direct property.
+   * Checks if `path` is a direct property of `object`.
    *
    * @static
    * @memberOf _
    * @category Object
    * @param {Object} object The object to query.
    * @param {Array|string} path The path to check.
-   * @returns {boolean} Returns `true` if `path` is a direct property, else `false`.
+   * @returns {boolean} Returns `true` if `path` exists, else `false`.
    * @example
    *
-   * var object = { 'a': { 'b': { 'c': 3 } } };
+   * var object = { 'a': { 'b': { 'c': 3 } } },
+   *     other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
    *
    * _.has(object, 'a');
    * // => true
@@ -2910,6 +2853,9 @@
    *
    * _.has(object, ['a', 'b', 'c']);
    * // => true
+   *
+   * _.has(other, 'a');
+   * // => false
    */
   function has(object, path) {
     return object != null && hasOwnProperty.call(object, path);
@@ -2943,11 +2889,9 @@
    * // => ['0', '1']
    */
   function keys(object) {
-    object = Object(object);
-
     var isProto = isPrototype(object);
     if (!(isProto || isArrayLike(object))) {
-      return nativeKeys(object);
+      return baseKeys(object);
     }
     var result = initKeys(object),
         length = result.length,
@@ -2986,8 +2930,6 @@
    * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
    */
   function keysIn(object) {
-    object = Object(object);
-
     var index = -1,
         isProto = isPrototype(object),
         props = baseKeysIn(object),
@@ -3380,7 +3322,6 @@
   lodash.defer = defer;
   lodash.delay = delay;
   lodash.extend = extend;
-  lodash.extendWith = extendWith;
   lodash.filter = filter;
   lodash.flatten = flatten;
   lodash.flattenDeep = flattenDeep;
@@ -3393,16 +3334,13 @@
   lodash.mixin = mixin;
   lodash.negate = negate;
   lodash.once = once;
-  lodash.partial = partial;
   lodash.pick = pick;
-  lodash.restParam = restParam;
   lodash.slice = slice;
   lodash.sortBy = sortBy;
   lodash.tap = tap;
   lodash.thru = thru;
   lodash.toArray = toArray;
   lodash.values = values;
-  lodash.wrap = wrap;
 
   // Add aliases.
   lodash.each = forEach;
@@ -3419,7 +3357,6 @@
   lodash.find = find;
   lodash.first = first;
   lodash.forEach = forEach;
-  lodash.gt = gt;
   lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;
@@ -3434,7 +3371,6 @@
   lodash.isRegExp = isRegExp;
   lodash.isString = isString;
   lodash.last = last;
-  lodash.lt = lt;
   lodash.max = max;
   lodash.min = min;
   lodash.noConflict = noConflict;
@@ -3485,9 +3421,6 @@
   });
 
   // Add chaining functions to the `lodash` wrapper.
-  lodash.prototype.chain = wrapperChain;
-  lodash.prototype.concat = wrapperConcat;
-  lodash.prototype.toString = wrapperToString;
   lodash.prototype.run = lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 
   /*--------------------------------------------------------------------------*/

@@ -2949,16 +2949,7 @@
      * @returns {Object} Returns `object`.
      */
     function copyObject(source, props, object) {
-      object || (object = {});
-
-      var index = -1,
-          length = props.length;
-
-      while (++index < length) {
-        var key = props[index];
-        assignValue(object, key, source[key], object[key]);
-      }
-      return object;
+      return copyObjectWith(source, props, object);
     }
 
     /**
@@ -2968,11 +2959,11 @@
      * @private
      * @param {Object} source The object to copy properties from.
      * @param {Array} props The property names to copy.
-     * @param {Function} [customizer] The function to customize copied values.
      * @param {Object} [object={}] The object to copy properties to.
+     * @param {Function} [customizer] The function to customize copied values.
      * @returns {Object} Returns `object`.
      */
-    function copyObjectWith(source, props, customizer, object) {
+    function copyObjectWith(source, props, object, customizer) {
       object || (object = {});
 
       var index = -1,
@@ -8604,7 +8595,7 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var assignWith = createAssigner(function(object, source, customizer) {
-      copyObjectWith(source, keys(source), customizer, object);
+      copyObjectWith(source, keys(source), object, customizer);
     });
 
     /**
@@ -8755,7 +8746,7 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var extendWith = createAssigner(function(object, source, customizer) {
-      copyObjectWith(source, keysIn(source), customizer, object);
+      copyObjectWith(source, keysIn(source), object, customizer);
     });
 
     /**

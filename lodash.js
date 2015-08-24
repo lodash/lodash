@@ -2633,7 +2633,7 @@
           index = -1;
 
       iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
-        return toIteratee(iteratee);
+        return toIteratee(iteratee, 3);
       });
 
       var result = baseMap(collection, function(value, key, collection) {
@@ -2991,7 +2991,7 @@
     function createAggregator(setter, initializer) {
       return function(collection, iteratee) {
         var result = initializer ? initializer() : {};
-        iteratee = getIteratee(iteratee);
+        iteratee = getIteratee(iteratee, 3);
 
         if (isArray(collection)) {
           var index = -1,
@@ -3682,16 +3682,18 @@
     /**
      * Gets the appropriate "iteratee" function. If the `_.iteratee` method is
      * customized this function returns the custom method, otherwise it returns
-     * the `baseIteratee` function. If arguments are provided the chosen function
-     * is invoked with them and its result is returned.
+     * `baseIteratee`. If arguments are provided the chosen function is invoked
+     * with them and its result is returned.
      *
      * @private
+     * @param {*} [value] The value to convert to an iteratee.
+     * @param {number} [arity] The arity of the created iteratee.
      * @returns {Function} Returns the chosen function or its result.
      */
     function getIteratee() {
       var result = lodash.iteratee || iteratee;
       result = result === iteratee ? baseIteratee : result;
-      return arguments.length ? result(arguments[0]) : result;
+      return arguments.length ? result(arguments[0], arguments[1]) : result;
     }
 
     /**
@@ -4428,7 +4430,7 @@
      */
     function dropRightWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate), true, true)
+        ? baseWhile(array, getIteratee(predicate, 3), true, true)
         : [];
     }
 
@@ -4470,7 +4472,7 @@
      */
     function dropWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate), true)
+        ? baseWhile(array, getIteratee(predicate, 3), true)
         : [];
     }
 
@@ -4549,7 +4551,7 @@
      */
     function findIndex(array, predicate) {
       return (array && array.length)
-        ? baseFindIndex(array, getIteratee(predicate))
+        ? baseFindIndex(array, getIteratee(predicate, 3))
         : -1;
     }
 
@@ -4588,7 +4590,7 @@
      */
     function findLastIndex(array, predicate) {
       return (array && array.length)
-        ? baseFindIndex(array, getIteratee(predicate), true)
+        ? baseFindIndex(array, getIteratee(predicate, 3), true)
         : -1;
     }
 
@@ -4944,7 +4946,7 @@
           indexes = [],
           length = array.length;
 
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
@@ -5194,7 +5196,7 @@
      */
     function takeRightWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate), false, true)
+        ? baseWhile(array, getIteratee(predicate, 3), false, true)
         : [];
     }
 
@@ -5236,7 +5238,7 @@
      */
     function takeWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate))
+        ? baseWhile(array, getIteratee(predicate, 3))
         : [];
     }
 
@@ -5881,7 +5883,7 @@
       if (guard && isIterateeCall(collection, predicate, guard)) {
         predicate = undefined;
       }
-      return func(collection, getIteratee(predicate));
+      return func(collection, getIteratee(predicate, 3));
     }
 
     /**
@@ -5921,7 +5923,7 @@
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      return func(collection, getIteratee(predicate));
+      return func(collection, getIteratee(predicate, 3));
     }
 
     /**
@@ -5961,7 +5963,7 @@
      * // => 'barney'
      */
     function find(collection, predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       if (isArray(collection)) {
         var index = baseFindIndex(collection, predicate);
         return index > -1 ? collection[index] : undefined;
@@ -5987,7 +5989,7 @@
      * // => 3
      */
     function findLast(collection, predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       if (isArray(collection)) {
         var index = baseFindIndex(collection, predicate, true);
         return index > -1 ? collection[index] : undefined;
@@ -6235,7 +6237,7 @@
      */
     function map(collection, iteratee) {
       var func = isArray(collection) ? arrayMap : baseMap;
-      return func(collection, getIteratee(iteratee));
+      return func(collection, getIteratee(iteratee, 3));
     }
 
     /**
@@ -6320,7 +6322,7 @@
       var initFromArray = arguments.length < 3;
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayReduce(collection, iteratee, accumulator, initFromArray)
-        : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, baseEach);
+        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromArray, baseEach);
     }
 
     /**
@@ -6347,7 +6349,7 @@
       var initFromArray = arguments.length < 3;
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayReduceRight(collection, iteratee, accumulator, initFromArray)
-        : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, baseEachRight);
+        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromArray, baseEachRight);
     }
 
     /**
@@ -6386,7 +6388,7 @@
      */
     function reject(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       return func(collection, function(value, index, collection) {
         return !predicate(value, index, collection);
       });
@@ -6518,7 +6520,7 @@
       if (guard && isIterateeCall(collection, predicate, guard)) {
         predicate = undefined;
       }
-      return func(collection, getIteratee(predicate));
+      return func(collection, getIteratee(predicate, 3));
     }
 
     /**
@@ -8789,7 +8791,7 @@
      * // => 'barney'
      */
     function findKey(object, predicate) {
-      return baseFind(object, getIteratee(predicate), baseForOwn, true);
+      return baseFind(object, getIteratee(predicate, 3), baseForOwn, true);
     }
 
     /**
@@ -8826,7 +8828,7 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate) {
-      return baseFind(object, getIteratee(predicate), baseForOwnRight, true);
+      return baseFind(object, getIteratee(predicate, 3), baseForOwnRight, true);
     }
 
     /**
@@ -9206,7 +9208,7 @@
      */
     function mapKeys(object, iteratee) {
       var result = {};
-      iteratee = getIteratee(iteratee);
+      iteratee = getIteratee(iteratee, 3);
 
       baseForOwn(object, function(value, key, object) {
         result[iteratee(value, key, object)] = value;
@@ -9241,7 +9243,7 @@
      */
     function mapValues(object, iteratee) {
       var result = {};
-      iteratee = getIteratee(iteratee);
+      iteratee = getIteratee(iteratee, 3);
 
       baseForOwn(object, function(value, key, object) {
         result[key] = iteratee(value, key, object);
@@ -9359,7 +9361,7 @@
      * // => { 'user': 'fred' }
      */
     function omitBy(object, predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       return basePickBy(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
@@ -9433,7 +9435,7 @@
      * // => { 'user': 'fred' }
      */
     function pickBy(object, predicate) {
-      return object == null ? {} : basePickBy(object, getIteratee(predicate));
+      return object == null ? {} : basePickBy(object, getIteratee(predicate, 3));
     }
 
     /**
@@ -9563,7 +9565,7 @@
      */
     function transform(object, iteratee, accumulator) {
       var isArr = isArray(object) || isTypedArray(object);
-      iteratee = getIteratee(iteratee);
+      iteratee = getIteratee(iteratee, 4);
 
       if (accumulator == null) {
         if (isArr || isObject(object)) {
@@ -11666,7 +11668,7 @@
 
       LazyWrapper.prototype[methodName] = function(iteratee) {
         var result = this.clone();
-        result.__iteratees__.push({ 'iteratee': getIteratee(iteratee), 'type': type });
+        result.__iteratees__.push({ 'iteratee': getIteratee(iteratee, 3), 'type': type });
         result.__filtered__ = result.__filtered__ || isFilter;
         return result;
       };
@@ -11703,7 +11705,7 @@
     };
 
     LazyWrapper.prototype.reject = function(predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       return this.filter(function(value) {
         return !predicate(value);
       });

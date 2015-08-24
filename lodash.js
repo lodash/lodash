@@ -2148,23 +2148,23 @@
      * The base implementation of `_.iteratee`.
      *
      * @private
-     * @param {*} [func=_.identity] The value to convert to an iteratee.
+     * @param {*} [value=_.identity] The value to convert to an iteratee.
      * @returns {Function} Returns the iteratee.
      */
-    function baseIteratee(func) {
-      var type = typeof func;
+    function baseIteratee(value) {
+      var type = typeof value;
       if (type == 'function') {
-        return func;
+        return value;
       }
-      if (func == null) {
+      if (value == null) {
         return identity;
       }
       if (type == 'object') {
-        return isArray(func)
-          ? baseMatchesProperty(func[0], func[1])
-          : baseMatches(func);
+        return isArray(value)
+          ? baseMatchesProperty(value[0], value[1])
+          : baseMatches(value);
       }
-      return property(func);
+      return property(value);
     }
 
     /**

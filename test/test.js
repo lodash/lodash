@@ -2128,7 +2128,8 @@
 
     test('`_.' + methodName + '` should support shortcut fusion', 12, function() {
       var filterCount,
-          mapCount;
+          mapCount,
+          array = _.range(LARGE_ARRAY_SIZE);
 
       var iteratee = function(value) {
         mapCount++;
@@ -2164,7 +2165,7 @@
             : fn(take3, _.compact, filter3, map3);
 
           filterCount = mapCount = 0;
-          deepEqual(combined(_.range(LARGE_ARRAY_SIZE)), [4, 16]);
+          deepEqual(combined(array), [4, 16]);
 
           if (!isNpm && WeakMap && WeakMap.name) {
             strictEqual(filterCount, 5, 'filterCount');

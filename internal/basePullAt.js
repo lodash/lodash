@@ -1,14 +1,18 @@
-var isIndex = require('./isIndex');
+var baseToPath = require('./baseToPath'),
+    isIndex = require('./isIndex'),
+    isKey = require('./isKey'),
+    last = require('../last'),
+    parent = require('./parent');
 
-/** Used for native method references. */
-var arrayProto = Array.prototype;
+/** Used for built-in method references. */
+var arrayProto = global.Array.prototype;
 
-/** Native method references. */
+/** Built-in value references. */
 var splice = arrayProto.splice;
 
 /**
  * The base implementation of `_.pullAt` without support for individual
- * index arguments and capturing the removed elements.
+ * indexes or capturing the removed elements.
  *
  * @private
  * @param {Array} array The array to modify.
@@ -16,12 +20,27 @@ var splice = arrayProto.splice;
  * @returns {Array} Returns `array`.
  */
 function basePullAt(array, indexes) {
-  var length = array ? indexes.length : 0;
+  var length = array ? indexes.length : 0,
+      lastIndex = length - 1;
+
   while (length--) {
     var index = indexes[length];
-    if (index != previous && isIndex(index)) {
+    if (lastIndex == length || index != previous) {
       var previous = index;
-      splice.call(array, index, 1);
+      if (isIndex(index)) {
+        splice.call(array, index, 1);
+      }
+      else if (!isKey(index, array)) {
+        var path = baseToPath(index),
+            object = parent(array, path);
+
+        if (object != null) {
+          delete object[last(path)];
+        }
+      }
+      else {
+        delete array[index];
+      }
     }
   }
   return array;

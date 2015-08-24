@@ -1,7 +1,7 @@
 var LazyWrapper = require('./LazyWrapper'),
     getData = require('./getData'),
     getFuncName = require('./getFuncName'),
-    lodash = require('../chain/lodash');
+    lodash = require('../wrapperLodash');
 
 /**
  * Checks if `func` has a lazy counterpart.

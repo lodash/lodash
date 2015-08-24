@@ -1,28 +1,29 @@
-var baseEach = require('./baseEach');
-
 /**
- * Gets the extremum value of `collection` invoking `iteratee` for each value
- * in `collection` to generate the criterion by which the value is ranked.
- * The `iteratee` is invoked with three arguments: (value, index|key, collection).
+ * The base implementation of methods like `_.max` and `_.min` which accepts a
+ * `comparator` to determine the extremum value.
  *
  * @private
- * @param {Array|Object|string} collection The collection to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @param {Function} comparator The function used to compare values.
- * @param {*} exValue The initial extremum value.
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The iteratee invoked per iteration.
+ * @param {Function} comparator The comparator used to compare values.
  * @returns {*} Returns the extremum value.
  */
-function baseExtremum(collection, iteratee, comparator, exValue) {
-  var computed = exValue,
-      result = computed;
+function baseExtremum(array, iteratee, comparator) {
+  var index = -1,
+      length = array.length;
 
-  baseEach(collection, function(value, index, collection) {
-    var current = +iteratee(value, index, collection);
-    if (comparator(current, computed) || (current === exValue && current === result)) {
-      computed = current;
-      result = value;
+  while (++index < length) {
+    var value = array[index],
+        current = iteratee(value);
+
+    if (current != null && (computed === undefined
+          ? current === current
+          : comparator(current, computed)
+        )) {
+      var computed = current,
+          result = value;
     }
-  });
+  }
   return result;
 }
 

@@ -1,7 +1,10 @@
-var isObject = require('../lang/isObject');
+var isKeyable = require('./isKeyable');
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
 /**
- * Adds `value` to the cache.
+ * Adds `value` to the set cache.
  *
  * @private
  * @name push
@@ -9,11 +12,15 @@ var isObject = require('../lang/isObject');
  * @param {*} value The value to cache.
  */
 function cachePush(value) {
-  var data = this.data;
-  if (typeof value == 'string' || isObject(value)) {
-    data.set.add(value);
-  } else {
-    data.hash[value] = true;
+  var map = this.__data__;
+  if (isKeyable(value)) {
+    var data = map.__data__,
+        hash = typeof value == 'string' ? data.string : data.hash;
+
+    hash[value] = HASH_UNDEFINED;
+  }
+  else {
+    map.set(value, HASH_UNDEFINED);
   }
 }
 

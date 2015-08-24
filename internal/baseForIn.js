@@ -1,9 +1,8 @@
 var baseFor = require('./baseFor'),
-    keysIn = require('../object/keysIn');
+    keysIn = require('../keysIn');
 
 /**
- * The base implementation of `_.forIn` without support for callback
- * shorthands and `this` binding.
+ * The base implementation of `_.forIn` without support for iteratee shorthands.
  *
  * @private
  * @param {Object} object The object to iterate over.
@@ -11,7 +10,7 @@ var baseFor = require('./baseFor'),
  * @returns {Object} Returns `object`.
  */
 function baseForIn(object, iteratee) {
-  return baseFor(object, iteratee, keysIn);
+  return object == null ? object : baseFor(object, iteratee, keysIn);
 }
 
 module.exports = baseForIn;

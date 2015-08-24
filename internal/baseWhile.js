@@ -1,8 +1,8 @@
 var baseSlice = require('./baseSlice');
 
 /**
- * The base implementation of `_.dropRightWhile`, `_.dropWhile`, `_.takeRightWhile`,
- * and `_.takeWhile` without support for callback shorthands and `this` binding.
+ * The base implementation of methods like `_.dropWhile` and `_.takeWhile`
+ * without support for iteratee shorthands.
  *
  * @private
  * @param {Array} array The array to query.
@@ -15,7 +15,9 @@ function baseWhile(array, predicate, isDrop, fromRight) {
   var length = array.length,
       index = fromRight ? length : -1;
 
-  while ((fromRight ? index-- : ++index < length) && predicate(array[index], index, array)) {}
+  while ((fromRight ? index-- : ++index < length) &&
+    predicate(array[index], index, array)) {}
+
   return isDrop
     ? baseSlice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
     : baseSlice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index));

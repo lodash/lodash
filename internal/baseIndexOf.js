@@ -1,7 +1,7 @@
 var indexOfNaN = require('./indexOfNaN');
 
 /**
- * The base implementation of `_.indexOf` without support for binary searches.
+ * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
  *
  * @private
  * @param {Array} array The array to search.

@@ -1,9 +1,9 @@
 /**
- * Creates a new array joining `array` with `other`.
+ * Creates a new array concatenating `array` with `other`.
  *
  * @private
- * @param {Array} array The array to join.
- * @param {Array} other The other array to join.
+ * @param {Array} array The first array to concatenate.
+ * @param {Array} other The second array to concatenate.
  * @returns {Array} Returns the new concatenated array.
  */
 function arrayConcat(array, other) {

@@ -1,5 +1,4 @@
-var baseGet = require('./baseGet'),
-    toPath = require('./toPath');
+var baseGet = require('./baseGet');
 
 /**
  * A specialized version of `baseProperty` which supports deep paths.
@@ -9,10 +8,8 @@ var baseGet = require('./baseGet'),
  * @returns {Function} Returns the new function.
  */
 function basePropertyDeep(path) {
-  var pathKey = (path + '');
-  path = toPath(path);
   return function(object) {
-    return baseGet(object, path, pathKey);
+    return baseGet(object, path);
   };
 }
 

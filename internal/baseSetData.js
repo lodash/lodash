@@ -1,4 +1,4 @@
-var identity = require('../utility/identity'),
+var identity = require('../identity'),
     metaMap = require('./metaMap');
 
 /**

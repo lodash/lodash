@@ -1,51 +1,62 @@
-var baseIndexOf = require('./baseIndexOf'),
-    cacheIndexOf = require('./cacheIndexOf'),
-    createCache = require('./createCache');
+var SetCache = require('./SetCache'),
+    arrayIncludes = require('./arrayIncludes'),
+    arrayIncludesWith = require('./arrayIncludesWith'),
+    arrayMap = require('./arrayMap'),
+    baseUnary = require('./baseUnary'),
+    cacheHas = require('./cacheHas');
 
 /** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;
 
 /**
- * The base implementation of `_.difference` which accepts a single array
- * of values to exclude.
+ * The base implementation of methods like `_.difference` without support for
+ * excluding multiple arrays or iteratee shorthands.
  *
  * @private
  * @param {Array} array The array to inspect.
  * @param {Array} values The values to exclude.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
  * @returns {Array} Returns the new array of filtered values.
  */
-function baseDifference(array, values) {
-  var length = array ? array.length : 0,
-      result = [];
+function baseDifference(array, values, iteratee, comparator) {
+  var index = -1,
+      includes = arrayIncludes,
+      isCommon = true,
+      length = array.length,
+      result = [],
+      valuesLength = values.length;
 
   if (!length) {
     return result;
   }
-  var index = -1,
-      indexOf = baseIndexOf,
-      isCommon = true,
-      cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? createCache(values) : null,
-      valuesLength = values.length;
-
-  if (cache) {
-    indexOf = cacheIndexOf;
+  if (iteratee) {
+    values = arrayMap(values, baseUnary(iteratee));
+  }
+  if (comparator) {
+    includes = arrayIncludesWith;
     isCommon = false;
-    values = cache;
+  }
+  else if (values.length >= LARGE_ARRAY_SIZE) {
+    includes = cacheHas;
+    isCommon = false;
+    values = new SetCache(values);
   }
   outer:
   while (++index < length) {
-    var value = array[index];
+    var value = array[index],
+        computed = iteratee ? iteratee(value) : value;
 
-    if (isCommon && value === value) {
+    if (isCommon && computed === computed) {
       var valuesIndex = valuesLength;
       while (valuesIndex--) {
-        if (values[valuesIndex] === value) {
+        if (values[valuesIndex] === computed) {
           continue outer;
         }
       }
       result.push(value);
     }
-    else if (indexOf(values, value, 0) < 0) {
+    else if (!includes(values, computed, comparator)) {
       result.push(value);
     }
   }

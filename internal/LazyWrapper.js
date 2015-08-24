@@ -1,8 +1,8 @@
 var baseCreate = require('./baseCreate'),
     baseLodash = require('./baseLodash');
 
-/** Used as references for `-Infinity` and `Infinity`. */
-var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
+/** Used as references for the maximum length and index of an array. */
+var MAX_ARRAY_LENGTH = 4294967295;
 
 /**
  * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
@@ -16,7 +16,7 @@ function LazyWrapper(value) {
   this.__dir__ = 1;
   this.__filtered__ = false;
   this.__iteratees__ = [];
-  this.__takeCount__ = POSITIVE_INFINITY;
+  this.__takeCount__ = MAX_ARRAY_LENGTH;
   this.__views__ = [];
 }
 

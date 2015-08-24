@@ -1,11 +1,19 @@
-var bufferClone = require('./bufferClone');
+var cloneBuffer = require('./cloneBuffer'),
+    cloneMap = require('./cloneMap'),
+    cloneRegExp = require('./cloneRegExp'),
+    cloneSet = require('./cloneSet'),
+    cloneSymbol = require('./cloneSymbol'),
+    cloneTypedArray = require('./cloneTypedArray');
 
 /** `Object#toString` result references. */
 var boolTag = '[object Boolean]',
     dateTag = '[object Date]',
+    mapTag = '[object Map]',
     numberTag = '[object Number]',
     regexpTag = '[object RegExp]',
-    stringTag = '[object String]';
+    setTag = '[object Set]',
+    stringTag = '[object String]',
+    symbolTag = '[object Symbol]';
 
 var arrayBufferTag = '[object ArrayBuffer]',
     float32Tag = '[object Float32Array]',
@@ -17,9 +25,6 @@ var arrayBufferTag = '[object ArrayBuffer]',
     uint8ClampedTag = '[object Uint8ClampedArray]',
     uint16Tag = '[object Uint16Array]',
     uint32Tag = '[object Uint32Array]';
-
-/** Used to match `RegExp` flags from their coerced string values. */
-var reFlags = /\w*$/;
 
 /**
  * Initializes an object clone based on its `toStringTag`.
@@ -37,7 +42,7 @@ function initCloneByTag(object, tag, isDeep) {
   var Ctor = object.constructor;
   switch (tag) {
     case arrayBufferTag:
-      return bufferClone(object);
+      return cloneBuffer(object);
 
     case boolTag:
     case dateTag:
@@ -46,18 +51,24 @@ function initCloneByTag(object, tag, isDeep) {
     case float32Tag: case float64Tag:
     case int8Tag: case int16Tag: case int32Tag:
     case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
-      var buffer = object.buffer;
-      return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
+      return cloneTypedArray(object, isDeep);
+
+    case mapTag:
+      return cloneMap(object);
 
     case numberTag:
     case stringTag:
       return new Ctor(object);
 
     case regexpTag:
-      var result = new Ctor(object.source, reFlags.exec(object));
-      result.lastIndex = object.lastIndex;
+      return cloneRegExp(object);
+
+    case setTag:
+      return cloneSet(object);
+
+    case symbolTag:
+      return cloneSymbol(object);
   }
-  return result;
 }
 
 module.exports = initCloneByTag;

@@ -1,12 +1,17 @@
-var arrayCopy = require('./arrayCopy'),
+var Stack = require('./Stack'),
     arrayEach = require('./arrayEach'),
+    assignValue = require('./assignValue'),
     baseAssign = require('./baseAssign'),
     baseForOwn = require('./baseForOwn'),
+    copyArray = require('./copyArray'),
+    copySymbols = require('./copySymbols'),
+    getTag = require('./getTag'),
     initCloneArray = require('./initCloneArray'),
     initCloneByTag = require('./initCloneByTag'),
     initCloneObject = require('./initCloneObject'),
-    isArray = require('../lang/isArray'),
-    isObject = require('../lang/isObject');
+    isArray = require('../isArray'),
+    isHostObject = require('./isHostObject'),
+    isObject = require('../isObject');
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',
@@ -15,12 +20,14 @@ var argsTag = '[object Arguments]',
     dateTag = '[object Date]',
     errorTag = '[object Error]',
     funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
     mapTag = '[object Map]',
     numberTag = '[object Number]',
     objectTag = '[object Object]',
     regexpTag = '[object RegExp]',
     setTag = '[object Set]',
     stringTag = '[object String]',
+    symbolTag = '[object Symbol]',
     weakMapTag = '[object WeakMap]';
 
 var arrayBufferTag = '[object ArrayBuffer]',
@@ -41,41 +48,32 @@ cloneableTags[arrayBufferTag] = cloneableTags[boolTag] =
 cloneableTags[dateTag] = cloneableTags[float32Tag] =
 cloneableTags[float64Tag] = cloneableTags[int8Tag] =
 cloneableTags[int16Tag] = cloneableTags[int32Tag] =
-cloneableTags[numberTag] = cloneableTags[objectTag] =
-cloneableTags[regexpTag] = cloneableTags[stringTag] =
-cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
-cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+cloneableTags[mapTag] = cloneableTags[numberTag] =
+cloneableTags[objectTag] = cloneableTags[regexpTag] =
+cloneableTags[setTag] = cloneableTags[stringTag] =
+cloneableTags[symbolTag] = cloneableTags[uint8Tag] =
+cloneableTags[uint8ClampedTag] = cloneableTags[uint16Tag] =
+cloneableTags[uint32Tag] = true;
 cloneableTags[errorTag] = cloneableTags[funcTag] =
-cloneableTags[mapTag] = cloneableTags[setTag] =
 cloneableTags[weakMapTag] = false;
 
-/** Used for native method references. */
-var objectProto = Object.prototype;
-
 /**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objToString = objectProto.toString;
-
-/**
- * The base implementation of `_.clone` without support for argument juggling
- * and `this` binding `customizer` functions.
+ * The base implementation of `_.clone` and `_.cloneDeep` which tracks
+ * traversed objects.
  *
  * @private
  * @param {*} value The value to clone.
  * @param {boolean} [isDeep] Specify a deep clone.
- * @param {Function} [customizer] The function to customize cloning values.
+ * @param {Function} [customizer] The function to customize cloning.
  * @param {string} [key] The key of `value`.
- * @param {Object} [object] The object `value` belongs to.
- * @param {Array} [stackA=[]] Tracks traversed source objects.
- * @param {Array} [stackB=[]] Associates clones with source counterparts.
+ * @param {Object} [object] The parent object of `value`.
+ * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
  * @returns {*} Returns the cloned value.
  */
-function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
+function baseClone(value, isDeep, customizer, key, object, stack) {
   var result;
   if (customizer) {
-    result = object ? customizer(value, key, object) : customizer(value);
+    result = object ? customizer(value, key, object, stack) : customizer(value);
   }
   if (result !== undefined) {
     return result;
@@ -87,16 +85,19 @@ function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
   if (isArr) {
     result = initCloneArray(value);
     if (!isDeep) {
-      return arrayCopy(value, result);
+      return copyArray(value, result);
     }
   } else {
-    var tag = objToString.call(value),
-        isFunc = tag == funcTag;
+    var tag = getTag(value),
+        isFunc = tag == funcTag || tag == genTag;
 
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
+      if (isHostObject(value)) {
+        return object ? value : {};
+      }
       result = initCloneObject(isFunc ? {} : value);
       if (!isDeep) {
-        return baseAssign(result, value);
+        return copySymbols(value, baseAssign(result, value));
       }
     } else {
       return cloneableTags[tag]
@@ -105,24 +106,18 @@ function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
     }
   }
   // Check for circular references and return its corresponding clone.
-  stackA || (stackA = []);
-  stackB || (stackB = []);
-
-  var length = stackA.length;
-  while (length--) {
-    if (stackA[length] == value) {
-      return stackB[length];
-    }
+  stack || (stack = new Stack);
+  var stacked = stack.get(value);
+  if (stacked) {
+    return stacked;
   }
-  // Add the source value to the stack of traversed objects and associate it with its clone.
-  stackA.push(value);
-  stackB.push(result);
+  stack.set(value, result);
 
   // Recursively populate clone (susceptible to call stack limits).
   (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
-    result[key] = baseClone(subValue, isDeep, customizer, key, value, stackA, stackB);
+    assignValue(result, key, baseClone(subValue, isDeep, customizer, key, value, stack));
   });
-  return result;
+  return isArr ? result : copySymbols(value, result);
 }
 
 module.exports = baseClone;

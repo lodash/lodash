@@ -1,5 +1,5 @@
 var baseCreate = require('./baseCreate'),
-    isObject = require('../lang/isObject');
+    isObject = require('../isObject');
 
 /**
  * Creates a function that produces an instance of `Ctor` regardless of

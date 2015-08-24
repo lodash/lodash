@@ -1,4 +1,4 @@
-var isObject = require('../lang/isObject');
+var isObject = require('../isObject');
 
 /**
  * The base implementation of `_.create` without support for assigning

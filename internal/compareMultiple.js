@@ -1,17 +1,17 @@
-var baseCompareAscending = require('./baseCompareAscending');
+var compareAscending = require('./compareAscending');
 
 /**
- * Used by `_.sortByOrder` to compare multiple properties of a value to another
+ * Used by `_.orderBy` to compare multiple properties of a value to another
  * and stable sort them.
  *
- * If `orders` is unspecified, all valuess are sorted in ascending order. Otherwise,
- * a value is sorted in ascending order if its corresponding order is "asc", and
- * descending if "desc".
+ * If `orders` is unspecified, all values are sorted in ascending order. Otherwise,
+ * specify an order of "desc" for descending or "asc" for ascending sort order
+ * of corresponding values.
  *
  * @private
  * @param {Object} object The object to compare.
  * @param {Object} other The other object to compare.
- * @param {boolean[]} orders The order to sort by for each property.
+ * @param {boolean[]|string[]} orders The order to sort by for each property.
  * @returns {number} Returns the sort order indicator for `object`.
  */
 function compareMultiple(object, other, orders) {
@@ -22,13 +22,13 @@ function compareMultiple(object, other, orders) {
       ordersLength = orders.length;
 
   while (++index < length) {
-    var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
+    var result = compareAscending(objCriteria[index], othCriteria[index]);
     if (result) {
       if (index >= ordersLength) {
         return result;
       }
       var order = orders[index];
-      return result * ((order === 'asc' || order === true) ? 1 : -1);
+      return result * (order == 'desc' ? -1 : 1);
     }
   }
   // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications

@@ -1,56 +1,43 @@
-var arrayEach = require('./arrayEach'),
+var Stack = require('./Stack'),
+    arrayEach = require('./arrayEach'),
+    assignMergeValue = require('./assignMergeValue'),
     baseMergeDeep = require('./baseMergeDeep'),
-    isArray = require('../lang/isArray'),
-    isArrayLike = require('./isArrayLike'),
-    isObject = require('../lang/isObject'),
-    isObjectLike = require('./isObjectLike'),
-    isTypedArray = require('../lang/isTypedArray'),
-    keys = require('../object/keys');
+    isArray = require('../isArray'),
+    isObject = require('../isObject'),
+    isTypedArray = require('../isTypedArray'),
+    keysIn = require('../keysIn');
 
 /**
- * The base implementation of `_.merge` without support for argument juggling,
- * multiple sources, and `this` binding `customizer` functions.
+ * The base implementation of `_.merge` without support for multiple sources.
  *
  * @private
  * @param {Object} object The destination object.
  * @param {Object} source The source object.
  * @param {Function} [customizer] The function to customize merged values.
- * @param {Array} [stackA=[]] Tracks traversed source objects.
- * @param {Array} [stackB=[]] Associates values with source counterparts.
- * @returns {Object} Returns `object`.
+ * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
  */
-function baseMerge(object, source, customizer, stackA, stackB) {
-  if (!isObject(object)) {
-    return object;
+function baseMerge(object, source, customizer, stack) {
+  if (object === source) {
+    return;
   }
-  var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-      props = isSrcArr ? undefined : keys(source);
-
+  var props = (isArray(source) || isTypedArray(source)) ? undefined : keysIn(source);
   arrayEach(props || source, function(srcValue, key) {
     if (props) {
       key = srcValue;
       srcValue = source[key];
     }
-    if (isObjectLike(srcValue)) {
-      stackA || (stackA = []);
-      stackB || (stackB = []);
-      baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+    if (isObject(srcValue)) {
+      stack || (stack = new Stack);
+      baseMergeDeep(object, source, key, baseMerge, customizer, stack);
     }
     else {
-      var value = object[key],
-          result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-          isCommon = result === undefined;
-
-      if (isCommon) {
-        result = srcValue;
+      var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stack) : undefined;
+      if (newValue === undefined) {
+        newValue = srcValue;
       }
-      if ((result !== undefined || (isSrcArr && !(key in object))) &&
-          (isCommon || (result === result ? (result !== value) : (value === value)))) {
-        object[key] = result;
-      }
+      assignMergeValue(object, key, newValue);
     }
   });
-  return object;
 }
 
 module.exports = baseMerge;

@@ -1,7 +1,7 @@
 {
   "name": "lodash",
-  "version": "3.10.1",
-  "description": "The modern build of lodash modular utilities.",
+  "version": "4.0.0",
+  "description": "Lodash modular utilities.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
@@ -10,9 +10,7 @@
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Benjamin Tan <demoneaux@gmail.com> (https://d10.github.io/)",
-    "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
-    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
+    "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",

@@ -1,4 +1,4 @@
-var isObject = require('../lang/isObject');
+var isObject = require('../isObject');
 
 /**
  * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.

@@ -1,8 +1,9 @@
-/** Native method references. */
-var pow = Math.pow;
+var toInteger = require('../toInteger'),
+    toNumber = require('../toNumber'),
+    toString = require('../toString');
 
 /**
- * Creates a `_.ceil`, `_.floor`, or `_.round` function.
+ * Creates a function like `_.round`.
  *
  * @private
  * @param {string} methodName The name of the `Math` method to use when rounding.
@@ -11,10 +12,16 @@ var pow = Math.pow;
 function createRound(methodName) {
   var func = Math[methodName];
   return function(number, precision) {
-    precision = precision === undefined ? 0 : (+precision || 0);
+    number = toNumber(number);
+    precision = toInteger(precision);
     if (precision) {
-      precision = pow(10, precision);
-      return func(number * precision) / precision;
+      // Shift with exponential notation to avoid floating-point issues.
+      // See [MDN](https://mdn.io/round#Examples) for more details.
+      var pair = (toString(number) + 'e').split('e'),
+          value = func(pair[0] + 'e' + (+pair[1] + precision));
+
+      pair = (toString(value) + 'e').split('e');
+      return +(pair[0] + 'e' + (+pair[1] - precision));
     }
     return func(number);
   };

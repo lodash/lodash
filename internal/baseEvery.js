@@ -1,14 +1,12 @@
 var baseEach = require('./baseEach');
 
 /**
- * The base implementation of `_.every` without support for callback
- * shorthands and `this` binding.
+ * The base implementation of `_.every` without support for iteratee shorthands.
  *
  * @private
- * @param {Array|Object|string} collection The collection to iterate over.
+ * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
- * @returns {boolean} Returns `true` if all elements pass the predicate check,
- *  else `false`
+ * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`
  */
 function baseEvery(collection, predicate) {
   var result = true;

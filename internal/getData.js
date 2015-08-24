@@ -1,5 +1,5 @@
 var metaMap = require('./metaMap'),
-    noop = require('../utility/noop');
+    noop = require('../noop');
 
 /**
  * Gets metadata for `func`.

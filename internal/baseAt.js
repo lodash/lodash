@@ -1,30 +1,21 @@
-var isArrayLike = require('./isArrayLike'),
-    isIndex = require('./isIndex');
+var get = require('../get');
 
 /**
- * The base implementation of `_.at` without support for string collections
- * and individual key arguments.
+ * The base implementation of `_.at` without support for individual paths.
  *
  * @private
- * @param {Array|Object} collection The collection to iterate over.
- * @param {number[]|string[]} props The property names or indexes of elements to pick.
+ * @param {Object} object The object to iterate over.
+ * @param {string[]} paths The property paths of elements to pick.
  * @returns {Array} Returns the new array of picked elements.
  */
-function baseAt(collection, props) {
+function baseAt(object, paths) {
   var index = -1,
-      isNil = collection == null,
-      isArr = !isNil && isArrayLike(collection),
-      length = isArr ? collection.length : 0,
-      propsLength = props.length,
-      result = Array(propsLength);
+      isNil = object == null,
+      length = paths.length,
+      result = Array(length);
 
-  while(++index < propsLength) {
-    var key = props[index];
-    if (isArr) {
-      result[index] = isIndex(key, length) ? collection[key] : undefined;
-    } else {
-      result[index] = isNil ? undefined : collection[key];
-    }
+  while (++index < length) {
+    result[index] = isNil ? undefined : get(object, paths[index]);
   }
   return result;
 }

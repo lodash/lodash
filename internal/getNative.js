@@ -1,4 +1,4 @@
-var isNative = require('../lang/isNative');
+var isNative = require('../isNative');
 
 /**
  * Gets the native function at `key` of `object`.

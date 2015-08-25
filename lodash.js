@@ -4999,6 +4999,22 @@
       return baseSlice(array, start, end);
     }
 
+
+    function insert(array, value, index) {
+      array.splice(index, 0, value);
+      return array;
+    }
+
+    function insertSorted(array, value, iteratee) {
+      var index = sortedIndexBy(array, value, iteratee);
+      return insert(array, value, index);
+    }
+
+    function insertSortedLast(array, value, iteratee) {
+      var index = sortedLastIndexBy(array, value, iteratee);
+      return insert(array, value, index);
+    }
+
     /**
      * Uses a binary search to determine the lowest index at which `value` should
      * be inserted into `array` in order to maintain its sort order.

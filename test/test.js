@@ -11381,7 +11381,7 @@
     });
 
     test('`_.' + methodName + '` should treat nullish values as empty strings', 6, function() {
-      _.each([null, '_-'], function(chars) {
+      _.each([undefined, '_-'], function(chars) {
         var expected = chars ? (isPad ? '__' : chars) : '  ';
         strictEqual(func(null, 2, chars), expected);
         strictEqual(func(undefined, 2, chars), expected);
@@ -15839,11 +15839,10 @@
       });
     });
 
-    test('`_.' + methodName + '` should work with nullish or empty string values for `chars`', 3, function() {
+    test('`_.' + methodName + '` should work with `undefined` or empty string values for `chars`', 2, function() {
       var string = whitespace + 'a b c' + whitespace,
           expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
-      strictEqual(func(string, null), expected);
       strictEqual(func(string, undefined), expected);
       strictEqual(func(string, ''), string);
     });

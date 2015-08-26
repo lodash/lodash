@@ -3341,13 +3341,13 @@
      */
     function createPadding(string, length, chars) {
       var strLength = string.length;
-      length = +length;
+      length = toInteger(length);
 
-      if (strLength >= length || !nativeIsFinite(length)) {
+      if (!length || strLength >= length) {
         return '';
       }
       var padLength = length - strLength;
-      chars = chars == null ? ' ' : (chars + '');
+      chars = chars === undefined ? ' ' : (chars + '');
       return repeat(chars, nativeCeil(padLength / chars.length)).slice(0, padLength);
     }
 
@@ -10018,10 +10018,10 @@
      */
     function pad(string, length, chars) {
       string = baseToString(string);
-      length = +length;
+      length = toInteger(length);
 
       var strLength = string.length;
-      if (strLength >= length || !nativeIsFinite(length)) {
+      if (!length || strLength >= length) {
         return string;
       }
       var mid = (length - strLength) / 2,
@@ -10466,7 +10466,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard || chars === undefined) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = (chars + '');
@@ -10497,7 +10497,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard || chars === undefined) {
         return string.slice(trimmedLeftIndex(string));
       }
       return string.slice(charsLeftIndex(string, (chars + '')));
@@ -10527,7 +10527,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard || chars === undefined) {
         return string.slice(0, trimmedRightIndex(string) + 1);
       }
       return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
@@ -10587,7 +10587,7 @@
         return omission;
       }
       var result = string.slice(0, end);
-      if (separator == null) {
+      if (separator === undefined) {
         return result + omission;
       }
       if (isRegExp(separator)) {

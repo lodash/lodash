@@ -1011,7 +1011,7 @@
 
     test('`_.' + methodName + '` should work with a `customizer` callback', 1, function() {
       var actual = func({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
-        return typeof a == 'undefined' ? b : a;
+        return a === undefined ? b : a;
       });
 
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
@@ -9157,7 +9157,7 @@
       deepEqual(actual, array);
     });
 
-    test('should handle object arguments with non-numeric length properties', 1, function() {
+    test('should handle object arguments with non-number length properties', 1, function() {
       var value = { 'value': 'x' },
           object = { 'length': { 'value': 'x' } };
 

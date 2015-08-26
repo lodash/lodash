@@ -5778,18 +5778,6 @@
     test('should coerce `fromIndex` to an integer', 1, function() {
       strictEqual(_.indexOf(array, 2, 1.2), 1);
     });
-
-    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
-      var sorted = [4, 4, 5, 5, 6, 6],
-          values = [true, '1', {}],
-          expected = _.map(values, _.constant(2));
-
-      var actual = _.map(values, function(value) {
-        return _.indexOf(sorted, 5, value);
-      });
-
-      deepEqual(actual, expected);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -5813,6 +5801,7 @@
     }
 
     var array = [1, new Foo, 3, new Foo],
+        sorted = [1, 3, new Foo, new Foo],
         indexOf = _.indexOf;
 
     var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
@@ -5855,32 +5844,52 @@
       }
     });
 
-    test('`_.uniq` should work with a custom `_.indexOf` method', 4, function() {
-      _.each([false, true], function(param) {
-        if (!isModularize) {
-          _.indexOf = custom;
-          deepEqual(_.uniq(array, param), array.slice(0, 3));
-          deepEqual(_.uniq(largeArray, param), [largeArray[0]]);
-          _.indexOf = indexOf;
-        }
-        else {
-          skipTest(2);
-        }
-      });
+    test('`_.uniq` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.uniq(array), array.slice(0, 3));
+        deepEqual(_.uniq(largeArray), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
     });
 
-    test('`_.uniqBy` should work with a custom `_.indexOf` method', 6, function() {
-      _.each([[false, _.identity], [true, _.identity], [_.identity]], function(params) {
-        if (!isModularize) {
-          _.indexOf = custom;
-          deepEqual(_.uniqBy.apply(_, [array].concat(params)), array.slice(0, 3));
-          deepEqual(_.uniqBy.apply(_, [largeArray].concat(params)), [largeArray[0]]);
-          _.indexOf = indexOf;
-        }
-        else {
-          skipTest(2);
-        }
-      });
+    test('`_.uniqBy` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.uniqBy(array, _.identity), array.slice(0, 3));
+        deepEqual(_.uniqBy(largeArray, _.identity), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_.sortedUniq` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.sortedUniq(sorted), sorted.slice(0, 3));
+        deepEqual(_.sortedUniq(largeArray), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_.sortedUniqBy` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.sortedUniqBy(sorted, _.identity), sorted.slice(0, 3));
+        deepEqual(_.sortedUniqBy(largeArray, _.identity), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -9024,9 +9033,9 @@
       deepEqual(actual, expected);
     });
 
-    test('should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`', 1, function() {
+    test('should treat falsey `fromIndex` values correctly', 1, function() {
       var expected = _.map(falsey, function(value) {
-        return typeof value == 'number' ? -1 : 5;
+        return value === undefined ? 5 : -1;
       });
 
       var actual = _.map(falsey, function(fromIndex) {
@@ -9039,27 +9048,16 @@
     test('should coerce `fromIndex` to an integer', 1, function() {
       strictEqual(_.lastIndexOf(array, 2, 4.2), 4);
     });
-
-    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
-      var sorted = [4, 4, 5, 5, 6, 6],
-          values = [true, '1', {}],
-          expected = _.map(values, _.constant(3));
-
-      var actual = _.map(values, function(value) {
-        return _.lastIndexOf(sorted, 5, value);
-      });
-
-      deepEqual(actual, expected);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('indexOf methods');
 
-  _.each(['indexOf', 'lastIndexOf'], function(methodName) {
+  _.each(['indexOf', 'lastIndexOf', 'sortedIndexOf', 'sortedLastIndexOf'], function(methodName) {
     var func = _[methodName],
-        isIndexOf = methodName == 'indexOf';
+        isIndexOf = !/last/i.test(methodName),
+        isSorted = /^sorted/.test(methodName);
 
     test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant(-1));
@@ -9094,11 +9092,20 @@
     });
 
     test('`_.' + methodName + '` should match `NaN`', 4, function() {
-      var array = [1, NaN, 3, NaN, 5, NaN];
-      strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
-      strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
-      strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
-      strictEqual(func([1, 2, NaN, NaN], NaN, true), isIndexOf ? 2 : 3);
+      var array = isSorted
+        ? [1, 2, NaN, NaN]
+        : [1, NaN, 3, NaN, 5, NaN];
+
+      if (isSorted) {
+        strictEqual(func(array, NaN, true), isIndexOf ? 2 : 3);
+        skipTest(3);
+      }
+      else {
+        strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
+        strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
+        strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
+        skipTest();
+      }
     });
 
     test('`_.' + methodName + '` should match `-0` as `0`', 2, function() {
@@ -14271,6 +14278,53 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('sortedIndexOf methods');
+
+  _.each(['sortedIndexOf', 'sortedLastIndexOf'], function(methodName) {
+    var func = _[methodName],
+        isSortedIndexOf = methodName == 'sortedIndexOf';
+
+    test('should perform a binary search', 1, function() {
+      var sorted = [4, 4, 5, 5, 6, 6];
+      deepEqual(func(sorted, 5), isSortedIndexOf ? 2 : 3);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortedUniq');
+
+  (function() {
+    test('should return unique values of a sorted array', 3, function() {
+      var expected = [1, 2, 3];
+
+      _.each([[1, 2, 3], [1, 1, 2, 2, 3], [1, 2, 3, 3, 3, 3, 3]], function(array) {
+        deepEqual(_.sortedUniq(array), expected);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortedUniqBy');
+
+  (function() {
+    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    test('should work with an `iteratee` argument', 1, function() {
+      var array = _.sortBy(objects, 'a'),
+          expected = [objects[2], objects[0], objects[1]];
+
+      var actual = _.sortedUniqBy(array, function(object) {
+        return object.a;
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.spread');
 
   (function() {
@@ -15902,17 +15956,14 @@
   (function() {
     var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
-    test('should work with an `iteratee` argument', 2, function() {
-      _.each([objects, _.sortBy(objects, 'a')], function(array, index) {
-        var isSorted = !!index,
-            expected = isSorted ? [objects[2], objects[0], objects[1]] : objects.slice(0, 3);
+    test('should work with an `iteratee` argument', 1, function() {
+      var expected = objects.slice(0, 3);
 
-        var actual = _.uniqBy(array, isSorted, function(object) {
-          return object.a;
-        });
-
-        deepEqual(actual, expected);
+      var actual = _.uniqBy(objects, function(object) {
+        return object.a;
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should provide the correct `iteratee` arguments', 1, function() {
@@ -15923,14 +15974,6 @@
       });
 
       deepEqual(args, [objects[0]]);
-    });
-
-    test('should work with `iteratee` without specifying `isSorted`', 1, function() {
-      var actual = _.uniqBy(objects, function(object) {
-        return object.a;
-      });
-
-      deepEqual(actual, objects.slice(0, 3));
     });
 
     test('should work with a "_.property" style `iteratee`', 2, function() {
@@ -15982,13 +16025,6 @@
 
     test('`_.' + methodName + '` should not treat `NaN` as unique', 1, function() {
       deepEqual(func([1, NaN, 3, NaN]), [1, NaN, 3]);
-    });
-
-    test('`_.' + methodName + '` should work with `isSorted`', 3, function() {
-      var expected = [1, 2, 3];
-      deepEqual(func([1, 2, 3], true), expected);
-      deepEqual(func([1, 1, 2, 2, 3], true), expected);
-      deepEqual(func([1, 2, 3, 3, 3, 3, 3], true), expected);
     });
 
     test('`_.' + methodName + '` should work with large arrays', 1, function() {
@@ -17148,10 +17184,11 @@
   QUnit.module('"Arrays" category methods');
 
  (function() {
-    var args = arguments,
+    var args = (function() { return arguments; }(1, null, [3], null, 5)),
+        sortedArgs = (function() { return arguments; }(1, [3], 5, null, null)),
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 28, function() {
+    test('should work with `arguments` objects', 30, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
@@ -17177,8 +17214,10 @@
       deepEqual(_.last(args), 5, message('last'));
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
       deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
-      deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
-      deepEqual(_.sortedLastIndex(args, 6), 5, message('sortedLastIndex'));
+      deepEqual(_.sortedIndex(sortedArgs, 6), 3, message('sortedIndex'));
+      deepEqual(_.sortedIndexOf(sortedArgs, 5), 2, message('sortedIndexOf'));
+      deepEqual(_.sortedLastIndex(sortedArgs, 5), 3, message('sortedLastIndex'))
+      deepEqual(_.sortedLastIndexOf(sortedArgs, 1), 0, message('sortedLastIndexOf'));
       deepEqual(_.take(args, 2), [1, null], message('take'));
       deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
       deepEqual(_.takeRightWhile(args, _.identity), [5], message('takeRightWhile'));
@@ -17208,7 +17247,7 @@
       deepEqual(_.intersection(array, null), [], message('intersection'));
       deepEqual(_.union(array, null), array, message('union'));
     });
-  }(1, null, [3], null, 5));
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -17319,7 +17358,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 224, function() {
+    test('should accept falsey arguments', 228, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

@@ -588,34 +588,6 @@
   }
 
   /**
-   * An implementation of `_.uniq` optimized for sorted arrays without support
-   * for callback shorthands.
-   *
-   * @private
-   * @param {Array} array The array to inspect.
-   * @param {Function} [iteratee] The function invoked per iteration.
-   * @returns {Array} Returns the new duplicate free array.
-   */
-  function sortedUniq(array, iteratee) {
-    var seen,
-        index = -1,
-        length = array.length,
-        resIndex = -1,
-        result = [];
-
-    while (++index < length) {
-      var value = array[index],
-          computed = iteratee ? iteratee(value, index, array) : value;
-
-      if (!index || seen !== computed) {
-        seen = computed;
-        result[++resIndex] = value;
-      }
-    }
-    return result;
-  }
-
-  /**
    * Used by `_.trim` and `_.trimLeft` to get the index of the first non-whitespace
    * character of `string`.
    *
@@ -2649,6 +2621,43 @@
     }
 
     /**
+     * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
+     * support for callback shorthands.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseSortedUniq(array, iteratee) {
+      var index = -1,
+          indexOf = getIndexOf(),
+          isCommon = indexOf === baseIndexOf,
+          length = array.length,
+          seen = isCommon ? undefined : [],
+          resIndex = -1,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index],
+            computed = iteratee ? iteratee(value, index, array) : value;
+
+        if (isCommon && value === value) {
+          if (seen !== computed || !index) {
+            seen = computed
+            result[++resIndex] = value;
+          }
+        } else {
+          if (!index || indexOf(seen, computed, 0) < 0) {
+            seen.push(computed);
+            result[++resIndex] = value;
+          }
+        }
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `_.uniq` and `_.uniqBy` without support for
      * callback shorthands.
      *
@@ -4662,8 +4671,7 @@
      * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-     *  to perform a binary search on a sorted array.
+     * @param {number} [fromIndex=0] The index to search from.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -4673,26 +4681,15 @@
      * // using `fromIndex`
      * _.indexOf([1, 2, 1, 2], 2, 2);
      * // => 3
-     *
-     * // performing a binary search
-     * _.indexOf([1, 1, 2, 2], 2, true);
-     * // => 2
      */
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
       if (!length) {
         return -1;
       }
-      if (typeof fromIndex == 'number') {
+      if (fromIndex) {
         fromIndex = toInteger(fromIndex);
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
-      } else if (fromIndex) {
-        var index = binaryIndex(array, value);
-        if (index < length &&
-            (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
-          return index;
-        }
-        return -1;
       }
       return baseIndexOf(array, value, fromIndex || 0);
     }
@@ -4792,8 +4789,7 @@
      * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=array.length-1] The index to search from
-     *  or `true` to perform a binary search on a sorted array.
+     * @param {number} [fromIndex=array.length-1] The index to search from.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -4803,10 +4799,6 @@
      * // using `fromIndex`
      * _.lastIndexOf([1, 2, 1, 2], 2, 2);
      * // => 1
-     *
-     * // performing a binary search
-     * _.lastIndexOf([1, 1, 2, 2], 2, true);
-     * // => 3
      */
     function lastIndexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
@@ -4814,16 +4806,9 @@
         return -1;
       }
       var index = length;
-      if (typeof fromIndex == 'number') {
+      if (fromIndex !== undefined) {
         index = toInteger(fromIndex);
         index = (index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1)) + 1;
-      } else if (fromIndex) {
-        index = binaryIndex(array, value, true) - 1;
-        var other = array[index];
-        if (value === value ? (value === other) : (other !== other)) {
-          return index;
-        }
-        return -1;
       }
       if (value !== value) {
         return indexOfNaN(array, index, true);
@@ -5051,6 +5036,33 @@
     }
 
     /**
+     * This method is like `_.indexOf` except that it performs a binary
+     * search on a sorted `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to search.
+     * @param {*} value The value to search for.
+     * @returns {number} Returns the index of the matched value, else `-1`.
+     * @example
+     *
+     * _.sortedIndexOf([1, 1, 2, 2], 2);
+     * // => 2
+     */
+    function sortedIndexOf(array, value) {
+      var length = array ? array.length : 0;
+      if (length) {
+        var index = binaryIndex(array, value);
+        if (index < length &&
+            (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    /**
      * This method is like `_.sortedIndex` except that it returns the highest
      * index at which `value` should be inserted into `array` in order to
      * maintain its sort order.
@@ -5090,6 +5102,77 @@
      */
     function sortedLastIndexBy(array, value, iteratee) {
       return binaryIndexBy(array, value, getIteratee(iteratee), true);
+    }
+
+    /**
+     * This method is like `_.lastIndexOf` except that it performs a binary
+     * search on a sorted `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to search.
+     * @param {*} value The value to search for.
+     * @returns {number} Returns the index of the matched value, else `-1`.
+     * @example
+     *
+     * _.sortedLastIndexOf([1, 1, 2, 2], 2);
+     * // => 3
+     */
+    function sortedLastIndexOf(array, value) {
+      var length = array ? array.length : 0;
+      if (length) {
+        var index = binaryIndex(array, value, true) - 1,
+            other = array[index];
+
+        if (value === value ? (value === other) : (other !== other)) {
+          return index;
+        }
+      }
+      return -1
+    }
+
+    /**
+     * This method is like `_.uniq` except that it's designed and optimized
+     * for sorted arrays.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @returns {Array} Returns the new duplicate free array.
+     * @example
+     *
+     * _.sortedUniq([1, 1, 2]);
+     * // => [1, 2]
+     */
+    function sortedUniq(array) {
+      return (array && array.length)
+        ? baseSortedUniq(array)
+        : [];
+    }
+
+    /**
+     * This method is like `_.uniqBy` except that it's designed and optimized
+     * for sorted arrays.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     * @example
+     *
+     * _.sortedUniqBy([1, 1.5, 2, 2.5], function(n) {
+     *   return Math.floor(n);
+     * });
+     * // => [1, 2]
+     */
+    function sortedUniqBy(array, iteratee) {
+      return (array && array.length)
+        ? baseSortedUniq(array, getIteratee(iteratee))
+        : [];
     }
 
     /**
@@ -5265,31 +5348,22 @@
      * Creates a duplicate-free version of an array, using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons, in which only the first occurence of each element
-     * is kept. Providing `true` for `isSorted` performs a faster search algorithm
-     * for sorted arrays.
+     * is kept.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted] Specify the array is sorted.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
      * _.uniq([2, 1, 2]);
      * // => [2, 1]
-     *
-     * // using `isSorted`
-     * _.uniq([1, 1, 2], true);
-     * // => [1, 2]
      */
-    function uniq(array, isSorted) {
-      if (!(array && array.length)) {
-        return [];
-      }
-      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() === baseIndexOf)
-        ? sortedUniq(array)
-        : baseUniq(array);
+    function uniq(array) {
+      return (array && array.length)
+        ? baseUniq(array)
+        : [];
     }
 
     /**
@@ -5301,7 +5375,6 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted] Specify the array is sorted.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the new duplicate free array.
      * @example
@@ -5315,21 +5388,10 @@
      * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    function uniqBy(array, isSorted, iteratee) {
-      if (!(array && array.length)) {
-        return [];
-      }
-      if (isSorted != null && typeof isSorted != 'boolean') {
-        iteratee = isSorted;
-        isSorted = false;
-      }
-      var toIteratee = getIteratee();
-      if (!(iteratee == null && toIteratee === baseIteratee)) {
-        iteratee = toIteratee(iteratee);
-      }
-      return (isSorted && getIndexOf() === baseIndexOf)
-        ? sortedUniq(array, iteratee)
-        : baseUniq(array, iteratee);
+    function uniqBy(array, iteratee) {
+      return (array && array.length)
+        ? baseUniq(array, getIteratee(iteratee))
+        : [];
     }
 
     /**
@@ -11457,6 +11519,8 @@
     lodash.slice = slice;
     lodash.sortBy = sortBy;
     lodash.sortByOrder = sortByOrder;
+    lodash.sortedUniq = sortedUniq;
+    lodash.sortedUniqBy = sortedUniqBy;
     lodash.spread = spread;
     lodash.take = take;
     lodash.takeRight = takeRight;
@@ -11583,8 +11647,10 @@
     lodash.some = some;
     lodash.sortedIndex = sortedIndex;
     lodash.sortedIndexBy = sortedIndexBy;
+    lodash.sortedIndexOf = sortedIndexOf;
     lodash.sortedLastIndex = sortedLastIndex;
     lodash.sortedLastIndexBy = sortedLastIndexBy;
+    lodash.sortedLastIndexOf = sortedLastIndexOf;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
     lodash.sum = sum;

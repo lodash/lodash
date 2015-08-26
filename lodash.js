@@ -6117,7 +6117,7 @@
     function includes(collection, target, fromIndex, guard) {
       collection = isArrayLike(collection) ? collection : values(collection);
       var length = collection.length;
-      if (guard || typeof fromIndex != 'number') {
+      if (guard || !fromIndex) {
         fromIndex = 0;
       } else {
         fromIndex = toInteger(fromIndex);

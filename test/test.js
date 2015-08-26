@@ -5572,8 +5572,10 @@
         deepEqual(actual, expected);
       });
 
-      test('should work with ' + key + ' and treat non-number `fromIndex` values as `0`', 1, function() {
-        strictEqual(_.includes(collection, values[0], '1'), true);
+      test('should work with ' + key + ' and coerce non-integer `fromIndex` values to integers', 3, function() {
+        strictEqual(_.includes(collection, values[0], '1'), false);
+        strictEqual(_.includes(collection, values[0], 0.1), true);
+        strictEqual(_.includes(collection, values[0], NaN), true);
       });
 
       test('should work with ' + key + ' and a negative `fromIndex`', 2, function() {
@@ -5631,10 +5633,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should not be possible to perform a binary search', 1, function() {
-      strictEqual(_.includes([3, 2, 1], 3, true), true);
     });
 
     test('should match `NaN`', 1, function() {

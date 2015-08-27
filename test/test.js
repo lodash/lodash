@@ -7773,7 +7773,7 @@
         strictEqual(_.isNil(_._undefined), true);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
   }(1, 2, 3));

@@ -2658,15 +2658,26 @@
     }
 
     /**
-     * The base implementation of `_.uniq` and `_.uniqBy` without support for
-     * callback shorthands.
+     * The base implementation of `_.uniq`.
      *
      * @private
      * @param {Array} array The array to inspect.
      * @param {Function} [iteratee] The function invoked per iteration.
      * @returns {Array} Returns the new duplicate free array.
      */
-    function baseUniq(array, iteratee) {
+    function baseUniq(array) {
+      return baseUniqBy(array);
+    }
+
+    /**
+     * The base implementation of `_.uniqBy` without support for callback shorthands.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseUniqBy(array, iteratee) {
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,

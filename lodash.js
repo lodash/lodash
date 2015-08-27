@@ -299,7 +299,7 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches.
+   * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
    *
    * @private
    * @param {Array} array The array to search.
@@ -1647,8 +1647,8 @@
     }
 
     /**
-     * The base implementation of `_.difference` which accepts a single array
-     * of values to exclude.
+     * The base implementation of `_.difference` without support for individual
+     * values to exclude.
      *
      * @private
      * @param {Array} array The array to inspect.
@@ -2245,7 +2245,7 @@
     }
 
     /**
-     * The base implementation of `_.merge` without support multiple sources.
+     * The base implementation of `_.merge` without support for multiple sources.
      *
      * @private
      * @param {Object} object The destination object.

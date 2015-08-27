@@ -3868,6 +3868,73 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.insert');
+
+  (function() {
+    test('should use a default `index` of `array.length`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.insert(array, 'a'), [1, 2, 3, 'a']);
+    });
+
+    test('should work with a positive `index`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.insert(array, 'a', 1), [1, 'a', 2, 3]);
+    });
+
+    test('should work with a `index` >= `array.length`', 2, function() {
+      deepEqual(_.insert([1, 2, 3], 'a', 3), [1, 2, 3, 'a']);
+      deepEqual(_.insert([1, 2, 3], 'a', 5), [1, 2, 3, undefined, undefined, 'a']);
+    });
+
+    test('should treat falsey `index` values as `array.length`', falsey.length, function() {
+      var expected = _.fill(Array(3), [1, 2, 3, 'a']);
+
+      var actual = _.map(falsey, function(index) {
+        var array = _.insert([1, 2, 3], 'a', index);
+        deepEqual(array, [1, 2, 3, 'a']);
+      });
+    });
+
+    test('should work with a negative `index`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.insert(array, 'a', -1), [1, 2, 'a', 3]);
+    });
+
+    test('should work with a negative `index` <= negative `array.length`', 1, function() {
+      var array = [1, 2, 3];
+      deepEqual(_.insert(array, 'a', -5), [1, 'a', 2, 3]);
+    });
+
+    test('should coerce `index` to integers', 1, function() {
+      var positions = [0.1, '0', '1', NaN];
+
+      var actual = _.map(positions, function(pos) {
+        var array = [1, 2, 3];
+        return _.insert.apply(_, [array, 'a'].concat(pos));
+      });
+
+      deepEqual(actual, [['a', 1, 2, 3], ['a', 1, 2, 3], [1, 'a', 2, 3], [1, 2, 3, 'a']]);
+    });
+
+    test('should return a wrapped value when chaining', 3, function() {
+      if (!isNpm) {
+        var array = [1, 2, 3],
+            wrapped = _(array).insert('a', 2),
+            actual = wrapped.value();
+
+        ok(wrapped instanceof _);
+        deepEqual(actual, [1, 2, 'a', 3]);
+        strictEqual(actual, array);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+
   QUnit.module('lodash.filter');
 
   (function() {
@@ -14261,6 +14328,115 @@
           if (array.length == length) {
             ok(steps == 32 || steps == 33);
             strictEqual(actual, expected);
+          }
+          else {
+            skipTest(2);
+          }
+        });
+      });
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('insertSorted methods');
+
+  _.each(['insertSorted', 'insertSortedLast'], function(methodName) {
+    var func = _[methodName],
+        isInsertSorted = methodName == 'insertSorted';
+
+    test('`_.' + methodName + '` should return an array with the given value inserted into a sorted location', 6, function() {
+      var values = [30, 40, 50],
+        expected = isInsertSorted ? [0, 1, 1] : [1, 1, 2];
+
+      _.each(values, function(value, index) {
+        var array = [30, 50];
+        func(array, value);
+        deepEqual(array[expected[index]], value);
+        strictEqual(array.length, 3);
+      });
+    });
+
+    test('`_.' + methodName + '` should work with an array of strings', 6, function() {
+      var values = ['a', 'b', 'c'],
+        expected = isInsertSorted ? [0, 1, 1] : [1, 1, 2];
+
+      _.each(values, function(value, index) {
+        var array = ['a', 'c'];
+        func(array, value);
+        deepEqual(array[expected[index]], value);
+        strictEqual(array.length, 3);
+      });
+    });
+
+    test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', 6, function() {
+      var values = [{ 'x': 30, 'y': 0 }, { 'x': 40, 'y': 0 }, { 'x': 50, 'y': 0 }],
+        expected = isInsertSorted ? [0, 1, 1] : [1, 1, 2];
+
+      _.each(values, function(value, index) {
+        var array = [{ 'x': 30 }, { 'x': 50 }];
+        func(array, value, 'x');
+        deepEqual(array[expected[index]], value);
+        strictEqual(array.length, 3);
+      });
+    });
+
+    test('`_.' + methodName + '` should accept a falsey `array` argument and a `value`', 1, function() {
+      var expected = _.map(falsey, _.constant([[1], [undefined], [NaN]]));
+
+      var actual = _.map(falsey, function(array) {
+        return [func(array, 1), func(array, undefined), func(array, NaN)];
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should align with `_.sortBy`', 10, function() {
+      var expected = isInsertSorted ? [2, 3, 4, 5] : [2, 4, 5, 7]
+
+      _.each([
+        [NaN, null, 1, '2', {}, NaN, undefined],
+        ['2', null, 1, NaN, {}, NaN, undefined]
+      ], function(array, index) {
+        var sortedArray = [1, '2', {}, null, undefined, NaN, NaN];
+        deepEqual(_.sortBy(array), sortedArray);
+        strictEqual(func(sortedArray.slice(), 3)[expected[0]], 3);
+        strictEqual(func(sortedArray.slice(), null)[expected[1]], null);
+        strictEqual(func(sortedArray.slice(), undefined)[expected[2]], undefined);
+        ok(_.isNaN(func(sortedArray.slice(), NaN)[expected[3]]));
+      });
+    });
+
+    test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
+      var args;
+
+      func([30, 50], 40, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [40]);
+    });
+
+    test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', 12, function() {
+      _.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH - 1], function(length) {
+        var values = [MAX_ARRAY_LENGTH, NaN, undefined],
+          expected = [0, length, 0];
+        
+        _.each(values, function(value, index) {
+          var array = [],
+              steps = 0,
+              actual;
+
+          array.length = length;
+          func(array, value, function(value) { steps++; return value; });
+
+          // Avoid false fails in older Firefox.
+          if (array.length - 1 == length) {
+            ok(steps == 32 || steps == 33);
+            if (_.isNaN(array[expected[index]]))
+              ok(_.isNaN(array[expected[index]]));
+            else
+              strictEqual(array[expected[index]], value);
           }
           else {
             skipTest(2);

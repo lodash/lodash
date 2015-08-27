@@ -5000,19 +5000,80 @@
     }
 
 
+    /**
+     * Uses a binary search to determine the lowest index at which `value` should
+     * be inserted into `array` in order to maintain its sort order.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @example
+     *
+     * _.sortedIndex([30, 50], 40);
+     * // => 1
+     *
+     * _.sortedIndex([4, 5], 4);
+     * // => 0
+     */    
     function insert(array, value, index) {
-      array.splice(index, 0, value);
+      array = array || [];
+      index = isNumber(index) ? index : array.length;
+
+      if (index < array.length) {
+        index = index < 0 ? index % array.length : index;
+        array.splice(index, 0, value);
+      } else {
+        array[index] = value
+      }
+
       return array;
     }
 
+    /**
+     * Uses a binary search to determine the lowest index at which `value` should
+     * be inserted into `array` in order to maintain its sort order.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @example
+     *
+     * _.sortedIndex([30, 50], 40);
+     * // => 1
+     *
+     * _.sortedIndex([4, 5], 4);
+     * // => 0
+     */
     function insertSorted(array, value, iteratee) {
-      var index = sortedIndexBy(array, value, iteratee);
-      return insert(array, value, index);
+      return insert(array, value, sortedIndexBy(array, value, iteratee));
     }
 
+    /**
+     * Uses a binary search to determine the lowest index at which `value` should
+     * be inserted into `array` in order to maintain its sort order.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     * @example
+     *
+     * _.sortedIndex([30, 50], 40);
+     * // => 1
+     *
+     * _.sortedIndex([4, 5], 4);
+     * // => 0
+     */
     function insertSortedLast(array, value, iteratee) {
-      var index = sortedLastIndexBy(array, value, iteratee);
-      return insert(array, value, index);
+      return insert(array, value, sortedLastIndexBy(array, value, iteratee));
     }
 
     /**
@@ -11427,6 +11488,9 @@
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
     lodash.initial = initial;
+    lodash.insert = insert;
+    lodash.insertSorted = insertSorted;
+    lodash.insertSortedLast = insertSortedLast;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;

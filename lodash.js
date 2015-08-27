@@ -2315,7 +2315,7 @@
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
             ? toPlainObject(oldValue)
-            : (isPlainObject(oldValue) ? oldValue : {});
+            : (isObject(oldValue) ? oldValue : {});
         }
         else {
           isCommon = isFunction(srcValue);

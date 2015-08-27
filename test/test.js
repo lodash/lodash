@@ -5141,29 +5141,29 @@
       var args,
           object = { 'a': 1 },
           source = { 'a': 2 },
-          expected = [1, 2, 'a', object, source];
-
-      func(object, source, function() {
-        args || (args = slice.call(arguments));
-      });
+          expected = _.map([1, 2, 'a', object, source], _.clone);
 
       if (isMergeWith) {
         expected.push(undefined, undefined);
       }
+      func(object, source, function() {
+        args || (args = _.map(arguments, _.clone));
+      });
+
       deepEqual(args, expected, 'primitive property values');
 
       args = null;
       object = { 'a': 1 };
       source = { 'b': 2 };
+      expected = _.map([undefined, 2, 'b', object, source], _.clone);
 
-      func(object, source, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      expected = [undefined, 2, 'b', object, source];
       if (isMergeWith) {
         expected.push(undefined, undefined);
       }
+      func(object, source, function() {
+        args || (args = _.map(arguments, _.clone));
+      });
+
       deepEqual(args, expected, 'missing destination property');
 
       var argsList = [],
@@ -5172,16 +5172,16 @@
 
       object = { 'a': objectValue };
       source = { 'a': sourceValue };
+      expected = [_.map([objectValue, sourceValue, 'a', object, source], _.cloneDeep)];
 
+      if (isMergeWith) {
+        expected[0].push([], []);
+        expected.push(_.map([undefined, 2, 'b', objectValue, sourceValue, [sourceValue], [objectValue]], _.cloneDeep));
+      }
       func(object, source, function() {
-        argsList.push(slice.call(arguments));
+        argsList.push(_.map(arguments, _.cloneDeep));
       });
 
-      expected = [[objectValue, sourceValue, 'a', object, source]];
-      if (isMergeWith) {
-        expected[0].push([sourceValue], [sourceValue]);
-        expected.push([undefined, 2, 'b', sourceValue, sourceValue, [sourceValue], [sourceValue]]);
-      }
       deepEqual(argsList, expected, 'object property values');
     });
 
@@ -10350,6 +10350,23 @@
       });
 
       deepEqual(actual, expected);
+    });
+
+    test('should merge plain-objects onto non plain-objects', 4, function() {
+      function Foo(object) {
+        _.assign(this, object);
+      }
+
+      var object = { 'a': 1 },
+          actual = _.merge(new Foo, object);
+
+      ok(actual instanceof Foo);
+      deepEqual(actual, new Foo(object));
+
+      actual = _.merge([new Foo], [object]);
+
+      ok(actual[0] instanceof Foo);
+      deepEqual(actual, [new Foo(object)]);
     });
 
     test('should convert values to arrays when merging with arrays of `source`', 2, function() {

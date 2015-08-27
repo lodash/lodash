@@ -5403,7 +5403,7 @@
      */
     function uniqBy(array, iteratee) {
       return (array && array.length)
-        ? baseUniq(array, getIteratee(iteratee))
+        ? baseUniqBy(array, getIteratee(iteratee))
         : [];
     }
 

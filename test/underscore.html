@@ -54,7 +54,7 @@
           ],
           'indexOf': [
             "sorted indexOf doesn't uses binary search",
-            'non-nums as fromIndex make indexOf assume sorted'
+            '0'
           ],
           'initial': [
             'initial can take an index',
@@ -69,6 +69,8 @@
             '0'
           ],
           'lastIndexOf': [
+            'should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`',
+            'should treat non-number `fromIndex` values as `array.length`',
             '[0,-1,-1]'
           ],
           'rest': [
@@ -129,6 +131,7 @@
           ],
           'every': [
             'Can be called with object',
+            'Died on test #15',
             'context works'
           ],
           'filter': [
@@ -157,6 +160,9 @@
           ],
           'groupBy': [
             'true'
+          ],
+          'includes': [
+            "doesn't delegate to binary search"
           ],
           'invoke': [
             'handles null & undefined'
@@ -193,6 +199,7 @@
           ],
           'some': [
             'Can be called with object',
+            'Died on test #17',
             'context works'
           ],
           'where': [
@@ -333,10 +340,6 @@
         };
       }());
 
-      // Only excuse for core builds.
-      if (!ui.isCore) {
-        delete QUnit.config.excused.Arrays.indexOf;
-      }
       // Only excuse in Sauce Labs.
       if (!ui.isSauceLabs) {
         delete QUnit.config.excused.Functions['throttle repeatedly with results'];

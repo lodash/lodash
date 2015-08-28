@@ -445,9 +445,6 @@
 
   // Add other realm values from the `vm` module.
   _.attempt(function() {
-    if (process.jsEngine === 'chakra') {
-      return;
-    }
     _.extend(_, require('vm').runInNewContext([
       '(function() {',
       ' var object = {',
@@ -1011,7 +1008,7 @@
 
     test('`_.' + methodName + '` should work with a `customizer` callback', 1, function() {
       var actual = func({ 'a': 1, 'b': 2 }, { 'a': 3, 'c': 3 }, function(a, b) {
-        return typeof a == 'undefined' ? b : a;
+        return a === undefined ? b : a;
       });
 
       deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
@@ -2128,7 +2125,8 @@
 
     test('`_.' + methodName + '` should support shortcut fusion', 12, function() {
       var filterCount,
-          mapCount;
+          mapCount,
+          array = _.range(LARGE_ARRAY_SIZE);
 
       var iteratee = function(value) {
         mapCount++;
@@ -2164,7 +2162,7 @@
             : fn(take3, _.compact, filter3, map3);
 
           filterCount = mapCount = 0;
-          deepEqual(combined(_.range(LARGE_ARRAY_SIZE)), [4, 16]);
+          deepEqual(combined(array), [4, 16]);
 
           if (!isNpm && WeakMap && WeakMap.name) {
             strictEqual(filterCount, 5, 'filterCount');
@@ -5200,29 +5198,29 @@
       var args,
           object = { 'a': 1 },
           source = { 'a': 2 },
-          expected = [1, 2, 'a', object, source];
-
-      func(object, source, function() {
-        args || (args = slice.call(arguments));
-      });
+          expected = _.map([1, 2, 'a', object, source], _.clone);
 
       if (isMergeWith) {
         expected.push(undefined, undefined);
       }
+      func(object, source, function() {
+        args || (args = _.map(arguments, _.clone));
+      });
+
       deepEqual(args, expected, 'primitive property values');
 
       args = null;
       object = { 'a': 1 };
       source = { 'b': 2 };
+      expected = _.map([undefined, 2, 'b', object, source], _.clone);
 
-      func(object, source, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      expected = [undefined, 2, 'b', object, source];
       if (isMergeWith) {
         expected.push(undefined, undefined);
       }
+      func(object, source, function() {
+        args || (args = _.map(arguments, _.clone));
+      });
+
       deepEqual(args, expected, 'missing destination property');
 
       var argsList = [],
@@ -5231,16 +5229,16 @@
 
       object = { 'a': objectValue };
       source = { 'a': sourceValue };
+      expected = [_.map([objectValue, sourceValue, 'a', object, source], _.cloneDeep)];
 
+      if (isMergeWith) {
+        expected[0].push([], []);
+        expected.push(_.map([undefined, 2, 'b', objectValue, sourceValue, [sourceValue], [objectValue]], _.cloneDeep));
+      }
       func(object, source, function() {
-        argsList.push(slice.call(arguments));
+        argsList.push(_.map(arguments, _.cloneDeep));
       });
 
-      expected = [[objectValue, sourceValue, 'a', object, source]];
-      if (isMergeWith) {
-        expected[0].push([sourceValue], [sourceValue]);
-        expected.push([undefined, 2, 'b', sourceValue, sourceValue, [sourceValue], [sourceValue]]);
-      }
       deepEqual(argsList, expected, 'object property values');
     });
 
@@ -5631,8 +5629,10 @@
         deepEqual(actual, expected);
       });
 
-      test('should work with ' + key + ' and treat non-number `fromIndex` values as `0`', 1, function() {
-        strictEqual(_.includes(collection, values[0], '1'), true);
+      test('should work with ' + key + ' and coerce non-integer `fromIndex` values to integers', 3, function() {
+        strictEqual(_.includes(collection, values[0], '1'), false);
+        strictEqual(_.includes(collection, values[0], 0.1), true);
+        strictEqual(_.includes(collection, values[0], NaN), true);
       });
 
       test('should work with ' + key + ' and a negative `fromIndex`', 2, function() {
@@ -5690,10 +5690,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should not be possible to perform a binary search', 1, function() {
-      strictEqual(_.includes([3, 2, 1], 3, true), true);
     });
 
     test('should match `NaN`', 1, function() {
@@ -5839,18 +5835,6 @@
     test('should coerce `fromIndex` to an integer', 1, function() {
       strictEqual(_.indexOf(array, 2, 1.2), 1);
     });
-
-    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
-      var sorted = [4, 4, 5, 5, 6, 6],
-          values = [true, '1', {}],
-          expected = _.map(values, _.constant(2));
-
-      var actual = _.map(values, function(value) {
-        return _.indexOf(sorted, 5, value);
-      });
-
-      deepEqual(actual, expected);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -5874,6 +5858,7 @@
     }
 
     var array = [1, new Foo, 3, new Foo],
+        sorted = [1, 3, new Foo, new Foo],
         indexOf = _.indexOf;
 
     var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
@@ -5916,32 +5901,52 @@
       }
     });
 
-    test('`_.uniq` should work with a custom `_.indexOf` method', 4, function() {
-      _.each([false, true], function(param) {
-        if (!isModularize) {
-          _.indexOf = custom;
-          deepEqual(_.uniq(array, param), array.slice(0, 3));
-          deepEqual(_.uniq(largeArray, param), [largeArray[0]]);
-          _.indexOf = indexOf;
-        }
-        else {
-          skipTest(2);
-        }
-      });
+    test('`_.uniq` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.uniq(array), array.slice(0, 3));
+        deepEqual(_.uniq(largeArray), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
     });
 
-    test('`_.uniqBy` should work with a custom `_.indexOf` method', 6, function() {
-      _.each([[false, _.identity], [true, _.identity], [_.identity]], function(params) {
-        if (!isModularize) {
-          _.indexOf = custom;
-          deepEqual(_.uniqBy.apply(_, [array].concat(params)), array.slice(0, 3));
-          deepEqual(_.uniqBy.apply(_, [largeArray].concat(params)), [largeArray[0]]);
-          _.indexOf = indexOf;
-        }
-        else {
-          skipTest(2);
-        }
-      });
+    test('`_.uniqBy` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.uniqBy(array, _.identity), array.slice(0, 3));
+        deepEqual(_.uniqBy(largeArray, _.identity), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_.sortedUniq` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.sortedUniq(sorted), sorted.slice(0, 3));
+        deepEqual(_.sortedUniq(largeArray), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
+    });
+
+    test('`_.sortedUniqBy` should work with a custom `_.indexOf` method', 2, function() {
+      if (!isModularize) {
+        _.indexOf = custom;
+        deepEqual(_.sortedUniqBy(sorted, _.identity), sorted.slice(0, 3));
+        deepEqual(_.sortedUniqBy(largeArray, _.identity), [largeArray[0]]);
+        _.indexOf = indexOf;
+      }
+      else {
+        skipTest(2);
+      }
     });
   }());
 
@@ -7825,7 +7830,7 @@
         strictEqual(_.isNil(_._undefined), true);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
   }(1, 2, 3));
@@ -9085,9 +9090,9 @@
       deepEqual(actual, expected);
     });
 
-    test('should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`', 1, function() {
+    test('should treat falsey `fromIndex` values correctly', 1, function() {
       var expected = _.map(falsey, function(value) {
-        return typeof value == 'number' ? -1 : 5;
+        return value === undefined ? 5 : -1;
       });
 
       var actual = _.map(falsey, function(fromIndex) {
@@ -9100,27 +9105,16 @@
     test('should coerce `fromIndex` to an integer', 1, function() {
       strictEqual(_.lastIndexOf(array, 2, 4.2), 4);
     });
-
-    test('should perform a binary search when `fromIndex` is a non-number truthy value', 1, function() {
-      var sorted = [4, 4, 5, 5, 6, 6],
-          values = [true, '1', {}],
-          expected = _.map(values, _.constant(3));
-
-      var actual = _.map(values, function(value) {
-        return _.lastIndexOf(sorted, 5, value);
-      });
-
-      deepEqual(actual, expected);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('indexOf methods');
 
-  _.each(['indexOf', 'lastIndexOf'], function(methodName) {
+  _.each(['indexOf', 'lastIndexOf', 'sortedIndexOf', 'sortedLastIndexOf'], function(methodName) {
     var func = _[methodName],
-        isIndexOf = methodName == 'indexOf';
+        isIndexOf = !/last/i.test(methodName),
+        isSorted = /^sorted/.test(methodName);
 
     test('`_.' + methodName + '` should accept a falsey `array` argument', 1, function() {
       var expected = _.map(falsey, _.constant(-1));
@@ -9155,11 +9149,20 @@
     });
 
     test('`_.' + methodName + '` should match `NaN`', 4, function() {
-      var array = [1, NaN, 3, NaN, 5, NaN];
-      strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
-      strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
-      strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
-      strictEqual(func([1, 2, NaN, NaN], NaN, true), isIndexOf ? 2 : 3);
+      var array = isSorted
+        ? [1, 2, NaN, NaN]
+        : [1, NaN, 3, NaN, 5, NaN];
+
+      if (isSorted) {
+        strictEqual(func(array, NaN, true), isIndexOf ? 2 : 3);
+        skipTest(3);
+      }
+      else {
+        strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
+        strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
+        strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
+        skipTest();
+      }
     });
 
     test('`_.' + methodName + '` should match `-0` as `0`', 2, function() {
@@ -9211,7 +9214,7 @@
       deepEqual(actual, array);
     });
 
-    test('should handle object arguments with non-numeric length properties', 1, function() {
+    test('should handle object arguments with non-number length properties', 1, function() {
       var value = { 'value': 'x' },
           object = { 'length': { 'value': 'x' } };
 
@@ -10406,6 +10409,23 @@
       deepEqual(actual, expected);
     });
 
+    test('should merge plain-objects onto non plain-objects', 4, function() {
+      function Foo(object) {
+        _.assign(this, object);
+      }
+
+      var object = { 'a': 1 },
+          actual = _.merge(new Foo, object);
+
+      ok(actual instanceof Foo);
+      deepEqual(actual, new Foo(object));
+
+      actual = _.merge([new Foo], [object]);
+
+      ok(actual[0] instanceof Foo);
+      deepEqual(actual, [new Foo(object)]);
+    });
+
     test('should convert values to arrays when merging with arrays of `source`', 2, function() {
       var object = { 'a': { '1': 'y', 'b': 'z', 'length': 2 } },
           actual = _.merge(object, { 'a': ['x'] });
@@ -11435,7 +11455,7 @@
     });
 
     test('`_.' + methodName + '` should treat nullish values as empty strings', 6, function() {
-      _.each([null, '_-'], function(chars) {
+      _.each([undefined, '_-'], function(chars) {
         var expected = chars ? (isPad ? '__' : chars) : '  ';
         strictEqual(func(null, 2, chars), expected);
         strictEqual(func(undefined, 2, chars), expected);
@@ -14332,6 +14352,53 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('sortedIndexOf methods');
+
+  _.each(['sortedIndexOf', 'sortedLastIndexOf'], function(methodName) {
+    var func = _[methodName],
+        isSortedIndexOf = methodName == 'sortedIndexOf';
+
+    test('should perform a binary search', 1, function() {
+      var sorted = [4, 4, 5, 5, 6, 6];
+      deepEqual(func(sorted, 5), isSortedIndexOf ? 2 : 3);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortedUniq');
+
+  (function() {
+    test('should return unique values of a sorted array', 3, function() {
+      var expected = [1, 2, 3];
+
+      _.each([[1, 2, 3], [1, 1, 2, 2, 3], [1, 2, 3, 3, 3, 3, 3]], function(array) {
+        deepEqual(_.sortedUniq(array), expected);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sortedUniqBy');
+
+  (function() {
+    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    test('should work with an `iteratee` argument', 1, function() {
+      var array = _.sortBy(objects, 'a'),
+          expected = [objects[2], objects[0], objects[1]];
+
+      var actual = _.sortedUniqBy(array, function(object) {
+        return object.a;
+      });
+
+      deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.spread');
 
   (function() {
@@ -15846,11 +15913,10 @@
       });
     });
 
-    test('`_.' + methodName + '` should work with nullish or empty string values for `chars`', 3, function() {
+    test('`_.' + methodName + '` should work with `undefined` or empty string values for `chars`', 2, function() {
       var string = whitespace + 'a b c' + whitespace,
           expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
-      strictEqual(func(string, null), expected);
       strictEqual(func(string, undefined), expected);
       strictEqual(func(string, ''), string);
     });
@@ -15963,17 +16029,14 @@
   (function() {
     var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
-    test('should work with an `iteratee` argument', 2, function() {
-      _.each([objects, _.sortBy(objects, 'a')], function(array, index) {
-        var isSorted = !!index,
-            expected = isSorted ? [objects[2], objects[0], objects[1]] : objects.slice(0, 3);
+    test('should work with an `iteratee` argument', 1, function() {
+      var expected = objects.slice(0, 3);
 
-        var actual = _.uniqBy(array, isSorted, function(object) {
-          return object.a;
-        });
-
-        deepEqual(actual, expected);
+      var actual = _.uniqBy(objects, function(object) {
+        return object.a;
       });
+
+      deepEqual(actual, expected);
     });
 
     test('should provide the correct `iteratee` arguments', 1, function() {
@@ -15984,14 +16047,6 @@
       });
 
       deepEqual(args, [objects[0]]);
-    });
-
-    test('should work with `iteratee` without specifying `isSorted`', 1, function() {
-      var actual = _.uniqBy(objects, function(object) {
-        return object.a;
-      });
-
-      deepEqual(actual, objects.slice(0, 3));
     });
 
     test('should work with a "_.property" style `iteratee`', 2, function() {
@@ -16043,13 +16098,6 @@
 
     test('`_.' + methodName + '` should not treat `NaN` as unique', 1, function() {
       deepEqual(func([1, NaN, 3, NaN]), [1, NaN, 3]);
-    });
-
-    test('`_.' + methodName + '` should work with `isSorted`', 3, function() {
-      var expected = [1, 2, 3];
-      deepEqual(func([1, 2, 3], true), expected);
-      deepEqual(func([1, 1, 2, 2, 3], true), expected);
-      deepEqual(func([1, 2, 3, 3, 3, 3, 3], true), expected);
     });
 
     test('`_.' + methodName + '` should work with large arrays', 1, function() {
@@ -17209,10 +17257,11 @@
   QUnit.module('"Arrays" category methods');
 
  (function() {
-    var args = arguments,
+    var args = (function() { return arguments; }(1, null, [3], null, 5)),
+        sortedArgs = (function() { return arguments; }(1, [3], 5, null, null)),
         array = [1, 2, 3, 4, 5, 6];
 
-    test('should work with `arguments` objects', 28, function() {
+    test('should work with `arguments` objects', 30, function() {
       function message(methodName) {
         return '`_.' + methodName + '` should work with `arguments` objects';
       }
@@ -17238,8 +17287,10 @@
       deepEqual(_.last(args), 5, message('last'));
       deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
       deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
-      deepEqual(_.sortedIndex(args, 6), 5, message('sortedIndex'));
-      deepEqual(_.sortedLastIndex(args, 6), 5, message('sortedLastIndex'));
+      deepEqual(_.sortedIndex(sortedArgs, 6), 3, message('sortedIndex'));
+      deepEqual(_.sortedIndexOf(sortedArgs, 5), 2, message('sortedIndexOf'));
+      deepEqual(_.sortedLastIndex(sortedArgs, 5), 3, message('sortedLastIndex'))
+      deepEqual(_.sortedLastIndexOf(sortedArgs, 1), 0, message('sortedLastIndexOf'));
       deepEqual(_.take(args, 2), [1, null], message('take'));
       deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
       deepEqual(_.takeRightWhile(args, _.identity), [5], message('takeRightWhile'));
@@ -17269,7 +17320,7 @@
       deepEqual(_.intersection(array, null), [], message('intersection'));
       deepEqual(_.union(array, null), array, message('union'));
     });
-  }(1, null, [3], null, 5));
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -17380,7 +17431,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 224, function() {
+    test('should accept falsey arguments', 228, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

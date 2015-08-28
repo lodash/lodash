@@ -2621,28 +2621,32 @@
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseSortedUniq(array, iteratee) {
-      var index = -1,
+      var length = array.length;
+      if (!length) {
+        return [];
+      }
+      var index = 0,
           indexOf = getIndexOf(),
           isCommon = indexOf === baseIndexOf,
-          length = array.length,
-          seen = isCommon ? undefined : [],
-          resIndex = -1,
-          result = [];
+          value = array[0],
+          computed = iteratee ? iteratee(value, 0, array) : value,
+          seen = isCommon ? computed : [computed],
+          resIndex = 0,
+          result = [value];
 
       while (++index < length) {
-        var value = array[index],
-            computed = iteratee ? iteratee(value, index, array) : value;
+        value = array[index],
+        computed = iteratee ? iteratee(value, index, array) : value;
 
-        if (isCommon && value === value) {
-          if (seen !== computed || !index) {
-            seen = computed
+        if (isCommon) {
+          if ((value === value ? (seen !== computed) : (indexOf(seen, computed, 0) < 0))) {
+            seen = computed;
             result[++resIndex] = value;
           }
-        } else {
-          if (!index || indexOf(seen, computed, 0) < 0) {
-            seen.push(computed);
-            result[++resIndex] = value;
-          }
+        }
+        else if (indexOf(seen, computed, 0) < 0) {
+          seen[++resIndex] = computed;
+          result[resIndex] = value;
         }
       }
       return result;

@@ -14320,25 +14320,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.sortedUniqBy');
-
-  (function() {
-    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
-
-    test('should work with an `iteratee` argument', 1, function() {
-      var array = _.sortBy(objects, 'a'),
-          expected = [objects[2], objects[0], objects[1]];
-
-      var actual = _.sortedUniqBy(array, function(object) {
-        return object.a;
-      });
-
-      deepEqual(actual, expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.spread');
 
   (function() {
@@ -15964,61 +15945,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.uniqBy');
-
-  (function() {
-    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
-
-    test('should work with an `iteratee` argument', 1, function() {
-      var expected = objects.slice(0, 3);
-
-      var actual = _.uniqBy(objects, function(object) {
-        return object.a;
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should provide the correct `iteratee` arguments', 1, function() {
-      var args;
-
-      _.uniqBy(objects, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [objects[0]]);
-    });
-
-    test('should work with a "_.property" style `iteratee`', 2, function() {
-      var actual = _.uniqBy(objects, 'a');
-
-      deepEqual(actual, objects.slice(0, 3));
-
-      var arrays = [[2], [3], [1], [2], [3], [1]];
-      actual = _.uniqBy(arrays, 0);
-
-      deepEqual(actual, arrays.slice(0, 3));
-    });
-
-    _.each({
-      'an array': [0, 'a'],
-      'an object': { '0': 'a' },
-      'a number': 0,
-      'a string': '0'
-    },
-    function(iteratee, key) {
-      test('should work with ' + key + ' for `iteratee`', 1, function() {
-        var actual = _.uniqBy([['a'], ['b'], ['a']], iteratee);
-        deepEqual(actual, [['a'], ['b']]);
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('uniq methods');
 
-  _.each(['uniq', 'uniqBy'], function(methodName) {
+  _.each(['uniq', 'uniqBy', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
     var func = _[methodName],
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
@@ -16114,6 +16043,68 @@
       });
 
       deepEqual(func(array), expected);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('uniqBy methods');
+
+  _.each(['uniqBy', 'sortedUniqBy'], function(methodName) {
+    var func = _[methodName],
+        isSortedUniqBy = methodName == 'sortedUniqBy',
+        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    if (isSortedUniqBy) {
+      objects = _.sortBy(objects, 'a');
+    }
+    test('`_.' + methodName + '` should work with an `iteratee` argument', 1, function() {
+      var expected = isSortedUniqBy ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3);
+
+      var actual = func(objects, function(object) {
+        return object.a;
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
+      var args;
+
+      func(objects, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      deepEqual(args, [objects[0]]);
+    });
+
+    test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', 2, function() {
+      var expected = isSortedUniqBy ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3),
+          actual = func(objects, 'a');
+
+      deepEqual(actual, expected);
+
+      var arrays = [[2], [3], [1], [2], [3], [1]];
+      if (isSortedUniqBy) {
+        arrays = _.sortBy(arrays, 0);
+      }
+      expected = isSortedUniqBy ? [[1], [2], [3]] : arrays.slice(0, 3);
+      actual = func(arrays, 0);
+
+      deepEqual(actual, expected);
+    });
+
+    _.each({
+      'an array': [0, 'a'],
+      'an object': { '0': 'a' },
+      'a number': 0,
+      'a string': '0'
+    },
+    function(iteratee, key) {
+      test('`_.' + methodName + '` should work with ' + key + ' for `iteratee`', 1, function() {
+        var actual = func([['a'], ['a'], ['b']], iteratee);
+        deepEqual(actual, [['a'], ['b']]);
+      });
     });
   });
 

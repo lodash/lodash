@@ -3886,12 +3886,14 @@
       deepEqual(_.insert([1, 2, 3], 'a', 5), [1, 2, 3, undefined, undefined, 'a']);
     });
 
-    test('should treat falsey `index` values as `array.length`', falsey.length, function() {
-      var expected = _.fill(Array(3), [1, 2, 3, 'a']);
-
+    test('should treat non-numerical falsey `index` values as `array.length`', falsey.length, function() {
       var actual = _.map(falsey, function(index) {
-        var array = _.insert([1, 2, 3], 'a', index);
-        deepEqual(array, [1, 2, 3, 'a']);
+        if (!_.isNumber(index)) {
+          var array = _.insert([1, 2, 3], 'a', index);
+          deepEqual(array, [1, 2, 3, 'a']);
+        } else {
+          skipTest(1);
+        }
       });
     });
 
@@ -17496,7 +17498,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 224, function() {
+    test('should accept falsey arguments', 227, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

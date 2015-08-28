@@ -299,7 +299,7 @@
   }
 
   /**
-   * The base implementation of `_.indexOf` without support for binary searches.
+   * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
    *
    * @private
    * @param {Array} array The array to search.
@@ -582,34 +582,6 @@
       if (array[index] === placeholder) {
         array[index] = PLACEHOLDER;
         result[++resIndex] = index;
-      }
-    }
-    return result;
-  }
-
-  /**
-   * An implementation of `_.uniq` optimized for sorted arrays without support
-   * for callback shorthands.
-   *
-   * @private
-   * @param {Array} array The array to inspect.
-   * @param {Function} [iteratee] The function invoked per iteration.
-   * @returns {Array} Returns the new duplicate free array.
-   */
-  function sortedUniq(array, iteratee) {
-    var seen,
-        index = -1,
-        length = array.length,
-        resIndex = -1,
-        result = [];
-
-    while (++index < length) {
-      var value = array[index],
-          computed = iteratee ? iteratee(value, index, array) : value;
-
-      if (!index || seen !== computed) {
-        seen = computed;
-        result[++resIndex] = value;
       }
     }
     return result;
@@ -1675,8 +1647,8 @@
     }
 
     /**
-     * The base implementation of `_.difference` which accepts a single array
-     * of values to exclude.
+     * The base implementation of `_.difference` without support for individual
+     * values to exclude.
      *
      * @private
      * @param {Array} array The array to inspect.
@@ -1934,18 +1906,9 @@
      * @returns {Array} Returns the new array of filtered property names.
      */
     function baseFunctions(object, props) {
-      var index = -1,
-          length = props.length,
-          resIndex = -1,
-          result = [];
-
-      while (++index < length) {
-        var key = props[index];
-        if (isFunction(object[key])) {
-          result[++resIndex] = key;
-        }
-      }
-      return result;
+      return arrayFilter(props, function(key) {
+        return isFunction(object[key]);
+      });
     }
 
     /**
@@ -2148,23 +2111,23 @@
      * The base implementation of `_.iteratee`.
      *
      * @private
-     * @param {*} [func=_.identity] The value to convert to an iteratee.
+     * @param {*} [value=_.identity] The value to convert to an iteratee.
      * @returns {Function} Returns the iteratee.
      */
-    function baseIteratee(func) {
-      var type = typeof func;
+    function baseIteratee(value) {
+      var type = typeof value;
       if (type == 'function') {
-        return func;
+        return value;
       }
-      if (func == null) {
+      if (value == null) {
         return identity;
       }
       if (type == 'object') {
-        return isArray(func)
-          ? baseMatchesProperty(func[0], func[1])
-          : baseMatches(func);
+        return isArray(value)
+          ? baseMatchesProperty(value[0], value[1])
+          : baseMatches(value);
       }
-      return property(func);
+      return property(value);
     }
 
     /**
@@ -2273,7 +2236,7 @@
     }
 
     /**
-     * The base implementation of `_.merge` without support multiple sources.
+     * The base implementation of `_.merge` without support for multiple sources.
      *
      * @private
      * @param {Object} object The destination object.
@@ -2343,7 +2306,7 @@
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
             ? toPlainObject(oldValue)
-            : (isPlainObject(oldValue) ? oldValue : {});
+            : (isObject(oldValue) ? oldValue : {});
         }
         else {
           isCommon = isFunction(srcValue);
@@ -2633,7 +2596,7 @@
           index = -1;
 
       iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
-        return toIteratee(iteratee);
+        return toIteratee(iteratee, 3);
       });
 
       var result = baseMap(collection, function(value, key, collection) {
@@ -2649,15 +2612,63 @@
     }
 
     /**
-     * The base implementation of `_.uniq` and `_.uniqBy` without support for
-     * callback shorthands.
+     * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
+     * support for callback shorthands.
      *
      * @private
      * @param {Array} array The array to inspect.
      * @param {Function} [iteratee] The function invoked per iteration.
      * @returns {Array} Returns the new duplicate free array.
      */
-    function baseUniq(array, iteratee) {
+    function baseSortedUniq(array, iteratee) {
+      var index = -1,
+          indexOf = getIndexOf(),
+          isCommon = indexOf === baseIndexOf,
+          length = array.length,
+          seen = isCommon ? undefined : [],
+          resIndex = -1,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index],
+            computed = iteratee ? iteratee(value, index, array) : value;
+
+        if (isCommon && value === value) {
+          if (seen !== computed || !index) {
+            seen = computed
+            result[++resIndex] = value;
+          }
+        } else {
+          if (!index || indexOf(seen, computed, 0) < 0) {
+            seen.push(computed);
+            result[++resIndex] = value;
+          }
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.uniq`.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseUniq(array) {
+      return baseUniqBy(array);
+    }
+
+    /**
+     * The base implementation of `_.uniqBy` without support for callback shorthands.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseUniqBy(array, iteratee) {
       var index = -1,
           indexOf = getIndexOf(),
           length = array.length,
@@ -2736,7 +2747,9 @@
       var length = array.length,
           index = fromRight ? length : -1;
 
-      while ((fromRight ? index-- : ++index < length) && predicate(array[index], index, array)) {}
+      while ((fromRight ? index-- : ++index < length) &&
+        predicate(array[index], index, array)) {}
+
       return isDrop
         ? baseSlice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
         : baseSlice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index));
@@ -2991,7 +3004,7 @@
     function createAggregator(setter, initializer) {
       return function(collection, iteratee) {
         var result = initializer ? initializer() : {};
-        iteratee = getIteratee(iteratee);
+        iteratee = getIteratee(iteratee, 3);
 
         if (isArray(collection)) {
           var index = -1,
@@ -3332,13 +3345,13 @@
      */
     function createPadding(string, length, chars) {
       var strLength = string.length;
-      length = +length;
+      length = toInteger(length);
 
-      if (strLength >= length || !nativeIsFinite(length)) {
+      if (!length || strLength >= length) {
         return '';
       }
       var padLength = length - strLength;
-      chars = chars == null ? ' ' : (chars + '');
+      chars = chars === undefined ? ' ' : (chars + '');
       return repeat(chars, nativeCeil(padLength / chars.length)).slice(0, padLength);
     }
 
@@ -3682,16 +3695,18 @@
     /**
      * Gets the appropriate "iteratee" function. If the `_.iteratee` method is
      * customized this function returns the custom method, otherwise it returns
-     * the `baseIteratee` function. If arguments are provided the chosen function
-     * is invoked with them and its result is returned.
+     * `baseIteratee`. If arguments are provided the chosen function is invoked
+     * with them and its result is returned.
      *
      * @private
+     * @param {*} [value] The value to convert to an iteratee.
+     * @param {number} [arity] The arity of the created iteratee.
      * @returns {Function} Returns the chosen function or its result.
      */
     function getIteratee() {
       var result = lodash.iteratee || iteratee;
       result = result === iteratee ? baseIteratee : result;
-      return arguments.length ? result(arguments[0]) : result;
+      return arguments.length ? result(arguments[0], arguments[1]) : result;
     }
 
     /**
@@ -4264,11 +4279,10 @@
         return [];
       }
       var index = 0,
-          resIndex = -1,
           result = Array(nativeCeil(length / size));
 
       while (index < length) {
-        result[++resIndex] = baseSlice(array, index, (index += size));
+        result.push(baseSlice(array, index, (index += size)));
       }
       return result;
     }
@@ -4428,7 +4442,7 @@
      */
     function dropRightWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate), true, true)
+        ? baseWhile(array, getIteratee(predicate, 3), true, true)
         : [];
     }
 
@@ -4470,7 +4484,7 @@
      */
     function dropWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate), true)
+        ? baseWhile(array, getIteratee(predicate, 3), true)
         : [];
     }
 
@@ -4549,7 +4563,7 @@
      */
     function findIndex(array, predicate) {
       return (array && array.length)
-        ? baseFindIndex(array, getIteratee(predicate))
+        ? baseFindIndex(array, getIteratee(predicate, 3))
         : -1;
     }
 
@@ -4588,7 +4602,7 @@
      */
     function findLastIndex(array, predicate) {
       return (array && array.length)
-        ? baseFindIndex(array, getIteratee(predicate), true)
+        ? baseFindIndex(array, getIteratee(predicate, 3), true)
         : -1;
     }
 
@@ -4660,8 +4674,7 @@
      * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-     *  to perform a binary search on a sorted array.
+     * @param {number} [fromIndex=0] The index to search from.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -4671,26 +4684,15 @@
      * // using `fromIndex`
      * _.indexOf([1, 2, 1, 2], 2, 2);
      * // => 3
-     *
-     * // performing a binary search
-     * _.indexOf([1, 1, 2, 2], 2, true);
-     * // => 2
      */
     function indexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
       if (!length) {
         return -1;
       }
-      if (typeof fromIndex == 'number') {
+      if (fromIndex) {
         fromIndex = toInteger(fromIndex);
         fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
-      } else if (fromIndex) {
-        var index = binaryIndex(array, value);
-        if (index < length &&
-            (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
-          return index;
-        }
-        return -1;
       }
       return baseIndexOf(array, value, fromIndex || 0);
     }
@@ -4790,8 +4792,7 @@
      * @category Array
      * @param {Array} array The array to search.
      * @param {*} value The value to search for.
-     * @param {boolean|number} [fromIndex=array.length-1] The index to search from
-     *  or `true` to perform a binary search on a sorted array.
+     * @param {number} [fromIndex=array.length-1] The index to search from.
      * @returns {number} Returns the index of the matched value, else `-1`.
      * @example
      *
@@ -4801,10 +4802,6 @@
      * // using `fromIndex`
      * _.lastIndexOf([1, 2, 1, 2], 2, 2);
      * // => 1
-     *
-     * // performing a binary search
-     * _.lastIndexOf([1, 1, 2, 2], 2, true);
-     * // => 3
      */
     function lastIndexOf(array, value, fromIndex) {
       var length = array ? array.length : 0;
@@ -4812,16 +4809,9 @@
         return -1;
       }
       var index = length;
-      if (typeof fromIndex == 'number') {
+      if (fromIndex !== undefined) {
         index = toInteger(fromIndex);
         index = (index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1)) + 1;
-      } else if (fromIndex) {
-        index = binaryIndex(array, value, true) - 1;
-        var other = array[index];
-        if (value === value ? (value === other) : (other !== other)) {
-          return index;
-        }
-        return -1;
       }
       if (value !== value) {
         return indexOfNaN(array, index, true);
@@ -4944,7 +4934,7 @@
           indexes = [],
           length = array.length;
 
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       while (++index < length) {
         var value = array[index];
         if (predicate(value, index, array)) {
@@ -5126,6 +5116,33 @@
     }
 
     /**
+     * This method is like `_.indexOf` except that it performs a binary
+     * search on a sorted `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to search.
+     * @param {*} value The value to search for.
+     * @returns {number} Returns the index of the matched value, else `-1`.
+     * @example
+     *
+     * _.sortedIndexOf([1, 1, 2, 2], 2);
+     * // => 2
+     */
+    function sortedIndexOf(array, value) {
+      var length = array ? array.length : 0;
+      if (length) {
+        var index = binaryIndex(array, value);
+        if (index < length &&
+            (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    /**
      * This method is like `_.sortedIndex` except that it returns the highest
      * index at which `value` should be inserted into `array` in order to
      * maintain its sort order.
@@ -5165,6 +5182,77 @@
      */
     function sortedLastIndexBy(array, value, iteratee) {
       return binaryIndexBy(array, value, getIteratee(iteratee), true);
+    }
+
+    /**
+     * This method is like `_.lastIndexOf` except that it performs a binary
+     * search on a sorted `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to search.
+     * @param {*} value The value to search for.
+     * @returns {number} Returns the index of the matched value, else `-1`.
+     * @example
+     *
+     * _.sortedLastIndexOf([1, 1, 2, 2], 2);
+     * // => 3
+     */
+    function sortedLastIndexOf(array, value) {
+      var length = array ? array.length : 0;
+      if (length) {
+        var index = binaryIndex(array, value, true) - 1,
+            other = array[index];
+
+        if (value === value ? (value === other) : (other !== other)) {
+          return index;
+        }
+      }
+      return -1
+    }
+
+    /**
+     * This method is like `_.uniq` except that it's designed and optimized
+     * for sorted arrays.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @returns {Array} Returns the new duplicate free array.
+     * @example
+     *
+     * _.sortedUniq([1, 1, 2]);
+     * // => [1, 2]
+     */
+    function sortedUniq(array) {
+      return (array && array.length)
+        ? baseSortedUniq(array)
+        : [];
+    }
+
+    /**
+     * This method is like `_.uniqBy` except that it's designed and optimized
+     * for sorted arrays.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The function invoked per iteration.
+     * @returns {Array} Returns the new duplicate free array.
+     * @example
+     *
+     * _.sortedUniqBy([1, 1.5, 2, 2.5], function(n) {
+     *   return Math.floor(n);
+     * });
+     * // => [1, 2]
+     */
+    function sortedUniqBy(array, iteratee) {
+      return (array && array.length)
+        ? baseSortedUniq(array, getIteratee(iteratee))
+        : [];
     }
 
     /**
@@ -5271,7 +5359,7 @@
      */
     function takeRightWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate), false, true)
+        ? baseWhile(array, getIteratee(predicate, 3), false, true)
         : [];
     }
 
@@ -5313,7 +5401,7 @@
      */
     function takeWhile(array, predicate) {
       return (array && array.length)
-        ? baseWhile(array, getIteratee(predicate))
+        ? baseWhile(array, getIteratee(predicate, 3))
         : [];
     }
 
@@ -5340,31 +5428,22 @@
      * Creates a duplicate-free version of an array, using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons, in which only the first occurence of each element
-     * is kept. Providing `true` for `isSorted` performs a faster search algorithm
-     * for sorted arrays.
+     * is kept.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted] Specify the array is sorted.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
      * _.uniq([2, 1, 2]);
      * // => [2, 1]
-     *
-     * // using `isSorted`
-     * _.uniq([1, 1, 2], true);
-     * // => [1, 2]
      */
-    function uniq(array, isSorted) {
-      if (!(array && array.length)) {
-        return [];
-      }
-      return (isSorted && typeof isSorted == 'boolean' && getIndexOf() === baseIndexOf)
-        ? sortedUniq(array)
-        : baseUniq(array);
+    function uniq(array) {
+      return (array && array.length)
+        ? baseUniq(array)
+        : [];
     }
 
     /**
@@ -5376,7 +5455,6 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {boolean} [isSorted] Specify the array is sorted.
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the new duplicate free array.
      * @example
@@ -5390,21 +5468,10 @@
      * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    function uniqBy(array, isSorted, iteratee) {
-      if (!(array && array.length)) {
-        return [];
-      }
-      if (isSorted != null && typeof isSorted != 'boolean') {
-        iteratee = isSorted;
-        isSorted = false;
-      }
-      var toIteratee = getIteratee();
-      if (!(iteratee == null && toIteratee === baseIteratee)) {
-        iteratee = toIteratee(iteratee);
-      }
-      return (isSorted && getIndexOf() === baseIndexOf)
-        ? sortedUniq(array, iteratee)
-        : baseUniq(array, iteratee);
+    function uniqBy(array, iteratee) {
+      return (array && array.length)
+        ? baseUniqBy(array, getIteratee(iteratee))
+        : [];
     }
 
     /**
@@ -5958,7 +6025,7 @@
       if (guard && isIterateeCall(collection, predicate, guard)) {
         predicate = undefined;
       }
-      return func(collection, getIteratee(predicate));
+      return func(collection, getIteratee(predicate, 3));
     }
 
     /**
@@ -5998,7 +6065,7 @@
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      return func(collection, getIteratee(predicate));
+      return func(collection, getIteratee(predicate, 3));
     }
 
     /**
@@ -6038,7 +6105,7 @@
      * // => 'barney'
      */
     function find(collection, predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       if (isArray(collection)) {
         var index = baseFindIndex(collection, predicate);
         return index > -1 ? collection[index] : undefined;
@@ -6064,7 +6131,7 @@
      * // => 3
      */
     function findLast(collection, predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       if (isArray(collection)) {
         var index = baseFindIndex(collection, predicate, true);
         return index > -1 ? collection[index] : undefined;
@@ -6192,7 +6259,7 @@
     function includes(collection, target, fromIndex, guard) {
       collection = isArrayLike(collection) ? collection : values(collection);
       var length = collection.length;
-      if (guard || typeof fromIndex != 'number') {
+      if (guard || !fromIndex) {
         fromIndex = 0;
       } else {
         fromIndex = toInteger(fromIndex);
@@ -6312,7 +6379,7 @@
      */
     function map(collection, iteratee) {
       var func = isArray(collection) ? arrayMap : baseMap;
-      return func(collection, getIteratee(iteratee));
+      return func(collection, getIteratee(iteratee, 3));
     }
 
     /**
@@ -6397,7 +6464,7 @@
       var initFromArray = arguments.length < 3;
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayReduce(collection, iteratee, accumulator, initFromArray)
-        : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, baseEach);
+        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromArray, baseEach);
     }
 
     /**
@@ -6424,7 +6491,7 @@
       var initFromArray = arguments.length < 3;
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayReduceRight(collection, iteratee, accumulator, initFromArray)
-        : baseReduce(collection, getIteratee(iteratee), accumulator, initFromArray, baseEachRight);
+        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromArray, baseEachRight);
     }
 
     /**
@@ -6463,7 +6530,7 @@
      */
     function reject(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       return func(collection, function(value, index, collection) {
         return !predicate(value, index, collection);
       });
@@ -6595,7 +6662,7 @@
       if (guard && isIterateeCall(collection, predicate, guard)) {
         predicate = undefined;
       }
-      return func(collection, getIteratee(predicate));
+      return func(collection, getIteratee(predicate, 3));
     }
 
     /**
@@ -8866,7 +8933,7 @@
      * // => 'barney'
      */
     function findKey(object, predicate) {
-      return baseFind(object, getIteratee(predicate), baseForOwn, true);
+      return baseFind(object, getIteratee(predicate, 3), baseForOwn, true);
     }
 
     /**
@@ -8903,7 +8970,7 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate) {
-      return baseFind(object, getIteratee(predicate), baseForOwnRight, true);
+      return baseFind(object, getIteratee(predicate, 3), baseForOwnRight, true);
     }
 
     /**
@@ -9283,7 +9350,7 @@
      */
     function mapKeys(object, iteratee) {
       var result = {};
-      iteratee = getIteratee(iteratee);
+      iteratee = getIteratee(iteratee, 3);
 
       baseForOwn(object, function(value, key, object) {
         result[iteratee(value, key, object)] = value;
@@ -9318,7 +9385,7 @@
      */
     function mapValues(object, iteratee) {
       var result = {};
-      iteratee = getIteratee(iteratee);
+      iteratee = getIteratee(iteratee, 3);
 
       baseForOwn(object, function(value, key, object) {
         result[key] = iteratee(value, key, object);
@@ -9436,7 +9503,7 @@
      * // => { 'user': 'fred' }
      */
     function omitBy(object, predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       return basePickBy(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
@@ -9510,7 +9577,7 @@
      * // => { 'user': 'fred' }
      */
     function pickBy(object, predicate) {
-      return object == null ? {} : basePickBy(object, getIteratee(predicate));
+      return object == null ? {} : basePickBy(object, getIteratee(predicate, 3));
     }
 
     /**
@@ -9640,7 +9707,7 @@
      */
     function transform(object, iteratee, accumulator) {
       var isArr = isArray(object) || isTypedArray(object);
-      iteratee = getIteratee(iteratee);
+      iteratee = getIteratee(iteratee, 4);
 
       if (accumulator == null) {
         if (isArr || isObject(object)) {
@@ -10031,10 +10098,10 @@
      */
     function pad(string, length, chars) {
       string = baseToString(string);
-      length = +length;
+      length = toInteger(length);
 
       var strLength = string.length;
-      if (strLength >= length || !nativeIsFinite(length)) {
+      if (!length || strLength >= length) {
         return string;
       }
       var mid = (length - strLength) / 2,
@@ -10479,7 +10546,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard || chars === undefined) {
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = (chars + '');
@@ -10510,7 +10577,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard || chars === undefined) {
         return string.slice(trimmedLeftIndex(string));
       }
       return string.slice(charsLeftIndex(string, (chars + '')));
@@ -10540,7 +10607,7 @@
       if (!string) {
         return string;
       }
-      if (guard || chars == null) {
+      if (guard || chars === undefined) {
         return string.slice(0, trimmedRightIndex(string) + 1);
       }
       return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
@@ -10600,7 +10667,7 @@
         return omission;
       }
       var result = string.slice(0, end);
-      if (separator == null) {
+      if (separator === undefined) {
         return result + omission;
       }
       if (isRegExp(separator)) {
@@ -11535,6 +11602,8 @@
     lodash.slice = slice;
     lodash.sortBy = sortBy;
     lodash.sortByOrder = sortByOrder;
+    lodash.sortedUniq = sortedUniq;
+    lodash.sortedUniqBy = sortedUniqBy;
     lodash.spread = spread;
     lodash.take = take;
     lodash.takeRight = takeRight;
@@ -11661,8 +11730,10 @@
     lodash.some = some;
     lodash.sortedIndex = sortedIndex;
     lodash.sortedIndexBy = sortedIndexBy;
+    lodash.sortedIndexOf = sortedIndexOf;
     lodash.sortedLastIndex = sortedLastIndex;
     lodash.sortedLastIndexBy = sortedLastIndexBy;
+    lodash.sortedLastIndexOf = sortedLastIndexOf;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
     lodash.sum = sum;
@@ -11746,7 +11817,7 @@
 
       LazyWrapper.prototype[methodName] = function(iteratee) {
         var result = this.clone();
-        result.__iteratees__.push({ 'iteratee': getIteratee(iteratee), 'type': type });
+        result.__iteratees__.push({ 'iteratee': getIteratee(iteratee, 3), 'type': type });
         result.__filtered__ = result.__filtered__ || isFilter;
         return result;
       };
@@ -11783,7 +11854,7 @@
     };
 
     LazyWrapper.prototype.reject = function(predicate) {
-      predicate = getIteratee(predicate);
+      predicate = getIteratee(predicate, 3);
       return this.filter(function(value) {
         return !predicate(value);
       });

@@ -4989,6 +4989,83 @@
       return baseSlice(array, start, end);
     }
 
+
+    /**
+     * Inserts a `value` at a given `index` of an `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to on which the insert should be performed.
+     * @param {*} value The value to be inserted.
+     * @param {number} index The index at which the value should be inserted.
+     * @returns {Array} Returns the `array` with the `value` inserted into the `index`.
+     * @example
+     *
+     * _.insert([30, 50], 40, 0);
+     * // => [40, 30, 50]
+     */    
+    function insert(array, value, index) {
+      array = array || [];
+      index = _.parseInt(index);
+      index = !_.isNaN(index) && isNumber(index) ? index : array.length;
+
+      if (index < array.length) {
+        index = index < 0 ? index % array.length : index;
+        array.splice(index, 0, value);
+      } else {
+        array[index] = value
+      }
+
+      return array;
+    }
+
+    /**
+     * Insert a `value` in the lowest index of an `array` at which it can be inserted
+     * in order to maintain sort order.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to on which the insert should be performed.
+     * @param {*} value The value to evaluate.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {number} Returns the `array` with the `value` inserted into the lowest sorted index.
+     * @example
+     *
+     * _.insertSorted([30, 50], 40);
+     * // => [30, 40, 50]
+     *
+     * _.insert([{ 'x': 'a' }, { 'x': 'b' }], { 'x': 'b', 'y': 'c' }, 'x');
+     * // => [{ 'x': 'a' }, { 'x': 'b', 'y': 'c' }, { 'x': 'b' }]
+     */
+    function insertSorted(array, value, iteratee) {
+      return insert(array, value, sortedIndexBy(array, value, iteratee));
+    }
+
+    /**
+     * Insert a `value` in the highest index of an `array` at which it can be inserted
+     * in order to maintain sort order.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The sorted array to on which the insert should be performed.
+     * @param {*} value The value to evaluate.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {number} Returns the `array` with the `value` inserted into the highest sorted index.
+     * @example
+     *
+     * _.insertSorted([30, 50], 40);
+     * // => [30, 40, 50]
+     *
+     * _.insert([{ 'x': 'a' }, { 'x': 'b' }], { 'x': 'b', 'y': 'c' }, 'x');
+     * // => [{ 'x': 'a' }, { 'x': 'b' }, { 'x': 'b', 'y': 'c' }]
+     */
+    function insertSortedLast(array, value, iteratee) {
+      return insert(array, value, sortedLastIndexBy(array, value, iteratee));
+    }
+
     /**
      * Uses a binary search to determine the lowest index at which `value` should
      * be inserted into `array` in order to maintain its sort order.
@@ -11478,6 +11555,9 @@
     lodash.groupBy = groupBy;
     lodash.indexBy = indexBy;
     lodash.initial = initial;
+    lodash.insert = insert;
+    lodash.insertSorted = insertSorted;
+    lodash.insertSortedLast = insertSortedLast;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;

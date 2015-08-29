@@ -1451,26 +1451,6 @@
     }
 
     /**
-     * A specialized version of `_.sum` for arrays without support for callback
-     * shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {number} Returns the sum.
-     */
-    function arraySum(array, iteratee) {
-      var index = -1,
-          length = array.length,
-          result = 0;
-
-      while (++index < length) {
-        result += +iteratee(array[index]) || 0;
-      }
-      return result;
-    }
-
-    /**
      * Assigns `value` to `key` of `object` if the existing value is not equivalent
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
@@ -2648,6 +2628,25 @@
           seen[++resIndex] = computed;
           result[resIndex] = value;
         }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.sum` without support for callback shorthands.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {number} Returns the sum.
+     */
+    function baseSum(array, iteratee) {
+      var index = -1,
+          length = array.length,
+          result = 0;
+
+      while (++index < length) {
+        result += +iteratee(array[index]) || 0;
       }
       return result;
     }
@@ -11362,7 +11361,7 @@
      * // => 10
      */
     function sum(array) {
-      return array ? arraySum(array, identity) : 0;
+      return array ? baseSum(array, identity) : 0;
     }
 
     /**
@@ -11392,7 +11391,7 @@
      */
     function sumBy(array, iteratee) {
       return (array && array.length)
-        ? arraySum(array, getIteratee(iteratee))
+        ? baseSum(array, getIteratee(iteratee))
         : 0;
     }
 

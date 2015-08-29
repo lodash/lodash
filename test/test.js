@@ -15949,13 +15949,18 @@
 
   _.each(['uniq', 'uniqBy', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
     var func = _[methodName],
+        isSorted = /^sorted/.test(methodName);
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
-    test('`_.' + methodName + '` should return unique values of an unsorted array', 1, function() {
-      var array = [2, 3, 1, 2, 3, 1];
-      deepEqual(func(array), [2, 3, 1]);
-    });
-
+    if (isSorted) {
+      objects = _.sortBy(objects, 'a');
+    }
+    else {
+      test('`_.' + methodName + '` should return unique values of an unsorted array', 1, function() {
+        var array = [2, 3, 1, 2, 3, 1];
+        deepEqual(func(array), [2, 3, 1]);
+      });
+    }
     test('`_.' + methodName + '` should return unique values of a sorted array', 1, function() {
       var array = [1, 1, 2, 2, 3];
       deepEqual(func(array), [1, 2, 3]);
@@ -15966,16 +15971,18 @@
     });
 
     test('`_.' + methodName + '` should not treat `NaN` as unique', 1, function() {
-      deepEqual(func([1, NaN, 3, NaN]), [1, NaN, 3]);
+      deepEqual(func([1, 3, NaN, NaN]), [1, 3, NaN]);
     });
 
     test('`_.' + methodName + '` should work with large arrays', 1, function() {
       var largeArray = [],
-          expected = [0, 'a', {}],
+          expected = [0, {}, 'a'],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
-      _.times(count, function() {
-        push.apply(largeArray, expected);
+      _.each(expected, function(value) {
+        _.times(count, function() {
+          largeArray.push(value);
+        });
       });
 
       deepEqual(func(largeArray), expected);
@@ -15983,11 +15990,13 @@
 
     test('`_.' + methodName + '` should work with large arrays of boolean, `NaN`, and nullish values', 1, function() {
       var largeArray = [],
-          expected = [true, false, NaN, null, undefined],
+          expected = [false, true, null, undefined, NaN],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
-      _.times(count, function() {
-        push.apply(largeArray, expected);
+      _.each(expected, function(value) {
+        _.times(count, function() {
+          largeArray.push(value);
+        });
       });
 
       deepEqual(func(largeArray), expected);
@@ -16011,7 +16020,7 @@
       if (Symbol) {
         var expected = [
           Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.iterator,
-          Symbol.match, Symbol.replace,  Symbol.search, Symbol.species,
+          Symbol.match, Symbol.replace, Symbol.search, Symbol.species,
           Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, Symbol.unscopables
         ];
 
@@ -16022,8 +16031,10 @@
           return symbol || {};
         });
 
-        _.times(count, function() {
-          push.apply(largeArray, expected);
+        _.each(expected, function(value) {
+          _.times(count, function() {
+            largeArray.push(value);
+          });
         });
 
         deepEqual(func(largeArray), expected);
@@ -16034,15 +16045,17 @@
     });
 
     test('`_.' + methodName + '` should distinguish between numbers and numeric strings', 1, function() {
-      var array = [],
+      var largeArray = [],
           expected = ['2', 2, Object('2'), Object(2)],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
-      _.times(count, function() {
-        push.apply(array, expected);
+      _.each(expected, function(value) {
+        _.times(count, function() {
+          largeArray.push(value);
+        });
       });
 
-      deepEqual(func(array), expected);
+      deepEqual(func(largeArray), expected);
     });
   });
 

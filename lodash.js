@@ -2629,17 +2629,17 @@
           indexOf = getIndexOf(),
           isCommon = indexOf === baseIndexOf,
           value = array[0],
-          computed = iteratee ? iteratee(value, 0, array) : value,
+          computed = iteratee ? iteratee(value) : value,
           seen = isCommon ? computed : [computed],
           resIndex = 0,
           result = [value];
 
       while (++index < length) {
         value = array[index],
-        computed = iteratee ? iteratee(value, index, array) : value;
+        computed = iteratee ? iteratee(value) : value;
 
         if (isCommon) {
-          if ((value === value ? (seen !== computed) : (indexOf(seen, computed, 0) < 0))) {
+          if ((seen === seen ? (seen !== computed) : (computed === computed))) {
             seen = computed;
             result[++resIndex] = value;
           }
@@ -2693,7 +2693,7 @@
         var value = array[index],
             computed = iteratee ? iteratee(value) : value;
 
-        if (isCommon && value === value) {
+        if (isCommon && computed === computed) {
           var seenIndex = seen.length;
           while (seenIndex--) {
             if (seen[seenIndex] === computed) {

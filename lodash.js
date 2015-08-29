@@ -2653,6 +2653,25 @@
     }
 
     /**
+     * The base implementation of `_.times` without support for callback shorthands
+     * or max array length checks.
+     *
+     * @private
+     * @param {number} n The number of times to invoke `iteratee`.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {Array} Returns the array of results.
+     */
+    function baseTimes(n, iteratee) {
+       var index = -1,
+           result = Array(n);
+
+      while (++index < n) {
+        result[index] = iteratee(index);
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `_.uniq`.
      *
      * @private
@@ -2726,14 +2745,9 @@
      * @returns {Object} Returns the array of property values.
      */
     function baseValues(object, props) {
-      var index = -1,
-          length = props.length,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = object[props[index]];
-      }
-      return result;
+      return arrayMap(props, function(key) {
+        return object[key];
+      });
     }
 
     /**
@@ -3149,15 +3163,7 @@
      */
     function createCompounder(callback) {
       return function(string) {
-        var index = -1,
-            array = words(deburr(string)),
-            length = array.length,
-            result = '';
-
-        while (++index < length) {
-          result = callback(result, array[index], index);
-        }
-        return result;
+        return arrayReduce(words(deburr(string)), callback, '');
       };
     }
 
@@ -3893,13 +3899,7 @@
       length = (length && isLength(length) &&
         (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
 
-      var index = -1,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = (index + '');
-      }
-      return result;
+      return baseTimes(length, String);
     }
 
     /**
@@ -6732,15 +6732,9 @@
      */
     function after(n, func) {
       if (typeof func != 'function') {
-        if (typeof n == 'function') {
-          var temp = n;
-          n = func;
-          func = temp;
-        } else {
-          throw new TypeError(FUNC_ERROR_TEXT);
-        }
+        throw new TypeError(FUNC_ERROR_TEXT);
       }
-      n = nativeIsFinite(n = +n) ? n : 0;
+      n = toInteger(n);
       return function() {
         if (--n < 1) {
           return func.apply(this, arguments);
@@ -6791,6 +6785,7 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
+      n = toInteger(n);
       return function() {
         if (--n > 0) {
           result = func.apply(this, arguments);
@@ -9453,17 +9448,9 @@
      */
     function pairs(object) {
       object = Object(object);
-
-      var index = -1,
-          props = keys(object),
-          length = props.length,
-          result = Array(length);
-
-      while (++index < length) {
-        var key = props[index];
-        result[index] = [key, object[key]];
-      }
-      return result;
+      return arrayMap(keys(object), function(key) {
+        return [key, object[key]];
+      });
     }
 
     /**
@@ -11099,17 +11086,10 @@
       } else {
         end = +end || 0;
       }
-      // Use `Array(length)` so engines like Chakra and V8 avoid slower modes.
-      // See https://youtu.be/XAqIpGU8ZZk#t=17m25s for more details.
-      var index = -1,
-          length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = start;
-        start += step;
-      }
-      return result;
+      var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
+      return baseTimes(n, function(index) {
+        return index ? (start += step) : start;
+      });
     }
 
     /**
@@ -11133,23 +11113,19 @@
      * // => invokes `mage.castSpell` three times with `n` of `0`, `1`, and `2`
      */
     function times(n, iteratee) {
-      n = nativeFloor(n);
-
-      // Exit early to avoid a JSC JIT bug in Safari 8
-      // where `Array(0)` is treated as `Array(1)`.
-      if (n < 1 || !nativeIsFinite(n)) {
+      n = toInteger(n);
+      if (n < 1 || n == POSITIVE_INFINITY || n == NEGATIVE_INFINITY) {
         return [];
       }
-      var index = -1,
-          result = Array(nativeMin(n, MAX_ARRAY_LENGTH));
+      var index = MAX_ARRAY_LENGTH,
+          length = nativeMin(n, MAX_ARRAY_LENGTH);
 
       iteratee = toFunction(iteratee);
+      n -= MAX_ARRAY_LENGTH;
+
+      var result = baseTimes(length, iteratee);
       while (++index < n) {
-        if (index < MAX_ARRAY_LENGTH) {
-          result[index] = iteratee(index);
-        } else {
-          iteratee(index);
-        }
+        iteratee(index);
       }
       return result;
     }

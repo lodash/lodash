@@ -866,27 +866,8 @@
       strictEqual(after(0, 1), 1, 'after(0) should invoke `func` when called once');
     });
 
-    test('should coerce non-finite `n` values to `0`', 1, function() {
-      var values = [-Infinity, NaN, Infinity],
-          expected = _.map(values, _.constant(1));
-
-      var actual = _.map(values, function(n) {
-        return after(n, 1);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should allow `func` as the first argument', 1, function() {
-      var count = 0;
-
-      try {
-        var after = _.after(function() { count++; }, 1);
-        after();
-        after();
-      } catch(e) {}
-
-      strictEqual(count, 2);
+    test('should coerce `n` values of `NaN` to `0`', 1, function() {
+      strictEqual(after(NaN, 1), 1);
     });
 
     test('should not set a `this` binding', 2, function() {
@@ -1179,15 +1160,8 @@
       strictEqual(before(0, 1), 0, 'before(0) should not invoke `func` when called');
     });
 
-    test('should coerce non-finite `n` values to `0`', 1, function() {
-      var values = [-Infinity, NaN, Infinity],
-          expected = _.map(values, _.constant(0));
-
-      var actual = _.map(values, function(n) {
-        return before(n);
-      });
-
-      deepEqual(actual, expected);
+    test('should coerce `n` values of `NaN` to `0`', 1, function() {
+      strictEqual(before(NaN, 1), 0);
     });
 
     test('should not set a `this` binding', 2, function() {

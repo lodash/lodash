@@ -805,8 +805,8 @@
      * `defer`, `delay`, `difference`, `drop`, `dropRight`, `dropRightWhile`,
      * `dropWhile`, `extend`, `extendWith`, `fill`, `filter`, `flatten`,
      * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
-     * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
-     * `initial`, `intersection`, `invert`, `invoke`, `iteratee`, `keys`, `keysIn`,
+     * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `initial`,
+     * `intersection`, `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`,
      * `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`, `memoize`,
      * `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`, `negate`,
      * `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`,
@@ -6198,37 +6198,6 @@
     }
 
     /**
-     * Creates an object composed of keys generated from the results of running
-     * each element of `collection` through `iteratee`. The corresponding value
-     * of each key is the last element responsible for generating the key. The
-     * iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns the composed aggregate object.
-     * @example
-     *
-     * var keyData = [
-     *   { 'dir': 'left', 'code': 97 },
-     *   { 'dir': 'right', 'code': 100 }
-     * ];
-     *
-     * _.indexBy(keyData, 'dir');
-     * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
-     *
-     * _.indexBy(keyData, function(o) {
-     *   return String.fromCharCode(o.code);
-     * });
-     * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
-     */
-    var indexBy = createAggregator(function(result, value, key) {
-      result[key] = value;
-    });
-
-    /**
      * Invokes the method at `path` of each element in `collection`, returning
      * an array of the results of each invoked method. Any additional arguments
      * are provided to each invoked method. If `methodName` is a function it's
@@ -6261,6 +6230,37 @@
         result[++index] = func ? func.apply(value, args) : invokePath(value, path, args);
       });
       return result;
+    });
+
+    /**
+     * Creates an object composed of keys generated from the results of running
+     * each element of `collection` through `iteratee`. The corresponding value
+     * of each key is the last element responsible for generating the key. The
+     * iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {Object} Returns the composed aggregate object.
+     * @example
+     *
+     * var keyData = [
+     *   { 'dir': 'left', 'code': 97 },
+     *   { 'dir': 'right', 'code': 100 }
+     * ];
+     *
+     * _.keyBy(keyData, 'dir');
+     * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
+     *
+     * _.keyBy(keyData, function(o) {
+     *   return String.fromCharCode(o.code);
+     * });
+     * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+     */
+    var keyBy = createAggregator(function(result, value, key) {
+      result[key] = value;
     });
 
     /**
@@ -11455,12 +11455,12 @@
     lodash.flowRight = flowRight;
     lodash.functions = functions;
     lodash.groupBy = groupBy;
-    lodash.indexBy = indexBy;
     lodash.initial = initial;
     lodash.intersection = intersection;
     lodash.invert = invert;
     lodash.invoke = invoke;
     lodash.iteratee = iteratee;
+    lodash.keyBy = keyBy;
     lodash.keys = keys;
     lodash.keysIn = keysIn;
     lodash.map = map;

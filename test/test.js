@@ -4635,7 +4635,7 @@
       'forOwn',
       'forOwnRight',
       'groupBy',
-      'indexBy',
+      'keyBy',
       'map',
       'mapKeys',
       'mapValues',
@@ -4665,7 +4665,7 @@
       'forEach',
       'forEachRight',
       'groupBy',
-      'indexBy',
+      'keyBy',
       'map',
       'partition',
       'reduce',
@@ -5602,74 +5602,6 @@
       ok(_.every(array1, _.partial(_.includes, array2)));
     });
   }(1, 2, 3, 4));
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.indexBy');
-
-  (function() {
-    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
-      var array = [4, 6, 6],
-          values = [, null, undefined],
-          expected = _.map(values, _.constant({ '4': 4, '6': 6 }));
-
-      var actual = _.map(values, function(value, index) {
-        return index ? _.indexBy(array, value) : _.indexBy(array);
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should work with a "_.property" style `iteratee`', 1, function() {
-      var actual = _.indexBy(['one', 'two', 'three'], 'length');
-      deepEqual(actual, { '3': 'two', '5': 'three' });
-    });
-
-    test('should only add values to own, not inherited, properties', 2, function() {
-      var actual = _.indexBy([4.2, 6.1, 6.4], function(num) {
-        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
-      });
-
-      deepEqual(actual.constructor, 4.2);
-      deepEqual(actual.hasOwnProperty, 6.4);
-    });
-
-    test('should work with a number for `iteratee`', 2, function() {
-      var array = [
-        [1, 'a'],
-        [2, 'a'],
-        [2, 'b']
-      ];
-
-      deepEqual(_.indexBy(array, 0), { '1': [1, 'a'], '2': [2, 'b'] });
-      deepEqual(_.indexBy(array, 1), { 'a': [2, 'a'], 'b': [2, 'b'] });
-    });
-
-    test('should work with an object for `collection`', 1, function() {
-      var actual = _.indexBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
-        return Math.floor(num);
-      });
-
-      deepEqual(actual, { '4': 4.2, '6': 6.4 });
-    });
-
-    test('should work in a lazy chain sequence', 1, function() {
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE).concat(
-          _.range(Math.floor(LARGE_ARRAY_SIZE / 2), LARGE_ARRAY_SIZE),
-          _.range(Math.floor(LARGE_ARRAY_SIZE / 1.5), LARGE_ARRAY_SIZE)
-        );
-
-        var predicate = function(value) { return value > 2; },
-            actual = _(array).indexBy().map(square).filter(predicate).take().value();
-
-        deepEqual(actual, _.take(_.filter(_.map(_.indexBy(array), square), predicate)));
-      }
-      else {
-        skipTest();
-      }
-    });
-  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -8466,10 +8398,10 @@
       }
     });
 
-    test('`_.indexBy` should use `_.iteratee` internally', 1, function() {
+    test('`_.keyBy` should use `_.iteratee` internally', 1, function() {
       if (!isModularize) {
         _.iteratee = getLength;
-        deepEqual(_.indexBy(array), { '3': 'two', '5': 'three' });
+        deepEqual(_.keyBy(array), { '3': 'two', '5': 'three' });
         _.iteratee = iteratee;
       }
       else {
@@ -8696,6 +8628,74 @@
         _.iteratee = getPropB;
         deepEqual(_.uniqBy(objects), [objects[0], objects[2]]);
         _.iteratee = iteratee;
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.keyBy');
+
+  (function() {
+    test('should use `_.identity` when `iteratee` is nullish', 1, function() {
+      var array = [4, 6, 6],
+          values = [, null, undefined],
+          expected = _.map(values, _.constant({ '4': 4, '6': 6 }));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.keyBy(array, value) : _.keyBy(array);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with a "_.property" style `iteratee`', 1, function() {
+      var actual = _.keyBy(['one', 'two', 'three'], 'length');
+      deepEqual(actual, { '3': 'two', '5': 'three' });
+    });
+
+    test('should only add values to own, not inherited, properties', 2, function() {
+      var actual = _.keyBy([4.2, 6.1, 6.4], function(num) {
+        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+      });
+
+      deepEqual(actual.constructor, 4.2);
+      deepEqual(actual.hasOwnProperty, 6.4);
+    });
+
+    test('should work with a number for `iteratee`', 2, function() {
+      var array = [
+        [1, 'a'],
+        [2, 'a'],
+        [2, 'b']
+      ];
+
+      deepEqual(_.keyBy(array, 0), { '1': [1, 'a'], '2': [2, 'b'] });
+      deepEqual(_.keyBy(array, 1), { 'a': [2, 'a'], 'b': [2, 'b'] });
+    });
+
+    test('should work with an object for `collection`', 1, function() {
+      var actual = _.keyBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+        return Math.floor(num);
+      });
+
+      deepEqual(actual, { '4': 4.2, '6': 6.4 });
+    });
+
+    test('should work in a lazy chain sequence', 1, function() {
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE).concat(
+          _.range(Math.floor(LARGE_ARRAY_SIZE / 2), LARGE_ARRAY_SIZE),
+          _.range(Math.floor(LARGE_ARRAY_SIZE / 1.5), LARGE_ARRAY_SIZE)
+        );
+
+        var predicate = function(value) { return value > 2; },
+            actual = _(array).keyBy().map(square).filter(predicate).take().value();
+
+        deepEqual(actual, _.take(_.filter(_.map(_.keyBy(array), square), predicate)));
       }
       else {
         skipTest();

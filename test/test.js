@@ -4747,7 +4747,7 @@
     _.each(methods, function(methodName) {
       var array = [1, 2, 3],
           func = _[methodName],
-          isExtremum = /^(?:max|min)/.test(methodName),
+          isBy = /(^partition|By)$/.test(methodName),
           isFind = /^find/.test(methodName),
           isSome = methodName == 'some';
 
@@ -4767,7 +4767,7 @@
           if (_.includes(objectMethods, methodName)) {
             expected[1] += '';
           }
-          if (isExtremum) {
+          if (isBy) {
             expected.length = 1;
           }
           deepEqual(args, expected);
@@ -4784,12 +4784,12 @@
 
           var expected = [[1, 0, array], [undefined, 1, array], [3, 2, array]];
 
-          if (isExtremum) {
+          if (isBy) {
             expected = _.map(expected, function(args) {
               return args.slice(0, 1);
             });
           }
-          if (_.includes(objectMethods, methodName)) {
+          else if (_.includes(objectMethods, methodName)) {
             expected = _.map(expected, function(args) {
               args[1] += '';
               return args;
@@ -4888,9 +4888,9 @@
         Foo.prototype.b = 2;
 
         if (func) {
-          var keys = [];
-          func(new Foo, function(value, key) { keys.push(key); });
-          deepEqual(keys, ['a']);
+          var values = [];
+          func(new Foo, function(value) { values.push(value); });
+          deepEqual(values, [1]);
         }
         else {
           skipTest();
@@ -11204,29 +11204,33 @@
   _.each(['omit', 'omitBy'], function(methodName) {
     var expected = { 'b': 2, 'd': 4 },
         func = _[methodName],
-        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
+        prop = function(object, props) { return props; };
 
-    var prop = methodName == 'omit' ? _.identity : function(props) {
-      props = typeof props == 'string' ? [props] : props;
-      return function(value, key) {
-        return _.includes(props, key);
+    if (methodName == 'omitBy') {
+      prop = function(object, props) {
+        props = typeof props == 'string' ? [props] : props;
+        return function(value) {
+          return _.some(props, function(key) { return object[key] === value; });
+        };
       };
-    };
-
+    }
     test('`_.' + methodName + '` should create an object with omitted properties', 2, function() {
-      deepEqual(func(object, prop('a')), { 'b': 2, 'c': 3, 'd': 4 });
-      deepEqual(func(object, prop(['a', 'c'])), expected);
+      deepEqual(func(object, prop(object, 'a')), { 'b': 2, 'c': 3, 'd': 4 });
+      deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
     test('`_.' + methodName + '` should iterate over inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(func(new Foo, prop(['a', 'c'])), expected);
+      var foo = new Foo;
+      deepEqual(func(foo, prop(object, ['a', 'c'])), expected);
     });
 
     test('`_.' + methodName + '` should work with an array `object` argument', 1, function() {
-      deepEqual(func([1, 2, 3], prop(['0', '2'])), { '1': 2 });
+      var array = [1, 2, 3];
+      deepEqual(func(array, prop(array, ['0', '2'])), { '1': 2 });
     });
   });
 
@@ -11921,29 +11925,33 @@
   _.each(['pick', 'pickBy'], function(methodName) {
     var expected = { 'a': 1, 'c': 3 },
         func = _[methodName],
-        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
+        object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
+        prop = function(object, props) { return props; };
 
-    var prop = methodName == 'pick' ? _.identity : function(props) {
-      props = typeof props == 'string' ? [props] : props;
-      return function(value, key) {
-        return _.includes(props, key);
+    if (methodName == 'pickBy') {
+      prop = function(object, props) {
+        props = typeof props == 'string' ? [props] : props;
+        return function(value) {
+          return _.some(props, function(key) { return object[key] === value; });
+        };
       };
-    };
-
+    }
     test('`_.' + methodName + '` should create an object of picked properties', 2, function() {
-      deepEqual(func(object, prop('a')), { 'a': 1 });
-      deepEqual(func(object, prop(['a', 'c'])), expected);
+      deepEqual(func(object, prop(object, 'a')), { 'a': 1 });
+      deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
     test('`_.' + methodName + '` should iterate over inherited properties', 1, function() {
       function Foo() {}
       Foo.prototype = object;
 
-      deepEqual(func(new Foo, prop(['a', 'c'])), expected);
+      var foo = new Foo;
+      deepEqual(func(foo, prop(foo, ['a', 'c'])), expected);
     });
 
     test('`_.' + methodName + '` should work with an array `object` argument', 1, function() {
-      deepEqual(func([1, 2, 3], prop('1')), { '1': 2 });
+      var array = [1, 2, 3];
+      deepEqual(func(array, prop(array, '1')), { '1': 2 });
     });
   });
 

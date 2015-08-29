@@ -2339,8 +2339,8 @@
      */
     function basePickBy(object, predicate) {
       var result = {};
-      baseForIn(object, function(value, key, object) {
-        if (predicate(value, key, object)) {
+      baseForIn(object, function(value, key) {
+        if (predicate(value)) {
           result[key] = value;
         }
       });
@@ -2576,12 +2576,12 @@
           index = -1;
 
       iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
-        return toIteratee(iteratee, 3);
+        return toIteratee(iteratee, 1);
       });
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
-          return iteratee(value, key, collection);
+          return iteratee(value);
         });
         return { 'criteria': criteria, 'index': ++index, 'value': value };
       });
@@ -3029,11 +3029,11 @@
 
           while (++index < length) {
             var value = collection[index];
-            setter(result, value, iteratee(value, index, collection), collection);
+            setter(result, value, iteratee(value), collection);
           }
         } else {
           baseEach(collection, function(value, key, collection) {
-            setter(result, value, iteratee(value, key, collection), collection);
+            setter(result, value, iteratee(value), collection);
           });
         }
         return result;
@@ -5892,7 +5892,7 @@
      * Creates an object composed of keys generated from the results of running
      * each element of `collection` through `iteratee`. The corresponding value
      * of each key is the number of times the key was returned by `iteratee`.
-     * The iteratee is invoked with three arguments: (value, index|key, collection).
+     * The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -6128,7 +6128,7 @@
      * Creates an object composed of keys generated from the results of running
      * each element of `collection` through `iteratee`. The corresponding value
      * of each key is an array of the elements responsible for generating the key.
-     * The iteratee is invoked with three arguments: (value, index|key, collection).
+     * The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -6201,7 +6201,7 @@
      * Creates an object composed of keys generated from the results of running
      * each element of `collection` through `iteratee`. The corresponding value
      * of each key is the last element responsible for generating the key. The
-     * iteratee is invoked with three arguments: (value, index|key, collection).
+     * iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -6596,8 +6596,7 @@
      * Creates an array of elements, sorted in ascending order by the results of
      * running each element in a collection through each iteratee. This method
      * performs a stable sort, that is, it preserves the original sort order of
-     * equal elements. The iteratees are invoked with three arguments:
-     * (value, index|key, collection).
+     * equal elements. The iteratees are invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -9425,9 +9424,9 @@
      * // => { 'user': 'fred' }
      */
     function omitBy(object, predicate) {
-      predicate = getIteratee(predicate, 3);
-      return basePickBy(object, function(value, key, object) {
-        return !predicate(value, key, object);
+      predicate = getIteratee(predicate);
+      return basePickBy(object, function(value) {
+        return !predicate(value);
       });
     }
 
@@ -9475,7 +9474,7 @@
 
     /**
      * Creates an object composed of the `object` properties `predicate` returns
-     * truthy for. The predicate is invoked with three arguments: (value, key, object).
+     * truthy for. The predicate is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -9491,7 +9490,7 @@
      * // => { 'user': 'fred' }
      */
     function pickBy(object, predicate) {
-      return object == null ? {} : basePickBy(object, getIteratee(predicate, 3));
+      return object == null ? {} : basePickBy(object, getIteratee(predicate));
     }
 
     /**

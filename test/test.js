@@ -2252,16 +2252,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should provide the correct `iteratee` arguments', 1, function() {
-      var args;
-
-      _.countBy(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [4.2, 0, array]);
-    });
-
     test('should work with a "_.property" style `iteratee`', 1, function() {
       var actual = _.countBy(['one', 'two', 'three'], 'length');
       deepEqual(actual, { '3': 2, '5': 1 });
@@ -5268,16 +5258,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should provide the correct `iteratee` arguments', 1, function() {
-      var args;
-
-      _.groupBy(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [4.2, 0, array]);
     });
 
     test('should work with a "_.property" style `iteratee`', 1, function() {
@@ -9100,16 +9080,6 @@
       deepEqual(_.map(object, String), expected);
     });
 
-    test('should provide the correct `iteratee` arguments', 1, function() {
-      var args;
-
-      _.map(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [1, 0, array]);
-    });
-
     test('should work with a "_.property" style `iteratee`', 1, function() {
       var objects = [{ 'a': 'x' }, { 'a': 'y' }];
       deepEqual(_.map(objects, 'a'), ['x', 'y']);
@@ -9304,18 +9274,6 @@
       });
 
       deepEqual(actual, expected);
-    });
-
-    test('should provide the correct `iteratee` arguments', 2, function() {
-      _.each([object, array], function(value, index) {
-        var args;
-
-        _.mapValues(value, function() {
-          args || (args = slice.call(arguments));
-        });
-
-        deepEqual(args, [1, index ? '0' : 'a', value]);
-      });
     });
 
     test('should return a wrapped value when chaining', 1, function() {
@@ -11832,16 +11790,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should provide the correct `predicate` arguments', 1, function() {
-      var args;
-
-      _.partition(array, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [1, 0, array]);
-    });
-
     test('should work with a "_.property" style `predicate`', 1, function() {
       var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
           actual = _.partition(objects, 'a');
@@ -13988,16 +13936,6 @@
       }), 'b');
 
       deepEqual(actual, [1, 2, 3, 4]);
-    });
-
-    test('should provide the correct `iteratee` arguments', 1, function() {
-      var args;
-
-      _.sortBy(objects, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      deepEqual(args, [objects[0], 0, objects]);
     });
 
     test('should use `_.identity` when `iteratee` is nullish', 1, function() {

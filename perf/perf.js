@@ -1118,42 +1118,6 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.indexBy` with `callback` iterating an array')
-      .add(buildName, '\
-        lodash.indexBy(numbers, function(num) { return num >> 1; })'
-      )
-      .add(otherName, '\
-        _.indexBy(numbers, function(num) { return num >> 1; })'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.indexBy` with `property` name iterating an array')
-      .add(buildName, {
-        'fn': 'lodash.indexBy(words, "length")',
-        'teardown': 'function countBy(){}'
-      })
-      .add(otherName, {
-        'fn': '_.indexBy(words, "length")',
-        'teardown': 'function countBy(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.indexBy` with `callback` iterating an object')
-      .add(buildName, {
-        'fn': 'lodash.indexBy(wordToNumber, function(num) { return num >> 1; })',
-        'teardown': 'function countBy(){}'
-      })
-      .add(otherName, {
-        'fn': '_.indexBy(wordToNumber, function(num) { return num >> 1; })',
-        'teardown': 'function countBy(){}'
-      })
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
     Benchmark.Suite('`_.indexOf`')
       .add(buildName, {
         'fn': 'lodash.indexOf(hundredSortedValues, 99)',

@@ -3594,9 +3594,9 @@
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
-      var objProps = keys(object),
+      var objProps = baseKeys(object),
           objLength = objProps.length,
-          othProps = keys(other),
+          othProps = baseKeys(other),
           othLength = othProps.length;
 
       if (objLength != othLength && !isLoose) {

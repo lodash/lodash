@@ -16580,6 +16580,85 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash(...).next');
+
+  _.each([true, false], function(implict) {
+    function arrayFrom(iter) {
+      var item;
+      var result = [];
+      while (!(item = iter.next()).done) {
+        result.push(item.value);
+      }
+      return result;
+    }
+
+    function chain(obj) {
+      return implict ? _(obj) : _.chain(obj);
+    }
+
+    var chainType = ' in an ' + (implict ? 'implict' : 'explict') + ' chain';
+
+    test('should produce an ES6 compliant object' + chainType, 7, function() {
+      var array = [0, 1, 1, 2, 3],
+          chained = chain(array);
+
+      deepEqual(chained.next(), {done: false, value: 0});
+      deepEqual(chained.next(), {done: false, value: 1});
+      deepEqual(chained.next(), {done: false, value: 1});
+      deepEqual(chained.next(), {done: false, value: 2});
+      deepEqual(chained.next(), {done: false, value: 3});
+      deepEqual(chained.next(), {done: true, value: undefined});
+      deepEqual(chained.next(), {done: true, value: undefined});
+    });
+
+    test('should make a lodash instance act as an iterable' + chainType, 1, function() {
+      var array = [0, 1, 1, 2, 3, 5, 8, 13, 21],
+          chained = chain(array);
+
+      deepEqual(arrayFrom(chained), array);
+    });
+
+    test('should reset the iterator upon forking (adding an action to the chain)' + chainType, 5, function() {
+      var array = [0, 1, 1, 2, 3, 5, 8, 13, 21],
+          chained = chain(array);
+
+      deepEqual(arrayFrom(chained), array);
+      // before reset produces empty array as iterator is exhausted
+      deepEqual(arrayFrom(chained), []);
+
+      var newChain = chained.filter(_.constant(true));
+      deepEqual(arrayFrom(newChain), array);
+
+      // original chain is still exhausted
+      deepEqual(arrayFrom(chained), []);
+
+      newChain = chained.slice();
+      deepEqual(arrayFrom(newChain), array);
+    });
+
+    test('should work in a lazy sequence' + chainType, 3, function() {
+      if (true) {
+        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            values = [],
+            predicate = function(value) { values.push(value); return value > 99; },
+            chained = chain(array);
+
+        deepEqual(arrayFrom(chained), array);
+
+        // resets index & supports lazy array
+        chained = chained.filter(predicate);
+        deepEqual(arrayFrom(chained), array.slice(99));
+        // Doesn't recompute everything each time
+        deepEqual(values, array);
+      }
+      else {
+        skipTest(3);
+      }
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash(...).plant');
 
   (function() {

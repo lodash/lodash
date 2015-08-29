@@ -10138,8 +10138,8 @@
     function repeat(string, n) {
       var result = '';
       string = baseToString(string);
-      n = +n;
-      if (n < 1 || !string || !nativeIsFinite(n)) {
+      n = toInteger(n);
+      if (n < 1 || n == POSITIVE_INFINITY || n == NEGATIVE_INFINITY || !string) {
         return result;
       }
       // Leverage the exponentiation by squaring algorithm for a faster repeat.

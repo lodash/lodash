@@ -2249,6 +2249,66 @@
         skipTest();
       }
     });
+
+    test('should return an object with a deeply non-writable and non-configurable value when passing a name and object', 11, function() {
+      var error,
+          object = {},
+          expected = { a : 'b' },
+          constant = _.constant(expected, 'name', object);
+
+      constant.name = 'c';
+      deepEqual(expected, constant.name);
+
+      constant.name.a = 'c';
+      deepEqual(expected, constant.name);
+
+      constant.name.b = 'c';
+      deepEqual(expected, constant.name);
+
+      delete constant.name;
+      deepEqual(expected, constant.name);
+
+      delete constant.name.a;
+      deepEqual(expected, constant.name);
+
+      object.name = 'c';
+      deepEqual(expected, constant.name);
+
+      object.name.a = 'c';
+      deepEqual(expected, constant.name);
+
+      object.name.b = 'c';
+      deepEqual(expected, constant.name);
+
+      delete object.name;
+      deepEqual(expected, constant.name);
+
+      delete object.name.a;
+      deepEqual(expected, constant.name);
+
+      error = _.attempt(function() {
+        _.constant(object, 'name', 'c');
+      });
+
+      deepEqual(expected, constant.name);
+    });
+
+    test('should return a function if the 2nd and 3rd params are not the correct type', 1, function() {
+      var testTypes = [ {}, function() {}, [], 1, 0, false, true, undefined, null, 'string' ],
+          nameFailTypes = _.take(testTypes, testTypes.length - 1),
+          objectFailTypes = _.takeRight(testTypes, testTypes.length - 1),
+          expected = _.fill(Array(nameFailTypes.length * objectFailTypes.length), 'function'),
+          actual = [];
+
+      _.forEach(nameFailTypes, function(name) {
+        _.forEach(objectFailTypes, function(object) {
+          actual.push(typeof _.constant('value', name, object));
+        });
+      });
+
+      deepEqual(actual, expected);
+    });
+
   }());
 
   /*--------------------------------------------------------------------------*/

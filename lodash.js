@@ -10697,13 +10697,15 @@
     });
 
     /**
-     * Creates a function that returns `value`.
-     *
+     * Creates a function that returns `value` or defines a none writable
+     * and none configurable property on an object name and object is given.
      * @static
      * @memberOf _
      * @category Utility
      * @param {*} value The value to return from the new function.
-     * @returns {Function} Returns the new function.
+     * @param {string} name The name of the constant to be set on the given object.
+     * @param {object} object The object on which the constant is defined.
+     * @returns {Function|Object} Returns the new function or the object containing the constant.
      * @example
      *
      * var object = { 'user': 'fred' };
@@ -10711,8 +10713,41 @@
      *
      * getter() === object;
      * // => true
+     *
+     * var constObject = {};
+     * var name = 'user';
+     * var value = { 'mail': fredy@fred.com' };
+     * 
+     * _.constant(value, name, constObject);
+     * 
+     * constObject.user === value;
+     * // => true
+     * 
+     * constObject.user.mail = 'alice@alice.come';
+     *
+     * constObject.user.mail === value.mail;
+     * // => true
+     *
+     * delete constObject.user;
+     * 
+     * constObject.user === value;
+     * // => true
+     * 
+     * delete constObject.user.mail;
+     *
+     * constObject.user.mail === value.mail;
+     * // => true
      */
-    function constant(value) {
+    function constant(value, name, object) {
+      if (isString(name) && isObject(object)) {
+        Object.defineProperty(object, name, { 
+          get: function() { return value; },
+          configurable: false,
+          enumerable: true
+        });
+        return object;
+      }
+
       return function() {
         return value;
       };

@@ -4,7 +4,7 @@ node_js:
 env:
   global:
     - PATTERN1="s|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)||"
-    - PATTERN2="s|\s*else\s*\{\s*iteratee\(index\);\s*\}||"
+    - PATTERN2="s|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}||"
     - BIN="node" ISTANBUL=false OPTION=""
     - NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="

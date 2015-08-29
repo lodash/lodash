@@ -1492,6 +1492,8 @@
       this.__wrapped__ = value;
       this.__actions__ = actions || [];
       this.__chain__ = !!chainAll;
+      this.__index__ = 0;
+      this.__values__ = undefined;
     }
 
     /**
@@ -5866,6 +5868,38 @@
         return arrayConcat(isArray(array) ? array : [Object(array)], values);
       });
     });
+
+    /**
+     * Gets the next value on a wrapped object in ES2015 iterator
+     * format (<link>). Useful for `for..of` loops and using with
+     * some ES2015 features.
+     *
+     * @name next
+     * @memberOf _
+     * @category Chain
+     * @returns {*} Returns the next value.
+     * @example
+     *
+     * var wrapped = _([1, 2]);
+     *
+     * wrapped.next();
+     * // => { 'done': false, 'value': 1 }
+     *
+     * wrapped.next();
+     * // => { 'done': false, 'value': 2 }
+     *
+     * wrapped.next();
+     * // => { 'done': true, 'value': undefined }
+     */
+    function wrapperNext() {
+      if (this.__values__ === undefined) {
+        this.__values__ = values(this.value());
+      }
+      var done = this.__index__ >= this.__values__.length,
+          value = done ? undefined : this.__values__[this.__index__++];
+
+      return { 'done': done, 'value': value };
+    }
 
     /**
      * Creates a clone of the chained sequence planting `value` as the wrapped value.
@@ -11958,6 +11992,7 @@
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
     lodash.prototype.concat = wrapperConcat;
+    lodash.prototype.next = wrapperNext;
     lodash.prototype.plant = wrapperPlant;
     lodash.prototype.reverse = wrapperReverse;
     lodash.prototype.toString = wrapperToString;

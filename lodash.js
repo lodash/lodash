@@ -1329,7 +1329,7 @@
         clearTimeout = context.clearTimeout,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
-        iteratorSymbol = Symbol.iterator,
+        iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -8677,7 +8677,7 @@
       if (isArrayLike(value)) {
         return value.length ? copyArray(value) : [];
       }
-      if (value[iteratorSymbol]) {
+      if (iteratorSymbol && value[iteratorSymbol]) {
         return iteratorToArray(value[iteratorSymbol]());
       }
       var tag = objToString.call(value),

@@ -2586,15 +2586,26 @@
     }
 
     /**
-     * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
-     * support for callback shorthands.
+     * The base implementation of `_.sortedUniq`.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseSortedUniq(array) {
+      return baseSortedUniqBy(array);
+    }
+
+    /**
+     * The base implementation of `_.sortedUniqBy` without support for callback
+     * shorthands.
      *
      * @private
      * @param {Array} array The array to inspect.
      * @param {Function} [iteratee] The function invoked per iteration.
      * @returns {Array} Returns the new duplicate free array.
      */
-    function baseSortedUniq(array, iteratee) {
+    function baseSortedUniqBy(array, iteratee) {
       var length = array.length;
       if (!length) {
         return [];
@@ -5167,7 +5178,7 @@
      */
     function sortedUniqBy(array, iteratee) {
       return (array && array.length)
-        ? baseSortedUniq(array, getIteratee(iteratee))
+        ? baseSortedUniqBy(array, getIteratee(iteratee))
         : [];
     }
 

@@ -2781,14 +2781,9 @@
       if (result instanceof LazyWrapper) {
         result = result.value();
       }
-      var index = -1,
-          length = actions.length;
-
-      while (++index < length) {
-        var action = actions[index];
-        result = action.func.apply(action.thisArg, arrayPush([result], action.args));
-      }
-      return result;
+      return arrayReduce(actions, function(result, action) {
+        return action.func.apply(action.thisArg, arrayPush([result], action.args));
+      }, result);
     }
 
     /**
@@ -5417,20 +5412,16 @@
       if (!(array && array.length)) {
         return [];
       }
-      var index = -1,
-          length = 0;
-
+      var length = 0;
       array = arrayFilter(array, function(group) {
         if (isObject(group) && isArrayLike(group)) {
           length = nativeMax(group.length, length);
           return true;
         }
       });
-      var result = Array(length);
-      while (++index < length) {
-        result[index] = arrayMap(array, baseProperty(index));
-      }
-      return result;
+      return baseTimes(length, function(index) {
+        return arrayMap(array, baseProperty(index));
+      });
     }
 
     /**
@@ -6860,15 +6851,9 @@
      * // => logs 'clicked docs' when the element is clicked
      */
     var bindAll = restParam(function(object, methodNames) {
-      methodNames = baseFlatten(methodNames);
-
-      var index = -1,
-          length = methodNames.length;
-
-      while (++index < length) {
-        var key = methodNames[index];
+      arrayEach(baseFlatten(methodNames), function(key) {
         object[key] = createWrapper(object[key], BIND_FLAG, object);
-      }
+      });
       return object;
     });
 
@@ -9134,16 +9119,8 @@
      */
     function invert(object, multiValue) {
       multiValue = typeof multiValue == 'boolean' && multiValue;
-
-      var index = -1,
-          props = keys(object),
-          length = props.length,
-          result = {};
-
-      while (++index < length) {
-        var key = props[index],
-            value = object[key];
-
+      return arrayReduce(keys(object), function(result, key) {
+        var value = object[key];
         if (multiValue) {
           if (hasOwnProperty.call(result, value)) {
             result[value].push(key);
@@ -9154,8 +9131,8 @@
         else {
           result[value] = key;
         }
-      }
-      return result;
+        return result;
+      }, {});
     }
 
     /**

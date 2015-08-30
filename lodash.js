@@ -43,6 +43,17 @@
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
+  /** Used as references for the maximum length and index of an array. */
+  var MAX_ARRAY_LENGTH = 4294967295,
+      MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
+      HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
+
+  /**
+   * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+   * of an array-like value.
+   */
+  var MAX_SAFE_INTEGER = 9007199254740991;
+
   /** Used as the internal argument placeholder. */
   var PLACEHOLDER = '__lodash_placeholder__';
 
@@ -301,6 +312,317 @@
   }
 
   /**
+   * Creates a new array joining `array` with `other`.
+   *
+   * @private
+   * @param {Array} array The array to join.
+   * @param {Array} other The other array to join.
+   * @returns {Array} Returns the new concatenated array.
+   */
+  function arrayConcat(array, other) {
+    var index = -1,
+        length = array.length,
+        othIndex = -1,
+        othLength = other.length,
+        result = Array(length + othLength);
+
+    while (++index < length) {
+      result[index] = array[index];
+    }
+    while (++othIndex < othLength) {
+      result[index++] = other[othIndex];
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.forEach` for arrays without support for
+   * callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEach(array, iteratee) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (iteratee(array[index], index, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.forEachRight` for arrays without support for
+   * callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayEachRight(array, iteratee) {
+    var length = array.length;
+
+    while (length--) {
+      if (iteratee(array[length], length, array) === false) {
+        break;
+      }
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.every` for arrays without support for
+   * callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`.
+   */
+  function arrayEvery(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (!predicate(array[index], index, array)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
+   * with one argument: (value).
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {Function} comparator The function used to compare values.
+   * @param {*} exValue The initial extremum value.
+   * @returns {*} Returns the extremum value.
+   */
+  function arrayExtremum(array, iteratee, comparator, exValue) {
+    var index = -1,
+        length = array.length,
+        computed = exValue,
+        result = computed;
+
+    while (++index < length) {
+      var value = array[index],
+          current = +iteratee(value);
+
+      if (comparator(current, computed)) {
+        computed = current;
+        result = value;
+      }
+    }
+    index = result === exValue ? -1 : index;
+    while (++index < length) {
+      value = array[index];
+      if (+iteratee(value) === exValue) {
+        return value;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.filter` for arrays without support for
+   * callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {Array} Returns the new filtered array.
+   */
+  function arrayFilter(array, predicate) {
+    var index = -1,
+        length = array.length,
+        resIndex = -1,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if (predicate(value, index, array)) {
+        result[++resIndex] = value;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * A specialized version of `_.map` for arrays without support for callback
+   * shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns the new mapped array.
+   */
+  function arrayMap(array, iteratee) {
+    var index = -1,
+        length = array.length,
+        result = Array(length);
+
+    while (++index < length) {
+      result[index] = iteratee(array[index], index, array);
+    }
+    return result;
+  }
+
+  /**
+   * Appends the elements of `values` to `array`.
+   *
+   * @private
+   * @param {Array} array The array to modify.
+   * @param {Array} values The values to append.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayPush(array, values) {
+    var index = -1,
+        length = values.length,
+        offset = array.length;
+
+    while (++index < length) {
+      array[offset + index] = values[index];
+    }
+    return array;
+  }
+
+  /**
+   * A specialized version of `_.reduce` for arrays without support for
+   * callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} [accumulator] The initial value.
+   * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
+   * @returns {*} Returns the accumulated value.
+   */
+  function arrayReduce(array, iteratee, accumulator, initFromArray) {
+    var index = -1,
+        length = array.length;
+
+    if (initFromArray && length) {
+      accumulator = array[++index];
+    }
+    while (++index < length) {
+      accumulator = iteratee(accumulator, array[index], index, array);
+    }
+    return accumulator;
+  }
+
+  /**
+   * A specialized version of `_.reduceRight` for arrays without support for
+   * callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} [accumulator] The initial value.
+   * @param {boolean} [initFromArray] Specify using the last element of `array` as the initial value.
+   * @returns {*} Returns the accumulated value.
+   */
+  function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
+    var length = array.length;
+    if (initFromArray && length) {
+      accumulator = array[--length];
+    }
+    while (length--) {
+      accumulator = iteratee(accumulator, array[length], length, array);
+    }
+    return accumulator;
+  }
+
+  /**
+   * A specialized version of `_.some` for arrays without support for callback
+   * shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @returns {boolean} Returns `true` if any element passes the predicate check, else `false`.
+   */
+  function arraySome(array, predicate) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Assigns `value` to `key` of `object` if the existing value is not equivalent
+   * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+   * for equality comparisons.
+   *
+   * @private
+   * @param {Object} object The object to augment.
+   * @param {string} key The key of the property to assign.
+   * @param {*} value The value to assign.
+   */
+  function assignValue(object, key, value) {
+    var oldValue = object[key];
+    if ((value === value ? (value !== oldValue) : (oldValue === oldValue)) ||
+        (value === undefined && !(key in object))) {
+      object[key] = value;
+    }
+  }
+
+  /**
+   * This function is like `assignValue` except that it doesn't assign `undefined` values.
+   *
+   * @private
+   * @param {Object} object The object to augment.
+   * @param {string} key The key of the property to assign.
+   * @param {*} value The value to assign.
+   */
+  function assignMergeValue(object, key, value) {
+    var oldValue = object[key];
+    if ((value !== undefined &&
+          (value === value ? (value !== oldValue) : (oldValue === oldValue))) ||
+        (typeof key == 'number' &&
+          value === undefined && !(key in object))) {
+      object[key] = value;
+    }
+  }
+
+  /**
+   * The base implementation of methods like `_.find` and `_.findKey` without
+   * support for callback shorthands, which iterates over `collection` using
+   * the provided `eachFunc`.
+   *
+   * @private
+   * @param {Array|Object} collection The collection to search.
+   * @param {Function} predicate The function invoked per iteration.
+   * @param {Function} eachFunc The function to iterate over `collection`.
+   * @param {boolean} [retKey] Specify returning the key of the found element instead of the element itself.
+   * @returns {*} Returns the found element or its key, else `undefined`.
+   */
+  function baseFind(collection, predicate, eachFunc, retKey) {
+    var result;
+    eachFunc(collection, function(value, key, collection) {
+      if (predicate(value, key, collection)) {
+        result = retKey ? key : value;
+        return false;
+      }
+    });
+    return result;
+  }
+
+  /**
    * The base implementation of `_.findIndex` and `_.findLastIndex` without
    * support for callback shorthands.
    *
@@ -361,6 +683,86 @@
   }
 
   /**
+   * The base implementation of `_.reduce` and `_.reduceRight` without support
+   * for callback shorthands, which iterates over `collection` using the provided
+   * `eachFunc`.
+   *
+   * @private
+   * @param {Array|Object} collection The collection to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {*} accumulator The initial value.
+   * @param {boolean} initFromCollection Specify using the first or last element of `collection` as the initial value.
+   * @param {Function} eachFunc The function to iterate over `collection`.
+   * @returns {*} Returns the accumulated value.
+   */
+  function baseReduce(collection, iteratee, accumulator, initFromCollection, eachFunc) {
+    eachFunc(collection, function(value, index, collection) {
+      accumulator = initFromCollection
+        ? (initFromCollection = false, value)
+        : iteratee(accumulator, value, index, collection);
+    });
+    return accumulator;
+  }
+
+  /**
+   * The base implementation of `_.sortBy` which uses `comparer` to define
+   * the sort order of `array` and replaces criteria objects with their
+   * corresponding values.
+   *
+   * @private
+   * @param {Array} array The array to sort.
+   * @param {Function} comparer The function to define sort order.
+   * @returns {Array} Returns `array`.
+   */
+  function baseSortBy(array, comparer) {
+    var length = array.length;
+
+    array.sort(comparer);
+    while (length--) {
+      array[length] = array[length].value;
+    }
+    return array;
+  }
+
+  /**
+   * The base implementation of `_.sum` without support for callback shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {number} Returns the sum.
+   */
+  function baseSum(array, iteratee) {
+    var index = -1,
+        length = array.length,
+        result = 0;
+
+    while (++index < length) {
+      result += +iteratee(array[index]) || 0;
+    }
+    return result;
+  }
+
+  /**
+   * The base implementation of `_.times` without support for callback shorthands
+   * or max array length checks.
+   *
+   * @private
+   * @param {number} n The number of times to invoke `iteratee`.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns the array of results.
+   */
+  function baseTimes(n, iteratee) {
+     var index = -1,
+         result = Array(n);
+
+    while (++index < n) {
+      result[index] = iteratee(index);
+    }
+    return result;
+  }
+
+  /**
    * Converts `value` to a string if it's not one. An empty string is returned
    * for `null` or `undefined` values.
    *
@@ -370,6 +772,22 @@
    */
   function baseToString(value) {
     return value == null ? '' : (value + '');
+  }
+
+  /**
+   * The base implementation of `_.values` and `_.valuesIn` which creates an
+   * array of `object` property values corresponding to the property names
+   * of `props`.
+   *
+   * @private
+   * @param {Object} object The object to query.
+   * @param {Array} props The property names to get values for.
+   * @returns {Object} Returns the array of property values.
+   */
+  function baseValues(object, props) {
+    return arrayMap(props, function(key) {
+      return object[key];
+    });
   }
 
   /**
@@ -490,6 +908,86 @@
   }
 
   /**
+   * Copies the values of `source` to `array`.
+   *
+   * @private
+   * @param {Array} source The array to copy values from.
+   * @param {Array} [array=[]] The array to copy values to.
+   * @returns {Array} Returns `array`.
+   */
+  function copyArray(source, array) {
+    var index = -1,
+        length = source.length;
+
+    array || (array = Array(length));
+    while (++index < length) {
+      array[index] = source[index];
+    }
+    return array;
+  }
+
+  /**
+   * Copies properties of `source` to `object`.
+   *
+   * @private
+   * @param {Object} source The object to copy properties from.
+   * @param {Array} props The property names to copy.
+   * @param {Object} [object={}] The object to copy properties to.
+   * @returns {Object} Returns `object`.
+   */
+  function copyObject(source, props, object) {
+    return copyObjectWith(source, props, object);
+  }
+
+  /**
+   * This function is like `copyObject` except that it accepts a function to
+   * customize copied values.
+   *
+   * @private
+   * @param {Object} source The object to copy properties from.
+   * @param {Array} props The property names to copy.
+   * @param {Object} [object={}] The object to copy properties to.
+   * @param {Function} [customizer] The function to customize copied values.
+   * @returns {Object} Returns `object`.
+   */
+  function copyObjectWith(source, props, object, customizer) {
+    object || (object = {});
+
+    var index = -1,
+        length = props.length;
+
+    while (++index < length) {
+      var key = props[index],
+          newValue = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
+
+      assignValue(object, key, newValue);
+    }
+    return object;
+  }
+
+  /**
+   * Creates a map from key-value `pairs`.
+   *
+   * @private
+   * @param {Array} pairs The key-value pairs to add.
+   * @returns {Object} Returns the new map.
+   */
+  function createMap(pairs) {
+    return arrayReduce(pairs, addMapEntry, new Map);
+  }
+
+  /**
+   * Creates a set from `values`.
+   *
+   * @private
+   * @param {Array} values The values to add.
+   * @returns {Object} Returns the new set.
+   */
+  function createSet(values) {
+    return arrayReduce(values, addSetEntry, new Set);
+  }
+
+  /**
    * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
    *
    * @private
@@ -520,6 +1018,18 @@
    */
   function escapeStringChar(chr) {
     return '\\' + stringEscapes[chr];
+  }
+
+  /**
+   * Used by `_.defaults` to customize its `_.assign` use.
+   *
+   * @private
+   * @param {*} objValue The destination object property value.
+   * @param {*} srcValue The source object property value.
+   * @returns {*} Returns the value to assign to the destination object.
+   */
+  function extendDefaults(objValue, srcValue) {
+    return objValue === undefined ? srcValue : objValue;
   }
 
   /**
@@ -561,6 +1071,33 @@
       } catch(e) {}
     }
     return result;
+  }
+
+  /**
+   * Checks if `value` is a valid array-like index.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+   */
+  function isIndex(value, length) {
+    value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+    length = length == null ? MAX_SAFE_INTEGER : length;
+    return value > -1 && value % 1 == 0 && value < length;
+  }
+
+  /**
+   * Checks if `value` is a valid array-like length.
+   *
+   * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+   */
+  function isLength(value) {
+    return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
   }
 
   /**
@@ -742,27 +1279,22 @@
     // after built-in constructors like `Object`, for the creation of literals.
     // ES5 clears this up by stating that literals must use built-in constructors.
     // See https://es5.github.io/#x11.1.5 for more details.
-    context = context ? _.defaults(root.Object(), context, _.pick(root, contextProps)) : root;
+    context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
 
     /** Native constructor references. */
-    var Array = context.Array,
-        Date = context.Date,
+    var Date = context.Date,
         Error = context.Error,
-        Function = context.Function,
         Math = context.Math,
-        Number = context.Number,
-        Object = context.Object,
         RegExp = context.RegExp,
-        String = context.String,
         TypeError = context.TypeError;
 
     /** Used for native method references. */
-    var arrayProto = Array.prototype,
-        objectProto = Object.prototype,
-        stringProto = String.prototype;
+    var arrayProto = context.Array.prototype,
+        objectProto = context.Object.prototype,
+        stringProto = context.String.prototype;
 
     /** Used to resolve the decompiled source of functions. */
-    var fnToString = Function.prototype.toString;
+    var fnToString = context.Function.prototype.toString;
 
     /** Used to check objects for own properties. */
     var hasOwnProperty = objectProto.hasOwnProperty;
@@ -819,17 +1351,6 @@
     /** Used as references for `-Infinity` and `Infinity`. */
     var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
         POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
-
-    /** Used as references for the maximum length and index of an array. */
-    var MAX_ARRAY_LENGTH = 4294967295,
-        MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
-        HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
-
-    /**
-     * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
-     * of an array-like value.
-     */
-    var MAX_SAFE_INTEGER = 9007199254740991;
 
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
@@ -1272,294 +1793,6 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a new array joining `array` with `other`.
-     *
-     * @private
-     * @param {Array} array The array to join.
-     * @param {Array} other The other array to join.
-     * @returns {Array} Returns the new concatenated array.
-     */
-    function arrayConcat(array, other) {
-      var index = -1,
-          length = array.length,
-          othIndex = -1,
-          othLength = other.length,
-          result = Array(length + othLength);
-
-      while (++index < length) {
-        result[index] = array[index];
-      }
-      while (++othIndex < othLength) {
-        result[index++] = other[othIndex];
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.forEach` for arrays without support for
-     * callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayEach(array, iteratee) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (iteratee(array[index], index, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.forEachRight` for arrays without support for
-     * callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayEachRight(array, iteratee) {
-      var length = array.length;
-
-      while (length--) {
-        if (iteratee(array[length], length, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.every` for arrays without support for
-     * callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`.
-     */
-    function arrayEvery(array, predicate) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (!predicate(array[index], index, array)) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    /**
-     * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
-     * with one argument: (value).
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {Function} comparator The function used to compare values.
-     * @param {*} exValue The initial extremum value.
-     * @returns {*} Returns the extremum value.
-     */
-    function arrayExtremum(array, iteratee, comparator, exValue) {
-      var index = -1,
-          length = array.length,
-          computed = exValue,
-          result = computed;
-
-      while (++index < length) {
-        var value = array[index],
-            current = +iteratee(value);
-
-        if (comparator(current, computed)) {
-          computed = current;
-          result = value;
-        }
-      }
-      index = result === exValue ? -1 : index;
-      while (++index < length) {
-        value = array[index];
-        if (+iteratee(value) === exValue) {
-          return value;
-        }
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.filter` for arrays without support for
-     * callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {Array} Returns the new filtered array.
-     */
-    function arrayFilter(array, predicate) {
-      var index = -1,
-          length = array.length,
-          resIndex = -1,
-          result = [];
-
-      while (++index < length) {
-        var value = array[index];
-        if (predicate(value, index, array)) {
-          result[++resIndex] = value;
-        }
-      }
-      return result;
-    }
-
-    /**
-     * A specialized version of `_.map` for arrays without support for callback
-     * shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns the new mapped array.
-     */
-    function arrayMap(array, iteratee) {
-      var index = -1,
-          length = array.length,
-          result = Array(length);
-
-      while (++index < length) {
-        result[index] = iteratee(array[index], index, array);
-      }
-      return result;
-    }
-
-    /**
-     * Appends the elements of `values` to `array`.
-     *
-     * @private
-     * @param {Array} array The array to modify.
-     * @param {Array} values The values to append.
-     * @returns {Array} Returns `array`.
-     */
-    function arrayPush(array, values) {
-      var index = -1,
-          length = values.length,
-          offset = array.length;
-
-      while (++index < length) {
-        array[offset + index] = values[index];
-      }
-      return array;
-    }
-
-    /**
-     * A specialized version of `_.reduce` for arrays without support for
-     * callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
-     * @returns {*} Returns the accumulated value.
-     */
-    function arrayReduce(array, iteratee, accumulator, initFromArray) {
-      var index = -1,
-          length = array.length;
-
-      if (initFromArray && length) {
-        accumulator = array[++index];
-      }
-      while (++index < length) {
-        accumulator = iteratee(accumulator, array[index], index, array);
-      }
-      return accumulator;
-    }
-
-    /**
-     * A specialized version of `_.reduceRight` for arrays without support for
-     * callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @param {boolean} [initFromArray] Specify using the last element of `array` as the initial value.
-     * @returns {*} Returns the accumulated value.
-     */
-    function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
-      var length = array.length;
-      if (initFromArray && length) {
-        accumulator = array[--length];
-      }
-      while (length--) {
-        accumulator = iteratee(accumulator, array[length], length, array);
-      }
-      return accumulator;
-    }
-
-    /**
-     * A specialized version of `_.some` for arrays without support for callback
-     * shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} predicate The function invoked per iteration.
-     * @returns {boolean} Returns `true` if any element passes the predicate check, else `false`.
-     */
-    function arraySome(array, predicate) {
-      var index = -1,
-          length = array.length;
-
-      while (++index < length) {
-        if (predicate(array[index], index, array)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    /**
-     * Assigns `value` to `key` of `object` if the existing value is not equivalent
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-     * for equality comparisons.
-     *
-     * @private
-     * @param {Object} object The object to augment.
-     * @param {string} key The key of the property to assign.
-     * @param {*} value The value to assign.
-     */
-    function assignValue(object, key, value) {
-      var oldValue = object[key];
-      if ((value === value ? (value !== oldValue) : (oldValue === oldValue)) ||
-          (value === undefined && !(key in object))) {
-        object[key] = value;
-      }
-    }
-
-    /**
-     * This function is like `assignValue` except that it doesn't assign `undefined` values.
-     *
-     * @private
-     * @param {Object} object The object to augment.
-     * @param {string} key The key of the property to assign.
-     * @param {*} value The value to assign.
-     */
-    function assignMergeValue(object, key, value) {
-      var oldValue = object[key];
-      if ((value !== undefined &&
-            (value === value ? (value !== oldValue) : (oldValue === oldValue))) ||
-          (typeof key == 'number' &&
-            value === undefined && !(key in object))) {
-        object[key] = value;
-      }
-    }
-
-    /**
      * The base implementation of `_.assign` without support for multiple sources
      * or `customizer` functions.
      *
@@ -1826,29 +2059,6 @@
       baseEach(collection, function(value, index, collection) {
         if (predicate(value, index, collection)) {
           result.push(value);
-        }
-      });
-      return result;
-    }
-
-    /**
-     * The base implementation of methods like `_.find` and `_.findKey` without
-     * support for callback shorthands, which iterates over `collection` using
-     * the provided `eachFunc`.
-     *
-     * @private
-     * @param {Array|Object} collection The collection to search.
-     * @param {Function} predicate The function invoked per iteration.
-     * @param {Function} eachFunc The function to iterate over `collection`.
-     * @param {boolean} [retKey] Specify returning the key of the found element instead of the element itself.
-     * @returns {*} Returns the found element or its key, else `undefined`.
-     */
-    function baseFind(collection, predicate, eachFunc, retKey) {
-      var result;
-      eachFunc(collection, function(value, key, collection) {
-        if (predicate(value, key, collection)) {
-          result = retKey ? key : value;
-          return false;
         }
       });
       return result;
@@ -2483,28 +2693,6 @@
     }
 
     /**
-     * The base implementation of `_.reduce` and `_.reduceRight` without support
-     * for callback shorthands, which iterates over `collection` using the provided
-     * `eachFunc`.
-     *
-     * @private
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @param {*} accumulator The initial value.
-     * @param {boolean} initFromCollection Specify using the first or last element of `collection` as the initial value.
-     * @param {Function} eachFunc The function to iterate over `collection`.
-     * @returns {*} Returns the accumulated value.
-     */
-    function baseReduce(collection, iteratee, accumulator, initFromCollection, eachFunc) {
-      eachFunc(collection, function(value, index, collection) {
-        accumulator = initFromCollection
-          ? (initFromCollection = false, value)
-          : iteratee(accumulator, value, index, collection);
-      });
-      return accumulator;
-    }
-
-    /**
      * The base implementation of `_.set`.
      *
      * @private
@@ -2603,26 +2791,6 @@
     }
 
     /**
-     * The base implementation of `_.sortBy` which uses `comparer` to define
-     * the sort order of `array` and replaces criteria objects with their
-     * corresponding values.
-     *
-     * @private
-     * @param {Array} array The array to sort.
-     * @param {Function} comparer The function to define sort order.
-     * @returns {Array} Returns `array`.
-     */
-    function baseSortBy(array, comparer) {
-      var length = array.length;
-
-      array.sort(comparer);
-      while (length--) {
-        array[length] = array[length].value;
-      }
-      return array;
-    }
-
-    /**
      * The base implementation of `_.sortByOrder` without param guards.
      *
      * @private
@@ -2704,44 +2872,6 @@
     }
 
     /**
-     * The base implementation of `_.sum` without support for callback shorthands.
-     *
-     * @private
-     * @param {Array} array The array to iterate over.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {number} Returns the sum.
-     */
-    function baseSum(array, iteratee) {
-      var index = -1,
-          length = array.length,
-          result = 0;
-
-      while (++index < length) {
-        result += +iteratee(array[index]) || 0;
-      }
-      return result;
-    }
-
-    /**
-     * The base implementation of `_.times` without support for callback shorthands
-     * or max array length checks.
-     *
-     * @private
-     * @param {number} n The number of times to invoke `iteratee`.
-     * @param {Function} iteratee The function invoked per iteration.
-     * @returns {Array} Returns the array of results.
-     */
-    function baseTimes(n, iteratee) {
-       var index = -1,
-           result = Array(n);
-
-      while (++index < n) {
-        result[index] = iteratee(index);
-      }
-      return result;
-    }
-
-    /**
      * The base implementation of `_.uniq`.
      *
      * @private
@@ -2802,22 +2932,6 @@
         }
       }
       return result;
-    }
-
-    /**
-     * The base implementation of `_.values` and `_.valuesIn` which creates an
-     * array of `object` property values corresponding to the property names
-     * of `props`.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @param {Array} props The property names to get values for.
-     * @returns {Object} Returns the array of property values.
-     */
-    function baseValues(object, props) {
-      return arrayMap(props, function(key) {
-        return object[key];
-      });
     }
 
     /**
@@ -3016,64 +3130,6 @@
         result[offset + holders[holdersIndex]] = args[argsIndex++];
       }
       return result;
-    }
-
-    /**
-     * Copies the values of `source` to `array`.
-     *
-     * @private
-     * @param {Array} source The array to copy values from.
-     * @param {Array} [array=[]] The array to copy values to.
-     * @returns {Array} Returns `array`.
-     */
-    function copyArray(source, array) {
-      var index = -1,
-          length = source.length;
-
-      array || (array = Array(length));
-      while (++index < length) {
-        array[index] = source[index];
-      }
-      return array;
-    }
-
-    /**
-     * Copies properties of `source` to `object`.
-     *
-     * @private
-     * @param {Object} source The object to copy properties from.
-     * @param {Array} props The property names to copy.
-     * @param {Object} [object={}] The object to copy properties to.
-     * @returns {Object} Returns `object`.
-     */
-    function copyObject(source, props, object) {
-      return copyObjectWith(source, props, object);
-    }
-
-    /**
-     * This function is like `copyObject` except that it accepts a function to
-     * customize copied values.
-     *
-     * @private
-     * @param {Object} source The object to copy properties from.
-     * @param {Array} props The property names to copy.
-     * @param {Object} [object={}] The object to copy properties to.
-     * @param {Function} [customizer] The function to customize copied values.
-     * @returns {Object} Returns `object`.
-     */
-    function copyObjectWith(source, props, object, customizer) {
-      object || (object = {});
-
-      var index = -1,
-          length = props.length;
-
-      while (++index < length) {
-        var key = props[index],
-            newValue = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
-
-        assignValue(object, key, newValue);
-      }
-      return object;
     }
 
     /**
@@ -3409,17 +3465,6 @@
     }
 
     /**
-     * Creates a map from key-value `pairs`.
-     *
-     * @private
-     * @param {Array} pairs The key-value pairs to add.
-     * @returns {Object} Returns the new map.
-     */
-    function createMap(pairs) {
-      return arrayReduce(pairs, addMapEntry, new Map);
-    }
-
-    /**
      * Creates the padding required for `string` based on the given `length`.
      * The `chars` string is truncated if the number of characters exceeds `length`.
      *
@@ -3495,17 +3540,6 @@
         }
         return func(number);
       };
-    }
-
-    /**
-     * Creates a set from `values`.
-     *
-     * @private
-     * @param {Array} values The values to add.
-     * @returns {Object} Returns the new set.
-     */
-    function createSet(values) {
-      return arrayReduce(values, addSetEntry, new Set);
     }
 
     /**
@@ -3734,18 +3768,6 @@
         }
       }
       return true;
-    }
-
-    /**
-     * Used by `_.defaults` to customize its `_.assign` use.
-     *
-     * @private
-     * @param {*} objValue The destination object property value.
-     * @param {*} srcValue The source object property value.
-     * @returns {*} Returns the value to assign to the destination object.
-     */
-    function extendDefaults(objValue, srcValue) {
-      return objValue === undefined ? srcValue : objValue;
     }
 
     /**
@@ -4035,20 +4057,6 @@
     }
 
     /**
-     * Checks if `value` is a valid array-like index.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-     * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-     */
-    function isIndex(value, length) {
-      value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-      length = length == null ? MAX_SAFE_INTEGER : length;
-      return value > -1 && value % 1 == 0 && value < length;
-    }
-
-    /**
      * Checks if the provided arguments are from an iteratee call.
      *
      * @private
@@ -4107,19 +4115,6 @@
       }
       var data = getData(other);
       return !!data && func === data[0];
-    }
-
-    /**
-     * Checks if `value` is a valid array-like length.
-     *
-     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-     */
-    function isLength(value) {
-      return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
     }
 
     /**

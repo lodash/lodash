@@ -2570,7 +2570,7 @@
           index = -1;
 
       iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
-        return toIteratee(iteratee, 1);
+        return toIteratee(iteratee);
       });
 
       var result = baseMap(collection, function(value, key, collection) {
@@ -3010,7 +3010,7 @@
     function createAggregator(setter, initializer) {
       return function(collection, iteratee) {
         var result = initializer ? initializer() : {};
-        iteratee = getIteratee(iteratee, 3);
+        iteratee = getIteratee(iteratee);
 
         if (isArray(collection)) {
           var index = -1,

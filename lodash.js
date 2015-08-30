@@ -9105,6 +9105,7 @@
      * @category Object
      * @param {Object} object The object to invert.
      * @param {boolean} [multiValue] Allow multiple values per key.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Object} Returns the new inverted object.
      * @example
      *
@@ -9117,11 +9118,10 @@
      * _.invert(object, true);
      * // => { '1': ['a', 'c'], '2': ['b'] }
      */
-    function invert(object, multiValue) {
-      multiValue = typeof multiValue == 'boolean' && multiValue;
+    function invert(object, multiValue, guard) {
       return arrayReduce(keys(object), function(result, key) {
         var value = object[key];
-        if (multiValue) {
+        if (multiValue && !guard) {
           if (hasOwnProperty.call(result, value)) {
             result[value].push(key);
           } else {
@@ -9416,7 +9416,6 @@
      * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
      */
     function pairs(object) {
-      object = Object(object);
       return arrayMap(keys(object), function(key) {
         return [key, object[key]];
       });

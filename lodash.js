@@ -2315,18 +2315,12 @@
      */
     function basePick(object, props) {
       object = Object(object);
-
-      var index = -1,
-          length = props.length,
-          result = {};
-
-      while (++index < length) {
-        var key = props[index];
+      return arrayReduce(props, function(result, key) {
         if (key in object) {
           result[key] = object[key];
         }
-      }
-      return result;
+        return result;
+      }, {});
     }
 
     /**

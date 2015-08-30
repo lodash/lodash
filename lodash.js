@@ -7373,8 +7373,8 @@
      *   return [x, y];
      * }, square, doubled);
      *
-     * modded(1, 2);
-     * // => [1, 4]
+     * modded(3, 4);
+     * // => [9, 8]
      *
      * modded(5, 10);
      * // => [25, 20]

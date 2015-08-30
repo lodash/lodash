@@ -3918,8 +3918,8 @@ var modded = _.modArgs(function(x, y) {
   return [x, y];
 }, square, doubled);
 
-modded(1, 2);
-// => [1, 4]
+modded(1, 3);
+// => [1, 6]
 
 modded(5, 10);
 // => [25, 20]

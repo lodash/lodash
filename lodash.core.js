@@ -265,8 +265,8 @@
    * `defer`, `delay`, `difference`, `drop`, `dropRight`, `dropRightWhile`,
    * `dropWhile`, `extend`, `extendWith`, `fill`, `filter`, `flatten`,
    * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
-   * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
-   * `initial`, `intersection`, `invert`, `invoke`, `iteratee`, `keys`, `keysIn`,
+   * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `initial`,
+   * `intersection`, `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`,
    * `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`, `memoize`,
    * `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`, `negate`,
    * `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`,
@@ -605,18 +605,9 @@
    * @returns {Array} Returns the new array of filtered property names.
    */
   function baseFunctions(object, props) {
-    var index = -1,
-        length = props.length,
-        resIndex = -1,
-        result = [];
-
-    while (++index < length) {
-      var key = props[index];
-      if (isFunction(object[key])) {
-        result[++resIndex] = key;
-      }
-    }
-    return result;
+    return baseFilter(props, function(key) {
+      return isFunction(object[key]);
+    });
   }
 
   /**
@@ -720,7 +711,7 @@
    * The base implementation of `_.iteratee`.
    *
    * @private
-   * @param {*} [func=_.identity] The value to convert to an iteratee.
+   * @param {*} [value=_.identity] The value to convert to an iteratee.
    * @returns {Function} Returns the iteratee.
    */
   function baseIteratee(func) {
@@ -833,18 +824,12 @@
    */
   function basePick(object, props) {
     object = Object(object);
-
-    var index = -1,
-        length = props.length,
-        result = {};
-
-    while (++index < length) {
-      var key = props[index];
+    return baseReduce(props, function(result, key) {
       if (key in object) {
         result[key] = object[key];
       }
-    }
-    return result;
+      return result;
+    }, {});
   }
 
   /**
@@ -932,6 +917,25 @@
   }
 
   /**
+   * The base implementation of `_.times` without support for callback shorthands
+   * or max array length checks.
+   *
+   * @private
+   * @param {number} n The number of times to invoke `iteratee`.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {Array} Returns the array of results.
+   */
+  function baseTimes(n, iteratee) {
+     var index = -1,
+         result = Array(n);
+
+    while (++index < n) {
+      result[index] = iteratee(index);
+    }
+    return result;
+  }
+
+  /**
    * The base implementation of `_.values` and `_.valuesIn` which creates an
    * array of `object` property values corresponding to the property names
    * of `props`.
@@ -942,14 +946,9 @@
    * @returns {Object} Returns the array of property values.
    */
   function baseValues(object, props) {
-    var index = -1,
-        length = props.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = object[props[index]];
-    }
-    return result;
+    return baseMap(props, function(key) {
+      return object[key];
+    });
   }
 
   /**
@@ -964,14 +963,9 @@
    */
   function baseWrapperValue(value, actions) {
     var result = value;
-    var index = -1,
-        length = actions.length;
-
-    while (++index < length) {
-      var action = actions[index];
-      result = action.func.apply(action.thisArg, arrayPush([result], action.args));
-    }
-    return result;
+    return baseReduce(actions, function(result, action) {
+      return action.func.apply(action.thisArg, arrayPush([result], action.args));
+    }, result);
   }
 
   /**
@@ -1355,13 +1349,7 @@
     length = (length && isLength(length) &&
       (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
 
-    var index = -1,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = (index + '');
-    }
-    return result;
+    return baseTimes(length, String);
   }
 
   /**
@@ -1538,8 +1526,7 @@
    * @category Array
    * @param {Array} array The array to search.
    * @param {*} value The value to search for.
-   * @param {boolean|number} [fromIndex=0] The index to search from or `true`
-   *  to perform a binary search on a sorted array.
+   * @param {number} [fromIndex=0] The index to search from.
    * @returns {number} Returns the index of the matched value, else `-1`.
    * @example
    *
@@ -1549,10 +1536,6 @@
    * // using `fromIndex`
    * _.indexOf([1, 2, 1, 2], 2, 2);
    * // => 3
-   *
-   * // performing a binary search
-   * _.indexOf([1, 1, 2, 2], 2, true);
-   * // => 2
    */
   function indexOf(array, value, fromIndex) {
     var length = array ? array.length : 0;
@@ -2122,8 +2105,7 @@
    * Creates an array of elements, sorted in ascending order by the results of
    * running each element in a collection through each iteratee. This method
    * performs a stable sort, that is, it preserves the original sort order of
-   * equal elements. The iteratees are invoked with three arguments:
-   * (value, index|key, collection).
+   * equal elements. The iteratees are invoked with one argument: (value).
    *
    * @static
    * @memberOf _
@@ -2208,6 +2190,7 @@
     if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
+    n = toInteger(n);
     return function() {
       if (--n > 0) {
         result = func.apply(this, arguments);
@@ -2496,6 +2479,26 @@
   var isArray = Array.isArray;
 
   /**
+   * Checks if `value` is classified as a boolean primitive or object.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+   * @example
+   *
+   * _.isBoolean(false);
+   * // => true
+   *
+   * _.isBoolean(null);
+   * // => false
+   */
+  function isBoolean(value) {
+    return value === true || value === false || (isObjectLike(value) && objToString.call(value) == boolTag);
+  }
+
+  /**
    * Checks if `value` is classified as a `Date` object.
    *
    * @static
@@ -2576,6 +2579,27 @@
    */
   function isEqual(value, other) {
     return baseIsEqual(value, other);
+  }
+
+  /**
+   * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
+   * `SyntaxError`, `TypeError`, or `URIError` object.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
+   * @example
+   *
+   * _.isError(new Error);
+   * // => true
+   *
+   * _.isError(Error);
+   * // => false
+   */
+  function isError(value) {
+    return isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag;
   }
 
   /**
@@ -2660,6 +2684,106 @@
   }
 
   /**
+   * Checks if `value` is `NaN`.
+   *
+   * **Note:** This method is not the same as [`isNaN`](https://es5.github.io/#x15.1.2.4)
+   * which returns `true` for `undefined` and other non-numeric values.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
+   * @example
+   *
+   * _.isNaN(NaN);
+   * // => true
+   *
+   * _.isNaN(new Number(NaN));
+   * // => true
+   *
+   * isNaN(undefined);
+   * // => true
+   *
+   * _.isNaN(undefined);
+   * // => false
+   */
+  function isNaN(value) {
+    // An `NaN` primitive is the only value that is not equal to itself.
+    // Perform the `toStringTag` check first to avoid errors with some ActiveX objects in IE.
+    return isNumber(value) && value != +value;
+  }
+
+  /**
+   * Checks if `value` is `null`.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
+   * @example
+   *
+   * _.isNull(null);
+   * // => true
+   *
+   * _.isNull(void 0);
+   * // => false
+   */
+  function isNull(value) {
+    return value === null;
+  }
+
+  /**
+   * Checks if `value` is `null` or `undefined`.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is nullish, else `false`.
+   * @example
+   *
+   * _.isNil(null);
+   * // => true
+   *
+   * _.isNil(void 0);
+   * // => true
+   *
+   * _.isNil(NaN);
+   * // => false
+   */
+  function isNil(value) {
+    return value == null;
+  }
+
+  /**
+   * Checks if `value` is classified as a `Number` primitive or object.
+   *
+   * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+   * as numbers, use the `_.isFinite` method.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+   * @example
+   *
+   * _.isNumber(8.4);
+   * // => true
+   *
+   * _.isNumber(NaN);
+   * // => true
+   *
+   * _.isNumber('8.4');
+   * // => false
+   */
+  function isNumber(value) {
+    return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag);
+  }
+
+  /**
    * Checks if `value` is classified as a `RegExp` object.
    *
    * @static
@@ -2697,6 +2821,26 @@
    */
   function isString(value) {
     return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag);
+  }
+
+  /**
+   * Checks if `value` is `undefined`.
+   *
+   * @static
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
+   * @example
+   *
+   * _.isUndefined(void 0);
+   * // => true
+   *
+   * _.isUndefined(null);
+   * // => false
+   */
+  function isUndefined(value) {
+    return value === undefined;
   }
 
   /**
@@ -3362,14 +3506,21 @@
   lodash.indexOf = indexOf;
   lodash.isArguments = isArguments;
   lodash.isArray = isArray;
+  lodash.isBoolean = isBoolean;
   lodash.isDate = isDate;
   lodash.isEmpty = isEmpty;
   lodash.isEqual = isEqual;
+  lodash.isError = isError;
   lodash.isFinite = isFinite;
   lodash.isFunction = isFunction;
+  lodash.isNaN = isNaN;
+  lodash.isNil = isNil;
+  lodash.isNull = isNull;
+  lodash.isNumber = isNumber;
   lodash.isObject = isObject;
   lodash.isRegExp = isRegExp;
   lodash.isString = isString;
+  lodash.isUndefined = isUndefined;
   lodash.last = last;
   lodash.max = max;
   lodash.min = min;

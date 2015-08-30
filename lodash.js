@@ -1324,7 +1324,6 @@
     var ArrayBuffer = context.ArrayBuffer,
         Symbol = context.Symbol,
         Reflect = context.Reflect,
-        Set = getNative(context, 'Set'),
         Uint8Array = context.Uint8Array,
         WeakMap = getNative(context, 'WeakMap'),
         clearTimeout = context.clearTimeout,
@@ -1346,7 +1345,8 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random;
+        nativeRandom = Math.random,
+        nativeSet = getNative(context, 'Set');
 
     /** Used as references for `-Infinity` and `Infinity`. */
     var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
@@ -1751,7 +1751,7 @@
     function SetCache(values) {
       var length = values ? values.length : 0;
 
-      this.data = { 'hash': nativeCreate(null), 'set': new Set };
+      this.data = { 'hash': nativeCreate(null), 'set': new nativeSet };
       while (length--) {
         this.push(values[length]);
       }
@@ -3272,7 +3272,7 @@
      * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
      */
     function createCache(values) {
-      return (nativeCreate && Set) ? new SetCache(values) : null;
+      return (nativeCreate && nativeSet) ? new SetCache(values) : null;
     }
 
     /**

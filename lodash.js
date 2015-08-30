@@ -141,9 +141,9 @@
   var contextProps = [
     'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
-    'Object', 'Reflect', 'RegExp', 'Set', 'String', 'TypeError', 'Uint8Array',
-    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
-    'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout'
+    'Object', 'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError',
+    'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
+    '_', 'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout'
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -171,12 +171,12 @@
   cloneableTags[dateTag] = cloneableTags[float32Tag] =
   cloneableTags[float64Tag] = cloneableTags[int8Tag] =
   cloneableTags[int16Tag] = cloneableTags[int32Tag] =
-  cloneableTags[numberTag] = cloneableTags[objectTag] =
-  cloneableTags[regexpTag] = cloneableTags[stringTag] =
+  cloneableTags[mapTag] = cloneableTags[numberTag] =
+  cloneableTags[objectTag] = cloneableTags[regexpTag] =
+  cloneableTags[setTag] = cloneableTags[stringTag] =
   cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
   cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
   cloneableTags[errorTag] = cloneableTags[funcTag] =
-  cloneableTags[mapTag] = cloneableTags[setTag] =
   cloneableTags[weakMapTag] = false;
 
   /** Used to map latin-1 supplementary letters to basic latin letters. */
@@ -275,6 +275,30 @@
   var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal || Function('return this')();
 
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Adds the key-value `pair` to `map`.
+   *
+   * @private
+   * @param {Object} map The map to modify.
+   * @param {Array} pair The key-value pair to add.
+   * @returns {Object} Returns `map`.
+   */
+  function addMapEntry(map, pair) {
+    return map.set(pair[0], pair[1]);
+  }
+
+  /**
+   * Adds `value` to `set`.
+   *
+   * @private
+   * @param {Object} set The set to modify.
+   * @param {*} value The value to add.
+   * @returns {Object} Returns `set`.
+   */
+  function addSetEntry(set, value) {
+    return set.add(value);
+  }
 
   /**
    * The base implementation of `_.findIndex` and `_.findLastIndex` without
@@ -564,6 +588,38 @@
   }
 
   /**
+   * Converts `iterator` to an array.
+   *
+   * @private
+   * @param {Object} iterator The iterator to convert.
+   * @returns {Array} Returns the converted array.
+   */
+  function iteratorToArray(iterator) {
+    var data,
+        result = [];
+
+    while (!(data = iterator.next()).done) {
+      result.push(data.value);
+    }
+    return result;
+  }
+
+  /**
+   * Converts `map` to an array.
+   *
+   * @private
+   * @param {Object} map The map to convert.
+   * @returns {Array} Returns the converted array.
+   */
+  function mapToArray(map) {
+    var result = [];
+    map.forEach(function(value, key) {
+      result.push([key, value]);
+    });
+    return result;
+  }
+
+  /**
    * Replaces all `placeholder` elements in `array` with an internal placeholder
    * and returns an array of their indexes.
    *
@@ -584,6 +640,21 @@
         result[++resIndex] = index;
       }
     }
+    return result;
+  }
+
+  /**
+   * Converts `set` to an array.
+   *
+   * @private
+   * @param {Object} set The set to convert.
+   * @returns {Array} Returns the converted array.
+   */
+  function setToArray(set) {
+    var result = [];
+    set.forEach(function(value) {
+      result.push(value);
+    });
     return result;
   }
 
@@ -719,6 +790,7 @@
 
     /** Native value references. */
     var ArrayBuffer = context.ArrayBuffer,
+        Symbol = context.Symbol,
         Reflect = context.Reflect,
         Set = getNative(context, 'Set'),
         Uint8Array = context.Uint8Array,
@@ -726,6 +798,7 @@
         clearTimeout = context.clearTimeout,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
+        iteratorSymbol = Symbol.iterator,
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -2000,7 +2073,7 @@
           isSameTag = objTag == othTag;
 
       if (isSameTag && !(objIsArr || objIsObj)) {
-        return equalByTag(object, other, objTag);
+        return equalByTag(object, other, objTag, equalFunc);
       }
       if (!isLoose) {
         var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
@@ -2144,14 +2217,7 @@
     // An alternative implementation intended for IE < 9 with es6-shim.
     if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
       baseKeysIn = function(object) {
-        var data,
-            iterator = enumerate(object),
-            result = [];
-
-        while (!(data = iterator.next()).done) {
-          result.push(data.value);
-        }
-        return result;
+        return iteratorToArray(enumerate(object));
       };
     }
 
@@ -2882,7 +2948,7 @@
      * @param {ArrayBuffer} buffer The array buffer to clone.
      * @returns {ArrayBuffer} Returns the cloned array buffer.
      */
-    function bufferClone(buffer) {
+    function cloneBuffer(buffer) {
       var result = new ArrayBuffer(buffer.byteLength),
           view = new Uint8Array(result);
 
@@ -3343,6 +3409,17 @@
     }
 
     /**
+     * Creates a map from key-value `pairs`.
+     *
+     * @private
+     * @param {Array} pairs The key-value pairs to add.
+     * @returns {Object} Returns the new map.
+     */
+    function createMap(pairs) {
+      return arrayReduce(pairs, addMapEntry, new Map);
+    }
+
+    /**
      * Creates the padding required for `string` based on the given `length`.
      * The `chars` string is truncated if the number of characters exceeds `length`.
      *
@@ -3350,7 +3427,7 @@
      * @param {string} string The string to create padding for.
      * @param {number} [length=0] The padding length.
      * @param {string} [chars=' '] The string used as padding.
-     * @returns {string} Returns the pad for `string`.
+     * @returns {string} Returns the padding for `string`.
      */
     function createPadding(string, length, chars) {
       var strLength = string.length;
@@ -3418,6 +3495,17 @@
         }
         return func(number);
       };
+    }
+
+    /**
+     * Creates a set from `values`.
+     *
+     * @private
+     * @param {Array} values The values to add.
+     * @returns {Object} Returns the new set.
+     */
+    function createSet(values) {
+      return arrayReduce(values, addSetEntry, new Set);
     }
 
     /**
@@ -3551,9 +3639,10 @@
      * @param {Object} object The object to compare.
      * @param {Object} other The other object to compare.
      * @param {string} tag The `toStringTag` of the objects to compare.
+     * @param {Function} equalFunc The function to determine equivalents of values.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalByTag(object, other, tag) {
+    function equalByTag(object, other, tag, equalFunc) {
       switch (tag) {
         case boolTag:
         case dateTag:
@@ -3575,6 +3664,12 @@
           // Coerce regexes to strings and treat strings primitives and string
           // objects as equal. See https://es5.github.io/#x15.10.6.4 for more details.
           return object == (other + '');
+
+        case mapTag:
+          return equalFunc(mapToArray(object), mapToArray(other));
+
+        case setTag:
+          return equalFunc(setToArray(object), setToArray(other));
       }
       return false;
     }
@@ -3861,7 +3956,7 @@
       var Ctor = object.constructor;
       switch (tag) {
         case arrayBufferTag:
-          return bufferClone(object);
+          return cloneBuffer(object);
 
         case boolTag:
         case dateTag:
@@ -3871,11 +3966,18 @@
         case int8Tag: case int16Tag: case int32Tag:
         case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
           var buffer = object.buffer;
-          return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
+          return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, object.byteOffset, object.length);
+
+        case mapTag:
+          return createMap(mapToArray(object));
 
         case numberTag:
         case stringTag:
           return new Ctor(object);
+
+        case setTag:
+          console.log(object)
+          return createSet(setToArray(object));
 
         case regexpTag:
           var result = new Ctor(object.source, reFlags.exec(object));
@@ -4329,7 +4431,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {...Array} [values] The arrays of values to exclude.
+     * @param {...Array} [values] The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
@@ -8574,10 +8676,19 @@
      * // => [2, 3]
      */
     function toArray(value) {
-      if (!isArrayLike(value)) {
-        return values(value);
+      if (!value) {
+        return [];
       }
-      return value.length ? copyArray(value) : [];
+      if (isArrayLike(value)) {
+        return value.length ? copyArray(value) : [];
+      }
+      if (value[iteratorSymbol]) {
+        return iteratorToArray(value[iteratorSymbol]());
+      }
+      var tag = objToString.call(value),
+          func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
+
+      return func(value);
     }
 
     /**

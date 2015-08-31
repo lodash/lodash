@@ -882,6 +882,54 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.allPass');
+
+  (function() {
+    function isEven(x) { return x % 2 === 0; }
+    function isGt10(x) { return x > 10; }
+
+    test('should return true for empty array', 1, function () {
+      var combined = _.allPass([]),
+          array = _.range(1000),
+          actual = _.map(array, combined),
+          expected = _.map(array, _.constant(true));
+      deepEqual(actual, expected);
+    });
+
+    test('should return true for even numbers larger than 10', 1, function () {
+      var combined = _.allPass([isEven, isGt10]),
+          array = _.range(12, 1000, 2),
+          actual = _.map(array, combined),
+          expected = _.map(array, _.constant(true));
+      deepEqual(actual, expected);
+    });
+
+    test('should return false for odd numbers or numbers smaller than 10', 1, function () {
+      var combined = _.allPass([isEven, isGt10]),
+          array = _.range(1, 1000, 2),
+          actual = _.map(array, combined),
+          expected = _.map(array, _.constant(false));
+      deepEqual(actual, expected);
+    });
+
+    test('should accept array and splat', 1, function () {
+      var combinedArray = _.allPass([isEven, isGt10]),
+          combinedSplat = _.allPass(isEven, isGt10),
+          array = _.range(1000);
+      deepEqual(_.map(array, combinedArray), _.map(array, combinedSplat));
+    });
+
+    test('should work with n-ary predicates', 2, function () {
+      function isTriangle(x, y, z) { return x + y + z === 180 };
+      function hasRightAngle(x, y, z) { return x === 90 || x === 90 || z === 90 };
+      var isRightTriangle = _.allPass([isTriangle, hasRightAngle]);
+      strictEqual(isRightTriangle(90, 45, 45), true);
+      strictEqual(isRightTriangle(60, 60, 60), false);
+    });
+  })();
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.ary');
 
   (function() {
@@ -17374,7 +17422,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 228, function() {
+    test('should accept falsey arguments', 229, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

@@ -5870,14 +5870,13 @@
     });
 
     /**
-     * Gets the next value on a wrapped object in ES2015 iterator
-     * format (<link>). Useful for `for..of` loops and using with
-     * some ES2015 features.
+     * Gets the next value on a wrapped object following the
+     * [iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator).
      *
      * @name next
      * @memberOf _
      * @category Chain
-     * @returns {*} Returns the next value.
+     * @returns {Object} Returns the next iterator value.
      * @example
      *
      * var wrapped = _([1, 2]);
@@ -5899,6 +5898,27 @@
           value = done ? undefined : this.__values__[this.__index__++];
 
       return { 'done': done, 'value': value };
+    }
+
+    /**
+     * Enables the wrapper to be iterable.
+     *
+     * @name next
+     * @memberOf _
+     * @category Chain
+     * @returns {Object} Returns the wrapper object.
+     * @example
+     *
+     * var wrapped = _([1, 2]);
+     *
+     * wrapped[Symbol.iterator]() === wrapped;
+     * // => true
+     *
+     * Array.from(wrapped);
+     * // => [1, 2]
+     */
+    function wrapperToIterator() {
+      return this;
     }
 
     /**
@@ -11998,6 +12018,9 @@
     lodash.prototype.toString = wrapperToString;
     lodash.prototype.run = lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 
+    if (iteratorSymbol) {
+      lodash.prototype[iteratorSymbol] = wrapperToIterator;
+    }
     return lodash;
   }
 

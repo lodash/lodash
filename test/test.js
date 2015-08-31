@@ -49,8 +49,8 @@
       fnToString = funcProto.toString,
       freeze = Object.freeze,
       JSON = root.JSON,
-      objToString = objectProto.toString,
       noop = function() {},
+      objToString = objectProto.toString,
       params = root.arguments,
       push = arrayProto.push,
       slice = arrayProto.slice,
@@ -16598,7 +16598,7 @@
 
     var chainType = ' in an ' + (implict ? 'implict' : 'explict') + ' chain';
 
-    test('should produce an ES6 compliant object' + chainType, 7, function() {
+    test('should follow ES2015 iterator specification' + chainType, 7, function() {
       var array = [0, 1, 1, 2, 3],
           chained = chain(array);
 
@@ -16616,6 +16616,13 @@
           chained = chain(array);
 
       deepEqual(arrayFrom(chained), array);
+    });
+
+    test('can be consumed by ES2015 APIs expecting an iterable' + chainType, 1, function() {
+      var array = [{a: 1}, {b: 1}, {c: 1}],
+          instance = _(array);
+
+      deepEqual(_.toArray(instance), array);
     });
 
     test('should reset the iterator upon forking (adding an action to the chain)' + chainType, 5, function() {

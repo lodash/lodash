@@ -1393,7 +1393,8 @@
      * and `toArray`
      *
      * The chainable wrapper methods are:
-     * `after`, `ary`, `assign`, `assignWith`, `at`, `before`, `bind`, `bindAll`,
+     * `after`, `allPass`, `anyPass`, `ary`, `assign`, `assignWith`, `at`,
+     * `before`, `bind`, `bindAll`,
      * `bindKey`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
      * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`,
      * `defer`, `delay`, `difference`, `drop`, `dropRight`, `dropRightWhile`,

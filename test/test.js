@@ -930,6 +930,55 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.anyPass');
+
+  (function() {
+    function isEven(x) { return x % 2 == 0; }
+    function isGt10(x) { return x > 10; }
+
+    test('should return false for empty array', 1, function () {
+      var combined = _.anyPass([]),
+          array = _.range(1000),
+          actual = _.map(array, combined),
+          expected = _.map(array, _.constant(false));
+      deepEqual(actual, expected);
+    });
+
+    test('should return true for even numbers and numbers larger than 10', 1, function () {
+      var combined = _.anyPass([isEven, isGt10]),
+          array = _.range(2, 1000, 2),
+          actual = _.map(array, combined),
+          expected = _.map(array, _.constant(true));
+      deepEqual(actual, expected);
+    });
+
+    test('should return false for odd numbers smaller than 10', 1, function () {
+      var combined = _.anyPass([isEven, isGt10]),
+          array = _.range(1, 10, 2),
+          actual = _.map(array, combined),
+          expected = _.map(array, _.constant(false));
+      deepEqual(actual, expected);
+    });
+
+    test('should accept array and splat', 1, function () {
+      var combinedArray = _.anyPass([isEven, isGt10]),
+          combinedSplat = _.anyPass(isEven, isGt10),
+          array = _.range(1000);
+      deepEqual(_.map(array, combinedArray), _.map(array, combinedSplat));
+    });
+
+    test('should work with n-ary predicates', 3, function () {
+      function isMarieCurie(x, y) { return x === 'Marie' && y === 'Curie'; }
+      function isNielsBohr(x, y) { return x === 'Niels' && y === 'Bohr'; }
+      var isNobelPrizeWinner = _.anyPass([isMarieCurie, isNielsBohr]);
+      strictEqual(isNobelPrizeWinner('Marie', 'Curie'), true);
+      strictEqual(isNobelPrizeWinner('Niels', 'Bohr'), true);
+      strictEqual(isNobelPrizeWinner('John-David', 'Dalton'), false);
+    });
+  })();
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.ary');
 
   (function() {
@@ -17422,7 +17471,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 229, function() {
+    test('should accept falsey arguments', 230, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

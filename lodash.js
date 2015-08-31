@@ -6922,6 +6922,40 @@
     }
 
     /**
+     * Combines multiple predicates into a single predicate that returns true
+     * if at least one predicate is satisfied and false otherwise.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Array} predicates The array of predicates.
+     * @returns {Function} Returns the combined predicate.
+     *
+     * var largeOrEven = _.anyPass([x => x > 1000, x => x % 2 === 0]);
+     * largeOrEven(1111);
+     * // => true
+     */
+    function anyPass(predicates) {
+      var args;
+      if (!predicates) {
+        args = [];
+      } else {
+        args = arguments;
+        isArray(args[0]) && (args = args[0]);
+      }
+      var length = args.length;
+      return function() {
+        var index = -1;
+        while (++index < length) {
+          if (args[index].apply(this, arguments) === true) {
+            return true;
+          }
+        }
+        return false;
+      };
+    }
+
+    /**
      * Creates a function that accepts up to `n` arguments ignoring any
      * additional arguments.
      *
@@ -11595,6 +11629,7 @@
     // Add functions that return wrapped values when chaining.
     lodash.after = after;
     lodash.allPass = allPass;
+    lodash.anyPass = anyPass;
     lodash.ary = ary;
     lodash.assign = assign;
     lodash.assignWith = assignWith;

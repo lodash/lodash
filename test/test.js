@@ -1714,7 +1714,7 @@
           wrapped = index ? _(array).chain() : _.chain(array);
           actual = wrapped
             .chain()
-            .filter(function(n) { return n % 2; })
+            .filter(function(n) { return n % 2 != 0; })
             .reject(function(n) { return n % 3 == 0; })
             .sortBy(function(n) { return -n; })
             .value();
@@ -2101,17 +2101,9 @@
     test('`_.' + methodName + '` should support shortcut fusion', 12, function() {
       var filterCount,
           mapCount,
-          array = _.range(LARGE_ARRAY_SIZE);
-
-      var iteratee = function(value) {
-        mapCount++;
-        return value * value;
-      };
-
-      var predicate = function(value) {
-        filterCount++;
-        return value % 2 == 0;
-      };
+          array = _.range(LARGE_ARRAY_SIZE),
+          iteratee = function(value) { mapCount++; return square(value); },
+          predicate = function(value) { filterCount++; return isEven(value); };
 
       _.times(2, function(index) {
         var filter1 = _.filter,
@@ -2293,10 +2285,9 @@
           _.range(Math.floor(LARGE_ARRAY_SIZE / 1.5), LARGE_ARRAY_SIZE)
         );
 
-        var predicate = function(value) { return value > 2; },
-            actual = _(array).countBy().map(square).filter(predicate).take().value();
+        var actual = _(array).countBy().map(square).filter(isEven).take().value();
 
-        deepEqual(actual, _.take(_.filter(_.map(_.countBy(array), square), predicate)));
+        deepEqual(actual, _.take(_.filter(_.map(_.countBy(array), square), isEven)));
       }
       else {
         skipTest();
@@ -3237,8 +3228,8 @@
     test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
         var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            predicate = function(value) { values.push(value); return isEven(value); },
             values = [],
-            predicate = function(value) { values.push(value); return value > 2; },
             actual = _(array).drop(2).drop().value();
 
         deepEqual(actual, array.slice(3));
@@ -3311,8 +3302,8 @@
     test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
         var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            predicate = function(value) { values.push(value); return isEven(value); },
             values = [],
-            predicate = function(value) { values.push(value); return value < 9; },
             actual = _(array).dropRight(2).dropRight().value();
 
         deepEqual(actual, array.slice(0, -3));
@@ -3837,11 +3828,7 @@
     var array = [1, 2, 3];
 
     test('should return elements `predicate` returns truthy for', 1, function() {
-      var actual = _.filter(array, function(num) {
-        return num % 2;
-      });
-
-      deepEqual(actual, [1, 3]);
+      deepEqual(_.filter(array, isEven), [2]);
     });
 
     test('should iterate over an object with numeric keys (test in Mobile Safari 8)', 1, function() {
@@ -3968,10 +3955,9 @@
 
           _.times(2, function(index) {
             var array = index ? largeArray : smallArray,
-                predicate = function(value) { return value % 2; },
-                wrapped = _(array).filter(predicate);
+                wrapped = _(array).filter(isEven);
 
-            strictEqual(wrapped[methodName](), func(_.filter(array, predicate)));
+            strictEqual(wrapped[methodName](), func(_.filter(array, isEven)));
           });
         }
         else {
@@ -4010,24 +3996,15 @@
     test('`_.' + methodName + '` should support shortcut fusion', 3, function() {
       if (!isNpm) {
         var findCount = 0,
-            mapCount = 0;
-
-        var iteratee = function(value) {
-          mapCount++;
-          return value * value;
-        };
-
-        var predicate = function(value) {
-          findCount++;
-          return value % 2 == 0;
-        };
-
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            result = _(array).map(iteratee)[methodName](predicate);
+            mapCount = 0,
+            array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            iteratee = function(value) { mapCount++; return square(value); },
+            predicate = function(value) { findCount++; return isEven(value); },
+            actual = _(array).map(iteratee)[methodName](predicate);
 
         strictEqual(findCount, isFind ? 2 : 1);
         strictEqual(mapCount, isFind ? 2 : 1);
-        strictEqual(result, isFind ? 4 : square(LARGE_ARRAY_SIZE));
+        strictEqual(actual, isFind ? 4 : square(LARGE_ARRAY_SIZE));
       }
       else {
         skipTest(3);
@@ -4090,15 +4067,14 @@
 
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var largeArray = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var largeArray = _.range(LARGE_ARRAY_SIZE),
             smallArray = array;
 
         _.times(2, function(index) {
           var array = index ? largeArray : smallArray,
-              predicate = function(value) { return value % 2; },
-              wrapped = _(array).filter(predicate);
+              wrapped = _(array).filter(isEven);
 
-          strictEqual(wrapped.first(), _.first(_.filter(array, predicate)));
+          strictEqual(wrapped.first(), _.first(_.filter(array, isEven)));
         });
       }
       else {
@@ -4152,14 +4128,14 @@
     test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
         var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            predicate = function(value) { values.push(value); return isEven(value); },
             values = [],
-            predicate = function(value) { values.push(value); return value > 2; },
             actual = _(array).take(2).take().value();
 
         deepEqual(actual, _.take(_.take(array, 2)));
 
         actual = _(array).filter(predicate).take(2).take().value();
-        deepEqual(values, [1, 2, 3]);
+        deepEqual(values, [1, 2]);
         deepEqual(actual, _.take(_.take(_.filter(array, predicate), 2)));
 
         actual = _(array).take(6).takeRight(4).take(2).takeRight().value();
@@ -4168,7 +4144,7 @@
         values = [];
 
         actual = _(array).take(array.length - 1).filter(predicate).take(6).takeRight(4).take(2).takeRight().value();
-        deepEqual(values, [1, 2, 3, 4, 5, 6, 7, 8]);
+        deepEqual(values, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
         deepEqual(actual, _.takeRight(_.take(_.takeRight(_.take(_.filter(_.take(array, array.length - 1), predicate), 6), 4), 2)));
       }
       else {
@@ -4221,9 +4197,9 @@
 
     test('should work in a lazy chain sequence', 6, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE),
+            predicate = function(value) { values.push(value); return isEven(value); },
             values = [],
-            predicate = function(value) { values.push(value); return value < 9; },
             actual = _(array).takeRight(2).takeRight().value();
 
         deepEqual(actual, _.takeRight(_.takeRight(array)));
@@ -4292,7 +4268,7 @@
 
     test('should work in a lazy chain sequence', 3, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE),
             predicate = function(num) { return num > 2; },
             expected = _.takeRightWhile(array, predicate),
             wrapped = _(array).takeRightWhile(predicate);
@@ -4392,7 +4368,7 @@
 
     test('should work in a lazy chain sequence', 3, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE),
             predicate = function(num) { return num < 3; },
             expected = _.takeWhile(array, predicate),
             wrapped = _(array).takeWhile(predicate);
@@ -4408,15 +4384,15 @@
 
     test('should work in a lazy chain sequence with `take`', 1, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1);
+        var array = _.range(LARGE_ARRAY_SIZE);
 
         var actual = _(array)
           .takeWhile(function(num) { return num < 4; })
           .take(2)
-          .takeWhile(function(num) { return num == 1; })
+          .takeWhile(function(num) { return num == 0; })
           .value();
 
-        deepEqual(actual, [1]);
+        deepEqual(actual, [0]);
       }
       else {
         skipTest();
@@ -5212,7 +5188,7 @@
           expected = [stringLiteral, stringObject];
 
       var largeArray = _.times(LARGE_ARRAY_SIZE, function(count) {
-        return count % 2 ? stringObject : stringLiteral;
+        return isEven(count) ? stringLiteral : stringObject;
       });
 
       deepEqual(_.difference(largeArray, largeArray), []);
@@ -5302,7 +5278,7 @@
         );
 
         var iteratee = function(value) { value.push(value[0]); return value; },
-            predicate = function(value) { return value[0] > 1; },
+            predicate = function(value) { return isEven(value[0]); },
             actual = _(array).groupBy().map(iteratee).filter(predicate).take().value();
 
         deepEqual(actual, _.take(_.filter(_.map(_.groupBy(array), iteratee), predicate)));
@@ -5813,7 +5789,7 @@
 
     test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE),
             values = [];
 
         var actual = _(array).initial().filter(function(value) {
@@ -5829,12 +5805,12 @@
 
         actual = _(array).filter(function(value) {
           values.push(value);
-          return value < 3;
+          return isEven(value);
         })
         .initial()
         .value();
 
-        deepEqual(actual, [1]);
+        deepEqual(actual, _.initial(_.filter(array, isEven)));
         deepEqual(values, array);
       }
       else {
@@ -8693,10 +8669,9 @@
           _.range(Math.floor(LARGE_ARRAY_SIZE / 1.5), LARGE_ARRAY_SIZE)
         );
 
-        var predicate = function(value) { return value > 2; },
-            actual = _(array).keyBy().map(square).filter(predicate).take().value();
+        var actual = _(array).keyBy().map(square).filter(isEven).take().value();
 
-        deepEqual(actual, _.take(_.filter(_.map(_.keyBy(array), square), predicate)));
+        deepEqual(actual, _.take(_.filter(_.map(_.keyBy(array), square), isEven)));
       }
       else {
         skipTest();
@@ -8887,15 +8862,14 @@
 
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var largeArray = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var largeArray = _.range(LARGE_ARRAY_SIZE),
             smallArray = array;
 
         _.times(2, function(index) {
           var array = index ? largeArray : smallArray,
-              predicate = function(value) { return value % 2; },
-              wrapped = _(array).filter(predicate);
+              wrapped = _(array).filter(isEven);
 
-          strictEqual(wrapped.last(), _.last(_.filter(array, predicate)));
+          strictEqual(wrapped.last(), _.last(_.filter(array, isEven)));
         });
       }
       else {
@@ -10940,11 +10914,10 @@
       if (!isNpm) {
         _.mixin({ 'a': _.countBy, 'b': _.filter });
 
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            predicate = function(value) { return value > 2; },
-            actual = _(array).a().map(square).b(predicate).take().value();
+        var array = _.range(LARGE_ARRAY_SIZE),
+            actual = _(array).a().map(square).b(isEven).take().value();
 
-        deepEqual(actual, _.take(_.b(_.map(_.a(array), square), predicate)));
+        deepEqual(actual, _.take(_.b(_.map(_.a(array), square), isEven)));
 
         delete _.a;
         delete _.prototype.a;
@@ -11009,9 +10982,7 @@
 
   (function() {
     test('should create a function that negates the result of `func`', 2, function() {
-      var negate = _.negate(function(n) {
-        return n % 2 == 0;
-      });
+      var negate = _.negate(isEven);
 
       strictEqual(negate(1), true);
       strictEqual(negate(2), false);
@@ -12681,11 +12652,7 @@
     var array = [1, 2, 3];
 
     test('should return elements the `predicate` returns falsey for', 1, function() {
-      var actual = _.reject(array, function(num) {
-        return num % 2;
-      });
-
-      deepEqual(actual, [2]);
+      deepEqual(_.reject(array, isEven), [1, 3]);
     });
   }());
 
@@ -12740,7 +12707,7 @@
     test('`_.' + methodName + '` should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
         var array = _.range(0, LARGE_ARRAY_SIZE + 1),
-            predicate = function(value) { return isFilter ? (value > 6) : (value < 6); },
+            predicate = function(value) { return isFilter ? isEven(value) : !isEven(value); },
             actual = _(array).slice(1).map(square)[methodName](predicate).value();
 
         deepEqual(actual, _[methodName](_.map(array.slice(1), square), predicate));
@@ -12828,7 +12795,7 @@
         var args = slice.call(arguments);
         args[2] = args[2].slice();
         argsList.push(args);
-        return index % 2 == 0;
+        return isEven(index);
       });
 
       deepEqual(argsList, [[1, 0, clone], [2, 1, clone], [3, 2, clone]]);
@@ -12872,7 +12839,7 @@
 
     test('should not mutate the array until all elements to remove are determined', 1, function() {
       var array = [1, 2, 3];
-      _.remove(array, function(num, index) { return index % 2 == 0; });
+      _.remove(array, function(num, index) { return isEven(index); });
       deepEqual(array, [2]);
     });
   }());
@@ -13106,7 +13073,7 @@
 
     test('should work in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE),
             values = [];
 
         var actual = _(array).rest().filter(function(value) {
@@ -13122,12 +13089,12 @@
 
         actual = _(array).filter(function(value) {
           values.push(value);
-          return value > 1;
+          return isEven(value);
         })
         .rest()
         .value();
 
-        deepEqual(actual, array.slice(2));
+        deepEqual(actual, _.rest(_.filter(array, isEven)));
         deepEqual(values, array);
       }
       else {
@@ -13137,7 +13104,7 @@
 
     test('should not execute subsequent iteratees on an empty array in a lazy chain sequence', 4, function() {
       if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE),
             iteratee = function() { pass = false },
             pass = true,
             actual = _(array).slice(0, 1).rest().map(iteratee).value();
@@ -15534,7 +15501,7 @@
           object = new Foo;
 
       var iteratee = function(result, value, key) {
-        result[key] = value * value;
+        result[key] = square(value);
       };
 
       var mapper = function(accumulator, index) {
@@ -15572,7 +15539,7 @@
 
       var actual = _.map(values, function(value) {
         return _.transform(value, function(result, value) {
-          result.push(value * value);
+          result.push(square(value));
         }, [0]);
       });
 
@@ -15582,7 +15549,7 @@
       expected = [object, { '_': 0, '0': 1, '1': 4, '2': 9 }, object];
       actual = _.map(values, function(value) {
         return _.transform(value, function(result, value, key) {
-          result[key] = value * value;
+          result[key] = square(value);
         }, { '_': 0 });
       });
 
@@ -16347,10 +16314,9 @@
           return ['key' + index, index];
         });
 
-        var predicate = function(value) { return value > 2; },
-            actual = _(array).zipObject().map(square).filter(predicate).take().value();
+        var actual = _(array).zipObject().map(square).filter(isEven).take().value();
 
-        deepEqual(actual, _.take(_.filter(_.map(_.zipObject(array), square), predicate)));
+        deepEqual(actual, _.take(_.filter(_.map(_.zipObject(array), square), isEven)));
       }
       else {
         skipTest();
@@ -16658,11 +16624,11 @@
       if (!isNpm) {
         var array1 = [5, null, 3, null, 1],
             array2 = [10, null, 8, null, 6],
-            wrapper1 = _(array1).thru(_.compact).map(square).takeRight(2).sort(),
-            wrapper2 = wrapper1.plant(array2);
+            wrapped1 = _(array1).thru(_.compact).map(square).takeRight(2).sort(),
+            wrapped2 = wrapped1.plant(array2);
 
-        deepEqual(wrapper2.value(), [36, 64]);
-        deepEqual(wrapper1.value(), [1, 9]);
+        deepEqual(wrapped2.value(), [36, 64]);
+        deepEqual(wrapped1.value(), [1, 9]);
       }
       else {
         skipTest(2);

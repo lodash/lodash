@@ -15376,16 +15376,25 @@
   QUnit.module('lodash.toArray');
 
   (function() {
-    test('should return the values of objects', 1, function() {
-      var array = [1, 2],
-          object = { 'a': 1, 'b': 2 };
-
-      deepEqual(_.toArray(object), array);
+    test('should convert objects to arrays', 1, function() {
+      deepEqual(_.toArray({ 'a': 1, 'b': 2 }), [1, 2]);
     });
 
-    test('should work with a string for `collection`', 2, function() {
+    test('should convert strings to arrays', 2, function() {
       deepEqual(_.toArray('ab'), ['a', 'b']);
       deepEqual(_.toArray(Object('ab')), ['a', 'b']);
+    });
+
+    test('should convert iterables to arrays', 1, function() {
+      if (!isNpm && Symbol && Symbol.iterator) {
+        var object = { '0': 'a', 'length': 1 };
+        object[Symbol.iterator] = arrayProto[Symbol.iterator];
+
+        deepEqual(_.toArray(object), ['a']);
+      }
+      else {
+        skipTest();
+      }
     });
 
     test('should work in a lazy chain sequence', 2, function() {

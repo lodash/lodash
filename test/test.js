@@ -16583,7 +16583,7 @@
     });
 
     test('should reset the iterator correctly ' + chainType, 4, function() {
-      if (!isNpm) {
+      if (!isNpm && Symbol && Symbol.iterator) {
         var array = [1, 2],
             wrapped = chain(array);
 
@@ -16600,7 +16600,7 @@
     });
 
     test('should work in a lazy sequence' + chainType, 3, function() {
-      if (!isNpm) {
+      if (!isNpm && Symbol && Symbol.iterator) {
         var array = _.range(LARGE_ARRAY_SIZE),
             predicate = function(value) { values.push(value); return isEven(value); },
             values = [],
@@ -16653,7 +16653,7 @@
     });
 
     test('should reset iterator data on cloned sequences', 3, function() {
-      if (!isNpm) {
+      if (!isNpm && Symbol && Symbol.iterator) {
         var array1 = [2, 4],
             array2 = [6, 8],
             wrapped1 = _(array1).map(square);

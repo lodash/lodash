@@ -2046,7 +2046,7 @@
 
     test('should work in a lazy chain sequence', 1, function() {
       if (!isNpm) {
-        var array = _.range(0, LARGE_ARRAY_SIZE).concat(null),
+        var array = _.range(LARGE_ARRAY_SIZE).concat(null),
             actual = _(array).slice(1).compact().reverse().take().value();
 
         deepEqual(actual, _.take(_.compact(_.slice(array, 1)).reverse()));
@@ -4285,7 +4285,7 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            array = _.range(LARGE_ARRAY_SIZE + 1),
             expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, _.map(array.slice(1), square)];
 
         _(array).slice(1).takeRightWhile(function(value, index, array) {
@@ -4402,7 +4402,7 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            array = _.range(LARGE_ARRAY_SIZE + 1),
             expected = [1, 0, _.map(array.slice(1), square)];
 
         _(array).slice(1).takeWhile(function(value, index, array) {
@@ -9121,7 +9121,7 @@
     test('should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            array = _.range(LARGE_ARRAY_SIZE + 1),
             expected = [1, 0, _.map(array.slice(1), square)];
 
         _(array).slice(1).map(function(value, index, array) {
@@ -12706,7 +12706,7 @@
 
     test('`_.' + methodName + '` should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.range(0, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE + 1),
             predicate = function(value) { return isFilter ? isEven(value) : !isEven(value); },
             actual = _(array).slice(1).map(square)[methodName](predicate).value();
 
@@ -12727,7 +12727,7 @@
     test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy chain sequence', 5, function() {
       if (!isNpm) {
         var args,
-            array = _.range(0, LARGE_ARRAY_SIZE + 1),
+            array = _.range(LARGE_ARRAY_SIZE + 1),
             expected = [1, 0, _.map(array.slice(1), square)];
 
         _(array).slice(1)[methodName](function(value, index, array) {
@@ -15390,7 +15390,7 @@
 
     test('should work in a lazy chain sequence', 2, function() {
       if (!isNpm) {
-        var array = _.range(0, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE + 1),
             actual = _(array).slice(1).map(String).toArray().value();
 
         deepEqual(actual, _.map(array.slice(1), String));
@@ -16245,7 +16245,7 @@
 
     test('should work when in a lazy chain sequence before `first` or `last`', 1, function() {
       if (!isNpm) {
-        var array = _.range(0, LARGE_ARRAY_SIZE + 1),
+        var array = _.range(LARGE_ARRAY_SIZE + 1),
             wrapped = _(array).slice(1).xor([LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE + 1]);
 
         var actual = _.map(['first', 'last'], function(methodName) {
@@ -16730,7 +16730,7 @@
   QUnit.module('lodash(...).reverse');
 
   (function() {
-    var largeArray = _.range(0, LARGE_ARRAY_SIZE).concat(null),
+    var largeArray = _.range(LARGE_ARRAY_SIZE).concat(null),
         smallArray = [0, 1, 2, null];
 
     test('should return the wrapped reversed `array`', 6, function() {

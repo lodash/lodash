@@ -49,8 +49,8 @@
       fnToString = funcProto.toString,
       freeze = Object.freeze,
       JSON = root.JSON,
-      objToString = objectProto.toString,
       noop = function() {},
+      objToString = objectProto.toString,
       params = root.arguments,
       push = arrayProto.push,
       slice = arrayProto.slice,
@@ -16569,13 +16569,16 @@
       }
     });
 
-    test('should act as an iterable ' + chainType, 1, function() {
+    test('should act as an iterable ' + chainType, 2, function() {
       if (!isNpm && Symbol && Symbol.iterator) {
-        var wrapped = chain([1, 2]);
+        var array = [1, 2],
+            wrapped = chain(array);
+
         ok(wrapped[Symbol.iterator]() === wrapped);
+        deepEqual(_.toArray(wrapped), array);
       }
       else {
-        skipTest();
+        skipTest(2);
       }
     });
 

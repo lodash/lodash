@@ -6399,7 +6399,7 @@
   QUnit.module('lodash.isEqual');
 
   (function() {
-    test('should perform comparisons between primitive values', 1, function() {
+    test('should compare primitives', 1, function() {
       var pairs = [
         [1, 1, true], [1, Object(1), true], [1, '1', false], [1, 2, false],
         [-0, -0, true], [0, 0, true], [0, Object(0), true], [Object(0), Object(0), true], [-0, 0, true], [0, '0', false], [0, null, false],
@@ -6422,7 +6422,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should perform comparisons between arrays', 6, function() {
+    test('should compare arrays', 6, function() {
       var array1 = [true, null, 1, 'a', undefined],
           array2 = [true, null, 1, 'a', undefined];
 
@@ -6486,7 +6486,7 @@
       strictEqual(_.isEqual(array1, array2), true);
     });
 
-    test('should work with sparse arrays', 3, function() {
+    test('should compare sparse arrays', 3, function() {
       var array = Array(1);
 
       strictEqual(_.isEqual(array, Array(1)), true);
@@ -6494,7 +6494,7 @@
       strictEqual(_.isEqual(array, Array(2)), false);
     });
 
-    test('should perform comparisons between plain objects', 5, function() {
+    test('should compare plain objects', 5, function() {
       var object1 = { 'a': true, 'b': null, 'c': 1, 'd': 'a', 'e': undefined },
           object2 = { 'a': true, 'b': null, 'c': 1, 'd': 'a', 'e': undefined };
 
@@ -6521,7 +6521,7 @@
       strictEqual(_.isEqual(object1, object2), false);
     });
 
-    test('should perform comparisons of nested objects', 1, function() {
+    test('should compare nested objects', 1, function() {
       var object1 = {
         'a': [1, 2, 3],
         'b': true,
@@ -6553,7 +6553,7 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
-    test('should perform comparisons between object instances', 4, function() {
+    test('should compare object instances', 4, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.a = 1;
 
@@ -6566,7 +6566,7 @@
       strictEqual(_.isEqual({ 'a': 2 }, new Bar), false);
     });
 
-    test('should perform comparisons between objects with constructor properties', 5, function() {
+    test('should compare objects with constructor properties', 5, function() {
       strictEqual(_.isEqual({ 'constructor': 1 },   { 'constructor': 1 }), true);
       strictEqual(_.isEqual({ 'constructor': 1 },   { 'constructor': '1' }), false);
       strictEqual(_.isEqual({ 'constructor': [1] }, { 'constructor': [1] }), true);
@@ -6574,7 +6574,7 @@
       strictEqual(_.isEqual({ 'constructor': Object }, {}), false);
     });
 
-    test('should perform comparisons between arrays with circular references', 4, function() {
+    test('should compare arrays with circular references', 4, function() {
       var array1 = [],
           array2 = [];
 
@@ -6600,7 +6600,7 @@
       strictEqual(_.isEqual(array1, array2), false);
     });
 
-    test('should perform comparisons between objects with circular references', 4, function() {
+    test('should compare objects with circular references', 4, function() {
       var object1 = {},
           object2 = {};
 
@@ -6626,7 +6626,7 @@
       strictEqual(_.isEqual(object1, object2), false);
     });
 
-    test('should perform comparisons between objects with multiple circular references', 3, function() {
+    test('should compare objects with multiple circular references', 3, function() {
       var array1 = [{}],
           array2 = [{}];
 
@@ -6646,7 +6646,7 @@
       strictEqual(_.isEqual(array1, array2), false);
     });
 
-    test('should perform comparisons between objects with complex circular references', 1, function() {
+    test('should compare objects with complex circular references', 1, function() {
       var object1 = {
         'foo': { 'b': { 'c': { 'd': {} } } },
         'bar': { 'a': 2 }
@@ -6666,7 +6666,7 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
-    test('should perform comparisons between objects with shared property values', 1, function() {
+    test('should compare objects with shared property values', 1, function() {
       var object1 = {
         'a': [1, 2]
       };
@@ -6681,7 +6681,50 @@
       strictEqual(_.isEqual(object1, object2), true);
     });
 
-    test('should work with `arguments` objects', 2, function() {
+    test('should treat objects created by `Object.create(null)` like a plain object', 2, function() {
+      function Foo() { this.a = 1; }
+      Foo.prototype.constructor = null;
+
+      var object2 = { 'a': 1 };
+      strictEqual(_.isEqual(new Foo, object2), false);
+
+      if (create)  {
+        var object1 = create(null);
+        object1.a = 1;
+        strictEqual(_.isEqual(object1, object2), true);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should return `false` for objects with custom `toString` methods', 1, function() {
+      var primitive,
+          object = { 'toString': function() { return primitive; } },
+          values = [true, null, 1, 'a', undefined],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        primitive = value;
+        return _.isEqual(object, value);
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should avoid common type coercions', 9, function() {
+      strictEqual(_.isEqual(true, Object(false)), false);
+      strictEqual(_.isEqual(Object(false), Object(0)), false);
+      strictEqual(_.isEqual(false, Object('')), false);
+      strictEqual(_.isEqual(Object(36), Object('36')), false);
+      strictEqual(_.isEqual(0, ''), false);
+      strictEqual(_.isEqual(1, true), false);
+      strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
+      strictEqual(_.isEqual('36', 36), false);
+      strictEqual(_.isEqual(36, '36'), false);
+    });
+
+    test('should compare `arguments` objects', 2, function() {
       var args1 = (function() { return arguments; }(1, 2, 3)),
           args2 = (function() { return arguments; }(1, 2, 3)),
           args3 = (function() { return arguments; }(1, 2));
@@ -6704,14 +6747,14 @@
       strictEqual(_.isEqual(new Foo, args), false);
     });
 
-    test('should perform comparisons between date objects', 4, function() {
+    test('should compare date objects', 4, function() {
       strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
       strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
       strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': _.constant(1337756400000) }), false);
       strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
     });
 
-    test('should perform comparisons between error objects', 1, function() {
+    test('should compare error objects', 1, function() {
       var pairs = _.map([
         'Error',
         'EvalError',
@@ -6737,7 +6780,7 @@
       deepEqual(actual, expected);
     });
 
-    test('should perform comparisons between functions', 2, function() {
+    test('should compare functions', 2, function() {
       function a() { return 1 + 2; }
       function b() { return 1 + 2; }
 
@@ -6745,7 +6788,7 @@
       strictEqual(_.isEqual(a, b), false);
     });
 
-    test('should perform comparisons between regexes', 5, function() {
+    test('should compare regexes', 5, function() {
       strictEqual(_.isEqual(/x/gim, /x/gim), true);
       strictEqual(_.isEqual(/x/gim, /x/mgi), true);
       strictEqual(_.isEqual(/x/gi, /x/g), false);
@@ -6753,7 +6796,7 @@
       strictEqual(_.isEqual(/x/g, { 'global': true, 'ignoreCase': false, 'multiline': false, 'source': 'x' }), false);
     });
 
-    test('should perform comparisons between typed arrays', 1, function() {
+    test('should compare typed arrays', 1, function() {
       var pairs = _.map(typedArrays, function(type, index) {
         var otherType = typedArrays[(index + 1) % typedArrays.length],
             CtorA = root[type] || function(n) { this.n = n; },
@@ -6774,56 +6817,12 @@
       deepEqual(actual, expected);
     });
 
-    test('should avoid common type coercions', 9, function() {
-      strictEqual(_.isEqual(true, Object(false)), false);
-      strictEqual(_.isEqual(Object(false), Object(0)), false);
-      strictEqual(_.isEqual(false, Object('')), false);
-      strictEqual(_.isEqual(Object(36), Object('36')), false);
-      strictEqual(_.isEqual(0, ''), false);
-      strictEqual(_.isEqual(1, true), false);
-      strictEqual(_.isEqual(1337756400000, new Date(2012, 4, 23)), false);
-      strictEqual(_.isEqual('36', 36), false);
-      strictEqual(_.isEqual(36, '36'), false);
-    });
-
-    test('should return `false` for objects with custom `toString` methods', 1, function() {
-      var primitive,
-          object = { 'toString': function() { return primitive; } },
-          values = [true, null, 1, 'a', undefined],
-          expected = _.map(values, _.constant(false));
-
-      var actual = _.map(values, function(value) {
-        primitive = value;
-        return _.isEqual(object, value);
-      });
-
-      deepEqual(actual, expected);
-    });
-
     test('should work as an iteratee for `_.every`', 1, function() {
       var actual = _.every([1, 1, 1], _.partial(_.isEqual, 1));
       ok(actual);
     });
 
-    test('should treat objects created by `Object.create(null)` like any other plain object', 2, function() {
-      function Foo() { this.a = 1; }
-      Foo.prototype.constructor = null;
-
-      var object2 = { 'a': 1 };
-      strictEqual(_.isEqual(new Foo, object2), false);
-
-      if (create)  {
-        var object1 = create(null);
-        object1.a = 1;
-        strictEqual(_.isEqual(object1, object2), true);
-      }
-      else {
-        skipTest();
-      }
-    });
-
     test('should return `true` for like-objects from different documents', 4, function() {
-      // Ensure `_._object` is assigned (unassigned in Opera 10.00).
       if (_._object) {
         strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, _._object), true);
         strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, _._object), false);
@@ -6851,7 +6850,7 @@
       }
     });
 
-    test('should perform comparisons between wrapped values', 32, function() {
+    test('should compare wrapped values', 32, function() {
       var stamp = +new Date;
 
       var values = [
@@ -6887,7 +6886,7 @@
       });
     });
 
-    test('should perform comparisons between wrapped and non-wrapped values', 4, function() {
+    test('should compare wrapped and non-wrapped values', 4, function() {
       if (!isNpm) {
         var object1 = _({ 'a': 1, 'b': 2 }),
             object2 = { 'a': 1, 'b': 2 };
@@ -11821,7 +11820,6 @@
       deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
     });
 
-
     test('should return an empty object when `object` is nullish', 2, function() {
       _.each([null, undefined], function(value) {
         deepEqual(_.pick(value, 'valueOf'), {});
@@ -13568,7 +13566,7 @@
       });
     });
 
-    test('`_.' + methodName + '` should not error on paths over primitive values in strict mode', 2, function() {
+    test('`_.' + methodName + '` should not error on paths over primitives in strict mode', 2, function() {
       numberProto.a = 0;
 
       _.each(['a', 'a.a.a'], function(path) {

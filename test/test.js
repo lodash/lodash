@@ -860,6 +860,7 @@
       _.times(times, _.after(n, function() { count++; }));
       return count;
     }
+
     test('should create a function that invokes `func` after `n` calls', 4, function() {
       strictEqual(after(5, 5), 1, 'after(n) should invoke `func` after being called `n` times');
       strictEqual(after(5, 4), 0, 'after(n) should not invoke `func` before being called `n` times');
@@ -1154,6 +1155,7 @@
       _.times(times, _.before(n, function() { count++; }));
       return count;
     }
+
     test('should create a function that invokes `func` after `n` calls', 4, function() {
       strictEqual(before(5, 4), 4, 'before(n) should invoke `func` before being called `n` times');
       strictEqual(before(5, 6), 4, 'before(n) should not invoke `func` after being called `n - 1` times');
@@ -7262,7 +7264,6 @@
 
     test('should work with a function for `source`', 1, function() {
       function source() {}
-
       source.a = 1;
       source.b = function() {};
       source.c = 3;
@@ -7772,6 +7773,7 @@
       function Foo(a) {
         this.a = 1;
       }
+
       strictEqual(_.isPlainObject({}), true);
       strictEqual(_.isPlainObject({ 'a': 1 }), true);
       strictEqual(_.isPlainObject({ 'constructor': Foo }), true);
@@ -9511,7 +9513,6 @@
 
     test('should work with a function for `source`', 1, function() {
       function source() {}
-
       source.a = 1;
       source.b = function() {};
       source.c = 3;
@@ -9794,7 +9795,6 @@
 
     test('should work with a function for `value`', 1, function() {
       function source() {}
-
       source.a = 1;
       source.b = function() {};
       source.c = 3;
@@ -9960,7 +9960,7 @@
     });
 
     test('should allow `_.memoize.Cache` to be customized', 5, function() {
-      var oldCache = _.memoize.Cache
+      var oldCache = _.memoize.Cache;
 
       function Cache() {
         this.__data__ = [];
@@ -10019,7 +10019,7 @@
     });
 
     test('should works with an immutable `_.memoize.Cache` ', 2, function() {
-      var oldCache = _.memoize.Cache
+      var oldCache = _.memoize.Cache;
 
       function Cache() {
         this.__data__ = [];
@@ -16599,7 +16599,7 @@
       }
     });
 
-    test('should work in a lazy sequence' + chainType, 3, function() {
+    test('should work in a lazy sequence ' + chainType, 3, function() {
       if (!isNpm && Symbol && Symbol.iterator) {
         var array = _.range(LARGE_ARRAY_SIZE),
             predicate = function(value) { values.push(value); return isEven(value); },

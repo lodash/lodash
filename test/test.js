@@ -49,10 +49,12 @@
       fnToString = funcProto.toString,
       freeze = Object.freeze,
       JSON = root.JSON,
+      Map = root.Map,
       noop = function() {},
       objToString = objectProto.toString,
       params = root.arguments,
       push = arrayProto.push,
+      Set = root.Set,
       slice = arrayProto.slice,
       Symbol = root.Symbol,
       system = root.system,
@@ -1784,6 +1786,17 @@
     Foo.prototype = { 'b': 1 };
     Foo.c = function() {};
 
+    if (Map) {
+      var map = new Map;
+      map.set('a', 1);
+      map.set('b', 2);
+    }
+    if (Set) {
+      var set = new Set;
+      set.add(1);
+      set.add(2);
+    }
+
     var objects = {
       '`arguments` objects': arguments,
       'arrays': ['a', ''],
@@ -1794,10 +1807,12 @@
       'objects': { 'a': 0, 'b': 1, 'c': 3 },
       'objects with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
       'objects from another document': _._object || {},
+      'maps': map,
       'null values': null,
       'numbers': 3,
       'number objects': Object(3),
       'regexes': /a/gim,
+      'sets': set,
       'strings': 'a',
       'string objects': Object('a'),
       'undefined values': undefined

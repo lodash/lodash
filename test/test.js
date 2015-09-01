@@ -62,6 +62,7 @@
   /** Math helpers. */
   var add = function(x, y) { return x + y; },
       doubled = function(n) { return n * 2; },
+      isEven = function(n) { return n % 2 == 0; },
       square = function(n) { return n * n; };
 
   /** Used to set property descriptors. */
@@ -16583,73 +16584,64 @@
   QUnit.module('lodash(...).next');
 
   _.each([true, false], function(implict) {
-    function arrayFrom(iter) {
-      var item;
-      var result = [];
-      while (!(item = iter.next()).done) {
-        result.push(item.value);
+    function chain(value) {
+      return implict ? _(value) : _.chain(value);
+    }
+
+    var chainType = 'in an ' + (implict ? 'implict' : 'explict') + ' chain';
+
+    test('should follow the iterator protocol ' + chainType, 3, function() {
+      if (!isNpm) {
+        var wrapped = chain([1, 2]);
+
+        deepEqual(wrapped.next(), { 'done': false, 'value': 1 });
+        deepEqual(wrapped.next(), { 'done': false, 'value': 2 });
+        deepEqual(wrapped.next(), { 'done': true,  'value': undefined });
       }
-      return result;
-    }
-
-    function chain(obj) {
-      return implict ? _(obj) : _.chain(obj);
-    }
-
-    var chainType = ' in an ' + (implict ? 'implict' : 'explict') + ' chain';
-
-    test('should produce an ES6 compliant object' + chainType, 7, function() {
-      var array = [0, 1, 1, 2, 3],
-          chained = chain(array);
-
-      deepEqual(chained.next(), {done: false, value: 0});
-      deepEqual(chained.next(), {done: false, value: 1});
-      deepEqual(chained.next(), {done: false, value: 1});
-      deepEqual(chained.next(), {done: false, value: 2});
-      deepEqual(chained.next(), {done: false, value: 3});
-      deepEqual(chained.next(), {done: true, value: undefined});
-      deepEqual(chained.next(), {done: true, value: undefined});
+      else {
+        skipTest(3);
+      }
     });
 
-    test('should make a lodash instance act as an iterable' + chainType, 1, function() {
-      var array = [0, 1, 1, 2, 3, 5, 8, 13, 21],
-          chained = chain(array);
-
-      deepEqual(arrayFrom(chained), array);
+    test('should act as an iterable ' + chainType, 1, function() {
+      if (!isNpm && Symbol && Symbol.iterator) {
+        var wrapped = chain([1, 2]);
+        ok(wrapped[Symbol.iterator]() === wrapped);
+      }
+      else {
+        skipTest();
+      }
     });
 
-    test('should reset the iterator upon forking (adding an action to the chain)' + chainType, 5, function() {
-      var array = [0, 1, 1, 2, 3, 5, 8, 13, 21],
-          chained = chain(array);
+    test('should reset the iterator correctly ' + chainType, 4, function() {
+      if (!isNpm) {
+        var array = [1, 2],
+            wrapped = chain(array);
 
-      deepEqual(arrayFrom(chained), array);
-      // before reset produces empty array as iterator is exhausted
-      deepEqual(arrayFrom(chained), []);
+        deepEqual(_.toArray(wrapped), array);
+        deepEqual(_.toArray(wrapped), [], 'produces an empty array for exhausted iterator');
 
-      var newChain = chained.filter(_.constant(true));
-      deepEqual(arrayFrom(newChain), array);
-
-      // original chain is still exhausted
-      deepEqual(arrayFrom(chained), []);
-
-      newChain = chained.slice();
-      deepEqual(arrayFrom(newChain), array);
+        var other = wrapped.filter();
+        deepEqual(_.toArray(other), array, 'reset for new chain segments');
+        deepEqual(_.toArray(wrapped), [], 'iterator is still exhausted');
+      }
+      else {
+        skipTest(4);
+      }
     });
 
     test('should work in a lazy sequence' + chainType, 3, function() {
-      if (true) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE),
+            predicate = function(value) { values.push(value); return isEven(value); },
             values = [],
-            predicate = function(value) { values.push(value); return value > 99; },
-            chained = chain(array);
+            wrapped = chain(array);
 
-        deepEqual(arrayFrom(chained), array);
+        deepEqual(_.toArray(wrapped), array);
 
-        // resets index & supports lazy array
-        chained = chained.filter(predicate);
-        deepEqual(arrayFrom(chained), array.slice(99));
-        // Doesn't recompute everything each time
-        deepEqual(values, array);
+        wrapped = wrapped.filter(predicate);
+        deepEqual(_.toArray(wrapped), _.filter(array, isEven), 'reset for new lazy chain segments');
+        deepEqual(values, array, 'memoizes iterator values');
       }
       else {
         skipTest(3);

@@ -16638,19 +16638,34 @@
       }
     });
 
-    test('should reset iterator data on cloned sequences', 2, function() {
+    test('should clone `chainAll` settings', 1, function() {
+      if (!isNpm) {
+        var array1 = [2, 4],
+            array2 = [6, 8],
+            wrapped1 = _(array1).chain().map(square),
+            wrapped2 = wrapped1.plant(array2);
+
+        deepEqual(wrapped2.first().value(), 36);
+      }
+      else {
+        skipTest();
+      }
+    });
+
+    test('should reset iterator data on cloned sequences', 3, function() {
       if (!isNpm) {
         var array1 = [2, 4],
             array2 = [6, 8],
             wrapped1 = _(array1).map(square);
 
         deepEqual(_.toArray(wrapped1), [4, 16]);
+        deepEqual(_.toArray(wrapped1), []);
 
         var wrapped2 = wrapped1.plant(array2);
         deepEqual(_.toArray(wrapped2), [36, 64]);
       }
       else {
-        skipTest(2);
+        skipTest(3);
       }
     });
   }());

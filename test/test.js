@@ -16637,6 +16637,22 @@
         skipTest(2);
       }
     });
+
+    test('should reset iterator data on cloned sequences', 2, function() {
+      if (!isNpm) {
+        var array1 = [2, 4],
+            array2 = [6, 8],
+            wrapped1 = _(array1).map(square);
+
+        deepEqual(_.toArray(wrapped1), [4, 16]);
+
+        var wrapped2 = wrapped1.plant(array2);
+        deepEqual(_.toArray(wrapped2), [36, 64]);
+      }
+      else {
+        skipTest(2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

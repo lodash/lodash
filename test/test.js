@@ -16106,6 +16106,90 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.unset');
+
+  (function() {
+    test('should unset property on given `object`', 4, function() {
+      _.each(['a', ['a']], function(path) {
+        var object = { 'a': 1, 'c': 2 };
+        strictEqual(_.unset(object, path), true);
+        deepEqual(object, { 'c': 2 });
+      });
+    });
+
+    test('should unset deep property on given `object`', 4, function() {
+      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var object = { 'a': { 'b': { 'c': null } } };
+        strictEqual(_.unset(object, path), true);
+        deepEqual(object, { 'a': { 'b': {} } });
+      });
+    });
+
+    test('should handle complex paths', 4, function() {
+      var paths = [
+        'a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][\ne\n][f].g',
+        ['a', '-1.23', '["b"]', 'c', "['d']", '\ne\n', 'f', 'g']
+      ];
+
+      _.each(paths, function(path) {
+        var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { '\ne\n': { 'f': { 'g': 8 } } } } } } } };
+        strictEqual(_.unset(object, path), true);
+
+        ok(!('g' in object.a[-1.23]['["b"]'].c["['d']"]['\ne\n'].f));
+      });
+    });
+
+    test('should return `true` for nonexistent paths', 5, function() {
+      var object = { 'a': { 'b': { 'c': null } } };
+
+      _.each(['z', 'a.z', 'a.b.z', 'a.b.c.z'], function(path) {
+        strictEqual(_.unset(object, path), true);
+      });
+
+      deepEqual(object, { 'a': { 'b': { 'c': null } } });
+    });
+
+    test('should not error when `object` is nullish', 1, function() {
+      var values = [null, undefined],
+          expected = [[true, true], [true, true]];
+
+      var actual = _.map(values, function(value) {
+        try {
+          return [_.unset(value, 'a.b'), _.unset(value, ['a', 'b'])];
+        } catch(e) {
+          return e.message;
+        }
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should follow `path` over non-plain objects', 2, function() {
+      function Foo() {};
+      Foo.prototype.a = 1;
+
+      strictEqual(_.unset(Foo, 'prototype.a'), true);
+      strictEqual(Foo.prototype.a, undefined);
+    });
+
+    test('should return `false` for non-configurable properties', 1, function() {
+      var object = {};
+
+      if (defineProperty) {
+        defineProperty(object, 'a', {
+          'configurable': false,
+          'value': null
+        });
+        strictEqual(_.unset(object, 'a'), false);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unzipWith');
 
   (function() {
@@ -17438,7 +17522,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 228, function() {
+    test('should accept falsey arguments', 229, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

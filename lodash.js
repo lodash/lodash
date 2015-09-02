@@ -2960,6 +2960,21 @@
     }
 
     /**
+     * The base implementation of `_.unset`.
+     *
+     * @private
+     * @param {Object} object The object to modify.
+     * @param {Array|string} path The path of the property to unset.
+     * @returns {boolean} Returns `true` if the property is deleted, else `false`.
+     */
+    function baseUnset(object, path) {
+      path = isKey(path, object) ? [path + ''] : toPath(path);
+      object = parent(object, path);
+      var key = last(path);
+      return (object != null && has(object, key)) ? delete object[key] : true;
+    }
+
+    /**
      * The base implementation of methods like `_.dropWhile` and `_.takeWhile`
      * without support for callback shorthands.
      *
@@ -9844,6 +9859,34 @@
     }
 
     /**
+     * Removes the property at `path` of `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to modify.
+     * @param {Array|string} path The path of the property to unset.
+     * @returns {boolean} Returns `true` if the property is deleted, else `false`.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': 7 } }] };
+     * _.unset(object, 'a[0].b.c');
+     * // => true
+     *
+     * console.log(object);
+     * // => { 'a': [{ 'b': {} }] };
+     *
+     * _.unset(object, 'a[0].b.c');
+     * // => true
+     *
+     * console.log(object);
+     * // => { 'a': [{ 'b': {} }] };
+     */
+    function unset(object, path) {
+      return object == null ? true : baseUnset(object, path);
+    }
+
+    /**
      * Creates an array of the own enumerable property values of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
@@ -11721,6 +11764,7 @@
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.uniqBy = uniqBy;
+    lodash.unset = unset;
     lodash.unzip = unzip;
     lodash.unzipWith = unzipWith;
     lodash.values = values;

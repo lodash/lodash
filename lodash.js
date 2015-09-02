@@ -211,6 +211,7 @@
     '\xf9': 'u',  '\xfa': 'u', '\xfb': 'u', '\xfc': 'u',
     '\xdd': 'Y',  '\xfd': 'y', '\xff': 'y',
     '\xc6': 'Ae', '\xe6': 'ae',
+    '\x37': 'Oe', '\x47': 'oe',
     '\xde': 'Th', '\xfe': 'th',
     '\xdf': 'ss'
   };

@@ -2738,6 +2738,21 @@
     }
 
     /**
+     * The base implementation of `_.unset`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the property to unset.
+     * @returns {boolean} Returns delete operator result.
+     */
+    function baseUnset(object, path) {
+      path = isKey(path, object) ? [path + ''] : toPath(path);
+      object = parent(object, path);
+      var key = last(path);
+      return (object != null && has(object, key)) ? delete object[key] : undefined;
+    }
+
+    /**
      * The base implementation of `setData` without support for hot loop detection.
      *
      * @private
@@ -9724,6 +9739,34 @@
     }
 
     /**
+     * Unset removes a property at `path` from an `object`.
+     * If a portion of `path` doesn't exist returns undefined.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to shrink.
+     * @param {Array|string} path The path of the property to unset.
+     * @returns {boolean} Returns delete operator result.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': 7 } }] };
+     * _.unset(object, 'a[0].b.c');
+     * // => true
+     *
+     * console.log(object);
+     * // => { 'a': [{ 'b': {} }] };
+     *
+     * _.unset(object, 'a[0].b.c');
+     * // => undefined
+     * console.log(object);
+     * // => { 'a': [{ 'b': {} }] };
+     */
+    function unset(object, path) {
+      return object == null ? undefined : baseUnset(object, path);
+    }
+
+    /**
      * This method is like `_.set` except that it accepts `customizer` which is
      * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
      * path creation is handled by the method instead. The `customizer` is invoked
@@ -11657,6 +11700,7 @@
     lodash.rest = rest;
     lodash.restParam = restParam;
     lodash.set = set;
+    lodash.unset = unset;
     lodash.setWith = setWith;
     lodash.shuffle = shuffle;
     lodash.slice = slice;

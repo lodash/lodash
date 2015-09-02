@@ -103,10 +103,11 @@ var browserNameMap = {
 /** List of platforms to load the runner on. */
 var platforms = [
   ['Linux', 'android', '5.1'],
-  ['Windows 10', 'firefox', '39'],
-  ['Windows 10', 'firefox', '38'],
   ['Windows 10', 'chrome', '44'],
   ['Windows 10', 'chrome', '43'],
+  ['Windows 10', 'firefox', '39'],
+  ['Windows 10', 'firefox', '38'],
+  ['Windows 10', 'microsoftedge', '20.10240'],
   ['Windows 10', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],

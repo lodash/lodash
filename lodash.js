@@ -757,7 +757,7 @@
    * @returns {Array} Returns the array of results.
    */
   function baseTimes(n, iteratee) {
-     var index = -1,
+    var index = -1,
          result = Array(n);
 
     while (++index < n) {
@@ -1072,7 +1072,7 @@
     if (value != null && typeof value.toString != 'function') {
       try {
         result = !!(value + '');
-      } catch(e) {}
+      } catch (e) {}
     }
     return result;
   }
@@ -1824,7 +1824,7 @@
           length = paths.length,
           result = Array(length);
 
-      while(++index < length) {
+      while (++index < length) {
         result[index] = isNil ? undefined : get(object, paths[index]);
       }
       return result;
@@ -10842,7 +10842,7 @@
     var attempt = restParam(function(func, args) {
       try {
         return func.apply(undefined, args);
-      } catch(e) {
+      } catch (e) {
         return isError(e) ? e : new Error(e);
       }
     });
@@ -12068,8 +12068,8 @@
     if (moduleExports) {
       (freeModule.exports = _)._ = _;
     }
-    // Export for Rhino with CommonJS support.
     else {
+      // Export for Rhino with CommonJS support.
       freeExports._ = _;
     }
   }

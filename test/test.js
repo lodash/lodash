@@ -215,8 +215,6 @@
   /** Load QUnit Extras and ES6 Set/WeakMap shims. */
   (function() {
     var paths = [
-      './asset/set.js',
-      './asset/weakmap.js',
       '../node_modules/qunit-extras/qunit-extras.js'
     ];
 

@@ -1824,7 +1824,7 @@
           length = paths.length,
           result = Array(length);
 
-      while(++index < length) {
+      while (++index < length) {
         result[index] = isNil ? undefined : get(object, paths[index]);
       }
       return result;

@@ -4430,7 +4430,10 @@
 
       while (++index < length) {
         var value = array[index];
-        if (value) {
+
+        if (isArray(value)) {
+          result[++resIndex] = compact(value);
+        } else if (value) {
           result[++resIndex] = value;
         }
       }

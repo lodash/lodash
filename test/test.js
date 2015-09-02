@@ -2048,6 +2048,12 @@
       deepEqual(_.compact(falsey.concat(array)), array);
     });
 
+    test('should deep filter falsey values', 1, function() {
+      var array = ['0', '1', '2', [ 1, 2, null, 3]];
+      var filteredArray = ['0', '1', '2', [ 1, 2, 3]];
+      deepEqual(_.compact(array), filteredArray);
+    });
+
     test('should work when in between lazy operators', 2, function() {
       if (!isNpm) {
         var actual = _(falsey).thru(_.slice).compact().thru(_.slice).value();

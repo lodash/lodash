@@ -25,6 +25,10 @@
       ARY_FLAG = 128,
       REARG_FLAG = 256;
 
+  /** Used to compose bitmasks for comparison styles. */
+  var UNORDERED_COMPARE_FLAG = 1,
+      PARTIAL_COMPARE_FLAG = 2;
+
   /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
@@ -2227,19 +2231,22 @@
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
      * @param {Function} [customizer] The function to customize comparisons.
-     * @param {boolean} [isLoose] Specify performing partial comparisons.
+     * @param {boolean} [bitmask] The bitmask of comparison flags.
+     *  The bitmask may be composed of the following flags:
+     *     1 - Unordered comparison
+     *     2 - Partial comparison
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
-    function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
+    function baseIsEqual(value, other, customizer, bitmask, stackA, stackB) {
       if (value === other) {
         return true;
       }
       if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
         return value !== value && other !== other;
       }
-      return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
+      return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stackA, stackB);
     }
 
     /**
@@ -2252,12 +2259,12 @@
      * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
-     * @param {boolean} [isLoose] Specify performing partial comparisons.
+     * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+    function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stackA, stackB) {
       var objIsArr = isArray(object),
           othIsArr = isArray(other),
           objTag = arrayTag,
@@ -2286,12 +2293,13 @@
       if (isSameTag && !(objIsArr || objIsObj)) {
         return equalByTag(object, other, objTag, equalFunc);
       }
-      if (!isLoose) {
+      var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
+      if (!isPartial) {
         var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
             othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (objIsWrapped || othIsWrapped) {
-          return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
+          return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, bitmask, stackA, stackB);
         }
       }
       if (!isSameTag) {
@@ -2312,7 +2320,7 @@
       stackA.push(object);
       stackB.push(other);
 
-      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
+      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, bitmask, stackA, stackB);
 
       stackA.pop();
       stackB.pop();
@@ -2363,7 +2371,7 @@
               stackB = [],
               result = customizer ? customizer(objValue, srcValue, key, object, source, stackA, stackB) : undefined;
 
-          if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, true, stackA, stackB) : result)) {
+          if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stackA, stackB) : result)) {
             return false;
           }
         }
@@ -2488,7 +2496,7 @@
         var objValue = get(object, path);
         return (objValue === undefined && objValue === srcValue)
           ? hasIn(object, path)
-          : baseIsEqual(srcValue, objValue, undefined, true);
+          : baseIsEqual(srcValue, objValue, undefined, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG);
       };
     }
 
@@ -3383,7 +3391,7 @@
      *
      * @private
      * @param {Function|string} func The function or method name to reference.
-     * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to prepend to those provided to the new function.
      * @param {Array} [holders] The `partials` placeholder indexes.
@@ -3494,7 +3502,7 @@
      *
      * @private
      * @param {Function} func The function to partially apply arguments to.
-     * @param {number} bitmask The bitmask of flags. See `createWrapper` for more details.
+     * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
      * @param {*} thisArg The `this` binding of `func`.
      * @param {Array} partials The arguments to prepend to those provided to the new function.
      * @returns {Function} Returns the new bound function.
@@ -3549,7 +3557,7 @@
      *
      * @private
      * @param {Function|string} func The function or method name to reference.
-     * @param {number} bitmask The bitmask of flags.
+     * @param {number} bitmask The bitmask of wrapper flags.
      *  The bitmask may be composed of the following flags:
      *     1 - `_.bind`
      *     2 - `_.bindKey`
@@ -3620,17 +3628,19 @@
      * @param {Array} other The other array to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
-     * @param {boolean} [isLoose] Specify performing partial comparisons.
+     * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
-    function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
+    function equalArrays(array, other, equalFunc, customizer, bitmask, stackA, stackB) {
       var index = -1,
+          isPartial = bitmask & PARTIAL_COMPARE_FLAG,
+          isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
           arrLength = array.length,
           othLength = other.length;
 
-      if (arrLength != othLength && !(isLoose && othLength > arrLength)) {
+      if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
         return false;
       }
       // Ignore non-index properties.
@@ -3639,7 +3649,7 @@
             othValue = other[index];
 
         if (customizer) {
-          var result = isLoose
+          var result = isPartial
             ? customizer(othValue, arrValue, index, other, array, stackA, stackB)
             : customizer(arrValue, othValue, index, array, other, stackA, stackB);
         }
@@ -3650,13 +3660,13 @@
           return false;
         }
         // Recursively compare arrays (susceptible to call stack limits).
-        if (isLoose) {
+        if (isUnordered) {
           if (!arraySome(other, function(othValue) {
-                return arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
+                return arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stackA, stackB);
               })) {
             return false;
           }
-        } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB))) {
+        } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stackA, stackB))) {
           return false;
         }
       }
@@ -3701,10 +3711,11 @@
           return object == (other + '');
 
         case mapTag:
-          return equalFunc(mapToArray(object), mapToArray(other));
+          var convert = mapToArray;
 
         case setTag:
-          return equalFunc(setToArray(object), setToArray(other));
+          convert || (convert = setToArray);
+          return equalFunc(convert(object), convert(other), undefined, UNORDERED_COMPARE_FLAG);
       }
       return false;
     }
@@ -3718,40 +3729,44 @@
      * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
-     * @param {boolean} [isLoose] Specify performing partial comparisons.
+     * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
+     * @param {boolean} [bitmask] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
-      var objProps = keys(object),
+    function equalObjects(object, other, equalFunc, customizer, bitmask, stackA, stackB) {
+      var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
+          isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
+          objProps = keys(object),
           objLength = objProps.length,
           othProps = keys(other),
           othLength = othProps.length;
 
-      if (objLength != othLength && !isLoose) {
+      if (objLength != othLength && !isPartial) {
         return false;
       }
       var index = objLength;
       while (index--) {
         var key = objProps[index];
-        if (!(isLoose ? key in other : hasOwnProperty.call(other, key))) {
+        if (!(isPartial ? key in other : hasOwnProperty.call(other, key)) ||
+            !(isUnordered || key == othProps[index])) {
           return false;
         }
       }
-      var skipCtor = isLoose;
+      var skipCtor = isPartial;
       while (++index < objLength) {
         key = objProps[index];
         var objValue = object[key],
             othValue = other[key];
 
         if (customizer) {
-          var result = isLoose
+          var result = isPartial
             ? customizer(othValue, objValue, key, other, object, stackA, stackB)
             : customizer(objValue, othValue, key, object, other, stackA, stackB);
         }
         // Recursively compare objects (susceptible to call stack limits).
-        if (!(result === undefined ? equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB) : result)) {
+        if (!(result === undefined ? equalFunc(objValue, othValue, customizer, bitmask, stackA, stackB) : result)) {
           return false;
         }
         skipCtor || (skipCtor = key == 'constructor');
@@ -3999,7 +4014,6 @@
           return new Ctor(object);
 
         case setTag:
-          console.log(object)
           return createSet(setToArray(object));
 
         case regexpTag:

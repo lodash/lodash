@@ -6788,28 +6788,28 @@
       strictEqual(_.isEqual(a, b), false);
     });
 
-    test('should compare maps', 3, function() {
+    test('should compare maps', 4, function() {
       if (Map) {
         var map1 = new Map,
             map2 = new Map;
 
         map1.set('a', 1);
         map2.set('b', 2);
-
         strictEqual(_.isEqual(map1, map2), false);
 
         map1.set('b', 2);
         map2.set('a', 1);
-
-        strictEqual(_.isEqual(map1, map2), false);
+        strictEqual(_.isEqual(map1, map2), true);
 
         map1['delete']('a');
         map1.set('a', 1);
-
         strictEqual(_.isEqual(map1, map2), true);
+
+        map2['delete']('a');
+        strictEqual(_.isEqual(map1, map2), false);
       }
       else {
-        skipTest(3);
+        skipTest(4);
       }
     });
 
@@ -6821,28 +6821,28 @@
       strictEqual(_.isEqual(/x/g, { 'global': true, 'ignoreCase': false, 'multiline': false, 'source': 'x' }), false);
     });
 
-    test('should compare sets', 3, function() {
+    test('should compare sets', 4, function() {
       if (Set) {
         var set1 = new Set,
             set2 = new Set;
 
         set1.add(1);
         set2.add(2);
-
         strictEqual(_.isEqual(set1, set2), false);
 
         set1.add(2);
         set2.add(1);
-
-        strictEqual(_.isEqual(set1, set2), false);
+        strictEqual(_.isEqual(set1, set2), true);
 
         set1['delete'](1);
         set1.add(1);
-
         strictEqual(_.isEqual(set1, set2), true);
+
+        set2['delete'](1);
+        strictEqual(_.isEqual(set1, set2), false);
       }
       else {
-        skipTest(3);
+        skipTest(4);
       }
     });
 

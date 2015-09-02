@@ -4306,19 +4306,19 @@
             expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, _.map(array.slice(1), square)];
 
         _(array).slice(1).takeRightWhile(function(value, index, array) {
-          args = slice.call(arguments)
+          args = slice.call(arguments);
         }).value();
 
         deepEqual(args, [LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE - 1, array.slice(1)]);
 
         _(array).slice(1).map(square).takeRightWhile(function(value, index, array) {
-          args = slice.call(arguments)
+          args = slice.call(arguments);
         }).value();
 
         deepEqual(args, expected);
 
         _(array).slice(1).map(square).takeRightWhile(function(value, index) {
-          args = slice.call(arguments)
+          args = slice.call(arguments);
         }).value();
 
         deepEqual(args, expected);
@@ -4683,7 +4683,7 @@
       'forInRight',
       'forOwn',
       'forOwnRight'
-    ]
+    ];
 
     var objectMethods = [
       'findKey',
@@ -7747,7 +7747,7 @@
     });
 
     test('should avoid `[xpconnect wrapped native prototype]` in Firefox', 1, function() {
-      strictEqual(_.isNumber(+"2"), true);
+      strictEqual(_.isNumber(+'2'), true);
     });
   }(1, 2, 3));
 
@@ -13168,7 +13168,7 @@
     test('should not execute subsequent iteratees on an empty array in a lazy chain sequence', 4, function() {
       if (!isNpm) {
         var array = _.range(LARGE_ARRAY_SIZE),
-            iteratee = function() { pass = false },
+            iteratee = function() { pass = false; },
             pass = true,
             actual = _(array).slice(0, 1).rest().map(iteratee).value();
 
@@ -13220,7 +13220,7 @@
 
     test('should coerce `start` to an integer', 1, function() {
       var rp = _.restParam(fn, 1.6);
-      deepEqual(rp(1, 2, 3), [1, [2, 3]])
+      deepEqual(rp(1, 2, 3), [1, [2, 3]]);
     });
 
     test('should use an empty array when `start` is not reached', 1, function() {
@@ -17296,7 +17296,7 @@
       deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
       deepEqual(_.sortedIndex(sortedArgs, 6), 3, message('sortedIndex'));
       deepEqual(_.sortedIndexOf(sortedArgs, 5), 2, message('sortedIndexOf'));
-      deepEqual(_.sortedLastIndex(sortedArgs, 5), 3, message('sortedLastIndex'))
+      deepEqual(_.sortedLastIndex(sortedArgs, 5), 3, message('sortedLastIndex'));
       deepEqual(_.sortedLastIndexOf(sortedArgs, 1), 0, message('sortedLastIndexOf'));
       deepEqual(_.take(args, 2), [1, null], message('take'));
       deepEqual(_.takeRight(args, 1), [5], message('takeRight'));

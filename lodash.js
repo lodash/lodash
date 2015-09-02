@@ -1913,7 +1913,7 @@
       return function(prototype) {
         if (isObject(prototype)) {
           object.prototype = prototype;
-          var result = new Object;
+          var result = new object;
           object.prototype = undefined;
         }
         return result || {};

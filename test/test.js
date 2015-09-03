@@ -73,7 +73,7 @@
       var o = {},
           func = Object.defineProperty,
           result = func(o, o, o) && func;
-    } catch(e) {}
+    } catch (e) {}
     return result;
   }());
 
@@ -99,11 +99,11 @@
     if (!amd) {
       try {
         result = require('fs').realpathSync(result);
-      } catch(e) {}
+      } catch (e) {}
 
       try {
         result = require.resolve(result);
-      } catch(e) {}
+      } catch (e) {}
     }
     return result;
   }());
@@ -190,7 +190,7 @@
   /** Used to test host objects in IE. */
   try {
     var xml = new ActiveXObject('Microsoft.XMLDOM');
-  } catch(e) {}
+  } catch (e) {}
 
   /** Poison the free variable `root` in Node.js */
   try {
@@ -199,7 +199,7 @@
       'enumerable': false,
       'get': function() { throw new ReferenceError; }
     });
-  } catch(e) {}
+  } catch (e) {}
 
   /** Use a single "load" function. */
   var load = (!amd && typeof require == 'function')
@@ -362,7 +362,7 @@
         'writable': true,
         'value': value
       });
-    } catch(e) {
+    } catch (e) {
       object[key] = value;
     }
   }
@@ -617,7 +617,7 @@
       if (lodashBizarro) {
         try {
           var actual = _.keysIn(new Foo).sort();
-        } catch(e) {
+        } catch (e) {
           actual = null;
         }
         deepEqual(actual, ['a', 'b'], message('_.keysIn', 'Object#propertyIsEnumerable'));
@@ -628,7 +628,7 @@
             lodashBizarro.intersection(largeArray, [object]),
             lodashBizarro.uniq(largeArray)
           ];
-        } catch(e) {
+        } catch (e) {
           actual = null;
         }
         deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
@@ -721,7 +721,7 @@
       if (func) {
         try {
           var actual = func(1, { 'toString': null }, [1]);
-        } catch(e) {
+        } catch (e) {
           var message = e.message;
         }
         strictEqual(actual, false, message || '');
@@ -909,7 +909,7 @@
 
       try {
         var actual = capped('a');
-      } catch(e) {}
+      } catch (e) {}
 
       deepEqual(actual, []);
     });
@@ -1052,7 +1052,7 @@
       var actual = _.map(falsey, function(object) {
         try {
           return _.at(object, 0, 1, 'pop', 'push');
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -1203,7 +1203,7 @@
         try {
           var bound = _.bind(fn, value);
           return bound();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       ok(_.every(actual, function(value, index) {
@@ -1297,7 +1297,7 @@
             case 7: return (new bound(1, 2, 3, 4, 5, 6, 7)).a;
             case 8: return (new bound(1, 2, 3, 4, 5, 6, 7, 8)).a;
           }
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -1342,7 +1342,7 @@
 
       try {
         var actual = new Ctor(2012, 4, 23, 0, 0, 0, 0);
-      } catch(e) {}
+      } catch (e) {}
 
       deepEqual(actual, expected);
 
@@ -1350,7 +1350,7 @@
 
       try {
         actual = new Ctor(0, 0, 0, 0);
-      } catch(e) {}
+      } catch (e) {}
 
       deepEqual(actual, expected);
     });
@@ -1375,7 +1375,7 @@
               case 6: return !!(new bound(1, 2, 3, 4, 5, 6));
               case 7: return !!(new bound(1, 2, 3, 4, 5, 6, 7));
             }
-          } catch(e) {}
+          } catch (e) {}
         });
 
         deepEqual(actual, expected);
@@ -1937,7 +1937,7 @@
 
           try {
             deepEqual(func(element), {});
-          } catch(e) {
+          } catch (e) {
             ok(false, e.message);
           }
         }
@@ -2096,7 +2096,7 @@
 
       try {
         strictEqual(combined('a'), 'a');
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
       strictEqual(combined.length, 0);
@@ -2637,7 +2637,7 @@
 
       try {
         var actual = curried(1)(2);
-      } catch(e) {}
+      } catch (e) {}
 
       strictEqual(actual, 3);
     });
@@ -3622,7 +3622,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.every(value, _.identity);
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -3693,7 +3693,7 @@
 
         try {
           func(object, isBindAll ? 'b' : { 'a': 1 });
-        } catch(e) {
+        } catch (e) {
           pass = !pass;
         }
         ok(pass);
@@ -3916,7 +3916,7 @@
         var actual = _.map(emptyValues, function(value) {
           try {
             return func(value, { 'a': 3 });
-          } catch(e) {}
+          } catch (e) {}
         });
 
         deepEqual(actual, expecting);
@@ -4500,7 +4500,7 @@
               actual = _.flatten(expected);
             }
             deepEqual(actual, expected);
-          } catch(e) {
+          } catch (e) {
             ok(false, e.message);
           }
         }
@@ -5010,7 +5010,7 @@
     test('`_.' + methodName + '` should not error on nullish sources', 1, function() {
       try {
         deepEqual(func({ 'a': 1 }, undefined, { 'b': 2 }, null), { 'a': 1, 'b': 2 });
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
     });
@@ -5021,7 +5021,7 @@
       var actual = _.map([null, undefined], function(value) {
         try {
           return _.isEqual(func(value, { 'a': 1 }), {});
-        } catch(e) {
+        } catch (e) {
           return false;
         }
       });
@@ -5572,7 +5572,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.includes(value);
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -5781,7 +5781,7 @@
       var actual = _.map(falsey, function(array, index) {
         try {
           return index ? _.initial(array) : _.initial();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -6051,7 +6051,7 @@
 
       try {
         var actual = _.invoke(array, 'toUpperCase');
-      } catch(e) {}
+      } catch (e) {}
 
       deepEqual(_.invoke(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
     });
@@ -6065,7 +6065,7 @@
 
       try {
         var actual = _.invoke(objects, 'a');
-      } catch(e) {}
+      } catch (e) {}
 
       deepEqual(actual, expected);
     });
@@ -6891,7 +6891,7 @@
 
         try {
           strictEqual(_.isEqual(element1, element2), false);
-        } catch(e) {
+        } catch (e) {
           ok(false, e.message);
         }
       }
@@ -7301,7 +7301,7 @@
       var actual = _.map(values, function(value) {
         try {
           return _.isMatch(value, source);
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -7360,7 +7360,7 @@
       var actual = _.map(values, function(value) {
         try {
           return _.isMatch(value, source);
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -8146,7 +8146,7 @@
 
           try {
             _[methodName](xml);
-          } catch(e) {
+          } catch (e) {
             pass = false;
           }
           ok(pass, '`_.' + methodName + '` should not error');
@@ -9057,7 +9057,7 @@
       var actual = _.map(falsey, function(array, index) {
         try {
           return index ? func(array) : func();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -9165,7 +9165,7 @@
       var actual = _.map(falsey, function(collection, index) {
         try {
           return index ? _.map(collection) : _.map();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -9311,7 +9311,7 @@
       var actual = _.map(falsey, function(object, index) {
         try {
           return index ? func(object) : func();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -9396,7 +9396,7 @@
       var actual = _.map(values, function(value, index) {
         try {
           return index ? matches(value) : matches();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -9477,7 +9477,7 @@
       var actual = _.map(values, function(value, index) {
         try {
           return index ? matches(value) : matches();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -9538,20 +9538,20 @@
       try {
         var matches = _.matches({ 'b': undefined });
         strictEqual(matches(1), true);
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
       try {
         matches = _.matches({ 'a': 1, 'b': undefined });
         strictEqual(matches(1), true);
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
       numberProto.a = { 'b': 1, 'c': undefined };
       try {
         matches = _.matches({ 'a': { 'c': undefined } });
         strictEqual(matches(1), true);
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
       delete numberProto.a;
@@ -9717,7 +9717,7 @@
         var actual = _.map(values, function(value, index) {
           try {
             return index ? matches(value) : matches();
-          } catch(e) {}
+          } catch (e) {}
         });
 
         deepEqual(actual, expected);
@@ -9734,7 +9734,7 @@
         var actual = _.map(values, function(value, index) {
           try {
             return index ? matches(value) : matches();
-          } catch(e) {}
+          } catch (e) {}
         });
 
         deepEqual(actual, expected);
@@ -9843,14 +9843,14 @@
       try {
         var matches = _.matchesProperty('b', undefined);
         strictEqual(matches(1), true);
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
       numberProto.a = { 'b': 1, 'c': undefined };
       try {
         matches = _.matchesProperty('a', { 'c': undefined });
         strictEqual(matches(1), true);
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
       delete numberProto.a;
@@ -9896,7 +9896,7 @@
       var actual = _.map(values, function(value, index) {
         try {
           return index ? _.max(value) : _.max();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -9939,7 +9939,7 @@
       var actual = _.map(falsey, function(resolver, index) {
         try {
           return _.isFunction(index ? _.memoize(_.noop, resolver) : _.memoize(_.noop));
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -10300,7 +10300,7 @@
       var actual = _.map(pairs, function(pair) {
         try {
           return _.merge(pair[0], pair[1]).el === pair[1].el;
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -10689,7 +10689,7 @@
       var actual = _.map(values, function(value, index) {
         try {
           return index ? _.min(value) : _.min();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -10929,7 +10929,7 @@
 
       try {
         _.mixin({}, source, 1);
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       ok(pass);
@@ -10938,7 +10938,7 @@
 
       try {
         _.mixin(source, 1);
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       delete _.a;
@@ -11274,7 +11274,7 @@
 
       try {
         once();
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       ok(pass);
@@ -12294,7 +12294,7 @@
       var actual = _.map(values, function(array) {
         try {
           return _.pullAt(array, 0, 1, 'pop', 'push');
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -12651,7 +12651,7 @@
       _.each(empties, function(value) {
         try {
           actual.push(func(value, _.noop));
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -12663,7 +12663,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return func(value, _.noop, 'x');
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -13113,7 +13113,7 @@
       var actual = _.map(falsey, function(array, index) {
         try {
           return index ? _.rest(array) : _.rest();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -13394,7 +13394,7 @@
       _.each(empties, function(value) {
         try {
           actual.push(_.sample(value), _.sample(value, 1));
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -13591,7 +13591,7 @@
       var actual = _.map(values, function(value) {
         try {
           return [func(value, 'a.b', 1), func(value, ['a', 'b'], 1)];
-        } catch(e) {
+        } catch (e) {
           return e.message;
         }
       });
@@ -13623,7 +13623,7 @@
         try {
           func(0, path, 1);
           strictEqual(0..a, 0);
-        } catch(e) {
+        } catch (e) {
           ok(false, e.message);
         }
         numberProto.a = 0;
@@ -13712,7 +13712,7 @@
       var actual = _.map(falsey, function(object, index) {
         try {
           return index ? _.size(object) : _.size();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -13891,7 +13891,7 @@
       var actual = _.map(empties, function(value) {
         try {
           return _.some(value, _.identity);
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -14100,7 +14100,7 @@
     test('`_.' + methodName + '` should not error on nullish elements', 1, function() {
       try {
         var actual = func(objects.concat(null, undefined), ['a', 'b']);
-      } catch(e) {}
+      } catch (e) {}
 
       deepEqual(actual, [objects[2], objects[0], objects[3], objects[1], null, undefined]);
     });
@@ -14549,7 +14549,7 @@
 
       try {
         var actual = compiled();
-      } catch(e) {}
+      } catch (e) {}
 
       strictEqual(actual, 'function');
     });
@@ -14671,7 +14671,7 @@
 
       try {
         strictEqual(compiled(data), '123');
-      } catch(e) {
+      } catch (e) {
         ok(false, e.message);
       }
     });
@@ -14748,7 +14748,7 @@
       /*@cc_on @*/
       try {
         compiled();
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       ok(pass);
@@ -14832,7 +14832,7 @@
 
       try {
         _.template('')(1);
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       ok(pass, '`data` value');
@@ -14841,7 +14841,7 @@
 
       try {
         _.template('', 1)(1);
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       ok(pass, '`options` value');
@@ -14862,7 +14862,7 @@
     test('should expose the source when a SyntaxError occurs', 1, function() {
       try {
         _.template('<% if x %>');
-      } catch(e) {
+      } catch (e) {
         var source = e.source;
       }
       ok(_.includes(source, '__p'));
@@ -14875,7 +14875,7 @@
 
       try {
         _.template('<% if x %>', options);
-      } catch(e) {
+      } catch (e) {
         values[1] = e.source;
       }
       var expected = _.map(values, _.constant(false));
@@ -15204,7 +15204,7 @@
 
       try {
         func(_.noop, 32, 1);
-      } catch(e) {
+      } catch (e) {
         pass = false;
       }
       ok(pass);
@@ -15516,7 +15516,7 @@
       if (document) {
         try {
           var actual = func(document.getElementsByTagName('body'));
-        } catch(e) {}
+        } catch (e) {}
 
         deepEqual(actual, [body]);
       }
@@ -16370,7 +16370,7 @@
       var actual = _.map(falsey, function(array, index) {
         try {
           return index ? _.zipObject(array) : _.zipObject();
-        } catch(e) {}
+        } catch (e) {}
       });
 
       deepEqual(actual, expected);
@@ -16868,7 +16868,7 @@
         try {
           var wrapped = _(array).slice(1).map(String).reverse(),
               actual = wrapped.last();
-        } catch(e) {}
+        } catch (e) {}
 
         ok(wrapped instanceof _);
         strictEqual(actual, '1');
@@ -17449,7 +17449,7 @@
         var actual = _.map(falsey, function(value, index) {
           try {
             return index ? func(value) : func();
-          } catch(e) {
+          } catch (e) {
             pass = false;
           }
         });
@@ -17508,7 +17508,7 @@
 
           try {
             index ? func(value) : func();
-          } catch(e) {
+          } catch (e) {
             pass = _.includes(checkFuncs, methodName)
               ? e.message == FUNC_ERROR_TEXT
               : !pass;

@@ -6084,10 +6084,12 @@
   QUnit.module('lodash.isArguments');
 
   (function() {
-    var args = arguments;
+    var args = (function() { return arguments; }(1, 2, 3)),
+        strictArgs = (function() { 'use strict'; return arguments; }(1, 2, 3));
 
-    test('should return `true` for `arguments` objects', 1, function() {
+    test('should return `true` for `arguments` objects', 2, function() {
       strictEqual(_.isArguments(args), true);
+      strictEqual(_.isArguments(strictArgs), true);
     });
 
     test('should return `false` for non `arguments` objects', 12, function() {
@@ -6120,7 +6122,7 @@
         skipTest();
       }
     });
-  }(1, 2, 3));
+  }());
 
   /*--------------------------------------------------------------------------*/
 

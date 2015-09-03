@@ -300,7 +300,8 @@
    * @returns {Object} Returns `map`.
    */
   function addMapEntry(map, pair) {
-    return map.set(pair[0], pair[1]);
+    map.set(pair[0], pair[1]);
+    return map;
   }
 
   /**
@@ -312,7 +313,8 @@
    * @returns {Object} Returns `set`.
    */
   function addSetEntry(set, value) {
-    return set.add(value);
+    set.add(value);
+    return set;
   }
 
   /**
@@ -1874,7 +1876,7 @@
         var tag = objToString.call(value),
             isFunc = tag == funcTag;
 
-        if (tag == objectTag && noMapSetTag) {
+        if (noMapSetTag && tag == objectTag) {
           tag = isMap(value) ? mapTag : (isSet(value) ? setTag : tag);
         }
         if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
@@ -2284,7 +2286,7 @@
 
       if (!objIsArr) {
         objTag = objToString.call(object);
-        if (othTag == objectTag && noMapSetTag) {
+        if (noMapSetTag && objTag == objectTag) {
           objTag = isMap(object) ? mapTag : (isSet(object) ? setTag : objTag);
         } else if (objTag == argsTag) {
           objTag = objectTag;
@@ -2294,7 +2296,7 @@
       }
       if (!othIsArr) {
         othTag = objToString.call(other);
-        if (othTag == objectTag && noMapSetTag) {
+        if (noMapSetTag && othTag == objectTag) {
           othTag = isMap(other) ? mapTag : (isSet(other) ? setTag : othTag);
         } else if (othTag == argsTag) {
           othTag = objectTag;
@@ -8810,7 +8812,7 @@
         return iteratorToArray(value[iteratorSymbol]());
       }
       var tag = objToString.call(value);
-      if (tag == objectTag && noMapSetTag) {
+      if (noMapSetTag && tag == objectTag) {
         tag = isMap(value) ? mapTag : (isSet(value) ? setTag : tag);
       }
       var func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);

@@ -573,7 +573,7 @@
    * for equality comparisons.
    *
    * @private
-   * @param {Object} object The object to augment.
+   * @param {Object} object The object to modify.
    * @param {string} key The key of the property to assign.
    * @param {*} value The value to assign.
    */
@@ -589,7 +589,7 @@
    * This function is like `assignValue` except that it doesn't assign `undefined` values.
    *
    * @private
-   * @param {Object} object The object to augment.
+   * @param {Object} object The object to modify.
    * @param {string} key The key of the property to assign.
    * @param {*} value The value to assign.
    */
@@ -4204,7 +4204,7 @@
      * Merging metadata reduces the number of wrappers required to invoke a function.
      * This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
      * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
-     * augment function arguments, making the order in which they are executed important,
+     * modify function arguments, making the order in which they are executed important,
      * preventing the merging of metadata. However, we make an exception for a safe
      * common case where curried functions have `_.ary` and or `_.rearg` applied.
      *
@@ -9745,7 +9745,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to augment.
+     * @param {Object} object The object to modify.
      * @param {Array|string} path The path of the property to set.
      * @param {*} value The value to set.
      * @returns {Object} Returns `object`.
@@ -9774,7 +9774,7 @@
      * @static
      * @memberOf _
      * @category Object
-     * @param {Object} object The object to augment.
+     * @param {Object} object The object to modify.
      * @param {Array|string} path The path of the property to set.
      * @param {*} value The value to set.
      * @param {Function} [customizer] The function to customize assigned values.

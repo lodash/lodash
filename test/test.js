@@ -350,7 +350,7 @@
    * See https://code.google.com/p/v8/issues/detail?id=1623
    *
    * @private
-   * @param {Object} object The object augment.
+   * @param {Object} object The object modify.
    * @param {string} key The name of the property to set.
    * @param {*} value The property value.
    */
@@ -8190,7 +8190,7 @@
       strictEqual(matches({ 'b': 2 }), false);
     });
 
-    test('should not change match behavior if `source` is augmented', 9, function() {
+    test('should not change match behavior if `source` is modified', 9, function() {
       var sources = [
         { 'a': { 'b': 2, 'c': 3 } },
         { 'a': 1, 'b': 2 },
@@ -9434,7 +9434,7 @@
       strictEqual(matches(object3), false);
     });
 
-    test('should not change match behavior if `source` is augmented', 9, function() {
+    test('should not change match behavior if `source` is modified', 9, function() {
       var sources = [
         { 'a': { 'b': 2, 'c': 3 } },
         { 'a': 1, 'b': 2 },
@@ -9761,7 +9761,7 @@
       strictEqual(matches({ 'a': object3 }), false);
     });
 
-    test('should not change match behavior if `value` is augmented', 9, function() {
+    test('should not change match behavior if `value` is modified', 9, function() {
       _.each([{ 'a': { 'b': 2, 'c': 3 } }, { 'a': 1, 'b': 2 }, { 'a': 1 }], function(source, index) {
         var object = _.cloneDeep(source),
             matches = _.matchesProperty('a', source);
@@ -14811,7 +14811,7 @@
       strictEqual(_.template(object)(data), '1');
     });
 
-    test('should not augment the `options` object', 1, function() {
+    test('should not modify the `options` object', 1, function() {
       var options = {};
       _.template('', options);
       deepEqual(options, {});

@@ -1285,6 +1285,10 @@
     // See https://es5.github.io/#x11.1.5 for more details.
     context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
 
+    /** Used as references for `-Infinity` and `Infinity`. */
+    var NEGATIVE_INFINITY = context.Number.NEGATIVE_INFINITY,
+        POSITIVE_INFINITY = context.Number.POSITIVE_INFINITY;
+
     /** Native constructor references. */
     var Date = context.Date,
         Error = context.Error,
@@ -1320,7 +1324,7 @@
 
     /** Used to detect if a method is native. */
     var reIsNative = RegExp('^' +
-      fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+      fnToString.call(hasOwnProperty).replace(reRegExpChars, '\\$&')
       .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
@@ -1346,18 +1350,23 @@
         nativeFloor = Math.floor,
         nativeIsFinite = context.isFinite,
         nativeKeys = Object.keys,
+        nativeMap = getNative(context, 'Map'),
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
         nativeSet = getNative(context, 'Set');
 
-    /** Used as references for `-Infinity` and `Infinity`. */
-    var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY,
-        POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
-
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
+
+    /** Used to detect maps and sets. */
+    var mapCtorString = nativeMap ? fnToString.call(nativeMap) : '',
+        setCtorString = nativeSet ? fnToString.call(nativeSet) : '';
+
+    /** Detect support for map and set `toStringTag` values. */
+    var noMapSetTag = nativeMap && nativeSet &&
+      !(objToString.call(new Map) == mapTag && objToString.call(new Set) == setTag);
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -1865,6 +1874,9 @@
         var tag = objToString.call(value),
             isFunc = tag == funcTag;
 
+        if (tag == objectTag && noMapSetTag) {
+          tag = isMap(value) ? mapTag : (isSet(value) ? setTag : tag);
+        }
         if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
           if (isHostObject(value)) {
             return object ? value : {};
@@ -2272,17 +2284,21 @@
 
       if (!objIsArr) {
         objTag = objToString.call(object);
-        if (objTag == argsTag) {
+        if (othTag == objectTag && noMapSetTag) {
+          objTag = isMap(object) ? mapTag : (isSet(object) ? setTag : objTag);
+        } else if (objTag == argsTag) {
           objTag = objectTag;
-        } else if (objTag != objectTag) {
+        } else {
           objIsArr = isTypedArray(object);
         }
       }
       if (!othIsArr) {
         othTag = objToString.call(other);
-        if (othTag == argsTag) {
+        if (othTag == objectTag && noMapSetTag) {
+          othTag = isMap(other) ? mapTag : (isSet(other) ? setTag : othTag);
+        } else if (othTag == argsTag) {
           othTag = objectTag;
-        } else if (othTag != objectTag) {
+        } else {
           othIsArr = isTypedArray(other);
         }
       }
@@ -4133,6 +4149,18 @@
     }
 
     /**
+     * Checks if `value` is classified as a `Map` object.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+     */
+    function isMap(value) {
+      var Ctor = value && value.constructor;
+      return typeof Ctor == 'function' && fnToString.call(Ctor) == mapCtorString;
+    }
+
+    /**
      * Checks if `value` is a prototype.
      *
      * @private
@@ -4140,10 +4168,22 @@
      * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
      */
     function isPrototype(value) {
-      var Ctor = !!value && value.constructor,
+      var Ctor = value && value.constructor,
           proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
       return value === proto;
+    }
+
+    /**
+     * Checks if `value` is classified as a `Set` object.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+     */
+    function isSet(value) {
+      var Ctor = value && value.constructor;
+      return typeof Ctor == 'function' && fnToString.call(Ctor) == setCtorString;
     }
 
     /**
@@ -8754,9 +8794,11 @@
       if (iteratorSymbol && value[iteratorSymbol]) {
         return iteratorToArray(value[iteratorSymbol]());
       }
-      var tag = objToString.call(value),
-          func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
-
+      var tag = objToString.call(value);
+      if (tag == objectTag && noMapSetTag) {
+        tag = isMap(value) ? mapTag : (isSet(value) ? setTag : tag);
+      }
+      var func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
       return func(value);
     }
 

@@ -38,7 +38,7 @@ In addition to the following guidelines, please follow the conventions already e
 - **Comments**:<br>
   Please use single-line comments to annotate significant additions, & [JSDoc-style](http://www.2ality.com/2011/08/jsdoc-intro.html) comments for new methods.
 
-Guidelines are enforced using JSSC.  This is a code style linter for programmatically enforcing style. To run the linter execute the following:
+Guidelines are enforced using [JSSC](https://www.npmjs.com/package/jscs).  To run the linter execute the following:
 
 ```bash
 $ npm run lint

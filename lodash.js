@@ -6610,10 +6610,10 @@
      * // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
      */
     function reduce(collection, iteratee, accumulator) {
-      var initFromArray = arguments.length < 3;
+      var initFromCollection = arguments.length < 3;
       return (typeof iteratee == 'function' && isArray(collection))
-        ? arrayReduce(collection, iteratee, accumulator, initFromArray)
-        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromArray, baseEach);
+        ? arrayReduce(collection, iteratee, accumulator, initFromCollection)
+        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEach);
     }
 
     /**
@@ -6637,10 +6637,10 @@
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, iteratee, accumulator) {
-      var initFromArray = arguments.length < 3;
+      var initFromCollection = arguments.length < 3;
       return (typeof iteratee == 'function' && isArray(collection))
-        ? arrayReduceRight(collection, iteratee, accumulator, initFromArray)
-        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromArray, baseEachRight);
+        ? arrayReduceRight(collection, iteratee, accumulator, initFromCollection)
+        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEachRight);
     }
 
     /**

@@ -4164,7 +4164,7 @@
     }
 
     /**
-     * Checks if `value` is classified as a `Map` object.
+     * Checks if `value` is likely a `Map` object.
      *
      * @private
      * @param {*} value The value to check.
@@ -4176,7 +4176,7 @@
     }
 
     /**
-     * Checks if `value` is a prototype.
+     * Checks if `value` is likely a prototype object.
      *
      * @private
      * @param {*} value The value to check.
@@ -4190,7 +4190,7 @@
     }
 
     /**
-     * Checks if `value` is classified as a `Set` object.
+     * Checks if `value` is likely a `Set` object.
      *
      * @private
      * @param {*} value The value to check.
@@ -8131,7 +8131,7 @@
     }
 
     /**
-     * Checks if `value` is classified as an `arguments` object.
+     * Checks if `value` is likely an `arguments` object.
      *
      * @static
      * @memberOf _
@@ -8211,7 +8211,7 @@
     }
 
     /**
-     * Checks if `value` is a DOM element.
+     * Checks if `value` is likely a DOM element.
      *
      * @static
      * @memberOf _

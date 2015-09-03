@@ -1976,7 +1976,8 @@
             }
           }
           result.push(value);
-        } else if (indexOf(values, value, 0) < 0) {
+        }
+        else if (indexOf(values, value, 0) < 0) {
           result.push(value);
         }
       }
@@ -2520,7 +2521,8 @@
           stackA || (stackA = []);
           stackB || (stackB = []);
           baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
-        } else {
+        }
+        else {
           var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stackA, stackB) : undefined;
           if (newValue === undefined) {
             newValue = srcValue;
@@ -2565,11 +2567,13 @@
           newValue = isArray(oldValue)
             ? oldValue
             : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : []);
-        } else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+        }
+        else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
             ? toPlainObject(oldValue)
             : (isObject(oldValue) ? oldValue : {});
-        } else {
+        }
+        else {
           isCommon = isFunction(srcValue);
         }
       }
@@ -2667,14 +2671,16 @@
           var previous = index;
           if (isIndex(index)) {
             splice.call(array, index, 1);
-          } else if (!isKey(index, array)) {
+          }
+          else if (!isKey(index, array)) {
             var path = toPath(index),
                 object = parent(array, path);
 
             if (object != null) {
               delete object[last(path)];
             }
-          } else {
+          }
+          else {
             delete array[index];
           }
         }
@@ -2865,7 +2871,8 @@
             seen = computed;
             result[++resIndex] = value;
           }
-        } else if (indexOf(seen, computed, 0) < 0) {
+        }
+        else if (indexOf(seen, computed, 0) < 0) {
           seen[++resIndex] = computed;
           result[resIndex] = value;
         }
@@ -7326,7 +7333,8 @@
         }
         if (isCalled && timeoutId) {
           timeoutId = clearTimeout(timeoutId);
-        } else if (!timeoutId && wait !== maxWait) {
+        }
+        else if (!timeoutId && wait !== maxWait) {
           timeoutId = setTimeout(delayed, wait);
         }
         if (leadingCall) {
@@ -9308,7 +9316,8 @@
           } else {
             result[value] = [key];
           }
-        } else {
+        }
+        else {
           result[value] = key;
         }
         return result;
@@ -9933,7 +9942,8 @@
         if (noMax && typeof min == 'boolean') {
           floating = min;
           min = 1;
-        } else if (typeof max == 'boolean') {
+        }
+        else if (typeof max == 'boolean') {
           floating = max;
           noMax = true;
         }
@@ -12055,11 +12065,13 @@
     // Export for Node.js or RingoJS.
     if (moduleExports) {
       (freeModule.exports = _)._ = _;
-    } else {
+    }
+    else {
       // Export for Rhino with CommonJS support.
       freeExports._ = _;
     }
-  } else {
+  }
+  else {
     // Export for a browser or Rhino.
     root._ = _;
   }

@@ -8149,6 +8149,7 @@
      * // => false
      */
     function isArguments(value) {
+      // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
       return isObjectLike(value) && isArrayLike(value) && hasOwnProperty.call(value, 'callee') &&
         (!propertyIsEnumerable.call(value, 'callee') || objToString.call(value) == argsTag);
     }

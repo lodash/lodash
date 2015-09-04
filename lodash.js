@@ -8149,8 +8149,8 @@
      * // => false
      */
     function isArguments(value) {
-      return isObjectLike(value) && isArrayLike(value) &&
-        hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
+      return isObjectLike(value) && isArrayLike(value) && hasOwnProperty.call(value, 'callee') &&
+        (!propertyIsEnumerable.call(value, 'callee') || objToString.call(value) == argsTag);
     }
 
     /**

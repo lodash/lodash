@@ -58,6 +58,10 @@
    */
   var MAX_SAFE_INTEGER = 9007199254740991;
 
+  /** Used as references for `-Infinity` and `Infinity`. */
+  var NEGATIVE_INFINITY = 1 / -0,
+      POSITIVE_INFINITY = 1 / 0;
+
   /** Used as the internal argument placeholder. */
   var PLACEHOLDER = '__lodash_placeholder__';
 
@@ -1286,10 +1290,6 @@
     // ES5 clears this up by stating that literals must use built-in constructors.
     // See https://es5.github.io/#x11.1.5 for more details.
     context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
-
-    /** Used as references for `-Infinity` and `Infinity`. */
-    var NEGATIVE_INFINITY = context.Number.NEGATIVE_INFINITY,
-        POSITIVE_INFINITY = context.Number.POSITIVE_INFINITY;
 
     /** Native constructor references. */
     var Date = context.Date,

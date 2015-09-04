@@ -6169,6 +6169,55 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isArrayLike');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for array-like values', 1, function() {
+      var values = [args, [1, 2, 3], { '0': 1, 'length': 1 }, 'a'],
+          expected = _.map(values, _.constant(true)),
+          actual = _.map(values, _.isArrayLike);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `false` for non-arrays', 10, function() {
+      var expected = _.map(falsey, function(value) { return value === ''; });
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? _.isArrayLike(value) : _.isArrayLike();
+      });
+
+      deepEqual(actual, expected);
+
+      strictEqual(_.isArrayLike(true), false);
+      strictEqual(_.isArrayLike(new Date), false);
+      strictEqual(_.isArrayLike(new Error), false);
+      strictEqual(_.isArrayLike(_), false);
+      strictEqual(_.isArrayLike(slice), false);
+      strictEqual(_.isArrayLike(), false);
+      strictEqual(_.isArrayLike(1), false);
+      strictEqual(_.isArrayLike(NaN), false);
+      strictEqual(_.isArrayLike(/x/), false);
+    });
+
+    test('should work with an array from another realm', 1, function() {
+      if (_._object) {
+        var values = [_._arguments, _._array, _._string],
+            expected = _.map(values, _.constant(true)),
+            actual = _.map(values, _.isArrayLike);
+
+        deepEqual(actual, expected);
+      }
+      else {
+        skipTest();
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isBoolean');
 
   (function() {
@@ -8133,11 +8182,11 @@
       });
     });
 
-    test('should not error on host objects (test in IE)', 16, function() {
+    test('should not error on host objects (test in IE)', 17, function() {
       var funcs = [
-        'isArguments', 'isArray', 'isBoolean', 'isDate', 'isElement',
-        'isError', 'isFinite', 'isFunction', 'isNaN', 'isNil', 'isNull',
-        'isNumber', 'isObject', 'isRegExp', 'isString', 'isUndefined'
+        'isArguments', 'isArray', 'isArrayLike', 'isBoolean', 'isDate',
+        'isElement', 'isError', 'isFinite', 'isFunction', 'isNaN', 'isNil',
+        'isNull', 'isNumber', 'isObject', 'isRegExp', 'isString', 'isUndefined'
       ];
 
       _.each(funcs, function(methodName) {
@@ -17310,6 +17359,7 @@
       'includes',
       'isArguments',
       'isArray',
+      'isArrayLike',
       'isBoolean',
       'isDate',
       'isElement',
@@ -17550,7 +17600,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 229, function() {
+    test('should accept falsey arguments', 230, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

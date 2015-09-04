@@ -4093,18 +4093,6 @@
     }
 
     /**
-     * Checks if `value` is array-like.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-     */
-    function isArrayLike(value) {
-      return value != null &&
-        !(typeof value == 'function' && objToString.call(value) == funcTag) && isLength(getLength(value));
-    }
-
-    /**
      * Checks if the provided arguments are from an iteratee call.
      *
      * @private
@@ -8174,6 +8162,33 @@
     var isArray = Array.isArray;
 
     /**
+     * Checks if `value` is array-like. A value is considered array-like if it's
+     * not a function and has a `value.length` that's an integer greater than or
+     * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+     * @example
+     *
+     * _.isArrayLike([1, 2, 3]);
+     * // => true
+     *
+     * _.isArrayLike(function() { return arguments; }());
+     * // => true
+     *
+     * _.isArrayLike(_.noop);
+     * // => false
+     */
+    function isArrayLike(value) {
+      return value != null &&
+        !(typeof value == 'function' && objToString.call(value) == funcTag) && isLength(getLength(value));
+    }
+
+    /**
      * Checks if `value` is classified as a boolean primitive or object.
      *
      * @static
@@ -11829,6 +11844,7 @@
     lodash.inRange = inRange;
     lodash.isArguments = isArguments;
     lodash.isArray = isArray;
+    lodash.isArrayLike = isArrayLike;
     lodash.isBoolean = isBoolean;
     lodash.isDate = isDate;
     lodash.isElement = isElement;

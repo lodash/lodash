@@ -17387,7 +17387,8 @@
       'random',
       'reduce',
       'reduceRight',
-      'some'
+      'some',
+      'toInteger'
     ];
 
     _.each(funcs, function(methodName) {
@@ -17596,7 +17597,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 232, function() {
+    test('should accept falsey arguments', 233, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

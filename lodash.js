@@ -4385,17 +4385,6 @@
     }
 
     /**
-     * Converts `value` to an integer.
-     *
-     * @private
-     * @param {*} value The value to convert.
-     * @returns {number} Returns the integer.
-     */
-    function toInteger(value) {
-      return nativeFloor(value) || 0;
-    }
-
-    /**
      * Creates a clone of `wrapper`.
      *
      * @private
@@ -8864,6 +8853,31 @@
     }
 
     /**
+     * Converts `value` to an integer.
+     *
+     * **Note:** This function is based on [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {number} Returns the converted integer.
+     * @example
+     *
+     *  _.toInteger('3.14');
+     *  // => 3
+     *
+     * _.toInteger(NaN);
+     * // => 0
+     *
+     * _.toInteger(Infinity);
+     * // => Infinity
+     */
+    function toInteger(value) {
+      return nativeFloor(value) || 0;
+    }
+
+    /**
      * Converts `value` to a plain object flattening inherited enumerable
      * properties of `value` to own properties of the plain object.
      *
@@ -11949,6 +11963,7 @@
     lodash.sum = sum;
     lodash.sumBy = sumBy;
     lodash.template = template;
+    lodash.toInteger = toInteger;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
     lodash.trimRight = trimRight;

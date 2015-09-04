@@ -1366,7 +1366,7 @@
     var mapCtorString = nativeMap ? fnToString.call(nativeMap) : '',
         setCtorString = nativeSet ? fnToString.call(nativeSet) : '';
 
-    /** Detect support for map and set `toStringTag` values. */
+    /** Detect lack of support for map and set `toStringTag` values (IE 11). */
     var noMapSetTag = nativeMap && nativeSet &&
       !(objToString.call(new Map) == mapTag && objToString.call(new Set) == setTag);
 

@@ -8851,27 +8851,17 @@
     });
 
     test('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', 1, function() {
-      if (!isStrict) {
-        args.a = 1;
-        deepEqual(func(args).sort(), ['0', '1', '2', 'a']);
-        delete args.a;
-      }
-      else {
-        skipTest();
-      }
+      args.a = 1;
+      deepEqual(func(args).sort(), ['0', '1', '2', 'a']);
+      delete args.a;
     });
 
     test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', 1, function() {
-      if (!isStrict) {
-        var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'];
+      var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'];
 
-        objectProto.a = 1;
-        deepEqual(func(args).sort(), expected);
-        delete objectProto.a;
-      }
-      else {
-        skipTest();
-      }
+      objectProto.a = 1;
+      deepEqual(func(args).sort(), expected);
+      delete objectProto.a;
     });
 
     test('`_.' + methodName + '` should work with string objects', 1, function() {

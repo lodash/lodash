@@ -13066,16 +13066,20 @@
 
       _.each(paths, function(path) {
         numberProto.a = 1;
+
         var actual = func(0, path);
         strictEqual(actual, 1);
+
         delete numberProto.a;
       });
 
-      _.each(['a.a.a', ['a', 'a', 'a']], function(path) {
-        stringProto.a = '_';
+      _.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
+        stringProto.replace.b = 1;
+
         var actual = func(object, path);
-        strictEqual(actual, '_');
-        delete stringProto.a;
+        strictEqual(actual, 1);
+
+        delete stringProto.replace.b;
       });
     });
 
@@ -13505,8 +13509,10 @@
 
       _.each(['a', ['a']], function(path) {
         var actual = func(object, path, 2);
+
         strictEqual(actual, object);
         strictEqual(object.a, 2);
+
         object.a = 1;
       });
     });
@@ -13516,8 +13522,10 @@
 
       _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
         var actual = func(object, path, 4);
+
         strictEqual(actual, object);
         strictEqual(object.a.b.c, 4);
+
         object.a.b.c = 3;
       });
     });
@@ -13527,8 +13535,10 @@
 
       _.each(['a.b.c', ['a.b.c']], function(path) {
         var actual = func(object, path, 4);
+
         strictEqual(actual, object);
         deepEqual(object, { 'a.b.c': 4 });
+
         object['a.b.c'] = 3;
       });
     });
@@ -13577,9 +13587,11 @@
 
       _.each(['a[1].b.c', ['a', '1', 'b', 'c']], function(path) {
         var actual = func(object, path, 4);
+
         strictEqual(actual, object);
         deepEqual(actual, { 'a': [undefined, { 'b': { 'c': 4 } }] });
         ok(!(0 in object.a));
+
         delete object.a;
       });
     });
@@ -16109,7 +16121,7 @@
   QUnit.module('lodash.unset');
 
   (function() {
-    test('should unset property on given `object`', 4, function() {
+    test('should unset property values', 4, function() {
       _.each(['a', ['a']], function(path) {
         var object = { 'a': 1, 'c': 2 };
         strictEqual(_.unset(object, path), true);
@@ -16117,7 +16129,7 @@
       });
     });
 
-    test('should unset deep property on given `object`', 4, function() {
+    test('should unset deep property values', 4, function() {
       _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
         var object = { 'a': { 'b': { 'c': null } } };
         strictEqual(_.unset(object, path), true);
@@ -16134,7 +16146,6 @@
       _.each(paths, function(path) {
         var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { '\ne\n': { 'f': { 'g': 8 } } } } } } } };
         strictEqual(_.unset(object, path), true);
-
         ok(!('g' in object.a[-1.23]['["b"]'].c["['d']"]['\ne\n'].f));
       });
     });
@@ -16164,12 +16175,29 @@
       deepEqual(actual, expected);
     });
 
-    test('should follow `path` over non-plain objects', 2, function() {
-      function Foo() {};
-      Foo.prototype.a = 1;
+    test('should follow `path` over non-plain objects', 8, function() {
+      var object = { 'a': '' },
+          paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
 
-      strictEqual(_.unset(Foo, 'prototype.a'), true);
-      strictEqual(Foo.prototype.a, undefined);
+      _.each(paths, function(path) {
+        numberProto.a = 1;
+
+        var actual = _.unset(0, path);
+        strictEqual(actual, true);
+        ok(!('a' in numberProto));
+
+        delete numberProto.a;
+      });
+
+      _.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
+        stringProto.replace.b = 1;
+
+        var actual = _.unset(object, path);
+        strictEqual(actual, true);
+        ok(!('a' in stringProto.replace));
+
+        delete stringProto.replace.b;
+      });
     });
 
     test('should return `false` for non-configurable properties', 1, function() {
@@ -16178,7 +16206,7 @@
       if (defineProperty) {
         defineProperty(object, 'a', {
           'configurable': false,
-          'value': null
+          'value': 1
         });
         strictEqual(_.unset(object, 'a'), false);
       }

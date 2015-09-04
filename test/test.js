@@ -8182,11 +8182,11 @@
       });
     });
 
-    test('should not error on host objects (test in IE)', 17, function() {
+    test('should not error on host objects (test in IE)', 18, function() {
       var funcs = [
-        'isArguments', 'isArray', 'isArrayLike', 'isBoolean', 'isDate',
-        'isElement', 'isError', 'isFinite', 'isFunction', 'isNaN', 'isNil',
-        'isNull', 'isNumber', 'isObject', 'isRegExp', 'isString', 'isUndefined'
+        'isArguments', 'isArray', 'isArrayLike', 'isBoolean', 'isDate', 'isElement',
+        'isError', 'isFinite', 'isFunction', 'isNaN', 'isNil', 'isNull', 'isNumber',
+        'isObject', 'isObjectLike', 'isRegExp', 'isString', 'isUndefined'
       ];
 
       _.each(funcs, function(methodName) {
@@ -17374,6 +17374,7 @@
       'isNull',
       'isNumber',
       'isObject',
+      'isObjectLike',
       'isPlainObject',
       'isRegExp',
       'isString',
@@ -17600,7 +17601,7 @@
 
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
-    test('should accept falsey arguments', 230, function() {
+    test('should accept falsey arguments', 232, function() {
       var emptyArrays = _.map(falsey, _.constant([]));
 
       _.each(acceptFalsey, function(methodName) {

@@ -1111,17 +1111,6 @@
   }
 
   /**
-   * Checks if `value` is object-like.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-   */
-  function isObjectLike(value) {
-    return !!value && typeof value == 'object';
-  }
-
-  /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -2202,7 +2191,7 @@
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path) {
-      path = isKey(path, object) ? [path + ''] : toPath(path);
+      path = isKey(path, object) ? [path + ''] : baseToPath(path);
 
       var index = 0,
           length = path.length;
@@ -2691,7 +2680,7 @@
             splice.call(array, index, 1);
           }
           else if (!isKey(index, array)) {
-            var path = toPath(index),
+            var path = baseToPath(index),
                 object = parent(array, path);
 
             if (object != null) {
@@ -2730,7 +2719,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseSet(object, path, value, customizer) {
-      path = isKey(path, object) ? [path + ''] : toPath(path);
+      path = isKey(path, object) ? [path + ''] : baseToPath(path);
 
       var index = -1,
           length = path.length,
@@ -2899,6 +2888,18 @@
     }
 
     /**
+     * The base implementation of `_.toPath` which only converts `value` to a
+     * path if it's not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Array} Returns the property path array.
+     */
+    function baseToPath(value) {
+      return isArray(value) ? value : stringToPath(value);
+    }
+
+    /**
      * The base implementation of `_.uniq`.
      *
      * @private
@@ -2970,7 +2971,7 @@
      * @returns {boolean} Returns `true` if the property is deleted, else `false`.
      */
     function baseUnset(object, path) {
-      path = isKey(path, object) ? [path + ''] : toPath(path);
+      path = isKey(path, object) ? [path + ''] : baseToPath(path);
       object = parent(object, path);
       var key = last(path);
       return (object != null && has(object, key)) ? delete object[key] : true;
@@ -3969,7 +3970,7 @@
       }
       var result = hasFunc(object, path);
       if (!result && !isKey(path)) {
-        path = toPath(path);
+        path = baseToPath(path);
         object = parent(object, path);
         if (object != null) {
           path = last(path);
@@ -4084,7 +4085,7 @@
      */
     function invokePath(object, path, args) {
       if (!isKey(path, object)) {
-        path = toPath(path);
+        path = baseToPath(path);
         object = parent(object, path);
         path = last(path);
       }
@@ -4358,6 +4359,21 @@
     }());
 
     /**
+     * Converts `string` to a property path array.
+     *
+     * @private
+     * @param {string} string The string to process.
+     * @returns {Array} Returns the property path array.
+     */
+    function stringToPath(string) {
+      var result = [];
+      baseToString(string).replace(rePropName, function(match, number, quote, string) {
+        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+      });
+      return result;
+    }
+
+    /**
      * Converts `value` to a function if it's not one.
      *
      * @private
@@ -4377,24 +4393,6 @@
      */
     function toInteger(value) {
       return nativeFloor(value) || 0;
-    }
-
-    /**
-     * Converts `value` to a property path array if it's not one.
-     *
-     * @private
-     * @param {*} value The value to process.
-     * @returns {Array} Returns the property path array.
-     */
-    function toPath(value) {
-      if (isArray(value)) {
-        return value;
-      }
-      var result = [];
-      baseToString(value).replace(rePropName, function(match, number, quote, string) {
-        result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
-      });
-      return result;
     }
 
     /**
@@ -8435,7 +8433,10 @@
      * _.isObject([1, 2, 3]);
      * // => true
      *
-     * _.isObject(1);
+     * _.isObject(_.noop);
+     * // => true
+     *
+     * _.isObject(null);
      * // => false
      */
     function isObject(value) {
@@ -8443,6 +8444,33 @@
       // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
       var type = typeof value;
       return !!value && (type == 'object' || type == 'function');
+    }
+
+    /**
+     * Checks if `value` is object-like. A value is object-like if it's not `null`
+     * and has a `typeof` result of "object".
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+     * @example
+     *
+     * _.isObjectLike({});
+     * // => true
+     *
+     * _.isObjectLike([1, 2, 3]);
+     * // => true
+     *
+     * _.isObjectLike(_.noop);
+     * // => false
+     *
+     * _.isObjectLike(null);
+     * // => false
+     */
+    function isObjectLike(value) {
+      return !!value && typeof value == 'object';
     }
 
     /**
@@ -9759,7 +9787,7 @@
      */
     function result(object, path, defaultValue) {
       if (!isKey(path, object)) {
-        path = toPath(path);
+        path = baseToPath(path);
         var result = get(object, path);
         object = parent(object, path);
       } else {
@@ -11393,6 +11421,21 @@
     }
 
     /**
+     * Converts `value` to a property path array.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {*} value The value to process.
+     * @returns {Array} Returns the new property path array.
+     * @example
+     *
+     */
+    function toPath(value) {
+      return isArray(value) ? copyArray(value) : stringToPath(value);
+    }
+
+    /**
      * Generates a unique ID. If `prefix` is provided the ID is appended to it.
      *
      * @static
@@ -11777,6 +11820,7 @@
     lodash.thru = thru;
     lodash.times = times;
     lodash.toArray = toArray;
+    lodash.toPath = toPath;
     lodash.toPlainObject = toPlainObject;
     lodash.transform = transform;
     lodash.union = union;
@@ -11862,6 +11906,7 @@
     lodash.isNull = isNull;
     lodash.isNumber = isNumber;
     lodash.isObject = isObject;
+    lodash.isObjectLike = isObjectLike;
     lodash.isPlainObject = isPlainObject;
     lodash.isRegExp = isRegExp;
     lodash.isString = isString;

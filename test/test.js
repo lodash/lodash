@@ -8847,12 +8847,7 @@
     });
 
     test('`_.' + methodName + '` should work with `arguments` objects', 1, function() {
-      if (!isStrict) {
-        deepEqual(func(args).sort(), ['0', '1', '2']);
-      }
-      else {
-        skipTest();
-      }
+      deepEqual(func(args).sort(), ['0', '1', '2']);
     });
 
     test('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', 1, function() {
@@ -16252,7 +16247,7 @@
     test('should return `false` for non-configurable properties', 1, function() {
       var object = {};
 
-      if (defineProperty) {
+      if (!isStrict && defineProperty) {
         defineProperty(object, 'a', {
           'configurable': false,
           'value': 1

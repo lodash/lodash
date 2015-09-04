@@ -1365,12 +1365,19 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object which wraps `value` to enable implicit chaining.
+     * Creates a `lodash` object which wraps `value` to enable implicit method chaining.
      * Methods that operate on and return arrays, collections, and functions can
-     * be chained together. Methods that retrieve a single value or may return a
-     * primitive value will automatically end the chain returning the unwrapped
-     * value. Explicit chaining may be enabled using `_.chain`. The execution of
-     * chained methods is lazy, that is, execution is deferred until `_#value`
+     * be chained together. Output type of a chained method must be the type of the first
+     * parameter of the next method.
+     * Methods that retrieve a single value or may return a primitive value
+     * will automatically end the chain returning the unwrapped value.
+     * Otherwise, the value at the end of the chain must be unwrapped with `_#value`.
+     * Explicit chaining (requiring unwrapping with `_#value` in all cases)
+     * may be enabled using `_.chain`.
+     * To include your own functions in the chain, you have to elevate them
+     * to be chainable lodash methods by using the `_.mixin` method.
+     *
+     * The execution of chained methods is lazy, that is, execution is deferred until `_#value`
      * is implicitly or explicitly called.
      *
      * Lazy evaluation allows several methods to support shortcut fusion. Shortcut
@@ -5761,8 +5768,8 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object that wraps `value` with explicit method
-     * chaining enabled.
+     * Creates a `lodash` object that wraps `value` with explicit method chaining enabled.
+     * The result of such method chaining must be unwrapped with `_#value`.
      *
      * @static
      * @memberOf _

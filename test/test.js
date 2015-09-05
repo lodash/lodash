@@ -11057,19 +11057,19 @@
       deepEqual(modded(5, 10, 18), [5, 10, 18]);
     });
 
-    test('should not pass `undefined` if there are more `transforms` than `arguments`', 1, function() {
+    test('should not pass `undefined` if there are more transforms than arguments', 1, function() {
       var modded = _.modArgs(fn, doubled, _.identity);
       deepEqual(modded(5), [10]);
     });
 
-    test('should not set a `this` binding', 1, function() {
+    test('should use `this` binding of function for transforms', 1, function() {
       var modded = _.modArgs(function(x) {
         return this[x];
       }, function(x) {
         return this === x;
       });
 
-      var object = { 'modded': modded, 'false': 1 };
+      var object = { 'modded': modded, 'true': 1 };
       strictEqual(object.modded(object), 1);
     });
   }());

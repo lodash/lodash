@@ -3514,6 +3514,31 @@
     }
 
     /**
+     * Creates a function like `_.modArgs`.
+     *
+     * @private
+     * @param {Function} resolver The function to resolve which invocation
+     *  arguments are provided to each transform.
+     * @returns {Function} Returns the new arguments modifier function.
+     */
+    function createModArgs(resolver) {
+      return restParam(function(func, transforms) {
+        transforms = baseFlatten(transforms);
+        if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
+          throw new TypeError(FUNC_ERROR_TEXT);
+        }
+        var length = transforms.length;
+        return restParam(function(args) {
+          var index = nativeMin(args.length, length);
+          while (index--) {
+            args[index] = transforms[index].apply(this, resolver(args[index], index, args));
+          }
+          return func.apply(this, args);
+        });
+      });
+    }
+
+    /**
      * Creates the padding required for `string` based on the given `length`.
      * The `chars` string is truncated if the number of characters exceeds `length`.
      *
@@ -7578,19 +7603,8 @@
      * modded(5, 10);
      * // => [25, 20]
      */
-    var modArgs = restParam(function(func, transforms) {
-      transforms = baseFlatten(transforms);
-      if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      var length = transforms.length;
-      return restParam(function(args) {
-        var index = nativeMin(args.length, length);
-        while (index--) {
-          args[index] = transforms[index](args[index]);
-        }
-        return func.apply(this, args);
-      });
+    var modArgs = createModArgs(function(value) {
+      return [value];
     });
 
     /**

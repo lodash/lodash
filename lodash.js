@@ -7956,7 +7956,7 @@
      * ];
      *
      * var shallow = _.clone(users);
-     * shallow[0] === users[0];
+     * console.log(shallow[0] === users[0]);
      * // => true
      */
     function clone(value) {
@@ -7983,11 +7983,11 @@
      *   }
      * });
      *
-     * el === document.body
+     * console.log(el === document.body);
      * // => false
-     * el.nodeName
+     * console.log(el.nodeName);
      * // => BODY
-     * el.childNodes.length;
+     * console.log(el.childNodes.length);
      * // => 0
      */
     function cloneWith(value, customizer) {
@@ -8010,7 +8010,7 @@
      * ];
      *
      * var deep = _.cloneDeep(users);
-     * deep[0] === users[0];
+     * console.log(deep[0] === users[0]);
      * // => false
      */
     function cloneDeep(value) {
@@ -8034,11 +8034,11 @@
      *   }
      * });
      *
-     * el === document.body
+     * console.log(el === document.body);
      * // => false
-     * el.nodeName
+     * console.log(el.nodeName);
      * // => BODY
-     * el.childNodes.length;
+     * console.log(el.childNodes.length);
      * // => 20
      */
     function cloneDeepWith(value, customizer) {

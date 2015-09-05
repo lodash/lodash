@@ -15645,6 +15645,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toPath');
+
+  (function() {
+    test('should convert a string to a path', 2, function() {
+      deepEqual(_.toPath('a.b.c'), ['a', 'b', 'c']);
+      deepEqual(_.toPath('a[0].b.c'), ['a', '0', 'b', 'c']);
+    });
+
+    test('should shallow clone array path', 2, function() {
+      var array = ['a', 'b', 'c'],
+          actual = _.toPath(array);
+
+      deepEqual(actual, array);
+      notStrictEqual(actual, array);
+    });
+
+    test('should handle complex paths', 1, function() {
+      var actual = _.toPath('a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][\ne\n][f].g');
+      deepEqual(actual, ['a', '-1.23', '["b"]', 'c', "['d']", '\ne\n', 'f', 'g']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toPlainObject');
 
   (function() {

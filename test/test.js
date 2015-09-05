@@ -9963,6 +9963,18 @@
       strictEqual(memoized(1, 3, 5), 9);
     });
 
+    test('should use `this` binding of function for `resolver`', 2, function() {
+      var fn = function(a, b, c) { return a + this.b + this.c; },
+          memoized = _.memoize(fn, fn);
+
+      var object = { 'b': 2, 'c': 3, 'memoized': memoized };
+      strictEqual(object.memoized(1), 6);
+
+      object.b = 3;
+      object.c = 5;
+      strictEqual(object.memoized(1), 9);
+    });
+
     test('should throw a TypeError if `resolve` is truthy and not a function', function() {
       raises(function() { _.memoize(_.noop, {}); }, TypeError);
     });

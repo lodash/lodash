@@ -8890,8 +8890,8 @@
      * _.toInteger(NaN);
      * // => 0
      *
-     * _.toInteger(Infinity);
-     * // => Infinity
+     * _.toInteger(-Infinity);
+     * // => -Infinity
      */
     function toInteger(value) {
       return nativeFloor(value) || 0;

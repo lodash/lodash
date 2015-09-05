@@ -15632,6 +15632,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toInteger');
+
+  (function() {
+    test('should convert values to integers', 4, function() {
+      strictEqual(_.toInteger('3.14'), 3);
+      strictEqual(_.toInteger(), 0);
+      strictEqual(_.toInteger(NaN), 0);
+      strictEqual(_.toInteger(-Infinity), -Infinity);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toPlainObject');
 
   (function() {

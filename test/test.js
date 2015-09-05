@@ -7877,6 +7877,52 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isObjectLike');
+
+  (function() {
+    var args = arguments;
+
+    test('should return `true` for objects', 9, function() {
+      strictEqual(_.isObjectLike(args), true);
+      strictEqual(_.isObjectLike([1, 2, 3]), true);
+      strictEqual(_.isObjectLike(Object(false)), true);
+      strictEqual(_.isObjectLike(new Date), true);
+      strictEqual(_.isObjectLike(new Error), true);
+      strictEqual(_.isObjectLike({ 'a': 1 }), true);
+      strictEqual(_.isObjectLike(Object(0)), true);
+      strictEqual(_.isObjectLike(/x/), true);
+      strictEqual(_.isObjectLike(Object('a')), true);
+    });
+
+    test('should return `false` for non-objects', 1, function() {
+      var symbol = (Symbol || noop)(),
+          values = falsey.concat(true, _, slice, 1, 'a', symbol),
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value, index) {
+        return index ? _.isObjectLike(value) : _.isObjectLike();
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should work with objects from another realm', 6, function() {
+      if (_._object) {
+        strictEqual(_.isObjectLike(_._object), true);
+        strictEqual(_.isObjectLike(_._boolean), true);
+        strictEqual(_.isObjectLike(_._date), true);
+        strictEqual(_.isObjectLike(_._number), true);
+        strictEqual(_.isObjectLike(_._regexp), true);
+        strictEqual(_.isObjectLike(_._string), true);
+      }
+      else {
+        skipTest(6);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isPlainObject');
 
   (function() {

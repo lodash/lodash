@@ -15653,12 +15653,14 @@
       deepEqual(_.toPath('a[0].b.c'), ['a', '0', 'b', 'c']);
     });
 
-    test('should shallow clone array path', 2, function() {
-      var array = ['a', 'b', 'c'],
-          actual = _.toPath(array);
+    test('should coerce array elements to strings', 4, function() {
+      var array = ['a', 'b', 'c'];
 
-      deepEqual(actual, array);
-      notStrictEqual(actual, array);
+      _.each([array, _.map(array, Object)], function(value) {
+        var actual = _.toPath(value);
+        deepEqual(actual, array);
+        notStrictEqual(actual, array);
+      });
     });
 
     test('should handle complex paths', 1, function() {

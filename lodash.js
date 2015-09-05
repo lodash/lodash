@@ -11480,7 +11480,7 @@
      * // => false
      */
     function toPath(value) {
-      return isArray(value) ? copyArray(value) : stringToPath(value);
+      return isArray(value) ? arrayMap(value, String) : stringToPath(value);
     }
 
     /**

@@ -3527,13 +3527,16 @@
         if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
           throw new TypeError(FUNC_ERROR_TEXT);
         }
-        var length = transforms.length;
+        var funcsLength = transforms.length;
         return restParam(function(args) {
-          var index = nativeMin(args.length, length);
-          while (index--) {
-            args[index] = transforms[index].apply(this, resolver(args[index], index, args));
+          var index = -1,
+              length = nativeMin(args.length, funcsLength),
+              modded = copyArray(args);
+
+          while (++index < length) {
+            modded[index] = transforms[index].apply(this, resolver(args[index], index, args));
           }
-          return func.apply(this, args);
+          return func.apply(this, modded);
         });
       });
     }

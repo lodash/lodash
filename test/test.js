@@ -11120,6 +11120,15 @@
       deepEqual(modded(5), [10]);
     });
 
+    test('should provide the correct argument to each transform', 1, function() {
+      var argsList = [],
+          transform = function() { argsList.push(slice.call(arguments)); },
+          modded = _.modArgs(_.noop, transform, transform, transform);
+
+      modded('a', 'b', 'c');
+      deepEqual(argsList, [['a'], ['b'], ['c']]);
+    });
+
     test('should use `this` binding of function for transforms', 1, function() {
       var modded = _.modArgs(function(x) {
         return this[x];

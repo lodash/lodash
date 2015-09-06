@@ -17638,6 +17638,7 @@
       'delay',
       'memoize',
       'modArgs',
+      'modArgsSet',
       'negate',
       'once',
       'partial',
@@ -17753,7 +17754,7 @@
       });
     });
 
-    test('should throw an error for falsey arguments', 23, function() {
+    test('should throw an error for falsey arguments', 24, function() {
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),
             func = _[methodName];

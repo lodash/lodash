@@ -7600,14 +7600,49 @@
      *   return [x, y];
      * }, square, doubled);
      *
-     * modded(3, 4);
-     * // => [9, 8]
+     * modded(9, 3);
+     * // => [81, 6]
      *
-     * modded(5, 10);
-     * // => [25, 20]
+     * modded(10, 5);
+     * // => [100, 10]
      */
     var modArgs = createModArgs(function(value) {
       return [value];
+    });
+
+    /**
+     * This method is like `_.modArgs` except that each transform function is
+     * provided all arguments the created function is invoked with.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to wrap.
+     * @param {...(Function|Function[])} [transforms] The functions to transform
+     * arguments, specified individually or in arrays.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function multiply(x, y) {
+     *   return x * y;
+     * }
+     *
+     * function divide(x, y) {
+     *   return x / y;
+     * }
+     *
+     * var modded = _.modArgsSet(function(x, y) {
+     *   return [x, y];
+     * }, multiply, divide);
+     *
+     * modded(9, 3);
+     * // => [27, 3]
+     *
+     * modded(10, 5);
+     * // => [50, 2]
+     */
+    var modArgsSet = createModArgs(function(value, index, args) {
+      return args;
     });
 
     /**
@@ -11833,6 +11868,7 @@
     lodash.methodOf = methodOf;
     lodash.mixin = mixin;
     lodash.modArgs = modArgs;
+    lodash.modArgsSet = modArgsSet;
     lodash.negate = negate;
     lodash.omit = omit;
     lodash.omitBy = omitBy;

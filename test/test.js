@@ -7319,14 +7319,6 @@
       strictEqual(_.isMatch({ 'a': new Foo }, { 'a': { 'b': 2 } }), true);
     });
 
-    test('should match `-0` as `0`', 2, function() {
-      var object1 = { 'a': -0 },
-          object2 = { 'a': 0 };
-
-      strictEqual(_.isMatch(object1, object2), true);
-      strictEqual(_.isMatch(object2, object1), true);
-    });
-
     test('should not match by inherited `source` properties', 1, function() {
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
@@ -7342,10 +7334,213 @@
       deepEqual(actual, expected);
     });
 
+    test('should compare a variety of `source` property values', 2, function() {
+      var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
+          object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } };
+
+      strictEqual(_.isMatch(object1, object1), true);
+      strictEqual(_.isMatch(object1, object2), false);
+    });
+
+    test('should match `-0` as `0`', 2, function() {
+      var object1 = { 'a': -0 },
+          object2 = { 'a': 0 };
+
+      strictEqual(_.isMatch(object1, object2), true);
+      strictEqual(_.isMatch(object2, object1), true);
+    });
+
+    test('should compare functions by reference', 3, function() {
+      var object1 = { 'a': _.noop },
+          object2 = { 'a': noop },
+          object3 = { 'a': {} };
+
+      strictEqual(_.isMatch(object1, object1), true);
+      strictEqual(_.isMatch(object2, object1), false);
+      strictEqual(_.isMatch(object3, object1), false);
+    });
+
+    test('should work with a function for `object`', 1, function() {
+      function Foo() {}
+      Foo.a = { 'b': 1, 'c': 2 };
+
+      strictEqual(_.isMatch(Foo, { 'a': { 'b': 1 } }), true);
+    });
+
+    test('should work with a function for `source`', 1, function() {
+      function Foo() {}
+      Foo.a = 1;
+      Foo.b = function() {};
+      Foo.c = 3;
+
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': Foo.b, 'c': 3 }];
+
+      var actual = _.map(objects, function(object) {
+        return _.isMatch(object, Foo);
+      });
+
+      deepEqual(actual, [false, true]);
+    });
+
+    test('should partial match arrays', 3, function() {
+      var objects = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
+          source = { 'a': ['d'] },
+          predicate = function(object) { return _.isMatch(object, source); },
+          actual = _.filter(objects, predicate);
+
+      deepEqual(actual, [objects[1]]);
+
+      source = { 'a': ['b', 'd'] };
+      actual = _.filter(objects, predicate);
+
+      deepEqual(actual, []);
+
+      source = { 'a': ['d', 'b'] };
+      actual = _.filter(objects, predicate);
+      deepEqual(actual, []);
+    });
+
+    test('should partial match arrays of objects', 1, function() {
+      var source = { 'a': [{ 'b': 1 }, { 'b': 4, 'c': 5 }] };
+
+      var objects = [
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5, 'd': 6 }] },
+        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 6, 'd': 7 }] }
+      ];
+
+      var actual = _.filter(objects, function(object) {
+        return _.isMatch(object, source);
+      });
+
+      deepEqual(actual, [objects[0]]);
+    });
+
+    test('should partial match maps', 3, function() {
+      var objects = [{ 'a': new Map }, { 'a': new Map }];
+      objects[0].a.set('a', 1);
+      objects[1].a.set('a', 1);
+      objects[1].a.set('b', 2);
+
+      var map = new Map;
+      map.set('b', 2);
+
+      var source = { 'a': map },
+          predicate = function(object) { return _.isMatch(object, source); },
+          actual = _.filter(objects, predicate);
+
+      deepEqual(actual, [objects[1]]);
+
+      map['delete']('b');
+      sourece = { 'a': map };
+      actual = _.filter(objects, predicate);
+
+      deepEqual(actual, objects);
+
+      map.set('c', 3);
+      source = { 'a': map };
+      actual = _.filter(objects, predicate);
+
+      deepEqual(actual, []);
+    });
+
+    test('should partial match sets', 3, function() {
+      var objects = [{ 'a': new Set }, { 'a': new Set }];
+      objects[0].a.add(1);
+      objects[1].a.add(1);
+      objects[1].a.add(2);
+
+      var set = new Set;
+      set.add(2);
+
+      var source = { 'a': set },
+          predicate = function(object) { return _.isMatch(object, source); },
+          actual = _.filter(objects, predicate);
+
+      deepEqual(actual, [objects[1]]);
+
+      set['delete'](2);
+      source = { 'a': set };
+      actual = _.filter(objects, predicate);
+
+      deepEqual(actual, objects);
+
+      set.add(3);
+      source = { 'a': set };
+      actual = _.filter(objects, predicate);
+
+      deepEqual(actual, []);
+    });
+
+    test('should match properties when `object` is not a plain object', 1, function() {
+      function Foo(object) { _.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) });
+      strictEqual(_.isMatch(object, { 'a': { 'b': 1 } }), true);
+    });
+
+    test('should match `undefined` values', 3, function() {
+      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
+          source = { 'b': undefined },
+          predicate = function(object) { return _.isMatch(object, source); },
+          actual = _.map(objects, predicate),
+          expected = [false, false, true];
+
+      deepEqual(actual, expected);
+
+      source = { 'a': 1, 'b': undefined };
+      actual = _.map(objects, predicate);
+
+      deepEqual(actual, expected);
+
+      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      source = { 'a': { 'c': undefined } };
+      actual = _.map(objects, predicate);
+
+      deepEqual(actual, expected);
+    });
+
+    test('should match `undefined` values on primitives', 3, function() {
+      numberProto.a = 1;
+      numberProto.b = undefined;
+
+      try {
+        strictEqual(_.isMatch(1, { 'b': undefined }), true);
+      } catch (e) {
+        ok(false, e.message);
+      }
+      try {
+        strictEqual(_.isMatch(1, { 'a': 1, 'b': undefined }), true);
+      } catch (e) {
+        ok(false, e.message);
+      }
+      numberProto.a = { 'b': 1, 'c': undefined };
+      try {
+        strictEqual(_.isMatch(1, { 'a': { 'c': undefined } }), true);
+      } catch (e) {
+        ok(false, e.message);
+      }
+      delete numberProto.a;
+      delete numberProto.b;
+    });
+
     test('should return `false` when `object` is nullish', 1, function() {
       var values = [null, undefined],
           expected = _.map(values, _.constant(false)),
           source = { 'a': 1 };
+
+      var actual = _.map(values, function(value) {
+        try {
+          return _.isMatch(value, source);
+        } catch (e) {}
+      });
+
+      deepEqual(actual, expected);
+    });
+
+    test('should return `true` when comparing an empty `source` to a nullish `object`', 1, function() {
+      var values = [null, undefined],
+          expected = _.map(values, _.constant(true)),
+          source = {};
 
       var actual = _.map(values, function(value) {
         try {
@@ -7367,29 +7562,6 @@
       deepEqual(actual, expected);
     });
 
-    test('should compare a variety of `source` property values', 2, function() {
-      var object1 = { 'a': false, 'b': true, 'c': '3', 'd': 4, 'e': [5], 'f': { 'g': 6 } },
-          object2 = { 'a': 0, 'b': 1, 'c': 3, 'd': '4', 'e': ['5'], 'f': { 'g': '6' } };
-
-      strictEqual(_.isMatch(object1, object1), true);
-      strictEqual(_.isMatch(object1, object2), false);
-    });
-
-    test('should work with a function for `source`', 1, function() {
-      function source() {}
-      source.a = 1;
-      source.b = function() {};
-      source.c = 3;
-
-      var objects = [{ 'a': 1 }, { 'a': 1, 'b': source.b, 'c': 3 }];
-
-      var actual = _.map(objects, function(object) {
-        return _.isMatch(object, source);
-      });
-
-      deepEqual(actual, [false, true]);
-    });
-
     test('should return `true` when comparing a `source` of empty arrays and objects', 1, function() {
       var objects = [{ 'a': [1], 'b': { 'c': 1 } }, { 'a': [2, 3], 'b': { 'd': 2 } }],
           source = { 'a': [], 'b': {} };
@@ -7399,91 +7571,6 @@
       });
 
       deepEqual(actual, objects);
-    });
-
-    test('should return `true` when comparing an empty `source` to a nullish `object`', 1, function() {
-      var values = [null, undefined],
-          expected = _.map(values, _.constant(true)),
-          source = {};
-
-      var actual = _.map(values, function(value) {
-        try {
-          return _.isMatch(value, source);
-        } catch (e) {}
-      });
-
-      deepEqual(actual, expected);
-    });
-
-    test('should search arrays of `source` for values', 3, function() {
-      var objects = [{ 'a': ['b'] }, { 'a': ['c', 'd'] }],
-          source = { 'a': ['d'] },
-          predicate = function(object) { return _.isMatch(object, source); },
-          actual = _.filter(objects, predicate);
-
-      deepEqual(actual, [objects[1]]);
-
-      source = { 'a': ['b', 'd'] };
-      actual = _.filter(objects, predicate);
-
-      deepEqual(actual, []);
-
-      source = { 'a': ['d', 'b'] };
-      actual = _.filter(objects, predicate);
-      deepEqual(actual, []);
-    });
-
-    test('should perform a partial comparison of all objects within arrays of `source`', 1, function() {
-      var source = { 'a': [{ 'b': 1 }, { 'b': 4, 'c': 5 }] };
-
-      var objects = [
-        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 5, 'd': 6 }] },
-        { 'a': [{ 'b': 1, 'c': 2 }, { 'b': 4, 'c': 6, 'd': 7 }] }
-      ];
-
-      var actual = _.filter(objects, function(object) {
-        return _.isMatch(object, source);
-      });
-
-      deepEqual(actual, [objects[0]]);
-    });
-
-    test('should handle a `source` with `undefined` values', 3, function() {
-      var objects = [{ 'a': 1 }, { 'a': 1, 'b': 1 }, { 'a': 1, 'b': undefined }],
-          source = { 'b': undefined },
-          predicate = function(object) { return _.isMatch(object, source); },
-          actual = _.map(objects, predicate),
-          expected = [false, false, true];
-
-      deepEqual(actual, expected);
-
-      source = { 'a': 1, 'b': undefined };
-      actual = _.map(objects, predicate);
-
-      deepEqual(actual, expected);
-
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
-      source = { 'a': { 'c': undefined } };
-      actual = _.map(objects, predicate);
-
-      deepEqual(actual, expected);
-    });
-
-    test('should match properties when `value` is a function', 1, function() {
-      function Foo() {}
-      Foo.a = { 'b': 1, 'c': 2 };
-
-      var matches = _.matches({ 'a': { 'b': 1 } });
-      strictEqual(matches(Foo), true);
-    });
-
-    test('should match properties when `value` is not a plain object', 1, function() {
-      function Foo(object) { _.assign(this, object); }
-
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
-          matches = _.matches({ 'a': { 'b': 1 } });
-
-      strictEqual(matches(object), true);
     });
   }());
 

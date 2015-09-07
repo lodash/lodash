@@ -7613,6 +7613,24 @@
       strictEqual(_.isMatchWith({ 'a': 1 }, { 'a': 1 }, _.noop), true);
     });
 
+    test('should not handle comparisons if `customizer` returns `true`', 2, function() {
+      var customizer = function(value) {
+        return _.isString(value) || undefined;
+      };
+
+      strictEqual(_.isMatchWith(['a'], ['b'], customizer), true);
+      strictEqual(_.isMatchWith({ '0': 'a' }, { '0': 'b' }, customizer), true);
+    });
+
+    test('should not handle comparisons if `customizer` returns `false`', 2, function() {
+      var customizer = function(value) {
+        return _.isString(value) ? false : undefined;
+      };
+
+      strictEqual(_.isMatchWith(['a'], ['a'], customizer), false);
+      strictEqual(_.isMatchWith({ '0': 'a' }, { '0': 'a' }, customizer), false);
+    });
+
     test('should return a boolean value even if `customizer` does not', 2, function() {
       var object = { 'a': 1 },
           actual = _.isMatchWith(object, { 'a': 1 }, _.constant('a'));

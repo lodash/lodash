@@ -9530,6 +9530,52 @@
       deepEqual(actual, [objects[0]]);
     });
 
+    test('should partial match maps', 3, function() {
+      var objects = [{ 'a': new Map }, { 'a': new Map }];
+      objects[0].a.set('a', 1);
+      objects[1].a.set('a', 1);
+      objects[1].a.set('b', 2);
+
+      var map = new Map;
+      map.set('b', 2);
+      var actual = _.filter(objects, _.matches({ 'a': map }));
+
+      deepEqual(actual, [objects[1]]);
+
+      map['delete']('b');
+      actual = _.filter(objects, _.matches({ 'a': map }));
+
+      deepEqual(actual, objects);
+
+      map.set('c', 3);
+      actual = _.filter(objects, _.matches({ 'a': map }));
+
+      deepEqual(actual, []);
+    });
+
+    test('should partial match sets', 3, function() {
+      var objects = [{ 'a': new Set }, { 'a': new Set }];
+      objects[0].a.add(1);
+      objects[1].a.add(1);
+      objects[1].a.add(2);
+
+      var set = new Set;
+      set.add(2);
+      var actual = _.filter(objects, _.matches({ 'a': set }));
+
+      deepEqual(actual, [objects[1]]);
+
+      set['delete'](2);
+      actual = _.filter(objects, _.matches({ 'a': set }));
+
+      deepEqual(actual, objects);
+
+      set.add(3);
+      actual = _.filter(objects, _.matches({ 'a': set }));
+
+      deepEqual(actual, []);
+    });
+
     test('should match properties when `object` is not a plain object', 1, function() {
       function Foo(object) { _.assign(this, object); }
 
@@ -9845,6 +9891,51 @@
 
       var actual = _.filter(objects, _.matchesProperty('a', [{ 'a': 1 }, { 'a': 4, 'b': 5 }]));
       deepEqual(actual, [objects[0]]);
+    });
+    test('should partial match maps', 3, function() {
+      var objects = [{ 'a': new Map }, { 'a': new Map }];
+      objects[0].a.set('a', 1);
+      objects[1].a.set('a', 1);
+      objects[1].a.set('b', 2);
+
+      var map = new Map;
+      map.set('b', 2);
+      var actual = _.filter(objects, _.matchesProperty('a', map));
+
+      deepEqual(actual, [objects[1]]);
+
+      map['delete']('b');
+      actual = _.filter(objects, _.matchesProperty('a', map));
+
+      deepEqual(actual, objects);
+
+      map.set('c', 3);
+      actual = _.filter(objects, _.matchesProperty('a', map));
+
+      deepEqual(actual, []);
+    });
+
+    test('should partial match sets', 3, function() {
+      var objects = [{ 'a': new Set }, { 'a': new Set }];
+      objects[0].a.add(1);
+      objects[1].a.add(1);
+      objects[1].a.add(2);
+
+      var set = new Set;
+      set.add(2);
+      var actual = _.filter(objects, _.matchesProperty('a', set));
+
+      deepEqual(actual, [objects[1]]);
+
+      set['delete'](2);
+      actual = _.filter(objects, _.matchesProperty('a', set));
+
+      deepEqual(actual, objects);
+
+      set.add(3);
+      actual = _.filter(objects, _.matchesProperty('a', set));
+
+      deepEqual(actual, []);
     });
 
     test('should match properties when `srcValue` is not a plain object', 1, function() {

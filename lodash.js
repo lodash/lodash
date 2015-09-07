@@ -2304,7 +2304,7 @@
           isSameTag = objTag == othTag;
 
       if (isSameTag && !(objIsArr || objIsObj)) {
-        return equalByTag(object, other, objTag, equalFunc);
+        return equalByTag(object, other, objTag, equalFunc, bitmask);
       }
       var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
       if (!isPartial) {
@@ -3753,9 +3753,10 @@
      * @param {Object} other The other object to compare.
      * @param {string} tag The `toStringTag` of the objects to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
+     * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalByTag(object, other, tag, equalFunc) {
+    function equalByTag(object, other, tag, equalFunc, bitmask) {
       switch (tag) {
         case boolTag:
         case dateTag:
@@ -3782,8 +3783,10 @@
           var convert = mapToArray;
 
         case setTag:
+          var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
           convert || (convert = setToArray);
-          return equalFunc(convert(object), convert(other), undefined, UNORDERED_COMPARE_FLAG);
+          return (isPartial || object.size == other.size) &&
+            equalFunc(convert(object), convert(other), undefined, bitmask | UNORDERED_COMPARE_FLAG);
       }
       return false;
     }

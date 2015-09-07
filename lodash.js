@@ -1148,9 +1148,11 @@
    * @returns {Array} Returns the converted array.
    */
   function mapToArray(map) {
-    var result = [];
+    var index = -1,
+        result = Array(map.size);
+
     map.forEach(function(value, key) {
-      result.push([key, value]);
+      result[++index] = [key, value];
     });
     return result;
   }
@@ -1187,9 +1189,11 @@
    * @returns {Array} Returns the converted array.
    */
   function setToArray(set) {
-    var result = [];
+    var index = -1,
+        result = Array(set.size);
+
     set.forEach(function(value) {
-      result.push(value);
+      result[++index] = value;
     });
     return result;
   }

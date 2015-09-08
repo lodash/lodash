@@ -7542,7 +7542,7 @@
 
       deepEqual(actual, expected);
 
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b': 1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
       source = { 'a': { 'c': undefined } };
       actual = _.map(objects, predicate);
 
@@ -9807,7 +9807,7 @@
 
       deepEqual(actual, expected);
 
-      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b':1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b': 1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
       actual = _.map(objects, _.matches({ 'a': { 'c': undefined } }));
 
       deepEqual(actual, expected);

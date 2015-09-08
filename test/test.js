@@ -7507,13 +7507,11 @@
         deepEqual(actual, [objects[1]]);
 
         set['delete'](2);
-        source = { 'a': set };
         actual = _.filter(objects, predicate);
 
         deepEqual(actual, objects);
 
         set.add(3);
-        source = { 'a': set };
         actual = _.filter(objects, predicate);
 
         deepEqual(actual, []);

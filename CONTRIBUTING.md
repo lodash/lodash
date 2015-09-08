@@ -36,7 +36,7 @@ In addition to the following guidelines, please follow the conventions already e
   Single-quoted strings are preferred to double-quoted strings; however, please use a double-quoted string if the value contains a single-quote character to avoid unnecessary escaping.
 
 - **Comments**:<br>
-  Please use single-line comments to annotate significant additions, & [JSDoc-style](http://www.2ality.com/2011/08/jsdoc-intro.html) comments for new methods.
+  Please use single-line comments to annotate significant additions, & [JSDoc-style](http://www.2ality.com/2011/08/jsdoc-intro.html) comments for functions.
 
 Guidelines are enforced using [JSSC](https://www.npmjs.com/package/jscs):
 

@@ -7633,12 +7633,12 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * function multiply(x, y) {
-     *   return x * y;
-     * }
-     *
      * function divide(x, y) {
      *   return x / y;
+     * }
+     *
+     * function multiply(x, y) {
+     *   return x * y;
      * }
      *
      * var modded = _.modArgsSet(function(x, y) {

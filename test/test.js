@@ -7103,6 +7103,50 @@
 
       deepEqual(actual, [true, false]);
     });
+
+    test('should call `customizer` for values maps and sets', 2, function() {
+      var value = { 'a': { 'b': 2 } };
+
+      if (Map) {
+        var map1 = new Map;
+        map1.set('a', value);
+
+        var map2 = new Map;
+        map2.set('a', value);
+      }
+      if (Set) {
+        var set1 = new Set;
+        set1.add(value);
+
+        var set2 = new Set;
+        set2.add(value);
+      }
+      _.each([[map1, map2], [set1, set2]], function(pair, index) {
+        if (pair[0]) {
+          var argsList = [],
+              array = _.toArray(pair[0]);
+
+          var expected = [
+            [pair[0], pair[1]],
+            [array[0], array[0], 0, array, array, [], []],
+            [array[0][0], array[0][0], 0, array[0], array[0], [], []],
+            [array[0][1], array[0][1], 1, array[0], array[0], [], []]
+          ];
+
+          if (index) {
+            expected.length = 2;
+          }
+          _.isEqualWith(pair[0], pair[1], function() {
+            argsList.push(slice.call(arguments));
+          });
+
+          deepEqual(argsList, expected, index ? 'Set' : 'Map');
+        }
+        else {
+          skipTest();
+        }
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -7663,6 +7707,52 @@
           actual = _.map([object, { 'a': 2 }], matches);
 
       deepEqual(actual, [true, false]);
+    });
+
+    test('should call `customizer` for values maps and sets', 2, function() {
+      var value = { 'a': { 'b': 2 } };
+
+      if (Map) {
+        var map1 = new Map;
+        map1.set('a', value);
+
+        var map2 = new Map;
+        map2.set('a', value);
+      }
+      if (Set) {
+        var set1 = new Set;
+        set1.add(value);
+
+        var set2 = new Set;
+        set2.add(value);
+      }
+      _.each([[map1, map2], [set1, set2]], function(pair, index) {
+        if (pair[0]) {
+          var argsList = [],
+              array = _.toArray(pair[0]),
+              object1 = { 'a': pair[0] },
+              object2 = { 'a': pair[1] };
+
+          var expected = [
+            [pair[0], pair[1], 'a', object1, object2, [], []],
+            [array[0], array[0], 0, array, array, [], []],
+            [array[0][0], array[0][0], 0, array[0], array[0], [], []],
+            [array[0][1], array[0][1], 1, array[0], array[0], [], []]
+          ];
+
+          if (index) {
+            expected.length = 2;
+          }
+          _.isMatchWith({ 'a': pair[0] }, { 'a': pair[1] }, function() {
+            argsList.push(slice.call(arguments));
+          });
+
+          deepEqual(argsList, expected, index ? 'Set' : 'Map');
+        }
+        else {
+          skipTest();
+        }
+      });
     });
   }());
 

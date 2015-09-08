@@ -7476,13 +7476,11 @@
         deepEqual(actual, [objects[1]]);
 
         map['delete']('b');
-        sourece = { 'a': map };
         actual = _.filter(objects, predicate);
 
         deepEqual(actual, objects);
 
         map.set('c', 3);
-        source = { 'a': map };
         actual = _.filter(objects, predicate);
 
         deepEqual(actual, []);

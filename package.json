@@ -10,7 +10,7 @@
     "jscs": "^2.1.1",
     "platform": "~1.3.0",
     "qunit-extras": "~1.4.0",
-    "qunitjs": "~1.18.0",
+    "qunitjs": "~1.19.0",
     "requirejs": "~2.1.0"
   },
   "scripts": {

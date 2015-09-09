@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "0.12"
+  - "4"
 env:
   global:
     - PATTERN1="s|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)||"

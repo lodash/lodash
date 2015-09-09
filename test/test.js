@@ -4674,7 +4674,7 @@
       assert.expect(1);
 
       var flipped = _.flip(fn);
-      assert.deepEqual(flipped('a', 'b', 'c'), ['c', 'b', 'a']);
+      assert.deepEqual(flipped('a', 'b', 'c', 'd'), ['d', 'c', 'b', 'a']);
     });
   }());
 

@@ -7489,8 +7489,8 @@
      *   return _.toArray(arguments);
      * });
      *
-     * flipped('a', 'b', 'c')
-     * // => ['c', 'b', 'a']
+     * flipped('a', 'b', 'c', 'd');
+     * // => ['d', 'c', 'b', 'a']
      */
     function flip(func) {
       return createWrapper(func, FLIP_FLAG);

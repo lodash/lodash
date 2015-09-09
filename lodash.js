@@ -23,7 +23,8 @@
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64,
       ARY_FLAG = 128,
-      REARG_FLAG = 256;
+      REARG_FLAG = 256,
+      FLIP_FLAG = 512;
 
   /** Used to compose bitmasks for comparison styles. */
   var UNORDERED_COMPARE_FLAG = 1,
@@ -3453,6 +3454,7 @@
           isCurry = bitmask & CURRY_FLAG,
           isCurryBound = bitmask & CURRY_BOUND_FLAG,
           isCurryRight = bitmask & CURRY_RIGHT_FLAG,
+          isFlip = bitmask & FLIP_FLAG,
           Ctor = isBindKey ? undefined : createCtorWrapper(func);
 
       function wrapper() {
@@ -3505,6 +3507,8 @@
 
         if (argPos) {
           args = reorder(args, argPos);
+        } else if (isFlip) {
+          args.reverse();
         }
         if (isAry && ary < args.length) {
           args.length = ary;
@@ -7470,6 +7474,27 @@
     var delay = restParam(function(func, wait, args) {
       return baseDelay(func, wait, args);
     });
+
+    /**
+     * Creates a function that invokes `func` with arguments reversed.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to flip arguments for.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var flipped = _.flip(function() {
+     *   return _.toArray(arguments);
+     * });
+     *
+     * flipped('a', 'b', 'c')
+     * // => ['c', 'b', 'a']
+     */
+    function flip(func) {
+      return createWrapper(func, FLIP_FLAG);
+    }
 
     /**
      * Creates a function that returns the result of invoking the provided
@@ -11854,6 +11879,7 @@
     lodash.filter = filter;
     lodash.flatten = flatten;
     lodash.flattenDeep = flattenDeep;
+    lodash.flip = flip;
     lodash.flow = flow;
     lodash.flowRight = flowRight;
     lodash.functions = functions;

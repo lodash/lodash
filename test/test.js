@@ -20617,6 +20617,7 @@
       'debounce',
       'defer',
       'delay',
+      'flip',
       'memoize',
       'modArgs',
       'modArgsSet',
@@ -20740,7 +20741,7 @@
     });
 
     QUnit.test('should throw an error for falsey arguments', function(assert) {
-      assert.expect(24);
+      assert.expect(25);
 
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),

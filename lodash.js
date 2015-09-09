@@ -6025,6 +6025,7 @@
      * @name plant
      * @memberOf _
      * @category Chain
+     * @param {*} value The value to plant.
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *

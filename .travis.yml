@@ -1,6 +1,5 @@
 language: node_js
 node_js:
-  - "0.12"
   - "4"
 env:
   global:
@@ -18,13 +17,13 @@ env:
 #    - BIN="ringo" OPTION="-o -1"
 matrix:
   include:
-    - node_js: "iojs"
-      env:
     - node_js: "0.8"
       env: NPM_VERSION="~1.4.0"
     - node_js: "0.10"
       env:
     - node_js: "0.12"
+      env:
+    - node_js: "4"
       env: SAUCE_LABS=true
 git:
   depth: 10

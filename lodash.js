@@ -3507,7 +3507,7 @@
 
         if (argPos) {
           args = reorder(args, argPos);
-        } else if (isFlip) {
+        } else if (isFlip && args.length > 1) {
           args.reverse();
         }
         if (isAry && ary < args.length) {

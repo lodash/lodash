@@ -7823,12 +7823,6 @@
      *
      * rearged('b', 'c', 'a')
      * // => ['a', 'b', 'c']
-     *
-     * var map = _.rearg(_.map, [1, 0]);
-     * map(function(n) {
-     *   return n * 3;
-     * }, [1, 2, 3]);
-     * // => [3, 6, 9]
      */
     var rearg = restParam(function(func, indexes) {
       return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));

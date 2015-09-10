@@ -12100,7 +12100,53 @@
       assert.ok(actual.bar.b === actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
     });
 
-    QUnit.test('should treat sources that are sparse arrays as dense', function(assert) {
+    QUnit.test('should work with four arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = { 'a': 4 },
+          actual = _.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should work with a function for `object`', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+
+      var source = { 'a': 1 },
+          actual = _.merge(Foo, source);
+
+      assert.strictEqual(actual, Foo);
+      assert.strictEqual(Foo.a, 1);
+    });
+
+    QUnit.test('should work with a non-plain `object`', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+
+      var object = new Foo,
+          source = { 'a': 1 },
+          actual = _.merge(object, source);
+
+      assert.strictEqual(actual, object);
+      assert.strictEqual(object.a, 1);
+    });
+
+    QUnit.test('should pass thru primitive `object` values', function(assert) {
+      assert.expect(1);
+
+      var values = [true, 1, '1'];
+
+      var actual = _.map(values, function(value) {
+        return _.merge(value, { 'a': 1 });
+      });
+
+      assert.deepEqual(actual, values);
+    });
+
+    QUnit.test('should treat sparse array sources as dense', function(assert) {
       assert.expect(2);
 
       var array = Array(3);
@@ -12113,25 +12159,6 @@
       expected[1] = undefined;
 
       assert.ok('1' in actual);
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should skip `undefined` values in arrays if a destination value exists', function(assert) {
-      assert.expect(2);
-
-      var array = Array(3);
-      array[0] = 1;
-      array[2] = 3;
-
-      var actual = _.merge([4, 5, 6], array),
-          expected = [1, 5, 3];
-
-      assert.deepEqual(actual, expected);
-
-      array = [1, , 3];
-      array[1] = undefined;
-
-      actual = _.merge([4, 5, 6], array);
       assert.deepEqual(actual, expected);
     });
 
@@ -12198,44 +12225,11 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with four arguments', function(assert) {
-      assert.expect(1);
-
-      var expected = { 'a': 4 },
-          actual = _.merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected);
-
-      assert.deepEqual(actual, expected);
-    });
-
     QUnit.test('should assign `null` values', function(assert) {
       assert.expect(1);
 
       var actual = _.merge({ 'a': 1 }, { 'a': null });
       assert.strictEqual(actual.a, null);
-    });
-
-    QUnit.test('should not assign `undefined` values', function(assert) {
-      assert.expect(1);
-
-      var actual = _.merge({ 'a': 1 }, { 'a': undefined, 'b': undefined });
-      assert.deepEqual(actual, { 'a': 1 });
-    });
-
-    QUnit.test('should not error on DOM elements', function(assert) {
-      assert.expect(1);
-
-      var object1 = { 'el': document && document.createElement('div') },
-          object2 = { 'el': document && document.createElement('div') },
-          pairs = [[{}, object1], [object1, object2]],
-          expected = _.map(pairs, _.constant(true));
-
-      var actual = _.map(pairs, function(pair) {
-        try {
-          return _.merge(pair[0], pair[1]).el === pair[1].el;
-        } catch (e) {}
-      });
-
-      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should assign non array/plain-object values directly', function(assert) {
@@ -12273,6 +12267,32 @@
       assert.deepEqual(actual, [new Foo(object)]);
     });
 
+    QUnit.test('should not assign `undefined` values', function(assert) {
+      assert.expect(1);
+
+      var actual = _.merge({ 'a': 1 }, { 'a': undefined, 'b': undefined });
+      assert.deepEqual(actual, { 'a': 1 });
+    });
+
+    QUnit.test('should skip `undefined` values in `source` arrays if a destination value exists', function(assert) {
+      assert.expect(2);
+
+      var array = Array(3);
+      array[0] = 1;
+      array[2] = 3;
+
+      var actual = _.merge([4, 5, 6], array),
+          expected = [1, 5, 3];
+
+      assert.deepEqual(actual, expected);
+
+      array = [1, , 3];
+      array[1] = undefined;
+
+      actual = _.merge([4, 5, 6], array);
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should convert values to arrays when merging with arrays of `source`', function(assert) {
       assert.expect(2);
 
@@ -12294,41 +12314,21 @@
       assert.deepEqual(actual, { 'a': ['x', 'y', 'z'] });
     });
 
-    QUnit.test('should work with a function for `object`', function(assert) {
-      assert.expect(2);
-
-      function Foo() {}
-
-      var source = { 'a': 1 },
-          actual = _.merge(Foo, source);
-
-      assert.strictEqual(actual, Foo);
-      assert.strictEqual(Foo.a, 1);
-    });
-
-    QUnit.test('should work with a non-plain `object` value', function(assert) {
-      assert.expect(2);
-
-      function Foo() {}
-
-      var object = new Foo,
-          source = { 'a': 1 },
-          actual = _.merge(object, source);
-
-      assert.strictEqual(actual, object);
-      assert.strictEqual(object.a, 1);
-    });
-
-    QUnit.test('should pass thru primitive `object` values', function(assert) {
+    QUnit.test('should not error on DOM elements', function(assert) {
       assert.expect(1);
 
-      var values = [true, 1, '1'];
+      var object1 = { 'el': document && document.createElement('div') },
+          object2 = { 'el': document && document.createElement('div') },
+          pairs = [[{}, object1], [object1, object2]],
+          expected = _.map(pairs, _.constant(true));
 
-      var actual = _.map(values, function(value) {
-        return _.merge(value, { 'a': 1 });
+      var actual = _.map(pairs, function(pair) {
+        try {
+          return _.merge(pair[0], pair[1]).el === pair[1].el;
+        } catch (e) {}
       });
 
-      assert.deepEqual(actual, values);
+      assert.deepEqual(actual, expected);
     });
   }(1, 2, 3));
 

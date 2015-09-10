@@ -2584,7 +2584,7 @@
         if (isArray(srcValue) || isTypedArray(srcValue)) {
           newValue = isArray(oldValue)
             ? oldValue
-            : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : []);
+            : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : srcValue);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)

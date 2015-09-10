@@ -12237,7 +12237,7 @@
 
       function Foo() {}
 
-      var values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp],
+      var values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp, new (Uint8Array || noop)],
           expected = _.map(values, _.constant(true));
 
       var actual = _.map(values, function(value) {

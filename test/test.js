@@ -11857,18 +11857,6 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
-      assert.expect(2);
-
-      var memoized = _.memoize(function(a, b, c) {
-        return a + this.b + this.c;
-      });
-
-      var object = { 'b': 2, 'c': 3, 'memoized': memoized };
-      assert.strictEqual(object.memoized(1), 6);
-      assert.strictEqual(object.memoized(2), 7);
-    });
-
     QUnit.test('should check cache for own properties', function(assert) {
       assert.expect(1);
 
@@ -13345,17 +13333,6 @@
       assert.strictEqual(count, 1);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
-      assert.expect(2);
-
-      var once = _.once(function() { return ++this.count; }),
-          object = { 'count': 0, 'once': once };
-
-      object.once();
-      assert.strictEqual(object.once(), 1);
-      assert.strictEqual(object.count, 1);
-    });
-
     QUnit.test('should ignore recursive calls', function(assert) {
       assert.expect(2);
 
@@ -13703,22 +13680,6 @@
         par = func(fn, ph, 'c', ph);
         assert.deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
       }
-    });
-
-    QUnit.test('`_.' + methodName + '` should not set a `this` binding', function(assert) {
-      assert.expect(3);
-
-      var fn = function() { return this.a; },
-          object = { 'a': 1 };
-
-      var par = func(_.bind(fn, object));
-      assert.strictEqual(par(), object.a);
-
-      par = _.bind(func(fn), object);
-      assert.strictEqual(par(), object.a);
-
-      object.par = func(fn);
-      assert.strictEqual(object.par(), object.a);
     });
 
     QUnit.test('`_.' + methodName + '` creates a function with a `length` of `0`', function(assert) {
@@ -15694,17 +15655,6 @@
 
       assert.deepEqual(rp(1, 2, 3, 4, 5), [1, 2, 3, [4, 5]]);
     });
-
-    QUnit.test('should not set a `this` binding', function(assert) {
-      assert.expect(1);
-
-      var rp = _.restParam(function(x, y) {
-        return this[x] + this[y[0]];
-      });
-
-      var object = { 'rp': rp, 'x': 4, 'y': 2 };
-      assert.strictEqual(object.rp('x', 'y'), 6);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -16959,17 +16909,6 @@
 
       spread([4, 2], 'ignored');
       assert.deepEqual(args, [4, 2]);
-    });
-
-    QUnit.test('should not set a `this` binding', function(assert) {
-      assert.expect(1);
-
-      var spread = _.spread(function(x, y) {
-        return this[x] + this[y];
-      });
-
-      var object = { 'spread': spread, 'x': 4, 'y': 2 };
-      assert.strictEqual(object.spread(['x', 'y']), 6);
     });
   }());
 
@@ -20710,6 +20649,20 @@
       'throttle'
     ];
 
+    var noBinding = [
+      'flip',
+      'memoize',
+      'modArgs',
+      'modArgsSet',
+      'negate',
+      'once',
+      'partial',
+      'partialRight',
+      'rearg',
+      'restParam',
+      'spread'
+    ];
+
     var rejectFalsey = [
       'flow',
       'flowRight',
@@ -20840,6 +20793,27 @@
         });
 
         assert.deepEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
+      });
+    });
+
+    QUnit.test('should not set a `this` binding', function(assert) {
+      assert.expect(33);
+
+      _.each(noBinding, function(methodName) {
+        var fn = function() { return this.a; },
+            func = _[methodName],
+            isNegate = methodName == 'negate',
+            object = { 'a': 1 },
+            expected = isNegate ? false : 1;
+
+        var wrapper = func(_.bind(fn, object));
+        assert.strictEqual(wrapper(), expected, '`_.' + methodName + '` can consume a bound function');
+
+        wrapper = _.bind(func(fn), object);
+        assert.strictEqual(wrapper(), expected, '`_.' + methodName + '` can be bound');
+
+        object.wrapper = func(fn);
+        assert.strictEqual(object.wrapper(), expected, '`_.' + methodName + '` uses the `this` of its parent object');
       });
     });
 

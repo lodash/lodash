@@ -9764,8 +9764,8 @@
      *
      * var object = { 'user': 'fred', 'age': 40 };
      *
-     * _.omit(object, 'age');
-     * // => { 'user': 'fred' }
+     * _.omit(object, 'user');
+     * // => { 'age': 40 }
      */
     var omit = restParam(function(object, props) {
       if (object == null) {
@@ -9855,8 +9855,8 @@
      *
      * var object = { 'user': 'fred', 'age': 40 };
      *
-     * _.pickBy(object, _.isString);
-     * // => { 'user': 'fred' }
+     * _.pickBy(object, _.isNumber);
+     * // => { 'age': 40 }
      */
     function pickBy(object, predicate) {
       return object == null ? {} : basePickBy(object, getIteratee(predicate));

@@ -12293,6 +12293,28 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should skip merging when `object` and `source` are the same value', function(assert) {
+      assert.expect(1);
+
+      if (defineProperty) {
+        var object = {},
+            pass = true;
+
+        defineProperty(object, 'a', {
+          'enumerable': true,
+          'configurable': true,
+          'get': function() { pass = false; },
+          'set': function() { pass = false; }
+        });
+
+        _.merge(object, object);
+        assert.ok(pass);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
     QUnit.test('should convert values to arrays when merging with arrays of `source`', function(assert) {
       assert.expect(2);
 

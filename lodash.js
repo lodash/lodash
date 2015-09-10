@@ -2529,6 +2529,9 @@
      * @param {Array} [stackB=[]] Associates values with source counterparts.
      */
     function baseMerge(object, source, customizer, stackA, stackB) {
+      if (object === source) {
+        return;
+      }
       var props = (isArray(source) || isTypedArray(source)) ? undefined : keysIn(source);
       arrayEach(props || source, function(srcValue, key) {
         if (props) {

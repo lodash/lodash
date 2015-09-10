@@ -1338,14 +1338,14 @@
       var bound = _.bind(fn, null),
           actual = bound('a');
 
-      assert.ok(actual[0] === null || actual[0] && actual[0].Array);
+      assert.ok(actual[0] === null || (actual[0] && actual[0].Array));
       assert.strictEqual(actual[1], 'a');
 
       _.times(2, function(index) {
         bound = index ? _.bind(fn, undefined) : _.bind(fn);
         actual = bound('b');
 
-        assert.ok(actual[0] === undefined || actual[0] && actual[0].Array);
+        assert.ok(actual[0] === undefined || (actual[0] && actual[0].Array));
         assert.strictEqual(actual[1], 'b');
       });
     });
@@ -4244,7 +4244,9 @@
           actual = _.fill(array);
 
       assert.deepEqual(actual, Array(3));
-      assert.ok(_.every(actual, function(value, index) { return index in actual; }));
+      assert.ok(_.every(actual, function(value, index) {
+        return index in actual;
+      }));
     });
 
     QUnit.test('should work with a positive `start`', function(assert) {
@@ -13194,7 +13196,7 @@
         vm.runInContext(source + '\nthis.lodash = this._.noConflict()', context);
 
         assert.strictEqual(context._, expected);
-        assert.ok(!!context.lodash);
+        assert.ok(context.lodash);
       }
       else {
         skipTest(assert, 2);
@@ -19857,7 +19859,7 @@
         var array = [1, 2],
             wrapped = chain(array);
 
-        assert.ok(wrapped[Symbol.iterator]() === wrapped);
+        assert.strictEqual(wrapped[Symbol.iterator](), wrapped);
         assert.deepEqual(_.toArray(wrapped), array);
       }
       else {

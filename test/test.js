@@ -195,7 +195,7 @@
   /** Poison the free variable `root` in Node.js */
   try {
     Object.defineProperty(global.root, 'root', {
-      'configurable': true,
+      'configurable': false,
       'enumerable': false,
       'get': function() { throw new ReferenceError; }
     });
@@ -5800,12 +5800,14 @@
               pass = true;
 
           defineProperty(object, 'a', {
+            'enumerable': true,
+            'configurable': true,
             'get': _.constant(value),
             'set': function() { pass = false; }
           });
 
           func(object, { 'a': value });
-          assert.ok(pass, value);
+          assert.ok(pass);
         }
         else {
           skipTest(assert);
@@ -16161,12 +16163,14 @@
               pass = true;
 
           defineProperty(object, 'a', {
+            'enumerable': true,
+            'configurable': true,
             'get': _.constant(value),
             'set': function() { pass = false; }
           });
 
           func(object, 'a', value);
-          assert.ok(pass, value);
+          assert.ok(pass);
         }
         else {
           skipTest(assert);
@@ -19203,7 +19207,9 @@
       if (!isStrict && defineProperty) {
         defineProperty(object, 'a', {
           'configurable': false,
-          'value': 1
+          'enumerable': true,
+          'writable': true,
+          'value': 1,
         });
         assert.strictEqual(_.unset(object, 'a'), false);
       }

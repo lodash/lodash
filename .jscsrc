@@ -25,15 +25,17 @@
         "<="
     ],
     "requireCamelCaseOrUpperCaseIdentifiers": true,
-    "maximumLineLength": false,
+    "maximumLineLength": {
+      "value": 180,
+      "allExcept": ["comments", "functionSignature", "regex"]
+    },
     "validateIndentation": 2,
+    "validateQuoteMarks": { "mark": "'", "escape": true },
 
     "disallowMultipleLineStrings": true,
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
-    "disallowMultipleVarDecl": false,
-    "disallowKeywordsOnNewLine": false,
 
     "requireSpaceAfterKeywords": [
       "if",
@@ -65,8 +67,7 @@
     "disallowSpacesInAnonymousFunctionExpression": {
         "beforeOpeningRoundBrace": true
     },
-    "disallowSpacesInsideObjectBrackets": false,
-    "disallowSpacesInsideArrayBrackets": "all",
+    "disallowSpacesInsideArrayBrackets": true,
     "disallowSpacesInsideParentheses": true,
 
     "disallowMultipleLineBreaks": true,
@@ -81,8 +82,15 @@
     "disallowSpacesInCallExpression": true,
     "disallowSpaceAfterObjectKeys": true,
     "requireSpaceBeforeObjectValues": true,
-    "requireCapitalizedConstructors": false,
-    "requireDotNotation": false,
     "requireSemicolons": true,
-    "validateParameterSeparator": ", "
+    "validateParameterSeparator": ", ",
+
+    "jsDoc": {
+        "requireParamTypes": true,
+        "requireReturnTypes": true,
+        "checkTypes": true,
+        "checkRedundantAccess": true,
+        "requireNewlineAfterDescription": true,
+        "requireParamDescription": true
+    }
 }

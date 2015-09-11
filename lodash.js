@@ -3654,7 +3654,7 @@
     function createRound(methodName) {
       var func = Math[methodName];
       return function(number, precision) {
-        precision = precision === undefined ? 0 : toInteger(precision);
+        precision = toInteger(precision);
         if (precision) {
           precision = pow(10, precision);
           return func(number * precision) / precision;

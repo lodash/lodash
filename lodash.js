@@ -977,28 +977,6 @@
   }
 
   /**
-   * Creates a map from key-value `pairs`.
-   *
-   * @private
-   * @param {Array} pairs The key-value pairs to add.
-   * @returns {Object} Returns the new map.
-   */
-  function createMap(pairs) {
-    return arrayReduce(pairs, addMapEntry, new Map);
-  }
-
-  /**
-   * Creates a set from `values`.
-   *
-   * @private
-   * @param {Array} values The values to add.
-   * @returns {Object} Returns the new set.
-   */
-  function createSet(values) {
-    return arrayReduce(values, addSetEntry, new Set);
-  }
-
-  /**
    * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
    *
    * @private
@@ -3113,18 +3091,73 @@
     }
 
     /**
-     * Creates a clone of the given array buffer.
+     * Creates a clone of `buffer`.
      *
      * @private
      * @param {ArrayBuffer} buffer The array buffer to clone.
      * @returns {ArrayBuffer} Returns the cloned array buffer.
      */
     function cloneBuffer(buffer) {
-      var result = new ArrayBuffer(buffer.byteLength),
+      var Ctor = buffer.constructor,
+          result = new Ctor(buffer.byteLength),
           view = new Uint8Array(result);
 
       view.set(new Uint8Array(buffer));
       return result;
+    }
+
+    /**
+     * Creates a clone of `map`.
+     *
+     * @private
+     * @param {Object} map The map to clone.
+     * @returns {Object} Returns the cloned map.
+     */
+    function cloneMap(map) {
+      var Ctor = map.constructor;
+      return arrayReduce(mapToArray(map), addMapEntry, new Ctor);
+    }
+
+    /**
+     * Creates a clone of `regexp`.
+     *
+     * @private
+     * @param {Object} regexp The regexp to clone.
+     * @returns {Object} Returns the cloned regexp.
+     */
+    function cloneRegExp(regexp) {
+      var Ctor = regexp.constructor,
+          result = new Ctor(regexp.source, reFlags.exec(regexp));
+
+      result.lastIndex = regexp.lastIndex;
+      return result;
+    }
+
+    /**
+     * Creates a clone of `set`.
+     *
+     * @private
+     * @param {Object} set The set to clone.
+     * @returns {Object} Returns the cloned set.
+     */
+    function cloneSet(set) {
+      var Ctor = set.constructor;
+      return arrayReduce(setToArray(set), addSetEntry, new Ctor);
+    }
+
+    /**
+     * Creates a clone of `typedArray`.
+     *
+     * @private
+     * @param {Object} typedArray The typed array to clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
+     * @returns {Object} Returns the cloned typed array.
+     */
+    function cloneTypedArray(typedArray, isDeep) {
+      var buffer = typedArray.buffer,
+          Ctor = typedArray.constructor;
+
+      return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
     }
 
     /**
@@ -4088,24 +4121,21 @@
         case float32Tag: case float64Tag:
         case int8Tag: case int16Tag: case int32Tag:
         case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
-          var buffer = object.buffer;
-          return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, object.byteOffset, object.length);
+          return cloneTypedArray(object, isDeep);
 
         case mapTag:
-          return createMap(mapToArray(object));
+          return cloneMap(object);
 
         case numberTag:
         case stringTag:
           return new Ctor(object);
 
         case setTag:
-          return createSet(setToArray(object));
+          return cloneSet(object);
 
         case regexpTag:
-          var result = new Ctor(object.source, reFlags.exec(object));
-          result.lastIndex = object.lastIndex;
+          return cloneRegExp(object);
       }
-      return result;
     }
 
     /**

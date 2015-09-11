@@ -5400,9 +5400,7 @@
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
-     * _.sortedUniqBy([1, 1.5, 2, 2.5], function(n) {
-     *   return Math.floor(n);
-     * });
+     * _.sortedUniqBy([1, 1.5, 2, 2.5], Math.floor);
      * // => [1, 2]
      */
     function sortedUniqBy(array, iteratee) {
@@ -5615,9 +5613,7 @@
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
-     * _.uniqBy([1, 2.5, 1.5, 2], function(n) {
-     *   return Math.floor(n);
-     * });
+     * _.uniqBy([1, 2.5, 1.5, 2], Math.floor);
      * // => [1, 2.5]
      *
      * // using the `_.property` callback shorthand
@@ -6061,15 +6057,14 @@
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *
-     * var array = [1, 2];
-     * var wrapped = _(array).map(function(value) {
-     *   return Math.pow(value, 2);
-     * });
+     * function square(n) {
+     *   return n * n;
+     * }
      *
-     * var other = [3, 4];
-     * var otherWrapped = wrapped.plant(other);
+     * var wrapped = _([1, 2]).map(square);
+     * var other = wrapped.plant([3, 4]);
      *
-     * otherWrapped.value();
+     * other.value();
      * // => [9, 16]
      *
      * wrapped.value();
@@ -6182,9 +6177,7 @@
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * _.countBy([4.3, 6.1, 6.4], function(n) {
-     *   return Math.floor(n);
-     * });
+     * _.countBy([4.3, 6.1, 6.4], Math.floor);
      * // => { '4': 1, '6': 2 }
      *
      * _.countBy(['one', 'two', 'three'], 'length');
@@ -6418,9 +6411,7 @@
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * _.groupBy([4.2, 6.1, 6.4], function(n) {
-     *   return Math.floor(n);
-     * });
+     * _.groupBy([4.2, 6.1, 6.4], Math.floor);
      * // => { '4': [4.2], '6': [6.1, 6.4] }
      *
      * // using the `_.property` callback shorthand

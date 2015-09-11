@@ -2475,7 +2475,7 @@
         };
       }
       return function(object) {
-        return baseIsMatch(object, source, matchData);
+        return object === source || baseIsMatch(object, source, matchData);
       };
     }
 
@@ -8599,7 +8599,7 @@
      * // => false
      */
     function isMatch(object, source) {
-      return baseIsMatch(object, source, getMatchData(source));
+      return object === source || baseIsMatch(object, source, getMatchData(source));
     }
 
     /**

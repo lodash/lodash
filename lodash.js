@@ -8402,7 +8402,7 @@
      * _.isEqual(object, other);
      * // => true
      *
-     * object == other;
+     * object === other;
      * // => false
      */
     function isEqual(value, other) {

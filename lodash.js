@@ -9708,9 +9708,13 @@
     }
 
     /**
-     * Recursively merges own enumerable properties of the source object(s) into the
-     * destination object, for source properties which don't resolve to `undefined`.
-     * Subsequent sources overwrite property assignments of previous sources.
+     * Recursively merges own and inherited enumerable properties of source
+     * objects into the destination object, skipping source properties that resolve
+     * to `undefined`. Array and plain object properties are merged recursively.
+     * Other objects and value types are overriden by assignment. Subsequent
+     * sources overwrite property assignments of previous sources.
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _

@@ -12176,18 +12176,26 @@
     });
 
     QUnit.test('should merge `arguments` objects', function(assert) {
-      assert.expect(3);
+      assert.expect(7);
 
       var object1 = { 'value': args },
           object2 = { 'value': { '3': 4 } },
           expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
           actual = _.merge(object1, object2);
 
+      assert.notOk('3' in args);
       assert.notOk(_.isArguments(actual.value));
       assert.deepEqual(actual.value, expected);
-      delete object1.value[3];
+      object1.value = args;
 
       actual = _.merge(object2, object1);
+      assert.notOk(_.isArguments(actual.value));
+      assert.deepEqual(actual.value, expected);
+
+      expected = { '0': 1, '1': 2, '2': 3 };
+
+      actual = _.merge({}, object1);
+      assert.notOk(_.isArguments(actual.value));
       assert.deepEqual(actual.value, expected);
     });
 

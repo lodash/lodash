@@ -2570,7 +2570,7 @@
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
             ? toPlainObject(oldValue)
-            : (isObject(oldValue) ? oldValue : {});
+            : (isObject(oldValue) ? oldValue : srcValue);
         }
         else {
           isCommon = isFunction(srcValue);

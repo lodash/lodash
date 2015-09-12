@@ -12245,17 +12245,31 @@
       assert.strictEqual(actual.a, null);
     });
 
-    QUnit.test('should assign non array/plain-object values directly', function(assert) {
+    QUnit.test('should assign non array/typed-array/plain-object sources directly', function(assert) {
       assert.expect(1);
 
       function Foo() {}
 
-      var values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp, new (Uint8Array || noop)],
+      var values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp],
           expected = _.map(values, _.constant(true));
 
       var actual = _.map(values, function(value) {
-        var object = _.merge({}, { 'a': value });
-        return object.a === value;
+        var object = _.merge({}, { 'value': value });
+        return object.value === value;
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should shallow clone array/typed-array/plain-object sources', function(assert) {
+      assert.expect(1);
+
+      var values = [[], new (Uint8Array || Object), {}],
+          expected = _.map(values, _.constant(true));
+
+      var actual = _.map(values, function(value) {
+        var object = _.merge({}, { 'value': value });
+        return object.value !== value && _.isEqual(object.value, value);
       });
 
       assert.deepEqual(actual, expected);

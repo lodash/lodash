@@ -2565,12 +2565,12 @@
         if (isArray(srcValue) || isTypedArray(srcValue)) {
           newValue = isArray(oldValue)
             ? oldValue
-            : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : srcValue);
+            : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : baseClone(srcValue));
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
             ? toPlainObject(oldValue)
-            : (isObject(oldValue) ? oldValue : srcValue);
+            : (isObject(oldValue) ? oldValue : baseClone(srcValue));
         }
         else {
           isCommon = isFunction(srcValue);

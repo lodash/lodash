@@ -9021,7 +9021,7 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Assigns own enumerable properties of source object(s) to the destination
+     * Assigns own enumerable properties of source objects to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
      *
      * **Note:** This method mutates `object` and is based on
@@ -9133,9 +9133,9 @@
     }
 
     /**
-     * Assigns own enumerable properties of source object(s) to the destination
-     * object for all destination properties that resolve to `undefined`. Once a
-     * property is set, additional values of the same property are ignored.
+     * Assigns own and inherited enumerable properties of source objects to the
+     * destination object for all destination properties that resolve to `undefined`.
+     * Once a property is set, additional values of the same property are ignored.
      *
      * **Note:** This method mutates `object`.
      *

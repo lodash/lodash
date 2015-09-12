@@ -50,14 +50,15 @@
     "requireSpacesInFunctionExpression": {
         "beforeOpeningCurlyBrace": true
     },
+    "requireCamelCaseOrUpperCaseIdentifiers": true,
+    "requireDotNotation": { "allExcept": ["keywords"] },
+    "requireLineFeedAtFileEnd": true,
+    "requireSemicolons": true,
     "requireSpaceAfterBinaryOperators": true,
     "requireSpacesInConditionalExpression": true,
     "requireSpaceBeforeObjectValues": true,
     "requireSpaceBeforeBlockStatements": true,
     "requireSpacesInForStatement": true,
-    "requireCamelCaseOrUpperCaseIdentifiers": true,
-    "requireLineFeedAtFileEnd": true,
-    "requireSemicolons": true,
 
     "validateIndentation": 2,
     "validateParameterSeparator": ", ",

@@ -2268,7 +2268,7 @@
           objTag = isMap(object) ? mapTag : (isSet(object) ? setTag : objTag);
         } else if (objTag == argsTag) {
           objTag = objectTag;
-        } else {
+        } else if (objTag != objectTag) {
           objIsArr = isTypedArray(object);
         }
       }
@@ -2278,7 +2278,7 @@
           othTag = isMap(other) ? mapTag : (isSet(other) ? setTag : othTag);
         } else if (othTag == argsTag) {
           othTag = objectTag;
-        } else {
+        } else if (othTag != objectTag) {
           othIsArr = isTypedArray(other);
         }
       }

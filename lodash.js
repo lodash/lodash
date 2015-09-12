@@ -3883,7 +3883,10 @@
             : customizer(objValue, othValue, key, object, other, stackA, stackB);
         }
         // Recursively compare objects (susceptible to call stack limits).
-        if (!(result === undefined ? equalFunc(objValue, othValue, customizer, bitmask, stackA, stackB) : result)) {
+        if (!(result === undefined
+              ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stackA, stackB))
+              : result
+            )) {
           return false;
         }
         skipCtor || (skipCtor = key == 'constructor');

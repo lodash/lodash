@@ -12297,7 +12297,6 @@
       assert.deepEqual(actual, new Foo(object));
 
       actual = _.merge([new Foo], [object]);
-
       assert.ok(actual[0] instanceof Foo);
       assert.deepEqual(actual, [new Foo(object)]);
     });
@@ -12309,7 +12308,7 @@
       assert.deepEqual(actual, { 'a': 1 });
     });
 
-    QUnit.test('should skip `undefined` values in `source` arrays if a destination value exists', function(assert) {
+    QUnit.test('should skip `undefined` values in array sources if a destination value exists', function(assert) {
       assert.expect(2);
 
       var array = Array(3);

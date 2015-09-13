@@ -1939,7 +1939,7 @@
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
-      var length = array ? array.length : 0,
+      var length = array.length,
           result = [];
 
       if (!length) {
@@ -2848,13 +2848,10 @@
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseSortedUniqBy(array, iteratee) {
-      var length = array.length;
-      if (!length) {
-        return [];
-      }
       var index = 0,
           indexOf = getIndexOf(),
           isCommon = indexOf === baseIndexOf,
+          length = array.length,
           value = array[0],
           computed = iteratee ? iteratee(value) : value,
           seen = isCommon ? computed : [computed],
@@ -5743,7 +5740,9 @@
             : array;
         }
       }
-      return result ? baseUniq(result) : [];
+      return (result && result.length)
+        ? baseUniq(result)
+        : [];
     }
 
     /**

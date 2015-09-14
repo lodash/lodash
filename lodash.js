@@ -93,8 +93,8 @@
       uint32Tag = '[object Uint32Array]';
 
   /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
-  var reStrSymbol = /[^\uD800-\uDBFF\uDC00-\uDFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF\uDC00-\uDFFF]/g,
-      reStrSurrogate = /[\uD800-\uDBFF\uDC00-\uDFFF]/;
+  var reStrSymbol = /[^\ud800-\udbff\udc00-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udbff\udc00-\udfff]/g,
+      reStrSurrogate = /[\ud800-\udbff\udc00-\udfff]/;
 
   /** Used to match empty string literals in compiled template source. */
   var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -153,10 +153,12 @@
 
   /** Used to match words to create compound words. */
   var reWords = (function() {
-    var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
-        lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+';
+    var astrals = '[\\ud800-\\udbff][\\udc00-\\udfff]',
+        upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
+        lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
+        digits = '\\d+';
 
-    return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
+    return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + [lower, upper + '+', astrals, digits].join('|'), 'g');
   }());
 
   /** Used to assign default `context` object properties. */
@@ -10288,7 +10290,7 @@
      */
     var camelCase = createCompounder(function(result, word, index) {
       word = word.toLowerCase();
-      return result + (index ? (word.charAt(0).toUpperCase() + word.slice(1)) : word);
+      return result + (index ? capitalize(word) : word);
     });
 
     /**
@@ -10306,7 +10308,11 @@
      */
     function capitalize(string) {
       string = baseToString(string);
-      return string && (string.charAt(0).toUpperCase() + string.slice(1));
+      if (!string) {
+        return string;
+      }
+      var symbols = stringToArray(string);
+      return symbols[0].toUpperCase() + symbols.slice(1).join('');
     }
 
     /**
@@ -10654,7 +10660,8 @@
      * // => 'Foo Bar'
      */
     var startCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + (word.charAt(0).toUpperCase() + word.slice(1));
+      var symbols = stringToArray(word);
+      return result + (index ? ' ' : '') + (symbols[0].toUpperCase() + symbols.slice(1).join(''));
     });
 
     /**

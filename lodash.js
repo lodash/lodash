@@ -92,6 +92,10 @@
       uint16Tag = '[object Uint16Array]',
       uint32Tag = '[object Uint32Array]';
 
+  /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
+  var reStrSymbol = /[^\uD800-\uDBFF\uDC00-\uDFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF\uDC00-\uDFFF]/g,
+      reStrSurrogate = /[\uD800-\uDBFF\uDC00-\uDFFF]/;
+
   /** Used to match empty string literals in compiled template source. */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -811,10 +815,13 @@
    * @returns {number} Returns the index of the first character not found in `chars`.
    */
   function charsLeftIndex(string, chars) {
+    string = string ? string.match(reStrSymbol) : [];
+    chars = chars ? chars.match(reStrSymbol) : [];
+
     var index = -1,
         length = string.length;
 
-    while (++index < length && chars.indexOf(string.charAt(index)) > -1) {}
+    while (++index < length && baseIndexOf(chars, string[index], 0) > -1) {}
     return index;
   }
 
@@ -828,9 +835,11 @@
    * @returns {number} Returns the index of the last character not found in `chars`.
    */
   function charsRightIndex(string, chars) {
-    var index = string.length;
+    string = string ? string.match(reStrSymbol) : [];
+    chars = chars ? chars.match(reStrSymbol) : [];
 
-    while (index-- && chars.indexOf(string.charAt(index)) > -1) {}
+    var index = string.length;
+    while (index-- && baseIndexOf(chars, string[index], 0) > -1) {}
     return index;
   }
 
@@ -1175,6 +1184,18 @@
       result[++index] = value;
     });
     return result;
+  }
+
+  /**
+   * Gets the number of symbols in `string`.
+   *
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the string size.
+   */
+  function stringSize(string) {
+    return (string && reStrSurrogate.test(string))
+      ? string.match(reStrSymbol).length
+      : string.length;
   }
 
   /**
@@ -3593,7 +3614,7 @@
      * @returns {string} Returns the padding for `string`.
      */
     function createPadding(string, length, chars) {
-      var strLength = string.length;
+      var strLength = stringSize(string);
       length = toInteger(length);
 
       if (!length || strLength >= length) {
@@ -3601,7 +3622,11 @@
       }
       var padLength = length - strLength;
       chars = chars === undefined ? ' ' : (chars + '');
-      return repeat(chars, nativeCeil(padLength / chars.length)).slice(0, padLength);
+
+      var result = repeat(chars, nativeCeil(padLength / stringSize(chars)));
+      return reStrSurrogate.test(chars)
+        ? result.match(reStrSymbol).slice(0, padLength).join('')
+        : result.slice(0, padLength);
     }
 
     /**
@@ -6803,7 +6828,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to inspect.
-     * @returns {number} Returns the size of `collection`.
+     * @returns {number} Returns the collection size.
      * @example
      *
      * _.size([1, 2, 3]);
@@ -6819,8 +6844,13 @@
       if (collection == null) {
         return 0;
       }
-      collection = isArrayLike(collection) ? collection : keys(collection);
-      return collection.length;
+      if (isArrayLike(collection)) {
+        var result = collection.length;
+        return (result && !isArray(collection) && isString(collection))
+          ? stringSize(collection)
+          : result;
+      }
+      return keys(collection).length;
     }
 
     /**
@@ -8952,7 +8982,13 @@
         return [];
       }
       if (isArrayLike(value)) {
-        return value.length ? copyArray(value) : [];
+        if (!value.length) {
+          return [];
+        }
+        if (!isArray(value) && isString(value)) {
+          return reStrSurrogate.test(value) ? value.match(reStrSymbol) : value.split('');
+        }
+        return copyArray(value);
       }
       if (iteratorSymbol && value[iteratorSymbol]) {
         return iteratorToArray(value[iteratorSymbol]());
@@ -10321,7 +10357,7 @@
       var length = string.length;
       position = position === undefined
         ? length
-        : nativeMin(position < 0 ? 0 : toInteger(position), length);
+        : nativeMin(nativeMax(toInteger(position), 0), length);
 
       position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
@@ -10436,7 +10472,7 @@
       string = baseToString(string);
       length = toInteger(length);
 
-      var strLength = string.length;
+      var strLength = stringSize(string);
       if (!length || strLength >= length) {
         return string;
       }
@@ -10444,8 +10480,7 @@
           leftLength = nativeFloor(mid),
           rightLength = nativeCeil(mid);
 
-      chars = createPadding('', rightLength, chars);
-      return chars.slice(0, leftLength) + string + chars;
+      return createPadding('', leftLength, chars) + string + createPadding('', rightLength, chars)
     }
 
     /**
@@ -10646,10 +10681,7 @@
      */
     function startsWith(string, target, position) {
       string = baseToString(string);
-      position = position == null
-        ? 0
-        : nativeMin(position < 0 ? 0 : toInteger(position), string.length);
-
+      position = nativeMin(nativeMax(toInteger(position), 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -10995,10 +11027,10 @@
         omission = 'omission' in options ? baseToString(options.omission) : omission;
       }
       string = baseToString(string);
-      if (length >= string.length) {
+      if (length >= stringSize(string)) {
         return string;
       }
-      var end = length - omission.length;
+      var end = length - stringSize(omission);
       if (end < 1) {
         return omission;
       }

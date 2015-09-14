@@ -158,7 +158,7 @@
         lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
         digits = '\\d+';
 
-    return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + [lower, upper + '+', astrals, digits].join('|'), 'g');
+    return RegExp([upper + '+(?=' + upper + lower + ')', upper + '?' + lower, upper + '+', astrals, digits].join('|'), 'g');
   }());
 
   /** Used to assign default `context` object properties. */

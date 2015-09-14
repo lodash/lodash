@@ -12854,9 +12854,9 @@
 
         value = value.__wrapped__;
       }
+      this.__wrapped__ = value;
       this.__actions__ = actions || [];
       this.__chain__ = chain || false;
-      this.__wrapped__ = value;
     }
 
     Wrapper.prototype.value = function() {

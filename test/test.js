@@ -54,6 +54,7 @@
       objToString = objectProto.toString,
       params = root.arguments,
       push = arrayProto.push,
+      realm = {},
       Set = root.Set,
       slice = arrayProto.slice,
       Symbol = root.Symbol,
@@ -447,27 +448,27 @@
 
   // Add other realm values from the `vm` module.
   _.attempt(function() {
-    _.extend(_, require('vm').runInNewContext([
+    _.extend(realm, require('vm').runInNewContext([
       '(function() {',
       '  var root = this;',
       '',
       '  var object = {',
-      "    '_arguments': (function() { return arguments; }(1, 2, 3)),",
-      "    '_array': [1, 2, 3],",
-      "    '_arrayBuffer': new (this.ArrayByffer || Object),",
-      "    '_boolean': Object(false),",
-      "    '_date': new Date,",
-      "    '_errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
-      "    '_function': function() {},",
-      "    '_map': new (root.Map || Object),",
-      "    '_nan': NaN,",
-      "    '_null': null,",
-      "    '_number': Object(0),",
-      "    '_object': { 'a': 1, 'b': 2, 'c': 3 },",
-      "    '_regexp': /x/,",
-      "    '_set': new (root.Set || Object),",
-      "    '_string': Object('a'),",
-      "    '_undefined': undefined",
+      "    'arguments': (function() { return arguments; }(1, 2, 3)),",
+      "    'array': [1, 2, 3],",
+      "    'arrayBuffer': new (this.ArrayByffer || Object),",
+      "    'boolean': Object(false),",
+      "    'date': new Date,",
+      "    'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
+      "    'function': function() {},",
+      "    'map': new (root.Map || Object),",
+      "    'nan': NaN,",
+      "    'null': null,",
+      "    'number': Object(0),",
+      "    'object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "    'regexp': /x/,",
+      "    'set': new (root.Set || Object),",
+      "    'string': Object('a'),",
+      "    'undefined': undefined",
       '  };',
       '',
       "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
@@ -484,6 +485,8 @@
 
   // Add other realm values from an iframe.
   _.attempt(function() {
+    _._realm = realm;
+
     var iframe = document.createElement('iframe');
     iframe.frameBorder = iframe.height = iframe.width = 0;
     body.appendChild(iframe);
@@ -491,35 +494,42 @@
     var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
     idoc.write([
       '<script>',
+      'var _ = parent._;',
+      '',
       'var root = this;',
       '',
-      'parent._._arguments = (function() { return arguments; }(1, 2, 3));',
-      'parent._._array = [1, 2, 3];',
-      'parent._._arrayBuffer = new (this.ArrayByffer || Object);',
-      'parent._._boolean = Object(false);',
-      'parent._._date = new Date;',
-      "parent._._element = document.createElement('div');",
-      'parent._._errors = [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError];',
-      'parent._._function = function() {};',
-      'parent._._map = new (this.Map || Object);',
-      'parent._._nan = NaN;',
-      'parent._._null = null;',
-      'parent._._number = Object(0);',
-      "parent._._object = { 'a': 1, 'b': 2, 'c': 3 };",
-      'parent._._regexp = /x/;',
-      'parent._._set = new (this.Set || Object);',
-      "parent._._string = Object('a');",
-      'parent._._undefined = undefined;',
+      'var object = {',
+      "  'arguments': (function() { return arguments; }(1, 2, 3)),",
+      "  'array': [1, 2, 3],",
+      "  'arrayBuffer': new (this.ArrayByffer || Object),",
+      "  'boolean': Object(false),",
+      "  'date': new Date,",
+      "  'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
+      "  'function': function() {},",
+      "  'map': new (root.Map || Object),",
+      "  'nan': NaN,",
+      "  'null': null,",
+      "  'number': Object(0),",
+      "  'object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "  'regexp': /x/,",
+      "  'set': new (root.Set || Object),",
+      "  'string': Object('a'),",
+      "  'undefined': undefined",
+      '};',
       '',
-      "parent._.each(['" + typedArrays.join("', '") + "'], function(type) {",
+      "_.each(['" + typedArrays.join("', '") + "'], function(type) {",
       '  var Ctor = root[type];',
       '  if (Ctor) {',
-      "    parent._['_' + type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
+      "    object['_' + type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
       '  }',
       '});',
+      '',
+      '_.extend(_._realm, object);',
       '<\/script>'
     ].join('\n'));
+
     idoc.close();
+    delete _._realm;
   });
 
   // Add a web worker.
@@ -534,11 +544,14 @@
 
   // Expose internal modules for better code coverage.
   _.attempt(function() {
+    var path = require('path'),
+        basePath = path.dirname(filePath);
+
     if (isModularize && !(amd || isNpm)) {
-      _.each(['internal/baseEach', 'internal/isIndex', 'internal/isIterateeCall',
-              'internal/isLength', 'function/flow', 'function/flowRight'], function(id) {
-        var func = require(id),
-            funcName = _.last(id.split('/'));
+      _.each(['internal/baseEach', 'internal/isIndex',
+              'internal/isIterateeCall', 'internal/isLength'], function(relPath) {
+        var func = require(path.join(basePath, relPath)),
+            funcName = path.basename(relPath);
 
         _['_' + funcName] = func[funcName] || func['default'] || func;
       });
@@ -1228,10 +1241,10 @@
     QUnit.test('should work with an error object from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        var expected = _.map(_._errors, _.constant(true));
+      if (realm.errors) {
+        var expected = _.map(realm.errors, _.constant(true));
 
-        var actual = _.map(_._errors, function(error) {
+        var actual = _.map(realm.errors, function(error) {
           return _.attempt(function() { throw error; }) === error;
         });
 
@@ -2002,7 +2015,6 @@
       set.add(1);
       set.add(2);
     }
-
     var objects = {
       '`arguments` objects': arguments,
       'arrays': ['a', ''],
@@ -2012,7 +2024,7 @@
       'Foo instances': new Foo,
       'objects': { 'a': 0, 'b': 1, 'c': 3 },
       'objects with object values': { 'a': /a/, 'b': ['B'], 'c': { 'C': 1 } },
-      'objects from another document': _._object || {},
+      'objects from another document': realm.object || {},
       'maps': map,
       'null values': null,
       'numbers': 3,
@@ -2366,7 +2378,7 @@
     });
 
     QUnit.test('`_.' + methodName + '` should support shortcut fusion', function(assert) {
-      assert.expect(12);
+      assert.expect(6);
 
       var filterCount,
           mapCount,
@@ -2387,28 +2399,20 @@
             take2 = _.curry(_.rearg(_.ary(_.take, 2), 1, 0), 2),
             take3 = (_.take = index ? take2 : take1, take2(2));
 
-        _.times(2, function(index) {
-          var fn = index ? _['_' + methodName] : func;
-          if (!fn) {
-            skipTest(assert, 3);
-            return;
-          }
-          var combined = isFlow
-            ? fn(map3, filter3, _.compact, take3)
-            : fn(take3, _.compact, filter3, map3);
+        var combined = isFlow
+          ? func(map3, filter3, _.compact, take3)
+          : func(take3, _.compact, filter3, map3);
 
-          filterCount = mapCount = 0;
-          assert.deepEqual(combined(array), [4, 16]);
+        filterCount = mapCount = 0;
+        assert.deepEqual(combined(array), [4, 16]);
 
-          if (!isNpm && WeakMap && WeakMap.name) {
-            assert.strictEqual(filterCount, 5, 'filterCount');
-            assert.strictEqual(mapCount, 5, 'mapCount');
-          }
-          else {
-            skipTest(assert, 2);
-          }
-        });
-
+        if (!isNpm && WeakMap && WeakMap.name) {
+          assert.strictEqual(filterCount, 5, 'filterCount');
+          assert.strictEqual(mapCount, 5, 'mapCount');
+        }
+        else {
+          skipTest(assert, 2);
+        }
         _.filter = filter1;
         _.map = map1;
         _.take = take1;
@@ -7050,8 +7054,8 @@
     QUnit.test('should work with an `arguments` object from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isArguments(_._arguments), true);
+      if (realm.arguments) {
+        assert.strictEqual(_.isArguments(realm.arguments), true);
       }
       else {
         skipTest(assert);
@@ -7099,8 +7103,8 @@
     QUnit.test('should work with an array from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isArray(_._array), true);
+      if (realm.array) {
+        assert.strictEqual(_.isArray(realm.array), true);
       }
       else {
         skipTest(assert);
@@ -7150,8 +7154,8 @@
     QUnit.test('should work with an array from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        var values = [_._arguments, _._array, _._string],
+      if (realm.object) {
+        var values = [realm.arguments, realm.array, realm.string],
             expected = _.map(values, _.constant(true)),
             actual = _.map(values, _.isArrayLike);
 
@@ -7206,8 +7210,8 @@
     QUnit.test('should work with a boolean from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isBoolean(_._boolean), true);
+      if (realm.boolean) {
+        assert.strictEqual(_.isBoolean(realm.boolean), true);
       }
       else {
         skipTest(assert);
@@ -7255,8 +7259,8 @@
     QUnit.test('should work with a date object from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isDate(_._date), true);
+      if (realm.date) {
+        assert.strictEqual(_.isDate(realm.date), true);
       }
       else {
         skipTest(assert);
@@ -7317,8 +7321,8 @@
     QUnit.test('should work with a DOM element from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._element) {
-        assert.strictEqual(_.isElement(_._element), true);
+      if (realm.element) {
+        assert.strictEqual(_.isElement(realm.element), true);
       }
       else {
         skipTest(assert);
@@ -7961,11 +7965,11 @@
     QUnit.test('should return `true` for like-objects from different documents', function(assert) {
       assert.expect(4);
 
-      if (_._object) {
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, _._object), true);
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, _._object), false);
-        assert.strictEqual(_.isEqual([1, 2, 3], _._array), true);
-        assert.strictEqual(_.isEqual([1, 2, 2], _._array), false);
+      if (realm.object) {
+        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, realm.object), true);
+        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, realm.object), false);
+        assert.strictEqual(_.isEqual([1, 2, 3], realm.array), true);
+        assert.strictEqual(_.isEqual([1, 2, 2], realm.array), false);
       }
       else {
         skipTest(assert, 4);
@@ -8258,10 +8262,10 @@
     QUnit.test('should work with an error object from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        var expected = _.map(_._errors, _.constant(true));
+      if (realm.errors) {
+        var expected = _.map(realm.errors, _.constant(true));
 
-        var actual = _.map(_._errors, function(error) {
+        var actual = _.map(realm.errors, function(error) {
           return _.isError(error) === true;
         });
 
@@ -8418,8 +8422,8 @@
     QUnit.test('should work with a function from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isFunction(_._function), true);
+      if (realm.function) {
+        assert.strictEqual(_.isFunction(realm.function), true);
       }
       else {
         skipTest(assert);
@@ -8933,8 +8937,8 @@
     QUnit.test('should work with `NaN` from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isNaN(_._nan), true);
+      if (realm.object) {
+        assert.strictEqual(_.isNaN(realm.nan), true);
       }
       else {
         skipTest(assert);
@@ -8996,14 +9000,14 @@
     QUnit.test('should work with native functions from another realm', function(assert) {
       assert.expect(2);
 
-      if (_._element) {
-        assert.strictEqual(_.isNative(_._element.cloneNode), true);
+      if (realm.element) {
+        assert.strictEqual(_.isNative(realm.element.cloneNode), true);
       }
       else {
         skipTest(assert);
       }
-      if (_._object) {
-        assert.strictEqual(_.isNative(_._object.valueOf), true);
+      if (realm.object) {
+        assert.strictEqual(_.isNative(realm.object.valueOf), true);
       }
       else {
         skipTest(assert);
@@ -9052,8 +9056,8 @@
     QUnit.test('should work with nulls from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isNull(_._null), true);
+      if (realm.object) {
+        assert.strictEqual(_.isNull(realm.null), true);
       }
       else {
         skipTest(assert);
@@ -9106,9 +9110,9 @@
     QUnit.test('should work with nulls from another realm', function(assert) {
       assert.expect(2);
 
-      if (_._object) {
-        assert.strictEqual(_.isNil(_._null), true);
-        assert.strictEqual(_.isNil(_._undefined), true);
+      if (realm.object) {
+        assert.strictEqual(_.isNil(realm.null), true);
+        assert.strictEqual(_.isNil(realm.undefined), true);
       }
       else {
         skipTest(assert, 2);
@@ -9157,8 +9161,8 @@
     QUnit.test('should work with numbers from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isNumber(_._number), true);
+      if (realm.number) {
+        assert.strictEqual(_.isNumber(realm.number), true);
       }
       else {
         skipTest(assert);
@@ -9218,20 +9222,20 @@
     QUnit.test('should work with objects from another realm', function(assert) {
       assert.expect(8);
 
-      if (_._element) {
-        assert.strictEqual(_.isObject(_._element), true);
+      if (realm.element) {
+        assert.strictEqual(_.isObject(realm.element), true);
       }
       else {
         skipTest(assert);
       }
-      if (_._object) {
-        assert.strictEqual(_.isObject(_._object), true);
-        assert.strictEqual(_.isObject(_._boolean), true);
-        assert.strictEqual(_.isObject(_._date), true);
-        assert.strictEqual(_.isObject(_._function), true);
-        assert.strictEqual(_.isObject(_._number), true);
-        assert.strictEqual(_.isObject(_._regexp), true);
-        assert.strictEqual(_.isObject(_._string), true);
+      if (realm.object) {
+        assert.strictEqual(_.isObject(realm.boolean), true);
+        assert.strictEqual(_.isObject(realm.date), true);
+        assert.strictEqual(_.isObject(realm.function), true);
+        assert.strictEqual(_.isObject(realm.number), true);
+        assert.strictEqual(_.isObject(realm.object), true);
+        assert.strictEqual(_.isObject(realm.regexp), true);
+        assert.strictEqual(_.isObject(realm.string), true);
       }
       else {
         skipTest(assert, 7);
@@ -9293,13 +9297,13 @@
     QUnit.test('should work with objects from another realm', function(assert) {
       assert.expect(6);
 
-      if (_._object) {
-        assert.strictEqual(_.isObjectLike(_._object), true);
-        assert.strictEqual(_.isObjectLike(_._boolean), true);
-        assert.strictEqual(_.isObjectLike(_._date), true);
-        assert.strictEqual(_.isObjectLike(_._number), true);
-        assert.strictEqual(_.isObjectLike(_._regexp), true);
-        assert.strictEqual(_.isObjectLike(_._string), true);
+      if (realm.object) {
+        assert.strictEqual(_.isObjectLike(realm.boolean), true);
+        assert.strictEqual(_.isObjectLike(realm.date), true);
+        assert.strictEqual(_.isObjectLike(realm.number), true);
+        assert.strictEqual(_.isObjectLike(realm.object), true);
+        assert.strictEqual(_.isObjectLike(realm.regexp), true);
+        assert.strictEqual(_.isObjectLike(realm.string), true);
       }
       else {
         skipTest(assert, 6);
@@ -9396,8 +9400,8 @@
     QUnit.test('should work with objects from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isPlainObject(_._object), true);
+      if (realm.object) {
+        assert.strictEqual(_.isPlainObject(realm.object), true);
       }
       else {
         skipTest(assert);
@@ -9446,8 +9450,8 @@
     QUnit.test('should work with regexes from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isRegExp(_._regexp), true);
+      if (realm.regexp) {
+        assert.strictEqual(_.isRegExp(realm.regexp), true);
       }
       else {
         skipTest(assert);
@@ -9496,8 +9500,8 @@
     QUnit.test('should work with strings from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isString(_._string), true);
+      if (realm.string) {
+        assert.strictEqual(_.isString(realm.string), true);
       }
       else {
         skipTest(assert);
@@ -9555,17 +9559,15 @@
     QUnit.test('should work with typed arrays from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        var props = _.map(typedArrays, function(type) {
-          return '_' + type.toLowerCase();
-        });
+      if (realm.object) {
+        var props = _.invoke(typedArrays, 'toLowerCase');
 
         var expected = _.map(props, function(key) {
-          return key in _;
+          return key in realm;
         });
 
         var actual = _.map(props, function(key) {
-          var value = _[key];
+          var value = realm[key];
           return value ? _.isTypedArray(value) : false;
         });
 
@@ -9619,8 +9621,8 @@
     QUnit.test('should work with `undefined` from another realm', function(assert) {
       assert.expect(1);
 
-      if (_._object) {
-        assert.strictEqual(_.isUndefined(_._undefined), true);
+      if (realm.object) {
+        assert.strictEqual(_.isUndefined(realm.undefined), true);
       }
       else {
         skipTest(assert);
@@ -13219,7 +13221,7 @@
     QUnit.test('should work with a `root` of `this`', function(assert) {
       assert.expect(2);
 
-      if (!isModularize && !document && _._object) {
+      if (!isModularize && !document && realm.object) {
         var fs = require('fs'),
             vm = require('vm'),
             expected = {},

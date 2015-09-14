@@ -1276,10 +1276,6 @@
    * var defer = _.runInContext({ 'setTimeout': setImmediate }).defer;
    */
   function runInContext(context) {
-    // Avoid issues with some ES3 environments that attempt to use values, named
-    // after built-in constructors like `Object`, for the creation of literals.
-    // ES5 clears this up by stating that literals must use built-in constructors.
-    // See https://es5.github.io/#x11.1.5 for more details.
     context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
 
     /** Native constructor references. */

@@ -6366,8 +6366,8 @@
      * Iteratee functions may exit iteration early by explicitly returning `false`.
      *
      * **Note:** As with other "Collections" methods, objects with a "length" property
-     * are iterated like arrays. To avoid this behavior `_.forIn` or `_.forOwn`
-     * may be used for object iteration.
+     * are iterated like arrays. To avoid this behavior use `_.forIn` or `_.forOwn`
+     * for object iteration.
      *
      * @static
      * @memberOf _

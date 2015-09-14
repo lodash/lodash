@@ -10590,7 +10590,7 @@
       var result = '';
       string = baseToString(string);
       n = toInteger(n);
-      if (n < 1 || n == POSITIVE_INFINITY || n == NEGATIVE_INFINITY || !string) {
+      if (!string || n < 1 || n == POSITIVE_INFINITY || n == NEGATIVE_INFINITY) {
         return result;
       }
       // Leverage the exponentiation by squaring algorithm for a faster repeat.

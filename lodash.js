@@ -1192,8 +1192,19 @@
    */
   function stringSize(string) {
     return (string && reStrSurrogate.test(string))
-      ? string.match(reStrSymbol).length
+      ? stringToArray(string).length
       : string.length;
+  }
+
+  /**
+   * Converts `string` to an array.
+   *
+   * @private
+   * @param {string} string The string to convert.
+   * @returns {Array} Returns the converted array.
+   */
+  function stringToArray(string) {
+    return string ? string.match(reStrSymbol) : [];
   }
 
   /**
@@ -3619,7 +3630,7 @@
 
       var result = repeat(chars, nativeCeil(padLength / stringSize(chars)));
       return reStrSurrogate.test(chars)
-        ? result.match(reStrSymbol).slice(0, padLength).join('')
+        ? stringToArray(result).slice(0, padLength).join('')
         : result.slice(0, padLength);
     }
 
@@ -8976,13 +8987,7 @@
         return [];
       }
       if (isArrayLike(value)) {
-        if (!value.length) {
-          return [];
-        }
-        if (!isArray(value) && isString(value)) {
-          return reStrSurrogate.test(value) ? value.match(reStrSymbol) : value.split('');
-        }
-        return copyArray(value);
+        return (!isArray(value) && isString(value)) ? stringToArray(value) : copyArray(value);
       }
       if (iteratorSymbol && value[iteratorSymbol]) {
         return iteratorToArray(value[iteratorSymbol]());
@@ -11028,7 +11033,10 @@
       if (end < 1) {
         return omission;
       }
-      var result = string.slice(0, end);
+      var result = reStrSurrogate.test(string)
+        ? stringToArray(string).slice(0, end).join('')
+        : string.slice(0, end);
+
       if (separator === undefined) {
         return result + omission;
       }

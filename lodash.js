@@ -806,39 +806,35 @@
   }
 
   /**
-   * Used by `_.trim` and `_.trimLeft` to get the index of the first character
-   * of `string` that is not found in `chars`.
+   * Used by `_.trim` and `_.trimLeft` to get the index of the first string symbol
+   * that is not found in the character symbols.
    *
    * @private
-   * @param {string} string The string to inspect.
-   * @param {string} chars The characters to find.
-   * @returns {number} Returns the index of the first character not found in `chars`.
+   * @param {Array} strSymbols The string symbols to inspect.
+   * @param {Array} chrSymbols The character symbols to find.
+   * @returns {number} Returns the index of the first unmatched string symbol.
    */
-  function charsLeftIndex(string, chars) {
-    var chrArray = chars.match(reStrSymbol),
-        strArray = string.match(reStrSymbol),
-        index = -1,
-        length = strArray.length;
+  function charsLeftIndex(strSymbols, chrSymbols) {
+    var index = -1,
+        length = strSymbols.length;
 
-    while (++index < length && baseIndexOf(chrArray, strArray[index], 0) > -1) {}
+    while (++index < length && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
     return index;
   }
 
   /**
-   * Used by `_.trim` and `_.trimRight` to get the index of the last character
-   * of `string` that is not found in `chars`.
+   * Used by `_.trim` and `_.trimRight` to get the index of the last string symbol
+   * that is not found in the character symbols.
    *
    * @private
-   * @param {string} string The string to inspect.
-   * @param {string} chars The characters to find.
-   * @returns {number} Returns the index of the last character not found in `chars`.
+   * @param {Array} strSymbols The string symbols to inspect.
+   * @param {Array} chrSymbols The character symbols to find.
+   * @returns {number} Returns the index of the last unmatched string symbol.
    */
-  function charsRightIndex(string, chars) {
-    var chrArray = chars.match(reStrSymbol),
-        strArray = string.match(reStrSymbol),
-        index = strArray.length;
+  function charsRightIndex(strSymbols, chrSymbols) {
+    var index = strSymbols.length;
 
-    while (index-- && baseIndexOf(chrArray, strArray[index], 0) > -1) {}
+    while (index-- && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
     return index;
   }
 
@@ -10924,7 +10920,13 @@
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = (chars + '');
-      return chars ? string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1) : string;
+      if (!chars) {
+        return string;
+      }
+      var strSymbols = string.match(reStrSymbol),
+          chrSymbols = chars.match(reStrSymbol);
+
+      return strSymbols.slice(charsLeftIndex(strSymbols, chrSymbols), charsRightIndex(strSymbols, chrSymbols) + 1).join('');
     }
 
     /**
@@ -10954,7 +10956,11 @@
         return string.slice(trimmedLeftIndex(string));
       }
       chars = (chars + '');
-      return chars ? string.slice(charsLeftIndex(string, chars)) : string;
+      if (!chars) {
+        return string;
+      }
+      var strSymbols = string.match(reStrSymbol);
+      return strSymbols.slice(charsLeftIndex(strSymbols, chars.match(reStrSymbol))).join('');
     }
 
     /**
@@ -10984,7 +10990,11 @@
         return string.slice(0, trimmedRightIndex(string) + 1);
       }
       chars = (chars + '');
-      return chars ? string.slice(0, charsRightIndex(string, chars) + 1) : string;
+      if (!chars) {
+        return string;
+      }
+      var strSymbols = string.match(reStrSymbol);
+      return strSymbols.slice(0, charsRightIndex(strSymbols, chars.match(reStrSymbol)) + 1).join('');
     }
 
     /**

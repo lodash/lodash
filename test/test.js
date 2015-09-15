@@ -18824,16 +18824,36 @@
   QUnit.module('astral symbols');
 
   (function() {
-    var string = 'I \uD83D\uDC95 the \uD83C\uDF42';
+    var hearts = '\uD83D\uDC95',
+        leafs = '\uD83C\uDF42',
+        string = 'I ' + hearts + ' the ' + leafs;
 
     QUnit.test('should account for astral symbols', function(assert) {
-      assert.expect(5);
+      assert.expect(17);
 
-      assert.strictEqual(_.size(string), 9);
+      assert.strictEqual(_.camelCase(hearts + ' the ' + leafs), hearts + 'The' + leafs);
+      assert.strictEqual(_.camelCase(string), 'i' + hearts + 'The' + leafs);
+      assert.strictEqual(_.capitalize(hearts), hearts);
+
       assert.strictEqual(_.pad(string, 12), ' ' + string + '  ');
       assert.strictEqual(_.padLeft(string, 12), '   ' + string);
       assert.strictEqual(_.padRight(string, 12), string + '   ');
-      assert.deepEqual(_.toArray(string), ['I', ' ', '\uD83D\uDC95', ' ', 't', 'h', 'e', ' ', '\uD83C\uDF42']);
+
+      assert.strictEqual(_.pad(string, 12, hearts + leafs), hearts + string + hearts + leafs);
+      assert.strictEqual(_.padLeft(string, 12, hearts + leafs), hearts + leafs + hearts + string);
+      assert.strictEqual(_.padRight(string, 12, hearts + leafs), string + hearts + leafs + hearts);
+
+      assert.strictEqual(_.size(string), 9);
+      assert.deepEqual(_.toArray(string), ['I', ' ', hearts, ' ', 't', 'h', 'e', ' ', leafs]);
+
+      assert.strictEqual(_.trim(hearts + hearts + string + hearts + hearts, hearts), string);
+      assert.strictEqual(_.trimLeft(hearts + hearts + string + hearts + hearts, hearts), string + hearts + hearts);
+      assert.strictEqual(_.trimRight(hearts + hearts + string + hearts + hearts, hearts), hearts + hearts + string);
+
+      assert.strictEqual(_.trunc(string, { 'length': 9 }), string);
+      assert.strictEqual(_.trunc(string, { 'length': 6 }), 'I ' + hearts + '...');
+
+      assert.deepEqual(_.words(string), ['I', hearts, 'the', leafs]);
     });
   }());
 

@@ -93,8 +93,8 @@
       uint32Tag = '[object Uint32Array]';
 
   /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
-  var reStrSymbol = /[^\ud800-\udbff\udc00-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udbff\udc00-\udfff]/g,
-      reStrSurrogate = /[\ud800-\udbff\udc00-\udfff]/;
+  var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g,
+      reStrSurrogate = /[\ud800-\udfff]/;
 
   /** Used to match empty string literals in compiled template source. */
   var reEmptyStringLeading = /\b__p \+= '';/g,

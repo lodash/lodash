@@ -815,13 +815,12 @@
    * @returns {number} Returns the index of the first character not found in `chars`.
    */
   function charsLeftIndex(string, chars) {
-    string = string ? string.match(reStrSymbol) : [];
-    chars = chars ? chars.match(reStrSymbol) : [];
+    var chrArray = chars.match(reStrSymbol),
+        strArray = string.match(reStrSymbol),
+        index = -1,
+        length = strArray.length;
 
-    var index = -1,
-        length = string.length;
-
-    while (++index < length && baseIndexOf(chars, string[index], 0) > -1) {}
+    while (++index < length && baseIndexOf(chrArray, strArray[index], 0) > -1) {}
     return index;
   }
 
@@ -835,11 +834,11 @@
    * @returns {number} Returns the index of the last character not found in `chars`.
    */
   function charsRightIndex(string, chars) {
-    string = string ? string.match(reStrSymbol) : [];
-    chars = chars ? chars.match(reStrSymbol) : [];
+    var chrArray = chars.match(reStrSymbol),
+        strArray = string.match(reStrSymbol),
+        index = strArray.length;
 
-    var index = string.length;
-    while (index-- && baseIndexOf(chars, string[index], 0) > -1) {}
+    while (index-- && baseIndexOf(chrArray, strArray[index], 0) > -1) {}
     return index;
   }
 
@@ -10311,8 +10310,11 @@
       if (!string) {
         return string;
       }
-      var array = stringToArray(string);
-      return array[0].toUpperCase() + array.slice(1).join('');
+      if (reStrSurrogate.test(string)) {
+        var array = stringToArray(string);
+        return array[0].toUpperCase() + array.slice(1).join('');
+      }
+      return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     /**
@@ -10914,7 +10916,6 @@
      * // => ['foo', 'bar']
      */
     function trim(string, chars, guard) {
-      var value = string;
       string = baseToString(string);
       if (!string) {
         return string;
@@ -10923,7 +10924,7 @@
         return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
       }
       chars = (chars + '');
-      return string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1);
+      return chars ? string.slice(charsLeftIndex(string, chars), charsRightIndex(string, chars) + 1) : string;
     }
 
     /**
@@ -10945,7 +10946,6 @@
      * // => 'abc-_-'
      */
     function trimLeft(string, chars, guard) {
-      var value = string;
       string = baseToString(string);
       if (!string) {
         return string;
@@ -10953,7 +10953,8 @@
       if (guard || chars === undefined) {
         return string.slice(trimmedLeftIndex(string));
       }
-      return string.slice(charsLeftIndex(string, (chars + '')));
+      chars = (chars + '');
+      return chars ? string.slice(charsLeftIndex(string, chars)) : string;
     }
 
     /**
@@ -10975,7 +10976,6 @@
      * // => '-_-abc'
      */
     function trimRight(string, chars, guard) {
-      var value = string;
       string = baseToString(string);
       if (!string) {
         return string;
@@ -10983,7 +10983,8 @@
       if (guard || chars === undefined) {
         return string.slice(0, trimmedRightIndex(string) + 1);
       }
-      return string.slice(0, charsRightIndex(string, (chars + '')) + 1);
+      chars = (chars + '');
+      return chars ? string.slice(0, charsRightIndex(string, chars) + 1) : string;
     }
 
     /**

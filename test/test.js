@@ -18327,8 +18327,9 @@
     });
 
     QUnit.test('should convert strings to arrays', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
+      assert.deepEqual(_.toArray(''), []);
       assert.deepEqual(_.toArray('ab'), ['a', 'b']);
       assert.deepEqual(_.toArray(Object('ab')), ['a', 'b']);
     });

@@ -18855,6 +18855,17 @@
 
       assert.deepEqual(_.words(string), ['I', hearts, 'the', leafs]);
     });
+
+    QUnit.test('should match lone surrogates', function(assert) {
+      assert.expect(3);
+
+      var pairs = hearts.split(''),
+          loneSurrogates = pairs[0] + ' ' + pairs[1];
+
+      assert.strictEqual(_.size(loneSurrogates), 3);
+      assert.deepEqual(_.toArray(loneSurrogates), [pairs[0], ' ', pairs[1]]);
+      assert.deepEqual(_.words(loneSurrogates), []);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

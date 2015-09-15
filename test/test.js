@@ -18821,6 +18821,24 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('astral symbols');
+
+  (function() {
+    var string = 'I \uD83D\uDC95 the \uD83C\uDF42';
+
+    QUnit.test('should account for astral symbols', function(assert) {
+      assert.expect(5);
+
+      assert.strictEqual(_.size(string), 9);
+      assert.strictEqual(_.pad(string, 12), ' ' + string + '  ');
+      assert.strictEqual(_.padLeft(string, 12), '   ' + string);
+      assert.strictEqual(_.padRight(string, 12), string + '   ');
+      assert.deepEqual(_.toArray(string), ['I', ' ', '\uD83D\uDC95', ' ', 't', 'h', 'e', ' ', '\uD83C\uDF42']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unescape');
 
   (function() {

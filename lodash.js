@@ -10311,8 +10311,8 @@
       if (!string) {
         return string;
       }
-      var symbols = stringToArray(string);
-      return symbols[0].toUpperCase() + symbols.slice(1).join('');
+      var array = stringToArray(string);
+      return array[0].toUpperCase() + array.slice(1).join('');
     }
 
     /**
@@ -10660,8 +10660,7 @@
      * // => 'Foo Bar'
      */
     var startCase = createCompounder(function(result, word, index) {
-      var symbols = stringToArray(word);
-      return result + (index ? ' ' : '') + (symbols[0].toUpperCase() + symbols.slice(1).join(''));
+      return result + (index ? ' ' : '') + capitalize(word);
     });
 
     /**

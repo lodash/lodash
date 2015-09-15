@@ -10483,7 +10483,7 @@
           leftLength = nativeFloor(mid),
           rightLength = nativeCeil(mid);
 
-      return createPadding('', leftLength, chars) + string + createPadding('', rightLength, chars)
+      return createPadding('', leftLength, chars) + string + createPadding('', rightLength, chars);
     }
 
     /**

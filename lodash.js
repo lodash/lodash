@@ -10307,8 +10307,8 @@
         return string;
       }
       if (reStrSurrogate.test(string)) {
-        var array = stringToArray(string);
-        return array[0].toUpperCase() + array.slice(1).join('');
+        var strSymbols = stringToArray(string);
+        return strSymbols[0].toUpperCase() + strSymbols.slice(1).join('');
       }
       return string.charAt(0).toUpperCase() + string.slice(1);
     }
@@ -10923,8 +10923,8 @@
       if (!chars) {
         return string;
       }
-      var strSymbols = string.match(reStrSymbol),
-          chrSymbols = chars.match(reStrSymbol);
+      var strSymbols = stringToArray(string),
+          chrSymbols = stringToArray(chars);
 
       return strSymbols.slice(charsLeftIndex(strSymbols, chrSymbols), charsRightIndex(strSymbols, chrSymbols) + 1).join('');
     }
@@ -10959,7 +10959,7 @@
       if (!chars) {
         return string;
       }
-      var strSymbols = string.match(reStrSymbol);
+      var strSymbols = stringToArray(string);
       return strSymbols.slice(charsLeftIndex(strSymbols, chars.match(reStrSymbol))).join('');
     }
 
@@ -10993,7 +10993,7 @@
       if (!chars) {
         return string;
       }
-      var strSymbols = string.match(reStrSymbol);
+      var strSymbols = stringToArray(string);
       return strSymbols.slice(0, charsRightIndex(strSymbols, chars.match(reStrSymbol)) + 1).join('');
     }
 

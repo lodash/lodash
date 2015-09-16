@@ -18494,7 +18494,7 @@
       assert.expect(6);
 
       assert.strictEqual(_.toInteger(-5.6), -5);
-      assert.strictEqual(_.toInteger('3.14'), 3);
+      assert.strictEqual(_.toInteger('5.6'), 5);
       assert.strictEqual(_.toInteger(), 0);
       assert.strictEqual(_.toInteger(NaN), 0);
       assert.strictEqual(_.toInteger(Infinity), MAX_INTEGER);

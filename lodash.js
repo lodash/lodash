@@ -8573,7 +8573,7 @@
      * // => false
      */
     function isInteger(value) {
-      return value === toInteger(value);
+      return typeof value == 'number' && value == toInteger(value);
     }
 
     /**

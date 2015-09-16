@@ -1587,7 +1587,7 @@
       this.__dir__ = 1;
       this.__filtered__ = false;
       this.__iteratees__ = [];
-      this.__takeCount__ = POSITIVE_INFINITY;
+      this.__takeCount__ = INFINITY;
       this.__views__ = [];
     }
 
@@ -6793,7 +6793,7 @@
           length = result.length,
           lastIndex = length - 1;
 
-      n = nativeMin(n < 0 ? 0 : toInteger(n), length);
+      n = nativeMin(nativeMax(toInteger(n), 0), length);
       while (++index < n) {
         var rand = baseRandom(index, lastIndex),
             value = result[rand];
@@ -6820,7 +6820,7 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
-      return sample(collection, POSITIVE_INFINITY);
+      return sample(collection, INFINITY);
     }
 
     /**
@@ -10658,7 +10658,7 @@
       var result = '';
       string = baseToString(string);
       n = toInteger(n);
-      if (!string || n < 1 || n == POSITIVE_INFINITY || n == NEGATIVE_INFINITY) {
+      if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
         return result;
       }
       // Leverage the exponentiation by squaring algorithm for a faster repeat.
@@ -11645,7 +11645,7 @@
      */
     function times(n, iteratee) {
       n = toInteger(n);
-      if (n < 1 || n == POSITIVE_INFINITY || n == NEGATIVE_INFINITY) {
+      if (n < 1 || n > MAX_SAFE_INTEGER) {
         return [];
       }
       var index = MAX_ARRAY_LENGTH,
@@ -11794,8 +11794,8 @@
      */
     function max(array) {
       return (array && array.length)
-        ? arrayExtremum(array, identity, gt, NEGATIVE_INFINITY)
-        : NEGATIVE_INFINITY;
+        ? arrayExtremum(array, identity, gt, -INFINITY)
+        : -INFINITY;
     }
 
     /**
@@ -11825,8 +11825,8 @@
      */
     function maxBy(array, iteratee) {
       return (array && array.length)
-        ? arrayExtremum(array, getIteratee(iteratee), gt, NEGATIVE_INFINITY)
-        : NEGATIVE_INFINITY;
+        ? arrayExtremum(array, getIteratee(iteratee), gt, -INFINITY)
+        : -INFINITY;
     }
 
     /**
@@ -11848,8 +11848,8 @@
      */
     function min(array) {
       return (array && array.length)
-        ? arrayExtremum(array, identity, lt, POSITIVE_INFINITY)
-        : POSITIVE_INFINITY;
+        ? arrayExtremum(array, identity, lt, INFINITY)
+        : INFINITY;
     }
 
     /**
@@ -11879,8 +11879,8 @@
      */
     function minBy(array, iteratee) {
       return (array && array.length)
-        ? arrayExtremum(array, getIteratee(iteratee), lt, POSITIVE_INFINITY)
-        : POSITIVE_INFINITY;
+        ? arrayExtremum(array, getIteratee(iteratee), lt, INFINITY)
+        : INFINITY;
     }
 
     /**
@@ -12268,9 +12268,9 @@
 
         var result = this.clone();
         if (filtered) {
-          result.__takeCount__ = nativeMin(result.__takeCount__, n);
+          result.__takeCount__ = nativeMin(n, result.__takeCount__);
         } else {
-          result.__views__.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
+          result.__views__.push({ 'size': nativeMin(n, MAX_ARRAY_LENGTH), 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
         }
         return result;
       };
@@ -12354,7 +12354,7 @@
     };
 
     LazyWrapper.prototype.toArray = function() {
-      return this.take(POSITIVE_INFINITY);
+      return this.take(MAX_ARRAY_LENGTH);
     };
 
     // Add `LazyWrapper` methods to `lodash.prototype`.

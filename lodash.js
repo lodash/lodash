@@ -51,7 +51,7 @@
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
-      MAX_VALUE = 1.7976931348623157e308;
+      MAX_INTEGER = 1e308;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
@@ -9072,13 +9072,12 @@
      * // => 0
      *
      * _.toInteger(-Infinity)
-     * // => -Number.MAX_VALUE
+     * // => -1e308
      */
     function toInteger(value) {
-      var result = nativeFloor(value) || 0;
-      return result == INFINITY
-        ? MAX_VALUE
-        : (result == -INFINITY ? -MAX_VALUE : result);
+      return (value == INFINITY || value == -INFINITY)
+        ? (value < 0 ? -1 : 1) * MAX_INTEGER
+        : (value - (value % 1)) || 0;
     }
 
     /**

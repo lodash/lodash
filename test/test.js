@@ -12,12 +12,13 @@
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /** Used as references for the max length and index of an array. */
-  var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+  /** Used as references for various `Number` constants. */
+  var MAX_SAFE_INTEGER = 9007199254740991,
+      MAX_INTEGER = 1e308;
 
-  /** Used as the maximum length an array-like object. */
-  var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+  /** Used as references for the maximum length and index of an array. */
+  var MAX_ARRAY_LENGTH = 4294967295,
+      MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1;
 
   /** `Object#toString` result references. */
   var funcTag = '[object Function]',
@@ -18430,12 +18431,13 @@
 
   (function() {
     QUnit.test('should convert values to integers', function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
       assert.strictEqual(_.toInteger('3.14'), 3);
       assert.strictEqual(_.toInteger(), 0);
       assert.strictEqual(_.toInteger(NaN), 0);
-      assert.strictEqual(_.toInteger(-Infinity), -1.7976931348623157e+308);
+      assert.strictEqual(_.toInteger(Infinity), MAX_INTEGER);
+      assert.strictEqual(_.toInteger(-Infinity), -MAX_INTEGER);
     });
   }());
 

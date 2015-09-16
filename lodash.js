@@ -9059,7 +9059,7 @@
     /**
      * Converts `value` to an integer.
      *
-     * **Note:** This function is based on [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
+     * **Note:** This function is loosely based on [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
      *
      * @static
      * @memberOf _
@@ -9074,11 +9074,14 @@
      * _.toInteger(NaN);
      * // => 0
      *
-     * _.toInteger(-Infinity);
-     * // => -Infinity
+     * _.toInteger(-Infinity)
+     * // => -Number.MAX_VALUE
      */
     function toInteger(value) {
-      return nativeFloor(value) || 0;
+      var result = nativeFloor(value) || 0;
+      return result == INFINITY
+        ? MAX_VALUE
+        : (result == -INFINITY ? -MAX_VALUE : result);
     }
 
     /**

@@ -1183,9 +1183,14 @@
    * @returns {number} Returns the string size.
    */
   function stringSize(string) {
-    return (string && reStrSurrogate.test(string))
-      ? stringToArray(string).length
-      : string.length;
+    if (!(string && reStrSurrogate.test(string))) {
+      return string.length;
+    }
+    var result = reStrSymbol.lastIndex = 0;
+    while (reStrSymbol.test(string)) {
+      result++;
+    }
+    return result;
   }
 
   /**

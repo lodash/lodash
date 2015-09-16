@@ -48,20 +48,15 @@
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
+  /** Used as references for various `Number` constants. */
+  var INFINITY = 1 / 0,
+      MAX_SAFE_INTEGER = 9007199254740991,
+      MAX_VALUE = 1.7976931348623157e308;
+
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
       MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
       HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
-
-  /**
-   * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
-   * of an array-like value.
-   */
-  var MAX_SAFE_INTEGER = 9007199254740991;
-
-  /** Used as references for `-Infinity` and `Infinity`. */
-  var NEGATIVE_INFINITY = 1 / -0,
-      POSITIVE_INFINITY = 1 / 0;
 
   /** Used as the internal argument placeholder. */
   var PLACEHOLDER = '__lodash_placeholder__';
@@ -1424,9 +1419,9 @@
      * `remove`, `rest`, `restParam`, `reverse`, `set`, `setWith`, `shuffle`,
      * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `take`,
      * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-     * `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`, `uniq`,
-     * `uniqBy`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
-     * `without`, `wrap`, `xor`, `zip`, `zipObject`, and `zipWith`
+     * `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`,
+     * `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`,
+     * `valuesIn`, `without`, `wrap`, `xor`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
@@ -1435,16 +1430,17 @@
      * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
      * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
      * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`,
-     * `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`,
-     * `isObjectLike`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`,
-     * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lt`, `lte`,
-     * `max`, `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`,
-     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`,
-     * `round`, `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-     * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-     * `startsWith`, `sum`, `sumBy`, `template`, `toInteger', 'trim`, `trimLeft`,
-     * `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`, and `words`
+     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`,
+     * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
+     * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
+     * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
+     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`,
+     * `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
+     * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
+     * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
+     * `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`, `sumBy`, `template`,
+     * `toInteger`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
+     * `value`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -8551,6 +8547,34 @@
     }
 
     /**
+     * Checks if `value` is an integer.
+     *
+     * **Note:** This method is based on [`Number.isInteger`](http://ecma-international.org/ecma-262/6.0/#sec-number.isinteger).
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an integer, else `false`.
+     * @example
+     *
+     * _.isInteger(3);
+     * // => true
+     *
+     * _.isInteger(Number.MAX_VALUE);
+     * // => true
+     *
+     * _.isInteger(3.14);
+     * // => false
+     *
+     * _.isInteger(Infinity);
+     * // => false
+     */
+    function isInteger(value) {
+      return value === toInteger(value);
+    }
+
+    /**
      * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
@@ -8854,6 +8878,36 @@
      */
     function isRegExp(value) {
       return isObject(value) && objToString.call(value) == regexpTag;
+    }
+
+    /**
+     * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
+     * double precision number which isn't the result of rounding result of unsafe
+     * integers.
+     *
+     * **Note:** This method is based on [`Number.isSafeInteger`](http://ecma-international.org/ecma-262/6.0/#sec-number.issafeinteger).
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a safe integer, else `false`.
+     * @example
+     *
+     * _.isSafeInteger(3);
+     * // => true
+     *
+     * _.isSafeInteger(Number.MAX_VALUE);
+     * // => false
+     *
+     * _.isSafeInteger(3.14);
+     * // => false
+     *
+     * _.isSafeInteger(Infinity);
+     * // => false
+     */
+    function isSafeInteger(value) {
+      return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
     }
 
     /**
@@ -12096,6 +12150,7 @@
     lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
+    lodash.isInteger = isInteger;
     lodash.isMatch = isMatch;
     lodash.isMatchWith = isMatchWith;
     lodash.isNaN = isNaN;
@@ -12107,6 +12162,7 @@
     lodash.isObjectLike = isObjectLike;
     lodash.isPlainObject = isPlainObject;
     lodash.isRegExp = isRegExp;
+    lodash.isSafeInteger = isSafeInteger;
     lodash.isString = isString;
     lodash.isTypedArray = isTypedArray;
     lodash.isUndefined = isUndefined;

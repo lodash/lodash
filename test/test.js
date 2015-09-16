@@ -9657,12 +9657,13 @@
     });
 
     QUnit.test('should not error on host objects (test in IE)', function(assert) {
-      assert.expect(18);
+      assert.expect(20);
 
       var funcs = [
-        'isArguments', 'isArray', 'isArrayLike', 'isBoolean', 'isDate', 'isElement',
-        'isError', 'isFinite', 'isFunction', 'isNaN', 'isNil', 'isNull', 'isNumber',
-        'isObject', 'isObjectLike', 'isRegExp', 'isString', 'isUndefined'
+        'isArguments', 'isArray', 'isArrayLike', 'isBoolean', 'isDate',
+        'isElement', 'isError', 'isFinite', 'isFunction', 'isInteger', 'isNaN',
+        'isNil', 'isNull', 'isNumber', 'isObject', 'isObjectLike', 'isRegExp',
+        'isSafeInteger', 'isString', 'isUndefined'
       ];
 
       _.each(funcs, function(methodName) {
@@ -18435,7 +18436,7 @@
       assert.strictEqual(_.toInteger('3.14'), 3);
       assert.strictEqual(_.toInteger(), 0);
       assert.strictEqual(_.toInteger(NaN), 0);
-      assert.strictEqual(_.toInteger(-Infinity), -Infinity);
+      assert.strictEqual(_.toInteger(-Infinity), -1.7976931348623157e+308);
     });
   }());
 
@@ -20561,6 +20562,7 @@
       'isError',
       'isFinite',
       'isFunction',
+      'isInteger',
       'isNaN',
       'isNative',
       'isNil',
@@ -20570,6 +20572,7 @@
       'isObjectLike',
       'isPlainObject',
       'isRegExp',
+      'isSafeInteger',
       'isString',
       'isUndefined',
       'join',
@@ -20824,7 +20827,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(233);
+      assert.expect(235);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

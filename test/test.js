@@ -7028,7 +7028,7 @@
     });
 
     QUnit.test('should return `false` for non `arguments` objects', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -7046,7 +7046,6 @@
       assert.strictEqual(_.isArguments(slice), false);
       assert.strictEqual(_.isArguments({ '0': 1, 'callee': _.noop, 'length': 1 }), false);
       assert.strictEqual(_.isArguments(1), false);
-      assert.strictEqual(_.isArguments(NaN), false);
       assert.strictEqual(_.isArguments(/x/), false);
       assert.strictEqual(_.isArguments('a'), false);
     });
@@ -7077,7 +7076,7 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -7095,7 +7094,6 @@
       assert.strictEqual(_.isArray(slice), false);
       assert.strictEqual(_.isArray({ '0': 1, 'length': 1 }), false);
       assert.strictEqual(_.isArray(1), false);
-      assert.strictEqual(_.isArray(NaN), false);
       assert.strictEqual(_.isArray(/x/), false);
       assert.strictEqual(_.isArray('a'), false);
     });
@@ -7130,9 +7128,11 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(10);
+      assert.expect(9);
 
-      var expected = _.map(falsey, function(value) { return value === ''; });
+      var expected = _.map(falsey, function(value) {
+        return value === '';
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isArrayLike(value) : _.isArrayLike();
@@ -7145,9 +7145,8 @@
       assert.strictEqual(_.isArrayLike(new Error), false);
       assert.strictEqual(_.isArrayLike(_), false);
       assert.strictEqual(_.isArrayLike(slice), false);
-      assert.strictEqual(_.isArrayLike(), false);
+      assert.strictEqual(_.isArrayLike({ 'a': 1 }), false);
       assert.strictEqual(_.isArrayLike(1), false);
-      assert.strictEqual(_.isArrayLike(NaN), false);
       assert.strictEqual(_.isArrayLike(/x/), false);
     });
 
@@ -7184,9 +7183,11 @@
     });
 
     QUnit.test('should return `false` for non-booleans', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
-      var expected = _.map(falsey, function(value) { return value === false; });
+      var expected = _.map(falsey, function(value) {
+        return value === false;
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isBoolean(value) : _.isBoolean();
@@ -7202,7 +7203,6 @@
       assert.strictEqual(_.isBoolean(slice), false);
       assert.strictEqual(_.isBoolean({ 'a': 1 }), false);
       assert.strictEqual(_.isBoolean(1), false);
-      assert.strictEqual(_.isBoolean(NaN), false);
       assert.strictEqual(_.isBoolean(/x/), false);
       assert.strictEqual(_.isBoolean('a'), false);
     });
@@ -7233,7 +7233,7 @@
     });
 
     QUnit.test('should return `false` for non-dates', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -7251,7 +7251,6 @@
       assert.strictEqual(_.isDate(slice), false);
       assert.strictEqual(_.isDate({ 'a': 1 }), false);
       assert.strictEqual(_.isDate(1), false);
-      assert.strictEqual(_.isDate(NaN), false);
       assert.strictEqual(_.isDate(/x/), false);
       assert.strictEqual(_.isDate('a'), false);
     });
@@ -7294,7 +7293,7 @@
     });
 
     QUnit.test('should return `false` for non DOM elements', function(assert) {
-      assert.expect(13);
+      assert.expect(12);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -7313,7 +7312,6 @@
       assert.strictEqual(_.isElement(slice), false);
       assert.strictEqual(_.isElement({ 'a': 1 }), false);
       assert.strictEqual(_.isElement(1), false);
-      assert.strictEqual(_.isElement(NaN), false);
       assert.strictEqual(_.isElement(/x/), false);
       assert.strictEqual(_.isElement('a'), false);
     });
@@ -8236,7 +8234,7 @@
     });
 
     QUnit.test('should return `false` for non error objects', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -8254,7 +8252,6 @@
       assert.strictEqual(_.isError(slice), false);
       assert.strictEqual(_.isError({ 'a': 1 }), false);
       assert.strictEqual(_.isError(1), false);
-      assert.strictEqual(_.isError(NaN), false);
       assert.strictEqual(_.isError(/x/), false);
       assert.strictEqual(_.isError('a'), false);
     });
@@ -8298,9 +8295,22 @@
     });
 
     QUnit.test('should return `false` for non-finite values', function(assert) {
-      assert.expect(9);
+      assert.expect(1);
 
       var values = [NaN, Infinity, -Infinity, Object(1)],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        return _.isFinite(value);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return `false` for non-numeric values', function(assert) {
+      assert.expect(9);
+
+      var values = [undefined, [], true, '', ' ', '2px'],
           expected = _.map(values, _.constant(false));
 
       var actual = _.map(values, function(value) {
@@ -8317,19 +8327,6 @@
       assert.strictEqual(_.isFinite({ 'a': 1 }), false);
       assert.strictEqual(_.isFinite(/x/), false);
       assert.strictEqual(_.isFinite('a'), false);
-    });
-
-    QUnit.test('should return `false` for non-numeric values', function(assert) {
-      assert.expect(1);
-
-      var values = [undefined, [], true, new Date, new Error, '', ' ', '2px'],
-          expected = _.map(values, _.constant(false));
-
-      var actual = _.map(values, function(value) {
-        return _.isFinite(value);
-      });
-
-      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should return `false` for numeric string values', function(assert) {
@@ -8375,7 +8372,7 @@
     });
 
     QUnit.test('should return `false` for non-functions', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -8392,7 +8389,6 @@
       assert.strictEqual(_.isFunction(new Error), false);
       assert.strictEqual(_.isFunction({ 'a': 1 }), false);
       assert.strictEqual(_.isFunction(1), false);
-      assert.strictEqual(_.isFunction(NaN), false);
       assert.strictEqual(_.isFunction(/x/), false);
       assert.strictEqual(_.isFunction('a'), false);
 
@@ -8912,7 +8908,9 @@
     QUnit.test('should return `false` for non-NaNs', function(assert) {
       assert.expect(13);
 
-      var expected = _.map(falsey, function(value) { return value !== value; });
+      var expected = _.map(falsey, function(value) {
+        return value !== value;
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isNaN(value) : _.isNaN();
@@ -8974,7 +8972,7 @@
     });
 
     QUnit.test('should return `false` for non-native methods', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -8992,7 +8990,6 @@
       assert.strictEqual(_.isNative(_), false);
       assert.strictEqual(_.isNative({ 'a': 1 }), false);
       assert.strictEqual(_.isNative(1), false);
-      assert.strictEqual(_.isNative(NaN), false);
       assert.strictEqual(_.isNative(/x/), false);
       assert.strictEqual(_.isNative('a'), false);
     });
@@ -9029,9 +9026,11 @@
     });
 
     QUnit.test('should return `false` for non `null` values', function(assert) {
-      assert.expect(13);
+      assert.expect(12);
 
-      var expected = _.map(falsey, function(value) { return value === null; });
+      var expected = _.map(falsey, function(value) {
+        return value === null;
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isNull(value) : _.isNull();
@@ -9048,7 +9047,6 @@
       assert.strictEqual(_.isNull(slice), false);
       assert.strictEqual(_.isNull({ 'a': 1 }), false);
       assert.strictEqual(_.isNull(1), false);
-      assert.strictEqual(_.isNull(NaN), false);
       assert.strictEqual(_.isNull(/x/), false);
       assert.strictEqual(_.isNull('a'), false);
     });
@@ -9081,7 +9079,7 @@
     });
 
     QUnit.test('should return `false` for non-nullish values', function(assert) {
-      assert.expect(13);
+      assert.expect(12);
 
       var expected = _.map(falsey, function(value) {
         return value == null;
@@ -9102,7 +9100,6 @@
       assert.strictEqual(_.isNil(slice), false);
       assert.strictEqual(_.isNil({ 'a': 1 }), false);
       assert.strictEqual(_.isNil(1), false);
-      assert.strictEqual(_.isNil(NaN), false);
       assert.strictEqual(_.isNil(/x/), false);
       assert.strictEqual(_.isNil('a'), false);
     });
@@ -9138,7 +9135,9 @@
     QUnit.test('should return `false` for non-numbers', function(assert) {
       assert.expect(11);
 
-      var expected = _.map(falsey, function(value) { return typeof value == 'number'; });
+      var expected = _.map(falsey, function(value) {
+        return typeof value == 'number';
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isNumber(value) : _.isNumber();
@@ -9424,7 +9423,7 @@
     });
 
     QUnit.test('should return `false` for non-regexes', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -9443,7 +9442,6 @@
       assert.strictEqual(_.isRegExp(slice), false);
       assert.strictEqual(_.isRegExp({ 'a': 1 }), false);
       assert.strictEqual(_.isRegExp(1), false);
-      assert.strictEqual(_.isRegExp(NaN), false);
       assert.strictEqual(_.isRegExp('a'), false);
     });
 
@@ -9474,9 +9472,11 @@
     });
 
     QUnit.test('should return `false` for non-strings', function(assert) {
-      assert.expect(12);
+      assert.expect(11);
 
-      var expected = _.map(falsey, function(value) { return value === ''; });
+      var expected = _.map(falsey, function(value) {
+        return value === '';
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isString(value) : _.isString();
@@ -9493,7 +9493,6 @@
       assert.strictEqual(_.isString(slice), false);
       assert.strictEqual(_.isString({ '0': 1, 'length': 1 }), false);
       assert.strictEqual(_.isString(1), false);
-      assert.strictEqual(_.isString(NaN), false);
       assert.strictEqual(_.isString(/x/), false);
     });
 
@@ -9532,7 +9531,7 @@
     });
 
     QUnit.test('should return `false` for non typed arrays', function(assert) {
-      assert.expect(13);
+      assert.expect(12);
 
       var expected = _.map(falsey, _.constant(false));
 
@@ -9551,7 +9550,6 @@
       assert.strictEqual(_.isTypedArray(slice), false);
       assert.strictEqual(_.isTypedArray({ 'a': 1 }), false);
       assert.strictEqual(_.isTypedArray(1), false);
-      assert.strictEqual(_.isTypedArray(NaN), false);
       assert.strictEqual(_.isTypedArray(/x/), false);
       assert.strictEqual(_.isTypedArray('a'), false);
     });
@@ -9594,9 +9592,11 @@
     });
 
     QUnit.test('should return `false` for non `undefined` values', function(assert) {
-      assert.expect(13);
+      assert.expect(12);
 
-      var expected = _.map(falsey, function(value) { return value === undefined; });
+      var expected = _.map(falsey, function(value) {
+        return value === undefined;
+      });
 
       var actual = _.map(falsey, function(value, index) {
         return index ? _.isUndefined(value) : _.isUndefined();
@@ -9613,7 +9613,6 @@
       assert.strictEqual(_.isUndefined(slice), false);
       assert.strictEqual(_.isUndefined({ 'a': 1 }), false);
       assert.strictEqual(_.isUndefined(1), false);
-      assert.strictEqual(_.isUndefined(NaN), false);
       assert.strictEqual(_.isUndefined(/x/), false);
       assert.strictEqual(_.isUndefined('a'), false);
     });

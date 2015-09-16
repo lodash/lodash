@@ -11022,7 +11022,7 @@
         return string;
       }
       var strSymbols = stringToArray(string);
-      return strSymbols.slice(charsLeftIndex(strSymbols, chars.match(reStrSymbol))).join('');
+      return strSymbols.slice(charsLeftIndex(strSymbols, stringToArray(chars))).join('');
     }
 
     /**
@@ -11056,7 +11056,7 @@
         return string;
       }
       var strSymbols = stringToArray(string);
-      return strSymbols.slice(0, charsRightIndex(strSymbols, chars.match(reStrSymbol)) + 1).join('');
+      return strSymbols.slice(0, charsRightIndex(strSymbols, stringToArray(chars)) + 1).join('');
     }
 
     /**

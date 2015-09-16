@@ -11102,25 +11102,34 @@
         omission = 'omission' in options ? baseToString(options.omission) : omission;
       }
       string = baseToString(string);
-      if (length >= stringSize(string)) {
+
+      var strLength = string.length;
+      if (reStrSurrogate.test(string)) {
+        var strSymbols = stringToArray(string);
+        strLength = strSymbols.length;
+      }
+      if (length >= strLength) {
         return string;
       }
       var end = length - stringSize(omission);
       if (end < 1) {
         return omission;
       }
-      var result = reStrSurrogate.test(string)
-        ? stringToArray(string).slice(0, end).join('')
+      var result = strSymbols
+        ? strSymbols.slice(0, end).join('')
         : string.slice(0, end);
 
       if (separator === undefined) {
         return result + omission;
       }
+      if (strSymbols) {
+        end += (result.length - end);
+      }
       if (isRegExp(separator)) {
         if (string.slice(end).search(separator)) {
           var match,
               newEnd,
-              substring = string.slice(0, end);
+              substring = result;
 
           if (!separator.global) {
             separator = RegExp(separator.source, (reFlags.exec(separator) || '') + 'g');

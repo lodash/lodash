@@ -8430,6 +8430,66 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('isInteger methods');
+
+  _.each(['isInteger', 'isSafeInteger'], function(methodName) {
+    var args = arguments,
+        func = _[methodName],
+        isSafe = methodName == 'isSafeInteger';
+
+    QUnit.test('`_.' + methodName + '` should return `true` for integer values', function(assert) {
+      assert.expect(2);
+
+      var values = [-1, 0, 1],
+          expected = _.map(values, _.constant(true));
+
+      var actual = _.map(values, function(value) {
+        return func(value);
+      });
+
+      assert.deepEqual(actual, expected);
+      assert.strictEqual(func(MAX_INTEGER), !isSafe);
+    });
+
+    QUnit.test('should return `false` for non-integer number values', function(assert) {
+      assert.expect(1);
+
+      var values = [NaN, Infinity, -Infinity, Object(1), 3.14],
+          expected = _.map(values, _.constant(false));
+
+      var actual = _.map(values, function(value) {
+        return func(value);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return `false` for non-numeric values', function(assert) {
+      assert.expect(9);
+
+      var expected = _.map(falsey, function(value) {
+        return value === 0;
+      });
+
+      var actual = _.map(falsey, function(value, index) {
+        return index ? func(value) : func();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(func(args), false);
+      assert.strictEqual(func([1, 2, 3]), false);
+      assert.strictEqual(func(true), false);
+      assert.strictEqual(func(new Date), false);
+      assert.strictEqual(func(new Error), false);
+      assert.strictEqual(func({ 'a': 1 }), false);
+      assert.strictEqual(func(/x/), false);
+      assert.strictEqual(func('a'), false);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isMatch');
 
   (function() {

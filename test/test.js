@@ -18491,8 +18491,9 @@
 
   (function() {
     QUnit.test('should convert values to integers', function(assert) {
-      assert.expect(5);
+      assert.expect(6);
 
+      assert.strictEqual(_.toInteger(-5.6), -5);
       assert.strictEqual(_.toInteger('3.14'), 3);
       assert.strictEqual(_.toInteger(), 0);
       assert.strictEqual(_.toInteger(NaN), 0);

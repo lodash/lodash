@@ -2555,7 +2555,7 @@ for equality comparisons. If `fromIndex` is negative, it's used as the offset
 from the end of `collection`.
 
 #### Aliases
-*_.contains, _.include*
+*_.contains, _.includes*
 
 #### Arguments
 1. `collection` *(Array|Object|string)*: The collection to search.

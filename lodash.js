@@ -6486,14 +6486,13 @@
      */
     function includes(collection, target, fromIndex, guard) {
       collection = isArrayLike(collection) ? collection : values(collection);
+      fromIndex = (fromIndex && !guard) ? toInteger(fromIndex) : 0;
+
       var length = collection.length;
-      if (guard || !fromIndex) {
-        fromIndex = 0;
-      } else {
-        fromIndex = toInteger(fromIndex);
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
+      if (fromIndex < 0) {
+        fromIndex = nativeMax(length + fromIndex, 0);
       }
-      return (typeof collection == 'string' || !isArray(collection) && isString(collection))
+      return isString(collection)
         ? (fromIndex <= length && collection.indexOf(target, fromIndex) > -1)
         : (!!length && getIndexOf(collection, target, fromIndex) > -1);
     }
@@ -6849,7 +6848,7 @@
       }
       if (isArrayLike(collection)) {
         var result = collection.length;
-        return (result && !isArray(collection) && isString(collection))
+        return (result && isString(collection))
           ? stringSize(collection)
           : result;
       }
@@ -8929,7 +8928,8 @@
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag);
+      return typeof value == 'string' ||
+        (!isArray(value) && isObjectLike(value) && objToString.call(value) == stringTag);
     }
 
     /**
@@ -9040,7 +9040,7 @@
         return [];
       }
       if (isArrayLike(value)) {
-        return (!isArray(value) && isString(value)) ? stringToArray(value) : copyArray(value);
+        return isString(value) ? stringToArray(value) : copyArray(value);
       }
       if (iteratorSymbol && value[iteratorSymbol]) {
         return iteratorToArray(value[iteratorSymbol]());

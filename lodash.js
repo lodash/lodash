@@ -4090,7 +4090,7 @@
         }
       }
       return result || (isLength(object && object.length) && isIndex(path, object.length) &&
-        (isArray(object) || isArguments(object) || isString(object)));
+        (isArray(object) || isString(object) || isArguments(object)));
     }
 
     /**
@@ -4178,7 +4178,7 @@
     function initKeys(object) {
       var length = object ? object.length : 0;
       length = (length && isLength(length) &&
-        (isArray(object) || isArguments(object) || isString(object)) && length) || 0;
+        (isArray(object) || isString(object) || isArguments(object)) && length) || 0;
 
       return baseTimes(length, String);
     }

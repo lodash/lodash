@@ -2495,7 +2495,8 @@
           if (object == null) {
             return false;
           }
-          return object[key] === value && (value !== undefined || (key in Object(object)));
+          return object[key] === value &&
+            (value !== undefined || (key in Object(object)));
         };
       }
       return function(object) {
@@ -3617,9 +3618,9 @@
      * @returns {string} Returns the padding for `string`.
      */
     function createPadding(string, length, chars) {
-      var strLength = stringSize(string);
       length = toInteger(length);
 
+      var strLength = stringSize(string);
       if (!length || strLength >= length) {
         return '';
       }
@@ -3679,7 +3680,7 @@
     function createRound(methodName) {
       var func = Math[methodName];
       return function(number, precision) {
-        precision = toInteger(precision);
+        precision = precision ? toInteger(precision) : 0;
         if (precision) {
           precision = pow(10, precision);
           return func(number * precision) / precision;
@@ -4951,11 +4952,11 @@
       if (!length) {
         return -1;
       }
-      if (fromIndex) {
-        fromIndex = toInteger(fromIndex);
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
+      fromIndex = fromIndex ? toInteger(fromIndex) : 0;
+      if (fromIndex < 0) {
+        fromIndex = nativeMax(length + fromIndex, 0);
       }
-      return baseIndexOf(array, value, fromIndex || 0);
+      return baseIndexOf(array, value, fromIndex);
     }
 
     /**
@@ -8337,7 +8338,8 @@
      * // => false
      */
     function isBoolean(value) {
-      return value === true || value === false || (isObjectLike(value) && objToString.call(value) == boolTag);
+      return value === true || value === false ||
+        (isObjectLike(value) && objToString.call(value) == boolTag);
     }
 
     /**
@@ -8493,7 +8495,8 @@
      * // => false
      */
     function isError(value) {
-      return isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag;
+      return isObjectLike(value) &&
+        typeof value.message == 'string' && objToString.call(value) == errorTag;
     }
 
     /**
@@ -8746,7 +8749,8 @@
       if (isFunction(value)) {
         return reIsNative.test(fnToString.call(value));
       }
-      return isObjectLike(value) && (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
+      return isObjectLike(value) &&
+        (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
     }
 
     /**
@@ -8815,7 +8819,8 @@
      * // => false
      */
     function isNumber(value) {
-      return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag);
+      return typeof value == 'number' ||
+        (isObjectLike(value) && objToString.call(value) == numberTag);
     }
 
     /**
@@ -10654,9 +10659,10 @@
      * // => ''
      */
     function repeat(string, n) {
-      var result = '';
       string = baseToString(string);
       n = toInteger(n);
+
+      var result = '';
       if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
         return result;
       }
@@ -12339,7 +12345,7 @@
     };
 
     LazyWrapper.prototype.slice = function(start, end) {
-      start = start == null ? 0 : toInteger(start);
+      start = start ? toInteger(start) : 0;
 
       var result = this;
       if (result.__filtered__ && (start > 0 || end < 0)) {

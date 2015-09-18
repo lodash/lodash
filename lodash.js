@@ -87,10 +87,6 @@
       uint16Tag = '[object Uint16Array]',
       uint32Tag = '[object Uint32Array]';
 
-  /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
-  var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g,
-      reStrSurrogate = /[\ud800-\udfff]/;
-
   /** Used to match empty string literals in compiled template source. */
   var reEmptyStringLeading = /\b__p \+= '';/g,
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -146,15 +142,38 @@
   /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
-  /** Used to match words to create compound words. */
-  var reWords = (function() {
-    var astrals = '[\\ud800-\\udbff][\\udc00-\\udfff]',
-        upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
-        lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
-        digits = '\\d+';
+  /** Used to compose `reStrSymbol` and `reWord`. */
+  var rsAstralRange = '\\ud800-\\udfff',
+      rsAstral = '[' + rsAstralRange + ']',
+      rsDigits = '\\d+',
+      rsLowers = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
+      rsNonAstral = '[^' + rsAstralRange + ']',
+      rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
+      rsUpper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
+      rsZWJ = '\\u200d',
+      rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
+      rsSurrPairs = rsSurrPair + '(?:' + rsZWJ + rsSurrPair + ')*';
 
-    return RegExp([upper + '+(?=' + upper + lower + ')', upper + '?' + lower, upper + '+', astrals, digits].join('|'), 'g');
-  }());
+  /** Used to match code points from the astral planes. */
+  var reAstral = RegExp(rsAstral);
+
+  /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
+  var reStrSymbol = RegExp([
+    rsNonAstral,
+    rsRegional,
+    rsSurrPairs,
+    rsAstral
+  ].join('|'), 'g');
+
+  /** Used to match words to create compound words. */
+  var reWord = RegExp([
+    rsUpper + '+(?=' + rsUpper + rsLowers + ')',
+    rsUpper + '?' + rsLowers,
+    rsUpper + '+',
+    rsRegional,
+    rsSurrPairs,
+    rsDigits
+  ].join('|'), 'g');
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -1183,7 +1202,7 @@
    * @returns {number} Returns the string size.
    */
   function stringSize(string) {
-    if (!(string && reStrSurrogate.test(string))) {
+    if (!(string && reAstral.test(string))) {
       return string.length;
     }
     var result = reStrSymbol.lastIndex = 0;
@@ -3628,7 +3647,7 @@
       chars = chars === undefined ? ' ' : (chars + '');
 
       var result = repeat(chars, nativeCeil(padLength / stringSize(chars)));
-      return reStrSurrogate.test(chars)
+      return reAstral.test(chars)
         ? stringToArray(result).slice(0, padLength).join('')
         : result.slice(0, padLength);
     }
@@ -10369,7 +10388,7 @@
       if (!string) {
         return string;
       }
-      if (reStrSurrogate.test(string)) {
+      if (reAstral.test(string)) {
         var strSymbols = stringToArray(string);
         return strSymbols[0].toUpperCase() + strSymbols.slice(1).join('');
       }
@@ -11109,7 +11128,7 @@
       string = baseToString(string);
 
       var strLength = string.length;
-      if (reStrSurrogate.test(string)) {
+      if (reAstral.test(string)) {
         var strSymbols = stringToArray(string);
         strLength = strSymbols.length;
       }
@@ -11200,7 +11219,7 @@
     function words(string, pattern, guard) {
       string = baseToString(string);
       pattern = guard ? undefined : guard;
-      return string.match(pattern || reWords) || [];
+      return string.match(pattern || reWord) || [];
     }
 
     /*------------------------------------------------------------------------*/

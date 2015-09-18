@@ -1,12 +1,10 @@
 import arrayPush from './arrayPush';
-import isArguments from '../lang/isArguments';
-import isArray from '../lang/isArray';
-import isArrayLike from './isArrayLike';
-import isObjectLike from './isObjectLike';
+import isArguments from '../isArguments';
+import isArray from '../isArray';
+import isArrayLikeObject from '../isArrayLikeObject';
 
 /**
- * The base implementation of `_.flatten` with added support for restricting
- * flattening and specifying the start index.
+ * The base implementation of `_.flatten` with support for restricting flattening.
  *
  * @private
  * @param {Array} array The array to flatten.
@@ -23,7 +21,7 @@ function baseFlatten(array, isDeep, isStrict, result) {
 
   while (++index < length) {
     var value = array[index];
-    if (isObjectLike(value) && isArrayLike(value) &&
+    if (isArrayLikeObject(value) &&
         (isStrict || isArray(value) || isArguments(value))) {
       if (isDeep) {
         // Recursively flatten arrays (susceptible to call stack limits).

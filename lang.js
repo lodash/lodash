@@ -1,63 +1,48 @@
-import clone from './lang/clone';
-import cloneDeep from './lang/cloneDeep';
-import eq from './lang/eq';
-import gt from './lang/gt';
-import gte from './lang/gte';
-import isArguments from './lang/isArguments';
-import isArray from './lang/isArray';
-import isBoolean from './lang/isBoolean';
-import isDate from './lang/isDate';
-import isElement from './lang/isElement';
-import isEmpty from './lang/isEmpty';
-import isEqual from './lang/isEqual';
-import isError from './lang/isError';
-import isFinite from './lang/isFinite';
-import isFunction from './lang/isFunction';
-import isMatch from './lang/isMatch';
-import isNaN from './lang/isNaN';
-import isNative from './lang/isNative';
-import isNull from './lang/isNull';
-import isNumber from './lang/isNumber';
-import isObject from './lang/isObject';
-import isPlainObject from './lang/isPlainObject';
-import isRegExp from './lang/isRegExp';
-import isString from './lang/isString';
-import isTypedArray from './lang/isTypedArray';
-import isUndefined from './lang/isUndefined';
-import lt from './lang/lt';
-import lte from './lang/lte';
-import toArray from './lang/toArray';
-import toPlainObject from './lang/toPlainObject';
-
-export default {
-  'clone': clone,
-  'cloneDeep': cloneDeep,
-  'eq': eq,
-  'gt': gt,
-  'gte': gte,
-  'isArguments': isArguments,
-  'isArray': isArray,
-  'isBoolean': isBoolean,
-  'isDate': isDate,
-  'isElement': isElement,
-  'isEmpty': isEmpty,
-  'isEqual': isEqual,
-  'isError': isError,
-  'isFinite': isFinite,
-  'isFunction': isFunction,
-  'isMatch': isMatch,
-  'isNaN': isNaN,
-  'isNative': isNative,
-  'isNull': isNull,
-  'isNumber': isNumber,
-  'isObject': isObject,
-  'isPlainObject': isPlainObject,
-  'isRegExp': isRegExp,
-  'isString': isString,
-  'isTypedArray': isTypedArray,
-  'isUndefined': isUndefined,
-  'lt': lt,
-  'lte': lte,
-  'toArray': toArray,
-  'toPlainObject': toPlainObject
-};
+export { default as clone } from './clone';
+export { default as cloneDeep } from './cloneDeep';
+export { default as cloneDeepWith } from './cloneDeepWith';
+export { default as cloneWith } from './cloneWith';
+export { default as eq } from './eq';
+export { default as gt } from './gt';
+export { default as gte } from './gte';
+export { default as isArguments } from './isArguments';
+export { default as isArray } from './isArray';
+export { default as isArrayLike } from './isArrayLike';
+export { default as isArrayLikeObject } from './isArrayLikeObject';
+export { default as isBoolean } from './isBoolean';
+export { default as isDate } from './isDate';
+export { default as isElement } from './isElement';
+export { default as isEmpty } from './isEmpty';
+export { default as isEqual } from './isEqual';
+export { default as isEqualWith } from './isEqualWith';
+export { default as isError } from './isError';
+export { default as isFinite } from './isFinite';
+export { default as isFunction } from './isFunction';
+export { default as isInteger } from './isInteger';
+export { default as isLength } from './isLength';
+export { default as isMatch } from './isMatch';
+export { default as isMatchWith } from './isMatchWith';
+export { default as isNaN } from './isNaN';
+export { default as isNative } from './isNative';
+export { default as isNil } from './isNil';
+export { default as isNull } from './isNull';
+export { default as isNumber } from './isNumber';
+export { default as isObject } from './isObject';
+export { default as isObjectLike } from './isObjectLike';
+export { default as isPlainObject } from './isPlainObject';
+export { default as isRegExp } from './isRegExp';
+export { default as isSafeInteger } from './isSafeInteger';
+export { default as isString } from './isString';
+export { default as isSymbol } from './isSymbol';
+export { default as isTypedArray } from './isTypedArray';
+export { default as isUndefined } from './isUndefined';
+export { default as lt } from './lt';
+export { default as lte } from './lte';
+export { default as toArray } from './toArray';
+export { default as toInteger } from './toInteger';
+export { default as toLength } from './toLength';
+export { default as toNumber } from './toNumber';
+export { default as toPlainObject } from './toPlainObject';
+export { default as toSafeInteger } from './toSafeInteger';
+export { default as toString } from './toString';
+export { default as default } from './lang.default';

@@ -1,15 +1,15 @@
 import isStrictComparable from './isStrictComparable';
-import pairs from '../object/pairs';
+import toPairs from '../toPairs';
 
 /**
- * Gets the propery names, values, and compare flags of `object`.
+ * Gets the property names, values, and compare flags of `object`.
  *
  * @private
  * @param {Object} object The object to query.
  * @returns {Array} Returns the match data of `object`.
  */
 function getMatchData(object) {
-  var result = pairs(object),
+  var result = toPairs(object),
       length = result.length;
 
   while (length--) {

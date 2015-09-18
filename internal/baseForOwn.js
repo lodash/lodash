@@ -1,9 +1,8 @@
 import baseFor from './baseFor';
-import keys from '../object/keys';
+import keys from '../keys';
 
 /**
- * The base implementation of `_.forOwn` without support for callback
- * shorthands and `this` binding.
+ * The base implementation of `_.forOwn` without support for iteratee shorthands.
  *
  * @private
  * @param {Object} object The object to iterate over.
@@ -11,7 +10,7 @@ import keys from '../object/keys';
  * @returns {Object} Returns `object`.
  */
 function baseForOwn(object, iteratee) {
-  return baseFor(object, iteratee, keys);
+  return object && baseFor(object, iteratee, keys);
 }
 
 export default baseForOwn;

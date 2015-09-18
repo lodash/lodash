@@ -1,5 +1,6 @@
 import LazyWrapper from './LazyWrapper';
 import arrayPush from './arrayPush';
+import arrayReduce from './arrayReduce';
 
 /**
  * The base implementation of `wrapperValue` which returns the result of
@@ -8,7 +9,7 @@ import arrayPush from './arrayPush';
  *
  * @private
  * @param {*} value The unwrapped value.
- * @param {Array} actions Actions to peform to resolve the unwrapped value.
+ * @param {Array} actions Actions to perform to resolve the unwrapped value.
  * @returns {*} Returns the resolved value.
  */
 function baseWrapperValue(value, actions) {
@@ -16,14 +17,9 @@ function baseWrapperValue(value, actions) {
   if (result instanceof LazyWrapper) {
     result = result.value();
   }
-  var index = -1,
-      length = actions.length;
-
-  while (++index < length) {
-    var action = actions[index];
-    result = action.func.apply(action.thisArg, arrayPush([result], action.args));
-  }
-  return result;
+  return arrayReduce(actions, function(result, action) {
+    return action.func.apply(action.thisArg, arrayPush([result], action.args));
+  }, result);
 }
 
 export default baseWrapperValue;

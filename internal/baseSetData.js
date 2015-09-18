@@ -1,4 +1,4 @@
-import identity from '../utility/identity';
+import identity from '../identity';
 import metaMap from './metaMap';
 
 /**

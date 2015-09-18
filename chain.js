@@ -1,31 +1,36 @@
-import chain from './chain/chain';
-import commit from './chain/commit';
-import concat from './chain/concat';
-import lodash from './chain/lodash';
-import plant from './chain/plant';
-import reverse from './chain/reverse';
-import run from './chain/run';
-import tap from './chain/tap';
-import thru from './chain/thru';
-import toJSON from './chain/toJSON';
-import toString from './chain/toString';
-import value from './chain/value';
-import valueOf from './chain/valueOf';
-import wrapperChain from './chain/wrapperChain';
+import lodash from './wrapperLodash';
 
-export default {
-  'chain': chain,
-  'commit': commit,
-  'concat': concat,
-  'lodash': lodash,
-  'plant': plant,
-  'reverse': reverse,
-  'run': run,
-  'tap': tap,
-  'thru': thru,
-  'toJSON': toJSON,
-  'toString': toString,
-  'value': value,
-  'valueOf': valueOf,
-  'wrapperChain': wrapperChain
-};
+/**
+ * Creates a `lodash` object that wraps `value` with explicit method chaining enabled.
+ * The result of such method chaining must be unwrapped with `_#value`.
+ *
+ * @static
+ * @memberOf _
+ * @category Seq
+ * @param {*} value The value to wrap.
+ * @returns {Object} Returns the new `lodash` wrapper instance.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney',  'age': 36 },
+ *   { 'user': 'fred',    'age': 40 },
+ *   { 'user': 'pebbles', 'age': 1 }
+ * ];
+ *
+ * var youngest = _
+ *   .chain(users)
+ *   .sortBy('age')
+ *   .map(function(o) {
+ *     return o.user + ' is ' + o.age;
+ *   })
+ *   .head()
+ *   .value();
+ * // => 'pebbles is 1'
+ */
+function chain(value) {
+  var result = lodash(value);
+  result.__chain__ = true;
+  return result;
+}
+
+export default chain;

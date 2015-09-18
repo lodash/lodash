@@ -1,11 +1,8 @@
-/** Used to detect unsigned integer values. */
-var reIsUint = /^\d+$/;
-
-/**
- * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
- * of an array-like value.
- */
+/** Used as references for various `Number` constants. */
 var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
 
 /**
  * Checks if `value` is a valid array-like index.

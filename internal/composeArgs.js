@@ -1,4 +1,4 @@
-/* Native method references for those with the same name as other `lodash` methods. */
+/* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;
 
 /**

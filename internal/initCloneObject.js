@@ -1,3 +1,6 @@
+import baseCreate from './baseCreate';
+import isFunction from '../isFunction';
+
 /**
  * Initializes an object clone.
  *
@@ -7,10 +10,7 @@
  */
 function initCloneObject(object) {
   var Ctor = object.constructor;
-  if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
-    Ctor = Object;
-  }
-  return new Ctor;
+  return baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
 }
 
 export default initCloneObject;

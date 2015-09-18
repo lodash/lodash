@@ -1,4 +1,4 @@
-import isNative from '../lang/isNative';
+import isNative from '../isNative';
 
 /**
  * Gets the native function at `key` of `object`.

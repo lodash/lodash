@@ -1,4 +1,4 @@
-import isObject from '../lang/isObject';
+import isObject from '../isObject';
 
 /**
  * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.

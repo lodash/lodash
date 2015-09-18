@@ -1,16 +1,26 @@
+import Map from './Map';
+import assocSet from './assocSet';
+import hashSet from './hashSet';
+import isKeyable from './isKeyable';
+
 /**
- * Sets `value` to `key` of the cache.
+ * Sets the map `key` to `value`.
  *
  * @private
  * @name set
- * @memberOf _.memoize.Cache
- * @param {string} key The key of the value to cache.
- * @param {*} value The value to cache.
- * @returns {Object} Returns the cache object.
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache object.
  */
 function mapSet(key, value) {
-  if (key != '__proto__') {
-    this.__data__[key] = value;
+  var data = this.__data__;
+  if (isKeyable(key)) {
+    hashSet(typeof key == 'string' ? data.string : data.hash, key, value);
+  } else if (Map) {
+    data.map.set(key, value);
+  } else {
+    assocSet(data.map, key, value);
   }
   return this;
 }

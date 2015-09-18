@@ -2,8 +2,8 @@
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
- * The base implementation of `_.delay` and `_.defer` which accepts an index
- * of where to slice the arguments to provide to `func`.
+ * The base implementation of `_.delay` and `_.defer` which accepts an array
+ * of `func` arguments.
  *
  * @private
  * @param {Function} func The function to delay.

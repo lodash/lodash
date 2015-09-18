@@ -1,4 +1,4 @@
-import isObject from '../lang/isObject';
+import isObject from '../isObject';
 
 /**
  * The base implementation of `_.create` without support for assigning

@@ -1,4 +1,4 @@
-/** Used for native method references. */
+/** Used for built-in method references. */
 var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
@@ -13,9 +13,9 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  */
 function initCloneArray(array) {
   var length = array.length,
-      result = new array.constructor(length);
+      result = array.constructor(length);
 
-  // Add array properties assigned by `RegExp#exec`.
+  // Add properties assigned by `RegExp#exec`.
   if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
     result.index = array.index;
     result.input = array.input;

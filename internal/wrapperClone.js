@@ -1,6 +1,6 @@
 import LazyWrapper from './LazyWrapper';
 import LodashWrapper from './LodashWrapper';
-import arrayCopy from './arrayCopy';
+import copyArray from './copyArray';
 
 /**
  * Creates a clone of `wrapper`.
@@ -10,9 +10,14 @@ import arrayCopy from './arrayCopy';
  * @returns {Object} Returns the cloned wrapper.
  */
 function wrapperClone(wrapper) {
-  return wrapper instanceof LazyWrapper
-    ? wrapper.clone()
-    : new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
+  if (wrapper instanceof LazyWrapper) {
+    return wrapper.clone();
+  }
+  var result = new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__);
+  result.__actions__ = copyArray(wrapper.__actions__);
+  result.__index__  = wrapper.__index__;
+  result.__values__ = wrapper.__values__;
+  return result;
 }
 
 export default wrapperClone;

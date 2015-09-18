@@ -1,61 +1,40 @@
-import assign from './object/assign';
-import create from './object/create';
-import defaults from './object/defaults';
-import defaultsDeep from './object/defaultsDeep';
-import extend from './object/extend';
-import findKey from './object/findKey';
-import findLastKey from './object/findLastKey';
-import forIn from './object/forIn';
-import forInRight from './object/forInRight';
-import forOwn from './object/forOwn';
-import forOwnRight from './object/forOwnRight';
-import functions from './object/functions';
-import get from './object/get';
-import has from './object/has';
-import invert from './object/invert';
-import keys from './object/keys';
-import keysIn from './object/keysIn';
-import mapKeys from './object/mapKeys';
-import mapValues from './object/mapValues';
-import merge from './object/merge';
-import methods from './object/methods';
-import omit from './object/omit';
-import pairs from './object/pairs';
-import pick from './object/pick';
-import result from './object/result';
-import set from './object/set';
-import transform from './object/transform';
-import values from './object/values';
-import valuesIn from './object/valuesIn';
-
-export default {
-  'assign': assign,
-  'create': create,
-  'defaults': defaults,
-  'defaultsDeep': defaultsDeep,
-  'extend': extend,
-  'findKey': findKey,
-  'findLastKey': findLastKey,
-  'forIn': forIn,
-  'forInRight': forInRight,
-  'forOwn': forOwn,
-  'forOwnRight': forOwnRight,
-  'functions': functions,
-  'get': get,
-  'has': has,
-  'invert': invert,
-  'keys': keys,
-  'keysIn': keysIn,
-  'mapKeys': mapKeys,
-  'mapValues': mapValues,
-  'merge': merge,
-  'methods': methods,
-  'omit': omit,
-  'pairs': pairs,
-  'pick': pick,
-  'result': result,
-  'set': set,
-  'transform': transform,
-  'values': values,
-  'valuesIn': valuesIn
-};
+export { default as assign } from './assign';
+export { default as assignIn } from './assignIn';
+export { default as assignInWith } from './assignInWith';
+export { default as assignWith } from './assignWith';
+export { default as create } from './create';
+export { default as defaults } from './defaults';
+export { default as defaultsDeep } from './defaultsDeep';
+export { default as findKey } from './findKey';
+export { default as findLastKey } from './findLastKey';
+export { default as forIn } from './forIn';
+export { default as forInRight } from './forInRight';
+export { default as forOwn } from './forOwn';
+export { default as forOwnRight } from './forOwnRight';
+export { default as functions } from './functions';
+export { default as functionsIn } from './functionsIn';
+export { default as get } from './get';
+export { default as has } from './has';
+export { default as hasIn } from './hasIn';
+export { default as invert } from './invert';
+export { default as invoke } from './invoke';
+export { default as keys } from './keys';
+export { default as keysIn } from './keysIn';
+export { default as mapKeys } from './mapKeys';
+export { default as mapValues } from './mapValues';
+export { default as merge } from './merge';
+export { default as mergeWith } from './mergeWith';
+export { default as omit } from './omit';
+export { default as omitBy } from './omitBy';
+export { default as pick } from './pick';
+export { default as pickBy } from './pickBy';
+export { default as result } from './result';
+export { default as set } from './set';
+export { default as setWith } from './setWith';
+export { default as toPairs } from './toPairs';
+export { default as toPairsIn } from './toPairsIn';
+export { default as transform } from './transform';
+export { default as unset } from './unset';
+export { default as values } from './values';
+export { default as valuesIn } from './valuesIn';
+export { default as default } from './object.default';

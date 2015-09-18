@@ -1,3 +1,5 @@
+import checkGlobal from './checkGlobal';
+
 /** Used to determine if values are of the language type `Object`. */
 var objectTypes = {
   'function': true,
@@ -5,19 +7,22 @@ var objectTypes = {
 };
 
 /** Detect free variable `exports`. */
-var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
 
 /** Detect free variable `module`. */
-var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType) ? module : null;
 
 /** Detect free variable `global` from Node.js. */
-var freeGlobal = freeExports && freeModule && typeof global == 'object' && global && global.Object && global;
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
 
 /** Detect free variable `self`. */
-var freeSelf = objectTypes[typeof self] && self && self.Object && self;
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
 
 /** Detect free variable `window`. */
-var freeWindow = objectTypes[typeof window] && window && window.Object && window;
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
 
 /**
  * Used as a reference to the global object.
@@ -25,6 +30,6 @@ var freeWindow = objectTypes[typeof window] && window && window.Object && window
  * The `this` value is used if it's the global object to avoid Greasemonkey's
  * restricted `window` object, otherwise the `window` object is used.
  */
-var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
+var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal || Function('return this')();
 
 export default root;

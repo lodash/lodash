@@ -1,49 +1,32 @@
-import camelCase from './string/camelCase';
-import capitalize from './string/capitalize';
-import deburr from './string/deburr';
-import endsWith from './string/endsWith';
-import escape from './string/escape';
-import escapeRegExp from './string/escapeRegExp';
-import kebabCase from './string/kebabCase';
-import pad from './string/pad';
-import padLeft from './string/padLeft';
-import padRight from './string/padRight';
-import parseInt from './string/parseInt';
-import repeat from './string/repeat';
-import snakeCase from './string/snakeCase';
-import startCase from './string/startCase';
-import startsWith from './string/startsWith';
-import template from './string/template';
-import templateSettings from './string/templateSettings';
-import trim from './string/trim';
-import trimLeft from './string/trimLeft';
-import trimRight from './string/trimRight';
-import trunc from './string/trunc';
-import unescape from './string/unescape';
-import words from './string/words';
-
-export default {
-  'camelCase': camelCase,
-  'capitalize': capitalize,
-  'deburr': deburr,
-  'endsWith': endsWith,
-  'escape': escape,
-  'escapeRegExp': escapeRegExp,
-  'kebabCase': kebabCase,
-  'pad': pad,
-  'padLeft': padLeft,
-  'padRight': padRight,
-  'parseInt': parseInt,
-  'repeat': repeat,
-  'snakeCase': snakeCase,
-  'startCase': startCase,
-  'startsWith': startsWith,
-  'template': template,
-  'templateSettings': templateSettings,
-  'trim': trim,
-  'trimLeft': trimLeft,
-  'trimRight': trimRight,
-  'trunc': trunc,
-  'unescape': unescape,
-  'words': words
-};
+export { default as camelCase } from './camelCase';
+export { default as capitalize } from './capitalize';
+export { default as deburr } from './deburr';
+export { default as endsWith } from './endsWith';
+export { default as escape } from './escape';
+export { default as escapeRegExp } from './escapeRegExp';
+export { default as kebabCase } from './kebabCase';
+export { default as lowerCase } from './lowerCase';
+export { default as lowerFirst } from './lowerFirst';
+export { default as pad } from './pad';
+export { default as padEnd } from './padEnd';
+export { default as padStart } from './padStart';
+export { default as parseInt } from './parseInt';
+export { default as repeat } from './repeat';
+export { default as replace } from './replace';
+export { default as snakeCase } from './snakeCase';
+export { default as split } from './split';
+export { default as startCase } from './startCase';
+export { default as startsWith } from './startsWith';
+export { default as template } from './template';
+export { default as templateSettings } from './templateSettings';
+export { default as toLower } from './toLower';
+export { default as toUpper } from './toUpper';
+export { default as trim } from './trim';
+export { default as trimEnd } from './trimEnd';
+export { default as trimStart } from './trimStart';
+export { default as truncate } from './truncate';
+export { default as unescape } from './unescape';
+export { default as upperCase } from './upperCase';
+export { default as upperFirst } from './upperFirst';
+export { default as words } from './words';
+export { default as default } from './string.default';

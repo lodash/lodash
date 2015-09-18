@@ -1,9 +1,9 @@
-import deburr from '../string/deburr';
-import words from '../string/words';
+import arrayReduce from './arrayReduce';
+import deburr from '../deburr';
+import words from '../words';
 
 /**
- * Creates a function that produces compound words out of the words in a
- * given string.
+ * Creates a function like `_.camelCase`.
  *
  * @private
  * @param {Function} callback The function to combine each word.
@@ -11,15 +11,7 @@ import words from '../string/words';
  */
 function createCompounder(callback) {
   return function(string) {
-    var index = -1,
-        array = words(deburr(string)),
-        length = array.length,
-        result = '';
-
-    while (++index < length) {
-      result = callback(result, array[index], index);
-    }
-    return result;
+    return arrayReduce(words(deburr(string)), callback, '');
   };
 }
 

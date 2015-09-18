@@ -1,9 +1,8 @@
 import baseFor from './baseFor';
-import keysIn from '../object/keysIn';
+import keysIn from '../keysIn';
 
 /**
- * The base implementation of `_.forIn` without support for callback
- * shorthands and `this` binding.
+ * The base implementation of `_.forIn` without support for iteratee shorthands.
  *
  * @private
  * @param {Object} object The object to iterate over.
@@ -11,7 +10,7 @@ import keysIn from '../object/keysIn';
  * @returns {Object} Returns `object`.
  */
 function baseForIn(object, iteratee) {
-  return baseFor(object, iteratee, keysIn);
+  return object == null ? object : baseFor(object, iteratee, keysIn);
 }
 
 export default baseForIn;

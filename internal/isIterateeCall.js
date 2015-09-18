@@ -1,6 +1,7 @@
-import isArrayLike from './isArrayLike';
+import eq from '../eq';
+import isArrayLike from '../isArrayLike';
 import isIndex from './isIndex';
-import isObject from '../lang/isObject';
+import isObject from '../isObject';
 
 /**
  * Checks if the provided arguments are from an iteratee call.
@@ -19,8 +20,7 @@ function isIterateeCall(value, index, object) {
   if (type == 'number'
       ? (isArrayLike(object) && isIndex(index, object.length))
       : (type == 'string' && index in object)) {
-    var other = object[index];
-    return value === value ? (value === other) : (other !== other);
+    return eq(object[index], value);
   }
   return false;
 }

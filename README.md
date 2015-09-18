@@ -1,10 +1,10 @@
-# lodash-es v3.10.1
+# lodash-es v4.0.0
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [ES](https://people.mozilla.org/~jorendorff/es6-draft.html) modules.
+The [lodash](https://lodash.com/) library exported as [ES](http://www.ecma-international.org/ecma-262/6.0/) modules.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 ```bash
-$ lodash modularize modern exports=es -o ./
+$ lodash modularize exports=es -o ./
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/3.10.1-es) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.0.0-es) for more details.

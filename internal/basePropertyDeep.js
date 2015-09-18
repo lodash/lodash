@@ -1,5 +1,4 @@
 import baseGet from './baseGet';
-import toPath from './toPath';
 
 /**
  * A specialized version of `baseProperty` which supports deep paths.
@@ -9,10 +8,8 @@ import toPath from './toPath';
  * @returns {Function} Returns the new function.
  */
 function basePropertyDeep(path) {
-  var pathKey = (path + '');
-  path = toPath(path);
   return function(object) {
-    return baseGet(object, path, pathKey);
+    return baseGet(object, path);
   };
 }
 

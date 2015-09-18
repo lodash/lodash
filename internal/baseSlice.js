@@ -11,11 +11,10 @@ function baseSlice(array, start, end) {
   var index = -1,
       length = array.length;
 
-  start = start == null ? 0 : (+start || 0);
   if (start < 0) {
     start = -start > length ? 0 : (length + start);
   }
-  end = (end === undefined || end > length) ? length : (+end || 0);
+  end = end > length ? length : end;
   if (end < 0) {
     end += length;
   }

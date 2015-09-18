@@ -1,8 +1,4 @@
-import getNative from './getNative';
-import root from './root';
-
-/** Native method references. */
-var WeakMap = getNative(root, 'WeakMap');
+import WeakMap from './WeakMap';
 
 /** Used to store function metadata. */
 var metaMap = WeakMap && new WeakMap;

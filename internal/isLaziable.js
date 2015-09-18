@@ -1,7 +1,7 @@
 import LazyWrapper from './LazyWrapper';
 import getData from './getData';
 import getFuncName from './getFuncName';
-import lodash from '../chain/lodash';
+import lodash from '../wrapperLodash';
 
 /**
  * Checks if `func` has a lazy counterpart.

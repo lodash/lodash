@@ -1,4 +1,5 @@
-import isFunction from '../lang/isFunction';
+import arrayFilter from './arrayFilter';
+import isFunction from '../isFunction';
 
 /**
  * The base implementation of `_.functions` which creates an array of
@@ -10,18 +11,9 @@ import isFunction from '../lang/isFunction';
  * @returns {Array} Returns the new array of filtered property names.
  */
 function baseFunctions(object, props) {
-  var index = -1,
-      length = props.length,
-      resIndex = -1,
-      result = [];
-
-  while (++index < length) {
-    var key = props[index];
-    if (isFunction(object[key])) {
-      result[++resIndex] = key;
-    }
-  }
-  return result;
+  return arrayFilter(props, function(key) {
+    return isFunction(object[key]);
+  });
 }
 
 export default baseFunctions;

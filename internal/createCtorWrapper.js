@@ -1,5 +1,5 @@
 import baseCreate from './baseCreate';
-import isObject from '../lang/isObject';
+import isObject from '../isObject';
 
 /**
  * Creates a function that produces an instance of `Ctor` regardless of

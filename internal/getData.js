@@ -1,5 +1,5 @@
 import metaMap from './metaMap';
-import noop from '../utility/noop';
+import noop from '../noop';
 
 /**
  * Gets metadata for `func`.

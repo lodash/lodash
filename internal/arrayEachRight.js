@@ -1,6 +1,6 @@
 /**
  * A specialized version of `_.forEachRight` for arrays without support for
- * callback shorthands and `this` binding.
+ * iteratee shorthands.
  *
  * @private
  * @param {Array} array The array to iterate over.

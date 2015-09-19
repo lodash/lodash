@@ -11149,15 +11149,14 @@
       if (isRegExp(separator)) {
         if (string.slice(end).search(separator)) {
           var match,
-              newEnd,
               substring = result;
 
           if (!separator.global) {
-            separator = RegExp(separator.source, (reFlags.exec(separator) || '') + 'g');
+            separator = RegExp(separator.source, baseToString(reFlags.exec(separator)) + 'g');
           }
           separator.lastIndex = 0;
           while ((match = separator.exec(substring))) {
-            newEnd = match.index;
+            var newEnd = match.index;
           }
           result = result.slice(0, newEnd == null ? end : newEnd);
         }

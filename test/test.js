@@ -18888,12 +18888,15 @@
   QUnit.module('astral symbols');
 
   (function() {
-    var hearts = '\uD83D\uDC95',
-        leafs = '\uD83C\uDF42',
-        string = 'I ' + hearts + ' the ' + leafs;
+    var flag = '\uD83C\uDDFA\uD83C\uDDF8',
+        hearts = '\uD83D\uDC95',
+        leafs = '\uD83C\uDF42';
 
     QUnit.test('should account for astral symbols', function(assert) {
-      assert.expect(17);
+      assert.expect(25);
+
+      var allHearts = _.repeat(hearts, 10),
+          string = 'I ' + hearts + ' the ' + leafs;
 
       assert.strictEqual(_.camelCase(hearts + ' the ' + leafs), hearts + 'The' + leafs);
       assert.strictEqual(_.camelCase(string), 'i' + hearts + 'The' + leafs);
@@ -18918,17 +18921,30 @@
       assert.strictEqual(_.trunc(string, { 'length': 6 }), 'I ' + hearts + '...');
 
       assert.deepEqual(_.words(string), ['I', hearts, 'the', leafs]);
+
+      _.times(2, function(index) {
+        var separator = index ? RegExp(hearts) : hearts,
+            options = { 'length': 4, 'separator': separator },
+            actual = _.trunc(string, options);
+
+        assert.strictEqual(actual, 'I...');
+        assert.strictEqual(actual.length, 4);
+
+        actual = _.trunc(allHearts, options);
+        assert.strictEqual(actual, hearts + '...');
+        assert.strictEqual(actual.length, 5);
+      });
     });
 
     QUnit.test('should match lone surrogates', function(assert) {
       assert.expect(3);
 
-      var pairs = hearts.split(''),
-          loneSurrogates = pairs[0] + ' ' + pairs[1];
+      var pair = hearts.split(''),
+          surrogates = pair[0] + ' ' + pair[1];
 
-      assert.strictEqual(_.size(loneSurrogates), 3);
-      assert.deepEqual(_.toArray(loneSurrogates), [pairs[0], ' ', pairs[1]]);
-      assert.deepEqual(_.words(loneSurrogates), []);
+      assert.strictEqual(_.size(surrogates), 3);
+      assert.deepEqual(_.toArray(surrogates), [pair[0], ' ', pair[1]]);
+      assert.deepEqual(_.words(surrogates), []);
     });
   }());
 

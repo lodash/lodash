@@ -146,6 +146,7 @@
   var rsAstralRange = '\\ud800-\\udfff',
       rsAstral = '[' + rsAstralRange + ']',
       rsDigits = '\\d+',
+      rsDingbat = '[\\u2700-\\u27bf]',
       rsLowers = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
       rsNonAstral = '[^' + rsAstralRange + ']',
       rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
@@ -168,7 +169,7 @@
     rsUpper + '+(?=' + rsUpper + rsLowers + ')',
     rsUpper + '?' + rsLowers,
     rsUpper + '+',
-    '(?:' + rsRegional + '|' + rsSurrPair + ')' + rsOptVS + rsJoiner,
+    '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsOptVS + rsJoiner,
     rsDigits
   ].join('|'), 'g');
 

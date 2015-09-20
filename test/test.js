@@ -18972,9 +18972,9 @@
     QUnit.test('should account for variation selectors', function(assert) {
       assert.expect(3);
 
-      assert.strictEqual(_.size(comboGlyph), 1);
-      assert.deepEqual(_.toArray(comboGlyph), [comboGlyph]);
-      assert.deepEqual(_.words(comboGlyph), [comboGlyph]);
+      assert.strictEqual(_.size(varHeart), 1);
+      assert.deepEqual(_.toArray(varHeart), [varHeart]);
+      assert.deepEqual(_.words(varHeart), [varHeart]);
     });
   }());
 

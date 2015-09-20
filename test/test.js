@@ -18946,6 +18946,22 @@
       assert.deepEqual(_.toArray(surrogates), [pair[0], ' ', pair[1]]);
       assert.deepEqual(_.words(surrogates), []);
     });
+
+    QUnit.test('should account for regional symbols', function(assert) {
+      assert.expect(6);
+
+      var pair = flag.match(/\ud83c[\udde6-\uddff]/g),
+          regionals = pair.join(' ');
+
+      assert.strictEqual(_.size(flag), 1);
+      assert.strictEqual(_.size(regionals), 3);
+
+      assert.deepEqual(_.toArray(flag), [flag]);
+      assert.deepEqual(_.toArray(regionals), [pair[0], ' ', pair[1]]);
+
+      assert.deepEqual(_.words(flag), [flag]);
+      assert.deepEqual(_.words(regionals), [pair[0], pair[1]]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

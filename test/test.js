@@ -18888,7 +18888,8 @@
   QUnit.module('astral symbols');
 
   (function() {
-    var flag = '\uD83C\uDDFA\uD83C\uDDF8',
+    var comboGlyph = '\uD83D\uDC68\u200D\u2764\uFE0F\u200D\uD83D\uDC8B\u200D\uD83D\uDC68',
+        flag = '\uD83C\uDDFA\uD83C\uDDF8',
         hearts = '\uD83D\uDC95',
         leafs = '\uD83C\uDF42';
 
@@ -18961,6 +18962,14 @@
 
       assert.deepEqual(_.words(flag), [flag]);
       assert.deepEqual(_.words(regionals), [pair[0], pair[1]]);
+    });
+
+    QUnit.test('should account for variation selectors', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.size(comboGlyph), 1);
+      assert.deepEqual(_.toArray(comboGlyph), [comboGlyph]);
+      assert.deepEqual(_.words(comboGlyph), [comboGlyph]);
     });
   }());
 

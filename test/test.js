@@ -18888,47 +18888,52 @@
   QUnit.module('astral symbols');
 
   (function() {
-    var comboGlyph = '\uD83D\uDC68\u200D\u2764\uFE0F\u200D\uD83D\uDC8B\u200D\uD83D\uDC68',
-        flag = '\uD83C\uDDFA\uD83C\uDDF8',
-        hearts = '\uD83D\uDC95',
-        leafs = '\uD83C\uDF42';
+    var flag = '\ud83c\uddfa\ud83c\uddf8',
+        hearts = '\ud83d\udc95',
+        leafs = '\ud83c\udf42',
+        rocket = '\ud83d\ude80',
+        varHeart = '\u2764\ufe0f',
+        comboGlyph = '\ud83d\udc68\u200d' + varHeart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68';
 
     QUnit.test('should account for astral symbols', function(assert) {
       assert.expect(25);
 
       var allHearts = _.repeat(hearts, 10),
-          string = 'I ' + hearts + ' the ' + leafs;
+          chars = hearts + comboGlyph,
+          string = 'A ' + leafs + ', ' + comboGlyph + ', and ' + rocket,
+          trimChars = comboGlyph + hearts,
+          trimString = trimChars + string + trimChars;
 
       assert.strictEqual(_.camelCase(hearts + ' the ' + leafs), hearts + 'The' + leafs);
-      assert.strictEqual(_.camelCase(string), 'i' + hearts + 'The' + leafs);
-      assert.strictEqual(_.capitalize(hearts), hearts);
+      assert.strictEqual(_.camelCase(string), 'a' + leafs + comboGlyph + 'And' + rocket);
+      assert.strictEqual(_.capitalize(rocket), rocket);
 
-      assert.strictEqual(_.pad(string, 12), ' ' + string + '  ');
-      assert.strictEqual(_.padLeft(string, 12), '   ' + string);
-      assert.strictEqual(_.padRight(string, 12), string + '   ');
+      assert.strictEqual(_.pad(string, 16), ' ' + string + '  ');
+      assert.strictEqual(_.padLeft(string, 16), '   ' + string);
+      assert.strictEqual(_.padRight(string, 16), string + '   ');
 
-      assert.strictEqual(_.pad(string, 12, hearts + leafs), hearts + string + hearts + leafs);
-      assert.strictEqual(_.padLeft(string, 12, hearts + leafs), hearts + leafs + hearts + string);
-      assert.strictEqual(_.padRight(string, 12, hearts + leafs), string + hearts + leafs + hearts);
+      assert.strictEqual(_.pad(string, 16, chars), hearts + string + chars);
+      assert.strictEqual(_.padLeft(string, 16, chars), chars + hearts + string);
+      assert.strictEqual(_.padRight(string, 16, chars), string + chars + hearts);
 
-      assert.strictEqual(_.size(string), 9);
-      assert.deepEqual(_.toArray(string), ['I', ' ', hearts, ' ', 't', 'h', 'e', ' ', leafs]);
+      assert.strictEqual(_.size(string), 13);
+      assert.deepEqual(_.toArray(string), ['A', ' ', leafs, ',', ' ', comboGlyph, ',', ' ', 'a', 'n', 'd', ' ', rocket]);
 
-      assert.strictEqual(_.trim(hearts + hearts + string + hearts + hearts, hearts), string);
-      assert.strictEqual(_.trimLeft(hearts + hearts + string + hearts + hearts, hearts), string + hearts + hearts);
-      assert.strictEqual(_.trimRight(hearts + hearts + string + hearts + hearts, hearts), hearts + hearts + string);
+      assert.strictEqual(_.trim(trimString, chars), string);
+      assert.strictEqual(_.trimLeft(trimString, chars), string + trimChars);
+      assert.strictEqual(_.trimRight(trimString, chars), trimChars + string);
 
-      assert.strictEqual(_.trunc(string, { 'length': 9 }), string);
-      assert.strictEqual(_.trunc(string, { 'length': 6 }), 'I ' + hearts + '...');
+      assert.strictEqual(_.trunc(string, { 'length': 13 }), string);
+      assert.strictEqual(_.trunc(string, { 'length': 6 }), 'A ' + leafs + '...');
 
-      assert.deepEqual(_.words(string), ['I', hearts, 'the', leafs]);
+      assert.deepEqual(_.words(string), ['A', leafs, comboGlyph, 'and', rocket]);
 
       _.times(2, function(index) {
         var separator = index ? RegExp(hearts) : hearts,
             options = { 'length': 4, 'separator': separator },
             actual = _.trunc(string, options);
 
-        assert.strictEqual(actual, 'I...');
+        assert.strictEqual(actual, 'A...');
         assert.strictEqual(actual.length, 4);
 
         actual = _.trunc(allHearts, options);

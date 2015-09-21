@@ -20061,6 +20061,23 @@
       }
     });
 
+    QUnit.test('should use `_.toArray` to generate the iterable result ' + chainType, function(assert) {
+      assert.expect(3);
+
+      if (!isNpm && Array.from) {
+        var hearts = '\ud83d\udc95',
+            values = [[1], { 'a': 1 }, hearts];
+
+        _.each(values, function(value) {
+          var wrapped = chain(value);
+          assert.deepEqual(Array.from(wrapped), _.toArray(value));
+        });
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+
     QUnit.test('should reset the iterator correctly ' + chainType, function(assert) {
       assert.expect(4);
 

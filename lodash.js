@@ -790,12 +790,12 @@
   }
 
   /**
-   * Converts `value` to a string if it's not one. An empty string is returned
-   * for `null` or `undefined` values.
+   * Converts `value` to a string. An empty string is returned for `null`
+   * and `undefined` values.
    *
    * @private
-   * @param {*} value The value to process.
-   * @returns {string} Returns the string.
+   * @param {*} value The value to convert.
+   * @returns {string} Returns the converted string.
    */
   function baseToString(value) {
     return value == null ? '' : (value + '');
@@ -4488,7 +4488,7 @@
      * Converts `string` to a property path array.
      *
      * @private
-     * @param {string} string The string to process.
+     * @param {string} string The string to convert.
      * @returns {Array} Returns the property path array.
      */
     function stringToPath(string) {
@@ -4503,7 +4503,7 @@
      * Converts `value` to a function if it's not one.
      *
      * @private
-     * @param {*} value The value to process.
+     * @param {*} value The value to convert.
      * @returns {Function} Returns the function.
      */
     function toFunction(value) {
@@ -11697,7 +11697,7 @@
      * @static
      * @memberOf _
      * @category Utility
-     * @param {*} value The value to process.
+     * @param {*} value The value to convert.
      * @returns {Array} Returns the new property path array.
      * @example
      *

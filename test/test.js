@@ -8490,6 +8490,55 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isJSON');
+
+  (function() {
+    QUnit.test('should return `false` for non-string values', function(assert) {
+      var values = [ undefined, null, '', 42, 3.14, [], [1,2], {}, {foo:'bar'}, true ];
+      assert.expect(values.length);
+
+      _.each(values, function(value) {
+        assert.strictEqual(_.isJSON(value), false, '' + value);
+      });
+    });
+    QUnit.test('should return `false` for invalid JSON', function(assert) {
+      var values = [
+        '',
+        'undefined',
+        'foo',
+        '[',
+        '{foo: "bar"}',
+        '"foo',
+        '{'
+      ];
+      assert.expect(values.length);
+
+      _.each(values, function(value) {
+        assert.strictEqual(_.isJSON(value), false, value);
+      });
+    });
+    QUnit.test('should return `true` for valid JSON', function(assert) {
+      var values = [
+        'null',
+        '42',
+        '3.14',
+        '[]',
+        '{}',
+        '[1,2,3]',
+        '"foo"',
+        '{"foo": "bar"}',
+        'false'
+      ];
+      assert.expect(values.length);
+
+      _.each(values, function(value) {
+        assert.strictEqual(_.isJSON(value), true, value);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isMatch');
 
   (function() {
@@ -20625,6 +20674,7 @@
       'isFinite',
       'isFunction',
       'isInteger',
+      'isJSON',
       'isNaN',
       'isNative',
       'isNil',
@@ -20889,7 +20939,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(235);
+      assert.expect(236);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

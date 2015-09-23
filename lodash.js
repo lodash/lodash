@@ -1452,7 +1452,7 @@
      * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
      * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
      * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`,
+     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`, `isJSON`,
      * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
      * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
      * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
@@ -8596,6 +8596,38 @@
     }
 
     /**
+     * Checks if `value` is a valid JSON string.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a valid JSON string, else `false`.
+     * @example
+     *
+     * _.isJSON('"foo"');
+     * // => true
+     *
+     * _.isJSON('{"foo": "bar"}');
+     * // => true
+     *
+     * _.isJSON(42);
+     * // => false
+     *
+     * _.isJSON([1, 2, 3]);
+     * // => false
+     */
+    function isJSON(value) {
+      if (!isString(value)) return false;
+      try {
+        JSON.parse(value);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    /**
      * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
@@ -12186,6 +12218,7 @@
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isInteger = isInteger;
+    lodash.isJSON = isJSON;
     lodash.isMatch = isMatch;
     lodash.isMatchWith = isMatchWith;
     lodash.isNaN = isNaN;

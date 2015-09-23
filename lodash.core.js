@@ -537,7 +537,7 @@
    * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
    * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
    * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-   * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isMatch`,
+   * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isJSON`, `isMatch`,
    * `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`,
    * `isObjectLike`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`,
    * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lt`, `lte`,

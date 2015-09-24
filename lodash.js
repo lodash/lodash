@@ -5627,7 +5627,7 @@
     /**
      * Creates a duplicate-free version of an array, using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-     * for equality comparisons, in which only the first occurence of each element
+     * for equality comparisons, in which only the first occurrence of each element
      * is kept.
      *
      * @static

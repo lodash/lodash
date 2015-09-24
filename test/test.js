@@ -20952,7 +20952,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(235);
+      assert.expect(238);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 
@@ -21023,7 +21023,7 @@
             func = _[methodName];
 
         var actual = _.map(falsey, function(value, index) {
-          var pass = !index && /^(?:backflow|compose|flow(Right)?)$/.test(methodName);
+          var pass = !index && /^(?:backflow|compose|conj|disj|flow(Right)?)$/.test(methodName);
 
           try {
             index ? func(value) : func();

@@ -3597,6 +3597,25 @@
     }
 
     /**
+     * Creates a function like `_.conj`.
+     *
+     * @private
+     * @param {Function} arrayFunc The function to iterate over `iteratees`.
+     * @returns {Function} Returns the new invoker function.
+     */
+    function createInvoker(arrayFunc) {
+      return restParam(function(iteratees) {
+        iteratees = arrayMap(baseFlatten(iteratees), getIteratee());
+        return restParam(function(args) {
+          var thisArg = this;
+          return arrayFunc(iteratees, function(iteratee) {
+            return iteratee.apply(thisArg, args);
+          });
+        });
+      });
+    }
+
+    /**
      * Creates a function like `_.modArgs`.
      *
      * @private
@@ -7251,6 +7270,30 @@
     });
 
     /**
+     * Creates a function that checks if **all** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function[]} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var conjed = _.conj(Boolean, isFinite);
+     *
+     * conjed('1');
+     * // => true
+     *
+     * conjed(null);
+     * // => false
+     *
+     * conjed(NaN);
+     * // => false
+     */
+    var conj = createInvoker(arrayEvery);
+
+    /**
      * Creates a function that accepts one or more arguments of `func` that when
      * called either invokes `func` returning its result, if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
@@ -7554,6 +7597,30 @@
     });
 
     /**
+     * Creates a function that checks if **any** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function[]} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var disjed = _.disj(Boolean, isFinite);
+     *
+     * disjed('1');
+     * // => true
+     *
+     * disjed(null);
+     * // => true
+     *
+     * disjed(NaN);
+     * // => false
+     */
+    var disj = createInvoker(arraySome);
+
+    /**
      * Creates a function that invokes `func` with arguments reversed.
      *
      * @static
@@ -7616,6 +7683,24 @@
      * // => 9
      */
     var flowRight = createFlow(true);
+
+    /**
+     * Creates a function that invokes `iteratees` with the arguments provided
+     * to the created function and returns their results.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function[]} iteratees The iteratees to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var juxted = _.juxt(Math.max, Math.min);
+     *
+     * juxted(1, 2, 3, 4);
+     * // => [4, 1]
+     */
+    var juxt = createInvoker(arrayMap);
 
     /**
      * Creates a function that memoizes the result of `func`. If `resolver` is
@@ -12024,6 +12109,7 @@
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
+    lodash.conj = conj;
     lodash.constant = constant;
     lodash.countBy = countBy;
     lodash.create = create;
@@ -12035,6 +12121,7 @@
     lodash.defer = defer;
     lodash.delay = delay;
     lodash.difference = difference;
+    lodash.disj = disj;
     lodash.drop = drop;
     lodash.dropRight = dropRight;
     lodash.dropRightWhile = dropRightWhile;
@@ -12055,6 +12142,7 @@
     lodash.invert = invert;
     lodash.invoke = invoke;
     lodash.iteratee = iteratee;
+    lodash.juxt = juxt;
     lodash.keyBy = keyBy;
     lodash.keys = keys;
     lodash.keysIn = keysIn;

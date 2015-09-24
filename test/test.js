@@ -20880,8 +20880,6 @@
       'delay',
       'flip',
       'memoize',
-      'modArgs',
-      'modArgsSet',
       'negate',
       'once',
       'partial',
@@ -20952,7 +20950,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(238);
+      assert.expect(240);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 
@@ -21016,7 +21014,7 @@
     });
 
     QUnit.test('should throw an error for falsey arguments', function(assert) {
-      assert.expect(25);
+      assert.expect(23);
 
       _.each(rejectFalsey, function(methodName) {
         var expected = _.map(falsey, _.constant(true)),

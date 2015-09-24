@@ -3625,10 +3625,8 @@
      */
     function createModArgs(resolver) {
       return restParam(function(func, transforms) {
-        transforms = baseFlatten(transforms);
-        if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
-          throw new TypeError(FUNC_ERROR_TEXT);
-        }
+        transforms = arrayMap(baseFlatten(transforms), getIteratee());
+
         var funcsLength = transforms.length;
         return restParam(function(args) {
           var index = -1,

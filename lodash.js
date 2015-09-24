@@ -3699,12 +3699,13 @@
       return function(number, precision) {
         precision = precision ? toInteger(precision) : 0;
         if (precision) {
-          // Shift
-          number = number.toString().split('e');
-          number = func(+(number[0] + 'e' + (number[1] ? (+number[1] + precision) : precision)));
+          // Shift decimal point with exponential operations
+          number = (number + 'e').split('e'); // Force a split
+          number = func(number[0] + 'e' + (+number[1] + precision)); // Use ToNumber conversions
           // Shift back
-          number = number.toString().split('e');
-          return +(number[0] + 'e' + (number[1] ? (+number[1] - precision) : -precision));
+          number = (number + 'e').split('e');
+          return +(number[0] + 'e' + (number[1] - precision));
+
         }
         return func(number);
       };

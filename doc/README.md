@@ -5643,8 +5643,9 @@ circle instanceof Shape;
 <a href="#_defaultsobject-sources">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/3.10.1/lodash.src.js#L9438 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.defaults "See the npm package")
 
 Assigns own enumerable properties of source object(s) to the destination
-object for all destination properties that resolve to `undefined`. Once a
-property is set, additional values of the same property are ignored.
+object for all destination properties that resolve to `undefined`. Assigns
+from sources in left to right order. Once a property is set, additional
+values of the same property are ignored.
 <br>
 <br>
 **Note:** This method mutates `object`.
@@ -5658,7 +5659,7 @@ property is set, additional values of the same property are ignored.
 
 #### Example
 ```js
-_.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+_.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred', 'age': 47 });
 // => { 'user': 'barney', 'age': 36 }
 ```
 * * *

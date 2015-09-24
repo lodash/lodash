@@ -7689,8 +7689,8 @@
     }
 
     /**
-     * Creates a function that runs each argument through a corresponding
-     * transform function.
+     * Creates a function that invokes `func` with arguments modified by
+     * corresponding `transforms`.
      *
      * @static
      * @memberOf _
@@ -7724,7 +7724,7 @@
     });
 
     /**
-     * This method is like `_.modArgs` except that each transform function is
+     * This method is like `_.modArgs` except that each of the `transforms` is
      * provided all arguments the created function is invoked with.
      *
      * @static

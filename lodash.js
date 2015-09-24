@@ -1474,18 +1474,18 @@
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
      * var wrapped = _([1, 2, 3]);
      *
      * // returns an unwrapped value
-     * wrapped.reduce(function(sum, n) {
-     *   return sum + n;
-     * });
+     * wrapped.reduce(_.add);
      * // => 6
      *
      * // returns a wrapped value
-     * var squares = wrapped.map(function(n) {
-     *   return n * n;
-     * });
+     * var squares = wrapped.map(square);
      *
      * _.isArray(squares);
      * // => false
@@ -6605,14 +6605,14 @@
      * @returns {Array} Returns the new mapped array.
      * @example
      *
-     * function timesThree(n) {
-     *   return n * 3;
+     * function square(n) {
+     *   return n * n;
      * }
      *
-     * _.map([1, 2], timesThree);
+     * _.map([1, 2], square);
      * // => [3, 6]
      *
-     * _.map({ 'a': 1, 'b': 2 }, timesThree);
+     * _.map({ 'a': 1, 'b': 2 }, square);
      * // => [3, 6] (iteration order is not guaranteed)
      *
      * var users = [

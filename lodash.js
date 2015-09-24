@@ -3600,7 +3600,7 @@
      * Creates a function like `_.conj`.
      *
      * @private
-     * @param {Function} arrayFunc The function to iterate over `iteratees`.
+     * @param {Function} arrayFunc The function to iterate over iteratees.
      * @returns {Function} Returns the new invoker function.
      */
     function createInvoker(arrayFunc) {

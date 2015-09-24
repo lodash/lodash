@@ -4081,8 +4081,15 @@
       return function(number, precision) {
         precision = precision ? toInteger(precision) : 0;
         if (precision) {
-          precision = pow(10, precision);
-          return func(number * precision) / precision;
+          // Shift the decimal point with exponential notation to avoid floating-point funny bussiness.
+          // See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round#Examples)
+          // for more details.
+          var pair = (+number + 'e').split('e'),
+              value = func(pair[0] + 'e' + (+pair[1] + precision));
+
+          // Shift back.
+          pair = (value + 'e').split('e');
+          return +(pair[0] + 'e' + (pair[1] - precision));
         }
         return func(number);
       };

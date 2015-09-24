@@ -11362,6 +11362,7 @@
       }
     });
   }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.mapKeys');
@@ -16222,11 +16223,28 @@
       assert.strictEqual(actual, isCeil ? 5 : 4);
     });
 
-    QUnit.test('`_.' + methodName + '` should return a rounded number with a precision of `0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a precision of `0`', function(assert) {
       assert.expect(1);
 
       var actual = func(4.006, 0);
       assert.strictEqual(actual, isCeil ? 5 : 4);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with a positive precision', function(assert) {
+      assert.expect(2);
+
+      var actual = func(4.016, 2);
+      assert.strictEqual(actual, isFloor ? 4.01 : 4.02);
+
+      actual = func(4.1, 2);
+      assert.strictEqual(actual, 4.1);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with a negative precision', function(assert) {
+      assert.expect(1);
+
+      var actual = func(4160, -2);
+      assert.strictEqual(actual, isFloor ? 4100 : 4200);
     });
 
     QUnit.test('`_.' + methodName + '` should coerce `precision` to an integer', function(assert) {
@@ -16244,18 +16262,18 @@
       assert.strictEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should return a rounded number with a positive precision', function(assert) {
-      assert.expect(1);
+    QUnit.test('`_.' + methodName + '` should work with exponential notation and `precision`', function(assert) {
+      assert.expect(3);
 
-      var actual = func(4.016, 2);
-      assert.strictEqual(actual, isFloor ? 4.01 : 4.02);
-    });
+      var actual = func(5e1, 2);
+      assert.deepEqual(actual, 50);
 
-    QUnit.test('`_.' + methodName + '` should return a rounded number with a negative precision', function(assert) {
-      assert.expect(1);
+      actual = func('5e', 1);
+      assert.deepEqual(actual, NaN);
 
-      var actual = func(4160, -2);
-      assert.strictEqual(actual, isFloor ? 4100 : 4200);
+      actual = func('5e1e1', 1);
+      assert.deepEqual(actual, NaN);
+
     });
   });
 

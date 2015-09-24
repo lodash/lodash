@@ -21071,6 +21071,95 @@
   }());
 
   /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.floor');
+  (function() {
+    QUnit.test('should accept integers', function(assert) {
+      assert.expect(4);
+      assert.equal(_.floor(4), 4);
+      assert.equal(_.floor(-4), -4);
+      assert.equal(_.floor(4, 2), 4);
+      assert.equal(_.floor(-4, 2), -4);
+    });
+
+    QUnit.test('should accept whole numbers', function(assert) {
+      assert.expect(5);
+      assert.equal(_.floor(4.3), 4);
+      assert.equal(_.floor(-4.3), -5);
+      assert.equal(_.floor(4.3, 2), 4.3);
+      assert.equal(_.floor(4.3333, 2), 4.33);
+      assert.equal(_.floor(-4.368, 2), -4.37);
+    });
+
+    QUnit.test('should accept exponential values', function(assert) {
+      assert.expect(5);
+      assert.equal(_.floor(4e1), 40);
+      assert.equal(_.floor(4e-1, 1), 0.4);
+      assert.equal(_.floor(4e-1, 2), 0.4);
+      assert.equal(_.floor(-4e-1), -1);
+      assert.equal(_.floor(-4e-1, 2), -0.4);
+    });
+  })();
+
+  /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.ceil');
+  (function() {
+    QUnit.test('should accept integers', function(assert) {
+      assert.expect(4);
+      assert.equal(_.ceil(4), 4);
+      assert.equal(_.ceil(-4), -4);
+      assert.equal(_.ceil(4, 2), 4);
+      assert.equal(_.ceil(-4, 2), -4);
+    });
+
+    QUnit.test('should accept whole numbers', function(assert) {
+      assert.expect(5);
+      assert.equal(_.ceil(4.3), 5);
+      assert.equal(_.ceil(-4.3), -4);
+      assert.equal(_.ceil(4.3, 2), 4.3);
+      assert.equal(_.ceil(4.3333, 2), 4.34);
+      assert.equal(_.ceil(-4.368, 2), -4.36);
+    });
+
+    QUnit.test('should accept exponential values', function(assert) {
+      assert.expect(5);
+      assert.equal(_.ceil(4e1), 40);
+      assert.equal(_.ceil(4e-1, 1), 0.4);
+      assert.equal(_.ceil(4e-1, 2), 0.4);
+      assert.equal(_.ceil(-4e-1), -0);
+      assert.equal(_.ceil(-4e-1, 2), -0.4);
+    });
+  })();
+
+  /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.round');
+  (function() {
+    QUnit.test('should accept integers', function(assert) {
+      assert.expect(4);
+      assert.equal(_.round(4), 4);
+      assert.equal(_.round(-4), -4);
+      assert.equal(_.round(4, 2), 4);
+      assert.equal(_.round(-4, 2), -4);
+    });
+
+    QUnit.test('should accept whole numbers', function(assert) {
+      assert.expect(5);
+      assert.equal(_.round(4.3), 4);
+      assert.equal(_.round(-4.3), -4);
+      assert.equal(_.round(4.3, 2), 4.3);
+      assert.equal(_.round(4.3333, 2), 4.33);
+      assert.equal(_.round(-4.368, 2), -4.37);
+    });
+
+    QUnit.test('should accept exponential values', function(assert) {
+      assert.expect(5);
+      assert.equal(_.round(4e1), 40);
+      assert.equal(_.round(4e-1, 1), 0.4);
+      assert.equal(_.round(4e-1, 2), 0.4);
+      assert.equal(_.round(-4e-1), -0);
+      assert.equal(_.round(-4e-1, 2), -0.4);
+    });
+  })();
+  /*--------------------------------------------------------------------------*/
 
   QUnit.config.asyncRetries = 10;
   QUnit.config.hidepassed = true;

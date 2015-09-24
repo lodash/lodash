@@ -3699,8 +3699,12 @@
       return function(number, precision) {
         precision = precision ? toInteger(precision) : 0;
         if (precision) {
-          precision = pow(10, precision);
-          return func(number * precision) / precision;
+          // Shift
+          number = number.toString().split('e');
+          number = func(+(number[0] + 'e' + (number[1] ? (+number[1] + precision) : precision)));
+          // Shift back
+          number = number.toString().split('e');
+          return +(number[0] + 'e' + (number[1] ? (+number[1] - precision) : -precision));
         }
         return func(number);
       };

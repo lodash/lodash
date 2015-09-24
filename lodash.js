@@ -3700,8 +3700,8 @@
         precision = precision ? toInteger(precision) : 0;
         if (precision) {
           // Shift decimal point with exponential operations
-          number = (number + 'e').split('e'); // Force a split
-          number = func(number[0] + 'e' + (+number[1] + precision)); // Use ToNumber conversions
+          number = (number + 'e').split('e');
+          number = func(number[0] + 'e' + (+number[1] + precision));
           // Shift back
           number = (number + 'e').split('e');
           return +(number[0] + 'e' + (number[1] - precision));

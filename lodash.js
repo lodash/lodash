@@ -6264,7 +6264,7 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Tests if the members of two or more collections are equal. Uses
+     * Tests if two or more collections have the same members. Uses
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero).
      *
      * @static

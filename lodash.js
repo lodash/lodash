@@ -9218,7 +9218,8 @@
 
     /**
      * Assigns own enumerable properties of source objects to the destination
-     * object. Subsequent sources overwrite property assignments of previous sources.
+     * object. Source objects are applied from left to right. Subsequent sources
+     * overwrite property assignments of previous sources.
      *
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
@@ -9331,7 +9332,8 @@
     /**
      * Assigns own and inherited enumerable properties of source objects to the
      * destination object for all destination properties that resolve to `undefined`.
-     * Once a property is set, additional values of the same property are ignored.
+     * Source objects are applied from left to right. Once a property is set,
+     * additional values of the same property are ignored.
      *
      * **Note:** This method mutates `object`.
      *
@@ -9907,8 +9909,9 @@
      * Recursively merges own and inherited enumerable properties of source
      * objects into the destination object, skipping source properties that resolve
      * to `undefined`. Array and plain object properties are merged recursively.
-     * Other objects and value types are overriden by assignment. Subsequent
-     * sources overwrite property assignments of previous sources.
+     * Other objects and value types are overriden by assignment. Source objects
+     * are applied from left to right. Subsequent sources overwrite property
+     * assignments of previous sources.
      *
      * **Note:** This method mutates `object`.
      *

@@ -18888,12 +18888,16 @@
   QUnit.module('astral symbols');
 
   (function() {
-    var flag = '\ud83c\uddfa\ud83c\uddf8',
+    var emojiVar = '\ufe0f',
+        flag = '\ud83c\uddfa\ud83c\uddf8',
+        heart = '\u2764' + emojiVar,
         hearts = '\ud83d\udc95',
         leafs = '\ud83c\udf42',
+        raisedHand = '\u270B' + emojiVar,
         rocket = '\ud83d\ude80',
-        varHeart = '\u2764\ufe0f',
-        comboGlyph = '\ud83d\udc68\u200d' + varHeart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68';
+        thumbsUp = '\ud83d\udc4d',
+        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68',
+        modifiers = ['\ud83c\udffb', '\ud83c\udffc', '\ud83c\udffd', '\ud83c\udffe', '\ud83c\udfff'];
 
     QUnit.test('should account for astral symbols', function(assert) {
       assert.expect(25);
@@ -18972,9 +18976,45 @@
     QUnit.test('should account for variation selectors', function(assert) {
       assert.expect(3);
 
-      assert.strictEqual(_.size(varHeart), 1);
-      assert.deepEqual(_.toArray(varHeart), [varHeart]);
-      assert.deepEqual(_.words(varHeart), [varHeart]);
+      assert.strictEqual(_.size(heart), 1);
+      assert.deepEqual(_.toArray(heart), [heart]);
+      assert.deepEqual(_.words(heart), [heart]);
+    });
+
+    QUnit.test('should account for modifiers', function(assert) {
+      assert.expect(1);
+
+      var values = _.map(modifiers, function(modifier) {
+        return thumbsUp + modifier;
+      });
+
+      var expected = _.map(values, function(value) {
+        return [1, [value], [value]];
+      });
+
+      var actual = _.map(values, function(value) {
+        return [_.size(value), _.toArray(value), _.words(value)];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should account for variation selectors with modifiers', function(assert) {
+      assert.expect(1);
+
+      var values = _.map(modifiers, function(modifier) {
+        return raisedHand + modifier;
+      });
+
+      var expected = _.map(values, function(value) {
+        return [1, [value], [value]];
+      });
+
+      var actual = _.map(values, function(value) {
+        return [_.size(value), _.toArray(value), _.words(value)];
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

@@ -148,28 +148,31 @@
       rsDigits = '\\d+',
       rsDingbat = '[\\u2700-\\u27bf]',
       rsLowers = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
+      rsModifier = '(?:\\ud83c[\\udffb-\\udfff])',
       rsNonAstral = '[^' + rsAstralRange + ']',
       rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
       rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
+      rsSymbol = '(?:' + [rsNonAstral, rsRegional, rsSurrPair, rsAstral].join('|') + ')',
       rsUpper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
       rsVS = '\\ufe0e\\ufe0f',
       rsZWJ = '\\u200d',
+      reOptMod = rsModifier + '?',
       rsOptVS = '[' + rsVS + ']?',
-      rsJoiner = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVS + ')*',
-      rsSymbol = '(?:' + [rsNonAstral, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
+      rsJoiner = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVS + reOptMod + ')*',
+      rsSeq = rsOptVS + reOptMod + rsJoiner;
 
   /** Used to match [zero-width joiners and code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
   var reAdvSymbol = RegExp('[' + rsZWJ + rsVS + rsAstralRange + ']');
 
   /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
-  var reStrSymbol = RegExp(rsSymbol + rsOptVS + rsJoiner, 'g');
+  var reStrSymbol = RegExp(rsSymbol + rsSeq, 'g');
 
   /** Used to match words to create compound words. */
   var reWord = RegExp([
     rsUpper + '+(?=' + rsUpper + rsLowers + ')',
     rsUpper + '?' + rsLowers,
     rsUpper + '+',
-    '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsOptVS + rsJoiner,
+    '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
     rsDigits
   ].join('|'), 'g');
 

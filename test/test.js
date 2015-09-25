@@ -2449,6 +2449,118 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.consists');
+
+  (function() {
+    
+    var consists = _.consists,
+        a = { a: 'a' },
+        b = { a: 'a' },
+        c = ['a','b'],
+        d = function () {},
+        e = function () {},
+        f = new Date(),
+        g = [],
+        h = [];
+
+    QUnit.test('should return `true` for no arguments', function(assert) {
+      assert.expect(1);
+      assert.ok(consists());
+    });
+
+    QUnit.test('should return `false` for one argument', function(assert) {
+      assert.expect(4);
+      assert.notOk(consists(1));
+      assert.notOk(consists('asdf'));
+      assert.notOk(consists([1]));
+      assert.notOk(consists({a:'a'}));
+    });
+
+    QUnit.test('should return `true` for empty collections', function(assert) {
+      assert.expect(3);
+      assert.ok(consists([], []));
+      assert.ok(consists({}, {}));
+      assert.ok(consists('', ''));
+    });
+
+    QUnit.test('should work on arrays', function(assert) {
+      assert.expect(2);
+      assert.ok(consists([1,2,3], [3,1,2]));
+      assert.notOk(consists([1,2,3], [1,2,4]));
+    });
+
+    QUnit.test('should work on strings', function(assert) {
+      assert.expect(2);
+      assert.ok(consists('abc', 'cab'));
+      assert.notOk(consists('abc', 'abcd'));
+    });
+
+    QUnit.test('should work on objects', function(assert) {
+      assert.expect(2);
+      assert.ok(consists({ a: 1, b: 2, c: 3 }, { b: 3, a: 2, c: 1 }));
+      assert.notOk(consists({ a: 1, b: 2, c: 3, d: 4 }, { b: 3, a: 2, c: 1, d: 1 }));
+    });
+
+    QUnit.test('should return `true` equivalent collections with primitives', function(assert) {
+      assert.expect(3);
+      assert.ok(consists([1,1,2,3], [3,1,2,1], [2,1,3,1]));
+      assert.ok(consists(['a','a','b','c'], ['b','a','a','c']));
+      assert.ok(consists(
+        [true,'a',false,'c',0,true, undefined,0,-0,NaN,'a',1,2,-1,false],
+        [0,2,undefined,true,-1,0,NaN,'a',1,-0,false,true,false,'c','a']
+      ));
+    });
+
+    QUnit.test('should return `false` inequivalent collections with primitives', function(assert) {
+      assert.expect(3);
+      assert.notOk(consists([1,1,2,3], [1,2,3,3]));
+      assert.notOk(consists(['a','a','b','c'], ['a','b','c']));
+      assert.notOk(consists(
+        [true,'a',undefined,false,'c',0,true,0,-0,NaN,'a',1,2,-1,false],
+        [0,2,true,-1,0,NaN,'a',1,-0,false,false,'c','a',undefined]
+      ));
+    });
+
+    QUnit.test('should return `true` equivalent collections with non-primitives', function(assert) {
+      assert.expect(3);
+      assert.ok(consists([a,b,c,d,e,f,g,h], [h,a,g,c,b,f,e,d]));
+      assert.ok(consists([a,a,b], [a,b,a]));
+      assert.ok(consists([a,h,h], [h,a,h]));
+    });
+
+    QUnit.test('should return `false` inequivalent collections with non-primitives', function(assert) {
+      assert.expect(3);
+      assert.notOk(consists([a,a,b,c,d,e,f,g,h], [h,a,g,c,b,b,f,e,d]));
+      assert.notOk(consists([d,e], [d,d]));
+      assert.notOk(consists([g,h], [g,g]));
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_([1,2,3]).consists([3,1,2]), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_([1,2,3]).chain().consists([3,1,2]) instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.constant');
 
   (function() {
@@ -20950,7 +21062,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(240);
+      assert.expect(241);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

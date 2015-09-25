@@ -1447,16 +1447,16 @@
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
-     * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
-     * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
-     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
-     * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
-     * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`,
-     * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
-     * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
-     * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
-     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`,
+     * `cloneDeepWith`, `cloneWith`, `consists`, `deburr`, `endsWith`, `eq`,
+     * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
+     * `findLast`, `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`,
+     * `gte`, `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`,
+     * `isArguments`, `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`,
+     * `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`,
+     * `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
+     * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
+     * `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
+     * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`,
      * `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
      * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
      * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
@@ -1952,6 +1952,39 @@
         return result || {};
       };
     }());
+
+    /**
+     * The base implementation of `_.consists`.
+     *
+     * @private
+     * @param {Array} collections The collections to compare.
+     * @returns {boolean} Returns `true` if all collections contain the same members, else `false`.
+     */
+    function baseConsists(collections) {
+      collections = map(collections, function(collection) {
+        return isArray(collection) ? collection : values(collection);
+      });
+
+      var value,
+          firstCollection = first(collections),
+          others = rest(collections),
+          length = firstCollection.length,
+          lengthsEqual = every(others, function(other) { return length === other.length; });
+
+      if (!lengthsEqual) { return false; }
+
+      while (length > 0) {
+        firstCollection = without(firstCollection, value = first(firstCollection));
+        length = firstCollection.length;
+
+        lengthsEqual = every(others, function(other, index) {
+          return length === (others[index] = without(other, value)).length;
+        });
+
+        if (!lengthsEqual) { return false; }
+      }
+      return true;
+    }
 
     /**
      * The base implementation of `_.delay` and `_.defer` which accepts an array
@@ -6229,6 +6262,44 @@
     }
 
     /*------------------------------------------------------------------------*/
+
+    /**
+     * Tests if two or more collections have the same members. Uses
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero).
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {...(Array|Object)} collections The collections to compare.
+     * @returns {boolean} Returns `true` if all collections contain the same members, else `false`.
+     * @example
+     *
+     * _.consists([1,1,2,3], [3,1,2,1], [2,1,3,1]);
+     * // => true
+     *
+     * _.consists([1,1,2,3], [3,1,2]);
+     * // => false
+     *
+     * _.consists('hello', 'loleh', ['o','l','l','e','h'], { a:'l', b:'h', c:'e', d:'o', e:'l' });
+     * // => true
+     *
+     * var a = { a: 'a' };
+     * var b = { b: 'b' };
+     * var b2 = { b: 'b' };
+     *
+     * _.consists([a, a, b], [b, a, a]);
+     * // => true
+     *
+     * _.consists([a, b, b], [a, b, b2]);
+     * // => false
+     *
+     */
+    var consists = restParam(function(collections) {
+      return !collections.length ? true :
+        collections.length === 1 ? false :
+        !every(collections, function(collection) { return isObject(collection) || isArrayLike(collection); }) ? false :
+        baseConsists(collections);
+    });
 
     /**
      * Creates an object composed of keys generated from the results of running
@@ -12235,6 +12306,7 @@
     lodash.cloneDeep = cloneDeep;
     lodash.cloneDeepWith = cloneDeepWith;
     lodash.cloneWith = cloneWith;
+    lodash.consists = consists;
     lodash.deburr = deburr;
     lodash.endsWith = endsWith;
     lodash.eq = eq;

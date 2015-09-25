@@ -793,14 +793,18 @@
   }
 
   /**
-   * Converts `value` to a string. An empty string is returned for `null`
-   * and `undefined` values.
+   * Converts `value` to a string if it's not one.
+   * An empty string is returned for `null` and `undefined` values.
    *
    * @private
-   * @param {*} value The value to convert.
-   * @returns {string} Returns the converted string.
+   * @param {*} value The value to process.
+   * @returns {string} Returns the string.
    */
   function baseToString(value) {
+    // Exit early for strings to avoid a performance hit in some environments.
+    if (typeof value == 'string') {
+      return value;
+    }
     return value == null ? '' : (value + '');
   }
 
@@ -4523,7 +4527,7 @@
      * Converts `value` to a function if it's not one.
      *
      * @private
-     * @param {*} value The value to convert.
+     * @param {*} value The value to process.
      * @returns {Function} Returns the function.
      */
     function toFunction(value) {
@@ -10526,7 +10530,7 @@
      */
     function endsWith(string, target, position) {
       string = baseToString(string);
-      target = (target + '');
+      target = typeof target == 'string' ? target : (target + '');
 
       var length = string.length;
       position = position === undefined

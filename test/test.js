@@ -20990,7 +20990,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(240);
+      assert.expect(241);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

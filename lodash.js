@@ -112,9 +112,6 @@
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
       reHasRegExpChar = RegExp(reRegExpChar.source);
 
-  /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
-  var reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
-
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
 
@@ -793,22 +790,6 @@
   }
 
   /**
-   * Converts `value` to a string if it's not one.
-   * An empty string is returned for `null` and `undefined` values.
-   *
-   * @private
-   * @param {*} value The value to process.
-   * @returns {string} Returns the string.
-   */
-  function baseToString(value) {
-    // Exit early for strings to avoid a performance hit in some environments.
-    if (typeof value == 'string') {
-      return value;
-    }
-    return value == null ? '' : (value + '');
-  }
-
-  /**
    * The base implementation of `_.values` and `_.valuesIn` which creates an
    * array of `object` property values corresponding to the property names
    * of `props`.
@@ -1468,8 +1449,8 @@
      * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
      * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
      * `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`, `sumBy`, `template`,
-     * `toInteger`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
-     * `value`, and `words`
+     * `toInteger`, `toString`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
+     * `uniqueId`, `value`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -4517,7 +4498,7 @@
      */
     function stringToPath(string) {
       var result = [];
-      baseToString(string).replace(rePropName, function(match, number, quote, string) {
+      toString(string).replace(rePropName, function(match, number, quote, string) {
         result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
       });
       return result;
@@ -6215,7 +6196,7 @@
      * // => '1,2,3'
      */
     function wrapperToString() {
-      return (this.value() + '');
+      return toString(this.value());
     }
 
     /**
@@ -9221,6 +9202,24 @@
       return copyObject(value, keysIn(value));
     }
 
+    /**
+     * Converts `value` to a string if it's not one.
+     * An empty string is returned for `null` and `undefined` values.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to process.
+     * @returns {string} Returns the string.
+     */
+    function toString(value) {
+      // Exit early for strings to avoid a performance hit in some environments.
+      if (typeof value == 'string') {
+        return value;
+      }
+      return value == null ? '' : (value + '');
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -10477,7 +10476,7 @@
      * // => 'Fred'
      */
     function capitalize(string) {
-      string = baseToString(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
@@ -10503,7 +10502,7 @@
      * // => 'deja vu'
      */
     function deburr(string) {
-      string = baseToString(string);
+      string = toString(string);
       return string && string.replace(reLatin1, deburrLetter).replace(reComboMark, '');
     }
 
@@ -10529,7 +10528,7 @@
      * // => true
      */
     function endsWith(string, target, position) {
-      string = baseToString(string);
+      string = toString(string);
       target = typeof target == 'string' ? target : (target + '');
 
       var length = string.length;
@@ -10574,7 +10573,7 @@
      * // => 'fred, barney, &amp; pebbles'
      */
     function escape(string) {
-      string = baseToString(string);
+      string = toString(string);
       return (string && reHasUnescapedHtml.test(string))
         ? string.replace(reUnescapedHtml, escapeHtmlChar)
         : string;
@@ -10595,7 +10594,7 @@
      * // => '\[lodash\]\(https://lodash\.com/\)'
      */
     function escapeRegExp(string) {
-      string = baseToString(string);
+      string = toString(string);
       return (string && reHasRegExpChar.test(string))
         ? string.replace(reRegExpChar, '\\$&')
         : string;
@@ -10647,7 +10646,7 @@
      * // => 'abc'
      */
     function pad(string, length, chars) {
-      string = baseToString(string);
+      string = toString(string);
       length = toInteger(length);
 
       var strLength = stringSize(string);
@@ -10684,7 +10683,7 @@
      * // => 'abc'
      */
     function padLeft(string, length, chars) {
-      string = baseToString(string);
+      string = toString(string);
       return createPadding(string, length, chars) + string;
     }
 
@@ -10711,7 +10710,7 @@
      * // => 'abc'
      */
     function padRight(string, length, chars) {
-      string = baseToString(string);
+      string = toString(string);
       return string + createPadding(string, length, chars);
     }
 
@@ -10771,7 +10770,7 @@
      * // => ''
      */
     function repeat(string, n) {
-      string = baseToString(string);
+      string = toString(string);
       n = toInteger(n);
 
       var result = '';
@@ -10859,7 +10858,7 @@
      * // => true
      */
     function startsWith(string, target, position) {
-      string = baseToString(string);
+      string = toString(string);
       position = nativeMin(nativeMax(toInteger(position), 0), string.length);
       return string.lastIndexOf(target, position) == position;
     }
@@ -10968,7 +10967,7 @@
       if (otherOptions && isIterateeCall(string, options, otherOptions)) {
         options = otherOptions = undefined;
       }
-      string = baseToString(string);
+      string = toString(string);
       options = extendWith({}, otherOptions || options, settings, extendDefaults);
 
       var imports = extendWith({}, options.imports, settings.imports, extendDefaults),
@@ -11088,7 +11087,7 @@
      * // => ['foo', 'bar']
      */
     function trim(string, chars, guard) {
-      string = baseToString(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
@@ -11124,7 +11123,7 @@
      * // => 'abc-_-'
      */
     function trimLeft(string, chars, guard) {
-      string = baseToString(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
@@ -11158,7 +11157,7 @@
      * // => '-_-abc'
      */
     function trimRight(string, chars, guard) {
-      string = baseToString(string);
+      string = toString(string);
       if (!string) {
         return string;
       }
@@ -11216,9 +11215,9 @@
       if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
         length = 'length' in options ? toInteger(options.length) : length;
-        omission = 'omission' in options ? baseToString(options.omission) : omission;
+        omission = 'omission' in options ? toString(options.omission) : omission;
       }
-      string = baseToString(string);
+      string = toString(string);
 
       var strLength = string.length;
       if (reAdvSymbol.test(string)) {
@@ -11248,7 +11247,7 @@
               substring = result;
 
           if (!separator.global) {
-            separator = RegExp(separator.source, baseToString(reFlags.exec(separator)) + 'g');
+            separator = RegExp(separator.source, toString(reFlags.exec(separator)) + 'g');
           }
           separator.lastIndex = 0;
           while ((match = separator.exec(substring))) {
@@ -11284,7 +11283,7 @@
      * // => 'fred, barney, & pebbles'
      */
     function unescape(string) {
-      string = baseToString(string);
+      string = toString(string);
       return (string && reHasEscapedHtml.test(string))
         ? string.replace(reEscapedHtml, unescapeHtmlChar)
         : string;
@@ -11309,7 +11308,7 @@
      * // => ['fred', 'barney', '&', 'pebbles']
      */
     function words(string, pattern, guard) {
-      string = baseToString(string);
+      string = toString(string);
       pattern = guard ? undefined : guard;
       return string.match(pattern || reWord) || [];
     }
@@ -11833,7 +11832,7 @@
      */
     function uniqueId(prefix) {
       var id = ++idCounter;
-      return baseToString(prefix) + id;
+      return toString(prefix) + id;
     }
 
     /*------------------------------------------------------------------------*/
@@ -12207,6 +12206,7 @@
     lodash.toArray = toArray;
     lodash.toPath = toPath;
     lodash.toPlainObject = toPlainObject;
+    lodash.toString = toString;
     lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;

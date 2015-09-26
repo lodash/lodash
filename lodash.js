@@ -139,9 +139,11 @@
   /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
-  /** Used to compose `reAdvSymbol`, `reStrSymbol`, and `reWord`. */
+  /** Used to compose unicode related regexes. */
   var rsAstralRange = '\\ud800-\\udfff',
       rsAstral = '[' + rsAstralRange + ']',
+      rsComboRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+      rsCombo = '[' + rsComboRange + ']',
       rsDigits = '\\d+',
       rsDingbat = '[\\u2700-\\u27bf]',
       rsLowers = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
@@ -149,7 +151,7 @@
       rsNonAstral = '[^' + rsAstralRange + ']',
       rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
       rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
-      rsSymbol = '(?:' + [rsNonAstral, rsRegional, rsSurrPair, rsAstral].join('|') + ')',
+      rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?' , rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')',
       rsUpper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
       rsVS = '\\ufe0e\\ufe0f',
       rsZWJ = '\\u200d',
@@ -159,7 +161,10 @@
       rsSeq = rsOptVS + reOptMod + rsJoiner;
 
   /** Used to match [zero-width joiners and code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reAdvSymbol = RegExp('[' + rsZWJ + rsVS + rsAstralRange + ']');
+  var reAdvSymbol = RegExp('[' + rsZWJ + rsVS + rsAstralRange + rsComboRange + ']');
+
+  /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
+  var reComboMark = RegExp(rsCombo, 'g');
 
   /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
   var reStrSymbol = RegExp(rsSymbol + rsSeq, 'g');

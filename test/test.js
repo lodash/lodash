@@ -249,12 +249,7 @@
     '\xef', '\xf0', '\xf1', '\xf2', '\xf3', '\xf4', '\xf5', '\xf6', '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff'
   ];
 
-  /** List of combining diacritical marks for spanning multiple characters. */
-  var comboHalfs = [
-    '\ufe20', '\ufe21', '\ufe22', '\ufe23'
-  ];
-
-  /** List of common combining diacritical marks. */
+  /** List of combining diacritical marks. */
   var comboMarks = [
     '\u0300', '\u0301', '\u0302', '\u0303', '\u0304', '\u0305', '\u0306', '\u0307', '\u0308', '\u0309', '\u030a', '\u030b', '\u030c', '\u030d', '\u030e', '\u030f',
     '\u0310', '\u0311', '\u0312', '\u0313', '\u0314', '\u0315', '\u0316', '\u0317', '\u0318', '\u0319', '\u031a', '\u031b', '\u031c', '\u031d', '\u031e', '\u031f',
@@ -262,7 +257,8 @@
     '\u0330', '\u0331', '\u0332', '\u0333', '\u0334', '\u0335', '\u0336', '\u0337', '\u0338', '\u0339', '\u033a', '\u033b', '\u033c', '\u033d', '\u033e', '\u033f',
     '\u0340', '\u0341', '\u0342', '\u0343', '\u0344', '\u0345', '\u0346', '\u0347', '\u0348', '\u0349', '\u034a', '\u034b', '\u034c', '\u034d', '\u034e', '\u034f',
     '\u0350', '\u0351', '\u0352', '\u0353', '\u0354', '\u0355', '\u0356', '\u0357', '\u0358', '\u0359', '\u035a', '\u035b', '\u035c', '\u035d', '\u035e', '\u035f',
-    '\u0360', '\u0361', '\u0362', '\u0363', '\u0364', '\u0365', '\u0366', '\u0367', '\u0368', '\u0369', '\u036a', '\u036b', '\u036c', '\u036d', '\u036e', '\u036f'
+    '\u0360', '\u0361', '\u0362', '\u0363', '\u0364', '\u0365', '\u0366', '\u0367', '\u0368', '\u0369', '\u036a', '\u036b', '\u036c', '\u036d', '\u036e', '\u036f',
+    '\ufe20', '\ufe21', '\ufe22', '\ufe23'
   ];
 
   /** List of `burredLetters` translated to basic latin letters. */
@@ -272,6 +268,18 @@
     'ss', 'a', 'a', 'a', 'a', 'a', 'a',  'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i',  'i',
     'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
   ];
+
+  /** List of emoji modifiers. */
+  var emojiModifiers = [
+    '\ud83c\udffb',
+    '\ud83c\udffc',
+    '\ud83c\udffd',
+    '\ud83c\udffe',
+    '\ud83c\udfff'
+  ];
+
+  /** Used to specify the emoji style glyph variant of characters. */
+  var emojiVar = '\ufe0f';
 
   /** Used to provide falsey values to methods. */
   var falsey = [, '', 0, false, NaN, null, undefined];
@@ -3293,10 +3301,9 @@
     QUnit.test('should deburr combining diacritical marks', function(assert) {
       assert.expect(1);
 
-      var values = comboMarks.concat(comboHalfs),
-          expected = _.map(values, _.constant('ei'));
+      var expected = _.map(comboMarks, _.constant('ei'));
 
-      var actual = _.map(values, function(chr) {
+      var actual = _.map(comboMarks, function(chr) {
         return _.deburr('e' + chr + 'i');
       });
 
@@ -18885,19 +18892,17 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('astral symbols');
+  QUnit.module('uncommon symbols');
 
   (function() {
-    var emojiVar = '\ufe0f',
-        flag = '\ud83c\uddfa\ud83c\uddf8',
+    var flag = '\ud83c\uddfa\ud83c\uddf8',
         heart = '\u2764' + emojiVar,
         hearts = '\ud83d\udc95',
         leafs = '\ud83c\udf42',
         raisedHand = '\u270B' + emojiVar,
         rocket = '\ud83d\ude80',
         thumbsUp = '\ud83d\udc4d',
-        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68',
-        modifiers = ['\ud83c\udffb', '\ud83c\udffc', '\ud83c\udffd', '\ud83c\udffe', '\ud83c\udfff'];
+        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68';
 
     QUnit.test('should account for astral symbols', function(assert) {
       assert.expect(25);
@@ -18984,7 +18989,7 @@
     QUnit.test('should account for modifiers', function(assert) {
       assert.expect(1);
 
-      var values = _.map(modifiers, function(modifier) {
+      var values = _.map(emojiModifiers, function(modifier) {
         return thumbsUp + modifier;
       });
 
@@ -19002,12 +19007,30 @@
     QUnit.test('should account for variation selectors with modifiers', function(assert) {
       assert.expect(1);
 
-      var values = _.map(modifiers, function(modifier) {
+      var values = _.map(emojiModifiers, function(modifier) {
         return raisedHand + modifier;
       });
 
       var expected = _.map(values, function(value) {
         return [1, [value], [value]];
+      });
+
+      var actual = _.map(values, function(value) {
+        return [_.size(value), _.toArray(value), _.words(value)];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should account for combining diacritical marks', function(assert) {
+      assert.expect(1);
+
+      var values = _.map(comboMarks, function(mark) {
+        return 'o' + mark;
+      });
+
+      var expected = _.map(values, function(value) {
+        return [1, [value], ['o']];
       });
 
       var actual = _.map(values, function(value) {

@@ -14507,50 +14507,59 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.pull');
+  QUnit.module('pull methods');
 
-  (function() {
-    QUnit.test('should modify and return the array', function(assert) {
+  _.each(['pull', 'pullAll'], function(methodName) {
+    var func = _[methodName],
+        isPull = methodName == 'pull';
+
+    function pull(array, values) {
+      return isPull
+        ? func.apply(undefined, [array].concat(values))
+        : func(array, values);
+    }
+
+    QUnit.test('`_.' + methodName + '` should modify and return the array', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3],
-          actual = _.pull(array, 1, 3);
+          actual = pull(array, [1, 3]);
 
       assert.deepEqual(array, [2]);
       assert.ok(actual === array);
     });
 
-    QUnit.test('should preserve holes in arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should preserve holes in arrays', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3, 4];
       delete array[1];
       delete array[3];
 
-      _.pull(array, 1);
+      pull(array, [1]);
       assert.notOk('0' in array);
       assert.notOk('2' in array);
     });
 
-    QUnit.test('should treat holes as `undefined`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat holes as `undefined`', function(assert) {
       assert.expect(1);
 
       var array = [1, 2, 3];
       delete array[1];
 
-      _.pull(array, undefined);
+      pull(array, [undefined]);
       assert.deepEqual(array, [1, 3]);
     });
 
-    QUnit.test('should match `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
       assert.expect(1);
 
       var array = [1, NaN, 3, NaN];
 
-      _.pull(array, NaN);
+      pull(array, [NaN]);
       assert.deepEqual(array, [1, 3]);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -21009,6 +21018,7 @@
       'map',
       'pairs',
       'pull',
+      'pullAll',
       'pullAt',
       'range',
       'reject',
@@ -21032,7 +21042,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(241);
+      assert.expect(243);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 
@@ -21052,7 +21062,7 @@
         if (methodName == 'noConflict') {
           root._ = oldDash;
         }
-        else if (methodName == 'pull') {
+        else if (methodName == 'pull' || methodName == 'pullAll') {
           expected = falsey;
         }
         if (_.includes(returnArrays, methodName) && methodName != 'sample') {
@@ -21070,7 +21080,7 @@
     });
 
     QUnit.test('should return an array', function(assert) {
-      assert.expect(66);
+      assert.expect(68);
 
       var array = [1, 2, 3];
 
@@ -21090,7 +21100,7 @@
         }
         assert.ok(_.isArray(actual), '_.' + methodName + ' returns an array');
 
-        var isPull = methodName == 'pull';
+        var isPull = methodName == 'pull' || methodName == 'pullAll';
         assert.strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
       });
     });

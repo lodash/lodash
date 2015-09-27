@@ -1348,6 +1348,7 @@
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
+        push = arrayProto.push,
         setTimeout = context.setTimeout,
         splice = arrayProto.splice;
 
@@ -1430,11 +1431,11 @@
      * `memoize`, `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`,
      * `modArgsSet', 'negate`, `omit`, `omitBy`, `once`, `pairs`, `partial`,
      * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
-     * `propertyOf`, `pull`, `pullAt`, `push`, `range`, `rearg`, `reject`,
-     * `remove`, `rest`, `restParam`, `reverse`, `set`, `setWith`, `shuffle`,
-     * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `take`,
-     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-     * `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`,
+     * `propertyOf`, `pull`, `pullAll`, `pullAt`, `push`, `range`, `rearg`,
+     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `set`, `setWith`,
+     * `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`,
      * `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`,
      * `valuesIn`, `without`, `wrap`, `xor`, `zip`, `zipObject`, and `zipWith`
      *
@@ -5154,6 +5155,31 @@
         }
       }
       return array;
+    }
+
+    /**
+     * This method is like `_.pull` except that it accepts an array of values to remove.
+     *
+     * **Note:** Unlike `_.difference`, this method mutates `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to modify.
+     * @param {Array} values The values to remove.
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2, 3, 1, 2, 3];
+     *
+     * _.pull(array, [2, 3]);
+     * console.log(array);
+     * // => [1, 1]
+     */
+    function pullAll(array, values) {
+      var args = [array];
+      push.apply(args, values);
+      return pull.apply(undefined, args);
     }
 
     /**
@@ -12184,6 +12210,7 @@
     lodash.property = property;
     lodash.propertyOf = propertyOf;
     lodash.pull = pull;
+    lodash.pullAll = pullAll;
     lodash.pullAt = pullAt;
     lodash.range = range;
     lodash.rearg = rearg;

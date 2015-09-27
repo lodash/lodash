@@ -20602,6 +20602,25 @@
         skipTest(assert);
       }
     });
+
+    QUnit.test('should treat nullish values as empty strings', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var values = [, null, undefined],
+            expected = _.map(values, _.constant(''));
+
+        var actual = _.map(values, function(value, index) {
+          var wrapped = index ? _(value) : _();
+          return String(wrapped);
+        });
+
+        assert.deepEqual(actual, expected);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

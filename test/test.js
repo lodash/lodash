@@ -15907,29 +15907,59 @@
       assert.ok(_.includes(array, actual));
     });
 
-    QUnit.test('should return two random elements', function(assert) {
+    QUnit.test('should return `undefined` when sampling empty collections', function(assert) {
       assert.expect(1);
 
-      var actual = _.sample(array, 2);
-      assert.ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
+      var expected = _.map(empties, _.constant(undefined));
+
+      var actual = _.transform(empties, function(result, value) {
+        try {
+          result.push(_.sample(value));
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should sample an object', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          actual = _.sample(object);
+
+      assert.ok(_.includes(array, actual));
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.sampleSize');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    QUnit.test('should return an array of random elements', function(assert) {
+      assert.expect(2);
+
+      var actual = _.sampleSize(array, 2);
+      assert.strictEqual(actual.length, 2);
+      assert.deepEqual(_.difference(actual, array), []);
     });
 
     QUnit.test('should contain elements of the collection', function(assert) {
       assert.expect(1);
 
-      var actual = _.sample(array, array.length);
+      var actual = _.sampleSize(array, array.length);
       assert.deepEqual(actual.sort(), array);
     });
 
-    QUnit.test('should treat falsey `n` values, except nullish, as `0`', function(assert) {
+    QUnit.test('should treat falsey `n` values as `0`', function(assert) {
       assert.expect(1);
 
-      var expected = _.map(falsey, function(value) {
-        return value == null ? 1 : [];
-      });
+      var expected = _.map(falsey, _.constant([]));
 
-      var actual = _.map(falsey, function(n) {
-        return _.sample([1], n);
+      var actual = _.map(falsey, function(n, index) {
+        return index ? _.sampleSize([1], n) : _.sampleSize([1]);
       });
 
       assert.deepEqual(actual, expected);
@@ -15939,7 +15969,7 @@
       assert.expect(3);
 
       _.each([0, -1, -Infinity], function(n) {
-        assert.deepEqual(_.sample(array, n), []);
+        assert.deepEqual(_.sampleSize(array, n), []);
       });
     });
 
@@ -15947,34 +15977,25 @@
       assert.expect(4);
 
       _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        assert.deepEqual(_.sample(array, n).sort(), array);
+        assert.deepEqual(_.sampleSize(array, n).sort(), array);
       });
     });
 
     QUnit.test('should coerce `n` to an integer', function(assert) {
       assert.expect(1);
 
-      var actual = _.sample(array, 1.6);
+      var actual = _.sampleSize(array, 1.6);
       assert.strictEqual(actual.length, 1);
-    });
-
-    QUnit.test('should return `undefined` when sampling an empty array', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.sample([]), undefined);
     });
 
     QUnit.test('should return an empty array for empty collections', function(assert) {
       assert.expect(1);
 
-      var expected = _.transform(empties, function(result) {
-        result.push(undefined, []);
-      });
+      var expected = _.map(empties, _.constant([]));
 
-      var actual = [];
-      _.each(empties, function(value) {
+      var actual = _.transform(empties, function(result, value) {
         try {
-          actual.push(_.sample(value), _.sample(value, 1));
+          result.push(_.sampleSize(value, 1));
         } catch (e) {}
       });
 
@@ -15985,83 +16006,10 @@
       assert.expect(2);
 
       var object = { 'a': 1, 'b': 2, 'c': 3 },
-          actual = _.sample(object);
+          actual = _.sampleSize(object, 2);
 
-      assert.ok(_.includes(array, actual));
-
-      actual = _.sample(object, 2);
-      assert.ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
-    });
-
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(2);
-
-      var array1 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-          array2 = ['abc', 'def', 'ghi'];
-
-      _.each([array1, array2], function(values) {
-        var a = values[0],
-            b = values[1],
-            c = values[2],
-            actual = _.map(values, _.sample);
-
-        assert.ok(_.includes(a, actual[0]) && _.includes(b, actual[1]) && _.includes(c, actual[2]));
-      });
-    });
-
-    QUnit.test('should return a wrapped value when chaining and `n` is provided', function(assert) {
-      assert.expect(2);
-
-      if (!isNpm) {
-        var wrapped = _(array).sample(2),
-            actual = wrapped.value();
-
-        assert.ok(wrapped instanceof _);
-        assert.ok(actual.length == 2 && actual[0] !== actual[1] && _.includes(array, actual[0]) && _.includes(array, actual[1]));
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('should return an unwrapped value when chaining and `n` is not provided', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var actual = _(array).sample();
-        assert.ok(_.includes(array, actual));
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.ok(_(array).chain().sample() instanceof _);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should use a stored reference to `_.sample` when chaining', function(assert) {
-      assert.expect(2);
-
-      if (!isNpm) {
-        var sample = _.sample;
-        _.sample = _.noop;
-
-        var wrapped = _(array);
-        assert.notStrictEqual(wrapped.sample(), undefined);
-        assert.notStrictEqual(wrapped.sample(2).value(), undefined);
-        _.sample = sample;
-      }
-      else {
-        skipTest(assert, 2);
-      }
+      assert.strictEqual(actual.length, 2);
+      assert.deepEqual(_.difference(actual, _.values(object)), []);
     });
   }());
 
@@ -21024,7 +20972,7 @@
       'reject',
       'remove',
       'rest',
-      'sample',
+      'sampleSize',
       'shuffle',
       'sortBy',
       'sortByOrder',
@@ -21042,7 +20990,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(243);
+      assert.expect(245);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

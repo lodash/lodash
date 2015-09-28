@@ -1432,12 +1432,13 @@
      * `modArgsSet', 'negate`, `omit`, `omitBy`, `once`, `pairs`, `partial`,
      * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
      * `propertyOf`, `pull`, `pullAll`, `pullAt`, `push`, `range`, `rearg`,
-     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `set`, `setWith`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`,
-     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
-     * `thru`, `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`,
-     * `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`,
-     * `valuesIn`, `without`, `wrap`, `xor`, `zip`, `zipObject`, and `zipWith`
+     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `sampleSize`, `set`,
+     * `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`,
+     * `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
+     * `throttle`, `thru`, `times`, `toArray`, `toPath`, `toPlainObject`,
+     * `transform`, `union`, `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`,
+     * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `zip`,
+     * `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
@@ -1450,16 +1451,13 @@
      * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
      * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
      * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
-     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`,
-     * `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
-     * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
+     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`, `pad`,
+     * `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
+     * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
      * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
      * `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`, `sumBy`, `template`,
-     * `toInteger`, `toString`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`,
-     * `uniqueId`, `value`, and `words`
-     *
-     * The wrapper method `sample` will return a wrapped value when `n` is provided,
-     * otherwise an unwrapped value is returned.
+     * `toInteger`, `toString`, `trim`, `trimLeft`, `trimRight`, `trunc`,
+     * `unescape`, `uniqueId`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -6629,9 +6627,9 @@
      *
      * The guarded methods are:
      * `ary`, `callback`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
-     * `fill`, `invert`, `parseInt`, `random`, `range`, `sample`, `slice`, `some`,
-     * `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `uniq`, and `words`
+     * `fill`, `invert`, `parseInt`, `random`, `range`, `slice`, `some`, `sortBy`,
+     * `take`, `takeRight`, `template`, `trim`, `trimLeft`, `trimRight`, `uniq`,
+     * and `words`
      *
      * @static
      * @memberOf _
@@ -6820,29 +6818,40 @@
     }
 
     /**
-     * Gets a random element or `n` random elements from a collection.
+     * Gets a random element from `collection`.
      *
      * @static
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to sample.
-     * @param {number} [n] The number of elements to sample.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {*} Returns the random sample(s).
+     * @returns {*} Returns the random element.
      * @example
      *
      * _.sample([1, 2, 3, 4]);
      * // => 2
+     */
+    function sample(collection) {
+      var array = isArrayLike(collection) ? collection : values(collection),
+          length = array.length;
+
+      return length > 0 ? array[baseRandom(0, length - 1)] : undefined;
+    }
+
+    /**
+     * Gets `n` random elements from `collection`.
      *
-     * _.sample([1, 2, 3, 4], 2);
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object} collection The collection to sample.
+     * @param {number} [n=0] The number of elements to sample.
+     * @returns {Array} Returns the random elements.
+     * @example
+     *
+     * _.sampleSize([1, 2, 3, 4], 2);
      * // => [3, 1]
      */
-    function sample(collection, n, guard) {
-      if (guard || n == null) {
-        collection = isArrayLike(collection) ? collection : values(collection);
-        length = collection.length;
-        return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
-      }
+    function sampleSize(collection, n) {
       var index = -1,
           result = toArray(collection),
           length = result.length,
@@ -6875,7 +6884,7 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
-      return sample(collection, INFINITY);
+      return sampleSize(collection, MAX_ARRAY_LENGTH);
     }
 
     /**
@@ -12218,6 +12227,7 @@
     lodash.remove = remove;
     lodash.rest = rest;
     lodash.restParam = restParam;
+    lodash.sampleSize = sampleSize;
     lodash.set = set;
     lodash.setWith = setWith;
     lodash.shuffle = shuffle;
@@ -12354,6 +12364,7 @@
     lodash.result = result;
     lodash.round = round;
     lodash.runInContext = runInContext;
+    lodash.sample = sample;
     lodash.size = size;
     lodash.snakeCase = snakeCase;
     lodash.some = some;
@@ -12386,20 +12397,6 @@
       });
       return source;
     }()), { 'chain': false });
-
-    /*------------------------------------------------------------------------*/
-
-    // Add functions capable of returning wrapped and unwrapped values when chaining.
-    lodash.sample = sample;
-
-    lodash.prototype.sample = function(n) {
-      if (!this.__chain__ && n == null) {
-        return sample(this.value());
-      }
-      return this.thru(function(value) {
-        return sample(value, n);
-      });
-    };
 
     /*------------------------------------------------------------------------*/
 

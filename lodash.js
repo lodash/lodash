@@ -6213,22 +6213,6 @@
     }
 
     /**
-     * Produces the result of coercing the unwrapped value to a string.
-     *
-     * @name toString
-     * @memberOf _
-     * @category Chain
-     * @returns {string} Returns the coerced string value.
-     * @example
-     *
-     * _([1, 2, 3]).toString();
-     * // => '1,2,3'
-     */
-    function wrapperToString() {
-      return toString(this.value());
-    }
-
-    /**
      * Executes the chained sequence to extract the unwrapped value.
      *
      * @name value
@@ -12248,7 +12232,6 @@
     lodash.toArray = toArray;
     lodash.toPath = toPath;
     lodash.toPlainObject = toPlainObject;
-    lodash.toString = toString;
     lodash.transform = transform;
     lodash.union = union;
     lodash.uniq = uniq;
@@ -12380,6 +12363,7 @@
     lodash.sumBy = sumBy;
     lodash.template = template;
     lodash.toInteger = toInteger;
+    lodash.toString = toString;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
     lodash.trimRight = trimRight;
@@ -12391,7 +12375,7 @@
     mixin(lodash, (function() {
       var source = {};
       baseForOwn(lodash, function(func, methodName) {
-        if (!lodash.prototype[methodName]) {
+        if (!hasOwnProperty.call(lodash.prototype, methodName)) {
           source[methodName] = func;
         }
       });
@@ -12602,7 +12586,6 @@
     lodash.prototype.next = wrapperNext;
     lodash.prototype.plant = wrapperPlant;
     lodash.prototype.reverse = wrapperReverse;
-    lodash.prototype.toString = wrapperToString;
     lodash.prototype.run = lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 
     if (iteratorSymbol) {

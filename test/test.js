@@ -20679,8 +20679,15 @@
   (function() {
     var funcs = [
       'concat',
+      'pull',
+      'pullAll',
+      'pullAt',
+      'sampleSize',
+      'shuffle',
       'slice',
-      'splice'
+      'splice',
+      'toArray',
+      'words'
     ];
 
     _.each(funcs, function(methodName) {
@@ -20708,10 +20715,18 @@
 
   (function() {
     var funcs = [
+      'camelCase',
+      'capitalize',
+      'ceil',
       'clone',
+      'deburr',
+      'endsWith',
+      'escape',
+      'escapeRegExp',
       'every',
       'find',
       'first',
+      'floor',
       'has',
       'hasIn',
       'includes',
@@ -20740,20 +20755,37 @@
       'isString',
       'isUndefined',
       'join',
+      'kebabCase',
       'last',
       'max',
       'maxBy',
       'min',
       'minBy',
+      'pad',
+      'padLeft',
+      'padRight',
       'parseInt',
       'pop',
+      'repeat',
       'shift',
+      'snakeCase',
+      'startCase',
       'sum',
       'random',
       'reduce',
       'reduceRight',
+      'round',
+      'sample',
+      'size',
       'some',
-      'toInteger'
+      'startsWith',
+      'toInteger',
+      'toString',
+      'trim',
+      'trimLeft',
+      'trimRight',
+      'trunc',
+      'unescape'
     ];
 
     _.each(funcs, function(methodName) {

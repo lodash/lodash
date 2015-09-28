@@ -12242,6 +12242,7 @@
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.without = without;
+    lodash.words = words;
     lodash.wrap = wrap;
     lodash.xor = xor;
     lodash.zip = zip;
@@ -12370,7 +12371,6 @@
     lodash.trunc = trunc;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
-    lodash.words = words;
 
     mixin(lodash, (function() {
       var source = {};

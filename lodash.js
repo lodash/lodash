@@ -4654,7 +4654,7 @@
       if (!(array && array.length)) {
         return [];
       }
-      n = (guard || n == null) ? 1 : n;
+      n = (guard || n === undefined) ? 1 : n;
       return baseSlice(array, n < 0 ? 0 : n);
     }
 
@@ -4687,7 +4687,7 @@
       if (!length) {
         return [];
       }
-      n = (guard || n == null) ? 1 : toInteger(n);
+      n = (guard || n === undefined) ? 1 : toInteger(n);
       n = length - n;
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
@@ -5517,7 +5517,7 @@
       if (!(array && array.length)) {
         return [];
       }
-      n = (guard || n == null) ? 1 : n;
+      n = (guard || n === undefined) ? 1 : n;
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -5550,7 +5550,7 @@
       if (!length) {
         return [];
       }
-      n = (guard || n == null) ? 1 : toInteger(n);
+      n = (guard || n === undefined) ? 1 : toInteger(n);
       n = length - n;
       return baseSlice(array, n < 0 ? 0 : n);
     }

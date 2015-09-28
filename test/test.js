@@ -3645,11 +3645,11 @@
       assert.deepEqual(_.drop(array, 2), [3]);
     });
 
-    QUnit.test('should treat falsey `n` values, except nullish, as `0`', function(assert) {
+    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
       assert.expect(1);
 
       var expected = _.map(falsey, function(value) {
-        return value == null ? [2, 3] : array;
+        return value === undefined ? [2, 3] : array;
       });
 
       var actual = _.map(falsey, function(n) {
@@ -3733,11 +3733,11 @@
       assert.deepEqual(_.dropRight(array, 2), [1]);
     });
 
-    QUnit.test('should treat falsey `n` values, except nullish, as `0`', function(assert) {
+    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
       assert.expect(1);
 
       var expected = _.map(falsey, function(value) {
-        return value == null ? [1, 2] : array;
+        return value === undefined ? [1, 2] : array;
       });
 
       var actual = _.map(falsey, function(n) {
@@ -4746,11 +4746,11 @@
       assert.deepEqual(_.take(array, 2), [1, 2]);
     });
 
-    QUnit.test('should treat falsey `n` values, except nullish, as `0`', function(assert) {
+    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
       assert.expect(1);
 
       var expected = _.map(falsey, function(value) {
-        return value == null ? [1] : [];
+        return value === undefined ? [1] : [];
       });
 
       var actual = _.map(falsey, function(n) {
@@ -4828,11 +4828,11 @@
       assert.deepEqual(_.takeRight(array, 2), [2, 3]);
     });
 
-    QUnit.test('should treat falsey `n` values, except nullish, as `0`', function(assert) {
+    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
       assert.expect(1);
 
       var expected = _.map(falsey, function(value) {
-        return value == null ? [3] : [];
+        return value === undefined ? [3] : [];
       });
 
       var actual = _.map(falsey, function(n) {

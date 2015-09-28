@@ -1955,7 +1955,7 @@
             .map(square)
             .value();
 
-          assert.deepEqual(actual,[25, 16, 9, 4]);
+          assert.deepEqual(actual, [25, 16, 9, 4]);
         });
       }
       else {

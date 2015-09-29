@@ -2457,6 +2457,90 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.conj');
+
+  (function() {
+    QUnit.test('should return `true` if all predicates return truthy', function(assert) {
+      assert.expect(1);
+
+      var conjed = _.conj(_.constant(true), _.constant(1), _.constant('a'));
+      assert.strictEqual(conjed(), true);
+    });
+
+    QUnit.test('should return `false` as soon as a predicate returns falsey', function(assert) {
+      assert.expect(1);
+
+      var conjed = _.conj(_.constant(true), _.constant(null), _.constant(true));
+      assert.strictEqual(conjed(), false);
+    });
+
+    QUnit.test('should use `_.identity` when a predicate is nullish', function(assert) {
+      assert.expect(2);
+
+      var conjed = _.conj(undefined, null);
+      assert.strictEqual(conjed(true), true);
+      assert.strictEqual(conjed(false), false);
+    });
+
+    QUnit.test('should work with a "_.property" style predicate', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 1, 'b': 2 },
+          conjed = _.conj('a', 'c');
+
+      assert.strictEqual(conjed(object), false);
+
+      conjed = _.conj('b', 'a');
+      assert.strictEqual(conjed(object), true);
+    });
+
+    QUnit.test('should work with a "_.matches" style predicate', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 1, 'b': 2 },
+          conjed = _.conj({ 'b': 2 }, { 'a': 1 });
+
+      assert.strictEqual(conjed(object), true);
+
+      conjed = _.conj({ 'a': 1 }, { 'c': 3 });
+      assert.strictEqual(conjed(object), false);
+    });
+
+    QUnit.test('should flatten `predicates`', function(assert) {
+      assert.expect(1);
+
+      var conjed = _.conj(_.constant(true), [_.constant(false)]);
+      assert.strictEqual(conjed(), false);
+    });
+
+    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      var conjed = _.conj(function() {
+        args = slice.call(arguments);
+      });
+
+      conjed('a', 'b', 'c');
+      assert.deepEqual(args, ['a', 'b', 'c']);
+    });
+
+    QUnit.test('should not set a `this` binding', function(assert) {
+      assert.expect(2);
+
+      var conjed = _.conj(function() { return this.b; }, function() { return this.a; }),
+          object = { 'conjed': conjed, 'a': 1, 'b': 2 };
+
+      assert.strictEqual(object.conjed(), true);
+
+      object.a = 0;
+      assert.strictEqual(object.conjed(), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.constant');
 
   (function() {
@@ -3631,6 +3715,96 @@
       assert.deepEqual(_.difference(array, args, null), [null]);
     });
   }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.disj');
+
+  (function() {
+    QUnit.test('should return `true` if any predicates return truthy', function(assert) {
+      assert.expect(2);
+
+      var disjed = _.disj(_.constant(false), _.constant(1), _.constant(''));
+      assert.strictEqual(disjed(), true);
+
+      disjed = _.disj(_.constant(null), _.constant('x'), _.constant(0));
+      assert.strictEqual(disjed(), true);
+    });
+
+    QUnit.test('should return `false` if all predicates return falsey', function(assert) {
+      assert.expect(2);
+
+      var disjed = _.disj(_.constant(false), _.constant(false), _.constant(false));
+      assert.strictEqual(disjed(), false);
+
+      disjed = _.disj(_.constant(null), _.constant(0), _.constant(''));
+      assert.strictEqual(disjed(), false);
+    });
+
+    QUnit.test('should use `_.identity` when a predicate is nullish', function(assert) {
+      assert.expect(2);
+
+      var disjed = _.disj(undefined, null);
+      assert.strictEqual(disjed(true), true);
+      assert.strictEqual(disjed(false), false);
+    });
+
+    QUnit.test('should work with a "_.property" style predicate', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 1, 'b': 2 },
+          disjed = _.disj('c', 'a');
+
+      assert.strictEqual(disjed(object), true);
+
+      disjed = _.disj('d', 'c');
+      assert.strictEqual(disjed(object), false);
+    });
+
+    QUnit.test('should work with a "_.matches" style predicate', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 1, 'b': 2 },
+          disjed = _.disj({ 'c': 3 }, { 'a': 1 });
+
+      assert.strictEqual(disjed(object), true);
+
+      disjed = _.disj({ 'b': 1 }, { 'a': 2 });
+      assert.strictEqual(disjed(object), false);
+    });
+
+    QUnit.test('should flatten `predicates`', function(assert) {
+      assert.expect(1);
+
+      var disjed = _.disj(_.constant(false), [_.constant(true)]);
+      assert.strictEqual(disjed(), true);
+    });
+
+    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      var disjed = _.disj(function() {
+        args = slice.call(arguments);
+      });
+
+      disjed('a', 'b', 'c');
+      assert.deepEqual(args, ['a', 'b', 'c']);
+    });
+
+    QUnit.test('should not set a `this` binding', function(assert) {
+      assert.expect(2);
+
+      var disjed = _.disj(function() { return this.b; }, function() { return this.a; }),
+          object = { 'disjed': disjed, 'a': 1, 'b': 2 };
+
+      assert.strictEqual(object.disjed(), true);
+
+      object.a = object.b = 0;
+      assert.strictEqual(object.disjed(), false);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

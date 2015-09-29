@@ -6305,10 +6305,11 @@
 
   QUnit.module('has methods');
 
-  _.each(['has', 'hasIn'], function(methodName) {
+  _.each(['has', 'hasOwn', 'hasIn'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName],
-        isHas = methodName == 'has';
+        isHasOwn = methodName == 'hasOwn',
+        isHasOrHasOwn = methodName == 'has' || isHasOwn;
 
     QUnit.test('`_.' + methodName + '` should check for own properties', function(assert) {
       assert.expect(2);
@@ -6327,15 +6328,17 @@
       assert.strictEqual(func(object, 'a'), true);
     });
 
-    QUnit.test('`_.' + methodName + '` should support deep paths', function(assert) {
-      assert.expect(2);
+    if (methodName != 'hasOwn') {
+      QUnit.test('`_.' + methodName + '` should support deep paths', function(assert) {
+        assert.expect(2);
 
-      var object = { 'a': { 'b': { 'c': 3 } } };
+        var object = { 'a': { 'b': { 'c': 3 } } };
 
-      _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-        assert.strictEqual(func(object, path), true);
+        _.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+          assert.strictEqual(func(object, path), true);
+        });
       });
-    });
+    }
 
     QUnit.test('`_.' + methodName + '` should work with non-string `path` arguments', function(assert) {
       assert.expect(2);
@@ -6368,22 +6371,24 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for inherited properties', function(assert) {
-      assert.expect(2);
+    QUnit.test('`_.' + methodName + '` should return `' + (isHasOrHasOwn ? 'false' : 'true') + '` for inherited properties', function(assert) {
+      assert.expect(isHasOwn ? 1 : 2);
 
       function Foo() {}
       Foo.prototype.a = 1;
 
-      _.each(['a', ['a']], function(path) {
-        assert.strictEqual(func(new Foo, path), !isHas);
+      _.each(isHasOwn ? ['a'] : ['a', ['a']], function(path) {
+        assert.strictEqual(func(new Foo, path), !isHasOrHasOwn);
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should treat sparse arrays as dense', function(assert) {
-      assert.expect(1);
+    if(!isHasOwn) {
+      QUnit.test('`_.' + methodName + '` should treat sparse arrays as dense', function(assert) {
+        assert.expect(1);
 
-      assert.strictEqual(func(Array(1), 0), true);
-    });
+        assert.strictEqual(func(Array(1), 0), true);
+      });
+    }
 
     QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
       assert.expect(1);
@@ -21196,7 +21201,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(245);
+      assert.expect(246);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

@@ -4314,6 +4314,12 @@
   QUnit.module('lodash.every');
 
   (function() {
+    QUnit.test('should return `true` if `predicate` returns truthy for all elements', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.every([true, 1, 'a'], _.identity), true);
+    });
+
     QUnit.test('should return `true` for empty collections', function(assert) {
       assert.expect(1);
 
@@ -4326,12 +4332,6 @@
       });
 
       assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should return `true` if `predicate` returns truthy for all elements in the collection', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.every([true, 1, 'a'], _.identity), true);
     });
 
     QUnit.test('should return `false` as soon as `predicate` returns falsey', function(assert) {
@@ -16694,6 +16694,13 @@
   QUnit.module('lodash.some');
 
   (function() {
+    QUnit.test('should return `true` if `predicate` returns truthy for any element', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.some([false, 1, ''], _.identity), true);
+      assert.strictEqual(_.some([null, 'x', 0], _.identity), true);
+    });
+
     QUnit.test('should return `false` for empty collections', function(assert) {
       assert.expect(1);
 
@@ -16708,14 +16715,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return `true` if `predicate` returns truthy for any element in the collection', function(assert) {
-      assert.expect(2);
-
-      assert.strictEqual(_.some([false, 1, ''], _.identity), true);
-      assert.strictEqual(_.some([null, 'x', 0], _.identity), true);
-    });
-
-    QUnit.test('should return `false` if `predicate` returns falsey for all elements in the collection', function(assert) {
+    QUnit.test('should return `false` if `predicate` returns falsey for all elements', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(_.some([false, false, false], _.identity), false);
@@ -16726,22 +16726,6 @@
       assert.expect(1);
 
       assert.strictEqual(_.some([null, true, null], _.identity), true);
-    });
-
-    QUnit.test('should work with a "_.property" style `predicate`', function(assert) {
-      assert.expect(2);
-
-      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
-      assert.strictEqual(_.some(objects, 'a'), false);
-      assert.strictEqual(_.some(objects, 'b'), true);
-    });
-
-    QUnit.test('should work with a "_.matches" style `predicate`', function(assert) {
-      assert.expect(2);
-
-      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 1, 'b': 1}];
-      assert.strictEqual(_.some(objects, { 'a': 0 }), true);
-      assert.strictEqual(_.some(objects, { 'b': 2 }), false);
     });
 
     QUnit.test('should use `_.identity` when `predicate` is nullish', function(assert) {
@@ -16764,6 +16748,22 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should work with a "_.property" style `predicate`', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
+      assert.strictEqual(_.some(objects, 'a'), false);
+      assert.strictEqual(_.some(objects, 'b'), true);
+    });
+
+    QUnit.test('should work with a "_.matches" style `predicate`', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': 0, 'b': 0 }, { 'a': 1, 'b': 1}];
+      assert.strictEqual(_.some(objects, { 'a': 0 }), true);
+      assert.strictEqual(_.some(objects, { 'b': 2 }), false);
     });
 
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {

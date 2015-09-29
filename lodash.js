@@ -1445,7 +1445,7 @@
      * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
      * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
      * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
-     * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+     * `has`, `hasIn`, `hasOwn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
      * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
      * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`,
      * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
@@ -2222,18 +2222,6 @@
         object = object[path[index++]];
       }
       return (index && index == length) ? object : undefined;
-    }
-
-    /**
-     * The base implementation of `_.has` without support for deep paths.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @param {Array|string} key The key to check.
-     * @returns {boolean} Returns `true` if `key` is a property, else `false`.
-     */
-    function baseHas(object, key) {
-      return object != null && hasOwnProperty.call(object, key);
     }
 
     /**
@@ -9713,7 +9701,7 @@
      * // => false
      */
     function has(object, path) {
-      return hasPath(object, path, baseHas);
+      return hasPath(object, path, hasOwn);
     }
 
     /**
@@ -9743,6 +9731,25 @@
      */
     function hasIn(object, path) {
       return hasPath(object, path, baseHasIn);
+    }
+
+    /**
+     * Checks if `key` is an own property of `object` (similar to
+     * `object.hasOwnProperty(key)`).
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {Array|string} key The key to check.
+     * @returns {boolean} Returns `true` if `key` exists, else `false`.
+     * @example
+     *
+     * _.hasOwn({a: 1, b: 2, c: 3}, "b");
+     * // => true
+     */
+    function hasOwn(object, key) {
+      return object != null && hasOwnProperty.call(object, key);
     }
 
     /**
@@ -12293,6 +12300,7 @@
     lodash.gte = gte;
     lodash.has = has;
     lodash.hasIn = hasIn;
+    lodash.hasOwn = hasOwn;
     lodash.identity = identity;
     lodash.includes = includes;
     lodash.indexOf = indexOf;

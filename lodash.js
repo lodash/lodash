@@ -10504,6 +10504,7 @@
       if (!string) {
         return string;
       }
+      string = string.toLowerCase();
       if (reAdvSymbol.test(string)) {
         var strSymbols = stringToArray(string);
         return strSymbols[0].toUpperCase() + strSymbols.slice(1).join('');

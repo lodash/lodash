@@ -632,6 +632,25 @@
   }
 
   /**
+   * Gets the index at which the first occurrence of `key` is found in `array`
+   * of key-value pairs.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {*} key The key to search for.
+   * @returns {number} Returns the index of the matched value, else `-1`.
+   */
+  function assocIndexOf(array, key) {
+    var length = array.length;
+    while (length--) {
+      if (array[length][0] === key) {
+        return length;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * The base implementation of methods like `_.find` and `_.findKey` without
    * support for callback shorthands, which iterates over `collection` using
    * the provided `eachFunc`.
@@ -1337,8 +1356,9 @@
 
     /** Native value references. */
     var ArrayBuffer = context.ArrayBuffer,
-        Symbol = context.Symbol,
+        Map = getNative(context, 'Map'),
         Reflect = context.Reflect,
+        Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
         WeakMap = getNative(context, 'WeakMap'),
         clearTimeout = context.clearTimeout,
@@ -1358,7 +1378,6 @@
         nativeFloor = Math.floor,
         nativeIsFinite = context.isFinite,
         nativeKeys = Object.keys,
-        nativeMap = getNative(context, 'Map'),
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
@@ -1369,12 +1388,12 @@
     var metaMap = WeakMap && new WeakMap;
 
     /** Used to detect maps and sets. */
-    var mapCtorString = nativeMap ? fnToString.call(nativeMap) : '',
+    var mapCtorString = Map ? fnToString.call(Map) : '',
         setCtorString = nativeSet ? fnToString.call(nativeSet) : '';
 
     /** Detect lack of support for map and set `toStringTag` values (IE 11). */
-    var noMapSetTag = nativeMap && nativeSet &&
-      !(objToString.call(new Map) == mapTag && objToString.call(new Set) == setTag);
+    var noMapSetTag = Map && nativeSet &&
+      !(objToString.call(new Map) == mapTag && objToString.call(new nativeSet) == setTag);
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -1699,19 +1718,19 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a cache object to store key/value pairs.
+     * Creates a memoize cache object to store key-value pairs.
      *
      * @private
      * @static
      * @name Cache
      * @memberOf _.memoize
      */
-    function MapCache() {
+    function MemCache() {
       this.__data__ = {};
     }
 
     /**
-     * Removes `key` and its value from the cache.
+     * Removes `key` and its value from the memoize cache.
      *
      * @private
      * @name delete
@@ -1719,7 +1738,7 @@
      * @param {string} key The key of the value to remove.
      * @returns {boolean} Returns `true` if the entry was removed successfully, else `false`.
      */
-    function mapDelete(key) {
+    function memDelete(key) {
       return this.has(key) && delete this.__data__[key];
     }
 
@@ -1732,7 +1751,7 @@
      * @param {string} key The key of the value to get.
      * @returns {*} Returns the cached value.
      */
-    function mapGet(key) {
+    function memGet(key) {
       return key == '__proto__' ? undefined : this.__data__[key];
     }
 
@@ -1745,7 +1764,7 @@
      * @param {string} key The key of the entry to check.
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
-    function mapHas(key) {
+    function memHas(key) {
       return key != '__proto__' && hasOwnProperty.call(this.__data__, key);
     }
 
@@ -1755,11 +1774,11 @@
      * @private
      * @name set
      * @memberOf _.memoize.Cache
-     * @param {string} key The key of the value to cache.
-     * @param {*} value The value to cache.
-     * @returns {Object} Returns the cache object.
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     * @returns {Object} Returns the memoize cache object.
      */
-    function mapSet(key, value) {
+    function memSet(key, value) {
       if (key != '__proto__') {
         this.__data__[key] = value;
       }
@@ -1769,8 +1788,62 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Creates a stack object to store key-value pairs.
      *
-     * Creates a cache object to store unique values.
+     * @private
+     */
+    function Stack() {
+      return Map ? new Map : (this.__data__ = [], this);
+    }
+
+    /**
+     * Removes `key` and its value from the stack.
+     *
+     * @private
+     * @name delete
+     * @memberOf Stack
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed successfully, else `false`.
+     */
+    function stackDelete() {
+      var data = this.__data__;
+      return !!data.length && (data.pop(), true);
+    }
+
+    /**
+     * Gets the stack value for `key`.
+     *
+     * @private
+     * @name get
+     * @memberOf Stack
+     * @param {string} key The key of the value to get.
+     * @returns {*} Returns the cached value.
+     */
+    function stackGet(key) {
+      var data = this.__data__,
+          index = assocIndexOf(data, key);
+
+      return index < 0 ? undefined : data[index][1];
+    }
+
+    /**
+     * Sets `value` to `key` of the stack.
+     *
+     * @private
+     * @name set
+     * @memberOf Stack
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     */
+    function stackSet(key, value) {
+      this.__data__.push([key, value]);
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
+     *
+     * Creates a set cache object to store unique values.
      *
      * @private
      * @param {Array} [values] The values to cache.
@@ -1789,7 +1862,7 @@
      * `_.indexOf` by returning `0` if the value is found, else `-1`.
      *
      * @private
-     * @param {Object} cache The cache to search.
+     * @param {Object} cache The set cache to search.
      * @param {*} value The value to search for.
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
@@ -1801,7 +1874,7 @@
     }
 
     /**
-     * Adds `value` to the cache.
+     * Adds `value` to the set cache.
      *
      * @private
      * @name push
@@ -1862,14 +1935,13 @@
      * @param {Function} [customizer] The function to customize cloning.
      * @param {string} [key] The key of `value`.
      * @param {Object} [object] The object `value` belongs to.
-     * @param {Array} [stackA=[]] Tracks traversed source objects.
-     * @param {Array} [stackB=[]] Associates clones with source counterparts.
+     * @param {Array} [stack] Tracks traversed sources and their clone counterparts.
      * @returns {*} Returns the cloned value.
      */
-    function baseClone(value, isDeep, customizer, key, object, stackA, stackB) {
+    function baseClone(value, isDeep, customizer, key, object, stack) {
       var result;
       if (customizer) {
-        result = object ? customizer(value, key, object, stackA, stackB) : customizer(value);
+        result = object ? customizer(value, key, object, stack) : customizer(value);
       }
       if (result !== undefined) {
         return result;
@@ -1905,22 +1977,16 @@
         }
       }
       // Check for circular references and return its corresponding clone.
-      stackA || (stackA = []);
-      stackB || (stackB = []);
-
-      var length = stackA.length;
-      while (length--) {
-        if (stackA[length] == value) {
-          return stackB[length];
-        }
+      stack || (stack = new Stack);
+      var stacked = stack.get(value);
+      if (stacked) {
+        return stacked;
       }
-      // Add the source value to the stack of traversed objects and associate it with its clone.
-      stackA.push(value);
-      stackB.push(result);
+      stack.set(value, result);
 
       // Recursively populate clone (susceptible to call stack limits).
       (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
-        result[key] = baseClone(subValue, isDeep, customizer, key, value, stackA, stackB);
+        result[key] = baseClone(subValue, isDeep, customizer, key, value, stack);
       });
       return result;
     }
@@ -2260,18 +2326,17 @@
      *  The bitmask may be composed of the following flags:
      *     1 - Unordered comparison
      *     2 - Partial comparison
-     * @param {Array} [stackA] Tracks traversed `value` objects.
-     * @param {Array} [stackB] Tracks traversed `other` objects.
+     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
-    function baseIsEqual(value, other, customizer, bitmask, stackA, stackB) {
+    function baseIsEqual(value, other, customizer, bitmask, stack) {
       if (value === other) {
         return true;
       }
       if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
         return value !== value && other !== other;
       }
-      return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stackA, stackB);
+      return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
     }
 
     /**
@@ -2285,11 +2350,10 @@
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-     * @param {Array} [stackA=[]] Tracks traversed `value` objects.
-     * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stackA, stackB) {
+    function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
       var objIsArr = isArray(object),
           othIsArr = isArray(other),
           objTag = arrayTag,
@@ -2328,7 +2392,7 @@
             othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
         if (objIsWrapped || othIsWrapped) {
-          return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, bitmask, stackA, stackB);
+          return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, bitmask, stack);
         }
       }
       if (!isSameTag) {
@@ -2336,24 +2400,16 @@
       }
       // Assume cyclic values are equal.
       // For more information on detecting circular references see https://es5.github.io/#JO.
-      stackA || (stackA = []);
-      stackB || (stackB = []);
-
-      var length = stackA.length;
-      while (length--) {
-        if (stackA[length] == object) {
-          return stackB[length] == other;
-        }
+      stack || (stack = new Stack);
+      var stacked = stack.get(object);
+      if (stacked) {
+        return stacked == other;
       }
-      // Add `object` and `other` to the stack of traversed objects.
-      stackA.push(object);
-      stackB.push(other);
+      stack.set(object, other);
 
-      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, bitmask, stackA, stackB);
+      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, bitmask, stack);
 
-      stackA.pop();
-      stackB.pop();
-
+      stack['delete'](object);
       return result;
     }
 
@@ -2396,11 +2452,10 @@
             return false;
           }
         } else {
-          var stackA = [],
-              stackB = [],
-              result = customizer ? customizer(objValue, srcValue, key, object, source, stackA, stackB) : undefined;
+          var stack = new Stack,
+              result = customizer ? customizer(objValue, srcValue, key, object, source, stack) : undefined;
 
-          if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stackA, stackB) : result)) {
+          if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stack) : result)) {
             return false;
           }
         }
@@ -2537,10 +2592,9 @@
      * @param {Object} object The destination object.
      * @param {Object} source The source object.
      * @param {Function} [customizer] The function to customize merged values.
-     * @param {Array} [stackA=[]] Tracks traversed source objects.
-     * @param {Array} [stackB=[]] Associates values with source counterparts.
+     * @param {Array} [stack] Tracks traversed sources and their value counterparts.
      */
-    function baseMerge(object, source, customizer, stackA, stackB) {
+    function baseMerge(object, source, customizer, stack) {
       if (object === source) {
         return;
       }
@@ -2551,12 +2605,11 @@
           srcValue = source[key];
         }
         if (isObject(srcValue)) {
-          stackA || (stackA = []);
-          stackB || (stackB = []);
-          baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+          stack || (stack = new Stack);
+          baseMergeDeep(object, source, key, baseMerge, customizer, stack);
         }
         else {
-          var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stackA, stackB) : undefined;
+          var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stack) : undefined;
           if (newValue === undefined) {
             newValue = srcValue;
           }
@@ -2576,22 +2629,18 @@
      * @param {string} key The key of the value to merge.
      * @param {Function} mergeFunc The function to merge values.
      * @param {Function} [customizer] The function to customize assigned values.
-     * @param {Array} [stackA=[]] Tracks traversed source objects.
-     * @param {Array} [stackB=[]] Associates values with source counterparts.
+     * @param {Array} [stack] Tracks traversed sources and their value counterparts.
      */
-    function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stackB) {
-      var length = stackA.length,
-          oldValue = object[key],
-          srcValue = source[key];
+    function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
+      var oldValue = object[key],
+          srcValue = source[key],
+          stacked = stack.get(oldValue) || stack.get(srcValue);
 
-      while (length--) {
-        var stacked = stackA[length];
-        if (stacked == srcValue || stacked == oldValue) {
-          assignMergeValue(object, key, stackB[length]);
-          return;
-        }
+      if (stacked) {
+        assignMergeValue(object, key, stacked);
+        return;
       }
-      var newValue = customizer ? customizer(oldValue, srcValue, (key + ''), object, source, stackA, stackB) : undefined,
+      var newValue = customizer ? customizer(oldValue, srcValue, (key + ''), object, source, stack) : undefined,
           isCommon = newValue === undefined;
 
       if (isCommon) {
@@ -2610,14 +2659,11 @@
           isCommon = isFunction(srcValue);
         }
       }
-      // Add the source value to the stack of traversed objects and associate
-      // it with its merged value.
-      stackA.push(srcValue);
-      stackB.push(newValue);
+      stack.set(srcValue, newValue);
 
       if (isCommon) {
         // Recursively merge objects and arrays (susceptible to call stack limits).
-        mergeFunc(newValue, srcValue, customizer, stackA, stackB);
+        mergeFunc(newValue, srcValue, customizer, stack);
       }
       assignMergeValue(object, key, newValue);
     }
@@ -3793,11 +3839,10 @@
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-     * @param {Array} [stackA] Tracks traversed `value` objects.
-     * @param {Array} [stackB] Tracks traversed `other` objects.
+     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
-    function equalArrays(array, other, equalFunc, customizer, bitmask, stackA, stackB) {
+    function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
       var index = -1,
           isPartial = bitmask & PARTIAL_COMPARE_FLAG,
           isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
@@ -3814,8 +3859,8 @@
 
         if (customizer) {
           var result = isPartial
-            ? customizer(othValue, arrValue, index, other, array, stackA, stackB)
-            : customizer(arrValue, othValue, index, array, other, stackA, stackB);
+            ? customizer(othValue, arrValue, index, other, array, stack)
+            : customizer(arrValue, othValue, index, array, other, stack);
         }
         if (result !== undefined) {
           if (result) {
@@ -3826,11 +3871,11 @@
         // Recursively compare arrays (susceptible to call stack limits).
         if (isUnordered) {
           if (!arraySome(other, function(othValue) {
-                return arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stackA, stackB);
+                return arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack);
               })) {
             return false;
           }
-        } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stackA, stackB))) {
+        } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
           return false;
         }
       }
@@ -3900,11 +3945,10 @@
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-     * @param {Array} [stackA] Tracks traversed `value` objects.
-     * @param {Array} [stackB] Tracks traversed `other` objects.
+     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalObjects(object, other, equalFunc, customizer, bitmask, stackA, stackB) {
+    function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
       var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
           isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
           objProps = keys(object),
@@ -3931,12 +3975,12 @@
 
         if (customizer) {
           var result = isPartial
-            ? customizer(othValue, objValue, key, other, object, stackA, stackB)
-            : customizer(objValue, othValue, key, object, other, stackA, stackB);
+            ? customizer(othValue, objValue, key, other, object, stack)
+            : customizer(objValue, othValue, key, object, other, stack);
         }
         // Recursively compare objects (susceptible to call stack limits).
         if (!(result === undefined
-              ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stackA, stackB))
+              ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
               : result
             )) {
           return false;
@@ -4417,11 +4461,10 @@
      * @param {*} srcValue The source object property value.
      * @returns {*} Returns the value to assign to the destination object.
      */
-    function mergeDefaults(objValue, srcValue, key, object, source, stackA, stackB) {
+    function mergeDefaults(objValue, srcValue, key, object, source, stack) {
       if (isObject(objValue)) {
-        stackA.push(objValue);
-        stackB.push(objValue);
-        baseMerge(objValue, srcValue, mergeDefaults, stackA, stackB);
+        stack.set(objValue, objValue);
+        baseMerge(objValue, srcValue, mergeDefaults, stack);
       }
       return objValue === undefined ? srcValue : objValue;
     }
@@ -8207,7 +8250,7 @@
      * This method is like `_.clone` except that it accepts `customizer` which
      * is invoked to produce the cloned value. If `customizer` returns `undefined`
      * cloning is handled by the method instead. The `customizer` is invoked with
-     * up to five arguments; (value [, index|key, object, stackA, stackB]).
+     * up to five arguments; (value [, index|key, object, stack]).
      *
      * @static
      * @memberOf _
@@ -8563,7 +8606,7 @@
      * This method is like `_.isEqual` except that it accepts `customizer` which is
      * invoked to compare values. If `customizer` returns `undefined` comparisons are
      * handled by the method instead. The `customizer` is invoked with up to seven arguments:
-     * (objValue, othValue [, index|key, object, other, stackA, stackB]).
+     * (objValue, othValue [, index|key, object, other, stack]).
      *
      * @static
      * @memberOf _
@@ -9973,7 +10016,7 @@
      * is invoked to produce the merged values of the destination and source
      * properties. If `customizer` returns `undefined` merging is handled by the
      * method instead. The `customizer` is invoked with seven arguments:
-     * (objValue, srcValue, key, object, source, stackA, stackB).
+     * (objValue, srcValue, key, object, source, stack).
      *
      * @static
      * @memberOf _
@@ -10057,7 +10100,7 @@
     }
 
     /**
-     * Creates a two dimensional array of the key-value pairs for `object`,
+     * Creates an array of the key-value pairs for `object`,
      * e.g. `[[key1, value1], [key2, value2]]`.
      *
      * @static
@@ -12115,17 +12158,22 @@
     LazyWrapper.prototype = baseCreate(baseLodash.prototype);
     LazyWrapper.prototype.constructor = LazyWrapper;
 
-    // Add functions to the `Map` cache.
-    MapCache.prototype['delete'] = mapDelete;
-    MapCache.prototype.get = mapGet;
-    MapCache.prototype.has = mapHas;
-    MapCache.prototype.set = mapSet;
+    // Add functions to the `MemCache` cache.
+    MemCache.prototype['delete'] = memDelete;
+    MemCache.prototype.get = memGet;
+    MemCache.prototype.has = memHas;
+    MemCache.prototype.set = memSet;
 
     // Add functions to the `Set` cache.
     SetCache.prototype.push = cachePush;
 
+    // Add functions to the `Stack` cache.
+    Stack.prototype['delete'] = stackDelete;
+    Stack.prototype.get = stackGet;
+    Stack.prototype.set = stackSet;
+
     // Assign cache to `_.memoize`.
-    memoize.Cache = MapCache;
+    memoize.Cache = MemCache;
 
     // Add functions that return wrapped values when chaining.
     lodash.after = after;

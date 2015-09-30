@@ -2259,10 +2259,13 @@
             foo = new Foo;
 
         func(foo, function() {
-          argsList.push(slice.call(arguments));
+          var length = arguments.length,
+              args = slice.call(arguments, 0, length - (length > 1 ? 1 : 0));
+
+          argsList.push(args);
         });
 
-        assert.deepEqual(argsList, isDeepWith ? [[foo], [1, 'a', foo, [foo], [{ 'a': 1 }]]] : [[foo]]);
+        assert.deepEqual(argsList, isDeepWith ? [[foo], [1, 'a', foo]] : [[foo]]);
       });
 
       QUnit.test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', function(assert) {
@@ -6025,11 +6028,8 @@
           source = { 'a': 2 },
           expected = _.map([1, 2, 'a', object, source], _.clone);
 
-      if (isMergeWith) {
-        expected.push(undefined, undefined);
-      }
       func(object, source, function() {
-        args || (args = _.map(arguments, _.clone));
+        args || (args = _.map(slice.call(arguments, 0, 5), _.clone));
       });
 
       assert.deepEqual(args, expected, 'primitive property values');
@@ -6039,11 +6039,8 @@
       source = { 'b': 2 };
       expected = _.map([undefined, 2, 'b', object, source], _.clone);
 
-      if (isMergeWith) {
-        expected.push(undefined, undefined);
-      }
       func(object, source, function() {
-        args || (args = _.map(arguments, _.clone));
+        args || (args = _.map(slice.call(arguments, 0, 5), _.clone));
       });
 
       assert.deepEqual(args, expected, 'missing destination property');
@@ -6057,11 +6054,10 @@
       expected = [_.map([objectValue, sourceValue, 'a', object, source], _.cloneDeep)];
 
       if (isMergeWith) {
-        expected[0].push([], []);
-        expected.push(_.map([undefined, 2, 'b', objectValue, sourceValue, [sourceValue], [objectValue]], _.cloneDeep));
+        expected.push(_.map([undefined, 2, 'b', objectValue, sourceValue], _.cloneDeep));
       }
       func(object, source, function() {
-        argsList.push(_.map(arguments, _.cloneDeep));
+        argsList.push(_.map(slice.call(arguments, 0, 5), _.cloneDeep));
       });
 
       assert.deepEqual(argsList, expected, 'object property values');
@@ -8273,18 +8269,21 @@
 
       var expected = [
         [object1, object2],
-        [object1.a, object2.a, 'a', object1, object2, [], []],
-        [object1.a[0], object2.a[0], 0, object1.a, object2.a, [], []],
-        [object1.a[1], object2.a[1], 1, object1.a, object2.a, [], []],
-        [object1.b, object2.b, 'b', object1.b, object2.b, [], []],
-        [object1.b.a, object2.b.a, 'a', object1.b, object2.b, [], []],
-        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a, [], []],
-        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a, [], []],
-        [object1.b.b, object2.b.b, 'b', object1.b.b, object2.b.b, [], []]
+        [object1.a, object2.a, 'a', object1, object2],
+        [object1.a[0], object2.a[0], 0, object1.a, object2.a],
+        [object1.a[1], object2.a[1], 1, object1.a, object2.a],
+        [object1.b, object2.b, 'b', object1.b, object2.b],
+        [object1.b.a, object2.b.a, 'a', object1.b, object2.b],
+        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a],
+        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a],
+        [object1.b.b, object2.b.b, 'b', object1.b.b, object2.b.b]
       ];
 
       _.isEqualWith(object1, object2, function(assert) {
-        argsList.push(slice.call(arguments));
+        var length = arguments.length,
+            args = slice.call(arguments, 0, length - (length > 2 ? 1 : 0));
+
+        argsList.push(args);
       });
 
       assert.deepEqual(argsList, expected);
@@ -8375,16 +8374,19 @@
 
           var expected = [
             [pair[0], pair[1]],
-            [array[0], array[0], 0, array, array, [], []],
-            [array[0][0], array[0][0], 0, array[0], array[0], [], []],
-            [array[0][1], array[0][1], 1, array[0], array[0], [], []]
+            [array[0], array[0], 0, array, array],
+            [array[0][0], array[0][0], 0, array[0], array[0]],
+            [array[0][1], array[0][1], 1, array[0], array[0]]
           ];
 
           if (index) {
             expected.length = 2;
           }
           _.isEqualWith(pair[0], pair[1], function() {
-            argsList.push(slice.call(arguments));
+            var length = arguments.length,
+                args = slice.call(arguments, 0, length - (length > 2 ? 1 : 0));
+
+            argsList.push(args);
           });
 
           assert.deepEqual(argsList, expected, index ? 'Set' : 'Map');
@@ -9007,22 +9009,22 @@
       object2.b = object1;
 
       var expected = [
-        [object1.a, object2.a, 'a', object1, object2, [], []],
-        [object1.a[0], object2.a[0], 0, object1.a, object2.a, [], []],
-        [object1.a[1], object2.a[1], 1, object1.a, object2.a, [], []],
-        [object1.b, object2.b, 'b', object1, object2, [], []],
-        [object1.b.a, object2.b.a, 'a', object1.b, object2.b, [], []],
-        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a, [], []],
-        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a, [], []],
-        [object1.b.b, object2.b.b, 'b', object1.b, object2.b, [], []],
-        [object1.b.b.a, object2.b.b.a, 'a', object1.b.b, object2.b.b, [], []],
-        [object1.b.b.a[0], object2.b.b.a[0], 0, object1.b.b.a, object2.b.b.a, [], []],
-        [object1.b.b.a[1], object2.b.b.a[1], 1, object1.b.b.a, object2.b.b.a, [], []],
-        [object1.b.b.b, object2.b.b.b, 'b', object1.b.b, object2.b.b, [], []]
+        [object1.a, object2.a, 'a', object1, object2],
+        [object1.a[0], object2.a[0], 0, object1.a, object2.a],
+        [object1.a[1], object2.a[1], 1, object1.a, object2.a],
+        [object1.b, object2.b, 'b', object1, object2],
+        [object1.b.a, object2.b.a, 'a', object1.b, object2.b],
+        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a],
+        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a],
+        [object1.b.b, object2.b.b, 'b', object1.b, object2.b],
+        [object1.b.b.a, object2.b.b.a, 'a', object1.b.b, object2.b.b],
+        [object1.b.b.a[0], object2.b.b.a[0], 0, object1.b.b.a, object2.b.b.a],
+        [object1.b.b.a[1], object2.b.b.a[1], 1, object1.b.b.a, object2.b.b.a],
+        [object1.b.b.b, object2.b.b.b, 'b', object1.b.b, object2.b.b]
       ];
 
       _.isMatchWith(object1, object2, function(assert) {
-        argsList.push(slice.call(arguments));
+        argsList.push(slice.call(arguments, 0, -1));
       });
 
       assert.deepEqual(argsList, expected);
@@ -9111,17 +9113,17 @@
               object2 = { 'a': pair[1] };
 
           var expected = [
-            [pair[0], pair[1], 'a', object1, object2, [], []],
-            [array[0], array[0], 0, array, array, [], []],
-            [array[0][0], array[0][0], 0, array[0], array[0], [], []],
-            [array[0][1], array[0][1], 1, array[0], array[0], [], []]
+            [pair[0], pair[1], 'a', object1, object2],
+            [array[0], array[0], 0, array, array],
+            [array[0][0], array[0][0], 0, array[0], array[0]],
+            [array[0][1], array[0][1], 1, array[0], array[0]]
           ];
 
           if (index) {
             expected.length = 2;
           }
           _.isMatchWith({ 'a': pair[0] }, { 'a': pair[1] }, function() {
-            argsList.push(slice.call(arguments));
+            argsList.push(slice.call(arguments, 0, -1));
           });
 
           assert.deepEqual(argsList, expected, index ? 'Set' : 'Map');
@@ -13091,7 +13093,7 @@
         return new Wrapper(value);
       }
       if (_.has(value, '__wrapped__')) {
-        var actions = _.slice(value.__actions__),
+        var actions = slice.call(value.__actions__),
             chain = value.__chain__;
 
         value = value.__wrapped__;

@@ -7266,7 +7266,7 @@
      */
     var bindAll = restParam(function(object, methodNames) {
       arrayEach(baseFlatten(methodNames), function(key) {
-        object[key] = createWrapper(object[key], BIND_FLAG, object);
+        object[key] = bind(object[key], object);
       });
       return object;
     });
@@ -8204,7 +8204,7 @@
      */
     function wrap(value, wrapper) {
       wrapper = wrapper == null ? identity : wrapper;
-      return createWrapper(wrapper, PARTIAL_FLAG, undefined, [value], []);
+      return partial(wrapper, value);
     }
 
     /*------------------------------------------------------------------------*/

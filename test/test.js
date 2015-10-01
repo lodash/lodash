@@ -8549,6 +8549,16 @@
       assert.strictEqual(_.isFunction(slice), true);
     });
 
+    QUnit.test('should return `true` for generator functions', function(assert) {
+      assert.expect(1);
+
+      var generator = _.attempt(function() {
+        return Function('return function*(){}');
+      });
+
+      assert.strictEqual(_.isFunction(generator), typeof generator == 'function');
+    });
+
     QUnit.test('should return `true` for typed array constructors', function(assert) {
       assert.expect(1);
 

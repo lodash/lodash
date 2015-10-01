@@ -68,6 +68,7 @@
       dateTag = '[object Date]',
       errorTag = '[object Error]',
       funcTag = '[object Function]',
+      genTag = '[object GeneratorFunction]',
       mapTag = '[object Map]',
       numberTag = '[object Number]',
       objectTag = '[object Object]',
@@ -8697,7 +8698,11 @@
       // The use of `Object#toString` avoids issues with the `typeof` operator
       // in Safari 8 which returns 'object' for typed array constructors, and
       // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-      return isObject(value) && objToString.call(value) == funcTag;
+      if (!isObject(value)) {
+        return false;
+      }
+      var tag = objToString.call(value);
+      return tag == funcTag || tag == genTag;
     }
 
     /**

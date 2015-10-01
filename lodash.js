@@ -1358,6 +1358,7 @@
     var ArrayBuffer = context.ArrayBuffer,
         Map = getNative(context, 'Map'),
         Reflect = context.Reflect,
+        Set = getNative(context, 'Set'),
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
         WeakMap = getNative(context, 'WeakMap'),
@@ -1381,19 +1382,18 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random,
-        nativeSet = getNative(context, 'Set');
+        nativeRandom = Math.random;
 
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
     /** Used to detect maps and sets. */
     var mapCtorString = Map ? fnToString.call(Map) : '',
-        setCtorString = nativeSet ? fnToString.call(nativeSet) : '';
+        setCtorString = Set ? fnToString.call(Set) : '';
 
     /** Detect lack of support for map and set `toStringTag` values (IE 11). */
-    var noMapSetTag = Map && nativeSet &&
-      !(objToString.call(new Map) == mapTag && objToString.call(new nativeSet) == setTag);
+    var noMapSetTag = Map && Set &&
+      !(objToString.call(new Map) == mapTag && objToString.call(new Set) == setTag);
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -1718,45 +1718,77 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a memoize cache object to store key-value pairs.
+     * Creates a map cache object to store key-value pairs.
      *
      * @private
-     * @static
-     * @name Cache
-     * @memberOf _.memoize
      */
-    function MemCache() {
-      this.__data__ = {};
+    function MapCache() {
+      this.__data__ = {
+        'hash': createCache(),
+        'map': (Map ? new Map : []),
+        'string': createCache()
+      };
     }
 
     /**
-     * Removes `key` and its value from the memoize cache.
+     * Removes `key` and its value from the map.
      *
      * @private
      * @name delete
-     * @memberOf _.memoize.Cache
+     * @memberOf MapCache
      * @param {string} key The key of the value to remove.
-     * @returns {boolean} Returns `true` if the entry was removed successfully, else `false`.
+     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
      */
-    function memDelete(key) {
-      return this.has(key) && delete this.__data__[key];
+    function mapDelete(key) {
+      var data = this.__data__,
+          map = data.map;
+
+      if (isKeyable(key)) {
+        var hash = typeof key == 'string' ? data.string : data.hash;
+        return hasOwnProperty.call(hash, key) && delete hash[key];
+      }
+      if (Map) {
+        return map['delete'](key);
+      }
+      var index = assocIndexOf(map, key);
+      if (index < 0) {
+        return false;
+      }
+      var lastIndex = map.length - 1;
+      if (index == lastIndex) {
+        map.pop();
+      } else {
+        splice.call(map, index, 1);
+      }
+      return true;
     }
 
     /**
-     * Gets the cached value for `key`.
+     * Gets the map value for `key`.
      *
      * @private
      * @name get
-     * @memberOf _.memoize.Cache
+     * @memberOf MapCache
      * @param {string} key The key of the value to get.
      * @returns {*} Returns the cached value.
      */
-    function memGet(key) {
-      return key == '__proto__' ? undefined : this.__data__[key];
+    function mapGet(key) {
+      var data = this.__data__,
+          map = data.map;
+
+      if (isKeyable(key)) {
+        var hash = typeof key == 'string' ? data.string : data.hash;
+        return (nativeCreate || hasOwnProperty.call(hash, key)) ? hash[key] : undefined;
+      }
+      if (Map) {
+        return map.get(key);
+      }
+      var index = assocIndexOf(map, key);
+      return index < 0 ? undefined : map[index][1];
     }
 
     /**
-     * Checks if a cached value for `key` exists.
+     * Checks if a map value for `key` exists.
      *
      * @private
      * @name has
@@ -1764,79 +1796,47 @@
      * @param {string} key The key of the entry to check.
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
-    function memHas(key) {
-      return key != '__proto__' && hasOwnProperty.call(this.__data__, key);
+    function mapHas(key) {
+      var data = this.__data__,
+          map = data.map;
+
+      if (isKeyable(key)) {
+        var hash = typeof key == 'string' ? data.string : data.hash;
+        return hasOwnProperty.call(hash, key);
+      }
+      return Map ? map.has(key) : (assocIndexOf(map, key) > -1);
     }
 
     /**
-     * Sets `value` to `key` of the cache.
+     * Sets `value` to `key` of the map.
      *
      * @private
      * @name set
-     * @memberOf _.memoize.Cache
+     * @memberOf MapCache
      * @param {string} key The key of the value to set.
      * @param {*} value The value to set.
-     * @returns {Object} Returns the memoize cache object.
+     * @returns {Object} Returns the map cache object.
      */
-    function memSet(key, value) {
-      if (key != '__proto__') {
-        this.__data__[key] = value;
+    function mapSet(key, value) {
+      var data = this.__data__,
+          map = data.map;
+
+      if (isKeyable(key)) {
+        var hash = typeof key == 'string' ? data.string : data.hash;
+        hash[key] = value;
+      }
+      else if (Map) {
+        map.set(key, value);
+      }
+      else {
+        var index = assocIndexOf(map, key);
+        if (index < 0) {
+          map.push([key, value]);
+        } else {
+          map[index][1] = value;
+        }
       }
       return this;
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Creates a stack object to store key-value pairs.
-     *
-     * @private
-     */
-    function Stack() {
-      return Map ? new Map : (this.__data__ = [], this);
-    }
-
-    /**
-     * Removes `key` and its value from the stack.
-     *
-     * @private
-     * @name delete
-     * @memberOf Stack
-     * @param {string} key The key of the value to remove.
-     * @returns {boolean} Returns `true` if the entry was removed successfully, else `false`.
-     */
-    function stackDelete() {
-      var data = this.__data__;
-      return !!data.length && (data.pop(), true);
-    }
-
-    /**
-     * Gets the stack value for `key`.
-     *
-     * @private
-     * @name get
-     * @memberOf Stack
-     * @param {string} key The key of the value to get.
-     * @returns {*} Returns the cached value.
-     */
-    function stackGet(key) {
-      var data = this.__data__,
-          index = assocIndexOf(data, key);
-
-      return index < 0 ? undefined : data[index][1];
-    }
-
-    /**
-     * Sets `value` to `key` of the stack.
-     *
-     * @private
-     * @name set
-     * @memberOf Stack
-     * @param {string} key The key of the value to set.
-     * @param {*} value The value to set.
-     */
-    function stackSet(key, value) {
-      this.__data__.push([key, value]);
     }
 
     /*------------------------------------------------------------------------*/
@@ -1849,17 +1849,17 @@
      * @param {Array} [values] The values to cache.
      */
     function SetCache(values) {
-      var length = values ? values.length : 0;
+      var length = values ? values.length : 0,
+          data = this.__data__ = new MapCache;
 
-      this.data = { 'hash': nativeCreate(null), 'set': new nativeSet };
       while (length--) {
-        this.push(values[length]);
+        data.set(values[length], true);
       }
     }
 
     /**
      * Checks if `value` is in `cache` mimicking the return signature of
-     * `_.indexOf` by returning `0` if the value is found, else `-1`.
+     * `_.indexOf` by returning `0` if `value` is found, else `-1`.
      *
      * @private
      * @param {Object} cache The set cache to search.
@@ -1867,10 +1867,7 @@
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
     function cacheIndexOf(cache, value) {
-      var data = cache.data,
-          result = (typeof value == 'string' || isObject(value)) ? data.set.has(value) : data.hash[value];
-
-      return result ? 0 : -1;
+      return cache.__data__.has(value) ? 0 : -1;
     }
 
     /**
@@ -1882,12 +1879,7 @@
      * @param {*} value The value to cache.
      */
     function cachePush(value) {
-      var data = this.data;
-      if (typeof value == 'string' || isObject(value)) {
-        data.set.add(value);
-      } else {
-        data.hash[value] = true;
-      }
+      this.__data__.set(value, true);
     }
 
     /*------------------------------------------------------------------------*/
@@ -1977,7 +1969,7 @@
         }
       }
       // Check for circular references and return its corresponding clone.
-      stack || (stack = new Stack);
+      stack || (stack = new MapCache);
       var stacked = stack.get(value);
       if (stacked) {
         return stacked;
@@ -2047,7 +2039,7 @@
       var index = -1,
           indexOf = getIndexOf(),
           isCommon = indexOf === baseIndexOf,
-          cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? createCache(values) : null,
+          cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? new SetCache(values) : null,
           valuesLength = values.length;
 
       if (cache) {
@@ -2400,7 +2392,7 @@
       }
       // Assume cyclic values are equal.
       // For more information on detecting circular references see https://es5.github.io/#JO.
-      stack || (stack = new Stack);
+      stack || (stack = new MapCache);
       var stacked = stack.get(object);
       if (stacked) {
         return stacked == other;
@@ -2452,7 +2444,7 @@
             return false;
           }
         } else {
-          var stack = new Stack,
+          var stack = new MapCache,
               result = customizer ? customizer(objValue, srcValue, key, object, source, stack) : undefined;
 
           if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stack) : result)) {
@@ -2605,7 +2597,7 @@
           srcValue = source[key];
         }
         if (isObject(srcValue)) {
-          stack || (stack = new Stack);
+          stack || (stack = new MapCache);
           baseMergeDeep(object, source, key, baseMerge, customizer, stack);
         }
         else {
@@ -2994,7 +2986,7 @@
           length = array.length,
           isCommon = indexOf === baseIndexOf,
           isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
-          seen = isLarge ? createCache() : null,
+          seen = isLarge ? new SetCache : null,
           result = [];
 
       if (seen) {
@@ -3432,14 +3424,13 @@
     }
 
     /**
-     * Creates a `Set` cache object to optimize linear searches of large arrays.
+     * Creates an empty cache object.
      *
      * @private
-     * @param {Array} [values] The values to cache.
-     * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
+     * @returns {Object} Returns the new cache object.
      */
-    function createCache(values) {
-      return (nativeCreate && nativeSet) ? new SetCache(values) : null;
+    function createCache() {
+      return nativeCreate ? nativeCreate(null) : {};
     }
 
     /**
@@ -4313,6 +4304,17 @@
     }
 
     /**
+     * Checks if `value` is suitable for use as unique object key.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+     */
+    function isKeyable(value) {
+      return !(value === '__proto__' || isObject(value));
+    }
+
+    /**
      * Checks if `func` has a lazy counterpart.
      *
      * @private
@@ -5069,7 +5071,7 @@
 
       while (othIndex--) {
         var value = arrays[othIndex] = isArrayLike(value = arrays[othIndex]) ? value : [];
-        caches[othIndex] = (isCommon && value.length >= 120) ? createCache(othIndex && value) : null;
+        caches[othIndex] = (isCommon && value.length >= 120) ? new SetCache(othIndex && value) : null;
       }
       var array = arrays[0],
           index = -1,
@@ -7759,9 +7761,8 @@
      * Creates a function that memoizes the result of `func`. If `resolver` is
      * provided it determines the cache key for storing the result based on the
      * arguments provided to the memoized function. By default, the first argument
-     * provided to the memoized function is coerced to a string and used as the
-     * cache key. The `func` is invoked with the `this` binding of the memoized
-     * function.
+     * provided to the memoized function is used as the map cache key. The `func`
+     * is invoked with the `this` binding of the memoized function.
      *
      * **Note:** The cache is exposed as the `cache` property on the memoized
      * function. Its creation may be customized by replacing the `_.memoize.Cache`
@@ -7776,35 +7777,27 @@
      * @returns {Function} Returns the new memoizing function.
      * @example
      *
-     * var upperCase = _.memoize(function(string) {
-     *   return string.toUpperCase();
-     * });
+     * var object = { 'a': 1, 'b': 2 };
+     * var other = { 'c': 3, 'd': 4 };
      *
-     * upperCase('fred');
-     * // => 'FRED'
+     * var values = _.memoize(_.values);
+     * values(object);
+     * // => [1, 2]
+     *
+     * values(other);
+     * // => [3, 4]
+     *
+     * object.a = 2;
+     * values(object);
+     * // => [1, 2]
      *
      * // modifying the result cache
-     * upperCase.cache.set('fred', 'BARNEY');
-     * upperCase('fred');
-     * // => 'BARNEY'
+     * values.cache.set(object, ['a', 'b']);
+     * values(object);
+     * // => ['a', 'b']
      *
      * // replacing `_.memoize.Cache`
-     * var object = { 'user': 'fred' };
-     * var other = { 'user': 'barney' };
-     * var identity = _.memoize(_.identity);
-     *
-     * identity(object);
-     * // => { 'user': 'fred' }
-     * identity(other);
-     * // => { 'user': 'fred' }
-     *
      * _.memoize.Cache = WeakMap;
-     * var identity = _.memoize(_.identity);
-     *
-     * identity(object);
-     * // => { 'user': 'fred' }
-     * identity(other);
-     * // => { 'user': 'barney' }
      */
     function memoize(func, resolver) {
       if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
@@ -9740,8 +9733,8 @@
      * @returns {boolean} Returns `true` if `path` exists, else `false`.
      * @example
      *
-     * var object = { 'a': { 'b': { 'c': 3 } } },
-     *     other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+     * var object = { 'a': { 'b': { 'c': 3 } } };
+     * var other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
      *
      * _.has(object, 'a');
      * // => true
@@ -12158,22 +12151,17 @@
     LazyWrapper.prototype = baseCreate(baseLodash.prototype);
     LazyWrapper.prototype.constructor = LazyWrapper;
 
-    // Add functions to the `MemCache` cache.
-    MemCache.prototype['delete'] = memDelete;
-    MemCache.prototype.get = memGet;
-    MemCache.prototype.has = memHas;
-    MemCache.prototype.set = memSet;
+    // Add functions to the `MapCache` cache.
+    MapCache.prototype['delete'] = mapDelete;
+    MapCache.prototype.get = mapGet;
+    MapCache.prototype.has = mapHas;
+    MapCache.prototype.set = mapSet;
 
     // Add functions to the `Set` cache.
     SetCache.prototype.push = cachePush;
 
-    // Add functions to the `Stack` cache.
-    Stack.prototype['delete'] = stackDelete;
-    Stack.prototype.get = stackGet;
-    Stack.prototype.set = stackSet;
-
     // Assign cache to `_.memoize`.
-    memoize.Cache = MemCache;
+    memoize.Cache = MapCache;
 
     // Add functions that return wrapped values when chaining.
     lodash.after = after;

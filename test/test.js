@@ -12165,17 +12165,19 @@
       });
     });
 
-    QUnit.test('should skip the `__proto__` key', function(assert) {
+    QUnit.test('should cache the `__proto__` key', function(assert) {
       assert.expect(8);
+
+      var array = [],
+          key = '__proto__';
 
       _.times(2, function(index) {
         var count = 0,
-            key = '__proto__',
             resolver = index && _.identity;
 
         var memoized = _.memoize(function() {
           count++;
-          return [];
+          return array;
         }, resolver);
 
         var cache = memoized.cache;
@@ -12183,9 +12185,9 @@
         memoized(key);
         memoized(key);
 
-        assert.strictEqual(count, 2);
-        assert.strictEqual(cache.get(key), undefined);
-        assert.strictEqual(cache['delete'](key), false);
+        assert.strictEqual(count, 1);
+        assert.strictEqual(cache.get(key), array);
+        assert.strictEqual(cache['delete'](key), true);
         assert.notOk(cache.__data__ instanceof Array);
       });
     });
@@ -12214,9 +12216,10 @@
           return true;
         },
         'get': function(key) {
-          return _.find(this.__data__, function(entry) {
+          var entry = _.find(this.__data__, function(entry) {
             return key === entry.key;
-          }).value;
+          });
+          return entry && entry.value;
         },
         'has': function(key) {
           return _.some(this.__data__, function(entry) {

@@ -422,6 +422,9 @@
       return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
     });
 
+    var _Map = root.Map;
+    setProperty(root, 'Map', _.noop);
+
     var _Set = root.Set;
     setProperty(root, 'Set', _.noop);
 
@@ -441,6 +444,11 @@
     // Restore built-in methods.
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
 
+    if (_Map) {
+      setProperty(root, 'Map', Map);
+    } else {
+      delete root.Map;
+    }
     if (_Set) {
       setProperty(root, 'Set', Set);
     } else {

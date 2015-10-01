@@ -84,6 +84,9 @@
           return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
         });
 
+        setProperty(window, '_Map', window.Map);
+        setProperty(window, 'Map', noop);
+
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
 
@@ -103,6 +106,11 @@
         var funcProto = Function.prototype,
             objectProto = Object.prototype;
 
+        if (window._Map) {
+          Map = _Map;
+        } else {
+          setProperty(window, 'Map', undefined);
+        }
         if (window._Set) {
           Set = _Set;
         } else {
@@ -113,6 +121,7 @@
         } else {
           setProperty(window, 'WeakMap', undefined);
         }
+        setProperty(window, '_Map', undefined);
         setProperty(window, '_Set', undefined);
         setProperty(window, '_WeakMap', undefined);
 

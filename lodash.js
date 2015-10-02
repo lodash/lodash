@@ -1915,6 +1915,68 @@
       }
     }
 
+    /*------------------------------------------------------------------------*/
+
+    /**
+     * Creates an hash object.
+     *
+     * @private
+     * @returns {Object} Returns the new hash object.
+     */
+    function createHash() {
+      return nativeCreate ? nativeCreate(null) : {};
+    }
+
+    /**
+     * Removes `key` and its value from the hash.
+     *
+     * @private
+     * @param {Object} hash The hash to modify.
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+     */
+    function hashDelete(hash, key) {
+      return (nativeCreate ? key in hash : hasOwnProperty.call(hash, key)) && delete hash[key];
+    }
+
+    /**
+     * Gets the hash value for `key`.
+     *
+     * @private
+     * @param {Object} hash The hash to query.
+     * @param {string} key The key of the value to get.
+     * @returns {*} Returns the entry value.
+     */
+    function hashGet(hash, key) {
+      return (nativeCreate || hasOwnProperty.call(hash, key)) ? hash[key] : undefined;
+    }
+
+    /**
+     * Checks if a hash value for `key` exists.
+     *
+     * @private
+     * @param {Object} hash The hash to query.
+     * @param {string} key The key of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function hashHas(hash, key) {
+      return nativeCreate ? key in hash : hasOwnProperty.call(hash, key);
+    }
+
+    /**
+     * Sets the hash `key` to `value`.
+     *
+     * @private
+     * @param {Object} hash The hash to modify.
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     */
+    function hashSet(hash, key, value) {
+      hash[key] = value;
+    }
+
+    /*------------------------------------------------------------------------*/
+
     /**
      * The base implementation of `_.assign` without support for multiple sources
      * or `customizer` functions.
@@ -3562,16 +3624,6 @@
     }
 
     /**
-     * Creates an hash object.
-     *
-     * @private
-     * @returns {Object} Returns the new hash object.
-     */
-    function createHash() {
-      return nativeCreate ? nativeCreate(null) : {};
-    }
-
-    /**
      * Creates a function that wraps `func` and invokes it with optional `this`
      * binding of, partial application, and currying.
      *
@@ -4163,54 +4215,6 @@
         }
       }
       return { 'start': start, 'end': end };
-    }
-
-    /**
-     * Removes `key` and its value from the hash.
-     *
-     * @private
-     * @param {Object} hash The hash to modify.
-     * @param {string} key The key of the value to remove.
-     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-     */
-    function hashDelete(hash, key) {
-      return (nativeCreate ? key in hash : hasOwnProperty.call(hash, key)) && delete hash[key];
-    }
-
-    /**
-     * Gets the hash value for `key`.
-     *
-     * @private
-     * @param {Object} hash The hash to query.
-     * @param {string} key The key of the value to get.
-     * @returns {*} Returns the entry value.
-     */
-    function hashGet(hash, key) {
-      return (nativeCreate || hasOwnProperty.call(hash, key)) ? hash[key] : undefined;
-    }
-
-    /**
-     * Checks if a hash value for `key` exists.
-     *
-     * @private
-     * @param {Object} hash The hash to query.
-     * @param {string} key The key of the entry to check.
-     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-     */
-    function hashHas(hash, key) {
-      return nativeCreate ? key in hash : hasOwnProperty.call(hash, key);
-    }
-
-    /**
-     * Sets the hash `key` to `value`.
-     *
-     * @private
-     * @param {Object} hash The hash to modify.
-     * @param {string} key The key of the value to set.
-     * @param {*} value The value to set.
-     */
-    function hashSet(hash, key, value) {
-      hash[key] = value;
     }
 
     /**

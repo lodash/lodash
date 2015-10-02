@@ -2322,7 +2322,13 @@
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHas(object, key) {
-      return object != null && hasOwnProperty.call(object, key);
+      if (object == null) {
+        return false;
+      }
+      // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`
+      // incorrectly report `false` for own index properties.
+      return hasOwnProperty.call(object, key) ||
+        (typeof object == 'object' && key in object && getPrototypeOf(object) === null);
     }
 
     /**
@@ -3984,7 +3990,7 @@
       var index = objLength;
       while (index--) {
         var key = objProps[index];
-        if (!(isPartial ? key in other : hasOwnProperty.call(other, key)) ||
+        if (!(isPartial ? key in other : baseHas(other, key)) ||
             !(isUnordered || key == othProps[index])) {
           return false;
         }
@@ -9941,7 +9947,7 @@
           skipIndexes = !!length;
 
       for (var key in object) {
-        if (hasOwnProperty.call(object, key) &&
+        if (baseHas(object, key) &&
             !(skipIndexes && isIndex(key, length)) &&
             !(isProto && key == 'constructor')) {
           result.push(key);

@@ -6341,17 +6341,7 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should work with non-string `path` arguments', function(assert) {
-      assert.expect(2);
-
-      var array = [1, 2, 3];
-
-      _.each([1, [1]], function(path) {
-        assert.strictEqual(func(array, path), true);
-      });
-    });
-
-    QUnit.test('`_.' + methodName + '` should coerce key to a string', function(assert) {
+    QUnit.test('`_.' + methodName + '` should coerce `path` to a string', function(assert) {
       assert.expect(1);
 
       function fn() {}
@@ -6387,12 +6377,6 @@
       assert.expect(1);
 
       assert.strictEqual(func(Array(1), 0), true);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(func(args, 1), true);
     });
 
     QUnit.test('`_.' + methodName + '` should check for a key over a path', function(assert) {
@@ -6443,6 +6427,35 @@
       _.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
         assert.strictEqual(func(object, path), false);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with non-string `path` arguments', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3];
+
+      _.each([1, [1]], function(path) {
+        assert.strictEqual(func(array, path), true);
+      });
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func(args, 1), true);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work for objects with a `[[Prototype]]` of `null`', function(assert) {
+      assert.expect(1);
+
+      if (create)  {
+        var object = create(null);
+        object[1] = 'a';
+        assert.strictEqual(func(object, 1), true);
+      }
+      else {
+        skipTest(assert);
+      }
     });
   });
 

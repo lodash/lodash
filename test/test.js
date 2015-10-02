@@ -214,7 +214,7 @@
     QUnit = QUnit.QUnit || QUnit
   ));
 
-  /** Load QUnit Extras and ES6 Set/WeakMap shims. */
+  /** Load QUnit Extras and ES6 shims. */
   (function() {
     var paths = [
       '../node_modules/qunit-extras/qunit-extras.js'
@@ -422,13 +422,8 @@
       return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
     });
 
-    var _Map = root.Map;
     setProperty(root, 'Map', _.noop);
-
-    var _Set = root.Set;
     setProperty(root, 'Set', _.noop);
-
-    var _WeakMap = root.WeakMap;
     setProperty(root, 'WeakMap', _.noop);
 
     // Fake `WinRTError`.
@@ -444,17 +439,17 @@
     // Restore built-in methods.
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
 
-    if (_Map) {
+    if (Map) {
       setProperty(root, 'Map', Map);
     } else {
       delete root.Map;
     }
-    if (_Set) {
+    if (Set) {
       setProperty(root, 'Set', Set);
     } else {
       delete root.Set;
     }
-    if (_WeakMap) {
+    if (WeakMap) {
       setProperty(root, 'WeakMap', WeakMap);
     } else {
       delete root.WeakMap;

@@ -1316,14 +1316,14 @@
   function runInContext(context) {
     context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
 
-    /** Native constructor references. */
+    /** Built-in constructor references. */
     var Date = context.Date,
         Error = context.Error,
         Math = context.Math,
         RegExp = context.RegExp,
         TypeError = context.TypeError;
 
-    /** Used for native method references. */
+    /** Used for built-in method references. */
     var arrayProto = context.Array.prototype,
         objectProto = context.Object.prototype,
         stringProto = context.String.prototype;
@@ -1355,14 +1355,11 @@
       .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
-    /** Native value references. */
+    /** Built-in value references. */
     var ArrayBuffer = context.ArrayBuffer,
-        Map = getNative(context, 'Map'),
         Reflect = context.Reflect,
-        Set = getNative(context, 'Set'),
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
-        WeakMap = getNative(context, 'WeakMap'),
         clearTimeout = context.clearTimeout,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
@@ -1374,9 +1371,8 @@
         setTimeout = context.setTimeout,
         splice = arrayProto.splice;
 
-    /* Native method references for those with the same name as other `lodash` methods. */
+    /* Built-in method references for those with the same name as other `lodash` methods. */
     var nativeCeil = Math.ceil,
-        nativeCreate = getNative(Object, 'create'),
         nativeFloor = Math.floor,
         nativeIsFinite = context.isFinite,
         nativeKeys = Object.keys,
@@ -1384,6 +1380,12 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random;
+
+    /* Built-in method references that are verified to be native. */
+    var Map = getNative(context, 'Map'),
+        Set = getNative(context, 'Set'),
+        WeakMap = getNative(context, 'WeakMap'),
+        nativeCreate = getNative(Object, 'create');
 
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
@@ -1725,9 +1727,9 @@
      */
     function MapCache() {
       this.__data__ = {
-        'hash': createCache(),
-        'map': (Map ? new Map : []),
-        'string': createCache()
+        'hash': createHash(),
+        'map': Map ? new Map : [],
+        'string': createHash()
       };
     }
 
@@ -1741,27 +1743,11 @@
      * @returns {boolean} Returns `true` if the entry was removed, else `false`.
      */
     function mapDelete(key) {
-      var data = this.__data__,
-          map = data.map;
-
+      var data = this.__data__;
       if (isKeyable(key)) {
-        var hash = typeof key == 'string' ? data.string : data.hash;
-        return hasOwnProperty.call(hash, key) && delete hash[key];
+        return hashDelete(typeof key == 'string' ? data.string : data.hash, key);
       }
-      if (Map) {
-        return map['delete'](key);
-      }
-      var index = assocIndexOf(map, key);
-      if (index < 0) {
-        return false;
-      }
-      var lastIndex = map.length - 1;
-      if (index == lastIndex) {
-        map.pop();
-      } else {
-        splice.call(map, index, 1);
-      }
-      return true;
+      return Map ? data.map['delete'](key) : assocDelete(data.map, key);
     }
 
     /**
@@ -1771,21 +1757,14 @@
      * @name get
      * @memberOf MapCache
      * @param {string} key The key of the value to get.
-     * @returns {*} Returns the cached value.
+     * @returns {*} Returns the entry value.
      */
     function mapGet(key) {
-      var data = this.__data__,
-          map = data.map;
-
+      var data = this.__data__;
       if (isKeyable(key)) {
-        var hash = typeof key == 'string' ? data.string : data.hash;
-        return (nativeCreate || hasOwnProperty.call(hash, key)) ? hash[key] : undefined;
+        return hashGet(typeof key == 'string' ? data.string : data.hash, key);
       }
-      if (Map) {
-        return map.get(key);
-      }
-      var index = assocIndexOf(map, key);
-      return index < 0 ? undefined : map[index][1];
+      return Map ? data.map.get(key) : assocGet(data.map, key);
     }
 
     /**
@@ -1798,18 +1777,15 @@
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
     function mapHas(key) {
-      var data = this.__data__,
-          map = data.map;
-
+      var data = this.__data__;
       if (isKeyable(key)) {
-        var hash = typeof key == 'string' ? data.string : data.hash;
-        return hasOwnProperty.call(hash, key);
+        return hashHas(typeof key == 'string' ? data.string : data.hash, key);
       }
-      return Map ? map.has(key) : (assocIndexOf(map, key) > -1);
+      return Map ? data.map.has(key) : assocHas(data.map, key);
     }
 
     /**
-     * Sets `value` to `key` of the map.
+     * Sets the map `key` to `value`.
      *
      * @private
      * @name set
@@ -1819,23 +1795,13 @@
      * @returns {Object} Returns the map cache object.
      */
     function mapSet(key, value) {
-      var data = this.__data__,
-          map = data.map;
-
+      var data = this.__data__;
       if (isKeyable(key)) {
-        var hash = typeof key == 'string' ? data.string : data.hash;
-        hash[key] = value;
-      }
-      else if (Map) {
-        map.set(key, value);
-      }
-      else {
-        var index = assocIndexOf(map, key);
-        if (index < 0) {
-          map.push([key, value]);
-        } else {
-          map[index][1] = value;
-        }
+        hashSet(typeof key == 'string' ? data.string : data.hash, key, value);
+      } else if (Map) {
+        data.map.set(key, value);
+      } else {
+        assocSet(data.map, key, value);
       }
       return this;
     }
@@ -1884,6 +1850,70 @@
     }
 
     /*------------------------------------------------------------------------*/
+
+    /**
+     * Removes `key` and its value from the associative array.
+     *
+     * @private
+     * @param {Array} array The array to query.
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+     */
+    function assocDelete(array, key) {
+      var index = assocIndexOf(array, key);
+      if (index < 0) {
+        return false;
+      }
+      var lastIndex = array.length - 1;
+      if (index == lastIndex) {
+        array.pop();
+      } else {
+        splice.call(array, index, 1);
+      }
+      return true;
+    }
+
+    /**
+     * Gets the associative array value for `key`.
+     *
+     * @private
+     * @param {Array} array The array to query.
+     * @param {string} key The key of the value to get.
+     * @returns {*} Returns the entry value.
+     */
+    function assocGet(array, key) {
+      var index = assocIndexOf(array, key);
+      return index < 0 ? undefined : array[index][1];
+    }
+
+    /**
+     * Checks if an associative array value for `key` exists.
+     *
+     * @private
+     * @param {Array} array The array to query.
+     * @param {string} key The key of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function assocHas(array, key) {
+      return assocIndexOf(array, key) > -1;
+    }
+
+    /**
+     * Sets the associative array `key` to `value`.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     */
+    function assocSet(array, key, value) {
+      var index = assocIndexOf(array, key);
+      if (index < 0) {
+        array.push([key, value]);
+      } else {
+        array[index][1] = value;
+      }
+    }
 
     /**
      * The base implementation of `_.assign` without support for multiple sources
@@ -2289,7 +2319,7 @@
      * @private
      * @param {Object} object The object to query.
      * @param {Array|string} key The key to check.
-     * @returns {boolean} Returns `true` if `key` is a property, else `false`.
+     * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHas(object, key) {
       return object != null && hasOwnProperty.call(object, key);
@@ -2301,7 +2331,7 @@
      * @private
      * @param {Object} object The object to query.
      * @param {Array|string} key The key to check.
-     * @returns {boolean} Returns `true` if `key` is a property, else `false`.
+     * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHasIn(object, key) {
       return object != null && key in Object(object);
@@ -3425,16 +3455,6 @@
     }
 
     /**
-     * Creates an empty cache object.
-     *
-     * @private
-     * @returns {Object} Returns the new cache object.
-     */
-    function createCache() {
-      return nativeCreate ? nativeCreate(null) : {};
-    }
-
-    /**
      * Creates a function like `_.camelCase`.
      *
      * @private
@@ -3533,6 +3553,16 @@
           return result;
         };
       };
+    }
+
+    /**
+     * Creates an hash object.
+     *
+     * @private
+     * @returns {Object} Returns the new hash object.
+     */
+    function createHash() {
+      return nativeCreate ? nativeCreate(null) : {};
     }
 
     /**
@@ -4127,6 +4157,54 @@
         }
       }
       return { 'start': start, 'end': end };
+    }
+
+    /**
+     * Removes `key` and its value from the hash.
+     *
+     * @private
+     * @param {Object} hash The hash to modify.
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+     */
+    function hashDelete(hash, key) {
+      return (nativeCreate ? key in hash : hasOwnProperty.call(hash, key)) && delete hash[key];
+    }
+
+    /**
+     * Gets the hash value for `key`.
+     *
+     * @private
+     * @param {Object} hash The hash to query.
+     * @param {string} key The key of the value to get.
+     * @returns {*} Returns the entry value.
+     */
+    function hashGet(hash, key) {
+      return (nativeCreate || hasOwnProperty.call(hash, key)) ? hash[key] : undefined;
+    }
+
+    /**
+     * Checks if a hash value for `key` exists.
+     *
+     * @private
+     * @param {Object} hash The hash to query.
+     * @param {string} key The key of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function hashHas(hash, key) {
+      return nativeCreate ? key in hash : hasOwnProperty.call(hash, key);
+    }
+
+    /**
+     * Sets the hash `key` to `value`.
+     *
+     * @private
+     * @param {Object} hash The hash to modify.
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     */
+    function hashSet(hash, key, value) {
+      hash[key] = value;
     }
 
     /**

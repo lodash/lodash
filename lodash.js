@@ -1836,7 +1836,14 @@
      * @returns {number} Returns `0` if `value` is found, else `-1`.
      */
     function cacheIndexOf(cache, value) {
-      return cache.__data__.has(value) ? 0 : -1;
+      var map = cache.__data__;
+      if (isKeyable(value)) {
+        var data = map.__data__,
+            hash = typeof value == 'string' ? data.string : data.hash;
+
+        return hash[value] === HASH_UNDEFINED ? 0 : -1;
+      }
+      return map.has(value) ? 0 : -1;
     }
 
     /**
@@ -1848,7 +1855,16 @@
      * @param {*} value The value to cache.
      */
     function cachePush(value) {
-      this.__data__.set(value, true);
+      var map = this.__data__;
+      if (isKeyable(value)) {
+        var data = map.__data__,
+            hash = typeof value == 'string' ? data.string : data.hash;
+
+        hash[value] = HASH_UNDEFINED;
+      }
+      else {
+        map.set(value, HASH_UNDEFINED);
+      }
     }
 
     /*------------------------------------------------------------------------*/
@@ -4404,7 +4420,9 @@
      * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
      */
     function isKeyable(value) {
-      return !(value === '__proto__' || isObject(value));
+      var type = typeof value;
+      return type == 'number' || type == 'boolean' ||
+        (type == 'string' && value !== '__proto__') || value == null;
     }
 
     /**

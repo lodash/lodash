@@ -48,6 +48,9 @@
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
+  /** Used to stand-in for `undefined` hash values. */
+  var HASH_UNDEFINED = {};
+
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
@@ -1727,9 +1730,9 @@
      */
     function MapCache() {
       this.__data__ = {
-        'hash': createHash(),
+        'hash': new Hash,
         'map': Map ? new Map : [],
-        'string': createHash()
+        'string': new Hash
       };
     }
 
@@ -1816,11 +1819,10 @@
      * @param {Array} [values] The values to cache.
      */
     function SetCache(values) {
-      var length = values ? values.length : 0,
-          data = this.__data__ = new MapCache;
-
+      var length = values ? values.length : 0;
+      this.__data__ = new MapCache;
       while (length--) {
-        data.set(values[length], true);
+        this.push(values[length]);
       }
     }
 
@@ -1923,9 +1925,7 @@
      * @private
      * @returns {Object} Returns the new hash object.
      */
-    function createHash() {
-      return nativeCreate ? nativeCreate(null) : {};
-    }
+    function Hash() {}
 
     /**
      * Removes `key` and its value from the hash.
@@ -1936,7 +1936,7 @@
      * @returns {boolean} Returns `true` if the entry was removed, else `false`.
      */
     function hashDelete(hash, key) {
-      return (nativeCreate ? key in hash : hasOwnProperty.call(hash, key)) && delete hash[key];
+      return hashHas(hash, key) && delete hash[key];
     }
 
     /**
@@ -1948,7 +1948,11 @@
      * @returns {*} Returns the entry value.
      */
     function hashGet(hash, key) {
-      return (nativeCreate || hasOwnProperty.call(hash, key)) ? hash[key] : undefined;
+      if (nativeCreate) {
+        var result = hash[key];
+        return result === HASH_UNDEFINED ? undefined : result;
+      }
+      return hasOwnProperty.call(hash, key) ? hash[key] : undefined;
     }
 
     /**
@@ -1960,7 +1964,7 @@
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
     function hashHas(hash, key) {
-      return nativeCreate ? key in hash : hasOwnProperty.call(hash, key);
+      return nativeCreate ? hash[key] !== undefined : hasOwnProperty.call(hash, key);
     }
 
     /**
@@ -1972,7 +1976,7 @@
      * @param {*} value The value to set.
      */
     function hashSet(hash, key, value) {
-      hash[key] = value;
+      hash[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
     }
 
     /*------------------------------------------------------------------------*/
@@ -12243,6 +12247,9 @@
 
     LazyWrapper.prototype = baseCreate(baseLodash.prototype);
     LazyWrapper.prototype.constructor = LazyWrapper;
+
+    // Avoid inheriting from `Object.prototype` when possible.
+    Hash.prototype = nativeCreate ? nativeCreate(null) : objectProto;
 
     // Add functions to the `MapCache` cache.
     MapCache.prototype['delete'] = mapDelete;

@@ -1724,6 +1724,68 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Creates an hash object.
+     *
+     * @private
+     * @returns {Object} Returns the new hash object.
+     */
+    function Hash() {}
+
+    /**
+     * Removes `key` and its value from the hash.
+     *
+     * @private
+     * @param {Object} hash The hash to modify.
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+     */
+    function hashDelete(hash, key) {
+      return hashHas(hash, key) && delete hash[key];
+    }
+
+    /**
+     * Gets the hash value for `key`.
+     *
+     * @private
+     * @param {Object} hash The hash to query.
+     * @param {string} key The key of the value to get.
+     * @returns {*} Returns the entry value.
+     */
+    function hashGet(hash, key) {
+      if (nativeCreate) {
+        var result = hash[key];
+        return result === HASH_UNDEFINED ? undefined : result;
+      }
+      return hasOwnProperty.call(hash, key) ? hash[key] : undefined;
+    }
+
+    /**
+     * Checks if a hash value for `key` exists.
+     *
+     * @private
+     * @param {Object} hash The hash to query.
+     * @param {string} key The key of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function hashHas(hash, key) {
+      return nativeCreate ? hash[key] !== undefined : hasOwnProperty.call(hash, key);
+    }
+
+    /**
+     * Sets the hash `key` to `value`.
+     *
+     * @private
+     * @param {Object} hash The hash to modify.
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     */
+    function hashSet(hash, key, value) {
+      hash[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
      * Creates a map cache object to store key-value pairs.
      *
      * @private
@@ -2025,68 +2087,6 @@
       } else {
         array[index][1] = value;
       }
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Creates an hash object.
-     *
-     * @private
-     * @returns {Object} Returns the new hash object.
-     */
-    function Hash() {}
-
-    /**
-     * Removes `key` and its value from the hash.
-     *
-     * @private
-     * @param {Object} hash The hash to modify.
-     * @param {string} key The key of the value to remove.
-     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-     */
-    function hashDelete(hash, key) {
-      return hashHas(hash, key) && delete hash[key];
-    }
-
-    /**
-     * Gets the hash value for `key`.
-     *
-     * @private
-     * @param {Object} hash The hash to query.
-     * @param {string} key The key of the value to get.
-     * @returns {*} Returns the entry value.
-     */
-    function hashGet(hash, key) {
-      if (nativeCreate) {
-        var result = hash[key];
-        return result === HASH_UNDEFINED ? undefined : result;
-      }
-      return hasOwnProperty.call(hash, key) ? hash[key] : undefined;
-    }
-
-    /**
-     * Checks if a hash value for `key` exists.
-     *
-     * @private
-     * @param {Object} hash The hash to query.
-     * @param {string} key The key of the entry to check.
-     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-     */
-    function hashHas(hash, key) {
-      return nativeCreate ? hash[key] !== undefined : hasOwnProperty.call(hash, key);
-    }
-
-    /**
-     * Sets the hash `key` to `value`.
-     *
-     * @private
-     * @param {Object} hash The hash to modify.
-     * @param {string} key The key of the value to set.
-     * @param {*} value The value to set.
-     */
-    function hashSet(hash, key, value) {
-      hash[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
     }
 
     /*------------------------------------------------------------------------*/

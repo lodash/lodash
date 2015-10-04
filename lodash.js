@@ -1727,13 +1727,19 @@
      * Creates a map cache object to store key-value pairs.
      *
      * @private
+     * @param {Array} [values] The values to cache.
      */
-    function MapCache() {
+    function MapCache(values) {
       this.__data__ = {
         'hash': new Hash,
         'map': Map ? new Map : [],
         'string': new Hash
       };
+      var length = values ? values.length : 0;
+      while (length--) {
+        var entry = values[length];
+        this.set(entry[0], entry[1]);
+      }
     }
 
     /**
@@ -1775,7 +1781,7 @@
      *
      * @private
      * @name has
-     * @memberOf _.memoize.Cache
+     * @memberOf MapCache
      * @param {string} key The key of the entry to check.
      * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
      */
@@ -1819,8 +1825,8 @@
      * @param {Array} [values] The values to cache.
      */
     function SetCache(values) {
-      var length = values ? values.length : 0;
       this.__data__ = new MapCache;
+      var length = values ? values.length : 0;
       while (length--) {
         this.push(values[length]);
       }
@@ -1865,6 +1871,94 @@
       else {
         map.set(value, HASH_UNDEFINED);
       }
+    }
+
+    /*------------------------------------------------------------------------*/
+
+    /**
+     * Creates a stack cache object to store key-value pairs.
+     *
+     * @private
+     */
+    function Stack() {
+      this.__data__ = { 'array': [], 'map': null };
+    }
+
+    /**
+     * Removes `key` and its value from the stack.
+     *
+     * @private
+     * @name delete
+     * @memberOf Stack
+     * @param {string} key The key of the value to remove.
+     * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+     */
+    function stackDelete(key) {
+      var data = this.__data__,
+          array = data.array;
+
+      return array ? assocDelete(array, key) : data.map['delete'](key);
+    }
+
+    /**
+     * Gets the stack value for `key`.
+     *
+     * @private
+     * @name get
+     * @memberOf Stack
+     * @param {string} key The key of the value to get.
+     * @returns {*} Returns the entry value.
+     */
+    function stackGet(key) {
+      var data = this.__data__,
+          array = data.array;
+
+      return array ? assocGet(array, key) : data.map.get(key);
+    }
+
+    /**
+     * Checks if a stack value for `key` exists.
+     *
+     * @private
+     * @name has
+     * @memberOf Stack
+     * @param {string} key The key of the entry to check.
+     * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+     */
+    function stackHas(key) {
+      var data = this.__data__,
+          array = data.array;
+
+      return array ? assocHas(array, key) : data.map.has(key);
+    }
+
+    /**
+     * Sets the stack `key` to `value`.
+     *
+     * @private
+     * @name set
+     * @memberOf Stack
+     * @param {string} key The key of the value to set.
+     * @param {*} value The value to set.
+     * @returns {Object} Returns the stack cache object.
+     */
+    function stackSet(key, value) {
+      var data = this.__data__,
+          array = data.array;
+
+      if (array) {
+        if (array.length < LARGE_ARRAY_SIZE) {
+          assocSet(array, key, value);
+        } else {
+          data.array = null;
+          data.map = new MapCache(array);
+        }
+      }
+      var map = data.map;
+      if (map) {
+        map.set(key, value);
+      }
+      return this;
     }
 
     /*------------------------------------------------------------------------*/
@@ -2082,7 +2176,7 @@
         }
       }
       // Check for circular references and return its corresponding clone.
-      stack || (stack = new MapCache);
+      stack || (stack = new Stack);
       var stacked = stack.get(value);
       if (stacked) {
         return stacked;
@@ -2511,7 +2605,7 @@
       }
       // Assume cyclic values are equal.
       // For more information on detecting circular references see https://es5.github.io/#JO.
-      stack || (stack = new MapCache);
+      stack || (stack = new Stack);
       var stacked = stack.get(object);
       if (stacked) {
         return stacked == other;
@@ -2563,7 +2657,7 @@
             return false;
           }
         } else {
-          var stack = new MapCache,
+          var stack = new Stack,
               result = customizer ? customizer(objValue, srcValue, key, object, source, stack) : undefined;
 
           if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stack) : result)) {
@@ -2716,7 +2810,7 @@
           srcValue = source[key];
         }
         if (isObject(srcValue)) {
-          stack || (stack = new MapCache);
+          stack || (stack = new Stack);
           baseMergeDeep(object, source, key, baseMerge, customizer, stack);
         }
         else {
@@ -12269,14 +12363,20 @@
     // Avoid inheriting from `Object.prototype` when possible.
     Hash.prototype = nativeCreate ? nativeCreate(null) : objectProto;
 
-    // Add functions to the `MapCache` cache.
+    // Add functions to the `MapCache`.
     MapCache.prototype['delete'] = mapDelete;
     MapCache.prototype.get = mapGet;
     MapCache.prototype.has = mapHas;
     MapCache.prototype.set = mapSet;
 
-    // Add functions to the `Set` cache.
+    // Add functions to the `SetCache`.
     SetCache.prototype.push = cachePush;
+
+    // Add functions to the `Stack` cache.
+    Stack.prototype['delete'] = stackDelete;
+    Stack.prototype.get = stackGet;
+    Stack.prototype.has = stackHas;
+    Stack.prototype.set = stackSet;
 
     // Assign cache to `_.memoize`.
     memoize.Cache = MapCache;

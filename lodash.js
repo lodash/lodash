@@ -49,7 +49,7 @@
   var FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used to stand-in for `undefined` hash values. */
-  var HASH_UNDEFINED = {};
+  var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,

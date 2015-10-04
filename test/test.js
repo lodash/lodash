@@ -7322,7 +7322,11 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(9);
+      assert.expect(10);
+
+      var generator = _.attempt(function() {
+        return Function('return function*(){}');
+      });
 
       var expected = _.map(falsey, function(value) {
         return value === '';
@@ -7338,6 +7342,7 @@
       assert.strictEqual(_.isArrayLike(new Date), false);
       assert.strictEqual(_.isArrayLike(new Error), false);
       assert.strictEqual(_.isArrayLike(_), false);
+      assert.strictEqual(_.isArrayLike(generator), false);
       assert.strictEqual(_.isArrayLike(slice), false);
       assert.strictEqual(_.isArrayLike({ 'a': 1 }), false);
       assert.strictEqual(_.isArrayLike(1), false);

@@ -8662,7 +8662,7 @@
      */
     function isArrayLike(value) {
       return value != null &&
-        !(typeof value == 'function' && objToString.call(value) == funcTag) && isLength(getLength(value));
+        !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
     }
 
     /**

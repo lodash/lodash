@@ -1397,10 +1397,6 @@
     var mapCtorString = Map ? fnToString.call(Map) : '',
         setCtorString = Set ? fnToString.call(Set) : '';
 
-    /** Detect lack of support for map and set `toStringTag` values (IE 11). */
-    var noMapSetTag = Map && Set &&
-      !(objToString.call(new Map) == mapTag && objToString.call(new Set) == setTag);
-
     /** Used to lookup unminified function names. */
     var realNames = {};
 
@@ -2155,12 +2151,9 @@
           return copyArray(value, result);
         }
       } else {
-        var tag = objToString.call(value),
+        var tag = getTag(value),
             isFunc = tag == funcTag;
 
-        if (noMapSetTag && tag == objectTag) {
-          tag = isMap(value) ? mapTag : (isSet(value) ? setTag : tag);
-        }
         if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
           if (isHostObject(value)) {
             return object ? value : {};
@@ -2565,20 +2558,16 @@
           othTag = arrayTag;
 
       if (!objIsArr) {
-        objTag = objToString.call(object);
-        if (noMapSetTag && objTag == objectTag) {
-          objTag = isMap(object) ? mapTag : (isSet(object) ? setTag : objTag);
-        } else if (objTag == argsTag) {
+        objTag = getTag(object);
+        if (objTag == argsTag) {
           objTag = objectTag;
         } else if (objTag != objectTag) {
           objIsArr = isTypedArray(object);
         }
       }
       if (!othIsArr) {
-        othTag = objToString.call(other);
-        if (noMapSetTag && othTag == objectTag) {
-          othTag = isMap(other) ? mapTag : (isSet(other) ? setTag : othTag);
-        } else if (othTag == argsTag) {
+        othTag = getTag(other);
+        if (othTag == argsTag) {
           othTag = objectTag;
         } else if (othTag != objectTag) {
           othIsArr = isTypedArray(other);
@@ -2722,7 +2711,7 @@
       return result;
     }
 
-    // An alternative implementation intended for IE < 9 with es6-shim.
+    // Fallback for IE < 9 with es6-shim.
     if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
       baseKeysIn = function(object) {
         return iteratorToArray(enumerate(object));
@@ -4304,6 +4293,30 @@
     }
 
     /**
+     * Gets the `toStringTag` of `value`.
+     *
+     * @private
+     * @param {*} value The value to query.
+     * @returns {string} Returns the `toStringTag`.
+     */
+    function getTag(value) {
+      return objToString.call(value);
+    }
+
+    // Fallback for IE 11 providing `toStringTag` values for maps and sets.
+    if ((Map && getTag(new Map) != mapTag) || (Set && getTag(new Set) != setTag)) {
+      getTag = function(value) {
+        var result = objToString.call(value),
+            Ctor = result == objectTag ? value.constructor : null,
+            ctorString = typeof Ctor == 'function' ? fnToString.call(Ctor) : '';
+
+        return ctorString == mapCtorString
+          ? mapTag
+          : (ctorString == setCtorString ? setTag : result);
+      };
+    }
+
+    /**
      * Gets the view, applying any `transforms` to the `start` and `end` positions.
      *
      * @private
@@ -4541,18 +4554,6 @@
     }
 
     /**
-     * Checks if `value` is likely a `Map` object.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-     */
-    function isMap(value) {
-      var Ctor = value && value.constructor;
-      return typeof Ctor == 'function' && fnToString.call(Ctor) == mapCtorString;
-    }
-
-    /**
      * Checks if `value` is likely a prototype object.
      *
      * @private
@@ -4564,18 +4565,6 @@
           proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
       return value === proto;
-    }
-
-    /**
-     * Checks if `value` is likely a `Set` object.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-     */
-    function isSet(value) {
-      var Ctor = value && value.constructor;
-      return typeof Ctor == 'function' && fnToString.call(Ctor) == setCtorString;
     }
 
     /**
@@ -9409,11 +9398,9 @@
       if (iteratorSymbol && value[iteratorSymbol]) {
         return iteratorToArray(value[iteratorSymbol]());
       }
-      var tag = objToString.call(value);
-      if (noMapSetTag && tag == objectTag) {
-        tag = isMap(value) ? mapTag : (isSet(value) ? setTag : tag);
-      }
-      var func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
+      var tag = getTag(value),
+          func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
+
       return func(value);
     }
 

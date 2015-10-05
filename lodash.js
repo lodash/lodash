@@ -1351,7 +1351,6 @@
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
-        push = arrayProto.push,
         setTimeout = context.setTimeout,
         splice = arrayProto.splice;
 

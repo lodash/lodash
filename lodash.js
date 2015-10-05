@@ -9130,10 +9130,7 @@
       // The use of `Object#toString` avoids issues with the `typeof` operator
       // in Safari 8 which returns 'object' for typed array constructors, and
       // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-      if (!isObject(value)) {
-        return false;
-      }
-      var tag = objToString.call(value);
+      var tag = isObject(value) ? objToString.call(value) : '';
       return tag == funcTag || tag == genTag;
     }
 

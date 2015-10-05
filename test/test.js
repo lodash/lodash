@@ -6702,133 +6702,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('custom `_.indexOf` methods');
-
-  (function() {
-    function Foo() {}
-
-    function custom(array, value, fromIndex) {
-      var index = (fromIndex || 0) - 1,
-          length = array.length;
-
-      while (++index < length) {
-        var other = array[index];
-        if (other === value || (value instanceof Foo && other instanceof Foo)) {
-          return index;
-        }
-      }
-      return -1;
-    }
-
-    var array = [1, new Foo, 3, new Foo],
-        sorted = [1, 3, new Foo, new Foo],
-        indexOf = _.indexOf;
-
-    var largeArray = _.times(LARGE_ARRAY_SIZE, function() {
-      return new Foo;
-    });
-
-    QUnit.test('`_.includes` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.ok(_.includes(array, new Foo));
-        assert.ok(_.includes({ 'a': 1, 'b': new Foo, 'c': 3 }, new Foo));
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('`_.difference` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.deepEqual(_.difference(array, [new Foo]), [1, 3]);
-        assert.deepEqual(_.difference(array, largeArray), [1, 3]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('`_.intersection` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.deepEqual(_.intersection(array, [new Foo]), [array[1]]);
-        assert.deepEqual(_.intersection(largeArray, [new Foo]), [array[1]]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('`_.uniq` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.deepEqual(_.uniq(array), array.slice(0, 3));
-        assert.deepEqual(_.uniq(largeArray), [largeArray[0]]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('`_.uniqBy` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.deepEqual(_.uniqBy(array, _.identity), array.slice(0, 3));
-        assert.deepEqual(_.uniqBy(largeArray, _.identity), [largeArray[0]]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('`_.sortedUniq` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.deepEqual(_.sortedUniq(sorted), sorted.slice(0, 3));
-        assert.deepEqual(_.sortedUniq(largeArray), [largeArray[0]]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('`_.sortedUniqBy` should work with a custom `_.indexOf` method', function(assert) {
-      assert.expect(2);
-
-      if (!isModularize) {
-        _.indexOf = custom;
-        assert.deepEqual(_.sortedUniqBy(sorted, _.identity), sorted.slice(0, 3));
-        assert.deepEqual(_.sortedUniqBy(largeArray, _.identity), [largeArray[0]]);
-        _.indexOf = indexOf;
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.initial');
 
   (function() {
@@ -21232,7 +21105,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(245);
+      assert.expect(251);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

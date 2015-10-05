@@ -2221,8 +2221,8 @@
     }
 
     /**
-     * The base implementation of `_.difference` without support for individual
-     * values to exclude.
+     * The base implementation of `_.difference` without support for excluding
+     * multiple arrays of values.
      *
      * @private
      * @param {Array} array The array to inspect.
@@ -2230,37 +2230,53 @@
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values) {
-      var length = array.length,
-          result = [];
+      return baseDifferenceBy(array, values);
+    }
+
+    /**
+     * The base implementation of `_.differenceBy` without support for callback
+     * shorthands.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Array} values The values to exclude.
+     * @param {Function} [iteratee] The function invoked per element.
+     * @returns {Array} Returns the new array of filtered values.
+     */
+    function baseDifferenceBy(array, values, iteratee) {
+      var index = -1,
+          indexOf = baseIndexOf,
+          isCommon = true,
+          length = array.length,
+          result = [],
+          valuesLength = values.length;
 
       if (!length) {
         return result;
       }
-      var index = -1,
-          indexOf = getIndexOf(),
-          isCommon = indexOf === baseIndexOf,
-          cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? new SetCache(values) : null,
-          valuesLength = values.length;
-
-      if (cache) {
+      if (iteratee) {
+        values = arrayMap(values, function(value) { return iteratee(value); });
+      }
+      if (values.length >= LARGE_ARRAY_SIZE) {
         indexOf = cacheIndexOf;
         isCommon = false;
-        values = cache;
+        values = new SetCache(values);
       }
       outer:
       while (++index < length) {
-        var value = array[index];
+        var value = array[index],
+            computed = iteratee ? iteratee(value) : value;
 
-        if (isCommon && value === value) {
+        if (isCommon && computed === computed) {
           var valuesIndex = valuesLength;
           while (valuesIndex--) {
-            if (values[valuesIndex] === value) {
+            if (values[valuesIndex] === computed) {
               continue outer;
             }
           }
           result.push(value);
         }
-        else if (indexOf(values, value, 0) < 0) {
+        else if (indexOf(values, computed, 0) < 0) {
           result.push(value);
         }
       }
@@ -2370,7 +2386,7 @@
 
       while (++index < length) {
         var value = array[index];
-        if (isObject(value) && isArrayLike(value) &&
+        if (isArrayLikeObject(value) &&
             (isStrict || isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
@@ -2510,6 +2526,68 @@
      */
     function baseHasIn(object, key) {
       return object != null && key in Object(object);
+    }
+
+    /**
+     * The base implementation of `_.intersection` that accepts an array of arrays
+     * to inspect.
+     *
+     * @private
+     * @param {Array} arrays The arrays to inspect.
+     * @returns {Array} Returns the new array of shared values.
+     */
+    function baseIntersection(arrays) {
+      return baseIntersectionBy(arrays);
+    }
+
+    /**
+     * The base implementation of `_.intersectionBy` without support for callback
+     * shorthands.
+     *
+     * @private
+     * @param {Array} arrays The arrays to inspect.
+     * @param {Function} [iteratee] The function invoked per element.
+     * @returns {Array} Returns the new array of shared values.
+     */
+    function baseIntersectionBy(arrays, iteratee) {
+      var othLength = arrays.length,
+          othIndex = othLength,
+          caches = Array(othLength),
+          result = [];
+
+      while (othIndex--) {
+        var array = arrays[othIndex];
+        if (iteratee) {
+          array = arrayMap(array, function(value) { return iteratee(value); });
+        }
+        caches[othIndex] = (iteratee || array.length >= 120) ? new SetCache(othIndex && array) : null;
+      }
+      array = arrays[0];
+
+      var index = -1,
+          length = array ? array.length : 0,
+          seen = caches[0];
+
+      outer:
+      while (++index < length) {
+        var value = array[index],
+            computed = iteratee ? iteratee(value) : value;
+
+        if ((seen ? cacheIndexOf(seen, computed) : baseIndexOf(result, computed, 0)) < 0) {
+          var othIndex = othLength;
+          while (--othIndex) {
+            var cache = caches[othIndex];
+            if ((cache ? cacheIndexOf(cache, computed) : baseIndexOf(arrays[othIndex], computed, 0)) < 0) {
+              continue outer;
+            }
+          }
+          if (seen) {
+            seen.push(computed);
+          }
+          result.push(value);
+        }
+      }
+      return result;
     }
 
     /**
@@ -2842,7 +2920,7 @@
         if (isArray(srcValue) || isTypedArray(srcValue)) {
           newValue = isArray(oldValue)
             ? oldValue
-            : ((isObject(oldValue) && isArrayLike(oldValue)) ? copyArray(oldValue) : baseClone(srcValue));
+            : ((isArrayLikeObject(oldValue)) ? copyArray(oldValue) : baseClone(srcValue));
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           newValue = isArguments(oldValue)
@@ -2886,7 +2964,7 @@
      *
      * @private
      * @param {Object} object The source object.
-     * @param {Function} predicate The function invoked per iteration.
+     * @param {Function} predicate The function invoked per property.
      * @returns {Object} Returns the new object.
      */
     function basePickBy(object, predicate) {
@@ -2923,6 +3001,51 @@
       return function(object) {
         return baseGet(object, path);
       };
+    }
+
+    /**
+     * The base implementation of `_.pullAll`.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {Array} values The values to remove.
+     * @returns {Array} Returns `array`.
+     */
+    function basePullAll(array, values) {
+      return basePullAllBy(array, values);
+    }
+
+    /**
+     * The base implementation of `_.pullAllBy` without support for callback
+     * shorthands.
+     *
+     * @private
+     * @param {Array} array The array to modify.
+     * @param {Array} values The values to remove.
+     * @param {Function} [iteratee] The function invoked per element.
+     * @returns {Array} Returns `array`.
+     */
+    function basePullAllBy(array, values, iteratee) {
+      var index = -1,
+          length = values.length,
+          seen = array;
+
+      if (iteratee) {
+        seen = arrayMap(array, function(value) { return iteratee(value); });
+      }
+      while (++index < length) {
+        var fromIndex = 0,
+            value = values[index],
+            computed = iteratee ? iteratee(value) : value;
+
+        while ((fromIndex = baseIndexOf(seen, computed, fromIndex)) > -1) {
+          if (seen !== array) {
+            splice.call(seen, fromIndex, 1);
+          }
+          splice.call(array, fromIndex, 1);
+        }
+      }
+      return array;
     }
 
     /**
@@ -3118,17 +3241,15 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per iteration.
+     * @param {Function} [iteratee] The function invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseSortedUniqBy(array, iteratee) {
       var index = 0,
-          indexOf = getIndexOf(),
-          isCommon = indexOf === baseIndexOf,
           length = array.length,
           value = array[0],
           computed = iteratee ? iteratee(value) : value,
-          seen = isCommon ? computed : [computed],
+          seen = computed,
           resIndex = 0,
           result = [value];
 
@@ -3136,15 +3257,9 @@
         value = array[index],
         computed = iteratee ? iteratee(value) : value;
 
-        if (isCommon) {
-          if ((seen === seen ? (seen !== computed) : (computed === computed))) {
-            seen = computed;
-            result[++resIndex] = value;
-          }
-        }
-        else if (indexOf(seen, computed, 0) < 0) {
-          seen[++resIndex] = computed;
-          result[resIndex] = value;
+        if ((seen === seen ? (seen !== computed) : (computed === computed))) {
+          seen = computed;
+          result[++resIndex] = value;
         }
       }
       return result;
@@ -3179,23 +3294,21 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per iteration.
+     * @param {Function} [iteratee] The function invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseUniqBy(array, iteratee) {
       var index = -1,
-          indexOf = getIndexOf(),
+          indexOf = baseIndexOf,
           length = array.length,
-          isCommon = indexOf === baseIndexOf,
-          isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
-          seen = isLarge ? new SetCache : null,
+          isCommon = true,
+          seen = length >= LARGE_ARRAY_SIZE ? new SetCache : null,
           result = [];
 
       if (seen) {
         indexOf = cacheIndexOf;
         isCommon = false;
       } else {
-        isLarge = false;
         seen = iteratee ? [] : result;
       }
       outer:
@@ -3216,7 +3329,7 @@
           result.push(value);
         }
         else if (indexOf(seen, computed, 0) < 0) {
-          if (iteratee || isLarge) {
+          if (seen !== result) {
             seen.push(computed);
           }
           result.push(value);
@@ -3284,6 +3397,39 @@
     }
 
     /**
+     * The base implementation of `_.xor` that accepts an array of arrays to inspect.
+     *
+     * @private
+     * @param {Array} arrays The arrays to inspect.
+     * @returns {Array} Returns the new array of values.
+     */
+    function baseXor(arrays) {
+      return baseXorBy(arrays);
+    }
+
+    /**
+     * The base implementation of `_.xorBy` without support for callback shorthands.
+     *
+     * @private
+     * @param {Array} arrays The arrays to inspect.
+     * @param {Function} [iteratee] The function invoked per element.
+     * @returns {Array} Returns the new array of values.
+     */
+    function baseXorBy(arrays, iteratee) {
+      var index = -1,
+          length = arrays.length;
+
+      while (++index < length) {
+        var result = result
+          ? arrayPush(baseDifferenceBy(result, arrays[index], iteratee), baseDifferenceBy(arrays[index], result, iteratee))
+          : arrays[index];
+      }
+      return (result && result.length)
+        ? baseUniqBy(result, iteratee)
+        : [];
+    }
+
+    /**
      * Performs a binary search of `array` to determine the index at which `value`
      * should be inserted into `array` in order to maintain its sort order.
      *
@@ -3322,7 +3468,7 @@
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The function invoked per iteration.
+     * @param {Function} iteratee The function invoked per element.
      * @param {boolean} [retHighest] Specify returning the highest qualified index.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      */
@@ -4219,21 +4365,6 @@
     }
 
     /**
-     * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
-     * customized this function returns the custom method, otherwise it returns
-     * the `baseIndexOf` function. If arguments are provided the chosen function
-     * is invoked with them and its result is returned.
-     *
-     * @private
-     * @returns {Function|number} Returns the chosen function or its result.
-     */
-    function getIndexOf(collection, target, fromIndex) {
-      var result = lodash.indexOf || indexOf;
-      result = result === indexOf ? baseIndexOf : result;
-      return collection ? result(collection, target, fromIndex) : result;
-    }
-
-    /**
      * Gets the appropriate "iteratee" function. If the `_.iteratee` method is
      * customized this function returns the custom method, otherwise it returns
      * `baseIteratee`. If arguments are provided the chosen function is invoked
@@ -4748,6 +4879,17 @@
     }
 
     /**
+     * Converts `value` to an array-like object if it's not one.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {Array} Returns the array-like object.
+     */
+    function toArrayLikeObject(value) {
+      return isArrayLikeObject(value) ? value : [];
+    }
+
+    /**
      * Converts `value` to a function if it's not one.
      *
      * @private
@@ -4856,12 +4998,39 @@
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
-     * _.difference([1, 2, 3], [4, 2]);
-     * // => [1, 3]
+     * _.difference([3, 2, 1], [4, 2]);
+     * // => [3, 1]
      */
     var difference = restParam(function(array, values) {
-      return (isObject(array) && isArrayLike(array))
+      return isArrayLikeObject(array)
         ? baseDifference(array, baseFlatten(values, false, true))
+        : [];
+    });
+
+    /**
+     * This method is like `_.difference` except that it accepts `iteratee` which
+     * is invoked for each element of `array` and `values` to generate the criterion
+     * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {...Array} [values] The values to exclude.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @returns {Array} Returns the new array of filtered values.
+     * @example
+     *
+     * _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
+     * // => [3.1, 1.3]
+     *
+     * // using the `_.property` callback shorthand
+     * _.differenceBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+     * // => [{ 'x': 1 }, { 'x': 2 }]
+     */
+    var differenceBy = restParam(function(array, values) {
+      return isArrayLikeObject(array)
+        ? baseDifferenceBy(array, baseFlatten(values, false, true), getIteratee(last(values)))
         : [];
     });
 
@@ -5252,44 +5421,41 @@
      * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of shared values.
      * @example
-     * _.intersection([1, 2], [4, 2], [2, 1]);
+     * _.intersection([2, 1], [4, 2], [1, 2]);
      * // => [2]
      */
     var intersection = restParam(function(arrays) {
-      var othLength = arrays.length,
-          othIndex = othLength,
-          caches = Array(length),
-          indexOf = getIndexOf(),
-          isCommon = indexOf === baseIndexOf,
-          result = [];
+      var mapped = arrayMap(arrays, toArrayLikeObject);
+      return mapped[0] === arrays[0]
+        ? baseIntersection(mapped)
+        : [];
+    });
 
-      while (othIndex--) {
-        var value = arrays[othIndex] = isArrayLike(value = arrays[othIndex]) ? value : [];
-        caches[othIndex] = (isCommon && value.length >= 120) ? new SetCache(othIndex && value) : null;
-      }
-      var array = arrays[0],
-          index = -1,
-          length = array ? array.length : 0,
-          seen = caches[0];
-
-      outer:
-      while (++index < length) {
-        value = array[index];
-        if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value, 0)) < 0) {
-          var othIndex = othLength;
-          while (--othIndex) {
-            var cache = caches[othIndex];
-            if ((cache ? cacheIndexOf(cache, value) : indexOf(arrays[othIndex], value, 0)) < 0) {
-              continue outer;
-            }
-          }
-          if (seen) {
-            seen.push(value);
-          }
-          result.push(value);
-        }
-      }
-      return result;
+    /**
+     * This method is like `_.intersection` except that it accepts `iteratee`
+     * which is invoked for each element of each `arrays` to generate the criterion
+     * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] The arrays to inspect.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @returns {Array} Returns the new array of shared values.
+     * @example
+     *
+     * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+     * // => [2.1]
+     *
+     * // using the `_.property` callback shorthand
+     * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+     * // => [{ 'x': 1 }]
+     */
+    var intersectionBy = restParam(function(arrays) {
+      var mapped = arrayMap(arrays, toArrayLikeObject);
+      return mapped[0] === arrays[0]
+        ? baseIntersectionBy(mapped, getIteratee(last(arrays)))
+        : [];
     });
 
     /**
@@ -5372,27 +5538,7 @@
      * console.log(array);
      * // => [1, 1]
      */
-    function pull() {
-      var args = arguments,
-          array = args[0];
-
-      if (!(array && array.length)) {
-        return array;
-      }
-      var index = 0,
-          indexOf = getIndexOf(),
-          length = args.length;
-
-      while (++index < length) {
-        var fromIndex = 0,
-            value = args[index];
-
-        while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
-          splice.call(array, fromIndex, 1);
-        }
-      }
-      return array;
-    }
+    var pull = restParam(pullAll);
 
     /**
      * This method is like `_.pull` except that it accepts an array of values to remove.
@@ -5414,9 +5560,37 @@
      * // => [1, 1]
      */
     function pullAll(array, values) {
-      var args = [array];
-      push.apply(args, values);
-      return pull.apply(undefined, args);
+      return (array && array.length && values && values.length)
+        ? basePullAll(array, values)
+        : array;
+    }
+
+    /**
+     * This method is like `_.pullAll` except that it accepts `iteratee` which is
+     * invoked for each element of `array` and `values` to to generate the criterion
+     * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+     *
+     * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to modify.
+     * @param {Array} values The values to remove.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2, 3, 1, 2, 3];
+     *
+     * _.pull(array, [2, 3]);
+     * console.log(array);
+     * // => [1, 1]
+     */
+    function pullAllBy(array, values, iteratee) {
+      return (array && array.length && values && values.length)
+        ? basePullAllBy(array, values, getIteratee(iteratee))
+        : array;
     }
 
     /**
@@ -5890,11 +6064,35 @@
      * @returns {Array} Returns the new array of combined values.
      * @example
      *
-     * _.union([1, 2], [4, 2], [2, 1]);
-     * // => [1, 2, 4]
+     * _.union([2, 1], [4, 2], [1, 2]);
+     * // => [2, 1, 4]
      */
     var union = restParam(function(arrays) {
       return baseUniq(baseFlatten(arrays, false, true));
+    });
+
+    /**
+     * This method is like `_.union` except that it accepts `iteratee` which is
+     * invoked for each element of each `arrays` to generate the criterion by which
+     * uniqueness is computed. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] The arrays to inspect.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @returns {Array} Returns the new array of combined values.
+     * @example
+     *
+     * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+     * // => [2.1, 1.2, 4.3]
+     *
+     * // using the `_.property` callback shorthand
+     * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+     * // => [{ 'x': 1 }, { 'x': 2 }]
+     */
+    var unionBy = restParam(function(arrays) {
+      return baseUniqBy(baseFlatten(arrays, false, true), getIteratee(last(arrays)));
     });
 
     /**
@@ -5969,7 +6167,7 @@
       }
       var length = 0;
       array = arrayFilter(array, function(group) {
-        if (isObject(group) && isArrayLike(group)) {
+        if (isArrayLikeObject(group)) {
           length = nativeMax(group.length, length);
           return true;
         }
@@ -6029,7 +6227,7 @@
      * // => [3]
      */
     var without = restParam(function(array, values) {
-      return (isObject(array) && isArrayLike(array))
+      return isArrayLikeObject(array)
         ? baseDifference(array, values)
         : [];
     });
@@ -6045,25 +6243,36 @@
      * @returns {Array} Returns the new array of values.
      * @example
      *
-     * _.xor([1, 2], [4, 2]);
+     * _.xor([2, 1], [4, 2]);
      * // => [1, 4]
      */
-    function xor() {
-      var index = -1,
-          length = arguments.length;
+    var xor = restParam(function(arrays) {
+      return baseXor(arrayFilter(arrays, isArrayLikeObject));
+    });
 
-      while (++index < length) {
-        var array = arguments[index];
-        if (isObject(array) && isArrayLike(array)) {
-          var result = result
-            ? arrayPush(baseDifference(result, array), baseDifference(array, result))
-            : array;
-        }
-      }
-      return (result && result.length)
-        ? baseUniq(result)
-        : [];
-    }
+    /**
+     * This method is like `_.xor` except that it accepts `iteratee` which is
+     * invoked for each element of each `arrays` to generate the criterion by which
+     * uniqueness is computed. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {...Array} [arrays] The arrays to inspect.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @returns {Array} Returns the new array of values.
+     * @example
+     *
+     * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+     * // => [1.2, 4.3]
+     *
+     * // using the `_.property` callback shorthand
+     * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+     * // => [{ 'x': 2 }]
+     */
+    var xorBy = restParam(function(arrays) {
+      return baseXorBy(arrayFilter(arrays, isArrayLikeObject), getIteratee(last(arrays)));
+    });
 
     /**
      * Creates an array of grouped elements, the first of which contains the first
@@ -6771,7 +6980,7 @@
       }
       return isString(collection)
         ? (fromIndex <= length && collection.indexOf(target, fromIndex) > -1)
-        : (!!length && getIndexOf(collection, target, fromIndex) > -1);
+        : (!!length && baseIndexOf(collection, target, fromIndex) > -1);
     }
 
     /**
@@ -8615,7 +8824,7 @@
      */
     function isArguments(value) {
       // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
-      return isObjectLike(value) && isArrayLike(value) && hasOwnProperty.call(value, 'callee') &&
+      return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
         (!propertyIsEnumerable.call(value, 'callee') || objToString.call(value) == argsTag);
     }
 
@@ -8633,7 +8842,13 @@
      * _.isArray([1, 2, 3]);
      * // => true
      *
-     * _.isArray(function() { return arguments; }());
+     * _.isArray(document.body.children);
+     * // => false
+     *
+     * _.isArray('abc');
+     * // => false
+     *
+     * _.isArray(_.noop);
      * // => false
      */
     var isArray = Array.isArray;
@@ -8654,7 +8869,10 @@
      * _.isArrayLike([1, 2, 3]);
      * // => true
      *
-     * _.isArrayLike(function() { return arguments; }());
+     * _.isArrayLike(document.body.children);
+     * // => true
+     *
+     * _.isArrayLike('abc');
      * // => true
      *
      * _.isArrayLike(_.noop);
@@ -8663,6 +8881,34 @@
     function isArrayLike(value) {
       return value != null &&
         !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+    }
+
+    /**
+     * This method is like `_.isArrayLike` except that it also checks if `value`
+     * is an object.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
+     * @example
+     *
+     * _.isArrayLikeObject([1, 2, 3]);
+     * // => true
+     *
+     * _.isArrayLikeObject(document.body.children);
+     * // => true
+     *
+     * _.isArrayLikeObject('abc');
+     * // => false
+     *
+     * _.isArrayLikeObject(_.noop);
+     * // => false
+     */
+    function isArrayLikeObject(value) {
+      return isObject(value) && isArrayLike(value);
     }
 
     /**
@@ -12393,6 +12639,7 @@
     lodash.defer = defer;
     lodash.delay = delay;
     lodash.difference = difference;
+    lodash.differenceBy = differenceBy;
     lodash.disj = disj;
     lodash.drop = drop;
     lodash.dropRight = dropRight;
@@ -12411,6 +12658,7 @@
     lodash.groupBy = groupBy;
     lodash.initial = initial;
     lodash.intersection = intersection;
+    lodash.intersectionBy = intersectionBy;
     lodash.invert = invert;
     lodash.invoke = invoke;
     lodash.iteratee = iteratee;
@@ -12445,6 +12693,7 @@
     lodash.propertyOf = propertyOf;
     lodash.pull = pull;
     lodash.pullAll = pullAll;
+    lodash.pullAllBy = pullAllBy;
     lodash.pullAt = pullAt;
     lodash.range = range;
     lodash.rearg = rearg;
@@ -12475,6 +12724,7 @@
     lodash.toPlainObject = toPlainObject;
     lodash.transform = transform;
     lodash.union = union;
+    lodash.unionBy = unionBy;
     lodash.uniq = uniq;
     lodash.uniqBy = uniqBy;
     lodash.unset = unset;
@@ -12486,6 +12736,7 @@
     lodash.words = words;
     lodash.wrap = wrap;
     lodash.xor = xor;
+    lodash.xorBy = xorBy;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
     lodash.zipWith = zipWith;
@@ -12541,6 +12792,7 @@
     lodash.isArguments = isArguments;
     lodash.isArray = isArray;
     lodash.isArrayLike = isArrayLike;
+    lodash.isArrayLikeObject = isArrayLikeObject;
     lodash.isBoolean = isBoolean;
     lodash.isDate = isDate;
     lodash.isElement = isElement;

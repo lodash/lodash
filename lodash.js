@@ -8907,7 +8907,7 @@
      * // => false
      */
     function isArrayLikeObject(value) {
-      return isObject(value) && isArrayLike(value);
+      return isObjectLike(value) && isArrayLike(value);
     }
 
     /**

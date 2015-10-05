@@ -1694,7 +1694,7 @@
 
   QUnit.module('case methods');
 
-  _.each(['camel', 'kebab', 'snake', 'start'], function(caseName) {
+  _.each(['camel', 'kebab', 'lower', 'snake', 'start', 'upper'], function(caseName) {
     var methodName = caseName + 'Case',
         func = _[methodName];
 
@@ -1707,8 +1707,10 @@
       switch (caseName) {
         case 'camel': return 'fooBar';
         case 'kebab': return 'foo-bar';
+        case 'lower': return 'foo bar';
         case 'snake': return 'foo_bar';
         case 'start': return 'Foo Bar';
+        case 'upper': return 'FOO BAR';
       }
     }());
 
@@ -1739,7 +1741,13 @@
 
       var actual = _.map(burredLetters, function(burred, index) {
         var letter = deburredLetters[index];
-        letter = caseName == 'start' ? _.capitalize(letter) : letter.toLowerCase();
+        if (caseName == 'start') {
+          letter = _.capitalize(letter);
+        } else if (caseName == 'upper') {
+          letter = letter.toUpperCase();
+        } else {
+          letter = letter.toLowerCase();
+        }
         return func(burred) === letter;
       });
 
@@ -1840,28 +1848,6 @@
       assert.strictEqual(_.capitalize('fred'), 'Fred');
       assert.strictEqual(_.capitalize('Fred'), 'Fred');
       assert.strictEqual(_.capitalize(' fred'), ' fred');
-    });
-
-    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.strictEqual(_('fred').capitalize(), 'Fred');
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.ok(_('fred').chain().capitalize() instanceof _);
-      }
-      else {
-        skipTest(assert);
-      }
     });
   }());
 
@@ -20840,6 +20826,7 @@
       'join',
       'kebabCase',
       'last',
+      'lowerCase',
       'max',
       'maxBy',
       'min',
@@ -20868,7 +20855,8 @@
       'trimLeft',
       'trimRight',
       'trunc',
-      'unescape'
+      'unescape',
+      'upperCase'
     ];
 
     _.each(funcs, function(methodName) {
@@ -20988,6 +20976,7 @@
       'capitalize',
       'escape',
       'kebabCase',
+      'lowerCase',
       'pad',
       'padLeft',
       'padRight',
@@ -20997,7 +20986,8 @@
       'trimLeft',
       'trimRight',
       'trunc',
-      'unescape'
+      'unescape',
+      'upperCase'
     ];
 
     _.each(stringMethods, function(methodName) {
@@ -21105,7 +21095,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(251);
+      assert.expect(253);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

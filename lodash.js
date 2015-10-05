@@ -11116,6 +11116,23 @@
     });
 
     /**
+     * Converts `string` to lower case.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the lower cased string.
+     * @example
+     *
+     * _.lowerCase('FRED');
+     * // => 'fred'
+     */
+    var lowerCase = createCompounder(function(result, word, index) {
+      return result + (index ? ' ' : '') + word.toLowerCase();
+    });
+
+    /**
      * Pads `string` on the left and right sides if it's shorter than `length`.
      * Padding characters are truncated if they can't be evenly divided by `length`.
      *
@@ -11780,6 +11797,23 @@
         ? string.replace(reEscapedHtml, unescapeHtmlChar)
         : string;
     }
+
+    /**
+     * Converts `string` to upper case.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the upper cased string.
+     * @example
+     *
+     * _.upperCase('fred');
+     * // => 'FRED'
+     */
+    var upperCase = createCompounder(function(result, word, index) {
+      return result + (index ? ' ' : '') + word.toUpperCase();
+    });
 
     /**
      * Splits `string` into an array of its words.
@@ -12811,6 +12845,7 @@
     lodash.kebabCase = kebabCase;
     lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
+    lodash.lowerCase = lowerCase;
     lodash.lt = lt;
     lodash.lte = lte;
     lodash.max = max;
@@ -12854,6 +12889,7 @@
     lodash.trunc = trunc;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
+    lodash.upperCase = upperCase;
 
     mixin(lodash, (function() {
       var source = {};

@@ -10983,6 +10983,46 @@
     }
 
     /**
+     * Lowercase the entire `string`. Useful for use as a function argument.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] - The string to send entirely to send to lower case.
+     * @returns {string} Returns the lowercased string.
+     * @example
+     *
+     * _.lowerCase('FRED');
+     * // => 'fred'
+     *
+     * // useful for transformations in callbacks
+     * fredPromise.then(_.lowerCase);
+     */
+    function lowerCase(string) {
+      return toString(string).toLowerCase();
+    }
+
+    /**
+     * Uppercase the entire `string`. Useful for use as a function argument.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] - The string to send entirely to send to upper case.
+     * @returns {string} Returns the uppercased string.
+     * @example
+     *
+     * _.upperCase('fred');
+     * // => 'FRED'
+     *
+     * // useful for transformations in callbacks
+     * fredPromise.then(_.upperCase);
+     */
+    function upperCase(string) {
+      return toString(string).toUpperCase();
+    }
+
+    /**
      * Deburrs `string` by converting [latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
      * to basic latin letters and removing [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
      *
@@ -12814,6 +12854,7 @@
     lodash.kebabCase = kebabCase;
     lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
+    lodash.lowerCase = lowerCase;
     lodash.lt = lt;
     lodash.lte = lte;
     lodash.max = max;
@@ -12857,6 +12898,7 @@
     lodash.trunc = trunc;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
+    lodash.upperCase = upperCase;
 
     mixin(lodash, (function() {
       var source = {};

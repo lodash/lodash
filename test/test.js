@@ -1867,6 +1867,78 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.lowerCase');
+
+  (function() {
+    QUnit.test('should lower case the entire string', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.lowerCase('FRED'), 'fred');
+      assert.strictEqual(_.lowerCase('fred'), 'fred');
+      assert.strictEqual(_.lowerCase(' FRED'), ' fred');
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_('Fred').lowerCase(), 'fred');
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_('fred').chain().lowerCase() instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.upperCase');
+
+  (function() {
+    QUnit.test('should upper case the entire string', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.upperCase('fred'), 'FRED');
+      assert.strictEqual(_.upperCase('FRED'), 'FRED');
+      assert.strictEqual(_.upperCase(' fred'), ' FRED');
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_('Fred').upperCase(), 'FRED');
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_('FRED').chain().upperCase() instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.chain');
 
   (function() {
@@ -20840,6 +20912,7 @@
       'join',
       'kebabCase',
       'last',
+      'lowerCase',
       'max',
       'maxBy',
       'min',
@@ -20868,7 +20941,8 @@
       'trimLeft',
       'trimRight',
       'trunc',
-      'unescape'
+      'unescape',
+      'upperCase'
     ];
 
     _.each(funcs, function(methodName) {
@@ -20988,6 +21062,7 @@
       'capitalize',
       'escape',
       'kebabCase',
+      'lowerCase',
       'pad',
       'padLeft',
       'padRight',
@@ -20997,7 +21072,8 @@
       'trimLeft',
       'trimRight',
       'trunc',
-      'unescape'
+      'unescape',
+      'upperCase'
     ];
 
     _.each(stringMethods, function(methodName) {
@@ -21105,7 +21181,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(251);
+      assert.expect(253);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

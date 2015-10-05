@@ -5747,7 +5747,7 @@
      * @category Array
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
@@ -5821,7 +5821,7 @@
      * @category Array
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
@@ -5889,12 +5889,12 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per iteration.
+     * @param {Function} [iteratee] The function invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
-     * _.sortedUniqBy([1, 1.5, 2, 2.5], Math.floor);
-     * // => [1, 2]
+     * _.sortedUniqBy([1.1, 1.2, 2.3, 2.4], Math.floor);
+     * // => [1.1, 2.2]
      */
     function sortedUniqBy(array, iteratee) {
       return (array && array.length)
@@ -6126,12 +6126,12 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
-     * _.uniqBy([1, 2.5, 1.5, 2], Math.floor);
-     * // => [1, 2.5]
+     * _.uniqBy([2.1, 1.2, 2.3], Math.floor);
+     * // => [2.1, 1.2]
      *
      * // using the `_.property` callback shorthand
      * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
@@ -6689,11 +6689,11 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * _.countBy([4.3, 6.1, 6.4], Math.floor);
+     * _.countBy([6.1, 4.2, 6.3], Math.floor);
      * // => { '4': 1, '6': 2 }
      *
      * _.countBy(['one', 'two', 'three'], 'length');
@@ -6923,12 +6923,12 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * _.groupBy([4.2, 6.1, 6.4], Math.floor);
-     * // => { '4': [4.2], '6': [6.1, 6.4] }
+     * _.groupBy([6.1, 4.2, 6.3], Math.floor);
+     * // => { '4': [4.2], '6': [6.1, 6.3] }
      *
      * // using the `_.property` callback shorthand
      * _.groupBy(['one', 'two', 'three'], 'length');
@@ -7028,7 +7028,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -10518,7 +10518,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per property.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -10583,7 +10583,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [predicate=_.identity] The function invoked per property.
      * @returns {Object} Returns the new object.
      * @example
      *
@@ -12433,7 +12433,7 @@
      * @memberOf _
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {*} Returns the maximum value.
      * @example
      *
@@ -12487,7 +12487,7 @@
      * @memberOf _
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {*} Returns the minimum value.
      * @example
      *
@@ -12560,7 +12560,7 @@
      * @memberOf _
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
      * @returns {number} Returns the sum.
      * @example
      *

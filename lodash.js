@@ -1986,7 +1986,7 @@
           array = data.array;
 
       if (array) {
-        if (array.length < LARGE_ARRAY_SIZE) {
+        if (array.length < (LARGE_ARRAY_SIZE - 1)) {
           assocSet(array, key, value);
         } else {
           data.array = null;

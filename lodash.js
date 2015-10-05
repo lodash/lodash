@@ -5421,7 +5421,7 @@
      */
     var intersection = restParam(function(arrays) {
       var mapped = arrayMap(arrays, toArrayLikeObject);
-      return mapped[0] === arrays[0]
+      return (mapped.length && mapped[0] === arrays[0])
         ? baseIntersection(mapped)
         : [];
     });
@@ -5448,7 +5448,7 @@
      */
     var intersectionBy = restParam(function(arrays) {
       var mapped = arrayMap(arrays, toArrayLikeObject);
-      return mapped[0] === arrays[0]
+      return (mapped.length && mapped[0] === arrays[0])
         ? baseIntersectionBy(mapped, getIteratee(last(arrays)))
         : [];
     });

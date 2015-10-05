@@ -3423,9 +3423,7 @@
           ? arrayPush(baseDifferenceBy(result, arrays[index], iteratee), baseDifferenceBy(arrays[index], result, iteratee))
           : arrays[index];
       }
-      return (result && result.length)
-        ? baseUniqBy(result, iteratee)
-        : [];
+      return (result && result.length) ? baseUniqBy(result, iteratee) : [];
     }
 
     /**
@@ -4239,9 +4237,7 @@
 
         case numberTag:
           // Treat `NaN` vs. `NaN` as equal.
-          return (object != +object)
-            ? other != +other
-            : object == +other;
+          return (object != +object) ? other != +other : object == +other;
 
         case regexpTag:
         case stringTag:
@@ -7344,9 +7340,7 @@
       }
       if (isArrayLike(collection)) {
         var result = collection.length;
-        return (result && isString(collection))
-          ? stringSize(collection)
-          : result;
+        return (result && isString(collection)) ? stringSize(collection) : result;
       }
       return keys(collection).length;
     }
@@ -9447,10 +9441,10 @@
       if (!isObjectLike(value) || objToString.call(value) != objectTag || isHostObject(value)) {
         return false;
       }
-      var proto = typeof value.constructor == 'function'
-        ? getPrototypeOf(value)
-        : objectProto;
-
+      var proto = objectProto;
+      if (typeof value.constructor == 'function') {
+        proto = getPrototypeOf(value);
+      }
       if (proto === null) {
         return true;
       }

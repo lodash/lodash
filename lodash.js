@@ -12336,7 +12336,7 @@
      *     newPath = _.toPath(path);
      *
      * console.log(newPath);
-     * // =>  ['a', 'b', 'c']
+     * // => ['a', 'b', 'c']
      *
      * console.log(path === newPath);
      * // => false

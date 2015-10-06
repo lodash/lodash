@@ -422,6 +422,7 @@
       return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
     });
 
+    setProperty(Object, 'create', _.noop);
     setProperty(root, 'Map', _.noop);
     setProperty(root, 'Set', _.noop);
     setProperty(root, 'WeakMap', _.noop);
@@ -438,6 +439,7 @@
 
     // Restore built-in methods.
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
+    setProperty(Object, 'create', create);
 
     if (Map) {
       setProperty(root, 'Map', Map);
@@ -650,7 +652,7 @@
     });
 
     QUnit.test('should avoid overwritten native methods', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -659,9 +661,14 @@
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 
-      var object = { 'a': 1 },
+      var cyclical = {},
+          object = { 'a': 1 },
           otherObject = { 'b': 2 },
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
+
+      _.times(LARGE_ARRAY_SIZE + 1, function(index) {
+        cyclical['v' + index] = [index ? cyclical['v' + (index - 1)] : cyclical];
+      });
 
       if (lodashBizarro) {
         try {
@@ -669,7 +676,8 @@
         } catch (e) {
           actual = null;
         }
-        assert.deepEqual(actual, ['a', 'b'], message('_.keysIn', 'Object#propertyIsEnumerable'));
+        var label = message('_.keysIn', 'Object#propertyIsEnumerable');
+        assert.deepEqual(actual, ['a', 'b'], label);
 
         try {
           actual = [
@@ -680,10 +688,21 @@
         } catch (e) {
           actual = null;
         }
-        assert.deepEqual(actual, [[otherObject], [object], [object]], message('_.difference`, `_.intersection`, and `_.uniq', 'Set'));
+        label = message('_.difference`, `_.intersection`, and `_.uniq', 'Object.create` and `Map');
+        assert.deepEqual(actual, [[otherObject], [object], [object]], label);
+
+        try {
+          var clone = _.cloneDeep(cyclical);
+          actual = clone['v' + LARGE_ARRAY_SIZE][0];
+        } catch (e) {
+          actual = null;
+          clone = {};
+        }
+        label = message('_.cloneDeep', 'Object.create` and `Map');
+        assert.strictEqual(actual, clone['v' + (LARGE_ARRAY_SIZE - 1)], label);
       }
       else {
-        skipTest(assert, 2);
+        skipTest(assert, 3);
       }
     });
   }());

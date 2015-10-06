@@ -84,6 +84,9 @@
           return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
         });
 
+        setProperty(Object, '_create', window.create);
+        setProperty(Object, 'create', noop);
+
         setProperty(window, '_Map', window.Map);
         setProperty(window, 'Map', noop);
 
@@ -106,6 +109,11 @@
         var funcProto = Function.prototype,
             objectProto = Object.prototype;
 
+        if (Object._create) {
+          Object.create = Object._create;
+        } else {
+          delete Object.create;
+        }
         if (window._Map) {
           Map = _Map;
         } else {
@@ -135,6 +143,7 @@
 
         delete funcProto._method;
         delete objectProto._propertyIsEnumerable;
+        delete Object._create;
       }
 
       // Load lodash to expose it to the bad extensions/shims.

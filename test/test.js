@@ -2088,6 +2088,21 @@
       assert.ok(actual.bar.b === actual.foo.b && actual === actual.foo.b.c.d && actual !== object);
     });
 
+    QUnit.test('`_.cloneDeep` should deep clone objects with lots of circular references', function(assert) {
+      assert.expect(2);
+
+      var cyclical = {};
+      _.times(LARGE_ARRAY_SIZE + 1, function(index) {
+        cyclical['v' + index] = [index ? cyclical['v' + (index - 1)] : cyclical];
+      });
+
+      var clone = _.cloneDeep(cyclical),
+          actual = clone['v' + LARGE_ARRAY_SIZE][0];
+
+      assert.strictEqual(actual, clone['v' + (LARGE_ARRAY_SIZE - 1)]);
+      assert.notStrictEqual(actual, cyclical['v' + (LARGE_ARRAY_SIZE - 1)]);
+    });
+
     _.each(['clone', 'cloneDeep'], function(methodName) {
       var func = _[methodName],
           isDeep = methodName == 'cloneDeep';

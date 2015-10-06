@@ -434,42 +434,6 @@
   }
 
   /**
-   * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
-   * with one argument: (value).
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @param {Function} comparator The function used to compare values.
-   * @param {*} exValue The initial extremum value.
-   * @returns {*} Returns the extremum value.
-   */
-  function arrayExtremum(array, iteratee, comparator, exValue) {
-    var index = -1,
-        length = array.length,
-        computed = exValue,
-        result = computed;
-
-    while (++index < length) {
-      var value = array[index],
-          current = +iteratee(value);
-
-      if (comparator(current, computed)) {
-        computed = current;
-        result = value;
-      }
-    }
-    index = result === exValue ? -1 : index;
-    while (++index < length) {
-      value = array[index];
-      if (+iteratee(value) === exValue) {
-        return value;
-      }
-    }
-    return result;
-  }
-
-  /**
    * A specialized version of `_.filter` for arrays without support for
    * callback shorthands.
    *
@@ -636,6 +600,44 @@
   }
 
   /**
+   * The base implementation of methods like `_.max` and `_.min` which accepts a
+   * `comparator` to determine the extremum value.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @param {Function} comparator The function used to compare values.
+   * @returns {*} Returns the extremum value.
+   */
+  function baseExtremum(array, iteratee, comparator) {
+    var computed,
+        result,
+        index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      var value = array[index],
+          current = iteratee(value);
+
+      if (current === current && current != null) {
+        computed = current;
+        result = value;
+        break;
+      }
+    }
+    while (++index < length) {
+      var value = array[index],
+          current = iteratee(value);
+
+      if (current != null && comparator(current, computed)) {
+        computed = current;
+        result = value;
+      }
+    }
+    return result;
+  }
+
+  /**
    * The base implementation of methods like `_.find` and `_.findKey` without
    * support for callback shorthands, which iterates over `collection` using
    * the provided `eachFunc`.
@@ -769,12 +771,15 @@
    * @returns {number} Returns the sum.
    */
   function baseSum(array, iteratee) {
-    var index = -1,
-        length = array.length,
-        result = 0;
+    var result,
+        index = -1,
+        length = array.length;
 
     while (++index < length) {
-      result += +iteratee(array[index]) || 0;
+      var current = iteratee(array[index]);
+      if (current === current && current != null) {
+        result = result === undefined ? current : (result + current);
+      }
     }
     return result;
   }
@@ -12378,7 +12383,14 @@
      * // => 10
      */
     function add(augend, addend) {
-      return (+augend || 0) + (+addend || 0);
+      var result;
+      if (augend === augend && augend != null) {
+        result = augend;
+      }
+      if (addend === addend && addend != null) {
+        result = result === undefined ? addend : (result + addend);
+      }
+      return result;
     }
 
     /**
@@ -12426,8 +12438,8 @@
     var floor = createRound('floor');
 
     /**
-     * Gets the maximum value of `collection`. If `collection` is empty or falsey
-     * `-Infinity` is returned.
+     * Gets the maximum value of `array`. If `array` is empty or falsey
+     * `undefined` is returned.
      *
      * @static
      * @memberOf _
@@ -12440,12 +12452,12 @@
      * // => 8
      *
      * _.max([]);
-     * // => -Infinity
+     * // => undefined
      */
     function max(array) {
       return (array && array.length)
-        ? arrayExtremum(array, identity, gt, -INFINITY)
-        : -INFINITY;
+        ? baseExtremum(array, identity, gt)
+        : undefined;
     }
 
     /**
@@ -12475,13 +12487,13 @@
      */
     function maxBy(array, iteratee) {
       return (array && array.length)
-        ? arrayExtremum(array, getIteratee(iteratee), gt, -INFINITY)
-        : -INFINITY;
+        ? baseExtremum(array, getIteratee(iteratee), gt)
+        : undefined;
     }
 
     /**
      * Gets the minimum value of `array`. If `array` is empty or falsey
-     * `Infinity` is returned.
+     * `undefined` is returned.
      *
      * @static
      * @memberOf _
@@ -12494,12 +12506,12 @@
      * // => 2
      *
      * _.min([]);
-     * // => Infinity
+     * // => undefined
      */
     function min(array) {
       return (array && array.length)
-        ? arrayExtremum(array, identity, lt, INFINITY)
-        : INFINITY;
+        ? baseExtremum(array, identity, lt)
+        : undefined;
     }
 
     /**
@@ -12529,8 +12541,8 @@
      */
     function minBy(array, iteratee) {
       return (array && array.length)
-        ? arrayExtremum(array, getIteratee(iteratee), lt, INFINITY)
-        : INFINITY;
+        ? baseExtremum(array, getIteratee(iteratee), lt)
+        : undefined;
     }
 
     /**
@@ -12567,12 +12579,11 @@
      *
      * _.sum([4, 6]);
      * // => 10
-     *
-     * _.sum({ 'a': 4, 'b': 6 });
-     * // => 10
      */
     function sum(array) {
-      return array ? baseSum(array, identity) : 0;
+      return (array && array.length)
+        ? baseSum(array, identity)
+        : undefined;
     }
 
     /**
@@ -12603,7 +12614,7 @@
     function sumBy(array, iteratee) {
       return (array && array.length)
         ? baseSum(array, getIteratee(iteratee))
-        : 0;
+        : undefined;
     }
 
     /*------------------------------------------------------------------------*/

@@ -898,12 +898,11 @@
       assert.strictEqual(_.add(6, 4), 10);
     });
 
-    QUnit.test('should coerce params to numbers', function(assert) {
-      assert.expect(3);
+    QUnit.test('should not coerce params to numbers', function(assert) {
+      assert.expect(2);
 
-      assert.strictEqual(_.add('6', '4'), 10);
-      assert.strictEqual(_.add('6', 'y'), 6);
-      assert.strictEqual(_.add('x', 'y'), 0);
+      assert.strictEqual(_.add('6', '4'), '64');
+      assert.strictEqual(_.add('x', 'y'), 'xy');
     });
 
     QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
@@ -11924,11 +11923,11 @@
       assert.strictEqual(_.max([1, 2, 3]), 3);
     });
 
-    QUnit.test('should return `-Infinity` for empty collections', function(assert) {
+    QUnit.test('should return `undefined` for empty collections', function(assert) {
       assert.expect(1);
 
       var values = falsey.concat([[]]),
-          expected = _.map(values, _.constant(-Infinity));
+          expected = _.map(values, _.constant(undefined));
 
       var actual = _.map(values, function(value, index) {
         try {
@@ -11939,10 +11938,10 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return `-Infinity` for non-numeric collection values', function(assert) {
+    QUnit.test('should work with non-numeric collection values', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.max(['a', 'b']), -Infinity);
+      assert.strictEqual(_.max(['a', 'b']), 'b');
     });
   }());
 
@@ -12873,11 +12872,11 @@
       assert.strictEqual(_.min([1, 2, 3]), 1);
     });
 
-    QUnit.test('should return `Infinity` for empty collections', function(assert) {
+    QUnit.test('should return `undefined` for empty collections', function(assert) {
       assert.expect(1);
 
       var values = falsey.concat([[]]),
-          expected = _.map(values, _.constant(Infinity));
+          expected = _.map(values, _.constant(undefined));
 
       var actual = _.map(values, function(value, index) {
         try {
@@ -12888,10 +12887,10 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return `Infinity` for non-numeric collection values', function(assert) {
+    QUnit.test('should work with non-numeric collection values', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.min(['a', 'b']), Infinity);
+      assert.strictEqual(_.min(['a', 'b']), 'a');
     });
   }());
 
@@ -17185,10 +17184,10 @@
       assert.strictEqual(_.sum(array), 12);
     });
 
-    QUnit.test('should return `0` when passing empty `array` values', function(assert) {
+    QUnit.test('should return `undefined` when passing empty `array` values', function(assert) {
       assert.expect(1);
 
-      var expected = _.map(empties, _.constant(0));
+      var expected = _.map(empties, _.constant(undefined));
 
       var actual = _.map(empties, function(value) {
         return _.sum(value);
@@ -17197,10 +17196,16 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should coerce values to numbers and `NaN` to `0`', function(assert) {
+    QUnit.test('should not coerce values to numbers', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.sum(['1', NaN, '2']), 3);
+      assert.strictEqual(_.sum(['1', '2']), '12');
+    });
+
+    QUnit.test('should skip `null`, `undefined`, and `NaN` values', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.sum(['1', null, undefined, NaN, '2']), '12');
     });
   }());
 

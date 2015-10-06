@@ -2511,9 +2511,6 @@
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHas(object, key) {
-      if (object == null) {
-        return false;
-      }
       // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`
       // incorrectly report `false` for own index properties.
       return hasOwnProperty.call(object, key) ||
@@ -2529,7 +2526,7 @@
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHasIn(object, key) {
-      return object != null && key in Object(object);
+      return key in Object(object);
     }
 
     /**

@@ -10073,6 +10073,19 @@
       }
     });
 
+    QUnit.test('`_.differenceBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        assert.deepEqual(_.differenceBy(objects, [objects[1]]), [objects[0]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
     QUnit.test('`_.dropRightWhile` should use `_.iteratee` internally', function(assert) {
       assert.expect(1);
 
@@ -10179,7 +10192,7 @@
       }
     });
 
-    QUnit.test('`_.findLastKey` should use `_.iteratee` internally', function(assert) {
+    QUnit.test('`_.findKey` should use `_.iteratee` internally', function(assert) {
       assert.expect(1);
 
       if (!isModularize) {
@@ -10192,7 +10205,7 @@
       }
     });
 
-    QUnit.test('`_.findKey` should use `_.iteratee` internally', function(assert) {
+    QUnit.test('`_.findLastKey` should use `_.iteratee` internally', function(assert) {
       assert.expect(1);
 
       if (!isModularize) {
@@ -10211,6 +10224,19 @@
       if (!isModularize) {
         _.iteratee = getLength;
         assert.deepEqual(_.groupBy(array), { '3': ['one', 'two'], '5': ['three'] });
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('`_.intersectionBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        assert.deepEqual(_.intersectionBy(objects, [objects[2]]), [objects[1]]);
         _.iteratee = iteratee;
       }
       else {
@@ -10304,6 +10330,19 @@
 
         _.iteratee = getPropA;
         assert.deepEqual(_.partition(objects), [objects.slice(0, 2), objects.slice(2)]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('`_.pullAllBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        assert.deepEqual(_.pullAllBy(objects.slice(), [{ 'a': 1, 'b': 0 }]), [objects[0]]);
         _.iteratee = iteratee;
       }
       else {
@@ -10487,6 +10526,32 @@
       if (!isModularize) {
         _.iteratee = getPropB;
         assert.deepEqual(_.uniqBy(objects), [objects[0], objects[2]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('`_.unionBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        _.iteratee = getPropB;
+        assert.deepEqual(_.unionBy(objects.slice(0, 1), [objects[2]]), [objects[0], objects[2]]);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('`_.xorBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        _.iteratee = getPropA;
+        assert.deepEqual(_.xorBy(objects, objects.slice(1)), [objects[0]]);
         _.iteratee = iteratee;
       }
       else {

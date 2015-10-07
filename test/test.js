@@ -2103,6 +2103,25 @@
       assert.notStrictEqual(actual, cyclical['v' + (LARGE_ARRAY_SIZE - 1)]);
     });
 
+    QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
+      assert.expect(5);
+
+      var stack,
+          object = new Foo;
+
+      var clone = _.cloneDeepWith(object, function() {
+        if (arguments.length > 1) {
+          stack || (stack = _.last(arguments));
+        }
+      });
+
+      assert.strictEqual(stack.has(object), true);
+      assert.strictEqual(stack.get(object), clone);
+      assert.strictEqual(stack['delete'](object), true);
+      assert.strictEqual(stack.has(object), false);
+      assert.strictEqual(stack['delete'](object), false);
+    });
+
     _.each(['clone', 'cloneDeep'], function(methodName) {
       var func = _[methodName],
           isDeep = methodName == 'cloneDeep';

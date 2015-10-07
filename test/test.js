@@ -2141,21 +2141,6 @@
         });
       });
 
-      _.forOwn(uncloneable, function(value, key) {
-        QUnit.test('`_.' + methodName + '` should not clone ' + key, function(assert) {
-          assert.expect(3);
-
-          var object = { 'a': value, 'b': { 'c': value } },
-              actual = func(object);
-
-          assert.deepEqual(actual, object);
-          assert.notStrictEqual(actual, object);
-
-          var expected = typeof value == 'function' ? { 'c': Foo.c } : (value && {});
-          assert.deepEqual(func(value), expected);
-        });
-      });
-
       QUnit.test('`_.' + methodName + '` should clone array buffers', function(assert) {
         assert.expect(2);
 
@@ -2169,31 +2154,6 @@
         else {
           skipTest(assert, 2);
         }
-      });
-
-      _.each(typedArrays, function(type) {
-        QUnit.test('`_.' + methodName + '` should clone ' + type + ' arrays', function(assert) {
-          assert.expect(10);
-
-          var Ctor = root[type];
-
-          _.times(2, function(index) {
-            if (Ctor) {
-              var buffer = new ArrayBuffer(24),
-                  array = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
-                  actual = func(array);
-
-              assert.deepEqual(actual, array);
-              assert.notStrictEqual(actual, array);
-              assert.strictEqual(actual.buffer === array.buffer, !isDeep);
-              assert.strictEqual(actual.byteOffset, array.byteOffset);
-              assert.strictEqual(actual.length, array.length);
-            }
-            else {
-              skipTest(assert, 5);
-            }
-          });
-        });
       });
 
       QUnit.test('`_.' + methodName + '` should clone `index` and `input` array properties', function(assert) {
@@ -2286,6 +2246,46 @@
         else {
           skipTest(assert, 2);
         }
+      });
+
+      _.each(typedArrays, function(type) {
+        QUnit.test('`_.' + methodName + '` should clone ' + type + ' arrays', function(assert) {
+          assert.expect(10);
+
+          var Ctor = root[type];
+
+          _.times(2, function(index) {
+            if (Ctor) {
+              var buffer = new ArrayBuffer(24),
+                  array = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
+                  actual = func(array);
+
+              assert.deepEqual(actual, array);
+              assert.notStrictEqual(actual, array);
+              assert.strictEqual(actual.buffer === array.buffer, !isDeep);
+              assert.strictEqual(actual.byteOffset, array.byteOffset);
+              assert.strictEqual(actual.length, array.length);
+            }
+            else {
+              skipTest(assert, 5);
+            }
+          });
+        });
+      });
+
+      _.forOwn(uncloneable, function(value, key) {
+        QUnit.test('`_.' + methodName + '` should not clone ' + key, function(assert) {
+          assert.expect(3);
+
+          var object = { 'a': value, 'b': { 'c': value } },
+              actual = func(object);
+
+          assert.deepEqual(actual, object);
+          assert.notStrictEqual(actual, object);
+
+          var expected = typeof value == 'function' ? { 'c': Foo.c } : (value && {});
+          assert.deepEqual(func(value), expected);
+        });
       });
     });
 

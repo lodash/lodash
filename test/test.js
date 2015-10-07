@@ -12081,7 +12081,7 @@
     });
 
     QUnit.test('should expose a `cache` object on the `memoized` function which implements `Map` interface', function(assert) {
-      assert.expect(18);
+      assert.expect(10);
 
       _.times(2, function(index) {
         var resolver = index ? _.identity : null;
@@ -12097,12 +12097,7 @@
         assert.strictEqual(cache.has('a'), true);
         assert.strictEqual(cache.get('a'), 'value:a');
         assert.strictEqual(cache['delete']('a'), true);
-        assert.strictEqual(cache['delete']('b'), false);
-
-        assert.strictEqual(cache.set('b', 'value:b'), cache);
-        assert.strictEqual(cache.has('b'), true);
-        assert.strictEqual(cache.get('b'), 'value:b');
-        assert.strictEqual(cache['delete']('b'), true);
+        assert.strictEqual(cache.has('a'), false);
         assert.strictEqual(cache['delete']('a'), false);
       });
     });

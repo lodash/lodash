@@ -1773,14 +1773,12 @@
      * @param {Array} [values] The values to cache.
      */
     function MapCache(values) {
-      this.__data__ = {
-        'hash': new Hash,
-        'map': Map ? new Map : [],
-        'string': new Hash
-      };
-      var length = values ? values.length : 0;
-      while (length--) {
-        var entry = values[length];
+      var index = -1,
+          length = values ? values.length : 0;
+
+      this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
+      while (++index < length) {
+        var entry = values[index];
         this.set(entry[0], entry[1]);
       }
     }
@@ -1868,10 +1866,12 @@
      * @param {Array} [values] The values to cache.
      */
     function SetCache(values) {
+      var index = -1,
+          length = values ? values.length : 0;
+
       this.__data__ = new MapCache;
-      var length = values ? values.length : 0;
-      while (length--) {
-        this.push(values[length]);
+      while (++index < length) {
+        this.push(values[index]);
       }
     }
 
@@ -1922,9 +1922,17 @@
      * Creates a stack cache object to store key-value pairs.
      *
      * @private
+     * @param {Array} [values] The values to cache.
      */
-    function Stack() {
+    function Stack(values) {
+      var index = -1,
+          length = values ? values.length : 0;
+
       this.__data__ = { 'array': [], 'map': null };
+      while (++index < length) {
+        var entry = values[index];
+        this.set(entry[0], entry[1]);
+      }
     }
 
     /**

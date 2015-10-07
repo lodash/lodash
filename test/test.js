@@ -2116,7 +2116,7 @@
     });
 
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
-      assert.expect(5);
+      assert.expect(12);
 
       var stack,
           object = new Foo;
@@ -2131,7 +2131,17 @@
       assert.strictEqual(stack.get(object), clone);
       assert.strictEqual(stack['delete'](object), true);
       assert.strictEqual(stack.has(object), false);
+      assert.strictEqual(stack.get(object), undefined);
       assert.strictEqual(stack['delete'](object), false);
+
+      stack = new stack.constructor([['a', 1], ['b', 2]]);
+
+      assert.strictEqual(stack.has('a'), true);
+      assert.strictEqual(stack.get('a'), 1);
+      assert.strictEqual(stack['delete']('a'), true);
+      assert.strictEqual(stack.has('a'), false);
+      assert.strictEqual(stack.get('a'), undefined);
+      assert.strictEqual(stack['delete']('a'), false);
     });
 
     _.each(['clone', 'cloneDeep'], function(methodName) {
@@ -12093,7 +12103,7 @@
     });
 
     QUnit.test('should expose a `cache` object on the `memoized` function which implements `Map` interface', function(assert) {
-      assert.expect(10);
+      assert.expect(12);
 
       _.times(2, function(index) {
         var resolver = index ? _.identity : null;
@@ -12110,6 +12120,7 @@
         assert.strictEqual(cache.get('a'), 'value:a');
         assert.strictEqual(cache['delete']('a'), true);
         assert.strictEqual(cache.has('a'), false);
+        assert.strictEqual(cache.get('a'), undefined);
         assert.strictEqual(cache['delete']('a'), false);
       });
     });
@@ -12136,8 +12147,8 @@
 
         assert.strictEqual(count, 1);
         assert.strictEqual(cache.get(key), array);
-        assert.strictEqual(cache['delete'](key), true);
         assert.notOk(cache.__data__ instanceof Array);
+        assert.strictEqual(cache['delete'](key), true);
       });
     });
 

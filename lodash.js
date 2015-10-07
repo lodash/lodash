@@ -2511,8 +2511,9 @@
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHas(object, key) {
-      // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`
-      // incorrectly report `false` for own index properties.
+      // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
+      // that are composed entirely of index properties, return `false` for
+      // `hasOwnProperty` checks of them.
       return hasOwnProperty.call(object, key) ||
         (typeof object == 'object' && key in object && getPrototypeOf(object) === null);
     }

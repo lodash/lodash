@@ -375,6 +375,7 @@
     } catch (e) {
       object[key] = value;
     }
+    return object;
   }
 
   /**
@@ -422,8 +423,22 @@
       return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
     });
 
+    if (Map) {
+      setProperty(root, 'Map', (function() {
+        var count = 0;
+        return function() {
+          if (count++) {
+            return new Map;
+          }
+          var result = {};
+          setProperty(root, 'Map', Map);
+          return result;
+        };
+      }()));
+
+      setProperty(root.Map, 'toString', createToString('Map'));
+    }
     setProperty(Object, 'create', _.noop);
-    setProperty(root, 'Map', _.noop);
     setProperty(root, 'Set', _.noop);
     setProperty(root, 'WeakMap', _.noop);
 
@@ -438,9 +453,6 @@
     root._ = oldDash;
 
     // Restore built-in methods.
-    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
-    setProperty(Object, 'create', create);
-
     if (Map) {
       setProperty(root, 'Map', Map);
     } else {
@@ -456,6 +468,9 @@
     } else {
       delete root.WeakMap;
     }
+    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
+    setProperty(Object, 'create', create);
+
     delete root.WinRTError;
     delete funcProto._method;
   }());
@@ -661,18 +676,13 @@
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 
-      var cyclical = {},
-          object = { 'a': 1 },
+      var object = { 'a': 1 },
           otherObject = { 'b': 2 },
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
-      _.times(LARGE_ARRAY_SIZE + 1, function(index) {
-        cyclical['v' + index] = [index ? cyclical['v' + (index - 1)] : cyclical];
-      });
-
       if (lodashBizarro) {
         try {
-          var actual = _.keysIn(new Foo).sort();
+          var actual = lodashBizarro.keysIn(new Foo).sort();
         } catch (e) {
           actual = null;
         }
@@ -692,14 +702,16 @@
         assert.deepEqual(actual, [[otherObject], [object], [object]], label);
 
         try {
-          var clone = _.cloneDeep(cyclical);
-          actual = clone['v' + LARGE_ARRAY_SIZE][0];
+          var map = new (Map || Object);
+          if (Symbol && Symbol.iterator) {
+            map[Symbol.iterator] = null;
+          }
+          actual = lodashBizarro.toArray(map);
         } catch (e) {
           actual = null;
-          clone = {};
         }
-        label = message('_.cloneDeep', 'Object.create` and `Map');
-        assert.strictEqual(actual, clone['v' + (LARGE_ARRAY_SIZE - 1)], label);
+        label = message('_.toArray', 'Map');
+        assert.deepEqual(actual, [], label);
       }
       else {
         skipTest(assert, 3);

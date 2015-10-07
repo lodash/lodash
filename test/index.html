@@ -42,6 +42,7 @@
           } catch(e) {
             object[key] = value;
           }
+          return object;
         };
       }());
 
@@ -61,9 +62,11 @@
             return value;
           };
         }
+
         function createToString(funcName) {
           return constant(nativeString.replace(reToString, funcName));
         }
+
         // Allow bypassing native checks.
         setProperty(funcProto, 'toString', (function() {
           function wrapper() {
@@ -84,11 +87,24 @@
           return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
         });
 
+        setProperty(window, '_Map', window.Map);
+        if (_Map) {
+          setProperty(window, 'Map', (function(Map) {
+            var count = 0;
+            return function() {
+              if (count++) {
+                return new Map;
+              }
+              var result = {};
+              setProperty(window, 'Map', Map);
+              return result;
+            };
+          }(_Map)));
+
+          setProperty(Map, 'toString', createToString('Map'));
+        }
         setProperty(Object, '_create', window.create);
         setProperty(Object, 'create', noop);
-
-        setProperty(window, '_Map', window.Map);
-        setProperty(window, 'Map', noop);
 
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
@@ -114,21 +130,23 @@
         } else {
           delete Object.create;
         }
-        if (window._Map) {
+        if (_Map) {
           Map = _Map;
         } else {
           setProperty(window, 'Map', undefined);
         }
-        if (window._Set) {
+        if (_Set) {
           Set = _Set;
         } else {
           setProperty(window, 'Set', undefined);
         }
-        if (window._WeakMap) {
+        if (_WeakMap) {
           WeakMap = _WeakMap;
         } else {
           setProperty(window, 'WeakMap', undefined);
         }
+        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
+
         setProperty(window, '_Map', undefined);
         setProperty(window, '_Set', undefined);
         setProperty(window, '_WeakMap', undefined);
@@ -138,8 +156,6 @@
         setProperty(window, 'exports', undefined);
         setProperty(window, 'global', undefined);
         setProperty(window, 'module', undefined);
-
-        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
         delete funcProto._method;
         delete objectProto._propertyIsEnumerable;

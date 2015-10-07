@@ -7940,7 +7940,7 @@
           clearTimeout(maxTimeoutId);
         }
         lastCalled = 0;
-        maxTimeoutId = timeoutId = trailingCall = undefined;
+        args = maxTimeoutId = thisArg = timeoutId = trailingCall = undefined;
       }
 
       function complete(isCalled, id) {

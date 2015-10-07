@@ -5587,11 +5587,11 @@
      * @returns {Array} Returns `array`.
      * @example
      *
-     * var array = [1, 2, 3, 1, 2, 3];
+     * var array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
      *
-     * _.pull(array, [2, 3]);
+     * _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], function(o) { return o.x; });
      * console.log(array);
-     * // => [1, 1]
+     * // => [{ 'x': 2 }]
      */
     function pullAllBy(array, values, iteratee) {
       return (array && array.length && values && values.length)

@@ -1388,7 +1388,7 @@
      * return the unwrapped value. Otherwise, the value must be unwrapped with
      * `_#value`.
      *
-     * Explicit chaining, which requires unwrapping with `_#value` in all cases,
+     * Explicit chaining, which must be unwrapped with `_#value` in all cases,
      * may be enabled using `_.chain`.
      *
      * The execution of chained methods is lazy, that is, execution is deferred
@@ -4010,8 +4010,8 @@
     }
 
     /**
-     * Creates the padding required for `string` based on the given `length`.
-     * The `chars` string is truncated if the number of characters exceeds `length`.
+     * Creates the padding for `string` based on the given `length`. The `chars`
+     * string is truncated if the number of characters exceeds `length`.
      *
      * @private
      * @param {string} string The string to create padding for.
@@ -4712,7 +4712,7 @@
     /**
      * Merges the function metadata of `source` into `data`.
      *
-     * Merging metadata reduces the number of wrappers required to invoke a function.
+     * Merging metadata reduces the number of wrappers used to invoke a function.
      * This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
      * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
      * modify function arguments, making the order in which they are executed important,
@@ -11534,8 +11534,8 @@
         }
         index = offset + match.length;
 
-        // The JS engine embedded in Adobe products requires returning the `match`
-        // string in order to produce the correct `offset` value.
+        // The JS engine embedded in Adobe products needs `match` returned in
+        // order to produce the correct `offset` value.
         return match;
       });
 

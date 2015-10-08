@@ -167,7 +167,6 @@
       rsModifier = '(?:\\ud83c[\\udffb-\\udfff])',
       rsNonAstral = '[^' + rsAstralRange + ']',
       rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
-      rsSpace = '[' + rsSpaceRange + ']',
       rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
       rsUpper = '[' + rsUpperRange + ']',
       rsZWJ = '\\u200d';
@@ -202,9 +201,9 @@
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
-    'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
-    'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Object',
-    'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
+    'Array', 'Date', 'Error', 'Float32Array', 'Float64Array', 'Function',
+    'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Object', 'Reflect',
+    'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
     'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout'
   ];
@@ -287,15 +286,6 @@
   var objectTypes = {
     'function': true,
     'object': true
-  };
-
-  /** Used to escape characters for inclusion in compiled regexes. */
-  var regexpEscapes = {
-    '0': 'x30', '1': 'x31', '2': 'x32', '3': 'x33', '4': 'x34',
-    '5': 'x35', '6': 'x36', '7': 'x37', '8': 'x38', '9': 'x39',
-    'A': 'x41', 'B': 'x42', 'C': 'x43', 'D': 'x44', 'E': 'x45', 'F': 'x46',
-    'a': 'x61', 'b': 'x62', 'c': 'x63', 'd': 'x64', 'e': 'x65', 'f': 'x66',
-    'n': 'x6e', 'r': 'x72', 't': 'x74', 'u': 'x75', 'v': 'x76', 'x': 'x78'
   };
 
   /** Used to escape characters for inclusion in compiled string literals. */
@@ -722,20 +712,6 @@
       }
     }
     return -1;
-  }
-
-  /**
-   * The base implementation of `_.isFunction` without support for environments
-   * with incorrect `typeof` results.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-   */
-  function baseIsFunction(value) {
-    // Avoid a Chakra JIT bug in compatibility modes of IE 11.
-    // See https://github.com/jashkenas/underscore/issues/1621 for more details.
-    return typeof value == 'function' || false;
   }
 
   /**
@@ -1363,8 +1339,7 @@
     );
 
     /** Built-in value references. */
-    var ArrayBuffer = context.ArrayBuffer,
-        Reflect = context.Reflect,
+    var Reflect = context.Reflect,
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
         clearTimeout = context.clearTimeout,
@@ -11746,7 +11721,7 @@
      * });
      * // => 'hi-diddly-ho there, neig [...]'
      */
-    function trunc(string, options, guard) {
+    function trunc(string, options) {
       var length = DEFAULT_TRUNC_LENGTH,
           omission = DEFAULT_TRUNC_OMISSION;
 
@@ -13168,7 +13143,7 @@
   }
   // Check for `exports` after `define` in case a build optimizer adds an `exports` object.
   else if (freeExports && freeModule) {
-    // Export for Node.js or RingoJS.
+    // Export for Node.js.
     if (moduleExports) {
       (freeModule.exports = _)._ = _;
     }

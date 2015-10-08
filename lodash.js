@@ -143,29 +143,47 @@
   /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
-  /** Used to compose unicode related regexes. */
+  /** Used to compose unicode character classes. */
   var rsAstralRange = '\\ud800-\\udfff',
-      rsAstral = '[' + rsAstralRange + ']',
       rsComboRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+      rsDingbatRange = '\\u2700-\\u27bf',
+      rsLowerRange = 'a-z\\xdf-\\xf6\\xf8-\\xff',
+      rsMathOpRange = '\\xd7\\xf7',
+      rsNonCharRange = '\\x00-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\xbf',
+      rsQuoteRange = '\\u2018\\u2019\\u201c\\u201d',
+      rsSpaceRange = ' \\t\\x0b\\f\\xa0\\ufeff\\n\\r\\u2028\\u2029\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000',
+      rsUpperRange = 'A-Z\\xc0-\\xd6\\xd8-\\xde',
+      rsVarRange = '\\ufe0e\\ufe0f',
+      rsBreakRange = rsMathOpRange + rsNonCharRange + rsQuoteRange + rsSpaceRange;
+
+  /** Used to compose unicode capture groups. */
+  var rsAstral = '[' + rsAstralRange + ']',
+      rsBreak = '[' + rsBreakRange + ']',
       rsCombo = '[' + rsComboRange + ']',
       rsDigits = '\\d+',
-      rsDingbat = '[\\u2700-\\u27bf]',
-      rsLowers = '[a-z\\xdf-\\xf6\\xf8-\\xff]+',
+      rsDingbat = '[' + rsDingbatRange + ']',
+      rsLower = '[' + rsLowerRange + ']',
+      rsMisc = '[^' + rsAstralRange + rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange + ']',
       rsModifier = '(?:\\ud83c[\\udffb-\\udfff])',
       rsNonAstral = '[^' + rsAstralRange + ']',
       rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
+      rsSpace = '[' + rsSpaceRange + ']',
       rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
-      rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?' , rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')',
-      rsUpper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
-      rsVS = '\\ufe0e\\ufe0f',
-      rsZWJ = '\\u200d',
+      rsUpper = '[' + rsUpperRange + ']',
+      rsZWJ = '\\u200d';
+
+  /** Used to compose unicode regexes. */
+  var rsLowerMisc = '(?:' + rsLower + '|' + rsMisc + ')',
+      rsUpperMisc = '(?:' + rsUpper + '|' + rsMisc + ')',
       reOptMod = rsModifier + '?',
-      rsOptVS = '[' + rsVS + ']?',
-      rsJoiner = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVS + reOptMod + ')*',
-      rsSeq = rsOptVS + reOptMod + rsJoiner;
+      rsOptVar = '[' + rsVarRange + ']?',
+      rsJoiner = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
+      rsSeq = rsOptVar + reOptMod + rsJoiner,
+      rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
+      rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
 
   /** Used to match [zero-width joiners and code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reAdvSymbol = RegExp('[' + rsZWJ + rsVS + rsAstralRange + rsComboRange + ']');
+  var reAdvSymbol = RegExp('[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']');
 
   /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
   var reComboMark = RegExp(rsCombo, 'g');
@@ -175,11 +193,11 @@
 
   /** Used to match words to create compound words. */
   var reWord = RegExp([
-    rsUpper + '+(?=' + rsUpper + rsLowers + ')',
-    rsUpper + '?' + rsLowers,
-    rsUpper + '+',
-    '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
-    rsDigits
+    rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
+    rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
+    rsUpper + '?' + rsLowerMisc + '+',
+    rsDigits + '(?:' + rsLowerMisc + '+)?',
+    rsEmoji
   ].join('|'), 'g');
 
   /** Used to assign default `context` object properties. */

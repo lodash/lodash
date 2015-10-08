@@ -1832,7 +1832,7 @@
         return func(result);
       }, 'enable 24h format');
 
-      assert.strictEqual(actual, 'enable24HFormat');
+      assert.strictEqual(actual, 'enable24hFormat');
     });
   }());
 
@@ -1844,7 +1844,7 @@
     QUnit.test('should work with numbers', function(assert) {
       assert.expect(4);
 
-      assert.strictEqual(_.camelCase('enable 24h format'), 'enable24HFormat');
+      assert.strictEqual(_.camelCase('enable 24h format'), 'enable24hFormat');
       assert.strictEqual(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
       assert.strictEqual(_.camelCase('walk 500 miles'), 'walk500Miles');
       assert.strictEqual(_.camelCase('xhr2 request'), 'xhr2Request');
@@ -19197,7 +19197,7 @@
       });
 
       var expected = _.map(values, function(value) {
-        return [1, [value], ['o']];
+        return [1, [value], [value]];
       });
 
       var actual = _.map(values, function(value) {
@@ -19770,7 +19770,7 @@
       assert.expect(6);
 
       assert.deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
-      assert.deepEqual(_.words('enable 24h format'), ['enable', '24', 'h', 'format']);
+      assert.deepEqual(_.words('enable 24h format'), ['enable', '24h', 'format']);
       assert.deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
       assert.deepEqual(_.words('walk500Miles'), ['walk', '500', 'Miles']);

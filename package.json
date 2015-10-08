@@ -4,14 +4,20 @@
   "main": "lodash.js",
   "private": true,
   "devDependencies": {
+    "chalk": "^1.0.0",
+    "coveralls": "^2.0.0",
     "curl-amd": "0.8.12",
     "dojo": "~1.10.0",
+    "ecstatic": "0.8.0",
+    "istanbul": "0.3.17",
     "jquery": "~1.11.0",
     "jscs": "^2.1.1",
     "platform": "~1.3.0",
     "qunit-extras": "~1.4.0",
     "qunitjs": "~1.19.0",
-    "requirejs": "~2.1.0"
+    "request": "^2.0.0",
+    "requirejs": "~2.1.0",
+    "sauce-tunnel": "2.2.3"
   },
   "scripts": {
     "test": "node test/test",

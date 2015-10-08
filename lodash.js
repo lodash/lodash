@@ -11129,8 +11129,14 @@
      * @returns {string} Returns the lower cased string.
      * @example
      *
-     * _.lowerCase('FRED');
-     * // => 'fred'
+     * _.lowerCase('Foo Bar');
+     * // => 'foo bar'
+     *
+     * _.lowerCase('fooBar');
+     * // => 'foo bar'
+     *
+     * _.lowerCase('__foo_bar__');
+     * // => 'foo bar'
      */
     var lowerCase = createCompounder(function(result, word, index) {
       return result + (index ? ' ' : '') + word.toLowerCase();
@@ -11812,8 +11818,14 @@
      * @returns {string} Returns the upper cased string.
      * @example
      *
-     * _.upperCase('fred');
-     * // => 'FRED'
+     * _.upperCase('Foo Bar');
+     * // => 'FOO BAR'
+     *
+     * _.upperCase('fooBar');
+     * // => 'FOO BAR'
+     *
+     * _.upperCase('__foo_bar__');
+     * // => 'FOO BAR'
      */
     var upperCase = createCompounder(function(result, word, index) {
       return result + (index ? ' ' : '') + word.toUpperCase();

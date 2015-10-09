@@ -624,28 +624,19 @@
    * @returns {*} Returns the extremum value.
    */
   function baseExtremum(array, iteratee, comparator) {
-    var computed,
-        result,
-        index = -1,
+    var index = -1,
         length = array.length;
 
     while (++index < length) {
       var value = array[index],
           current = iteratee(value);
 
-      if (current === current && current != null) {
-        computed = current;
-        result = value;
-        break;
-      }
-    }
-    while (++index < length) {
-      var value = array[index],
-          current = iteratee(value);
-
-      if (current != null && comparator(current, computed)) {
-        computed = current;
-        result = value;
+      if (current != null && (computed === undefined
+            ? current === current
+            : comparator(current, computed)
+          )) {
+        var computed = current,
+            result = value;
       }
     }
     return result;

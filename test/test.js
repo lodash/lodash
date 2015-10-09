@@ -17652,7 +17652,7 @@
       }
     });
 
-    QUnit.test('should support the legacy `options` param signature', function(assert) {
+    QUnit.test('should support the legacy `options` argument signature', function(assert) {
       assert.expect(1);
 
       var compiled = _.template('<%= data.a %>', null, { 'variable': 'data' }),

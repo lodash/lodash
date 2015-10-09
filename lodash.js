@@ -181,23 +181,29 @@
       rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
       rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
 
-  /** Used to match [zero-width joiners and code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reAdvSymbol = RegExp('[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']');
-
   /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
   var reComboMark = RegExp(rsCombo, 'g');
 
   /** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */
-  var reStrSymbol = RegExp(rsSymbol + rsSeq, 'g');
+  var reComplexSymbol = RegExp(rsSymbol + rsSeq, 'g');
 
-  /** Used to match words to create compound words. */
-  var reWord = RegExp([
+  /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
+  var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']');
+
+  /** Used to match non-compound words composed of alphanumeric characters. */
+  var reBasicWord = /[^ ]+/g;
+
+  /** Used to match complex or compound words. */
+  var reComplexWord = RegExp([
     rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
     rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
     rsUpper + '?' + rsLowerMisc + '+',
     rsDigits + '(?:' + rsLowerMisc + '+)?',
     rsEmoji
   ].join('|'), 'g');
+
+  /** Used to detect strings that need a more robust regexp to match words. */
+  var reHasComplexWord = /[a-z][A-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
@@ -1196,11 +1202,11 @@
    * @returns {number} Returns the string size.
    */
   function stringSize(string) {
-    if (!(string && reAdvSymbol.test(string))) {
+    if (!(string && reHasComplexSymbol.test(string))) {
       return string.length;
     }
-    var result = reStrSymbol.lastIndex = 0;
-    while (reStrSymbol.test(string)) {
+    var result = reComplexSymbol.lastIndex = 0;
+    while (reComplexSymbol.test(string)) {
       result++;
     }
     return result;
@@ -1214,7 +1220,7 @@
    * @returns {Array} Returns the converted array.
    */
   function stringToArray(string) {
-    return string ? string.match(reStrSymbol) : [];
+    return string ? string.match(reComplexSymbol) : [];
   }
 
   /**
@@ -4030,7 +4036,7 @@
       chars = chars === undefined ? ' ' : (chars + '');
 
       var result = repeat(chars, nativeCeil(padLength / stringSize(chars)));
-      return reAdvSymbol.test(chars)
+      return reHasComplexSymbol.test(chars)
         ? stringToArray(result).slice(0, padLength).join('')
         : result.slice(0, padLength);
     }
@@ -10976,7 +10982,7 @@
       if (!string) {
         return string;
       }
-      if (reAdvSymbol.test(string)) {
+      if (reHasComplexSymbol.test(string)) {
         var strSymbols = stringToArray(string);
         return strSymbols[0].toUpperCase() + strSymbols.slice(1).join('');
       }
@@ -11785,7 +11791,7 @@
       string = toString(string);
 
       var strLength = string.length;
-      if (reAdvSymbol.test(string)) {
+      if (reHasComplexSymbol.test(string)) {
         var strSymbols = stringToArray(string);
         strLength = strSymbols.length;
       }
@@ -11897,8 +11903,12 @@
      */
     function words(string, pattern, guard) {
       string = toString(string);
-      pattern = guard ? undefined : guard;
-      return string.match(pattern || reWord) || [];
+      pattern = guard ? undefined : pattern;
+
+      if (pattern === undefined) {
+        pattern = reHasComplexWord.test(string) ? reComplexWord : reBasicWord;
+      }
+      return string.match(pattern) || [];
     }
 
     /*------------------------------------------------------------------------*/

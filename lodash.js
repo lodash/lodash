@@ -11120,7 +11120,7 @@
     });
 
     /**
-     * Converts `string` to lower case.
+     * Converts `string`, as space separated words, to lower case.
      *
      * @static
      * @memberOf _
@@ -11129,13 +11129,13 @@
      * @returns {string} Returns the lower cased string.
      * @example
      *
-     * _.lowerCase('Foo Bar');
+     * _.lowerCase('--Foo-Bar');
      * // => 'foo bar'
      *
      * _.lowerCase('fooBar');
      * // => 'foo bar'
      *
-     * _.lowerCase('__foo_bar__');
+     * _.lowerCase('__FOO_BAR__');
      * // => 'foo bar'
      */
     var lowerCase = createCompounder(function(result, word, index) {
@@ -11585,6 +11585,52 @@
     }
 
     /**
+     * Converts `string`, as a whole, to lower case.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the lower cased string.
+     * @example
+     *
+     * _.toLower('--Foo-Bar');
+     * // => '--foo-bar'
+     *
+     * _.toLower('fooBar');
+     * // => 'foobar'
+     *
+     * _.toLower('__FOO_BAR__');
+     * // => '__foo_bar__'
+     */
+    function toLower(value) {
+      return toString(value).toLowerCase();
+    }
+
+    /**
+     * Converts `string`, as a whole, to upper case.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the upper cased string.
+     * @example
+     *
+     * _.toUpper('--foo-bar');
+     * // => '--FOO-BAR'
+     *
+     * _.toUpper('fooBar');
+     * // => 'FOOBAR'
+     *
+     * _.toUpper('__foo_bar__');
+     * // => '__FOO_BAR__'
+     */
+    function toUpper(value) {
+      return toString(value).toUpperCase();
+    }
+
+    /**
      * Removes leading and trailing whitespace or specified characters from `string`.
      *
      * @static
@@ -11809,7 +11855,7 @@
     }
 
     /**
-     * Converts `string` to upper case.
+     * Converts `string`, as space separated words, to upper case.
      *
      * @static
      * @memberOf _
@@ -11818,7 +11864,7 @@
      * @returns {string} Returns the upper cased string.
      * @example
      *
-     * _.upperCase('Foo Bar');
+     * _.upperCase('--foo-bar');
      * // => 'FOO BAR'
      *
      * _.upperCase('fooBar');
@@ -12904,7 +12950,9 @@
     lodash.sumBy = sumBy;
     lodash.template = template;
     lodash.toInteger = toInteger;
+    lodash.toLower = toLower;
     lodash.toString = toString;
+    lodash.toUpper = toUpper;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
     lodash.trimRight = trimRight;

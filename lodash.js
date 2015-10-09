@@ -191,7 +191,7 @@
   var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']');
 
   /** Used to match non-compound words composed of alphanumeric characters. */
-  var reBasicWord = /[^ ]+/g;
+  var reBasicWord = /[a-zA-Z0-9]+/g;
 
   /** Used to match complex or compound words. */
   var reComplexWord = RegExp([
@@ -203,7 +203,7 @@
   ].join('|'), 'g');
 
   /** Used to detect strings that need a more robust regexp to match words. */
-  var reHasComplexWord = /[a-z][A-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
+  var reHasComplexWord = /[a-z][A-Z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;
 
   /** Used to assign default `context` object properties. */
   var contextProps = [

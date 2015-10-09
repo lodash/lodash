@@ -1842,8 +1842,9 @@
 
   (function() {
     QUnit.test('should work with numbers', function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
+      assert.strictEqual(_.camelCase('12 feet'), '12Feet');
       assert.strictEqual(_.camelCase('enable 24h format'), 'enable24hFormat');
       assert.strictEqual(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
       assert.strictEqual(_.camelCase('walk 500 miles'), 'walk500Miles');
@@ -19774,14 +19775,15 @@
     });
 
     QUnit.test('should work with compound words', function(assert) {
-      assert.expect(6);
+      assert.expect(7);
 
-      assert.deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
+      assert.deepEqual(_.words('12Feet'), ['12', 'Feet']);
       assert.deepEqual(_.words('enable 24h format'), ['enable', '24h', 'format']);
-      assert.deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
       assert.deepEqual(_.words('walk500Miles'), ['walk', '500', 'Miles']);
       assert.deepEqual(_.words('xhr2Request'), ['xhr', '2', 'Request']);
+      assert.deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
+      assert.deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
     });
 
     QUnit.test('should work with compound words containing diacritical marks', function(assert) {

@@ -19750,11 +19750,18 @@
     QUnit.test('should not treat mathematical operators as words', function(assert) {
       assert.expect(1);
 
-      var operators = ['\xd7', '\xf7'],
+      var operators = ['\xac', '\xb1', '\xd7', '\xf7'],
           expected = _.map(operators, _.constant([])),
           actual = _.map(operators, _.words);
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should support a `pattern` argument', function(assert) {
+      assert.expect(2);
+
+      assert.deepEqual(_.words('abcd', /ab|cd/g), ['ab', 'cd']);
+      assert.deepEqual(_.words('abcd', 'ab|cd'), ['ab']);
     });
 
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {

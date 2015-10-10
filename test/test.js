@@ -3720,28 +3720,29 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.difference');
+  QUnit.module('difference methods');
 
-  (function() {
-    var args = arguments;
+  _.each(['difference', 'differenceBy'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName];
 
-    QUnit.test('should return the difference of the given arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the difference of the given arrays', function(assert) {
       assert.expect(2);
 
-      var actual = _.difference([1, 2, 3, 4, 5], [5, 2, 10]);
+      var actual = func([1, 2, 3, 4, 5], [5, 2, 10]);
       assert.deepEqual(actual, [1, 3, 4]);
 
-      actual = _.difference([1, 2, 3, 4, 5], [5, 2, 10], [8, 4]);
+      actual = func([1, 2, 3, 4, 5], [5, 2, 10], [8, 4]);
       assert.deepEqual(actual, [1, 3]);
     });
 
-    QUnit.test('should match `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.difference([1, NaN, 3], [NaN, 5, NaN]), [1, 3]);
+      assert.deepEqual(func([1, NaN, 3], [NaN, 5, NaN]), [1, 3]);
     });
 
-    QUnit.test('should work with large arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays', function(assert) {
       assert.expect(1);
 
       var array1 = _.range(LARGE_ARRAY_SIZE + 1),
@@ -3753,35 +3754,35 @@
       array1.push(a, b, c);
       array2.push(b, c, a);
 
-      assert.deepEqual(_.difference(array1, array2), [LARGE_ARRAY_SIZE]);
+      assert.deepEqual(func(array1, array2), [LARGE_ARRAY_SIZE]);
     });
 
-    QUnit.test('should work with large arrays of objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of objects', function(assert) {
       assert.expect(1);
 
       var object1 = {},
           object2 = {},
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object1));
 
-      assert.deepEqual(_.difference([object1, object2], largeArray), [object2]);
+      assert.deepEqual(func([object1, object2], largeArray), [object2]);
     });
 
-    QUnit.test('should work with large arrays of `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of `NaN`', function(assert) {
       assert.expect(1);
 
       var largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(NaN));
-      assert.deepEqual(_.difference([1, NaN, 3], largeArray), [1, 3]);
+      assert.deepEqual(func([1, NaN, 3], largeArray), [1, 3]);
     });
 
-    QUnit.test('should ignore values that are not array-like', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ignore values that are not array-like', function(assert) {
       assert.expect(3);
 
       var array = [1, null, 3];
-      assert.deepEqual(_.difference(args, 3, { '0': 1 }), [1, 2, 3]);
-      assert.deepEqual(_.difference(null, array, 1), []);
-      assert.deepEqual(_.difference(array, args, null), [null]);
+      assert.deepEqual(func(args, 3, { '0': 1 }), [1, 2, 3]);
+      assert.deepEqual(func(null, array, 1), []);
+      assert.deepEqual(func(array, args, null), [null]);
     });
-  }(1, 2, 3));
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -6900,82 +6901,83 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.intersection');
+  QUnit.module('intersection methods');
 
-  (function() {
-    var args = arguments;
+  _.each(['intersection', 'intersectionBy'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName];
 
-    QUnit.test('should return the intersection of the given arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the intersection of the given arrays', function(assert) {
       assert.expect(1);
 
-      var actual = _.intersection([1, 3, 2], [5, 2, 1, 4], [2, 1]);
+      var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
       assert.deepEqual(actual, [1, 2]);
     });
 
-    QUnit.test('should return an array of unique values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {
       assert.expect(1);
 
-      var actual = _.intersection([1, 1, 3, 2, 2], [5, 2, 2, 1, 4], [2, 1, 1]);
+      var actual = func([1, 1, 3, 2, 2], [5, 2, 2, 1, 4], [2, 1, 1]);
       assert.deepEqual(actual, [1, 2]);
     });
 
-    QUnit.test('should match `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
       assert.expect(1);
 
-      var actual = _.intersection([1, NaN, 3], [NaN, 5, NaN]);
+      var actual = func([1, NaN, 3], [NaN, 5, NaN]);
       assert.deepEqual(actual, [NaN]);
     });
 
-    QUnit.test('should work with large arrays of objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of objects', function(assert) {
       assert.expect(2);
 
       var object = {},
           largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(object));
 
-      assert.deepEqual(_.intersection([object], largeArray), [object]);
-      assert.deepEqual(_.intersection(_.range(LARGE_ARRAY_SIZE), [1]), [1]);
+      assert.deepEqual(func([object], largeArray), [object]);
+      assert.deepEqual(func(_.range(LARGE_ARRAY_SIZE), [1]), [1]);
     });
 
-    QUnit.test('should work with large arrays of `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of `NaN`', function(assert) {
       assert.expect(1);
 
       var largeArray = _.times(LARGE_ARRAY_SIZE, _.constant(NaN));
-      assert.deepEqual(_.intersection([1, NaN, 3], largeArray), [NaN]);
+      assert.deepEqual(func([1, NaN, 3], largeArray), [NaN]);
     });
 
-    QUnit.test('should work with `arguments` objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
       assert.expect(2);
 
       var array = [0, 1, null, 3],
           expected = [1, 3];
 
-      assert.deepEqual(_.intersection(array, args), expected);
-      assert.deepEqual(_.intersection(args, array), expected);
+      assert.deepEqual(func(array, args), expected);
+      assert.deepEqual(func(args, array), expected);
     });
 
-    QUnit.test('should work with a single array', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a single array', function(assert) {
       assert.expect(1);
 
-      var actual = _.intersection([1, 1, 3, 2, 2]);
+      var actual = func([1, 1, 3, 2, 2]);
       assert.deepEqual(actual, [1, 3, 2]);
     });
 
-    QUnit.test('should treat values that are not arrays or `arguments` objects as empty', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat values that are not arrays or `arguments` objects as empty', function(assert) {
       assert.expect(3);
 
       var array = [0, 1, null, 3],
           values = [3, null, { '0': 1 }];
 
       _.each(values, function(value) {
-        assert.deepEqual(_.intersection(array, value), []);
+        assert.deepEqual(func(array, value), []);
       });
     });
 
-    QUnit.test('should return a wrapped value when chaining', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a wrapped value when chaining', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
-        var wrapped = _([1, 3, 2]).intersection([5, 2, 1, 4]);
+        var wrapped = _([1, 3, 2])[methodName]([5, 2, 1, 4]);
         assert.ok(wrapped instanceof _);
         assert.deepEqual(wrapped.value(), [1, 2]);
       }
@@ -6983,7 +6985,7 @@
         skipTest(assert, 2);
       }
     });
-  }(1, 2, 3));
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -19253,34 +19255,35 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.union');
+  QUnit.module('union methods');
 
-  (function() {
-    var args = arguments;
+  _.each(['union', 'unionBy'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName];
 
-    QUnit.test('should return the union of the given arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the union of the given arrays', function(assert) {
       assert.expect(1);
 
-      var actual = _.union([1, 3, 2], [5, 2, 1, 4], [2, 1]);
+      var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
       assert.deepEqual(actual, [1, 3, 2, 5, 4]);
     });
 
-    QUnit.test('should not flatten nested arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not flatten nested arrays', function(assert) {
       assert.expect(1);
 
-      var actual = _.union([1, 3, 2], [1, [5]], [2, [4]]);
+      var actual = func([1, 3, 2], [1, [5]], [2, [4]]);
       assert.deepEqual(actual, [1, 3, 2, [5], [4]]);
     });
 
-    QUnit.test('should ignore values that are not arrays or `arguments` objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', function(assert) {
       assert.expect(3);
 
       var array = [0];
-      assert.deepEqual(_.union(array, 3, null, { '0': 1 }), array);
-      assert.deepEqual(_.union(null, array, null, [2, 1]), [0, 2, 1]);
-      assert.deepEqual(_.union(array, null, args, null), [0, 1, 2, 3]);
+      assert.deepEqual(func(array, 3, { '0': 1 }, null), array);
+      assert.deepEqual(func(null, array, null, [2, 1]), [0, 2, 1]);
+      assert.deepEqual(func(array, null, args, null), [0, 1, 2, 3]);
     });
-  }(1, 2, 3));
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -19851,56 +19854,57 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.xor');
+  QUnit.module('xor methods');
 
-  (function() {
-    var args = arguments;
+  _.each(['xor', 'xorBy'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName];
 
-    QUnit.test('should return the symmetric difference of the given arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the symmetric difference of the given arrays', function(assert) {
       assert.expect(1);
 
-      var actual = _.xor([1, 2, 5], [2, 3, 5], [3, 4, 5]);
+      var actual = func([1, 2, 5], [2, 3, 5], [3, 4, 5]);
       assert.deepEqual(actual, [1, 4, 5]);
     });
 
-    QUnit.test('should return an array of unique values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {
       assert.expect(2);
 
-      var actual = _.xor([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
+      var actual = func([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
       assert.deepEqual(actual, [1, 4, 5]);
 
-      actual = _.xor([1, 1]);
+      actual = func([1, 1]);
       assert.deepEqual(actual, [1]);
     });
 
-    QUnit.test('should return a new array when a single array is provided', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a new array when a single array is provided', function(assert) {
       assert.expect(1);
 
       var array = [1];
-      assert.notStrictEqual(_.xor(array), array);
+      assert.notStrictEqual(func(array), array);
     });
 
-    QUnit.test('should ignore individual secondary arguments', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ignore individual secondary arguments', function(assert) {
       assert.expect(1);
 
       var array = [0];
-      assert.deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
+      assert.deepEqual(func(array, 3, null, { '0': 1 }), array);
     });
 
-    QUnit.test('should ignore values that are not arrays or `arguments` objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', function(assert) {
       assert.expect(3);
 
       var array = [1, 2];
-      assert.deepEqual(_.xor(array, 3, null, { '0': 1 }), array);
-      assert.deepEqual(_.xor(null, array, null, [2, 3]), [1, 3]);
-      assert.deepEqual(_.xor(array, null, args, null), [3]);
+      assert.deepEqual(func(array, 3, { '0': 1 }, null), array);
+      assert.deepEqual(func(null, array, null, [2, 3]), [1, 3]);
+      assert.deepEqual(func(array, null, args, null), [3]);
     });
 
-    QUnit.test('should return a wrapped value when chaining', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a wrapped value when chaining', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
-        var wrapped = _([1, 2, 3]).xor([5, 2, 1, 4]);
+        var wrapped = _([1, 2, 3])[methodName]([5, 2, 1, 4]);
         assert.ok(wrapped instanceof _);
         assert.deepEqual(wrapped.value(), [3, 5, 4]);
       }
@@ -19909,12 +19913,12 @@
       }
     });
 
-    QUnit.test('should work when in a lazy chain sequence before `first` or `last`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work when in a lazy chain sequence before `first` or `last`', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
         var array = _.range(LARGE_ARRAY_SIZE + 1),
-            wrapped = _(array).slice(1).xor([LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE + 1]);
+            wrapped = _(array).slice(1)[methodName]([LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE + 1]);
 
         var actual = _.map(['first', 'last'], function(methodName) {
           return wrapped[methodName]();
@@ -19926,7 +19930,7 @@
         skipTest(assert);
       }
     });
-  }(1, 2, 3));
+  });
 
   /*--------------------------------------------------------------------------*/
 

@@ -5025,8 +5025,12 @@
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
     var differenceBy = restParam(function(array, values) {
+      var iteratee = last(values);
+      if (isArrayLikeObject(iteratee)) {
+        iteratee = undefined;
+      }
       return isArrayLikeObject(array)
-        ? baseDifferenceBy(array, baseFlatten(values, false, true), getIteratee(last(values)))
+        ? baseDifferenceBy(array, baseFlatten(values, false, true), getIteratee(iteratee))
         : [];
     });
 
@@ -5448,9 +5452,14 @@
      * // => [{ 'x': 1 }]
      */
     var intersectionBy = restParam(function(arrays) {
-      var mapped = arrayMap(arrays, toArrayLikeObject);
+      var iteratee = last(arrays),
+          mapped = arrayMap(arrays, toArrayLikeObject);
+
+      if (iteratee === last(mapped)) {
+        iteratee = undefined;
+      }
       return (mapped.length && mapped[0] === arrays[0])
-        ? baseIntersectionBy(mapped, getIteratee(last(arrays)))
+        ? baseIntersectionBy(mapped, getIteratee(iteratee))
         : [];
     });
 
@@ -6088,7 +6097,11 @@
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
     var unionBy = restParam(function(arrays) {
-      return baseUniqBy(baseFlatten(arrays, false, true), getIteratee(last(arrays)));
+      var iteratee = last(arrays);
+      if (isArrayLikeObject(iteratee)) {
+        iteratee = undefined;
+      }
+      return baseUniqBy(baseFlatten(arrays, false, true), getIteratee(iteratee));
     });
 
     /**
@@ -6267,7 +6280,11 @@
      * // => [{ 'x': 2 }]
      */
     var xorBy = restParam(function(arrays) {
-      return baseXorBy(arrayFilter(arrays, isArrayLikeObject), getIteratee(last(arrays)));
+      var iteratee = last(arrays);
+      if (isArrayLikeObject(iteratee)) {
+        iteratee = undefined;
+      }
+      return baseXorBy(arrayFilter(arrays, isArrayLikeObject), getIteratee(iteratee));
     });
 
     /**

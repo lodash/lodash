@@ -3562,7 +3562,20 @@
       source.bar.b = source.foo.b;
 
       var actual = _.defaultsDeep(object, source);
-      assert.ok(actual.bar.b === source.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+      assert.ok(actual.bar.b === actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+    });
+
+    QUnit.test('should not modify sources', function(assert) {
+      assert.expect(3);
+
+      var object = {},
+          source1 = { 'a': 1, 'b': { 'c': 2 } },
+          source2 = { 'b': { 'c': 3, 'd': 3 } },
+          actual = _.defaultsDeep(object, source1, source2);
+
+      assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 2, 'd': 3 } });
+      assert.deepEqual(source1, { 'a': 1, 'b': { 'c': 2 } });
+      assert.deepEqual(source2, { 'b': { 'c': 3, 'd': 3 } });
     });
   }());
 

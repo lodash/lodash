@@ -4786,10 +4786,10 @@
      */
     function mergeDefaults(objValue, srcValue, key, object, source, stack) {
       if (isObject(objValue)) {
-        stack.set(objValue, objValue);
+        stack.set(srcValue, objValue);
         baseMerge(objValue, srcValue, mergeDefaults, stack);
       }
-      return objValue === undefined ? srcValue : objValue;
+      return objValue === undefined ? baseClone(srcValue) : objValue;
     }
 
     /**

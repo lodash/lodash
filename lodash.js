@@ -2557,7 +2557,7 @@
 
       while (othIndex--) {
         var array = arrays[othIndex];
-        if (iteratee) {
+        if (othIndex && iteratee) {
           array = arrayMap(array, function(value) { return iteratee(value); });
         }
         caches[othIndex] = (iteratee || array.length >= 120) ? new SetCache(othIndex && array) : null;

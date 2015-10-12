@@ -1357,7 +1357,8 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random;
+        nativeRandom = Math.random,
+        nativeReverse = arrayProto.reverse;
 
     /* Built-in method references that are verified to be native. */
     var Map = getNative(context, 'Map'),
@@ -1402,58 +1403,57 @@
      * In addition to lodash methods, wrappers have `Array` and `String` methods.
      *
      * The wrapper `Array` methods are:
-     * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`,
-     * `splice`, and `unshift`
+     * `concat`, `join`, `pop`, `push`, `shift`, `sort`, `splice`, and `unshift`
      *
      * The wrapper `String` methods are:
      * `replace` and `split`
      *
      * The wrapper methods that support shortcut fusion are:
-     * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
-     * `find`, `findLast`, `first`, `initial`, `last`, `map`, `reject`, `rest`,
-     * `reverse`, `slice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
-     * and `toArray`
+     * `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`, `findLast`,
+     * `first`, `initial`, `last`, `map`, `reject`, `rest`, `reverse`, `slice`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `assignWith`, `at`, `before`, `bind`, `bindAll`,
      * `bindKey`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
      * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`,
-     * `defer`, `delay`, `difference`, `drop`, `dropRight`, `dropRightWhile`,
-     * `dropWhile`, `extend`, `extendWith`, `fill`, `filter`, `flatten`,
-     * `flattenDeep`, `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`,
-     * `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`,
-     * `initial`, `intersection`, `invert`, `invoke`, `iteratee`, `keyBy`, `keys`,
-     * `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,
-     * `memoize`, `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`,
-     * `modArgsSet', 'negate`, `omit`, `omitBy`, `once`, `pairs`, `partial`,
-     * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
-     * `propertyOf`, `pull`, `pullAll`, `pullAt`, `push`, `range`, `rearg`,
-     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `sampleSize`, `set`,
-     * `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`,
-     * `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-     * `throttle`, `thru`, `times`, `toArray`, `toPath`, `toPlainObject`,
-     * `transform`, `union`, `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`,
-     * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `zip`,
-     * `zipObject`, and `zipWith`
+     * `defer`, `delay`, `difference`, `differenceBy`, `drop`, `dropRight`,
+     * `dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,
+     * `flatten`, `flattenDeep`, `flip`, `flow`, `flowRight`, `forEach`,
+     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
+     * `groupBy`, `initial`, `intersection`, `intersectionBY`, `invert`, `invoke`,
+     * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
+     * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith` `method`,
+     * `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `omit`, `omitBy`,
+     * `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pickBy`,
+     * `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`,
+     * `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`, `reverse`,
+     * `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
+     * `sortByOrder`, `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`,
+     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPath`,
+     * `toPlainObject`, `transform`, `union`, `unionBy`, `uniq`, `uniqBy`, `unset`,
+     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`, `wrap`,
+     * `xor`, `xorBy`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
      * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
      * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
-     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
-     * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
-     * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`,
-     * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
-     * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
-     * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
-     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`, `pad`,
-     * `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
-     * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
-     * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
-     * `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`, `sumBy`, `template`,
-     * `toInteger`, `toString`, `trim`, `trimLeft`, `trimRight`, `trunc`,
-     * `unescape`, `uniqueId`, `value`, and `words`
+     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`, `has`,
+     * `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+     * `isArray`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`,
+     * `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`,
+     * `isFunction`, `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`,
+     * `isNil`, `isNull`, `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`,
+     * `isRegExp`, `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`,
+     * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lt`, `lte`, `max`,
+     * `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
+     * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
+     * `startsWith`, `sum`, `sumBy`, `template`, `toLower`, `toInteger`, `toString`,
+     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
+     * `upperCase`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -2557,7 +2557,7 @@
 
       while (othIndex--) {
         var array = arrays[othIndex];
-        if (iteratee) {
+        if (othIndex && iteratee) {
           array = arrayMap(array, function(value) { return iteratee(value); });
         }
         caches[othIndex] = (iteratee || array.length >= 120) ? new SetCache(othIndex && array) : null;
@@ -5021,8 +5021,8 @@
      * // => [3.1, 1.3]
      *
      * // using the `_.property` callback shorthand
-     * _.differenceBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
-     * // => [{ 'x': 1 }, { 'x': 2 }]
+     * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
+     * // => [{ 'x': 2 }]
      */
     var differenceBy = restParam(function(array, values) {
       var iteratee = last(values);
@@ -5457,6 +5457,8 @@
 
       if (iteratee === last(mapped)) {
         iteratee = undefined;
+      } else {
+        mapped.pop();
       }
       return (mapped.length && mapped[0] === arrays[0])
         ? baseIntersectionBy(mapped, getIteratee(iteratee))
@@ -5692,6 +5694,29 @@
      */
     function rest(array) {
       return drop(array, 1);
+    }
+
+    /**
+     * Reverses `array` so that the first element becomes the last, the second
+     * element becomes the second to last, and so on.
+     *
+     * **Note:** This method mutates `array`.
+     *
+     * @memberOf _
+     * @category Array
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2, 3];
+     *
+     * _.reverse(array);
+     * // => [3, 2, 1]
+     *
+     * console.log(array);
+     * // => [3, 2, 1]
+     */
+    function reverse(array) {
+      return array ? nativeReverse.call(array) : array;
     }
 
     /**
@@ -6364,7 +6389,7 @@
       var length = arrays.length,
           iteratee = length > 1 ? arrays[length - 1] : undefined;
 
-      iteratee = typeof iteratee == 'function' ? (arrays.length--, iteratee) : undefined;
+      iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined;
       return unzipWith(arrays, iteratee);
     });
 
@@ -6636,8 +6661,8 @@
     }
 
     /**
-     * Reverses the wrapped array so the first element becomes the last, the
-     * second element becomes the second to last, and so on.
+     * Reverses the wrapped array so that the first element becomes the last,
+     * the second element becomes the second to last, and so on.
      *
      * **Note:** This method mutates the wrapped array.
      *
@@ -6657,20 +6682,16 @@
      */
     function wrapperReverse() {
       var value = this.__wrapped__;
-
-      var interceptor = function(value) {
-        return value.reverse();
-      };
       if (value instanceof LazyWrapper) {
         var wrapped = value;
         if (this.__actions__.length) {
           wrapped = new LazyWrapper(this);
         }
         wrapped = wrapped.reverse();
-        wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+        wrapped.__actions__.push({ 'func': thru, 'args': [reverse], 'thisArg': undefined });
         return new LodashWrapper(wrapped, this.__chain__);
       }
-      return this.thru(interceptor);
+      return this.thru(reverse);
     }
 
     /**
@@ -12812,6 +12833,7 @@
     lodash.remove = remove;
     lodash.rest = rest;
     lodash.restParam = restParam;
+    lodash.reverse = reverse;
     lodash.sampleSize = sampleSize;
     lodash.set = set;
     lodash.setWith = setWith;

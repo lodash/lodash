@@ -667,7 +667,7 @@
     });
 
     QUnit.test('should avoid overwritten native methods', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -702,7 +702,16 @@
         assert.deepEqual(actual, [[otherObject], [object], [object]], label);
 
         try {
-          var map = new (Map || Object);
+          var map = new lodashBizarro.memoize.Cache;
+          actual = map.set('a', 1).get('a');
+        } catch (e) {
+          actual = null;
+        }
+        label = message('_.memoize.Cache', 'Map');
+        assert.deepEqual(actual, 1, label);
+
+        try {
+          map = new (Map || Object);
           if (Symbol && Symbol.iterator) {
             map[Symbol.iterator] = null;
           }
@@ -714,7 +723,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipTest(assert, 3);
+        skipTest(assert, 4);
       }
     });
   }());
@@ -2527,7 +2536,7 @@
   QUnit.module('lodash.conj');
 
   (function() {
-    QUnit.test('should return `true` if all predicates return truthy', function(assert) {
+    QUnit.test('should create a function that returns `true` if all predicates return truthy', function(assert) {
       assert.expect(1);
 
       var conjed = _.conj(_.constant(true), _.constant(1), _.constant('a'));
@@ -3799,10 +3808,38 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.differenceBy');
+
+  (function() {
+    QUnit.test('should accept an `iteratee` argument', function(assert) {
+      assert.expect(2);
+
+      var actual = _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
+      assert.deepEqual(actual, [3.1, 1.3]);
+
+      actual = _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
+      assert.deepEqual(actual, [{ 'x': 2 }]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [4.4]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.disj');
 
   (function() {
-    QUnit.test('should return `true` if any predicates return truthy', function(assert) {
+    QUnit.test('should create a function that returns `true` if any predicates return truthy', function(assert) {
       assert.expect(2);
 
       var disjed = _.disj(_.constant(false), _.constant(1), _.constant(''));
@@ -6982,12 +7019,10 @@
     QUnit.test('`_.' + methodName + '` should treat values that are not arrays or `arguments` objects as empty', function(assert) {
       assert.expect(3);
 
-      var array = [0, 1, null, 3],
-          values = [3, null, { '0': 1 }];
-
-      _.each(values, function(value) {
-        assert.deepEqual(func(array, value), []);
-      });
+      var array = [0, 1, null, 3];
+      assert.deepEqual(func(array, 3, { '0': 1 }, null), []);
+      assert.deepEqual(func(null, array, null, [2, 3]), []);
+      assert.deepEqual(func(array, null, args, null), []);
     });
 
     QUnit.test('`_.' + methodName + '` should return a wrapped value when chaining', function(assert) {
@@ -7003,6 +7038,34 @@
       }
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.intersectionBy');
+
+  (function() {
+    QUnit.test('should accept an `iteratee` argument', function(assert) {
+      assert.expect(2);
+
+      var actual = _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+      assert.deepEqual(actual, [2.1]);
+
+      actual = _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+      assert.deepEqual(actual, [{ 'x': 1 }]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      _.intersectionBy([2.1, 1.2], [4.3, 2.4], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [4.3]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -11081,6 +11144,63 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.juxt');
+
+  (function() {
+    QUnit.test('should create a function that invokes `iteratees`', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(Math.max, Math.min);
+      assert.deepEqual(juxted(1, 2, 3, 4), [4, 1]);
+    });
+
+    QUnit.test('should use `_.identity` when a predicate is nullish', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(undefined, null);
+      assert.deepEqual(juxted('a', 'b', 'c'), ['a', 'a']);
+    });
+
+    QUnit.test('should work with a "_.property" style predicate', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2 },
+          juxted = _.juxt('b', 'a');
+
+      assert.deepEqual(juxted(object), [2, 1]);
+    });
+
+    QUnit.test('should work with a "_.matches" style predicate', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2 },
+          juxted = _.juxt({ 'c': 3 }, { 'a': 1 });
+
+      assert.deepEqual(juxted(object), [false, true]);
+    });
+
+    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(function() {
+        return slice.call(arguments);
+      });
+
+      assert.deepEqual(juxted('a', 'b', 'c'), [['a', 'b', 'c']]);
+    });
+
+    QUnit.test('should not set a `this` binding', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(function() { return this.b; }, function() { return this.a; }),
+          object = { 'juxted': juxted, 'a': 1, 'b': 2 };
+
+      assert.deepEqual(object.juxted(), [2, 1]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.map');
 
   (function() {
@@ -14787,6 +14907,37 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.pullAllBy');
+
+  (function() {
+    QUnit.test('should accept an `iteratee` argument', function(assert) {
+      assert.expect(1);
+
+      var array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+
+      var actual = _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], function(object) {
+        return object.x;
+      });
+
+      assert.deepEqual(actual, [{ 'x': 2 }]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args,
+          array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+
+      _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [{ 'x': 1 }]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.pullAt');
 
   (function() {
@@ -16016,6 +16167,22 @@
       });
 
       assert.deepEqual(rp(1, 2, 3, 4, 5), [1, 2, 3, [4, 5]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.reverse');
+
+  (function() {
+    QUnit.test('should reverse `array`', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3],
+          actual = _.reverse(array);
+
+      assert.deepEqual(array, [3, 2, 1]);
+      assert.strictEqual(actual, array);
     });
   }());
 
@@ -19308,6 +19475,34 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.unionBy');
+
+  (function() {
+    QUnit.test('should accept an `iteratee` argument', function(assert) {
+      assert.expect(2);
+
+      var actual = _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+      assert.deepEqual(actual, [2.1, 1.2, 4.3]);
+
+      actual = _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+      assert.deepEqual(actual, [{ 'x': 1 }, { 'x': 2 }]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      _.unionBy([2.1, 1.2], [4.3, 2.4], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [2.1]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.uniq');
 
   (function() {
@@ -19952,6 +20147,34 @@
       }
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.xorBy');
+
+  (function() {
+    QUnit.test('should accept an `iteratee` argument', function(assert) {
+      assert.expect(2);
+
+      var actual = _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+      assert.deepEqual(actual, [1.2, 4.3]);
+
+      actual = _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
+      assert.deepEqual(actual, [{ 'x': 2 }]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      _.xorBy([2.1, 1.2], [4.3, 2.4], function() {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [4.3]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -21272,7 +21495,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(255);
+      assert.expect(256);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

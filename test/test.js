@@ -2527,7 +2527,7 @@
   QUnit.module('lodash.conj');
 
   (function() {
-    QUnit.test('should return `true` if all predicates return truthy', function(assert) {
+    QUnit.test('should create a function that returns `true` if all predicates return truthy', function(assert) {
       assert.expect(1);
 
       var conjed = _.conj(_.constant(true), _.constant(1), _.constant('a'));
@@ -3802,7 +3802,7 @@
   QUnit.module('lodash.disj');
 
   (function() {
-    QUnit.test('should return `true` if any predicates return truthy', function(assert) {
+    QUnit.test('should create a function that returns `true` if any predicates return truthy', function(assert) {
       assert.expect(2);
 
       var disjed = _.disj(_.constant(false), _.constant(1), _.constant(''));
@@ -11074,6 +11074,63 @@
       assert.strictEqual(func([0], -0), 0);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.juxt');
+
+  (function() {
+    QUnit.test('should create a function that invokes `iteratees`', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(Math.max, Math.min);
+      assert.deepEqual(juxted(1, 2, 3, 4), [4, 1]);
+    });
+
+    QUnit.test('should use `_.identity` when a predicate is nullish', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(undefined, null);
+      assert.deepEqual(juxted('a', 'b', 'c'), ['a', 'a']);
+    });
+
+    QUnit.test('should work with a "_.property" style predicate', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2 },
+          juxted = _.juxt('b', 'a');
+
+      assert.deepEqual(juxted(object), [2, 1]);
+    });
+
+    QUnit.test('should work with a "_.matches" style predicate', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2 },
+          juxted = _.juxt({ 'c': 3 }, { 'a': 1 });
+
+      assert.deepEqual(juxted(object), [false, true]);
+    });
+
+    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(function() {
+        return slice.call(arguments);
+      });
+
+      assert.deepEqual(juxted('a', 'b', 'c'), [['a', 'b', 'c']]);
+    });
+
+    QUnit.test('should not set a `this` binding', function(assert) {
+      assert.expect(1);
+
+      var juxted = _.juxt(function() { return this.b; }, function() { return this.a; }),
+          object = { 'juxted': juxted, 'a': 1, 'b': 2 };
+
+      assert.deepEqual(object.juxted(), [2, 1]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

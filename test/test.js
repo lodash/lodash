@@ -4453,9 +4453,13 @@
     });
 
     QUnit.test('should return `false` as soon as `predicate` returns falsey', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.every([true, null, true], _.identity), false);
+      assert.expect(2);
+      var count = 0;
+      assert.strictEqual(_.every([true, null, true], function (value) {
+        count++;
+        return value;
+      }), false);
+      assert.strictEqual(count, 2);
     });
 
     QUnit.test('should work with collections of `undefined` values (test in IE < 9)', function(assert) {
@@ -16936,9 +16940,13 @@
     });
 
     QUnit.test('should return `true` as soon as `predicate` returns truthy', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.some([null, true, null], _.identity), true);
+      assert.expect(2);
+      var count = 0;
+      assert.strictEqual(_.some([null, true, null], function (value) {
+        count++;
+        return value;
+      }), true);
+      assert.strictEqual(count, 2);
     });
 
     QUnit.test('should use `_.identity` when `predicate` is nullish', function(assert) {

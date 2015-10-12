@@ -667,7 +667,7 @@
     });
 
     QUnit.test('should avoid overwritten native methods', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -702,7 +702,16 @@
         assert.deepEqual(actual, [[otherObject], [object], [object]], label);
 
         try {
-          var map = new (Map || Object);
+          var map = new lodashBizarro.memoize.Cache;
+          actual = map.set('a', 1).get('a');
+        } catch (e) {
+          actual = null;
+        }
+        label = message('_.memoize.Cache', 'Map');
+        assert.deepEqual(actual, 1, label);
+
+        try {
+          map = new (Map || Object);
           if (Symbol && Symbol.iterator) {
             map[Symbol.iterator] = null;
           }
@@ -714,7 +723,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipTest(assert, 3);
+        skipTest(assert, 4);
       }
     });
   }());

@@ -6718,7 +6718,8 @@
 
     /**
      * Checks if `predicate` returns truthy for **all** elements of `collection`.
-     * The predicate is invoked with three arguments: (value, index|key, collection).
+     * Iteration is stopped once `predicate` returns falsy. The predicate is 
+     * invoked with three arguments: (value, index|key, collection).
      *
      * @static
      * @memberOf _

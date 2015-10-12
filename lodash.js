@@ -1409,51 +1409,51 @@
      * `replace` and `split`
      *
      * The wrapper methods that support shortcut fusion are:
-     * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
-     * `find`, `findLast`, `first`, `initial`, `last`, `map`, `reject`, `rest`,
-     * `reverse`, `slice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
-     * and `toArray`
+     * `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`, `findLast`,
+     * `first`, `initial`, `last`, `map`, `reject`, `rest`, `reverse`, `slice`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `assignWith`, `at`, `before`, `bind`, `bindAll`,
      * `bindKey`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
      * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`,
-     * `defer`, `delay`, `difference`, `drop`, `dropRight`, `dropRightWhile`,
-     * `dropWhile`, `extend`, `extendWith`, `fill`, `filter`, `flatten`,
-     * `flattenDeep`, `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`,
-     * `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`,
-     * `initial`, `intersection`, `invert`, `invoke`, `iteratee`, `keyBy`, `keys`,
-     * `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,
-     * `memoize`, `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`,
-     * `modArgsSet', 'negate`, `omit`, `omitBy`, `once`, `pairs`, `partial`,
-     * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
-     * `propertyOf`, `pull`, `pullAll`, `pullAt`, `push`, `range`, `rearg`,
-     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `sampleSize`, `set`,
-     * `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`,
-     * `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
-     * `throttle`, `thru`, `times`, `toArray`, `toPath`, `toPlainObject`,
-     * `transform`, `union`, `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`,
-     * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `zip`,
-     * `zipObject`, and `zipWith`
+     * `defer`, `delay`, `difference`, `differenceBy`, `drop`, `dropRight`,
+     * `dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,
+     * `flatten`, `flattenDeep`, `flip`, `flow`, `flowRight`, `forEach`,
+     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
+     * `groupBy`, `initial`, `intersection`, `intersectionBy`, `invert`, `invoke`,
+     * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
+     * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith` `method`,
+     * `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `omit`, `omitBy`,
+     * `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pickBy`,
+     * `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`,
+     * `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`, `reverse`,
+     * `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
+     * `sortByOrder`, `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`,
+     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPath`,
+     * `toPlainObject`, `transform`, `union`, `unionBy`, `uniq`, `uniqBy`, `unset`,
+     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`, `wrap`,
+     * `xor`, `xorBy`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
      * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
      * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
-     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`,
-     * `has`, `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
-     * `isArray`, `isArrayLike`, `isBoolean`, `isDate`, `isElement`, `isEmpty`,
-     * `isEqual`, `isEqualWith`, `isError`, `isFinite` `isFunction`, `isInteger`,
-     * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
-     * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
-     * `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`, `last`,
-     * `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`, `now`, `pad`,
-     * `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
-     * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
-     * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
-     * `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`, `sumBy`, `template`,
-     * `toInteger`, `toString`, `trim`, `trimLeft`, `trimRight`, `trunc`,
-     * `unescape`, `uniqueId`, `value`, and `words`
+     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`, `has`,
+     * `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
+     * `isArray`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`,
+     * `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`,
+     * `isFunction`, `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`,
+     * `isNil`, `isNull`, `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`,
+     * `isRegExp`, `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`,
+     * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lt`, `lte`, `max`,
+     * `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
+     * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
+     * `startsWith`, `sum`, `sumBy`, `template`, `toLower`, `toInteger`, `toString`,
+     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
+     * `upperCase`, `value`, and `words`
      *
      * @name _
      * @constructor

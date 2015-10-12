@@ -1357,7 +1357,8 @@
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
-        nativeRandom = Math.random;
+        nativeRandom = Math.random,
+        nativeReverse = arrayProto.reverse;
 
     /* Built-in method references that are verified to be native. */
     var Map = getNative(context, 'Map'),
@@ -1402,8 +1403,7 @@
      * In addition to lodash methods, wrappers have `Array` and `String` methods.
      *
      * The wrapper `Array` methods are:
-     * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`,
-     * `splice`, and `unshift`
+     * `concat`, `join`, `pop`, `push`, `shift`, `sort`, `splice`, and `unshift`
      *
      * The wrapper `String` methods are:
      * `replace` and `split`
@@ -5695,6 +5695,29 @@
     }
 
     /**
+     * Reverses `array` so that the first element becomes the last, the second
+     * element becomes the second to last, and so on.
+     *
+     * **Note:** This method mutates `array`.
+     *
+     * @memberOf _
+     * @category Array
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2, 3];
+     *
+     * _.reverse(array);
+     * // => [3, 2, 1]
+     *
+     * console.log(array);
+     * // => [3, 2, 1]
+     */
+    function reverse(array) {
+      return array ? nativeReverse.call(array) : array;
+    }
+
+    /**
      * Creates a slice of `array` from `start` up to, but not including, `end`.
      *
      * **Note:** This method is used instead of `Array#slice` to ensure dense
@@ -6636,8 +6659,8 @@
     }
 
     /**
-     * Reverses the wrapped array so the first element becomes the last, the
-     * second element becomes the second to last, and so on.
+     * Reverses the wrapped array so that the first element becomes the last,
+     * the second element becomes the second to last, and so on.
      *
      * **Note:** This method mutates the wrapped array.
      *
@@ -6657,20 +6680,16 @@
      */
     function wrapperReverse() {
       var value = this.__wrapped__;
-
-      var interceptor = function(value) {
-        return value.reverse();
-      };
       if (value instanceof LazyWrapper) {
         var wrapped = value;
         if (this.__actions__.length) {
           wrapped = new LazyWrapper(this);
         }
         wrapped = wrapped.reverse();
-        wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+        wrapped.__actions__.push({ 'func': thru, 'args': [reverse], 'thisArg': undefined });
         return new LodashWrapper(wrapped, this.__chain__);
       }
-      return this.thru(interceptor);
+      return this.thru(reverse);
     }
 
     /**
@@ -12811,6 +12830,7 @@
     lodash.remove = remove;
     lodash.rest = rest;
     lodash.restParam = restParam;
+    lodash.reverse = reverse;
     lodash.sampleSize = sampleSize;
     lodash.set = set;
     lodash.setWith = setWith;

@@ -4417,14 +4417,11 @@
 
     QUnit.test('should return `false` as soon as `predicate` returns falsey', function(assert) {
       assert.expect(2);
-
-      assert.strictEqual(_.every([true, null, true], _.identity), false);
-
       var count = 0;
-      _.every([true, null, true], function (value) {
+      assert.strictEqual(_.every([true, null, true], function (value) {
         count++;
         return value;
-      });
+      }), false);
       assert.strictEqual(count, 2);
     });
 
@@ -16777,14 +16774,11 @@
 
     QUnit.test('should return `true` as soon as `predicate` returns truthy', function(assert) {
       assert.expect(2);
-
-      assert.strictEqual(_.some([null, true, null], _.identity), true);
-
       var count = 0;
-      _.some([null, true, null], function (value) {
+      assert.strictEqual(_.some([null, true, null], function (value) {
         count++;
         return value;
-      });
+      }), true);
       assert.strictEqual(count, 2);
     });
 

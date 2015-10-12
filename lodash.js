@@ -5457,6 +5457,8 @@
 
       if (iteratee === last(mapped)) {
         iteratee = undefined;
+      } else {
+        mapped.pop();
       }
       return (mapped.length && mapped[0] === arrays[0])
         ? baseIntersectionBy(mapped, getIteratee(iteratee))

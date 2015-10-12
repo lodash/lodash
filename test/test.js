@@ -16074,6 +16074,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.reverse');
+
+  (function() {
+    QUnit.test('should reverse `array`', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3],
+          actual = _.reverse(array);
+
+      assert.deepEqual(array, [3, 2, 1]);
+      assert.strictEqual(actual, array);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('round methods');
 
   _.each(['ceil', 'floor', 'round'], function(methodName) {

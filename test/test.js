@@ -2544,10 +2544,15 @@
     });
 
     QUnit.test('should return `false` as soon as a predicate returns falsey', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var conjed = _.conj(_.constant(true), _.constant(null), _.constant(true));
+      var count = 0,
+          falsey = function() { count++; return false; },
+          truthy = function() { count++; return true; },
+          conjed = _.conj(truthy, falsey, truthy);
+
       assert.strictEqual(conjed(), false);
+      assert.strictEqual(count, 2);
     });
 
     QUnit.test('should use `_.identity` when a predicate is nullish', function(assert) {
@@ -3847,6 +3852,18 @@
 
       disjed = _.disj(_.constant(null), _.constant('x'), _.constant(0));
       assert.strictEqual(disjed(), true);
+    });
+
+    QUnit.test('should return `true` as soon as `predicate` returns truthy', function(assert) {
+      assert.expect(2);
+
+      var count = 0,
+          falsey = function() { count++; return false; },
+          truthy = function() { count++; return true; },
+          disjed = _.disj(falsey, truthy, falsey);
+
+      assert.strictEqual(disjed(), true);
+      assert.strictEqual(count, 2);
     });
 
     QUnit.test('should return `false` if all predicates return falsey', function(assert) {

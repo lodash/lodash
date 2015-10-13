@@ -1,4 +1,4 @@
-# lodash v3.10.1
+# lodash v4.0.0-pre
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) with packages for [Bower](http://bower.io/), [Component](http://component.github.io/), & [Volo](http://volojs.org/).
 

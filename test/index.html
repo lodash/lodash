@@ -5,7 +5,7 @@
     <title>lodash Test Suite</title>
     <link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
     <style>
-      #exports {
+      #exports, #module {
         display: none;
       }
     </style>
@@ -28,6 +28,7 @@
     <script src="./asset/test-ui.js"></script>
     <div id="qunit"></div>
     <div id="exports"></div>
+    <div id="module"></div>
     <script>
       var setProperty = (function() {
         var _defineProperty = Object.defineProperty;
@@ -153,9 +154,9 @@
 
         setProperty(window, 'WinRTError', undefined);
 
-        setProperty(window, 'exports', undefined);
+        setProperty(window, 'exports', document.getElementById('exports'));
         setProperty(window, 'global', undefined);
-        setProperty(window, 'module', undefined);
+        setProperty(window, 'module', document.getElementById('module'));
 
         delete funcProto._method;
         delete objectProto._propertyIsEnumerable;

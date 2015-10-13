@@ -6599,7 +6599,7 @@
     /**
      * Enables the wrapper to be iterable.
      *
-     * @name next
+     * @name Symbol.iterator
      * @memberOf _
      * @category Chain
      * @returns {Object} Returns the wrapper object.

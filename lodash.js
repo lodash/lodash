@@ -10875,10 +10875,10 @@
      * @static
      * @memberOf _
      * @category Number
-     * @param {number} n The number to check.
+     * @param {number} number The number to check.
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
-     * @returns {boolean} Returns `true` if `n` is in the range, else `false`.
+     * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
      * @example
      *
      * _.inRange(3, 2, 4);
@@ -10902,7 +10902,7 @@
      * _.inRange(-3, -2, -6);
      * // => true
      */
-    function inRange(value, start, end) {
+    function inRange(number, start, end) {
       start = +start || 0;
       if (end === undefined) {
         end = start;
@@ -10910,7 +10910,7 @@
       } else {
         end = +end || 0;
       }
-      return value >= nativeMin(start, end) && value < nativeMax(start, end);
+      return number >= nativeMin(start, end) && number < nativeMax(start, end);
     }
 
     /**
@@ -12498,12 +12498,12 @@
     }
 
     /**
-     * Calculates `n` rounded up to `precision`.
+     * Calculates `number` rounded up to `precision`.
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {number} n The number to round up.
+     * @param {number} number The number to round up.
      * @param {number} [precision=0] The precision to round up to.
      * @returns {number} Returns the rounded up number.
      * @example
@@ -12520,12 +12520,12 @@
     var ceil = createRound('ceil');
 
     /**
-     * Calculates `n` rounded down to `precision`.
+     * Calculates `number` rounded down to `precision`.
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {number} n The number to round down.
+     * @param {number} number The number to round down.
      * @param {number} [precision=0] The precision to round down to.
      * @returns {number} Returns the rounded down number.
      * @example
@@ -12650,12 +12650,12 @@
     }
 
     /**
-     * Calculates `n` rounded to `precision`.
+     * Calculates `number` rounded to `precision`.
      *
      * @static
      * @memberOf _
      * @category Math
-     * @param {number} n The number to round.
+     * @param {number} number The number to round.
      * @param {number} [precision=0] The precision to round to.
      * @returns {number} Returns the rounded number.
      * @example

@@ -1446,14 +1446,14 @@
      * `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
      * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
      * `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
-     * `last`, `lastIndexOf`, `lowerCase`, `lt`, `lte`, `max`, `min`, `noConflict`,
-     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
-     * `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
+     * `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`, `min`,
+     * `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`,
+     * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
      * `sumBy`, `template`, `toLower`, `toInteger`, `toString`, `toUpper`, `trim`,
      * `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `upperCase`,
-     * `value`, and `words`
+     * `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -3767,6 +3767,25 @@
         return fn.apply(thisArg, arguments);
       }
       return wrapper;
+    }
+
+    /**
+     * Creates a function like `_.lowerFirst`.
+     *
+     * @private
+     * @param {string} methodName The name of the `String` case method to use.
+     * @returns {Function} Returns the new function.
+     */
+    function createCaseFirst(methodName) {
+      return function(string) {
+        string = toString(string);
+
+        var strSymbols = reHasComplexSymbol.test(string) ? stringToArray(string) : undefined,
+            chr = strSymbols ? strSymbols[0] : string.charAt(0),
+            trailing = strSymbols ? strSymbols.slice(1).join('') : string.slice(1);
+
+        return chr[methodName]() + trailing;
+      };
     }
 
     /**
@@ -11001,7 +11020,8 @@
     });
 
     /**
-     * Capitalizes the first character of `string`.
+     * Converts the first character of `string` to upper case and the remaining
+     * to lower case.
      *
      * @static
      * @memberOf _
@@ -11010,19 +11030,11 @@
      * @returns {string} Returns the capitalized string.
      * @example
      *
-     * _.capitalize('fred');
+     * _.capitalize('FRED');
      * // => 'Fred'
      */
     function capitalize(string) {
-      string = toString(string);
-      if (!string) {
-        return string;
-      }
-      if (reHasComplexSymbol.test(string)) {
-        var strSymbols = stringToArray(string);
-        return strSymbols[0].toUpperCase() + strSymbols.slice(1).join('');
-      }
-      return string.charAt(0).toUpperCase() + string.slice(1);
+      return upperFirst(toString(string).toLowerCase());
     }
 
     /**
@@ -11079,7 +11091,7 @@
     }
 
     /**
-     * Converts the characters "&", "<", ">", '"', "'", and "\`", in `string` to
+     * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
      * their corresponding HTML entities.
      *
      * **Note:** No other characters are escaped. To escape additional characters
@@ -11183,6 +11195,42 @@
     var lowerCase = createCompounder(function(result, word, index) {
       return result + (index ? ' ' : '') + word.toLowerCase();
     });
+
+    /**
+     * Converts the first character of `string` to lower case.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the converted string.
+     * @example
+     *
+     * _.lowerFirst('Fred');
+     * // => 'fred'
+     *
+     * _.lowerFirst('FRED');
+     * // => 'fRED'
+     */
+    var lowerFirst = createCaseFirst('toLowerCase');
+
+    /**
+     * Converts the first character of `string` to upper case.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to convert.
+     * @returns {string} Returns the converted string.
+     * @example
+     *
+     * _.upperFirst('fred');
+     * // => 'Fred'
+     *
+     * _.upperFirst('FRED');
+     * // => 'FRED'
+     */
+    var upperFirst = createCaseFirst('toUpperCase');
 
     /**
      * Pads `string` on the left and right sides if it's shorter than `length`.
@@ -12961,6 +13009,7 @@
     lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
     lodash.lowerCase = lowerCase;
+    lodash.lowerFirst = lowerFirst;
     lodash.lt = lt;
     lodash.lte = lte;
     lodash.max = max;
@@ -13007,6 +13056,7 @@
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
     lodash.upperCase = upperCase;
+    lodash.upperFirst = upperFirst;
 
     // Add aliases.
     lodash.first = head;

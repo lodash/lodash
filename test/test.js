@@ -1757,8 +1757,7 @@
       assert.expect(1);
 
       var actual = _.map(strings, function(string) {
-        var expected = (caseName === 'start' && string === 'FOO BAR') ? string : converted;
-        return func(string) === expected;
+        return func(string) === converted;
       });
 
       assert.deepEqual(actual, _.map(strings, _.constant(true)));
@@ -1768,8 +1767,7 @@
       assert.expect(1);
 
       var actual = _.map(strings, function(string) {
-        var expected = (caseName === 'start' && string === 'FOO BAR') ? string : converted;
-        return func(func(string)) === expected;
+        return func(func(string)) === converted;
       });
 
       assert.deepEqual(actual, _.map(strings, _.constant(true)));
@@ -21272,6 +21270,7 @@
       'kebabCase',
       'last',
       'lowerCase',
+      'lowerFirst',
       'max',
       'maxBy',
       'min',
@@ -21303,7 +21302,8 @@
       'trimRight',
       'trunc',
       'unescape',
-      'upperCase'
+      'upperCase',
+      'upperFirst'
     ];
 
     _.each(funcs, function(methodName) {
@@ -21542,7 +21542,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(257);
+      assert.expect(259);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

@@ -1927,14 +1927,14 @@
       if (!isNpm) {
         var array = ['c', 'b', 'a'];
 
-        assert.ok(_.chain(array).first() instanceof _);
-        assert.ok(_(array).chain().first() instanceof _);
+        assert.ok(_.chain(array).head() instanceof _);
+        assert.ok(_(array).chain().head() instanceof _);
 
         assert.ok(_.chain(array).isArray() instanceof _);
         assert.ok(_(array).chain().isArray() instanceof _);
 
-        assert.ok(_.chain(array).sortBy().first() instanceof _);
-        assert.ok(_(array).chain().sortBy().first() instanceof _);
+        assert.ok(_.chain(array).sortBy().head() instanceof _);
+        assert.ok(_(array).chain().sortBy().head() instanceof _);
       }
       else {
         skipTest(assert, 6);
@@ -2450,14 +2450,14 @@
       assert.notStrictEqual(combined, _.identity);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with a curried function and `_.first`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a curried function and `_.head`', function(assert) {
       assert.expect(1);
 
       var curried = _.curry(_.identity);
 
       var combined = isFlow
-        ? func(_.first, curried)
-        : func(curried, _.first);
+        ? func(_.head, curried)
+        : func(curried, _.head);
 
       assert.strictEqual(combined([1]), 1);
     });
@@ -4949,91 +4949,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.first');
-
-  (function() {
-    var array = [1, 2, 3, 4];
-
-    QUnit.test('should return the first element', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.first(array), 1);
-    });
-
-    QUnit.test('should return `undefined` when querying empty arrays', function(assert) {
-      assert.expect(1);
-
-      var array = [];
-      array['-1'] = 1;
-
-      assert.strictEqual(_.first(array), undefined);
-    });
-
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(1);
-
-      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-          actual = _.map(array, _.first);
-
-      assert.deepEqual(actual, [1, 4, 7]);
-    });
-
-    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.strictEqual(_(array).first(), 1);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.ok(_(array).chain().first() instanceof _);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should not execute immediately when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var wrapped = _(array).chain().first();
-        assert.strictEqual(wrapped.__wrapped__, array);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(2);
-
-      if (!isNpm) {
-        var largeArray = _.range(LARGE_ARRAY_SIZE),
-            smallArray = array;
-
-        _.times(2, function(index) {
-          var array = index ? largeArray : smallArray,
-              wrapped = _(array).filter(isEven);
-
-          assert.strictEqual(wrapped.first(), _.first(_.filter(array, isEven)));
-        });
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.flip');
 
   (function() {
@@ -5046,418 +4961,6 @@
 
       var flipped = _.flip(fn);
       assert.deepEqual(flipped('a', 'b', 'c', 'd'), ['d', 'c', 'b', 'a']);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.take');
-
-  (function() {
-    var array = [1, 2, 3];
-
-    QUnit.test('should take the first two elements', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.take(array, 2), [1, 2]);
-    });
-
-    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
-      assert.expect(1);
-
-      var expected = _.map(falsey, function(value) {
-        return value === undefined ? [1] : [];
-      });
-
-      var actual = _.map(falsey, function(n) {
-        return _.take(array, n);
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should return an empty array when `n` < `1`', function(assert) {
-      assert.expect(3);
-
-      _.each([0, -1, -Infinity], function(n) {
-        assert.deepEqual(_.take(array, n), []);
-      });
-    });
-
-    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
-      assert.expect(4);
-
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        assert.deepEqual(_.take(array, n), array);
-      });
-    });
-
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(1);
-
-      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-          actual = _.map(array, _.take);
-
-      assert.deepEqual(actual, [[1], [4], [7]]);
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(6);
-
-      if (!isNpm) {
-        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
-            predicate = function(value) { values.push(value); return isEven(value); },
-            values = [],
-            actual = _(array).take(2).take().value();
-
-        assert.deepEqual(actual, _.take(_.take(array, 2)));
-
-        actual = _(array).filter(predicate).take(2).take().value();
-        assert.deepEqual(values, [1, 2]);
-        assert.deepEqual(actual, _.take(_.take(_.filter(array, predicate), 2)));
-
-        actual = _(array).take(6).takeRight(4).take(2).takeRight().value();
-        assert.deepEqual(actual, _.takeRight(_.take(_.takeRight(_.take(array, 6), 4), 2)));
-
-        values = [];
-
-        actual = _(array).take(array.length - 1).filter(predicate).take(6).takeRight(4).take(2).takeRight().value();
-        assert.deepEqual(values, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-        assert.deepEqual(actual, _.takeRight(_.take(_.takeRight(_.take(_.filter(_.take(array, array.length - 1), predicate), 6), 4), 2)));
-      }
-      else {
-        skipTest(assert, 6);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.takeRight');
-
-  (function() {
-    var array = [1, 2, 3];
-
-    QUnit.test('should take the last two elements', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeRight(array, 2), [2, 3]);
-    });
-
-    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
-      assert.expect(1);
-
-      var expected = _.map(falsey, function(value) {
-        return value === undefined ? [3] : [];
-      });
-
-      var actual = _.map(falsey, function(n) {
-        return _.takeRight(array, n);
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should return an empty array when `n` < `1`', function(assert) {
-      assert.expect(3);
-
-      _.each([0, -1, -Infinity], function(n) {
-        assert.deepEqual(_.takeRight(array, n), []);
-      });
-    });
-
-    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
-      assert.expect(4);
-
-      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        assert.deepEqual(_.takeRight(array, n), array);
-      });
-    });
-
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(1);
-
-      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-          actual = _.map(array, _.takeRight);
-
-      assert.deepEqual(actual, [[3], [6], [9]]);
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(6);
-
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE),
-            predicate = function(value) { values.push(value); return isEven(value); },
-            values = [],
-            actual = _(array).takeRight(2).takeRight().value();
-
-        assert.deepEqual(actual, _.takeRight(_.takeRight(array)));
-
-        actual = _(array).filter(predicate).takeRight(2).takeRight().value();
-        assert.deepEqual(values, array);
-        assert.deepEqual(actual, _.takeRight(_.takeRight(_.filter(array, predicate), 2)));
-
-        actual = _(array).takeRight(6).take(4).takeRight(2).take().value();
-        assert.deepEqual(actual, _.take(_.takeRight(_.take(_.takeRight(array, 6), 4), 2)));
-
-        values = [];
-
-        actual = _(array).filter(predicate).takeRight(6).take(4).takeRight(2).take().value();
-        assert.deepEqual(values, array);
-        assert.deepEqual(actual, _.take(_.takeRight(_.take(_.takeRight(_.filter(array, predicate), 6), 4), 2)));
-      }
-      else {
-        skipTest(assert, 6);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.takeRightWhile');
-
-  (function() {
-    var array = [1, 2, 3, 4];
-
-    var objects = [
-      { 'a': 0, 'b': 0 },
-      { 'a': 1, 'b': 1 },
-      { 'a': 2, 'b': 2 }
-    ];
-
-    QUnit.test('should take elements while `predicate` returns truthy', function(assert) {
-      assert.expect(1);
-
-      var actual = _.takeRightWhile(array, function(num) {
-        return num > 2;
-      });
-
-      assert.deepEqual(actual, [3, 4]);
-    });
-
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      _.takeRightWhile(array, function() {
-        args = slice.call(arguments);
-      });
-
-      assert.deepEqual(args, [4, 3, array]);
-    });
-
-    QUnit.test('should work with a "_.matches" style `predicate`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
-    });
-
-    QUnit.test('should work with a "_.matchesProperty" style `predicate`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeRightWhile(objects, ['b', 2]), objects.slice(2));
-    });
-
-    QUnit.test('should work with a "_.property" style `predicate`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(3);
-
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE),
-            predicate = function(num) { return num > 2; },
-            expected = _.takeRightWhile(array, predicate),
-            wrapped = _(array).takeRightWhile(predicate);
-
-        assert.deepEqual(wrapped.value(), expected);
-        assert.deepEqual(wrapped.reverse().value(), expected.slice().reverse());
-        assert.strictEqual(wrapped.last(), _.last(expected));
-      }
-      else {
-        skipTest(assert, 3);
-      }
-    });
-
-    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
-      assert.expect(5);
-
-      if (!isNpm) {
-        var args,
-            array = _.range(LARGE_ARRAY_SIZE + 1),
-            expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, _.map(array.slice(1), square)];
-
-        _(array).slice(1).takeRightWhile(function(value, index, array) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, [LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE - 1, array.slice(1)]);
-
-        _(array).slice(1).map(square).takeRightWhile(function(value, index, array) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, expected);
-
-        _(array).slice(1).map(square).takeRightWhile(function(value, index) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, expected);
-
-        _(array).slice(1).map(square).takeRightWhile(function(index) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, [square(LARGE_ARRAY_SIZE)]);
-
-        _(array).slice(1).map(square).takeRightWhile(function() {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, expected);
-      }
-      else {
-        skipTest(assert, 5);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.takeWhile');
-
-  (function() {
-    var array = [1, 2, 3, 4];
-
-    var objects = [
-      { 'a': 2, 'b': 2 },
-      { 'a': 1, 'b': 1 },
-      { 'a': 0, 'b': 0 }
-    ];
-
-    QUnit.test('should take elements while `predicate` returns truthy', function(assert) {
-      assert.expect(1);
-
-      var actual = _.takeWhile(array, function(num) {
-        return num < 3;
-      });
-
-      assert.deepEqual(actual, [1, 2]);
-    });
-
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      _.takeWhile(array, function() {
-        args = slice.call(arguments);
-      });
-
-      assert.deepEqual(args, [1, 0, array]);
-    });
-
-    QUnit.test('should work with a "_.matches" style `predicate`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
-    });
-
-    QUnit.test('should work with a "_.matchesProperty" style `predicate`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeWhile(objects, ['b', 2]), objects.slice(0, 1));
-    });
-    QUnit.test('should work with a "_.property" style `predicate`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(3);
-
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE),
-            predicate = function(num) { return num < 3; },
-            expected = _.takeWhile(array, predicate),
-            wrapped = _(array).takeWhile(predicate);
-
-        assert.deepEqual(wrapped.value(), expected);
-        assert.deepEqual(wrapped.reverse().value(), expected.slice().reverse());
-        assert.strictEqual(wrapped.last(), _.last(expected));
-      }
-      else {
-        skipTest(assert, 3);
-      }
-    });
-
-    QUnit.test('should work in a lazy chain sequence with `take`', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE);
-
-        var actual = _(array)
-          .takeWhile(function(num) { return num < 4; })
-          .take(2)
-          .takeWhile(function(num) { return num == 0; })
-          .value();
-
-        assert.deepEqual(actual, [0]);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
-      assert.expect(5);
-
-      if (!isNpm) {
-        var args,
-            array = _.range(LARGE_ARRAY_SIZE + 1),
-            expected = [1, 0, _.map(array.slice(1), square)];
-
-        _(array).slice(1).takeWhile(function(value, index, array) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, [1, 0, array.slice(1)]);
-
-        _(array).slice(1).map(square).takeWhile(function(value, index, array) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, expected);
-
-        _(array).slice(1).map(square).takeWhile(function(value, index) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, expected);
-
-        _(array).slice(1).map(square).takeWhile(function(value) {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, [1]);
-
-        _(array).slice(1).map(square).takeWhile(function() {
-          args = slice.call(arguments);
-        }).value();
-
-        assert.deepEqual(args, expected);
-      }
-      else {
-        skipTest(assert, 5);
-      }
     });
   }());
 
@@ -6589,6 +6092,97 @@
       }
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.head');
+
+  (function() {
+    var array = [1, 2, 3, 4];
+
+    QUnit.test('should return the first element', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.head(array), 1);
+    });
+
+    QUnit.test('should return `undefined` when querying empty arrays', function(assert) {
+      assert.expect(1);
+
+      var array = [];
+      array['-1'] = 1;
+
+      assert.strictEqual(_.head(array), undefined);
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.head);
+
+      assert.deepEqual(actual, [1, 4, 7]);
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_(array).head(), 1);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_(array).chain().head() instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should not execute immediately when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var wrapped = _(array).chain().head();
+        assert.strictEqual(wrapped.__wrapped__, array);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var largeArray = _.range(LARGE_ARRAY_SIZE),
+            smallArray = array;
+
+        _.times(2, function(index) {
+          var array = index ? largeArray : smallArray,
+              wrapped = _(array).filter(isEven);
+
+          assert.strictEqual(wrapped.head(), _.head(_.filter(array, isEven)));
+        });
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
+
+    QUnit.test('should be aliased', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.first, _.head);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -15382,7 +14976,7 @@
 
       var args,
           object = { 'a': 1, 'b': 2 },
-          firstKey = _.first(_.keys(object));
+          firstKey = _.head(_.keys(object));
 
       var expected = firstKey == 'a'
         ? [0, 1, 'a', object]
@@ -16035,105 +15629,6 @@
   QUnit.module('lodash.rest');
 
   (function() {
-    var array = [1, 2, 3];
-
-    QUnit.test('should accept a falsey `array` argument', function(assert) {
-      assert.expect(1);
-
-      var expected = _.map(falsey, _.constant([]));
-
-      var actual = _.map(falsey, function(array, index) {
-        try {
-          return index ? _.rest(array) : _.rest();
-        } catch (e) {}
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should exclude the first element', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.rest(array), [2, 3]);
-    });
-
-    QUnit.test('should return an empty when querying empty arrays', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.rest([]), []);
-    });
-
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(1);
-
-      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-          actual = _.map(array, _.rest);
-
-      assert.deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(4);
-
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE),
-            values = [];
-
-        var actual = _(array).rest().filter(function(value) {
-          values.push(value);
-          return false;
-        })
-        .value();
-
-        assert.deepEqual(actual, []);
-        assert.deepEqual(values, array.slice(1));
-
-        values = [];
-
-        actual = _(array).filter(function(value) {
-          values.push(value);
-          return isEven(value);
-        })
-        .rest()
-        .value();
-
-        assert.deepEqual(actual, _.rest(_.filter(array, isEven)));
-        assert.deepEqual(values, array);
-      }
-      else {
-        skipTest(assert, 4);
-      }
-    });
-
-    QUnit.test('should not execute subsequent iteratees on an empty array in a lazy chain sequence', function(assert) {
-      assert.expect(4);
-
-      if (!isNpm) {
-        var array = _.range(LARGE_ARRAY_SIZE),
-            iteratee = function() { pass = false; },
-            pass = true,
-            actual = _(array).slice(0, 1).rest().map(iteratee).value();
-
-        assert.ok(pass);
-        assert.deepEqual(actual, []);
-
-        pass = true;
-        actual = _(array).filter().slice(0, 1).rest().map(iteratee).value();
-
-        assert.ok(pass);
-        assert.deepEqual(actual, []);
-      }
-      else {
-        skipTest(assert, 4);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.restParam');
-
-  (function() {
     function fn(a, b, c) {
       return slice.call(arguments);
     }
@@ -16141,14 +15636,14 @@
     QUnit.test('should apply a rest parameter to `func`', function(assert) {
       assert.expect(1);
 
-      var rp = _.restParam(fn);
+      var rp = _.rest(fn);
       assert.deepEqual(rp(1, 2, 3, 4), [1, 2, [3, 4]]);
     });
 
     QUnit.test('should work with `start`', function(assert) {
       assert.expect(1);
 
-      var rp = _.restParam(fn, 1);
+      var rp = _.rest(fn, 1);
       assert.deepEqual(rp(1, 2, 3, 4), [1, [2, 3, 4]]);
     });
 
@@ -16159,7 +15654,7 @@
           expected = _.map(values, _.constant([[1, 2, 3, 4]]));
 
       var actual = _.map(values, function(value) {
-        var rp = _.restParam(fn, value);
+        var rp = _.rest(fn, value);
         return rp(1, 2, 3, 4);
       });
 
@@ -16169,21 +15664,21 @@
     QUnit.test('should coerce `start` to an integer', function(assert) {
       assert.expect(1);
 
-      var rp = _.restParam(fn, 1.6);
+      var rp = _.rest(fn, 1.6);
       assert.deepEqual(rp(1, 2, 3), [1, [2, 3]]);
     });
 
     QUnit.test('should use an empty array when `start` is not reached', function(assert) {
       assert.expect(1);
 
-      var rp = _.restParam(fn);
+      var rp = _.rest(fn);
       assert.deepEqual(rp(1), [1, undefined, []]);
     });
 
     QUnit.test('should work on functions with more than three params', function(assert) {
       assert.expect(1);
 
-      var rp = _.restParam(function(a, b, c, d) {
+      var rp = _.rest(function(a, b, c, d) {
         return slice.call(arguments);
       });
 
@@ -17613,6 +17108,517 @@
       var arrays = [[2], [3], [1]];
       assert.strictEqual(_.sumBy(arrays, 0), 6);
       assert.strictEqual(_.sumBy(objects, 'a'), 6);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.tail');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    QUnit.test('should accept a falsey `array` argument', function(assert) {
+      assert.expect(1);
+
+      var expected = _.map(falsey, _.constant([]));
+
+      var actual = _.map(falsey, function(array, index) {
+        try {
+          return index ? _.tail(array) : _.tail();
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should exclude the first element', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.tail(array), [2, 3]);
+    });
+
+    QUnit.test('should return an empty when querying empty arrays', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.tail([]), []);
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.tail);
+
+      assert.deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(4);
+
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE),
+            values = [];
+
+        var actual = _(array).tail().filter(function(value) {
+          values.push(value);
+          return false;
+        })
+        .value();
+
+        assert.deepEqual(actual, []);
+        assert.deepEqual(values, array.slice(1));
+
+        values = [];
+
+        actual = _(array).filter(function(value) {
+          values.push(value);
+          return isEven(value);
+        })
+        .tail()
+        .value();
+
+        assert.deepEqual(actual, _.tail(_.filter(array, isEven)));
+        assert.deepEqual(values, array);
+      }
+      else {
+        skipTest(assert, 4);
+      }
+    });
+
+    QUnit.test('should not execute subsequent iteratees on an empty array in a lazy chain sequence', function(assert) {
+      assert.expect(4);
+
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE),
+            iteratee = function() { pass = false; },
+            pass = true,
+            actual = _(array).slice(0, 1).tail().map(iteratee).value();
+
+        assert.ok(pass);
+        assert.deepEqual(actual, []);
+
+        pass = true;
+        actual = _(array).filter().slice(0, 1).tail().map(iteratee).value();
+
+        assert.ok(pass);
+        assert.deepEqual(actual, []);
+      }
+      else {
+        skipTest(assert, 4);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.take');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    QUnit.test('should take the first two elements', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.take(array, 2), [1, 2]);
+    });
+
+    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
+      assert.expect(1);
+
+      var expected = _.map(falsey, function(value) {
+        return value === undefined ? [1] : [];
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.take(array, n);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return an empty array when `n` < `1`', function(assert) {
+      assert.expect(3);
+
+      _.each([0, -1, -Infinity], function(n) {
+        assert.deepEqual(_.take(array, n), []);
+      });
+    });
+
+    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
+      assert.expect(4);
+
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+        assert.deepEqual(_.take(array, n), array);
+      });
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.take);
+
+      assert.deepEqual(actual, [[1], [4], [7]]);
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(6);
+
+      if (!isNpm) {
+        var array = _.range(1, LARGE_ARRAY_SIZE + 1),
+            predicate = function(value) { values.push(value); return isEven(value); },
+            values = [],
+            actual = _(array).take(2).take().value();
+
+        assert.deepEqual(actual, _.take(_.take(array, 2)));
+
+        actual = _(array).filter(predicate).take(2).take().value();
+        assert.deepEqual(values, [1, 2]);
+        assert.deepEqual(actual, _.take(_.take(_.filter(array, predicate), 2)));
+
+        actual = _(array).take(6).takeRight(4).take(2).takeRight().value();
+        assert.deepEqual(actual, _.takeRight(_.take(_.takeRight(_.take(array, 6), 4), 2)));
+
+        values = [];
+
+        actual = _(array).take(array.length - 1).filter(predicate).take(6).takeRight(4).take(2).takeRight().value();
+        assert.deepEqual(values, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+        assert.deepEqual(actual, _.takeRight(_.take(_.takeRight(_.take(_.filter(_.take(array, array.length - 1), predicate), 6), 4), 2)));
+      }
+      else {
+        skipTest(assert, 6);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.takeRight');
+
+  (function() {
+    var array = [1, 2, 3];
+
+    QUnit.test('should take the last two elements', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeRight(array, 2), [2, 3]);
+    });
+
+    QUnit.test('should treat falsey `n` values, except `undefined`, as `0`', function(assert) {
+      assert.expect(1);
+
+      var expected = _.map(falsey, function(value) {
+        return value === undefined ? [3] : [];
+      });
+
+      var actual = _.map(falsey, function(n) {
+        return _.takeRight(array, n);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return an empty array when `n` < `1`', function(assert) {
+      assert.expect(3);
+
+      _.each([0, -1, -Infinity], function(n) {
+        assert.deepEqual(_.takeRight(array, n), []);
+      });
+    });
+
+    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
+      assert.expect(4);
+
+      _.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
+        assert.deepEqual(_.takeRight(array, n), array);
+      });
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+          actual = _.map(array, _.takeRight);
+
+      assert.deepEqual(actual, [[3], [6], [9]]);
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(6);
+
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE),
+            predicate = function(value) { values.push(value); return isEven(value); },
+            values = [],
+            actual = _(array).takeRight(2).takeRight().value();
+
+        assert.deepEqual(actual, _.takeRight(_.takeRight(array)));
+
+        actual = _(array).filter(predicate).takeRight(2).takeRight().value();
+        assert.deepEqual(values, array);
+        assert.deepEqual(actual, _.takeRight(_.takeRight(_.filter(array, predicate), 2)));
+
+        actual = _(array).takeRight(6).take(4).takeRight(2).take().value();
+        assert.deepEqual(actual, _.take(_.takeRight(_.take(_.takeRight(array, 6), 4), 2)));
+
+        values = [];
+
+        actual = _(array).filter(predicate).takeRight(6).take(4).takeRight(2).take().value();
+        assert.deepEqual(values, array);
+        assert.deepEqual(actual, _.take(_.takeRight(_.take(_.takeRight(_.filter(array, predicate), 6), 4), 2)));
+      }
+      else {
+        skipTest(assert, 6);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.takeRightWhile');
+
+  (function() {
+    var array = [1, 2, 3, 4];
+
+    var objects = [
+      { 'a': 0, 'b': 0 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 2, 'b': 2 }
+    ];
+
+    QUnit.test('should take elements while `predicate` returns truthy', function(assert) {
+      assert.expect(1);
+
+      var actual = _.takeRightWhile(array, function(num) {
+        return num > 2;
+      });
+
+      assert.deepEqual(actual, [3, 4]);
+    });
+
+    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      _.takeRightWhile(array, function() {
+        args = slice.call(arguments);
+      });
+
+      assert.deepEqual(args, [4, 3, array]);
+    });
+
+    QUnit.test('should work with a "_.matches" style `predicate`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
+    });
+
+    QUnit.test('should work with a "_.matchesProperty" style `predicate`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeRightWhile(objects, ['b', 2]), objects.slice(2));
+    });
+
+    QUnit.test('should work with a "_.property" style `predicate`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(3);
+
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE),
+            predicate = function(num) { return num > 2; },
+            expected = _.takeRightWhile(array, predicate),
+            wrapped = _(array).takeRightWhile(predicate);
+
+        assert.deepEqual(wrapped.value(), expected);
+        assert.deepEqual(wrapped.reverse().value(), expected.slice().reverse());
+        assert.strictEqual(wrapped.last(), _.last(expected));
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+
+    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
+      assert.expect(5);
+
+      if (!isNpm) {
+        var args,
+            array = _.range(LARGE_ARRAY_SIZE + 1),
+            expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, _.map(array.slice(1), square)];
+
+        _(array).slice(1).takeRightWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, [LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE - 1, array.slice(1)]);
+
+        _(array).slice(1).map(square).takeRightWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, expected);
+
+        _(array).slice(1).map(square).takeRightWhile(function(value, index) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, expected);
+
+        _(array).slice(1).map(square).takeRightWhile(function(index) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, [square(LARGE_ARRAY_SIZE)]);
+
+        _(array).slice(1).map(square).takeRightWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, expected);
+      }
+      else {
+        skipTest(assert, 5);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.takeWhile');
+
+  (function() {
+    var array = [1, 2, 3, 4];
+
+    var objects = [
+      { 'a': 2, 'b': 2 },
+      { 'a': 1, 'b': 1 },
+      { 'a': 0, 'b': 0 }
+    ];
+
+    QUnit.test('should take elements while `predicate` returns truthy', function(assert) {
+      assert.expect(1);
+
+      var actual = _.takeWhile(array, function(num) {
+        return num < 3;
+      });
+
+      assert.deepEqual(actual, [1, 2]);
+    });
+
+    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      _.takeWhile(array, function() {
+        args = slice.call(arguments);
+      });
+
+      assert.deepEqual(args, [1, 0, array]);
+    });
+
+    QUnit.test('should work with a "_.matches" style `predicate`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
+    });
+
+    QUnit.test('should work with a "_.matchesProperty" style `predicate`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeWhile(objects, ['b', 2]), objects.slice(0, 1));
+    });
+    QUnit.test('should work with a "_.property" style `predicate`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(3);
+
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE),
+            predicate = function(num) { return num < 3; },
+            expected = _.takeWhile(array, predicate),
+            wrapped = _(array).takeWhile(predicate);
+
+        assert.deepEqual(wrapped.value(), expected);
+        assert.deepEqual(wrapped.reverse().value(), expected.slice().reverse());
+        assert.strictEqual(wrapped.last(), _.last(expected));
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+
+    QUnit.test('should work in a lazy chain sequence with `take`', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var array = _.range(LARGE_ARRAY_SIZE);
+
+        var actual = _(array)
+          .takeWhile(function(num) { return num < 4; })
+          .take(2)
+          .takeWhile(function(num) { return num == 0; })
+          .value();
+
+        assert.deepEqual(actual, [0]);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
+      assert.expect(5);
+
+      if (!isNpm) {
+        var args,
+            array = _.range(LARGE_ARRAY_SIZE + 1),
+            expected = [1, 0, _.map(array.slice(1), square)];
+
+        _(array).slice(1).takeWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, [1, 0, array.slice(1)]);
+
+        _(array).slice(1).map(square).takeWhile(function(value, index, array) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, expected);
+
+        _(array).slice(1).map(square).takeWhile(function(value, index) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, expected);
+
+        _(array).slice(1).map(square).takeWhile(function(value) {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, [1]);
+
+        _(array).slice(1).map(square).takeWhile(function() {
+          args = slice.call(arguments);
+        }).value();
+
+        assert.deepEqual(args, expected);
+      }
+      else {
+        skipTest(assert, 5);
+      }
     });
   }());
 
@@ -20170,14 +20176,14 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should work when in a lazy chain sequence before `first` or `last`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work when in a lazy chain sequence before `head` or `last`', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
         var array = _.range(LARGE_ARRAY_SIZE + 1),
             wrapped = _(array).slice(1)[methodName]([LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE + 1]);
 
-        var actual = _.map(['first', 'last'], function(methodName) {
+        var actual = _.map(['head', 'last'], function(methodName) {
           return wrapped[methodName]();
         });
 
@@ -20449,7 +20455,7 @@
       assert.expect(2);
 
       if (!isNpm) {
-        var wrapped = _([1]).chain().commit().first();
+        var wrapped = _([1]).chain().commit().head();
         assert.ok(wrapped instanceof _);
         assert.strictEqual(wrapped.value(), 1);
       }
@@ -20677,7 +20683,7 @@
             wrapped1 = _(array1).chain().map(square),
             wrapped2 = wrapped1.plant(array2);
 
-        assert.deepEqual(wrapped2.first().value(), 36);
+        assert.deepEqual(wrapped2.head().value(), 36);
       }
       else {
         skipTest(assert);
@@ -20888,10 +20894,10 @@
         _.times(2, function(index) {
           var array = (index ? largeArray : smallArray).slice(),
               expected = array.slice().reverse(),
-              wrapped = _(array).chain().reverse().first();
+              wrapped = _(array).chain().reverse().head();
 
           assert.ok(wrapped instanceof _);
-          assert.strictEqual(wrapped.value(), _.first(expected));
+          assert.strictEqual(wrapped.value(), _.head(expected));
           assert.deepEqual(array, expected);
         });
       }
@@ -21233,10 +21239,10 @@
       'escapeRegExp',
       'every',
       'find',
-      'first',
       'floor',
       'has',
       'hasIn',
+      'head',
       'includes',
       'isArguments',
       'isArray',
@@ -21360,18 +21366,18 @@
       assert.deepEqual(_.dropWhile(args,_.identity), [ null, [3], null, 5], message('dropWhile'));
       assert.deepEqual(_.findIndex(args, _.identity), 0, message('findIndex'));
       assert.deepEqual(_.findLastIndex(args, _.identity), 4, message('findLastIndex'));
-      assert.deepEqual(_.first(args), 1, message('first'));
       assert.deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
+      assert.deepEqual(_.head(args), 1, message('head'));
       assert.deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
       assert.deepEqual(_.initial(args), [1, null, [3], null], message('initial'));
       assert.deepEqual(_.intersection(args, [1]), [1], message('intersection'));
       assert.deepEqual(_.last(args), 5, message('last'));
       assert.deepEqual(_.lastIndexOf(args, 1), 0, message('lastIndexOf'));
-      assert.deepEqual(_.rest(args, 4), [null, [3], null, 5], message('rest'));
       assert.deepEqual(_.sortedIndex(sortedArgs, 6), 3, message('sortedIndex'));
       assert.deepEqual(_.sortedIndexOf(sortedArgs, 5), 2, message('sortedIndexOf'));
       assert.deepEqual(_.sortedLastIndex(sortedArgs, 5), 3, message('sortedLastIndex'));
       assert.deepEqual(_.sortedLastIndexOf(sortedArgs, 1), 0, message('sortedLastIndexOf'));
+      assert.deepEqual(_.tail(args, 4), [null, [3], null, 5], message('tail'));
       assert.deepEqual(_.take(args, 2), [1, null], message('take'));
       assert.deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
       assert.deepEqual(_.takeRightWhile(args, _.identity), [5], message('takeRightWhile'));
@@ -21470,7 +21476,7 @@
       'partial',
       'partialRight',
       'rearg',
-      'restParam',
+      'rest',
       'spread',
       'throttle'
     ];
@@ -21485,7 +21491,7 @@
       'partial',
       'partialRight',
       'rearg',
-      'restParam',
+      'rest',
       'spread'
     ];
 
@@ -21517,11 +21523,11 @@
       'range',
       'reject',
       'remove',
-      'rest',
       'sampleSize',
       'shuffle',
       'sortBy',
       'sortByOrder',
+      'tail',
       'take',
       'times',
       'toArray',
@@ -21536,7 +21542,7 @@
     var acceptFalsey = _.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(256);
+      assert.expect(257);
 
       var emptyArrays = _.map(falsey, _.constant([]));
 

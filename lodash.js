@@ -1410,50 +1410,50 @@
      *
      * The wrapper methods that support shortcut fusion are:
      * `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`, `findLast`,
-     * `first`, `initial`, `last`, `map`, `reject`, `rest`, `reverse`, `slice`,
+     * `head`, `initial`, `last`, `map`, `reject`, `reverse`, `slice`, `tail`,
      * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `assignWith`, `at`, `before`, `bind`, `bindAll`,
      * `bindKey`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
-     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`,
-     * `defer`, `delay`, `difference`, `differenceBy`, `drop`, `dropRight`,
-     * `dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,
-     * `flatten`, `flattenDeep`, `flip`, `flow`, `flowRight`, `forEach`,
-     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
-     * `groupBy`, `initial`, `intersection`, `intersectionBy`, `invert`, `invoke`,
-     * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
-     * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith` `method`,
-     * `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `omit`, `omitBy`,
-     * `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`, `pickBy`,
-     * `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`,
-     * `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`, `reverse`,
-     * `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `sortByOrder`, `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`,
-     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPath`,
-     * `toPlainObject`, `transform`, `union`, `unionBy`, `uniq`, `uniqBy`, `unset`,
-     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`, `wrap`,
-     * `xor`, `xorBy`, `zip`, `zipObject`, and `zipWith`
+     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`,
+     * `delay`, `difference`, `differenceBy`, `drop`, `dropRight`, `dropRightWhile`,
+     * `dropWhile`, `extend`, `extendWith`, `fill`, `filter`, `flatten`, `flattenDeep`,
+     * `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
+     * `forOwn`, `forOwnRight`, `functions`, `groupBy`, `initial`, `intersection`,
+     * `intersectionBy`, `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`,
+     * `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`, `memoize`,
+     * `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`, `modArgsSet',
+     * 'negate`, `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`,
+     * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
+     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`,
+     * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
+     * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`,
+     * `unionBy`, `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`, `unzipWith`,
+     * `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `zip`, `zipObject`,
+     * and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
      * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
      * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
-     * `findLastIndex`, `findLastKey`, `first`, `floor`, `get`, `gt`, `gte`, `has`,
-     * `hasIn`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
-     * `isArray`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`,
-     * `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`,
-     * `isFunction`, `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`,
-     * `isNil`, `isNull`, `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`,
-     * `isRegExp`, `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`,
-     * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lt`, `lte`, `max`,
-     * `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
-     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
-     * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-     * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-     * `startsWith`, `sum`, `sumBy`, `template`, `toLower`, `toInteger`, `toString`,
-     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
-     * `upperCase`, `value`, and `words`
+     * `findLastIndex`, `findLastKey`, `floor`, `get`, `gt`, `gte`, `has`, `hasIn`,
+     * `head`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`,
+     * `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`, `isElement`,
+     * `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`, `isFunction`,
+     * `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
+     * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
+     * `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
+     * `last`, `lastIndexOf`, `lowerCase`, `lt`, `lte`, `max`, `min`, `noConflict`,
+     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
+     * `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
+     * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
+     * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toString`, `toUpper`, `trim`,
+     * `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `upperCase`,
+     * `value`, and `words`
      *
      * @name _
      * @constructor
@@ -3675,7 +3675,7 @@
      * @returns {Function} Returns the new assigner function.
      */
     function createAssigner(assigner) {
-      return restParam(function(object, sources) {
+      return rest(function(object, sources) {
         var index = -1,
             length = object == null ? 0 : sources.length,
             customizer = length > 1 ? sources[length - 1] : undefined,
@@ -3969,9 +3969,9 @@
      * @returns {Function} Returns the new invoker function.
      */
     function createInvoker(arrayFunc) {
-      return restParam(function(iteratees) {
+      return rest(function(iteratees) {
         iteratees = arrayMap(baseFlatten(iteratees), getIteratee());
-        return restParam(function(args) {
+        return rest(function(args) {
           var thisArg = this;
           return arrayFunc(iteratees, function(iteratee) {
             return iteratee.apply(thisArg, args);
@@ -3989,11 +3989,11 @@
      * @returns {Function} Returns the new arguments modifier function.
      */
     function createModArgs(resolver) {
-      return restParam(function(func, transforms) {
+      return rest(function(func, transforms) {
         transforms = arrayMap(baseFlatten(transforms), getIteratee());
 
         var funcsLength = transforms.length;
-        return restParam(function(args) {
+        return rest(function(args) {
           var index = -1,
               length = nativeMin(args.length, funcsLength),
               modded = copyArray(args);
@@ -5004,7 +5004,7 @@
      * _.difference([3, 2, 1], [4, 2]);
      * // => [3, 1]
      */
-    var difference = restParam(function(array, values) {
+    var difference = rest(function(array, values) {
       return isArrayLikeObject(array)
         ? baseDifference(array, baseFlatten(values, false, true))
         : [];
@@ -5031,7 +5031,7 @@
      * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
      * // => [{ 'x': 2 }]
      */
-    var differenceBy = restParam(function(array, values) {
+    var differenceBy = rest(function(array, values) {
       var iteratee = last(values);
       if (isArrayLikeObject(iteratee)) {
         iteratee = undefined;
@@ -5310,26 +5310,6 @@
     }
 
     /**
-     * Gets the first element of `array`.
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} array The array to query.
-     * @returns {*} Returns the first element of `array`.
-     * @example
-     *
-     * _.first([1, 2, 3]);
-     * // => 1
-     *
-     * _.first([]);
-     * // => undefined
-     */
-    function first(array) {
-      return array ? array[0] : undefined;
-    }
-
-    /**
      * Flattens `array` a single level.
      *
      * @static
@@ -5363,6 +5343,27 @@
     function flattenDeep(array) {
       var length = array ? array.length : 0;
       return length ? baseFlatten(array, true) : [];
+    }
+
+    /**
+     * Gets the first element of `array`.
+     *
+     * @static
+     * @memberOf _
+     * @alias first
+     * @category Array
+     * @param {Array} array The array to query.
+     * @returns {*} Returns the first element of `array`.
+     * @example
+     *
+     * _.head([1, 2, 3]);
+     * // => 1
+     *
+     * _.head([]);
+     * // => undefined
+     */
+    function head(array) {
+      return array ? array[0] : undefined;
     }
 
     /**
@@ -5431,7 +5432,7 @@
      * _.intersection([2, 1], [4, 2], [1, 2]);
      * // => [2]
      */
-    var intersection = restParam(function(arrays) {
+    var intersection = rest(function(arrays) {
       var mapped = arrayMap(arrays, toArrayLikeObject);
       return (mapped.length && mapped[0] === arrays[0])
         ? baseIntersection(mapped)
@@ -5458,7 +5459,7 @@
      * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }]
      */
-    var intersectionBy = restParam(function(arrays) {
+    var intersectionBy = rest(function(arrays) {
       var iteratee = last(arrays),
           mapped = arrayMap(arrays, toArrayLikeObject);
 
@@ -5552,7 +5553,7 @@
      * console.log(array);
      * // => [1, 1]
      */
-    var pull = restParam(pullAll);
+    var pull = rest(pullAll);
 
     /**
      * This method is like `_.pull` except that it accepts an array of values to remove.
@@ -5631,7 +5632,7 @@
      * console.log(evens);
      * // => [10, 20]
      */
-    var pullAt = restParam(function(array, indexes) {
+    var pullAt = rest(function(array, indexes) {
       indexes = arrayMap(baseFlatten(indexes), String);
 
       var result = baseAt(array, indexes);
@@ -5684,23 +5685,6 @@
       }
       basePullAt(array, indexes);
       return result;
-    }
-
-    /**
-     * Gets all but the first element of `array`.
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} array The array to query.
-     * @returns {Array} Returns the slice of `array`.
-     * @example
-     *
-     * _.rest([1, 2, 3]);
-     * // => [2, 3]
-     */
-    function rest(array) {
-      return drop(array, 1);
     }
 
     /**
@@ -5940,6 +5924,23 @@
     }
 
     /**
+     * Gets all but the first element of `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to query.
+     * @returns {Array} Returns the slice of `array`.
+     * @example
+     *
+     * _.tail([1, 2, 3]);
+     * // => [2, 3]
+     */
+    function tail(array) {
+      return drop(array, 1);
+    }
+
+    /**
      * Creates a slice of `array` with `n` elements taken from the beginning.
      *
      * @static
@@ -6104,7 +6105,7 @@
      * _.union([2, 1], [4, 2], [1, 2]);
      * // => [2, 1, 4]
      */
-    var union = restParam(function(arrays) {
+    var union = rest(function(arrays) {
       return baseUniq(baseFlatten(arrays, false, true));
     });
 
@@ -6128,7 +6129,7 @@
      * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
-    var unionBy = restParam(function(arrays) {
+    var unionBy = rest(function(arrays) {
       var iteratee = last(arrays);
       if (isArrayLikeObject(iteratee)) {
         iteratee = undefined;
@@ -6267,7 +6268,7 @@
      * _.without([1, 2, 1, 3], 1, 2);
      * // => [3]
      */
-    var without = restParam(function(array, values) {
+    var without = rest(function(array, values) {
       return isArrayLikeObject(array)
         ? baseDifference(array, values)
         : [];
@@ -6287,7 +6288,7 @@
      * _.xor([2, 1], [4, 2]);
      * // => [1, 4]
      */
-    var xor = restParam(function(arrays) {
+    var xor = rest(function(arrays) {
       return baseXor(arrayFilter(arrays, isArrayLikeObject));
     });
 
@@ -6311,7 +6312,7 @@
      * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 2 }]
      */
-    var xorBy = restParam(function(arrays) {
+    var xorBy = rest(function(arrays) {
       var iteratee = last(arrays);
       if (isArrayLikeObject(iteratee)) {
         iteratee = undefined;
@@ -6334,7 +6335,7 @@
      * _.zip(['fred', 'barney'], [30, 40], [true, false]);
      * // => [['fred', 30, true], ['barney', 40, false]]
      */
-    var zip = restParam(unzip);
+    var zip = rest(unzip);
 
     /**
      * The inverse of `_.pairs`; this method returns an object composed from arrays
@@ -6392,7 +6393,7 @@
      * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
      * // => [111, 222]
      */
-    var zipWith = restParam(function(arrays) {
+    var zipWith = rest(function(arrays) {
       var length = arrays.length,
           iteratee = length > 1 ? arrays[length - 1] : undefined;
 
@@ -6425,7 +6426,7 @@
      *   .map(function(o) {
      *     return o.user + ' is ' + o.age;
      *   })
-     *   .first()
+     *   .head()
      *   .value();
      * // => 'pebbles is 1'
      */
@@ -6501,13 +6502,13 @@
      * ];
      *
      * // without explicit chaining
-     * _(users).first();
+     * _(users).head();
      * // => { 'user': 'barney', 'age': 36 }
      *
      * // with explicit chaining
      * _(users)
      *   .chain()
-     *   .first()
+     *   .head()
      *   .pick('user')
      *   .value();
      * // => { 'user': 'barney' }
@@ -6565,7 +6566,7 @@
      * console.log(array);
      * // => [1]
      */
-    var wrapperConcat = restParam(function(values) {
+    var wrapperConcat = rest(function(values) {
       values = baseFlatten(values);
       return this.thru(function(array) {
         return arrayConcat(isArray(array) ? array : [Object(array)], values);
@@ -7047,7 +7048,7 @@
      * _.invoke([123, 456], String.prototype.split, '');
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
-    var invoke = restParam(function(collection, path, args) {
+    var invoke = rest(function(collection, path, args) {
       var index = -1,
           isFunc = typeof path == 'function',
           isProp = isKey(path),
@@ -7469,7 +7470,7 @@
      * }) );
      * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
      */
-    var sortBy = restParam(function(collection, iteratees) {
+    var sortBy = rest(function(collection, iteratees) {
       if (collection == null) {
         return [];
       }
@@ -7672,7 +7673,7 @@
      * bound('hi');
      * // => 'hi fred!'
      */
-    var bind = restParam(function(func, thisArg, partials) {
+    var bind = rest(function(func, thisArg, partials) {
       var bitmask = BIND_FLAG;
       if (partials.length) {
         var holders = replaceHolders(partials, bind.placeholder);
@@ -7707,7 +7708,7 @@
      * jQuery('#docs').on('click', view.onClick);
      * // => logs 'clicked docs' when the element is clicked
      */
-    var bindAll = restParam(function(object, methodNames) {
+    var bindAll = rest(function(object, methodNames) {
       arrayEach(baseFlatten(methodNames), function(key) {
         object[key] = bind(object[key], object);
       });
@@ -7758,7 +7759,7 @@
      * bound('hi');
      * // => 'hiya fred!'
      */
-    var bindKey = restParam(function(object, key, partials) {
+    var bindKey = rest(function(object, key, partials) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (partials.length) {
         var holders = replaceHolders(partials, bindKey.placeholder);
@@ -8068,7 +8069,7 @@
      * }, 'deferred');
      * // logs 'deferred' after one or more milliseconds
      */
-    var defer = restParam(function(func, args) {
+    var defer = rest(function(func, args) {
       return baseDelay(func, 1, args);
     });
 
@@ -8090,7 +8091,7 @@
      * }, 1000, 'later');
      * // => logs 'later' after one second
      */
-    var delay = restParam(function(func, wait, args) {
+    var delay = rest(function(func, wait, args) {
       return baseDelay(func, wait, args);
     });
 
@@ -8413,7 +8414,7 @@
      * greetFred('hi');
      * // => 'hi fred'
      */
-    var partial = restParam(function(func, partials) {
+    var partial = rest(function(func, partials) {
       var holders = replaceHolders(partials, partial.placeholder);
       return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
     });
@@ -8449,7 +8450,7 @@
      * sayHelloTo('fred');
      * // => 'hello fred'
      */
-    var partialRight = restParam(function(func, partials) {
+    var partialRight = rest(function(func, partials) {
       var holders = replaceHolders(partials, partialRight.placeholder);
       return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
     });
@@ -8476,7 +8477,7 @@
      * rearged('b', 'c', 'a')
      * // => ['a', 'b', 'c']
      */
-    var rearg = restParam(function(func, indexes) {
+    var rearg = rest(function(func, indexes) {
       return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));
     });
 
@@ -8494,7 +8495,7 @@
      * @returns {Function} Returns the new function.
      * @example
      *
-     * var say = _.restParam(function(what, names) {
+     * var say = _.rest(function(what, names) {
      *   return what + ' ' + _.initial(names).join(', ') +
      *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
      * });
@@ -8502,7 +8503,7 @@
      * say('hello', 'fred', 'barney', 'pebbles');
      * // => 'hello fred, barney, & pebbles'
      */
-    function restParam(func, start) {
+    function rest(func, start) {
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
@@ -8511,22 +8512,22 @@
         var args = arguments,
             index = -1,
             length = nativeMax(args.length - start, 0),
-            rest = Array(length);
+            array = Array(length);
 
         while (++index < length) {
-          rest[index] = args[start + index];
+          array[index] = args[start + index];
         }
         switch (start) {
-          case 0: return func.call(this, rest);
-          case 1: return func.call(this, args[0], rest);
-          case 2: return func.call(this, args[0], args[1], rest);
+          case 0: return func.call(this, array);
+          case 1: return func.call(this, args[0], array);
+          case 2: return func.call(this, args[0], args[1], array);
         }
         var otherArgs = Array(start + 1);
         index = -1;
         while (++index < start) {
           otherArgs[index] = args[index];
         }
-        otherArgs[start] = rest;
+        otherArgs[start] = array;
         return func.apply(this, otherArgs);
       };
     }
@@ -9832,7 +9833,7 @@
      * _.at(['a', 'b', 'c'], 0, 2);
      * // => ['a', 'c']
      */
-    var at = restParam(function(object, paths) {
+    var at = rest(function(object, paths) {
       return baseAt(object, baseFlatten(paths));
     });
 
@@ -9893,7 +9894,7 @@
      * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
      * // => { 'user': 'barney', 'age': 36 }
      */
-    var defaults = restParam(function(args) {
+    var defaults = rest(function(args) {
       args.push(undefined, extendDefaults);
       return extendWith.apply(undefined, args);
     });
@@ -9916,7 +9917,7 @@
      * // => { 'user': { 'name': 'barney', 'age': 36 } }
      *
      */
-    var defaultsDeep = restParam(function(args) {
+    var defaultsDeep = rest(function(args) {
       args.push(undefined, mergeDefaults);
       return mergeWith.apply(undefined, args);
     });
@@ -10538,7 +10539,7 @@
      * _.omit(object, 'user');
      * // => { 'age': 40 }
      */
-    var omit = restParam(function(object, props) {
+    var omit = rest(function(object, props) {
       if (object == null) {
         return {};
       }
@@ -10608,7 +10609,7 @@
      * _.pick(object, 'user');
      * // => { 'user': 'fred' }
      */
-    var pick = restParam(function(object, props) {
+    var pick = rest(function(object, props) {
       return object == null ? {} : basePick(object, baseFlatten(props));
     });
 
@@ -11970,7 +11971,7 @@
      *   elements = [];
      * }
      */
-    var attempt = restParam(function(func, args) {
+    var attempt = rest(function(func, args) {
       try {
         return func.apply(undefined, args);
       } catch (e) {
@@ -12138,7 +12139,7 @@
      * _.invoke(_.sortBy(objects, _.method(['a', 'b', 'c'])), 'a.b.c');
      * // => [1, 2]
      */
-    var method = restParam(function(path, args) {
+    var method = rest(function(path, args) {
       return function(object) {
         return invokePath(object, path, args);
       };
@@ -12166,7 +12167,7 @@
      * _.map([['a', '2'], ['c', '0']], _.methodOf(object));
      * // => [2, 0]
      */
-    var methodOf = restParam(function(object, args) {
+    var methodOf = rest(function(object, args) {
       return function(path) {
         return invokePath(object, path, args);
       };
@@ -12839,7 +12840,6 @@
     lodash.reject = reject;
     lodash.remove = remove;
     lodash.rest = rest;
-    lodash.restParam = restParam;
     lodash.reverse = reverse;
     lodash.sampleSize = sampleSize;
     lodash.set = set;
@@ -12851,6 +12851,7 @@
     lodash.sortedUniq = sortedUniq;
     lodash.sortedUniqBy = sortedUniqBy;
     lodash.spread = spread;
+    lodash.tail = tail;
     lodash.take = take;
     lodash.takeRight = takeRight;
     lodash.takeRightWhile = takeRightWhile;
@@ -12912,7 +12913,6 @@
     lodash.findLast = findLast;
     lodash.findLastIndex = findLastIndex;
     lodash.findLastKey = findLastKey;
-    lodash.first = first;
     lodash.floor = floor;
     lodash.forEach = forEach;
     lodash.forEachRight = forEachRight;
@@ -12925,6 +12925,7 @@
     lodash.gte = gte;
     lodash.has = has;
     lodash.hasIn = hasIn;
+    lodash.head = head;
     lodash.identity = identity;
     lodash.includes = includes;
     lodash.indexOf = indexOf;
@@ -13009,6 +13010,9 @@
     lodash.uniqueId = uniqueId;
     lodash.upperCase = upperCase;
 
+    // Add aliases.
+    lodash.first = head;
+
     mixin(lodash, (function() {
       var source = {};
       baseForOwn(lodash, function(func, methodName) {
@@ -13071,8 +13075,8 @@
       };
     });
 
-    // Add `LazyWrapper` methods for `_.first` and `_.last`.
-    arrayEach(['first', 'last'], function(methodName, index) {
+    // Add `LazyWrapper` methods for `_.head` and `_.last`.
+    arrayEach(['head', 'last'], function(methodName, index) {
       var takeName = 'take' + (index ? 'Right' : '');
 
       LazyWrapper.prototype[methodName] = function() {
@@ -13080,8 +13084,8 @@
       };
     });
 
-    // Add `LazyWrapper` methods for `_.initial` and `_.rest`.
-    arrayEach(['initial', 'rest'], function(methodName, index) {
+    // Add `LazyWrapper` methods for `_.initial` and `_.tail`.
+    arrayEach(['initial', 'tail'], function(methodName, index) {
       var dropName = 'drop' + (index ? '' : 'Right');
 
       LazyWrapper.prototype[methodName] = function() {
@@ -13094,7 +13098,7 @@
     };
 
     LazyWrapper.prototype.find = function(predicate) {
-      return this.filter(predicate).first();
+      return this.filter(predicate).head();
     };
 
     LazyWrapper.prototype.findLast = function(predicate) {
@@ -13138,7 +13142,7 @@
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
-          isTaker = /^(?:first|last)$/.test(methodName),
+          isTaker = /^(?:head|last)$/.test(methodName),
           retUnwrapped = isTaker || /^find/.test(methodName),
           lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
 

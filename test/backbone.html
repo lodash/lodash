@@ -32,7 +32,7 @@
 
         return function(_) {
           lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
-          lodash.mixin(_ , { 'indexBy': lodash.keyBy });
+          lodash.mixin(_ , { 'indexBy': lodash.keyBy, 'rest': lodash.tail });
           lodash.mixin(_, lodash.pick(lodash, lodash.difference(lodash.functions(lodash), lodash.functions(_))));
         };
       }());

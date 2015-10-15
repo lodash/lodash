@@ -342,9 +342,14 @@
           'methods': 'functions',
           'object': 'zipObject',
           'pluck': 'map',
-          'restArgs': 'restParam',
+          'restParam': 'restArgs',
           'select': 'filter',
           'where': 'filter'
+        };
+
+        var keyMap = {
+          'rest': 'tail',
+          'restArgs': 'rest'
         };
 
         var lodash = _.noConflict();
@@ -352,6 +357,12 @@
         return function(_) {
           lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
           lodash.mixin(_, lodash.pick(lodash, lodash.difference(lodash.functions(lodash), lodash.functions(_))));
+
+          lodash.forOwn(keyMap, function(realName, otherName) {
+            _[otherName] = lodash[realName];
+            _.prototype[otherName] = lodash.prototype[realName];
+          });
+
           lodash.forOwn(aliasToReal, function(realName, alias) {
             _[alias] = _[realName];
             _.prototype[alias] = _.prototype[realName];

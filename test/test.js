@@ -18942,6 +18942,18 @@
       var actual = _.toPath('a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][\ne\n][f].g');
       assert.deepEqual(actual, ['a', '-1.23', '["b"]', 'c', "['d']", '\ne\n', 'f', 'g']);
     });
+
+    QUnit.test('should ignore consecutive brackets and dots', function(assert) {
+      assert.expect(4);
+
+      var expected = ['a'];
+      assert.deepEqual(_.toPath('a.'), expected);
+      assert.deepEqual(_.toPath('a[]'), expected);
+
+      expected = ['a', 'b'];
+      assert.deepEqual(_.toPath('a..b'), expected);
+      assert.deepEqual(_.toPath('a[][]b'), expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

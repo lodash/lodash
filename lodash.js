@@ -4081,13 +4081,11 @@
       return function(number, precision) {
         precision = precision ? toInteger(precision) : 0;
         if (precision) {
-          // Shift the decimal point with exponential notation to avoid floating-point funny bussiness.
-          // See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round#Examples)
-          // for more details.
+          // Shift with exponential notation to avoid floating-point issues.
+          // See [MDN](https://mdn.io/round#Examples) for more details.
           var pair = (+number + 'e').split('e'),
               value = func(pair[0] + 'e' + (+pair[1] + precision));
 
-          // Shift back.
           pair = (value + 'e').split('e');
           return +(pair[0] + 'e' + (pair[1] - precision));
         }
@@ -6575,7 +6573,7 @@
 
     /**
      * Gets the next value on a wrapped object following the
-     * [iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator).
+     * [iterator protocol](https://mdn.io/iteration_protocols#iterator).
      *
      * @name next
      * @memberOf _
@@ -8485,7 +8483,7 @@
      * Creates a function that invokes `func` with the `this` binding of the
      * created function and arguments from `start` and beyond provided as an array.
      *
-     * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
+     * **Note:** This method is based on the [rest parameter](https://mdn.io/rest_parameters).
      *
      * @static
      * @memberOf _
@@ -8536,7 +8534,7 @@
      * Creates a function that invokes `func` with the `this` binding of the created
      * function and an array of arguments much like [`Function#apply`](https://es5.github.io/#x15.3.4.3).
      *
-     * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/Web/JavaScript/Reference/Operators/Spread_operator).
+     * **Note:** This method is based on the [spread operator](https://mdn.io/spread_operator).
      *
      * @static
      * @memberOf _

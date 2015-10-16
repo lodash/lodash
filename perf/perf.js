@@ -1086,31 +1086,31 @@
   suites.push(
     Benchmark.Suite('`_.includes` searching an array')
       .add(buildName, '\
-        lodash.include(numbers, limit - 1)'
+        lodash.includes(numbers, limit - 1)'
       )
       .add(otherName, '\
-        _.include(numbers, limit - 1)'
+        _.includes(numbers, limit - 1)'
       )
   );
 
   suites.push(
     Benchmark.Suite('`_.includes` searching an object')
       .add(buildName, '\
-        lodash.include(object, limit - 1)'
+        lodash.includes(object, limit - 1)'
       )
       .add(otherName, '\
-        _.include(object, limit - 1)'
+        _.includes(object, limit - 1)'
       )
   );
 
-  if (lodash.include('ab', 'ab') && _.include('ab', 'ab')) {
+  if (lodash.includes('ab', 'ab') && _.includes('ab', 'ab')) {
     suites.push(
       Benchmark.Suite('`_.includes` searching a string')
         .add(buildName, '\
-          lodash.include(strNumbers, "," + (limit - 1))'
+          lodash.includes(strNumbers, "," + (limit - 1))'
         )
         .add(otherName, '\
-          _.include(strNumbers, "," + (limit - 1))'
+          _.includes(strNumbers, "," + (limit - 1))'
         )
     );
   }

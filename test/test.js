@@ -10560,6 +10560,34 @@
     });
   }());
 
+/*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.lowerCase');
+
+  (function() {
+    QUnit.test('should lowercase as space-separated words', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.lowerCase('--Foo-Bar'), 'foo bar');
+      assert.strictEqual(_.lowerCase('fooBar'), 'foo bar');
+      assert.strictEqual(_.lowerCase('__FOO_BAR__'), 'foo bar');
+    });
+  }());
+
+/*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.lowerFirst');
+
+  (function() {
+    QUnit.test('should lowercase only the first character', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.lowerFirst('fred'), 'fred');
+      assert.strictEqual(_.lowerFirst('Fred'), 'fred');
+      assert.strictEqual(_.lowerFirst('FRED'), 'fRED');
+    });
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.lt');
@@ -18843,6 +18871,34 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toLower');
+
+  (function() {
+    QUnit.test('should convert whole string to lower case', function(assert) {
+      assert.expect(3);
+
+      assert.deepEqual(_.toLower('--Foo-Bar'), '--foo-bar');
+      assert.deepEqual(_.toLower('fooBar'), 'foobar');
+      assert.deepEqual(_.toLower('__FOO_BAR__'), '__foo_bar__');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toUpper');
+
+  (function() {
+    QUnit.test('should convert whole string to upper case', function(assert) {
+      assert.expect(3);
+
+      assert.deepEqual(_.toUpper('--Foo-Bar'), '--FOO-BAR');
+      assert.deepEqual(_.toUpper('fooBar'), 'FOOBAR');
+      assert.deepEqual(_.toUpper('__FOO_BAR__'), '__FOO_BAR__');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.slice and lodash.toArray');
 
   _.each(['slice', 'toArray'], function(methodName) {
@@ -19495,6 +19551,34 @@
       assert.expect(1);
 
       assert.strictEqual(_.unescape(_.escape(unescaped)), unescaped);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.upperCase');
+
+  (function() {
+    QUnit.test('should uppercase as space-separated words', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.upperCase('--foo-bar'), 'FOO BAR');
+      assert.strictEqual(_.upperCase('fooBar'), 'FOO BAR');
+      assert.strictEqual(_.upperCase('__foo_bar__'), 'FOO BAR');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.upperFirst');
+
+  (function() {
+    QUnit.test('should uppercase only the first character', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.upperFirst('fred'), 'Fred');
+      assert.strictEqual(_.upperFirst('Fred'), 'Fred');
+      assert.strictEqual(_.upperFirst('FRED'), 'FRED');
     });
   }());
 
@@ -21292,19 +21376,19 @@
       'padRight',
       'parseInt',
       'pop',
-      'repeat',
-      'shift',
-      'snakeCase',
-      'startCase',
-      'sum',
       'random',
       'reduce',
       'reduceRight',
+      'repeat',
       'round',
       'sample',
+      'shift',
       'size',
+      'snakeCase',
       'some',
+      'startCase',
       'startsWith',
+      'sum',
       'toInteger',
       'toLower',
       'toString',
@@ -21436,17 +21520,21 @@
       'escape',
       'kebabCase',
       'lowerCase',
+      'lowerFirst',
       'pad',
       'padLeft',
       'padRight',
       'repeat',
       'snakeCase',
+      'toLower',
+      'toUpper',
       'trim',
       'trimLeft',
       'trimRight',
       'trunc',
       'unescape',
-      'upperCase'
+      'upperCase',
+      'upperFirst'
     ];
 
     _.each(stringMethods, function(methodName) {

@@ -41,5 +41,5 @@ In addition to the following guidelines, please follow the conventions already e
 Guidelines are enforced using [JSCS](https://www.npmjs.com/package/jscs):
 
 ```bash
-$ npm run lint
+$ npm run style
 ```

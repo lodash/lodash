@@ -21,8 +21,8 @@
     "sauce-tunnel": "2.2.3"
   },
   "scripts": {
-    "test": "node test/test",
-    "lint": "jscs lodash.js"
+    "style": "jscs lodash.js",
+    "test": "node test/test"
   },
   "volo": {
     "type": "directory",

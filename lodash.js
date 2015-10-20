@@ -12464,6 +12464,11 @@
      * // => []
      */
     function range(start, end, step) {
+      function scaleFloat(number, exp) {
+        var parts = number.toExponential().split('e');
+        exp = (exp || 0) + +parts[1];
+        return +(parts[0] + 'e' + exp);
+      }
       if (step && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
@@ -12480,7 +12485,7 @@
         end = +end || 0;
       }
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
-      var scaleFactor = 1;
+      var scaleExp = 0;
       // Only do extra work for fractional `step` values.
       if (step % 1 !== 0) {
         // Separate sigificant digits from exponent, e.g. ['-4.005', '+4']
@@ -12501,21 +12506,27 @@
         // `stepDigits` were to have a single extra digit, and the runtime
         // produces the same value +1 and -1, then skip scaling because it
         // won't produce any better results.
-        var testNumber = parseInt(stepDigits + '0');
+        var testNumber = +(stepDigits + '0');
         if (testNumber !== testNumber + 1 && testNumber !== testNumber - 1) {
           // To get the scale factor, we could divide the new integer value by
           // the original `step`, but the division could potentially produce an
-          // inexact result. So find out how many places the decimal shifted by
-          // subtracting the exponent from the number of digits.
+          // inexact result. So just find out how many places the decimal
+          // shifted by subtracting the exponent from the number of digits.
+          // Don't use `Math.pow` on the exponent, because that too can produce
+          // inexact results. Instead, just save the exponent and use
+          // `scaleFloat`.
           var numDigits = stepDigits.length - (stepDigits.charAt(0) === '-');
-          var exponent = parseInt(exponentParts[1], 10);
-          scaleFactor = Math.pow(10, numDigits - exponent - 1);
-          step = parseInt(stepDigits, 10);
-          start *= scaleFactor;
+          scaleExp = numDigits - +exponentParts[1] - 1;
+          if (scaleExp) {
+            step = +stepDigits;
+            start = scaleFloat(start, scaleExp);
+          }
         }
       }
       return baseTimes(n, function(index) {
-        return (index ? (start + index * step) : start) / scaleFactor;
+        var result = index ? (start + index * step) : start;
+        // Only call `scaleFloat` if we have a scaled result.
+        return scaleExp ? scaleFloat(result, -scaleExp) : result;
       });
     }
 

@@ -12480,24 +12480,42 @@
         end = +end || 0;
       }
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
-      var factor = 1;
+      var scaleFactor = 1;
       // Only do extra work for fractional `step` values.
       if (step % 1 !== 0) {
+        // Separate sigificant digits from exponent, e.g. ['-4.005', '+4']
         var exponentParts = step.toExponential().split('e');
-        // If the step looks inexact already, and would result in a very large
-        // `factor`, don't even attempt to get more exact results.
-        if (exponentParts[0].length < 16) {
-          var integerStep = +(exponentParts[0].replace('.', ''));
-          // We know `factor` should be a power of ten. Do we need to potentially
-          // use `round` or `floor` here to ensure this float division doesn't
-          // screw that up?
-          factor = integerStep / step;
-          step = integerStep;
-          start *= factor;
+        // Remove the decimal to get a string version of `step` scaled up by
+        // some power of 10.
+        var stepDigits = exponentParts[0].replace('.', '');
+        // Let's find out how exact `step` is, to determine if it's worth
+        // scaling up in the first place. `toExponential` already gave us a
+        // hint at how exact it is, because the number of digits after the
+        // decimal point defaults to the number of digits necessary to
+        // represent the value uniquely. Even though 0.1, for example, can NOT
+        // be exactly represented, `toExponential` gives us '1e-1' and it is
+        // worth scaling up when summing.
+        // We don't want to assume we know what the limit of precision is on
+        // this particular JS runtime, so instead of hard-coding a certain
+        // number of digits to consider inexact, let's just do a test: if
+        // `stepDigits` were to have a single extra digit, and the runtime
+        // produces the same value +1 and -1, then skip scaling because it
+        // won't produce any better results.
+        var testNumber = parseInt(stepDigits + '0');
+        if (testNumber !== testNumber + 1 && testNumber !== testNumber - 1) {
+          // To get the scale factor, we could divide the new integer value by
+          // the original `step`, but the division could potentially produce an
+          // inexact result. So find out how many places the decimal shifted by
+          // subtracting the exponent from the number of digits.
+          var numDigits = stepDigits.length - (stepDigits.charAt(0) === '-');
+          var exponent = parseInt(exponentParts[1], 10);
+          scaleFactor = Math.pow(10, numDigits - exponent - 1);
+          step = parseInt(stepDigits, 10);
+          start *= scaleFactor;
         }
       }
       return baseTimes(n, function(index) {
-        return (index ? (start + index * step) : start) / factor;
+        return (index ? (start + index * step) : start) / scaleFactor;
       });
     }
 

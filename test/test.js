@@ -14921,6 +14921,13 @@
       assert.strictEqual(1 / actual[0], -Infinity);
     });
 
+    QUnit.test('should produce exact fractional results when possible', function(assert) {
+      assert.expect(2);
+
+      assert.deepEqual(_.range(0, 0.6, 0.1), [0, 0.1, 0.2, 0.3, 0.4, 0.5]);
+      assert.deepEqual(_.range(0, -4/3, -1/3), [0, -1/3, -2/3, -1]);
+    });
+
     QUnit.test('should treat falsey `start` arguments as `0`', function(assert) {
       assert.expect(13);
 

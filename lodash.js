@@ -12480,8 +12480,24 @@
         end = +end || 0;
       }
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
+      var factor = 1;
+      // Only do extra work for fractional `step` values.
+      if (step % 1 !== 0) {
+        var exponentParts = step.toExponential().split('e');
+        // If the step looks inexact already, and would result in a very large
+        // `factor`, don't even attempt to get more exact results.
+        if (exponentParts[0].length < 16) {
+          var integerStep = +(exponentParts[0].replace('.', ''));
+          // We know `factor` should be a power of ten. Do we need to potentially
+          // use `round` or `floor` here to ensure this float division doesn't
+          // screw that up?
+          factor = integerStep / step;
+          step = integerStep;
+          start *= factor;
+        }
+      }
       return baseTimes(n, function(index) {
-        return index ? (start += step) : start;
+        return index ? (start + index * step) / factor : start;
       });
     }
 

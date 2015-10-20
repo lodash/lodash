@@ -14926,7 +14926,7 @@
 
       assert.deepEqual(_.range(0, 0.6, 0.1), [0, 0.1, 0.2, 0.3, 0.4, 0.5]);
       assert.deepEqual(_.range(0, -4/3, -1/3), [0, -1/3, -2/3, -1]);
-      assert.deepEqual(_.range(1, 3, 0.72), [1, 1.72, 2.44]);
+      assert.deepEqual(_.range(3, 6, 0.72), [3, 3.72, 4.44, 5.16, 5.88]);
     });
 
     QUnit.test('should treat falsey `start` arguments as `0`', function(assert) {

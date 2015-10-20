@@ -12497,7 +12497,7 @@
         }
       }
       return baseTimes(n, function(index) {
-        return index ? (start + index * step) / factor : start;
+        return (index ? (start + index * step) : start) / factor;
       });
     }
 

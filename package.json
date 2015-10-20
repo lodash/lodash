@@ -4,6 +4,7 @@
   "main": "lodash.js",
   "private": true,
   "devDependencies": {
+    "async": "^1.4.2",
     "chalk": "^1.1.1",
     "coveralls": "^2.11.4",
     "curl-amd": "0.8.12",
@@ -19,7 +20,9 @@
     "qunitjs": "~1.19.0",
     "request": "^2.65.0",
     "requirejs": "~2.1.20",
-    "sauce-tunnel": "2.2.3"
+    "sauce-tunnel": "2.2.3",
+    "uglify-js": "2.5.0",
+    "webpack": "^1.12.2"
   },
   "scripts": {
     "style": "jscs lodash.js",

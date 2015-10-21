@@ -3252,7 +3252,7 @@
           return value;
         }, 32, {});
 
-        assert.strictEqual(debounced('x'), undefined);
+        assert.strictEqual(debounced('a'), undefined);
 
         setTimeout(function() {
           assert.strictEqual(callCount, 1);
@@ -3278,10 +3278,10 @@
           return value;
         }, 32, { 'leading': true });
 
-        assert.strictEqual(withLeading('x'), 'x');
+        assert.strictEqual(withLeading('a'), 'a');
 
         var withoutLeading = _.debounce(identity, 32, { 'leading': false });
-        assert.strictEqual(withoutLeading('x'), undefined);
+        assert.strictEqual(withoutLeading('a'), undefined);
 
         var withLeadingAndTrailing = _.debounce(function() {
           callCounts[1]++;
@@ -3295,7 +3295,7 @@
         setTimeout(function() {
           assert.deepEqual(callCounts, [1, 2]);
 
-          withLeading('x');
+          withLeading('a');
           assert.strictEqual(callCounts[0], 2);
 
           done();
@@ -3326,8 +3326,8 @@
           return value;
         }, 32, { 'trailing': false });
 
-        assert.strictEqual(withTrailing('x'), undefined);
-        assert.strictEqual(withoutTrailing('x'), undefined);
+        assert.strictEqual(withTrailing('a'), undefined);
+        assert.strictEqual(withoutTrailing('a'), undefined);
 
         setTimeout(function() {
           assert.strictEqual(withCount, 1);
@@ -3844,7 +3844,7 @@
       var disjed = _.disj(lodashStable.constant(false), lodashStable.constant(1), lodashStable.constant(''));
       assert.strictEqual(disjed(), true);
 
-      disjed = _.disj(lodashStable.constant(null), lodashStable.constant('x'), lodashStable.constant(0));
+      disjed = _.disj(lodashStable.constant(null), lodashStable.constant('a'), lodashStable.constant(0));
       assert.strictEqual(disjed(), true);
     });
 
@@ -9153,7 +9153,7 @@
       // 2: Initial check with object, this is the other half of the trigger.
       _.isObject(object);
 
-      assert.strictEqual(_.isObject('x'), false);
+      assert.strictEqual(_.isObject('a'), false);
     });
   }(1, 2, 3));
 
@@ -15672,7 +15672,7 @@
     QUnit.test('should treat `start` as `0` for negative or `NaN` values', function(assert) {
       assert.expect(1);
 
-      var values = [-1, NaN, 'x'],
+      var values = [-1, NaN, 'a'],
           expected = lodashStable.map(values, lodashStable.constant([[1, 2, 3, 4]]));
 
       var actual = lodashStable.map(values, function(value) {
@@ -16472,7 +16472,7 @@
       assert.expect(2);
 
       assert.strictEqual(_.some([false, 1, ''], identity), true);
-      assert.strictEqual(_.some([null, 'x', 0], identity), true);
+      assert.strictEqual(_.some([null, 'a', 0], identity), true);
     });
 
     QUnit.test('should return `false` for empty collections', function(assert) {

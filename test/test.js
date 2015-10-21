@@ -49,6 +49,7 @@
       create = Object.create,
       fnToString = funcProto.toString,
       freeze = Object.freeze,
+      identity = function(value) { return value; },
       JSON = root.JSON,
       Map = root.Map,
       noop = function() {},
@@ -2440,13 +2441,13 @@
         assert.ok(false, e.message);
       }
       assert.strictEqual(combined.length, 0);
-      assert.notStrictEqual(combined, lodashStable.identity);
+      assert.notStrictEqual(combined, identity);
     });
 
     QUnit.test('`_.' + methodName + '` should work with a curried function and `_.head`', function(assert) {
       assert.expect(1);
 
-      var curried = _.curry(lodashStable.identity);
+      var curried = _.curry(identity);
 
       var combined = isFlow
         ? func(_.head, curried)
@@ -3197,7 +3198,7 @@
       var done = assert.async();
 
       if (!(isRhino && isModularize)) {
-        var debounced = _.debounce(lodashStable.identity, 32);
+        var debounced = _.debounce(identity, 32);
         debounced('x');
 
         setTimeout(function() {
@@ -3221,7 +3222,7 @@
       var done = assert.async();
 
       if (!(isRhino && isModularize)) {
-        var debounced = _.debounce(lodashStable.identity, 32, { 'leading': true, 'trailing': false }),
+        var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
             result = [debounced('x'), debounced('y')];
 
         assert.deepEqual(result, ['x', 'x']);
@@ -3279,7 +3280,7 @@
 
         assert.strictEqual(withLeading('x'), 'x');
 
-        var withoutLeading = _.debounce(lodashStable.identity, 32, { 'leading': false });
+        var withoutLeading = _.debounce(identity, 32, { 'leading': false });
         assert.strictEqual(withoutLeading('x'), undefined);
 
         var withLeadingAndTrailing = _.debounce(function() {
@@ -4445,7 +4446,7 @@
     QUnit.test('should return `true` if `predicate` returns truthy for all elements', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(lodashStable.every([true, 1, 'a'], lodashStable.identity), true);
+      assert.strictEqual(lodashStable.every([true, 1, 'a'], identity), true);
     });
 
     QUnit.test('should return `true` for empty collections', function(assert) {
@@ -4455,7 +4456,7 @@
 
       var actual = lodashStable.map(empties, function(value) {
         try {
-          return _.every(value, lodashStable.identity);
+          return _.every(value, identity);
         } catch (e) {}
       });
 
@@ -4478,7 +4479,7 @@
     QUnit.test('should work with collections of `undefined` values (test in IE < 9)', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.every([undefined, undefined, undefined], lodashStable.identity), false);
+      assert.strictEqual(_.every([undefined, undefined, undefined], identity), false);
     });
 
     QUnit.test('should use `_.identity` when `predicate` is nullish', function(assert) {
@@ -5789,7 +5790,7 @@
     QUnit.test('should return the function names of an object', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 'a', 'b': lodashStable.identity, 'c': /x/, 'd': lodashStable.each };
+      var object = { 'a': 'a', 'b': identity, 'c': /x/, 'd': lodashStable.each };
       assert.deepEqual(_.functions(object).sort(), ['b', 'd']);
     });
 
@@ -5797,7 +5798,7 @@
       assert.expect(1);
 
       function Foo() {
-        this.a = lodashStable.identity;
+        this.a = identity;
         this.b = 'b';
       }
       Foo.prototype.c = noop;
@@ -10881,7 +10882,7 @@
       var value = { 'value': 'x' },
           object = { 'length': { 'value': 'x' } };
 
-      assert.deepEqual(_.map(object, lodashStable.identity), [value]);
+      assert.deepEqual(_.map(object, identity), [value]);
     });
 
     QUnit.test('should treat a nodelist as an array-like object', function(assert) {
@@ -11934,7 +11935,7 @@
         'valueOf'
       ];
 
-      var memoized = _.memoize(lodashStable.identity);
+      var memoized = _.memoize(identity);
 
       var actual = lodashStable.map(props, function(value) {
         return memoized(value);
@@ -11947,7 +11948,7 @@
       assert.expect(12);
 
       lodashStable.times(2, function(index) {
-        var resolver = index ? lodashStable.identity : null;
+        var resolver = index ? identity : null;
 
         var memoized = _.memoize(function(value) {
           return 'value:' + value;
@@ -11974,7 +11975,7 @@
 
       lodashStable.times(2, function(index) {
         var count = 0,
-            resolver = index && lodashStable.identity;
+            resolver = index && identity;
 
         var memoized = _.memoize(function() {
           count++;
@@ -12449,7 +12450,7 @@
       var actual = _.mergeWith({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, noop);
       assert.deepEqual(actual, { 'a': { 'b': [0, 1] } });
 
-      actual = _.mergeWith([], [undefined], lodashStable.identity);
+      actual = _.mergeWith([], [undefined], identity);
       assert.deepEqual(actual, [undefined]);
     });
 
@@ -13179,7 +13180,7 @@
     QUnit.test('`_.' + methodName + '` should not pass `undefined` if there are more transforms than arguments', function(assert) {
       assert.expect(1);
 
-      var modded = func(fn, doubled, lodashStable.identity);
+      var modded = func(fn, doubled, identity);
       assert.deepEqual(modded(5), [10]);
     });
 
@@ -13743,7 +13744,7 @@
     QUnit.test('`_.' + methodName + '` partially applies arguments', function(assert) {
       assert.expect(1);
 
-      var par = func(lodashStable.identity, 'a');
+      var par = func(identity, 'a');
       assert.strictEqual(par(), 'a');
     });
 
@@ -13769,7 +13770,7 @@
     QUnit.test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked with additional arguments', function(assert) {
       assert.expect(1);
 
-      var par = func(lodashStable.identity);
+      var par = func(identity);
       assert.strictEqual(par('a'), 'a');
     });
 
@@ -14075,7 +14076,7 @@
     QUnit.test('should return two groups of elements', function(assert) {
       assert.expect(3);
 
-      assert.deepEqual(_.partition([], lodashStable.identity), [[], []]);
+      assert.deepEqual(_.partition([], identity), [[], []]);
       assert.deepEqual(_.partition(array, lodashStable.constant(true)), [array, []]);
       assert.deepEqual(_.partition(array, lodashStable.constant(false)), [[], array]);
     });
@@ -16470,8 +16471,8 @@
     QUnit.test('should return `true` if `predicate` returns truthy for any element', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.some([false, 1, ''], lodashStable.identity), true);
-      assert.strictEqual(_.some([null, 'x', 0], lodashStable.identity), true);
+      assert.strictEqual(_.some([false, 1, ''], identity), true);
+      assert.strictEqual(_.some([null, 'x', 0], identity), true);
     });
 
     QUnit.test('should return `false` for empty collections', function(assert) {
@@ -16481,7 +16482,7 @@
 
       var actual = lodashStable.map(empties, function(value) {
         try {
-          return _.some(value, lodashStable.identity);
+          return _.some(value, identity);
         } catch (e) {}
       });
 
@@ -16504,8 +16505,8 @@
     QUnit.test('should return `false` if `predicate` returns falsey for all elements', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.some([false, false, false], lodashStable.identity), false);
-      assert.strictEqual(_.some([null, 0, ''], lodashStable.identity), false);
+      assert.strictEqual(_.some([false, false, false], identity), false);
+      assert.strictEqual(_.some([null, 0, ''], identity), false);
     });
 
     QUnit.test('should use `_.identity` when `predicate` is nullish', function(assert) {
@@ -18300,7 +18301,7 @@
       var done = assert.async();
 
       if (!(isRhino && isModularize)) {
-        var throttled = _.throttle(lodashStable.identity, 32),
+        var throttled = _.throttle(identity, 32),
             result = [throttled('a'), throttled('b')];
 
         assert.deepEqual(result, ['a', 'a']);
@@ -18448,10 +18449,10 @@
       assert.expect(2);
 
       if (!(isRhino && isModularize)) {
-        var withLeading = _.throttle(lodashStable.identity, 32, { 'leading': true });
+        var withLeading = _.throttle(identity, 32, { 'leading': true });
         assert.strictEqual(withLeading('a'), 'a');
 
-        var withoutLeading = _.throttle(lodashStable.identity, 32, { 'leading': false });
+        var withoutLeading = _.throttle(identity, 32, { 'leading': false });
         assert.strictEqual(withoutLeading('a'), undefined);
       }
       else {
@@ -20962,12 +20963,12 @@
           lodashStable.each(['map', 'filter'], function(methodName) {
             var array = clone.slice(),
                 expected = clone.slice(1, -1).reverse(),
-                actual = _(array)[methodName](lodashStable.identity).thru(_.compact).reverse().value();
+                actual = _(array)[methodName](identity).thru(_.compact).reverse().value();
 
             assert.deepEqual(actual, expected);
 
             array = clone.slice();
-            actual = _(array).thru(_.compact)[methodName](lodashStable.identity).pull(1).push(3).reverse().value();
+            actual = _(array).thru(_.compact)[methodName](identity).pull(1).push(3).reverse().value();
 
             assert.deepEqual(actual, [3].concat(expected.slice(0, -1)));
           });
@@ -21455,10 +21456,10 @@
       assert.deepEqual(_.compact(args), [1, [3], 5], message('compact'));
       assert.deepEqual(_.drop(args, 3), [null, 5], message('drop'));
       assert.deepEqual(_.dropRight(args, 3), [1, null], message('dropRight'));
-      assert.deepEqual(_.dropRightWhile(args,lodashStable.identity), [1, null, [3], null], message('dropRightWhile'));
-      assert.deepEqual(_.dropWhile(args,lodashStable.identity), [ null, [3], null, 5], message('dropWhile'));
-      assert.deepEqual(_.findIndex(args, lodashStable.identity), 0, message('findIndex'));
-      assert.deepEqual(_.findLastIndex(args, lodashStable.identity), 4, message('findLastIndex'));
+      assert.deepEqual(_.dropRightWhile(args,identity), [1, null, [3], null], message('dropRightWhile'));
+      assert.deepEqual(_.dropWhile(args,identity), [ null, [3], null, 5], message('dropWhile'));
+      assert.deepEqual(_.findIndex(args, identity), 0, message('findIndex'));
+      assert.deepEqual(_.findLastIndex(args, identity), 4, message('findLastIndex'));
       assert.deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
       assert.deepEqual(_.head(args), 1, message('head'));
       assert.deepEqual(_.indexOf(args, 5), 4, message('indexOf'));
@@ -21473,8 +21474,8 @@
       assert.deepEqual(_.tail(args, 4), [null, [3], null, 5], message('tail'));
       assert.deepEqual(_.take(args, 2), [1, null], message('take'));
       assert.deepEqual(_.takeRight(args, 1), [5], message('takeRight'));
-      assert.deepEqual(_.takeRightWhile(args, lodashStable.identity), [5], message('takeRightWhile'));
-      assert.deepEqual(_.takeWhile(args, lodashStable.identity), [1], message('takeWhile'));
+      assert.deepEqual(_.takeRightWhile(args, identity), [5], message('takeRightWhile'));
+      assert.deepEqual(_.takeWhile(args, identity), [1], message('takeWhile'));
       assert.deepEqual(_.uniq(args), [1, null, [3], 5], message('uniq'));
       assert.deepEqual(_.without(args, null), [1, [3], 5], message('without'));
       assert.deepEqual(_.zip(args, args), [[1, 1], [null, null], [[3], [3]], [null, null], [5, 5]], message('zip'));

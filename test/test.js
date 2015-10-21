@@ -14875,6 +14875,58 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.clamp');
+
+  (function() {
+    QUnit.test('should limit negative numbers', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.clamp(-10, -5, 5), -5);
+    });
+
+    QUnit.test('should limit posiive number', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.clamp(10, -5, 5), 5);
+    });
+
+    QUnit.test('should not alter negative numbers in range', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.clamp(-5, -5, 5), -5);
+    });
+
+    QUnit.test('should not alter positive numbers in range`', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.clamp(10, -5, 5), 5);
+    });
+
+    QUnit.test('should not alter positive zero in range', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(0, -5, 5), 1 / 0);
+    });
+
+    QUnit.test('should not alter negative zero in range', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(-0, -5, 5), 1 / -0);
+    });
+
+    QUnit.test('should return NaN if an argument is or is coerced to NaN', function(assert) {
+      assert.expect(5);
+
+      assert.deepEqual(_.clamp(NaN, -5, 5), NaN);
+      assert.deepEqual(_.clamp(Infinity, -5, NaN), NaN);
+      assert.deepEqual(_.clamp(-Infinity, -5, NaN), NaN);
+      assert.deepEqual(_.clamp(Infinity, NaN, 5), NaN);
+      assert.deepEqual(_.clamp(-Infinity, NaN, 5), NaN);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.rearg');
 
   (function() {

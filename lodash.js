@@ -11005,6 +11005,29 @@
       return baseRandom(min, max);
     }
 
+    /**
+     * Returns a number whose value is limited to the given range specified
+     * by `min` and `max`.
+     *
+     * @static
+     * @memberOf _
+     * @category Number
+     * @param {number} number The number whose value is to be limited.
+     * @param {number} min The minimum possible value.
+     * @param {number} max The maximum possible value.
+     * @returns {number} A number in the range [min, max].
+     * @example
+     *
+     * _.clamp(-10, -5, 5);
+     * // => -5
+     *
+     * _.clamp(10, -5, 5);
+     * // => 5
+     */
+    function clamp(number, min, max) {
+      return Math.min(Math.max(number, min), max);
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -12958,6 +12981,7 @@
     lodash.camelCase = camelCase;
     lodash.capitalize = capitalize;
     lodash.ceil = ceil;
+    lodash.clamp = clamp;
     lodash.clone = clone;
     lodash.cloneDeep = cloneDeep;
     lodash.cloneDeepWith = cloneDeepWith;

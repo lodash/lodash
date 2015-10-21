@@ -10946,6 +10946,9 @@
      * If `floating` is `true`, or either `min` or `max` are floats, a floating-point
      * number is returned instead of an integer.
      *
+     * **Note:** JavaScript follows the IEEE 754-2008 standard for resolving
+     * floating-point values which can produce unexpected results.
+     *
      * @static
      * @memberOf _
      * @category Number
@@ -12391,6 +12394,9 @@
      * `start` up to, but not including, `end`. If `end` is not specified it's
      * set to `start` with `start` then set to `0`. If `end` is less than `start`
      * a zero-length range is created unless a negative `step` is specified.
+     *
+     * **Note:** JavaScript follows the IEEE 754-2008 standard for resolving
+     * floating-point values which can produce unexpected results.
      *
      * @static
      * @memberOf _

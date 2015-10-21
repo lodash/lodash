@@ -10946,6 +10946,15 @@
      * If `floating` is `true`, or either `min` or `max` are floats, a floating-point
      * number is returned instead of an integer.
      *
+     * Note: Javascript uses IEE 754 which can take the programmer by surprise
+     * with unexpected precision errors. In the case of random, one example is
+     * when the integer range between max and min near or exceed the
+     * MAX_SAFE_INTEGER value then rand will not return the full range that you
+     * may expect: numbers can no longer be represented accurately. Similar is
+     * also true when the values for max and min are small or are not integer
+     * representations: rounding errors can occur. This is not something that
+     * lodash has control over.
+     * 
      * @static
      * @memberOf _
      * @category Number

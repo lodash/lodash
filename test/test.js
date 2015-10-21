@@ -2028,6 +2028,78 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.clamp');
+
+  (function() {
+    QUnit.test('should limit negative numbers', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.clamp(-10, -5, 5), -5);
+      assert.strictEqual(_.clamp(-10.2, -5.5, 5.5), -5.5);
+      assert.strictEqual(_.clamp(-Infinity, -5, 5), -5);
+    });
+
+    QUnit.test('should limit posiive number', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.clamp(10, -5, 5), 5)
+      assert.strictEqual(_.clamp(10.6, -5.6, 5.4), 5.4);
+      assert.strictEqual(_.clamp(Infinity, -5, 5), 5)
+    });
+
+    QUnit.test('should not alter negative numbers in range', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.clamp(-4, -5, 5), -4);
+      assert.strictEqual(_.clamp(-5, -5, 5), -5);
+      assert.strictEqual(_.clamp(-5.5, -5.6, 5.6), -5.5);
+    });
+
+    QUnit.test('should not alter positive numbers in range`', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.clamp(4, -5, 5), 4);
+      assert.strictEqual(_.clamp(5, -5, 5), 5);
+      assert.strictEqual(_.clamp(4.5, -5.1, 5.2), 4.5);
+    });
+
+    QUnit.test('should not alter positive zero in range', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(0, -5, 5), 1 / 0);
+    });
+
+    QUnit.test('should clamp to positive zero', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(-10, 0, 5), 1 / 0);
+    });
+
+    QUnit.test('should not alter negative zero in range', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(-0, -5, 5), 1 / -0);
+    });
+
+    QUnit.test('should clamp to negative zero', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(-10, -0, 5), 1 / -0);
+    });
+
+    QUnit.test('should return NaN if an argument is or is coerced to NaN', function(assert) {
+      assert.expect(5);
+
+      assert.deepEqual(_.clamp(NaN, -5, 5), NaN);
+      assert.deepEqual(_.clamp(Infinity, -5, NaN), NaN);
+      assert.deepEqual(_.clamp(-Infinity, -5, NaN), NaN);
+      assert.deepEqual(_.clamp(Infinity, NaN, 5), NaN);
+      assert.deepEqual(_.clamp(-Infinity, NaN, 5), NaN);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('clone methods');
 
   (function() {
@@ -21667,7 +21739,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(259);
+      assert.expect(260);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

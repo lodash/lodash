@@ -18732,6 +18732,33 @@
         done();
       }
     });
+
+    QUnit.test('_.' + methodName + ' should support flushing delayed calls', function(assert) {
+      assert.expect(2);
+
+      var done = assert.async();
+
+      if (!(isRhino && isModularize)) {
+        var callCount = 0;
+
+        var funced = func(function() {
+          return ++callCount;
+        }, 32, { 'leading': false });
+
+        funced();
+        var actual = funced.flush();
+
+        setTimeout(function() {
+          assert.strictEqual(actual, 1);
+          assert.strictEqual(callCount, 1);
+          done();
+        }, 64);
+      }
+      else {
+        skipTest(assert, 2);
+        done();
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/

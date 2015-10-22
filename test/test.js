@@ -2031,7 +2031,7 @@
   QUnit.module('lodash.clamp');
 
   (function() {
-    QUnit.test('should limit negative numbers', function(assert) {
+    QUnit.test('should clamp negative numbers', function(assert) {
       assert.expect(3);
 
       assert.strictEqual(_.clamp(-10, -5, 5), -5);
@@ -2039,7 +2039,7 @@
       assert.strictEqual(_.clamp(-Infinity, -5, 5), -5);
     });
 
-    QUnit.test('should limit posiive number', function(assert) {
+    QUnit.test('should clamp positive numbers', function(assert) {
       assert.expect(3);
 
       assert.strictEqual(_.clamp(10, -5, 5), 5)

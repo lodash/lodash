@@ -19170,6 +19170,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toSafeInteger');
+
+  (function() {
+    QUnit.test('should convert values to safe integers', function(assert) {
+      assert.expect(6);
+
+      assert.strictEqual(_.toSafeInteger(-5.6), -5);
+      assert.strictEqual(_.toSafeInteger('5.6'), 5);
+      assert.strictEqual(_.toSafeInteger(), 0);
+      assert.strictEqual(_.toSafeInteger(NaN), 0);
+      assert.strictEqual(_.toSafeInteger(Infinity), MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toSafeInteger(-Infinity), -MAX_SAFE_INTEGER);
+    });
+
+    QUnit.test('should support `value` of `-0`', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.toSafeInteger(-0), -Infinity);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.transform');
 
   (function() {
@@ -21511,6 +21534,7 @@
       'sum',
       'toInteger',
       'toLower',
+      'toSafeInteger',
       'toString',
       'toUpper',
       'trim',
@@ -21762,7 +21786,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(260);
+      assert.expect(261);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

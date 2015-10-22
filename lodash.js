@@ -9772,6 +9772,33 @@
     }
 
     /**
+     * Converts `value` to a safe integer. A safe integer can be compared and
+     * represented correctly.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {number} Returns the converted integer.
+     * @example
+     *
+     *  _.toSafeInteger('3.14');
+     *  // => 3
+     *
+     * _.toSafeInteger(NaN);
+     * // => 0
+     *
+     * _.toSafeInteger(Infinity)
+     * // => 9007199254740991
+     *
+     * _.toSafeInteger(-Infinity)
+     * // => -9007199254740991
+     */
+    function toSafeInteger(value) {
+      return clamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
+    }
+
+    /**
      * Converts `value` to a string if it's not one.
      * An empty string is returned for `null` and `undefined` values.
      *
@@ -13102,6 +13129,7 @@
     lodash.template = template;
     lodash.toInteger = toInteger;
     lodash.toLower = toLower;
+    lodash.toSafeInteger = toSafeInteger;
     lodash.toString = toString;
     lodash.toUpper = toUpper;
     lodash.trim = trim;

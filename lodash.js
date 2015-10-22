@@ -8022,7 +8022,7 @@
 
       function flush() {
         if ((timeoutId && trailingCall) || (maxTimeoutId && trailing)) {
-          complete(true);
+          result = func.apply(thisArg, args);
         }
         cancel();
         return result;

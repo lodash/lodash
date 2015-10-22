@@ -14879,27 +14879,35 @@
 
   (function() {
     QUnit.test('should limit negative numbers', function(assert) {
-      assert.expect(1);
+      assert.expect(3);
 
       assert.strictEqual(_.clamp(-10, -5, 5), -5);
+      assert.strictEqual(_.clamp(-10.2, -5.5, 5.5), -5.5);
+      assert.strictEqual(_.clamp(-Infinity, -5, 5), -5);
     });
 
     QUnit.test('should limit posiive number', function(assert) {
-      assert.expect(1);
+      assert.expect(3);
 
-      assert.strictEqual(_.clamp(10, -5, 5), 5);
+      assert.strictEqual(_.clamp(10, -5, 5), 5)
+      assert.strictEqual(_.clamp(10.6, -5.6, 5.4), 5.4);
+      assert.strictEqual(_.clamp(Infinity, -5, 5), 5)
     });
 
     QUnit.test('should not alter negative numbers in range', function(assert) {
-      assert.expect(1);
+      assert.expect(3);
 
+      assert.strictEqual(_.clamp(-4, -5, 5), -4);
       assert.strictEqual(_.clamp(-5, -5, 5), -5);
+      assert.strictEqual(_.clamp(-5.5, -5.6, 5.6), -5.5);
     });
 
     QUnit.test('should not alter positive numbers in range`', function(assert) {
-      assert.expect(1);
+      assert.expect(3);
 
-      assert.strictEqual(_.clamp(10, -5, 5), 5);
+      assert.strictEqual(_.clamp(4, -5, 5), 4);
+      assert.strictEqual(_.clamp(5, -5, 5), 5);
+      assert.strictEqual(_.clamp(4.5, -5.1, 5.2), 4.5);
     });
 
     QUnit.test('should not alter positive zero in range', function(assert) {

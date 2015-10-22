@@ -14908,10 +14908,22 @@
       assert.strictEqual(1 / _.clamp(0, -5, 5), 1 / 0);
     });
 
+    QUnit.test('should clamp to positive zero', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(-10, 0, 5), 1 / 0);
+    });
+
     QUnit.test('should not alter negative zero in range', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(1 / _.clamp(-0, -5, 5), 1 / -0);
+    });
+
+    QUnit.test('should clamp to negative zero', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.clamp(-10, -0, 5), 1 / -0);
     });
 
     QUnit.test('should return NaN if an argument is or is coerced to NaN', function(assert) {

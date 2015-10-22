@@ -11943,7 +11943,7 @@
           while ((match = separator.exec(substring))) {
             var newEnd = match.index;
           }
-          result = result.slice(0, newEnd == null ? end : newEnd);
+          result = result.slice(0, newEnd === undefined ? end : newEnd);
         }
       } else if (string.indexOf(separator, end) != end) {
         var index = result.lastIndexOf(separator);
@@ -12453,9 +12453,9 @@
         end = step = undefined;
       }
       start = +start || 0;
-      step = step == null ? 1 : (+step || 0);
+      step = step === undefined ? 1 : (+step || 0);
 
-      if (end == null) {
+      if (end === undefined) {
         end = start;
         start = 0;
       } else {
@@ -13133,7 +13133,7 @@
         if (filtered && !index) {
           return new LazyWrapper(this);
         }
-        n = n == null ? 1 : nativeMax(toInteger(n), 0);
+        n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
 
         var result = this.clone();
         if (filtered) {

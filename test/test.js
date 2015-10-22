@@ -19063,6 +19063,12 @@
       assert.strictEqual(_.toInteger(Infinity), MAX_INTEGER);
       assert.strictEqual(_.toInteger(-Infinity), -MAX_INTEGER);
     });
+
+    QUnit.test('should not coerce `-0` to `0`', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.toInteger(-0), -Infinity);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

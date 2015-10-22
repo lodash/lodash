@@ -9736,9 +9736,12 @@
      * // => -1e308
      */
     function toInteger(value) {
-      return (value == INFINITY || value == -INFINITY)
-        ? (value < 0 ? -1 : 1) * MAX_INTEGER
-        : (value - (value % 1)) || 0;
+      if (value === INFINITY || value === -INFINITY) {
+        return (value < 0 ? -1 : 1) * MAX_INTEGER;
+      }
+      value = +value;
+      var remainder = value % 1;
+      return value === value ? (remainder ? value - remainder : value) : 0;
     }
 
     /**

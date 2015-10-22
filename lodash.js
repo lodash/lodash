@@ -10904,7 +10904,7 @@
      * @memberOf _
      * @category Number
      * @param {number} number The number whose value is to be limited.
-     * @param {number} min The minimum possible value.
+     * @param {number} [min] The minimum possible value.
      * @param {number} max The maximum possible value.
      * @returns {number} A number in the range [min, max].
      * @example
@@ -10916,7 +10916,19 @@
      * // => 5
      */
     function clamp(number, min, max) {
-      return nativeMin(nativeMax(number, min), max);
+      if (max === undefined) {
+        max = min;
+        min = undefined;
+      }
+      if (max !== undefined) {
+        max = +max;
+        number = nativeMin(number, max === max ? max : 0);
+      }
+      if (min !== undefined) {
+        min = +min;
+        number = nativeMax(number, min === min ? min : 0);
+      }
+      return number;
     }
 
     /**

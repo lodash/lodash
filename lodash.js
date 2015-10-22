@@ -7349,7 +7349,7 @@
           length = result.length,
           lastIndex = length - 1;
 
-      n = nativeMin(nativeMax(toInteger(n), 0), length);
+      n = clamp(toInteger(n), 0, length);
       while (++index < n) {
         var rand = baseRandom(index, lastIndex),
             value = result[rand];
@@ -11134,7 +11134,7 @@
       var length = string.length;
       position = position === undefined
         ? length
-        : nativeMin(nativeMax(toInteger(position), 0), length);
+        : clamp(toInteger(position), 0, length);
 
       position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
@@ -11518,7 +11518,7 @@
      */
     function startsWith(string, target, position) {
       string = toString(string);
-      position = nativeMin(nativeMax(toInteger(position), 0), string.length);
+      position = clamp(toInteger(position), 0, string.length);
       return string.lastIndexOf(target, position) == position;
     }
 

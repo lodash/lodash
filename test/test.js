@@ -14911,7 +14911,7 @@
       assert.deepEqual(_.range(21, 10, -3), [21, 18, 15, 12]);
     });
 
-    QUnit.test('should not coerce `start` of `-0` to `0`', function(assert) {
+    QUnit.test('should support `start` of `-0`', function(assert) {
       assert.expect(1);
 
       var actual = _.range(-0, 1);
@@ -19071,7 +19071,7 @@
       assert.strictEqual(_.toInteger(-Infinity), -MAX_INTEGER);
     });
 
-    QUnit.test('should not coerce `-0` to `0`', function(assert) {
+    QUnit.test('should support `value` of `-0`', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(1 / _.toInteger(-0), -Infinity);

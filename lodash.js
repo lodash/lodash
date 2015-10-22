@@ -54,7 +54,6 @@
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
-      MIN_SAFE_INTEGER = -MAX_SAFE_INTEGER,
       MAX_INTEGER = 1e308;
 
   /** Used as references for the maximum length and index of an array. */
@@ -9572,7 +9571,7 @@
      * // => false
      */
     function isSafeInteger(value) {
-      return isInteger(value) && value >= MIN_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
+      return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
     }
 
     /**
@@ -9774,7 +9773,7 @@
      * // => -9007199254740991
      */
     function toSafeInteger(value) {
-      return clamp(toInteger(value), MIN_SAFE_INTEGER, MAX_SAFE_INTEGER);
+      return clamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
     }
 
     /**

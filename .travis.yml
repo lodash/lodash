@@ -14,9 +14,6 @@ env:
     -
     - ISTANBUL=true
     - BIN="phantomjs"
-#    - BIN="rhino" OPTION="-opt -1"
-#    - BIN="rhino" OPTION="-opt -1 -require"
-#    - BIN="ringo" OPTION="-o -1"
 matrix:
   include:
     - node_js: "0.8"
@@ -42,10 +39,6 @@ before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm config set loglevel error"
   - "npm i -g npm@\"$NPM_VERSION\""
-#  - "[ $BIN != 'rhino' ] || (sudo mkdir /opt/rhino-1.7.6 && sudo wget --no-check-certificate -O $_/js.jar https://lodash.com/_travis/rhino-1.7.6.jar)"
-#  - "[ $BIN != 'rhino' ] || (echo -e '#!/bin/sh\\njava -jar /opt/rhino-1.7.6/js.jar $@' | sudo tee /usr/local/bin/rhino && sudo chmod +x /usr/local/bin/rhino)"
-#  - "[ $BIN != 'ringo' ] || (wget --no-check-certificate https://lodash.com/_travis/ringojs-0.11.zip && sudo unzip ringojs-0.11 -d /opt && rm ringojs-0.11.zip)"
-#  - "[ $BIN != 'ringo' ] || (sudo ln -s /opt/ringojs-0.11/bin/ringo /usr/local/bin/ringo && sudo chmod +x $_)"
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
   - "node ./node_modules/lodash-cli/bin/lodash -o ./lodash.js"
   - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN1\" ./lodash.js"
@@ -60,8 +53,6 @@ script:
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../lodash.min.js"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.js&noglobals=true\" tags=\"development\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.min.js&noglobals=true\" tags=\"production\""
-#  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.js\" tags=\"development,ie-compat\" compatMode=7"
-#  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.min.js\" tags=\"production,ie-compat\" compatMode=7"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../lodash.js\" tags=\"development,backbone\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../lodash.min.js\" tags=\"production,backbone\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../lodash.js\" tags=\"development,underscore\""

@@ -19067,26 +19067,31 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.toInteger');
+  QUnit.module('toInteger methods');
 
-  (function() {
-    QUnit.test('should convert values to integers', function(assert) {
+  _.each(['toInteger', 'toSafeInteger'], function(methodName) {
+    var func = _[methodName],
+        isSafe = methodName == 'toSafeInteger';
+
+    QUnit.test('`_.' + methodName + '` should convert values to integers', function(assert) {
       assert.expect(6);
 
-      assert.strictEqual(_.toInteger(-5.6), -5);
-      assert.strictEqual(_.toInteger('5.6'), 5);
-      assert.strictEqual(_.toInteger(), 0);
-      assert.strictEqual(_.toInteger(NaN), 0);
-      assert.strictEqual(_.toInteger(Infinity), MAX_INTEGER);
-      assert.strictEqual(_.toInteger(-Infinity), -MAX_INTEGER);
+      assert.strictEqual(func(-5.6), -5);
+      assert.strictEqual(func('5.6'), 5);
+      assert.strictEqual(func(), 0);
+      assert.strictEqual(func(NaN), 0);
+
+      var expected = isSafe ? MAX_SAFE_INTEGER : MAX_INTEGER;
+      assert.strictEqual(func(Infinity), expected);
+      assert.strictEqual(func(-Infinity), -expected);
     });
 
-    QUnit.test('should support `value` of `-0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should support `value` of `-0`', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(1 / _.toInteger(-0), -Infinity);
+      assert.strictEqual(1 / func(-0), -Infinity);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -19167,29 +19172,6 @@
       assert.deepEqual(actual, expected);
     });
   }(1, 2, 3));
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.toSafeInteger');
-
-  (function() {
-    QUnit.test('should convert values to safe integers', function(assert) {
-      assert.expect(6);
-
-      assert.strictEqual(_.toSafeInteger(-5.6), -5);
-      assert.strictEqual(_.toSafeInteger('5.6'), 5);
-      assert.strictEqual(_.toSafeInteger(), 0);
-      assert.strictEqual(_.toSafeInteger(NaN), 0);
-      assert.strictEqual(_.toSafeInteger(Infinity), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toSafeInteger(-Infinity), -MAX_SAFE_INTEGER);
-    });
-
-    QUnit.test('should support `value` of `-0`', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(1 / _.toSafeInteger(-0), -Infinity);
-    });
-  }());
 
   /*--------------------------------------------------------------------------*/
 

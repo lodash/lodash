@@ -9546,8 +9546,7 @@
 
     /**
      * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
-     * double precision number which isn't the result of rounding result of unsafe
-     * integers.
+     * double precision number which isn't the result of a rounded unsafe integer.
      *
      * **Note:** This method is based on [`Number.isSafeInteger`](http://ecma-international.org/ecma-262/6.0/#sec-number.issafeinteger).
      *

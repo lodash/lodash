@@ -1436,9 +1436,9 @@
      * and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
-     * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
-     * `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`, `escape`,
-     * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
+     * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
+     * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`,
+     * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
      * `findLastIndex`, `findLastKey`, `floor`, `get`, `gt`, `gte`, `has`, `hasIn`,
      * `head`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`,
      * `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`, `isElement`,
@@ -1451,9 +1451,9 @@
      * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toString`, `toUpper`, `trim`,
-     * `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `upperCase`,
-     * `upperFirst`, `value`, and `words`
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toSafeInteger`, `toString`,
+     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
+     * `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor

@@ -293,7 +293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'aliasMap': {
 	    'forEach': ['each'],
 	    'forEachRight': ['eachRight'],
-	    'first': ['head']
+	    'head': ['first']
 	  },
 
 	  /** Used to map method names to their iteratee ary. */
@@ -339,7 +339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'aryMethodMap': {
 	    1: (
 	      'attempt,ceil,create,curry,floor,iteratee,invert,memoize,method,methodOf,' +
-	      'mixin,restParam,reverse,round,runInContext,template,trim,trimLeft,trimRight,' +
+	      'mixin,rest,reverse,round,runInContext,template,trim,trimLeft,trimRight,' +
 	      'words,zipObject').split(','),
 	    2: (
 	      'ary,assign,at,bind,bindKey,cloneDeepWith,cloneWith,countBy,curryN,debounce,' +
@@ -353,7 +353,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'sortedLastIndexBy,sortedUniqBy,startsWith,sumBy,take,takeRight,takeRightWhile,' +
 	      'takeWhile,throttle,times,trunc,union,uniqBy,uniqueId,without,wrap,xor,zip').split(','),
 	    3: (
-	      'assignWith,differenceBy,extendWith,inRange,intersectionBy,isEqualWith,' +
+	      'assignWith,clamp,differenceBy,extendWith,inRange,intersectionBy,isEqualWith,' +
 	      'isMatchWith,mergeWith,omitBy,pickBy,pullAllBy,reduce,reduceRight,slice,' +
 	      'transform,unionBy,xorBy,zipWith').split(','),
 	    4:
@@ -369,6 +369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /** Used to map ary to rearg configs by method names. */
 	  'methodReargMap': {
+	    'clamp': [2, 0, 1],
 	    'reduce': [2, 0, 1],
 	    'reduceRight': [2, 0, 1],
 	    'slice': [2, 0, 1],

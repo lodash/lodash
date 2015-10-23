@@ -8723,11 +8723,13 @@
      * @returns {*} Returns the cloned value.
      * @example
      *
-     * var el = _.clone(document.body, function(value) {
+     * function customizer(value) {
      *   if (_.isElement(value)) {
      *     return value.cloneNode(false);
      *   }
-     * });
+     * }
+     *
+     * var el = _.clone(document.body, customizer);
      *
      * console.log(el === document.body);
      * // => false
@@ -8774,11 +8776,13 @@
      * @returns {*} Returns the deep cloned value.
      * @example
      *
-     * var el = _.cloneDeep(document.body, function(value) {
+     * function customizer(value) {
      *   if (_.isElement(value)) {
      *     return value.cloneNode(true);
      *   }
-     * });
+     * }
+     *
+     * var el = _.cloneDeep(document.body, customizer);
      *
      * console.log(el === document.body);
      * // => false
@@ -9117,15 +9121,20 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
+     * function isGreeting(value) {
+     *   return /^h(?:i|ello)$/.test(value);
+     * }
+     *
+     * function customizer(objValue, othValue) {
+     *   if (isGreeting(objValue) && isGreeting(othValue)) {
+     *     return true;
+     *   }
+     * }
+     *
      * var array = ['hello', 'goodbye'];
      * var other = ['hi', 'goodbye'];
      *
-     * _.isEqualWith(array, other, function(value, other) {
-     *   var reHello = /^h(?:i|ello)$/;
-     *   if (reHello.test(value) && reHello.test(other)) {
-     *     return true;
-     *   }
-     * });
+     * _.isEqualWith(array, other, customizer);
      * // => true
      */
     function isEqualWith(value, other, customizer) {
@@ -9337,15 +9346,20 @@
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      * @example
      *
+     * function isGreeting(value) {
+     *   return /^h(?:i|ello)$/.test(value);
+     * }
+     *
+     * function customizer(objValue, srcValue) {
+     *   if (isGreeting(objValue) && isGreeting(srcValue)) {
+     *     return true;
+     *   }
+     * }
+     *
      * var object = { 'greeting': 'hello' };
      * var source = { 'greeting': 'hi' };
      *
-     * _.isMatchWith(object, source, function(value, other) {
-     *   var reHello = /^h(?:i|ello)$/;
-     *   if (reHello.test(value) && reHello.test(other)) {
-     *     return true;
-     *   }
-     * });
+     * _.isMatchWith(object, source, customizer);
      * // => true
      */
     function isMatchWith(object, source, customizer) {
@@ -9833,8 +9847,19 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
-     * // => { 'user': 'fred', 'age': 40 }
+     * function Foo() {
+     *   this.c = 3;
+     * }
+     *
+     * function Bar() {
+     *   this.e = 5;
+     * }
+     *
+     * Foo.prototype.d = 4;
+     * Bar.prototype.f = 6;
+     *
+     * _.assign({ 'a': 1 }, new Foo, new Bar);
+     * // => { 'a': 1, 'c': 3, 'e': 5 }
      */
     var assign = createAssigner(function(object, source) {
       copyObject(source, keys(source), object);
@@ -9857,12 +9882,14 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * var defaults = _.partialRight(_.assignWith, function(value, other) {
-     *   return _.isUndefined(value) ? other : value;
-     * });
+     * function customizer(objValue, srcValue) {
+     *   return _.isUndefined(objValue) ? srcValue : objValue;
+     * }
      *
-     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
-     * // => { 'user': 'barney', 'age': 36 }
+     * var defaults = _.partialRight(_.assignWith, customizer);
+     *
+     * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+     * // => { 'a': 1, 'b': 2 }
      */
     var assignWith = createAssigner(function(object, source, customizer) {
       copyObjectWith(source, keys(source), object, customizer);
@@ -9989,8 +10016,19 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.extend({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
-     * // => { 'user': 'fred', 'age': 40 }
+     * function Foo() {
+     *   this.b = 2;
+     * }
+     *
+     * function Bar() {
+     *   this.d = 4;
+     * }
+     *
+     * Foo.prototype.c = 3;
+     * Bar.prototype.e = 5;
+     *
+     * _.extend({ 'a': 1 }, new Foo, new Bar);
+     * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
      */
     var extend = createAssigner(function(object, source) {
       copyObject(source, keysIn(source), object);
@@ -10009,12 +10047,14 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * var defaults = _.partialRight(_.extendWith, function(value, other) {
-     *   return _.isUndefined(value) ? other : value;
-     * });
+     * function customizer(objValue, srcValue) {
+     *   return _.isUndefined(objValue) ? srcValue : objValue;
+     * }
      *
-     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
-     * // => { 'user': 'barney', 'age': 36 }
+     * var defaults = _.partialRight(_.extendWith, customizer);
+     *
+     * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+     * // => { 'a': 1, 'b': 2 }
      */
     var extendWith = createAssigner(function(object, source, customizer) {
       copyObjectWith(source, keysIn(source), object, customizer);
@@ -10555,6 +10595,12 @@
      * @returns {Object} Returns `object`.
      * @example
      *
+     * function customizer(objValue, srcValue) {
+     *   if (_.isArray(objValue)) {
+     *     return objValue.concat(srcValue);
+     *   }
+     * }
+     *
      * var object = {
      *   'fruits': ['apple'],
      *   'vegetables': ['beet']
@@ -10565,11 +10611,7 @@
      *   'vegetables': ['carrot']
      * };
      *
-     * _.mergeWith(object, other, function(a, b) {
-     *   if (_.isArray(a)) {
-     *     return a.concat(b);
-     *   }
-     * });
+     * _.mergeWith(object, other, customizer);
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
      */
     var mergeWith = createAssigner(function(object, source, customizer) {
@@ -10774,11 +10816,13 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, function(value) {
-     *   if (!_.isObject(value)) {
+     * function customizer(nsValue) {
+     *   if (!_.isObject(nsValue)) {
      *     return {};
      *   }
-     * });
+     * }
+     *
+     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, customizer);
      * // => { '0': { '1': { '2': 3 }, 'length': 2 } }
      */
     function setWith(object, path, value, customizer) {

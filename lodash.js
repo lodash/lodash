@@ -13377,9 +13377,7 @@
 
   // Some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    // Define as an anonymous module so, through path mapping, it can be
-    // referenced as the "underscore" module.
-    define(function() {
+    define('underscore', function() {
       return _;
     });
   }

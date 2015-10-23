@@ -11007,10 +11007,10 @@
     /**
      * Produces a random number between `min` and `max` (inclusive). If only one
      * argument is provided a number between `0` and the given number is returned.
-     * If `floating` is `true`, or either `min` or `max` are floats, a floating-point
-     * number is returned instead of an integer.
+     * If `floating` is `true`, or either `min` or `max` are floats, a
+     * floating-point number is returned instead of an integer.
      *
-     * **Note:** JavaScript follows the IEEE 754-2008 standard for resolving
+     * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
      *
      * @static
@@ -12459,7 +12459,7 @@
      * set to `start` with `start` then set to `0`. If `end` is less than `start`
      * a zero-length range is created unless a negative `step` is specified.
      *
-     * **Note:** JavaScript follows the IEEE 754-2008 standard for resolving
+     * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
      *
      * @static

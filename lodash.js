@@ -12468,11 +12468,9 @@
         end = step = undefined;
       }
       start = +start;
+      start = start === start ? start : 0;
       step = step === undefined ? 1 : (+step || 0);
 
-      if (start !== start) {
-        start = 0;
-      }
       if (end === undefined) {
         end = start;
         start = 0;

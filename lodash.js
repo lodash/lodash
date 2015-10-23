@@ -10986,17 +10986,22 @@
      * // => 5
      */
     function clamp(number, min, max) {
-      if (max === undefined) {
-        max = min;
-        min = undefined;
-      }
-      if (max !== undefined) {
-        max = +max;
-        number = nativeMin(number, max === max ? max : 0);
-      }
-      if (min !== undefined) {
-        min = +min;
-        number = nativeMax(number, min === min ? min : 0);
+      number = +number;
+      if (number === number) {
+        if (max === undefined) {
+          max = min;
+          min = undefined;
+        }
+        if (max !== undefined) {
+          max = +max;
+          max = max === max ? max : 0;
+          number = number <= max ? number : max;
+        }
+        if (min !== undefined) {
+          min = +min;
+          min = min === min ? min : 0;
+          number = number >= min ? number : min;
+        }
       }
       return number;
     }

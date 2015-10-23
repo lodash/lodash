@@ -2031,6 +2031,13 @@
   QUnit.module('lodash.clamp');
 
   (function() {
+    QUnit.test('should work with a `max` argument', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.clamp(5, 3), 3);
+      assert.strictEqual(_.clamp(1, 3), 1);
+    });
+
     QUnit.test('should clamp negative numbers', function(assert) {
       assert.expect(3);
 

@@ -11012,10 +11012,10 @@
       if (floating && isIterateeCall(min, max, floating)) {
         max = floating = undefined;
       }
-      var noMin = min == null,
-          noMax = max == null;
+      var noMin = min === undefined,
+          noMax = max === undefined;
 
-      if (floating == null) {
+      if (floating === undefined) {
         if (noMax && typeof min == 'boolean') {
           floating = min;
           min = 1;

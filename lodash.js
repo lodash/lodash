@@ -2186,6 +2186,35 @@
     }
 
     /**
+     * The base implementation of `_.conforms` which doesn't clone `source`.
+     *
+     * @private
+     * @param {Object} source The object of property predicates to conform to.
+     * @returns {Function} Returns the new function.
+     */
+    function baseConforms(source) {
+      var props = keysIn(source),
+          length = props.length;
+
+      return function(object) {
+        if (object == null) {
+          return false;
+        }
+        var index = length;
+        while (index--) {
+          var key = props[index],
+              predicate = source[key],
+              value = object[key];
+
+          if ((value === undefined && !(key in Object(object))) || !predicate(value)) {
+            return false;
+          }
+        }
+        return true;
+      };
+    }
+
+    /**
      * The base implementation of `_.create` without support for assigning
      * properties to the created object.
      *
@@ -12151,6 +12180,30 @@
     });
 
     /**
+     * Creates a function that invokes the predicate properties of `source` with
+     * the corresponding property values of a given object, returning `true` if
+     * all predicates return truthy, else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Object} source The object of property predicates to conform to.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
+     * ];
+     *
+     * _.filter(users, _.conforms({ 'age': _.partial(_.gt, _, 38) }));
+     * // => [{ 'user': 'fred', 'age': 40 }]
+     */
+    function conforms(source) {
+      return baseConforms(baseClone(source, true));
+    }
+
+    /**
      * Creates a function that returns `value`.
      *
      * @static
@@ -12942,6 +12995,7 @@
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
+    lodash.conforms = conforms;
     lodash.conj = conj;
     lodash.constant = constant;
     lodash.countBy = countBy;

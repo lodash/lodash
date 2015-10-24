@@ -10607,7 +10607,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {string|string[]} [props] The property names to omit, specified
+     * @param {...(string|string[])} [props] The property names to omit, specified
      *  individually or in arrays..
      * @returns {Object} Returns the new object.
      * @example
@@ -10677,7 +10677,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {string|string[]} [props] The property names to pick, specified
+     * @param {...(string|string[])} [props] The property names to pick, specified
      *  individually or in arrays.
      * @returns {Object} Returns the new object.
      * @example

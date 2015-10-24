@@ -83,7 +83,8 @@ QUnit.module('method ary caps');
 
     var funcMethods = [
       'after', 'ary', 'before', 'bind', 'bindKey', 'cloneDeepWith', 'cloneWith',
-      'curryN', 'debounce', 'delay', 'rearg', 'throttle', 'wrap'
+      'curryN', 'debounce', 'delay', 'modArgs', 'modArgsSet', 'rearg', 'throttle',
+      'wrap'
     ];
 
     var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),

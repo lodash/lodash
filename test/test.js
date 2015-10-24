@@ -4063,7 +4063,7 @@
     QUnit.test('should coerce `n` to an integer', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.drop(array, 1.2), [2, 3]);
+      assert.deepEqual(_.drop(array, 1.6), [2, 3]);
     });
 
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
@@ -4151,7 +4151,7 @@
     QUnit.test('should coerce `n` to an integer', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.dropRight(array, 1.2), [1, 2]);
+      assert.deepEqual(_.dropRight(array, 1.6), [1, 2]);
     });
 
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
@@ -15560,11 +15560,12 @@
       assert.strictEqual(_.repeat('abc', -2), '');
     });
 
-    QUnit.test('should coerce `n` to a number', function(assert) {
-      assert.expect(3);
+    QUnit.test('should coerce `n` to an integer', function(assert) {
+      assert.expect(4);
 
       assert.strictEqual(_.repeat('abc'), '');
       assert.strictEqual(_.repeat('abc', '2'), 'abcabc');
+      assert.strictEqual(_.repeat('abc', 2.6), 'abcabc');
       assert.strictEqual(_.repeat('*', { 'valueOf': lodashStable.constant(3) }), '***');
     });
 
@@ -18909,7 +18910,7 @@
     QUnit.test('should coerce `n` to an integer', function(assert) {
       assert.expect(1);
 
-      var actual = _.times(2.4, _.indentify);
+      var actual = _.times(2.6, _.indentify);
       assert.deepEqual(actual, [0, 1]);
     });
 

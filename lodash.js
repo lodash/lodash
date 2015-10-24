@@ -1424,11 +1424,11 @@
      * `functions`, `groupBy`, `initial`, `intersection`, `intersectionBy`,
      * `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`,
      * `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`,
-     * `method`, `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `omit`,
-     * `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
-     * `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`,
-     * `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `reverse`,
-     * `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
+     * `method`, `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `nthArg`,
+     * `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`,
+     * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`,
+     * `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`,
+     * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
      * `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`, `takeRightWhile`,
      * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPath`,
      * `toPlainObject`, `transform`, `union`, `unionBy`, `uniq`, `uniqBy`, `unset`,
@@ -12506,6 +12506,28 @@
     }
 
     /**
+     * Creates a function that returns its nth argument.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {number} [n=0] The index of the argument to return.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var func = _.nthArg(1);
+     *
+     * func('a', 'b', 'c');
+     * // => 'b'
+     */
+    function nthArg(n) {
+      n = toInteger(n);
+      return function() {
+        return arguments[n];
+      };
+    }
+
+    /**
      * Creates a function that returns the value at `path` of a given object.
      *
      * @static
@@ -13050,6 +13072,7 @@
     lodash.modArgs = modArgs;
     lodash.modArgsSet = modArgsSet;
     lodash.negate = negate;
+    lodash.nthArg = nthArg;
     lodash.omit = omit;
     lodash.omitBy = omitBy;
     lodash.once = once;

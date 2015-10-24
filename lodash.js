@@ -12167,7 +12167,6 @@
      */
     var disj = createInvoker(arraySome);
 
-
     /**
      * Creates a function that returns the result of invoking the provided
      * functions with the `this` binding of the created function, where each

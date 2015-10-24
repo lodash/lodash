@@ -7815,30 +7815,6 @@
     });
 
     /**
-     * Creates a function that checks if **all** of the `predicates` return
-     * truthy when invoked with the arguments provided to the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Function
-     * @param {Function[]} predicates The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var conjed = _.conj(Boolean, isFinite);
-     *
-     * conjed('1');
-     * // => true
-     *
-     * conjed(null);
-     * // => false
-     *
-     * conjed(NaN);
-     * // => false
-     */
-    var conj = createInvoker(arrayEvery);
-
-    /**
      * Creates a function that accepts one or more arguments of `func` that when
      * called either invokes `func` returning its result, if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
@@ -8149,30 +8125,6 @@
     var delay = rest(function(func, wait, args) {
       return baseDelay(func, wait, args);
     });
-
-    /**
-     * Creates a function that checks if **any** of the `predicates` return
-     * truthy when invoked with the arguments provided to the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Function
-     * @param {Function[]} predicates The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var disjed = _.disj(Boolean, isFinite);
-     *
-     * disjed('1');
-     * // => true
-     *
-     * disjed(null);
-     * // => true
-     *
-     * disjed(NaN);
-     * // => false
-     */
-    var disj = createInvoker(arraySome);
 
     /**
      * Creates a function that invokes `func` with arguments reversed.
@@ -12204,6 +12156,30 @@
     }
 
     /**
+     * Creates a function that checks if **all** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {...(Function|Function[])} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var conjed = _.conj(Boolean, isFinite);
+     *
+     * conjed('1');
+     * // => true
+     *
+     * conjed(null);
+     * // => false
+     *
+     * conjed(NaN);
+     * // => false
+     */
+    var conj = createInvoker(arrayEvery);
+
+    /**
      * Creates a function that returns `value`.
      *
      * @static
@@ -12224,6 +12200,30 @@
         return value;
       };
     }
+
+    /**
+     * Creates a function that checks if **any** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {...(Function|Function[])} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var disjed = _.disj(Boolean, isFinite);
+     *
+     * disjed('1');
+     * // => true
+     *
+     * disjed(null);
+     * // => true
+     *
+     * disjed(NaN);
+     * // => false
+     */
+    var disj = createInvoker(arraySome);
 
     /**
      * This method returns the first argument provided to it.

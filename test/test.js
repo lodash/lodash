@@ -13400,6 +13400,49 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.nthArg');
+
+  (function() {
+    QUnit.test('should create a function that returns its nth argument', function(assert) {
+      assert.expect(1);
+
+      var expected = ['a', 'b', 'c'];
+
+      var actual = lodashStable.times(expected.length, function(n) {
+        var func = _.nthArg(n);
+        return func.apply(undefined, expected);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should coerce `n` to an integer', function(assert) {
+      assert.expect(2);
+
+      var values = falsey,
+          expected = lodashStable.map(values, lodashStable.constant('a'));
+
+      var actual = lodashStable.map(values, function(n) {
+        var func = n ? _.nthArg(n) : _.nthArg();
+        return func('a', 'b', 'c');
+      });
+
+      assert.deepEqual(actual, expected);
+
+      values = ['1', 1.6];
+      expected = lodashStable.map(values, lodashStable.constant('b'));
+
+      actual = lodashStable.map(values, function(n) {
+        var func = _.nthArg(n);
+        return func('a', 'b', 'c');
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.omit');
 
   (function() {

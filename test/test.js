@@ -3658,14 +3658,20 @@
     QUnit.test('should not modify sources', function(assert) {
       assert.expect(3);
 
-      var object = {},
-          source1 = { 'a': 1, 'b': { 'c': 2 } },
+      var source1 = { 'a': 1, 'b': { 'c': 2 } },
           source2 = { 'b': { 'c': 3, 'd': 3 } },
-          actual = _.defaultsDeep(object, source1, source2);
+          actual = _.defaultsDeep({}, source1, source2);
 
       assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 2, 'd': 3 } });
       assert.deepEqual(source1, { 'a': 1, 'b': { 'c': 2 } });
       assert.deepEqual(source2, { 'b': { 'c': 3, 'd': 3 } });
+    });
+
+    QUnit.test('should not attempt a merge of a string into an array', function(assert) {
+      assert.expect(1);
+
+      var actual = _.defaultsDeep({ 'a': ['abc'] }, { 'a': 'abc' });
+      assert.deepEqual(actual, { 'a': ['abc'] });
     });
   }());
 

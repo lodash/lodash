@@ -4841,7 +4841,7 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function mergeDefaults(objValue, srcValue, key, object, source, stack) {
-      if (isObject(objValue)) {
+      if (isObject(objValue) && isObject(srcValue)) {
         stack.set(srcValue, objValue);
         baseMerge(objValue, srcValue, mergeDefaults, stack);
       }

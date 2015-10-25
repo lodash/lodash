@@ -9867,7 +9867,7 @@
       assert.strictEqual(matches({ 'b': 2 }), false);
     });
 
-    QUnit.test('should not change match behavior if `source` is modified', function(assert) {
+    QUnit.test('should not change behavior if `source` is modified', function(assert) {
       assert.expect(9);
 
       var sources = [
@@ -11663,7 +11663,7 @@
       assert.deepEqual(actual, objects);
     });
 
-    QUnit.test('should not change match behavior if `source` is modified', function(assert) {
+    QUnit.test('should not change behavior if `source` is modified', function(assert) {
       assert.expect(9);
 
       var sources = [
@@ -12052,7 +12052,7 @@
       assert.deepEqual(actual, objects);
     });
 
-    QUnit.test('should not change match behavior if `srcValue` is modified', function(assert) {
+    QUnit.test('should not change behavior if `srcValue` is modified', function(assert) {
       assert.expect(9);
 
       lodashStable.each([{ 'a': { 'b': 2, 'c': 3 } }, { 'a': 1, 'b': 2 }, { 'a': 1 }], function(source, index) {

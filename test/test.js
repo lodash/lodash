@@ -21845,11 +21845,16 @@
       var func = _[methodName];
 
       QUnit.test('`_.' + methodName + '` should return an empty string for empty values', function(assert) {
-        assert.expect(3);
+        assert.expect(1);
 
-        assert.strictEqual(func(null), '');
-        assert.strictEqual(func(undefined), '');
-        assert.strictEqual(func(''), '');
+        var values = [, null, undefined, ''],
+            expected = lodashStable.map(values, lodashStable.constant(''));
+
+        var actual = lodashStable.map(values, function(value, index) {
+          return index ? func(value) : func();
+        });
+
+        assert.deepEqual(actual, expected);
       });
     });
   }());

@@ -12618,6 +12618,11 @@
      * // => []
      */
     function range(start, end, step) {
+      function scaleFloat(number, exp) {
+        var parts = number.toExponential().split('e');
+        exp = (exp || 0) + +parts[1];
+        return +(parts[0] + 'e' + exp);
+      }
       if (step && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
@@ -12632,8 +12637,48 @@
         end = +end || 0;
       }
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
+      var scaleExp = 0;
+      // Only do extra work for fractional `step` values.
+      if (step % 1 !== 0) {
+        // Separate sigificant digits from exponent, e.g. ['-4.005', '+4']
+        var exponentParts = step.toExponential().split('e');
+        // Remove the decimal to get a string version of `step` scaled up by
+        // some power of 10.
+        var stepDigits = exponentParts[0].replace('.', '');
+        // Let's find out how exact `step` is, to determine if it's worth
+        // scaling up in the first place. `toExponential` already gave us a
+        // hint at how exact it is, because the number of digits after the
+        // decimal point defaults to the number of digits necessary to
+        // represent the value uniquely. Even though 0.1, for example, can NOT
+        // be exactly represented, `toExponential` gives us '1e-1' and it is
+        // worth scaling up when summing.
+        // We don't want to assume we know what the limit of precision is on
+        // this particular JS runtime, so instead of hard-coding a certain
+        // number of digits to consider inexact, let's just do a test: if
+        // `stepDigits` were to have a single extra digit, and the runtime
+        // produces the same value +1 and -1, then skip scaling because it
+        // won't produce any better results.
+        var testNumber = +(stepDigits + '0');
+        if (testNumber !== testNumber + 1 && testNumber !== testNumber - 1) {
+          // To get the scale factor, we could divide the new integer value by
+          // the original `step`, but the division could potentially produce an
+          // inexact result. So just find out how many places the decimal
+          // shifted by subtracting the exponent from the number of digits.
+          // Don't use `Math.pow` on the exponent, because that too can produce
+          // inexact results. Instead, just save the exponent and use
+          // `scaleFloat`.
+          var numDigits = stepDigits.length - (stepDigits.charAt(0) === '-');
+          scaleExp = numDigits - +exponentParts[1] - 1;
+          if (scaleExp) {
+            step = +stepDigits;
+            start = scaleFloat(start, scaleExp);
+          }
+        }
+      }
       return baseTimes(n, function(index) {
-        return index ? (start += step) : start;
+        var result = index ? (start + index * step) : start;
+        // Only call `scaleFloat` if we have a scaled result.
+        return scaleExp ? scaleFloat(result, -scaleExp) : result;
       });
     }
 

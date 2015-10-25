@@ -18305,6 +18305,21 @@
       assert.strictEqual(compiled(data), '');
     });
 
+    QUnit.test('should return an empty string for empty values', function(assert) {
+      assert.expect(1);
+
+      var data = data = { 'a': 1 },
+          values = [, null, undefined, ''],
+          expected = lodashStable.map(values, lodashStable.constant(''));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        var compiled = index ? _.template(value) : _.template();
+        return compiled(data);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should parse delimiters without newlines', function(assert) {
       assert.expect(1);
 

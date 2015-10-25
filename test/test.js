@@ -2491,6 +2491,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.conforms');
+
+  (function() {
+    QUnit.test('should create a function that checks if a given object conforms to `source`', function(assert) {
+      assert.expect(1);
+
+      var objects = [
+        { 'a': 1, 'b': 8 },
+        { 'a': 2, 'b': 4 }
+      ];
+
+      var conforms = _.conforms({ 'b': function(value) { return value > 4; } }),
+          actual = lodashStable.filter(objects, conforms);
+
+      assert.deepEqual(actual, [objects[0]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.conj');
 
   (function() {

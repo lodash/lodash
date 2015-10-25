@@ -2198,7 +2198,7 @@
 
       return function(object) {
         if (object == null) {
-          return false;
+          return !length;
         }
         var index = length;
         while (index--) {

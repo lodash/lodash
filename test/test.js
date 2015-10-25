@@ -2600,6 +2600,52 @@
 
       assert.deepEqual(actual, expected);
     });
+
+    QUnit.test('should return `true` when comparing an empty `source` to a nullish `object`', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(true)),
+          conforms = _.conforms({});
+
+      var actual = lodashStable.map(values, function(value, index) {
+        try {
+          return index ? conforms(value) : conforms();
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return `true` when comparing an empty `source`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1 },
+          expected = lodashStable.map(empties, lodashStable.constant(true));
+
+      var actual = lodashStable.map(empties, function(value) {
+        var conforms = _.conforms(value);
+        return conforms(object);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should not change behavior if `source` is modified', function(assert) {
+      assert.expect(2);
+
+      var source = {
+        'a': function(value) { return value > 1; }
+      };
+
+      var object = { 'a': 2 },
+          conforms = _.conforms(source);
+
+      assert.strictEqual(conforms(object), true);
+
+      source.a = function(value) { return value < 2; };
+      assert.strictEqual(conforms(object), true);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -6757,13 +6757,13 @@
      * // => [3,7]
      */
     function wrapperCallable() {
-      var self = this;
+      var clone = wrapperClone(this);
+      var deepest = clone;
+      while (deepest.__wrapped__ instanceof baseLodash) {
+        deepest = deepest.__wrapped__;
+      }
+      
       return function(operand) {
-        var clone = wrapperClone(self);
-        var deepest = clone;
-        while (deepest.__wrapped__ instanceof baseLodash) {
-          deepest = deepest.__wrapped__;
-        }
         deepest.__wrapped__ = operand;
         return clone.value();
       }

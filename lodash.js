@@ -12963,11 +12963,11 @@
      *   { 'n': 6 }
      * ];
      *
-     * _.sum(objects, function(o) { return o.n; });
+     * _.sumBy(objects, function(o) { return o.n; });
      * // => 10
      *
      * // using the `_.property` callback shorthand
-     * _.sum(objects, 'n');
+     * _.sumBy(objects, 'n');
      * // => 10
      */
     function sumBy(array, iteratee) {

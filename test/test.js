@@ -18499,7 +18499,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.trunc');
+  QUnit.module('lodash.truncate');
 
   (function() {
     var string = 'hi-diddly-ho there, neighborino';
@@ -18507,46 +18507,46 @@
     QUnit.test('should truncate to a length of `30` by default', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.trunc(string), 'hi-diddly-ho there, neighbo...');
+      assert.strictEqual(_.truncate(string), 'hi-diddly-ho there, neighbo...');
     });
 
     QUnit.test('should not truncate if `string` is <= `length`', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.trunc(string, { 'length': string.length }), string);
-      assert.strictEqual(_.trunc(string, { 'length': string.length + 2 }), string);
+      assert.strictEqual(_.truncate(string, { 'length': string.length }), string);
+      assert.strictEqual(_.truncate(string, { 'length': string.length + 2 }), string);
     });
 
     QUnit.test('should truncate string the given length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.trunc(string, { 'length': 24 }), 'hi-diddly-ho there, n...');
+      assert.strictEqual(_.truncate(string, { 'length': 24 }), 'hi-diddly-ho there, n...');
     });
 
     QUnit.test('should support a `omission` option', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.trunc(string, { 'omission': ' [...]' }), 'hi-diddly-ho there, neig [...]');
+      assert.strictEqual(_.truncate(string, { 'omission': ' [...]' }), 'hi-diddly-ho there, neig [...]');
     });
 
     QUnit.test('should support a `length` option', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.trunc(string, { 'length': 4 }), 'h...');
+      assert.strictEqual(_.truncate(string, { 'length': 4 }), 'h...');
     });
 
     QUnit.test('should support a `separator` option', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.trunc(string, { 'length': 24, 'separator': ' ' }), 'hi-diddly-ho there,...');
-      assert.strictEqual(_.trunc(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
+      assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': ' ' }), 'hi-diddly-ho there,...');
+      assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
     });
 
     QUnit.test('should treat negative `length` as `0`', function(assert) {
       assert.expect(2);
 
       lodashStable.each([0, -2], function(length) {
-        assert.strictEqual(_.trunc(string, { 'length': length }), '...');
+        assert.strictEqual(_.truncate(string, { 'length': length }), '...');
       });
     });
 
@@ -18555,21 +18555,21 @@
 
       lodashStable.each(['', NaN, 4.6, '4'], function(length, index) {
         var actual = index > 1 ? 'h...' : '...';
-        assert.strictEqual(_.trunc(string, { 'length': { 'valueOf': lodashStable.constant(length) } }), actual);
+        assert.strictEqual(_.truncate(string, { 'length': { 'valueOf': lodashStable.constant(length) } }), actual);
       });
     });
 
     QUnit.test('should coerce `string` to a string', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.trunc(Object(string), { 'length': 4 }), 'h...');
-      assert.strictEqual(_.trunc({ 'toString': lodashStable.constant(string) }, { 'length': 5 }), 'hi...');
+      assert.strictEqual(_.truncate(Object(string), { 'length': 4 }), 'h...');
+      assert.strictEqual(_.truncate({ 'toString': lodashStable.constant(string) }, { 'length': 5 }), 'hi...');
     });
 
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(1);
 
-      var actual = lodashStable.map([string, string, string], _.trunc),
+      var actual = lodashStable.map([string, string, string], _.truncate),
           truncated = 'hi-diddly-ho there, neighbo...';
 
       assert.deepEqual(actual, [truncated, truncated, truncated]);
@@ -19752,20 +19752,20 @@
       assert.strictEqual(_.trimLeft(trimString, chars), string + trimChars);
       assert.strictEqual(_.trimRight(trimString, chars), trimChars + string);
 
-      assert.strictEqual(_.trunc(string, { 'length': 13 }), string);
-      assert.strictEqual(_.trunc(string, { 'length': 6 }), 'A ' + leafs + '...');
+      assert.strictEqual(_.truncate(string, { 'length': 13 }), string);
+      assert.strictEqual(_.truncate(string, { 'length': 6 }), 'A ' + leafs + '...');
 
       assert.deepEqual(_.words(string), ['A', leafs, comboGlyph, 'and', rocket]);
 
       lodashStable.times(2, function(index) {
         var separator = index ? RegExp(hearts) : hearts,
             options = { 'length': 4, 'separator': separator },
-            actual = _.trunc(string, options);
+            actual = _.truncate(string, options);
 
         assert.strictEqual(actual, 'A...');
         assert.strictEqual(actual.length, 4);
 
-        actual = _.trunc(allHearts, options);
+        actual = _.truncate(allHearts, options);
         assert.strictEqual(actual, hearts + '...');
         assert.strictEqual(actual.length, 5);
       });
@@ -21746,7 +21746,7 @@
       'trim',
       'trimLeft',
       'trimRight',
-      'trunc',
+      'truncate',
       'unescape',
       'upperCase',
       'upperFirst'
@@ -21881,7 +21881,7 @@
       'trim',
       'trimLeft',
       'trimRight',
-      'trunc',
+      'truncate',
       'unescape',
       'upperCase',
       'upperFirst'

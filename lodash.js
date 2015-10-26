@@ -30,7 +30,7 @@
   var UNORDERED_COMPARE_FLAG = 1,
       PARTIAL_COMPARE_FLAG = 2;
 
-  /** Used as default options for `_.trunc`. */
+  /** Used as default options for `_.truncate`. */
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
 
@@ -1452,7 +1452,7 @@
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
      * `sumBy`, `template`, `toLower`, `toInteger`, `toSafeInteger`, `toString`,
-     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
+     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`,
      * `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
@@ -11891,27 +11891,27 @@
      * @returns {string} Returns the truncated string.
      * @example
      *
-     * _.trunc('hi-diddly-ho there, neighborino');
+     * _.truncate('hi-diddly-ho there, neighborino');
      * // => 'hi-diddly-ho there, neighbo...'
      *
-     * _.trunc('hi-diddly-ho there, neighborino', {
+     * _.truncate('hi-diddly-ho there, neighborino', {
      *   'length': 24,
      *   'separator': ' '
      * });
      * // => 'hi-diddly-ho there,...'
      *
-     * _.trunc('hi-diddly-ho there, neighborino', {
+     * _.truncate('hi-diddly-ho there, neighborino', {
      *   'length': 24,
      *   'separator': /,? +/
      * });
      * // => 'hi-diddly-ho there...'
      *
-     * _.trunc('hi-diddly-ho there, neighborino', {
+     * _.truncate('hi-diddly-ho there, neighborino', {
      *   'omission': ' [...]'
      * });
      * // => 'hi-diddly-ho there, neig [...]'
      */
-    function trunc(string, options) {
+    function truncate(string, options) {
       var length = DEFAULT_TRUNC_LENGTH,
           omission = DEFAULT_TRUNC_OMISSION;
 
@@ -13264,7 +13264,7 @@
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
     lodash.trimRight = trimRight;
-    lodash.trunc = trunc;
+    lodash.truncate = truncate;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
     lodash.upperCase = upperCase;

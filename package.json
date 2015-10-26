@@ -4,7 +4,7 @@
   "main": "lodash.js",
   "private": true,
   "devDependencies": {
-    "async": "^1.4.2",
+    "async": "^1.5.0",
     "chalk": "^1.1.1",
     "coveralls": "^2.11.4",
     "curl-amd": "0.8.12",

@@ -268,7 +268,7 @@ function isJobId(value) {
  */
 function logInline(text) {
   var blankLine = _.repeat(' ', _.size(prevLine));
-  prevLine = text = _.trunc(text, { 'length': 40 });
+  prevLine = text = _.truncate(text, { 'length': 40 });
   process.stdout.write(text + blankLine.slice(text.length) + '\r');
 }
 

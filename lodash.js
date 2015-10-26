@@ -6736,6 +6736,39 @@
       return baseWrapperValue(this.__wrapped__, this.__actions__);
     }
 
+    /**
+     * Creates a function which executes the chained sequence on its argument.
+     * The original wrapped value of the chain is ignored.
+     *
+     * **Note:** Many `lodash` methods (`sum`, `first`, etc...) are not chainable by default. 
+     * It's good practice to always use `_.prototype.chain` with `_.prototype.callable`,
+     * as it explicity enables chaining for all methods.
+     *
+     * @name callable
+     * @memberOf _
+     * @category Chain
+     * @returns {Function} Returns the callable chain function.
+     * @example
+     *
+     * _.chain([10, 20]).map(Math.floor).sum().callable()([1.5, 2.5]);
+     * // => 3
+     *
+     * _.map([[1.5,2.5], [3.5,4.5]], _.chain().map(Math.floor).sum().callable());
+     * // => [3,7]
+     */
+    function wrapperCallable() {
+      var self = this;
+      return function(operand) {
+        var clone = wrapperClone(self);
+        var deepest = clone;
+        while (deepest.__wrapped__ instanceof baseLodash) {
+          deepest = deepest.__wrapped__;
+        }
+        deepest.__wrapped__ = operand;
+        return clone.value();
+      }
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -13351,6 +13384,7 @@
     LazyWrapper.prototype.value = lazyValue;
 
     // Add chaining functions to the `lodash` wrapper.
+    lodash.prototype.callable = wrapperCallable;
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
     lodash.prototype.concat = wrapperConcat;

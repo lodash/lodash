@@ -21374,6 +21374,70 @@
     });
   }());
 
+  QUnit.module('loading(...).callable');
+
+  (function() {
+    QUnit.test('should return a method which executes the chained sequence on its argument', function(assert) {
+      assert.expect(3);
+
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _.chain().push(2).push(3).sum(),
+            callable = wrapped.callable();
+
+        assert.strictEqual(typeof callable , 'function');
+
+        assert.deepEqual(callable(array), 6);
+        assert.deepEqual(array, [1, 2, 3]);
+      }
+      else {
+        skipTest(assert, 4);
+      }
+    });
+
+    QUnit.test('should not affect the original chain when called', function(assert) {
+      assert.expect(5);
+
+      if (!isNpm) {
+        var original = [1],
+            array = [5],
+            wrapped = _.chain(original).push(2).push(3).sum(),
+            callable = wrapped.callable();
+
+        assert.strictEqual(typeof callable , 'function');
+
+        assert.strictEqual(callable(array), 10);
+        assert.deepEqual(original, [1]);
+        assert.strictEqual(wrapped.value(), 6);
+        assert.deepEqual(original, [1, 2, 3]);
+      }
+      else {
+        skipTest(assert, 5);
+      }
+    });
+
+    QUnit.test('should work with nested wrappers', function(assert) {
+      assert.expect(3);
+
+      if (!isNpm) {
+        var data = [[1, 0], [2, 0], [3, 0], [4, 0]],
+            dummy = [1],
+            wrapped = _.chain(dummy).map(_.compact).flatten().push(5).sum(),
+            callable = wrapped.callable();
+
+        function double (x) { return x*2; }
+
+        assert.strictEqual(typeof callable , 'function');
+
+        assert.strictEqual(callable(data), 15);
+        assert.deepEqual(dummy, [1]);
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+  })();
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash(...) methods that return the wrapped modified array');

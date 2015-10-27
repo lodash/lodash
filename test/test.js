@@ -1088,9 +1088,21 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.assign and lodash.extend');
+  QUnit.module('lodash.assignIn');
 
-  lodashStable.each(['assign', 'extend'], function(methodName) {
+  (function() {
+    QUnit.test('should be aliased', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.extend, _.assignIn);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.assign and lodash.assignIn');
+
+  lodashStable.each(['assign', 'assignIn'], function(methodName) {
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should assign properties of a source object to the destination object', function(assert) {
@@ -1124,9 +1136,21 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.assignWith and lodash.extendWith');
+  QUnit.module('lodash.assignInWith');
 
-  lodashStable.each(['assignWith', 'extendWith'], function(methodName) {
+  (function() {
+    QUnit.test('should be aliased', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.extendWith, _.assignInWith);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.assignWith and lodash.assignInWith');
+
+  lodashStable.each(['assignWith', 'assignInWith'], function(methodName) {
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should work with a `customizer` callback', function(assert) {
@@ -4661,7 +4685,7 @@
 
   QUnit.module('strict mode checks');
 
-  lodashStable.each(['assign', 'extend', 'bindAll', 'defaults'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'bindAll', 'defaults'], function(methodName) {
     var func = _[methodName],
         isBindAll = methodName == 'bindAll';
 
@@ -5778,7 +5802,7 @@
 
   QUnit.module('object assignments');
 
-  lodashStable.each(['assign', 'defaults', 'extend', 'merge'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'defaults', 'merge'], function(methodName) {
     var func = _[methodName],
         isAssign = methodName == 'assign',
         isDefaults = methodName == 'defaults';
@@ -5857,7 +5881,7 @@
     });
   });
 
-  lodashStable.each(['assign', 'extend', 'merge'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'merge'], function(methodName) {
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should not treat `object` as `source`', function(assert) {
@@ -5871,7 +5895,7 @@
     });
   });
 
-  lodashStable.each(['assign', 'assignWith', 'defaults', 'extend', 'extendWith', 'merge', 'mergeWith'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'assignInWith', 'assignWith', 'defaults', 'merge', 'mergeWith'], function(methodName) {
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should not assign values that are the same as their destinations', function(assert) {
@@ -5899,7 +5923,7 @@
     });
   });
 
-  lodashStable.each(['assignWith', 'extendWith', 'mergeWith'], function(methodName) {
+  lodashStable.each(['assignWith', 'assignInWith', 'mergeWith'], function(methodName) {
     var func = _[methodName],
         isMergeWith = methodName == 'mergeWith';
 
@@ -21997,7 +22021,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(265);
+      assert.expect(267);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

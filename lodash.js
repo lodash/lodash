@@ -578,6 +578,18 @@
   }
 
   /**
+   * Used by `_.defaults` to customize its `_.assignIn` use.
+   *
+   * @private
+   * @param {*} objValue The destination object property value.
+   * @param {*} srcValue The source object property value.
+   * @returns {*} Returns the value to assign to the destination object.
+   */
+  function assignInDefaults(objValue, srcValue) {
+    return objValue === undefined ? srcValue : objValue;
+  }
+
+  /**
    * Assigns `value` to `key` of `object` if the existing value is not equivalent
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons.
@@ -1034,18 +1046,6 @@
   }
 
   /**
-   * Used by `_.defaults` to customize its `_.assign` use.
-   *
-   * @private
-   * @param {*} objValue The destination object property value.
-   * @param {*} srcValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function extendDefaults(objValue, srcValue) {
-    return objValue === undefined ? srcValue : objValue;
-  }
-
-  /**
    * Gets the index at which the first occurrence of `NaN` is found in `array`.
    *
    * @private
@@ -1429,11 +1429,11 @@
      * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
-     * `after`, `ary`, `assign`, `assignWith`, `at`, `before`, `bind`, `bindAll`,
-     * `bindKey`, `chain`, `chunk`, `commit`, `compact`, `concat`, `conforms`,
-     * `conj`, `constant`, `countBy`, `create`, `curry`, `debounce`, `defaults`,
-     * `defaultsDeep`, `defer`, `delay`, `difference`, `differenceBy`, `disj`,
-     * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `extend`, `extendWith`,
+     * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,
+     * `before`, `bind`, `bindAll`, `bindKey`, `chain`, `chunk`, `commit`, `compact`,
+     * `concat`, `conforms`, `conj`, `constant`, `countBy`, `create`, `curry`,
+     * `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`, `difference`,
+     * `differenceBy`, `disj`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`,
      * `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`, `flowRight`,
      * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
      * `functions`, `groupBy`, `initial`, `intersection`, `intersectionBy`,
@@ -9915,8 +9915,8 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var defaults = rest(function(args) {
-      args.push(undefined, extendDefaults);
-      return extendWith.apply(undefined, args);
+      args.push(undefined, assignInDefaults);
+      return assignInWith.apply(undefined, args);
     });
 
     /**
@@ -9948,6 +9948,7 @@
      *
      * @static
      * @memberOf _
+     * @alias extend
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
@@ -9965,10 +9966,10 @@
      * Foo.prototype.c = 3;
      * Bar.prototype.e = 5;
      *
-     * _.extend({ 'a': 1 }, new Foo, new Bar);
+     * _.assignIn({ 'a': 1 }, new Foo, new Bar);
      * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
      */
-    var extend = createAssigner(function(object, source) {
+    var assignIn = createAssigner(function(object, source) {
       copyObject(source, keysIn(source), object);
     });
 
@@ -9978,6 +9979,7 @@
      *
      * @static
      * @memberOf _
+     * @alias extendWith
      * @category Object
      * @param {Object} object The destination object.
      * @param {...Object} sources The source objects.
@@ -9989,12 +9991,12 @@
      *   return _.isUndefined(objValue) ? srcValue : objValue;
      * }
      *
-     * var defaults = _.partialRight(_.extendWith, customizer);
+     * var defaults = _.partialRight(_.assignInWith, customizer);
      *
      * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
      * // => { 'a': 1, 'b': 2 }
      */
-    var extendWith = createAssigner(function(object, source, customizer) {
+    var assignInWith = createAssigner(function(object, source, customizer) {
       copyObjectWith(source, keysIn(source), object, customizer);
     });
 
@@ -11699,9 +11701,9 @@
         options = otherOptions = undefined;
       }
       string = toString(string);
-      options = extendWith({}, otherOptions || options, settings, extendDefaults);
+      options = assignInWith({}, otherOptions || options, settings, assignInDefaults);
 
-      var imports = extendWith({}, options.imports, settings.imports, extendDefaults),
+      var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
           importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
 
@@ -13086,6 +13088,8 @@
     lodash.after = after;
     lodash.ary = ary;
     lodash.assign = assign;
+    lodash.assignIn = assignIn;
+    lodash.assignInWith = assignInWith;
     lodash.assignWith = assignWith;
     lodash.at = at;
     lodash.before = before;
@@ -13114,8 +13118,6 @@
     lodash.dropRight = dropRight;
     lodash.dropRightWhile = dropRightWhile;
     lodash.dropWhile = dropWhile;
-    lodash.extend = extend;
-    lodash.extendWith = extendWith;
     lodash.fill = fill;
     lodash.filter = filter;
     lodash.flatten = flatten;
@@ -13217,6 +13219,8 @@
     // Add aliases.
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
+    lodash.extend = assignIn;
+    lodash.extendWith = assignInWith;
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);

@@ -6041,7 +6041,7 @@
       assert.deepEqual(_.functions(object).sort(), ['b', 'd']);
     });
 
-    QUnit.test('should include inherited functions', function(assert) {
+    QUnit.test('should not include inherited functions', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -6049,7 +6049,7 @@
         this.b = 'b';
       }
       Foo.prototype.c = noop;
-      assert.deepEqual(_.functions(new Foo).sort(), ['a', 'c']);
+      assert.deepEqual(_.functions(new Foo).sort(), ['a']);
     });
   }());
 
@@ -21997,7 +21997,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(263);
+      assert.expect(265);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

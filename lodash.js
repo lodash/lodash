@@ -712,7 +712,22 @@
   }
 
   /**
-   * The base implementation of `_.reduce` and `_.reduceRight` without support
+   * The base implementation of `_.pairs` and `_.pairsIn` which creates an array
+   * of key-value pairs for `object` corresponding to the property names of `props`.
+   *
+   * @private
+   * @param {Object} object The object to query.
+   * @param {Array} props The property names to get values for.
+   * @returns {Object} Returns the new array of key-value pairs.
+   */
+  function basePairs(object, props) {
+    return arrayMap(props, function(key) {
+      return [key, object[key]];
+    });
+  }
+
+  /**
+   * The base implementation of `_.reduce` and `_.reduceRight`, without support
    * for callback shorthands, which iterates over `collection` using the provided
    * `eachFunc`.
    *
@@ -10174,8 +10189,8 @@
     }
 
     /**
-     * Creates an array of function property names from all enumerable properties,
-     * own and inherited, of `object`.
+     * Creates an array of function property names from own enumerable properties
+     * of `object`.
      *
      * @static
      * @memberOf _
@@ -10184,10 +10199,42 @@
      * @returns {Array} Returns the new array of property names.
      * @example
      *
-     * _.functions(_);
-     * // => ['after', 'ary', 'assign', ...]
+     * function Foo() {
+     *   this.a = _.constant('a');
+     *   this.b = _.constant('b');
+     * }
+     *
+     * Foo.prototype.c = _.constant('c');
+     *
+     * _.functions(new Foo);
+     * // => ['a', 'b']
      */
     function functions(object) {
+      return object == null ? [] : baseFunctions(object, keys(object));
+    }
+
+    /**
+     * Creates an array of function property names from own and inherited
+     * enumerable properties of `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to inspect.
+     * @returns {Array} Returns the new array of property names.
+     * @example
+     *
+     * function Foo() {
+     *   this.a = _.constant('a');
+     *   this.b = _.constant('b');
+     * }
+     *
+     * Foo.prototype.c = _.constant('c');
+     *
+     * _.functionsIn(new Foo);
+     * // => ['a', 'b', 'c']
+     */
+    function functionsIn(object) {
       return object == null ? [] : baseFunctions(object, keysIn(object));
     }
 
@@ -10593,8 +10640,7 @@
     }
 
     /**
-     * Creates an array of the key-value pairs for `object`,
-     * e.g. `[[key1, value1], [key2, value2]]`.
+     * Creates an array of own enumerable key-value pairs for `object`.
      *
      * @static
      * @memberOf _
@@ -10603,13 +10649,42 @@
      * @returns {Array} Returns the new array of key-value pairs.
      * @example
      *
-     * _.pairs({ 'barney': 36, 'fred': 40 });
-     * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
+     * }
+     *
+     * Foo.prototype.c = 3;
+     *
+     * _.pairs(new Foo);
+     * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
      */
     function pairs(object) {
-      return arrayMap(keys(object), function(key) {
-        return [key, object[key]];
-      });
+      return basePairs(object, keys(object));
+    }
+
+    /**
+     * Creates an array of own and inherited enumerable key-value pairs for `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the new array of key-value pairs.
+     * @example
+     *
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
+     * }
+     *
+     * Foo.prototype.c = 3;
+     *
+     * _.pairsIn(new Foo);
+     * // => [['a', 1], ['b', 2], ['c', 1]] (iteration order is not guaranteed)
+     */
+    function pairsIn(object) {
+      return basePairs(object, keysIn(object));
     }
 
     /**
@@ -13050,6 +13125,7 @@
     lodash.flow = flow;
     lodash.flowRight = flowRight;
     lodash.functions = functions;
+    lodash.functionsIn = functionsIn;
     lodash.groupBy = groupBy;
     lodash.initial = initial;
     lodash.intersection = intersection;
@@ -13080,6 +13156,7 @@
     lodash.omitBy = omitBy;
     lodash.once = once;
     lodash.pairs = pairs;
+    lodash.pairsIn = pairsIn;
     lodash.partial = partial;
     lodash.partialRight = partialRight;
     lodash.partition = partition;

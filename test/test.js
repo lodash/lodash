@@ -20300,7 +20300,7 @@
       var actual = lodashStable.map(values, function(value) {
         try {
           return [_.unset(value, 'a.b'), _.unset(value, ['a', 'b'])];
-        } catch(e) {
+        } catch (e) {
           return e.message;
         }
       });

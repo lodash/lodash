@@ -10936,8 +10936,7 @@
     }
 
     /**
-     * Creates an array of the own and inherited enumerable property values
-     * of `object`.
+     * Creates an array of the own and inherited enumerable property values of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
      *

@@ -643,7 +643,7 @@
   }
 
   /**
-   * The base implementation of methods like `_.find` and `_.findKey` without
+   * The base implementation of methods like `_.find` and `_.findKey`, without
    * support for callback shorthands, which iterates over `collection` using
    * the provided `eachFunc`.
    *

@@ -19429,33 +19429,51 @@
 
   (function() {
     QUnit.test('null, empty strings and undefined should convert to `0` and `NaN`', function(assert) {
-      assert.expect(5);
+      assert.expect(2);
 
       assert.deepEqual(_.toNumber(), NaN);
-      assert.deepEqual(_.toNumber(undefined), NaN);
-      assert.strictEqual(1 / _.toNumber(null), INFINITY);
-      assert.strictEqual(1 / _.toNumber(''), INFINITY);
-      assert.strictEqual(1 / _.toNumber(' '), INFINITY);
+      var values = [undefined, null, '', ' '],
+        expected = [NaN, INFINITY, INFINITY, INFINITY],
+        actual = lodashStable.map(values, function(value) {
+          return 1 / _.toNumber(value);
+        });
+
+      assert.deepEqual(actual, expected);
     });
 
-    var toNumberNumbers = [0, 10, 1.23456789, MAX_SAFE_INTEGER, MAX_INTEGER, INFINITY, NaN];
+    QUnit.test('zeros should preserve their sign', function(assert) {
+      assert.expect(1);
+
+      var temp = [0, '0', ' 0 ', '+0', ' +0 '],
+        values = temp,
+        length = temp.length * 2,
+        expected = _.fill(Array(length), INFINITY),
+        actual = lodashStable.reduce(temp, function(acc, value) {
+          acc.push(1 / _.toNumber(value), 1 / _.toNumber(Object(value)));
+          return acc;
+        }, []);
+
+      temp = [-0, '-0', ' -0 '];
+      values = values.concat(temp);
+      expected.length += temp.length * 2;
+      _.fill(expected, -INFINITY, length);
+      lodashStable.reduce(temp, function(acc, value) {
+        acc.push(1 / _.toNumber(value), 1 / _.toNumber(Object(value)));
+        return acc;
+      }, actual);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    var toNumberNumbers = [10, 1.23456789, MAX_SAFE_INTEGER, MAX_INTEGER, INFINITY, NaN];
     lodashStable.each(toNumberNumbers, function (number) {
       QUnit.test('number literal and objects should return number literals', function(assert) {
-        assert.expect(4);
+        assert.expect(1);
 
-        if (number === 0) {
-          assert.strictEqual(1 / _.toNumber(number), INFINITY);
-          assert.strictEqual(1 / _.toNumber(-number), -INFINITY);
+        var expected = [number, -number, number, -number],
+          actual = [_.toNumber(number), _.toNumber(-number), _.toNumber(Object(number)), _.toNumber(Object(-number))];
 
-          assert.strictEqual(1 / _.toNumber(Object(number)), INFINITY);
-          assert.strictEqual(1 / _.toNumber(Object(-number)), -INFINITY);
-        } else {
-          assert.deepEqual(_.toNumber(number), number);
-          assert.deepEqual(_.toNumber(-number), -number);
-
-          assert.deepEqual(_.toNumber(Object(number)), number);
-          assert.deepEqual(_.toNumber(Object(-number)), -number);
-        }
+        assert.deepEqual(actual, expected);
       });
     });
 
@@ -19471,40 +19489,41 @@
       return ' ' + string + ' ';
     }
 
-    var toNumberBasicStrings = ['0', '10', '1.234567890', '9007199254740991', '1e+308', '1e308', '1E+308', '1E308', '5e-324', '5E-324', 'Infinity', 'NaN'];
+    var toNumberBasicStrings = ['10', '1.234567890', '9007199254740991', '1e+308', '1e308', '1E+308', '1E308', '5e-324', '5E-324', 'Infinity', 'NaN'];
     lodashStable.each(toNumberNumbers, function (string) {
       QUnit.test('should convert basic string literals and objects accurately', function(assert) {
-        assert.expect(12);
+        assert.expect(1);
 
-        if (string === '0') {
-          assert.strictEqual(1 / _.toNumber(string), INFINITY);
-          assert.strictEqual(1 / _.toNumber(posStr(string)), -INFINITY);
-          assert.strictEqual(1 / _.toNumber(negStr(string)), -INFINITY);
-          assert.strictEqual(1 / _.toNumber(wrapWS(string)), INFINITY);
-          assert.strictEqual(1 / _.toNumber(wrapWS(posStr(string))), -INFINITY);
-          assert.strictEqual(1 / _.toNumber(wrapWS(negStr(string))), -INFINITY);
+        var actual = [],
+          expected = [];
 
-          assert.strictEqual(1 / _.toNumber(Object(string)), INFINITY);
-          assert.strictEqual(1 / _.toNumber(Object(posStr(string))), -INFINITY);
-          assert.strictEqual(1 / _.toNumber(Object(negStr(string))), -INFINITY);
-          assert.strictEqual(1 / _.toNumber(Object(wrapWS(string))), INFINITY);
-          assert.strictEqual(1 / _.toNumber(Object(wrapWS(posStr(string)))), -INFINITY);
-          assert.strictEqual(1 / _.toNumber(Object(wrapWS(negStr(string)))), -INFINITY);
-        } else {
-          assert.deepEqual(_.toNumber(string), +string);
-          assert.deepEqual(_.toNumber(posStr(string)), +posStr(string));
-          assert.deepEqual(_.toNumber(negStr(string)), +negStr(string));
-          assert.deepEqual(_.toNumber(wrapWS(string)), +wrapWS(string));
-          assert.deepEqual(_.toNumber(wrapWS(posStr(string))), +wrapWS(posStr(string)));
-          assert.deepEqual(_.toNumber(wrapWS(negStr(string))), +wrapWS(negStr(string)));
+        actual.push(_.toNumber(string));
+        expected.push(+string);
+        actual.push(_.toNumber(posStr(string)));
+        expected.push(+posStr(string));
+        actual.push(_.toNumber(negStr(string)));
+        expected.push(+negStr(string));
+        actual.push(_.toNumber(wrapWS(string)));
+        expected.push(+wrapWS(string));
+        actual.push(_.toNumber(wrapWS(posStr(string))));
+        expected.push(+wrapWS(posStr(string)));
+        actual.push(_.toNumber(wrapWS(negStr(string))));
+        expected.push(+wrapWS(negStr(string)));
 
-          assert.deepEqual(_.toNumber(Object(string)), +string);
-          assert.deepEqual(_.toNumber(Object(posStr(string))), +posStr(string));
-          assert.deepEqual(_.toNumber(Object(negStr(string))), +negStr(string));
-          assert.deepEqual(_.toNumber(Object(wrapWS(string))), +wrapWS(string));
-          assert.deepEqual(_.toNumber(Object(wrapWS(posStr(string)))), +wrapWS(posStr(string)));
-          assert.deepEqual(_.toNumber(Object(wrapWS(negStr(string)))), +wrapWS(negStr(string)));
-        }
+        actual.push(_.toNumber(Object(string))),
+        expected.push(+string);
+        actual.push(_.toNumber(Object(posStr(string))));
+        expected.push(+posStr(string));
+        actual.push(_.toNumber(Object(negStr(string))));
+        expected.push(+negStr(string));
+        actual.push(_.toNumber(Object(wrapWS(string))));
+        expected.push(+wrapWS(string));
+        actual.push(_.toNumber(Object(wrapWS(posStr(string)))));
+        expected.push(+wrapWS(posStr(string)));
+        actual.push(_.toNumber(Object(wrapWS(negStr(string)))));
+        expected.push(+wrapWS(negStr(string)));
+
+        assert.deepEqual(actual, expected);
       });
     });
 
@@ -19520,145 +19539,213 @@
       }];
     lodashStable.each(toNumberAdvancedStrings, function (item) {
       QUnit.test('should convert basic string literals and objects accurately', function(assert) {
-        assert.expect(24);
+        assert.expect(1);
 
-        assert.deepEqual(_.toNumber(item.string), item.value);
-        assert.deepEqual(_.toNumber(posStr(item.string)), NaN);
-        assert.deepEqual(_.toNumber(negStr(item.string)), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(item.string)), item.value);
-        assert.deepEqual(_.toNumber(wrapWS(posStr(item.string))), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(negStr(item.string))), NaN);
+        var actual = [],
+          expected = [];
 
-        assert.deepEqual(_.toNumber(item.string.toUpperCase()), item.value);
-        assert.deepEqual(_.toNumber(posStr(item.string.toUpperCase())), NaN);
-        assert.deepEqual(_.toNumber(negStr(item.string.toUpperCase())), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(item.string.toUpperCase())), item.value);
-        assert.deepEqual(_.toNumber(wrapWS(posStr(item.string.toUpperCase()))), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(negStr(item.string.toUpperCase()))), NaN);
+        actual.push(_.toNumber(item.string));
+        expected.push(item.value);
+        actual.push(_.toNumber(posStr(item.string)));
+        expected.push(NaN);
+        actual.push(_.toNumber(negStr(item.string)));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(item.string)));
+        expected.push(item.value);
+        actual.push(_.toNumber(wrapWS(posStr(item.string))));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(negStr(item.string))));
+        expected.push(NaN);
 
-        assert.deepEqual(_.toNumber(Object(item.string)), item.value);
-        assert.deepEqual(_.toNumber(Object(posStr(item.string))), NaN);
-        assert.deepEqual(_.toNumber(Object(negStr(item.string))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(item.string))), item.value);
-        assert.deepEqual(_.toNumber(Object(wrapWS(posStr(item.string)))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(negStr(item.string)))), NaN);
+        actual.push(_.toNumber(item.string.toUpperCase()));
+        expected.push(item.value);
+        actual.push(_.toNumber(posStr(item.string.toUpperCase())));
+        expected.push(NaN);
+        actual.push(_.toNumber(negStr(item.string.toUpperCase())));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(item.string.toUpperCase())));
+        expected.push(item.value);
+        actual.push(_.toNumber(wrapWS(posStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(negStr(item.string.toUpperCase()))));
+        expected.push(NaN);
 
-        assert.deepEqual(_.toNumber(Object(item.string.toUpperCase())), item.value);
-        assert.deepEqual(_.toNumber(Object(posStr(item.string.toUpperCase()))), NaN);
-        assert.deepEqual(_.toNumber(Object(negStr(item.string.toUpperCase()))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(item.string.toUpperCase()))), item.value);
-        assert.deepEqual(_.toNumber(Object(wrapWS(posStr(item.string.toUpperCase())))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(negStr(item.string.toUpperCase())))), NaN);
+        actual.push(_.toNumber(Object(item.string)));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(posStr(item.string))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(negStr(item.string))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(item.string))));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(wrapWS(posStr(item.string)))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(negStr(item.string)))));
+        expected.push(NaN);
+
+        actual.push(_.toNumber(Object(item.string.toUpperCase())));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(posStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(negStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(item.string.toUpperCase()))));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(wrapWS(posStr(item.string.toUpperCase())))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(negStr(item.string.toUpperCase())))));
+        expected.push(NaN);
+
+        assert.deepEqual(actual, expected);
       });
     });
 
     var toNumberInvalidAdvanceStrings = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x'];
     lodashStable.each(toNumberInvalidAdvanceStrings, function (string) {
       QUnit.test('invalid binary, octal and hex string literals and objects should be `NaN`', function(assert) {
-        assert.expect(12);
+        assert.expect(1);
 
-        assert.deepEqual(_.toNumber(string), NaN);
-        assert.deepEqual(_.toNumber(posStr(string)), NaN);
-        assert.deepEqual(_.toNumber(negStr(string)), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(string)), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(posStr(string))), NaN);
-        assert.deepEqual(_.toNumber(wrapWS(negStr(string))), NaN);
+        var actual = [];
 
-        assert.deepEqual(_.toNumber(Object(string)), NaN);
-        assert.deepEqual(_.toNumber(Object(posStr(string))), NaN);
-        assert.deepEqual(_.toNumber(Object(negStr(string))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(string))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(posStr(string)))), NaN);
-        assert.deepEqual(_.toNumber(Object(wrapWS(negStr(string)))), NaN);
+        actual.push(_.toNumber(string));
+        actual.push(_.toNumber(posStr(string)));
+        actual.push(_.toNumber(negStr(string)));
+        actual.push(_.toNumber(wrapWS(string)));
+        actual.push(_.toNumber(wrapWS(posStr(string))));
+        actual.push(_.toNumber(wrapWS(negStr(string))));
+
+        actual.push(_.toNumber(Object(string)));
+        actual.push(_.toNumber(Object(posStr(string))));
+        actual.push(_.toNumber(Object(negStr(string))));
+        actual.push(_.toNumber(Object(wrapWS(string))));
+        actual.push(_.toNumber(Object(wrapWS(posStr(string)))));
+        actual.push(_.toNumber(Object(wrapWS(negStr(string)))));
+
+        var expected = _.fill(Array(actual.length), NaN);
+        assert.deepEqual(actual, expected);
       });
     });
 
     QUnit.test('should convert boolean literals and objects', function(assert) {
-      assert.expect(6);
+      assert.expect(1);
 
-      assert.strictEqual(1 / _.toNumber(false), INFINITY);
-      assert.strictEqual(_.toNumber(true), 1);
-      assert.strictEqual(1 / _.toNumber(new Boolean(false)), INFINITY);
-      assert.strictEqual(_.toNumber(new Boolean(true)), 1);
-      assert.deepEqual(_.toNumber('false'), NaN);
-      assert.deepEqual(_.toNumber('true'), NaN);
+      var actual = [],
+        expected = [];
+
+      actual.push(1 / _.toNumber(false));
+      expected.push(INFINITY);
+      actual.push(_.toNumber(true));
+      expected.push(1);
+      actual.push(1 / _.toNumber(new Boolean(false)));
+      expected.push(INFINITY);
+      actual.push(_.toNumber(new Boolean(true)));
+      expected.push(1);
+      actual.push(_.toNumber('false'));
+      expected.push(NaN);
+      actual.push(_.toNumber('true'));
+      expected.push(NaN);
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should convert dates', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
-      var now = new Date();
-      assert.strictEqual(_.toNumber(now), now.getTime());
-      assert.deepEqual(_.toNumber(new Date(MAX_INTEGER)), NaN);
+      var now = new Date(),
+        actual = [_.toNumber(now), _.toNumber(new Date(MAX_INTEGER))],
+        expected = [now.getTime(), NaN];
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should convert RegExp literals and objects', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
-      assert.deepEqual(_.toNumber(/abc/i), NaN);
-      assert.deepEqual(_.toNumber(new RegExp('abc', 'i')), NaN);
+      var actual = [_.toNumber(/abc/i), _.toNumber(new RegExp('abc', 'i'))],
+        expected = [NaN, NaN];
+
+      assert.deepEqual(actual, expected);
     })
 
     QUnit.test('other objects', function(assert) {
-      assert.expect(14);
+      assert.expect(1);
 
-      assert.deepEqual(_.toNumber({}), NaN);
-      assert.deepEqual(_.toNumber({
+      var actual = [],
+        expected = [];
+
+      actual.push(_.toNumber({}));
+      expected.push(NaN);
+      actual.push(_.toNumber({
         valueOf: '1.1'
-      }), NaN);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(NaN);
+      actual.push(_.toNumber({
         valueOf: '1.1',
         toString: function () {
           return '2.2';
         }
-      }), 2.2);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(2.2);
+      actual.push(_.toNumber({
         valueOf: function () {
           return '1.1';
         },
         toString: '2.2'
-      }), 1.1);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(1.1);
+      actual.push(_.toNumber({
         valueOf: function () {
           return '1.1';
         },
         toString: function () {
           return '2.2';
         },
-      }), 1.1);
-      assert.deepEqual(_.toNumber({
+      }));
+      expected.push(1.1);
+      actual.push(_.toNumber({
         valueOf: function () {
           return '-0x1a2b3c';
         }
-      }), NaN);
-      assert.deepEqual(_.toNumber({
+      }));
+      expected.push(NaN);
+      actual.push(_.toNumber({
         toString: function () {
           return '-0x1a2b3c';
         },
-      }), NaN);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(NaN);
+      actual.push(_.toNumber({
         valueOf: function () {
           return '0o12345';
         }
-      }), 5349);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(5349);
+      actual.push(_.toNumber({
         toString: function () {
           return '0o12345';
         },
-      }), 5349);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(5349);
+      actual.push(_.toNumber({
         valueOf: function () {
           return '0b101010';
         }
-      }), 42);
-      assert.strictEqual(_.toNumber({
+      }));
+      expected.push(42);
+      actual.push(_.toNumber({
         toString: function () {
           return '0b101010';
         },
-      }), 42);
-      assert.strictEqual(1 / _.toNumber([]), INFINITY);
-      assert.strictEqual(_.toNumber([1]), 1);
-      assert.deepEqual(_.toNumber([1, 2]), NaN);
+      }));
+      expected.push(42);
+      actual.push(1 / _.toNumber([]));
+      expected.push(INFINITY);
+      actual.push(_.toNumber([1]));
+      expected.push(1);
+      actual.push(_.toNumber([1, 2]));
+      expected.push(NaN);
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

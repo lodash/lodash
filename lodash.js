@@ -9792,22 +9792,25 @@
      * @returns {number} Returns the number.
      */
     function toNumber(value) {
-      // Possibly not required, not sure if this improves performance or not?
-      if (typeof value === 'number') {
-        return value;
-      }
-      if (isString(value)) {
-        var trimmed = _.trim(value);
-        if (reIsBinary.test(trimmed)) {
-          return parseInt(trimmed.slice(2), 2);
+      if (!isNumber(value)) {
+        if (isObject(value) && isFunction(value.valueOf)) {
+          value = value.valueOf.call(value);
         }
-        if (reIsOctal.test(trimmed)) {
-          return parseInt(trimmed.slice(2), 8);
+        if (isObject(value)) {
+          value = toString(value);
         }
-        if (reIsBadHex.test(trimmed)) {
-          return NaN;
+        if (isString(value)) {
+          value = trim(value);
+          if (reIsBinary.test(value)) {
+            return parseInt(value.slice(2), 2);
+          }
+          if (reIsOctal.test(value)) {
+            return parseInt(value.slice(2), 8);
+          }
+          if (reIsBadHex.test(value)) {
+            return NaN;
+          }
         }
-        return +trimmed;
       }
       return +value;
     }

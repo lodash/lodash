@@ -9775,7 +9775,7 @@
      * object. Source objects are applied from left to right. Subsequent sources
      * overwrite property assignments of previous sources.
      *
-     * **Note:** This method mutates `object` and is based on
+     * **Note:** This method mutates `object` and is loosely based on
      * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
      *
      * @static
@@ -9807,6 +9807,8 @@
     /**
      * This method is like `_.assign` except that it iterates over own and
      * inherited source properties.
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _

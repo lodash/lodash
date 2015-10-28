@@ -19399,6 +19399,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toString');
+
+  (function() {
+    QUnit.test('null and undefined should convert to an empty string', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.toString(), '');
+      assert.strictEqual(_.toString(undefined), '');
+      assert.strictEqual(_.toString(null), '');
+    });
+
+    QUnit.test('should preserve sign of `0`', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.toString(0), '0');
+      assert.strictEqual(_.toString(-0), '-0');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.transform');
 
   (function() {

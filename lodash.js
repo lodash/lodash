@@ -9792,11 +9792,11 @@
      * @returns {number} Returns the number.
      */
     function toNumber(value) {
-      var type = typeof value;
-      if (type === 'number') {
+      // Possibly not required, not sure if this improves performance or not?
+      if (typeof value === 'number') {
         return value;
       }
-      if (type === 'string') {
+      if (isString(value)) {
         var trimmed = _.trim(value);
         if (reIsBinary.test(trimmed)) {
           return parseInt(trimmed.slice(2), 2);

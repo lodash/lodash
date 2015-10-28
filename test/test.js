@@ -19433,9 +19433,9 @@
 
       assert.deepEqual(_.toNumber(), NaN);
       assert.deepEqual(_.toNumber(undefined), NaN);
-      assert.strictEqual(_.toNumber(null), 0);
-      assert.strictEqual(_.toNumber(''), 0);
-      assert.strictEqual(_.toNumber(' '), 0);
+      assert.strictEqual(1 / _.toNumber(null), INFINITY);
+      assert.strictEqual(1 / _.toNumber(''), INFINITY);
+      assert.strictEqual(1 / _.toNumber(' '), INFINITY);
     });
 
     QUnit.test('number literals should remain unchanged', function(assert) {
@@ -19714,11 +19714,13 @@
       assert.deepEqual(_.toNumber(' -0x '), NaN);
     });
 
-    QUnit.test('should convert booleans', function(assert) {
-      assert.expect(4);
+    QUnit.test('should convert boolean literals and objects', function(assert) {
+      assert.expect(6);
 
-      assert.strictEqual(_.toNumber(false), 0);
+      assert.strictEqual(1 / _.toNumber(false), INFINITY);
       assert.strictEqual(_.toNumber(true), 1);
+      assert.strictEqual(1 / _.toNumber(new Boolean(false)), INFINITY);
+      assert.strictEqual(_.toNumber(new Boolean(true)), 1);
       assert.deepEqual(_.toNumber('false'), NaN);
       assert.deepEqual(_.toNumber('true'), NaN);
     });
@@ -19731,17 +19733,18 @@
       assert.deepEqual(_.toNumber(new Date(MAX_INTEGER)), NaN);
     });
 
-    QUnit.test('should convert regexs', function(assert) {
-      assert.expect(1);
+    QUnit.test('should convert RegExp literals and objects', function(assert) {
+      assert.expect(2);
 
       assert.deepEqual(_.toNumber(/abc/i), NaN);
+      assert.deepEqual(_.toNumber(new RegExp('abc', 'i')), NaN);
     })
 
     QUnit.test('other objects', function(assert) {
       assert.expect(4);
 
       assert.deepEqual(_.toNumber({}), NaN);
-      assert.strictEqual(_.toNumber([]), 0);
+      assert.strictEqual(1 / _.toNumber([]), INFINITY);
       assert.strictEqual(_.toNumber([1]), 1);
       assert.deepEqual(_.toNumber([1, 2]), NaN);
     });

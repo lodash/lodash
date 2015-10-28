@@ -19472,7 +19472,7 @@
       assert.strictEqual(_.toNumber('+9007199254740991'), MAX_SAFE_INTEGER);
       assert.strictEqual(_.toNumber('-9007199254740991'), -MAX_SAFE_INTEGER);
       assert.strictEqual(_.toNumber('1e+308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('1e+308'), MAX_INTEGER);
+      assert.strictEqual(_.toNumber('+1e+308'), MAX_INTEGER);
       assert.strictEqual(_.toNumber('-1e+308'), -MAX_INTEGER);
       assert.strictEqual(_.toNumber('1e308'), MAX_INTEGER);
       assert.strictEqual(_.toNumber('+1e308'), MAX_INTEGER);
@@ -19552,7 +19552,7 @@
       assert.strictEqual(_.toNumber(' +9007199254740991 '), MAX_SAFE_INTEGER);
       assert.strictEqual(_.toNumber(' -9007199254740991 '), -MAX_SAFE_INTEGER);
       assert.strictEqual(_.toNumber(' 1e+308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' 1e+308 '), MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' +1e+308 '), MAX_INTEGER);
       assert.strictEqual(_.toNumber(' -1e+308 '), -MAX_INTEGER);
       assert.strictEqual(_.toNumber(' 1e308 '), MAX_INTEGER);
       assert.strictEqual(_.toNumber(' +1e308 '), MAX_INTEGER);

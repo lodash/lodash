@@ -9807,6 +9807,7 @@
         if (reIsBadHex.test(trimmed)) {
           return NaN;
         }
+        return +trimmed;
       }
       return +value;
     }

@@ -19741,9 +19741,12 @@
     })
 
     QUnit.test('other objects', function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
       assert.deepEqual(_.toNumber({}), NaN);
+      assert.deepEqual(_.toNumber({
+        valueOf: '1.1'
+      }), NaN);
       assert.strictEqual(1 / _.toNumber([]), INFINITY);
       assert.strictEqual(_.toNumber([1]), 1);
       assert.deepEqual(_.toNumber([1, 2]), NaN);

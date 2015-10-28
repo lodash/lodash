@@ -134,7 +134,7 @@
   /** Used to detect octal string values. */
   var reIsOctal = /^0o[0-7]+$/i;
 
-  /** Used to detect bad negative hex string values. */
+  /** Used to detect bad signed hex string values. */
   var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
 
   /** Used to detect host constructors (Safari > 5). */

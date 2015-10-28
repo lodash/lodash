@@ -19423,6 +19423,44 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toString');
+
+  (function() {
+    QUnit.test('should treat nullish values as empty strings', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(''));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.toString(value) : _.toString();
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should preserve sign of `0`', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.toString(0), '0');
+      assert.strictEqual(_.toString(-0), '-0');
+    });
+
+    QUnit.test('should return the `toString` result of the wrapped value', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3]);
+        assert.strictEqual(wrapped.toString(), '1,2,3');
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.transform');
 
   (function() {
@@ -21520,43 +21558,6 @@
       }
       else {
         skipTest(assert, 2);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash(...).toString');
-
-  (function() {
-    QUnit.test('should return the `toString` result of the wrapped value', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var wrapped = _([1, 2, 3]);
-        assert.strictEqual(String(wrapped), '1,2,3');
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should treat nullish values as empty strings', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var values = [, null, undefined],
-            expected = lodashStable.map(values, lodashStable.constant(''));
-
-        var actual = lodashStable.map(values, function(value, index) {
-          var wrapped = index ? _(value) : _();
-          return String(wrapped);
-        });
-
-        assert.deepEqual(actual, expected);
-      }
-      else {
-        skipTest(assert);
       }
     });
   }());

@@ -30,7 +30,7 @@
   var UNORDERED_COMPARE_FLAG = 1,
       PARTIAL_COMPARE_FLAG = 2;
 
-  /** Used as default options for `_.truncate`. */
+  /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
 
@@ -578,18 +578,6 @@
   }
 
   /**
-   * Used by `_.defaults` to customize its `_.assignIn` use.
-   *
-   * @private
-   * @param {*} objValue The destination object property value.
-   * @param {*} srcValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignInDefaults(objValue, srcValue) {
-    return objValue === undefined ? srcValue : objValue;
-  }
-
-  /**
    * Assigns `value` to `key` of `object` if the existing value is not equivalent
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons.
@@ -655,7 +643,7 @@
   }
 
   /**
-   * The base implementation of methods like `_.find` and `_.findKey`, without
+   * The base implementation of methods like `_.find` and `_.findKey` without
    * support for callback shorthands, which iterates over `collection` using
    * the provided `eachFunc`.
    *
@@ -724,22 +712,7 @@
   }
 
   /**
-   * The base implementation of `_.pairs` and `_.pairsIn` which creates an array
-   * of key-value pairs for `object` corresponding to the property names of `props`.
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {Array} props The property names to get values for.
-   * @returns {Object} Returns the new array of key-value pairs.
-   */
-  function basePairs(object, props) {
-    return arrayMap(props, function(key) {
-      return [key, object[key]];
-    });
-  }
-
-  /**
-   * The base implementation of `_.reduce` and `_.reduceRight`, without support
+   * The base implementation of `_.reduce` and `_.reduceRight` without support
    * for callback shorthands, which iterates over `collection` using the provided
    * `eachFunc`.
    *
@@ -1043,6 +1016,18 @@
    */
   function escapeStringChar(chr) {
     return '\\' + stringEscapes[chr];
+  }
+
+  /**
+   * Used by `_.defaults` to customize its `_.assign` use.
+   *
+   * @private
+   * @param {*} objValue The destination object property value.
+   * @param {*} srcValue The source object property value.
+   * @returns {*} Returns the value to assign to the destination object.
+   */
+  function extendDefaults(objValue, srcValue) {
+    return objValue === undefined ? srcValue : objValue;
   }
 
   /**
@@ -1429,26 +1414,26 @@
      * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
-     * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,
-     * `before`, `bind`, `bindAll`, `bindKey`, `chain`, `chunk`, `commit`, `compact`,
-     * `concat`, `conforms`, `conj`, `constant`, `countBy`, `create`, `curry`,
-     * `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`, `difference`,
-     * `differenceBy`, `disj`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`,
-     * `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`, `flowRight`,
-     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-     * `functions`, `groupBy`, `initial`, `intersection`, `intersectionBy`,
-     * `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`,
-     * `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`,
-     * `method`, `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `nthArg`,
-     * `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`,
-     * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`,
-     * `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`,
-     * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`, `takeRightWhile`,
-     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPath`,
-     * `toPlainObject`, `transform`, `union`, `unionBy`, `uniq`, `uniqBy`, `unset`,
-     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`, `wrap`,
-     * `xor`, `xorBy`, `zip`, `zipObject`, and `zipWith`
+     * `after`, `ary`, `assign`, `assignWith`, `at`, `before`, `bind`, `bindAll`,
+     * `bindKey`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
+     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`,
+     * `delay`, `difference`, `differenceBy`, `drop`, `dropRight`, `dropRightWhile`,
+     * `dropWhile`, `extend`, `extendWith`, `fill`, `filter`, `flatten`, `flattenDeep`,
+     * `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
+     * `forOwn`, `forOwnRight`, `functions`, `groupBy`, `initial`, `intersection`,
+     * `intersectionBy`, `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`,
+     * `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`, `memoize`,
+     * `merge`, `mergeWith` `method`, `methodOf`, `mixin`, `modArgs`, `modArgsSet',
+     * 'negate`, `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`,
+     * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
+     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`,
+     * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
+     * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `times`, `toArray`, `toPath`, `toPlainObject`, `transform`, `union`,
+     * `unionBy`, `uniq`, `uniqBy`, `unset`, `unshift`, `unzip`, `unzipWith`,
+     * `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `zip`, `zipObject`,
+     * and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -1467,7 +1452,7 @@
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
      * `sumBy`, `template`, `toLower`, `toInteger`, `toSafeInteger`, `toString`,
-     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`,
+     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`,
      * `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
@@ -2201,35 +2186,6 @@
     }
 
     /**
-     * The base implementation of `_.conforms` which doesn't clone `source`.
-     *
-     * @private
-     * @param {Object} source The object of property predicates to conform to.
-     * @returns {Function} Returns the new function.
-     */
-    function baseConforms(source) {
-      var props = keysIn(source),
-          length = props.length;
-
-      return function(object) {
-        if (object == null) {
-          return !length;
-        }
-        var index = length;
-        while (index--) {
-          var key = props[index],
-              predicate = source[key],
-              value = object[key];
-
-          if ((value === undefined && !(key in Object(object))) || !predicate(value)) {
-            return false;
-          }
-        }
-        return true;
-      };
-    }
-
-    /**
      * The base implementation of `_.create` without support for assigning
      * properties to the created object.
      *
@@ -2889,7 +2845,7 @@
      *
      * @private
      * @param {string} path The path of the property to get.
-     * @param {*} srcValue The value to match.
+     * @param {*} srcValue The value to compare.
      * @returns {Function} Returns the new function.
      */
     function baseMatchesProperty(path, srcValue) {
@@ -3886,26 +3842,23 @@
      * @returns {Function} Returns the new flow function.
      */
     function createFlow(fromRight) {
-      return rest(function(funcs) {
-        funcs = baseFlatten(funcs);
+      return function() {
+        var wrapper,
+            length = arguments.length,
+            index = fromRight ? length : -1,
+            leftIndex = 0,
+            funcs = Array(length);
 
-        var length = funcs.length,
-            index = length,
-            prereq = LodashWrapper.prototype.thru;
-
-        if (fromRight) {
-          funcs.reverse();
-        }
-        while (index--) {
-          var func = funcs[index];
+        while ((fromRight ? index-- : ++index < length)) {
+          var func = funcs[leftIndex++] = arguments[index];
           if (typeof func != 'function') {
             throw new TypeError(FUNC_ERROR_TEXT);
           }
-          if (prereq && !wrapper && getFuncName(func) == 'wrapper') {
-            var wrapper = new LodashWrapper([], true);
+          if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
+            wrapper = new LodashWrapper([], true);
           }
         }
-        index = wrapper ? index : length;
+        index = wrapper ? -1 : length;
         while (++index < length) {
           func = funcs[index];
 
@@ -3933,7 +3886,7 @@
           }
           return result;
         };
-      });
+      };
     }
 
     /**
@@ -4856,7 +4809,7 @@
      * @returns {*} Returns the value to assign to the destination object.
      */
     function mergeDefaults(objValue, srcValue, key, object, source, stack) {
-      if (isObject(objValue) && isObject(srcValue)) {
+      if (isObject(objValue)) {
         stack.set(srcValue, objValue);
         baseMerge(objValue, srcValue, mergeDefaults, stack);
       }
@@ -7833,6 +7786,30 @@
     });
 
     /**
+     * Creates a function that checks if **all** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function[]} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var conjed = _.conj(Boolean, isFinite);
+     *
+     * conjed('1');
+     * // => true
+     *
+     * conjed(null);
+     * // => false
+     *
+     * conjed(NaN);
+     * // => false
+     */
+    var conj = createInvoker(arrayEvery);
+
+    /**
      * Creates a function that accepts one or more arguments of `func` that when
      * called either invokes `func` returning its result, if all `func` arguments
      * have been provided, or returns a function that accepts one or more of the
@@ -8145,6 +8122,30 @@
     });
 
     /**
+     * Creates a function that checks if **any** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function[]} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var disjed = _.disj(Boolean, isFinite);
+     *
+     * disjed('1');
+     * // => true
+     *
+     * disjed(null);
+     * // => true
+     *
+     * disjed(NaN);
+     * // => false
+     */
+    var disj = createInvoker(arraySome);
+
+    /**
      * Creates a function that invokes `func` with arguments reversed.
      *
      * @static
@@ -8164,6 +8165,67 @@
     function flip(func) {
       return createWrapper(func, FLIP_FLAG);
     }
+
+    /**
+     * Creates a function that returns the result of invoking the provided
+     * functions with the `this` binding of the created function, where each
+     * successive invocation is supplied the return value of the previous.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
+     * var addSquare = _.flow(_.add, square);
+     * addSquare(1, 2);
+     * // => 9
+     */
+    var flow = createFlow();
+
+    /**
+     * This method is like `_.flow` except that it creates a function that
+     * invokes the provided functions from right to left.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {...Function} [funcs] Functions to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
+     * var addSquare = _.flowRight(square, _.add);
+     * addSquare(1, 2);
+     * // => 9
+     */
+    var flowRight = createFlow(true);
+
+    /**
+     * Creates a function that invokes `iteratees` with the arguments provided
+     * to the created function and returns their results.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function[]} iteratees The iteratees to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var juxted = _.juxt(Math.max, Math.min);
+     *
+     * juxted(1, 2, 3, 4);
+     * // => [4, 1]
+     */
+    var juxt = createInvoker(arrayMap);
 
     /**
      * Creates a function that memoizes the result of `func`. If `resolver` is
@@ -8264,7 +8326,7 @@
 
     /**
      * This method is like `_.modArgs` except that each of the `transforms` is
-     * provided the complete set of arguments the created function is invoked with.
+     * provided all arguments the created function is invoked with.
      *
      * @static
      * @memberOf _
@@ -8661,13 +8723,11 @@
      * @returns {*} Returns the cloned value.
      * @example
      *
-     * function customizer(value) {
+     * var el = _.clone(document.body, function(value) {
      *   if (_.isElement(value)) {
      *     return value.cloneNode(false);
      *   }
-     * }
-     *
-     * var el = _.clone(document.body, customizer);
+     * });
      *
      * console.log(el === document.body);
      * // => false
@@ -8714,13 +8774,11 @@
      * @returns {*} Returns the deep cloned value.
      * @example
      *
-     * function customizer(value) {
+     * var el = _.cloneDeep(document.body, function(value) {
      *   if (_.isElement(value)) {
      *     return value.cloneNode(true);
      *   }
-     * }
-     *
-     * var el = _.cloneDeep(document.body, customizer);
+     * });
      *
      * console.log(el === document.body);
      * // => false
@@ -9059,20 +9117,15 @@
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
-     * function isGreeting(value) {
-     *   return /^h(?:i|ello)$/.test(value);
-     * }
-     *
-     * function customizer(objValue, othValue) {
-     *   if (isGreeting(objValue) && isGreeting(othValue)) {
-     *     return true;
-     *   }
-     * }
-     *
      * var array = ['hello', 'goodbye'];
      * var other = ['hi', 'goodbye'];
      *
-     * _.isEqualWith(array, other, customizer);
+     * _.isEqualWith(array, other, function(value, other) {
+     *   var reHello = /^h(?:i|ello)$/;
+     *   if (reHello.test(value) && reHello.test(other)) {
+     *     return true;
+     *   }
+     * });
      * // => true
      */
     function isEqualWith(value, other, customizer) {
@@ -9284,20 +9337,15 @@
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      * @example
      *
-     * function isGreeting(value) {
-     *   return /^h(?:i|ello)$/.test(value);
-     * }
-     *
-     * function customizer(objValue, srcValue) {
-     *   if (isGreeting(objValue) && isGreeting(srcValue)) {
-     *     return true;
-     *   }
-     * }
-     *
      * var object = { 'greeting': 'hello' };
      * var source = { 'greeting': 'hi' };
      *
-     * _.isMatchWith(object, source, customizer);
+     * _.isMatchWith(object, source, function(value, other) {
+     *   var reHello = /^h(?:i|ello)$/;
+     *   if (reHello.test(value) && reHello.test(other)) {
+     *     return true;
+     *   }
+     * });
      * // => true
      */
     function isMatchWith(object, source, customizer) {
@@ -9764,8 +9812,7 @@
       if (typeof value == 'string') {
         return value;
       }
-      var result = value == null ? '' : (value + '');
-      return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+      return value == null ? '' : (value + '');
     }
 
     /*------------------------------------------------------------------------*/
@@ -9775,7 +9822,7 @@
      * object. Source objects are applied from left to right. Subsequent sources
      * overwrite property assignments of previous sources.
      *
-     * **Note:** This method mutates `object` and is loosely based on
+     * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
      *
      * @static
@@ -9786,86 +9833,11 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function Foo() {
-     *   this.c = 3;
-     * }
-     *
-     * function Bar() {
-     *   this.e = 5;
-     * }
-     *
-     * Foo.prototype.d = 4;
-     * Bar.prototype.f = 6;
-     *
-     * _.assign({ 'a': 1 }, new Foo, new Bar);
-     * // => { 'a': 1, 'c': 3, 'e': 5 }
+     * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
+     * // => { 'user': 'fred', 'age': 40 }
      */
     var assign = createAssigner(function(object, source) {
       copyObject(source, keys(source), object);
-    });
-
-    /**
-     * This method is like `_.assign` except that it iterates over own and
-     * inherited source properties.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @alias extend
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * function Foo() {
-     *   this.b = 2;
-     * }
-     *
-     * function Bar() {
-     *   this.d = 4;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     * Bar.prototype.e = 5;
-     *
-     * _.assignIn({ 'a': 1 }, new Foo, new Bar);
-     * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
-     */
-    var assignIn = createAssigner(function(object, source) {
-      copyObject(source, keysIn(source), object);
-    });
-
-    /**
-     * This method is like `_.assignIn` except that it accepts `customizer` which
-     * is invoked to produce the assigned values. If `customizer` returns `undefined`
-     * assignment is handled by the method instead. The `customizer` is invoked
-     * with five arguments: (objValue, srcValue, key, object, source).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @alias extendWith
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} sources The source objects.
-     * @param {Function} [customizer] The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * function customizer(objValue, srcValue) {
-     *   return _.isUndefined(objValue) ? srcValue : objValue;
-     * }
-     *
-     * var defaults = _.partialRight(_.assignInWith, customizer);
-     *
-     * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
-     * // => { 'a': 1, 'b': 2 }
-     */
-    var assignInWith = createAssigner(function(object, source, customizer) {
-      copyObjectWith(source, keysIn(source), object, customizer);
     });
 
     /**
@@ -9885,14 +9857,12 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function customizer(objValue, srcValue) {
-     *   return _.isUndefined(objValue) ? srcValue : objValue;
-     * }
+     * var defaults = _.partialRight(_.assignWith, function(value, other) {
+     *   return _.isUndefined(value) ? other : value;
+     * });
      *
-     * var defaults = _.partialRight(_.assignWith, customizer);
-     *
-     * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
-     * // => { 'a': 1, 'b': 2 }
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+     * // => { 'user': 'barney', 'age': 36 }
      */
     var assignWith = createAssigner(function(object, source, customizer) {
       copyObjectWith(source, keys(source), object, customizer);
@@ -9980,8 +9950,8 @@
      * // => { 'user': 'barney', 'age': 36 }
      */
     var defaults = rest(function(args) {
-      args.push(undefined, assignInDefaults);
-      return assignInWith.apply(undefined, args);
+      args.push(undefined, extendDefaults);
+      return extendWith.apply(undefined, args);
     });
 
     /**
@@ -10005,6 +9975,49 @@
     var defaultsDeep = rest(function(args) {
       args.push(undefined, mergeDefaults);
       return mergeWith.apply(undefined, args);
+    });
+
+    /**
+     * This method is like `_.assign` except that it iterates over own and
+     * inherited source properties.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} [sources] The source objects.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * _.extend({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
+     * // => { 'user': 'fred', 'age': 40 }
+     */
+    var extend = createAssigner(function(object, source) {
+      copyObject(source, keysIn(source), object);
+    });
+
+    /**
+     * This method is like `_.assignWith` except that it iterates over own and
+     * inherited source properties.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The destination object.
+     * @param {...Object} sources The source objects.
+     * @param {Function} [customizer] The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var defaults = _.partialRight(_.extendWith, function(value, other) {
+     *   return _.isUndefined(value) ? other : value;
+     * });
+     *
+     * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+     * // => { 'user': 'barney', 'age': 36 }
+     */
+    var extendWith = createAssigner(function(object, source, customizer) {
+      copyObjectWith(source, keysIn(source), object, customizer);
     });
 
     /**
@@ -10198,8 +10211,8 @@
     }
 
     /**
-     * Creates an array of function property names from own enumerable properties
-     * of `object`.
+     * Creates an array of function property names from all enumerable properties,
+     * own and inherited, of `object`.
      *
      * @static
      * @memberOf _
@@ -10208,42 +10221,10 @@
      * @returns {Array} Returns the new array of property names.
      * @example
      *
-     * function Foo() {
-     *   this.a = _.constant('a');
-     *   this.b = _.constant('b');
-     * }
-     *
-     * Foo.prototype.c = _.constant('c');
-     *
-     * _.functions(new Foo);
-     * // => ['a', 'b']
+     * _.functions(_);
+     * // => ['after', 'ary', 'assign', ...]
      */
     function functions(object) {
-      return object == null ? [] : baseFunctions(object, keys(object));
-    }
-
-    /**
-     * Creates an array of function property names from own and inherited
-     * enumerable properties of `object`.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the new array of property names.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = _.constant('a');
-     *   this.b = _.constant('b');
-     * }
-     *
-     * Foo.prototype.c = _.constant('c');
-     *
-     * _.functionsIn(new Foo);
-     * // => ['a', 'b', 'c']
-     */
-    function functionsIn(object) {
       return object == null ? [] : baseFunctions(object, keysIn(object));
     }
 
@@ -10574,12 +10555,6 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function customizer(objValue, srcValue) {
-     *   if (_.isArray(objValue)) {
-     *     return objValue.concat(srcValue);
-     *   }
-     * }
-     *
      * var object = {
      *   'fruits': ['apple'],
      *   'vegetables': ['beet']
@@ -10590,7 +10565,11 @@
      *   'vegetables': ['carrot']
      * };
      *
-     * _.mergeWith(object, other, customizer);
+     * _.mergeWith(object, other, function(a, b) {
+     *   if (_.isArray(a)) {
+     *     return a.concat(b);
+     *   }
+     * });
      * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
      */
     var mergeWith = createAssigner(function(object, source, customizer) {
@@ -10605,7 +10584,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {...(string|string[])} [props] The property names to omit, specified
+     * @param {string|string[]} [props] The property names to omit, specified
      *  individually or in arrays..
      * @returns {Object} Returns the new object.
      * @example
@@ -10649,7 +10628,8 @@
     }
 
     /**
-     * Creates an array of own enumerable key-value pairs for `object`.
+     * Creates an array of the key-value pairs for `object`,
+     * e.g. `[[key1, value1], [key2, value2]]`.
      *
      * @static
      * @memberOf _
@@ -10658,42 +10638,13 @@
      * @returns {Array} Returns the new array of key-value pairs.
      * @example
      *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.pairs(new Foo);
-     * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
+     * _.pairs({ 'barney': 36, 'fred': 40 });
+     * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
      */
     function pairs(object) {
-      return basePairs(object, keys(object));
-    }
-
-    /**
-     * Creates an array of own and inherited enumerable key-value pairs for `object`.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the new array of key-value pairs.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.pairsIn(new Foo);
-     * // => [['a', 1], ['b', 2], ['c', 1]] (iteration order is not guaranteed)
-     */
-    function pairsIn(object) {
-      return basePairs(object, keysIn(object));
+      return arrayMap(keys(object), function(key) {
+        return [key, object[key]];
+      });
     }
 
     /**
@@ -10703,7 +10654,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {...(string|string[])} [props] The property names to pick, specified
+     * @param {string|string[]} [props] The property names to pick, specified
      *  individually or in arrays.
      * @returns {Object} Returns the new object.
      * @example
@@ -10823,13 +10774,11 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function customizer(nsValue) {
-     *   if (!_.isObject(nsValue)) {
+     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, function(value) {
+     *   if (!_.isObject(value)) {
      *     return {};
      *   }
-     * }
-     *
-     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, customizer);
+     * });
      * // => { '0': { '1': { '2': 3 }, 'length': 2 } }
      */
     function setWith(object, path, value, customizer) {
@@ -10945,7 +10894,8 @@
     }
 
     /**
-     * Creates an array of the own and inherited enumerable property values of `object`.
+     * Creates an array of the own and inherited enumerable property values
+     * of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
      *
@@ -10992,22 +10942,17 @@
      * // => 5
      */
     function clamp(number, min, max) {
-      number = +number;
-      if (number === number) {
-        if (max === undefined) {
-          max = min;
-          min = undefined;
-        }
-        if (max !== undefined) {
-          max = +max;
-          max = max === max ? max : 0;
-          number = number <= max ? number : max;
-        }
-        if (min !== undefined) {
-          min = +min;
-          min = min === min ? min : 0;
-          number = number >= min ? number : min;
-        }
+      if (max === undefined) {
+        max = min;
+        min = undefined;
+      }
+      if (max !== undefined) {
+        max = +max;
+        number = nativeMin(number, max === max ? max : 0);
+      }
+      if (min !== undefined) {
+        min = +min;
+        number = nativeMax(number, min === min ? min : 0);
       }
       return number;
     }
@@ -11708,9 +11653,9 @@
         options = otherOptions = undefined;
       }
       string = toString(string);
-      options = assignInWith({}, otherOptions || options, settings, assignInDefaults);
+      options = extendWith({}, otherOptions || options, settings, extendDefaults);
 
-      var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
+      var imports = extendWith({}, options.imports, settings.imports, extendDefaults),
           importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
 
@@ -11974,27 +11919,27 @@
      * @returns {string} Returns the truncated string.
      * @example
      *
-     * _.truncate('hi-diddly-ho there, neighborino');
+     * _.trunc('hi-diddly-ho there, neighborino');
      * // => 'hi-diddly-ho there, neighbo...'
      *
-     * _.truncate('hi-diddly-ho there, neighborino', {
+     * _.trunc('hi-diddly-ho there, neighborino', {
      *   'length': 24,
      *   'separator': ' '
      * });
      * // => 'hi-diddly-ho there,...'
      *
-     * _.truncate('hi-diddly-ho there, neighborino', {
+     * _.trunc('hi-diddly-ho there, neighborino', {
      *   'length': 24,
      *   'separator': /,? +/
      * });
      * // => 'hi-diddly-ho there...'
      *
-     * _.truncate('hi-diddly-ho there, neighborino', {
+     * _.trunc('hi-diddly-ho there, neighborino', {
      *   'omission': ' [...]'
      * });
      * // => 'hi-diddly-ho there, neig [...]'
      */
-    function truncate(string, options) {
+    function trunc(string, options) {
       var length = DEFAULT_TRUNC_LENGTH,
           omission = DEFAULT_TRUNC_OMISSION;
 
@@ -12157,54 +12102,6 @@
     });
 
     /**
-     * Creates a function that invokes the predicate properties of `source` with
-     * the corresponding property values of a given object, returning `true` if
-     * all predicates return truthy, else `false`.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {Object} source The object of property predicates to conform to.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
-     *
-     * _.filter(users, _.conforms({ 'age': _.partial(_.gt, _, 38) }));
-     * // => [{ 'user': 'fred', 'age': 40 }]
-     */
-    function conforms(source) {
-      return baseConforms(baseClone(source, true));
-    }
-
-    /**
-     * Creates a function that checks if **all** of the `predicates` return
-     * truthy when invoked with the arguments provided to the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} predicates The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var conjed = _.conj(Boolean, isFinite);
-     *
-     * conjed('1');
-     * // => true
-     *
-     * conjed(null);
-     * // => false
-     *
-     * conjed(NaN);
-     * // => false
-     */
-    var conj = createInvoker(arrayEvery);
-
-    /**
      * Creates a function that returns `value`.
      *
      * @static
@@ -12225,73 +12122,6 @@
         return value;
       };
     }
-
-    /**
-     * Creates a function that checks if **any** of the `predicates` return
-     * truthy when invoked with the arguments provided to the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} predicates The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var disjed = _.disj(Boolean, isFinite);
-     *
-     * disjed('1');
-     * // => true
-     *
-     * disjed(null);
-     * // => true
-     *
-     * disjed(NaN);
-     * // => false
-     */
-    var disj = createInvoker(arraySome);
-
-    /**
-     * Creates a function that returns the result of invoking the provided
-     * functions with the `this` binding of the created function, where each
-     * successive invocation is supplied the return value of the previous.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} [funcs] Functions to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var addSquare = _.flow(_.add, square);
-     * addSquare(1, 2);
-     * // => 9
-     */
-    var flow = createFlow();
-
-    /**
-     * This method is like `_.flow` except that it creates a function that
-     * invokes the provided functions from right to left.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} [funcs] Functions to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var addSquare = _.flowRight(square, _.add);
-     * addSquare(1, 2);
-     * // => 9
-     */
-    var flowRight = createFlow(true);
 
     /**
      * This method returns the first argument provided to it.
@@ -12353,27 +12183,9 @@
     }
 
     /**
-     * Creates a function that invokes `iteratees` with the arguments provided
-     * to the created function and returns their results.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} iteratees The iteratees to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var juxted = _.juxt(Math.max, Math.min);
-     *
-     * juxted(1, 2, 3, 4);
-     * // => [4, 1]
-     */
-    var juxt = createInvoker(arrayMap);
-
-    /**
-     * Creates a function that performs a deep partial comparison between a given
-     * object and `source`, returning `true` if the given object has equivalent
-     * property values, else `false`.
+     * Creates a function that performs a deep comparison between a given object
+     * and `source`, returning `true` if the given object has equivalent property
+     * values, else `false`.
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Objects are compared by
@@ -12400,9 +12212,8 @@
     }
 
     /**
-     * Creates a function that performs a deep partial comparison between the
-     * value at `path` of a given object to `srcValue`, returning `true` if the
-     * object value is equivalent, else `false`.
+     * Creates a function that compares the value at `path` of a given object
+     * to `srcValue`.
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings.
@@ -12589,28 +12400,6 @@
      */
     function noop() {
       // No operation performed.
-    }
-
-    /**
-     * Creates a function that returns its nth argument.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {number} [n=0] The index of the argument to return.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var func = _.nthArg(1);
-     *
-     * func('a', 'b', 'c');
-     * // => 'b'
-     */
-    function nthArg(n) {
-      n = toInteger(n);
-      return function() {
-        return arguments[n];
-      };
     }
 
     /**
@@ -13046,11 +12835,11 @@
      *   { 'n': 6 }
      * ];
      *
-     * _.sumBy(objects, function(o) { return o.n; });
+     * _.sum(objects, function(o) { return o.n; });
      * // => 10
      *
      * // using the `_.property` callback shorthand
-     * _.sumBy(objects, 'n');
+     * _.sum(objects, 'n');
      * // => 10
      */
     function sumBy(array, iteratee) {
@@ -13095,8 +12884,6 @@
     lodash.after = after;
     lodash.ary = ary;
     lodash.assign = assign;
-    lodash.assignIn = assignIn;
-    lodash.assignInWith = assignInWith;
     lodash.assignWith = assignWith;
     lodash.at = at;
     lodash.before = before;
@@ -13106,7 +12893,6 @@
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
-    lodash.conforms = conforms;
     lodash.conj = conj;
     lodash.constant = constant;
     lodash.countBy = countBy;
@@ -13125,6 +12911,8 @@
     lodash.dropRight = dropRight;
     lodash.dropRightWhile = dropRightWhile;
     lodash.dropWhile = dropWhile;
+    lodash.extend = extend;
+    lodash.extendWith = extendWith;
     lodash.fill = fill;
     lodash.filter = filter;
     lodash.flatten = flatten;
@@ -13133,7 +12921,6 @@
     lodash.flow = flow;
     lodash.flowRight = flowRight;
     lodash.functions = functions;
-    lodash.functionsIn = functionsIn;
     lodash.groupBy = groupBy;
     lodash.initial = initial;
     lodash.intersection = intersection;
@@ -13159,12 +12946,10 @@
     lodash.modArgs = modArgs;
     lodash.modArgsSet = modArgsSet;
     lodash.negate = negate;
-    lodash.nthArg = nthArg;
     lodash.omit = omit;
     lodash.omitBy = omitBy;
     lodash.once = once;
     lodash.pairs = pairs;
-    lodash.pairsIn = pairsIn;
     lodash.partial = partial;
     lodash.partialRight = partialRight;
     lodash.partition = partition;
@@ -13226,8 +13011,6 @@
     // Add aliases.
     lodash.each = forEach;
     lodash.eachRight = forEachRight;
-    lodash.extend = assignIn;
-    lodash.extendWith = assignInWith;
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);
@@ -13351,7 +13134,7 @@
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
     lodash.trimRight = trimRight;
-    lodash.truncate = truncate;
+    lodash.trunc = trunc;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;
     lodash.upperCase = upperCase;

@@ -8,6 +8,7 @@
     "*.log",
     "*.map",
     "*.md",
+    "lodash.js",
     "package.json",
     "doc",
     "node_modules",

@@ -38,8 +38,8 @@ In addition to the following guidelines, please follow the conventions already e
 - **Comments**:<br>
   Please use single-line comments to annotate significant additions, & [JSDoc-style](http://www.2ality.com/2011/08/jsdoc-intro.html) comments for functions.
 
-Guidelines are enforced using [JSSC](https://www.npmjs.com/package/jscs):
+Guidelines are enforced using [JSCS](https://www.npmjs.com/package/jscs):
 
 ```bash
-$ npm run lint
+$ npm run style
 ```

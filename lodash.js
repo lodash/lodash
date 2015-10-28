@@ -1475,9 +1475,9 @@
      * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toSafeInteger`, `toString`,
-     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`,
-     * `upperCase`, `upperFirst`, `value`, and `words`
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toNumber`, `toSafeInteger`,
+     * `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`,
+     * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor

@@ -19438,280 +19438,139 @@
       assert.strictEqual(1 / _.toNumber(' '), INFINITY);
     });
 
-    QUnit.test('number literals should remain unchanged', function(assert) {
-      assert.expect(13);
+    var toNumberNumbers = [0, 10, 1.23456789, MAX_SAFE_INTEGER, MAX_INTEGER, INFINITY, NaN];
+    lodashStable.each(toNumberNumbers, function (number) {
+      QUnit.test('number literal and objects should return number literals', function(assert) {
+        assert.expect(4);
 
-      assert.strictEqual(1 /_.toNumber(0), INFINITY);
-      assert.strictEqual(1 / _.toNumber(-0), -INFINITY);
-      assert.strictEqual(_.toNumber(10), 10);
-      assert.strictEqual(_.toNumber(-10), -10);
-      assert.strictEqual(_.toNumber(1.234567890), 1.23456789);
-      assert.strictEqual(_.toNumber(-1.234567890), -1.23456789);
-      assert.strictEqual(_.toNumber(MAX_SAFE_INTEGER), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(-MAX_SAFE_INTEGER), -MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(MAX_INTEGER), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(-MAX_INTEGER), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(INFINITY), INFINITY);
-      assert.strictEqual(_.toNumber(-INFINITY), -INFINITY);
-      assert.deepEqual(_.toNumber(NaN), NaN);
+        if (number === 0) {
+          assert.strictEqual(1 / _.toNumber(number), INFINITY);
+          assert.strictEqual(1 / _.toNumber(-number), -INFINITY);
+
+          assert.strictEqual(1 / _.toNumber(Object(number)), INFINITY);
+          assert.strictEqual(1 / _.toNumber(Object(-number)), -INFINITY);
+        } else {
+          assert.deepEqual(_.toNumber(number), number);
+          assert.deepEqual(_.toNumber(-number), -number);
+
+          assert.deepEqual(_.toNumber(Object(number)), number);
+          assert.deepEqual(_.toNumber(Object(-number)), -number);
+        }
+      });
     });
 
-    QUnit.test('number objects should return number literals', function(assert) {
-      assert.expect(13);
+    function negStr(string) {
+      return '-' + string;
+    }
 
-      assert.strictEqual(1 /_.toNumber(new Number(0)), INFINITY);
-      assert.strictEqual(1 / _.toNumber(new Number(-0)), -INFINITY);
-      assert.strictEqual(_.toNumber(new Number(10)), 10);
-      assert.strictEqual(_.toNumber(new Number(-10)), -10);
-      assert.strictEqual(_.toNumber(new Number(1.234567890)), 1.23456789);
-      assert.strictEqual(_.toNumber(new Number(-1.234567890)), -1.23456789);
-      assert.strictEqual(_.toNumber(new Number(MAX_SAFE_INTEGER)), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(new Number(-MAX_SAFE_INTEGER)), -MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(new Number(MAX_INTEGER)), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new Number(-MAX_INTEGER)), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new Number(INFINITY)), INFINITY);
-      assert.strictEqual(_.toNumber(new Number(-INFINITY)), -INFINITY);
-      assert.deepEqual(_.toNumber(new Number(NaN)), NaN);
+    function posStr(string) {
+      return '+' + string;
+    }
+
+    function wrapWS(string) {
+      return ' ' + string + ' ';
+    }
+
+    var toNumberBasicStrings = ['0', '10', '1.234567890', '9007199254740991', '1e+308', '1e308', '1E+308', '1E308', '5e-324', '5E-324', 'Infinity', 'NaN'];
+    lodashStable.each(toNumberNumbers, function (string) {
+      QUnit.test('should convert basic string literals and objects accurately', function(assert) {
+        assert.expect(12);
+
+        if (string === '0') {
+          assert.strictEqual(1 / _.toNumber(string), INFINITY);
+          assert.strictEqual(1 / _.toNumber(posStr(string)), -INFINITY);
+          assert.strictEqual(1 / _.toNumber(negStr(string)), -INFINITY);
+          assert.strictEqual(1 / _.toNumber(wrapWS(string)), INFINITY);
+          assert.strictEqual(1 / _.toNumber(wrapWS(posStr(string))), -INFINITY);
+          assert.strictEqual(1 / _.toNumber(wrapWS(negStr(string))), -INFINITY);
+
+          assert.strictEqual(1 / _.toNumber(Object(string)), INFINITY);
+          assert.strictEqual(1 / _.toNumber(Object(posStr(string))), -INFINITY);
+          assert.strictEqual(1 / _.toNumber(Object(negStr(string))), -INFINITY);
+          assert.strictEqual(1 / _.toNumber(Object(wrapWS(string))), INFINITY);
+          assert.strictEqual(1 / _.toNumber(Object(wrapWS(posStr(string)))), -INFINITY);
+          assert.strictEqual(1 / _.toNumber(Object(wrapWS(negStr(string)))), -INFINITY);
+        } else {
+          assert.deepEqual(_.toNumber(string), +string);
+          assert.deepEqual(_.toNumber(posStr(string)), +posStr(string));
+          assert.deepEqual(_.toNumber(negStr(string)), +negStr(string));
+          assert.deepEqual(_.toNumber(wrapWS(string)), +wrapWS(string));
+          assert.deepEqual(_.toNumber(wrapWS(posStr(string))), +wrapWS(posStr(string)));
+          assert.deepEqual(_.toNumber(wrapWS(negStr(string))), +wrapWS(negStr(string)));
+
+          assert.deepEqual(_.toNumber(Object(string)), +string);
+          assert.deepEqual(_.toNumber(Object(posStr(string))), +posStr(string));
+          assert.deepEqual(_.toNumber(Object(negStr(string))), +negStr(string));
+          assert.deepEqual(_.toNumber(Object(wrapWS(string))), +wrapWS(string));
+          assert.deepEqual(_.toNumber(Object(wrapWS(posStr(string)))), +wrapWS(posStr(string)));
+          assert.deepEqual(_.toNumber(Object(wrapWS(negStr(string)))), +wrapWS(negStr(string)));
+        }
+      });
     });
 
-    QUnit.test('should convert string literals accurately', function(assert) {
-      assert.expect(75);
+    var toNumberAdvancedStrings = [{
+        string: '0b101010',
+        value: 42
+      }, {
+        string: '0o12345',
+        value: 5349
+      }, {
+        string: '0x1a2b3c',
+        value: 1715004
+      }];
+    lodashStable.each(toNumberAdvancedStrings, function (item) {
+      QUnit.test('should convert basic string literals and objects accurately', function(assert) {
+        assert.expect(24);
 
-      assert.strictEqual(1 / _.toNumber('0'), INFINITY);
-      assert.strictEqual(1 / _.toNumber('+0'), INFINITY);
-      assert.strictEqual(1 / _.toNumber('-0'), -INFINITY);
-      assert.strictEqual(_.toNumber('10'), 10);
-      assert.strictEqual(_.toNumber('+10'), 10);
-      assert.strictEqual(_.toNumber('-10'), -10);
-      assert.strictEqual(_.toNumber('1.234567890'), 1.23456789);
-      assert.strictEqual(_.toNumber('+1.234567890'), 1.23456789);
-      assert.strictEqual(_.toNumber('-1.234567890'), -1.23456789);
-      assert.strictEqual(_.toNumber('9007199254740991'), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber('+9007199254740991'), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber('-9007199254740991'), -MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber('1e+308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('+1e+308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('-1e+308'), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber('1e308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('+1e308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('-1e308'), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber('1E+308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('+1E+308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('-1E+308'), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber('1E308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('+1E308'), MAX_INTEGER);
-      assert.strictEqual(_.toNumber('-1E308'), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber('5e-324'), MIN_VALUE);
-      assert.strictEqual(_.toNumber('+5e-324'), MIN_VALUE);
-      assert.strictEqual(_.toNumber('-5e-324'), -MIN_VALUE);
-      assert.strictEqual(_.toNumber('5E-324'), MIN_VALUE);
-      assert.strictEqual(_.toNumber('+5E-324'), MIN_VALUE);
-      assert.strictEqual(_.toNumber('-5E-324'), -MIN_VALUE);
-      assert.strictEqual(_.toNumber('Infinity'), INFINITY);
-      assert.strictEqual(_.toNumber('+Infinity'), INFINITY);
-      assert.strictEqual(_.toNumber('-Infinity'), -INFINITY);
-      assert.deepEqual(_.toNumber('NaN'), NaN);
-      assert.deepEqual(_.toNumber('+NaN'), NaN);
-      assert.deepEqual(_.toNumber('-NaN'), NaN);
-      assert.strictEqual(_.toNumber('0b101010'), 42);
-      assert.deepEqual(_.toNumber('+0b101010'), NaN);
-      assert.deepEqual(_.toNumber('-0b101010'), NaN);
-      assert.strictEqual(_.toNumber('0B101010'), 42);
-      assert.deepEqual(_.toNumber('+0B101010'), NaN);
-      assert.deepEqual(_.toNumber('-0B101010'), NaN);
-      assert.strictEqual(_.toNumber('0o12345'), 5349);
-      assert.deepEqual(_.toNumber('+0o12345'), NaN);
-      assert.deepEqual(_.toNumber('-0o12345'), NaN);
-      assert.strictEqual(_.toNumber('0O12345'), 5349);
-      assert.deepEqual(_.toNumber('+0O12345'), NaN);
-      assert.deepEqual(_.toNumber('-0O12345'), NaN);
-      assert.strictEqual(_.toNumber('0x1a2b3c'), 1715004);
-      assert.deepEqual(_.toNumber('+0x1a2b3c'), NaN);
-      assert.deepEqual(_.toNumber('-0x1a2b3c'), NaN);
-      assert.strictEqual(_.toNumber('0X1A2B3C'), 1715004);
-      assert.deepEqual(_.toNumber('+0X1A2B3C'), NaN);
-      assert.deepEqual(_.toNumber('-0X1A2B3C'), NaN);
-      assert.deepEqual(_.toNumber('0b1010102'), NaN);
-      assert.deepEqual(_.toNumber('+0b1010102'), NaN);
-      assert.deepEqual(_.toNumber('-0b1010102'), NaN);
-      assert.deepEqual(_.toNumber('0B1010102'), NaN);
-      assert.deepEqual(_.toNumber('+0B1010102'), NaN);
-      assert.deepEqual(_.toNumber('-0B1010102'), NaN);
-      assert.deepEqual(_.toNumber('0o123458'), NaN);
-      assert.deepEqual(_.toNumber('+0o123458'), NaN);
-      assert.deepEqual(_.toNumber('-0o123458'), NaN);
-      assert.deepEqual(_.toNumber('0O123458'), NaN);
-      assert.deepEqual(_.toNumber('+0O123458'), NaN);
-      assert.deepEqual(_.toNumber('-0O123458'), NaN);
-      assert.deepEqual(_.toNumber('0x1a2b3x'), NaN);
-      assert.deepEqual(_.toNumber('+0x1a2b3x'), NaN);
-      assert.deepEqual(_.toNumber('-0x1a2b3x'), NaN);
-      assert.deepEqual(_.toNumber('0X1A2B3X'), NaN);
-      assert.deepEqual(_.toNumber('+0X1A2B3X'), NaN);
-      assert.deepEqual(_.toNumber('-0X1A2B3X'), NaN);
-      assert.deepEqual(_.toNumber('-0b'), NaN);
-      assert.deepEqual(_.toNumber('-0o'), NaN);
-      assert.deepEqual(_.toNumber('-0x'), NaN);
+        assert.deepEqual(_.toNumber(item.string), item.value);
+        assert.deepEqual(_.toNumber(posStr(item.string)), NaN);
+        assert.deepEqual(_.toNumber(negStr(item.string)), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(item.string)), item.value);
+        assert.deepEqual(_.toNumber(wrapWS(posStr(item.string))), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(negStr(item.string))), NaN);
+
+        assert.deepEqual(_.toNumber(item.string.toUpperCase()), item.value);
+        assert.deepEqual(_.toNumber(posStr(item.string.toUpperCase())), NaN);
+        assert.deepEqual(_.toNumber(negStr(item.string.toUpperCase())), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(item.string.toUpperCase())), item.value);
+        assert.deepEqual(_.toNumber(wrapWS(posStr(item.string.toUpperCase()))), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(negStr(item.string.toUpperCase()))), NaN);
+
+        assert.deepEqual(_.toNumber(Object(item.string)), item.value);
+        assert.deepEqual(_.toNumber(Object(posStr(item.string))), NaN);
+        assert.deepEqual(_.toNumber(Object(negStr(item.string))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(item.string))), item.value);
+        assert.deepEqual(_.toNumber(Object(wrapWS(posStr(item.string)))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(negStr(item.string)))), NaN);
+
+        assert.deepEqual(_.toNumber(Object(item.string.toUpperCase())), item.value);
+        assert.deepEqual(_.toNumber(Object(posStr(item.string.toUpperCase()))), NaN);
+        assert.deepEqual(_.toNumber(Object(negStr(item.string.toUpperCase()))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(item.string.toUpperCase()))), item.value);
+        assert.deepEqual(_.toNumber(Object(wrapWS(posStr(item.string.toUpperCase())))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(negStr(item.string.toUpperCase())))), NaN);
+      });
     });
 
-    QUnit.test('should convert string literals with whitespace accurately', function(assert) {
-      assert.expect(75);
+    var toNumberInvalidAdvanceStrings = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x'];
+    lodashStable.each(toNumberInvalidAdvanceStrings, function (string) {
+      QUnit.test('invalid binary, octal and hex string literals and objects should be `NaN`', function(assert) {
+        assert.expect(12);
 
-      assert.strictEqual(1 / _.toNumber(' 0 '), INFINITY);
-      assert.strictEqual(1 / _.toNumber(' +0 '), INFINITY);
-      assert.strictEqual(1 / _.toNumber(' -0 '), -INFINITY);
-      assert.strictEqual(_.toNumber(' 10 '), 10);
-      assert.strictEqual(_.toNumber(' +10 '), 10);
-      assert.strictEqual(_.toNumber(' -10 '), -10);
-      assert.strictEqual(_.toNumber(' 1.234567890 '), 1.23456789);
-      assert.strictEqual(_.toNumber(' +1.234567890 '), 1.23456789);
-      assert.strictEqual(_.toNumber(' -1.234567890 '), -1.23456789);
-      assert.strictEqual(_.toNumber(' 9007199254740991 '), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(' +9007199254740991 '), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(' -9007199254740991 '), -MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(' 1e+308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' +1e+308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' -1e+308 '), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' 1e308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' +1e308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' -1e308 '), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' 1E+308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' +1E+308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' -1E+308 '), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' 1E308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' +1E308 '), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' -1E308 '), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(' 5e-324 '), MIN_VALUE);
-      assert.strictEqual(_.toNumber(' +5e-324 '), MIN_VALUE);
-      assert.strictEqual(_.toNumber(' -5e-324 '), -MIN_VALUE);
-      assert.strictEqual(_.toNumber(' 5E-324 '), MIN_VALUE);
-      assert.strictEqual(_.toNumber(' +5E-324 '), MIN_VALUE);
-      assert.strictEqual(_.toNumber(' -5E-324 '), -MIN_VALUE);
-      assert.strictEqual(_.toNumber(' Infinity '), INFINITY);
-      assert.strictEqual(_.toNumber(' +Infinity '), INFINITY);
-      assert.strictEqual(_.toNumber(' -Infinity '), -INFINITY);
-      assert.deepEqual(_.toNumber(' NaN '), NaN);
-      assert.deepEqual(_.toNumber(' +NaN '), NaN);
-      assert.deepEqual(_.toNumber(' -NaN '), NaN);
-      assert.strictEqual(_.toNumber(' 0b101010 '), 42);
-      assert.deepEqual(_.toNumber(' +0b101010 '), NaN);
-      assert.deepEqual(_.toNumber(' -0b101010 '), NaN);
-      assert.strictEqual(_.toNumber(' 0B101010 '), 42);
-      assert.deepEqual(_.toNumber(' +0B101010 '), NaN);
-      assert.deepEqual(_.toNumber(' -0B101010 '), NaN);
-      assert.strictEqual(_.toNumber( '0o12345 '), 5349);
-      assert.deepEqual(_.toNumber(' +0o12345 '), NaN);
-      assert.deepEqual(_.toNumber(' -0o12345 '), NaN);
-      assert.strictEqual(_.toNumber(' 0O12345 '), 5349);
-      assert.deepEqual(_.toNumber(' +0O12345 '), NaN);
-      assert.deepEqual(_.toNumber(' -0O12345 '), NaN);
-      assert.strictEqual(_.toNumber(' 0x1a2b3c'), 1715004);
-      assert.deepEqual(_.toNumber(' +0x1a2b3c '), NaN);
-      assert.deepEqual(_.toNumber(' -0x1a2b3c '), NaN);
-      assert.strictEqual(_.toNumber(' 0X1A2B3C '), 1715004);
-      assert.deepEqual(_.toNumber(' +0X1A2B3C '), NaN);
-      assert.deepEqual(_.toNumber(' -0X1A2B3C '), NaN);
-      assert.deepEqual(_.toNumber(' 0b1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' +0b1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' -0b1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' 0B1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' +0B1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' -0B1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' 0o123458 '), NaN);
-      assert.deepEqual(_.toNumber(' +0o123458 '), NaN);
-      assert.deepEqual(_.toNumber(' -0o123458 '), NaN);
-      assert.deepEqual(_.toNumber(' 0O123458 '), NaN);
-      assert.deepEqual(_.toNumber(' +0O123458 '), NaN);
-      assert.deepEqual(_.toNumber(' -0O123458 '), NaN);
-      assert.deepEqual(_.toNumber(' 0x1a2b3x '), NaN);
-      assert.deepEqual(_.toNumber(' +0x1a2b3x '), NaN);
-      assert.deepEqual(_.toNumber(' -0x1a2b3x '), NaN);
-      assert.deepEqual(_.toNumber(' 0X1A2B3X '), NaN);
-      assert.deepEqual(_.toNumber(' +0X1A2B3X '), NaN);
-      assert.deepEqual(_.toNumber(' -0X1A2B3X '), NaN);
-      assert.deepEqual(_.toNumber(' -0b '), NaN);
-      assert.deepEqual(_.toNumber(' -0o '), NaN);
-      assert.deepEqual(_.toNumber(' -0x '), NaN);
-    });
+        assert.deepEqual(_.toNumber(string), NaN);
+        assert.deepEqual(_.toNumber(posStr(string)), NaN);
+        assert.deepEqual(_.toNumber(negStr(string)), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(string)), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(posStr(string))), NaN);
+        assert.deepEqual(_.toNumber(wrapWS(negStr(string))), NaN);
 
-    QUnit.test('should convert string objects with whitespace accurately', function(assert) {
-      assert.expect(75);
-
-      assert.strictEqual(1 / _.toNumber(new String(' 0 ')), INFINITY);
-      assert.strictEqual(1 / _.toNumber(new String(' +0 ')), INFINITY);
-      assert.strictEqual(1 / _.toNumber(new String(' -0 ')), -INFINITY);
-      assert.strictEqual(_.toNumber(new String(' 10 ')), 10);
-      assert.strictEqual(_.toNumber(new String(' +10 ')), 10);
-      assert.strictEqual(_.toNumber(new String(' -10 ')), -10);
-      assert.strictEqual(_.toNumber(new String(' 1.234567890 ')), 1.23456789);
-      assert.strictEqual(_.toNumber(new String(' +1.234567890 ')), 1.23456789);
-      assert.strictEqual(_.toNumber(new String(' -1.234567890 ')), -1.23456789);
-      assert.strictEqual(_.toNumber(new String(' 9007199254740991 ')), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' +9007199254740991 ')), MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' -9007199254740991 ')), -MAX_SAFE_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' 1e+308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' +1e+308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' -1e+308 ')), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' 1e308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' +1e308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' -1e308 ')), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' 1E+308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' +1E+308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' -1E+308 ')), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' 1E308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' +1E308 ')), MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' -1E308 ')), -MAX_INTEGER);
-      assert.strictEqual(_.toNumber(new String(' 5e-324 ')), MIN_VALUE);
-      assert.strictEqual(_.toNumber(new String(' +5e-324 ')), MIN_VALUE);
-      assert.strictEqual(_.toNumber(new String(' -5e-324 ')), -MIN_VALUE);
-      assert.strictEqual(_.toNumber(new String(' 5E-324 ')), MIN_VALUE);
-      assert.strictEqual(_.toNumber(new String(' +5E-324 ')), MIN_VALUE);
-      assert.strictEqual(_.toNumber(new String(' -5E-324 ')), -MIN_VALUE);
-      assert.strictEqual(_.toNumber(new String(' Infinity ')), INFINITY);
-      assert.strictEqual(_.toNumber(new String(' +Infinity ')), INFINITY);
-      assert.strictEqual(_.toNumber(new String(' -Infinity ')), -INFINITY);
-      assert.deepEqual(_.toNumber(' NaN '), NaN);
-      assert.deepEqual(_.toNumber(' +NaN '), NaN);
-      assert.deepEqual(_.toNumber(' -NaN '), NaN);
-      assert.strictEqual(_.toNumber(' 0b101010 '), 42);
-      assert.deepEqual(_.toNumber(' +0b101010 '), NaN);
-      assert.deepEqual(_.toNumber(' -0b101010 '), NaN);
-      assert.strictEqual(_.toNumber(' 0B101010 '), 42);
-      assert.deepEqual(_.toNumber(' +0B101010 '), NaN);
-      assert.deepEqual(_.toNumber(' -0B101010 '), NaN);
-      assert.strictEqual(_.toNumber( '0o12345 '), 5349);
-      assert.deepEqual(_.toNumber(' +0o12345 '), NaN);
-      assert.deepEqual(_.toNumber(' -0o12345 '), NaN);
-      assert.strictEqual(_.toNumber(' 0O12345 '), 5349);
-      assert.deepEqual(_.toNumber(' +0O12345 '), NaN);
-      assert.deepEqual(_.toNumber(' -0O12345 '), NaN);
-      assert.strictEqual(_.toNumber(' 0x1a2b3c'), 1715004);
-      assert.deepEqual(_.toNumber(' +0x1a2b3c '), NaN);
-      assert.deepEqual(_.toNumber(' -0x1a2b3c '), NaN);
-      assert.strictEqual(_.toNumber(' 0X1A2B3C '), 1715004);
-      assert.deepEqual(_.toNumber(' +0X1A2B3C '), NaN);
-      assert.deepEqual(_.toNumber(' -0X1A2B3C '), NaN);
-      assert.deepEqual(_.toNumber(' 0b1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' +0b1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' -0b1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' 0B1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' +0B1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' -0B1010102 '), NaN);
-      assert.deepEqual(_.toNumber(' 0o123458 '), NaN);
-      assert.deepEqual(_.toNumber(' +0o123458 '), NaN);
-      assert.deepEqual(_.toNumber(' -0o123458 '), NaN);
-      assert.deepEqual(_.toNumber(' 0O123458 '), NaN);
-      assert.deepEqual(_.toNumber(' +0O123458 '), NaN);
-      assert.deepEqual(_.toNumber(' -0O123458 '), NaN);
-      assert.deepEqual(_.toNumber(' 0x1a2b3x '), NaN);
-      assert.deepEqual(_.toNumber(' +0x1a2b3x '), NaN);
-      assert.deepEqual(_.toNumber(' -0x1a2b3x '), NaN);
-      assert.deepEqual(_.toNumber(' 0X1A2B3X '), NaN);
-      assert.deepEqual(_.toNumber(' +0X1A2B3X '), NaN);
-      assert.deepEqual(_.toNumber(' -0X1A2B3X '), NaN);
-      assert.deepEqual(_.toNumber(' -0b '), NaN);
-      assert.deepEqual(_.toNumber(' -0o '), NaN);
-      assert.deepEqual(_.toNumber(' -0x '), NaN);
+        assert.deepEqual(_.toNumber(Object(string)), NaN);
+        assert.deepEqual(_.toNumber(Object(posStr(string))), NaN);
+        assert.deepEqual(_.toNumber(Object(negStr(string))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(string))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(posStr(string)))), NaN);
+        assert.deepEqual(_.toNumber(Object(wrapWS(negStr(string)))), NaN);
+      });
     });
 
     QUnit.test('should convert boolean literals and objects', function(assert) {

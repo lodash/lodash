@@ -19428,7 +19428,7 @@
   QUnit.module('lodash.toNumber');
 
   (function() {
-    QUnit.test('null, enpty strings and undefined should convert to `0` and `NaN`', function(assert) {
+    QUnit.test('null, empty strings and undefined should convert to `0` and `NaN`', function(assert) {
       assert.expect(5);
 
       assert.deepEqual(_.toNumber(), NaN);

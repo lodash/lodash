@@ -128,11 +128,14 @@
   /** Used to detect hexadecimal string values. */
   var reHasHexPrefix = /^0[xX]/;
 
-  /** Used to binary string values. */
-  var reHasBinaryPrefix = /^0b[0-1]+$/i;
+  /** Used to detect binary string values. */
+  var reIsBinary = /^0b[0-1]+$/i;
 
-  /** Used to octal string values. */
-  var reHasOctalPrefix = /^0o[0-7]+$/i;
+  /** Used to detect octal string values. */
+  var reIsOctal = /^0o[0-7]+$/i;
+
+  /** Used to detect bad negative hex string values. */
+  var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
 
   /** Used to detect host constructors (Safari > 5). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
@@ -9795,11 +9798,14 @@
       }
       if (type === 'string') {
         var trimmed = _.trim(value);
-        if (reHasBinaryPrefix.test(trimmed)) {
+        if (reIsBinary.test(trimmed)) {
           return parseInt(trimmed.slice(2), 2);
         }
-        if (reHasOctalPrefix.test(trimmed)) {
+        if (reIsOctal.test(trimmed)) {
           return parseInt(trimmed.slice(2), 8);
+        }
+        if (reIsBadHex.test(trimmed)) {
+          return NaN;
         }
       }
       return +value;

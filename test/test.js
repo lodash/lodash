@@ -19440,10 +19440,16 @@
     });
 
     QUnit.test('should preserve sign of `0`', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
-      assert.strictEqual(_.toString(0), '0');
-      assert.strictEqual(_.toString(-0), '-0');
+      var values = [0, Object(0), -0, Object(-0)],
+          expected = ['0', '0', '-0', '-0'];
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.toString(value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should return the `toString` result of the wrapped value', function(assert) {

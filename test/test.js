@@ -19425,66 +19425,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.toString');
-
-  (function() {
-    QUnit.test('null and undefined should convert to an empty string', function(assert) {
-      assert.expect(3);
-
-      assert.strictEqual(_.toString(), '');
-      assert.strictEqual(_.toString(undefined), '');
-      assert.strictEqual(_.toString(null), '');
-    });
-
-    QUnit.test('should preserve sign of `0`', function(assert) {
-      assert.expect(2);
-
-      assert.strictEqual(_.toString(0), '0');
-      assert.strictEqual(_.toString(-0), '-0');
-    });
-
-    QUnit.test('should convert other numbers accurately', function(assert) {
-      assert.expect(11);
-
-      assert.strictEqual(_.toString(10), '10');
-      assert.strictEqual(_.toString(-10), '-10');
-      assert.strictEqual(_.toString(1.234567890), '1.23456789');
-      assert.strictEqual(_.toString(-1.234567890), '-1.23456789');
-      assert.strictEqual(_.toString(MAX_SAFE_INTEGER), '9007199254740991');
-      assert.strictEqual(_.toString(-MAX_SAFE_INTEGER), '-9007199254740991');
-      assert.strictEqual(_.toString(MAX_INTEGER), '1e+308');
-      assert.strictEqual(_.toString(-MAX_INTEGER), '-1e+308');
-      assert.strictEqual(_.toString(INFINITY), 'Infinity');
-      assert.strictEqual(_.toString(-INFINITY), '-Infinity');
-      assert.strictEqual(_.toString(NaN), 'NaN');
-    });
-
-    QUnit.test('should convert dates', function(assert) {
-      assert.expect(2);
-
-      var now = new Date();
-      assert.strictEqual(_.toString(now), now.toString());
-      assert.strictEqual(_.toString(new Date(MAX_INTEGER)), 'Invalid Date');
-    });
-
-    QUnit.test('should convert regexs', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.toString(/abc/i), '/abc/i');
-    });
-
-    QUnit.test('other objects', function(assert) {
-      assert.expect(4);
-
-      assert.strictEqual(_.toString({}), objectTag);
-      assert.strictEqual(_.toString([]), '');
-      assert.strictEqual(_.toString([1]), '1');
-      assert.strictEqual(_.toString([1, 2]), '1,2');
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.toNumber');
 
   (function() {
@@ -19706,6 +19646,44 @@
       assert.strictEqual(_.toNumber([]), 0);
       assert.strictEqual(_.toNumber([1]), 1);
       assert.deepEqual(_.toNumber([1, 2]), NaN);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toString');
+
+  (function() {
+    QUnit.test('should treat nullish values as empty strings', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(''));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.toString(value) : _.toString();
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should preserve sign of `0`', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.toString(0), '0');
+      assert.strictEqual(_.toString(-0), '-0');
+    });
+
+    QUnit.test('should return the `toString` result of the wrapped value', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var wrapped = _([1, 2, 3]);
+        assert.strictEqual(wrapped.toString(), '1,2,3');
+      }
+      else {
+        skipTest(assert);
+      }
     });
   }());
 
@@ -21808,43 +21786,6 @@
       }
       else {
         skipTest(assert, 2);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash(...).toString');
-
-  (function() {
-    QUnit.test('should return the `toString` result of the wrapped value', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var wrapped = _([1, 2, 3]);
-        assert.strictEqual(String(wrapped), '1,2,3');
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should treat nullish values as empty strings', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var values = [, null, undefined],
-            expected = lodashStable.map(values, lodashStable.constant(''));
-
-        var actual = lodashStable.map(values, function(value, index) {
-          var wrapped = index ? _(value) : _();
-          return String(wrapped);
-        });
-
-        assert.deepEqual(actual, expected);
-      }
-      else {
-        skipTest(assert);
       }
     });
   }());

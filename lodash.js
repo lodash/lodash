@@ -9770,9 +9770,9 @@
      * @returns {string} Returns the string.
      */
     function toString(value) {
-      // Preserve sign of `0`
+      // Preserve sign of `0`.
       if (value === 0) {
-        return 1 / value === INFINITY ? '0' : '-0';
+        return (1 / value) == INFINITY ? '0' : '-0';
       }
       // Exit early for strings to avoid a performance hit in some environments.
       if (typeof value == 'string') {

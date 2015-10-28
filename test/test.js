@@ -19432,7 +19432,7 @@
       assert.expect(2);
 
       assert.deepEqual(_.toNumber(), NaN);
-      var values = [undefined, null, '', ' '],
+      var values = [undefined, null, '', whitespace],
         expected = [NaN, INFINITY, INFINITY, INFINITY],
         actual = lodashStable.map(values, function(value) {
           return 1 / _.toNumber(value);
@@ -19486,7 +19486,7 @@
     }
 
     function wrapWS(string) {
-      return ' ' + string + ' ';
+      return whitespace + string + whitespace;
     }
 
     var toNumberBasicStrings = ['10', '1.234567890', '9007199254740991', '1e+308', '1e308', '1E+308', '1E308', '5e-324', '5E-324', 'Infinity', 'NaN'];

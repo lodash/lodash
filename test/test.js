@@ -13,7 +13,8 @@
   var FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used as references for various `Number` constants. */
-  var MAX_SAFE_INTEGER = 9007199254740991,
+  var INFINITY = 1 / 0,
+      MAX_SAFE_INTEGER = 9007199254740991,
       MAX_INTEGER = 1e308;
 
   /** Used as references for the maximum length and index of an array. */
@@ -19440,6 +19441,213 @@
       assert.strictEqual(_.toString(0), '0');
       assert.strictEqual(_.toString(-0), '-0');
     });
+
+    QUnit.test('should convert other numbers accurately', function(assert) {
+      assert.expect(11);
+
+      assert.strictEqual(_.toString(10), '10');
+      assert.strictEqual(_.toString(-10), '-10');
+      assert.strictEqual(_.toString(1.234567890), '1.23456789');
+      assert.strictEqual(_.toString(-1.234567890), '-1.23456789');
+      assert.strictEqual(_.toString(MAX_SAFE_INTEGER), '9007199254740991');
+      assert.strictEqual(_.toString(-MAX_SAFE_INTEGER), '-9007199254740991');
+      assert.strictEqual(_.toString(MAX_INTEGER), '1e+308');
+      assert.strictEqual(_.toString(-MAX_INTEGER), '-1e+308');
+      assert.strictEqual(_.toString(INFINITY), 'Infinity');
+      assert.strictEqual(_.toString(-INFINITY), '-Infinity');
+      assert.strictEqual(_.toString(NaN), 'NaN');
+    });
+
+    QUnit.test('should convert dates', function(assert) {
+      assert.expect(2);
+
+      var now = new Date();
+      assert.strictEqual(_.toString(now), now.toString());
+      assert.strictEqual(_.toString(new Date(MAX_INTEGER)), 'Invalid Date');
+    });
+
+    QUnit.test('should convert regexs', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.toString(/abc/i), '/abc/i');
+    });
+
+    QUnit.test('other objects', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.toString({}), objectTag);
+      assert.strictEqual(_.toString([]), '');
+      assert.strictEqual(_.toString([1]), '1');
+      assert.strictEqual(_.toString([1, 2]), '1,2');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toNumber');
+
+  (function() {
+    QUnit.test('null, enpty strings and undefined should convert to `0` and `NaN`', function(assert) {
+      assert.expect(5);
+
+      assert.deepEqual(_.toNumber(), NaN);
+      assert.deepEqual(_.toNumber(undefined), NaN);
+      assert.strictEqual(_.toNumber(null), 0);
+      assert.strictEqual(_.toNumber(''), 0);
+      assert.strictEqual(_.toNumber(' '), 0);
+    });
+
+    QUnit.test('numbers should remain unchanged', function(assert) {
+      assert.expect(13);
+
+      assert.strictEqual(_.toNumber(0), 0);
+      assert.deepEqual(_.toNumber(-0), -0);
+      assert.strictEqual(_.toNumber(10), 10);
+      assert.strictEqual(_.toNumber(-10), -10);
+      assert.strictEqual(_.toNumber(1.234567890), 1.23456789);
+      assert.strictEqual(_.toNumber(-1.234567890), -1.23456789);
+      assert.strictEqual(_.toNumber(MAX_SAFE_INTEGER), MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toNumber(-MAX_SAFE_INTEGER), -MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toNumber(MAX_INTEGER), MAX_INTEGER);
+      assert.strictEqual(_.toNumber(-MAX_INTEGER), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber(INFINITY), INFINITY);
+      assert.strictEqual(_.toNumber(-INFINITY), -INFINITY);
+      assert.deepEqual(_.toNumber(NaN), NaN);
+    });
+
+    QUnit.test('should convert string literals accurately', function(assert) {
+      assert.expect(46);
+
+      assert.strictEqual(_.toNumber('0'), 0);
+      assert.deepEqual(_.toNumber('-0'), -0);
+      assert.strictEqual(_.toNumber('10'), 10);
+      assert.strictEqual(_.toNumber('-10'), -10);
+      assert.strictEqual(_.toNumber('1.234567890'), 1.23456789);
+      assert.strictEqual(_.toNumber('-1.234567890'), -1.23456789);
+      assert.strictEqual(_.toNumber('9007199254740991'), MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toNumber('-9007199254740991'), -MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toNumber('1e+308'), MAX_INTEGER);
+      assert.strictEqual(_.toNumber('-1e+308'), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber('1e308'), MAX_INTEGER);
+      assert.strictEqual(_.toNumber('-1e308'), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber('1E+308'), MAX_INTEGER);
+      assert.strictEqual(_.toNumber('-1E+308'), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber('1E308'), MAX_INTEGER);
+      assert.strictEqual(_.toNumber('-1E308'), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber('Infinity'), INFINITY);
+      assert.strictEqual(_.toNumber('-Infinity'), -INFINITY);
+      assert.deepEqual(_.toNumber('NaN'), NaN);
+      assert.strictEqual(_.toNumber('0b101010'), 42);
+      assert.deepEqual(_.toNumber('-0b101010'), NaN);
+      assert.strictEqual(_.toNumber('0B101010'), 42);
+      assert.deepEqual(_.toNumber('-0B101010'), NaN);
+      assert.strictEqual(_.toNumber('0o12345'), 5349);
+      assert.deepEqual(_.toNumber('-0o12345'), NaN);
+      assert.strictEqual(_.toNumber('0O12345'), 5349);
+      assert.deepEqual(_.toNumber('-0O12345'), NaN);
+      assert.strictEqual(_.toNumber('0x1a2b3c'), 1715004);
+      assert.deepEqual(_.toNumber('-0x1a2b3c'), NaN);
+      assert.strictEqual(_.toNumber('0X1A2B3C'), 1715004);
+      assert.deepEqual(_.toNumber('-0X1A2B3C'), NaN);
+      assert.deepEqual(_.toNumber('0b1010102'), NaN);
+      assert.deepEqual(_.toNumber('-0b1010102'), NaN);
+      assert.deepEqual(_.toNumber('0B1010102'), NaN);
+      assert.deepEqual(_.toNumber('-0B1010102'), NaN);
+      assert.deepEqual(_.toNumber('0o123458'), NaN);
+      assert.deepEqual(_.toNumber('-0o123458'), NaN);
+      assert.deepEqual(_.toNumber('0O123458'), NaN);
+      assert.deepEqual(_.toNumber('-0O123458'), NaN);
+      assert.deepEqual(_.toNumber('0x1a2b3x'), NaN);
+      assert.deepEqual(_.toNumber('-0x1a2b3x'), NaN);
+      assert.deepEqual(_.toNumber('0X1A2B3X'), NaN);
+      assert.deepEqual(_.toNumber('-0X1A2B3X'), NaN);
+      assert.deepEqual(_.toNumber('-0b'), NaN);
+      assert.deepEqual(_.toNumber('-0o'), NaN);
+      assert.deepEqual(_.toNumber('-0x'), NaN);
+    });
+
+    QUnit.test('should convert string literals with whitespace accurately', function(assert) {
+      assert.expect(46);
+
+      assert.strictEqual(_.toNumber(' 0 '), 0);
+      assert.deepEqual(_.toNumber(' -0 '), -0);
+      assert.strictEqual(_.toNumber(' 10 '), 10);
+      assert.strictEqual(_.toNumber(' -10 '), -10);
+      assert.strictEqual(_.toNumber(' 1.234567890 '), 1.23456789);
+      assert.strictEqual(_.toNumber(' -1.234567890 '), -1.23456789);
+      assert.strictEqual(_.toNumber(' 9007199254740991 '), MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toNumber(' -9007199254740991 '), -MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toNumber(' 1e+308 '), MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' -1e+308 '), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' 1e308 '), MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' -1e308 '), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' 1E+308 '), MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' -1E+308 '), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' 1E308 '), MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' -1E308 '), -MAX_INTEGER);
+      assert.strictEqual(_.toNumber(' Infinity '), INFINITY);
+      assert.strictEqual(_.toNumber(' -Infinity '), -INFINITY);
+      assert.deepEqual(_.toNumber(' NaN '), NaN);
+      assert.strictEqual(_.toNumber(' 0b101010 '), 42);
+      assert.deepEqual(_.toNumber(' -0b101010 '), NaN);
+      assert.strictEqual(_.toNumber(' 0B101010 '), 42);
+      assert.deepEqual(_.toNumber(' -0B101010 '), NaN);
+      assert.strictEqual(_.toNumber(' 0o12345 '), 5349);
+      assert.deepEqual(_.toNumber(' -0o12345 '), NaN);
+      assert.strictEqual(_.toNumber(' 0O12345 '), 5349);
+      assert.strictEqual(_.toNumber(' 0x1a2b3c '), 1715004);
+      assert.deepEqual(_.toNumber(' -0x1a2b3c '), NaN);
+      assert.strictEqual(_.toNumber( '0X1A2B3C '), 1715004);
+      assert.deepEqual(_.toNumber(' -0X1A2B3C '), NaN);
+      assert.deepEqual(_.toNumber(' -0O12345 '), NaN);
+      assert.deepEqual(_.toNumber(' 0b1010102 '), NaN);
+      assert.deepEqual(_.toNumber(' -0b1010102 '), NaN);
+      assert.deepEqual(_.toNumber(' 0B1010102 '), NaN);
+      assert.deepEqual(_.toNumber(' -0B1010102 '), NaN);
+      assert.deepEqual(_.toNumber(' 0o123458 '), NaN);
+      assert.deepEqual(_.toNumber(' -0o123458 '), NaN);
+      assert.deepEqual(_.toNumber(' 0O123458 '), NaN);
+      assert.deepEqual(_.toNumber(' -0O123458 '), NaN);
+      assert.deepEqual(_.toNumber(' 0x1a2b3x' ), NaN);
+      assert.deepEqual(_.toNumber(' -0x1a2b3x' ), NaN);
+      assert.deepEqual(_.toNumber(' 0X1A2B3X' ), NaN);
+      assert.deepEqual(_.toNumber(' -0X1A2B3X '), NaN);
+      assert.deepEqual(_.toNumber(' -0b '), NaN);
+      assert.deepEqual(_.toNumber(' -0o '), NaN);
+      assert.deepEqual(_.toNumber(' -0x '), NaN);
+    });
+
+    QUnit.test('should convert booleans', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.toNumber(false), 0);
+      assert.strictEqual(_.toNumber(true), 1);
+      assert.deepEqual(_.toNumber('false'), NaN);
+      assert.deepEqual(_.toNumber('true'), NaN);
+    });
+
+    QUnit.test('should convert dates', function(assert) {
+      assert.expect(2);
+
+      var now = new Date();
+      assert.strictEqual(_.toNumber(now), now.getTime());
+      assert.deepEqual(_.toNumber(new Date(MAX_INTEGER)), NaN);
+    });
+
+    QUnit.test('should convert regexs', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.toNumber(/abc/i), NaN);
+    })
+
+    QUnit.test('other objects', function(assert) {
+      assert.expect(4);
+
+      assert.deepEqual(_.toNumber({}), NaN);
+      assert.strictEqual(_.toNumber([]), 0);
+      assert.strictEqual(_.toNumber([1]), 1);
+      assert.deepEqual(_.toNumber([1, 2]), NaN);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -22042,7 +22250,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(267);
+      assert.expect(268);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

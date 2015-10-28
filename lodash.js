@@ -128,6 +128,12 @@
   /** Used to detect hexadecimal string values. */
   var reHasHexPrefix = /^0[xX]/;
 
+  /** Used to binary string values. */
+  var reHasBinaryPrefix = /^0b[0-1]+$/i;
+
+  /** Used to octal string values. */
+  var reHasOctalPrefix = /^0o[0-7]+$/i;
+
   /** Used to detect host constructors (Safari > 5). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
@@ -9752,6 +9758,7 @@
     /**
      * Converts `value` to a string if it's not one.
      * An empty string is returned for `null` and `undefined` values.
+     * **Note:** Loosely based on [`ToString`](http://www.ecma-international.org/ecma-262/6.0/#sec-tostring)
      *
      * @static
      * @memberOf _
@@ -9762,13 +9769,40 @@
     function toString(value) {
       // Preserve sign of `0`
       if (value === 0) {
-        return 1 / value !== Infinity ? '-0' : '0';
+        return 1 / value === INFINITY ? '0' : '-0';
       }
       // Exit early for strings to avoid a performance hit in some environments.
       if (typeof value == 'string') {
         return value;
       }
       return value == null ? '' : (value + '');
+    }
+
+    /**
+     * Converts `value` to a number if it's not one.
+     * **Note:** Loosely based on [`ToNumber`](http://www.ecma-international.org/ecma-262/6.0/#sec-tonumber)
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to process.
+     * @returns {number} Returns the number.
+     */
+    function toNumber(value) {
+      var type = typeof value;
+      if (type === 'number') {
+        return value;
+      }
+      if (type === 'string') {
+        var trimmed = _.trim(value);
+        if (reHasBinaryPrefix.test(trimmed)) {
+          return parseInt(trimmed.slice(2), 2);
+        }
+        if (reHasOctalPrefix.test(trimmed)) {
+          return parseInt(trimmed.slice(2), 8);
+        }
+      }
+      return +value;
     }
 
     /*------------------------------------------------------------------------*/
@@ -13342,6 +13376,7 @@
     lodash.template = template;
     lodash.toInteger = toInteger;
     lodash.toLower = toLower;
+    lodash.toNumber = toNumber;
     lodash.toSafeInteger = toSafeInteger;
     lodash.toString = toString;
     lodash.toUpper = toUpper;

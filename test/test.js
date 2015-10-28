@@ -19504,11 +19504,11 @@
         actual.push(_.toNumber(negStr(string)));
         expected.push(+negStr(string));
         actual.push(_.toNumber(wrapWS(string)));
-        expected.push(+wrapWS(string));
+        expected.push(+string);
         actual.push(_.toNumber(wrapWS(posStr(string))));
-        expected.push(+wrapWS(posStr(string)));
+        expected.push(+posStr(string));
         actual.push(_.toNumber(wrapWS(negStr(string))));
-        expected.push(+wrapWS(negStr(string)));
+        expected.push(+negStr(string));
 
         actual.push(_.toNumber(Object(string))),
         expected.push(+string);
@@ -19517,11 +19517,11 @@
         actual.push(_.toNumber(Object(negStr(string))));
         expected.push(+negStr(string));
         actual.push(_.toNumber(Object(wrapWS(string))));
-        expected.push(+wrapWS(string));
+        expected.push(+string);
         actual.push(_.toNumber(Object(wrapWS(posStr(string)))));
-        expected.push(+wrapWS(posStr(string)));
+        expected.push(+posStr(string));
         actual.push(_.toNumber(Object(wrapWS(negStr(string)))));
-        expected.push(+wrapWS(negStr(string)));
+        expected.push(+negStr(string));
 
         assert.deepEqual(actual, expected);
       });

@@ -9799,10 +9799,10 @@
         if (isString(value)) {
           value = trim(value);
           if (reIsBinary.test(value)) {
-            return parseInt(value.slice(2), 2);
+            return nativeParseInt(value.slice(2), 2);
           }
           if (reIsOctal.test(value)) {
-            return parseInt(value.slice(2), 8);
+            return nativeParseInt(value.slice(2), 8);
           }
           if (reIsBadHex.test(value)) {
             return NaN;

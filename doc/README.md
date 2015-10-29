@@ -1430,7 +1430,7 @@ _.union([1, 2], [4, 2], [2, 1]);
 
 Creates a duplicate-free version of an array, using
 [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-for equality comparisons, in which only the first occurence of each element
+for equality comparisons, in which only the first occurrence of each element
 is kept. Providing `true` for `isSorted` performs a faster search algorithm
 for sorted arrays. If an iteratee function is provided it's invoked for
 each element in the array to generate the criterion by which uniqueness

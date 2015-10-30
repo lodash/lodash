@@ -574,7 +574,7 @@
 
     if (isModularize && !(amd || isNpm)) {
       lodashStable.each(['internal/baseEach', 'internal/isIndex',
-              'internal/isIterateeCall', 'internal/isLength'], function(relPath) {
+              'internal/isIterateeCall'], function(relPath) {
         var func = require(path.join(basePath, relPath)),
             funcName = path.basename(relPath);
 
@@ -736,6 +736,7 @@
 
       if (func) {
         assert.strictEqual(func(0), true);
+        assert.strictEqual(func('0'), true);
         assert.strictEqual(func('1'), true);
         assert.strictEqual(func(3, 4), true);
         assert.strictEqual(func(MAX_SAFE_INTEGER - 1), true);
@@ -750,6 +751,8 @@
 
       if (func) {
         assert.strictEqual(func('1abc'), false);
+        assert.strictEqual(func('07'), false);
+        assert.strictEqual(func('0001'), false);
         assert.strictEqual(func(-1), false);
         assert.strictEqual(func(3, 3), false);
         assert.strictEqual(func(1.1), false);
@@ -825,41 +828,6 @@
       }
       else {
         skipTest(assert);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('isLength');
-
-  (function() {
-    var func = _._isLength;
-
-    QUnit.test('should return `true` for lengths', function(assert) {
-      assert.expect(3);
-
-      if (func) {
-        assert.strictEqual(func(0), true);
-        assert.strictEqual(func(3), true);
-        assert.strictEqual(func(MAX_SAFE_INTEGER), true);
-      }
-      else {
-        skipTest(assert, 3);
-      }
-    });
-
-    QUnit.test('should return `false` for non-lengths', function(assert) {
-      assert.expect(4);
-
-      if (func) {
-        assert.strictEqual(func(-1), false);
-        assert.strictEqual(func('1'), false);
-        assert.strictEqual(func(1.1), false);
-        assert.strictEqual(func(MAX_SAFE_INTEGER + 1), false);
-      }
-      else {
-        skipTest(assert, 4);
       }
     });
   }());
@@ -8598,6 +8566,33 @@
       assert.strictEqual(func('a'), false);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isLength');
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('isLength');
+
+  (function() {
+    QUnit.test('should return `true` for lengths', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.isLength(0), true);
+      assert.strictEqual(_.isLength(3), true);
+      assert.strictEqual(_.isLength(MAX_SAFE_INTEGER), true);
+    });
+
+    QUnit.test('should return `false` for non-lengths', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.isLength(-1), false);
+      assert.strictEqual(_.isLength('1'), false);
+      assert.strictEqual(_.isLength(1.1), false);
+      assert.strictEqual(_.isLength(MAX_SAFE_INTEGER + 1), false);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -19345,6 +19340,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toLength');
+
+  (function() {
+    QUnit.test('should return number literal integers in range unchanged', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.toLength(0), 0);
+      assert.strictEqual(_.toLength(3), 3);
+      assert.strictEqual(_.toLength(MAX_ARRAY_LENGTH), MAX_ARRAY_LENGTH);
+    });
+
+    QUnit.test('should return number as integer clamped to range', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.toLength(-1), 0);
+      assert.strictEqual(_.toLength('1'), 1);
+      assert.strictEqual(_.toLength(1.1), 1);
+      assert.strictEqual(_.toLength(MAX_INTEGER), MAX_ARRAY_LENGTH);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toPath');
 
   (function() {
@@ -22356,7 +22374,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(273);
+      assert.expect(275);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

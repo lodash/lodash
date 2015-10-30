@@ -141,7 +141,7 @@
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
   /** Used to detect unsigned integer values. */
-  var reIsUint = /^\d+$/;
+  var reIsUint = /^(?:\d|[1-9]\d+)$/;
 
   /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
@@ -1132,19 +1132,6 @@
   }
 
   /**
-   * Checks if `value` is a valid array-like length.
-   *
-   * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-   */
-  function isLength(value) {
-    return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-  }
-
-  /**
    * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
    * character code is whitespace.
    *
@@ -1489,17 +1476,17 @@
      * `head`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`,
      * `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`, `isElement`,
      * `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`, `isFunction`,
-     * `isInteger`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
-     * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
+     * `isInteger`, `isLength`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`,
+     * `isNull`, `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
      * `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
      * `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`, `min`,
      * `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`,
      * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toNumber`, `toSafeInteger`,
-     * `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`,
-     * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toNumber`,
+     * `toSafeInteger`, `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`,
+     * `truncate`, `unescape`, uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -9328,6 +9315,21 @@
     }
 
     /**
+     * Checks if `value` is a valid array-like length.
+     *
+     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+     */
+    function isLength(value) {
+      return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+    }
+
+    /**
      * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
      *
@@ -9837,6 +9839,22 @@
       value = +value;
       var remainder = value % 1;
       return value === value ? (remainder ? value - remainder : value) : 0;
+    }
+
+    /**
+     * The abstract operation toLength converts its argument to an integer
+     * suitable for use as the length of an array-like object.
+     *
+     * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The object to be converted to a length.
+     * @return {number} Integer in range 0 to 2^32-1.
+     */
+    function toLength(value) {
+      return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
     }
 
     /**
@@ -13472,6 +13490,7 @@
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;
     lodash.isInteger = isInteger;
+    lodash.isLength = isLength;
     lodash.isMatch = isMatch;
     lodash.isMatchWith = isMatchWith;
     lodash.isNaN = isNaN;
@@ -13528,6 +13547,7 @@
     lodash.sumBy = sumBy;
     lodash.template = template;
     lodash.toInteger = toInteger;
+    lodash.toLength = toLength;
     lodash.toLower = toLower;
     lodash.toNumber = toNumber;
     lodash.toSafeInteger = toSafeInteger;

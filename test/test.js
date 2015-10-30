@@ -19338,12 +19338,12 @@
   QUnit.module('lodash.toLength');
 
   (function() {
-    QUnit.test('should return number literals in range unchanged', function(assert) {
+    QUnit.test('should return number literal integers in range unchanged', function(assert) {
       assert.expect(3);
 
       assert.strictEqual(_.toLength(0), 0);
       assert.strictEqual(_.toLength(3), 3);
-      assert.strictEqual(_.toLength(MAX_SAFE_INTEGER), MAX_SAFE_INTEGER);
+      assert.strictEqual(_.toLength(MAX_ARRAY_LENGTH), MAX_ARRAY_LENGTH);
     });
 
     QUnit.test('should return number as integer clamped to range', function(assert) {
@@ -19352,16 +19352,7 @@
       assert.strictEqual(_.toLength(-1), 0);
       assert.strictEqual(_.toLength('1'), 1);
       assert.strictEqual(_.toLength(1.1), 1);
-      assert.strictEqual(_.toLength(MAX_INTEGER), MAX_SAFE_INTEGER);
-    });
-
-    QUnit.test('should return number as integer clamped to specified range', function(assert) {
-      assert.expect(4);
-
-      assert.strictEqual(_.toLength(-1, MAX_ARRAY_LENGTH), 0);
-      assert.strictEqual(_.toLength('1', MAX_ARRAY_LENGTH), 1);
-      assert.strictEqual(_.toLength(1.1, MAX_ARRAY_LENGTH), 1);
-      assert.strictEqual(_.toLength(MAX_INTEGER, MAX_ARRAY_LENGTH), MAX_ARRAY_LENGTH);
+      assert.strictEqual(_.toLength(MAX_INTEGER), MAX_ARRAY_LENGTH);
     });
   }());
 

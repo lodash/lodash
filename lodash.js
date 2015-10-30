@@ -9836,19 +9836,16 @@
      * The abstract operation toLength converts its argument to an integer
      * suitable for use as the length of an array-like object.
      *
-     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
      *
      * @static
      * @memberOf _
      * @category Lang
      * @param {*} value The object to be converted to a length.
-     * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid length.
-     * @return {number} If len <= 0 then 0 else if len is +INFINITY then 2^53-1
-     *                  else min(len, 2^53-1).
+     * @return {number} Integer in range 0 to 2^32-1.
      */
-    function toLength(value, length) {
-      length = length == null ? MAX_SAFE_INTEGER : length;
-      return _.clamp(_.toInteger(value), 0, length);
+    function toLength(value) {
+      return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
     }
 
     /**

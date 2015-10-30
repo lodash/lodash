@@ -734,6 +734,7 @@
 
       if (func) {
         assert.strictEqual(func(0), true);
+        assert.strictEqual(func('0'), true);
         assert.strictEqual(func('1'), true);
         assert.strictEqual(func(3, 4), true);
         assert.strictEqual(func(MAX_SAFE_INTEGER - 1), true);
@@ -748,6 +749,8 @@
 
       if (func) {
         assert.strictEqual(func('1abc'), false);
+        assert.strictEqual(func('07'), false);
+        assert.strictEqual(func('0001'), false);
         assert.strictEqual(func(-1), false);
         assert.strictEqual(func(3, 3), false);
         assert.strictEqual(func(1.1), false);

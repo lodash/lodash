@@ -1475,9 +1475,9 @@
      * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toSafeInteger`, `toString`,
-     * `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`,
-     * `upperCase`, `upperFirst`, `value`, and `words`
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toSafeInteger`,
+     * `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`,
+     * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -9833,6 +9833,22 @@
     }
 
     /**
+     * The abstract operation toLength converts its argument to an integer
+     * suitable for use as the length of an array-like object.
+     *
+     * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The object to be converted to a length.
+     * @return {number} Integer in range 0 to 2^32-1.
+     */
+    function toLength(value) {
+      return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
+    }
+
+    /**
      * Converts `value` to a plain object flattening inherited enumerable
      * properties of `value` to own properties of the plain object.
      *
@@ -13487,6 +13503,7 @@
     lodash.sumBy = sumBy;
     lodash.template = template;
     lodash.toInteger = toInteger;
+    lodash.toLength = toLength;
     lodash.toLower = toLower;
     lodash.toSafeInteger = toSafeInteger;
     lodash.toString = toString;

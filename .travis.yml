@@ -1,7 +1,7 @@
 language: node_js
 sudo: false
 node_js:
-  - "4"
+  - "5"
 env:
   global:
     - BIN="node" ISTANBUL=false OPTION=""
@@ -23,6 +23,8 @@ matrix:
     - node_js: "0.12"
       env:
     - node_js: "4"
+      env:
+    - node_js: "5"
       env: SAUCE_LABS=true
 git:
   depth: 10

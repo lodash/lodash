@@ -134,6 +134,15 @@
   /** Used to detect binary string values. */
   var reIsBinary = /^0b[0-1]+$/i;
 
+  /** Used to detect binary string values. */
+  var reIsBinary = /^0b[0-1]+$/i;
+
+  /** Used to detect octal string values. */
+  var reIsOctal = /^0o[0-7]+$/i;
+
+  /** Used to detect bad signed hex string values. */
+  var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
   /** Used to detect host constructors (Safari > 5). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
@@ -9956,6 +9965,7 @@
     /**
      * Converts `value` to a string if it's not one.
      * An empty string is returned for `null` and `undefined` values.
+     * **Note:** Loosely based on [`ToString`](http://www.ecma-international.org/ecma-262/6.0/#sec-tostring)
      *
      * @static
      * @memberOf _
@@ -9970,6 +9980,40 @@
       }
       var result = value == null ? '' : (value + '');
       return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+    }
+
+    /**
+     * Converts `value` to a number if it's not one.
+     * **Note:** Loosely based on [`ToNumber`](http://www.ecma-international.org/ecma-262/6.0/#sec-tonumber)
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to process.
+     * @returns {number} Returns the number.
+     */
+    function toNumber(value) {
+      if (!isNumber(value)) {
+        if (isObject(value) && isFunction(value.valueOf)) {
+          value = value.valueOf.call(value);
+        }
+        if (isObject(value)) {
+          value = toString(value);
+        }
+        if (value && typeof value == 'string') {
+          value = trim(value);
+          if (value) {
+            var isBinary = reIsBinary.test(value);
+            if (isBinary || reIsOctal.test(value)) {
+              return nativeParseInt(value.slice(2), isBinary ? 2 : 8);
+            }
+            if (reIsBadHex.test(value)) {
+              return NaN;
+            }
+          }
+        }
+      }
+      return +value;
     }
 
     /*------------------------------------------------------------------------*/

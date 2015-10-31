@@ -9969,11 +9969,9 @@
         if (value && typeof value == 'string') {
           value = trim(value);
           if (value) {
-            if (reIsBinary.test(value)) {
-              return nativeParseInt(value.slice(2), 2);
-            }
-            if (reIsOctal.test(value)) {
-              return nativeParseInt(value.slice(2), 8);
+            var isBinary = reIsBinary.test(value);
+            if (isBinary || reIsOctal.test(value)) {
+              return nativeParseInt(value.slice(2), isBinary ? 2 : 8);
             }
             if (reIsBadHex.test(value)) {
               return NaN;

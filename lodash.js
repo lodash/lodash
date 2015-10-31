@@ -9959,15 +9959,29 @@
      * @returns {number} Returns the number.
      */
     function toNumber(value) {
-      var result = +value;
-      if (typeof value == 'number' || result === result) {
-        return result;
+      if (!isNumber(value)) {
+        if (isObject(value) && isFunction(value.valueOf)) {
+          value = value.valueOf.call(value);
+        }
+        if (isObject(value)) {
+          value = toString(value);
+        }
+        if (typeof value == 'string') {
+          value = trim(value);
+          if (value) {
+            if (reIsBinary.test(value)) {
+              return nativeParseInt(value.slice(2), 2);
+            }
+            if (reIsOctal.test(value)) {
+              return nativeParseInt(value.slice(2), 8);
+            }
+            if (reIsBadHex.test(value)) {
+              return NaN;
+            }
+          }
+        }
       }
-      value = trim(value);
-      var isBinary = reIsBinary.test(value);
-      return (isBinary || reIsOctal.test(value))
-        ? nativeParseInt(value.slice(2), isBinary ? 2 : 8)
-        : result;
+      return +value;
     }
 
     /*------------------------------------------------------------------------*/

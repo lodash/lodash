@@ -730,34 +730,38 @@
     var func = _._isIndex;
 
     QUnit.test('should return `true` for indexes', function(assert) {
-      assert.expect(4);
+      assert.expect(1);
 
       if (func) {
-        assert.strictEqual(func(0), true);
-        assert.strictEqual(func('0'), true);
-        assert.strictEqual(func('1'), true);
-        assert.strictEqual(func(3, 4), true);
-        assert.strictEqual(func(MAX_SAFE_INTEGER - 1), true);
+        var values = [[0], ['0'], ['1'], [3, 4], [MAX_SAFE_INTEGER - 1]],
+            expected = lodashStable.map(values, lodashStable.constant(true));
+
+        var actual = lodashStable.map(values, function(args) {
+          return func.apply(undefined, args);
+        });
+
+        assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert, 4);
+        skipTest(assert);
       }
     });
 
     QUnit.test('should return `false` for non-indexes', function(assert) {
-      assert.expect(5);
+      assert.expect(1);
 
       if (func) {
-        assert.strictEqual(func('1abc'), false);
-        assert.strictEqual(func('07'), false);
-        assert.strictEqual(func('0001'), false);
-        assert.strictEqual(func(-1), false);
-        assert.strictEqual(func(3, 3), false);
-        assert.strictEqual(func(1.1), false);
-        assert.strictEqual(func(MAX_SAFE_INTEGER), false);
+        var values = [['1abc'], ['07'], ['0001'], [-1], [3, 3], [1.1], [MAX_SAFE_INTEGER]],
+            expected = lodashStable.map(values, lodashStable.constant(false));
+
+        var actual = lodashStable.map(values, function(args) {
+          return func.apply(undefined, args);
+        });
+
+        assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert, 5);
+        skipTest(assert);
       }
     });
   }());

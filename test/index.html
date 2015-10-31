@@ -276,13 +276,11 @@
               require(getConfig(), [
                 'lodash/internal/baseEach',
                 'lodash/internal/isIndex',
-                'lodash/internal/isIterateeCall',
-                'lodash/internal/isLength'
-              ], function(baseEach, isIndex, isIterateeCall, isLength) {
+                'lodash/internal/isIterateeCall'
+              ], function(baseEach, isIndex, isIterateeCall) {
                 lodash._baseEach = baseEach;
                 lodash._isIndex = isIndex;
                 lodash._isIterateeCall = isIterateeCall;
-                lodash._isLength = isLength;
                 loadTests();
               });
             } else {

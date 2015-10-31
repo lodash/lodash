@@ -15,8 +15,7 @@
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
-      MAX_INTEGER = 1e308,
-      MIN_VALUE = 5e-324;
+      MAX_INTEGER = 1.7976931348623157e+308;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
@@ -573,8 +572,7 @@
         basePath = path.dirname(filePath);
 
     if (isModularize && !(amd || isNpm)) {
-      lodashStable.each(['internal/baseEach', 'internal/isIndex',
-              'internal/isIterateeCall'], function(relPath) {
+      lodashStable.each(['internal/baseEach', 'internal/isIndex', 'internal/isIterateeCall'], function(relPath) {
         var func = require(path.join(basePath, relPath)),
             funcName = path.basename(relPath);
 
@@ -732,34 +730,38 @@
     var func = _._isIndex;
 
     QUnit.test('should return `true` for indexes', function(assert) {
-      assert.expect(4);
+      assert.expect(1);
 
       if (func) {
-        assert.strictEqual(func(0), true);
-        assert.strictEqual(func('0'), true);
-        assert.strictEqual(func('1'), true);
-        assert.strictEqual(func(3, 4), true);
-        assert.strictEqual(func(MAX_SAFE_INTEGER - 1), true);
+        var values = [[0], ['0'], ['1'], [3, 4], [MAX_SAFE_INTEGER - 1]],
+            expected = lodashStable.map(values, lodashStable.constant(true));
+
+        var actual = lodashStable.map(values, function(args) {
+          return func.apply(undefined, args);
+        });
+
+        assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert, 4);
+        skipTest(assert);
       }
     });
 
     QUnit.test('should return `false` for non-indexes', function(assert) {
-      assert.expect(5);
+      assert.expect(1);
 
       if (func) {
-        assert.strictEqual(func('1abc'), false);
-        assert.strictEqual(func('07'), false);
-        assert.strictEqual(func('0001'), false);
-        assert.strictEqual(func(-1), false);
-        assert.strictEqual(func(3, 3), false);
-        assert.strictEqual(func(1.1), false);
-        assert.strictEqual(func(MAX_SAFE_INTEGER), false);
+        var values = [['1abc'], ['07'], ['0001'], [-1], [3, 3], [1.1], [MAX_SAFE_INTEGER]],
+            expected = lodashStable.map(values, lodashStable.constant(false));
+
+        var actual = lodashStable.map(values, function(args) {
+          return func.apply(undefined, args);
+        });
+
+        assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert, 5);
+        skipTest(assert);
       }
     });
   }());
@@ -8571,26 +8573,31 @@
 
   QUnit.module('lodash.isLength');
 
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('isLength');
-
   (function() {
     QUnit.test('should return `true` for lengths', function(assert) {
-      assert.expect(3);
+      assert.expect(1);
 
-      assert.strictEqual(_.isLength(0), true);
-      assert.strictEqual(_.isLength(3), true);
-      assert.strictEqual(_.isLength(MAX_SAFE_INTEGER), true);
+      var values = [0, 3, MAX_SAFE_INTEGER],
+          expected = lodashStable.map(values, lodashStable.constant(true));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isLength(value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should return `false` for non-lengths', function(assert) {
-      assert.expect(4);
+      assert.expect(1);
 
-      assert.strictEqual(_.isLength(-1), false);
-      assert.strictEqual(_.isLength('1'), false);
-      assert.strictEqual(_.isLength(1.1), false);
-      assert.strictEqual(_.isLength(MAX_SAFE_INTEGER + 1), false);
+      var values = [-1, '1', 1.1, MAX_SAFE_INTEGER + 1],
+          expected = lodashStable.map(values, lodashStable.constant(false));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isLength(value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -19343,21 +19350,21 @@
   QUnit.module('lodash.toLength');
 
   (function() {
-    QUnit.test('should return number literal integers in range unchanged', function(assert) {
-      assert.expect(3);
-
-      assert.strictEqual(_.toLength(0), 0);
-      assert.strictEqual(_.toLength(3), 3);
-      assert.strictEqual(_.toLength(MAX_ARRAY_LENGTH), MAX_ARRAY_LENGTH);
-    });
-
-    QUnit.test('should return number as integer clamped to range', function(assert) {
+    QUnit.test('should return a valid length', function(assert) {
       assert.expect(4);
 
       assert.strictEqual(_.toLength(-1), 0);
       assert.strictEqual(_.toLength('1'), 1);
       assert.strictEqual(_.toLength(1.1), 1);
       assert.strictEqual(_.toLength(MAX_INTEGER), MAX_ARRAY_LENGTH);
+    });
+
+    QUnit.test('should return `value` if a valid length', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.toLength(0), 0);
+      assert.strictEqual(_.toLength(3), 3);
+      assert.strictEqual(_.toLength(MAX_ARRAY_LENGTH), MAX_ARRAY_LENGTH);
     });
   }());
 

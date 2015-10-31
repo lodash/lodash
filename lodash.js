@@ -54,7 +54,7 @@
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
-      MAX_INTEGER = 1e308;
+      MAX_INTEGER = 1.7976931348623157e+308;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
@@ -141,7 +141,7 @@
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
   /** Used to detect unsigned integer values. */
-  var reIsUint = /^(?:\d|[1-9]\d+)$/;
+  var reIsUint = /^(?:0|[1-9]\d*)$/;
 
   /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
@@ -1447,46 +1447,49 @@
      * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
      *
      * The chainable wrapper methods are:
-     * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,
-     * `before`, `bind`, `bindAll`, `bindKey`, `chain`, `chunk`, `commit`, `compact`,
-     * `concat`, `conforms`, `conj`, `constant`, `countBy`, `create`, `curry`,
-     * `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`, `difference`,
-     * `differenceBy`, `disj`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`,
-     * `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`, `flowRight`,
-     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
-     * `functions`, `groupBy`, `initial`, `intersection`, `intersectionBy`,
-     * `invert`, `invoke`, `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`,
-     * `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`,
-     * `method`, `methodOf`, `mixin`, `modArgs`, `modArgsSet', 'negate`, `nthArg`,
-     * `omit`, `omitBy`, `once`, `pairs`, `partial`, `partialRight`, `partition`,
+     * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`,
+     * `at`, `before`, `bind`, `bindAll`, `bindKey`, `chain`, `chunk`, `commit`,
+     * `compact`, `concat`, `conforms`, `conj`, `constant`, `countBy`, `create`,
+     * `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,
+     * `difference`, `differenceBy`, `differenceWith`, `disj`, `drop`, `dropRight`,
+     * `dropRightWhile`, `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`,
+     * `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
+     * `forOwn`, `forOwnRight`, `functions`, `functionsIn`, `groupBy`, `initial`,
+     * `intersection`, `intersectionBy`, `intersectionWith`, invert`, `invoke`,
+     * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
+     * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
+     * `methodOf`, `mixin`, `modArgs`, `modArgsSet', `negate`, `nthArg`, `omit`,
+     * `omitBy`, `once`, `pairs`, `pairsIn`, `partial`, `partialRight`, `partition`,
      * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`,
      * `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`,
-     * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
-     * `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`, `takeRightWhile`,
-     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPath`,
-     * `toPlainObject`, `transform`, `union`, `unionBy`, `uniq`, `uniqBy`, `unset`,
-     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`, `wrap`,
-     * `xor`, `xorBy`, `zip`, `zipObject`, and `zipWith`
+     * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`,
+     * `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`,
+     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`,
+     * `toPath`, `toPlainObject`, `transform`, `union`, `unionBy`, `unionWith`,
+     * `uniq`, `uniqBy`, `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`,
+     * `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,
+     * `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
      * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`,
-     * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
-     * `findLastIndex`, `findLastKey`, `floor`, `get`, `gt`, `gte`, `has`, `hasIn`,
-     * `head`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`,
-     * `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isDate`, `isElement`,
-     * `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`, `isFunction`,
-     * `isInteger`, `isLength`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`,
-     * `isNull`, `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
-     * `isSafeInteger`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
-     * `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`, `min`,
-     * `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`,
-     * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
+     * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
+     * `findLast`, `findLastIndex`, `findLastKey`, `floor`, `get`, `gt`, `gte`,
+     * `has`, `hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`,
+     * `isArguments`, `isArray`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
+     * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`,
+     * `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMatch`, `isMatchWith`,
+     * `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`, `isObjectLike`,
+     * `isPlainObject`, `isRegExp`, `isSafeInteger`, `isString`, `isUndefined`,
+     * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`,
+     * `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `min`, `minBy`, `noConflict`,
+     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
+     * `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toNumber`,
-     * `toSafeInteger`, `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`,
-     * `truncate`, `unescape`, uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toSafeInteger`,
+     * `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`,
+     * `unescape`, `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -9317,13 +9320,26 @@
     /**
      * Checks if `value` is a valid array-like length.
      *
-     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
      *
      * @static
      * @memberOf _
      * @category Lang
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+     * @example
+     *
+     * _.isLength(3);
+     * // => true
+     *
+     * _.isLength(Number.MAX_VALUE);
+     * // => false
+     *
+     * _.isLength(3.14);
+     * // => false
+     *
+     * _.isLength(Infinity);
+     * // => false
      */
     function isLength(value) {
       return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
@@ -9830,28 +9846,29 @@
      * // => 0
      *
      * _.toInteger(-Infinity)
-     * // => -1e308
+     * // => 1.7976931348623157e+308
      */
     function toInteger(value) {
-      if (value === INFINITY || value === -INFINITY) {
-        return (value < 0 ? -1 : 1) * MAX_INTEGER;
-      }
       value = +value;
+      if (value === INFINITY || value === -INFINITY) {
+        var sign = (value < 0 ? -1 : 1);
+        return sign * MAX_INTEGER;
+      }
       var remainder = value % 1;
       return value === value ? (remainder ? value - remainder : value) : 0;
     }
 
     /**
-     * The abstract operation toLength converts its argument to an integer
-     * suitable for use as the length of an array-like object.
+     * Converts `value` to an integer suitable for use as the length of an
+     * array-like object.
      *
-     * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
      *
      * @static
      * @memberOf _
      * @category Lang
-     * @param {*} value The object to be converted to a length.
-     * @return {number} Integer in range 0 to 2^32-1.
+     * @param {*} value The value to convert.
+     * @return {number} Returns the converted integer.
      */
     function toLength(value) {
       return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
@@ -9942,27 +9959,15 @@
      * @returns {number} Returns the number.
      */
     function toNumber(value) {
-      if (!isNumber(value)) {
-        if (isObject(value) && isFunction(value.valueOf)) {
-          value = value.valueOf.call(value);
-        }
-        if (isObject(value)) {
-          value = toString(value);
-        }
-        if (isString(value)) {
-          value = trim(value);
-          if (reIsBinary.test(value)) {
-            return nativeParseInt(value.slice(2), 2);
-          }
-          if (reIsOctal.test(value)) {
-            return nativeParseInt(value.slice(2), 8);
-          }
-          if (reIsBadHex.test(value)) {
-            return NaN;
-          }
-        }
+      var result = +value;
+      if (typeof value == 'number' || result === result) {
+        return result;
       }
-      return +value;
+      value = trim(value);
+      var isBinary = reIsBinary.test(value);
+      return (isBinary || reIsOctal.test(value))
+        ? nativeParseInt(value.slice(2), isBinary ? 2 : 8)
+        : result;
     }
 
     /*------------------------------------------------------------------------*/

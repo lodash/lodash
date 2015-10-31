@@ -132,7 +132,7 @@
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
   /** Used to detect unsigned integer values. */
-  var reIsUint = /^(?:\d|[1-9]\d+)$/;
+  var reIsUint = /^(?:0|[1-9]\d*)$/;
 
   /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;

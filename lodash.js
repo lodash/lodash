@@ -9966,7 +9966,7 @@
         if (isObject(value)) {
           value = toString(value);
         }
-        if (typeof value == 'string') {
+        if (value && typeof value == 'string') {
           value = trim(value);
           if (value) {
             if (reIsBinary.test(value)) {

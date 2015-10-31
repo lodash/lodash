@@ -126,10 +126,19 @@
   var reFlags = /\w*$/;
 
   /** Used to detect hexadecimal string values. */
-  var reHasHexPrefix = /^0[xX]/;
+  var reHasHexPrefix = /^0x/i;
+
+  /** Used to detect bad signed hex string values. */
+  var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+  /** Used to detect binary string values. */
+  var reIsBinary = /^0b[0-1]+$/i;
 
   /** Used to detect host constructors (Safari > 5). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+  /** Used to detect octal string values. */
+  var reIsOctal = /^0o[0-7]+$/i;
 
   /** Used to detect unsigned integer values. */
   var reIsUint = /^(?:0|[1-9]\d*)$/;
@@ -9853,7 +9862,7 @@
      * Converts `value` to an integer suitable for use as the length of an
      * array-like object.
      *
-     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+     * **Note:** This method is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
      *
      * @static
      * @memberOf _
@@ -9863,6 +9872,31 @@
      */
     function toLength(value) {
       return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
+    }
+
+    /**
+     * Converts `value` to a number.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to process.
+     * @returns {number} Returns the number.
+     */
+    function toNumber(value) {
+      if (isObject(value)) {
+        var other = isFunction(value.valueOf) ? value.valueOf() : value;
+        value = isObject(other) ? (other + '') : other;
+      }
+      if (typeof value == 'number' || !isString(value)) {
+        return +value;
+      }
+      value = trim(value);
+      var isBinary = reIsBinary.test(value);
+      if (isBinary || reIsOctal.test(value)) {
+        return nativeParseInt(value.slice(2), isBinary ? 2 : 8);
+      }
+      return reIsBadHex.test(value) ? NaN : +value;
     }
 
     /**
@@ -13522,6 +13556,7 @@
     lodash.toInteger = toInteger;
     lodash.toLength = toLength;
     lodash.toLower = toLower;
+    lodash.toNumber = toNumber;
     lodash.toSafeInteger = toSafeInteger;
     lodash.toString = toString;
     lodash.toUpper = toUpper;

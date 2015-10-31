@@ -54,7 +54,7 @@
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
-      MAX_INTEGER = 1e308;
+      MAX_INTEGER = 1.7976931348623157e+308;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
@@ -9837,13 +9837,14 @@
      * // => 0
      *
      * _.toInteger(-Infinity)
-     * // => -1e308
+     * // => 1.7976931348623157e+308
      */
     function toInteger(value) {
-      if (value === INFINITY || value === -INFINITY) {
-        return (value < 0 ? -1 : 1) * MAX_INTEGER;
-      }
       value = +value;
+      if (value === INFINITY || value === -INFINITY) {
+        var sign = (value < 0 ? -1 : 1);
+        return sign * MAX_INTEGER;
+      }
       var remainder = value % 1;
       return value === value ? (remainder ? value - remainder : value) : 0;
     }

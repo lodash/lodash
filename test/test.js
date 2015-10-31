@@ -14,7 +14,7 @@
 
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991,
-      MAX_INTEGER = 1e308;
+      MAX_INTEGER = 1.7976931348623157e+308;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,

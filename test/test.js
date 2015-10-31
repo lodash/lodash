@@ -571,8 +571,7 @@
         basePath = path.dirname(filePath);
 
     if (isModularize && !(amd || isNpm)) {
-      lodashStable.each(['internal/baseEach', 'internal/isIndex',
-              'internal/isIterateeCall'], function(relPath) {
+      lodashStable.each(['internal/baseEach', 'internal/isIndex', 'internal/isIterateeCall'], function(relPath) {
         var func = require(path.join(basePath, relPath)),
             funcName = path.basename(relPath);
 
@@ -8573,26 +8572,31 @@
 
   QUnit.module('lodash.isLength');
 
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('isLength');
-
   (function() {
     QUnit.test('should return `true` for lengths', function(assert) {
-      assert.expect(3);
+      assert.expect(1);
 
-      assert.strictEqual(_.isLength(0), true);
-      assert.strictEqual(_.isLength(3), true);
-      assert.strictEqual(_.isLength(MAX_SAFE_INTEGER), true);
+      var values = [0, 3, MAX_SAFE_INTEGER],
+          expected = lodashStable.map(values, lodashStable.constant(true));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isLength(value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should return `false` for non-lengths', function(assert) {
-      assert.expect(4);
+      assert.expect(1);
 
-      assert.strictEqual(_.isLength(-1), false);
-      assert.strictEqual(_.isLength('1'), false);
-      assert.strictEqual(_.isLength(1.1), false);
-      assert.strictEqual(_.isLength(MAX_SAFE_INTEGER + 1), false);
+      var values = [-1, '1', 1.1, MAX_SAFE_INTEGER + 1],
+          expected = lodashStable.map(values, lodashStable.constant(false));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isLength(value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

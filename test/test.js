@@ -19373,6 +19373,332 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toNumber');
+
+  (function() {
+    QUnit.test('null, empty strings and undefined should convert to `0` and `NaN`', function(assert) {
+      assert.expect(2);
+
+      assert.deepEqual(_.toNumber(), NaN);
+      var values = [undefined, null, '', whitespace],
+        expected = [NaN, Infinity, Infinity, Infinity],
+        actual = lodashStable.map(values, function(value) {
+          return 1 / _.toNumber(value);
+        });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('zeros should preserve their sign', function(assert) {
+      assert.expect(1);
+
+      var temp = [0, '0', ' 0 ', '+0', ' +0 '],
+        values = temp,
+        length = temp.length * 2,
+        expected = _.fill(Array(length), Infinity),
+        actual = lodashStable.reduce(temp, function(acc, value) {
+          acc.push(1 / _.toNumber(value), 1 / _.toNumber(Object(value)));
+          return acc;
+        }, []);
+
+      temp = [-0, '-0', ' -0 '];
+      values = values.concat(temp);
+      expected.length += temp.length * 2;
+      _.fill(expected, -Infinity, length);
+      lodashStable.reduce(temp, function(acc, value) {
+        acc.push(1 / _.toNumber(value), 1 / _.toNumber(Object(value)));
+        return acc;
+      }, actual);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    var toNumberNumbers = [10, 1.23456789, MAX_SAFE_INTEGER, MAX_INTEGER, Infinity, NaN];
+    lodashStable.each(toNumberNumbers, function (number) {
+      QUnit.test('number literal and objects should return number literals', function(assert) {
+        assert.expect(1);
+
+        var expected = [number, -number, number, -number],
+          actual = [_.toNumber(number), _.toNumber(-number), _.toNumber(Object(number)), _.toNumber(Object(-number))];
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
+    function negStr(string) {
+      return '-' + string;
+    }
+
+    function posStr(string) {
+      return '+' + string;
+    }
+
+    function wrapWS(string) {
+      return whitespace + string + whitespace;
+    }
+
+    var toNumberBasicStrings = ['10', '1.234567890', '9007199254740991', '1e+308', '1e308', '1E+308', '1E308', '5e-324', '5E-324', 'Infinity', 'NaN'];
+    lodashStable.each(toNumberNumbers, function (string) {
+      QUnit.test('should convert basic string literals and objects accurately', function(assert) {
+        assert.expect(1);
+
+        var actual = [],
+          expected = [];
+
+        actual.push(_.toNumber(string));
+        expected.push(+string);
+        actual.push(_.toNumber(posStr(string)));
+        expected.push(+posStr(string));
+        actual.push(_.toNumber(negStr(string)));
+        expected.push(+negStr(string));
+        actual.push(_.toNumber(wrapWS(string)));
+        expected.push(+string);
+        actual.push(_.toNumber(wrapWS(posStr(string))));
+        expected.push(+posStr(string));
+        actual.push(_.toNumber(wrapWS(negStr(string))));
+        expected.push(+negStr(string));
+
+        actual.push(_.toNumber(Object(string))),
+        expected.push(+string);
+        actual.push(_.toNumber(Object(posStr(string))));
+        expected.push(+posStr(string));
+        actual.push(_.toNumber(Object(negStr(string))));
+        expected.push(+negStr(string));
+        actual.push(_.toNumber(Object(wrapWS(string))));
+        expected.push(+string);
+        actual.push(_.toNumber(Object(wrapWS(posStr(string)))));
+        expected.push(+posStr(string));
+        actual.push(_.toNumber(Object(wrapWS(negStr(string)))));
+        expected.push(+negStr(string));
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
+    var toNumberAdvancedStrings = [{
+        string: '0b101010',
+        value: 42
+      }, {
+        string: '0o12345',
+        value: 5349
+      }, {
+        string: '0x1a2b3c',
+        value: 1715004
+      }];
+    lodashStable.each(toNumberAdvancedStrings, function (item) {
+      QUnit.test('should convert basic string literals and objects accurately', function(assert) {
+        assert.expect(1);
+
+        var actual = [],
+          expected = [];
+
+        actual.push(_.toNumber(item.string));
+        expected.push(item.value);
+        actual.push(_.toNumber(posStr(item.string)));
+        expected.push(NaN);
+        actual.push(_.toNumber(negStr(item.string)));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(item.string)));
+        expected.push(item.value);
+        actual.push(_.toNumber(wrapWS(posStr(item.string))));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(negStr(item.string))));
+        expected.push(NaN);
+
+        actual.push(_.toNumber(item.string.toUpperCase()));
+        expected.push(item.value);
+        actual.push(_.toNumber(posStr(item.string.toUpperCase())));
+        expected.push(NaN);
+        actual.push(_.toNumber(negStr(item.string.toUpperCase())));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(item.string.toUpperCase())));
+        expected.push(item.value);
+        actual.push(_.toNumber(wrapWS(posStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+        actual.push(_.toNumber(wrapWS(negStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+
+        actual.push(_.toNumber(Object(item.string)));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(posStr(item.string))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(negStr(item.string))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(item.string))));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(wrapWS(posStr(item.string)))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(negStr(item.string)))));
+        expected.push(NaN);
+
+        actual.push(_.toNumber(Object(item.string.toUpperCase())));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(posStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(negStr(item.string.toUpperCase()))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(item.string.toUpperCase()))));
+        expected.push(item.value);
+        actual.push(_.toNumber(Object(wrapWS(posStr(item.string.toUpperCase())))));
+        expected.push(NaN);
+        actual.push(_.toNumber(Object(wrapWS(negStr(item.string.toUpperCase())))));
+        expected.push(NaN);
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
+    var toNumberInvalidAdvanceStrings = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x'];
+    lodashStable.each(toNumberInvalidAdvanceStrings, function (string) {
+      QUnit.test('invalid binary, octal and hex string literals and objects should be `NaN`', function(assert) {
+        assert.expect(1);
+
+        var actual = [];
+
+        actual.push(_.toNumber(string));
+        actual.push(_.toNumber(posStr(string)));
+        actual.push(_.toNumber(negStr(string)));
+        actual.push(_.toNumber(wrapWS(string)));
+        actual.push(_.toNumber(wrapWS(posStr(string))));
+        actual.push(_.toNumber(wrapWS(negStr(string))));
+
+        actual.push(_.toNumber(Object(string)));
+        actual.push(_.toNumber(Object(posStr(string))));
+        actual.push(_.toNumber(Object(negStr(string))));
+        actual.push(_.toNumber(Object(wrapWS(string))));
+        actual.push(_.toNumber(Object(wrapWS(posStr(string)))));
+        actual.push(_.toNumber(Object(wrapWS(negStr(string)))));
+
+        var expected = _.fill(Array(actual.length), NaN);
+        assert.deepEqual(actual, expected);
+      });
+    });
+
+    QUnit.test('should convert boolean literals and objects', function(assert) {
+      assert.expect(1);
+
+      var actual = [],
+        expected = [];
+
+      actual.push(1 / _.toNumber(false));
+      expected.push(Infinity);
+      actual.push(_.toNumber(true));
+      expected.push(1);
+      actual.push(1 / _.toNumber(new Boolean(false)));
+      expected.push(Infinity);
+      actual.push(_.toNumber(new Boolean(true)));
+      expected.push(1);
+      actual.push(_.toNumber('false'));
+      expected.push(NaN);
+      actual.push(_.toNumber('true'));
+      expected.push(NaN);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should convert dates', function(assert) {
+      assert.expect(1);
+
+      var now = new Date(),
+        actual = [_.toNumber(now), _.toNumber(new Date(MAX_INTEGER))],
+        expected = [now.getTime(), NaN];
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should convert RegExp literals and objects', function(assert) {
+      assert.expect(1);
+
+      var actual = [_.toNumber(/abc/i), _.toNumber(new RegExp('abc', 'i'))],
+        expected = [NaN, NaN];
+
+      assert.deepEqual(actual, expected);
+    })
+
+    QUnit.test('other objects', function(assert) {
+      assert.expect(1);
+
+      var actual = [],
+        expected = [];
+
+      actual.push(_.toNumber({}));
+      expected.push(NaN);
+      actual.push(_.toNumber({
+        valueOf: '1.1'
+      }));
+      expected.push(NaN);
+      actual.push(_.toNumber({
+        valueOf: '1.1',
+        toString: function () {
+          return '2.2';
+        }
+      }));
+      expected.push(2.2);
+      actual.push(_.toNumber({
+        valueOf: function () {
+          return '1.1';
+        },
+        toString: '2.2'
+      }));
+      expected.push(1.1);
+      actual.push(_.toNumber({
+        valueOf: function () {
+          return '1.1';
+        },
+        toString: function () {
+          return '2.2';
+        },
+      }));
+      expected.push(1.1);
+      actual.push(_.toNumber({
+        valueOf: function () {
+          return '-0x1a2b3c';
+        }
+      }));
+      expected.push(NaN);
+      actual.push(_.toNumber({
+        toString: function () {
+          return '-0x1a2b3c';
+        },
+      }));
+      expected.push(NaN);
+      actual.push(_.toNumber({
+        valueOf: function () {
+          return '0o12345';
+        }
+      }));
+      expected.push(5349);
+      actual.push(_.toNumber({
+        toString: function () {
+          return '0o12345';
+        },
+      }));
+      expected.push(5349);
+      actual.push(_.toNumber({
+        valueOf: function () {
+          return '0b101010';
+        }
+      }));
+      expected.push(42);
+      actual.push(_.toNumber({
+        toString: function () {
+          return '0b101010';
+        },
+      }));
+      expected.push(42);
+      actual.push(1 / _.toNumber([]));
+      expected.push(Infinity);
+      actual.push(_.toNumber([1]));
+      expected.push(1);
+      actual.push(_.toNumber([1, 2]));
+      expected.push(NaN);
+
+      assert.deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toPath');
 
   (function() {
@@ -21801,6 +22127,7 @@
       'sum',
       'toInteger',
       'toLower',
+      'toNumber',
       'toSafeInteger',
       'toString',
       'toUpper',
@@ -22058,7 +22385,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(274);
+      assert.expect(275);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

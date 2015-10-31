@@ -571,7 +571,11 @@
         basePath = path.dirname(filePath);
 
     if (isModularize && !(amd || isNpm)) {
-      lodashStable.each(['internal/baseEach', 'internal/isIndex', 'internal/isIterateeCall'], function(relPath) {
+      lodashStable.each([
+        'internal/baseEach',
+        'internal/isIndex',
+        'internal/isIterateeCall'
+      ], function(relPath) {
         var func = require(path.join(basePath, relPath)),
             funcName = path.basename(relPath);
 

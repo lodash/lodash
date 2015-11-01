@@ -7407,11 +7407,8 @@
     QUnit.test('should return `true` for empty values', function(assert) {
       assert.expect(7);
 
-      var expected = lodashStable.map(empties, lodashStable.constant(true));
-
-      var actual = lodashStable.map(empties, function(value) {
-        return _.isEmpty(value);
-      });
+      var expected = lodashStable.map(empties, lodashStable.constant(true)),
+          actual = lodashStable.map(empties, _.isEmpty);
 
       assert.deepEqual(actual, expected);
 
@@ -8360,11 +8357,8 @@
       assert.expect(1);
 
       var values = [0, 1, 3.14, -1],
-          expected = lodashStable.map(values, lodashStable.constant(true));
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.isFinite(value);
-      });
+          expected = lodashStable.map(values, lodashStable.constant(true)),
+          actual = lodashStable.map(values, _.isFinite);
 
       assert.deepEqual(actual, expected);
     });
@@ -8373,11 +8367,8 @@
       assert.expect(1);
 
       var values = [NaN, Infinity, -Infinity, Object(1)],
-          expected = lodashStable.map(values, lodashStable.constant(false));
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.isFinite(value);
-      });
+          expected = lodashStable.map(values, lodashStable.constant(false)),
+          actual = lodashStable.map(values, _.isFinite);
 
       assert.deepEqual(actual, expected);
     });
@@ -8386,11 +8377,8 @@
       assert.expect(9);
 
       var values = [undefined, [], true, '', ' ', '2px'],
-          expected = lodashStable.map(values, lodashStable.constant(false));
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.isFinite(value);
-      });
+          expected = lodashStable.map(values, lodashStable.constant(false)),
+          actual = lodashStable.map(values, _.isFinite);
 
       assert.deepEqual(actual, expected);
 
@@ -8408,11 +8396,8 @@
       assert.expect(1);
 
       var values = ['2', '0', '08'],
-          expected = lodashStable.map(values, lodashStable.constant(false));
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.isFinite(value);
-      });
+          expected = lodashStable.map(values, lodashStable.constant(false)),
+          actual = lodashStable.map(values, _.isFinite);
 
       assert.deepEqual(actual, expected);
     });
@@ -8581,11 +8566,8 @@
       assert.expect(1);
 
       var values = [0, 3, MAX_SAFE_INTEGER],
-          expected = lodashStable.map(values, lodashStable.constant(true));
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.isLength(value);
-      });
+          expected = lodashStable.map(values, lodashStable.constant(true)),
+          actual = lodashStable.map(values, _.isLength);
 
       assert.deepEqual(actual, expected);
     });
@@ -8594,11 +8576,8 @@
       assert.expect(1);
 
       var values = [-1, '1', 1.1, MAX_SAFE_INTEGER + 1],
-          expected = lodashStable.map(values, lodashStable.constant(false));
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.isLength(value);
-      });
+          expected = lodashStable.map(values, lodashStable.constant(false)),
+          actual = lodashStable.map(values, _.isLength);
 
       assert.deepEqual(actual, expected);
     });
@@ -17403,11 +17382,8 @@
     QUnit.test('should return `undefined` when passing empty `array` values', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(empties, lodashStable.constant(undefined));
-
-      var actual = lodashStable.map(empties, function(value) {
-        return _.sum(value);
-      });
+      var expected = lodashStable.map(empties, lodashStable.constant(undefined)),
+          actual = lodashStable.map(empties, _.sum);
 
       assert.deepEqual(actual, expected);
     });
@@ -19551,9 +19527,7 @@
         42,   42
       ];
 
-      var actual = lodashStable.map(values, function(value) {
-        return _.toNumber(value);
-      });
+      var actual = lodashStable.map(values, _.toNumber);
 
       assert.deepEqual(actual, expected);
     });
@@ -19661,11 +19635,8 @@
       assert.expect(1);
 
       var values = [0, Object(0), -0, Object(-0)],
-          expected = ['0', '0', '-0', '-0'];
-
-      var actual = lodashStable.map(values, function(value) {
-        return _.toString(value);
-      });
+          expected = ['0', '0', '-0', '-0'],
+          actual = lodashStable.map(values, _.toString);
 
       assert.deepEqual(actual, expected);
     });

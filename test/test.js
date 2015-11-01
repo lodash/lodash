@@ -19652,6 +19652,33 @@
         skipTest(assert);
       }
     });
+
+    QUnit.test('should return the `toString` result', function(assert) {
+      assert.expect(1);
+
+      var answer = {
+        valueOf: function () {
+          return true;
+        },
+        toString: function () {
+          return 'correct'
+        }
+      };
+
+      assert.strictEqual(_.toString(answer), 'correct');
+    });
+
+    QUnit.test('should return the `valueOf` result', function(assert) {
+      assert.expect(1);
+
+      var answer = {
+        valueOf: function () {
+          return true;
+        }
+      };
+
+      assert.strictEqual(_.toString(answer), 'true');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

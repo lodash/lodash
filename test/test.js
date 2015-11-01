@@ -19349,9 +19349,12 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.toNumber');
+  QUnit.module('lodash.toInteger and lodash.toNumber');
 
-  (function() {
+  lodashStable.each(['toInteger', 'toNumber'], function(methodName) {
+    var func = _[methodName],
+        isInt = methodName == 'toInteger';
+
     function negative(string) {
       return '-' + string;
     }
@@ -19364,39 +19367,50 @@
       return '+' + string;
     }
 
-    QUnit.test('should convert empty values to `0` or `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert empty values to `0` or `NaN`', function(assert) {
       assert.expect(1);
 
       var values = falsey.concat(whitespace),
-          expected = lodashStable.map(values, Number);
+          expected = lodashStable.map(values, isInt ? lodashStable.constant(0) : Number);
 
       var actual = lodashStable.map(values, function(value, index) {
-        return index ? _.toNumber(value) : _.toNumber();
+        return index ? func(value) : func();
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should preserve sign of `0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should preserve sign of `0`', function(assert) {
       assert.expect(1);
 
       var values = [0, '0', -0, '-0'],
           expected = [[0, Infinity], [0, Infinity], [-0, -Infinity], [-0, -Infinity]];
 
       var actual = lodashStable.map(values, function(value) {
-        var result = _.toNumber(value);
+        var result = func(value);
         return [result, 1 / result];
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should convert number primitives and objects to numbers', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert number primitives and objects to numbers', function(assert) {
       assert.expect(1);
 
       var values = [2, 1.2, MAX_SAFE_INTEGER, MAX_INTEGER, Infinity, NaN];
 
       var expected = lodashStable.map(values, function(value) {
+        if (isInt) {
+          if (value == 1.2) {
+            value = 1;
+          }
+          else if (value == Infinity) {
+            value = MAX_INTEGER;
+          }
+          else if (value !== value) {
+            value = 0;
+          }
+        }
         return [value, value, -value, -value];
       });
 
@@ -19405,8 +19419,8 @@
           lodashStable.times(2, function(index) {
             var other = index ? -value : value;
             return [
-              _.toNumber(other),
-              _.toNumber(Object(other))
+              func(other),
+              func(Object(other))
             ];
           })
         )
@@ -19415,8 +19429,10 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should convert string primitives and objects to numbers', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert string primitives and objects to numbers', function(assert) {
       assert.expect(1);
+
+      var transforms = [identity, pad, positive, negative];
 
       var values = [
         '10', '1.234567890', (MAX_SAFE_INTEGER + ''),
@@ -19427,15 +19443,26 @@
 
       var expected = lodashStable.map(values, function(value) {
         var n = +value;
+        if (isInt) {
+          if (n == 1.234567890) {
+            n = 1;
+          }
+          else if (n == Infinity) {
+            n = MAX_INTEGER;
+          }
+          else if (n == Number.MIN_VALUE || n !== n) {
+            n = 0;
+          }
+        }
         return [n, n, n, n, n, n, -n, -n];
       });
 
       var actual = lodashStable.map(values, function(value) {
         return lodashStable.flattenDeep(
-          lodashStable.map([identity, pad, positive, negative], function(func) {
+          lodashStable.map(transforms, function(mod) {
             return [
-              _.toNumber(func(value)),
-              _.toNumber(Object(func(value)))
+              func(mod(value)),
+              func(Object(mod(value)))
             ];
           })
         );
@@ -19444,7 +19471,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should convert binary and octal strings to numbers', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert binary and octal strings to numbers', function(assert) {
       assert.expect(1);
 
       var numbers = [42, 5349, 1715004],
@@ -19461,8 +19488,8 @@
             var other = index ? value.toUpperCase() : value;
             return lodashStable.map(transforms, function(mod) {
               return [
-                _.toNumber(mod(other)),
-                _.toNumber(Object(mod(other)))
+                func(mod(other)),
+                func(Object(mod(other)))
               ];
             })
           })
@@ -19472,14 +19499,14 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should convert invalid binary and octal strings to `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert invalid binary and octal strings to `NaN`', function(assert) {
       assert.expect(1);
 
       var transforms = [identity, pad, positive, negative],
           values = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x'];
 
       var expected = lodashStable.map(values, function(n) {
-        return lodashStable.times(16, lodashStable.constant(NaN));
+        return lodashStable.times(16, lodashStable.constant(isInt ? 0 : NaN));
       });
 
       var actual = lodashStable.map(values, function(value) {
@@ -19488,8 +19515,8 @@
             var other = index ? value.toUpperCase() : value;
             return lodashStable.map(transforms, function(mod) {
               return [
-                _.toNumber(mod(value)),
-                _.toNumber(Object(mod(value)))
+                func(mod(value)),
+                func(Object(mod(value)))
               ];
             })
           })
@@ -19499,7 +19526,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should coerce objects to numbers', function(assert) {
+    QUnit.test('`_.' + methodName + '` should coerce objects to numbers', function(assert) {
       assert.expect(1);
 
       var values = [
@@ -19527,11 +19554,20 @@
         42,   42
       ];
 
-      var actual = lodashStable.map(values, _.toNumber);
+      if (isInt) {
+        expected = [
+          0, 0, 1, 0,
+          0, 2, 1, 1,
+          0, 0,
+          5349, 5349,
+          42, 42
+        ];
+      }
+      var actual = lodashStable.map(values, func);
 
       assert.deepEqual(actual, expected);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

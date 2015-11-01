@@ -9850,7 +9850,7 @@
      * // => 1.7976931348623157e+308
      */
     function toInteger(value) {
-      value = +value;
+      value = toNumber(value);
       if (value === INFINITY || value === -INFINITY) {
         var sign = (value < 0 ? -1 : 1);
         return sign * MAX_INTEGER;

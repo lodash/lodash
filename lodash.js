@@ -847,6 +847,13 @@
     return result;
   }
 
+  /**
+   * The base implementation of `_.unary` without support for storing wrapper metadata.
+   *
+   * @private
+   * @param {Function} func The function to cap arguments for.
+   * @returns {Function} Returns the new function.
+   */
   function baseUnary(func) {
     return function(value) {
       return func(value);
@@ -1466,10 +1473,10 @@
      * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`,
      * `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`,
      * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`,
-     * `toPath`, `toPlainObject`, `transform`, `union`, `unionBy`, `unionWith`,
-     * `uniq`, `uniqBy`, `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`,
-     * `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,
-     * `zipObject`, and `zipWith`
+     * `toPath`, `toPlainObject`, `transform`, `unary`, `union`, `unionBy`,
+     * `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`, `unshift`, `unzip`,
+     * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`,
+     * `xorWith`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -1488,9 +1495,10 @@
      * `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
      * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toSafeInteger`,
-     * `toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`, `truncate`,
-     * `unescape`, `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
+     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toNumber`,
+     * `toSafeInteger`, toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`,
+     * `truncate`, `unescape`, `uniqueId`, `upperCase`, `upperFirst`, `value`,
+     * and `words`
      *
      * @name _
      * @constructor
@@ -7779,7 +7787,7 @@
     }
 
     /**
-     * Creates a function that accepts up to `n` arguments ignoring any
+     * Creates a function that accepts up to `n` arguments, ignoring any
      * additional arguments.
      *
      * @static
@@ -8721,6 +8729,24 @@
     }
 
     /**
+     * Creates a function that accepts up to one argument, ignoring any
+     * additional arguments.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to cap arguments for.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * _.map(['6', '8', '10'], _.unary(parseInt));
+     * // => [6, 8, 10]
+     */
+    function unary(func) {
+      return ary(func, 1);
+    }
+
+    /**
      * Creates a function that provides `value` to the wrapper function as its
      * first argument. Any additional arguments provided to the function are
      * appended to those provided to the wrapper function. The wrapper is invoked
@@ -8744,10 +8770,6 @@
     function wrap(value, wrapper) {
       wrapper = wrapper == null ? identity : wrapper;
       return partial(wrapper, value);
-    }
-
-    function unary(func) {
-      return ary(func, 1);
     }
 
     /*------------------------------------------------------------------------*/
@@ -13411,6 +13433,7 @@
     lodash.toPath = toPath;
     lodash.toPlainObject = toPlainObject;
     lodash.transform = transform;
+    lodash.unary = unary;
     lodash.union = union;
     lodash.unionBy = unionBy;
     lodash.unionWith = unionWith;

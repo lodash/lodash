@@ -22190,7 +22190,8 @@
       'rearg',
       'rest',
       'spread',
-      'throttle'
+      'throttle',
+      'unary'
     ];
 
     var noBinding = [
@@ -22318,7 +22319,7 @@
     });
 
     QUnit.test('should throw an error for falsey arguments', function(assert) {
-      assert.expect(23);
+      assert.expect(24);
 
       lodashStable.each(rejectFalsey, function(methodName) {
         var expected = lodashStable.map(falsey, lodashStable.constant(true)),

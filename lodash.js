@@ -133,7 +133,7 @@
   var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
 
   /** Used to detect binary string values. */
-  var reIsBinary = /^0b[0-1]+$/i;
+  var reIsBinary = /^0b[01]+$/i;
 
   /** Used to detect host constructors (Safari > 5). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;

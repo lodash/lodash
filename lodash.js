@@ -129,7 +129,7 @@
   /** Used to detect hexadecimal string values. */
   var reHasHexPrefix = /^0x/i;
 
-  /** Used to detect bad signed hex string values. */
+  /** Used to detect bad signed hexadecimal string values. */
   var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
 
   /** Used to detect binary string values. */

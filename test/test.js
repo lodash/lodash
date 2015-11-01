@@ -19370,8 +19370,11 @@
     QUnit.test('`_.' + methodName + '` should convert empty values to `0` or `NaN`', function(assert) {
       assert.expect(1);
 
-      var values = falsey.concat(whitespace),
-          expected = lodashStable.map(values, isInt ? lodashStable.constant(0) : Number);
+      var values = falsey.concat(whitespace);
+
+      var expected = lodashStable.map(values, function(value) {
+        return (isInt || (value === whitespace)) ? 0 : Number(value);
+      });
 
       var actual = lodashStable.map(values, function(value, index) {
         return index ? func(value) : func();

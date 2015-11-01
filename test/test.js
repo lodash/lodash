@@ -15048,7 +15048,7 @@
       }));
 
       assert.ok(_.some(array, function() {
-        return _.random(Number.MAX_VALUE) > 0;
+        return _.random(MAX_INTEGER) > 0;
       }));
     });
 

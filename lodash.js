@@ -10019,12 +10019,34 @@
     /**
      * Converts `value` to a string if it's not one.
      * An empty string is returned for `null` and `undefined` values.
+     * The number literals `-0` and `0` preserve their sign to become `'-0'` and `'0'`.
+     * This method is consistant with `value + ''` coersion rather than casting
+     * with `String(value)`.
      *
      * @static
      * @memberOf _
      * @category Lang
      * @param {*} value The value to process.
      * @returns {string} Returns the string.
+     * @example
+     *
+     * _.toString(null);
+     * // => ''
+     *
+     * _.toString(-0);
+     * // => '-0'
+     *
+     * var answer = {
+     *   valueOf: function() {
+     *     return 1;
+     *   },
+     *   toString: function () {
+     *     return 'one';
+     *   }
+     * };
+     *
+     * _.toString(answer);
+     * // => '1'
      */
     function toString(value) {
       // Exit early for strings to avoid a performance hit in some environments.

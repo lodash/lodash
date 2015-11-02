@@ -20261,6 +20261,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.unary');
+
+  (function() {
+    function fn() {
+      return slice.call(arguments);
+    }
+
+    QUnit.test('should cap the number of params provided to `func`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map(['6', '8', '10'], _.unary(parseInt));
+      assert.deepEqual(actual, [6, 8, 10]);
+    });
+
+    QUnit.test('should work when provided less than the capped numer of arguments', function(assert) {
+      assert.expect(1);
+
+      var capped = _.unary(fn);
+      assert.deepEqual(capped(), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('union methods');
 
   lodashStable.each(['union', 'unionBy', 'unionWith'], function(methodName) {

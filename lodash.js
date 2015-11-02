@@ -9892,6 +9892,25 @@
      * @category Lang
      * @param {*} value The value to convert.
      * @return {number} Returns the converted integer.
+     * @example
+     *
+     * _.toLength(NaN);
+     * // => 0
+     *
+     * _.toLength(Infinity);
+     * // => 4294967295
+     *
+     * var answer = {
+     *   valueOf: function () {
+     *       return 1;
+     *   },
+     *   toString: function () {
+     *       return 'one';
+     *   }
+     * };
+     *
+     * _.toLength(answer);
+     * // => 1
      */
     function toLength(value) {
       return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);

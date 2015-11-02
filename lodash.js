@@ -9924,6 +9924,28 @@
      * @category Lang
      * @param {*} value The value to process.
      * @returns {number} Returns the number.
+     * @examples
+     *
+     * _.toNumber(undefined);
+     * // => NaN
+     *
+     * _.toNumber(null);
+     * // => 0
+     *
+     * _.toNumber('-0');
+     * // => -0
+     *
+     * var answer = {
+     *   valueOf: function() {
+     *     return 1;
+     *   },
+     *   toString: function () {
+     *     return 'one';
+     *   }
+     * };
+     *
+     * _.toNumber(answer);
+     * // => 1
      */
     function toNumber(value) {
       if (isObject(value)) {

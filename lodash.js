@@ -6284,7 +6284,7 @@
     var unionWith = rest(function(arrays) {
       var comparator = last(arrays);
       if (isArrayLikeObject(comparator)) {
-        iteratee = undefined;
+        comparator = undefined;
       }
       return baseUniq(baseFlatten(arrays, false, true), undefined, comparator);
     });

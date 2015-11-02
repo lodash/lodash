@@ -3871,7 +3871,7 @@
 
   QUnit.module('difference methods');
 
-  lodashStable.each(['difference', 'differenceBy'], function(methodName) {
+  lodashStable.each(['difference', 'differenceBy', 'differenceWith'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
@@ -3958,6 +3958,21 @@
       });
 
       assert.deepEqual(args, [4.4]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.differenceWith');
+
+  (function() {
+    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+
+    QUnit.test('should work with a `comparator` argument', function(assert) {
+      assert.expect(1);
+
+      var actual = _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], lodashStable.isEqual);
+      assert.deepEqual(actual, [{ 'x': 2, 'y': 1 }]);
     });
   }());
 
@@ -6811,7 +6826,7 @@
 
   QUnit.module('intersection methods');
 
-  lodashStable.each(['intersection', 'intersectionBy'], function(methodName) {
+  lodashStable.each(['intersection', 'intersectionBy', 'intersectionWith'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
@@ -6918,6 +6933,23 @@
       });
 
       assert.deepEqual(args, [4.3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.intersectionWith');
+
+  (function() {
+    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+
+    QUnit.test('should work with a `comparator` argument', function(assert) {
+      assert.expect(1);
+
+      var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
+          actual = _.intersectionWith(objects, others, lodashStable.isEqual);
+
+      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }]);
     });
   }());
 
@@ -20231,7 +20263,7 @@
 
   QUnit.module('union methods');
 
-  lodashStable.each(['union', 'unionBy'], function(methodName) {
+  lodashStable.each(['union', 'unionBy', 'unionWith'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
@@ -20289,6 +20321,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.unionWith');
+
+  (function() {
+    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+
+    QUnit.test('should work with a `comparator` argument', function(assert) {
+      assert.expect(1);
+
+      var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
+          actual = _.unionWith(objects, others, lodashStable.isEqual);
+
+      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.uniq');
 
   (function() {
@@ -20306,7 +20355,7 @@
 
   QUnit.module('uniq methods');
 
-  lodashStable.each(['uniq', 'uniqBy', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
+  lodashStable.each(['uniq', 'uniqBy', 'uniqWith', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
     var func = _[methodName],
         isSorted = /^sorted/.test(methodName);
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
@@ -20505,6 +20554,21 @@
       });
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.uniqWith');
+
+  (function() {
+    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }];
+
+    QUnit.test('should work with a `comparator` argument', function(assert) {
+      assert.expect(1);
+
+      var actual = _.uniqWith(objects, lodashStable.isEqual);
+      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -20858,7 +20922,7 @@
 
   QUnit.module('xor methods');
 
-  lodashStable.each(['xor', 'xorBy'], function(methodName) {
+  lodashStable.each(['xor', 'xorBy', 'xorWith'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
@@ -20959,6 +21023,23 @@
       });
 
       assert.deepEqual(args, [4.3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.xorWith');
+
+  (function() {
+    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+
+    QUnit.test('should work with a `comparator` argument', function(assert) {
+      assert.expect(1);
+
+      var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
+          actual = _.xorWith(objects, others, lodashStable.isEqual);
+
+      assert.deepEqual(actual, [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]);
     });
   }());
 

@@ -9327,13 +9327,13 @@
      * _.isInteger(3);
      * // => true
      *
-     * _.isInteger(Number.MAX_VALUE);
-     * // => true
-     *
-     * _.isInteger(3.14);
+     * _.isInteger(Number.MIN_VALUE);
      * // => false
      *
      * _.isInteger(Infinity);
+     * // => false
+     *
+     * _.isInteger('3');
      * // => false
      */
     function isInteger(value) {
@@ -9355,13 +9355,13 @@
      * _.isLength(3);
      * // => true
      *
-     * _.isLength(Number.MAX_VALUE);
-     * // => false
-     *
-     * _.isLength(3.14);
+     * _.isLength(Number.MIN_VALUE);
      * // => false
      *
      * _.isLength(Infinity);
+     * // => false
+     *
+     * _.isLength('3');
      * // => false
      */
     function isLength(value) {
@@ -9604,13 +9604,16 @@
      * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
      * @example
      *
-     * _.isNumber(8.4);
+     * _.isNumber(3);
      * // => true
      *
-     * _.isNumber(NaN);
+     * _.isNumber(Number.MIN_VALUE);
      * // => true
      *
-     * _.isNumber('8.4');
+     * _.isNumber(Infinity);
+     * // => true
+     *
+     * _.isNumber('3');
      * // => false
      */
     function isNumber(value) {
@@ -9697,13 +9700,13 @@
      * _.isSafeInteger(3);
      * // => true
      *
-     * _.isSafeInteger(Number.MAX_VALUE);
-     * // => false
-     *
-     * _.isSafeInteger(3.14);
+     * _.isSafeInteger(Number.MIN_VALUE);
      * // => false
      *
      * _.isSafeInteger(Infinity);
+     * // => false
+     *
+     * _.isSafeInteger('3');
      * // => false
      */
     function isSafeInteger(value) {
@@ -9862,14 +9865,17 @@
      * @returns {number} Returns the converted integer.
      * @example
      *
-     *  _.toInteger('3.14');
-     *  // => 3
+     * _.toInteger(3);
+     * // => 3
      *
-     * _.toInteger(NaN);
+     * _.toInteger(Number.MIN_VALUE);
      * // => 0
      *
-     * _.toInteger(-Infinity)
+     * _.toInteger(Infinity);
      * // => 1.7976931348623157e+308
+     *
+     * _.toInteger('3');
+     * // => 3
      */
     function toInteger(value) {
       value = toNumber(value);
@@ -9894,23 +9900,17 @@
      * @return {number} Returns the converted integer.
      * @example
      *
-     * _.toLength(NaN);
+     * _.toLength(3);
+     * // => 3
+     *
+     * _.toLength(Number.MIN_VALUE);
      * // => 0
      *
      * _.toLength(Infinity);
      * // => 4294967295
      *
-     * var answer = {
-     *   valueOf: function () {
-     *       return 1;
-     *   },
-     *   toString: function () {
-     *       return 'one';
-     *   }
-     * };
-     *
-     * _.toLength(answer);
-     * // => 1
+     * _.toLength('3');
+     * // => 3
      */
     function toLength(value) {
       return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
@@ -9924,28 +9924,19 @@
      * @category Lang
      * @param {*} value The value to process.
      * @returns {number} Returns the number.
-     * @examples
+     * @example
      *
-     * _.toNumber(undefined);
-     * // => NaN
+     * _.toNumber(3);
+     * // => 3
      *
-     * _.toNumber(null);
-     * // => 0
+     * _.toNumber(Number.MIN_VALUE);
+     * // => 5e-324
      *
-     * _.toNumber('-0');
-     * // => -0
+     * _.toNumber(Infinity);
+     * // => Infinity
      *
-     * var answer = {
-     *   valueOf: function() {
-     *     return 1;
-     *   },
-     *   toString: function () {
-     *     return 'one';
-     *   }
-     * };
-     *
-     * _.toNumber(answer);
-     * // => 1
+     * _.toNumber('3');
+     * // => 3
      */
     function toNumber(value) {
       if (isObject(value)) {
@@ -10000,28 +9991,25 @@
      * @returns {number} Returns the converted integer.
      * @example
      *
-     *  _.toSafeInteger('3.14');
-     *  // => 3
+     * _.toSafeInteger(3);
+     * // => 3
      *
-     * _.toSafeInteger(NaN);
+     * _.toSafeInteger(Number.MIN_VALUE);
      * // => 0
      *
-     * _.toSafeInteger(Infinity)
+     * _.toSafeInteger(Infinity);
      * // => 9007199254740991
      *
-     * _.toSafeInteger(-Infinity)
-     * // => -9007199254740991
+     * _.toSafeInteger('3');
+     * // => 3
      */
     function toSafeInteger(value) {
       return clamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
     }
 
     /**
-     * Converts `value` to a string if it's not one.
-     * An empty string is returned for `null` and `undefined` values.
-     * The number literals `-0` and `0` preserve their sign to become `'-0'` and `'0'`.
-     * This method is consistant with `value + ''` coersion rather than casting
-     * with `String(value)`.
+     * Converts `value` to a string if it's not one. An empty string is returned
+     * for `null` and `undefined` values. The sign of `-0` is preserved.
      *
      * @static
      * @memberOf _
@@ -10036,17 +10024,8 @@
      * _.toString(-0);
      * // => '-0'
      *
-     * var answer = {
-     *   valueOf: function() {
-     *     return 1;
-     *   },
-     *   toString: function () {
-     *     return 'one';
-     *   }
-     * };
-     *
-     * _.toString(answer);
-     * // => '1'
+     * _.toString([1, 2, 3]);
+     * // => '1,2,3'
      */
     function toString(value) {
       // Exit early for strings to avoid a performance hit in some environments.

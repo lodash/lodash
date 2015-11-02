@@ -1436,7 +1436,11 @@
      * Lazy evaluation allows several methods to support shortcut fusion. Shortcut
      * fusion is an optimization strategy which merge iteratee calls; this can help
      * to avoid the creation of intermediate data structures and greatly reduce the
-     * number of iteratee executions.
+     * number of iteratee executions. Sections of a chain sequence may qualify for
+     * shortcut fusion if the section is applied to an array of at least two hundred
+     * elements and any iteratees or predicates accept only one argument. The
+     * heuristic for whether a section qualifies for shortcut fusion is subject
+     * to change.
      *
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.

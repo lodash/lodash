@@ -11264,19 +11264,19 @@
      * // => 5
      */
     function clamp(number, min, max) {
-      number = +number;
+      number = toNumber(number);
       if (number === number) {
         if (max === undefined) {
           max = min;
           min = undefined;
         }
         if (max !== undefined) {
-          max = +max;
+          max = toNumber(max);
           max = max === max ? max : 0;
           number = number <= max ? number : max;
         }
         if (min !== undefined) {
-          min = +min;
+          min = toNumber(min);
           min = min === min ? min : 0;
           number = number >= min ? number : min;
         }

@@ -16130,7 +16130,19 @@
 
       actual = func('5e1e1', 1);
       assert.deepEqual(actual, NaN);
+    });
 
+    QUnit.test('`_.' + methodName + '` should preserve sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var values = [[0], [-0], ['0'], ['-0'], [0, 1], [-0, 1], ['0', 1], ['-0', 1]],
+          expected = [Infinity, -Infinity, Infinity, -Infinity, Infinity, -Infinity, Infinity, -Infinity];
+
+      var actual = lodashStable.map(values, function(args) {
+        return 1 / func.apply(undefined, args);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   });
 

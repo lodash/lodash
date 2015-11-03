@@ -4149,13 +4149,14 @@
       var func = Math[methodName];
       return function(number, precision) {
         number = toNumber(number);
-        precision = precision ? toInteger(precision) : 0;
+        precision = toInteger(precision);
         if (precision) {
           // Shift with exponential notation to avoid floating-point issues.
           // See [MDN](https://mdn.io/round#Examples) for more details.
           var pair = (toString(number) + 'e').split('e'),
-              value = toString(func(pair[0] + 'e' + (+pair[1] + precision)));
-          pair = (value + 'e').split('e');
+              value = func(pair[0] + 'e' + (+pair[1] + precision));
+
+          pair = (toString(value) + 'e').split('e');
           return +(pair[0] + 'e' + (+pair[1] - precision));
         }
         return func(number);
@@ -5490,7 +5491,7 @@
       if (!length) {
         return -1;
       }
-      fromIndex = fromIndex ? toInteger(fromIndex) : 0;
+      fromIndex = toInteger(fromIndex);
       if (fromIndex < 0) {
         fromIndex = nativeMax(length + fromIndex, 0);
       }
@@ -9882,6 +9883,9 @@
      * // => 3
      */
     function toInteger(value) {
+      if (!value) {
+        return value === 0 ? value : 0;
+      }
       value = toNumber(value);
       if (value === INFINITY || value === -INFINITY) {
         var sign = (value < 0 ? -1 : 1);
@@ -9917,6 +9921,9 @@
      * // => 3
      */
     function toLength(value) {
+      if (!value) {
+        return 0;
+      }
       return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
     }
 
@@ -9943,6 +9950,9 @@
      * // => 3
      */
     function toNumber(value) {
+      if (!value) {
+        return value === 0 ? value : +value;
+      }
       if (isObject(value)) {
         var other = isFunction(value.valueOf) ? value.valueOf() : value;
         value = isObject(other) ? (other + '') : other;
@@ -10008,6 +10018,9 @@
      * // => 3
      */
     function toSafeInteger(value) {
+      if (!value) {
+        return value === 0 ? value : 0;
+      }
       return clamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
     }
 
@@ -13742,7 +13755,7 @@
     };
 
     LazyWrapper.prototype.slice = function(start, end) {
-      start = start ? toInteger(start) : 0;
+      start = toInteger(start);
 
       var result = this;
       if (result.__filtered__ && (start > 0 || end < 0)) {

@@ -4156,7 +4156,7 @@
           var pair = (toString(number) + 'e').split('e'),
               value = toString(func(pair[0] + 'e' + (+pair[1] + precision)));
           pair = (value + 'e').split('e');
-          return +(pair[0] + 'e' + (+pair[1]- precision));
+          return +(pair[0] + 'e' + (+pair[1] - precision));
         }
         return func(number);
       };

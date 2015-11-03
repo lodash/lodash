@@ -8145,8 +8145,7 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      wait = toInteger(wait);
-      wait = wait < 0 ? 0 : wait;
+      wait = clamp(toInteger(wait), 0, MAX_INTEGER);
       if (isObject(options)) {
         leading = !!options.leading;
         maxWait = 'maxWait' in options && nativeMax(toInteger(options.maxWait), wait);

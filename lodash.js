@@ -8146,10 +8146,10 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      wait = wait < 0 ? 0 : (+wait || 0);
+      wait = toNumber(wait) || 0;
       if (isObject(options)) {
         leading = !!options.leading;
-        maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
+        maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
         trailing = 'trailing' in options ? !!options.trailing : trailing;
       }
 
@@ -8285,7 +8285,7 @@
      * // => logs 'later' after one second
      */
     var delay = rest(function(func, wait, args) {
-      return baseDelay(func, toNumber(wait), args);
+      return baseDelay(func, toNumber(wait) || 0, args);
     });
 
     /**

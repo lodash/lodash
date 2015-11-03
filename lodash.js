@@ -8145,10 +8145,11 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      wait = wait < 0 ? 0 : (+wait || 0);
+      wait = toInteger(wait);
+      wait = wait < 0 ? 0 : wait;
       if (isObject(options)) {
         leading = !!options.leading;
-        maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
+        maxWait = 'maxWait' in options && nativeMax(toInteger(options.maxWait), wait);
         trailing = 'trailing' in options ? !!options.trailing : trailing;
       }
 

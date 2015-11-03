@@ -12976,15 +12976,15 @@
       if (step && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
-      start = +start;
+      start = toNumber(start);
       start = start === start ? start : 0;
-      step = step === undefined ? 1 : (+step || 0);
+      step = step === undefined ? 1 : (toNumber(step) || 0);
 
       if (end === undefined) {
         end = start;
         start = 0;
       } else {
-        end = +end || 0;
+        end = toNumber(end) || 0;
       }
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
       return baseTimes(n, function(index) {

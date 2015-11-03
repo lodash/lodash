@@ -16073,6 +16073,17 @@
         isCeil = methodName == 'ceil',
         isFloor = methodName == 'floor';
 
+    QUnit.test('`_.' + methodName + '` should return `0` with sign preserved', function(assert) {
+      assert.expect(1);
+
+      var actual = [1 / func(0), 1 / func(-0), 1 / func('0'), 1 / func('-0'),
+          1 / func(0, 1), 1 / func(-0, 1), 1 / func('0', 1), 1 / func('-0', 1)],
+        expected = [Infinity, -Infinity, Infinity, -Infinity,
+          Infinity, -Infinity, Infinity, -Infinity];
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('`_.' + methodName + '` should return a rounded number without a precision', function(assert) {
       assert.expect(1);
 

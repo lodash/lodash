@@ -8285,7 +8285,7 @@
      * // => logs 'later' after one second
      */
     var delay = rest(function(func, wait, args) {
-      return baseDelay(func, wait, args);
+      return baseDelay(func, toNumber(wait), args);
     });
 
     /**

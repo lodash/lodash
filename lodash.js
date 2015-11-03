@@ -11382,12 +11382,12 @@
         max = 1;
         noMax = false;
       }
-      min = +min || 0;
+      min = toNumber(min) || 0;
       if (noMax) {
         max = min;
         min = 0;
       } else {
-        max = +max || 0;
+        max = toNumber(max) || 0;
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();

@@ -11321,13 +11321,14 @@
      * // => true
      */
     function inRange(number, start, end) {
-      start = +start || 0;
+      start = toNumber(start) || 0;
       if (end === undefined) {
         end = start;
         start = 0;
       } else {
-        end = +end || 0;
+        end = toNumber(end) || 0;
       }
+      number = toNumber(number);
       return number >= nativeMin(start, end) && number < nativeMax(start, end);
     }
 

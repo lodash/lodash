@@ -2403,7 +2403,7 @@
     function baseFill(array, value, start, end) {
       var length = array.length;
 
-      start = start == null ? 0 : toInteger(start);
+      start = toInteger(start);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
@@ -2411,10 +2411,9 @@
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : (end >>> 0);
-      start >>>= 0;
-
-      while (start < length) {
+      end = start > end ? 0 : toLength(end);
+      start = toLength(start);
+      while (start < end) {
         array[start++] = value;
       }
       return array;
@@ -5317,7 +5316,7 @@
      * // => [4, '*', '*', 10]
      */
     function fill(array, value, start, end) {
-      var length = array ? array.length : 0;
+      var length = isArrayLike(array) ? array.length : 0;
       if (!length) {
         return [];
       }

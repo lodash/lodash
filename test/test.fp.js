@@ -37,11 +37,11 @@ QUnit.module('method aliases');
     var actual = _.transform(mapping.aliasMap, function(result, aliases, methodName) {
       var func = fp[methodName];
       _.each(aliases, function(alias) {
-        result.push(fp[alias] === func);
+        result.push([alias, fp[alias] === func]);
       });
     }, []);
 
-    assert.ok(_.every(actual));
+    assert.deepEqual(_.reject(actual, 1), []);
   });
 }());
 
@@ -54,8 +54,8 @@ QUnit.module('method ary caps');
     assert.expect(1);
 
     var funcMethods = [
-      'curry', 'iteratee', 'memoize', 'method', 'methodOf',
-      'restParam', 'runInContext'
+      'conj', 'curry', 'disj', 'iteratee', 'juxt', 'memoize',
+      'method', 'methodOf', 'restParam', 'runInContext'
     ];
 
     var exceptions = funcMethods.concat('mixin', 'template'),

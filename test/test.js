@@ -907,7 +907,7 @@
       assert.strictEqual(_.add(6, 4), 10);
     });
 
-    QUnit.test('should not coerce params to numbers', function(assert) {
+    QUnit.test('should not coerce arguments to numbers', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(_.add('6', '4'), '64');
@@ -984,7 +984,7 @@
       return slice.call(arguments);
     }
 
-    QUnit.test('should cap the number of params provided to `func`', function(assert) {
+    QUnit.test('should cap the number of arguments provided to `func`', function(assert) {
       assert.expect(2);
 
       var actual = lodashStable.map(['6', '8', '10'], _.ary(parseInt, 1));
@@ -16037,7 +16037,7 @@
       assert.deepEqual(rp(1), [1, undefined, []]);
     });
 
-    QUnit.test('should work on functions with more than three params', function(assert) {
+    QUnit.test('should work on functions with more than three parameters', function(assert) {
       assert.expect(1);
 
       var rp = _.rest(function(a, b, c, d) {
@@ -20280,7 +20280,7 @@
       return slice.call(arguments);
     }
 
-    QUnit.test('should cap the number of params provided to `func`', function(assert) {
+    QUnit.test('should cap the number of arguments provided to `func`', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(['6', '8', '10'], _.unary(parseInt));

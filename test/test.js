@@ -901,10 +901,12 @@
   QUnit.module('lodash.add');
 
   (function() {
-    QUnit.test('should add two numbers together', function(assert) {
-      assert.expect(1);
+    QUnit.test('should add two numbers', function(assert) {
+      assert.expect(3);
 
       assert.strictEqual(_.add(6, 4), 10);
+      assert.strictEqual(_.add(-6, 4), -2);
+      assert.strictEqual(_.add(-6, -4), -10);
     });
 
     QUnit.test('should not coerce arguments to numbers', function(assert) {
@@ -17412,6 +17414,49 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.subtract');
+
+  (function() {
+    QUnit.test('should subtract two numbers', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.subtract(6, 4), 2);
+      assert.strictEqual(_.subtract(-6, 4), -10);
+      assert.strictEqual(_.subtract(-6, -4), -2);
+    });
+
+    QUnit.test('should coerce arguments only numbers', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.subtract('6', '4'), 2);
+      assert.deepEqual(_.subtract('x', 'y'), NaN);
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_(1).subtract(2), -1);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_(1).chain().subtract(2) instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.sum');
 
   (function() {
@@ -22375,7 +22420,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(275);
+      assert.expect(276);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

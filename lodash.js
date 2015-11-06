@@ -13100,9 +13100,9 @@
      * @static
      * @memberOf _
      * @category Math
-     * @param {number} augend The first number to add.
-     * @param {number} addend The second number to add.
-     * @returns {number} Returns the sum.
+     * @param {number} augend The first number in an addition.
+     * @param {number} addend The second number in an addition.
+     * @returns {number} Returns the total.
      * @example
      *
      * _.add(6, 4);
@@ -13292,6 +13292,31 @@
      * // => 4100
      */
     var round = createRound('round');
+
+    /**
+     * Subtract two numbers.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} minuend The first number in a subtraction.
+     * @param {number} subtrahend The second number in a subtraction.
+     * @returns {number} Returns the difference.
+     * @example
+     *
+     * _.subtract(6, 4);
+     * // => 2
+     */
+    function subtract(minuend, subtrahend) {
+      var result;
+      if (minuend === minuend && minuend != null) {
+        result = minuend;
+      }
+      if (subtrahend === subtrahend && subtrahend != null) {
+        result = result === undefined ? subtrahend : (result - subtrahend);
+      }
+      return result;
+    }
 
     /**
      * Gets the sum of the values in `array`.
@@ -13631,6 +13656,7 @@
     lodash.sortedLastIndexOf = sortedLastIndexOf;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
+    lodash.subtract = subtract;
     lodash.sum = sum;
     lodash.sumBy = sumBy;
     lodash.template = template;

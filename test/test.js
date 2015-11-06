@@ -4542,6 +4542,42 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.enrich');
+
+  (function() {
+    QUnit.test('`_.enrich` should increment numbers', function(assert) {
+      assert.expect(3);
+
+	  var arr = [1, 2, 3];
+	  arr = _.enrich(arr, 4);
+      assert.strictEqual(arr[0], 5);
+      assert.strictEqual(arr[1], 6);
+	  assert.strictEqual(arr[2], 7);
+    });
+	
+	QUnit.test('`_.enrich` should concat string', function(assert) {
+      assert.expect(3);
+
+	  var arr = ['1', '2', '3'];
+	  arr = _.enrich(arr, 1);
+      assert.strictEqual(arr[0], '11');
+      assert.strictEqual(arr[1], '21');
+	  assert.strictEqual(arr[2], '31');
+    });
+	
+	QUnit.test('`_.enrich` should respect concat order', function(assert) {
+      assert.expect(3);
+
+	  var arr = ['1', '2', '3'];
+	  arr = _.enrich(arr, 'id_', true);
+      assert.strictEqual(arr[0], 'id_1');
+      assert.strictEqual(arr[1], 'id_2');
+	  assert.strictEqual(arr[2], 'id_3');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.eq');
 
   (function() {

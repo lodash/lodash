@@ -68,6 +68,7 @@
   var add = function(x, y) { return x + y; },
       doubled = function(n) { return n * 2; },
       isEven = function(n) { return n % 2 == 0; },
+	  subtract = function(x, y) { return x - y; },
       square = function(n) { return n * n; };
 
   /** Used to set property descriptors. */
@@ -17409,6 +17410,49 @@
       assert.strictEqual(func(string, 'b', { 'toString': lodashStable.constant(String(position)) }), true);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.subtract');
+
+  (function() {
+    QUnit.test('should subtract two numbers together', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.subtract(6, 4), 2);
+      assert.strictEqual(_.subtract(-6, 4), -10);
+      assert.strictEqual(_.subtract(-6, -4), -2);
+    });
+
+    QUnit.test('should coerce arguments only numbers', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.subtract('6', '4'), 2);
+      assert.ok(isNaN(_.subtract('x', 'y')));
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_(1).subtract(2), -1);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_(1).chain().subtract(2) instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

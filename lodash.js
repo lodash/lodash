@@ -13294,6 +13294,30 @@
     var round = createRound('round');
 
     /**
+     * Subtract two numbers.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} x The first number to subtract.
+     * @param {number} y The second number to subtract.
+     * @returns {number} Returns the subtraction.
+     * @example
+     *
+     * _.subtract(6, 4);
+     * // => 2
+     */
+    function subtract(x, y) {
+      var result;
+      if (x === x && x != null) {
+        result = x;
+      }
+      if (y === y && y != null) {
+        result = result === undefined ? y : (result - y);
+      }
+      return result;
+    }
+    /**
      * Gets the sum of the values in `array`.
      *
      * @static
@@ -13631,6 +13655,7 @@
     lodash.sortedLastIndexOf = sortedLastIndexOf;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
+    lodash.subtract = subtract;
     lodash.sum = sum;
     lodash.sumBy = sumBy;
     lodash.template = template;

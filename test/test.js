@@ -17232,10 +17232,14 @@
         array.length = length;
 
         lodashStable.each(values, function(value) {
-          var steps = 0,
-              actual = func(array, value, function(value) { steps++; return value; });
+          var steps = 0;
 
-          var expected = (isSortedIndexBy ? !_.isNaN(value) : _.isFinite(value))
+          var actual = func(array, value, function(value) {
+            steps++;
+            return value;
+          });
+
+          var expected = (isSortedIndexBy ? !lodashStable.isNaN(value) : lodashStable.isFinite(value))
             ? 0
             : Math.min(length, MAX_ARRAY_INDEX);
 

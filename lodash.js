@@ -588,18 +588,6 @@
   }
 
   /**
-   * Used by `_.defaults` to customize its `_.assignIn` use.
-   *
-   * @private
-   * @param {*} objValue The destination object property value.
-   * @param {*} srcValue The source object property value.
-   * @returns {*} Returns the value to assign to the destination object.
-   */
-  function assignInDefaults(objValue, srcValue) {
-    return objValue === undefined ? srcValue : objValue;
-  }
-
-  /**
    * Assigns `value` to `key` of `object` if the existing value is not equivalent
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons.
@@ -2136,6 +2124,21 @@
     }
 
     /*------------------------------------------------------------------------*/
+
+    /**
+     * Used by `_.defaults` to customize its `_.assignIn` use.
+     *
+     * @private
+     * @param {*} objValue The destination value.
+     * @param {*} srcValue The source value.
+     * @param {string} key The key of the property to assign.
+     * @returns {*} Returns the value to assign.
+     */
+    function assignInDefaults(objValue, srcValue, key) {
+      return (objValue === undefined || objValue === objectProto[key])
+        ? srcValue
+        : objValue;
+    }
 
     /**
      * The base implementation of `_.assign` without support for multiple sources
@@ -4853,9 +4856,9 @@
      * Used by `_.defaultsDeep` to customize its `_.merge` use.
      *
      * @private
-     * @param {*} objValue The destination object property value.
-     * @param {*} srcValue The source object property value.
-     * @returns {*} Returns the value to assign to the destination object.
+     * @param {*} objValue The destination value.
+     * @param {*} srcValue The source value.
+     * @returns {*} Returns the value to assign.
      */
     function mergeDefaults(objValue, srcValue, key, object, source, stack) {
       if (isObject(objValue) && isObject(srcValue)) {

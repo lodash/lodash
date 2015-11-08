@@ -3626,6 +3626,13 @@
       var actual = _.defaults({ 'a': undefined }, { 'a': 1 });
       assert.strictEqual(actual.a, 1);
     });
+
+    QUnit.test('should assign properties that shadow those on `Object.prototype`', function(assert) {
+      assert.expect(1);
+
+      var actual = _.defaults({}, { 'constructor': 1 });
+      assert.strictEqual(actual.constructor, 1);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

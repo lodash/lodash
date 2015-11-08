@@ -885,7 +885,7 @@
               unwrapped = wrapped.value();
 
           return wrapped instanceof _ &&
-            (unwrapped === value || (_.isNaN(unwrapped) && _.isNaN(value)));
+            (unwrapped === value || (unwrapped !== unwrapped && value !== value));
         });
 
         assert.deepEqual(actual, expected);
@@ -2774,7 +2774,7 @@
         var constant = index ? _.constant(value) : _.constant(),
             result = constant();
 
-        return result === value || (_.isNaN(result) && _.isNaN(value));
+        return result === value || (result !== result && value !== value);
       });
 
       assert.deepEqual(actual, expected);

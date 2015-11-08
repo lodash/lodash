@@ -1486,8 +1486,8 @@
      * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
      * `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
      * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
-     * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `sum`,
-     * `sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toNumber`,
+     * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `subtract`,
+     * `sum`, sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toNumber`,
      * `toSafeInteger`, toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`,
      * `truncate`, `unescape`, `uniqueId`, `upperCase`, `upperFirst`, `value`,
      * and `words`

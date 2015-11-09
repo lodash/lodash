@@ -21236,6 +21236,13 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should support deep paths', function(assert) {
+      assert.expect(1);
+
+      var actual = _.zipObject(['a.b.c'], [1]);
+      assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+    });
+
     QUnit.test('should support consuming the return value of `_.pairs`', function(assert) {
       assert.expect(1);
 

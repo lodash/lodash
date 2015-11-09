@@ -6671,9 +6671,9 @@
       while (++index < length) {
         var key = props[index];
         if (values) {
-          result[key] = values[index];
+          baseSet(result, key, values[index]);
         } else if (key) {
-          result[key[0]] = key[1];
+          baseSet(result, key[0], key[1]);
         }
       }
       return result;

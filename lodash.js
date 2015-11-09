@@ -629,8 +629,8 @@
    *
    * @private
    * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @param {Function} comparator The function used to compare values.
+   * @param {Function} iteratee The iteratee invoked per iteration.
+   * @param {Function} comparator The comparator used to compare values.
    * @returns {*} Returns the extremum value.
    */
   function baseExtremum(array, iteratee, comparator) {
@@ -3082,7 +3082,7 @@
      * @private
      * @param {Array} array The array to modify.
      * @param {Array} values The values to remove.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
      * @returns {Array} Returns `array`.
      */
     function basePullAllBy(array, values, iteratee) {
@@ -3301,7 +3301,7 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseSortedUniqBy(array, iteratee) {
@@ -3457,7 +3457,8 @@
      *
      * @private
      * @param {Array} arrays The arrays to inspect.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of values.
      */
     function baseXor(arrays, iteratee, comparator) {
@@ -3514,7 +3515,7 @@
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The function invoked per element.
+     * @param {Function} iteratee The iteratee invoked per element.
      * @param {boolean} [retHighest] Specify returning the highest qualified index.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      */
@@ -5089,7 +5090,7 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {...Array} [values] The values to exclude.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
@@ -5120,7 +5121,7 @@
      * @category Array
      * @param {Array} array The array to inspect.
      * @param {...Array} [values] The values to exclude.
-     * @param {Function} [comparator] The function invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
@@ -5546,7 +5547,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Array} Returns the new array of shared values.
      * @example
      *
@@ -5580,7 +5581,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @param {Function} [comparator] The function invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of shared values.
      * @example
      *
@@ -5723,7 +5724,7 @@
      * @category Array
      * @param {Array} array The array to modify.
      * @param {Array} values The values to remove.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Array} Returns `array`.
      * @example
      *
@@ -5899,7 +5900,7 @@
      * @category Array
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
@@ -5973,7 +5974,7 @@
      * @category Array
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
@@ -6041,7 +6042,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
@@ -6249,7 +6250,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Array} Returns the new array of combined values.
      * @example
      *
@@ -6277,7 +6278,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @param {Function} [comparator] The function invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of combined values.
      * @example
      *
@@ -6326,7 +6327,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
@@ -6352,7 +6353,7 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to inspect.
-     * @param {Function} [comparator] The function invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      * @example
      *
@@ -6483,7 +6484,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Array} Returns the new array of values.
      * @example
      *
@@ -6511,7 +6512,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @param {Function} [comparator] The function invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of values.
      * @example
      *
@@ -6940,7 +6941,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -7175,7 +7176,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -7280,7 +7281,7 @@
      * @memberOf _
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
@@ -13198,7 +13199,7 @@
      * @memberOf _
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {*} Returns the maximum value.
      * @example
      *
@@ -13252,7 +13253,7 @@
      * @memberOf _
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {*} Returns the minimum value.
      * @example
      *
@@ -13349,7 +13350,7 @@
      * @memberOf _
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per element.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
      * @returns {number} Returns the sum.
      * @example
      *

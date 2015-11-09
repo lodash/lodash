@@ -482,6 +482,41 @@
   }
 
   /**
+   * A specialized version of `_.includes` for arrays without support for
+   * specifying an index to search from.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {*} target The value to search for.
+   * @returns {boolean} Returns `true` if `target` is found, else `false`.
+   */
+  function arrayIncludes(array, value) {
+    return !!array.length && baseIndexOf(array, value, 0) > -1;
+  }
+
+  /**
+   * A specialized version of `_.includesWith` for arrays without support for
+   * specifying an index to search from.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {*} target The value to search for.
+   * @param {Function} comparator The comparator invoked per element.
+   * @returns {boolean} Returns `true` if `target` is found, else `false`.
+   */
+  function arrayIncludesWith(array, value, comparator) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      if (comparator(value, array[index])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * A specialized version of `_.map` for arrays without support for callback
    * shorthands.
    *
@@ -719,22 +754,6 @@
       }
     }
     return -1;
-  }
-
-  function baseIncludes(array, value) {
-    return baseIndexOf(array, value, 0) > -1;
-  }
-
-  function includesWith(array, value, comparator) {
-    var index = -1,
-        length = array ? array.length : 0;
-
-    while (++index < length) {
-      if (comparator(value, array[index])) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -2309,12 +2328,13 @@
      * @private
      * @param {Array} array The array to inspect.
      * @param {Array} values The values to exclude.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of filtered values.
      */
     function baseDifference(array, values, iteratee, comparator) {
       var index = -1,
-          includes = baseIncludes,
+          includes = arrayIncludes,
           isCommon = true,
           length = array.length,
           result = [],
@@ -2327,7 +2347,7 @@
         values = arrayMap(values, baseUnary(iteratee));
       }
       if (comparator) {
-        includes = includesWith;
+        includes = arrayIncludesWith;
         isCommon = false;
       }
       else if (values.length >= LARGE_ARRAY_SIZE) {
@@ -2603,11 +2623,12 @@
      *
      * @private
      * @param {Array} arrays The arrays to inspect.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new array of shared values.
      */
     function baseIntersection(arrays, iteratee, comparator) {
-      var includes = comparator ? includesWith : baseIncludes,
+      var includes = comparator ? arrayIncludesWith : arrayIncludes,
           othLength = arrays.length,
           othIndex = othLength,
           caches = Array(othLength),
@@ -3342,13 +3363,14 @@
      *
      * @private
      * @param {Array} array The array to inspect.
-     * @param {Function} [iteratee] The function invoked per element.
+     * @param {Function} [iteratee] The iteratee invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseUniq(array, iteratee, comparator) {
       var seen,
           index = -1,
-          includes = baseIncludes,
+          includes = arrayIncludes,
           length = array.length,
           isCommon = true,
           result = [],
@@ -3356,7 +3378,7 @@
 
       if (comparator) {
         isCommon = false;
-        includes = includesWith;
+        includes = arrayIncludesWith;
       }
       else if (length >= LARGE_ARRAY_SIZE) {
         isCommon = false;

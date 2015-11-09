@@ -558,10 +558,10 @@ QUnit.module('fp.uniqBy');
 QUnit.module('fp.zipObject');
 
 (function() {
-  QUnit.test('should accept a single key-value `pairs` params', function(assert) {
+  QUnit.test('should zip together key/value arrays into an object', function(assert) {
     assert.expect(1);
 
-    assert.deepEqual(fp.zipObject([['a', 1], ['b', 2]]), { 'a': 1, 'b': 2 });
+    assert.deepEqual(fp.zipObject(['a', 'b'], [1, 2]), { 'a': 1, 'b': 2 });
   });
 }());
 

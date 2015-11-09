@@ -3931,7 +3931,7 @@
 
         length -= argsHolders.length;
         if (length < arity) {
-          var result = createRecurryWrapper(func, bitmask, undefined, args, argsHolders, undefined, undefined, nativeMax(arity - length, 0));
+          var result = createRecurryWrapper(func, bitmask, undefined, args, argsHolders, undefined, undefined, nativeMax(arity - length, 0), createHybridWrapper);
           result.placeholder = placeholder;
           return result;
         }
@@ -4046,7 +4046,7 @@
 
           length -= argsHolders.length;
           if (length < arity) {
-            var result = createRecurryWrapper(func, bitmask, thisArg, args, argsHolders, argPos, ary, nativeMax(arity - length, 0));
+            var result = createRecurryWrapper(func, bitmask, thisArg, args, argsHolders, argPos, ary, nativeMax(arity - length, 0), createHybridWrapper);
             result.placeholder = placeholder;
             return result;
           }
@@ -4070,7 +4070,7 @@
       return wrapper;
     }
 
-    function createRecurryWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
+    function createRecurryWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity, wrapperFunc) {
       var isCurry = bitmask & CURRY_FLAG,
           isCurryBound = bitmask & CURRY_BOUND_FLAG,
           newArgPos = argPos ? copyArray(argPos) : undefined,
@@ -4086,7 +4086,7 @@
         bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
       }
       var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
-          result = createHybridWrapper.apply(undefined, newData);
+          result = wrapperFunc.apply(undefined, newData);
 
       if (isLaziable(func)) {
         setData(result, newData);

@@ -371,6 +371,16 @@
     return set;
   }
 
+  function apply(func, thisArg, args) {
+    switch(args.length) {
+      case 0: return func.call(thisArg);
+      case 1: return func.call(thisArg, args[0]);
+      case 2: return func.call(thisArg, args[0], args[1]);
+      case 3: return func.call(thisArg, args[0], args[1], args[2]);
+    }
+    return func.apply(thisArg, args);
+  }
+
   /**
    * Creates a new array concatenating `array` with `other`.
    *
@@ -3905,6 +3915,32 @@
       };
     }
 
+    function createCurryWrapper(func, bitmask, arity) {
+      var Ctor = createCtorWrapper(func);
+
+      function wrapper() {
+        var length = arguments.length,
+            index = length,
+            args = Array(length);
+
+        while (index--) {
+          args[index] = arguments[index];
+        }
+        var placeholder = wrapper.placeholder,
+            argsHolders = replaceHolders(args, placeholder);
+
+        length -= argsHolders.length;
+        if (length < arity) {
+          var result = createRecurryWrapper(func, bitmask, undefined, args, argsHolders, undefined, undefined, nativeMax(arity - length, 0));
+          result.placeholder = placeholder;
+          return result;
+        }
+        var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+        return apply(fn, this, args);
+      }
+      return wrapper;
+    }
+
     /**
      * Creates a `_.flow` or `_.flowRight` function.
      *
@@ -3991,8 +4027,6 @@
           Ctor = isBindKey ? undefined : createCtorWrapper(func);
 
       function wrapper() {
-        // Avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before providing it to other functions.
         var length = arguments.length,
             index = length,
             args = Array(length);
@@ -4012,25 +4046,7 @@
 
           length -= argsHolders.length;
           if (length < arity) {
-            var newArgPos = argPos ? copyArray(argPos) : undefined,
-                newArity = nativeMax(arity - length, 0),
-                newsHolders = isCurry ? argsHolders : undefined,
-                newHoldersRight = isCurry ? undefined : argsHolders,
-                newPartials = isCurry ? args : undefined,
-                newPartialsRight = isCurry ? undefined : args;
-
-            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
-            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
-
-            if (!isCurryBound) {
-              bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-            }
-            var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity],
-                result = createHybridWrapper.apply(undefined, newData);
-
-            if (isLaziable(func)) {
-              setData(result, newData);
-            }
+            var result = createRecurryWrapper(func, bitmask, thisArg, args, argsHolders, argPos, ary, nativeMax(arity - length, 0));
             result.placeholder = placeholder;
             return result;
           }
@@ -4052,6 +4068,30 @@
         return fn.apply(thisBinding, args);
       }
       return wrapper;
+    }
+
+    function createRecurryWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
+      var isCurry = bitmask & CURRY_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG,
+          newArgPos = argPos ? copyArray(argPos) : undefined,
+          newsHolders = isCurry ? holders : undefined,
+          newHoldersRight = isCurry ? undefined : holders,
+          newPartials = isCurry ? partials : undefined,
+          newPartialsRight = isCurry ? undefined : partials;
+
+      bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
+      bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
+
+      if (!isCurryBound) {
+        bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+      }
+      var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
+          result = createHybridWrapper.apply(undefined, newData);
+
+      if (isLaziable(func)) {
+        setData(result, newData);
+      }
+      return result;
     }
 
     /**
@@ -4237,16 +4277,21 @@
 
       if (data) {
         mergeData(newData, data);
+        func = newData[0];
         bitmask = newData[1];
+        thisArg = newData[2];
+        holders = newData[4];
         arity = newData[9];
       }
-      newData[9] = arity == null
+      arity = newData[9] = arity == null
         ? (isBindKey ? 0 : func.length)
         : nativeMax(arity - length, 0);
 
       if (bitmask == BIND_FLAG) {
-        var result = createBindWrapper(newData[0], newData[2]);
-      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
+        var result = createBindWrapper(func, thisArg);
+      } else if (bitmask == CURRY_FLAG || bitmask == CURRY_RIGHT_FLAG) {
+        result = createCurryWrapper(func, bitmask, arity);
+      } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
         result = createPartialWrapper.apply(undefined, newData);
       } else {
         result = createHybridWrapper.apply(undefined, newData);

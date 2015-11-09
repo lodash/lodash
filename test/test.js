@@ -21236,6 +21236,24 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should accept deep-path key: subscript with string', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.zipObject([['a[b]', 1]]), { 'a': { 'b': 1 }});
+    });
+
+    QUnit.test('should accept deep-path key: subscript with index', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.zipObject([['a[1]', 1]]), { 'a': [ undefined, 1 ]});
+    });
+
+    QUnit.test('should accept deep-path key: dot-notation', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.zipObject(['a.b'], [1]), { 'a': { 'b': 1 }});
+    });
+
     QUnit.test('should support consuming the return value of `_.pairs`', function(assert) {
       assert.expect(1);
 

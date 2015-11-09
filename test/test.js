@@ -2492,6 +2492,51 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.concat');
+
+  (function() {
+    QUnit.test('should concat arrays and values', function(assert) {
+      assert.expect(2);
+
+      var array = [1],
+          actual = _.concat(array, 2, [3], [[4]]);
+
+      assert.deepEqual(actual, [1, 2, 3, [4]]);
+      assert.deepEqual(array, [1]);
+    });
+
+    QUnit.test('should treat sparse arrays as dense', function(assert) {
+      assert.expect(3);
+
+      var expected = [],
+          actual = _.concat(Array(1), Array(1));
+
+      expected.push(undefined, undefined);
+
+      assert.ok('0'in actual);
+      assert.ok('1' in actual);
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return a new wrapped array', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var array = [1],
+            wrapped = _(array).concat([2, 3]),
+            actual = wrapped.value();
+
+        assert.deepEqual(array, [1]);
+        assert.deepEqual(actual, [1, 2, 3]);
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.conforms');
 
   (function() {
@@ -21379,63 +21424,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...).concat');
-
-  (function() {
-    QUnit.test('should concat arrays and values', function(assert) {
-      assert.expect(2);
-
-      if (!isNpm) {
-        var array = [1],
-            wrapped = _(array).concat(2, [3], [[4]]);
-
-        assert.deepEqual(wrapped.value(), [1, 2, 3, [4]]);
-        assert.deepEqual(array, [1]);
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('should treat sparse arrays as dense', function(assert) {
-      assert.expect(3);
-
-      if (!isNpm) {
-        var expected = [],
-            wrapped = _(Array(1)).concat(Array(1)),
-            actual = wrapped.value();
-
-        expected.push(undefined, undefined);
-
-        assert.ok('0'in actual);
-        assert.ok('1' in actual);
-        assert.deepEqual(actual, expected);
-      }
-      else {
-        skipTest(assert, 3);
-      }
-    });
-
-    QUnit.test('should return a new wrapped array', function(assert) {
-      assert.expect(3);
-
-      if (!isNpm) {
-        var array = [1],
-            wrapped = _(array).concat([2, 3]),
-            actual = wrapped.value();
-
-        assert.deepEqual(array, [1]);
-        assert.deepEqual(actual, [1, 2, 3]);
-        assert.notStrictEqual(actual, array);
-      }
-      else {
-        skipTest(assert, 3);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash(...).join');
 
   (function() {
@@ -22431,7 +22419,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(276);
+      assert.expect(277);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

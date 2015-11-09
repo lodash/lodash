@@ -372,11 +372,11 @@
   }
 
   /**
-   * Creates a new array joining `array` with `other`.
+   * Creates a new array concatenating `array` with `other`.
    *
    * @private
-   * @param {Array} array The array to join.
-   * @param {Array} other The other array to join.
+   * @param {Array} array The first array to concatenate.
+   * @param {Array} other The second array to concatenate.
    * @returns {Array} Returns the new concatenated array.
    */
   function arrayConcat(array, other) {
@@ -5081,6 +5081,32 @@
     }
 
     /**
+     * Creates a new array concatenating `array` with any additional arrays
+     * and/or values.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to concatenate.
+     * @param {...*} [values] The values to concatenate.
+     * @returns {Array} Returns the new concatenated array.
+     * @example
+     *
+     * var array = [1];
+     * var other = _.concat(array, 2, [3], [[4]]);
+     *
+     * console.log(other);
+     * // => [1, 2, 3, [4]]
+     *
+     * console.log(array);
+     * // => [1]
+     */
+    var concat = rest(function(array, values) {
+      values = baseFlatten(values);
+      return arrayConcat(isArray(array) ? array : [Object(array)], values);
+    });
+
+    /**
      * Creates an array of unique `array` values not included in the other
      * provided arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
@@ -6777,33 +6803,6 @@
     function wrapperCommit() {
       return new LodashWrapper(this.value(), this.__chain__);
     }
-
-    /**
-     * Creates a new array joining a wrapped array with any additional arrays
-     * and/or values.
-     *
-     * @name concat
-     * @memberOf _
-     * @category Chain
-     * @param {...*} [values] The values to concatenate.
-     * @returns {Array} Returns the new concatenated array.
-     * @example
-     *
-     * var array = [1];
-     * var wrapped = _(array).concat(2, [3], [[4]]);
-     *
-     * console.log(wrapped.value());
-     * // => [1, 2, 3, [4]]
-     *
-     * console.log(array);
-     * // => [1]
-     */
-    var wrapperConcat = rest(function(values) {
-      values = baseFlatten(values);
-      return this.thru(function(array) {
-        return arrayConcat(isArray(array) ? array : [Object(array)], values);
-      });
-    });
 
     /**
      * Gets the next value on a wrapped object following the
@@ -13441,6 +13440,7 @@
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;
+    lodash.concat = concat;
     lodash.conforms = conforms;
     lodash.conj = conj;
     lodash.constant = constant;
@@ -13915,7 +13915,6 @@
     // Add chaining functions to the `lodash` wrapper.
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
-    lodash.prototype.concat = wrapperConcat;
     lodash.prototype.next = wrapperNext;
     lodash.prototype.plant = wrapperPlant;
     lodash.prototype.reverse = wrapperReverse;

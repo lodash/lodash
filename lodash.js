@@ -3378,8 +3378,7 @@
      * @returns {Array} Returns the new duplicate free array.
      */
     function baseUniq(array, iteratee, comparator) {
-      var seen,
-          index = -1,
+      var index = -1,
           includes = arrayIncludes,
           length = array.length,
           isCommon = true,
@@ -3391,6 +3390,10 @@
         includes = arrayIncludesWith;
       }
       else if (length >= LARGE_ARRAY_SIZE) {
+        var set = createSet(array);
+        if (set) {
+          return setToArray(set);
+        }
         isCommon = false;
         includes = cacheHas;
         seen = new SetCache;
@@ -4226,6 +4229,17 @@
         return func(number);
       };
     }
+
+    /**
+     * Creates a set of `values`.
+     *
+     * @private
+     * @param {Array} values The values to add to the set.
+     * @returns {Object} Returns the new set.
+     */
+    var createSet = !(Set && new Set([1, 2]).size === 2) ? noop : function(values) {
+      return new Set(values);
+    };
 
     /**
      * Creates a function that either curries or invokes `func` with optional

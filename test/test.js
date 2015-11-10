@@ -12207,6 +12207,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.mean');
+
+  (function() {
+    QUnit.test('should return the mean of an array of numbers', function(assert) {
+      assert.expect(1);
+
+      var array = [4, 2, 8, 6];
+      assert.strictEqual(_.mean(array), 5);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.memoize');
 
   (function() {
@@ -22426,7 +22439,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(277);
+      assert.expect(278);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

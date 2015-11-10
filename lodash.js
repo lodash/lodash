@@ -1521,15 +1521,15 @@
      * `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`, `isObjectLike`,
      * `isPlainObject`, `isRegExp`, `isSafeInteger`, `isString`, `isUndefined`,
      * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`,
-     * `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `min`, `minBy`, `noConflict`,
-     * `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`,
-     * `reduce`, `reduceRight`, `repeat`, `result`, `round`, `runInContext`,
-     * `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
-     * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `subtract`,
-     * `sum`, sumBy`, `template`, `toLower`, `toInteger`, `toLength`, `toNumber`,
-     * `toSafeInteger`, toString`, `toUpper`, `trim`, `trimLeft`, `trimRight`,
-     * `truncate`, `unescape`, `uniqueId`, `upperCase`, `upperFirst`, `value`,
-     * and `words`
+     * `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `mean`, `min`, `minBy`,
+     * `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
+     * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
+     * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
+     * `startsWith`, `subtract`, `sum`, sumBy`, `template`, `toLower`, `toInteger`,
+     * `toLength`, `toNumber`, `toSafeInteger`, toString`, `toUpper`, `trim`,
+     * `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
+     * `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -13336,6 +13336,23 @@
     }
 
     /**
+     * Computes the mean value of an `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array} array The array to iterate over.
+     * @returns {number} Returns the mean.
+     * @example
+     *
+     * _.mean([4, 2, 8, 6]);
+     * // => 5
+     */
+    function mean(array) {
+      return sum(array) / (array ? array.length : 0);
+    }
+
+    /**
      * Gets the minimum value of `array`. If `array` is empty or falsey
      * `undefined` is returned.
      *
@@ -13446,8 +13463,8 @@
      * @returns {number} Returns the sum.
      * @example
      *
-     * _.sum([4, 6]);
-     * // => 10
+     * _.sum([4, 2, 8, 6]);
+     * // => 20
      */
     function sum(array) {
       return (array && array.length)
@@ -13468,17 +13485,14 @@
      * @returns {number} Returns the sum.
      * @example
      *
-     * var objects = [
-     *   { 'n': 4 },
-     *   { 'n': 6 }
-     * ];
+     * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
      *
      * _.sumBy(objects, function(o) { return o.n; });
-     * // => 10
+     * // => 20
      *
      * // using the `_.property` callback shorthand
      * _.sumBy(objects, 'n');
-     * // => 10
+     * // => 20
      */
     function sumBy(array, iteratee) {
       return (array && array.length)
@@ -13747,6 +13761,7 @@
     lodash.lte = lte;
     lodash.max = max;
     lodash.maxBy = maxBy;
+    lodash.mean = mean;
     lodash.min = min;
     lodash.minBy = minBy;
     lodash.noConflict = noConflict;

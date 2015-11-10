@@ -4161,8 +4161,6 @@
           Ctor = createCtorWrapper(func);
 
       function wrapper() {
-        // Avoid `arguments` object use disqualifying optimizations by
-        // converting it to an array before providing it `func`.
         var argsIndex = -1,
             argsLength = arguments.length,
             leftIndex = -1,
@@ -4176,7 +4174,7 @@
           args[leftIndex++] = arguments[++argsIndex];
         }
         var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
-        return fn.apply(isBind ? thisArg : this, args);
+        return apply(fn, isBind ? thisArg : this, args);
       }
       return wrapper;
     }

@@ -4271,12 +4271,7 @@
       if (!isBindKey && typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var length = partials ? partials.length : 0;
-      if (!length) {
-        bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
-        partials = holders = undefined;
-      }
-      length -= holders ? holders.length : 0;
+      var length = (partials ? partials.length : 0) - (holders ? holders.length : 0);
       if (bitmask & PARTIAL_RIGHT_FLAG) {
         var partialsRight = partials,
             holdersRight = holders;
@@ -7965,7 +7960,8 @@
      */
     var bind = rest(function(func, thisArg, partials) {
       var bitmask = BIND_FLAG;
-      if (partials.length) {
+      partials = partials.length ? partials : undefined;
+      if (partials) {
         var holders = replaceHolders(partials, bind.placeholder);
         bitmask |= PARTIAL_FLAG;
       }
@@ -8051,7 +8047,8 @@
      */
     var bindKey = rest(function(object, key, partials) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
-      if (partials.length) {
+      partials = partials.length ? partials : undefined;
+      if (partials) {
         var holders = replaceHolders(partials, bindKey.placeholder);
         bitmask |= PARTIAL_FLAG;
       }

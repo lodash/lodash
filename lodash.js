@@ -13447,6 +13447,24 @@
         : undefined;
     }
 
+    /**
+     * Computes the mean value of an `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array} array The array to iterate over.
+     * @returns {number} Returns the mean.
+     * @example
+     *
+     * _.mean([4, 6]);
+     * // => 5
+     */
+
+    function mean(array) {
+      return sum(array) / size(array);
+    }
+
     /*------------------------------------------------------------------------*/
 
     // Ensure wrappers are instances of `baseLodash`.
@@ -13739,6 +13757,7 @@
     lodash.subtract = subtract;
     lodash.sum = sum;
     lodash.sumBy = sumBy;
+    lodash.mean = mean;
     lodash.template = template;
     lodash.toInteger = toInteger;
     lodash.toLength = toLength;

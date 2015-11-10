@@ -17585,6 +17585,19 @@
     });
   }());
 
+  QUnit.module('lodash.mean');
+
+  (function() {
+    var array = [6, 4];
+
+    QUnit.test('should return the mean of an array of numbers', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.mean(array), 5);
+    });
+
+  }());
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.tail');
@@ -22426,7 +22439,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(277);
+      assert.expect(278);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

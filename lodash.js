@@ -4073,30 +4073,6 @@
       return wrapper;
     }
 
-    function createRecurryWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity, wrapperFunc) {
-      var isCurry = bitmask & CURRY_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG,
-          newArgPos = argPos ? copyArray(argPos) : undefined,
-          newsHolders = isCurry ? holders : undefined,
-          newHoldersRight = isCurry ? undefined : holders,
-          newPartials = isCurry ? partials : undefined,
-          newPartialsRight = isCurry ? undefined : partials;
-
-      bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
-      bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
-
-      if (!isCurryBound) {
-        bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
-      }
-      var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
-          result = wrapperFunc.apply(undefined, newData);
-
-      if (isLaziable(func)) {
-        setData(result, newData);
-      }
-      return result;
-    }
-
     /**
      * Creates a function like `_.conj`.
      *
@@ -4203,6 +4179,30 @@
         return fn.apply(isBind ? thisArg : this, args);
       }
       return wrapper;
+    }
+
+    function createRecurryWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity, wrapperFunc) {
+      var isCurry = bitmask & CURRY_FLAG,
+          isCurryBound = bitmask & CURRY_BOUND_FLAG,
+          newArgPos = argPos ? copyArray(argPos) : undefined,
+          newsHolders = isCurry ? holders : undefined,
+          newHoldersRight = isCurry ? undefined : holders,
+          newPartials = isCurry ? partials : undefined,
+          newPartialsRight = isCurry ? undefined : partials;
+
+      bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
+      bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
+
+      if (!isCurryBound) {
+        bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
+      }
+      var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
+          result = wrapperFunc.apply(undefined, newData);
+
+      if (isLaziable(func)) {
+        setData(result, newData);
+      }
+      return result;
     }
 
     /**

@@ -382,7 +382,7 @@
    * @returns {*} Returns the result of `func`.
    */
   function apply(func, thisArg, args) {
-    switch(args.length) {
+    switch (args.length) {
       case 0: return func.call(thisArg);
       case 1: return func.call(thisArg, args[0]);
       case 2: return func.call(thisArg, args[0], args[1]);
@@ -4220,7 +4220,7 @@
           newPartials = isCurry ? partials : undefined,
           newPartialsRight = isCurry ? undefined : partials;
 
-      arity= arity == undefined ? arity : nativeMax(arity, 0);
+      arity = arity == undefined ? arity : nativeMax(arity, 0);
       bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
       bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
 

@@ -11857,6 +11857,62 @@
     }
 
     /**
+     * Converts `any` to a boolean. If a boolean is not able to be determined, it
+     * returns the string `"NaB"`. This is unfortunate being that there is no js equivalent
+     * to `NaN` for booleans.
+     *
+     * @static
+     * @memberOf _
+     * @category Any
+     * @param {any} any The variable to convert.
+     * @param {array} truthy Array or string to add to truthy values.
+     * @param {array} falsey Array or string to add to falsey values.
+     * @returns {boolean} Returns the fitting boolean or string "NaB".
+     * @example
+     *
+     * _.parseBool('yes');
+     * // => true
+     *
+     * _.parseBool('off');
+     * // => false
+     *
+     * _.parseBool('foo');
+     * // => 'NaB'
+     *
+     * _.parseBool('foo', ['foo']);
+     * // => 'true'
+     *
+     * _.parseBool('bar', 'foo', 'bar');
+     * // => 'false'
+     */
+    function parseBool(any, truthy, falsey) {
+      var truthyArr = ['on', 't', 'true', 'up', 'y', 'yes'].concat(truthy);
+      var falseyArr = ['off', 'f', 'false', 'down', 'n', 'no'].concat(falsey);
+      switch(typeof any) {
+        case 'boolean':
+          return any;
+        case 'undefined':
+          return false;
+        case 'function':
+          return parseBool(any());
+        case 'array':
+          return !!any.length;
+        case 'object':
+          return any !== null && !!Object.keys(any).length;
+        case 'number':
+          return any > 0;
+        case 'string':
+          if(truthyArr.indexOf(any) !== -1) {
+            return true;
+          }
+          if(falseyArr.indexOf(any) !== -1) {
+            return false;
+          }
+      }
+      return 'NaB';
+    }
+
+    /**
      * Converts `string` to an integer of the specified radix. If `radix` is
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
@@ -13676,6 +13732,7 @@
     lodash.eachRight = forEachRight;
     lodash.extend = assignIn;
     lodash.extendWith = assignInWith;
+    lodash.parseBoolean = parseBool;
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);
@@ -13770,6 +13827,7 @@
     lodash.pad = pad;
     lodash.padLeft = padLeft;
     lodash.padRight = padRight;
+    lodash.parseBool = parseBool;
     lodash.parseInt = parseInt;
     lodash.random = random;
     lodash.reduce = reduce;

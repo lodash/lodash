@@ -3835,20 +3835,22 @@
     }
 
     /**
-     * Creates a function that wraps `func` and invokes it with the `this`
+     * Creates a function that wraps `func` and invokes it with the optional `this`
      * binding of `thisArg`.
      *
      * @private
-     * @param {Function} func The function to bind.
+     * @param {Function} func The function to wrap.
+     * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
      * @param {*} [thisArg] The `this` binding of `func`.
-     * @returns {Function} Returns the new bound function.
+     * @returns {Function} Returns the new wrapped function.
      */
-    function createBindWrapper(func, thisArg) {
-      var Ctor = createCtorWrapper(func);
+    function createBaseWrapper(func, bitmask, thisArg) {
+      var isBind = bitmask & BIND_FLAG,
+          Ctor = createCtorWrapper(func);
 
       function wrapper() {
         var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
-        return fn.apply(thisArg, arguments);
+        return fn.apply(isBind ? thisArg : this, arguments);
       }
       return wrapper;
     }
@@ -3918,28 +3920,36 @@
       };
     }
 
+    /**
+     * Creates a function that wraps `func` to enable currying.
+     *
+     * @private
+     * @param {Function} func The function to wrap.
+     * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
+     * @param {number} arity The arity of `func`.
+     * @returns {Function} Returns the new wrapped function.
+     */
     function createCurryWrapper(func, bitmask, arity) {
       var Ctor = createCtorWrapper(func);
 
       function wrapper() {
         var length = arguments.length,
             index = length,
-            args = Array(length);
+            args = Array(length),
+            fn = (this && this !== root && this instanceof wrapper) ? Ctor : func,
+            placeholder = wrapper.placeholder;
 
         while (index--) {
           args[index] = arguments[index];
         }
-        var placeholder = wrapper.placeholder,
-            argsHolders = replaceHolders(args, placeholder);
+        var holders = (length < 3 && args[0] !== placeholder && args[length - 1] !== placeholder)
+          ? []
+          : replaceHolders(args, placeholder);
 
-        length -= argsHolders.length;
-        if (length < arity) {
-          var result = createRecurryWrapper(func, bitmask, undefined, args, argsHolders, undefined, undefined, nativeMax(arity - length, 0), createHybridWrapper);
-          result.placeholder = placeholder;
-          return result;
-        }
-        var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
-        return apply(fn, this, args);
+        length -= holders.length;
+        return length < arity
+          ? createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, undefined, args, holders, undefined, undefined, arity - length)
+          : apply(fn, this, args);
       }
       return wrapper;
     }
@@ -4004,10 +4014,10 @@
 
     /**
      * Creates a function that wraps `func` and invokes it with optional `this`
-     * binding of, partial application, and currying.
+     * binding of `thisArg`, partial application, and currying.
      *
      * @private
-     * @param {Function|string} func The function or method name to reference.
+     * @param {Function|string} func The function or method name to wrap.
      * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to prepend to those provided to the new function.
@@ -4024,7 +4034,6 @@
           isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
           isCurry = bitmask & CURRY_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG,
           isCurryRight = bitmask & CURRY_RIGHT_FLAG,
           isFlip = bitmask & FLIP_FLAG,
           Ctor = isBindKey ? undefined : createCtorWrapper(func);
@@ -4049,9 +4058,7 @@
 
           length -= argsHolders.length;
           if (length < arity) {
-            var result = createRecurryWrapper(func, bitmask, thisArg, args, argsHolders, argPos, ary, nativeMax(arity - length, 0), createHybridWrapper);
-            result.placeholder = placeholder;
-            return result;
+            return createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, thisArg, args, argsHolders, argPos, ary, arity - length);
           }
         }
         var thisBinding = isBind ? thisArg : this,
@@ -4150,11 +4157,11 @@
      * the wrapper.
      *
      * @private
-     * @param {Function} func The function to partially apply arguments to.
+     * @param {Function} func The function to wrap.
      * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
      * @param {*} thisArg The `this` binding of `func`.
      * @param {Array} partials The arguments to prepend to those provided to the new function.
-     * @returns {Function} Returns the new bound function.
+     * @returns {Function} Returns the new wrapped function.
      */
     function createPartialWrapper(func, bitmask, thisArg, partials) {
       var isBind = bitmask & BIND_FLAG,
@@ -4179,27 +4186,44 @@
       return wrapper;
     }
 
-    function createRecurryWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity, wrapperFunc) {
+    /**
+     * Creates a function that wraps `func` to continue currying.
+     *
+     * @private
+     * @param {Function} func The function to wrap.
+     * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
+     * @param {Function} wrapper The function to wrap `func`.
+     * @param {*} placeholder The placeholder to replace.
+     * @param {*} [thisArg] The `this` binding of `func`.
+     * @param {Array} [partials] The arguments to prepend to those provided to the new function.
+     * @param {Array} [holders] The `partials` placeholder indexes.
+     * @param {Array} [argPos] The argument positions of the new function.
+     * @param {number} [ary] The arity cap of `func`.
+     * @param {number} [arity] The arity of `func`.
+     * @returns {Function} Returns the new wrapped function.
+     */
+    function createRecurryWrapper(func, bitmask, wrapper, placeholder, thisArg, partials, holders, argPos, ary, arity) {
       var isCurry = bitmask & CURRY_FLAG,
-          isCurryBound = bitmask & CURRY_BOUND_FLAG,
           newArgPos = argPos ? copyArray(argPos) : undefined,
           newsHolders = isCurry ? holders : undefined,
           newHoldersRight = isCurry ? undefined : holders,
           newPartials = isCurry ? partials : undefined,
           newPartialsRight = isCurry ? undefined : partials;
 
+      arity= arity == undefined ? arity : nativeMax(arity, 0);
       bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
       bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
 
-      if (!isCurryBound) {
+      if (!(bitmask & CURRY_BOUND_FLAG)) {
         bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
       }
       var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
-          result = wrapperFunc.apply(undefined, newData);
+          result = wrapper.apply(undefined, newData);
 
       if (isLaziable(func)) {
         setData(result, newData);
       }
+      result.placeholder = placeholder;
       return result;
     }
 
@@ -4244,7 +4268,7 @@
      * `this` binding and partially applied arguments.
      *
      * @private
-     * @param {Function|string} func The function or method name to reference.
+     * @param {Function|string} func The function or method name to wrap.
      * @param {number} bitmask The bitmask of wrapper flags.
      *  The bitmask may be composed of the following flags:
      *     1 - `_.bind`
@@ -4269,37 +4293,45 @@
       if (!isBindKey && typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      var length = (partials ? partials.length : 0) - (holders ? holders.length : 0);
+      var length = partials ? partials.length : 0;
+      if (!length) {
+        bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
+        partials = holders = undefined;
+      }
+      ary = ary === undefined ? ary : nativeMax(toInteger(ary), 0);
+      arity = arity === undefined ? arity : toInteger(arity);
+      length -= holders ? holders.length : 0;
+
       if (bitmask & PARTIAL_RIGHT_FLAG) {
         var partialsRight = partials,
             holdersRight = holders;
 
         partials = holders = undefined;
       }
-      ary = ary == null ? ary : nativeMax(toInteger(ary), 0);
-      arity = arity == null ? arity : toInteger(arity);
-
       var data = isBindKey ? undefined : getData(func),
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 
       if (data) {
         mergeData(newData, data);
-        func = newData[0];
-        bitmask = newData[1];
-        thisArg = newData[2];
-        holders = newData[4];
-        arity = newData[9];
       }
-      arity = newData[9] = arity == null
+      func = newData[0];
+      bitmask = newData[1];
+      thisArg = newData[2];
+      partials = newData[3];
+      holders = newData[4];
+      arity = newData[9] = newData[9] == null
         ? (isBindKey ? 0 : func.length)
-        : nativeMax(arity - length, 0);
+        : nativeMax(newData[9] - length, 0);
 
-      if (bitmask == BIND_FLAG) {
-        var result = createBindWrapper(func, thisArg);
+      if (!arity && bitmask & (CURRY_FLAG | CURRY_RIGHT_FLAG)) {
+        bitmask &= ~(CURRY_FLAG | CURRY_RIGHT_FLAG);
+      }
+      if (!bitmask || bitmask == BIND_FLAG) {
+        var result = createBaseWrapper(func, bitmask, thisArg);
       } else if (bitmask == CURRY_FLAG || bitmask == CURRY_RIGHT_FLAG) {
         result = createCurryWrapper(func, bitmask, arity);
       } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
-        result = createPartialWrapper.apply(undefined, newData);
+        result = createPartialWrapper(func, bitmask, thisArg, partials);
       } else {
         result = createHybridWrapper.apply(undefined, newData);
       }
@@ -7958,8 +7990,7 @@
      */
     var bind = rest(function(func, thisArg, partials) {
       var bitmask = BIND_FLAG;
-      partials = partials.length ? partials : undefined;
-      if (partials) {
+      if (partials.length) {
         var holders = replaceHolders(partials, bind.placeholder);
         bitmask |= PARTIAL_FLAG;
       }
@@ -8045,8 +8076,7 @@
      */
     var bindKey = rest(function(object, key, partials) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
-      partials = partials.length ? partials : undefined;
-      if (partials) {
+      if (partials.length) {
         var holders = replaceHolders(partials, bindKey.placeholder);
         bitmask |= PARTIAL_FLAG;
       }

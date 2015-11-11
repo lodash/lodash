@@ -14035,6 +14035,99 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.parseBool');
+
+  (function() {
+    QUnit.test('Should accept a `boolean` argument', function(assert) {
+      assert.expect(2);
+
+      var test1 = true;
+      var test2 = 'foo' === 'bar';
+
+      assert.ok(_.parseBool(test1));
+      assert.ok(!_.parseBool(test2));
+    });
+    QUnit.test('Should accept a `undefined` argument', function(assert) {
+      assert.expect(2);
+
+      var test1 = undefined;
+
+      assert.ok(!_.parseBool(test1));
+      assert.equal(_.parseBool('unknown'), 'NaB');
+    });
+    QUnit.test('Should accept a `function` argument', function(assert) {
+      assert.expect(2);
+
+      var test1 = function() {
+        return 5 > 3;
+      };
+      var test2 = function() {
+        return 'foo' === 'bar';
+      };
+
+      assert.ok(_.parseBool(test1));
+      assert.ok(!_.parseBool(test2));
+    });
+    QUnit.test('Should accept a `array` argument', function(assert) {
+      assert.expect(2);
+
+      var test1 = ['foo'];
+      var test2 = [];
+
+      assert.ok(_.parseBool(test1));
+      assert.ok(!_.parseBool(test2));
+    });
+    QUnit.test('Should accept a `object` argument', function(assert) {
+      assert.expect(3);
+
+      var test1 = {foo: 'bar'};
+      var test2 = {};
+      var test3 = null;
+
+      assert.ok(_.parseBool(test1));
+      assert.ok(!_.parseBool(test2));
+      assert.ok(!_.parseBool(test3));
+    });
+    QUnit.test('Should accept a `number` argument', function(assert) {
+      assert.expect(4);
+
+      var test1 = 25;
+      var test2 = -50;
+      var test3 = 0;
+      var test4 = NaN;
+
+      assert.ok(_.parseBool(test1));
+      assert.ok(!_.parseBool(test2));
+      assert.ok(!_.parseBool(test3));
+      assert.ok(!_.parseBool(test4));
+    });
+    QUnit.test('Should accept a `string` argument', function(assert) {
+      assert.expect(8);
+
+      assert.ok(_.parseBool('yes'));
+      assert.ok(!_.parseBool('no'));
+
+      assert.ok(_.parseBool('true'));
+      assert.ok(!_.parseBool('false'));
+
+      assert.ok(_.parseBool('up'));
+      assert.ok(!_.parseBool('down'));
+
+      assert.ok(_.parseBool('on'));
+      assert.ok(!_.parseBool('off'));
+    });
+    QUnit.test('Should accept a `string` 2nd and 3rd argument', function(assert) {
+      assert.expect(3);
+
+      assert.ok(_.parseBool('foo', 'foo'));
+      assert.ok(!_.parseBool('bar', 'foo', 'bar'));
+
+      assert.ok(_.parseBool('baz', ['foo', 'baz']));
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.parseInt');
 
   (function() {
@@ -22439,7 +22532,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(278);
+      assert.expect(280);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

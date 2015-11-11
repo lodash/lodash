@@ -1327,7 +1327,7 @@
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Create a new pristine `lodash` function using the given `context` object.
+   * Create a new pristine `lodash` function using the `context` object.
    *
    * @static
    * @memberOf _
@@ -3845,7 +3845,7 @@
     }
 
     /**
-     * Creates a function that wraps `func` and invokes it with the optional `this`
+     * Creates a function that wraps `func` to invoke it with the optional `this`
      * binding of `thisArg`.
      *
      * @private
@@ -4023,7 +4023,7 @@
     }
 
     /**
-     * Creates a function that wraps `func` and invokes it with optional `this`
+     * Creates a function that wraps `func` to invoke it with optional `this`
      * binding of `thisArg`, partial application, and currying.
      *
      * @private
@@ -4136,8 +4136,8 @@
     }
 
     /**
-     * Creates the padding for `string` based on the given `length`. The `chars`
-     * string is truncated if the number of characters exceeds `length`.
+     * Creates the padding for `string` based on `length`. The `chars` string
+     * is truncated if the number of characters exceeds `length`.
      *
      * @private
      * @param {string} string The string to create padding for.
@@ -4162,7 +4162,7 @@
     }
 
     /**
-     * Creates a function that wraps `func` and invokes it with the optional `this`
+     * Creates a function that wraps `func` to invoke it with the optional `this`
      * binding of `thisArg` and the `partials` prepended to those provided to
      * the wrapper.
      *
@@ -10325,9 +10325,8 @@
     });
 
     /**
-     * Creates an object that inherits from the given `prototype` object. If a
-     * `properties` object is provided its own enumerable properties are assigned
-     * to the created object.
+     * Creates an object that inherits from the `prototype` object. If a `properties`
+     * object is provided its own enumerable properties are assigned to the created object.
      *
      * @static
      * @memberOf _

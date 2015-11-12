@@ -1503,7 +1503,7 @@
      * `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`,
      * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`,
      * `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`,
-     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`,
+     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `toArray`,
      * `toPath`, `toPlainObject`, `transform`, `unary`, `union`, `unionBy`,
      * `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`, `unshift`, `unzip`,
      * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`,
@@ -1526,10 +1526,10 @@
      * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
      * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
      * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-     * `startsWith`, `subtract`, `sum`, sumBy`, `template`, `toLower`, `toInteger`,
-     * `toLength`, `toNumber`, `toSafeInteger`, toString`, `toUpper`, `trim`,
-     * `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
-     * `upperFirst`, `value`, and `words`
+     * `startsWith`, `subtract`, `sum`, sumBy`, `template`, `times`, `toLower`,
+     * `toInteger`, `toLength`, `toNumber`, `toSafeInteger`, toString`, `toUpper`,
+     * `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`,
+     * `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
      * @constructor
@@ -13644,7 +13644,6 @@
     lodash.tap = tap;
     lodash.throttle = throttle;
     lodash.thru = thru;
-    lodash.times = times;
     lodash.toArray = toArray;
     lodash.toPath = toPath;
     lodash.toPlainObject = toPlainObject;
@@ -13794,6 +13793,7 @@
     lodash.sum = sum;
     lodash.sumBy = sumBy;
     lodash.template = template;
+    lodash.times = times;
     lodash.toInteger = toInteger;
     lodash.toLength = toLength;
     lodash.toLower = toLower;

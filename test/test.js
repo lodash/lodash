@@ -19287,7 +19287,7 @@
     QUnit.test('should return an array of the results of each `iteratee` execution', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.times(3, function(n) { return n * 2; }), [0, 2, 4]);
+      assert.deepEqual(_.times(3, doubled), [0, 2, 4]);
     });
 
     QUnit.test('should return an empty array for falsey and negative `n` arguments', function(assert) {
@@ -19303,16 +19303,25 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return a wrapped value when chaining', function(assert) {
-      assert.expect(2);
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
 
       if (!isNpm) {
-        var wrapped = _(3).times();
-        assert.ok(wrapped instanceof _);
-        assert.deepEqual(wrapped.value(), [0, 1, 2]);
+        assert.deepEqual(_(3).times(), [0, 1, 2]);
       }
       else {
-        skipTest(assert, 2);
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_(3).chain().times() instanceof _);
+      }
+      else {
+        skipTest(assert);
       }
     });
   }());

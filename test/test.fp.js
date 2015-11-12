@@ -555,6 +555,18 @@ QUnit.module('fp.uniqBy');
 
 /*----------------------------------------------------------------------------*/
 
+QUnit.module('fp.zip');
+
+(function() {
+  QUnit.test('should zip together two arrays', function(assert) {
+    assert.expect(1);
+
+    assert.deepEqual(fp.zip([1, 2], [3, 4]), [[1, 3], [2, 4]]);
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
 QUnit.module('fp.zipObject');
 
 (function() {

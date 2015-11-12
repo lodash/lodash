@@ -13238,7 +13238,7 @@
     }
 
     /**
-     * Calculates `number` rounded up to `precision`.
+     * Computes `number` rounded up to `precision`.
      *
      * @static
      * @memberOf _
@@ -13260,7 +13260,7 @@
     var ceil = createRound('ceil');
 
     /**
-     * Calculates `number` rounded down to `precision`.
+     * Computes `number` rounded down to `precision`.
      *
      * @static
      * @memberOf _
@@ -13282,7 +13282,7 @@
     var floor = createRound('floor');
 
     /**
-     * Gets the maximum value of `array`. If `array` is empty or falsey
+     * Computes the maximum value of `array`. If `array` is empty or falsey
      * `undefined` is returned.
      *
      * @static
@@ -13336,7 +13336,7 @@
     }
 
     /**
-     * Computes the mean value of an `array`.
+     * Computes the mean of the values in `array`.
      *
      * @static
      * @memberOf _
@@ -13353,7 +13353,7 @@
     }
 
     /**
-     * Gets the minimum value of `array`. If `array` is empty or falsey
+     * Computes the minimum value of `array`. If `array` is empty or falsey
      * `undefined` is returned.
      *
      * @static
@@ -13407,7 +13407,7 @@
     }
 
     /**
-     * Calculates `number` rounded to `precision`.
+     * Computes `number` rounded to `precision`.
      *
      * @static
      * @memberOf _
@@ -13454,7 +13454,7 @@
     }
 
     /**
-     * Gets the sum of the values in `array`.
+     * Computes the sum of the values in `array`.
      *
      * @static
      * @memberOf _

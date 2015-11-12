@@ -4202,7 +4202,7 @@
      * @private
      * @param {Function} func The function to wrap.
      * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
-     * @param {Function} wrapper The function to wrap `func`.
+     * @param {Function} wrapFunc The function to create the `func` wrapper.
      * @param {*} placeholder The placeholder to replace.
      * @param {*} [thisArg] The `this` binding of `func`.
      * @param {Array} [partials] The arguments to prepend to those provided to the new function.
@@ -4212,7 +4212,7 @@
      * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
      */
-    function createRecurryWrapper(func, bitmask, wrapper, placeholder, thisArg, partials, holders, argPos, ary, arity) {
+    function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
       var isCurry = bitmask & CURRY_FLAG,
           newArgPos = argPos ? copyArray(argPos) : undefined,
           newsHolders = isCurry ? holders : undefined,
@@ -4228,7 +4228,7 @@
         bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
       }
       var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
-          result = wrapper.apply(undefined, newData);
+          result = wrapFunc.apply(undefined, newData);
 
       if (isLaziable(func)) {
         setData(result, newData);

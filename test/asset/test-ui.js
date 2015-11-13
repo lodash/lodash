@@ -128,9 +128,9 @@
   ui.buildPath = (function() {
     var result;
     switch (build) {
-      case 'lodash':            result = 'lodash.min.js'; break;
-      case 'lodash-core-dev':   result = 'lodash.core.js'; break;
-      case 'lodash-core':       result = 'lodash.core.min.js'; break;
+      case 'lodash':            result = 'dist/lodash.min.js'; break;
+      case 'lodash-core-dev':   result = 'dist/lodash.core.js'; break;
+      case 'lodash-core':       result = 'dist/lodash.core.min.js'; break;
       case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
       case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case null:                build  = 'lodash-dev';

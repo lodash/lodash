@@ -1154,7 +1154,8 @@
 
   (function() {
     var args = arguments,
-        array = ['a', 'b', 'c'];
+        array = ['a', 'b', 'c'],
+        object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
 
     QUnit.test('should return the elements corresponding to the specified keys', function(assert) {
       assert.expect(1);
@@ -1232,8 +1233,8 @@
     QUnit.test('should work with an object for `object`', function(assert) {
       assert.expect(1);
 
-      var actual = _.at({ 'a': 1, 'b': 2, 'c': 3 }, ['c', 'a']);
-      assert.deepEqual(actual, [3, 1]);
+      var actual = _.at(object, ['a[0].b.c', 'a[1]']);
+      assert.deepEqual(actual, [3, 4]);
     });
 
     QUnit.test('should pluck inherited property values', function(assert) {
@@ -1244,6 +1245,58 @@
 
       var actual = _.at(new Foo, 'b');
       assert.deepEqual(actual, [2]);
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(4);
+
+      if (!isNpm) {
+        var largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
+            smallArray = array;
+
+        lodashStable.each([[2], [2, 1]], function(paths) {
+          lodashStable.times(2, function(index) {
+            var array = index ? largeArray : smallArray,
+                wrapped = _(array).map(identity).at(paths);
+
+            assert.deepEqual(wrapped.value(), _.at(_.map(array, identity), paths));
+          });
+        });
+      }
+      else {
+        skipTest(assert, 4);
+      }
+    });
+
+    QUnit.test('should support shortcut fusion', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var count = 0,
+            array = lodashStable.range(LARGE_ARRAY_SIZE),
+            iteratee = function(value) { count++; return square(value); },
+            actual = _(array).map(iteratee).at(LARGE_ARRAY_SIZE - 1).value();
+
+        assert.strictEqual(count, 1);
+        assert.deepEqual(actual, [square(LARGE_ARRAY_SIZE -1)]);
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
+
+    QUnit.test('work with an object for `object` when chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var paths = ['a[0].b.c', 'a[1]'],
+            wrapped = _(object).map(identity).at(paths);
+
+        assert.deepEqual(wrapped.value(), _.at(_.map(object, identity), paths));
+      }
+      else {
+        skipTest(assert);
+      }
     });
   }(1, 2, 3));
 

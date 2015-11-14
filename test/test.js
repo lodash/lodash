@@ -2460,7 +2460,7 @@
       assert.deepEqual(_.compact(falsey.concat(array)), array);
     });
 
-    QUnit.test('should work when in between lazy operators', function(assert) {
+    QUnit.test('should work when in-between lazy operators', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {

@@ -4764,20 +4764,18 @@
     }
 
     /**
-     * Initializes an array of property names based on `object`. If `object` is
-     * an array, `arguments` object, or `string` its index keys are returned,
-     * otherwise an empty array is returned.
+     * Creates an array of index keys for `object` values of arrays,
+     * `arguments` objects, and strings, otherwise `null` is returned.
      *
      * @private
      * @param {Object} object The object to query.
-     * @returns {Array} Returns the initialized array of property names.
+     * @returns {Array|null} Returns index keys, else `null`.
      */
-    function initKeys(object) {
-      var length = object ? object.length : 0;
-      length = (length && isLength(length) &&
-        (isArray(object) || isString(object) || isArguments(object)) && length) || 0;
-
-      return baseTimes(length, String);
+    function indexKeys(object) {
+      var length = object ? object.length : undefined;
+      return (isLength(length) && (isArray(object) || isString(object) || isArguments(object)))
+        ? baseTimes(length, String)
+        : null;
     }
 
     /**
@@ -10808,13 +10806,14 @@
       if (!(isProto || isArrayLike(object))) {
         return baseKeys(object);
       }
-      var result = initKeys(object),
-          length = result.length,
-          skipIndexes = !!length;
+      var indexes = indexKeys(object),
+          skipIndexes = !!indexes,
+          result = indexes || [],
+          length = result.length;
 
       for (var key in object) {
         if (baseHas(object, key) &&
-            !(skipIndexes && isIndex(key, length)) &&
+            !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
             !(isProto && key == 'constructor')) {
           result.push(key);
         }
@@ -10849,13 +10848,14 @@
           isProto = isPrototype(object),
           props = baseKeysIn(object),
           propsLength = props.length,
-          result = initKeys(object),
-          length = result.length,
-          skipIndexes = !!length;
+          indexes = indexKeys(object),
+          skipIndexes = !!indexes,
+          result = indexes || [],
+          length = result.length;
 
       while (++index < propsLength) {
         var key = props[index];
-        if (!(skipIndexes && isIndex(key, length)) &&
+        if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
             !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
         }

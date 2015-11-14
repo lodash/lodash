@@ -10678,7 +10678,8 @@
   QUnit.module('keys methods');
 
   lodashStable.each(['keys', 'keysIn'], function(methodName) {
-    var args = arguments,
+    var args = (function() { return arguments; }(1, 2, 3)),
+        strictArgs = (function() { 'use strict'; return arguments; }(1, 2, 3)),
         func = _[methodName],
         isKeys = methodName == 'keys';
 
@@ -10740,25 +10741,43 @@
     QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(func(args).sort(), ['0', '1', '2']);
+      var values = [args, strictArgs],
+          expected = lodashStable.map(values, lodashStable.constant(['0', '1', '2'])),
+          actual = lodashStable.map(values, func);
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', function(assert) {
       assert.expect(1);
 
-      args.a = 1;
-      assert.deepEqual(func(args).sort(), ['0', '1', '2', 'a']);
-      delete args.a;
+      var values = [args, strictArgs],
+          expected = lodashStable.map(values, lodashStable.constant(['0', '1', '2', 'a']));
+
+      var actual = lodashStable.map(values, function(value) {
+        value.a = 1;
+        var result = func(value).sort();
+        delete value.a;
+        return result;
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', function(assert) {
       assert.expect(1);
 
-      var expected = isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a'];
+      var values = [args, strictArgs],
+          expected = lodashStable.map(values, lodashStable.constant(isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a']));
 
-      objectProto.a = 1;
-      assert.deepEqual(func(args).sort(), expected);
-      delete objectProto.a;
+      var actual = lodashStable.map(values, function(value) {
+        objectProto.a = 1;
+        var result = func(value).sort();
+        delete objectProto.a;
+        return result;
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should work with string objects', function(assert) {

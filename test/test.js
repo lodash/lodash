@@ -1269,7 +1269,7 @@
     });
 
     QUnit.test('should support shortcut fusion', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       if (!isNpm) {
         var array = lodashStable.range(LARGE_ARRAY_SIZE),
@@ -1277,16 +1277,16 @@
             iteratee = function(value) { count++; return square(value); },
             lastIndex = LARGE_ARRAY_SIZE - 1;
 
-        _.each([lastIndex, lastIndex + ''], function(index) {
+        _.each([lastIndex, lastIndex + '', []], function(n, index) {
           count = 0;
-          var actual = _(array).map(iteratee).at(index).value();
+          var actual = _(array).map(iteratee).at(n).value();
 
-          assert.strictEqual(count, 1);
-          assert.deepEqual(actual, [square(lastIndex)]);
+          assert.strictEqual(count, index == 2 ? 0 : 1);
+          assert.deepEqual(actual, index == 2 ? [] : [square(lastIndex)]);
         });
       }
       else {
-        skipTest(assert, 4);
+        skipTest(assert, 6);
       }
     });
 

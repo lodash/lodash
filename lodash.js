@@ -43,7 +43,8 @@
 
   /** Used to indicate the type of lazy iteratees. */
   var LAZY_FILTER_FLAG = 1,
-      LAZY_MAP_FLAG = 2;
+      LAZY_MAP_FLAG = 2,
+      LAZY_WHILE_FLAG = 3;
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -6838,6 +6839,45 @@
     }
 
     /**
+     * Creates a wrapped array of values corresponding to `paths` of the wrapped object.
+     *
+     * @name at
+     * @memberOf _
+     * @category Chain
+     * @param {...(string|string[])} [paths] The property paths of elements to pick,
+     *  specified individually or in arrays.
+     * @returns {Object} Returns the new `lodash` wrapper instance.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
+     *
+     * _(object).at(['a[0].b.c', 'a[1]']);
+     * // => [3, 4]
+     *
+     * _(['a', 'b', 'c']).at(0, 2);
+     * // => ['a', 'c']
+     */
+    var wrapperAt = rest(function(paths) {
+      paths = baseFlatten(paths);
+      var length = paths.length,
+          start = length ? paths[0] : 0,
+          value = this.__wrapped__,
+          interceptor = function(object) { return baseAt(object, paths); };
+
+      if (length > 1 || this.__actions__.length || !(value instanceof LazyWrapper) || !isIndex(start)) {
+        return this.thru(interceptor);
+      }
+      value = value.slice(start, +start + (length ? 1 : 0));
+      value.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+      return new LodashWrapper(value, this.__chain__).thru(function(object) {
+        if (length && !object.length) {
+          object.push(undefined);
+        }
+        return object;
+      });
+    });
+
+    /**
      * Enables explicit method chaining on the wrapper object.
      *
      * @name chain
@@ -7000,7 +7040,7 @@
      * @name reverse
      * @memberOf _
      * @category Chain
-     * @returns {Object} Returns the new reversed `lodash` wrapper instance.
+     * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *
      * var array = [1, 2, 3];
@@ -13865,7 +13905,7 @@
     // Add `LazyWrapper` methods that accept an `iteratee` value.
     arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
       var type = index + 1,
-          isFilter = type != LAZY_MAP_FLAG;
+          isFilter = type == LAZY_FILTER_FLAG || type == LAZY_WHILE_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee) {
         var result = this.clone();
@@ -13891,16 +13931,6 @@
       LazyWrapper.prototype[methodName] = function() {
         return this.__filtered__ ? new LazyWrapper(this) : this[dropName](1);
       };
-    });
-
-    LazyWrapper.prototype.at = rest(function(paths) {
-      paths = baseFlatten(paths);
-      var length = paths.length,
-          start = length ? paths[0] : 0;
-
-      return (length < 2 && isIndex(start))
-        ? this.slice(start, length ? (+start + 1) : start)
-        : new LazyWrapper(this);
     });
 
     LazyWrapper.prototype.compact = function() {
@@ -13953,15 +13983,15 @@
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
           isTaker = /^(?:head|last)$/.test(methodName),
-          retUnwrapped = isTaker || /^find/.test(methodName),
-          lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
+          lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
+          retUnwrapped = isTaker || /^find/.test(methodName);
 
       if (!lodashFunc) {
         return;
       }
       lodash.prototype[methodName] = function() {
-        var args = isTaker ? [1] : arguments,
-            value = this.__wrapped__,
+        var value = this.__wrapped__,
+            args = isTaker ? [1] : arguments,
             isLazy = value instanceof LazyWrapper,
             iteratee = args[0],
             useLazy = isLazy || isArray(value);
@@ -13975,8 +14005,7 @@
           // Avoid lazy use if the iteratee has a "length" value other than `1`.
           isLazy = useLazy = false;
         }
-        var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
-            chainAll = this.__chain__,
+        var chainAll = this.__chain__,
             isHybrid = !!this.__actions__.length,
             isUnwrapped = retUnwrapped && !chainAll,
             onlyLazy = isLazy && !isHybrid;
@@ -13984,7 +14013,7 @@
         if (!retUnwrapped && useLazy) {
           value = onlyLazy ? value : new LazyWrapper(this);
           var result = func.apply(value, args);
-          result.__actions__.push(action);
+          result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
           return new LodashWrapper(result, chainAll);
         }
         if (isUnwrapped && onlyLazy) {
@@ -14031,6 +14060,7 @@
     LazyWrapper.prototype.value = lazyValue;
 
     // Add chaining functions to the `lodash` wrapper.
+    lodash.prototype.at = wrapperAt;
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
     lodash.prototype.next = wrapperNext;

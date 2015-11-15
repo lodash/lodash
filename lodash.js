@@ -13896,7 +13896,7 @@
     LazyWrapper.prototype.at = rest(function(paths) {
       paths = baseFlatten(paths);
       return (paths.length == 1 && isIndex(paths[0]))
-        ? this.slice(paths[0], paths[0] + 1)
+        ? this.slice(paths[0], +paths[0] + 1)
         : new LazyWrapper(this);
     });
 

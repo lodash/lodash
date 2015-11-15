@@ -1248,13 +1248,13 @@
     });
 
     QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       if (!isNpm) {
         var largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
             smallArray = array;
 
-        lodashStable.each([[2], [2, 1]], function(paths) {
+        lodashStable.each([[2], ['2'], [2, 1]], function(paths) {
           lodashStable.times(2, function(index) {
             var array = index ? largeArray : smallArray,
                 wrapped = _(array).map(identity).at(paths);
@@ -1264,24 +1264,29 @@
         });
       }
       else {
-        skipTest(assert, 4);
+        skipTest(assert, 6);
       }
     });
 
     QUnit.test('should support shortcut fusion', function(assert) {
-      assert.expect(2);
+      assert.expect(4);
 
       if (!isNpm) {
-        var count = 0,
-            array = lodashStable.range(LARGE_ARRAY_SIZE),
+        var array = lodashStable.range(LARGE_ARRAY_SIZE),
+            count = 0,
             iteratee = function(value) { count++; return square(value); },
-            actual = _(array).map(iteratee).at(LARGE_ARRAY_SIZE - 1).value();
+            lastIndex = LARGE_ARRAY_SIZE - 1;
 
-        assert.strictEqual(count, 1);
-        assert.deepEqual(actual, [square(LARGE_ARRAY_SIZE -1)]);
+        _.each([lastIndex, lastIndex + ''], function(index) {
+          count = 0;
+          var actual = _(array).map(iteratee).at(index).value();
+
+          assert.strictEqual(count, 1);
+          assert.deepEqual(actual, [square(lastIndex)]);
+        });
       }
       else {
-        skipTest(assert, 2);
+        skipTest(assert, 4);
       }
     });
 

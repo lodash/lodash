@@ -1422,6 +1422,7 @@
     var nativeCeil = Math.ceil,
         nativeFloor = Math.floor,
         nativeIsFinite = context.isFinite,
+        nativeJoin = arrayProto.join,
         nativeKeys = Object.keys,
         nativeMax = Math.max,
         nativeMin = Math.min,
@@ -5745,6 +5746,24 @@
         ? baseIntersection(mapped, undefined, comparator)
         : [];
     });
+
+    /**
+     * Converts all elements in `array` into a string separated by `separator`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to convert.
+     * @param {string} [separator=','] The element separator.
+     * @returns {string} Returns the joined string.
+     * @example
+     *
+     * _.join(['a', 'b', 'c'], '~');
+     * // => 'a~b~c'
+     */
+    function join(array, separator) {
+      return array ? nativeJoin.call(array, separator) : '';
+    }
 
     /**
      * Gets the last element of `array`.
@@ -13791,6 +13810,7 @@
     lodash.isString = isString;
     lodash.isTypedArray = isTypedArray;
     lodash.isUndefined = isUndefined;
+    lodash.join = join;
     lodash.kebabCase = kebabCase;
     lodash.last = last;
     lodash.lastIndexOf = lastIndexOf;
@@ -14025,10 +14045,10 @@
     });
 
     // Add `Array` and `String` methods to `lodash.prototype`.
-    arrayEach(['join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+    arrayEach(['pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
       var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-          retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
+          retUnwrapped = /^(?:pop|replace|shift)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var args = arguments;

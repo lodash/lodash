@@ -22,7 +22,7 @@
     "request": "^2.65.0",
     "requirejs": "~2.1.20",
     "sauce-tunnel": "2.2.3",
-    "uglify-js": "2.6.0",
+    "uglify-js": "2.6.1",
     "webpack": "^1.12.6"
   },
   "scripts": {

@@ -477,9 +477,9 @@
    * `replace` and `split`
    *
    * The wrapper methods that support shortcut fusion are:
-   * `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`, `findLast`,
-   * `head`, `initial`, `last`, `map`, `reject`, `reverse`, `slice`, `tail`,
-   * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
+   * `at`, `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`,
+   * `findLast`, `head`, `initial`, `last`, `map`, `reject`, `reverse`, `slice`,
+   * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`
    *
    * The chainable wrapper methods are:
    * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`,
@@ -830,9 +830,10 @@
     // Assume cyclic values are equal.
     // For more information on detecting circular references see https://es5.github.io/#JO.
     stack || (stack = []);
-    var stacked = result(find(stack, function(entry) {
+    var stacked = find(stack, function(entry) {
       return entry[0] === object;
-    }), 1);
+    });
+    stacked = stacked && stacked[1];
     if (stacked) {
       return stacked == other;
     }
@@ -954,7 +955,7 @@
    */
   function basePick(object, props) {
     object = Object(object);
-    return baseReduce(props, function(result, key) {
+    return reduce(props, function(result, key) {
       if (key in object) {
         result[key] = object[key];
       }
@@ -1046,7 +1047,7 @@
    */
   function baseWrapperValue(value, actions) {
     var result = value;
-    return baseReduce(actions, function(result, action) {
+    return reduce(actions, function(result, action) {
       return action.func.apply(action.thisArg, arrayPush([result], action.args));
     }, result);
   }
@@ -1218,6 +1219,7 @@
       var arrValue = array[index],
           othValue = other[index];
 
+      var result;
       if (result !== undefined) {
         if (result) {
           continue;
@@ -1316,6 +1318,7 @@
       var objValue = object[key],
           othValue = other[key];
 
+      var result;
       // Recursively compare objects (susceptible to call stack limits).
       if (!(result === undefined
             ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
@@ -1353,20 +1356,18 @@
   var getLength = baseProperty('length');
 
   /**
-   * Initializes an array of property names based on `object`. If `object` is
-   * an array, `arguments` object, or `string` its index keys are returned,
-   * otherwise an empty array is returned.
+   * Creates an array of index keys for `object` values of arrays,
+   * `arguments` objects, and strings, otherwise `null` is returned.
    *
    * @private
    * @param {Object} object The object to query.
-   * @returns {Array} Returns the initialized array of property names.
+   * @returns {Array|null} Returns index keys, else `null`.
    */
-  function initKeys(object) {
-    var length = object ? object.length : 0;
-    length = (length && isLength(length) &&
-      (isArray(object) || isString(object) || isArguments(object)) && length) || 0;
-
-    return baseTimes(length, String);
+  function indexKeys(object) {
+    var length = object ? object.length : undefined;
+    return (isLength(length) && (isArray(object) || isString(object) || isArguments(object)))
+      ? baseTimes(length, String)
+      : null;
   }
 
   /**
@@ -3271,13 +3272,14 @@
     if (!(isProto || isArrayLike(object))) {
       return baseKeys(object);
     }
-    var result = initKeys(object),
-        length = result.length,
-        skipIndexes = !!length;
+    var indexes = indexKeys(object),
+        skipIndexes = !!indexes,
+        result = indexes || [],
+        length = result.length;
 
     for (var key in object) {
       if (hasOwnProperty.call(object, key) &&
-          !(skipIndexes && isIndex(key, length)) &&
+          !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
           !(isProto && key == 'constructor')) {
         result.push(key);
       }
@@ -3312,13 +3314,14 @@
         isProto = isPrototype(object),
         props = baseKeysIn(object),
         propsLength = props.length,
-        result = initKeys(object),
-        length = result.length,
-        skipIndexes = !!length;
+        indexes = indexKeys(object),
+        skipIndexes = !!indexes,
+        result = indexes || [],
+        length = result.length;
 
     while (++index < propsLength) {
       var key = props[index];
-      if (!(skipIndexes && isIndex(key, length)) &&
+      if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
           !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
         result.push(key);
       }
@@ -3793,10 +3796,10 @@
   lodash.VERSION = VERSION;
 
   // Add `Array` and `String` methods to `lodash.prototype`.
-  baseEach(['join', 'pop', 'push', 'replace', 'reverse', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+  baseEach(['pop', 'join', 'reverse', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
     var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
         chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-        retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
+        retUnwrapped = /^(?:pop|join|replace|shift)$/.test(methodName);
 
     lodash.prototype[methodName] = function() {
       var args = arguments;

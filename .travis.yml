@@ -12,8 +12,8 @@ env:
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
   matrix:
     -
-    - ISTANBUL=true
     - BIN="phantomjs"
+    - ISTANBUL=true
     - SAUCE_LABS=true
 matrix:
   include:

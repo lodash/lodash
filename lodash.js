@@ -8245,9 +8245,10 @@
      * milliseconds have elapsed since the last time the debounced function was
      * invoked. The debounced function comes with a `cancel` method to cancel
      * delayed `func` invocations and a `flush` method to immediately invoke them.
-     * Provide an options object to indicate that `func` should be invoked on the
-     * leading and/or trailing edge of the `wait` timeout. Subsequent calls to the
-     * debounced function return the result of the last `func` invocation.
+     * Provide an options object to indicate whether `func` should be invoked on
+     * the leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+     * with the last arguments provided to the debounced function. Subsequent calls
+     * to the debounced function return the result of the last `func` invocation.
      *
      * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
      * on the trailing edge of the timeout only if the the debounced function is
@@ -8856,9 +8857,11 @@
     /**
      * Creates a throttled function that only invokes `func` at most once per
      * every `wait` milliseconds. The throttled function comes with a `cancel`
-     * method to cancel delayed invocations. Provide an options object to indicate
-     * that `func` should be invoked on the leading and/or trailing edge of the
-     * `wait` timeout. Subsequent calls to the throttled function return the
+     * method to cancel delayed `func` invocations and a `flush` method to
+     * immediately invoke them. Provide an options object to indicate whether
+     * `func` should be invoked on the leading and/or trailing edge of the `wait`
+     * timeout. The `func` is invoked with the last arguments provided to the
+     * throttled function. Subsequent calls to the throttled function return the
      * result of the last `func` call.
      *
      * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked

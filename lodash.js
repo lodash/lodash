@@ -11518,6 +11518,37 @@
       number = toNumber(number);
       return number >= nativeMin(start, end) && number < nativeMax(start, end);
     }
+	
+	/**
+     * Checks if `number` is a Primer number, meaning that it has no positive divisors other itself and one.    
+     *
+     * @static
+     * @memberOf _
+     * @category Number
+     * @param {number} number The number to check.
+     * @returns {boolean} Returns `true` if `number` is Prime, else `false`.
+     * @example
+     *
+     * _.isPrime(3);
+     * // => true
+     *
+     * _.isPrime(8);
+     * // => false
+     *
+     */
+    function isPrime(number) {
+	  if(_.isUndefined(number) || _.isNull(number) || number < 2 || number % 2 === 0 || !_.isNumber(number)) {
+        return false;
+      }
+      var i = 3;
+      while(i * i <= number) {
+        if(number % i === 0) {
+          return false;
+        }
+        i += 2;
+      }
+	  return true;
+    }
 
     /**
      * Produces a random number between `min` and `max` (inclusive). If only one
@@ -13804,6 +13835,7 @@
     lodash.isObject = isObject;
     lodash.isObjectLike = isObjectLike;
     lodash.isPlainObject = isPlainObject;
+	lodash.isPrime = isPrime;
     lodash.isRegExp = isRegExp;
     lodash.isSafeInteger = isSafeInteger;
     lodash.isString = isString;

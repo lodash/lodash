@@ -5430,39 +5430,6 @@
         ? baseWhile(array, getIteratee(predicate, 3), true)
         : [];
     }
-	
-	 /**
-     * Creates an enriched array in which all values were enriched with the parameter value provided
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} array The array to enrich.
-     * @param {*} the value that will enrich every element of the array by concatenate to each element value
-	 * @param {boolean} the position of the value concatenated, before or after the value
-     * @returns {Array} Returns the enriched array.
-     * @example
-     *
-	 * _.enrich(['1','2','3','4'], 1);
-     * // → ['11', '21', '31', '41']
-	 *
-	 * _.enrich([1, 2, 3, 4], 5);
-     * // → [6, 7, 8, 9]
-     *
-	 * _.enrich([1, 2, 3, 4], 'id_', true);
-     * // → ['id_1', 'id_2', 'id_3', 'id_4']
-     *
-     */
-    function enrich(arr, value, before) {
-      if(_.isUndefined(arr) || _.isNull(arr) || _.isUndefined(value) || _.isNull(value)) {
-        return arr;
-      }
-      _.forEach(arr, function(element, index){
-        arr[index] = before === true ? value + element : element + value;
-      });
-      return arr;
-    }
-
 
     /**
      * Fills elements of `array` with `value` from `start` up to, but not
@@ -13659,7 +13626,6 @@
     lodash.dropRight = dropRight;
     lodash.dropRightWhile = dropRightWhile;
     lodash.dropWhile = dropWhile;
-	lodash.enrich = enrich;
     lodash.fill = fill;
     lodash.filter = filter;
     lodash.flatten = flatten;

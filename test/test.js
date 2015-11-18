@@ -14022,51 +14022,51 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.padLeft');
+  QUnit.module('lodash.padEnd');
 
   (function() {
     QUnit.test('should pad a string to a given length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padLeft('abc', 6), '   abc');
+      assert.strictEqual(_.padEnd('abc', 6), 'abc   ');
     });
 
     QUnit.test('should truncate pad characters to fit the pad length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padLeft('abc', 6, '_-'), '_-_abc');
+      assert.strictEqual(_.padEnd('abc', 6, '_-'), 'abc_-_');
     });
 
     QUnit.test('should coerce `string` to a string', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.padLeft(Object('abc'), 4), ' abc');
-      assert.strictEqual(_.padLeft({ 'toString': lodashStable.constant('abc') }, 5), '  abc');
+      assert.strictEqual(_.padEnd(Object('abc'), 4), 'abc ');
+      assert.strictEqual(_.padEnd({ 'toString': lodashStable.constant('abc') }, 5), 'abc  ');
     });
   }());
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.padRight');
+  QUnit.module('lodash.padStart');
 
   (function() {
     QUnit.test('should pad a string to a given length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padRight('abc', 6), 'abc   ');
+      assert.strictEqual(_.padStart('abc', 6), '   abc');
     });
 
     QUnit.test('should truncate pad characters to fit the pad length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padRight('abc', 6, '_-'), 'abc_-_');
+      assert.strictEqual(_.padStart('abc', 6, '_-'), '_-_abc');
     });
 
     QUnit.test('should coerce `string` to a string', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.padRight(Object('abc'), 4), 'abc ');
-      assert.strictEqual(_.padRight({ 'toString': lodashStable.constant('abc') }, 5), 'abc  ');
+      assert.strictEqual(_.padStart(Object('abc'), 4), ' abc');
+      assert.strictEqual(_.padStart({ 'toString': lodashStable.constant('abc') }, 5), '  abc');
     });
   }());
 
@@ -14074,10 +14074,10 @@
 
   QUnit.module('pad methods');
 
-  lodashStable.each(['pad', 'padLeft', 'padRight'], function(methodName) {
+  lodashStable.each(['pad', 'padStart', 'padEnd'], function(methodName) {
     var func = _[methodName],
         isPad = methodName == 'pad',
-        isPadLeft = methodName == 'padLeft';
+        isStart = methodName == 'padStart';
 
     QUnit.test('`_.' + methodName + '` should not pad is string is >= `length`', function(assert) {
       assert.expect(2);
@@ -14098,7 +14098,7 @@
       assert.expect(2);
 
       lodashStable.each(['', '4'], function(length) {
-        var actual = length ? (isPadLeft ? ' abc' : 'abc ') : 'abc';
+        var actual = length ? (isStart ? ' abc' : 'abc ') : 'abc';
         assert.strictEqual(func('abc', length), actual);
       });
     });
@@ -20175,7 +20175,7 @@
 
   QUnit.module('trim methods');
 
-  lodashStable.each(['trim', 'trimLeft', 'trimRight'], function(methodName, index) {
+  lodashStable.each(['trim', 'trimStart', 'trimEnd'], function(methodName, index) {
     var func = _[methodName];
 
     var parts = [];
@@ -20319,19 +20319,19 @@
       assert.strictEqual(_.capitalize(rocket), rocket);
 
       assert.strictEqual(_.pad(string, 16), ' ' + string + '  ');
-      assert.strictEqual(_.padLeft(string, 16), '   ' + string);
-      assert.strictEqual(_.padRight(string, 16), string + '   ');
+      assert.strictEqual(_.padStart(string, 16), '   ' + string);
+      assert.strictEqual(_.padEnd(string, 16), string + '   ');
 
       assert.strictEqual(_.pad(string, 16, chars), hearts + string + chars);
-      assert.strictEqual(_.padLeft(string, 16, chars), chars + hearts + string);
-      assert.strictEqual(_.padRight(string, 16, chars), string + chars + hearts);
+      assert.strictEqual(_.padStart(string, 16, chars), chars + hearts + string);
+      assert.strictEqual(_.padEnd(string, 16, chars), string + chars + hearts);
 
       assert.strictEqual(_.size(string), 13);
       assert.deepEqual(_.toArray(string), ['A', ' ', leafs, ',', ' ', comboGlyph, ',', ' ', 'a', 'n', 'd', ' ', rocket]);
 
       assert.strictEqual(_.trim(trimString, chars), string);
-      assert.strictEqual(_.trimLeft(trimString, chars), string + trimChars);
-      assert.strictEqual(_.trimRight(trimString, chars), trimChars + string);
+      assert.strictEqual(_.trimStart(trimString, chars), string + trimChars);
+      assert.strictEqual(_.trimEnd(trimString, chars), trimChars + string);
 
       assert.strictEqual(_.truncate(string, { 'length': 13 }), string);
       assert.strictEqual(_.truncate(string, { 'length': 6 }), 'A ' + leafs + '...');
@@ -22256,8 +22256,8 @@
       'min',
       'minBy',
       'pad',
-      'padLeft',
-      'padRight',
+      'padEnd',
+      'padStart',
       'parseInt',
       'pop',
       'random',
@@ -22280,8 +22280,8 @@
       'toString',
       'toUpper',
       'trim',
-      'trimLeft',
-      'trimRight',
+      'trimEnd',
+      'trimStart',
       'truncate',
       'unescape',
       'upperCase',
@@ -22408,15 +22408,15 @@
       'lowerCase',
       'lowerFirst',
       'pad',
-      'padLeft',
-      'padRight',
+      'padEnd',
+      'padStart',
       'repeat',
       'snakeCase',
       'toLower',
       'toUpper',
       'trim',
-      'trimLeft',
-      'trimRight',
+      'trimEnd',
+      'trimStart',
       'truncate',
       'unescape',
       'upperCase',

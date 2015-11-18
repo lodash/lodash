@@ -904,7 +904,7 @@
   }
 
   /**
-   * Used by `_.trim` and `_.trimLeft` to get the index of the first string symbol
+   * Used by `_.trim` and `_.trimStart` to get the index of the first string symbol
    * that is not found in the character symbols.
    *
    * @private
@@ -912,7 +912,7 @@
    * @param {Array} chrSymbols The character symbols to find.
    * @returns {number} Returns the index of the first unmatched string symbol.
    */
-  function charsLeftIndex(strSymbols, chrSymbols) {
+  function charsStartIndex(strSymbols, chrSymbols) {
     var index = -1,
         length = strSymbols.length;
 
@@ -921,7 +921,7 @@
   }
 
   /**
-   * Used by `_.trim` and `_.trimRight` to get the index of the last string symbol
+   * Used by `_.trim` and `_.trimEnd` to get the index of the last string symbol
    * that is not found in the character symbols.
    *
    * @private
@@ -929,7 +929,7 @@
    * @param {Array} chrSymbols The character symbols to find.
    * @returns {number} Returns the index of the last unmatched string symbol.
    */
-  function charsRightIndex(strSymbols, chrSymbols) {
+  function charsEndIndex(strSymbols, chrSymbols) {
     var index = strSymbols.length;
 
     while (index-- && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
@@ -1167,7 +1167,7 @@
   }
 
   /**
-   * Used by `trimmedLeftIndex` and `trimmedRightIndex` to determine if a
+   * Used by `trimmedStartIndex` and `trimmedEndIndex` to determine if a
    * character code is whitespace.
    *
    * @private
@@ -1283,14 +1283,14 @@
   }
 
   /**
-   * Used by `_.trim` and `_.trimLeft` to get the index of the first non-whitespace
+   * Used by `_.trim` and `_.trimStart` to get the index of the first non-whitespace
    * character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
    * @returns {number} Returns the index of the first non-whitespace character.
    */
-  function trimmedLeftIndex(string) {
+  function trimmedStartIndex(string) {
     var index = -1,
         length = string.length;
 
@@ -1299,14 +1299,14 @@
   }
 
   /**
-   * Used by `_.trim` and `_.trimRight` to get the index of the last non-whitespace
+   * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
    * character of `string`.
    *
    * @private
    * @param {string} string The string to inspect.
    * @returns {number} Returns the index of the last non-whitespace character.
    */
-  function trimmedRightIndex(string) {
+  function trimmedEndIndex(string) {
     var index = string.length;
 
     while (index-- && isSpace(string.charCodeAt(index))) {}
@@ -1489,9 +1489,9 @@
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`,
      * `at`, `before`, `bind`, `bindAll`, `bindKey`, `chain`, `chunk`, `commit`,
-     * `compact`, `concat`, `conforms`, `conj`, `constant`, `countBy`, `create`,
+     * `compact`, `concat`, `conforms`, `overEvery`, `constant`, `countBy`, `create`,
      * `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,
-     * `difference`, `differenceBy`, `differenceWith`, `disj`, `drop`, `dropRight`,
+     * `difference`, `differenceBy`, `differenceWith`, `overSome`, `drop`, `dropRight`,
      * `dropRightWhile`, `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`,
      * `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
      * `forOwn`, `forOwnRight`, `functions`, `functionsIn`, `groupBy`, `initial`,
@@ -1523,13 +1523,13 @@
      * `isPlainObject`, `isRegExp`, `isSafeInteger`, `isString`, `isUndefined`,
      * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`,
      * `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `mean`, `min`, `minBy`,
-     * `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`,
+     * `noConflict`, `noop`, `now`, `pad`, `padEnd`, `padStart`, `parseInt`,
      * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
      * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
      * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
      * `startsWith`, `subtract`, `sum`, sumBy`, `template`, `times`, `toLower`,
      * `toInteger`, `toLength`, `toNumber`, `toSafeInteger`, toString`, `toUpper`,
-     * `trim`, `trimLeft`, `trimRight`, `truncate`, `unescape`, `uniqueId`,
+     * `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`,
      * `upperCase`, `upperFirst`, `value`, and `words`
      *
      * @name _
@@ -4092,7 +4092,7 @@
     }
 
     /**
-     * Creates a function like `_.conj`.
+     * Creates a function like `_.overEvery`.
      *
      * @private
      * @param {Function} arrayFunc The function to iterate over iteratees.
@@ -7484,7 +7484,7 @@
      * The guarded methods are:
      * `ary`, `callback`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
      * `fill`, `invert`, `parseInt`, `random`, `range`, `slice`, `some`, `sortBy`,
-     * `take`, `takeRight`, `template`, `trim`, `trimLeft`, `trimRight`, `uniq`,
+     * `take`, `takeRight`, `template`, `trim`, `trimEnd`, `trimStart`, `uniq`,
      * and `words`
      *
      * @static
@@ -11864,33 +11864,6 @@
     }
 
     /**
-     * Pads `string` on the left side if it's shorter than `length`. Padding
-     * characters are truncated if they exceed `length`.
-     *
-     * @static
-     * @memberOf _
-     * @category String
-     * @param {string} [string=''] The string to pad.
-     * @param {number} [length=0] The padding length.
-     * @param {string} [chars=' '] The string used as padding.
-     * @returns {string} Returns the padded string.
-     * @example
-     *
-     * _.padLeft('abc', 6);
-     * // => '   abc'
-     *
-     * _.padLeft('abc', 6, '_-');
-     * // => '_-_abc'
-     *
-     * _.padLeft('abc', 3);
-     * // => 'abc'
-     */
-    function padLeft(string, length, chars) {
-      string = toString(string);
-      return createPadding(string, length, chars) + string;
-    }
-
-    /**
      * Pads `string` on the right side if it's shorter than `length`. Padding
      * characters are truncated if they exceed `length`.
      *
@@ -11903,18 +11876,45 @@
      * @returns {string} Returns the padded string.
      * @example
      *
-     * _.padRight('abc', 6);
+     * _.padEnd('abc', 6);
      * // => 'abc   '
      *
-     * _.padRight('abc', 6, '_-');
+     * _.padEnd('abc', 6, '_-');
      * // => 'abc_-_'
      *
-     * _.padRight('abc', 3);
+     * _.padEnd('abc', 3);
      * // => 'abc'
      */
-    function padRight(string, length, chars) {
+    function padEnd(string, length, chars) {
       string = toString(string);
       return string + createPadding(string, length, chars);
+    }
+
+    /**
+     * Pads `string` on the left side if it's shorter than `length`. Padding
+     * characters are truncated if they exceed `length`.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to pad.
+     * @param {number} [length=0] The padding length.
+     * @param {string} [chars=' '] The string used as padding.
+     * @returns {string} Returns the padded string.
+     * @example
+     *
+     * _.padStart('abc', 6);
+     * // => '   abc'
+     *
+     * _.padStart('abc', 6, '_-');
+     * // => '_-_abc'
+     *
+     * _.padStart('abc', 3);
+     * // => 'abc'
+     */
+    function padStart(string, length, chars) {
+      string = toString(string);
+      return createPadding(string, length, chars) + string;
     }
 
     /**
@@ -12341,7 +12341,7 @@
         return string;
       }
       if (guard || chars === undefined) {
-        return string.slice(trimmedLeftIndex(string), trimmedRightIndex(string) + 1);
+        return string.slice(trimmedStartIndex(string), trimmedEndIndex(string) + 1);
       }
       chars = (chars + '');
       if (!chars) {
@@ -12350,41 +12350,7 @@
       var strSymbols = stringToArray(string),
           chrSymbols = stringToArray(chars);
 
-      return strSymbols.slice(charsLeftIndex(strSymbols, chrSymbols), charsRightIndex(strSymbols, chrSymbols) + 1).join('');
-    }
-
-    /**
-     * Removes leading whitespace or specified characters from `string`.
-     *
-     * @static
-     * @memberOf _
-     * @category String
-     * @param {string} [string=''] The string to trim.
-     * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
-     * @returns {string} Returns the trimmed string.
-     * @example
-     *
-     * _.trimLeft('  abc  ');
-     * // => 'abc  '
-     *
-     * _.trimLeft('-_-abc-_-', '_-');
-     * // => 'abc-_-'
-     */
-    function trimLeft(string, chars, guard) {
-      string = toString(string);
-      if (!string) {
-        return string;
-      }
-      if (guard || chars === undefined) {
-        return string.slice(trimmedLeftIndex(string));
-      }
-      chars = (chars + '');
-      if (!chars) {
-        return string;
-      }
-      var strSymbols = stringToArray(string);
-      return strSymbols.slice(charsLeftIndex(strSymbols, stringToArray(chars))).join('');
+      return strSymbols.slice(charsStartIndex(strSymbols, chrSymbols), charsEndIndex(strSymbols, chrSymbols) + 1).join('');
     }
 
     /**
@@ -12399,26 +12365,60 @@
      * @returns {string} Returns the trimmed string.
      * @example
      *
-     * _.trimRight('  abc  ');
+     * _.trimEnd('  abc  ');
      * // => '  abc'
      *
-     * _.trimRight('-_-abc-_-', '_-');
+     * _.trimEnd('-_-abc-_-', '_-');
      * // => '-_-abc'
      */
-    function trimRight(string, chars, guard) {
+    function trimEnd(string, chars, guard) {
       string = toString(string);
       if (!string) {
         return string;
       }
       if (guard || chars === undefined) {
-        return string.slice(0, trimmedRightIndex(string) + 1);
+        return string.slice(0, trimmedEndIndex(string) + 1);
       }
       chars = (chars + '');
       if (!chars) {
         return string;
       }
       var strSymbols = stringToArray(string);
-      return strSymbols.slice(0, charsRightIndex(strSymbols, stringToArray(chars)) + 1).join('');
+      return strSymbols.slice(0, charsEndIndex(strSymbols, stringToArray(chars)) + 1).join('');
+    }
+
+    /**
+     * Removes leading whitespace or specified characters from `string`.
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to trim.
+     * @param {string} [chars=whitespace] The characters to trim.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+     * @returns {string} Returns the trimmed string.
+     * @example
+     *
+     * _.trimStart('  abc  ');
+     * // => 'abc  '
+     *
+     * _.trimStart('-_-abc-_-', '_-');
+     * // => 'abc-_-'
+     */
+    function trimStart(string, chars, guard) {
+      string = toString(string);
+      if (!string) {
+        return string;
+      }
+      if (guard || chars === undefined) {
+        return string.slice(trimmedStartIndex(string));
+      }
+      chars = (chars + '');
+      if (!chars) {
+        return string;
+      }
+      var strSymbols = stringToArray(string);
+      return strSymbols.slice(charsStartIndex(strSymbols, stringToArray(chars))).join('');
     }
 
     /**
@@ -13829,8 +13829,8 @@
     lodash.noop = noop;
     lodash.now = now;
     lodash.pad = pad;
-    lodash.padLeft = padLeft;
-    lodash.padRight = padRight;
+    lodash.padEnd = padEnd;
+    lodash.padStart = padStart;
     lodash.parseInt = parseInt;
     lodash.random = random;
     lodash.reduce = reduce;
@@ -13864,8 +13864,8 @@
     lodash.toString = toString;
     lodash.toUpper = toUpper;
     lodash.trim = trim;
-    lodash.trimLeft = trimLeft;
-    lodash.trimRight = trimRight;
+    lodash.trimEnd = trimEnd;
+    lodash.trimStart = trimStart;
     lodash.truncate = truncate;
     lodash.unescape = unescape;
     lodash.uniqueId = uniqueId;

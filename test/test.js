@@ -9713,6 +9713,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isPrime');
+
+  (function() {
+    QUnit.test('should detect if number is a prime number', function(assert) {
+      assert.expect(4);     
+      assert.strictEqual(_.isPrime(7), true);
+      assert.strictEqual(_.isPrime(12), false);
+	  assert.strictEqual(_.isPrime(15), false);
+	  assert.strictEqual(_.isPrime(17), true);
+    });
+	
+	QUnit.test('should handle strings', function(assert) {
+      assert.expect(3);     
+      assert.strictEqual(_.isPrime('7'), false);
+      assert.strictEqual(_.isPrime('15'), false);
+	  assert.strictEqual(_.isPrime('toto'), false);
+    });
+	
+	QUnit.test('should handle negatives numbers as non Prime', function(assert) {
+      assert.expect(2);     
+      assert.strictEqual(_.isPrime(-7), false);
+      assert.strictEqual(_.isPrime(-15), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isRegExp');
 
   (function() {

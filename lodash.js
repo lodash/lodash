@@ -777,21 +777,6 @@
   }
 
   /**
-   * The base implementation of `_.pairs` and `_.pairsIn` which creates an array
-   * of key-value pairs for `object` corresponding to the property names of `props`.
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {Array} props The property names to get values for.
-   * @returns {Object} Returns the new array of key-value pairs.
-   */
-  function basePairs(object, props) {
-    return arrayMap(props, function(key) {
-      return [key, object[key]];
-    });
-  }
-
-  /**
    * The base implementation of `_.reduce` and `_.reduceRight`, without support
    * for callback shorthands, which iterates over `collection` using the provided
    * `eachFunc`.
@@ -872,6 +857,21 @@
       result[index] = iteratee(index);
     }
     return result;
+  }
+
+  /**
+   * The base implementation of `_.toPairs` and `_.toPairsIn` which creates an array
+   * of key-value pairs for `object` corresponding to the property names of `props`.
+   *
+   * @private
+   * @param {Object} object The object to query.
+   * @param {Array} props The property names to get values for.
+   * @returns {Object} Returns the new array of key-value pairs.
+   */
+  function baseToPairs(object, props) {
+    return arrayMap(props, function(key) {
+      return [key, object[key]];
+    });
   }
 
   /**
@@ -1494,21 +1494,21 @@
      * `differenceBy`, `differenceWith`,  `drop`, `dropRight`, `dropRightWhile`,
      * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`,
      * `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
-     * `forOwnRight`, `functions`, `functionsIn`, `groupBy`, `initial`,
+     * `forOwnRight`, `fromPairs`, `functions`, `functionsIn`, `groupBy`, `initial`,
      * `intersection`, `intersectionBy`, `intersectionWith`, invert`, `invoke`,
      * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
      * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
      * `methodOf`, `mixin`, `modArgs`, `modArgsSet', `negate`, `nthArg`, `omit`,
-     * `omitBy`, `once`, `over`, `overEvery`, `overSome`, `pairs`, `pairsIn`,
-     * `partial`, `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
-     * `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`,
-     * `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`,
-     * `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`,
-     * `spread`, `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
-     * `tap`, `throttle`, `thru`, `toArray`, `toPath`, `toPlainObject`, `transform`,
-     * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
-     * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
-     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
+     * `omitBy`, `once`, `over`, `overEvery`, `overSome`, `partial`, `partialRight`,
+     * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
+     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`,
+     * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
+     * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
+     * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
+     * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
+     * `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -4591,7 +4591,7 @@
      * @returns {Array} Returns the match data of `object`.
      */
     function getMatchData(object) {
-      var result = pairs(object),
+      var result = toPairs(object),
           length = result.length;
 
       while (length--) {
@@ -5583,6 +5583,45 @@
     function flattenDeep(array) {
       var length = array ? array.length : 0;
       return length ? baseFlatten(array, true) : [];
+    }
+
+    /**
+     * The inverse of `_.toPairs`; this method returns an object composed from arrays
+     * of property names and values. Provide either a single two dimensional array,
+     * e.g. `[[key1, value1], [key2, value2]]` or two arrays, one of property names
+     * and one of corresponding values.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} props The property names.
+     * @param {Array} [values=[]] The property values.
+     * @returns {Object} Returns the new object.
+     * @example
+     *
+     * _.fromPairs([['fred', 30], ['barney', 40]]);
+     * // => { 'fred': 30, 'barney': 40 }
+     *
+     * _.fromPairs(['fred', 'barney'], [30, 40]);
+     * // => { 'fred': 30, 'barney': 40 }
+     */
+    function fromPairs(props, values) {
+      var index = -1,
+          length = props ? props.length : 0,
+          result = {};
+
+      if (length && !values && !isArray(props[0])) {
+        values = [];
+      }
+      while (++index < length) {
+        var key = props[index];
+        if (values) {
+          baseSet(result, key, values[index]);
+        } else if (key) {
+          baseSet(result, key[0], key[1]);
+        }
+      }
+      return result;
     }
 
     /**
@@ -6705,45 +6744,6 @@
      * // => [['fred', 30, true], ['barney', 40, false]]
      */
     var zip = rest(unzip);
-
-    /**
-     * The inverse of `_.pairs`; this method returns an object composed from arrays
-     * of property names and values. Provide either a single two dimensional array,
-     * e.g. `[[key1, value1], [key2, value2]]` or two arrays, one of property names
-     * and one of corresponding values.
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} props The property names.
-     * @param {Array} [values=[]] The property values.
-     * @returns {Object} Returns the new object.
-     * @example
-     *
-     * _.zipObject([['fred', 30], ['barney', 40]]);
-     * // => { 'fred': 30, 'barney': 40 }
-     *
-     * _.zipObject(['fred', 'barney'], [30, 40]);
-     * // => { 'fred': 30, 'barney': 40 }
-     */
-    function zipObject(props, values) {
-      var index = -1,
-          length = props ? props.length : 0,
-          result = {};
-
-      if (length && !values && !isArray(props[0])) {
-        values = [];
-      }
-      while (++index < length) {
-        var key = props[index];
-        if (values) {
-          baseSet(result, key, values[index]);
-        } else if (key) {
-          baseSet(result, key[0], key[1]);
-        }
-      }
-      return result;
-    }
 
     /**
      * This method is like `_.zip` except that it accepts `iteratee` to specify
@@ -11111,54 +11111,6 @@
     }
 
     /**
-     * Creates an array of own enumerable key-value pairs for `object`.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the new array of key-value pairs.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.pairs(new Foo);
-     * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
-     */
-    function pairs(object) {
-      return basePairs(object, keys(object));
-    }
-
-    /**
-     * Creates an array of own and inherited enumerable key-value pairs for `object`.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the new array of key-value pairs.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.pairsIn(new Foo);
-     * // => [['a', 1], ['b', 2], ['c', 1]] (iteration order is not guaranteed)
-     */
-    function pairsIn(object) {
-      return basePairs(object, keysIn(object));
-    }
-
-    /**
      * Creates an object composed of the picked `object` properties.
      *
      * @static
@@ -11297,6 +11249,54 @@
     function setWith(object, path, value, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
       return object == null ? object : baseSet(object, path, value, customizer);
+    }
+
+    /**
+     * Creates an array of own enumerable key-value pairs for `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the new array of key-value pairs.
+     * @example
+     *
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
+     * }
+     *
+     * Foo.prototype.c = 3;
+     *
+     * _.toPairs(new Foo);
+     * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
+     */
+    function toPairs(object) {
+      return baseToPairs(object, keys(object));
+    }
+
+    /**
+     * Creates an array of own and inherited enumerable key-value pairs for `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the new array of key-value pairs.
+     * @example
+     *
+     * function Foo() {
+     *   this.a = 1;
+     *   this.b = 2;
+     * }
+     *
+     * Foo.prototype.c = 3;
+     *
+     * _.toPairsIn(new Foo);
+     * // => [['a', 1], ['b', 2], ['c', 1]] (iteration order is not guaranteed)
+     */
+    function toPairsIn(object) {
+      return baseToPairs(object, keysIn(object));
     }
 
     /**
@@ -13634,6 +13634,7 @@
     lodash.flip = flip;
     lodash.flow = flow;
     lodash.flowRight = flowRight;
+    lodash.fromPairs = fromPairs;
     lodash.functions = functions;
     lodash.functionsIn = functionsIn;
     lodash.groupBy = groupBy;
@@ -13668,8 +13669,6 @@
     lodash.over = over;
     lodash.overEvery = overEvery;
     lodash.overSome = overSome;
-    lodash.pairs = pairs;
-    lodash.pairsIn = pairsIn;
     lodash.partial = partial;
     lodash.partialRight = partialRight;
     lodash.partition = partition;
@@ -13706,6 +13705,8 @@
     lodash.throttle = throttle;
     lodash.thru = thru;
     lodash.toArray = toArray;
+    lodash.toPairs = toPairs;
+    lodash.toPairsIn = toPairsIn;
     lodash.toPath = toPath;
     lodash.toPlainObject = toPlainObject;
     lodash.transform = transform;
@@ -13728,7 +13729,6 @@
     lodash.xorBy = xorBy;
     lodash.xorWith = xorWith;
     lodash.zip = zip;
-    lodash.zipObject = zipObject;
     lodash.zipWith = zipWith;
 
     // Add aliases.

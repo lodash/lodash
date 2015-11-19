@@ -5969,6 +5969,93 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.fromPairs');
+
+  (function() {
+    var object = { 'barney': 36, 'fred': 40 },
+        array = [['barney', 36], ['fred', 40]];
+
+    QUnit.test('should skip falsey elements in a given two dimensional array', function(assert) {
+      assert.expect(1);
+
+      var actual = _.fromPairs(array.concat(falsey));
+      assert.deepEqual(actual, object);
+    });
+
+    QUnit.test('should zip together key/value arrays into an object', function(assert) {
+      assert.expect(1);
+
+      var actual = _.fromPairs(['barney', 'fred'], [36, 40]);
+      assert.deepEqual(actual, object);
+    });
+
+    QUnit.test('should ignore extra `values`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.fromPairs(['a'], [1, 2]), { 'a': 1 });
+    });
+
+    QUnit.test('should accept a two dimensional array', function(assert) {
+      assert.expect(1);
+
+      var actual = _.fromPairs(array);
+      assert.deepEqual(actual, object);
+    });
+
+    QUnit.test('should not assume `keys` is two dimensional if `values` is not provided', function(assert) {
+      assert.expect(1);
+
+      var actual = _.fromPairs(['barney', 'fred']);
+      assert.deepEqual(actual, { 'barney': undefined, 'fred': undefined });
+    });
+
+    QUnit.test('should accept a falsey `array` argument', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, lodashStable.constant({}));
+
+      var actual = lodashStable.map(falsey, function(array, index) {
+        try {
+          return index ? _.fromPairs(array) : _.fromPairs();
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should support deep paths', function(assert) {
+      assert.expect(1);
+
+      var actual = _.fromPairs(['a.b.c'], [1]);
+      assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+    });
+
+    QUnit.test('should support consuming the return value of `_.toPairs`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.fromPairs(_.toPairs(object)), object);
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var array = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
+          return ['key' + index, index];
+        });
+
+        var actual = _(array).fromPairs().map(square).filter(isEven).take().value();
+
+        assert.deepEqual(actual, _.take(_.filter(_.map(_.fromPairs(array), square), isEven)));
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.functions');
 
   (function() {
@@ -13891,7 +13978,7 @@
       assert.strictEqual(object.over(), false);
     });
   }());
-  
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.overSome');
@@ -14122,34 +14209,6 @@
       assert.strictEqual(func('abc', 6, ''), 'abc');
     });
   });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.pairs');
-
-  (function() {
-    QUnit.test('should create a two dimensional array of key-value pairs', function(assert) {
-      assert.expect(1);
-
-      var object = { 'a': 1, 'b': 2 };
-      assert.deepEqual(_.pairs(object), [['a', 1], ['b', 2]]);
-    });
-
-    QUnit.test('should work with an object that has a `length` property', function(assert) {
-      assert.expect(1);
-
-      var object = { '0': 'a', '1': 'b', 'length': 2 };
-      assert.deepEqual(_.pairs(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
-    });
-
-    QUnit.test('should work with strings', function(assert) {
-      assert.expect(2);
-
-      lodashStable.each(['xo', Object('xo')], function(string) {
-        assert.deepEqual(_.pairs(string), [['0', 'x'], ['1', 'o']]);
-      });
-    });
-  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -17241,7 +17300,7 @@
       new Pair(undefined, 5, 1), new Pair(undefined, 6, 1)
     ];
 
-    var stableObject = _.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
+    var stableObject = lodashStable.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
 
     QUnit.test('`_.' + methodName + '` should sort mutliple properties in ascending order', function(assert) {
       assert.expect(1);
@@ -19486,7 +19545,7 @@
 
         assert.deepEqual(actual, lodashStable.map(array.slice(1), String));
 
-        var object = _.zipObject(lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
+        var object = lodashStable.zipObject(lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
           return ['key' + index, index];
         }));
 
@@ -19856,6 +19915,34 @@
       assert.deepEqual(actual, expected);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toPairs');
+
+  (function() {
+    QUnit.test('should create a two dimensional array of key-value pairs', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2 };
+      assert.deepEqual(_.toPairs(object), [['a', 1], ['b', 2]]);
+    });
+
+    QUnit.test('should work with an object that has a `length` property', function(assert) {
+      assert.expect(1);
+
+      var object = { '0': 'a', '1': 'b', 'length': 2 };
+      assert.deepEqual(_.toPairs(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
+    });
+
+    QUnit.test('should work with strings', function(assert) {
+      assert.expect(2);
+
+      lodashStable.each(['xo', Object('xo')], function(string) {
+        assert.deepEqual(_.toPairs(string), [['0', 'x'], ['1', 'o']]);
+      });
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -21322,93 +21409,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.zipObject');
-
-  (function() {
-    var object = { 'barney': 36, 'fred': 40 },
-        array = [['barney', 36], ['fred', 40]];
-
-    QUnit.test('should skip falsey elements in a given two dimensional array', function(assert) {
-      assert.expect(1);
-
-      var actual = _.zipObject(array.concat(falsey));
-      assert.deepEqual(actual, object);
-    });
-
-    QUnit.test('should zip together key/value arrays into an object', function(assert) {
-      assert.expect(1);
-
-      var actual = _.zipObject(['barney', 'fred'], [36, 40]);
-      assert.deepEqual(actual, object);
-    });
-
-    QUnit.test('should ignore extra `values`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.zipObject(['a'], [1, 2]), { 'a': 1 });
-    });
-
-    QUnit.test('should accept a two dimensional array', function(assert) {
-      assert.expect(1);
-
-      var actual = _.zipObject(array);
-      assert.deepEqual(actual, object);
-    });
-
-    QUnit.test('should not assume `keys` is two dimensional if `values` is not provided', function(assert) {
-      assert.expect(1);
-
-      var actual = _.zipObject(['barney', 'fred']);
-      assert.deepEqual(actual, { 'barney': undefined, 'fred': undefined });
-    });
-
-    QUnit.test('should accept a falsey `array` argument', function(assert) {
-      assert.expect(1);
-
-      var expected = lodashStable.map(falsey, lodashStable.constant({}));
-
-      var actual = lodashStable.map(falsey, function(array, index) {
-        try {
-          return index ? _.zipObject(array) : _.zipObject();
-        } catch (e) {}
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should support deep paths', function(assert) {
-      assert.expect(1);
-
-      var actual = _.zipObject(['a.b.c'], [1]);
-      assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
-    });
-
-    QUnit.test('should support consuming the return value of `_.pairs`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.zipObject(_.pairs(object)), object);
-    });
-
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var array = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
-          return ['key' + index, index];
-        });
-
-        var actual = _(array).zipObject().map(square).filter(isEven).take().value();
-
-        assert.deepEqual(actual, _.take(_.filter(_.map(_.zipObject(array), square), isEven)));
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.zipWith');
 
   (function() {
@@ -22508,7 +22508,6 @@
       'invoke',
       'keys',
       'map',
-      'pairs',
       'pull',
       'pullAll',
       'pullAt',
@@ -22523,6 +22522,7 @@
       'take',
       'times',
       'toArray',
+      'toPairs',
       'union',
       'uniq',
       'values',

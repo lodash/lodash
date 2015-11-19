@@ -1489,26 +1489,26 @@
      * The chainable wrapper methods are:
      * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`,
      * `at`, `before`, `bind`, `bindAll`, `bindKey`, `chain`, `chunk`, `commit`,
-     * `compact`, `concat`, `conforms`, `overEvery`, `constant`, `countBy`, `create`,
-     * `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,
-     * `difference`, `differenceBy`, `differenceWith`, `overSome`, `drop`, `dropRight`,
-     * `dropRightWhile`, `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`,
-     * `flip`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
-     * `forOwn`, `forOwnRight`, `functions`, `functionsIn`, `groupBy`, `initial`,
+     * `compact`, `concat`, `conforms`,  `constant`, `countBy`, `create`, `curry`,
+     * `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`, `difference`,
+     * `differenceBy`, `differenceWith`,  `drop`, `dropRight`, `dropRightWhile`,
+     * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`,
+     * `flowRight`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
+     * `forOwnRight`, `functions`, `functionsIn`, `groupBy`, `initial`,
      * `intersection`, `intersectionBy`, `intersectionWith`, invert`, `invoke`,
      * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
      * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
      * `methodOf`, `mixin`, `modArgs`, `modArgsSet', `negate`, `nthArg`, `omit`,
-     * `omitBy`, `once`, `pairs`, `pairsIn`, `partial`, `partialRight`, `partition`,
-     * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`,
-     * `pullAllBy`, `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`,
-     * `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`,
-     * `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`, `take`, `takeRight`,
-     * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `toArray`,
-     * `toPath`, `toPlainObject`, `transform`, `unary`, `union`, `unionBy`,
-     * `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`, `unshift`, `unzip`,
-     * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`,
-     * `xorWith`, `zip`, `zipObject`, and `zipWith`
+     * `omitBy`, `once`, `over`, `overEvery`, `overSome`, `pairs`, `pairsIn`,
+     * `partial`, `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
+     * `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`,
+     * `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`,
+     * `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`,
+     * `spread`, `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`,
+     * `tap`, `throttle`, `thru`, `toArray`, `toPath`, `toPlainObject`, `transform`,
+     * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
+     * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
+     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -4092,25 +4092,6 @@
     }
 
     /**
-     * Creates a function like `_.overEvery`.
-     *
-     * @private
-     * @param {Function} arrayFunc The function to iterate over iteratees.
-     * @returns {Function} Returns the new invoker function.
-     */
-    function createInvoker(arrayFunc) {
-      return rest(function(iteratees) {
-        iteratees = arrayMap(baseFlatten(iteratees), getIteratee());
-        return rest(function(args) {
-          var thisArg = this;
-          return arrayFunc(iteratees, function(iteratee) {
-            return iteratee.apply(thisArg, args);
-          });
-        });
-      });
-    }
-
-    /**
      * Creates a function like `_.modArgs`.
      *
      * @private
@@ -4132,6 +4113,25 @@
             modded[index] = transforms[index].apply(this, resolver(args[index], index, args));
           }
           return func.apply(this, modded);
+        });
+      });
+    }
+
+    /**
+     * Creates a function like `_.over`.
+     *
+     * @private
+     * @param {Function} arrayFunc The function to iterate over iteratees.
+     * @returns {Function} Returns the new invoker function.
+     */
+    function createOver(arrayFunc) {
+      return rest(function(iteratees) {
+        iteratees = arrayMap(baseFlatten(iteratees), getIteratee());
+        return rest(function(args) {
+          var thisArg = this;
+          return arrayFunc(iteratees, function(iteratee) {
+            return iteratee.apply(thisArg, args);
+          });
         });
       });
     }
@@ -12644,30 +12644,6 @@
     }
 
     /**
-     * Creates a function that checks if **all** of the `predicates` return
-     * truthy when invoked with the arguments provided to the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} predicates The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var conjed = _.conj(Boolean, isFinite);
-     *
-     * conjed('1');
-     * // => true
-     *
-     * conjed(null);
-     * // => false
-     *
-     * conjed(NaN);
-     * // => false
-     */
-    var conj = createInvoker(arrayEvery);
-
-    /**
      * Creates a function that returns `value`.
      *
      * @static
@@ -12688,30 +12664,6 @@
         return value;
       };
     }
-
-    /**
-     * Creates a function that checks if **any** of the `predicates` return
-     * truthy when invoked with the arguments provided to the created function.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} predicates The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var disjed = _.disj(Boolean, isFinite);
-     *
-     * disjed('1');
-     * // => true
-     *
-     * disjed(null);
-     * // => true
-     *
-     * disjed(NaN);
-     * // => false
-     */
-    var disj = createInvoker(arraySome);
 
     /**
      * Creates a function that returns the result of invoking the provided
@@ -12814,24 +12766,6 @@
         ? matches(func)
         : baseIteratee(func);
     }
-
-    /**
-     * Creates a function that invokes `iteratees` with the arguments provided
-     * to the created function and returns their results.
-     *
-     * @static
-     * @memberOf _
-     * @category Utility
-     * @param {...(Function|Function[])} iteratees The iteratees to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var juxted = _.juxt(Math.max, Math.min);
-     *
-     * juxted(1, 2, 3, 4);
-     * // => [4, 1]
-     */
-    var juxt = createInvoker(arrayMap);
 
     /**
      * Creates a function that performs a deep partial comparison between a given
@@ -13075,6 +13009,72 @@
         return arguments[n];
       };
     }
+
+    /**
+     * Creates a function that invokes `iteratees` with the arguments provided
+     * to the created function and returns their results.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {...(Function|Function[])} iteratees The iteratees to invoke.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var func = _.over(Math.max, Math.min);
+     *
+     * func(1, 2, 3, 4);
+     * // => [4, 1]
+     */
+    var over = createOver(arrayMap);
+
+    /**
+     * Creates a function that checks if **all** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {...(Function|Function[])} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var func = _.overEvery(Boolean, isFinite);
+     *
+     * func('1');
+     * // => true
+     *
+     * func(null);
+     * // => false
+     *
+     * func(NaN);
+     * // => false
+     */
+    var overEvery = createOver(arrayEvery);
+
+    /**
+     * Creates a function that checks if **any** of the `predicates` return
+     * truthy when invoked with the arguments provided to the created function.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {...(Function|Function[])} predicates The predicates to check.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var func = _.overSome(Boolean, isFinite);
+     *
+     * func('1');
+     * // => true
+     *
+     * func(null);
+     * // => true
+     *
+     * func(NaN);
+     * // => false
+     */
+    var overSome = createOver(arraySome);
 
     /**
      * Creates a function that returns the value at `path` of a given object.
@@ -13610,7 +13610,6 @@
     lodash.compact = compact;
     lodash.concat = concat;
     lodash.conforms = conforms;
-    lodash.conj = conj;
     lodash.constant = constant;
     lodash.countBy = countBy;
     lodash.create = create;
@@ -13624,7 +13623,6 @@
     lodash.difference = difference;
     lodash.differenceBy = differenceBy;
     lodash.differenceWith = differenceWith;
-    lodash.disj = disj;
     lodash.drop = drop;
     lodash.dropRight = dropRight;
     lodash.dropRightWhile = dropRightWhile;
@@ -13646,7 +13644,6 @@
     lodash.invert = invert;
     lodash.invoke = invoke;
     lodash.iteratee = iteratee;
-    lodash.juxt = juxt;
     lodash.keyBy = keyBy;
     lodash.keys = keys;
     lodash.keysIn = keysIn;
@@ -13668,6 +13665,9 @@
     lodash.omit = omit;
     lodash.omitBy = omitBy;
     lodash.once = once;
+    lodash.over = over;
+    lodash.overEvery = overEvery;
+    lodash.overSome = overSome;
     lodash.pairs = pairs;
     lodash.pairsIn = pairsIn;
     lodash.partial = partial;

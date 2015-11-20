@@ -1783,6 +1783,20 @@
       assert.deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
       assert.deepEqual(bound(), [undefined, 'b', undefined]);
     });
+
+    QUnit.test('should ensure `new bound` is an instance of `object[key]`', function(assert) {
+      assert.expect(2);
+
+      function Foo(value) {
+        return value && object;
+      }
+
+      var object = { 'Foo': Foo },
+          bound = _.bindKey(object, 'Foo');
+
+      assert.ok(new bound instanceof Foo);
+      assert.strictEqual(new bound(true), object);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -14377,7 +14391,7 @@
       assert.strictEqual(par.length, 0);
     });
 
-    QUnit.test('`_.' + methodName + '` ensure `new partialed` is an instance of `func`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ensure `new par` is an instance of `func`', function(assert) {
       assert.expect(2);
 
       function Foo(value) {
@@ -14501,6 +14515,20 @@
       c = _.partialRight(b, 4);
 
       assert.deepEqual(c(3), expected);
+    });
+
+    QUnit.test('should ensure `new combo` is an instance of `func`', function(assert) {
+      assert.expect(2);
+
+      function Foo(a, b, c) {
+        return b === 0 && object;
+      }
+
+      var combo = _.partial(_.partialRight(Foo, 3), 1),
+          object = {};
+
+      assert.ok(new combo(2) instanceof Foo);
+      assert.strictEqual(new combo(0), object);
     });
 
     QUnit.test('should work with combinations of functions with placeholders', function(assert) {

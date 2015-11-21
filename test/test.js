@@ -1247,7 +1247,7 @@
       assert.deepEqual(actual, [2]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(6);
 
       if (!isNpm) {
@@ -2550,7 +2550,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -2896,7 +2896,7 @@
       assert.deepEqual(actual, { '4': 1, '6': 2 });
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -4074,7 +4074,7 @@
       assert.deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(6);
 
       if (!isNpm) {
@@ -4162,7 +4162,7 @@
       assert.deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(6);
 
       if (!isNpm) {
@@ -4315,7 +4315,7 @@
       assert.deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(3);
 
       if (!isNpm) {
@@ -4333,7 +4333,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence with `drop`', function(assert) {
+    QUnit.test('should work in a lazy sequence with `drop`', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -4952,7 +4952,7 @@
         }
       });
 
-      QUnit.test('should work in a lazy chain sequence', function(assert) {
+      QUnit.test('should work in a lazy sequence', function(assert) {
         assert.expect(2);
 
         if (!isNpm) {
@@ -6039,7 +6039,7 @@
       assert.deepEqual(_.fromPairs(_.toPairs(object)), object);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -6143,7 +6143,7 @@
       assert.deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -6427,7 +6427,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
@@ -6741,7 +6741,7 @@
       assert.deepEqual(actual, [[1, 2], [4, 5], [7, 8]]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(4);
 
       if (!isNpm) {
@@ -10652,7 +10652,7 @@
       assert.deepEqual(actual, { '4': 4.2, '6': 6.4 });
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -10896,7 +10896,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
@@ -11234,7 +11234,7 @@
       }
     });
 
-    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
+    QUnit.test('should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -13431,7 +13431,7 @@
       });
     });
 
-    QUnit.test('should produce methods that work in a lazy chain sequence', function(assert) {
+    QUnit.test('should produce methods that work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -15849,7 +15849,7 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should work in a lazy chain sequence', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work in a lazy sequence', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
@@ -15871,7 +15871,7 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
+    QUnit.test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -17036,7 +17036,7 @@
       assert.notStrictEqual(actual, array);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(38);
 
       if (!isNpm) {
@@ -17834,7 +17834,7 @@
       assert.deepEqual(actual, [[2, 3], [5, 6], [8, 9]]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(4);
 
       if (!isNpm) {
@@ -17867,7 +17867,7 @@
       }
     });
 
-    QUnit.test('should not execute subsequent iteratees on an empty array in a lazy chain sequence', function(assert) {
+    QUnit.test('should not execute subsequent iteratees on an empty array in a lazy sequence', function(assert) {
       assert.expect(4);
 
       if (!isNpm) {
@@ -17943,7 +17943,7 @@
       assert.deepEqual(actual, [[1], [4], [7]]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(6);
 
       if (!isNpm) {
@@ -18025,7 +18025,7 @@
       assert.deepEqual(actual, [[3], [6], [9]]);
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(6);
 
       if (!isNpm) {
@@ -18108,7 +18108,7 @@
       assert.deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(3);
 
       if (!isNpm) {
@@ -18126,7 +18126,7 @@
       }
     });
 
-    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
+    QUnit.test('should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -18222,7 +18222,7 @@
       assert.deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(3);
 
       if (!isNpm) {
@@ -18240,7 +18240,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence with `take`', function(assert) {
+    QUnit.test('should work in a lazy sequence with `take`', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -18259,7 +18259,7 @@
       }
     });
 
-    QUnit.test('should provide the correct `predicate` arguments in a lazy chain sequence', function(assert) {
+    QUnit.test('should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -19553,7 +19553,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
@@ -21360,7 +21360,7 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should work when in a lazy chain sequence before `head` or `last`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work when in a lazy sequence before `head` or `last`', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -21452,7 +21452,7 @@
       assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -21892,7 +21892,7 @@
       }
     });
 
-    QUnit.test('should work in a lazy chain sequence', function(assert) {
+    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(4);
 
       if (!isNpm) {
@@ -21910,7 +21910,7 @@
       }
     });
 
-    QUnit.test('should be lazy when in a lazy chain sequence', function(assert) {
+    QUnit.test('should be lazy when in a lazy sequence', function(assert) {
       assert.expect(3);
 
       if (!isNpm) {
@@ -21937,7 +21937,7 @@
       }
     });
 
-    QUnit.test('should work in a hybrid chain sequence', function(assert) {
+    QUnit.test('should work in a hybrid sequence', function(assert) {
       assert.expect(8);
 
       if (!isNpm) {

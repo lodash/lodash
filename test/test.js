@@ -5989,38 +5989,11 @@
     var object = { 'barney': 36, 'fred': 40 },
         array = [['barney', 36], ['fred', 40]];
 
-    QUnit.test('should skip falsey elements in a given two dimensional array', function(assert) {
-      assert.expect(1);
-
-      var actual = _.fromPairs(array.concat(falsey));
-      assert.deepEqual(actual, object);
-    });
-
-    QUnit.test('should zip together key/value arrays into an object', function(assert) {
-      assert.expect(1);
-
-      var actual = _.fromPairs(['barney', 'fred'], [36, 40]);
-      assert.deepEqual(actual, object);
-    });
-
-    QUnit.test('should ignore extra `values`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.fromPairs(['a'], [1, 2]), { 'a': 1 });
-    });
-
     QUnit.test('should accept a two dimensional array', function(assert) {
       assert.expect(1);
 
       var actual = _.fromPairs(array);
       assert.deepEqual(actual, object);
-    });
-
-    QUnit.test('should not assume `keys` is two dimensional if `values` is not provided', function(assert) {
-      assert.expect(1);
-
-      var actual = _.fromPairs(['barney', 'fred']);
-      assert.deepEqual(actual, { 'barney': undefined, 'fred': undefined });
     });
 
     QUnit.test('should accept a falsey `array` argument', function(assert) {
@@ -6040,7 +6013,7 @@
     QUnit.test('should support deep paths', function(assert) {
       assert.expect(1);
 
-      var actual = _.fromPairs(['a.b.c'], [1]);
+      var actual = _.fromPairs([['a.b.c', 1]]);
       assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
     });
 
@@ -21437,6 +21410,50 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.zipObject');
+
+  (function() {
+    var object = { 'barney': 36, 'fred': 40 },
+        array = [['barney', 36], ['fred', 40]];
+
+    QUnit.test('should zip together key/value arrays into an object', function(assert) {
+      assert.expect(1);
+
+      var actual = _.zipObject(['barney', 'fred'], [36, 40]);
+      assert.deepEqual(actual, object);
+    });
+
+    QUnit.test('should ignore extra `values`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.zipObject(['a'], [1, 2]), { 'a': 1 });
+    });
+
+    QUnit.test('should support deep paths', function(assert) {
+      assert.expect(1);
+
+      var actual = _.zipObject(['a.b.c'], [1]);
+      assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+    });
+
+    QUnit.test('should work in a lazy chain sequence', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var values = lodashStable.range(LARGE_ARRAY_SIZE),
+            props = lodashStable.map(values, function(value) { return 'key' + value; }),
+            actual = _(props).zipObject(values).map(square).filter(isEven).take().value();
+
+        assert.deepEqual(actual, _.take(_.filter(_.map(_.zipObject(props, values), square), isEven)));
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.zipWith');
 
   (function() {
@@ -22562,7 +22579,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(280);
+      assert.expect(281);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

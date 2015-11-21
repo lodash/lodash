@@ -73,6 +73,10 @@
             'should treat non-number `fromIndex` values as `array.length`',
             '[0,-1,-1]'
           ],
+          'object': [
+            'an array of pairs zipped together into an object',
+            'an object converted to pairs and back to an object'
+          ],
           'rest': [
             'working rest(0)',
             'rest can take an index',
@@ -343,13 +347,12 @@
           'mapObject': 'mapValues',
           'matcher': 'matches',
           'methods': 'functions',
-          'object': 'fromPairs',
+          'object': 'zipObject',
           'pairs': 'toPairs',
           'pluck': 'map',
           'restParam': 'restArgs',
           'select': 'filter',
-          'where': 'filter',
-          'zipObject': 'fromPairs'
+          'where': 'filter'
         };
 
         var keyMap = {

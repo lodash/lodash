@@ -5041,6 +5041,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.flatMap');
+
+  (function() {
+    QUnit.test('should map values in `array` to a new flattened array', function(assert) {
+      assert.expect(1);
+
+      var actual = _.flatMap([1, 2], function(n) {
+        return [n, n];
+      });
+
+      assert.deepEqual(actual, [1, 1, 2, 2]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('flatten methods');
 
   (function() {

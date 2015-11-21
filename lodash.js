@@ -7096,8 +7096,7 @@
     }
 
     /**
-     * Reverses the wrapped array so that the first element becomes the last,
-     * the second element becomes the second to last, and so on.
+     * This method is the wrapper version of `_.reverse`.
      *
      * **Note:** This method mutates the wrapped array.
      *

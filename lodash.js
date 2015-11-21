@@ -5550,6 +5550,31 @@
     }
 
     /**
+     * Creates an array of flattened values by running each element in `array`
+     * through `iteratee` and concating its result to the other mapped values.
+     * The iteratee is invoked with three arguments: (value, index|key, array).
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to iterate over.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {Array} Returns the new array.
+     * @example
+     *
+     * function duplicate(n) {
+     *   return [n, n];
+     * }
+     *
+     * _.flatMap([1, 2], duplicate);
+     * // => [1, 1, 2, 2]
+     */
+    function flatMap(array, iteratee) {
+      var length = array ? array.length : 0;
+      return length ? baseFlatten(arrayMap(array, getIteratee(iteratee, 3))) : [];
+    }
+
+    /**
      * Flattens `array` a single level.
      *
      * @static
@@ -6952,6 +6977,27 @@
      */
     function wrapperCommit() {
       return new LodashWrapper(this.value(), this.__chain__);
+    }
+
+    /**
+     * This method is the wrapper version of `_.flatMap`.
+     *
+     * @static
+     * @memberOf _
+     * @category Chain
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {Object} Returns the new `lodash` wrapper instance.
+     * @example
+     *
+     * function duplicate(n) {
+     *   return [n, n];
+     * }
+     *
+     * _([1, 2]).flatMap(duplicate).value();
+     * // => [1, 1, 2, 2]
+     */
+    function wrapperFlatMap(iteratee) {
+      return this.map(iteratee).flatten();
     }
 
     /**
@@ -13629,6 +13675,7 @@
     lodash.dropWhile = dropWhile;
     lodash.fill = fill;
     lodash.filter = filter;
+    lodash.flatMap = flatMap;
     lodash.flatten = flatten;
     lodash.flattenDeep = flattenDeep;
     lodash.flip = flip;
@@ -14085,6 +14132,7 @@
     lodash.prototype.at = wrapperAt;
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;
+    lodash.prototype.flatMap = wrapperFlatMap;
     lodash.prototype.next = wrapperNext;
     lodash.prototype.plant = wrapperPlant;
     lodash.prototype.reverse = wrapperReverse;

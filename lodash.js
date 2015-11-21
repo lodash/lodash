@@ -7527,9 +7527,9 @@
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
-     * `fill`, `invert`, `parseInt`, `random`, `range`, `slice`, `some`, `sortBy`,
-     * `take`, `takeRight`, `template`, `trim`, `trimEnd`, `trimStart`, `uniq`,
+     * `ary`, `curry`, `curryRight`, `drop`, `dropRight`, `every`, `fill`,
+     * `invert`, `parseInt`, `random`, `range`, `slice`, `some`, `sortBy`,
+     * `take`, `takeRight`, `template`, `trim`, `trimEnd`, `trimStart`,
      * and `words`
      *
      * @static

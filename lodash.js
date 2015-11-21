@@ -6882,7 +6882,7 @@
     }
 
     /**
-     * Creates a wrapped array of values corresponding to `paths` of the wrapped object.
+     * This method is the wrapper version of `_.at`.
      *
      * @name at
      * @memberOf _
@@ -6894,10 +6894,10 @@
      *
      * var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
      *
-     * _(object).at(['a[0].b.c', 'a[1]']);
+     * _(object).at(['a[0].b.c', 'a[1]']).value();
      * // => [3, 4]
      *
-     * _(['a', 'b', 'c']).at(0, 2);
+     * _(['a', 'b', 'c']).at(0, 2).value();
      * // => ['a', 'c']
      */
     var wrapperAt = rest(function(paths) {
@@ -6912,11 +6912,11 @@
       }
       value = value.slice(start, +start + (length ? 1 : 0));
       value.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
-      return new LodashWrapper(value, this.__chain__).thru(function(object) {
-        if (length && !object.length) {
-          object.push(undefined);
+      return new LodashWrapper(value, this.__chain__).thru(function(array) {
+        if (length && !array.length) {
+          array.push(undefined);
         }
-        return object;
+        return array;
       });
     });
 

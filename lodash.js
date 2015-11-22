@@ -4781,25 +4781,6 @@
     }
 
     /**
-     * Invokes the method at `path` of `object`.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path of the method to invoke.
-     * @param {Array} args The arguments to invoke the method with.
-     * @returns {*} Returns the result of the invoked method.
-     */
-    function invokePath(object, path, args) {
-      if (!isKey(path, object)) {
-        path = baseToPath(path);
-        object = parent(object, path);
-        path = last(path);
-      }
-      var func = object == null ? object : object[path];
-      return func == null ? undefined : func.apply(object, args);
-    }
-
-    /**
      * Checks if the provided arguments are from an iteratee call.
      *
      * @private
@@ -10896,6 +10877,27 @@
     }
 
     /**
+     * Invokes the method at `path` of `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the method to invoke.
+     * @param {Array} args The arguments to invoke the method with.
+     * @returns {*} Returns the result of the invoked method.
+     */
+    function invokePath(object, path, args) {
+      if (!isKey(path, object)) {
+        path = baseToPath(path);
+        object = parent(object, path);
+        path = last(path);
+      }
+      var func = object == null ? object : object[path];
+      return func == null ? undefined : func.apply(object, args);
+    }
+
+    /**
      * Creates an array of the own enumerable property names of `object`.
      *
      * **Note:** Non-object values are coerced to objects. See the
@@ -13705,6 +13707,7 @@
     lodash.intersectionWith = intersectionWith;
     lodash.invert = invert;
     lodash.invoke = invoke;
+    lodash.invokePath = invokePath;
     lodash.iteratee = iteratee;
     lodash.keyBy = keyBy;
     lodash.keys = keys;

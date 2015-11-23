@@ -2195,7 +2195,7 @@
     }
 
     /**
-     * The base implementation of `_.at` without support for individual path arguments.
+     * The base implementation of `_.at` without support for individual paths.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -3174,7 +3174,7 @@
 
     /**
      * The base implementation of `_.pullAt` without support for individual
-     * index arguments or capturing the removed elements.
+     * indexes or capturing the removed elements.
      *
      * @private
      * @param {Array} array The array to modify.
@@ -8489,7 +8489,7 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to defer.
-     * @param {...*} [args] The arguments to invoke the function with.
+     * @param {...*} [args] The arguments to invoke `func` with.
      * @returns {number} Returns the timer id.
      * @example
      *
@@ -8511,7 +8511,7 @@
      * @category Function
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
-     * @param {...*} [args] The arguments to invoke the function with.
+     * @param {...*} [args] The arguments to invoke `func` with.
      * @returns {number} Returns the timer id.
      * @example
      *

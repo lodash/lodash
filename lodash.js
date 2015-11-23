@@ -11255,10 +11255,10 @@
      * _.result(object, 'a[0].b.c2');
      * // => 4
      *
-     * _.result(object, 'a.b.c', 'default');
+     * _.result(object, 'a[0].b.c3', 'default');
      * // => 'default'
      *
-     * _.result(object, 'a.b.c', _.constant('default'));
+     * _.result(object, 'a[0].b.c3', _.constant('default'));
      * // => 'default'
      */
     function result(object, path, defaultValue) {

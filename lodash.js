@@ -2694,6 +2694,27 @@
     }
 
     /**
+     * The base implementation of `_.invokePath` without support for individual
+     * method arguments.
+     *
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the method to invoke.
+     * @param {Array} args The arguments to invoke the method with.
+     * @returns {*} Returns the result of the invoked method.
+     */
+    function baseInvokePath(object, path, args) {
+      if (!isKey(path, object)) {
+        path = baseToPath(path);
+        object = parent(object, path);
+        path = last(path);
+      }
+      var func = object == null ? object : object[path];
+      return func == null ? undefined : func.apply(object, args);
+    }
+
+    /**
      * The base implementation of `_.isEqual` which supports partial comparisons
      * and tracks traversed objects.
      *
@@ -7460,7 +7481,7 @@
      * @param {Array|Object} collection The collection to iterate over.
      * @param {Array|Function|string} path The path of the method to invoke or
      *  the function invoked per iteration.
-     * @param {...*} [args] The arguments to invoke the method with.
+     * @param {...*} [args] The arguments to invoke each method with.
      * @returns {Array} Returns the array of results.
      * @example
      *
@@ -7478,7 +7499,7 @@
 
       baseEach(collection, function(value) {
         var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
-        result[++index] = func ? func.apply(value, args) : invokePath(value, path, args);
+        result[++index] = func ? func.apply(value, args) : baseInvokePath(value, path, args);
       });
       return result;
     });
@@ -10884,18 +10905,16 @@
      * @category Object
      * @param {Object} object The object to query.
      * @param {Array|string} path The path of the method to invoke.
-     * @param {Array} args The arguments to invoke the method with.
+     * @param {...*} [args] The arguments to invoke the method with.
      * @returns {*} Returns the result of the invoked method.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
+     *
+     * _.invokePath(object, 'a[0].b.c.slice', 1, 3);
+     * // => [2, 3]
      */
-    function invokePath(object, path, args) {
-      if (!isKey(path, object)) {
-        path = baseToPath(path);
-        object = parent(object, path);
-        path = last(path);
-      }
-      var func = object == null ? object : object[path];
-      return func == null ? undefined : func.apply(object, args);
-    }
+    var invokePath = rest(baseInvokePath);
 
     /**
      * Creates an array of the own enumerable property names of `object`.
@@ -12911,7 +12930,7 @@
      */
     var method = rest(function(path, args) {
       return function(object) {
-        return invokePath(object, path, args);
+        return baseInvokePath(object, path, args);
       };
     });
 
@@ -12939,7 +12958,7 @@
      */
     var methodOf = rest(function(object, args) {
       return function(path) {
-        return invokePath(object, path, args);
+        return baseInvokePath(object, path, args);
       };
     });
 

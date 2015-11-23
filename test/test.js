@@ -5044,14 +5044,38 @@
   QUnit.module('lodash.flatMap');
 
   (function() {
+    var array = [1, 2, 3, 4];
+
+    function duplicate(n) {
+      return [n, n];
+    }
+
     QUnit.test('should map values in `array` to a new flattened array', function(assert) {
       assert.expect(1);
 
-      var actual = _.flatMap([1, 2], function(n) {
-        return [n, n];
-      });
+      var actual = _.flatMap(array, duplicate),
+          expected = lodashStable.flatten(lodashStable.map(array, duplicate));
 
-      assert.deepEqual(actual, [1, 1, 2, 2]);
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should work in a lazy sequence', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
+            smallArray = array;
+
+        lodashStable.times(2, function(index) {
+          var array = index ? largeArray : smallArray,
+              actual = _(array).filter(isEven).flatMap(duplicate).take(2).value();
+
+          assert.deepEqual(actual, _.take(_.flatMap(_.filter(array, isEven), duplicate), 2));
+        });
+      }
+      else {
+        skipTest(assert, 2);
+      }
     });
   }());
 

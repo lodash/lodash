@@ -21470,10 +21470,12 @@
     });
 
     QUnit.test('should support deep paths', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var actual = _.zipObject(['a.b.c'], [1]);
-      assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+      lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var actual = _.zipObject([path], [1]);
+        assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+      });
     });
 
     QUnit.test('should work in a lazy sequence', function(assert) {

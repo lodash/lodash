@@ -3423,7 +3423,7 @@
         includes = arrayIncludesWith;
       }
       else if (length >= LARGE_ARRAY_SIZE) {
-        var set = createSet(array);
+        var set = iteratee ? null : createSet(array);
         if (set) {
           return setToArray(set);
         }

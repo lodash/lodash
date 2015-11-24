@@ -20979,6 +20979,19 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should work with large arrays', function(assert) {
+      assert.expect(2);
+
+      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function() {
+        return [1, 2];
+      });
+
+      var actual = func(largeArray, String);
+
+      assert.deepEqual(actual, [[1, 2]]);
+      assert.strictEqual(actual[0], largeArray[0]);
+    });
+
     QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 

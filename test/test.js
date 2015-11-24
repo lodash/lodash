@@ -7066,11 +7066,13 @@
   QUnit.module('lodash.invoke');
 
   (function() {
-    QUnit.test('should invoke a methods on each element of a collection', function(assert) {
+    QUnit.test('should invoke a methods on each element of `collection`', function(assert) {
       assert.expect(1);
 
-      var array = ['a', 'b', 'c'];
-      assert.deepEqual(_.invoke(array, 'toUpperCase'), ['A', 'B', 'C']);
+      var array = ['a', 'b', 'c'],
+          actual = _.invoke(array, 'toUpperCase');
+
+      assert.deepEqual(actual, ['A', 'B', 'C']);
     });
 
     QUnit.test('should support invoking with arguments', function(assert) {
@@ -7097,8 +7099,10 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 1, 'b': 2, 'c': 3 };
-      assert.deepEqual(_.invoke(object, 'toFixed', 1), ['1.0', '2.0', '3.0']);
+      var object = { 'a': 1, 'b': 2, 'c': 3 },
+          actual = _.invoke(object, 'toFixed', 1);
+
+      assert.deepEqual(actual, ['1.0', '2.0', '3.0']);
     });
 
     QUnit.test('should treat number values for `collection` as empty', function(assert) {
@@ -7142,6 +7146,67 @@
 
       lodashStable.each(['a.b', ['a', 'b']], function(path) {
         assert.deepEqual(_.invoke([object], path), [1]);
+      });
+    });
+  }());
+
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.invokePath');
+
+  (function() {
+    QUnit.test('should invoke a method on `object`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': lodashStable.constant('A') },
+          actual = _.invokePath(object, 'a');
+
+      assert.strictEqual(actual, 'A');
+    });
+
+    QUnit.test('should support invoking with arguments', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': function(a, b) { return [a, b]; } },
+          actual = _.invokePath(object, 'a', 1, 2);
+
+      assert.deepEqual(actual, [1, 2]);
+    });
+
+    QUnit.test('should not error on nullish elements', function(assert) {
+      assert.expect(1);
+
+      var values = [null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(undefined));
+
+      var actual = lodashStable.map(values, function(value) {
+        try {
+          return _.invokePath(value, 'a.b.c', 1, 2);
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should support deep paths', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': { 'b': function(a, b) { return [a, b]; } } };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        var actual = _.invokePath(object, path, 1, 2);
+        assert.deepEqual(actual, [1, 2]);
+      });
+    });
+
+    QUnit.test('should invoke deep property methods with the correct `this` binding', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        assert.deepEqual(_.invokePath(object, path), 1);
       });
     });
   }());

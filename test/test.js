@@ -7063,14 +7063,14 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.invoke');
+  QUnit.module('lodash.invokeMap');
 
   (function() {
     QUnit.test('should invoke a methods on each element of `collection`', function(assert) {
       assert.expect(1);
 
       var array = ['a', 'b', 'c'],
-          actual = _.invoke(array, 'toUpperCase');
+          actual = _.invokeMap(array, 'toUpperCase');
 
       assert.deepEqual(actual, ['A', 'B', 'C']);
     });
@@ -7079,7 +7079,7 @@
       assert.expect(1);
 
       var array = [function() { return slice.call(arguments); }],
-          actual = _.invoke(array, 'call', null, 'a', 'b', 'c');
+          actual = _.invokeMap(array, 'call', null, 'a', 'b', 'c');
 
       assert.deepEqual(actual, [['a', 'b', 'c']]);
     });
@@ -7089,7 +7089,7 @@
 
       var array = ['a', 'b', 'c'];
 
-      var actual = _.invoke(array, function(left, right) {
+      var actual = _.invokeMap(array, function(left, right) {
         return left + this.toUpperCase() + right;
       }, '(', ')');
 
@@ -7100,7 +7100,7 @@
       assert.expect(1);
 
       var object = { 'a': 1, 'b': 2, 'c': 3 },
-          actual = _.invoke(object, 'toFixed', 1);
+          actual = _.invokeMap(object, 'toFixed', 1);
 
       assert.deepEqual(actual, ['1.0', '2.0', '3.0']);
     });
@@ -7108,7 +7108,7 @@
     QUnit.test('should treat number values for `collection` as empty', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.invoke(1), []);
+      assert.deepEqual(_.invokeMap(1), []);
     });
 
     QUnit.test('should not error on nullish elements', function(assert) {
@@ -7117,10 +7117,10 @@
       var array = ['a', null, undefined, 'd'];
 
       try {
-        var actual = _.invoke(array, 'toUpperCase');
+        var actual = _.invokeMap(array, 'toUpperCase');
       } catch (e) {}
 
-      assert.deepEqual(_.invoke(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
+      assert.deepEqual(_.invokeMap(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
     });
 
     QUnit.test('should not error on elements with missing properties', function(assert) {
@@ -7133,7 +7133,7 @@
       var expected = lodashStable.times(objects.length - 1, lodashStable.constant(undefined)).concat(1);
 
       try {
-        var actual = _.invoke(objects, 'a');
+        var actual = _.invokeMap(objects, 'a');
       } catch (e) {}
 
       assert.deepEqual(actual, expected);
@@ -7145,11 +7145,10 @@
       var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } };
 
       lodashStable.each(['a.b', ['a', 'b']], function(path) {
-        assert.deepEqual(_.invoke([object], path), [1]);
+        assert.deepEqual(_.invokeMap([object], path), [1]);
       });
     });
   }());
-
 
   /*--------------------------------------------------------------------------*/
 
@@ -9849,7 +9848,8 @@
       assert.expect(1);
 
       if (realm.object) {
-        var props = _.invoke(typedArrays, 'toLowerCase');
+        var invoke = lodashStable.invokeMap || lodashStable.invoke,
+            props = invoke(typedArrays, 'toLowerCase');
 
         var expected = lodashStable.map(props, function(key) {
           return key in realm;
@@ -22670,7 +22670,7 @@
       'functions',
       'initial',
       'intersection',
-      'invoke',
+      'invokeMap',
       'keys',
       'map',
       'pull',
@@ -22746,7 +22746,7 @@
             func = _[methodName];
 
         switch (methodName) {
-          case 'invoke':
+          case 'invokeMap':
              actual = func(array, 'toFixed');
              break;
           case 'sample':

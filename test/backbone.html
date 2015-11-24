@@ -28,12 +28,30 @@
       QUnit.config.hidepassed = true;
 
       var mixinPrereqs = (function() {
+        var aliasToReal = {
+          'indexBy': 'keyBy',
+          'invoke': 'invokeMap'
+        };
+
+        var keyMap = {
+          'rest': 'tail'
+        };
+
         var lodash = _.noConflict();
 
         return function(_) {
           lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
-          lodash.mixin(_ , { 'indexBy': lodash.keyBy, 'rest': lodash.tail });
           lodash.mixin(_, lodash.pick(lodash, lodash.difference(lodash.functions(lodash), lodash.functions(_))));
+
+          lodash.forOwn(keyMap, function(realName, otherName) {
+            _[otherName] = lodash[realName];
+            _.prototype[otherName] = lodash.prototype[realName];
+          });
+
+          lodash.forOwn(aliasToReal, function(realName, alias) {
+            _[alias] = _[realName];
+            _.prototype[alias] = _.prototype[realName];
+          });
         };
       }());
 

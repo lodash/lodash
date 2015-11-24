@@ -290,7 +290,7 @@ function logThrobber() {
  * @returns {Array} Returns the new converted array.
  */
 function optionToArray(name, string) {
-  return _.compact(_.invoke((optionToValue(name, string) || '').split(/, */), 'trim'));
+  return _.compact(_.invokeMap((optionToValue(name, string) || '').split(/, */), 'trim'));
 }
 
 /**
@@ -714,7 +714,7 @@ function Tunnel(properties) {
       total = all.length,
       tunnel = this;
 
-  _.invoke(all, 'on', 'complete', function() {
+  _.invokeMap(all, 'on', 'complete', function() {
     _.pull(active, this);
     if (success) {
       success = !this.failed;
@@ -726,7 +726,7 @@ function Tunnel(properties) {
     tunnel.dequeue();
   });
 
-  _.invoke(all, 'on', 'restart', function() {
+  _.invokeMap(all, 'on', 'restart', function() {
     if (!_.includes(restarted, this)) {
       restarted.push(this);
     }
@@ -774,7 +774,7 @@ Tunnel.prototype.restart = function(callback) {
       all = jobs.all;
 
   var reset = _.after(all.length, _.bind(this.stop, this, onGenericRestart)),
-      stop = _.after(active.length, _.partial(_.invoke, all, 'reset', reset));
+      stop = _.after(active.length, _.partial(_.invokeMap, all, 'reset', reset));
 
   if (_.isEmpty(active)) {
     _.defer(stop);
@@ -782,7 +782,7 @@ Tunnel.prototype.restart = function(callback) {
   if (_.isEmpty(all)) {
     _.defer(reset);
   }
-  _.invoke(active, 'stop', function() {
+  _.invokeMap(active, 'stop', function() {
     _.pull(active, this);
     stop();
   });
@@ -870,7 +870,7 @@ Tunnel.prototype.stop = function(callback) {
   if (_.isEmpty(active)) {
     _.defer(stop);
   }
-  _.invoke(active, 'stop', function() {
+  _.invokeMap(active, 'stop', function() {
     _.pull(active, this);
     stop();
   });

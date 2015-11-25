@@ -7089,6 +7089,90 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.invoke');
+
+  (function() {
+    QUnit.test('should invoke a method on `object`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': lodashStable.constant('A') },
+          actual = _.invoke(object, 'a');
+
+      assert.strictEqual(actual, 'A');
+    });
+
+    QUnit.test('should support invoking with arguments', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': function(a, b) { return [a, b]; } },
+          actual = _.invoke(object, 'a', 1, 2);
+
+      assert.deepEqual(actual, [1, 2]);
+    });
+
+    QUnit.test('should not error on nullish elements', function(assert) {
+      assert.expect(1);
+
+      var values = [null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(undefined));
+
+      var actual = lodashStable.map(values, function(value) {
+        try {
+          return _.invoke(value, 'a.b.c', 1, 2);
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should support deep paths', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': { 'b': function(a, b) { return [a, b]; } } };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        var actual = _.invoke(object, path, 1, 2);
+        assert.deepEqual(actual, [1, 2]);
+      });
+    });
+
+    QUnit.test('should invoke deep property methods with the correct `this` binding', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        assert.deepEqual(_.invoke(object, path), 1);
+      });
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var object = { 'a': lodashStable.constant(1) };
+        assert.strictEqual(_(object).invoke('a'), 1);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var object = { 'a': lodashStable.constant(1) };
+        assert.ok(_(object).chain().invoke('a') instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.invokeMap');
 
   (function() {
@@ -7193,90 +7277,6 @@
       }
       else {
         skipTest(assert, 2);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.invokePath');
-
-  (function() {
-    QUnit.test('should invoke a method on `object`', function(assert) {
-      assert.expect(1);
-
-      var object = { 'a': lodashStable.constant('A') },
-          actual = _.invokePath(object, 'a');
-
-      assert.strictEqual(actual, 'A');
-    });
-
-    QUnit.test('should support invoking with arguments', function(assert) {
-      assert.expect(1);
-
-      var object = { 'a': function(a, b) { return [a, b]; } },
-          actual = _.invokePath(object, 'a', 1, 2);
-
-      assert.deepEqual(actual, [1, 2]);
-    });
-
-    QUnit.test('should not error on nullish elements', function(assert) {
-      assert.expect(1);
-
-      var values = [null, undefined],
-          expected = lodashStable.map(values, lodashStable.constant(undefined));
-
-      var actual = lodashStable.map(values, function(value) {
-        try {
-          return _.invokePath(value, 'a.b.c', 1, 2);
-        } catch (e) {}
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should support deep paths', function(assert) {
-      assert.expect(2);
-
-      var object = { 'a': { 'b': function(a, b) { return [a, b]; } } };
-
-      lodashStable.each(['a.b', ['a', 'b']], function(path) {
-        var actual = _.invokePath(object, path, 1, 2);
-        assert.deepEqual(actual, [1, 2]);
-      });
-    });
-
-    QUnit.test('should invoke deep property methods with the correct `this` binding', function(assert) {
-      assert.expect(2);
-
-      var object = { 'a': { 'b': function() { return this.c; }, 'c': 1 } };
-
-      lodashStable.each(['a.b', ['a', 'b']], function(path) {
-        assert.deepEqual(_.invokePath(object, path), 1);
-      });
-    });
-
-    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var object = { 'a': lodashStable.constant(1) };
-        assert.strictEqual(_(object).invokePath('a'), 1);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-
-    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var object = { 'a': lodashStable.constant(1) };
-        assert.ok(_(object).chain().invokePath('a') instanceof _);
-      }
-      else {
-        skipTest(assert);
       }
     });
   }());

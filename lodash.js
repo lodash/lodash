@@ -1517,7 +1517,7 @@
      * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `floor`, `get`, `gt`, `gte`,
      * `has`, `hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`,
-     * `invokePath`, `isArguments`, `isArray`, `isArrayLike`, `isArrayLikeObject`,
+     * `invoke`, `isArguments`, `isArray`, `isArrayLike`, `isArrayLikeObject`,
      * `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
      * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMatch`,
      * `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
@@ -2704,7 +2704,7 @@
     }
 
     /**
-     * The base implementation of `_.invokePath` without support for individual
+     * The base implementation of `_.invoke` without support for individual
      * method arguments.
      *
      *
@@ -2714,7 +2714,7 @@
      * @param {Array} args The arguments to invoke the method with.
      * @returns {*} Returns the result of the invoked method.
      */
-    function baseInvokePath(object, path, args) {
+    function baseInvoke(object, path, args) {
       if (!isKey(path, object)) {
         path = baseToPath(path);
         object = parent(object, path);
@@ -7509,7 +7509,7 @@
 
       baseEach(collection, function(value) {
         var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
-        result[++index] = func ? func.apply(value, args) : baseInvokePath(value, path, args);
+        result[++index] = func ? func.apply(value, args) : baseInvoke(value, path, args);
       });
       return result;
     });
@@ -10921,10 +10921,10 @@
      *
      * var object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
      *
-     * _.invokePath(object, 'a[0].b.c.slice', 1, 3);
+     * _.invoke(object, 'a[0].b.c.slice', 1, 3);
      * // => [2, 3]
      */
-    var invokePath = rest(baseInvokePath);
+    var invoke = rest(baseInvoke);
 
     /**
      * Creates an array of the own enumerable property names of `object`.
@@ -12940,7 +12940,7 @@
      */
     var method = rest(function(path, args) {
       return function(object) {
-        return baseInvokePath(object, path, args);
+        return baseInvoke(object, path, args);
       };
     });
 
@@ -12968,7 +12968,7 @@
      */
     var methodOf = rest(function(object, args) {
       return function(path) {
-        return baseInvokePath(object, path, args);
+        return baseInvoke(object, path, args);
       };
     });
 
@@ -13875,7 +13875,7 @@
     lodash.includes = includes;
     lodash.indexOf = indexOf;
     lodash.inRange = inRange;
-    lodash.invokePath = invokePath;
+    lodash.invoke = invoke;
     lodash.isArguments = isArguments;
     lodash.isArray = isArray;
     lodash.isArrayLike = isArrayLike;
@@ -14066,7 +14066,7 @@
         return new LazyWrapper(this);
       }
       return this.map(function(value) {
-        return baseInvokePath(value, path, args);
+        return baseInvoke(value, path, args);
       });
     });
 

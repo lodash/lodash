@@ -54,7 +54,7 @@ QUnit.module('method ary caps');
     assert.expect(1);
 
     var funcMethods = [
-      'conj', 'curry', 'disj', 'iteratee', 'juxt', 'memoize',
+      'curry', 'iteratee', 'memoize', 'over', 'overEvery', 'overSome',
       'method', 'methodOf', 'restParam', 'runInContext'
     ];
 

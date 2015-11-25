@@ -2224,7 +2224,7 @@
      * @param {Function} [customizer] The function to customize cloning.
      * @param {string} [key] The key of `value`.
      * @param {Object} [object] The object `value` belongs to.
-     * @param {Array} [stack] Tracks traversed sources and their clone counterparts.
+     * @param {Object} [stack] Tracks traversed sources and their clone counterparts.
      * @returns {*} Returns the cloned value.
      */
     function baseClone(value, isDeep, customizer, key, object, stack) {
@@ -2726,7 +2726,7 @@
      *  The bitmask may be composed of the following flags:
      *     1 - Unordered comparison
      *     2 - Partial comparison
-     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
+     * @param {Object} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
     function baseIsEqual(value, other, customizer, bitmask, stack) {
@@ -2750,7 +2750,7 @@
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
+     * @param {Object} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
@@ -2988,7 +2988,7 @@
      * @param {Object} object The destination object.
      * @param {Object} source The source object.
      * @param {Function} [customizer] The function to customize merged values.
-     * @param {Array} [stack] Tracks traversed sources and their value counterparts.
+     * @param {Object} [stack] Tracks traversed sources and their value counterparts.
      */
     function baseMerge(object, source, customizer, stack) {
       if (object === source) {
@@ -3025,7 +3025,7 @@
      * @param {string} key The key of the value to merge.
      * @param {Function} mergeFunc The function to merge values.
      * @param {Function} [customizer] The function to customize assigned values.
-     * @param {Array} [stack] Tracks traversed sources and their value counterparts.
+     * @param {Object} [stack] Tracks traversed sources and their value counterparts.
      */
     function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
       var oldValue = object[key],
@@ -4382,7 +4382,7 @@
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
+     * @param {Object} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
     function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
@@ -4486,7 +4486,7 @@
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-     * @param {Array} [stack] Tracks traversed `value` and `other` objects.
+     * @param {Object} [stack] Tracks traversed `value` and `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
     function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {

@@ -7208,6 +7208,30 @@
         assert.deepEqual(_.invokePath(object, path), 1);
       });
     });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var object = { 'a': lodashStable.constant(1) };
+        assert.strictEqual(_(object).invokePath('a'), 1);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var object = { 'a': lodashStable.constant(1) };
+        assert.ok(_(object).chain().invokePath('a') instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

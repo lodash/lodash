@@ -7656,6 +7656,105 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.nonEmpty');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `false` for empty values', function(assert) {
+      assert.expect(7);
+
+      var expected = lodashStable.map(empties, lodashStable.constant(false)),
+          actual = lodashStable.map(empties, _.nonEmpty);
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.nonEmpty(true), false);
+      assert.strictEqual(_.nonEmpty(slice), false);
+      assert.strictEqual(_.nonEmpty(1), false);
+      assert.strictEqual(_.nonEmpty(NaN), false);
+      assert.strictEqual(_.nonEmpty(/x/), false);
+      assert.strictEqual(_.nonEmpty(), false);
+    });
+
+    QUnit.test('should return `true` for non-empty values', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.nonEmpty([0]), true);
+      assert.strictEqual(_.nonEmpty({ 'a': 0 }), true);
+      assert.strictEqual(_.nonEmpty('a'), true);
+    });
+
+    QUnit.test('should work with an object that has a `length` property', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.nonEmpty({ 'length': 0 }), true);
+    });
+
+    QUnit.test('should work with `arguments` objects', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.nonEmpty(args), true);
+    });
+
+    QUnit.test('should work with jQuery/MooTools DOM query collections', function(assert) {
+      assert.expect(1);
+
+      function Foo(elements) { push.apply(this, elements); }
+      Foo.prototype = { 'length': 0, 'splice': arrayProto.splice };
+
+      assert.strictEqual(_.nonEmpty(new Foo([])), false);
+    });
+
+    QUnit.test('should not treat objects with negative lengths as array-like', function(assert) {
+      assert.expect(1);
+
+      function Foo() {}
+      Foo.prototype.length = -1;
+
+      assert.strictEqual(_.nonEmpty(new Foo), false);
+    });
+
+    QUnit.test('should not treat objects with lengths larger than `MAX_SAFE_INTEGER` as array-like', function(assert) {
+      assert.expect(1);
+
+      function Foo() {}
+      Foo.prototype.length = MAX_SAFE_INTEGER + 1;
+
+      assert.strictEqual(_.nonEmpty(new Foo), false);
+    });
+
+    QUnit.test('should not treat objects with non-number lengths as array-like', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.nonEmpty({ 'length': '0' }), true);
+    });
+
+    QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.strictEqual(_({}).nonEmpty(), false);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        assert.ok(_({}).chain().nonEmpty() instanceof _);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isEqual');
 
   (function() {
@@ -22723,7 +22822,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(282);
+      assert.expect(283);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 

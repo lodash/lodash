@@ -1518,7 +1518,7 @@
      * `findLast`, `findLastIndex`, `findLastKey`, `floor`, `get`, `gt`, `gte`,
      * `has`, `hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`,
      * `invokePath`, `isArguments`, `isArray`, `isArrayLike`, `isArrayLikeObject`,
-     * `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
+     * `isBoolean`, `isDate`, `isElement`, `isEmpty`, `nonEmpty`, `isEqual`, `isEqualWith`,
      * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMatch`,
      * `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
      * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
@@ -9415,6 +9415,37 @@
     }
 
     /**
+     * Checks if `value` is not empty. A value is considered empty unless it's an
+     * `arguments` object, array, string, or jQuery-like collection with a length
+     * greater than `0` or an object with own enumerable properties.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {Array|Object|string} value The value to inspect.
+     * @returns {boolean} Returns `false` if `value` is empty, else `true`.
+     * @example
+     *
+     * _.nonEmpty(null);
+     * // => false
+     *
+     * _.nonEmpty(true);
+     * // => false
+     *
+     * _.nonEmpty(1);
+     * // => false
+     *
+     * _.nonEmpty([1, 2, 3]);
+     * // => true
+     *
+     * _.nonEmpty({ 'a': 1 });
+     * // => truw
+     */
+    function nonEmpty(value) {
+      return !isEmpty(value);
+    }
+
+    /**
      * Performs a deep comparison between two values to determine if they are
      * equivalent.
      *
@@ -13874,6 +13905,7 @@
     lodash.isDate = isDate;
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;
+    lodash.nonEmpty = nonEmpty;
     lodash.isEqual = isEqual;
     lodash.isEqualWith = isEqualWith;
     lodash.isError = isError;

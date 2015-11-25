@@ -13220,9 +13220,10 @@
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to, but not including, `end`. If `end` is not specified it's
-     * set to `start` with `start` then set to `0`. If `end` is less than `start`
-     * a zero-length range is created unless a negative `step` is specified.
+     * `start` up to, but not including, `end`. A step of `-1` is used if a negative
+     * `start` is specified without an `end` or `step`. If `end` is not specified
+     * it's set to `start` with `start` then set to `0`.  If `end` is less than
+     * `start` a zero-length range is created unless a negative `step` is specified.
      *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
@@ -13238,6 +13239,9 @@
      *
      * _.range(4);
      * // => [0, 1, 2, 3]
+     *
+     * _.range(-4);
+     * // => [0, -1, -2, -3]
      *
      * _.range(1, 5);
      * // => [1, 2, 3, 4]
@@ -13260,14 +13264,16 @@
       }
       start = toNumber(start);
       start = start === start ? start : 0;
-      step = step === undefined ? 1 : (toNumber(step) || 0);
 
       if (end === undefined) {
         end = start;
         start = 0;
+        step = step === undefined ? (start < end ? 1 : -1) : step;
       } else {
         end = toNumber(end) || 0;
       }
+      step = step === undefined ? 1 : (toNumber(step) || 0);
+
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
       return baseTimes(n, function(index) {
         return index ? (start += step) : start;

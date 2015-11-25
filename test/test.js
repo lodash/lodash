@@ -15555,10 +15555,16 @@
   QUnit.module('lodash.range');
 
   (function() {
-    QUnit.test('should work with an `end` argument', function(assert) {
+    QUnit.test('should work with only an `end` argument', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.range(4), [0, 1, 2, 3]);
+    });
+
+    QUnit.test('should use a `step` of `-1` when provided only a negative `end` argument', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.range(-4), [0, -1, -2, -3]);
     });
 
     QUnit.test('should work with `start` and `end` arguments', function(assert) {

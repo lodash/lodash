@@ -14051,6 +14051,15 @@
       return this.reverse().find(predicate);
     };
 
+    LazyWrapper.prototype.invokeMap = rest(function(path, args) {
+      if (typeof path == 'function') {
+        return new LazyWrapper(this);
+      }
+      return this.map(function(value) {
+        return baseInvokePath(value, path, args);
+      });
+    });
+
     LazyWrapper.prototype.reject = function(predicate) {
       predicate = getIteratee(predicate, 3);
       return this.filter(function(value) {

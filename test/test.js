@@ -7148,6 +7148,27 @@
         assert.deepEqual(_.invokeMap([object], path), [1]);
       });
     });
+
+    QUnit.test('should support shortcut fusion', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var count = 0,
+            method = function() { count++; return this.index; };
+
+        var array = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
+          return { 'index': index, 'method': method };
+        });
+
+        var actual = _(array).invokeMap('method').take(1).value();
+
+        assert.strictEqual(count, 1);
+        assert.deepEqual(actual, [0]);
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

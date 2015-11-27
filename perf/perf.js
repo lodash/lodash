@@ -357,13 +357,13 @@
         uncompacted[6] = null;\
         uncompacted[18] = "";\
       }\
-      if (typeof compose != "undefined") {\
+      if (typeof flowRight != "undefined") {\
         var compAddOne = function(n) { return n + 1; },\
             compAddTwo = function(n) { return n + 2; },\
             compAddThree = function(n) { return n + 3; };\
         \
-        var _composed = _.compose(compAddThree, compAddTwo, compAddOne),\
-            lodashComposed = lodash.compose(compAddThree, compAddTwo, compAddOne);\
+        var _composed = _.flowRight(compAddThree, compAddTwo, compAddOne),\
+            lodashComposed = lodash.flowRight(compAddThree, compAddTwo, compAddOne);\
       }\
       if (typeof countBy != "undefined" || typeof omit != "undefined") {\
         var wordToNumber = {\
@@ -458,11 +458,8 @@
       if (typeof matches != "undefined") {\
         var source = { "num": 9 };\
         \
-        var _findWhere = _.findWhere || _.find,\
-            _matcher = (_.matches || _.createCallback || _.noop)(source);\
-        \
-        var lodashFindWhere = lodash.findWhere || lodash.find,\
-            lodashMatcher = (lodash.matches || lodash.createCallback || lodash.noop)(source);\
+        var _matcher = (_.matches || _.noop)(source),\
+            lodashMatcher = (lodash.matches || lodash.noop)(source);\
       }\
       if (typeof multiArrays != "undefined") {\
         var twentyValues = belt.shuffle(belt.range(20)),\
@@ -642,25 +639,13 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.bindAll` iterating arguments')
+    Benchmark.Suite('`_.bindAll`')
       .add(buildName, {
-        'fn': 'lodash.bindAll.apply(lodash, [bindAllObjects[++bindAllCount]].concat(funcNames))',
+        'fn': 'lodash.bindAll(bindAllObjects[++bindAllCount], funcNames)',
         'teardown': 'function bindAll(){}'
       })
       .add(otherName, {
-        'fn': '_.bindAll.apply(_, [bindAllObjects[++bindAllCount]].concat(funcNames))',
-        'teardown': 'function bindAll(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.bindAll` iterating the `object`')
-      .add(buildName, {
-        'fn': 'lodash.bindAll(bindAllObjects[++bindAllCount])',
-        'teardown': 'function bindAll(){}'
-      })
-      .add(otherName, {
-        'fn': '_.bindAll(bindAllObjects[++bindAllCount])',
+        'fn': '_.bindAll(bindAllObjects[++bindAllCount], funcNames)',
         'teardown': 'function bindAll(){}'
       })
   );
@@ -698,32 +683,6 @@
       .add(otherName, {
         'fn': '_.compact(uncompacted)',
         'teardown': 'function compact(){}'
-      })
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.compose`')
-      .add(buildName, {
-        'fn': 'lodash.compose(compAddThree, compAddTwo, compAddOne)',
-        'teardown': 'function compose(){}'
-      })
-      .add(otherName, {
-        'fn': '_.compose(compAddThree, compAddTwo, compAddOne)',
-        'teardown': 'function compose(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('composed call')
-      .add(buildName, {
-        'fn': 'lodashComposed(0)',
-        'teardown': 'function compose(){}'
-      })
-      .add(otherName, {
-        'fn': '_composed(0)',
-        'teardown': 'function compose(){}'
       })
   );
 
@@ -906,6 +865,18 @@
   );
 
   suites.push(
+    Benchmark.Suite('`_.filter` with `_.matches` shorthand')
+      .add(buildName, {
+        'fn': 'lodash.filter(objects, source)',
+        'teardown': 'function matches(){}'
+      })
+      .add(otherName, {
+        'fn': '_.filter(objects, source)',
+        'teardown': 'function matches(){}'
+      })
+  );
+
+  suites.push(
     Benchmark.Suite('`_.filter` with `_.matches` predicate')
       .add(buildName, {
         'fn': 'lodash.filter(objects, lodashMatcher)',
@@ -951,11 +922,11 @@
   suites.push(
     Benchmark.Suite('`_.find` with `_.matches` shorthand')
       .add(buildName, {
-        'fn': 'lodashFindWhere(objects, source)',
+        'fn': 'lodash.find(objects, source)',
         'teardown': 'function matches(){}'
       })
       .add(otherName, {
-        'fn': '_findWhere(objects, source)',
+        'fn': '_.find(objects, source)',
         'teardown': 'function matches(){}'
       })
   );
@@ -974,27 +945,55 @@
       })
   );
 
+  /*--------------------------------------------------------------------------*/
+
   suites.push(
-    Benchmark.Suite('`_.flatten` nested arrays of numbers with `isDeep`')
+    Benchmark.Suite('`_.flattenDeep` nested arrays of numbers')
       .add(buildName, {
-        'fn': 'lodash.flatten(nestedNumbers, lodashFlattenDeep)',
+        'fn': 'lodash.flattenDeep(nestedNumbers)',
         'teardown': 'function flatten(){}'
       })
       .add(otherName, {
-        'fn': '_.flatten(nestedNumbers, _flattenDeep)',
+        'fn': '_.flattenDeep(nestedNumbers)',
         'teardown': 'function flatten(){}'
       })
   );
 
   suites.push(
-    Benchmark.Suite('`_.flatten` nest arrays of objects with `isDeep`')
+    Benchmark.Suite('`_.flattenDeep` nest arrays of objects')
       .add(buildName, {
-        'fn': 'lodash.flatten(nestedObjects, lodashFlattenDeep)',
+        'fn': 'lodash.flattenDeep(nestedObjects)',
         'teardown': 'function flatten(){}'
       })
       .add(otherName, {
-        'fn': '_.flatten(nestedObjects, _flattenDeep)',
+        'fn': '_.flattenDeep(nestedObjects)',
         'teardown': 'function flatten(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.flowRight`')
+      .add(buildName, {
+        'fn': 'lodash.flowRight(compAddThree, compAddTwo, compAddOne)',
+        'teardown': 'function flowRight(){}'
+      })
+      .add(otherName, {
+        'fn': '_.flowRight(compAddThree, compAddTwo, compAddOne)',
+        'teardown': 'function flowRight(){}'
+      })
+  );
+
+  suites.push(
+    Benchmark.Suite('composed call')
+      .add(buildName, {
+        'fn': 'lodashComposed(0)',
+        'teardown': 'function flowRight(){}'
+      })
+      .add(otherName, {
+        'fn': '_composed(0)',
+        'teardown': 'function flowRight(){}'
       })
   );
 
@@ -1090,18 +1089,6 @@
       })
       .add(otherName, {
         'fn': '_.indexOf(hundredSortedValues, 99)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.indexOf` performing a binary search')
-      .add(buildName, {
-        'fn': 'lodash.indexOf(hundredSortedValues, 99, true)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.indexOf(hundredSortedValues, 99, true)',
         'teardown': 'function multiArrays(){}'
       })
   );
@@ -1342,18 +1329,6 @@
       })
   );
 
-  suites.push(
-    Benchmark.Suite('`_.lastIndexOf` performing a binary search')
-      .add(buildName, {
-        'fn': 'lodash.lastIndexOf(hundredSortedValues, 0, true)',
-        'teardown': 'function multiArrays(){}'
-      })
-      .add(otherName, {
-        'fn': '_.lastIndexOf(hundredSortedValues, 0, true)',
-        'teardown': 'function multiArrays(){}'
-      })
-  );
-
   /*--------------------------------------------------------------------------*/
 
   suites.push(
@@ -1381,6 +1356,16 @@
         _.map(object, function(value) {\
           return value;\
         })'
+      )
+  );
+
+  suites.push(
+    Benchmark.Suite('`_.map` with `_.property` shorthand')
+      .add(buildName, '\
+        lodash.map(objects, "num")'
+      )
+      .add(otherName, '\
+        _.map(objects, "num")'
       )
   );
 
@@ -1430,18 +1415,6 @@
         'fn': '_.omit(wordToNumber, words)',
         'teardown': 'function omit(){}'
       })
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.pairs`')
-      .add(buildName, '\
-        lodash.pairs(object)'
-      )
-      .add(otherName, '\
-        _.pairs(object)'
-      )
   );
 
   /*--------------------------------------------------------------------------*/
@@ -1509,18 +1482,6 @@
       )
       .add(otherName, '\
         _.pick(object, "key6", "key13")'
-      )
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.pluck`')
-      .add(buildName, '\
-        lodash.pluck(objects, "num")'
-      )
-      .add(otherName, '\
-        _.pluck(objects, "num")'
       )
   );
 
@@ -1625,12 +1586,12 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
-    Benchmark.Suite('`_.sample` with an `n`')
+    Benchmark.Suite('`_.sampleSize`')
       .add(buildName, '\
-        lodash.sample(numbers, limit / 2)'
+        lodash.sampleSize(numbers, limit / 2)'
       )
       .add(otherName, '\
-        _.sample(numbers, limit / 2)'
+        _.sampleSize(numbers, limit / 2)'
       )
   );
 
@@ -1724,21 +1685,51 @@
       )
   );
 
+  /*--------------------------------------------------------------------------*/
+
   suites.push(
-    Benchmark.Suite('`_.sortedIndex` with `callback`')
+    Benchmark.Suite('`_.sortedIndexBy`')
       .add(buildName, {
         'fn': '\
-          lodash.sortedIndex(words, "twenty-five", function(value) {\
+          lodash.sortedIndexBy(words, "twenty-five", function(value) {\
             return wordToNumber[value];\
           })',
         'teardown': 'function countBy(){}'
       })
       .add(otherName, {
         'fn': '\
-          _.sortedIndex(words, "twenty-five", function(value) {\
+          _.sortedIndexBy(words, "twenty-five", function(value) {\
             return wordToNumber[value];\
           })',
         'teardown': 'function countBy(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.sortedIndexOf`')
+      .add(buildName, {
+        'fn': 'lodash.sortedIndexOf(hundredSortedValues, 99)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.sortedIndexOf(hundredSortedValues, 99)',
+        'teardown': 'function multiArrays(){}'
+      })
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
+    Benchmark.Suite('`_.sortedLastIndexOf`')
+      .add(buildName, {
+        'fn': 'lodash.sortedLastIndexOf(hundredSortedValues, 0)',
+        'teardown': 'function multiArrays(){}'
+      })
+      .add(otherName, {
+        'fn': '_.sortedLastIndexOf(hundredSortedValues, 0)',
+        'teardown': 'function multiArrays(){}'
       })
   );
 
@@ -1831,6 +1822,18 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.toPairs`')
+      .add(buildName, '\
+        lodash.toPairs(object)'
+      )
+      .add(otherName, '\
+        _.toPairs(object)'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.unescape` string without html entities')
       .add(buildName, '\
         lodash.unescape("`&`, `<`, `>`, `\\"`, and `\'`")'
@@ -1887,20 +1890,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.uniq` with `callback`')
-      .add(buildName, '\
-        lodash.uniq(numbers.concat(twoNumbers, fourNumbers), function(num) {\
-          return num % 2;\
-        })'
-      )
-      .add(otherName, '\
-        _.uniq(numbers.concat(twoNumbers, fourNumbers), function(num) {\
-          return num % 2;\
-        })'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_.uniq` iterating an array of 200 elements')
       .add(buildName, {
         'fn': 'lodash.uniq(twoHundredValues)',
@@ -1915,6 +1904,22 @@
   /*--------------------------------------------------------------------------*/
 
   suites.push(
+    Benchmark.Suite('`_.uniqBy`')
+      .add(buildName, '\
+        lodash.uniqBy(numbers.concat(twoNumbers, fourNumbers), function(num) {\
+          return num % 2;\
+        })'
+      )
+      .add(otherName, '\
+        _.uniqBy(numbers.concat(twoNumbers, fourNumbers), function(num) {\
+          return num % 2;\
+        })'
+      )
+  );
+
+  /*--------------------------------------------------------------------------*/
+
+  suites.push(
     Benchmark.Suite('`_.values`')
       .add(buildName, '\
         lodash.values(object)'
@@ -1922,20 +1927,6 @@
       .add(otherName, '\
         _.values(object)'
       )
-  );
-
-  /*--------------------------------------------------------------------------*/
-
-  suites.push(
-    Benchmark.Suite('`_.where`')
-      .add(buildName, {
-        'fn': 'lodash.where(objects, source)',
-        'teardown': 'function matches(){}'
-      })
-      .add(otherName, {
-        'fn': '_.where(objects, source)',
-        'teardown': 'function matches(){}'
-      })
   );
 
   /*--------------------------------------------------------------------------*/

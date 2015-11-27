@@ -13282,11 +13282,10 @@
       if (end === undefined) {
         end = start;
         start = 0;
-        step = step === undefined ? (start < end ? 1 : -1) : step;
       } else {
         end = toNumber(end) || 0;
       }
-      step = step === undefined ? 1 : (toNumber(step) || 0);
+      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
 
       var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
       return baseTimes(n, function(index) {

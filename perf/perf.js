@@ -830,22 +830,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.each` iterating an array with `thisArg` (slow path)')
-      .add(buildName, '\
-        var result = [];\
-        lodash.each(numbers, function(num, index) {\
-          result.push(num + this["key" + index]);\
-        }, object)'
-      )
-      .add(otherName, '\
-        var result = [];\
-        _.each(numbers, function(num, index) {\
-          result.push(num + this["key" + index]);\
-        }, object)'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_.each` iterating an object')
       .add(buildName, '\
         var result = [];\
@@ -904,20 +888,6 @@
         _.filter(numbers, function(num) {\
           return num % 2;\
         })'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.filter` iterating an array with `thisArg` (slow path)')
-      .add(buildName, '\
-        lodash.filter(numbers, function(num, index) {\
-          return this["key" + index] % 2;\
-        }, object)'
-      )
-      .add(otherName, '\
-        _.filter(numbers, function(num, index) {\
-           return this["key" + index] % 2;\
-        }, object)'
       )
   );
 
@@ -1401,20 +1371,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.map` with `thisArg` iterating an array (slow path)')
-      .add(buildName, '\
-        lodash.map(objects, function(value, index) {\
-          return this["key" + index] + value.num;\
-        }, object)'
-      )
-      .add(otherName, '\
-        _.map(objects, function(value, index) {\
-          return this["key" + index] + value.num;\
-        }, object)'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_.map` iterating an object')
       .add(buildName, '\
         lodash.map(object, function(value) {\
@@ -1527,20 +1483,6 @@
         _.partition(numbers, function(num) {\
           return num % 2;\
         })'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.partition` iterating an array with `thisArg` (slow path)')
-      .add(buildName, '\
-        lodash.partition(numbers, function(num, index) {\
-          return this["key" + index] % 2;\
-        }, object)'
-      )
-      .add(otherName, '\
-        _.partition(numbers, function(num, index) {\
-           return this["key" + index] % 2;\
-        }, object)'
       )
   );
 
@@ -1667,20 +1609,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.reject` iterating an array with `thisArg` (slow path)')
-      .add(buildName, '\
-        lodash.reject(numbers, function(num, index) {\
-          return this["key" + index] % 2;\
-        }, object)'
-      )
-      .add(otherName, '\
-        _.reject(numbers, function(num, index) {\
-           return this["key" + index] % 2;\
-        }, object)'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_.reject` iterating an object')
       .add(buildName, '\
         lodash.reject(object, function(num) {\
@@ -1747,20 +1675,6 @@
   );
 
   suites.push(
-    Benchmark.Suite('`_.some` with `thisArg` iterating an array (slow path)')
-      .add(buildName, '\
-        lodash.some(objects, function(value, index) {\
-          return this["key" + index] == (limit - 1);\
-        }, object)'
-      )
-      .add(otherName, '\
-        _.some(objects, function(value, index) {\
-          return this["key" + index] == (limit - 1);\
-        }, object)'
-      )
-  );
-
-  suites.push(
     Benchmark.Suite('`_.some` iterating an object')
       .add(buildName, '\
         lodash.some(object, function(num) {\
@@ -1783,16 +1697,6 @@
       )
       .add(otherName, '\
         _.sortBy(numbers, function(num) { return Math.sin(num); })'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.sortBy` with `callback` and `thisArg` (slow path)')
-      .add(buildName, '\
-        lodash.sortBy(numbers, function(num) { return this.sin(num); }, Math)'
-      )
-      .add(otherName, '\
-        _.sortBy(numbers, function(num) { return this.sin(num); }, Math)'
       )
   );
 
@@ -1899,18 +1803,6 @@
       .add(otherName, '\
         var result = [];\
         _.times(limit, function(n) { result.push(n); })'
-      )
-  );
-
-  suites.push(
-    Benchmark.Suite('`_.times` with `thisArg` (slow path)')
-      .add(buildName, '\
-        var result = [];\
-        lodash.times(limit, function(n) { result.push(this.sin(n)); }, Math)'
-      )
-      .add(otherName, '\
-        var result = [];\
-        _.times(limit, function(n) { result.push(this.sin(n)); }, Math)'
       )
   );
 

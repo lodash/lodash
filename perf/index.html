@@ -9,10 +9,6 @@
         padding: 0;
         height: 100%;
       }
-      applet {
-        position: absolute;
-        left: -9999em;
-      }
       #FirebugUI {
         top: 2em;
       }
@@ -66,15 +62,6 @@
           setTimeout(run, 15);
         }
 
-        // is the applet permitted?
-        if (!/[?&]nojava=true(?:&|$)/.test(location.search)) {
-          // is the applet really needed?
-          while (!(measured = new Date - begin)) {}
-          if (measured > 1 && !((perfNow = window.performance) && typeof (perfNow.now || perfNow.webkitNow) == 'function')) {
-            // load applet
-            document.write('<applet code="nano" archive="../vendor/benchmark.js/nano.jar"></applet>');
-          }
-        }
         window.onload = init;
       }());
     </script>

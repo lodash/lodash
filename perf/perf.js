@@ -88,13 +88,10 @@
   /** Detect if in a browser environment. */
   var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
 
-  /** Detect if in a Java environment. */
-  var isJava = !isBrowser && /Java/.test(toString.call(root.java));
-
   /** Use a single "load" function. */
   var load = (typeof require == 'function' && !amd)
     ? require
-    : (isJava && root.load) || noop;
+    : noop;
 
   /** Load lodash. */
   var lodash = root.lodash || (root.lodash = (
@@ -205,7 +202,7 @@
       fbPanel.getElementById('fbPanel1');
 
     log('\nSit back and relax, this may take a while.');
-    suites[0].run({ 'async': !isJava });
+    suites[0].run({ 'async': true });
   }
 
   /*--------------------------------------------------------------------------*/
@@ -258,7 +255,7 @@
 
       if (suites.length) {
         // Run next suite.
-        suites[0].run({ 'async': !isJava });
+        suites[0].run({ 'async': true });
       }
       else {
         var aMeanHz = getGeometricMean(score.a),
@@ -981,19 +978,17 @@
   );
 
   // Avoid Underscore induced `OutOfMemoryError` in Rhino and Ringo.
-  if (!isJava) {
-    suites.push(
-      Benchmark.Suite('`_.find` with `_.matches` shorthand')
-        .add(buildName, {
-          'fn': 'lodashFindWhere(objects, source)',
-          'teardown': 'function matches(){}'
-        })
-        .add(otherName, {
-          'fn': '_findWhere(objects, source)',
-          'teardown': 'function matches(){}'
-        })
-    );
-  }
+  suites.push(
+    Benchmark.Suite('`_.find` with `_.matches` shorthand')
+      .add(buildName, {
+        'fn': 'lodashFindWhere(objects, source)',
+        'teardown': 'function matches(){}'
+      })
+      .add(otherName, {
+        'fn': '_findWhere(objects, source)',
+        'teardown': 'function matches(){}'
+      })
+  );
 
   /*--------------------------------------------------------------------------*/
 

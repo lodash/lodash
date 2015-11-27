@@ -1,5 +1,5 @@
 /*!
- * Benchmark.js v2.0.0 <http://benchmarkjs.com/>
+ * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
  * Copyright 2010-2015 Mathias Bynens <http://mths.be/>
  * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
  * Modified by John-David Dalton <http://allyoucanleet.com/>
@@ -53,8 +53,8 @@
   /** Used to assign default `context` object properties. */
   var contextProps = [
     'Array', 'Date', 'Function', 'Math', 'Object', 'RegExp', 'String', '_',
-    'clearTimeout', 'chrome', 'chromium', 'document', 'java', 'navigator',
-    'phantom', 'platform', 'process', 'runtime', 'setTimeout'
+    'clearTimeout', 'chrome', 'chromium', 'document', 'navigator', 'phantom',
+    'platform', 'process', 'runtime', 'setTimeout'
   ];
 
   /** Used to avoid hz of Infinity. */
@@ -200,14 +200,6 @@
        * @type boolean
        */
       support.browser = doc && isHostType(context, 'navigator') && !isHostType(context, 'phantom');
-
-      /**
-       * Detect if Java is enabled/exposed.
-       *
-       * @memberOf Benchmark.support
-       * @type boolean
-       */
-      support.java = isClassOf(context.java, 'JavaPackage');
 
       /**
        * Detect if the Timers API exists.
@@ -499,7 +491,7 @@
      * @param {*} value The value to clone.
      * @returns {*} The cloned value.
      */
-    var cloneDeep = _.partial(_.cloneDeep, _, function(value) {
+    var cloneDeep = _.partial(_.cloneDeepWith || _.cloneDeep, _, function(value) {
       // Only clone primitives, arrays, and plain objects.
       return (_.isObject(value) && !_.isArray(value) && !_.isPlainObject(value))
         ? value
@@ -750,7 +742,6 @@
      * @memberOf Benchmark
      * @param {Array} array The array to iterate over.
      * @param {Function|string} callback The function/alias called per iteration.
-     * @param {*} thisArg The `this` binding for the callback.
      * @returns {Array} A new array of values that passed callback filter.
      * @example
      *
@@ -768,7 +759,7 @@
      * // get benchmarks that completed without erroring
      * Benchmark.filter(benches, 'successful');
      */
-    function filter(array, callback, thisArg) {
+    function filter(array, callback) {
       if (callback === 'successful') {
         // Callback to exclude those that are errored, unrun, or have hz of Infinity.
         callback = function(bench) {
@@ -786,7 +777,7 @@
           return result[0].compare(bench) == 0;
         });
       }
-      return _.filter(array, callback, thisArg);
+      return _.filter(array, callback);
     }
 
     /**
@@ -1536,7 +1527,7 @@
           id = bench.id,
           stats = bench.stats,
           size = stats.sample.length,
-          pm = support.java ? '+/-' : '\xb1',
+          pm = '\xb1',
           result = bench.name || (_.isNaN(id) ? id : '<Test #' + id + '>');
 
       if (error) {
@@ -1558,8 +1549,7 @@
      * @returns {number} The time taken.
      */
     function clock() {
-      var applet,
-          options = Benchmark.options,
+      var options = Benchmark.options,
           templateData = {},
           timers = [{ 'ns': timer.ns, 'res': max(0.0015, getRes('ms')), 'unit': 'ms' }];
 
@@ -1582,16 +1572,6 @@
         // Init `minTime` if needed.
         clone.minTime = bench.minTime || (bench.minTime = bench.options.minTime = options.minTime);
 
-        // Repair nanosecond timer.
-        // Some Chrome builds erase the `ns` variable after millions of executions.
-        if (applet) {
-          try {
-            timer.ns.nanoTime();
-          } catch(e) {
-            // Use non-element to avoid issues with libs that augment them.
-            timer.ns = new applet.Packages.nano;
-          }
-        }
         // Compile in setup/teardown functions and the test loop.
         // Create a new compiled test, instead of using the cached `bench.compiled`,
         // to avoid potential engine optimizations enabled over the life of the test.
@@ -1688,17 +1668,10 @@
 
         // Use API of chosen timer.
         if (timer.unit == 'ns') {
-          if (timer.ns.nanoTime) {
-            _.assign(templateData, {
-              'begin': interpolate('s#=n#.nanoTime()'),
-              'end': interpolate('r#=(n#.nanoTime()-s#)/1e9')
-            });
-          } else {
-            _.assign(templateData, {
-              'begin': interpolate('s#=n#()'),
-              'end': interpolate('r#=n#(s#);r#=r#[0]+(r#[1]/1e9)')
-            });
-          }
+          _.assign(templateData, {
+            'begin': interpolate('s#=n#()'),
+            'end': interpolate('r#=n#(s#);r#=r#[0]+(r#[1]/1e9)')
+          });
         }
         else if (timer.unit == 'us') {
           if (timer.ns.stop) {
@@ -1769,14 +1742,9 @@
           }
           else if (unit == 'ns') {
             divisor = 1e9;
-            if (ns.nanoTime) {
-              begin = ns.nanoTime();
-              while (!(measured = ns.nanoTime() - begin)) {}
-            } else {
-              begin = (begin = ns())[0] + (begin[1] / divisor);
-              while (!(measured = ((measured = ns())[0] + (measured[1] / divisor)) - begin)) {}
-              divisor = 1;
-            }
+            begin = (begin = ns())[0] + (begin[1] / divisor);
+            while (!(measured = ((measured = ns())[0] + (measured[1] / divisor)) - begin)) {}
+            divisor = 1;
           }
           else if (ns.now) {
             begin = ns.now();
@@ -1786,8 +1754,7 @@
             begin = new ns().getTime();
             while (!(measured = new ns().getTime() - begin)) {}
           }
-          // Check for broken timers (`nanoTime` may have issues).
-          // For more information see http://alivebutsleepy.srnet.cz/unreliable-system-nanotime/.
+          // Check for broken timers.
           if (measured > 0) {
             sample.push(measured);
           } else {
@@ -1809,18 +1776,6 @@
 
       /*----------------------------------------------------------------------*/
 
-      // Detect nanosecond support from a Java applet.
-      _.find(doc && _.union(doc.applets, doc.embeds, doc.getElementsByTagName('object')) || [], function(element) {
-        return timer.ns = applet = 'nanoTime' in element && element;
-      });
-
-      // Check type in case Safari returns an object instead of a number.
-      try {
-        if (typeof timer.ns.nanoTime() == 'number') {
-          timers.push({ 'ns': timer.ns, 'res': getRes('ns'), 'unit': 'ns' });
-        }
-      } catch(e) {}
-
       // Detect Chrome's microsecond timer:
       // enable benchmarking via the --enable-benchmarking command
       // line switch in at least Chrome 7 to use chrome.Interval
@@ -1841,10 +1796,6 @@
       // Pick timer with highest resolution.
       timer = (_.minBy || _.min)(timers, 'res');
 
-      // Remove unused applet.
-      if (timer.unit != 'ns' && applet) {
-        applet = destroyElement(applet);
-      }
       // Error if there are no working timers.
       if (timer.res == Infinity) {
         throw new Error('Benchmark.js was unable to find a working timer.');
@@ -2333,7 +2284,7 @@
        * @memberOf Benchmark
        * @type string
        */
-      'version': '2.0.0'
+      'version': '2.0.0-pre'
     });
 
     _.assign(Benchmark, {

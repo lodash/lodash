@@ -34,7 +34,7 @@
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
 
-  /** Used to detect when a function becomes hot. */
+  /** Used to detect hot functions by number of calls within a span of milliseconds. */
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 

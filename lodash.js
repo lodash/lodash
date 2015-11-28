@@ -3373,6 +3373,85 @@
     }
 
     /**
+     * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` which
+     * performs a binary search of `array` to determine the index at which `value`
+     * should be inserted into `array` in order to maintain its sort order.
+     *
+     * @private
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {boolean} [retHighest] Specify returning the highest qualified index.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     */
+    function baseSortedIndex(array, value, retHighest) {
+      var low = 0,
+          high = array ? array.length : low;
+
+      if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+        while (low < high) {
+          var mid = (low + high) >>> 1,
+              computed = array[mid];
+
+          if ((retHighest ? (computed <= value) : (computed < value)) && computed !== null) {
+            low = mid + 1;
+          } else {
+            high = mid;
+          }
+        }
+        return high;
+      }
+      return baseSortedIndexBy(array, value, identity, retHighest);
+    }
+
+    /**
+     * The base implementation of `_.sortedIndexBy` and `_.sortedLastIndexBy`
+     * which invokes `iteratee` for `value` and each element of `array` to compute
+     * their sort ranking. The iteratee is invoked with one argument; (value).
+     *
+     * @private
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function} iteratee The iteratee invoked per element.
+     * @param {boolean} [retHighest] Specify returning the highest qualified index.
+     * @returns {number} Returns the index at which `value` should be inserted into `array`.
+     */
+    function baseSortedIndexBy(array, value, iteratee, retHighest) {
+      value = iteratee(value);
+
+      var low = 0,
+          high = array ? array.length : 0,
+          valIsNaN = value !== value,
+          valIsNull = value === null,
+          valIsUndef = value === undefined;
+
+      while (low < high) {
+        var mid = nativeFloor((low + high) / 2),
+            computed = iteratee(array[mid]),
+            isDef = computed !== undefined,
+            isReflexive = computed === computed;
+
+        if (valIsNaN) {
+          var setLow = isReflexive || retHighest;
+        } else if (valIsNull) {
+          setLow = isReflexive && isDef && (retHighest || computed != null);
+        } else if (valIsUndef) {
+          setLow = isReflexive && (retHighest || isDef);
+        } else if (computed == null) {
+          setLow = false;
+        } else {
+          setLow = retHighest ? (computed <= value) : (computed < value);
+        }
+        if (setLow) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return nativeMin(high, MAX_ARRAY_INDEX);
+    }
+
+    /**
      * The base implementation of `_.sortedUniq`.
      *
      * @private
@@ -3566,84 +3645,6 @@
           : arrays[index];
       }
       return (result && result.length) ? baseUniq(result, iteratee, comparator) : [];
-    }
-
-    /**
-     * Performs a binary search of `array` to determine the index at which `value`
-     * should be inserted into `array` in order to maintain its sort order.
-     *
-     * @private
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {boolean} [retHighest] Specify returning the highest qualified index.
-     * @returns {number} Returns the index at which `value` should be inserted
-     *  into `array`.
-     */
-    function binaryIndex(array, value, retHighest) {
-      var low = 0,
-          high = array ? array.length : low;
-
-      if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
-        while (low < high) {
-          var mid = (low + high) >>> 1,
-              computed = array[mid];
-
-          if ((retHighest ? (computed <= value) : (computed < value)) && computed !== null) {
-            low = mid + 1;
-          } else {
-            high = mid;
-          }
-        }
-        return high;
-      }
-      return binaryIndexBy(array, value, identity, retHighest);
-    }
-
-    /**
-     * This function is like `binaryIndex` except that it invokes `iteratee` for
-     * `value` and each element of `array` to compute their sort ranking. The
-     * iteratee is invoked with one argument; (value).
-     *
-     * @private
-     * @param {Array} array The sorted array to inspect.
-     * @param {*} value The value to evaluate.
-     * @param {Function} iteratee The iteratee invoked per element.
-     * @param {boolean} [retHighest] Specify returning the highest qualified index.
-     * @returns {number} Returns the index at which `value` should be inserted into `array`.
-     */
-    function binaryIndexBy(array, value, iteratee, retHighest) {
-      value = iteratee(value);
-
-      var low = 0,
-          high = array ? array.length : 0,
-          valIsNaN = value !== value,
-          valIsNull = value === null,
-          valIsUndef = value === undefined;
-
-      while (low < high) {
-        var mid = nativeFloor((low + high) / 2),
-            computed = iteratee(array[mid]),
-            isDef = computed !== undefined,
-            isReflexive = computed === computed;
-
-        if (valIsNaN) {
-          var setLow = isReflexive || retHighest;
-        } else if (valIsNull) {
-          setLow = isReflexive && isDef && (retHighest || computed != null);
-        } else if (valIsUndef) {
-          setLow = isReflexive && (retHighest || isDef);
-        } else if (computed == null) {
-          setLow = false;
-        } else {
-          setLow = retHighest ? (computed <= value) : (computed < value);
-        }
-        if (setLow) {
-          low = mid + 1;
-        } else {
-          high = mid;
-        }
-      }
-      return nativeMin(high, MAX_ARRAY_INDEX);
     }
 
     /**
@@ -6124,7 +6125,7 @@
      * // => 0
      */
     function sortedIndex(array, value) {
-      return binaryIndex(array, value);
+      return baseSortedIndex(array, value);
     }
 
     /**
@@ -6151,7 +6152,7 @@
      * // => 0
      */
     function sortedIndexBy(array, value, iteratee) {
-      return binaryIndexBy(array, value, getIteratee(iteratee));
+      return baseSortedIndexBy(array, value, getIteratee(iteratee));
     }
 
     /**
@@ -6172,7 +6173,7 @@
     function sortedIndexOf(array, value) {
       var length = array ? array.length : 0;
       if (length) {
-        var index = binaryIndex(array, value);
+        var index = baseSortedIndex(array, value);
         if (index < length &&
             (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
           return index;
@@ -6198,7 +6199,7 @@
      * // => 1
      */
     function sortedLastIndex(array, value) {
-      return binaryIndex(array, value, true);
+      return baseSortedIndex(array, value, true);
     }
 
     /**
@@ -6220,7 +6221,7 @@
      * // => 1
      */
     function sortedLastIndexBy(array, value, iteratee) {
-      return binaryIndexBy(array, value, getIteratee(iteratee), true);
+      return baseSortedIndexBy(array, value, getIteratee(iteratee), true);
     }
 
     /**
@@ -6241,7 +6242,7 @@
     function sortedLastIndexOf(array, value) {
       var length = array ? array.length : 0;
       if (length) {
-        var index = binaryIndex(array, value, true) - 1,
+        var index = baseSortedIndex(array, value, true) - 1,
             other = array[index];
 
         if (value === value ? (value === other) : (other !== other)) {

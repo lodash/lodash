@@ -8373,7 +8373,7 @@
      *   'maxWait': 1000
      * }));
      *
-     * // cancel a debounced call
+     * // cancel a debounced invocation
      * var todoChanges = _.debounce(batchLog, 1000);
      * Object.observe(models.todo, todoChanges);
      *
@@ -8387,7 +8387,7 @@
      * models.todo.completed = true;
      *
      * // ...before 1 second has passed `models.todo` is deleted
-     * // which cancels the debounced `todoChanges` call
+     * // which cancels the debounced `todoChanges` invocation
      * delete models.todo;
      */
     function debounce(func, wait, options) {
@@ -8731,8 +8731,8 @@
 
     /**
      * Creates a function that is restricted to invoking `func` once. Repeat calls
-     * to the function return the value of the first call. The `func` is invoked
-     * with the `this` binding and arguments of the created function.
+     * to the function return the value of the first invocation. The `func` is
+     * invoked with the `this` binding and arguments of the created function.
      *
      * @static
      * @memberOf _
@@ -8948,7 +8948,7 @@
      * `func` should be invoked on the leading and/or trailing edge of the `wait`
      * timeout. The `func` is invoked with the last arguments provided to the
      * throttled function. Subsequent calls to the throttled function return the
-     * result of the last `func` call.
+     * result of the last `func` invocation.
      *
      * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
      * on the trailing edge of the timeout only if the the throttled function is
@@ -8978,7 +8978,7 @@
      *   'trailing': false
      * }));
      *
-     * // cancel a trailing throttled call
+     * // cancel a trailing throttled invocation
      * jQuery(window).on('popstate', throttled.cancel);
      */
     function throttle(func, wait, options) {

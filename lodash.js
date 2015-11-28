@@ -384,6 +384,7 @@
    */
   function apply(func, thisArg, args) {
     switch (args.length) {
+      case 0: return func.call(thisArg);
       case 1: return func.call(thisArg, args[0]);
       case 2: return func.call(thisArg, args[0], args[1]);
       case 3: return func.call(thisArg, args[0], args[1], args[2]);
@@ -7524,7 +7525,7 @@
 
       baseEach(collection, function(value) {
         var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
-        result[++index] = func ? func.apply(value, args) : baseInvoke(value, path, args);
+        result[++index] = func ? apply(func, value, args) : baseInvoke(value, path, args);
       });
       return result;
     });

@@ -14069,9 +14069,9 @@
       assert.expect(2);
 
       var count = 0,
-          falsey = function() { count++; return false; },
-          truthy = function() { count++; return true; },
-          over = _.overEvery(truthy, falsey, truthy);
+          alwaysFalse = function() { count++; return false; },
+          alwaysTrue = function() { count++; return true; },
+          over = _.overEvery(alwaysTrue, alwaysFalse, alwaysTrue);
 
       assert.strictEqual(over(), false);
       assert.strictEqual(count, 2);

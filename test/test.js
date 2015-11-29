@@ -17716,10 +17716,20 @@
       assert.strictEqual(spread([4, 2]), 6);
     });
 
-    QUnit.test('should throw a TypeError when receiving a non-array `array` argument', function(assert) {
+    QUnit.test('should accept a falsey `array` argument', function(assert) {
       assert.expect(1);
 
-      assert.raises(function() { _.spread(4, 2); }, TypeError);
+      var alwaysTrue = lodashStable.constant(true),
+          spread = _.spread(alwaysTrue),
+          expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(array, index) {
+        try {
+          return index ? spread(array) : spread();
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should provide the correct `func` arguments', function(assert) {

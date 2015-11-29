@@ -123,9 +123,6 @@
   /** The basename of the lodash file to test. */
   var basename = /[\w.-]+$/.exec(filePath)[0];
 
-  /** Detect if in a Java environment. */
-  var isJava = !document && !!root.java;
-
   /** Used to indicate testing a modularized build. */
   var isModularize = ui.isModularize;
 
@@ -134,9 +131,6 @@
 
   /** Detect if running in PhantomJS. */
   var isPhantom = phantom || typeof callPhantom == 'function';
-
-  /** Detect if running in Rhino. */
-  var isRhino = isJava && typeof global == 'function' && global().Array === root.Array;
 
   /** Detect if lodash is in strict mode. */
   var isStrict = ui.isStrict;
@@ -207,18 +201,15 @@
   /** Use a single "load" function. */
   var load = (!amd && typeof require == 'function')
     ? require
-    : (isJava ? root.load : noop);
+    : noop;
 
   /** The unit testing framework. */
-  var QUnit = root.QUnit || (root.QUnit = (
-    QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
-    QUnit = QUnit.QUnit || QUnit
-  ));
+  var QUnit = root.QUnit || (root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js'));
 
   /** Load stable Lodash and QUnit Extras. */
   var lodashStable = root.lodashStable || load('../node_modules/lodash/index.js');
   if (lodashStable) {
-    lodashStable.runInContext(root);
+    lodashStable = lodashStable.runInContext(root);
   }
   var QUnitExtras = load('../node_modules/qunit-extras/qunit-extras.js');
   if (QUnitExtras) {
@@ -227,7 +218,7 @@
 
   /** The `lodash` function to test. */
   var _ = root._ || (root._ = (
-    _ = load(filePath) || root._,
+    _ = load(filePath),
     _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default']) || _,
     (_.runInContext ? _.runInContext(root) : _)
   ));
@@ -3326,25 +3317,19 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0,
-            debounced = _.debounce(function() { callCount++; }, 32);
+      var callCount = 0,
+          debounced = _.debounce(function() { callCount++; }, 32);
 
-        debounced();
-        debounced();
-        debounced();
+      debounced();
+      debounced();
+      debounced();
 
-        assert.strictEqual(callCount, 0);
+      assert.strictEqual(callCount, 0);
 
-        setTimeout(function() {
-          assert.strictEqual(callCount, 1);
-          done();
-        }, 96);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 1);
         done();
-      }
+      }, 96);
     });
 
     QUnit.test('subsequent debounced calls return the last `func` result', function(assert) {
@@ -3352,23 +3337,17 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var debounced = _.debounce(identity, 32);
-        debounced('x');
+      var debounced = _.debounce(identity, 32);
+      debounced('x');
 
-        setTimeout(function() {
-          assert.notEqual(debounced('y'), 'y');
-        }, 64);
+      setTimeout(function() {
+        assert.notEqual(debounced('y'), 'y');
+      }, 64);
 
-        setTimeout(function() {
-          assert.notEqual(debounced('z'), 'z');
-          done();
-        }, 128);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.notEqual(debounced('z'), 'z');
         done();
-      }
+      }, 128);
     });
 
     QUnit.test('subsequent "immediate" debounced calls return the last `func` result', function(assert) {
@@ -3376,22 +3355,16 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
-            result = [debounced('x'), debounced('y')];
+      var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
+          result = [debounced('x'), debounced('y')];
 
-        assert.deepEqual(result, ['x', 'x']);
+      assert.deepEqual(result, ['x', 'x']);
 
-        setTimeout(function() {
-          var result = [debounced('a'), debounced('b')];
-          assert.deepEqual(result, ['a', 'a']);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        var result = [debounced('a'), debounced('b')];
+        assert.deepEqual(result, ['a', 'a']);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should apply default options', function(assert) {
@@ -3399,25 +3372,19 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var debounced = _.debounce(function(value) {
-          callCount++;
-          return value;
-        }, 32, {});
+      var debounced = _.debounce(function(value) {
+        callCount++;
+        return value;
+      }, 32, {});
 
-        assert.strictEqual(debounced('a'), undefined);
+      assert.strictEqual(debounced('a'), undefined);
 
-        setTimeout(function() {
-          assert.strictEqual(callCount, 1);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 1);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should support a `leading` option', function(assert) {
@@ -3425,41 +3392,35 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCounts = [0, 0];
+      var callCounts = [0, 0];
 
-        var withLeading = _.debounce(function(value) {
-          callCounts[0]++;
-          return value;
-        }, 32, { 'leading': true });
+      var withLeading = _.debounce(function(value) {
+        callCounts[0]++;
+        return value;
+      }, 32, { 'leading': true });
 
-        assert.strictEqual(withLeading('a'), 'a');
+      assert.strictEqual(withLeading('a'), 'a');
 
-        var withoutLeading = _.debounce(identity, 32, { 'leading': false });
-        assert.strictEqual(withoutLeading('a'), undefined);
+      var withoutLeading = _.debounce(identity, 32, { 'leading': false });
+      assert.strictEqual(withoutLeading('a'), undefined);
 
-        var withLeadingAndTrailing = _.debounce(function() {
-          callCounts[1]++;
-        }, 32, { 'leading': true });
+      var withLeadingAndTrailing = _.debounce(function() {
+        callCounts[1]++;
+      }, 32, { 'leading': true });
 
-        withLeadingAndTrailing();
-        withLeadingAndTrailing();
+      withLeadingAndTrailing();
+      withLeadingAndTrailing();
 
-        assert.strictEqual(callCounts[1], 1);
+      assert.strictEqual(callCounts[1], 1);
 
-        setTimeout(function() {
-          assert.deepEqual(callCounts, [1, 2]);
+      setTimeout(function() {
+        assert.deepEqual(callCounts, [1, 2]);
 
-          withLeading('a');
-          assert.strictEqual(callCounts[0], 2);
+        withLeading('a');
+        assert.strictEqual(callCounts[0], 2);
 
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 5);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should support a `trailing` option', function(assert) {
@@ -3467,33 +3428,27 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var withCount = 0,
-            withoutCount = 0;
+      var withCount = 0,
+          withoutCount = 0;
 
-        var withTrailing = _.debounce(function(value) {
-          withCount++;
-          return value;
-        }, 32, { 'trailing': true });
+      var withTrailing = _.debounce(function(value) {
+        withCount++;
+        return value;
+      }, 32, { 'trailing': true });
 
-        var withoutTrailing = _.debounce(function(value) {
-          withoutCount++;
-          return value;
-        }, 32, { 'trailing': false });
+      var withoutTrailing = _.debounce(function(value) {
+        withoutCount++;
+        return value;
+      }, 32, { 'trailing': false });
 
-        assert.strictEqual(withTrailing('a'), undefined);
-        assert.strictEqual(withoutTrailing('a'), undefined);
+      assert.strictEqual(withTrailing('a'), undefined);
+      assert.strictEqual(withoutTrailing('a'), undefined);
 
-        setTimeout(function() {
-          assert.strictEqual(withCount, 1);
-          assert.strictEqual(withoutCount, 0);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 4);
+      setTimeout(function() {
+        assert.strictEqual(withCount, 1);
+        assert.strictEqual(withoutCount, 0);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should support a `maxWait` option', function(assert) {
@@ -3501,35 +3456,29 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var limit = (argv || isPhantom) ? 1000 : 320,
-            withCount = 0,
-            withoutCount = 0;
+      var limit = (argv || isPhantom) ? 1000 : 320,
+          withCount = 0,
+          withoutCount = 0;
 
-        var withMaxWait = _.debounce(function() {
-          withCount++;
-        }, 64, { 'maxWait': 128 });
+      var withMaxWait = _.debounce(function() {
+        withCount++;
+      }, 64, { 'maxWait': 128 });
 
-        var withoutMaxWait = _.debounce(function() {
-          withoutCount++;
-        }, 96);
+      var withoutMaxWait = _.debounce(function() {
+        withoutCount++;
+      }, 96);
 
-        var start = +new Date;
-        while ((new Date - start) < limit) {
-          withMaxWait();
-          withoutMaxWait();
-        }
-        var actual = [Boolean(withCount), Boolean(withoutCount)];
-
-        setTimeout(function() {
-          assert.deepEqual(actual, [true, false]);
-          done();
-        }, 1);
+      var start = +new Date;
+      while ((new Date - start) < limit) {
+        withMaxWait();
+        withoutMaxWait();
       }
-      else {
-        skipTest(assert);
+      var actual = [Boolean(withCount), Boolean(withoutCount)];
+
+      setTimeout(function() {
+        assert.deepEqual(actual, [true, false]);
         done();
-      }
+      }, 1);
     });
 
     QUnit.test('should cancel `maxDelayed` when `delayed` is invoked', function(assert) {
@@ -3537,24 +3486,18 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var debounced = _.debounce(function() {
-          callCount++;
-        }, 32, { 'maxWait': 64 });
+      var debounced = _.debounce(function() {
+        callCount++;
+      }, 32, { 'maxWait': 64 });
 
-        debounced();
+      debounced();
 
-        setTimeout(function() {
-          assert.strictEqual(callCount, 1);
-          done();
-        }, 128);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 1);
         done();
-      }
+      }, 128);
     });
 
     QUnit.test('should invoke the `trailing` call with the correct arguments and `this` binding', function(assert) {
@@ -3562,32 +3505,26 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var actual,
-            callCount = 0,
-            object = {};
+      var actual,
+          callCount = 0,
+          object = {};
 
-        var debounced = _.debounce(function(value) {
-          actual = [this];
-          push.apply(actual, arguments);
-          return ++callCount != 2;
-        }, 32, { 'leading': true, 'maxWait': 64 });
+      var debounced = _.debounce(function(value) {
+        actual = [this];
+        push.apply(actual, arguments);
+        return ++callCount != 2;
+      }, 32, { 'leading': true, 'maxWait': 64 });
 
-        while (true) {
-          if (!debounced.call(object, 'a')) {
-            break;
-          }
+      while (true) {
+        if (!debounced.call(object, 'a')) {
+          break;
         }
-        setTimeout(function() {
-          assert.strictEqual(callCount, 2);
-          assert.deepEqual(actual, [object, 'a']);
-          done();
-        }, 64);
       }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        assert.deepEqual(actual, [object, 'a']);
         done();
-      }
+      }, 64);
     });
   }());
 
@@ -3765,19 +3702,13 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var pass = false;
-        _.defer(function() { pass = true; });
+      var pass = false;
+      _.defer(function() { pass = true; });
 
-        setTimeout(function() {
-          assert.ok(pass);
-          done();
-        }, 32);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.ok(pass);
         done();
-      }
+      }, 32);
     });
 
     QUnit.test('should provide additional arguments to `func`', function(assert) {
@@ -3785,22 +3716,16 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var args;
+      var args;
 
-        _.defer(function() {
-          args = slice.call(arguments);
-        }, 1, 2);
+      _.defer(function() {
+        args = slice.call(arguments);
+      }, 1, 2);
 
-        setTimeout(function() {
-          assert.deepEqual(args, [1, 2]);
-          done();
-        }, 32);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.deepEqual(args, [1, 2]);
         done();
-      }
+      }, 32);
     });
 
     QUnit.test('should be cancelable', function(assert) {
@@ -3808,24 +3733,18 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var pass = true;
+      var pass = true;
 
-        var timerId = _.defer(function() {
-          pass = false;
-        });
+      var timerId = _.defer(function() {
+        pass = false;
+      });
 
-        clearTimeout(timerId);
+      clearTimeout(timerId);
 
-        setTimeout(function() {
-          assert.ok(pass);
-          done();
-        }, 32);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.ok(pass);
         done();
-      }
+      }, 32);
     });
   }());
 
@@ -3839,23 +3758,17 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var pass = false;
-        _.delay(function() { pass = true; }, 32);
+      var pass = false;
+      _.delay(function() { pass = true; }, 32);
 
-        setTimeout(function() {
-          assert.notOk(pass);
-        }, 1);
+      setTimeout(function() {
+        assert.notOk(pass);
+      }, 1);
 
-        setTimeout(function() {
-          assert.ok(pass);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.ok(pass);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should provide additional arguments to `func`', function(assert) {
@@ -3863,22 +3776,16 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var args;
+      var args;
 
-        _.delay(function() {
-          args = slice.call(arguments);
-        }, 32, 1, 2);
+      _.delay(function() {
+        args = slice.call(arguments);
+      }, 32, 1, 2);
 
-        setTimeout(function() {
-          assert.deepEqual(args, [1, 2]);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.deepEqual(args, [1, 2]);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should be cancelable', function(assert) {
@@ -3886,24 +3793,18 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var pass = true;
+      var pass = true;
 
-        var timerId = _.delay(function() {
-          pass = false;
-        }, 32);
+      var timerId = _.delay(function() {
+        pass = false;
+      }, 32);
 
-        clearTimeout(timerId);
+      clearTimeout(timerId);
 
-        setTimeout(function() {
-          assert.ok(pass);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.ok(pass);
         done();
-      }
+      }, 64);
     });
   }());
 
@@ -13729,13 +13630,7 @@
 
       if (!isModularize) {
         assert.strictEqual(_.noConflict(), oldDash);
-
-        if (!(isRhino && typeof require == 'function')) {
-          assert.notStrictEqual(root._, oldDash);
-        }
-        else {
-          skipTest(assert);
-        }
+        assert.notStrictEqual(root._, oldDash);
         root._ = oldDash;
       }
       else {
@@ -13779,16 +13674,10 @@
 
       assert.ok(actual >= stamp);
 
-      if (!(isRhino && isModularize)) {
-        setTimeout(function() {
-          assert.ok(_.now() > actual);
-          done();
-        }, 32);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.ok(_.now() > actual);
         done();
-      }
+      }, 32);
     });
   }());
 
@@ -19119,26 +19008,20 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0,
-            throttled = _.throttle(function() { callCount++; }, 32);
+      var callCount = 0,
+          throttled = _.throttle(function() { callCount++; }, 32);
 
-        throttled();
-        throttled();
-        throttled();
+      throttled();
+      throttled();
+      throttled();
 
-        var lastCount = callCount;
-        assert.ok(callCount > 0);
+      var lastCount = callCount;
+      assert.ok(callCount > 0);
 
-        setTimeout(function() {
-          assert.ok(callCount > lastCount);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.ok(callCount > lastCount);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('subsequent calls should return the result of the first call', function(assert) {
@@ -19146,26 +19029,20 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var throttled = _.throttle(identity, 32),
-            result = [throttled('a'), throttled('b')];
+      var throttled = _.throttle(identity, 32),
+          result = [throttled('a'), throttled('b')];
 
-        assert.deepEqual(result, ['a', 'a']);
+      assert.deepEqual(result, ['a', 'a']);
 
-        setTimeout(function() {
-          var result = [throttled('x'), throttled('y')];
-          assert.notEqual(result[0], 'a');
-          assert.notStrictEqual(result[0], undefined);
+      setTimeout(function() {
+        var result = [throttled('x'), throttled('y')];
+        assert.notEqual(result[0], 'a');
+        assert.notStrictEqual(result[0], undefined);
 
-          assert.notEqual(result[1], 'y');
-          assert.notStrictEqual(result[1], undefined);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 5);
+        assert.notEqual(result[1], 'y');
+        assert.notStrictEqual(result[1], undefined);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('should clear timeout when `func` is called', function(assert) {
@@ -19213,54 +19090,42 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0,
-            throttled = _.throttle(function() { callCount++; }, 32);
+      var callCount = 0,
+          throttled = _.throttle(function() { callCount++; }, 32);
 
-        throttled();
+      throttled();
+      assert.strictEqual(callCount, 1);
+
+      setTimeout(function() {
         assert.strictEqual(callCount, 1);
-
-        setTimeout(function() {
-          assert.strictEqual(callCount, 1);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 2);
         done();
-      }
+      }, 64);
     });
 
     lodashStable.times(2, function(index) {
      QUnit.test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), function(assert) {
-       assert.expect(1);
+        assert.expect(1);
 
-       var done = assert.async();
+        var done = assert.async();
 
-        if (!(isRhino && isModularize)) {
-          var callCount = 0,
-              limit = (argv || isPhantom) ? 1000 : 320,
-              options = index ? { 'leading': false } : {};
+        var callCount = 0,
+            limit = (argv || isPhantom) ? 1000 : 320,
+            options = index ? { 'leading': false } : {};
 
-          var throttled = _.throttle(function() {
-            callCount++;
-          }, 32, options);
+        var throttled = _.throttle(function() {
+          callCount++;
+        }, 32, options);
 
-          var start = +new Date;
-          while ((new Date - start) < limit) {
-            throttled();
-          }
-          var actual = callCount > 1;
-
-          setTimeout(function() {
-            assert.ok(actual);
-            done();
-          }, 1);
+        var start = +new Date;
+        while ((new Date - start) < limit) {
+          throttled();
         }
-        else {
-          skipTest(assert);
+        var actual = callCount > 1;
+
+        setTimeout(function() {
+          assert.ok(actual);
           done();
-        }
+        }, 1);
       });
     });
 
@@ -19269,41 +19134,30 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var throttled = _.throttle(function(value) {
-          callCount++;
-          return value;
-        }, 32, {});
+      var throttled = _.throttle(function(value) {
+        callCount++;
+        return value;
+      }, 32, {});
 
-        assert.strictEqual(throttled('a'), 'a');
-        assert.strictEqual(throttled('b'), 'a');
+      assert.strictEqual(throttled('a'), 'a');
+      assert.strictEqual(throttled('b'), 'a');
 
-        setTimeout(function() {
-          assert.strictEqual(callCount, 2);
-          done();
-        }, 128);
-      }
-      else {
-        skipTest(assert, 3);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
         done();
-      }
+      }, 128);
     });
 
     QUnit.test('should support a `leading` option', function(assert) {
       assert.expect(2);
 
-      if (!(isRhino && isModularize)) {
-        var withLeading = _.throttle(identity, 32, { 'leading': true });
-        assert.strictEqual(withLeading('a'), 'a');
+      var withLeading = _.throttle(identity, 32, { 'leading': true });
+      assert.strictEqual(withLeading('a'), 'a');
 
-        var withoutLeading = _.throttle(identity, 32, { 'leading': false });
-        assert.strictEqual(withoutLeading('a'), undefined);
-      }
-      else {
-        skipTest(assert, 2);
-      }
+      var withoutLeading = _.throttle(identity, 32, { 'leading': false });
+      assert.strictEqual(withoutLeading('a'), undefined);
     });
 
     QUnit.test('should support a `trailing` option', function(assert) {
@@ -19311,36 +19165,30 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var withCount = 0,
-            withoutCount = 0;
+      var withCount = 0,
+          withoutCount = 0;
 
-        var withTrailing = _.throttle(function(value) {
-          withCount++;
-          return value;
-        }, 64, { 'trailing': true });
+      var withTrailing = _.throttle(function(value) {
+        withCount++;
+        return value;
+      }, 64, { 'trailing': true });
 
-        var withoutTrailing = _.throttle(function(value) {
-          withoutCount++;
-          return value;
-        }, 64, { 'trailing': false });
+      var withoutTrailing = _.throttle(function(value) {
+        withoutCount++;
+        return value;
+      }, 64, { 'trailing': false });
 
-        assert.strictEqual(withTrailing('a'), 'a');
-        assert.strictEqual(withTrailing('b'), 'a');
+      assert.strictEqual(withTrailing('a'), 'a');
+      assert.strictEqual(withTrailing('b'), 'a');
 
-        assert.strictEqual(withoutTrailing('a'), 'a');
-        assert.strictEqual(withoutTrailing('b'), 'a');
+      assert.strictEqual(withoutTrailing('a'), 'a');
+      assert.strictEqual(withoutTrailing('b'), 'a');
 
-        setTimeout(function() {
-          assert.strictEqual(withCount, 2);
-          assert.strictEqual(withoutCount, 1);
-          done();
-        }, 256);
-      }
-      else {
-        skipTest(assert, 6);
+      setTimeout(function() {
+        assert.strictEqual(withCount, 2);
+        assert.strictEqual(withoutCount, 1);
         done();
-      }
+      }, 256);
     });
 
     QUnit.test('should not update `lastCalled`, at the end of the timeout, when `trailing` is `false`', function(assert) {
@@ -19348,30 +19196,24 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var throttled = _.throttle(function() {
-          callCount++;
-        }, 64, { 'trailing': false });
+      var throttled = _.throttle(function() {
+        callCount++;
+      }, 64, { 'trailing': false });
 
+      throttled();
+      throttled();
+
+      setTimeout(function() {
         throttled();
         throttled();
+      }, 96);
 
-        setTimeout(function() {
-          throttled();
-          throttled();
-        }, 96);
-
-        setTimeout(function() {
-          assert.ok(callCount > 1);
-          done();
-        }, 192);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.ok(callCount > 1);
         done();
-      }
+      }, 192);
     });
   }());
 
@@ -19401,25 +19243,19 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var funced = func(function() {
-          callCount++;
-        });
+      var funced = func(function() {
+        callCount++;
+      });
 
+      funced();
+
+      setTimeout(function() {
         funced();
-
-        setTimeout(function() {
-          funced();
-          assert.strictEqual(callCount, isDebounce ? 1 : 2);
-          done();
-        }, 32);
-      }
-      else {
-        skipTest(assert);
+        assert.strictEqual(callCount, isDebounce ? 1 : 2);
         done();
-      }
+      }, 32);
     });
 
     QUnit.test('_.' + methodName + ' should invoke `func` with the correct `this` binding', function(assert) {
@@ -19427,27 +19263,21 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var object = {
-          'funced': func(function() { actual.push(this); }, 32)
-        };
+      var object = {
+        'funced': func(function() { actual.push(this); }, 32)
+      };
 
-        var actual = [],
-            expected = lodashStable.times(isDebounce ? 1 : 2, lodashStable.constant(object));
+      var actual = [],
+          expected = lodashStable.times(isDebounce ? 1 : 2, lodashStable.constant(object));
 
+      object.funced();
+      if (!isDebounce) {
         object.funced();
-        if (!isDebounce) {
-          object.funced();
-        }
-        setTimeout(function() {
-          assert.deepEqual(actual, expected);
-          done();
-        }, 64);
       }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.deepEqual(actual, expected);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('_.' + methodName + ' supports recursive calls', function(assert) {
@@ -19455,36 +19285,30 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var actual = [],
-            args = lodashStable.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
-            expected = args.slice(),
-            queue = args.slice();
+      var actual = [],
+          args = lodashStable.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
+          expected = args.slice(),
+          queue = args.slice();
 
-        var funced = func(function() {
-          var current = [this];
-          push.apply(current, arguments);
-          actual.push(current);
-
-          var next = queue.shift();
-          if (next) {
-            funced.call(next[0], next[1]);
-          }
-        }, 32);
+      var funced = func(function() {
+        var current = [this];
+        push.apply(current, arguments);
+        actual.push(current);
 
         var next = queue.shift();
-        funced.call(next[0], next[1]);
-        assert.deepEqual(actual, expected.slice(0, isDebounce ? 0 : 1));
+        if (next) {
+          funced.call(next[0], next[1]);
+        }
+      }, 32);
 
-        setTimeout(function() {
-          assert.deepEqual(actual, expected.slice(0, actual.length));
-          done();
-        }, 256);
-      }
-      else {
-        skipTest(assert, 2);
+      var next = queue.shift();
+      funced.call(next[0], next[1]);
+      assert.deepEqual(actual, expected.slice(0, isDebounce ? 0 : 1));
+
+      setTimeout(function() {
+        assert.deepEqual(actual, expected.slice(0, actual.length));
         done();
-      }
+      }, 256);
     });
 
     QUnit.test('_.' + methodName + ' should work if the system time is set backwards', function(assert) {
@@ -19531,25 +19355,19 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var funced = func(function() {
-          callCount++;
-        }, 32, { 'leading': false });
+      var funced = func(function() {
+        callCount++;
+      }, 32, { 'leading': false });
 
-        funced();
-        funced.cancel();
+      funced();
+      funced.cancel();
 
-        setTimeout(function() {
-          assert.strictEqual(callCount, 0);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 0);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('_.' + methodName + ' should reset `lastCalled` after cancelling', function(assert) {
@@ -19557,26 +19375,20 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var funced = func(function() {
-          return ++callCount;
-        }, 32, { 'leading': true });
+      var funced = func(function() {
+        return ++callCount;
+      }, 32, { 'leading': true });
 
-        assert.strictEqual(funced(), 1);
-        funced.cancel();
-        assert.strictEqual(funced(), 2);
+      assert.strictEqual(funced(), 1);
+      funced.cancel();
+      assert.strictEqual(funced(), 2);
 
-        setTimeout(function() {
-          assert.strictEqual(callCount, 2);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 3);
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
         done();
-      }
+      }, 64);
     });
 
     QUnit.test('_.' + methodName + ' should support flushing delayed calls', function(assert) {
@@ -19584,26 +19396,20 @@
 
       var done = assert.async();
 
-      if (!(isRhino && isModularize)) {
-        var callCount = 0;
+      var callCount = 0;
 
-        var funced = func(function() {
-          return ++callCount;
-        }, 32, { 'leading': false });
+      var funced = func(function() {
+        return ++callCount;
+      }, 32, { 'leading': false });
 
-        funced();
-        var actual = funced.flush();
+      funced();
+      var actual = funced.flush();
 
-        setTimeout(function() {
-          assert.strictEqual(actual, 1);
-          assert.strictEqual(callCount, 1);
-          done();
-        }, 64);
-      }
-      else {
-        skipTest(assert, 2);
+      setTimeout(function() {
+        assert.strictEqual(actual, 1);
+        assert.strictEqual(callCount, 1);
         done();
-      }
+      }, 64);
     });
   });
 

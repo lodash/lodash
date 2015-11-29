@@ -226,6 +226,11 @@
   /** Used to restore the `_` reference. */
   var oldDash = root._;
 
+  /** Used to test generator functions. */
+  var generator = lodashStable.attempt(function() {
+    return Function('return function*(){}');
+  });
+
   /** List of latin-1 supplementary letters to basic latin letters. */
   var burredLetters = [
     '\xc0', '\xc1', '\xc2', '\xc3', '\xc4', '\xc5', '\xc6', '\xc7', '\xc8', '\xc9', '\xca', '\xcb', '\xcc', '\xcd', '\xce',
@@ -2219,7 +2224,8 @@
 
     var uncloneable = {
       'DOM elements': body,
-      'functions': Foo
+      'functions': Foo,
+      'generators': generator
     };
 
     lodashStable.each(errors, function(error) {
@@ -2452,14 +2458,18 @@
         QUnit.test('`_.' + methodName + '` should not clone ' + key, function(assert) {
           assert.expect(3);
 
-          var object = { 'a': value, 'b': { 'c': value } },
-              actual = func(object);
+          if (value) {
+            var object = { 'a': value, 'b': { 'c': value } },
+                actual = func(object),
+                expected = (typeof value == 'function' && !!value.c) ? { 'c': Foo.c } : {};
 
-          assert.deepEqual(actual, object);
-          assert.notStrictEqual(actual, object);
-
-          var expected = typeof value == 'function' ? { 'c': Foo.c } : (value && {});
-          assert.deepEqual(func(value), expected);
+            assert.deepEqual(actual, object);
+            assert.notStrictEqual(actual, object);
+            assert.deepEqual(func(value), expected);
+          }
+          else {
+            skipTest(assert, 3);
+          }
         });
       });
     });
@@ -7300,10 +7310,6 @@
     QUnit.test('should return `false` for non-arrays', function(assert) {
       assert.expect(10);
 
-      var generator = lodashStable.attempt(function() {
-        return Function('return function*(){}');
-      });
-
       var expected = lodashStable.map(falsey, function(value) {
         return value === '';
       });
@@ -8525,10 +8531,6 @@
 
     QUnit.test('should return `true` for generator functions', function(assert) {
       assert.expect(1);
-
-      var generator = lodashStable.attempt(function() {
-        return Function('return function*(){}');
-      });
 
       assert.strictEqual(_.isFunction(generator), typeof generator == 'function');
     });

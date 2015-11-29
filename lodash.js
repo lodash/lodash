@@ -2262,7 +2262,7 @@
         }
       } else {
         var tag = getTag(value),
-            isFunc = tag == funcTag;
+            isFunc = tag == funcTag || tag == genTag;
 
         if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
           if (isHostObject(value)) {

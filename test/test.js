@@ -2125,9 +2125,9 @@
     QUnit.test('should clamp positive numbers', function(assert) {
       assert.expect(3);
 
-      assert.strictEqual(_.clamp(10, -5, 5), 5)
+      assert.strictEqual(_.clamp(10, -5, 5), 5);
       assert.strictEqual(_.clamp(10.6, -5.6, 5.4), 5.4);
-      assert.strictEqual(_.clamp(Infinity, -5, 5), 5)
+      assert.strictEqual(_.clamp(Infinity, -5, 5), 5);
     });
 
     QUnit.test('should not alter negative numbers in range', function(assert) {
@@ -19951,7 +19951,7 @@
               func(Object(other))
             ];
           })
-        )
+        );
       });
 
       assert.deepEqual(actual, expected);
@@ -20019,7 +20019,7 @@
                 func(mod(other)),
                 func(Object(mod(other)))
               ];
-            })
+            });
           })
         );
       });
@@ -20046,7 +20046,7 @@
                 func(mod(value)),
                 func(Object(mod(value)))
               ];
-            })
+            });
           })
         );
       });

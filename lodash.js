@@ -2736,7 +2736,7 @@
         path = last(path);
       }
       var func = object == null ? object : object[path];
-      return func == null ? undefined : func.apply(object, args);
+      return func == null ? undefined : apply(func, object, args);
     }
 
     /**
@@ -4178,7 +4178,7 @@
         return rest(function(args) {
           var thisArg = this;
           return arrayFunc(iteratees, function(iteratee) {
-            return iteratee.apply(thisArg, args);
+            return apply(iteratee, thisArg, args);
           });
         });
       });
@@ -8898,7 +8898,7 @@
           otherArgs[index] = args[index];
         }
         otherArgs[start] = array;
-        return func.apply(this, otherArgs);
+        return apply(func, this, otherArgs);
       };
     }
 
@@ -8938,7 +8938,7 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       return function(array) {
-        return func.apply(this, array);
+        return apply(func, this, array);
       };
     }
 
@@ -10529,7 +10529,7 @@
      */
     var defaults = rest(function(args) {
       args.push(undefined, assignInDefaults);
-      return assignInWith.apply(undefined, args);
+      return apply(assignInWith, undefined, args);
     });
 
     /**
@@ -10552,7 +10552,7 @@
      */
     var defaultsDeep = rest(function(args) {
       args.push(undefined, mergeDefaults);
-      return mergeWith.apply(undefined, args);
+      return apply(mergeWith, undefined, args);
     });
 
     /**
@@ -12720,7 +12720,7 @@
      */
     var attempt = rest(function(func, args) {
       try {
-        return func.apply(undefined, args);
+        return apply(func, undefined, args);
       } catch (e) {
         return isError(e) ? e : new Error(e);
       }

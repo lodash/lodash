@@ -3247,6 +3247,33 @@
       return min + nativeFloor(nativeRandom() * (max - min + 1));
     }
 
+    function baseRange(start, end, step, fromRight) {
+      start = toNumber(start);
+      start = start === start ? start : 0;
+
+      if (end === undefined) {
+        end = start;
+        start = 0;
+      } else {
+        end = toNumber(end) || 0;
+      }
+      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
+
+      var index = -1,
+          length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
+          result = Array(length);
+
+      while (++index < length) {
+        if (fromRight) {
+          result[index] = (end -= step);
+        } else {
+          result[index] = start;
+          start+= step;
+        }
+      }
+      return result;
+    }
+
     /**
      * The base implementation of `_.set`.
      *
@@ -13279,21 +13306,14 @@
       if (step && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
-      start = toNumber(start);
-      start = start === start ? start : 0;
+      return baseRange(start, end, step);
+    }
 
-      if (end === undefined) {
-        end = start;
-        start = 0;
-      } else {
-        end = toNumber(end) || 0;
+    function rangeRight(start, end, step) {
+      if (step && isIterateeCall(start, end, step)) {
+        end = step = undefined;
       }
-      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
-
-      var n = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
-      return baseTimes(n, function(index) {
-        return index ? (start += step) : start;
-      });
+      return baseRange(start, end, step, true);
     }
 
     /**
@@ -13795,6 +13815,7 @@
     lodash.pullAllBy = pullAllBy;
     lodash.pullAt = pullAt;
     lodash.range = range;
+    lodash.rangeRight = rangeRight;
     lodash.rearg = rearg;
     lodash.reject = reject;
     lodash.remove = remove;

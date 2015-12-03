@@ -22570,6 +22570,7 @@
       'pullAll',
       'pullAt',
       'range',
+      'rangeRight',
       'reject',
       'remove',
       'sampleSize',
@@ -22592,7 +22593,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(282);
+      assert.expect(284);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 
@@ -22630,7 +22631,7 @@
     });
 
     QUnit.test('should return an array', function(assert) {
-      assert.expect(68);
+      assert.expect(70);
 
       var array = [1, 2, 3];
 

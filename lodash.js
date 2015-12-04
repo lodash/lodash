@@ -3912,13 +3912,13 @@
      */
     function createBaseFor(fromRight) {
       return function(object, iteratee, keysFunc) {
-        var iterable = Object(object),
+        var index = -1,
+            iterable = Object(object),
             props = keysFunc(object),
-            length = props.length,
-            index = fromRight ? length : -1;
+            length = props.length;
 
-        while ((fromRight ? index-- : ++index < length)) {
-          var key = props[index];
+        while (length--) {
+          var key = props[fromRight ? length : ++index];
           if (iteratee(iterable[key], key, iterable) === false) {
             break;
           }

@@ -3273,13 +3273,9 @@
           length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
           result = Array(length);
 
-      while (++index < length) {
-        if (fromRight) {
-          result[index] = (end -= step);
-        } else {
-          result[index] = start;
-          start += step;
-        }
+      while (length--) {
+        result[fromRight ? length : ++index] = start;
+        start += step;
       }
       return result;
     }
@@ -13348,7 +13344,7 @@
      * // => [-3, -2, -1, 0]
      *
      * _.rangeRight(1, 4, 0);
-     * // => [4, 4, 4]
+     * // => [1, 1, 1]
      *
      * _.rangeRight(0);
      * // => []

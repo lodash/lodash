@@ -362,8 +362,8 @@
             compAddTwo = function(n) { return n + 2; },\
             compAddThree = function(n) { return n + 3; };\
         \
-        var _composed = _.flowRight(compAddThree, compAddTwo, compAddOne),\
-            lodashComposed = lodash.flowRight(compAddThree, compAddTwo, compAddOne);\
+        var _composed = _.flowRight && _.flowRight(compAddThree, compAddTwo, compAddOne),\
+            lodashComposed = lodash.flowRight && lodash.flowRight(compAddThree, compAddTwo, compAddOne);\
       }\
       if (typeof countBy != "undefined" || typeof omit != "undefined") {\
         var wordToNumber = {\

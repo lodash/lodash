@@ -101,17 +101,17 @@
     lodash.noConflict()
   ));
 
+  /** Load Underscore. */
+  var _ = root.underscore || (root.underscore = (
+    _ = load('../vendor/underscore/underscore.js') || root._,
+    _._ || _
+  ));
+
   /** Load Benchmark.js. */
   var Benchmark = root.Benchmark || (root.Benchmark = (
     Benchmark = load('../vendor/benchmark.js/benchmark.js') || root.Benchmark,
     Benchmark = Benchmark.Benchmark || Benchmark,
     Benchmark.runInContext(lodash.extend({}, root, { '_': lodash }))
-  ));
-
-  /** Load Underscore. */
-  var _ = root._ || (root._ = (
-    _ = load('../vendor/underscore/underscore.js') || root._,
-    _._ || _
   ));
 
   /*--------------------------------------------------------------------------*/
@@ -281,7 +281,7 @@
   lodash.extend(Benchmark.options, {
     'async': true,
     'setup': '\
-      var _ = global._,\
+      var _ = global.underscore,\
           lodash = global.lodash,\
           belt = this.name == buildName ? lodash : _;\
       \
@@ -348,8 +348,8 @@
             square = function(v) { return v * v; };\
         \
         var largeArray = belt.range(10000),\
-            _chaining = _.chain ? _(largeArray).chain() : _(largeArray),\
-            lodashChaining = lodash(largeArray);\
+            _chaining = _(largeArray).chain(),\
+            lodashChaining = lodash(largeArray).chain();\
       }\
       if (typeof compact != "undefined") {\
         var uncompacted = numbers.slice();\

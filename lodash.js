@@ -11336,8 +11336,10 @@
     }
 
     /**
-     * Sets the value at `path` of `object`. If a portion of `path` doesn't
-     * exist it's created.
+     * Sets the value at `path` of `object`. If a portion of `path` doesn't exist
+     * it's created. Arrays are created for missing index properties while objects
+     * are created for all other missing properties. Use `_.setWith` to customize
+     * `path` creation.
      *
      * @static
      * @memberOf _
@@ -11378,13 +11380,7 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * function customizer(nsValue) {
-     *   if (!_.isObject(nsValue)) {
-     *     return {};
-     *   }
-     * }
-     *
-     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, customizer);
+     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, Object);
      * // => { '0': { '1': { '2': 3 }, 'length': 2 } }
      */
     function setWith(object, path, value, customizer) {

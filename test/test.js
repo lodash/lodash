@@ -2476,7 +2476,7 @@
 
     lodashStable.each(['cloneWith', 'cloneDeepWith'], function(methodName) {
       var func = _[methodName],
-          isDeepWith = methodName == 'cloneDeepWith';
+          isDeep = methodName == 'cloneDeepWith';
 
       QUnit.test('`_.' + methodName + '` should provide the correct `customizer` arguments', function(assert) {
         assert.expect(1);
@@ -2491,7 +2491,7 @@
           argsList.push(args);
         });
 
-        assert.deepEqual(argsList, isDeepWith ? [[foo], [1, 'a', foo]] : [[foo]]);
+        assert.deepEqual(argsList, isDeep ? [[foo], [1, 'a', foo]] : [[foo]]);
       });
 
       QUnit.test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', function(assert) {
@@ -20854,16 +20854,16 @@
 
   lodashStable.each(['uniqBy', 'sortedUniqBy'], function(methodName) {
     var func = _[methodName],
-        isSortedUniqBy = methodName == 'sortedUniqBy',
+        isSorted = methodName == 'sortedUniqBy',
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
-    if (isSortedUniqBy) {
+    if (isSorted) {
       objects = _.sortBy(objects, 'a');
     }
     QUnit.test('`_.' + methodName + '` should work with an `iteratee` argument', function(assert) {
       assert.expect(1);
 
-      var expected = isSortedUniqBy ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3);
+      var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3);
 
       var actual = func(objects, function(object) {
         return object.a;
@@ -20900,16 +20900,16 @@
     QUnit.test('`_.' + methodName + '` should work with a "_.property" style `iteratee`', function(assert) {
       assert.expect(2);
 
-      var expected = isSortedUniqBy ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3),
+      var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3),
           actual = func(objects, 'a');
 
       assert.deepEqual(actual, expected);
 
       var arrays = [[2], [3], [1], [2], [3], [1]];
-      if (isSortedUniqBy) {
+      if (isSorted) {
         arrays = lodashStable.sortBy(arrays, 0);
       }
-      expected = isSortedUniqBy ? [[1], [2], [3]] : arrays.slice(0, 3);
+      expected = isSorted ? [[1], [2], [3]] : arrays.slice(0, 3);
       actual = func(arrays, 0);
 
       assert.deepEqual(actual, expected);

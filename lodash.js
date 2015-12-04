@@ -11337,7 +11337,8 @@
 
     /**
      * Sets the value at `path` of `object`. If a portion of `path` doesn't
-     * exist it's created.
+     * exist it's created. An array is created for missing index properties,
+     * otherwise an object is created for all other missing properties.
      *
      * @static
      * @memberOf _

@@ -22711,7 +22711,7 @@
     QUnit.test('should not contain minified method names (test production builds)', function(assert) {
       assert.expect(1);
 
-      var shortNames = ['at', 'eq', 'gt', 'lt'];
+      var shortNames = ['_', 'at', 'eq', 'gt', 'lt'];
       assert.ok(lodashStable.every(_.functions(_), function(methodName) {
         return methodName.length > 2 || lodashStable.includes(shortNames, methodName);
       }));

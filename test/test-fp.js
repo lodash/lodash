@@ -1,744 +1,809 @@
-'use strict';
+;(function() {
 
-var _ = require('lodash'),
-    path = require('path');
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
-var basePath = path.join(__dirname, '..'),
-    libPath = path.join(basePath, 'lib'),
-    fpPath = path.join(libPath, 'fp');
+  /** Used as the size to cover large array optimizations. */
+  var LARGE_ARRAY_SIZE = 200;
 
-var convert = require(path.join(fpPath, 'fp.js')),
-    mapping = require(path.join(fpPath, 'mapping.js'));
+  /** Used as a reference to the global object. */
+  var root = (typeof global == 'object' && global) || this;
 
-var fp = convert(_.runInContext());
+  /** Used for native method references. */
+  var arrayProto = Array.prototype;
 
-global.QUnit = require('qunitjs');
-require('qunit-extras').runInContext(global);
+  /** Method and object shortcuts. */
+  var phantom = root.phantom,
+      amd = root.define && define.amd,
+      document = !phantom && root.document,
+      noop = function() {},
+      slice = arrayProto.slice;
 
-/*----------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
-/** Used as the size to cover large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
+  /** Use a single "load" function. */
+  var load = (!amd && typeof require == 'function')
+    ? require
+    : noop;
 
-/** Used for native method references. */
-var arrayProto = Array.prototype;
+  /** The unit testing framework. */
+  var QUnit = root.QUnit || (root.QUnit = (
+    QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
+    QUnit = QUnit.QUnit || QUnit
+  ));
 
-/** Method and object shortcuts. */
-var slice = arrayProto.slice;
+  /** Load stable Lodash and QUnit Extras. */
+  var _ = root._ || load('../lodash.js');
+  if (_) {
+    _ = _.runInContext(root);
+  }
+  var QUnitExtras = load('../node_modules/qunit-extras/qunit-extras.js');
+  if (QUnitExtras) {
+    QUnitExtras.runInContext(root);
+  }
 
-/*----------------------------------------------------------------------------*/
+  var convert = root.fp || load('../dist/lodash.fp.js'),
+      mapping = root.mapping || load('../lib/fp/mapping.js'),
+      fp = convert(_.runInContext());
 
-QUnit.module('method aliases');
+  /*--------------------------------------------------------------------------*/
 
-(function() {
-  QUnit.test('should have correct aliases', function(assert) {
-    assert.expect(1);
+  /**
+   * Skips a given number of tests with a passing result.
+   *
+   * @private
+   * @param {Object} assert The QUnit assert object.
+   * @param {number} [count=1] The number of tests to skip.
+   */
+  function skipTest(assert, count) {
+    count || (count = 1);
+    while (count--) {
+      assert.ok(true, 'test skipped');
+    }
+  }
 
-    var actual = _.transform(mapping.aliasMap, function(result, aliases, methodName) {
-      var func = fp[methodName];
-      _.each(aliases, function(alias) {
-        result.push([alias, fp[alias] === func]);
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('method aliases');
+
+  (function() {
+    QUnit.test('should have correct aliases', function(assert) {
+      assert.expect(1);
+
+      var actual = _.transform(mapping.aliasMap, function(result, aliases, methodName) {
+        var func = fp[methodName];
+        _.each(aliases, function(alias) {
+          result.push([alias, fp[alias] === func]);
+        });
+      }, []);
+
+      assert.deepEqual(_.reject(actual, 1), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('method ary caps');
+
+  (function() {
+    QUnit.test('should have a cap of 1', function(assert) {
+      assert.expect(1);
+
+      var funcMethods = [
+        'curry', 'iteratee', 'memoize', 'over', 'overEvery', 'overSome',
+        'method', 'methodOf', 'restParam', 'runInContext'
+      ];
+
+      var exceptions = funcMethods.concat('mixin', 'template'),
+          expected = _.map(mapping.aryMethodMap[1], _.constant(true));
+
+      var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
+        var arg = _.includes(funcMethods, methodName) ? _.noop : 1,
+            result = _.attempt(function() { return fp[methodName](arg); });
+
+        if (_.includes(exceptions, methodName)
+              ? typeof result == 'function'
+              : typeof result != 'function'
+            ) {
+          return true;
+        }
+        console.log(methodName, result);
+        return false;
       });
-    }, []);
 
-    assert.deepEqual(_.reject(actual, 1), []);
-  });
-}());
+      assert.deepEqual(actual, expected);
+    });
 
-/*----------------------------------------------------------------------------*/
+    QUnit.test('should have a cap of 2', function(assert) {
+      assert.expect(1);
 
-QUnit.module('method ary caps');
+      var funcMethods = [
+        'after', 'ary', 'before', 'bind', 'bindKey', 'cloneDeepWith', 'cloneWith',
+        'curryN', 'debounce', 'delay', 'modArgs', 'modArgsSet', 'rearg', 'throttle',
+        'wrap'
+      ];
 
-(function() {
-  QUnit.test('should have a cap of 1', function(assert) {
-    assert.expect(1);
+      var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
+          expected = _.map(mapping.aryMethodMap[2], _.constant(true));
 
-    var funcMethods = [
-      'curry', 'iteratee', 'memoize', 'over', 'overEvery', 'overSome',
-      'method', 'methodOf', 'restParam', 'runInContext'
-    ];
+      var actual = _.map(mapping.aryMethodMap[2], function(methodName) {
+        var args = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
+            result = _.attempt(function() { return fp[methodName](args[0])(args[1]); });
 
-    var exceptions = funcMethods.concat('mixin', 'template'),
-        expected = _.map(mapping.aryMethodMap[1], _.constant(true));
+        if (_.includes(exceptions, methodName)
+              ? typeof result == 'function'
+              : typeof result != 'function'
+            ) {
+          return true;
+        }
+        console.log(methodName, result);
+        return false;
+      });
 
-    var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
-      var arg = _.includes(funcMethods, methodName) ? _.noop : 1,
-          result = _.attempt(function() { return fp[methodName](arg); });
+      assert.deepEqual(actual, expected);
+    });
 
-      if (_.includes(exceptions, methodName)
-            ? typeof result == 'function'
-            : typeof result != 'function'
-          ) {
-        return true;
+    QUnit.test('should have a cap of 3', function(assert) {
+      assert.expect(1);
+
+      var funcMethods = [
+        'assignWith', 'extendWith', 'isEqualWith', 'isMatchWith', 'omitBy',
+        'pickBy', 'reduce', 'reduceRight', 'transform', 'zipWith'
+      ];
+
+      var expected = _.map(mapping.aryMethodMap[3], _.constant(true));
+
+      var actual = _.map(mapping.aryMethodMap[3], function(methodName) {
+        var args = _.includes(funcMethods, methodName) ? [_.noop, 0, 1] : [0, 1, []],
+            result = _.attempt(function() { return fp[methodName](args[0])(args[1])(args[2]); });
+
+        if (typeof result != 'function') {
+          return true;
+        }
+        console.log(methodName, result);
+        return false;
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('methods that use `indexOf`');
+
+  (function() {
+    QUnit.test('should work with `fp.indexOf`', function(assert) {
+      assert.expect(10);
+
+      var array = ['a', 'b', 'c'],
+          other = ['b', 'b', 'd'],
+          object = { 'a': 1, 'b': 2, 'c': 2 },
+          actual = fp.difference(array, other);
+
+      assert.deepEqual(actual, ['a', 'c'], 'fp.difference');
+
+      actual = fp.includes('b', array);
+      assert.strictEqual(actual, true, 'fp.includes');
+
+      actual = fp.intersection(other, array);
+      assert.deepEqual(actual, ['b'], 'fp.intersection');
+
+      actual = fp.omit(other, object);
+      assert.deepEqual(actual, { 'a': 1, 'c': 2 }, 'fp.omit');
+
+      actual = fp.union(other, array);
+      assert.deepEqual(actual, ['a', 'b', 'c', 'd'], 'fp.union');
+
+      actual = fp.uniq(other);
+      assert.deepEqual(actual, ['b', 'd'], 'fp.uniq');
+
+      actual = fp.uniqBy(_.identity, other);
+      assert.deepEqual(actual, ['b', 'd'], 'fp.uniqBy');
+
+      actual = fp.without('b', array);
+      assert.deepEqual(actual, ['a', 'c'], 'fp.without');
+
+      actual = fp.xor(other, array);
+      assert.deepEqual(actual, ['a', 'c', 'd'], 'fp.xor');
+
+      actual = fp.pull('b', array);
+      assert.deepEqual(actual, ['a', 'c'], 'fp.pull');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('cherry-picked methods');
+
+  (function() {
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      if (!document) {
+        var args,
+            array = [1, 2, 3],
+            map = convert('map', _.map);
+
+        map(function() {
+          args || (args = slice.call(arguments));
+        })(array);
+
+        assert.deepEqual(args, [1]);
       }
-      console.log(methodName, result);
-      return false;
-    });
-
-    assert.deepEqual(actual, expected);
-  });
-
-  QUnit.test('should have a cap of 2', function(assert) {
-    assert.expect(1);
-
-    var funcMethods = [
-      'after', 'ary', 'before', 'bind', 'bindKey', 'cloneDeepWith', 'cloneWith',
-      'curryN', 'debounce', 'delay', 'modArgs', 'modArgsSet', 'rearg', 'throttle',
-      'wrap'
-    ];
-
-    var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
-        expected = _.map(mapping.aryMethodMap[2], _.constant(true));
-
-    var actual = _.map(mapping.aryMethodMap[2], function(methodName) {
-      var args = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
-          result = _.attempt(function() { return fp[methodName](args[0])(args[1]); });
-
-      if (_.includes(exceptions, methodName)
-            ? typeof result == 'function'
-            : typeof result != 'function'
-          ) {
-        return true;
+      else {
+        skipTest(assert);
       }
-      console.log(methodName, result);
-      return false;
     });
 
-    assert.deepEqual(actual, expected);
-  });
+    QUnit.test('should not support shortcut fusion', function(assert) {
+      assert.expect(3);
 
-  QUnit.test('should have a cap of 3', function(assert) {
-    assert.expect(1);
+      if (!document) {
+        var array = fp.range(0, LARGE_ARRAY_SIZE),
+            filterCount = 0,
+            mapCount = 0;
 
-    var funcMethods = [
-      'assignWith', 'extendWith', 'isEqualWith', 'isMatchWith', 'omitBy',
-      'pickBy', 'reduce', 'reduceRight', 'transform', 'zipWith'
-    ];
+        var iteratee = function(value) {
+          mapCount++;
+          return value * value;
+        };
 
-    var expected = _.map(mapping.aryMethodMap[3], _.constant(true));
+        var predicate = function(value) {
+          filterCount++;
+          return value % 2 == 0;
+        };
 
-    var actual = _.map(mapping.aryMethodMap[3], function(methodName) {
-      var args = _.includes(funcMethods, methodName) ? [_.noop, 0, 1] : [0, 1, []],
-          result = _.attempt(function() { return fp[methodName](args[0])(args[1])(args[2]); });
+        var map1 = convert('map', _.map),
+            filter1 = convert('filter', _.filter),
+            take1 = convert('take', _.take);
 
-      if (typeof result != 'function') {
-        return true;
+        var filter2 = filter1(predicate),
+            map2 = map1(iteratee),
+            take2 = take1(2);
+
+        var combined = fp.flow(map2, filter2, fp.compact, take2);
+
+        assert.deepEqual(combined(array), [4, 16]);
+        assert.strictEqual(filterCount, 200, 'filterCount');
+        assert.strictEqual(mapCount, 200, 'mapCount');
       }
-      console.log(methodName, result);
-      return false;
+      else {
+        skipTest(assert, 3);
+      }
     });
+  }());
 
-    assert.deepEqual(actual, expected);
-  });
-}());
+  /*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------*/
+  QUnit.module('fp.curry');
 
-QUnit.module('methods that use `indexOf`');
+  (function() {
+    QUnit.test('should accept only a `func` param', function(assert) {
+      assert.expect(1);
 
-(function() {
-  QUnit.test('should work with `fp.indexOf`', function(assert) {
-    assert.expect(10);
+      assert.raises(function() { fp.curry(1, _.noop); }, TypeError);
+    });
+  }());
 
-    var array = ['a', 'b', 'c'],
-        other = ['b', 'b', 'd'],
-        object = { 'a': 1, 'b': 2, 'c': 2 },
-        actual = fp.difference(array, other);
+  /*--------------------------------------------------------------------------*/
 
-    assert.deepEqual(actual, ['a', 'c'], 'fp.difference');
+  QUnit.module('fp.curryN');
 
-    actual = fp.includes('b', array);
-    assert.strictEqual(actual, true, 'fp.includes');
+  (function() {
+    QUnit.test('should accept an `arity` param', function(assert) {
+      assert.expect(1);
 
-    actual = fp.intersection(other, array);
-    assert.deepEqual(actual, ['b'], 'fp.intersection');
+      var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a');
+      assert.deepEqual(actual, ['a', undefined]);
+    });
+  }());
 
-    actual = fp.omit(other, object);
-    assert.deepEqual(actual, { 'a': 1, 'c': 2 }, 'fp.omit');
+  /*--------------------------------------------------------------------------*/
 
-    actual = fp.union(other, array);
-    assert.deepEqual(actual, ['a', 'b', 'c', 'd'], 'fp.union');
+  QUnit.module('fp.difference');
 
-    actual = fp.uniq(other);
-    assert.deepEqual(actual, ['b', 'd'], 'fp.uniq');
+  (function() {
+    QUnit.test('should return the elements of the first array not included in the second array', function(assert) {
+      assert.expect(1);
 
-    actual = fp.uniqBy(_.identity, other);
-    assert.deepEqual(actual, ['b', 'd'], 'fp.uniqBy');
+      assert.deepEqual(fp.difference([1, 2])([2, 3]), [1]);
+    });
+  }());
 
-    actual = fp.without('b', array);
-    assert.deepEqual(actual, ['a', 'c'], 'fp.without');
+  /*--------------------------------------------------------------------------*/
 
-    actual = fp.xor(other, array);
-    assert.deepEqual(actual, ['a', 'c', 'd'], 'fp.xor');
+  QUnit.module('fp.fill');
 
-    actual = fp.pull('b', array);
-    assert.deepEqual(actual, ['a', 'c'], 'fp.pull');
-  });
-}());
+  (function() {
+    QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
+      assert.expect(1);
 
-/*----------------------------------------------------------------------------*/
+      var array = [1, 2, 3];
+      assert.deepEqual(fp.fill(1)(2)('*')(array), [1, '*', 3]);
+    });
+  }());
 
-QUnit.module('cherry-picked methods');
+  /*--------------------------------------------------------------------------*/
 
-(function() {
-  QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
-    assert.expect(1);
+  QUnit.module('fp.flow and fp.flowRight');
 
-    var args,
-        array = [1, 2, 3],
-        map = convert('map', _.map);
+  _.each(['flow', 'flowRight'], function(methodName, index) {
+    var func = fp[methodName],
+        isFlow = methodName == 'flow';
 
-    map(function() {
-      args || (args = slice.call(arguments));
-    })(array);
+    QUnit.test('`fp.' + methodName + '` should support shortcut fusion', function(assert) {
+      assert.expect(6);
 
-    assert.deepEqual(args, [1]);
-  });
+      var filterCount,
+          mapCount,
+          array = fp.range(0, LARGE_ARRAY_SIZE);
 
-  QUnit.test('should not support shortcut fusion', function(assert) {
-    assert.expect(3);
+      var iteratee = function(value) {
+        mapCount++;
+        return value * value;
+      };
 
-    var array = fp.range(0, LARGE_ARRAY_SIZE),
-        filterCount = 0,
-        mapCount = 0;
+      var predicate = function(value) {
+        filterCount++;
+        return value % 2 == 0;
+      };
 
-    var iteratee = function(value) {
-      mapCount++;
-      return value * value;
-    };
+      var filter = fp.filter(predicate),
+          map = fp.map(iteratee),
+          take = fp.take(2);
 
-    var predicate = function(value) {
-      filterCount++;
-      return value % 2 == 0;
-    };
+      _.times(2, function(index) {
+        var combined = isFlow
+          ? func(map, filter, fp.compact, take)
+          : func(take, fp.compact, filter, map);
 
-    var map1 = convert('map', _.map),
-        filter1 = convert('filter', _.filter),
-        take1 = convert('take', _.take);
+        filterCount = mapCount = 0;
 
-    var filter2 = filter1(predicate),
-        map2 = map1(iteratee),
-        take2 = take1(2);
-
-    var combined = fp.flow(map2, filter2, fp.compact, take2);
-
-    assert.deepEqual(combined(array), [4, 16]);
-    assert.strictEqual(filterCount, 200, 'filterCount');
-    assert.strictEqual(mapCount, 200, 'mapCount');
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.curry');
-
-(function() {
-  QUnit.test('should accept only a `func` param', function(assert) {
-    assert.expect(1);
-
-    assert.raises(function() { fp.curry(1, _.noop); }, TypeError);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.curryN');
-
-(function() {
-  QUnit.test('should accept an `arity` param', function(assert) {
-    assert.expect(1);
-
-    var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a');
-    assert.deepEqual(actual, ['a', undefined]);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.difference');
-
-(function() {
-  QUnit.test('should return the elements of the first array not included in the second array', function(assert) {
-    assert.expect(1);
-
-    assert.deepEqual(fp.difference([1, 2])([2, 3]), [1]);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.fill');
-
-(function() {
-  QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
-    assert.expect(1);
-
-    var array = [1, 2, 3];
-    assert.deepEqual(fp.fill(1)(2)('*')(array), [1, '*', 3]);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.flow and fp.flowRight');
-
-_.each(['flow', 'flowRight'], function(methodName, index) {
-  var func = fp[methodName],
-      isFlow = methodName == 'flow';
-
-  QUnit.test('`fp.' + methodName + '` should support shortcut fusion', function(assert) {
-    assert.expect(6);
-
-    var filterCount,
-        mapCount,
-        array = fp.range(0, LARGE_ARRAY_SIZE);
-
-    var iteratee = function(value) {
-      mapCount++;
-      return value * value;
-    };
-
-    var predicate = function(value) {
-      filterCount++;
-      return value % 2 == 0;
-    };
-
-    var filter = fp.filter(predicate),
-        map = fp.map(iteratee),
-        take = fp.take(2);
-
-    _.times(2, function(index) {
-      var combined = isFlow
-        ? func(map, filter, fp.compact, take)
-        : func(take, fp.compact, filter, map);
-
-      filterCount = mapCount = 0;
-
-      assert.deepEqual(combined(array), [4, 16]);
-      assert.strictEqual(filterCount, 5, 'filterCount');
-      assert.strictEqual(mapCount, 5, 'mapCount');
+        assert.deepEqual(combined(array), [4, 16]);
+        assert.strictEqual(filterCount, 5, 'filterCount');
+        assert.strictEqual(mapCount, 5, 'mapCount');
+      });
     });
   });
-});
 
-/*----------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
-QUnit.module('fp.inRange');
+  QUnit.module('fp.inRange');
 
-(function() {
-  QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
-    assert.expect(1);
+  (function() {
+    QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
+      assert.expect(1);
 
-    assert.strictEqual(fp.inRange(2)(4)(3), true);
-  });
-}());
+      assert.strictEqual(fp.inRange(2)(4)(3), true);
+    });
+  }());
 
-/*----------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
-QUnit.module('fp.iteratee');
+  QUnit.module('fp.iteratee');
 
-(function() {
-  QUnit.test('should return a iteratee with capped params', function(assert) {
-    assert.expect(1);
+  (function() {
+    QUnit.test('should return a iteratee with capped params', function(assert) {
+      assert.expect(1);
 
-    var func = fp.iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
-    assert.deepEqual(func(1, 2, 3), [1, undefined, undefined]);
-  });
+      var func = fp.iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+      assert.deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+    });
 
-  QUnit.test('should convert by name', function(assert) {
-    assert.expect(1);
+    QUnit.test('should convert by name', function(assert) {
+      assert.expect(1);
 
-    var iteratee = convert('iteratee', _.iteratee),
-        func = iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+      if (!document) {
+        var iteratee = convert('iteratee', _.iteratee),
+            func = iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
 
-    assert.deepEqual(func(1, 2, 3), [1, undefined, undefined]);
-  });
-}());
+        assert.deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }());
 
-/*----------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
-QUnit.module('fp.maxBy and fp.minBy');
+  QUnit.module('fp.maxBy and fp.minBy');
 
-_.each(['maxBy', 'minBy'], function(methodName, index) {
-  var array = [1, 2, 3],
-      func = fp[methodName],
-      isMax = !index;
+  _.each(['maxBy', 'minBy'], function(methodName, index) {
+    var array = [1, 2, 3],
+        func = fp[methodName],
+        isMax = !index;
 
-  QUnit.test('`fp.' + methodName + '` should work with an `iteratee` argument', function(assert) {
-    assert.expect(1);
+    QUnit.test('`fp.' + methodName + '` should work with an `iteratee` argument', function(assert) {
+      assert.expect(1);
 
-    var actual = func(function(num) {
-      return -num;
-    })(array);
+      var actual = func(function(num) {
+        return -num;
+      })(array);
 
-    assert.strictEqual(actual, isMax ? 1 : 3);
-  });
+      assert.strictEqual(actual, isMax ? 1 : 3);
+    });
 
-  QUnit.test('`fp.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
-    assert.expect(1);
+    QUnit.test('`fp.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
 
-    var args;
+      var args;
 
-    func(function() {
-      args || (args = slice.call(arguments));
-    })(array);
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(array);
 
-    assert.deepEqual(args, [1]);
-  });
-});
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.mixin');
-
-(function() {
-  var source = { 'a': _.noop };
-
-  QUnit.test('should mixin static methods but not prototype methods', function(assert) {
-    assert.expect(2);
-
-    fp.mixin(source);
-
-    assert.strictEqual(typeof fp.a, 'function');
-    assert.notOk('a' in fp.prototype);
-
-    delete fp.a;
-    delete fp.prototype.a;
+      assert.deepEqual(args, [1]);
+    });
   });
 
-  QUnit.test('should not assign inherited `source` methods', function(assert) {
-    assert.expect(2);
+  /*--------------------------------------------------------------------------*/
 
-    function Foo() {}
-    Foo.prototype.a = _.noop;
-    fp.mixin(new Foo);
+  QUnit.module('fp.mixin');
 
-    assert.notOk('a' in fp);
-    assert.notOk('a' in fp.prototype);
+  (function() {
+    var source = { 'a': _.noop };
 
-    delete fp.a;
-    delete fp.prototype.a;
-  });
+    QUnit.test('should mixin static methods but not prototype methods', function(assert) {
+      assert.expect(2);
 
-  QUnit.test('should not remove existing prototype methods', function(assert) {
-    assert.expect(2);
+      fp.mixin(source);
 
-    var each1 = fp.each,
-        each2 = fp.prototype.each;
+      assert.strictEqual(typeof fp.a, 'function');
+      assert.notOk('a' in fp.prototype);
 
-    fp.mixin({ 'each': source.a });
+      delete fp.a;
+      delete fp.prototype.a;
+    });
 
-    assert.strictEqual(fp.each, source.a);
-    assert.strictEqual(fp.prototype.each, each2);
+    QUnit.test('should not assign inherited `source` methods', function(assert) {
+      assert.expect(2);
 
-    fp.each = each1;
-    fp.prototype.each = each2;
-  });
+      function Foo() {}
+      Foo.prototype.a = _.noop;
+      fp.mixin(new Foo);
 
-  QUnit.test('should not export to the global when `source` is not an object', function(assert) {
-    assert.expect(2);
+      assert.notOk('a' in fp);
+      assert.notOk('a' in fp.prototype);
 
-    var props = _.without(_.keys(_), '_');
+      delete fp.a;
+      delete fp.prototype.a;
+    });
 
-    _.times(2, function(index) {
-      fp.mixin.apply(fp, index ? [1] : []);
+    QUnit.test('should not remove existing prototype methods', function(assert) {
+      assert.expect(2);
 
-      assert.ok(_.every(props, function(key) {
-        return global[key] !== fp[key];
+      var each1 = fp.each,
+          each2 = fp.prototype.each;
+
+      fp.mixin({ 'each': source.a });
+
+      assert.strictEqual(fp.each, source.a);
+      assert.strictEqual(fp.prototype.each, each2);
+
+      fp.each = each1;
+      fp.prototype.each = each2;
+    });
+
+    QUnit.test('should not export to the global when `source` is not an object', function(assert) {
+      assert.expect(2);
+
+      var props = _.without(_.keys(_), '_');
+
+      _.times(2, function(index) {
+        fp.mixin.apply(fp, index ? [1] : []);
+
+        assert.ok(_.every(props, function(key) {
+          return root[key] !== fp[key];
+        }));
+
+        _.each(props, function(key) {
+          delete root[key];
+        });
+      });
+    });
+
+    QUnit.test('should convert by name', function(assert) {
+      assert.expect(3);
+
+      if (!document) {
+        var object = { 'mixin': convert('mixin', _.mixin) };
+
+        function Foo() {}
+        Foo.mixin = object.mixin;
+        Foo.mixin(source);
+
+        assert.strictEqual(typeof Foo.a, 'function');
+        assert.notOk('a' in Foo.prototype);
+
+        object.mixin(source);
+        assert.strictEqual(typeof object.a, 'function');
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.random');
+
+  (function() {
+    var array = Array(1000);
+
+    QUnit.test('should support a `min` and `max` argument', function(assert) {
+      assert.expect(1);
+
+      var min = 5,
+          max = 10;
+
+      assert.ok(_.some(array, function() {
+        var result = fp.random(min)(max);
+        return result >= min && result <= max;
       }));
-
-      _.each(props, function(key) {
-        delete global[key];
-      });
     });
-  });
+  }());
 
-  QUnit.test('should convert by name', function(assert) {
-    assert.expect(3);
+  /*--------------------------------------------------------------------------*/
 
-    var object = { 'mixin': convert('mixin', _.mixin) };
+  QUnit.module('fp.range');
 
-    function Foo() {}
-    Foo.mixin = object.mixin;
-    Foo.mixin(source);
+  (function() {
+    QUnit.test('should have an argument order of `start` then `end`', function(assert) {
+      assert.expect(1);
 
-    assert.strictEqual(typeof Foo.a, 'function');
-    assert.notOk('a' in Foo.prototype);
+      assert.deepEqual(fp.range(1)(4), [1, 2, 3]);
+    });
+  }());
 
-    object.mixin(source);
-    assert.strictEqual(typeof object.a, 'function');
-  });
-}());
+  /*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------*/
+  QUnit.module('fp.runInContext');
 
-QUnit.module('fp.random');
+  (function() {
+    QUnit.test('should return a converted lodash instance', function(assert) {
+      assert.expect(1);
 
-(function() {
-  var array = Array(1000);
+      assert.strictEqual(typeof fp.runInContext({}).curryN, 'function');
+    });
 
-  QUnit.test('should support a `min` and `max` argument', function(assert) {
-    assert.expect(1);
+    QUnit.test('should convert by name', function(assert) {
+      assert.expect(1);
 
-    var min = 5,
-        max = 10;
-
-    assert.ok(_.some(array, function() {
-      var result = fp.random(min)(max);
-      return result >= min && result <= max;
-    }));
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.range');
-
-(function() {
-  QUnit.test('should have an argument order of `start` then `end`', function(assert) {
-    assert.expect(1);
-
-    assert.deepEqual(fp.range(1)(4), [1, 2, 3]);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.runInContext');
-
-(function() {
-  QUnit.test('should return a converted lodash instance', function(assert) {
-    assert.expect(1);
-
-    assert.strictEqual(typeof fp.runInContext({}).curryN, 'function');
-  });
-
-  QUnit.test('should convert by name', function(assert) {
-    assert.expect(1);
-
-    var runInContext = convert('runInContext', _.runInContext);
-    assert.strictEqual(typeof runInContext({}).curryN, 'function');
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.uniqBy');
-
-(function() {
-  var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
-
-  QUnit.test('should work with an `iteratee` argument', function(assert) {
-    assert.expect(1);
-
-    var expected = objects.slice(0, 3);
-
-    var actual = fp.uniqBy(function(object) {
-      return object.a;
-    })(objects);
-
-    assert.deepEqual(actual, expected);
-  });
-
-  QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
-    assert.expect(1);
-
-    var args;
-
-    fp.uniqBy(function() {
-      args || (args = slice.call(arguments));
-    })(objects);
-
-    assert.deepEqual(args, [objects[0]]);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.zip');
-
-(function() {
-  QUnit.test('should zip together two arrays', function(assert) {
-    assert.expect(1);
-
-    assert.deepEqual(fp.zip([1, 2], [3, 4]), [[1, 3], [2, 4]]);
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('fp.zipObject');
-
-(function() {
-  QUnit.test('should zip together key/value arrays into an object', function(assert) {
-    assert.expect(1);
-
-    assert.deepEqual(fp.zipObject(['a', 'b'], [1, 2]), { 'a': 1, 'b': 2 });
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('mutation methods');
-
-(function() {
-  var array = [1, 2, 3],
-      object = { 'a': 1 };
-
-  QUnit.test('should not mutate values', function(assert) {
-    assert.expect(28);
-
-    function Foo() {}
-    Foo.prototype = { 'b': 2 };
-
-    var value = _.clone(object),
-        actual = fp.assign({ 'b': 2 }, value);
-
-    assert.deepEqual(value, object, 'fp.assign');
-    assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assign');
-
-    value = _.clone(object);
-    actual = fp.assignWith(function(objValue, srcValue) {
-      return srcValue;
-    }, { 'b': 2 }, value);
-
-    assert.deepEqual(value, object, 'fp.assignWith');
-    assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
-
-    value = _.clone(object);
-    actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
-
-    assert.deepEqual(value, object, 'fp.defaults');
-    assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
-
-    value = _.clone(object);
-    value.b = { 'c': 1 };
-    actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
-
-    assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
-    assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
-
-    value = _.clone(object);
-    actual = fp.extend(new Foo, value);
-
-    assert.deepEqual(value, object, 'fp.extend');
-    assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
-
-    value = _.clone(object);
-    actual = fp.extendWith(function(objValue, srcValue) {
-      return srcValue;
-    }, new Foo, value);
-
-    assert.deepEqual(value, object, 'fp.extendWith');
-    assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extendWith');
-
-    value = _.clone(array);
-    actual = fp.fill(1, 2, '*', value);
-
-    assert.deepEqual(value, array, 'fp.fill');
-    assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
-
-    value = { 'a': { 'b': 2 } };
-    actual = fp.merge({ 'a': { 'c': 3 } }, value);
-
-    assert.deepEqual(value, { 'a': { 'b': 2 } }, 'fp.merge');
-    assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
-
-    value = { 'a': [1] };
-    actual = fp.mergeWith(function(objValue, srcValue) {
-      if (_.isArray(objValue)) {
-        return objValue.concat(srcValue);
+      if (!document) {
+        var runInContext = convert('runInContext', _.runInContext);
+        assert.strictEqual(typeof runInContext({}).curryN, 'function');
       }
-    }, { 'a': [2, 3] }, value);
-
-    assert.deepEqual(value, { 'a': [1] }, 'fp.mergeWith');
-    assert.deepEqual(actual, { 'a': [1, 2, 3] }, 'fp.mergeWith');
-
-    value = _.clone(array);
-    actual = fp.pull(2, value);
-
-    assert.deepEqual(value, array, 'fp.pull');
-    assert.deepEqual(actual, [1, 3], 'fp.pull');
-
-    value = _.clone(array);
-    actual = fp.pullAll([1, 3], value);
-
-    assert.deepEqual(value, array, 'fp.pullAll');
-    assert.deepEqual(actual, [2], 'fp.pullAll');
-
-    value = _.clone(array);
-    actual = fp.pullAt([0, 2], value);
-
-    assert.deepEqual(value, array, 'fp.pullAt');
-    assert.deepEqual(actual, [2], 'fp.pullAt');
-
-    value = _.clone(array);
-    actual = fp.remove(function(value) {
-      return value === 2;
-    }, value);
-
-    assert.deepEqual(value, array, 'fp.remove');
-    assert.deepEqual(actual, [1, 3], 'fp.remove');
-
-    value = _.clone(array);
-    actual = fp.reverse(value);
-
-    assert.deepEqual(value, array, 'fp.reverse');
-    assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
-  });
-}());
-
-/*----------------------------------------------------------------------------*/
-
-QUnit.module('with methods');
-
-(function() {
-  var array = [1, 2, 3],
-      object = { 'a': 1 };
-
-  QUnit.test('should provice the correct `customizer` arguments', function(assert) {
-    assert.expect(3);
-
-    var args,
-        value = _.clone(object);
-
-    var actual = fp.assignWith(function(objValue, srcValue) {
-      args || (args = _.map(arguments, _.cloneDeep));
-      return srcValue;
-    }, { 'b': 2 }, value);
-
-    assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
-
-    args = null;
-    value = _.clone(object);
-
-    actual = fp.extendWith(function(objValue, srcValue) {
-      args || (args = _.map(arguments, _.cloneDeep));
-      return srcValue;
-    }, { 'b': 2 }, value);
-
-    assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
-
-    args = null;
-    value = { 'a': [1] };
-
-    var stack = { '__data__': { 'array': [], 'map': null } },
-        expected = [[1], [2, 3], 'a', { 'a': [ 1 ] }, { 'a': [2, 3] }, stack];
-
-    actual = fp.mergeWith(function(objValue, srcValue) {
-      args || (args = _.map(arguments, _.cloneDeep));
-      if (_.isArray(objValue)) {
-        return objValue.concat(srcValue);
+      else {
+        skipTest(assert);
       }
-    }, { 'a': [2, 3] }, value);
+    });
+  }());
 
-    assert.deepEqual(args, expected, 'fp.mergeWith');
-  });
-}());
+  /*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------*/
+  QUnit.module('fp.uniqBy');
 
-QUnit.config.asyncRetries = 10;
-QUnit.config.hidepassed = true;
-QUnit.config.noglobals = true;
-QUnit.load();
+  (function() {
+    var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    QUnit.test('should work with an `iteratee` argument', function(assert) {
+      assert.expect(1);
+
+      var expected = objects.slice(0, 3);
+
+      var actual = fp.uniqBy(function(object) {
+        return object.a;
+      })(objects);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.uniqBy(function() {
+        args || (args = slice.call(arguments));
+      })(objects);
+
+      assert.deepEqual(args, [objects[0]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.zip');
+
+  (function() {
+    QUnit.test('should zip together two arrays', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(fp.zip([1, 2], [3, 4]), [[1, 3], [2, 4]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.zipObject');
+
+  (function() {
+    QUnit.test('should zip together key/value arrays into an object', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(fp.zipObject(['a', 'b'], [1, 2]), { 'a': 1, 'b': 2 });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('mutation methods');
+
+  (function() {
+    var array = [1, 2, 3],
+        object = { 'a': 1 };
+
+    QUnit.test('should not mutate values', function(assert) {
+      assert.expect(28);
+
+      function Foo() {}
+      Foo.prototype = { 'b': 2 };
+
+      var value = _.clone(object),
+          actual = fp.assign({ 'b': 2 }, value);
+
+      assert.deepEqual(value, object, 'fp.assign');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assign');
+
+      value = _.clone(object);
+      actual = fp.assignWith(function(objValue, srcValue) {
+        return srcValue;
+      }, { 'b': 2 }, value);
+
+      assert.deepEqual(value, object, 'fp.assignWith');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
+
+      value = _.clone(object);
+      actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
+
+      assert.deepEqual(value, object, 'fp.defaults');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
+
+      value = _.clone(object);
+      value.b = { 'c': 1 };
+      actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
+
+      assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
+      assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
+
+      value = _.clone(object);
+      actual = fp.extend(new Foo, value);
+
+      assert.deepEqual(value, object, 'fp.extend');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
+
+      value = _.clone(object);
+      actual = fp.extendWith(function(objValue, srcValue) {
+        return srcValue;
+      }, new Foo, value);
+
+      assert.deepEqual(value, object, 'fp.extendWith');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extendWith');
+
+      value = _.clone(array);
+      actual = fp.fill(1, 2, '*', value);
+
+      assert.deepEqual(value, array, 'fp.fill');
+      assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
+
+      value = { 'a': { 'b': 2 } };
+      actual = fp.merge({ 'a': { 'c': 3 } }, value);
+
+      assert.deepEqual(value, { 'a': { 'b': 2 } }, 'fp.merge');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
+
+      value = { 'a': [1] };
+      actual = fp.mergeWith(function(objValue, srcValue) {
+        if (_.isArray(objValue)) {
+          return objValue.concat(srcValue);
+        }
+      }, { 'a': [2, 3] }, value);
+
+      assert.deepEqual(value, { 'a': [1] }, 'fp.mergeWith');
+      assert.deepEqual(actual, { 'a': [1, 2, 3] }, 'fp.mergeWith');
+
+      value = _.clone(array);
+      actual = fp.pull(2, value);
+
+      assert.deepEqual(value, array, 'fp.pull');
+      assert.deepEqual(actual, [1, 3], 'fp.pull');
+
+      value = _.clone(array);
+      actual = fp.pullAll([1, 3], value);
+
+      assert.deepEqual(value, array, 'fp.pullAll');
+      assert.deepEqual(actual, [2], 'fp.pullAll');
+
+      value = _.clone(array);
+      actual = fp.pullAt([0, 2], value);
+
+      assert.deepEqual(value, array, 'fp.pullAt');
+      assert.deepEqual(actual, [2], 'fp.pullAt');
+
+      value = _.clone(array);
+      actual = fp.remove(function(value) {
+        return value === 2;
+      }, value);
+
+      assert.deepEqual(value, array, 'fp.remove');
+      assert.deepEqual(actual, [1, 3], 'fp.remove');
+
+      value = _.clone(array);
+      actual = fp.reverse(value);
+
+      assert.deepEqual(value, array, 'fp.reverse');
+      assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('with methods');
+
+  (function() {
+    var array = [1, 2, 3],
+        object = { 'a': 1 };
+
+    QUnit.test('should provice the correct `customizer` arguments', function(assert) {
+      assert.expect(3);
+
+      var args,
+          value = _.clone(object);
+
+      var actual = fp.assignWith(function(objValue, srcValue) {
+        args || (args = _.map(arguments, _.cloneDeep));
+        return srcValue;
+      }, { 'b': 2 }, value);
+
+      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
+
+      args = null;
+      value = _.clone(object);
+
+      actual = fp.extendWith(function(objValue, srcValue) {
+        args || (args = _.map(arguments, _.cloneDeep));
+        return srcValue;
+      }, { 'b': 2 }, value);
+
+      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
+
+      args = null;
+      value = { 'a': [1] };
+
+      var stack = { '__data__': { 'array': [], 'map': null } },
+          expected = [[1], [2, 3], 'a', { 'a': [ 1 ] }, { 'a': [2, 3] }, stack];
+
+      actual = fp.mergeWith(function(objValue, srcValue) {
+        args || (args = _.map(arguments, _.cloneDeep));
+        if (_.isArray(objValue)) {
+          return objValue.concat(srcValue);
+        }
+      }, { 'a': [2, 3] }, value);
+
+      assert.deepEqual(args, expected, 'fp.mergeWith');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.config.asyncRetries = 10;
+  QUnit.config.hidepassed = true;
+
+  if (!document) {
+    QUnit.config.noglobals = true;
+    QUnit.load();
+  }
+}.call(this));

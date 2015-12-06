@@ -53,6 +53,7 @@ script:
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../lodash.min.js"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\"     runner=\"test/index.html?build=../lodash.js&noglobals=true\"     tags=\"development\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\"     runner=\"test/index.html?build=../lodash.min.js&noglobals=true\" tags=\"production\""
+  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash-fp tests\"  runner=\"test/fp.html?noglobals=true\"                           tags=\"development\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../lodash.js\"               tags=\"development,underscore\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../lodash.min.js\"           tags=\"production,underscore\""
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../lodash.js\"                 tags=\"development,backbone\""

@@ -219,8 +219,8 @@
   /** Used to assign default `context` object properties. */
   var contextProps = [
     'Array', 'Date', 'Error', 'Float32Array', 'Float64Array', 'Function',
-    'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Object', 'Reflect',
-    'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
+    'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
+    'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
     'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout'
   ];
@@ -4713,9 +4713,15 @@
             Ctor = result == objectTag ? value.constructor : null,
             ctorString = typeof Ctor == 'function' ? fnToString.call(Ctor) : '';
 
-        return ctorString == mapCtorString
-          ? mapTag
-          : (ctorString == setCtorString ? setTag : result);
+        if (ctorString) {
+          if (ctorString == mapCtorString) {
+            return mapTag;
+          }
+          if (ctorString == setCtorString) {
+            return setTag;
+          }
+        }
+        return result;
       };
     }
 

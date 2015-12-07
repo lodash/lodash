@@ -17,7 +17,8 @@
       amd = root.define && define.amd,
       document = !phantom && root.document,
       noop = function() {},
-      slice = arrayProto.slice;
+      slice = arrayProto.slice,
+      WeakMap = root.WeakMap;
 
   /*--------------------------------------------------------------------------*/
 
@@ -360,9 +361,14 @@
 
         filterCount = mapCount = 0;
 
-        assert.deepEqual(combined(array), [4, 16]);
-        assert.strictEqual(filterCount, 5, 'filterCount');
-        assert.strictEqual(mapCount, 5, 'mapCount');
+        if (WeakMap && WeakMap.name) {
+          assert.deepEqual(combined(array), [4, 16]);
+          assert.strictEqual(filterCount, 5, 'filterCount');
+          assert.strictEqual(mapCount, 5, 'mapCount');
+        }
+        else {
+          skipTest(assert, 3);
+        }
       });
     });
   });
@@ -499,7 +505,9 @@
         }));
 
         _.each(props, function(key) {
-          delete root[key];
+          if (root[key] === fp[key]) {
+            delete root[key];
+          }
         });
       });
     });

@@ -1514,13 +1514,13 @@
      * `intersection`, `intersectionBy`, `intersectionWith`, invert`, `invokeMap`,
      * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
      * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
-     * `methodOf`, `mixin`, `modArgs`, `modArgsSet', `negate`, `nthArg`, `omit`,
-     * `omitBy`, `once`, `over`, `overEvery`, `overSome`, `partial`, `partialRight`,
-     * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
-     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,
-     * `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`,
-     * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `over`,
+     * `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`, `partition`,
+     * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`,
+     * `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,`reject`,
+     * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
+     * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`,
+     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
      * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
      * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
      * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
@@ -4171,32 +4171,6 @@
         return fn.apply(thisBinding, args);
       }
       return wrapper;
-    }
-
-    /**
-     * Creates a function like `_.modArgs`.
-     *
-     * @private
-     * @param {Function} resolver The function to resolve which invocation
-     *  arguments are provided to each transform.
-     * @returns {Function} Returns the new arguments modifier function.
-     */
-    function createModArgs(resolver) {
-      return rest(function(func, transforms) {
-        transforms = arrayMap(baseFlatten(transforms), getIteratee());
-
-        var funcsLength = transforms.length;
-        return rest(function(args) {
-          var index = -1,
-              length = nativeMin(args.length, funcsLength),
-              modded = copyArray(args);
-
-          while (++index < length) {
-            modded[index] = transforms[index].apply(this, resolver(args[index], index, args));
-          }
-          return func.apply(this, modded);
-        });
-      });
     }
 
     /**
@@ -8674,76 +8648,6 @@
     }
 
     /**
-     * Creates a function that invokes `func` with arguments modified by
-     * corresponding `transforms`.
-     *
-     * @static
-     * @memberOf _
-     * @category Function
-     * @param {Function} func The function to wrap.
-     * @param {...(Function|Function[])} [transforms] The functions to transform
-     * arguments, specified individually or in arrays.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function doubled(n) {
-     *   return n * 2;
-     * }
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var modded = _.modArgs(function(x, y) {
-     *   return [x, y];
-     * }, square, doubled);
-     *
-     * modded(9, 3);
-     * // => [81, 6]
-     *
-     * modded(10, 5);
-     * // => [100, 10]
-     */
-    var modArgs = createModArgs(function(value) {
-      return [value];
-    });
-
-    /**
-     * This method is like `_.modArgs` except that each of the `transforms` is
-     * provided the complete set of arguments the created function is invoked with.
-     *
-     * @static
-     * @memberOf _
-     * @category Function
-     * @param {Function} func The function to wrap.
-     * @param {...(Function|Function[])} [transforms] The functions to transform
-     * arguments, specified individually or in arrays.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function divide(x, y) {
-     *   return x / y;
-     * }
-     *
-     * function multiply(x, y) {
-     *   return x * y;
-     * }
-     *
-     * var modded = _.modArgsSet(function(x, y) {
-     *   return [x, y];
-     * }, multiply, divide);
-     *
-     * modded(9, 3);
-     * // => [27, 3]
-     *
-     * modded(10, 5);
-     * // => [50, 2]
-     */
-    var modArgsSet = createModArgs(function(value, index, args) {
-      return args;
-    });
-
-    /**
      * Creates a function that negates the result of the predicate `func`. The
      * `func` predicate is invoked with the `this` binding and arguments of the
      * created function.
@@ -8791,6 +8695,53 @@
     function once(func) {
       return before(2, func);
     }
+
+    /**
+     * Creates a function that invokes `func` with arguments transformed by
+     * corresponding `transforms`.
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to wrap.
+     * @param {...(Function|Function[])} [transforms] The functions to transform
+     * arguments, specified individually or in arrays.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * function doubled(n) {
+     *   return n * 2;
+     * }
+     *
+     * function square(n) {
+     *   return n * n;
+     * }
+     *
+     * var func = _.overArgs(function(x, y) {
+     *   return [x, y];
+     * }, square, doubled);
+     *
+     * func(9, 3);
+     * // => [81, 6]
+     *
+     * func(10, 5);
+     * // => [100, 10]
+     */
+    var overArgs = rest(function(func, transforms) {
+      transforms = arrayMap(baseFlatten(transforms), getIteratee());
+
+      var funcsLength = transforms.length;
+      return rest(function(args) {
+        var index = -1,
+            length = nativeMin(args.length, funcsLength),
+            newArgs = copyArray(args);
+
+        while (++index < length) {
+          newArgs[index] = transforms[index].call(this, args[index]);
+        }
+        return apply(func, this, newArgs);
+      });
+    });
 
     /**
      * Creates a function that invokes `func` with `partial` arguments prepended
@@ -13835,14 +13786,13 @@
     lodash.method = method;
     lodash.methodOf = methodOf;
     lodash.mixin = mixin;
-    lodash.modArgs = modArgs;
-    lodash.modArgsSet = modArgsSet;
     lodash.negate = negate;
     lodash.nthArg = nthArg;
     lodash.omit = omit;
     lodash.omitBy = omitBy;
     lodash.once = once;
     lodash.over = over;
+    lodash.overArgs = overArgs;
     lodash.overEvery = overEvery;
     lodash.overSome = overSome;
     lodash.partial = partial;

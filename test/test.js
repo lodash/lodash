@@ -13518,75 +13518,72 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('modArgs methods');
+  QUnit.module('lodash.overArgs');
 
-  lodashStable.each(['modArgs', 'modArgsSet'], function(methodName) {
-    var func = _[methodName],
-        isModArgs = methodName == 'modArgs';
-
+  (function() {
     function fn() {
       return slice.call(arguments);
     }
 
-    QUnit.test('`_.' + methodName + '` should transform each argument', function(assert) {
+    QUnit.test('should transform each argument', function(assert) {
       assert.expect(1);
 
-      var modded = func(fn, doubled, square);
-      assert.deepEqual(modded(5, 10), isModArgs ? [10, 100] : [10, 25]);
+      var over = _.overArgs(fn, doubled, square);
+      assert.deepEqual(over(5, 10), [10, 100]);
     });
 
-    QUnit.test('`_.' + methodName + '` should flatten `transforms`', function(assert) {
+    QUnit.test('should flatten `transforms`', function(assert) {
       assert.expect(1);
 
-      var modded = func(fn, [doubled, square], String);
-      assert.deepEqual(modded(5, 10, 15), isModArgs ? [10, 100, '15'] : [10, 25, '5']);
+      var over = _.overArgs(fn, [doubled, square], String);
+      assert.deepEqual(over(5, 10, 15), [10, 100, '15']);
     });
 
-    QUnit.test('`_.' + methodName + '` should not transform any argument greater than the number of transforms', function(assert) {
+    QUnit.test('should not transform any argument greater than the number of transforms', function(assert) {
       assert.expect(1);
 
-      var modded = func(fn, doubled, square);
-      assert.deepEqual(modded(5, 10, 18), isModArgs ? [10, 100, 18] : [10, 25, 18]);
+      var over = _.overArgs(fn, doubled, square);
+      assert.deepEqual(over(5, 10, 18), [10, 100, 18]);
     });
 
-    QUnit.test('`_.' + methodName + '` should not transform any arguments if no transforms are provided', function(assert) {
+    QUnit.test('should not transform any arguments if no transforms are provided', function(assert) {
       assert.expect(1);
 
-      var modded = func(fn);
-      assert.deepEqual(modded(5, 10, 18), [5, 10, 18]);
+      var over = _.overArgs(fn);
+      assert.deepEqual(over(5, 10, 18), [5, 10, 18]);
     });
 
-    QUnit.test('`_.' + methodName + '` should not pass `undefined` if there are more transforms than arguments', function(assert) {
+    QUnit.test('should not pass `undefined` if there are more transforms than arguments', function(assert) {
       assert.expect(1);
 
-      var modded = func(fn, doubled, identity);
-      assert.deepEqual(modded(5), [10]);
+      var over = _.overArgs(fn, doubled, identity);
+      assert.deepEqual(over(5), [10]);
     });
 
-    QUnit.test('`_.' + methodName + '` should provide the correct argument to each transform', function(assert) {
+    QUnit.test('should provide the correct argument to each transform', function(assert) {
       assert.expect(1);
 
       var argsList = [],
           transform = function() { argsList.push(slice.call(arguments)); },
-          modded = func(noop, transform, transform, transform);
+          over = _.overArgs(noop, transform, transform, transform);
 
-      modded('a', 'b');
-      assert.deepEqual(argsList, isModArgs ? [['a'], ['b']] : [['a', 'b'], ['a', 'b']]);
+      over('a', 'b');
+      assert.deepEqual(argsList, [['a'], ['b']]);
     });
 
-    QUnit.test('`_.' + methodName + '` should use `this` binding of function for transforms', function(assert) {
+    QUnit.test('should use `this` binding of function for transforms', function(assert) {
       assert.expect(1);
 
-      var modded = func(function(x) {
+      var over = _.overArgs(function(x) {
         return this[x];
       }, function(x) {
         return this === x;
       });
 
-      var object = { 'modded': modded, 'true': 1 };
-      assert.strictEqual(object.modded(object), 1);
+      var object = { 'over': over, 'true': 1 };
+      assert.strictEqual(object.over(object), 1);
     });
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -22541,10 +22538,9 @@
     var noBinding = [
       'flip',
       'memoize',
-      'modArgs',
-      'modArgsSet',
       'negate',
       'once',
+      'overArgs',
       'partial',
       'partialRight',
       'rearg',
@@ -22600,7 +22596,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(284);
+      assert.expect(283);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 
@@ -22688,7 +22684,7 @@
     });
 
     QUnit.test('should not set a `this` binding', function(assert) {
-      assert.expect(33);
+      assert.expect(30);
 
       lodashStable.each(noBinding, function(methodName) {
         var fn = function() { return this.a; },

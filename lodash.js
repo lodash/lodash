@@ -8733,13 +8733,12 @@
       var funcsLength = transforms.length;
       return rest(function(args) {
         var index = -1,
-            length = nativeMin(args.length, funcsLength),
-            newArgs = copyArray(args);
+            length = nativeMin(args.length, funcsLength);
 
         while (++index < length) {
-          newArgs[index] = transforms[index].call(this, args[index]);
+          args[index] = transforms[index].call(this, args[index]);
         }
-        return apply(func, this, newArgs);
+        return apply(func, this, args);
       });
     });
 

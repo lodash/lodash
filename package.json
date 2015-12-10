@@ -6,7 +6,7 @@
   "devDependencies": {
     "async": "^1.5.0",
     "chalk": "^1.1.1",
-    "coveralls": "^2.11.4",
+    "coveralls": "^2.11.6",
     "curl-amd": "0.8.12",
     "docdown": "0.3.0",
     "dojo": "~1.10.0",

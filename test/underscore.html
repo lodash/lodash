@@ -30,12 +30,13 @@
       QUnit.config.excused = {
         'Arrays': {
           'drop': [
-            'alias for rest'
+            'is an alias for rest'
           ],
           'first': [
-            'can pass an index to first',
-            '[1,2]',
-            '0'
+            'returns an empty array when n <= 0 (0 case)',
+            'returns an empty array when n <= 0 (negative case)',
+            'can fetch the first n elements',
+            'returns the whole array if n > length'
           ],
           'findIndex': [
             'called with context'
@@ -44,29 +45,31 @@
             'called with context'
           ],
           'flatten': [
-            'Flattens empty arrays',
+            'supports empty arrays',
             'can flatten nested arrays',
             'works on an arguments object',
-            'Flatten can handle very deep arrays'
+            'can handle very deep arrays'
           ],
           'head': [
-            'alias for first'
+            'is an alias for first'
           ],
           'indexOf': [
             "sorted indexOf doesn't uses binary search",
             '0'
           ],
           'initial': [
-            'initial can take an index',
-            'initial can take a large index',
-            'initial works on arguments object'
+            'returns all but the last n elements',
+            'returns an empty array when n > length',
+            'works on an arguments object'
           ],
           'intersection': [
             'can perform an OO-style intersection'
           ],
           'last': [
-            'can pass an index to last',
-            '0'
+            'returns an empty array when n <= 0 (0 case)',
+            'returns an empty array when n <= 0 (negative case)',
+            'can fetch the last n elements',
+            'returns the whole array if n > length'
           ],
           'lastIndexOf': [
             'should treat falsey `fromIndex` values, except `0` and `NaN`, as `array.length`',
@@ -81,19 +84,19 @@
             'range with two arguments a &amp; b, b&lt;a generates an empty array'
           ],
           'rest': [
-            'working rest(0)',
-            'rest can take an index',
-            'works on arguments object'
+            'returns the whole array when index is 0',
+            'returns elements starting at the given index',
+            'works on an arguments object'
           ],
           'sortedIndex': [
             '2',
             '3'
           ],
           'tail': [
-            'alias for rest'
+            'is an alias for rest'
           ],
           'take': [
-            'alias for first'
+            'is an alias for first'
           ],
           'uniq': [
             'can find the unique values of an array using a custom iterator',
@@ -101,9 +104,6 @@
             'string iterator works with sorted array',
             'can use pluck like iterator',
             'can use falsey pluck like iterator'
-          ],
-          'unique': [
-            'alias for uniq'
           ]
         },
         'Chaining': {
@@ -118,20 +118,8 @@
           'lookupIterator with contexts': true,
           'Iterating objects with sketchy length properties': true,
           'Resistant to collection length and properties changing while iterating': true,
-          'all': [
-            'alias for all'
-          ],
-          'any': [
-            'alias for any'
-          ],
-          'collect': [
-            'alias for map'
-          ],
           'countBy': [
             'true'
-          ],
-          'detect': [
-            'alias for detect'
           ],
           'each': [
             'context object property accessed'
@@ -158,12 +146,6 @@
           ],
           'findWhere': [
             'checks properties given function'
-          ],
-          'foldl': [
-            'alias for reduce'
-          ],
-          'foldr': [
-            'alias for reduceRight'
           ],
           'groupBy': [
             'true'
@@ -237,6 +219,7 @@
         },
         'Functions': {
           'debounce asap': true,
+          'debounce asap cancel': true,
           'debounce after system time is set backwards': true,
           'debounce asap recursively': true,
           'throttle repeatedly with results': true,
@@ -281,8 +264,8 @@
             'extending undefined results in undefined'
           ],
           'extendOwn': [
-            'assigning non-objects results in returning the non-object value',
-            'assigning undefined results in undefined'
+            'extending non-objects results in returning the non-object value',
+            'extending undefined results in undefined'
           ],
           'functions': [
             'also looks up functions on the prototype'
@@ -339,11 +322,17 @@
 
       var mixinPrereqs = (function() {
         var aliasToReal = {
+          'all': 'every',
           'allKeys': 'keysIn',
+          'any': 'some',
+          'collect': 'map',
           'compose': 'flowRight',
           'contains': 'includes',
+          'detect': 'find',
           'extendOwn': 'assign',
           'findWhere': 'find',
+          'foldl': 'reduce',
+          'foldr': 'reduceRight',
           'include': 'includes',
           'indexBy': 'keyBy',
           'inject': 'reduce',
@@ -356,6 +345,7 @@
           'pluck': 'map',
           'restParam': 'restArgs',
           'select': 'filter',
+          'unique': 'uniq',
           'where': 'filter'
         };
 

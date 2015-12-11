@@ -651,10 +651,11 @@
 
   (function() {
     var array = [1, 2, 3],
-        object = { 'a': 1 };
+        object = { 'a': 1 },
+        deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should not mutate values', function(assert) {
-      assert.expect(28);
+      assert.expect(32);
 
       function Foo() {}
       Foo.prototype = { 'b': 2 };
@@ -753,6 +754,18 @@
 
       assert.deepEqual(value, array, 'fp.reverse');
       assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.set(3, 'a.b', value);
+
+      assert.deepEqual(value, deepObject, 'fp.set');
+      assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.set');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.setWith(Object, 4, 'd.e', value);
+
+      assert.deepEqual(value, deepObject, 'fp.setWith');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.setWith');
     });
   }());
 

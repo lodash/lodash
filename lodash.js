@@ -6076,7 +6076,8 @@
      * Reverses `array` so that the first element becomes the last, the second
      * element becomes the second to last, and so on.
      *
-     * **Note:** This method mutates `array`.
+     * **Note:** This method mutates `array` and is based on
+     * [`Array#reverse`](https://mdn.io/Array/reverse).
      *
      * @memberOf _
      * @category Array
@@ -6098,8 +6099,8 @@
     /**
      * Creates a slice of `array` from `start` up to, but not including, `end`.
      *
-     * **Note:** This method is used instead of `Array#slice` to ensure dense
-     * arrays are returned.
+     * **Note:** This method is used instead of [`Array#slice`](https://mdn.io/Array/slice)
+     * to ensure dense arrays are returned.
      *
      * @static
      * @memberOf _
@@ -9522,7 +9523,7 @@
     /**
      * Checks if `value` is a finite primitive number.
      *
-     * **Note:** This method is based on [`Number.isFinite`](http://ecma-international.org/ecma-262/6.0/#sec-number.isfinite).
+     * **Note:** This method is based on [`Number.isFinite`](https://mdn.io/Number/isFinite).
      *
      * @static
      * @memberOf _
@@ -9574,7 +9575,7 @@
     /**
      * Checks if `value` is an integer.
      *
-     * **Note:** This method is based on [`Number.isInteger`](http://ecma-international.org/ecma-262/6.0/#sec-number.isinteger).
+     * **Note:** This method is based on [`Number.isInteger`](https://mdn.io/Number/isInteger).
      *
      * @static
      * @memberOf _
@@ -9947,7 +9948,7 @@
      * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
      * double precision number which isn't the result of a rounded unsafe integer.
      *
-     * **Note:** This method is based on [`Number.isSafeInteger`](http://ecma-international.org/ecma-262/6.0/#sec-number.issafeinteger).
+     * **Note:** This method is based on [`Number.isSafeInteger`](https://mdn.io/Number/isSafeInteger).
      *
      * @static
      * @memberOf _
@@ -10315,7 +10316,7 @@
      * overwrite property assignments of previous sources.
      *
      * **Note:** This method mutates `object` and is loosely based on
-     * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
+     * [`Object.assign`](https://mdn.io/Object/assign).
      *
      * @static
      * @memberOf _

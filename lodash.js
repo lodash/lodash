@@ -12087,6 +12087,30 @@
     }
 
     /**
+     * Replaces matches for `pattern` in `string` with `replacement`.
+     *
+     * **Note:** This method is based on [`String#replace`](https://mdn.io/String/replace).
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to modify.
+     * @param {RegExp|string} pattern The pattern to replace.
+     * @param {Function|string} replacement The match replacement.
+     * @returns {string} Returns the modified string.
+     * @example
+     *
+     * _.replace('Hi Fred', 'Fred', 'Barney');
+     * // => 'Hi Barney'
+     */
+    function replace() {
+      var args = arguments,
+          string = toString(args[0]);
+
+      return args.length < 3 ? string : string.replace(args[1], args[2]);
+    }
+
+    /**
      * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).
      *
      * @static
@@ -12108,6 +12132,27 @@
     var snakeCase = createCompounder(function(result, word, index) {
       return result + (index ? '_' : '') + word.toLowerCase();
     });
+
+    /**
+     * Splits `string` by `separator`.
+     *
+     * **Note:** This method is based on [`String#split`](https://mdn.io/String/split).
+     *
+     * @static
+     * @memberOf _
+     * @category String
+     * @param {string} [string=''] The string to split.
+     * @param {RegExp|string} separator The separator pattern to split by.
+     * @param {number} [limit] The length to truncate results to.
+     * @returns {Array} Returns the new array of string segments.
+     * @example
+     *
+     * _.split('a-b-c', '-', 2);
+     * // => ['a', 'b']
+     */
+    function split(string, separator, limit) {
+      return toString(string).split(separator, limit);
+    }
 
     /**
      * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
@@ -13821,6 +13866,7 @@
     lodash.sortByOrder = sortByOrder;
     lodash.sortedUniq = sortedUniq;
     lodash.sortedUniqBy = sortedUniqBy;
+    lodash.split = split;
     lodash.spread = spread;
     lodash.tail = tail;
     lodash.take = take;
@@ -13964,6 +14010,7 @@
     lodash.reduce = reduce;
     lodash.reduceRight = reduceRight;
     lodash.repeat = repeat;
+    lodash.replace = replace;
     lodash.result = result;
     lodash.round = round;
     lodash.runInContext = runInContext;
@@ -14184,10 +14231,10 @@
     });
 
     // Add `Array` and `String` methods to `lodash.prototype`.
-    arrayEach(['pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
-      var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
+    arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+      var func = arrayProto[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-          retUnwrapped = /^(?:pop|replace|shift)$/.test(methodName);
+          retUnwrapped = /^(?:pop|shift)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var args = arguments;

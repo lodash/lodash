@@ -7701,11 +7701,10 @@
      * // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
      */
     function reduce(collection, iteratee, accumulator) {
-      var initFromCollection = arguments.length < 3;
-      iteratee = getIteratee(iteratee, 4);
-      return isArray(collection)
-        ? arrayReduce(collection, iteratee, accumulator, initFromCollection)
-        : baseReduce(collection, iteratee, accumulator, initFromCollection, baseEach);
+      var func = isArray(collection) ? arrayReduce : baseReduce,
+          initFromCollection = arguments.length < 3;
+
+      return func(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEach);
     }
 
     /**
@@ -7729,11 +7728,10 @@
      * // => [4, 5, 2, 3, 0, 1]
      */
     function reduceRight(collection, iteratee, accumulator) {
-      var initFromCollection = arguments.length < 3;
-      iteratee = getIteratee(iteratee, 4);
-      return isArray(collection)
-        ? arrayReduceRight(collection, iteratee, accumulator, initFromCollection)
-        : baseReduce(collection, iteratee, accumulator, initFromCollection, baseEachRight);
+      var func = isArray(collection) ? arrayReduceRight : baseReduce,
+          initFromCollection = arguments.length < 3;
+
+      return func(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEachRight);
     }
 
     /**

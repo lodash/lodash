@@ -567,6 +567,28 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('reduce methods');
+
+  _.each(['reduce', 'reduceRight'], function(methodName) {
+    var func = fp[methodName],
+        array = [1, 2, 3],
+        isReduce = methodName == 'reduce';
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(0, array);
+
+      assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.runInContext');
 
   (function() {

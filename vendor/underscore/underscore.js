@@ -189,7 +189,7 @@
   // Create a reducing function iterating left or right.
   var createReduce = function(dir) {
     // Wrap code that reassigns argument variables in a separate function than
-    // the one that accesses `arguments.length` to avoid a perf hit. (#1191)
+    // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
     var reducer = function(obj, iteratee, memo, initial) {
       var keys = !isArrayLike(obj) && _.keys(obj),
           length = (keys || obj).length,

@@ -33,7 +33,7 @@
   );
   iDoc.close();
 
-  test('isEqual', function(assert) {
+  QUnit.test('isEqual', function(assert) {
 
     assert.ok(!_.isEqual(iNumber, 101));
     assert.ok(_.isEqual(iNumber, 100));
@@ -45,73 +45,73 @@
     assert.ok(_.isEqual([1, 2, 3], iArray), 'Arrays with equivalent elements created in different documents are equal');
   });
 
-  test('isEmpty', function(assert) {
+  QUnit.test('isEmpty', function(assert) {
     assert.ok(!_([iNumber]).isEmpty(), '[1] is not empty');
     assert.ok(!_.isEmpty(iArray), '[] is empty');
     assert.ok(_.isEmpty(iObject), '{} is empty');
   });
 
-  test('isElement', function(assert) {
+  QUnit.test('isElement', function(assert) {
     assert.ok(!_.isElement('div'), 'strings are not dom elements');
     assert.ok(_.isElement(document.body), 'the body tag is a DOM element');
     assert.ok(_.isElement(iElement), 'even from another frame');
   });
 
-  test('isArguments', function(assert) {
+  QUnit.test('isArguments', function(assert) {
     assert.ok(_.isArguments(iArguments), 'even from another frame');
   });
 
-  test('isObject', function(assert) {
+  QUnit.test('isObject', function(assert) {
     assert.ok(_.isObject(iElement), 'even from another frame');
     assert.ok(_.isObject(iFunction), 'even from another frame');
   });
 
-  test('isArray', function(assert) {
+  QUnit.test('isArray', function(assert) {
     assert.ok(_.isArray(iArray), 'even from another frame');
   });
 
-  test('isString', function(assert) {
+  QUnit.test('isString', function(assert) {
     assert.ok(_.isString(iString), 'even from another frame');
   });
 
-  test('isNumber', function(assert) {
+  QUnit.test('isNumber', function(assert) {
     assert.ok(_.isNumber(iNumber), 'even from another frame');
   });
 
-  test('isBoolean', function(assert) {
+  QUnit.test('isBoolean', function(assert) {
     assert.ok(_.isBoolean(iBoolean), 'even from another frame');
   });
 
-  test('isFunction', function(assert) {
+  QUnit.test('isFunction', function(assert) {
     assert.ok(_.isFunction(iFunction), 'even from another frame');
   });
 
-  test('isDate', function(assert) {
+  QUnit.test('isDate', function(assert) {
     assert.ok(_.isDate(iDate), 'even from another frame');
   });
 
-  test('isRegExp', function(assert) {
+  QUnit.test('isRegExp', function(assert) {
     assert.ok(_.isRegExp(iRegExp), 'even from another frame');
   });
 
-  test('isNaN', function(assert) {
+  QUnit.test('isNaN', function(assert) {
     assert.ok(_.isNaN(iNaN), 'even from another frame');
   });
 
-  test('isNull', function(assert) {
+  QUnit.test('isNull', function(assert) {
     assert.ok(_.isNull(iNull), 'even from another frame');
   });
 
-  test('isUndefined', function(assert) {
+  QUnit.test('isUndefined', function(assert) {
     assert.ok(_.isUndefined(iUndefined), 'even from another frame');
   });
 
-  test('isError', function(assert) {
+  QUnit.test('isError', function(assert) {
     assert.ok(_.isError(iError), 'even from another frame');
   });
 
   if (typeof ActiveXObject != 'undefined') {
-    test('IE host objects', function(assert) {
+    QUnit.test('IE host objects', function(assert) {
       var xml = new ActiveXObject('Msxml2.DOMDocument.3.0');
       assert.ok(!_.isNumber(xml));
       assert.ok(!_.isBoolean(xml));
@@ -121,7 +121,7 @@
       assert.ok(!_.isUndefined(xml));
     });
 
-    test('#1621 IE 11 compat mode DOM elements are not functions', function(assert) {
+    QUnit.test('#1621 IE 11 compat mode DOM elements are not functions', function(assert) {
       var fn = function() {};
       var xml = new ActiveXObject('Msxml2.DOMDocument.3.0');
       var div = document.createElement('div');

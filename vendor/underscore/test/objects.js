@@ -5,7 +5,7 @@
 
   var testElement = typeof document === 'object' ? document.createElement('div') : void 0;
 
-  test('keys', function(assert) {
+  QUnit.test('keys', function(assert) {
     assert.deepEqual(_.keys({one: 1, two: 2}), ['one', 'two'], 'can extract the keys from an object');
     // the test above is not safe because it relies on for-in enumeration order
     var a = []; a[1] = 0;
@@ -35,7 +35,7 @@
     assert.deepEqual(_.keys(trouble).sort(), troubleKeys, 'matches non-enumerable properties');
   });
 
-  test('allKeys', function(assert) {
+  QUnit.test('allKeys', function(assert) {
     assert.deepEqual(_.allKeys({one: 1, two: 2}), ['one', 'two'], 'can extract the allKeys from an object');
     // the test above is not safe because it relies on for-in enumeration order
     var a = []; a[1] = 0;
@@ -73,17 +73,17 @@
     assert.deepEqual(_.allKeys(y), ['x'], 'should get keys from constructor');
   });
 
-  test('values', function(assert) {
+  QUnit.test('values', function(assert) {
     assert.deepEqual(_.values({one: 1, two: 2}), [1, 2], 'can extract the values from an object');
     assert.deepEqual(_.values({one: 1, two: 2, length: 3}), [1, 2, 3], '... even when one of them is "length"');
   });
 
-  test('pairs', function(assert) {
+  QUnit.test('pairs', function(assert) {
     assert.deepEqual(_.pairs({one: 1, two: 2}), [['one', 1], ['two', 2]], 'can convert an object into pairs');
     assert.deepEqual(_.pairs({one: 1, two: 2, length: 3}), [['one', 1], ['two', 2], ['length', 3]], '... even when one of them is "length"');
   });
 
-  test('invert', function(assert) {
+  QUnit.test('invert', function(assert) {
     var obj = {first: 'Moe', second: 'Larry', third: 'Curly'};
     assert.deepEqual(_.keys(_.invert(obj)), ['Moe', 'Larry', 'Curly'], 'can invert an object');
     assert.deepEqual(_.invert(_.invert(obj)), obj, 'two inverts gets you back where you started');
@@ -92,7 +92,7 @@
     assert.equal(_.invert(obj)['3'], 'length', 'can invert an object with "length"');
   });
 
-  test('functions', function(assert) {
+  QUnit.test('functions', function(assert) {
     var obj = {a: 'dash', b: _.map, c: /yo/, d: _.reduce};
     assert.deepEqual(['b', 'd'], _.functions(obj), 'can grab the function names of any passed-in object');
 
@@ -101,11 +101,11 @@
     assert.deepEqual(_.functions(new Animal), ['run'], 'also looks up functions on the prototype');
   });
 
-  test('methods', function(assert) {
+  QUnit.test('methods', function(assert) {
     assert.strictEqual(_.methods, _.functions, 'is an alias for functions');
   });
 
-  test('extend', function(assert) {
+  QUnit.test('extend', function(assert) {
     var result;
     assert.equal(_.extend({}, {a: 'b'}).a, 'b', 'can extend an object with the attributes of another');
     assert.equal(_.extend({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
@@ -136,7 +136,7 @@
     assert.strictEqual(_.extend(void 0, {a: 1}), void 0, 'extending undefined results in undefined');
   });
 
-  test('extendOwn', function(assert) {
+  QUnit.test('extendOwn', function(assert) {
     var result;
     assert.equal(_.extendOwn({}, {a: 'b'}).a, 'b', 'can extend an object with the attributes of another');
     assert.equal(_.extendOwn({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
@@ -166,11 +166,11 @@
     assert.deepEqual(result, {a: 1, 0: 1, 1: 2, length: 2}, 'should treat array-like objects like normal objects');
   });
 
-  test('assign', function(assert) {
+  QUnit.test('assign', function(assert) {
     assert.strictEqual(_.assign, _.extendOwn, 'is an alias for extendOwn');
   });
 
-  test('pick', function(assert) {
+  QUnit.test('pick', function(assert) {
     var result;
     result = _.pick({a: 1, b: 2, c: 3}, 'a', 'c');
     assert.deepEqual(result, {a: 1, c: 3}, 'can restrict properties to those named');
@@ -211,7 +211,7 @@
     });
   });
 
-  test('omit', function(assert) {
+  QUnit.test('omit', function(assert) {
     var result;
     result = _.omit({a: 1, b: 2, c: 3}, 'b');
     assert.deepEqual(result, {a: 1, c: 3}, 'can omit a single named property');
@@ -245,7 +245,7 @@
     }, instance), {a: 1, b: 2}, 'function is given context');
   });
 
-  test('defaults', function(assert) {
+  QUnit.test('defaults', function(assert) {
     var options = {zero: 0, one: 1, empty: '', nan: NaN, nothing: null};
 
     _.defaults(options, {zero: 1, one: 10, twenty: 20, nothing: 'str'});
@@ -270,7 +270,7 @@
     assert.deepEqual(_.defaults(void 0, {a: 1}), {a: 1}, 'defaults skips undefined');
   });
 
-  test('clone', function(assert) {
+  QUnit.test('clone', function(assert) {
     var moe = {name: 'moe', lucky: [13, 27, 34]};
     var clone = _.clone(moe);
     assert.equal(clone.name, 'moe', 'the clone as the attributes of the original');
@@ -286,7 +286,7 @@
     assert.equal(_.clone(null), null, 'non objects should not be changed by clone');
   });
 
-  test('create', function(assert) {
+  QUnit.test('create', function(assert) {
     var Parent = function() {};
     Parent.prototype = {foo: function() {}, bar: 2};
 
@@ -312,7 +312,7 @@
     assert.ok(!created.hasOwnProperty('foo'), 'should only add own properties');
   });
 
-  test('isEqual', function(assert) {
+  QUnit.test('isEqual', function(assert) {
     function First() {
       this.value = 1;
     }
@@ -567,7 +567,7 @@
     assert.equal(_.isEqual({a: NaN}, {a: NaN}), true);
   });
 
-  test('isEmpty', function(assert) {
+  QUnit.test('isEmpty', function(assert) {
     assert.ok(!_([1]).isEmpty(), '[1] is not empty');
     assert.ok(_.isEmpty([]), '[] is empty');
     assert.ok(!_.isEmpty({one: 1}), '{one: 1} is not empty');
@@ -592,13 +592,13 @@
   });
 
   if (typeof document === 'object') {
-    test('isElement', function(assert) {
+    QUnit.test('isElement', function(assert) {
       assert.ok(!_.isElement('div'), 'strings are not dom elements');
       assert.ok(_.isElement(testElement), 'an element is a DOM element');
     });
   }
 
-  test('isArguments', function(assert) {
+  QUnit.test('isArguments', function(assert) {
     var args = (function(){ return arguments; }(1, 2, 3));
     assert.ok(!_.isArguments('string'), 'a string is not an arguments object');
     assert.ok(!_.isArguments(_.isArguments), 'a function is not an arguments object');
@@ -607,7 +607,7 @@
     assert.ok(!_.isArguments([1, 2, 3]), 'and not vanilla arrays.');
   });
 
-  test('isObject', function(assert) {
+  QUnit.test('isObject', function(assert) {
     assert.ok(_.isObject(arguments), 'the arguments object is object');
     assert.ok(_.isObject([1, 2, 3]), 'and arrays');
     if (testElement) {
@@ -622,13 +622,13 @@
     assert.ok(_.isObject(new String('string')), 'but new String()');
   });
 
-  test('isArray', function(assert) {
+  QUnit.test('isArray', function(assert) {
     assert.ok(!_.isArray(void 0), 'undefined vars are not arrays');
     assert.ok(!_.isArray(arguments), 'the arguments object is not an array');
     assert.ok(_.isArray([1, 2, 3]), 'but arrays are');
   });
 
-  test('isString', function(assert) {
+  QUnit.test('isString', function(assert) {
     var obj = new String('I am a string object');
     if (testElement) {
       assert.ok(!_.isString(testElement), 'an element is not a string');
@@ -639,7 +639,7 @@
     assert.strictEqual(_.isString(1), false);
   });
 
-  test('isNumber', function(assert) {
+  QUnit.test('isNumber', function(assert) {
     assert.ok(!_.isNumber('string'), 'a string is not a number');
     assert.ok(!_.isNumber(arguments), 'the arguments object is not a number');
     assert.ok(!_.isNumber(void 0), 'undefined is not a number');
@@ -649,7 +649,7 @@
     assert.ok(!_.isNumber('1'), 'numeric strings are not numbers');
   });
 
-  test('isBoolean', function(assert) {
+  QUnit.test('isBoolean', function(assert) {
     assert.ok(!_.isBoolean(2), 'a number is not a boolean');
     assert.ok(!_.isBoolean('string'), 'a string is not a boolean');
     assert.ok(!_.isBoolean('false'), 'the string "false" is not a boolean');
@@ -662,7 +662,7 @@
     assert.ok(_.isBoolean(false), 'and so is false');
   });
 
-  test('isFunction', function(assert) {
+  QUnit.test('isFunction', function(assert) {
     assert.ok(!_.isFunction(void 0), 'undefined vars are not functions');
     assert.ok(!_.isFunction([1, 2, 3]), 'arrays are not functions');
     assert.ok(!_.isFunction('moe'), 'strings are not functions');
@@ -680,7 +680,7 @@
   });
 
   if (typeof Int8Array !== 'undefined') {
-    test('#1929 Typed Array constructors are functions', function(assert) {
+    QUnit.test('#1929 Typed Array constructors are functions', function(assert) {
       _.chain(['Float32Array', 'Float64Array', 'Int8Array', 'Int16Array', 'Int32Array', 'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array'])
       .map(_.propertyOf(typeof GLOBAL != 'undefined' ? GLOBAL : window))
       .compact()
@@ -692,18 +692,18 @@
     });
   }
 
-  test('isDate', function(assert) {
+  QUnit.test('isDate', function(assert) {
     assert.ok(!_.isDate(100), 'numbers are not dates');
     assert.ok(!_.isDate({}), 'objects are not dates');
     assert.ok(_.isDate(new Date()), 'but dates are');
   });
 
-  test('isRegExp', function(assert) {
+  QUnit.test('isRegExp', function(assert) {
     assert.ok(!_.isRegExp(_.identity), 'functions are not RegExps');
     assert.ok(_.isRegExp(/identity/), 'but RegExps are');
   });
 
-  test('isFinite', function(assert) {
+  QUnit.test('isFinite', function(assert) {
     assert.ok(!_.isFinite(void 0), 'undefined is not finite');
     assert.ok(!_.isFinite(null), 'null is not finite');
     assert.ok(!_.isFinite(NaN), 'NaN is not finite');
@@ -719,7 +719,7 @@
     assert.ok(_.isFinite(-12.44), 'Floats are finite');
   });
 
-  test('isNaN', function(assert) {
+  QUnit.test('isNaN', function(assert) {
     assert.ok(!_.isNaN(void 0), 'undefined is not NaN');
     assert.ok(!_.isNaN(null), 'null is not NaN');
     assert.ok(!_.isNaN(0), '0 is not NaN');
@@ -728,13 +728,13 @@
     assert.ok(_.isNaN(new Number(NaN)), 'wrapped NaN is still NaN');
   });
 
-  test('isNull', function(assert) {
+  QUnit.test('isNull', function(assert) {
     assert.ok(!_.isNull(void 0), 'undefined is not null');
     assert.ok(!_.isNull(NaN), 'NaN is not null');
     assert.ok(_.isNull(null), 'but null is');
   });
 
-  test('isUndefined', function(assert) {
+  QUnit.test('isUndefined', function(assert) {
     assert.ok(!_.isUndefined(1), 'numbers are defined');
     assert.ok(!_.isUndefined(null), 'null is defined');
     assert.ok(!_.isUndefined(false), 'false is defined');
@@ -743,7 +743,7 @@
     assert.ok(_.isUndefined(void 0), 'undefined is undefined');
   });
 
-  test('isError', function(assert) {
+  QUnit.test('isError', function(assert) {
     assert.ok(!_.isError(1), 'numbers are not Errors');
     assert.ok(!_.isError(null), 'null is not an Error');
     assert.ok(!_.isError(Error), 'functions are not Errors');
@@ -756,7 +756,7 @@
     assert.ok(_.isError(new URIError()), 'URIErrors are Errors');
   });
 
-  test('tap', function(assert) {
+  QUnit.test('tap', function(assert) {
     var intercepted = null;
     var interceptor = function(obj) { intercepted = obj; };
     var returned = _.tap(1, interceptor);
@@ -772,7 +772,7 @@
     assert.equal(intercepted, returned, 'can use tapped objects in a chain');
   });
 
-  test('has', function(assert) {
+  QUnit.test('has', function(assert) {
     var obj = {foo: 'bar', func: function(){}};
     assert.ok(_.has(obj, 'foo'), 'has() checks that the object has a property.');
     assert.ok(!_.has(obj, 'baz'), "has() returns false if the object doesn't have the property.");
@@ -786,7 +786,7 @@
     assert.strictEqual(_.has(void 0, 'foo'), false, 'has() returns false for undefined');
   });
 
-  test('isMatch', function(assert) {
+  QUnit.test('isMatch', function(assert) {
     var moe = {name: 'Moe Howard', hair: true};
     var curly = {name: 'Curly Howard', hair: false};
 
@@ -826,7 +826,7 @@
     assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true], 'doesnt falsey match constructor on undefined/null');
   });
 
-  test('matcher', function(assert) {
+  QUnit.test('matcher', function(assert) {
     var moe = {name: 'Moe Howard', hair: true};
     var curly = {name: 'Curly Howard', hair: false};
     var stooges = [moe, curly];
@@ -883,11 +883,11 @@
     assert.deepEqual(_.map([null, void 0, 5, {}], oCon), [false, false, false, true], 'doesnt falsey match constructor on undefined/null');
   });
 
-  test('matches', function(assert) {
+  QUnit.test('matches', function(assert) {
     assert.strictEqual(_.matches, _.matcher, 'is an alias for matcher');
   });
 
-  test('findKey', function(assert) {
+  QUnit.test('findKey', function(assert) {
     var objects = {
       a: {a: 0, b: 0},
       b: {a: 1, b: 1},
@@ -928,7 +928,7 @@
   });
 
 
-  test('mapObject', function(assert) {
+  QUnit.test('mapObject', function(assert) {
     var obj = {a: 1, b: 2};
     var objects = {
       a: {a: 0, b: 0},

@@ -3,7 +3,7 @@
 
   QUnit.module('Arrays');
 
-  test('first', function(assert) {
+  QUnit.test('first', function(assert) {
     assert.equal(_.first([1, 2, 3]), 1, 'can pull out the first element of an array');
     assert.equal(_([1, 2, 3]).first(), 1, 'can perform OO-style "first()"');
     assert.deepEqual(_.first([1, 2, 3], 0), [], 'returns an empty array when n <= 0 (0 case)');
@@ -17,15 +17,15 @@
     assert.equal(_.first(null), void 0, 'returns undefined when called on null');
   });
 
-  test('head', function(assert) {
+  QUnit.test('head', function(assert) {
     assert.strictEqual(_.head, _.first, 'is an alias for first');
   });
 
-  test('take', function(assert) {
+  QUnit.test('take', function(assert) {
     assert.strictEqual(_.take, _.first, 'is an alias for first');
   });
 
-  test('rest', function(assert) {
+  QUnit.test('rest', function(assert) {
     var numbers = [1, 2, 3, 4];
     assert.deepEqual(_.rest(numbers), [2, 3, 4], 'fetches all but the first element');
     assert.deepEqual(_.rest(numbers, 0), [1, 2, 3, 4], 'returns the whole array when index is 0');
@@ -36,15 +36,15 @@
     assert.deepEqual(_.flatten(result), [2, 3, 2, 3], 'works well with _.map');
   });
 
-  test('tail', function(assert) {
+  QUnit.test('tail', function(assert) {
     assert.strictEqual(_.tail, _.rest, 'is an alias for rest');
   });
 
-  test('drop', function(assert) {
+  QUnit.test('drop', function(assert) {
     assert.strictEqual(_.drop, _.rest, 'is an alias for rest');
   });
 
-  test('initial', function(assert) {
+  QUnit.test('initial', function(assert) {
     assert.deepEqual(_.initial([1, 2, 3, 4, 5]), [1, 2, 3, 4], 'returns all but the last element');
     assert.deepEqual(_.initial([1, 2, 3, 4], 2), [1, 2], 'returns all but the last n elements');
     assert.deepEqual(_.initial([1, 2, 3, 4], 6), [], 'returns an empty array when n > length');
@@ -54,7 +54,7 @@
     assert.deepEqual(_.flatten(result), [1, 2, 1, 2], 'works well with _.map');
   });
 
-  test('last', function(assert) {
+  QUnit.test('last', function(assert) {
     assert.equal(_.last([1, 2, 3]), 3, 'can pull out the last element of an array');
     assert.equal(_([1, 2, 3]).last(), 3, 'can perform OO-style "last()"');
     assert.deepEqual(_.last([1, 2, 3], 0), [], 'returns an empty array when n <= 0 (0 case)');
@@ -68,7 +68,7 @@
     assert.equal(_.last(null), void 0, 'returns undefined when called on null');
   });
 
-  test('compact', function(assert) {
+  QUnit.test('compact', function(assert) {
     assert.deepEqual(_.compact([1, false, null, 0, '', void 0, NaN, 2]), [1, 2], 'removes all falsy values');
     var result = (function(){ return _.compact(arguments); }(0, 1, false, 2, false, 3));
     assert.deepEqual(result, [1, 2, 3], 'works on an arguments object');
@@ -76,7 +76,7 @@
     assert.deepEqual(result, [[1], [3]], 'works well with _.map');
   });
 
-  test('flatten', function(assert) {
+  QUnit.test('flatten', function(assert) {
     assert.deepEqual(_.flatten(null), [], 'supports null');
     assert.deepEqual(_.flatten(void 0), [], 'supports undefined');
 
@@ -102,7 +102,7 @@
     assert.deepEqual(_.flatten(x, true), x[0], 'can handle very deep arrays in shallow mode');
   });
 
-  test('without', function(assert) {
+  QUnit.test('without', function(assert) {
     var list = [1, 2, 1, 0, 3, 1, 4];
     assert.deepEqual(_.without(list, 0, 1), [2, 3, 4], 'removes all instances of the given values');
     var result = (function(){ return _.without(arguments, 0, 1); }(1, 2, 1, 0, 3, 1, 4));
@@ -113,7 +113,7 @@
     assert.deepEqual(_.without(list, list[0]), [{two: 2}], 'compares objects by reference (reference case)');
   });
 
-  test('sortedIndex', function(assert) {
+  QUnit.test('sortedIndex', function(assert) {
     var numbers = [10, 20, 30, 40, 50];
     var indexFor35 = _.sortedIndex(numbers, 35);
     assert.equal(indexFor35, 3, 'finds the index at which a value should be inserted to retain order');
@@ -140,7 +140,7 @@
     assert.equal(_.sortedIndex(largeArray, 2147483648), 2147483648, 'works with large indexes');
   });
 
-  test('uniq', function(assert) {
+  QUnit.test('uniq', function(assert) {
     var list = [1, 2, 1, 3, 1, 4];
     assert.deepEqual(_.uniq(list), [1, 2, 3, 4], 'can find the unique values of an unsorted array');
 
@@ -192,11 +192,11 @@
     assert.deepEqual(_.uniq([{0: 1, b: 1}, {0: 1, b: 2}, {0: 1, b: 3}, {0: 2, b: 1}], 0), [{0: 1, b: 1}, {0: 2, b: 1}], 'can use falsey pluck like iterator');
   });
 
-  test('unique', function(assert) {
+  QUnit.test('unique', function(assert) {
     assert.strictEqual(_.unique, _.uniq, 'is an alias for uniq');
   });
 
-  test('intersection', function(assert) {
+  QUnit.test('intersection', function(assert) {
     var stooges = ['moe', 'curly', 'larry'], leaders = ['moe', 'groucho'];
     assert.deepEqual(_.intersection(stooges, leaders), ['moe'], 'can take the set intersection of two arrays');
     assert.deepEqual(_(stooges).intersection(leaders), ['moe'], 'can perform an OO-style intersection');
@@ -214,7 +214,7 @@
     assert.equal(result.length, 0, 'returns an empty array when passed null as argument beyond the first');
   });
 
-  test('union', function(assert) {
+  QUnit.test('union', function(assert) {
     var result = _.union([1, 2, 3], [2, 30, 1], [1, 40]);
     assert.deepEqual(result, [1, 2, 3, 30, 40], 'takes the union of a list of arrays');
 
@@ -230,7 +230,7 @@
     assert.deepEqual(result, [1, 2, 3], 'restrict the union to arrays only');
   });
 
-  test('difference', function(assert) {
+  QUnit.test('difference', function(assert) {
     var result = _.difference([1, 2, 3], [2, 30, 40]);
     assert.deepEqual(result, [1, 3], 'takes the difference of two arrays');
 
@@ -241,7 +241,7 @@
     assert.deepEqual(result, [1, 2, 3], 'restrict the difference to arrays only');
   });
 
-  test('zip', function(assert) {
+  QUnit.test('zip', function(assert) {
     var names = ['moe', 'larry', 'curly'], ages = [30, 40, 50], leaders = [true];
     assert.deepEqual(_.zip(names, ages, leaders), [
       ['moe', 30, true],
@@ -264,7 +264,7 @@
     assert.deepEqual(_.zip(), [], '_.zip() returns []');
   });
 
-  test('unzip', function(assert) {
+  QUnit.test('unzip', function(assert) {
     assert.deepEqual(_.unzip(null), [], 'handles null');
 
     assert.deepEqual(_.unzip([['a', 'b'], [1, 2]]), [['a', 1], ['b', 2]]);
@@ -277,7 +277,7 @@
     assert.deepEqual(_.unzip(zipped), [['moe', 30, void 0], ['larry', 40, void 0], ['curly', 50, 'extra data']], 'Uses length of largest array');
   });
 
-  test('object', function(assert) {
+  QUnit.test('object', function(assert) {
     var result = _.object(['moe', 'larry', 'curly'], [30, 40, 50]);
     var shouldBe = {moe: 30, larry: 40, curly: 50};
     assert.deepEqual(result, shouldBe, 'two arrays zipped together into an object');
@@ -292,7 +292,7 @@
     assert.deepEqual(_.object(null), {}, 'handles nulls');
   });
 
-  test('indexOf', function(assert) {
+  QUnit.test('indexOf', function(assert) {
     var numbers = [1, 2, 3];
     assert.equal(_.indexOf(numbers, 2), 1, 'can compute indexOf');
     var result = (function(){ return _.indexOf(arguments, 2); }(1, 2, 3));
@@ -343,7 +343,7 @@
     assert.equal(index, -1, 'empty array with truthy `isSorted` returns -1');
   });
 
-  test('indexOf with NaN', function(assert) {
+  QUnit.test('indexOf with NaN', function(assert) {
     assert.strictEqual(_.indexOf([1, 2, NaN, NaN], NaN), 2, 'Expected [1, 2, NaN] to contain NaN');
     assert.strictEqual(_.indexOf([1, 2, Infinity], NaN), -1, 'Expected [1, 2, NaN] to contain NaN');
 
@@ -355,14 +355,14 @@
     }(1, 2, NaN, NaN));
   });
 
-  test('indexOf with +- 0', function(assert) {
+  QUnit.test('indexOf with +- 0', function(assert) {
     _.each([-0, +0], function(val) {
       assert.strictEqual(_.indexOf([1, 2, val, val], val), 2);
       assert.strictEqual(_.indexOf([1, 2, val, val], -val), 2);
     });
   });
 
-  test('lastIndexOf', function(assert) {
+  QUnit.test('lastIndexOf', function(assert) {
     var numbers = [1, 0, 1];
     var falsey = [void 0, '', 0, false, NaN, null, void 0];
     assert.equal(_.lastIndexOf(numbers, 1), 2);
@@ -420,7 +420,7 @@
     }), [0, -1, -1]);
   });
 
-  test('lastIndexOf with NaN', function(assert) {
+  QUnit.test('lastIndexOf with NaN', function(assert) {
     assert.strictEqual(_.lastIndexOf([1, 2, NaN, NaN], NaN), 3, 'Expected [1, 2, NaN] to contain NaN');
     assert.strictEqual(_.lastIndexOf([1, 2, Infinity], NaN), -1, 'Expected [1, 2, NaN] to contain NaN');
 
@@ -432,7 +432,7 @@
     }(1, 2, NaN, NaN));
   });
 
-  test('lastIndexOf with +- 0', function(assert) {
+  QUnit.test('lastIndexOf with +- 0', function(assert) {
     _.each([-0, +0], function(val) {
       assert.strictEqual(_.lastIndexOf([1, 2, val, val], val), 3);
       assert.strictEqual(_.lastIndexOf([1, 2, val, val], -val), 3);
@@ -440,7 +440,7 @@
     });
   });
 
-  test('findIndex', function(assert) {
+  QUnit.test('findIndex', function(assert) {
     var objects = [
       {a: 0, b: 0},
       {a: 1, b: 1},
@@ -483,7 +483,7 @@
     assert.strictEqual(_.findIndex(array, function(x) { return x === 55; }), -1, 'doesn\'t match array-likes keys');
   });
 
-  test('findLastIndex', function(assert) {
+  QUnit.test('findLastIndex', function(assert) {
     var objects = [
       {a: 0, b: 0},
       {a: 1, b: 1},
@@ -526,7 +526,7 @@
     assert.strictEqual(_.findLastIndex(array, function(x) { return x === 55; }), -1, 'doesn\'t match array-likes keys');
   });
 
-  test('range', function(assert) {
+  QUnit.test('range', function(assert) {
     assert.deepEqual(_.range(0), [], 'range with 0 as a first argument generates an empty array');
     assert.deepEqual(_.range(4), [0, 1, 2, 3], 'range with a single positive argument generates an array of elements 0,1,2,...,n-1');
     assert.deepEqual(_.range(5, 8), [5, 6, 7], 'range with two arguments a &amp; b, a&lt;b generates an array of elements a,a+1,a+2,...,b-2,b-1');
@@ -539,7 +539,7 @@
     assert.deepEqual(_.range(-3), [0, -1, -2], 'negative range generates descending array');
   });
 
-  test('chunk', function(assert) {
+  QUnit.test('chunk', function(assert) {
     assert.deepEqual(_.chunk([], 2), [], 'chunk for empty array returns an empty array');
 
     assert.deepEqual(_.chunk([1, 2, 3], 0), [], 'chunk into parts of 0 elements returns empty array');

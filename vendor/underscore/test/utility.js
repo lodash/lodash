@@ -4,18 +4,18 @@
 
   QUnit.module('Utility', {
 
-    setup: function() {
+    beforeEach: function() {
       templateSettings = _.clone(_.templateSettings);
     },
 
-    teardown: function() {
+    afterEach: function() {
       _.templateSettings = templateSettings;
     }
 
   });
 
   if (typeof this == 'object') {
-    test('noConflict', function(assert) {
+    QUnit.test('noConflict', function(assert) {
       var underscore = _.noConflict();
       assert.equal(underscore.identity(1), 1);
       if (typeof require != 'function') {
@@ -28,7 +28,9 @@
   }
 
   if (typeof require == 'function') {
-    asyncTest('noConflict (node vm)', 2, function(assert) {
+    QUnit.test('noConflict (node vm)', function(assert) {
+      assert.expect(2);
+      var done = assert.async();
       var fs = require('fs');
       var vm = require('vm');
       var filename = __dirname + '/../underscore.js';
@@ -42,39 +44,40 @@
         assert.equal(context._, 'oldvalue');
         assert.equal(context.underscore.VERSION, _.VERSION);
 
-        start();
+        done();
       });
     });
   }
 
-  test('#750 - Return _ instance.', 2, function(assert) {
+  QUnit.test('#750 - Return _ instance.', function(assert) {
+    assert.expect(2);
     var instance = _([]);
     assert.ok(_(instance) === instance);
     assert.ok(new _(instance) === instance);
   });
 
-  test('identity', function(assert) {
+  QUnit.test('identity', function(assert) {
     var stooge = {name: 'moe'};
     assert.equal(_.identity(stooge), stooge, 'stooge is the same as his identity');
   });
 
-  test('constant', function(assert) {
+  QUnit.test('constant', function(assert) {
     var stooge = {name: 'moe'};
     assert.equal(_.constant(stooge)(), stooge, 'should create a function that returns stooge');
   });
 
-  test('noop', function(assert) {
+  QUnit.test('noop', function(assert) {
     assert.strictEqual(_.noop('curly', 'larry', 'moe'), void 0, 'should always return undefined');
   });
 
-  test('property', function(assert) {
+  QUnit.test('property', function(assert) {
     var stooge = {name: 'moe'};
     assert.equal(_.property('name')(stooge), 'moe', 'should return the property with the given name');
     assert.equal(_.property('name')(null), void 0, 'should return undefined for null values');
     assert.equal(_.property('name')(void 0), void 0, 'should return undefined for undefined values');
   });
 
-  test('propertyOf', function(assert) {
+  QUnit.test('propertyOf', function(assert) {
     var stoogeRanks = _.propertyOf({curly: 2, moe: 1, larry: 3});
     assert.equal(stoogeRanks('curly'), 2, 'should return the property with the given name');
     assert.equal(stoogeRanks(null), void 0, 'should return undefined for null values');
@@ -92,7 +95,7 @@
     assert.equal(undefPropertyOf('curly'), void 0, 'should return undefined when obj is undefined');
   });
 
-  test('random', function(assert) {
+  QUnit.test('random', function(assert) {
     var array = _.range(1000);
     var min = Math.pow(2, 31);
     var max = Math.pow(2, 62);
@@ -106,18 +109,18 @@
     }), 'should produce a random number when passed `Number.MAX_VALUE`');
   });
 
-  test('now', function(assert) {
+  QUnit.test('now', function(assert) {
     var diff = _.now() - new Date().getTime();
     assert.ok(diff <= 0 && diff > -5, 'Produces the correct time in milliseconds');//within 5ms
   });
 
-  test('uniqueId', function(assert) {
+  QUnit.test('uniqueId', function(assert) {
     var ids = [], i = 0;
     while (i++ < 100) ids.push(_.uniqueId());
     assert.equal(_.uniq(ids).length, ids.length, 'can generate a globally-unique stream of ids');
   });
 
-  test('times', function(assert) {
+  QUnit.test('times', function(assert) {
     var vals = [];
     _.times(3, function(i) { vals.push(i); });
     assert.deepEqual(vals, [0, 1, 2], 'is 0 indexed');
@@ -133,7 +136,7 @@
     assert.deepEqual(_.times(parseFloat('-Infinity'), _.identity), []);
   });
 
-  test('mixin', function(assert) {
+  QUnit.test('mixin', function(assert) {
     _.mixin({
       myReverse: function(string) {
         return string.split('').reverse().join('');
@@ -143,11 +146,11 @@
     assert.equal(_('champ').myReverse(), 'pmahc', 'mixed in a function to the OOP wrapper');
   });
 
-  test('_.escape', function(assert) {
+  QUnit.test('_.escape', function(assert) {
     assert.equal(_.escape(null), '');
   });
 
-  test('_.unescape', function(assert) {
+  QUnit.test('_.unescape', function(assert) {
     var string = 'Curly & Moe';
     assert.equal(_.unescape(null), '');
     assert.equal(_.unescape(_.escape(string)), string);
@@ -155,7 +158,7 @@
   });
 
   // Don't care what they escape them to just that they're escaped and can be unescaped
-  test('_.escape & unescape', function(assert) {
+  QUnit.test('_.escape & unescape', function(assert) {
     // test & (&amp;) seperately obviously
     var escapeCharacters = ['<', '>', '"', '\'', '`'];
 
@@ -189,7 +192,7 @@
     assert.equal(_.unescape(str), str, 'can unescape &amp;');
   });
 
-  test('template', function(assert) {
+  QUnit.test('template', function(assert) {
     var basicTemplate = _.template("<%= thing %> is gettin' on my noives!");
     var result = basicTemplate({thing: 'This'});
     assert.equal(result, "This is gettin' on my noives!", 'can do basic attribute interpolation');
@@ -298,7 +301,7 @@
     assert.equal(templateWithNull({planet: 'world'}), 'a null undefined world', 'can handle missing escape and evaluate settings');
   });
 
-  test('_.template provides the generated function source, when a SyntaxError occurs', function(assert) {
+  QUnit.test('_.template provides the generated function source, when a SyntaxError occurs', function(assert) {
     var source;
     try {
       _.template('<b><%= if x %></b>');
@@ -308,12 +311,12 @@
     assert.ok(/__p/.test(source));
   });
 
-  test('_.template handles \\u2028 & \\u2029', function(assert) {
+  QUnit.test('_.template handles \\u2028 & \\u2029', function(assert) {
     var tmpl = _.template('<p>\u2028<%= "\\u2028\\u2029" %>\u2029</p>');
     assert.strictEqual(tmpl(), '<p>\u2028\u2028\u2029\u2029</p>');
   });
 
-  test('result calls functions and returns primitives', function(assert) {
+  QUnit.test('result calls functions and returns primitives', function(assert) {
     var obj = {w: '', x: 'x', y: function(){ return this.x; }};
     assert.strictEqual(_.result(obj, 'w'), '');
     assert.strictEqual(_.result(obj, 'x'), 'x');
@@ -322,34 +325,34 @@
     assert.strictEqual(_.result(null, 'x'), void 0);
   });
 
-  test('result returns a default value if object is null or undefined', function(assert) {
+  QUnit.test('result returns a default value if object is null or undefined', function(assert) {
     assert.strictEqual(_.result(null, 'b', 'default'), 'default');
     assert.strictEqual(_.result(void 0, 'c', 'default'), 'default');
     assert.strictEqual(_.result(''.match('missing'), 1, 'default'), 'default');
   });
 
-  test('result returns a default value if property of object is missing', function(assert) {
+  QUnit.test('result returns a default value if property of object is missing', function(assert) {
     assert.strictEqual(_.result({d: null}, 'd', 'default'), null);
     assert.strictEqual(_.result({e: false}, 'e', 'default'), false);
   });
 
-  test('result only returns the default value if the object does not have the property or is undefined', function(assert) {
+  QUnit.test('result only returns the default value if the object does not have the property or is undefined', function(assert) {
     assert.strictEqual(_.result({}, 'b', 'default'), 'default');
     assert.strictEqual(_.result({d: void 0}, 'd', 'default'), 'default');
   });
 
-  test('result does not return the default if the property of an object is found in the prototype', function(assert) {
+  QUnit.test('result does not return the default if the property of an object is found in the prototype', function(assert) {
     var Foo = function(){};
     Foo.prototype.bar = 1;
     assert.strictEqual(_.result(new Foo, 'bar', 2), 1);
   });
 
-  test('result does use the fallback when the result of invoking the property is undefined', function(assert) {
+  QUnit.test('result does use the fallback when the result of invoking the property is undefined', function(assert) {
     var obj = {a: function() {}};
     assert.strictEqual(_.result(obj, 'a', 'failed'), void 0);
   });
 
-  test('result fallback can use a function', function(assert) {
+  QUnit.test('result fallback can use a function', function(assert) {
     var obj = {a: [1, 2, 3]};
     assert.strictEqual(_.result(obj, 'b', _.constant(5)), 5);
     assert.strictEqual(_.result(obj, 'b', function() {
@@ -357,7 +360,7 @@
     }), obj.a, 'called with context');
   });
 
-  test('_.templateSettings.variable', function(assert) {
+  QUnit.test('_.templateSettings.variable', function(assert) {
     var s = '<%=data.x%>';
     var data = {x: 'x'};
     var tmp = _.template(s, {variable: 'data'});
@@ -366,13 +369,13 @@
     assert.strictEqual(_.template(s)(data), 'x');
   });
 
-  test('#547 - _.templateSettings is unchanged by custom settings.', function(assert) {
+  QUnit.test('#547 - _.templateSettings is unchanged by custom settings.', function(assert) {
     assert.ok(!_.templateSettings.variable);
     _.template('', {}, {variable: 'x'});
     assert.ok(!_.templateSettings.variable);
   });
 
-  test('#556 - undefined template variables.', function(assert) {
+  QUnit.test('#556 - undefined template variables.', function(assert) {
     var template = _.template('<%=x%>');
     assert.strictEqual(template({x: null}), '');
     assert.strictEqual(template({x: void 0}), '');
@@ -390,7 +393,8 @@
     assert.strictEqual(templateWithPropertyEscaped({x: {}}), '');
   });
 
-  test('interpolate evaluates code only once.', 2, function(assert) {
+  QUnit.test('interpolate evaluates code only once.', function(assert) {
+    assert.expect(2);
     var count = 0;
     var template = _.template('<%= f() %>');
     template({f: function(){ assert.ok(!count++); }});
@@ -400,13 +404,15 @@
     templateEscaped({f: function(){ assert.ok(!countEscaped++); }});
   });
 
-  test('#746 - _.template settings are not modified.', 1, function(assert) {
+  QUnit.test('#746 - _.template settings are not modified.', function(assert) {
+    assert.expect(1);
     var settings = {};
     _.template('', null, settings);
     assert.deepEqual(settings, {});
   });
 
-  test('#779 - delimeters are applied to unescaped text.', 1, function(assert) {
+  QUnit.test('#779 - delimeters are applied to unescaped text.', function(assert) {
+    assert.expect(1);
     var template = _.template('<<\nx\n>>', null, {evaluate: /<<(.*?)>>/g});
     assert.strictEqual(template(), '<<\nx\n>>');
   });

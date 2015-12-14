@@ -7702,9 +7702,10 @@
      */
     function reduce(collection, iteratee, accumulator) {
       var initFromCollection = arguments.length < 3;
-      return (typeof iteratee == 'function' && isArray(collection))
+      iteratee = getIteratee(iteratee, 4);
+      return isArray(collection)
         ? arrayReduce(collection, iteratee, accumulator, initFromCollection)
-        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEach);
+        : baseReduce(collection, iteratee, accumulator, initFromCollection, baseEach);
     }
 
     /**
@@ -7729,9 +7730,10 @@
      */
     function reduceRight(collection, iteratee, accumulator) {
       var initFromCollection = arguments.length < 3;
-      return (typeof iteratee == 'function' && isArray(collection))
+      iteratee = getIteratee(iteratee, 4);
+      return isArray(collection)
         ? arrayReduceRight(collection, iteratee, accumulator, initFromCollection)
-        : baseReduce(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEachRight);
+        : baseReduce(collection, iteratee, accumulator, initFromCollection, baseEachRight);
     }
 
     /**

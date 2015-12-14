@@ -59,8 +59,6 @@
       '<label for="perf-build">Build: </label>' +
       '<select id="perf-build">' +
       '<option value="lodash">lodash</option>' +
-      '<option value="lodash-custom-dev">lodash (custom development)</option>' +
-      '<option value="lodash-custom">lodash (custom production)</option>' +
       '</select>';
 
     var span2 = document.createElement('span');
@@ -71,8 +69,6 @@
       '<option value="underscore-dev">Underscore (development)</option>' +
       '<option value="underscore">Underscore (production)</option>' +
       '<option value="lodash">lodash</option>' +
-      '<option value="lodash-custom-dev">lodash (custom development)</option>' +
-      '<option value="lodash-custom">lodash (custom production)</option>' +
       '</select>';
 
     var buildList = span1.lastChild,
@@ -84,8 +80,6 @@
 
     buildList.selectedIndex = (function() {
       switch (build) {
-        case 'lodash-custom-dev': return 1;
-        case 'lodash-custom':     return 2;
         case 'lodash':
         case null:                return 0;
       }
@@ -96,8 +90,6 @@
       switch (other) {
         case 'underscore-dev':    return 0;
         case 'lodash':            return 2;
-        case 'lodash-custom-dev': return 3;
-        case 'lodash-custom':     return 4;
         case 'underscore':
         case null:                return 1;
       }
@@ -112,8 +104,6 @@
   ui.buildPath = (function() {
     var result;
     switch (build) {
-      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
-      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case null:                build  = 'lodash';
       case 'lodash':            result = 'dist/lodash.min.js'; break;
       default:                  return build;
@@ -126,8 +116,6 @@
     var result;
     switch (other) {
       case 'lodash':            result = 'dist/lodash.min.js'; break;
-      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
-      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
       case null:                other  = 'underscore';
       case 'underscore':        result = 'vendor/underscore/underscore-min.js'; break;

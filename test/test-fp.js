@@ -218,21 +218,45 @@
 
   (function() {
     QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
-      assert.expect(1);
+      assert.expect(4);
 
       if (!document) {
         var args,
             array = [1, 2, 3],
-            map = convert('map', _.map);
+            object = { 'a': 1, 'b': 2 },
+            isFIFO = _.keys(object)[0] == 'a',
+            map = convert('map', _.map),
+            reduce = convert('reduce', _.reduce);
 
         map(function() {
           args || (args = slice.call(arguments));
         })(array);
 
         assert.deepEqual(args, [1]);
+
+        args = undefined;
+        map(function() {
+          args || (args = slice.call(arguments));
+        })(object);
+
+        assert.deepEqual(args, isFIFO ? [1] : [2]);
+
+        args = undefined;
+        reduce(function() {
+          args || (args = slice.call(arguments));
+        })(0, array);
+
+        assert.deepEqual(args, [0, 1]);
+
+        args = undefined;
+        reduce(function() {
+          args || (args = slice.call(arguments));
+        })(0, object);
+
+        assert.deepEqual(args, isFIFO ? [0, 1] : [0, 2]);
       }
       else {
-        skipTest(assert);
+        skipTest(assert, 4);
       }
     });
 
@@ -571,19 +595,37 @@
 
   _.each(['reduce', 'reduceRight'], function(methodName) {
     var func = fp[methodName],
-        array = [1, 2, 3],
         isReduce = methodName == 'reduce';
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
       assert.expect(1);
 
-      var args;
+      var args,
+          array = [1, 2, 3];
 
       func(function() {
         args || (args = slice.call(arguments));
       })(0, array);
 
       assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
+      assert.expect(1);
+
+      var args,
+          object = { 'a': 1, 'b': 2 },
+          isFIFO = _.keys(object)[0] == 'a';
+
+      var expected = isFIFO
+        ? (isReduce ? [0, 1] : [0, 2])
+        : (isReduce ? [0, 2] : [0, 1]);
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(0, object);
+
+      assert.deepEqual(args, expected);
     });
   });
 
@@ -812,9 +854,8 @@
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
 
-      args = null;
+      args = undefined;
       value = _.clone(object);
-
       actual = fp.extendWith(function(objValue, srcValue) {
         args || (args = _.map(arguments, _.cloneDeep));
         return srcValue;
@@ -822,12 +863,11 @@
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
 
-      args = null;
-      value = { 'a': [1] };
-
       var stack = { '__data__': { 'array': [], 'map': null } },
           expected = [[1], [2, 3], 'a', { 'a': [ 1 ] }, { 'a': [2, 3] }, stack];
 
+      args = undefined;
+      value = { 'a': [1] };
       actual = fp.mergeWith(function(objValue, srcValue) {
         args || (args = _.map(arguments, _.cloneDeep));
         if (_.isArray(objValue)) {

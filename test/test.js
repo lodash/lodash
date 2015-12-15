@@ -5846,7 +5846,7 @@
 
       assert.deepEqual(args, expected, 'primitive property values');
 
-      args = null;
+      args = undefined;
       object = { 'a': 1 };
       source = { 'b': 2 };
       expected = lodashStable.map([undefined, 2, 'b', object, source], lodashStable.cloneDeep);
@@ -11311,28 +11311,28 @@
 
         assert.deepEqual(args, [1, 0, array.slice(1)]);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square).map(function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
 
         assert.deepEqual(args, expected);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square).map(function(value, index) {
           args || (args = slice.call(arguments));
         }).value();
 
         assert.deepEqual(args, expected);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square).map(function(value) {
           args || (args = slice.call(arguments));
         }).value();
 
         assert.deepEqual(args, [1]);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square).map(function() {
           args || (args = slice.call(arguments));
         }).value();
@@ -15644,7 +15644,7 @@
 
       assert.deepEqual(args, [0, 1, 0, array]);
 
-      args = null;
+      args = undefined;
       _.reduce(array, function() {
         args || (args = slice.call(arguments));
       });
@@ -15669,7 +15669,7 @@
 
       assert.deepEqual(args, expected);
 
-      args = null;
+      args = undefined;
       expected = firstKey == 'a'
         ? [1, 2, 'b', object]
         : [2, 1, 'a', object];
@@ -15706,7 +15706,7 @@
 
       assert.deepEqual(args, [0, 3, 2, array]);
 
-      args = null;
+      args = undefined;
       _.reduceRight(array, function() {
         args || (args = slice.call(arguments));
       });
@@ -15719,9 +15719,9 @@
 
       var args,
           object = { 'a': 1, 'b': 2 },
-          lastKey = _.last(_.keys(object));
+          isFIFO = lodashStable.keys(object)[0] == 'a';
 
-      var expected = lastKey == 'b'
+      var expected = isFIFO
         ? [0, 2, 'b', object]
         : [0, 1, 'a', object];
 
@@ -15731,8 +15731,8 @@
 
       assert.deepEqual(args, expected);
 
-      args = null;
-      expected = lastKey == 'b'
+      args = undefined;
+      expected = isFIFO
         ? [2, 1, 'a', object]
         : [1, 2, 'b', object];
 
@@ -15944,28 +15944,28 @@
 
         assert.deepEqual(args, [1, 0, array.slice(1)]);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square)[methodName](function(value, index, array) {
           args || (args = slice.call(arguments));
         }).value();
 
         assert.deepEqual(args, expected);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square)[methodName](function(value, index) {
           args || (args = slice.call(arguments));
         }).value();
 
         assert.deepEqual(args, expected);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square)[methodName](function(value) {
           args || (args = slice.call(arguments));
         }).value();
 
         assert.deepEqual(args, [1]);
 
-        args = null;
+        args = undefined;
         _(array).slice(1).map(square)[methodName](function() {
           args || (args = slice.call(arguments));
         }).value();

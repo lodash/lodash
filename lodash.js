@@ -8102,7 +8102,7 @@
      * @returns {Function} Returns the new restricted function.
      * @example
      *
-     * jQuery('#add').on('click', _.before(5, addContactToList));
+     * jQuery(element).on('click', _.before(5, addContactToList));
      * // => allows adding up to 4 contacts to the list
      */
     function before(n, func) {
@@ -8189,8 +8189,8 @@
      * };
      *
      * _.bindAll(view, 'onClick');
-     * jQuery('#docs').on('click', view.onClick);
-     * // => logs 'clicked docs' when the element is clicked
+     * jQuery(element).on('click', view.onClick);
+     * // => logs 'clicked docs' when clicked
      */
     var bindAll = rest(function(object, methodNames) {
       arrayEach(baseFlatten(methodNames), function(key) {
@@ -8378,34 +8378,19 @@
      * // avoid costly calculations while the window size is in flux
      * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
      *
-     * // invoke `sendMail` when the click event is fired, debouncing subsequent calls
-     * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
+     * // invoke `sendMail` when clicked, debouncing subsequent calls
+     * jQuery(element).on('click', _.debounce(sendMail, 300, {
      *   'leading': true,
      *   'trailing': false
      * }));
      *
      * // ensure `batchLog` is invoked once after 1 second of debounced calls
+     * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
      * var source = new EventSource('/stream');
-     * jQuery(source).on('message', _.debounce(batchLog, 250, {
-     *   'maxWait': 1000
-     * }));
+     * jQuery(source).on('message', debounced);
      *
-     * // cancel a debounced invocation
-     * var todoChanges = _.debounce(batchLog, 1000);
-     * Object.observe(models.todo, todoChanges);
-     *
-     * Object.observe(models, function(changes) {
-     *   if (_.find(changes, { 'user': 'todo', 'type': 'delete'})) {
-     *     todoChanges.cancel();
-     *   }
-     * }, ['delete']);
-     *
-     * // ...at some point `models.todo` is changed
-     * models.todo.completed = true;
-     *
-     * // ...before 1 second has passed `models.todo` is deleted
-     * // which cancels the debounced `todoChanges` invocation
-     * delete models.todo;
+     * // cancel a trailing debounced invocation
+     * jQuery(window).on('popstate', debounced.cancel);
      */
     function debounce(func, wait, options) {
       var args,
@@ -8967,9 +8952,8 @@
      * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
      *
      * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
-     * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
-     *   'trailing': false
-     * }));
+     * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+     * jQuery(element).on('click', throttled);
      *
      * // cancel a trailing throttled invocation
      * jQuery(window).on('popstate', throttled.cancel);

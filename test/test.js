@@ -16106,6 +16106,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.replace');
+
+  (function() {
+    QUnit.test('should replace the matched pattern', function(assert) {
+      assert.expect(2);
+
+      var string = 'abcdef';
+      assert.strictEqual(_.replace(string, 'def', '123'), 'abc123');
+      assert.strictEqual(_.replace(string, /[bdf]/g, '-'), 'a-c-e-');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.result');
 
   (function() {
@@ -17596,6 +17610,32 @@
       lodashStable.each([[1, 2, 3], [1, 1, 2, 2, 3], [1, 2, 3, 3, 3, 3, 3]], function(array) {
         assert.deepEqual(_.sortedUniq(array), expected);
       });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.split');
+
+  (function() {
+    QUnit.test('should support string split', function(assert) {
+      assert.expect(2);
+
+      var string = 'abcde';
+      assert.deepEqual(_.split(string, 'c'), ['ab', 'de']);
+      assert.deepEqual(_.split(string, /[bd]/), ['a', 'c', 'e']);
+    });
+
+    QUnit.test('should allow mixed string and array prototype methods', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm) {
+        var wrapped = _('abc');
+        assert.strictEqual(wrapped.split('b').join(','), 'a,c');
+      }
+      else {
+        skipTest(assert);
+      }
     });
   }());
 
@@ -21837,36 +21877,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...).replace');
-
-  (function() {
-      QUnit.test('should replace the matched pattern', function(assert) {
-        assert.expect(2);
-
-      if (!isNpm) {
-        var wrapped = _('abcdef');
-        assert.strictEqual(wrapped.replace('def', '123'), 'abc123');
-        assert.strictEqual(wrapped.replace(/[bdf]/g, '-'), 'a-c-e-');
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.ok(_('abc').chain().replace('b', '_') instanceof _);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash(...).reverse');
 
   (function() {
@@ -22012,29 +22022,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash(...).slice');
-
-  (function() {
-    QUnit.test('should return a slice of `array`', function(assert) {
-      assert.expect(3);
-
-      if (!isNpm) {
-        var array = [1, 2, 3],
-            wrapped = _(array).slice(0, 2),
-            actual = wrapped.value();
-
-        assert.deepEqual(array, [1, 2, 3]);
-        assert.deepEqual(actual, [1, 2]);
-        assert.notStrictEqual(actual, array);
-      }
-      else {
-        skipTest(assert, 3);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash(...).sort');
 
   (function() {
@@ -22077,37 +22064,6 @@
       }
       else {
         skipTest(assert, 5);
-      }
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash(...).split');
-
-  (function() {
-    QUnit.test('should support string split', function(assert) {
-      assert.expect(2);
-
-      if (!isNpm) {
-        var wrapped = _('abcde');
-        assert.deepEqual(wrapped.split('c').value(), ['ab', 'de']);
-        assert.deepEqual(wrapped.split(/[bd]/).value(), ['a', 'c', 'e']);
-      }
-      else {
-        skipTest(assert, 2);
-      }
-    });
-
-    QUnit.test('should allow mixed string and array prototype methods', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var wrapped = _('abc');
-        assert.strictEqual(wrapped.split('b').join(','), 'a,c');
-      }
-      else {
-        skipTest(assert);
       }
     });
   }());
@@ -22240,6 +22196,7 @@
       'shuffle',
       'slice',
       'splice',
+      'split',
       'toArray',
       'words'
     ];
@@ -22249,8 +22206,8 @@
         assert.expect(2);
 
         if (!isNpm) {
-          var array = [1, 2, 3],
-              wrapped = _(array),
+          var value = methodName == 'split' ? 'abc' : [1, 2, 3],
+              wrapped = _(value),
               actual = wrapped[methodName]();
 
           assert.ok(actual instanceof _);
@@ -22326,6 +22283,7 @@
       'reduce',
       'reduceRight',
       'repeat',
+      'replace',
       'round',
       'sample',
       'shift',

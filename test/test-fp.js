@@ -321,6 +321,45 @@
       var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a');
       assert.deepEqual(actual, ['a', undefined]);
     });
+
+    QUnit.test('should only pass in `arity` number of arguments', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a', 'b');
+      assert.deepEqual(actual, ['a', undefined]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.curryRight');
+
+  (function() {
+    QUnit.test('should accept only a `func` param', function(assert) {
+      assert.expect(1);
+
+      assert.raises(function() { fp.curryRight(1, _.noop); }, TypeError);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.curryRightN');
+
+  (function() {
+    QUnit.test('should accept an `arity` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.curryRightN(1, function(a, b) { return [a, b]; })('a');
+      assert.deepEqual(actual, ['a', undefined]);
+    });
+
+    QUnit.test('should only pass in `arity` number of arguments', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.curryRightN(1, function(a, b) { return [a, b]; })('a', 'b');
+      assert.deepEqual(actual, ['a', undefined]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

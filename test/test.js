@@ -17619,11 +17619,12 @@
 
   (function() {
     QUnit.test('should support string split', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       var string = 'abcde';
       assert.deepEqual(_.split(string, 'c'), ['ab', 'de']);
       assert.deepEqual(_.split(string, /[bd]/), ['a', 'c', 'e']);
+      assert.deepEqual(_.split(string, '', 2), ['a', 'b']);
     });
 
     QUnit.test('should allow mixed string and array prototype methods', function(assert) {

@@ -2189,12 +2189,15 @@
      * @param {*} objValue The destination value.
      * @param {*} srcValue The source value.
      * @param {string} key The key of the property to assign.
+     * @param {Object} object The parent object of `objValue`.
      * @returns {*} Returns the value to assign.
      */
-    function assignInDefaults(objValue, srcValue, key) {
-      return (objValue === undefined || objValue === objectProto[key])
-        ? srcValue
-        : objValue;
+    function assignInDefaults(objValue, srcValue, key, object) {
+      if (objValue === undefined ||
+          (objValue === objectProto[key] && !hasOwnProperty.call(object, key))) {
+        return srcValue;
+      }
+      return objValue;
     }
 
     /**

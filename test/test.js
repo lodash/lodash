@@ -3606,10 +3606,15 @@
     });
 
     QUnit.test('should assign properties that shadow those on `Object.prototype`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var actual = _.defaults({}, { 'constructor': 1 });
+      var ctor = objectProto.constructor,
+          actual = _.defaults({}, { 'constructor': 1 });
+
       assert.strictEqual(actual.constructor, 1);
+
+      actual = _.defaults({ 'constructor': ctor }, { 'constructor': 1 });
+      assert.strictEqual(actual.constructor, ctor);
     });
   }());
 

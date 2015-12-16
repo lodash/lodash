@@ -300,67 +300,32 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.curry');
+  QUnit.module('curry methods');
 
-  (function() {
-    QUnit.test('should accept only a `func` param', function(assert) {
+  _.each(['curry', 'curryRight'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`_.' + methodName + '` should only accept a `func` param', function(assert) {
       assert.expect(1);
 
-      assert.raises(function() { fp.curry(1, _.noop); }, TypeError);
+      assert.raises(function() { func(1, _.noop); }, TypeError);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.curryN');
+  QUnit.module('curryN methods');
 
-  (function() {
-    QUnit.test('should accept an `arity` param', function(assert) {
+  _.each(['curryN', 'curryRightN'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`_.' + methodName + '` accept an `arity` param', function(assert) {
       assert.expect(1);
 
-      var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a');
+      var actual = func(1, function(a, b) { return [a, b]; })('a');
       assert.deepEqual(actual, ['a', undefined]);
     });
-
-    QUnit.test('should only pass in `arity` number of arguments', function(assert) {
-      assert.expect(1);
-
-      var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a', 'b');
-      assert.deepEqual(actual, ['a', undefined]);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('fp.curryRight');
-
-  (function() {
-    QUnit.test('should accept only a `func` param', function(assert) {
-      assert.expect(1);
-
-      assert.raises(function() { fp.curryRight(1, _.noop); }, TypeError);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('fp.curryRightN');
-
-  (function() {
-    QUnit.test('should accept an `arity` param', function(assert) {
-      assert.expect(1);
-
-      var actual = fp.curryRightN(1, function(a, b) { return [a, b]; })('a');
-      assert.deepEqual(actual, ['a', undefined]);
-    });
-
-    QUnit.test('should only pass in `arity` number of arguments', function(assert) {
-      assert.expect(1);
-
-      var actual = fp.curryRightN(1, function(a, b) { return [a, b]; })('a', 'b');
-      assert.deepEqual(actual, ['a', undefined]);
-    });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

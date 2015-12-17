@@ -28,7 +28,7 @@ define(['../internal/baseGet', '../internal/toPath'], function(baseGet, toPath) 
    * // => 'default'
    */
   function get(object, path, defaultValue) {
-    var result = object == null ? undefined : baseGet(object, toPath(path), path + '');
+    var result = object == null ? undefined : baseGet(object, toPath(path), (path + ''));
     return result === undefined ? defaultValue : result;
   }
 

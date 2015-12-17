@@ -10,7 +10,7 @@ define(['./baseIndexOf', './cacheIndexOf', './createCache'], function(baseIndexO
    * @private
    * @param {Array} array The array to inspect.
    * @param {Function} [iteratee] The function invoked per iteration.
-   * @returns {Array} Returns the new duplicate-value-free array.
+   * @returns {Array} Returns the new duplicate free array.
    */
   function baseUniq(array, iteratee) {
     var index = -1,

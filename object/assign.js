@@ -3,7 +3,7 @@ define(['../internal/assignWith', '../internal/baseAssign', '../internal/createA
   /**
    * Assigns own enumerable properties of source object(s) to the destination
    * object. Subsequent sources overwrite property assignments of previous sources.
-   * If `customizer` is provided it is invoked to produce the assigned values.
+   * If `customizer` is provided it's invoked to produce the assigned values.
    * The `customizer` is bound to `thisArg` and invoked with five arguments:
    * (objectValue, sourceValue, key, object, source).
    *

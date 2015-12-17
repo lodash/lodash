@@ -5,7 +5,7 @@ define(['../lang/isError', '../function/restParam'], function(isError, restParam
 
   /**
    * Attempts to invoke `func`, returning either the result or the caught error
-   * object. Any additional arguments are provided to `func` when it is invoked.
+   * object. Any additional arguments are provided to `func` when it's invoked.
    *
    * @static
    * @memberOf _

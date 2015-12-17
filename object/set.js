@@ -2,7 +2,7 @@ define(['../internal/isIndex', '../internal/isKey', '../lang/isObject', '../inte
 
   /**
    * Sets the property value of `path` on `object`. If a portion of `path`
-   * does not exist it is created.
+   * does not exist it's created.
    *
    * @static
    * @memberOf _

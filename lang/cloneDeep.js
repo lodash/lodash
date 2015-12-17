@@ -1,10 +1,10 @@
 define(['../internal/baseClone', '../internal/bindCallback'], function(baseClone, bindCallback) {
 
   /**
-   * Creates a deep clone of `value`. If `customizer` is provided it is invoked
+   * Creates a deep clone of `value`. If `customizer` is provided it's invoked
    * to produce the cloned values. If `customizer` returns `undefined` cloning
    * is handled by the method instead. The `customizer` is bound to `thisArg`
-   * and invoked with two argument; (value [, index|key, object]).
+   * and invoked with up to three argument; (value [, index|key, object]).
    *
    * **Note:** This method is loosely based on the
    * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
@@ -47,7 +47,7 @@ define(['../internal/baseClone', '../internal/bindCallback'], function(baseClone
    */
   function cloneDeep(value, customizer, thisArg) {
     return typeof customizer == 'function'
-      ? baseClone(value, true, bindCallback(customizer, thisArg, 1))
+      ? baseClone(value, true, bindCallback(customizer, thisArg, 3))
       : baseClone(value, true);
   }
 

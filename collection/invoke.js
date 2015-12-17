@@ -6,7 +6,7 @@ define(['../internal/baseEach', '../internal/invokePath', '../internal/isArrayLi
   /**
    * Invokes the method at `path` of each element in `collection`, returning
    * an array of the results of each invoked method. Any additional arguments
-   * are provided to each invoked method. If `methodName` is a function it is
+   * are provided to each invoked method. If `methodName` is a function it's
    * invoked for, and `this` bound to, each element in `collection`.
    *
    * @static

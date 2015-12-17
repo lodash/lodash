@@ -27,7 +27,7 @@ define(['../internal/LazyWrapper', '../internal/LodashWrapper', './thru'], funct
     var value = this.__wrapped__;
 
     var interceptor = function(value) {
-      return (wrapped && wrapped.__dir__ < 0) ? value : value.reverse();
+      return value.reverse();
     };
     if (value instanceof LazyWrapper) {
       var wrapped = value;

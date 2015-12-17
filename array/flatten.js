@@ -2,7 +2,7 @@ define(['../internal/baseFlatten', '../internal/isIterateeCall'], function(baseF
 
   /**
    * Flattens a nested array. If `isDeep` is `true` the array is recursively
-   * flattened, otherwise it is only flattened a single level.
+   * flattened, otherwise it's only flattened a single level.
    *
    * @static
    * @memberOf _

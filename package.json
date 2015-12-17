@@ -29,22 +29,5 @@
     "build": "node lib/main/build.js && node lib/fp/build.js",
     "style": "jscs lodash.js lib/**/*.js",
     "test": "node test/test"
-  },
-  "volo": {
-    "type": "directory",
-    "ignore": [
-      ".*",
-      "*.custom.*",
-      "*.log",
-      "*.map",
-      "*.md",
-      "bower.json",
-      "component.json",
-      "doc",
-      "node_modules",
-      "perf",
-      "test",
-      "vendor"
-    ]
   }
 }

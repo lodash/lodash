@@ -1,4 +1,4 @@
-define(['../internal/baseEach', '../internal/getLength', '../internal/invokePath', '../internal/isKey', '../internal/isLength', '../function/restParam'], function(baseEach, getLength, invokePath, isKey, isLength, restParam) {
+define(['../internal/baseEach', '../internal/invokePath', '../internal/isArrayLike', '../internal/isKey', '../function/restParam'], function(baseEach, invokePath, isArrayLike, isKey, restParam) {
 
   /**
    * Invokes the method at `path` on each element in `collection`, returning
@@ -26,8 +26,7 @@ define(['../internal/baseEach', '../internal/getLength', '../internal/invokePath
     var index = -1,
         isFunc = typeof path == 'function',
         isProp = isKey(path),
-        length = getLength(collection),
-        result = isLength(length) ? Array(length) : [];
+        result = isArrayLike(collection) ? Array(collection.length) : [];
 
     baseEach(collection, function(value) {
       var func = isFunc ? path : (isProp && value != null && value[path]);

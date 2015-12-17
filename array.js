@@ -1,4 +1,4 @@
-define(['./array/chunk', './array/compact', './array/difference', './array/drop', './array/dropRight', './array/dropRightWhile', './array/dropWhile', './array/fill', './array/findIndex', './array/findLastIndex', './array/first', './array/flatten', './array/flattenDeep', './array/head', './array/indexOf', './array/initial', './array/intersection', './array/last', './array/lastIndexOf', './array/object', './array/pull', './array/pullAt', './array/remove', './array/rest', './array/slice', './array/sortedIndex', './array/sortedLastIndex', './array/tail', './array/take', './array/takeRight', './array/takeRightWhile', './array/takeWhile', './array/union', './array/uniq', './array/unique', './array/unzip', './array/without', './array/xor', './array/zip', './array/zipObject'], function(chunk, compact, difference, drop, dropRight, dropRightWhile, dropWhile, fill, findIndex, findLastIndex, first, flatten, flattenDeep, head, indexOf, initial, intersection, last, lastIndexOf, object, pull, pullAt, remove, rest, slice, sortedIndex, sortedLastIndex, tail, take, takeRight, takeRightWhile, takeWhile, union, uniq, unique, unzip, without, xor, zip, zipObject) {
+define(['./array/chunk', './array/compact', './array/difference', './array/drop', './array/dropRight', './array/dropRightWhile', './array/dropWhile', './array/fill', './array/findIndex', './array/findLastIndex', './array/first', './array/flatten', './array/flattenDeep', './array/head', './array/indexOf', './array/initial', './array/intersection', './array/last', './array/lastIndexOf', './array/object', './array/pull', './array/pullAt', './array/remove', './array/rest', './array/slice', './array/sortedIndex', './array/sortedLastIndex', './array/tail', './array/take', './array/takeRight', './array/takeRightWhile', './array/takeWhile', './array/union', './array/uniq', './array/unique', './array/unzip', './array/unzipWith', './array/without', './array/xor', './array/zip', './array/zipObject', './array/zipWith'], function(chunk, compact, difference, drop, dropRight, dropRightWhile, dropWhile, fill, findIndex, findLastIndex, first, flatten, flattenDeep, head, indexOf, initial, intersection, last, lastIndexOf, object, pull, pullAt, remove, rest, slice, sortedIndex, sortedLastIndex, tail, take, takeRight, takeRightWhile, takeWhile, union, uniq, unique, unzip, unzipWith, without, xor, zip, zipObject, zipWith) {
   return {
     'chunk': chunk,
     'compact': compact,
@@ -36,9 +36,11 @@ define(['./array/chunk', './array/compact', './array/difference', './array/drop'
     'uniq': uniq,
     'unique': unique,
     'unzip': unzip,
+    'unzipWith': unzipWith,
     'without': without,
     'xor': xor,
     'zip': zip,
-    'zipObject': zipObject
+    'zipObject': zipObject,
+    'zipWith': zipWith
   };
 });

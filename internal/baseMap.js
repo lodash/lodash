@@ -1,4 +1,4 @@
-define(['./baseEach', './getLength', './isLength'], function(baseEach, getLength, isLength) {
+define(['./baseEach', './isArrayLike'], function(baseEach, isArrayLike) {
 
   /**
    * The base implementation of `_.map` without support for callback shorthands
@@ -11,8 +11,7 @@ define(['./baseEach', './getLength', './isLength'], function(baseEach, getLength
    */
   function baseMap(collection, iteratee) {
     var index = -1,
-        length = getLength(collection),
-        result = isLength(length) ? Array(length) : [];
+        result = isArrayLike(collection) ? Array(collection.length) : [];
 
     baseEach(collection, function(value, key, collection) {
       result[++index] = iteratee(value, key, collection);

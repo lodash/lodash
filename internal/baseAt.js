@@ -1,4 +1,4 @@
-define(['./isIndex', './isLength'], function(isIndex, isLength) {
+define(['./isArrayLike', './isIndex'], function(isArrayLike, isIndex) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,8 +14,9 @@ define(['./isIndex', './isLength'], function(isIndex, isLength) {
    */
   function baseAt(collection, props) {
     var index = -1,
-        length = collection.length,
-        isArr = isLength(length),
+        isNil = collection == null,
+        isArr = !isNil && isArrayLike(collection),
+        length = isArr && collection.length,
         propsLength = props.length,
         result = Array(propsLength);
 
@@ -24,7 +25,7 @@ define(['./isIndex', './isLength'], function(isIndex, isLength) {
       if (isArr) {
         result[index] = isIndex(key, length) ? collection[key] : undefined;
       } else {
-        result[index] = collection[key];
+        result[index] = isNil ? undefined : collection[key];
       }
     }
     return result;

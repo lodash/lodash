@@ -1,4 +1,4 @@
-define(['./arrayCopy', './getLength', '../lang/isArguments', '../lang/isArray', './isLength', '../lang/isPlainObject', '../lang/isTypedArray', '../lang/toPlainObject'], function(arrayCopy, getLength, isArguments, isArray, isLength, isPlainObject, isTypedArray, toPlainObject) {
+define(['./arrayCopy', '../lang/isArguments', '../lang/isArray', './isArrayLike', '../lang/isPlainObject', '../lang/isTypedArray', '../lang/toPlainObject'], function(arrayCopy, isArguments, isArray, isArrayLike, isPlainObject, isTypedArray, toPlainObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -34,10 +34,10 @@ define(['./arrayCopy', './getLength', '../lang/isArguments', '../lang/isArray', 
 
     if (isCommon) {
       result = srcValue;
-      if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
+      if (isArrayLike(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
         result = isArray(value)
           ? value
-          : (getLength(value) ? arrayCopy(value) : []);
+          : (isArrayLike(value) ? arrayCopy(value) : []);
       }
       else if (isPlainObject(srcValue) || isArguments(srcValue)) {
         result = isArguments(value)

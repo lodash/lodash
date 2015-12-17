@@ -1,5 +1,11 @@
 define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './isLaziable'], function(LodashWrapper, getData, getFuncName, isArray, isLaziable) {
 
+  /** Used to compose bitmasks for wrapper metadata. */
+  var CURRY_FLAG = 8,
+      PARTIAL_FLAG = 32,
+      ARY_FLAG = 128,
+      REARG_FLAG = 256;
+
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -35,7 +41,7 @@ define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './i
         funcName = getFuncName(func);
 
         var data = funcName == 'wrapper' ? getData(func) : null;
-        if (data && isLaziable(data[0])) {
+        if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
           wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
         } else {
           wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);

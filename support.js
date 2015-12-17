@@ -20,6 +20,7 @@ define(['./internal/root'], function(root) {
 
   (function(x) {
     var Ctor = function() { this.x = x; },
+        args = arguments,
         object = { '0': x, 'length': x },
         props = [];
 
@@ -69,7 +70,7 @@ define(['./internal/root'], function(root) {
      * @type boolean
      */
     try {
-      support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
+      support.nonEnumArgs = !propertyIsEnumerable.call(args, 1);
     } catch(e) {
       support.nonEnumArgs = true;
     }

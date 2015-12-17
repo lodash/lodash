@@ -26,7 +26,6 @@ define(['../internal/baseAt', '../internal/baseCompareAscending', '../internal/b
    * // => [10, 20]
    */
   var pullAt = restParam(function(array, indexes) {
-    array || (array = []);
     indexes = baseFlatten(indexes);
 
     var result = baseAt(array, indexes);

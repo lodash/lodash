@@ -1,12 +1,9 @@
-define(['../internal/baseDifference', '../lang/isArguments', '../lang/isArray', '../function/restParam'], function(baseDifference, isArguments, isArray, restParam) {
+define(['../internal/baseDifference', '../internal/isArrayLike', '../function/restParam'], function(baseDifference, isArrayLike, restParam) {
 
   /**
-   * Creates an array excluding all provided values using `SameValueZero` for
-   * equality comparisons.
-   *
-   * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-   * comparisons are like strict equality comparisons, e.g. `===`, except that
-   * `NaN` matches `NaN`.
+   * Creates an array excluding all provided values using
+   * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * for equality comparisons.
    *
    * @static
    * @memberOf _
@@ -20,7 +17,7 @@ define(['../internal/baseDifference', '../lang/isArguments', '../lang/isArray', 
    * // => [3]
    */
   var without = restParam(function(array, values) {
-    return (isArray(array) || isArguments(array))
+    return isArrayLike(array)
       ? baseDifference(array, values)
       : [];
   });

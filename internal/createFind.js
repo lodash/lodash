@@ -19,7 +19,7 @@ define(['./baseCallback', './baseFind', './baseFindIndex', '../lang/isArray'], f
         return index > -1 ? collection[index] : undefined;
       }
       return baseFind(collection, predicate, eachFunc);
-    }
+    };
   }
 
   return createFind;

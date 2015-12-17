@@ -7,14 +7,11 @@ define(['../internal/baseIndexOf'], function(baseIndexOf) {
   var splice = arrayProto.splice;
 
   /**
-   * Removes all provided values from `array` using `SameValueZero` for equality
-   * comparisons.
+   * Removes all provided values from `array` using
+   * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * for equality comparisons.
    *
-   * **Notes:**
-   *  - Unlike `_.without`, this method mutates `array`
-   *  - [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-   *    comparisons are like strict equality comparisons, e.g. `===`, except
-   *    that `NaN` matches `NaN`
+   * **Note:** Unlike `_.without`, this method mutates `array`.
    *
    * @static
    * @memberOf _

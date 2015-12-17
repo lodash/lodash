@@ -1,7 +1,4 @@
-define(['../internal/isLength', '../internal/isObjectLike'], function(isLength, isObjectLike) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['../internal/isArrayLike', '../internal/isObjectLike'], function(isArrayLike, isObjectLike) {
 
   /** `Object#toString` result references. */
   var argsTag = '[object Arguments]';
@@ -32,8 +29,7 @@ define(['../internal/isLength', '../internal/isObjectLike'], function(isLength, 
    * // => false
    */
   function isArguments(value) {
-    var length = isObjectLike(value) ? value.length : undefined;
-    return isLength(length) && objToString.call(value) == argsTag;
+    return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
   }
 
   return isArguments;

@@ -16,7 +16,7 @@ define(['./isIndex'], function(isIndex) {
    * @returns {Array} Returns `array`.
    */
   function basePullAt(array, indexes) {
-    var length = indexes.length;
+    var length = array ? indexes.length : 0;
     while (length--) {
       var index = parseFloat(indexes[length]);
       if (index != previous && isIndex(index)) {

@@ -11,7 +11,7 @@ define([], function() {
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-      MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1;
+      MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1;
 
   /**
    * This function is like `binaryIndex` except that it invokes `iteratee` for

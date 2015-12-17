@@ -1,7 +1,7 @@
 define(['./baseCopy', './getSymbols', '../lang/isNative', '../object/keys'], function(baseCopy, getSymbols, isNative, keys) {
 
   /** Native method references. */
-  var preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions;
+  var preventExtensions = isNative(preventExtensions = Object.preventExtensions) && preventExtensions;
 
   /** Used as `baseAssign`. */
   var nativeAssign = (function() {
@@ -11,12 +11,19 @@ define(['./baseCopy', './getSymbols', '../lang/isNative', '../object/keys'], fun
     //
     // Use `Object.preventExtensions` on a plain object instead of simply using
     // `Object('x')` because Chrome and IE fail to throw an error when attempting
-    // to assign values to readonly indexes of strings in strict mode.
-    var object = { '1': 0 },
-        func = preventExtensions && isNative(func = Object.assign) && func;
-
-    try { func(preventExtensions(object), 'xo'); } catch(e) {}
-    return !object[1] && func;
+    // to assign values to readonly indexes of strings.
+    var func = preventExtensions && isNative(func = Object.assign) && func;
+    try {
+      if (func) {
+        var object = preventExtensions({ '1': 0 });
+        object[0] = 1;
+      }
+    } catch(e) {
+      // Only attempt in strict mode.
+      try { func(object, 'xo'); } catch(e) {}
+      return !object[1] && func;
+    }
+    return false;
   }());
 
   /**

@@ -29,7 +29,7 @@ define(['../internal/isObjectLike'], function(isObjectLike) {
    * // => false
    */
   function isRegExp(value) {
-    return (isObjectLike(value) && objToString.call(value) == regexpTag) || false;
+    return isObjectLike(value) && objToString.call(value) == regexpTag;
   }
 
   return isRegExp;

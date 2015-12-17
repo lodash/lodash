@@ -1,4 +1,4 @@
-define(['./arrayEach', './baseMergeDeep', './getSymbols', '../lang/isArray', './isLength', '../lang/isObject', './isObjectLike', '../lang/isTypedArray', '../object/keys'], function(arrayEach, baseMergeDeep, getSymbols, isArray, isLength, isObject, isObjectLike, isTypedArray, keys) {
+define(['./arrayEach', './baseMergeDeep', './getSymbols', '../lang/isArray', './isArrayLike', '../lang/isObject', './isObjectLike', '../lang/isTypedArray', '../object/keys'], function(arrayEach, baseMergeDeep, getSymbols, isArray, isArrayLike, isObject, isObjectLike, isTypedArray, keys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -25,7 +25,7 @@ define(['./arrayEach', './baseMergeDeep', './getSymbols', '../lang/isArray', './
     if (!isObject(object)) {
       return object;
     }
-    var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
+    var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
     if (!isSrcArr) {
       var props = keys(source);
       push.apply(props, getSymbols(source));

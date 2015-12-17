@@ -1,22 +1,20 @@
-define([], function() {
-
-  /** Used for native method references. */
-  var objectProto = Object.prototype;
-
-  /** Used to check objects for own properties. */
-  var hasOwnProperty = objectProto.hasOwnProperty;
+define(['./Map', './assocHas', './hashHas', './isKeyable'], function(Map, assocHas, hashHas, isKeyable) {
 
   /**
-   * Checks if a cached value for `key` exists.
+   * Checks if a map value for `key` exists.
    *
    * @private
    * @name has
-   * @memberOf _.memoize.Cache
+   * @memberOf MapCache
    * @param {string} key The key of the entry to check.
    * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
    */
   function mapHas(key) {
-    return key != '__proto__' && hasOwnProperty.call(this.__data__, key);
+    var data = this.__data__;
+    if (isKeyable(key)) {
+      return hashHas(typeof key == 'string' ? data.string : data.hash, key);
+    }
+    return Map ? data.map.has(key) : assocHas(data.map, key);
   }
 
   return mapHas;

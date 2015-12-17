@@ -1,4 +1,4 @@
-define(['../utility/identity', './metaMap'], function(identity, metaMap) {
+define(['../identity', './metaMap'], function(identity, metaMap) {
 
   /**
    * The base implementation of `setData` without support for hot loop detection.

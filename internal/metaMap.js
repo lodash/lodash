@@ -1,7 +1,4 @@
-define(['./getNative', './root'], function(getNative, root) {
-
-  /** Native method references. */
-  var WeakMap = getNative(root, 'WeakMap');
+define(['./WeakMap'], function(WeakMap) {
 
   /** Used to store function metadata. */
   var metaMap = WeakMap && new WeakMap;

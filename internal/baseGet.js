@@ -1,25 +1,19 @@
-define(['./toObject'], function(toObject) {
+define(['./baseToPath', './isKey'], function(baseToPath, isKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /**
-   * The base implementation of `get` without support for string paths
-   * and default values.
+   * The base implementation of `_.get` without support for default values.
    *
    * @private
    * @param {Object} object The object to query.
-   * @param {Array} path The path of the property to get.
-   * @param {string} [pathKey] The key representation of path.
+   * @param {Array|string} path The path of the property to get.
    * @returns {*} Returns the resolved value.
    */
-  function baseGet(object, path, pathKey) {
-    if (object == null) {
-      return;
-    }
-    if (pathKey !== undefined && pathKey in toObject(object)) {
-      path = [pathKey];
-    }
+  function baseGet(object, path) {
+    path = isKey(path, object) ? [path + ''] : baseToPath(path);
+
     var index = 0,
         length = path.length;
 

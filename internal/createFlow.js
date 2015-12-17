@@ -1,4 +1,4 @@
-define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './isLaziable'], function(LodashWrapper, getData, getFuncName, isArray, isLaziable) {
+define(['./LodashWrapper', './baseFlatten', './getData', './getFuncName', '../isArray', './isLaziable', '../rest'], function(LodashWrapper, baseFlatten, getData, getFuncName, isArray, isLaziable, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,23 +23,26 @@ define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './i
    * @returns {Function} Returns the new flow function.
    */
   function createFlow(fromRight) {
-    return function() {
-      var wrapper,
-          length = arguments.length,
-          index = fromRight ? length : -1,
-          leftIndex = 0,
-          funcs = Array(length);
+    return rest(function(funcs) {
+      funcs = baseFlatten(funcs);
 
-      while ((fromRight ? index-- : ++index < length)) {
-        var func = funcs[leftIndex++] = arguments[index];
+      var length = funcs.length,
+          index = length,
+          prereq = LodashWrapper.prototype.thru;
+
+      if (fromRight) {
+        funcs.reverse();
+      }
+      while (index--) {
+        var func = funcs[index];
         if (typeof func != 'function') {
           throw new TypeError(FUNC_ERROR_TEXT);
         }
-        if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
-          wrapper = new LodashWrapper([], true);
+        if (prereq && !wrapper && getFuncName(func) == 'wrapper') {
+          var wrapper = new LodashWrapper([], true);
         }
       }
-      index = wrapper ? -1 : length;
+      index = wrapper ? index : length;
       while (++index < length) {
         func = funcs[index];
 
@@ -67,7 +70,7 @@ define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './i
         }
         return result;
       };
-    };
+    });
   }
 
   return createFlow;

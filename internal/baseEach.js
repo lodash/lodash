@@ -1,13 +1,12 @@
 define(['./baseForOwn', './createBaseEach'], function(baseForOwn, createBaseEach) {
 
   /**
-   * The base implementation of `_.forEach` without support for callback
-   * shorthands and `this` binding.
+   * The base implementation of `_.forEach` without support for iteratee shorthands.
    *
    * @private
-   * @param {Array|Object|string} collection The collection to iterate over.
+   * @param {Array|Object} collection The collection to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
-   * @returns {Array|Object|string} Returns `collection`.
+   * @returns {Array|Object} Returns `collection`.
    */
   var baseEach = createBaseEach(baseForOwn);
 

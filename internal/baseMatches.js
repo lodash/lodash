@@ -1,10 +1,10 @@
-define(['./baseIsMatch', './getMatchData', './toObject'], function(baseIsMatch, getMatchData, toObject) {
+define(['./baseIsMatch', './getMatchData'], function(baseIsMatch, getMatchData) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /**
-   * The base implementation of `_.matches` which does not clone `source`.
+   * The base implementation of `_.matches` which doesn't clone `source`.
    *
    * @private
    * @param {Object} source The object of property values to match.
@@ -20,11 +20,12 @@ define(['./baseIsMatch', './getMatchData', './toObject'], function(baseIsMatch, 
         if (object == null) {
           return false;
         }
-        return object[key] === value && (value !== undefined || (key in toObject(object)));
+        return object[key] === value &&
+          (value !== undefined || (key in Object(object)));
       };
     }
     return function(object) {
-      return baseIsMatch(object, matchData);
+      return object === source || baseIsMatch(object, source, matchData);
     };
   }
 

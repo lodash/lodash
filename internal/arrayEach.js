@@ -1,8 +1,8 @@
 define([], function() {
 
   /**
-   * A specialized version of `_.forEach` for arrays without support for callback
-   * shorthands and `this` binding.
+   * A specialized version of `_.forEach` for arrays without support for
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.

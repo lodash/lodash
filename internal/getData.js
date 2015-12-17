@@ -1,4 +1,4 @@
-define(['./metaMap', '../utility/noop'], function(metaMap, noop) {
+define(['./metaMap', '../noop'], function(metaMap, noop) {
 
   /**
    * Gets metadata for `func`.

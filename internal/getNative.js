@@ -1,4 +1,4 @@
-define(['../lang/isNative'], function(isNative) {
+define(['../isNative'], function(isNative) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

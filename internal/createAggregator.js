@@ -1,7 +1,7 @@
-define(['./baseCallback', './baseEach', '../lang/isArray'], function(baseCallback, baseEach, isArray) {
+define(['./baseEach', './baseIteratee', '../isArray'], function(baseEach, baseIteratee, isArray) {
 
   /**
-   * Creates a `_.countBy`, `_.groupBy`, `_.indexBy`, or `_.partition` function.
+   * Creates a function like `_.groupBy`.
    *
    * @private
    * @param {Function} setter The function to set keys and values of the accumulator object.
@@ -9,9 +9,9 @@ define(['./baseCallback', './baseEach', '../lang/isArray'], function(baseCallbac
    * @returns {Function} Returns the new aggregator function.
    */
   function createAggregator(setter, initializer) {
-    return function(collection, iteratee, thisArg) {
+    return function(collection, iteratee) {
       var result = initializer ? initializer() : {};
-      iteratee = baseCallback(iteratee, thisArg, 3);
+      iteratee = baseIteratee(iteratee);
 
       if (isArray(collection)) {
         var index = -1,
@@ -19,11 +19,11 @@ define(['./baseCallback', './baseEach', '../lang/isArray'], function(baseCallbac
 
         while (++index < length) {
           var value = collection[index];
-          setter(result, value, iteratee(value, index, collection), collection);
+          setter(result, value, iteratee(value), collection);
         }
       } else {
         baseEach(collection, function(value, key, collection) {
-          setter(result, value, iteratee(value, key, collection), collection);
+          setter(result, value, iteratee(value), collection);
         });
       }
       return result;

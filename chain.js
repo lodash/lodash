@@ -1,18 +1,37 @@
-define(['./chain/chain', './chain/commit', './chain/concat', './chain/lodash', './chain/plant', './chain/reverse', './chain/run', './chain/tap', './chain/thru', './chain/toJSON', './chain/toString', './chain/value', './chain/valueOf', './chain/wrapperChain'], function(chain, commit, concat, lodash, plant, reverse, run, tap, thru, toJSON, toString, value, valueOf, wrapperChain) {
-  return {
-    'chain': chain,
-    'commit': commit,
-    'concat': concat,
-    'lodash': lodash,
-    'plant': plant,
-    'reverse': reverse,
-    'run': run,
-    'tap': tap,
-    'thru': thru,
-    'toJSON': toJSON,
-    'toString': toString,
-    'value': value,
-    'valueOf': valueOf,
-    'wrapperChain': wrapperChain
-  };
+define(['./wrapperLodash'], function(lodash) {
+
+  /**
+   * Creates a `lodash` object that wraps `value` with explicit method chaining enabled.
+   * The result of such method chaining must be unwrapped with `_#value`.
+   *
+   * @static
+   * @memberOf _
+   * @category Seq
+   * @param {*} value The value to wrap.
+   * @returns {Object} Returns the new `lodash` wrapper instance.
+   * @example
+   *
+   * var users = [
+   *   { 'user': 'barney',  'age': 36 },
+   *   { 'user': 'fred',    'age': 40 },
+   *   { 'user': 'pebbles', 'age': 1 }
+   * ];
+   *
+   * var youngest = _
+   *   .chain(users)
+   *   .sortBy('age')
+   *   .map(function(o) {
+   *     return o.user + ' is ' + o.age;
+   *   })
+   *   .head()
+   *   .value();
+   * // => 'pebbles is 1'
+   */
+  function chain(value) {
+    var result = lodash(value);
+    result.__chain__ = true;
+    return result;
+  }
+
+  return chain;
 });

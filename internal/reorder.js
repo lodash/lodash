@@ -1,9 +1,9 @@
-define(['./arrayCopy', './isIndex'], function(arrayCopy, isIndex) {
+define(['./copyArray', './isIndex'], function(copyArray, isIndex) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /* Native method references for those with the same name as other `lodash` methods. */
+  /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
 
   /**
@@ -19,7 +19,7 @@ define(['./arrayCopy', './isIndex'], function(arrayCopy, isIndex) {
   function reorder(array, indexes) {
     var arrLength = array.length,
         length = nativeMin(indexes.length, arrLength),
-        oldArray = arrayCopy(array);
+        oldArray = copyArray(array);
 
     while (length--) {
       var index = indexes[length];

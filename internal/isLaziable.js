@@ -1,4 +1,4 @@
-define(['./LazyWrapper', './getData', './getFuncName', '../chain/lodash'], function(LazyWrapper, getData, getFuncName, lodash) {
+define(['./LazyWrapper', './getData', './getFuncName', '../wrapperLodash'], function(LazyWrapper, getData, getFuncName, lodash) {
 
   /**
    * Checks if `func` has a lazy counterpart.

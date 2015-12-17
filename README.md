@@ -1,30 +1,30 @@
-# lodash v3.10.1
+# lodash-amd v4.0.0
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
+The [lodash](https://lodash.com/) library exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 ```bash
-$ lodash modularize modern exports=amd -o ./
-$ lodash modern exports=amd -d -o ./main.js
+$ lodash exports=amd -o ./
+$ lodash exports=amd -d -o ./main.js
 ```
 
 ## Installation
 
-Using bower or volo:
-
+Using npm:
 ```bash
-$ bower i lodash#3.10.1-amd
-$ volo add lodash/3.10.1-amd
+$ {sudo -H} npm i -g npm
+$ npm i --save lodash-amd
 ```
 
-Defining a build as `'lodash'`.
-
+Using an AMD loader:
 ```js
 require({
   'packages': [
     { 'name': 'lodash', 'location': 'path/to/lodash' }
   ]
-}, ['lodash/array/chunk'], function(chunk) {
+}, ['lodash/chunk'], function(chunk) {
   // use `chunk`
 });
 ```
+
+See the [package source](https://github.com/lodash/lodash/tree/4.0.0-amd) for more details.

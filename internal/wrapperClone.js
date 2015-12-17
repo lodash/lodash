@@ -1,4 +1,4 @@
-define(['./LazyWrapper', './LodashWrapper', './arrayCopy'], function(LazyWrapper, LodashWrapper, arrayCopy) {
+define(['./LazyWrapper', './LodashWrapper', './copyArray'], function(LazyWrapper, LodashWrapper, copyArray) {
 
   /**
    * Creates a clone of `wrapper`.
@@ -8,9 +8,14 @@ define(['./LazyWrapper', './LodashWrapper', './arrayCopy'], function(LazyWrapper
    * @returns {Object} Returns the cloned wrapper.
    */
   function wrapperClone(wrapper) {
-    return wrapper instanceof LazyWrapper
-      ? wrapper.clone()
-      : new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
+    if (wrapper instanceof LazyWrapper) {
+      return wrapper.clone();
+    }
+    var result = new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__);
+    result.__actions__ = copyArray(wrapper.__actions__);
+    result.__index__  = wrapper.__index__;
+    result.__values__ = wrapper.__values__;
+    return result;
   }
 
   return wrapperClone;

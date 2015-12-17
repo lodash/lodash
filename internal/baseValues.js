@@ -1,4 +1,4 @@
-define([], function() {
+define(['./arrayMap'], function(arrayMap) {
 
   /**
    * The base implementation of `_.values` and `_.valuesIn` which creates an
@@ -11,14 +11,9 @@ define([], function() {
    * @returns {Object} Returns the array of property values.
    */
   function baseValues(object, props) {
-    var index = -1,
-        length = props.length,
-        result = Array(length);
-
-    while (++index < length) {
-      result[index] = object[props[index]];
-    }
-    return result;
+    return arrayMap(props, function(key) {
+      return object[key];
+    });
   }
 
   return baseValues;

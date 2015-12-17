@@ -1,4 +1,4 @@
-define(['./LazyWrapper', './arrayPush'], function(LazyWrapper, arrayPush) {
+define(['./LazyWrapper', './arrayPush', './arrayReduce'], function(LazyWrapper, arrayPush, arrayReduce) {
 
   /**
    * The base implementation of `wrapperValue` which returns the result of
@@ -7,7 +7,7 @@ define(['./LazyWrapper', './arrayPush'], function(LazyWrapper, arrayPush) {
    *
    * @private
    * @param {*} value The unwrapped value.
-   * @param {Array} actions Actions to peform to resolve the unwrapped value.
+   * @param {Array} actions Actions to perform to resolve the unwrapped value.
    * @returns {*} Returns the resolved value.
    */
   function baseWrapperValue(value, actions) {
@@ -15,14 +15,9 @@ define(['./LazyWrapper', './arrayPush'], function(LazyWrapper, arrayPush) {
     if (result instanceof LazyWrapper) {
       result = result.value();
     }
-    var index = -1,
-        length = actions.length;
-
-    while (++index < length) {
-      var action = actions[index];
-      result = action.func.apply(action.thisArg, arrayPush([result], action.args));
-    }
-    return result;
+    return arrayReduce(actions, function(result, action) {
+      return action.func.apply(action.thisArg, arrayPush([result], action.args));
+    }, result);
   }
 
   return baseWrapperValue;

@@ -1,4 +1,4 @@
-define(['./date/now'], function(now) {
+define(['./now'], function(now) {
   return {
     'now': now
   };

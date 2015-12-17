@@ -1,7 +1,7 @@
-define(['../lang/isArray', './toObject'], function(isArray, toObject) {
+define(['../isArray'], function(isArray) {
 
   /** Used to match property names within property paths. */
-  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
+  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
       reIsPlainProp = /^\w*$/;
 
   /**
@@ -13,15 +13,12 @@ define(['../lang/isArray', './toObject'], function(isArray, toObject) {
    * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
    */
   function isKey(value, object) {
-    var type = typeof value;
-    if ((type == 'string' && reIsPlainProp.test(value)) || type == 'number') {
+    if (typeof value == 'number') {
       return true;
     }
-    if (isArray(value)) {
-      return false;
-    }
-    var result = !reIsDeepProp.test(value);
-    return result || (object != null && value in toObject(object));
+    return !isArray(value) &&
+      (reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+        (object != null && value in Object(object)));
   }
 
   return isKey;

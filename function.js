@@ -1,30 +1,27 @@
-define(['./function/after', './function/ary', './function/backflow', './function/before', './function/bind', './function/bindAll', './function/bindKey', './function/compose', './function/curry', './function/curryRight', './function/debounce', './function/defer', './function/delay', './function/flow', './function/flowRight', './function/memoize', './function/modArgs', './function/negate', './function/once', './function/partial', './function/partialRight', './function/rearg', './function/restParam', './function/spread', './function/throttle', './function/wrap'], function(after, ary, backflow, before, bind, bindAll, bindKey, compose, curry, curryRight, debounce, defer, delay, flow, flowRight, memoize, modArgs, negate, once, partial, partialRight, rearg, restParam, spread, throttle, wrap) {
+define(['./after', './ary', './before', './bind', './bindKey', './curry', './curryRight', './debounce', './defer', './delay', './flip', './memoize', './negate', './once', './overArgs', './partial', './partialRight', './rearg', './rest', './spread', './throttle', './unary', './wrap'], function(after, ary, before, bind, bindKey, curry, curryRight, debounce, defer, delay, flip, memoize, negate, once, overArgs, partial, partialRight, rearg, rest, spread, throttle, unary, wrap) {
   return {
     'after': after,
     'ary': ary,
-    'backflow': backflow,
     'before': before,
     'bind': bind,
-    'bindAll': bindAll,
     'bindKey': bindKey,
-    'compose': compose,
     'curry': curry,
     'curryRight': curryRight,
     'debounce': debounce,
     'defer': defer,
     'delay': delay,
-    'flow': flow,
-    'flowRight': flowRight,
+    'flip': flip,
     'memoize': memoize,
-    'modArgs': modArgs,
     'negate': negate,
     'once': once,
+    'overArgs': overArgs,
     'partial': partial,
     'partialRight': partialRight,
     'rearg': rearg,
-    'restParam': restParam,
+    'rest': rest,
     'spread': spread,
     'throttle': throttle,
+    'unary': unary,
     'wrap': wrap
   };
 });

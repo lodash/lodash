@@ -1,8 +1,7 @@
-define(['../string/deburr', '../string/words'], function(deburr, words) {
+define(['./arrayReduce', '../deburr', '../words'], function(arrayReduce, deburr, words) {
 
   /**
-   * Creates a function that produces compound words out of the words in a
-   * given string.
+   * Creates a function like `_.camelCase`.
    *
    * @private
    * @param {Function} callback The function to combine each word.
@@ -10,15 +9,7 @@ define(['../string/deburr', '../string/words'], function(deburr, words) {
    */
   function createCompounder(callback) {
     return function(string) {
-      var index = -1,
-          array = words(deburr(string)),
-          length = array.length,
-          result = '';
-
-      while (++index < length) {
-        result = callback(result, array[index], index);
-      }
-      return result;
+      return arrayReduce(words(deburr(string)), callback, '');
     };
   }
 

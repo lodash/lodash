@@ -1,8 +1,8 @@
-define(['./baseCopy', '../object/keys'], function(baseCopy, keys) {
+define(['./copyObject', '../keys'], function(copyObject, keys) {
 
   /**
-   * The base implementation of `_.assign` without support for argument juggling,
-   * multiple sources, and `customizer` functions.
+   * The base implementation of `_.assign` without support for multiple sources
+   * or `customizer` functions.
    *
    * @private
    * @param {Object} object The destination object.
@@ -10,9 +10,7 @@ define(['./baseCopy', '../object/keys'], function(baseCopy, keys) {
    * @returns {Object} Returns `object`.
    */
   function baseAssign(object, source) {
-    return source == null
-      ? object
-      : baseCopy(source, keys(source), object);
+    return object && copyObject(source, keys(source), object);
   }
 
   return baseAssign;

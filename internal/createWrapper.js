@@ -1,4 +1,4 @@
-define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './createPartialWrapper', './getData', './mergeData', './setData'], function(baseSetData, createBindWrapper, createHybridWrapper, createPartialWrapper, getData, mergeData, setData) {
+define(['./baseSetData', './createBaseWrapper', './createCurryWrapper', './createHybridWrapper', './createPartialWrapper', './getData', './mergeData', './setData', '../toInteger'], function(baseSetData, createBaseWrapper, createCurryWrapper, createHybridWrapper, createPartialWrapper, getData, mergeData, setData, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -6,13 +6,15 @@ define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './crea
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
+      CURRY_FLAG = 8,
+      CURRY_RIGHT_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /* Native method references for those with the same name as other `lodash` methods. */
+  /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;
 
   /**
@@ -20,8 +22,8 @@ define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './crea
    * `this` binding and partially applied arguments.
    *
    * @private
-   * @param {Function|string} func The function or method name to reference.
-   * @param {number} bitmask The bitmask of flags.
+   * @param {Function|string} func The function or method name to wrap.
+   * @param {number} bitmask The bitmask of wrapper flags.
    *  The bitmask may be composed of the following flags:
    *     1 - `_.bind`
    *     2 - `_.bindKey`
@@ -50,7 +52,10 @@ define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './crea
       bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
       partials = holders = undefined;
     }
-    length -= (holders ? holders.length : 0);
+    ary = ary === undefined ? ary : nativeMax(toInteger(ary), 0);
+    arity = arity === undefined ? arity : toInteger(arity);
+    length -= holders ? holders.length : 0;
+
     if (bitmask & PARTIAL_RIGHT_FLAG) {
       var partialsRight = partials,
           holdersRight = holders;
@@ -62,17 +67,25 @@ define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './crea
 
     if (data) {
       mergeData(newData, data);
-      bitmask = newData[1];
-      arity = newData[9];
     }
-    newData[9] = arity == null
+    func = newData[0];
+    bitmask = newData[1];
+    thisArg = newData[2];
+    partials = newData[3];
+    holders = newData[4];
+    arity = newData[9] = newData[9] == null
       ? (isBindKey ? 0 : func.length)
-      : (nativeMax(arity - length, 0) || 0);
+      : nativeMax(newData[9] - length, 0);
 
-    if (bitmask == BIND_FLAG) {
-      var result = createBindWrapper(newData[0], newData[2]);
-    } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
-      result = createPartialWrapper.apply(undefined, newData);
+    if (!arity && bitmask & (CURRY_FLAG | CURRY_RIGHT_FLAG)) {
+      bitmask &= ~(CURRY_FLAG | CURRY_RIGHT_FLAG);
+    }
+    if (!bitmask || bitmask == BIND_FLAG) {
+      var result = createBaseWrapper(func, bitmask, thisArg);
+    } else if (bitmask == CURRY_FLAG || bitmask == CURRY_RIGHT_FLAG) {
+      result = createCurryWrapper(func, bitmask, arity);
+    } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
+      result = createPartialWrapper(func, bitmask, thisArg, partials);
     } else {
       result = createHybridWrapper.apply(undefined, newData);
     }

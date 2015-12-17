@@ -1,6 +1,6 @@
-define(['./baseSetData', '../date/now'], function(baseSetData, now) {
+define(['./baseSetData', '../now'], function(baseSetData, now) {
 
-  /** Used to detect when a function becomes hot. */
+  /** Used to detect hot functions by number of calls within a span of milliseconds. */
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 

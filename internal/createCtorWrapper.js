@@ -1,4 +1,4 @@
-define(['./baseCreate', '../lang/isObject'], function(baseCreate, isObject) {
+define(['./baseCreate', '../isObject'], function(baseCreate, isObject) {
 
   /**
    * Creates a function that produces an instance of `Ctor` regardless of

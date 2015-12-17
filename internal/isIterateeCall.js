@@ -1,4 +1,4 @@
-define(['./isArrayLike', './isIndex', '../lang/isObject'], function(isArrayLike, isIndex, isObject) {
+define(['../eq', '../isArrayLike', './isIndex', '../isObject'], function(eq, isArrayLike, isIndex, isObject) {
 
   /**
    * Checks if the provided arguments are from an iteratee call.
@@ -17,8 +17,7 @@ define(['./isArrayLike', './isIndex', '../lang/isObject'], function(isArrayLike,
     if (type == 'number'
         ? (isArrayLike(object) && isIndex(index, object.length))
         : (type == 'string' && index in object)) {
-      var other = object[index];
-      return value === value ? (value === other) : (other !== other);
+      return eq(object[index], value);
     }
     return false;
   }

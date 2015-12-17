@@ -1,4 +1,4 @@
-define(['./baseGet', './toPath'], function(baseGet, toPath) {
+define(['./baseGet'], function(baseGet) {
 
   /**
    * A specialized version of `baseProperty` which supports deep paths.
@@ -8,10 +8,8 @@ define(['./baseGet', './toPath'], function(baseGet, toPath) {
    * @returns {Function} Returns the new function.
    */
   function basePropertyDeep(path) {
-    var pathKey = (path + '');
-    path = toPath(path);
     return function(object) {
-      return baseGet(object, path, pathKey);
+      return baseGet(object, path);
     };
   }
 

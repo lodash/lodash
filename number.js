@@ -1,5 +1,6 @@
-define(['./number/inRange', './number/random'], function(inRange, random) {
+define(['./clamp', './inRange', './random'], function(clamp, inRange, random) {
   return {
+    'clamp': clamp,
     'inRange': inRange,
     'random': random
   };

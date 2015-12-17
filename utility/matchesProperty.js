@@ -1,7 +1,7 @@
 define(['../internal/baseClone', '../internal/baseMatchesProperty'], function(baseClone, baseMatchesProperty) {
 
   /**
-   * Creates a function which compares the property value of `path` on a given
+   * Creates a function that compares the property value of `path` on a given
    * object to `value`.
    *
    * **Note:** This method supports comparing arrays, booleans, `Date` objects,

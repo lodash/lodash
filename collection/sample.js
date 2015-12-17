@@ -1,4 +1,4 @@
-define(['../internal/baseRandom', '../internal/isIterateeCall', './shuffle', '../internal/toIterable'], function(baseRandom, isIterateeCall, shuffle, toIterable) {
+define(['../internal/baseRandom', '../internal/isIterateeCall', '../lang/toArray', '../internal/toIterable'], function(baseRandom, isIterateeCall, toArray, toIterable) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -30,8 +30,20 @@ define(['../internal/baseRandom', '../internal/isIterateeCall', './shuffle', '..
       var length = collection.length;
       return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
     }
-    var result = shuffle(collection);
-    result.length = nativeMin(n < 0 ? 0 : (+n || 0), result.length);
+    var index = -1,
+        result = toArray(collection),
+        length = result.length,
+        lastIndex = length - 1;
+
+    n = nativeMin(n < 0 ? 0 : (+n || 0), length);
+    while (++index < n) {
+      var rand = baseRandom(index, lastIndex),
+          value = result[rand];
+
+      result[rand] = result[index];
+      result[index] = value;
+    }
+    result.length = n;
     return result;
   }
 

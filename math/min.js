@@ -1,5 +1,8 @@
 define(['../internal/createExtremum', '../lang/lt'], function(createExtremum, lt) {
 
+  /** Used as references for `-Infinity` and `Infinity`. */
+  var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
+
   /**
    * Gets the minimum value of `collection`. If `collection` is empty or falsey
    * `Infinity` is returned. If an iteratee function is provided it is invoked
@@ -47,7 +50,7 @@ define(['../internal/createExtremum', '../lang/lt'], function(createExtremum, lt
    * _.min(users, 'age');
    * // => { 'user': 'barney', 'age': 36 }
    */
-  var min = createExtremum(lt, Infinity);
+  var min = createExtremum(lt, POSITIVE_INFINITY);
 
   return min;
 });

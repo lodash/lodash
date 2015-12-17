@@ -4,8 +4,7 @@ define(['./baseGet', './baseIsEqual', './baseSlice', '../lang/isArray', './isKey
   var undefined;
 
   /**
-   * The base implementation of `_.matchesProperty` which does not which does
-   * not clone `value`.
+   * The base implementation of `_.matchesProperty` which does not clone `srcValue`.
    *
    * @private
    * @param {string} path The path of the property to get.

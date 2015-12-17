@@ -1,7 +1,7 @@
 define(['../internal/baseProperty', '../internal/basePropertyDeep', '../internal/isKey'], function(baseProperty, basePropertyDeep, isKey) {
 
   /**
-   * Creates a function which returns the property value at `path` on a
+   * Creates a function that returns the property value at `path` on a
    * given object.
    *
    * @static

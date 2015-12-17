@@ -1,4 +1,7 @@
-define(['../internal/baseRandom', '../internal/toIterable'], function(baseRandom, toIterable) {
+define(['./sample'], function(sample) {
+
+  /** Used as references for `-Infinity` and `Infinity`. */
+  var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
 
   /**
    * Creates an array of shuffled values, using a version of the
@@ -15,20 +18,7 @@ define(['../internal/baseRandom', '../internal/toIterable'], function(baseRandom
    * // => [4, 1, 3, 2]
    */
   function shuffle(collection) {
-    collection = toIterable(collection);
-
-    var index = -1,
-        length = collection.length,
-        result = Array(length);
-
-    while (++index < length) {
-      var rand = baseRandom(0, index);
-      if (index != rand) {
-        result[index] = result[rand];
-      }
-      result[rand] = collection[index];
-    }
-    return result;
+    return sample(collection, POSITIVE_INFINITY);
   }
 
   return shuffle;

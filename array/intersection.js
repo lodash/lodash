@@ -1,8 +1,8 @@
 define(['../internal/baseIndexOf', '../internal/cacheIndexOf', '../internal/createCache', '../internal/isArrayLike', '../function/restParam'], function(baseIndexOf, cacheIndexOf, createCache, isArrayLike, restParam) {
 
   /**
-   * Creates an array of unique values in all provided arrays using
-   * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+   * Creates an array of unique values that are included in all of the provided
+   * arrays using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
    * for equality comparisons.
    *
    * @static

@@ -1,5 +1,8 @@
 define(['../internal/createExtremum', '../lang/gt'], function(createExtremum, gt) {
 
+  /** Used as references for `-Infinity` and `Infinity`. */
+  var NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
+
   /**
    * Gets the maximum value of `collection`. If `collection` is empty or falsey
    * `-Infinity` is returned. If an iteratee function is provided it is invoked
@@ -47,7 +50,7 @@ define(['../internal/createExtremum', '../lang/gt'], function(createExtremum, gt
    * _.max(users, 'age');
    * // => { 'user': 'fred', 'age': 40 }
    */
-  var max = createExtremum(gt, -Infinity);
+  var max = createExtremum(gt, NEGATIVE_INFINITY);
 
   return max;
 });

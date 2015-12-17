@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used to detect unsigned integer values. */
+  var reIsUint = /^\d+$/;
+
   /**
    * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
    * of an array-like value.
@@ -15,7 +18,7 @@ define([], function() {
    * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
    */
   function isIndex(value, length) {
-    value = typeof value == 'number' ? value : parseFloat(value);
+    value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
     length = length == null ? MAX_SAFE_INTEGER : length;
     return value > -1 && value % 1 == 0 && value < length;
   }

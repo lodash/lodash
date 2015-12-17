@@ -1,4 +1,4 @@
-# lodash v3.9.2
+# lodash v3.9.3
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
 
@@ -13,8 +13,8 @@ $ lodash modern exports=amd -d -o ./main.js
 Using bower or volo:
 
 ```bash
-$ bower i lodash#3.9.2-amd
-$ volo add lodash/3.9.2-amd
+$ bower i lodash#3.9.3-amd
+$ volo add lodash/3.9.3-amd
 ```
 
 Defining a build as `'lodash'`.

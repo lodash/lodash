@@ -1939,6 +1939,17 @@
       return this;
     }
 
+    /**
+     * Clears the map data
+     *
+     * @private
+     * @name clear
+     * @memberOf MapCache
+     */
+    function mapClear() {
+      this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -8636,6 +8647,7 @@
         return result;
       };
       memoized.cache = new memoize.Cache;
+      memoized.clear = function() { memoized.cache.clear(); };
       return memoized;
     }
 
@@ -13741,6 +13753,7 @@
     MapCache.prototype.get = mapGet;
     MapCache.prototype.has = mapHas;
     MapCache.prototype.set = mapSet;
+    MapCache.prototype.clear = mapClear;
 
     // Add functions to the `SetCache`.
     SetCache.prototype.push = cachePush;

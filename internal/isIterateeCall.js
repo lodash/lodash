@@ -20,8 +20,11 @@ define(['./isIndex', './isLength', '../lang/isObject'], function(isIndex, isLeng
     } else {
       prereq = type == 'string' && index in object;
     }
-    var other = object[index];
-    return prereq && (value === value ? value === other : other !== other);
+    if (prereq) {
+      var other = object[index];
+      return value === value ? value === other : other !== other;
+    }
+    return false;
   }
 
   return isIterateeCall;

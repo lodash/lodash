@@ -1,4 +1,4 @@
-# lodash v3.3.0
+# lodash v3.3.1
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
 

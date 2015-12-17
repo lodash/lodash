@@ -104,10 +104,10 @@ define(['../internal/assignOwnDefaults', '../utility/attempt', '../internal/base
    * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
    * compiled.source;
    * // => function(data) {
-   *   var __t, __p = '';
-   *   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
-   *   return __p;
-   * }
+   * //   var __t, __p = '';
+   * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
+   * //   return __p;
+   * // }
    *
    * // using the `source` property to inline compiled templates for meaningful
    * // line numbers in error messages and a stack trace

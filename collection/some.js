@@ -38,7 +38,7 @@ define(['../internal/arraySome', '../internal/baseCallback', '../internal/baseSo
    * ];
    *
    * // using the `_.matches` callback shorthand
-   * _.some(users, { user': 'barney', 'active': false });
+   * _.some(users, { 'user': 'barney', 'active': false });
    * // => false
    *
    * // using the `_.matchesProperty` callback shorthand

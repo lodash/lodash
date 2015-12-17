@@ -15,7 +15,7 @@ define(['./baseIndexOf', './cacheIndexOf', './createCache'], function(baseIndexO
         length = array.length,
         isCommon = true,
         isLarge = isCommon && length >= 200,
-        seen = isLarge && createCache(),
+        seen = isLarge ? createCache() : null,
         result = [];
 
     if (seen) {

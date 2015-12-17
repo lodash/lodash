@@ -27,10 +27,14 @@ define(['../internal/createAggregator'], function(createAggregator) {
    * @returns {Array} Returns the array of grouped elements.
    * @example
    *
-   * _.partition([1, 2, 3], function(n) { return n % 2; });
+   * _.partition([1, 2, 3], function(n) {
+   *   return n % 2;
+   * });
    * // => [[1, 3], [2]]
    *
-   * _.partition([1.2, 2.3, 3.4], function(n) { return this.floor(n) % 2; }, Math);
+   * _.partition([1.2, 2.3, 3.4], function(n) {
+   *   return this.floor(n) % 2;
+   * }, Math);
    * // => [[1, 3], [2]]
    *
    * var users = [
@@ -39,7 +43,9 @@ define(['../internal/createAggregator'], function(createAggregator) {
    *   { 'user': 'pebbles', 'age': 1,  'active': false }
    * ];
    *
-   * var mapper = function(array) { return _.pluck(array, 'user'); };
+   * var mapper = function(array) {
+   *   return _.pluck(array, 'user');
+   * };
    *
    * // using the `_.matches` callback shorthand
    * _.map(_.partition(users, { 'age': 1, 'active': false }), mapper);

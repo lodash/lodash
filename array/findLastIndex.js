@@ -31,7 +31,9 @@ define(['../internal/baseCallback'], function(baseCallback) {
    *   { 'user': 'pebbles', 'active': false }
    * ];
    *
-   * _.findLastIndex(users, function(chr) { return chr.user == 'pebbles'; });
+   * _.findLastIndex(users, function(chr) {
+   *   return chr.user == 'pebbles';
+   * });
    * // => 2
    *
    * // using the `_.matches` callback shorthand

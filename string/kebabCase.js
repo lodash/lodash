@@ -1,7 +1,7 @@
 define(['../internal/createCompounder'], function(createCompounder) {
 
   /**
-   * Converts `string` to kebab case (a.k.a. spinal case).
+   * Converts `string` to kebab case.
    * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) for
    * more details.
    *

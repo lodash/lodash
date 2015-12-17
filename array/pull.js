@@ -25,6 +25,7 @@ define(['../internal/baseIndexOf'], function(baseIndexOf) {
    * @example
    *
    * var array = [1, 2, 3, 1, 2, 3];
+   *
    * _.pull(array, 2, 3);
    * console.log(array);
    * // => [1, 1]

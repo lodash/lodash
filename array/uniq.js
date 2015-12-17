@@ -43,7 +43,9 @@ define(['../internal/baseCallback', '../internal/baseUniq', '../internal/isItera
    * // => [1, 2]
    *
    * // using an iteratee function
-   * _.uniq([1, 2.5, 1.5, 2], function(n) { return this.floor(n); }, Math);
+   * _.uniq([1, 2.5, 1.5, 2], function(n) {
+   *   return this.floor(n);
+   * }, Math);
    * // => [1, 2.5]
    *
    * // using the `_.property` callback shorthand
@@ -55,8 +57,7 @@ define(['../internal/baseCallback', '../internal/baseUniq', '../internal/isItera
     if (!length) {
       return [];
     }
-    // Juggle arguments.
-    if (typeof isSorted != 'boolean' && isSorted != null) {
+    if (isSorted != null && typeof isSorted != 'boolean') {
       thisArg = iteratee;
       iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
       isSorted = false;

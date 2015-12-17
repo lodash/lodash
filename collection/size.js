@@ -11,11 +11,11 @@ define(['../internal/isLength', '../object/keys'], function(isLength, keys) {
    * @returns {number} Returns the size of `collection`.
    * @example
    *
-   * _.size([1, 2]);
-   * // => 2
-   *
-   * _.size({ 'one': 1, 'two': 2, 'three': 3 });
+   * _.size([1, 2, 3]);
    * // => 3
+   *
+   * _.size({ 'a': 1, 'b': 2 });
+   * // => 2
    *
    * _.size('pebbles');
    * // => 7

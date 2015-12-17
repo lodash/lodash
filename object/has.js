@@ -18,7 +18,9 @@ define([], function() {
    * @returns {boolean} Returns `true` if `key` is a direct property, else `false`.
    * @example
    *
-   * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
+   * var object = { 'a': 1, 'b': 2, 'c': 3 };
+   *
+   * _.has(object, 'b');
    * // => true
    */
   function has(object, key) {

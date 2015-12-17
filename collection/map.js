@@ -37,11 +37,15 @@ define(['../internal/arrayMap', '../internal/baseCallback', '../internal/baseMap
    * @returns {Array} Returns the new mapped array.
    * @example
    *
-   * _.map([1, 2, 3], function(n) { return n * 3; });
-   * // => [3, 6, 9]
+   * function timesThree(n) {
+   *   return n * 3;
+   * }
    *
-   * _.map({ 'one': 1, 'two': 2, 'three': 3 }, function(n) { return n * 3; });
-   * // => [3, 6, 9] (iteration order is not guaranteed)
+   * _.map([1, 2], timesThree);
+   * // => [3, 6]
+   *
+   * _.map({ 'a': 1, 'b': 2 }, timesThree);
+   * // => [3, 6] (iteration order is not guaranteed)
    *
    * var users = [
    *   { 'user': 'barney' },

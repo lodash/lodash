@@ -1,4 +1,4 @@
-define([], function() {
+define(['./baseCreate', './baseLodash'], function(baseCreate, baseLodash) {
 
   /**
    * The base constructor for creating `lodash` wrapper objects.
@@ -13,6 +13,9 @@ define([], function() {
     this.__actions__ = actions || [];
     this.__chain__ = !!chainAll;
   }
+
+  LodashWrapper.prototype = baseCreate(baseLodash.prototype);
+  LodashWrapper.prototype.constructor = LodashWrapper;
 
   return LodashWrapper;
 });

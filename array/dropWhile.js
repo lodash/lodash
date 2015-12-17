@@ -26,7 +26,9 @@ define(['../internal/baseCallback', '../internal/baseSlice'], function(baseCallb
    * @returns {Array} Returns the slice of `array`.
    * @example
    *
-   * _.dropWhile([1, 2, 3], function(n) { return n < 3; });
+   * _.dropWhile([1, 2, 3], function(n) {
+   *   return n < 3;
+   * });
    * // => [3]
    *
    * var users = [

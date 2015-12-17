@@ -19,7 +19,9 @@ define(['../internal/baseBindAll', '../internal/baseFlatten', '../object/functio
    *
    * var view = {
    *   'label': 'docs',
-   *   'onClick': function() { console.log('clicked ' + this.label); }
+   *   'onClick': function() {
+   *     console.log('clicked ' + this.label);
+   *   }
    * };
    *
    * _.bindAll(view);

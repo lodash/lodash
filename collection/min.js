@@ -38,7 +38,9 @@ define(['../internal/arrayMin', '../internal/createExtremum'], function(arrayMin
    *   { 'user': 'fred',   'age': 40 }
    * ];
    *
-   * _.min(users, function(chr) { return chr.age; });
+   * _.min(users, function(chr) {
+   *   return chr.age;
+   * });
    * // => { 'user': 'barney', 'age': 36 };
    *
    * // using the `_.property` callback shorthand

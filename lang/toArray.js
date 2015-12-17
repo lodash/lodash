@@ -10,7 +10,9 @@ define(['../internal/arrayCopy', '../internal/isLength', '../object/values'], fu
    * @returns {Array} Returns the converted array.
    * @example
    *
-   * (function() { return _.toArray(arguments).slice(1); })(1, 2, 3);
+   * (function() {
+   *   return _.toArray(arguments).slice(1);
+   * }(1, 2, 3));
    * // => [2, 3]
    */
   function toArray(value) {

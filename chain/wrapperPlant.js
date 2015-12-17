@@ -1,4 +1,4 @@
-define(['../internal/LodashWrapper', '../internal/wrapperClone'], function(LodashWrapper, wrapperClone) {
+define(['../internal/baseLodash', '../internal/wrapperClone'], function(baseLodash, wrapperClone) {
 
   /**
    * Creates a clone of the chained sequence planting `value` as the wrapped value.
@@ -27,7 +27,7 @@ define(['../internal/LodashWrapper', '../internal/wrapperClone'], function(Lodas
     var result,
         parent = this;
 
-    while (parent instanceof LodashWrapper) {
+    while (parent instanceof baseLodash) {
       var clone = wrapperClone(parent);
       if (result) {
         previous.__wrapped__ = clone;

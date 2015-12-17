@@ -42,7 +42,9 @@ define(['../internal/baseMerge', '../internal/createAssigner'], function(baseMer
    * };
    *
    * _.merge(object, other, function(a, b) {
-   *   return _.isArray(a) ? a.concat(b) : undefined;
+   *   if (_.isArray(a)) {
+   *     return a.concat(b);
+   *   }
    * });
    * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
    */

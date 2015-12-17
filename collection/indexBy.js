@@ -36,10 +36,14 @@ define(['../internal/createAggregator'], function(createAggregator) {
    * _.indexBy(keyData, 'dir');
    * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
    *
-   * _.indexBy(keyData, function(object) { return String.fromCharCode(object.code); });
+   * _.indexBy(keyData, function(object) {
+   *   return String.fromCharCode(object.code);
+   * });
    * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
    *
-   * _.indexBy(keyData, function(object) { return this.fromCharCode(object.code); }, String);
+   * _.indexBy(keyData, function(object) {
+   *   return this.fromCharCode(object.code);
+   * }, String);
    * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
    */
   var indexBy = createAggregator(function(result, value, key) {

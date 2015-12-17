@@ -30,13 +30,21 @@ define(['../internal/baseToString', '../internal/isIterateeCall', '../lang/isObj
    * _.trunc('hi-diddly-ho there, neighborino', 24);
    * // => 'hi-diddly-ho there, n...'
    *
-   * _.trunc('hi-diddly-ho there, neighborino', { 'length': 24, 'separator': ' ' });
+   * _.trunc('hi-diddly-ho there, neighborino', {
+   *   'length': 24,
+   *   'separator': ' '
+   * });
    * // => 'hi-diddly-ho there,...'
    *
-   * _.trunc('hi-diddly-ho there, neighborino', { 'length': 24, 'separator': /,? +/ });
+   * _.trunc('hi-diddly-ho there, neighborino', {
+   *   'length': 24,
+   *   'separator': /,? +/
+   * });
    * //=> 'hi-diddly-ho there...'
    *
-   * _.trunc('hi-diddly-ho there, neighborino', { 'omission': ' [...]' });
+   * _.trunc('hi-diddly-ho there, neighborino', {
+   *   'omission': ' [...]'
+   * });
    * // => 'hi-diddly-ho there, neig [...]'
    */
   function trunc(string, options, guard) {

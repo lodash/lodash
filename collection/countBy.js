@@ -34,10 +34,14 @@ define(['../internal/createAggregator'], function(createAggregator) {
    * @returns {Object} Returns the composed aggregate object.
    * @example
    *
-   * _.countBy([4.3, 6.1, 6.4], function(n) { return Math.floor(n); });
+   * _.countBy([4.3, 6.1, 6.4], function(n) {
+   *   return Math.floor(n);
+   * });
    * // => { '4': 1, '6': 2 }
    *
-   * _.countBy([4.3, 6.1, 6.4], function(n) { return this.floor(n); }, Math);
+   * _.countBy([4.3, 6.1, 6.4], function(n) {
+   *   return this.floor(n);
+   * }, Math);
    * // => { '4': 1, '6': 2 }
    *
    * _.countBy(['one', 'two', 'three'], 'length');

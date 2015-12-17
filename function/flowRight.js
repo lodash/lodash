@@ -1,4 +1,4 @@
-define(['../internal/arrayEvery', '../lang/isFunction'], function(arrayEvery, isFunction) {
+define(['../internal/arrayEvery', '../internal/baseIsFunction'], function(arrayEvery, baseIsFunction) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -34,7 +34,7 @@ define(['../internal/arrayEvery', '../lang/isFunction'], function(arrayEvery, is
     if (fromIndex < 0) {
       return function() { return arguments[0]; };
     }
-    if (!arrayEvery(funcs, isFunction)) {
+    if (!arrayEvery(funcs, baseIsFunction)) {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     return function() {

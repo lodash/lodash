@@ -1,4 +1,4 @@
-define(['../internal/LazyWrapper', '../internal/LodashWrapper', '../lang/isArray', '../internal/isObjectLike', '../internal/wrapperClone'], function(LazyWrapper, LodashWrapper, isArray, isObjectLike, wrapperClone) {
+define(['../internal/LazyWrapper', '../internal/LodashWrapper', '../internal/baseLodash', '../lang/isArray', '../internal/isObjectLike', '../internal/wrapperClone'], function(LazyWrapper, LodashWrapper, baseLodash, isArray, isObjectLike, wrapperClone) {
 
   /** Used for native method references. */
   var objectProto = Object.prototype;
@@ -78,11 +78,15 @@ define(['../internal/LazyWrapper', '../internal/LodashWrapper', '../lang/isArray
    * var wrapped = _([1, 2, 3]);
    *
    * // returns an unwrapped value
-   * wrapped.reduce(function(sum, n) { return sum + n; });
+   * wrapped.reduce(function(sum, n) {
+   *   return sum + n;
+   * });
    * // => 6
    *
    * // returns a wrapped value
-   * var squares = wrapped.map(function(n) { return n * n; });
+   * var squares = wrapped.map(function(n) {
+   *   return n * n;
+   * });
    *
    * _.isArray(squares);
    * // => false
@@ -101,6 +105,9 @@ define(['../internal/LazyWrapper', '../internal/LodashWrapper', '../lang/isArray
     }
     return new LodashWrapper(value);
   }
+
+  // Ensure wrappers are instances of `baseLodash`.
+  lodash.prototype = baseLodash.prototype;
 
   return lodash;
 });

@@ -16,7 +16,9 @@ define([], function() {
    * @example
    *
    * _([1, 2, 3])
-   *  .tap(function(array) { array.pop(); })
+   *  .tap(function(array) {
+   *    array.pop();
+   *  })
    *  .reverse()
    *  .value();
    * // => [2, 1]

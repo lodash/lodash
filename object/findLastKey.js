@@ -31,7 +31,9 @@ define(['../internal/baseCallback', '../internal/baseFind', '../internal/baseFor
    *   'pebbles': { 'age': 1,  'active': true }
    * };
    *
-   * _.findLastKey(users, function(chr) { return chr.age < 40; });
+   * _.findLastKey(users, function(chr) {
+   *   return chr.age < 40;
+   * });
    * // => returns `pebbles` assuming `_.findKey` returns `barney`
    *
    * // using the `_.matches` callback shorthand

@@ -29,10 +29,14 @@ define(['../internal/baseCallback', '../internal/baseEach', '../internal/baseSor
    * @returns {Array} Returns the new sorted array.
    * @example
    *
-   * _.sortBy([1, 2, 3], function(n) { return Math.sin(n); });
+   * _.sortBy([1, 2, 3], function(n) {
+   *   return Math.sin(n);
+   * });
    * // => [3, 1, 2]
    *
-   * _.sortBy([1, 2, 3], function(n) { return this.sin(n); }, Math);
+   * _.sortBy([1, 2, 3], function(n) {
+   *   return this.sin(n);
+   * }, Math);
    * // => [3, 1, 2]
    *
    * var users = [

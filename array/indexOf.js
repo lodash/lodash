@@ -24,15 +24,15 @@ define(['../internal/baseIndexOf', '../internal/binaryIndex'], function(baseInde
    * @returns {number} Returns the index of the matched value, else `-1`.
    * @example
    *
-   * _.indexOf([1, 2, 3, 1, 2, 3], 2);
-   * // => 1
+   * _.indexOf([1, 2, 1, 2], 2);
+   * // => 2
    *
    * // using `fromIndex`
-   * _.indexOf([1, 2, 3, 1, 2, 3], 2, 3);
-   * // => 4
+   * _.indexOf([1, 2, 1, 2], 2, 2);
+   * // => 3
    *
    * // performing a binary search
-   * _.indexOf([4, 4, 5, 5, 6, 6], 5, true);
+   * _.indexOf([1, 1, 2, 2], 2, true);
    * // => 2
    */
   function indexOf(array, value, fromIndex) {

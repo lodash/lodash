@@ -19,7 +19,9 @@ define(['./lodash'], function(lodash) {
    *
    * var youngest = _.chain(users)
    *   .sortBy('age')
-   *   .map(function(chr) { return chr.user + ' is ' + chr.age; })
+   *   .map(function(chr) {
+   *     return chr.user + ' is ' + chr.age;
+   *   })
    *   .first()
    *   .value();
    * // => 'pebbles is 1'

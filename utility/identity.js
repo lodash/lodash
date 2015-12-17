@@ -11,6 +11,7 @@ define([], function() {
    * @example
    *
    * var object = { 'user': 'fred' };
+   *
    * _.identity(object) === object;
    * // => true
    */

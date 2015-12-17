@@ -12,7 +12,9 @@ define(['../lang/isNative'], function(isNative) {
    * @category Date
    * @example
    *
-   * _.defer(function(stamp) { console.log(_.now() - stamp); }, _.now());
+   * _.defer(function(stamp) {
+   *   console.log(_.now() - stamp);
+   * }, _.now());
    * // => logs the number of milliseconds it took for the deferred function to be invoked
    */
   var now = nativeNow || function() {

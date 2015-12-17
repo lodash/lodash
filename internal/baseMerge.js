@@ -1,4 +1,4 @@
-define(['./arrayEach', './baseForOwn', './baseMergeDeep', '../lang/isArray', './isLength', './isObjectLike', '../lang/isTypedArray'], function(arrayEach, baseForOwn, baseMergeDeep, isArray, isLength, isObjectLike, isTypedArray) {
+define(['./arrayEach', './baseForOwn', './baseMergeDeep', '../lang/isArray', './isLength', '../lang/isObject', './isObjectLike', '../lang/isTypedArray'], function(arrayEach, baseForOwn, baseMergeDeep, isArray, isLength, isObject, isObjectLike, isTypedArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -16,8 +16,10 @@ define(['./arrayEach', './baseForOwn', './baseMergeDeep', '../lang/isArray', './
    * @returns {Object} Returns the destination object.
    */
   function baseMerge(object, source, customizer, stackA, stackB) {
+    if (!isObject(object)) {
+      return object;
+    }
     var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
-
     (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
       if (isObjectLike(srcValue)) {
         stackA || (stackA = []);

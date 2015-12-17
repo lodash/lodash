@@ -17,7 +17,7 @@ define(['../internal/baseFlatten', '../internal/basePullAt'], function(baseFlatt
    * @example
    *
    * var array = [5, 10, 15, 20];
-   * var evens = _.pullAt(array, [1, 3]);
+   * var evens = _.pullAt(array, 1, 3);
    *
    * console.log(array);
    * // => [5, 15]

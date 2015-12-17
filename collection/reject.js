@@ -25,7 +25,9 @@ define(['../internal/arrayFilter', '../internal/baseCallback', '../internal/base
    * @returns {Array} Returns the new filtered array.
    * @example
    *
-   * var odds = _.reject([1, 2, 3, 4], function(n) { return n % 2 == 0; });
+   * _.reject([1, 2, 3, 4], function(n) {
+   *   return n % 2 == 0;
+   * });
    * // => [1, 3]
    *
    * var users = [

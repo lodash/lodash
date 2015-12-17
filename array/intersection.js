@@ -43,11 +43,11 @@ define(['../internal/baseIndexOf', '../internal/cacheIndexOf', '../internal/crea
     outer:
     while (++index < length) {
       value = array[index];
-      if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value)) < 0) {
+      if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value, 0)) < 0) {
         argsIndex = argsLength;
         while (--argsIndex) {
           var cache = caches[argsIndex];
-          if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value)) < 0) {
+          if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value, 0)) < 0) {
             continue outer;
           }
         }

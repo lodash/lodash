@@ -1,7 +1,4 @@
-define(['../internal/baseEach', '../internal/baseFlatten', '../internal/baseSortBy', '../internal/compareMultipleAscending', '../internal/isIterateeCall', '../internal/isLength'], function(baseEach, baseFlatten, baseSortBy, compareMultipleAscending, isIterateeCall, isLength) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['../internal/baseFlatten', '../internal/baseSortByOrder', '../internal/isIterateeCall'], function(baseFlatten, baseSortByOrder, isIterateeCall) {
 
   /**
    * This method is like `_.sortBy` except that it sorts by property names
@@ -27,25 +24,16 @@ define(['../internal/baseEach', '../internal/baseFlatten', '../internal/baseSort
    * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
    */
   function sortByAll(collection) {
-    var args = arguments;
-    if (args.length > 3 && isIterateeCall(args[1], args[2], args[3])) {
+    if (collection == null) {
+      return [];
+    }
+    var args = arguments,
+        guard = args[3];
+
+    if (guard && isIterateeCall(args[1], args[2], guard)) {
       args = [collection, args[1]];
     }
-    var index = -1,
-        length = collection ? collection.length : 0,
-        props = baseFlatten(args, false, false, 1),
-        result = isLength(length) ? Array(length) : [];
-
-    baseEach(collection, function(value) {
-      var length = props.length,
-          criteria = Array(length);
-
-      while (length--) {
-        criteria[length] = value == null ? undefined : value[props[length]];
-      }
-      result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
-    });
-    return baseSortBy(result, compareMultipleAscending);
+    return baseSortByOrder(collection, baseFlatten(args, false, false, 1), []);
   }
 
   return sortByAll;

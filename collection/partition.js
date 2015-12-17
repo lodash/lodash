@@ -35,7 +35,7 @@ define(['../internal/createAggregator'], function(createAggregator) {
    * _.partition([1.2, 2.3, 3.4], function(n) {
    *   return this.floor(n) % 2;
    * }, Math);
-   * // => [[1, 3], [2]]
+   * // => [[1.2, 3.4], [2.3]]
    *
    * var users = [
    *   { 'user': 'barney',  'age': 36, 'active': false },

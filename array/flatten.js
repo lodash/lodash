@@ -25,7 +25,7 @@ define(['../internal/baseFlatten', '../internal/isIterateeCall'], function(baseF
     if (guard && isIterateeCall(array, isDeep, guard)) {
       isDeep = false;
     }
-    return length ? baseFlatten(array, isDeep) : [];
+    return length ? baseFlatten(array, isDeep, false, 0) : [];
   }
 
   return flatten;

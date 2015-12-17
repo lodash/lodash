@@ -42,7 +42,7 @@ define(['./baseIndexOf', './cacheIndexOf', './createCache'], function(baseIndexO
         }
         result.push(value);
       }
-      else if (indexOf(seen, computed) < 0) {
+      else if (indexOf(seen, computed, 0) < 0) {
         if (iteratee || isLarge) {
           seen.push(computed);
         }

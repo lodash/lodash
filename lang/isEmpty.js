@@ -1,7 +1,7 @@
 define(['./isArguments', './isArray', './isFunction', '../internal/isLength', '../internal/isObjectLike', './isString', '../object/keys'], function(isArguments, isArray, isFunction, isLength, isObjectLike, isString, keys) {
 
   /**
-   * Checks if a value is empty. A value is considered empty unless it is an
+   * Checks if `value` is empty. A value is considered empty unless it is an
    * `arguments` object, array, string, or jQuery-like collection with a length
    * greater than `0` or an object with own enumerable properties.
    *

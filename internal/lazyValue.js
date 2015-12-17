@@ -1,8 +1,9 @@
 define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrapperValue, getView, isArray) {
 
   /** Used to indicate the type of lazy iteratees. */
-  var LAZY_FILTER_FLAG = 0,
-      LAZY_MAP_FLAG = 1;
+  var LAZY_DROP_WHILE_FLAG = 0,
+      LAZY_MAP_FLAG = 2,
+      LAZY_TAKE_WHILE_FLAG = 3;
 
   /* Native method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
@@ -44,16 +45,22 @@ define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrap
       while (++iterIndex < iterLength) {
         var data = iteratees[iterIndex],
             iteratee = data.iteratee,
-            computed = iteratee(value, index, array),
             type = data.type;
 
+        if (type != LAZY_DROP_WHILE_FLAG) {
+          var computed = iteratee(value);
+        } else {
+          data.done = data.done && (isRight ? index < data.index : index > data.index);
+          data.index = index;
+          computed = data.done || (data.done = !iteratee(value));
+        }
         if (type == LAZY_MAP_FLAG) {
           value = computed;
         } else if (!computed) {
-          if (type == LAZY_FILTER_FLAG) {
-            continue outer;
-          } else {
+          if (type == LAZY_TAKE_WHILE_FLAG) {
             break outer;
+          } else {
+            continue outer;
           }
         }
       }

@@ -5,7 +5,7 @@ define(['../internal/baseToString', '../internal/escapeHtmlChar'], function(base
       reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 
   /**
-   * Converts the characters "&", "<", ">", '"', "'", and '`', in `string` to
+   * Converts the characters "&", "<", ">", '"', "'", and "\`", in `string` to
    * their corresponding HTML entities.
    *
    * **Note:** No other characters are escaped. To escape additional characters

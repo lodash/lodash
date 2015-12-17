@@ -1,8 +1,8 @@
 define(['../internal/isLength', '../object/keys'], function(isLength, keys) {
 
   /**
-   * Gets the size of `collection` by returning `collection.length` for
-   * array-like values or the number of own enumerable properties for objects.
+   * Gets the size of `collection` by returning its length for array-like
+   * values or the number of own enumerable properties for objects.
    *
    * @static
    * @memberOf _

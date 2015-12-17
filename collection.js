@@ -1,4 +1,4 @@
-define(['./collection/all', './collection/any', './collection/at', './collection/collect', './collection/contains', './collection/countBy', './collection/detect', './collection/each', './collection/eachRight', './collection/every', './collection/filter', './collection/find', './collection/findLast', './collection/findWhere', './collection/foldl', './collection/foldr', './collection/forEach', './collection/forEachRight', './collection/groupBy', './collection/include', './collection/includes', './collection/indexBy', './collection/inject', './collection/invoke', './collection/map', './collection/max', './collection/min', './collection/partition', './collection/pluck', './collection/reduce', './collection/reduceRight', './collection/reject', './collection/sample', './collection/select', './collection/shuffle', './collection/size', './collection/some', './collection/sortBy', './collection/sortByAll', './collection/where'], function(all, any, at, collect, contains, countBy, detect, each, eachRight, every, filter, find, findLast, findWhere, foldl, foldr, forEach, forEachRight, groupBy, include, includes, indexBy, inject, invoke, map, max, min, partition, pluck, reduce, reduceRight, reject, sample, select, shuffle, size, some, sortBy, sortByAll, where) {
+define(['./collection/all', './collection/any', './collection/at', './collection/collect', './collection/contains', './collection/countBy', './collection/detect', './collection/each', './collection/eachRight', './collection/every', './collection/filter', './collection/find', './collection/findLast', './collection/findWhere', './collection/foldl', './collection/foldr', './collection/forEach', './collection/forEachRight', './collection/groupBy', './collection/include', './collection/includes', './collection/indexBy', './collection/inject', './collection/invoke', './collection/map', './math/max', './math/min', './collection/partition', './collection/pluck', './collection/reduce', './collection/reduceRight', './collection/reject', './collection/sample', './collection/select', './collection/shuffle', './collection/size', './collection/some', './collection/sortBy', './collection/sortByAll', './collection/sortByOrder', './math/sum', './collection/where'], function(all, any, at, collect, contains, countBy, detect, each, eachRight, every, filter, find, findLast, findWhere, foldl, foldr, forEach, forEachRight, groupBy, include, includes, indexBy, inject, invoke, map, max, min, partition, pluck, reduce, reduceRight, reject, sample, select, shuffle, size, some, sortBy, sortByAll, sortByOrder, sum, where) {
   return {
     'all': all,
     'any': any,
@@ -39,6 +39,8 @@ define(['./collection/all', './collection/any', './collection/at', './collection
     'some': some,
     'sortBy': sortBy,
     'sortByAll': sortByAll,
+    'sortByOrder': sortByOrder,
+    'sum': sum,
     'where': where
   };
 });

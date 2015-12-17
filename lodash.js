@@ -1939,6 +1939,17 @@
       return this;
     }
 
+    /**
+     * Clears the map data
+     *
+     * @private
+     * @name clear
+     * @memberOf MapCache
+     */
+    function mapClear() {
+      this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
+    }
+
     /*------------------------------------------------------------------------*/
 
     /**
@@ -13737,6 +13748,7 @@
     Hash.prototype = nativeCreate ? nativeCreate(null) : objectProto;
 
     // Add functions to the `MapCache`.
+    MapCache.prototype.clear = mapClear;
     MapCache.prototype['delete'] = mapDelete;
     MapCache.prototype.get = mapGet;
     MapCache.prototype.has = mapHas;

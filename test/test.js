@@ -12485,6 +12485,28 @@
 
       _.memoize.Cache = oldCache;
     });
+
+    QUnit.test('should allow clearing cache', function(assert) {
+      assert.expect(5);
+
+      var memoized = _.memoize(_.identity);
+
+      assert.strictEqual(memoized.cache.has('a'), false);
+
+      memoized('a');
+
+      assert.strictEqual(memoized.cache.has('a'), true);
+
+      memoized.cache.clear();
+
+      assert.strictEqual(memoized.cache.has('a'), false);
+
+      memoized('a');
+      memoized('b');
+
+      assert.strictEqual(memoized.cache.has('a'), true);
+      assert.strictEqual(memoized.cache.has('b'), true);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

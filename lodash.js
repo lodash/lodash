@@ -996,7 +996,7 @@
   }
 
   /**
-   * Used by `_.sortByOrder` to compare multiple properties of a value to another
+   * Used by `_.orderBy` to compare multiple properties of a value to another
    * and stable sort them.
    *
    * If `orders` is unspecified, all valuess are sorted in ascending order. Otherwise,
@@ -1514,18 +1514,17 @@
      * `intersection`, `intersectionBy`, `intersectionWith`, invert`, `invokeMap`,
      * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
      * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
-     * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `over`,
-     * `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`, `partition`,
-     * `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`,
-     * `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,`reject`,
-     * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
-     * `slice`, `sort`, `sortBy`, `sortByOrder`, `splice`, `spread`, `tail`,
-     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
-     * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
-     * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
-     * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
-     * `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`,
-     * and `zipWith`
+     * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `orderBy`,
+     * `over`, `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`,
+     * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
+     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,
+     * `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`,
+     * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`,
+     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
+     * `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`,
+     * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
+     * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
+     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -3094,6 +3093,35 @@
     }
 
     /**
+     * The base implementation of `_.orderBy` without param guards.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
+     * @param {string[]} orders The sort orders of `iteratees`.
+     * @returns {Array} Returns the new sorted array.
+     */
+    function baseOrderBy(collection, iteratees, orders) {
+      var toIteratee = getIteratee(),
+          index = -1;
+
+      iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
+        return toIteratee(iteratee);
+      });
+
+      var result = baseMap(collection, function(value, key, collection) {
+        var criteria = arrayMap(iteratees, function(iteratee) {
+          return iteratee(value);
+        });
+        return { 'criteria': criteria, 'index': ++index, 'value': value };
+      });
+
+      return baseSortBy(result, function(object, other) {
+        return compareMultiple(object, other, orders);
+      });
+    }
+
+    /**
      * The base implementation of `_.pick` without support for individual
      * property names.
      *
@@ -3379,35 +3407,6 @@
         return !result;
       });
       return !!result;
-    }
-
-    /**
-     * The base implementation of `_.sortByOrder` without param guards.
-     *
-     * @private
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
-     * @param {string[]} orders The sort orders of `iteratees`.
-     * @returns {Array} Returns the new sorted array.
-     */
-    function baseSortByOrder(collection, iteratees, orders) {
-      var toIteratee = getIteratee(),
-          index = -1;
-
-      iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
-        return toIteratee(iteratee);
-      });
-
-      var result = baseMap(collection, function(value, key, collection) {
-        var criteria = arrayMap(iteratees, function(iteratee) {
-          return iteratee(value);
-        });
-        return { 'criteria': criteria, 'index': ++index, 'value': value };
-      });
-
-      return baseSortBy(result, function(object, other) {
-        return compareMultiple(object, other, orders);
-      });
     }
 
     /**
@@ -7630,6 +7629,49 @@
     }
 
     /**
+     * This method is like `_.sortBy` except that it allows specifying the
+     * sort orders of the iteratees to sort by. If `orders` is unspecified, all
+     * values are sorted in ascending order. Otherwise, a value is sorted in
+     * ascending order if its corresponding order is "asc", and descending if "desc".
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function[]|Object[]|string[]} [iteratees=[_.identity]] The iteratees to sort by.
+     * @param {string[]} [orders] The sort orders of `iteratees`.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.
+     * @returns {Array} Returns the new sorted array.
+     * @example
+     *
+     * var resolve = _.partial(_.map, _, _.values);
+     *
+     * var users = [
+     *   { 'user': 'fred',   'age': 48 },
+     *   { 'user': 'barney', 'age': 34 },
+     *   { 'user': 'fred',   'age': 42 },
+     *   { 'user': 'barney', 'age': 36 }
+     * ];
+     *
+     * // sort by `user` in ascending order and by `age` in descending order
+     * resolve( _.orderBy(users, ['user', 'age'], ['asc', 'desc']) );
+     * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
+     */
+    function orderBy(collection, iteratees, orders, guard) {
+      if (collection == null) {
+        return [];
+      }
+      if (!isArray(iteratees)) {
+        iteratees = iteratees == null ? [] : [iteratees];
+      }
+      orders = guard ? undefined : orders;
+      if (!isArray(orders)) {
+        orders = orders == null ? [] : [orders];
+      }
+      return baseOrderBy(collection, iteratees, orders);
+    }
+
+    /**
      * Creates an array of elements split into two groups, the first of which
      * contains elements `predicate` returns truthy for, while the second of which
      * contains elements `predicate` returns falsey for. The predicate is invoked
@@ -7684,8 +7726,8 @@
      * `_.reduce`, `_.reduceRight`, and `_.transform`.
      *
      * The guarded methods are:
-     * `assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `sortBy`,
-     * and `sortByOrder`
+     * `assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `orderBy`,
+     * and `sortBy`
      *
      * @static
      * @memberOf _
@@ -7971,51 +8013,8 @@
       } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
         iteratees.length = 1;
       }
-      return baseSortByOrder(collection, baseFlatten(iteratees), []);
+      return baseOrderBy(collection, baseFlatten(iteratees), []);
     });
-
-    /**
-     * This method is like `_.sortBy` except that it allows specifying the
-     * sort orders of the iteratees to sort by. If `orders` is unspecified, all
-     * values are sorted in ascending order. Otherwise, a value is sorted in
-     * ascending order if its corresponding order is "asc", and descending if "desc".
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function[]|Object[]|string[]} [iteratees=[_.identity]] The iteratees to sort by.
-     * @param {string[]} [orders] The sort orders of `iteratees`.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.reduce`.
-     * @returns {Array} Returns the new sorted array.
-     * @example
-     *
-     * var resolve = _.partial(_.map, _, _.values);
-     *
-     * var users = [
-     *   { 'user': 'fred',   'age': 48 },
-     *   { 'user': 'barney', 'age': 34 },
-     *   { 'user': 'fred',   'age': 42 },
-     *   { 'user': 'barney', 'age': 36 }
-     * ];
-     *
-     * // sort by `user` in ascending order and by `age` in descending order
-     * resolve( _.sortByOrder(users, ['user', 'age'], ['asc', 'desc']) );
-     * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
-     */
-    function sortByOrder(collection, iteratees, orders, guard) {
-      if (collection == null) {
-        return [];
-      }
-      if (!isArray(iteratees)) {
-        iteratees = iteratees == null ? [] : [iteratees];
-      }
-      orders = guard ? undefined : orders;
-      if (!isArray(orders)) {
-        orders = orders == null ? [] : [orders];
-      }
-      return baseSortByOrder(collection, iteratees, orders);
-    }
 
     /*------------------------------------------------------------------------*/
 
@@ -13827,6 +13826,7 @@
     lodash.omit = omit;
     lodash.omitBy = omitBy;
     lodash.once = once;
+    lodash.orderBy = orderBy;
     lodash.over = over;
     lodash.overArgs = overArgs;
     lodash.overEvery = overEvery;
@@ -13855,7 +13855,6 @@
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
-    lodash.sortByOrder = sortByOrder;
     lodash.sortedUniq = sortedUniq;
     lodash.sortedUniqBy = sortedUniqBy;
     lodash.split = split;

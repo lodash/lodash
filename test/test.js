@@ -13523,6 +13523,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.orderBy');
+
+  (function() {
+    var objects = [
+      { 'a': 'x', 'b': 3 },
+      { 'a': 'y', 'b': 4 },
+      { 'a': 'x', 'b': 1 },
+      { 'a': 'y', 'b': 2 }
+    ];
+
+    QUnit.test('should sort multiple properties by specified orders', function(assert) {
+      assert.expect(1);
+
+      var actual = _.orderBy(objects, ['a', 'b'], ['desc', 'asc']);
+      assert.deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+    });
+
+    QUnit.test('should sort a property in ascending order when its order is not specified', function(assert) {
+      assert.expect(1);
+
+      var actual = _.orderBy(objects, ['a', 'b'], ['desc']);
+      assert.deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.overArgs');
 
   (function() {
@@ -17337,36 +17364,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.sortByOrder');
-
-  (function() {
-    var objects = [
-      { 'a': 'x', 'b': 3 },
-      { 'a': 'y', 'b': 4 },
-      { 'a': 'x', 'b': 1 },
-      { 'a': 'y', 'b': 2 }
-    ];
-
-    QUnit.test('should sort multiple properties by specified orders', function(assert) {
-      assert.expect(1);
-
-      var actual = _.sortByOrder(objects, ['a', 'b'], ['desc', 'asc']);
-      assert.deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
-    });
-
-    QUnit.test('should sort a property in ascending order when its order is not specified', function(assert) {
-      assert.expect(1);
-
-      var actual = _.sortByOrder(objects, ['a', 'b'], ['desc']);
-      assert.deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('sortBy methods');
 
-  lodashStable.each(['sortBy', 'sortByOrder'], function(methodName) {
+  lodashStable.each(['orderBy', 'sortBy'], function(methodName) {
     var func = _[methodName];
 
     function Pair(a, b, c) {
@@ -22533,6 +22533,7 @@
       'invokeMap',
       'keys',
       'map',
+      'orderBy',
       'pull',
       'pullAll',
       'pullAt',
@@ -22543,7 +22544,6 @@
       'sampleSize',
       'shuffle',
       'sortBy',
-      'sortByOrder',
       'tail',
       'take',
       'times',

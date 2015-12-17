@@ -1,8 +1,8 @@
-define(['../internal/arrayEvery', '../internal/baseCallback', '../internal/baseEvery', '../lang/isArray'], function(arrayEvery, baseCallback, baseEvery, isArray) {
+define(['../internal/arrayEvery', '../internal/baseCallback', '../internal/baseEvery', '../lang/isArray', '../internal/isIterateeCall'], function(arrayEvery, baseCallback, baseEvery, isArray, isIterateeCall) {
 
   /**
    * Checks if `predicate` returns truthy for **all** elements of `collection`.
-   * The predicate is bound to `thisArg` and invoked with three arguments;
+   * The predicate is bound to `thisArg` and invoked with three arguments:
    * (value, index|key, collection).
    *
    * If a property name is provided for `predicate` the created `_.property`
@@ -50,6 +50,9 @@ define(['../internal/arrayEvery', '../internal/baseCallback', '../internal/baseE
    */
   function every(collection, predicate, thisArg) {
     var func = isArray(collection) ? arrayEvery : baseEvery;
+    if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+      predicate = null;
+    }
     if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
       predicate = baseCallback(predicate, thisArg, 3);
     }

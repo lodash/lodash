@@ -1,8 +1,8 @@
-define(['../internal/arrayEach', '../internal/baseEach', '../internal/bindCallback', '../lang/isArray'], function(arrayEach, baseEach, bindCallback, isArray) {
+define(['../internal/arrayEach', '../internal/baseEach', '../internal/createForEach'], function(arrayEach, baseEach, createForEach) {
 
   /**
    * Iterates over elements of `collection` invoking `iteratee` for each element.
-   * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+   * The `iteratee` is bound to `thisArg` and invoked with three arguments:
    * (value, index|key, collection). Iterator functions may exit iteration early
    * by explicitly returning `false`.
    *
@@ -30,11 +30,7 @@ define(['../internal/arrayEach', '../internal/baseEach', '../internal/bindCallba
    * });
    * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
    */
-  function forEach(collection, iteratee, thisArg) {
-    return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-      ? arrayEach(collection, iteratee)
-      : baseEach(collection, bindCallback(iteratee, thisArg, 3));
-  }
+  var forEach = createForEach(arrayEach, baseEach);
 
   return forEach;
 });

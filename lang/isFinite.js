@@ -7,9 +7,7 @@ define(['./isNative', '../internal/root'], function(isNative, root) {
   /**
    * Checks if `value` is a finite primitive number.
    *
-   * **Note:** This method is based on ES `Number.isFinite`. See the
-   * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
-   * for more details.
+   * **Note:** This method is based on [`Number.isFinite`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite).
    *
    * @static
    * @memberOf _

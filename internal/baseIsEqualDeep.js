@@ -3,6 +3,7 @@ define(['./equalArrays', './equalByTag', './equalObjects', '../lang/isArray', '.
   /** `Object#toString` result references. */
   var argsTag = '[object Arguments]',
       arrayTag = '[object Array]',
+      funcTag = '[object Function]',
       objectTag = '[object Object]';
 
   /** Used for native method references. */
@@ -12,9 +13,8 @@ define(['./equalArrays', './equalByTag', './equalObjects', '../lang/isArray', '.
   var hasOwnProperty = objectProto.hasOwnProperty;
 
   /**
-   * Used to resolve the `toStringTag` of values.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-   * for more details.
+   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * of values.
    */
   var objToString = objectProto.toString;
 
@@ -28,12 +28,12 @@ define(['./equalArrays', './equalByTag', './equalObjects', '../lang/isArray', '.
    * @param {Object} other The other object to compare.
    * @param {Function} equalFunc The function to determine equivalents of values.
    * @param {Function} [customizer] The function to customize comparing objects.
-   * @param {boolean} [isWhere] Specify performing partial comparisons.
+   * @param {boolean} [isLoose] Specify performing partial comparisons.
    * @param {Array} [stackA=[]] Tracks traversed `value` objects.
    * @param {Array} [stackB=[]] Tracks traversed `other` objects.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
    */
-  function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
+  function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
     var objIsArr = isArray(object),
         othIsArr = isArray(other),
         objTag = arrayTag,
@@ -55,21 +55,27 @@ define(['./equalArrays', './equalByTag', './equalObjects', '../lang/isArray', '.
         othIsArr = isTypedArray(other);
       }
     }
-    var objIsObj = objTag == objectTag,
-        othIsObj = othTag == objectTag,
+    var objIsObj = (objTag == objectTag || (isLoose && objTag == funcTag)),
+        othIsObj = (othTag == objectTag || (isLoose && othTag == funcTag)),
         isSameTag = objTag == othTag;
 
     if (isSameTag && !(objIsArr || objIsObj)) {
       return equalByTag(object, other, objTag);
     }
-    var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-        othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+    if (isLoose) {
+      if (!isSameTag && !(objIsObj && othIsObj)) {
+        return false;
+      }
+    } else {
+      var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+          othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
-    if (valWrapped || othWrapped) {
-      return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
-    }
-    if (!isSameTag) {
-      return false;
+      if (valWrapped || othWrapped) {
+        return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
+      }
+      if (!isSameTag) {
+        return false;
+      }
     }
     // Assume cyclic values are equal.
     // For more information on detecting circular references see https://es5.github.io/#JO.
@@ -86,7 +92,7 @@ define(['./equalArrays', './equalByTag', './equalObjects', '../lang/isArray', '.
     stackA.push(object);
     stackB.push(other);
 
-    var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isWhere, stackA, stackB);
+    var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
 
     stackA.pop();
     stackB.pop();

@@ -1,7 +1,7 @@
-define(['../internal/baseFlatten', '../internal/createWrapper'], function(baseFlatten, createWrapper) {
+define(['../internal/baseFlatten', '../internal/createWrapper', './restParam'], function(baseFlatten, createWrapper, restParam) {
 
   /** Used to compose bitmasks for wrapper metadata. */
-  var REARG_FLAG = 128;
+  var REARG_FLAG = 256;
 
   /**
    * Creates a function that invokes `func` with arguments arranged according
@@ -31,10 +31,9 @@ define(['../internal/baseFlatten', '../internal/createWrapper'], function(baseFl
    * }, [1, 2, 3]);
    * // => [3, 6, 9]
    */
-  function rearg(func) {
-    var indexes = baseFlatten(arguments, false, false, 1);
-    return createWrapper(func, REARG_FLAG, null, null, null, indexes);
-  }
+  var rearg = restParam(function(func, indexes) {
+    return createWrapper(func, REARG_FLAG, null, null, null, baseFlatten(indexes));
+  });
 
   return rearg;
 });

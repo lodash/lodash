@@ -1,4 +1,4 @@
-define(['../internal/arrayReduceRight', '../internal/baseCallback', '../internal/baseEachRight', '../internal/baseReduce', '../lang/isArray'], function(arrayReduceRight, baseCallback, baseEachRight, baseReduce, isArray) {
+define(['../internal/arrayReduceRight', '../internal/baseEachRight', '../internal/createReduce'], function(arrayReduceRight, baseEachRight, createReduce) {
 
   /**
    * This method is like `_.reduce` except that it iterates over elements of
@@ -22,10 +22,7 @@ define(['../internal/arrayReduceRight', '../internal/baseCallback', '../internal
    * }, []);
    * // => [4, 5, 2, 3, 0, 1]
    */
-  function reduceRight(collection, iteratee, accumulator, thisArg) {
-    var func = isArray(collection) ? arrayReduceRight : baseReduce;
-    return func(collection, baseCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
-  }
+  var reduceRight =  createReduce(arrayReduceRight, baseEachRight);
 
   return reduceRight;
 });

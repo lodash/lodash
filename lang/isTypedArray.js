@@ -45,9 +45,8 @@ define(['../internal/isLength', '../internal/isObjectLike'], function(isLength, 
   var objectProto = Object.prototype;
 
   /**
-   * Used to resolve the `toStringTag` of values.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-   * for more details.
+   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * of values.
    */
   var objToString = objectProto.toString;
 
@@ -68,7 +67,7 @@ define(['../internal/isLength', '../internal/isObjectLike'], function(isLength, 
    * // => false
    */
   function isTypedArray(value) {
-    return (isObjectLike(value) && isLength(value.length) && typedArrayTags[objToString.call(value)]) || false;
+    return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
   }
 
   return isTypedArray;

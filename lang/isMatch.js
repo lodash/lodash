@@ -1,17 +1,11 @@
-define(['../internal/baseIsMatch', '../internal/bindCallback', '../internal/isStrictComparable', '../object/keys'], function(baseIsMatch, bindCallback, isStrictComparable, keys) {
-
-  /** Used for native method references. */
-  var objectProto = Object.prototype;
-
-  /** Used to check objects for own properties. */
-  var hasOwnProperty = objectProto.hasOwnProperty;
+define(['../internal/baseIsMatch', '../internal/bindCallback', '../internal/isStrictComparable', '../object/keys', '../internal/toObject'], function(baseIsMatch, bindCallback, isStrictComparable, keys, toObject) {
 
   /**
    * Performs a deep comparison between `object` and `source` to determine if
    * `object` contains equivalent property values. If `customizer` is provided
    * it is invoked to compare values. If `customizer` returns `undefined`
    * comparisons are handled by the method instead. The `customizer` is bound
-   * to `thisArg` and invoked with three arguments; (value, other, index|key).
+   * to `thisArg` and invoked with three arguments: (value, other, index|key).
    *
    * **Note:** This method supports comparing properties of arrays, booleans,
    * `Date` objects, numbers, `Object` objects, regexes, and strings. Functions
@@ -49,13 +43,19 @@ define(['../internal/baseIsMatch', '../internal/bindCallback', '../internal/isSt
     var props = keys(source),
         length = props.length;
 
+    if (!length) {
+      return true;
+    }
+    if (object == null) {
+      return false;
+    }
     customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
     if (!customizer && length == 1) {
       var key = props[0],
           value = source[key];
 
       if (isStrictComparable(value)) {
-        return object != null && value === object[key] && hasOwnProperty.call(object, key);
+        return value === object[key] && (typeof value != 'undefined' || (key in toObject(object)));
       }
     }
     var values = Array(length),
@@ -65,7 +65,7 @@ define(['../internal/baseIsMatch', '../internal/bindCallback', '../internal/isSt
       value = values[length] = source[props[length]];
       strictCompareFlags[length] = isStrictComparable(value);
     }
-    return baseIsMatch(object, props, values, strictCompareFlags, customizer);
+    return baseIsMatch(toObject(object), props, values, strictCompareFlags, customizer);
   }
 
   return isMatch;

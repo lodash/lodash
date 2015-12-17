@@ -1,4 +1,4 @@
-define(['../internal/baseForRight', '../internal/bindCallback', './keysIn'], function(baseForRight, bindCallback, keysIn) {
+define(['../internal/baseForRight', '../internal/createForIn'], function(baseForRight, createForIn) {
 
   /**
    * This method is like `_.forIn` except that it iterates over properties of
@@ -25,10 +25,7 @@ define(['../internal/baseForRight', '../internal/bindCallback', './keysIn'], fun
    * });
    * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
    */
-  function forInRight(object, iteratee, thisArg) {
-    iteratee = bindCallback(iteratee, thisArg, 3);
-    return baseForRight(object, iteratee, keysIn);
-  }
+  var forInRight = createForIn(baseForRight);
 
   return forInRight;
 });

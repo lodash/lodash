@@ -2,7 +2,7 @@ define([], function() {
 
   /**
    * The base implementation of `_.reduce` and `_.reduceRight` without support
-   * for callback shorthands or `this` binding, which iterates over `collection`
+   * for callback shorthands and `this` binding, which iterates over `collection`
    * using the provided `eachFunc`.
    *
    * @private

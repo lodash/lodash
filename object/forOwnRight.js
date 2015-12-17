@@ -1,4 +1,4 @@
-define(['../internal/baseForRight', '../internal/bindCallback', './keys'], function(baseForRight, bindCallback, keys) {
+define(['../internal/baseForOwnRight', '../internal/createForOwn'], function(baseForOwnRight, createForOwn) {
 
   /**
    * This method is like `_.forOwn` except that it iterates over properties of
@@ -25,10 +25,7 @@ define(['../internal/baseForRight', '../internal/bindCallback', './keys'], funct
    * });
    * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
    */
-  function forOwnRight(object, iteratee, thisArg) {
-    iteratee = bindCallback(iteratee, thisArg, 3);
-    return baseForRight(object, iteratee, keys);
-  }
+  var forOwnRight = createForOwn(baseForOwnRight);
 
   return forOwnRight;
 });

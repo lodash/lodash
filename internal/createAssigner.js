@@ -4,6 +4,8 @@ define(['./bindCallback', './isIterateeCall'], function(bindCallback, isIteratee
    * Creates a function that assigns properties of source object(s) to a given
    * destination object.
    *
+   * **Note:** This function is used to create `_.assign`, `_.defaults`, and `_.merge`.
+   *
    * @private
    * @param {Function} assigner The function to assign values.
    * @returns {Function} Returns the new assigner function.

@@ -1,4 +1,4 @@
-define(['../internal/baseDelay'], function(baseDelay) {
+define(['../internal/baseDelay', './restParam'], function(baseDelay, restParam) {
 
   /**
    * Invokes `func` after `wait` milliseconds. Any additional arguments are
@@ -18,9 +18,9 @@ define(['../internal/baseDelay'], function(baseDelay) {
    * }, 1000, 'later');
    * // => logs 'later' after one second
    */
-  function delay(func, wait) {
-    return baseDelay(func, wait, arguments, 2);
-  }
+  var delay = restParam(function(func, wait, args) {
+    return baseDelay(func, wait, args);
+  });
 
   return delay;
 });

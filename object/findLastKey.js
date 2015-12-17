@@ -1,4 +1,4 @@
-define(['../internal/baseCallback', '../internal/baseFind', '../internal/baseForOwnRight'], function(baseCallback, baseFind, baseForOwnRight) {
+define(['../internal/baseForOwnRight', '../internal/createFindKey'], function(baseForOwnRight, createFindKey) {
 
   /**
    * This method is like `_.findKey` except that it iterates over elements of
@@ -48,10 +48,7 @@ define(['../internal/baseCallback', '../internal/baseFind', '../internal/baseFor
    * _.findLastKey(users, 'active');
    * // => 'pebbles'
    */
-  function findLastKey(object, predicate, thisArg) {
-    predicate = baseCallback(predicate, thisArg, 3);
-    return baseFind(object, predicate, baseForOwnRight, true);
-  }
+  var findLastKey = createFindKey(baseForOwnRight);
 
   return findLastKey;
 });

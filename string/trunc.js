@@ -40,7 +40,7 @@ define(['../internal/baseToString', '../internal/isIterateeCall', '../lang/isObj
    *   'length': 24,
    *   'separator': /,? +/
    * });
-   * //=> 'hi-diddly-ho there...'
+   * // => 'hi-diddly-ho there...'
    *
    * _.trunc('hi-diddly-ho there, neighborino', {
    *   'omission': ' [...]'

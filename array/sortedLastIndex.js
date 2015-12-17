@@ -1,4 +1,4 @@
-define(['../internal/baseCallback', '../internal/binaryIndex', '../internal/binaryIndexBy'], function(baseCallback, binaryIndex, binaryIndexBy) {
+define(['../internal/createSortedIndex'], function(createSortedIndex) {
 
   /**
    * This method is like `_.sortedIndex` except that it returns the highest
@@ -20,11 +20,7 @@ define(['../internal/baseCallback', '../internal/binaryIndex', '../internal/bina
    * _.sortedLastIndex([4, 4, 5, 5], 5);
    * // => 4
    */
-  function sortedLastIndex(array, value, iteratee, thisArg) {
-    return iteratee == null
-      ? binaryIndex(array, value, true)
-      : binaryIndexBy(array, value, baseCallback(iteratee, thisArg, 1), true);
-  }
+  var sortedLastIndex = createSortedIndex(true);
 
   return sortedLastIndex;
 });

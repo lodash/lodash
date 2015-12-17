@@ -1,8 +1,8 @@
-define(['../internal/baseCallback'], function(baseCallback) {
+define(['../internal/createFindIndex'], function(createFindIndex) {
 
   /**
    * This method is like `_.find` except that it returns the index of the first
-   * element `predicate` returns truthy for, instead of the element itself.
+   * element `predicate` returns truthy for instead of the element itself.
    *
    * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.
@@ -48,18 +48,7 @@ define(['../internal/baseCallback'], function(baseCallback) {
    * _.findIndex(users, 'active');
    * // => 2
    */
-  function findIndex(array, predicate, thisArg) {
-    var index = -1,
-        length = array ? array.length : 0;
-
-    predicate = baseCallback(predicate, thisArg, 3);
-    while (++index < length) {
-      if (predicate(array[index], index, array)) {
-        return index;
-      }
-    }
-    return -1;
-  }
+  var findIndex = createFindIndex();
 
   return findIndex;
 });

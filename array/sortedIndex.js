@@ -1,4 +1,4 @@
-define(['../internal/baseCallback', '../internal/binaryIndex', '../internal/binaryIndexBy'], function(baseCallback, binaryIndex, binaryIndexBy) {
+define(['../internal/createSortedIndex'], function(createSortedIndex) {
 
   /**
    * Uses a binary search to determine the lowest index at which `value` should
@@ -7,14 +7,14 @@ define(['../internal/baseCallback', '../internal/binaryIndex', '../internal/bina
    * to compute their sort ranking. The iteratee is bound to `thisArg` and
    * invoked with one argument; (value).
    *
-   * If a property name is provided for `predicate` the created `_.property`
+   * If a property name is provided for `iteratee` the created `_.property`
    * style callback returns the property value of the given element.
    *
    * If a value is also provided for `thisArg` the created `_.matchesProperty`
    * style callback returns `true` for elements that have a matching property
    * value, else `false`.
    *
-   * If an object is provided for `predicate` the created `_.matches` style
+   * If an object is provided for `iteratee` the created `_.matches` style
    * callback returns `true` for elements that have the properties of the given
    * object, else `false`.
    *
@@ -48,11 +48,7 @@ define(['../internal/baseCallback', '../internal/binaryIndex', '../internal/bina
    * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
    * // => 1
    */
-  function sortedIndex(array, value, iteratee, thisArg) {
-    return iteratee == null
-      ? binaryIndex(array, value)
-      : binaryIndexBy(array, value, baseCallback(iteratee, thisArg, 1));
-  }
+  var sortedIndex = createSortedIndex();
 
   return sortedIndex;
 });

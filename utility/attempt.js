@@ -1,4 +1,4 @@
-define(['../lang/isError'], function(isError) {
+define(['../lang/isError', '../function/restParam'], function(isError, restParam) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -10,7 +10,7 @@ define(['../lang/isError'], function(isError) {
    * @static
    * @memberOf _
    * @category Utility
-   * @param {*} func The function to attempt.
+   * @param {Function} func The function to attempt.
    * @returns {*} Returns the `func` result or error object.
    * @example
    *
@@ -23,20 +23,13 @@ define(['../lang/isError'], function(isError) {
    *   elements = [];
    * }
    */
-  function attempt() {
-    var func = arguments[0],
-        length = arguments.length,
-        args = Array(length ? (length - 1) : 0);
-
-    while (--length > 0) {
-      args[length - 1] = arguments[length];
-    }
+  var attempt = restParam(function(func, args) {
     try {
       return func.apply(undefined, args);
     } catch(e) {
       return isError(e) ? e : new Error(e);
     }
-  }
+  });
 
   return attempt;
 });

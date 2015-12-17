@@ -1,4 +1,7 @@
-define(['../internal/baseBindAll', '../internal/baseFlatten', '../object/functions'], function(baseBindAll, baseFlatten, functions) {
+define(['../internal/baseFlatten', '../internal/createWrapper', '../object/functions', './restParam'], function(baseFlatten, createWrapper, functions, restParam) {
+
+  /** Used to compose bitmasks for wrapper metadata. */
+  var BIND_FLAG = 1;
 
   /**
    * Binds methods of an object to the object itself, overwriting the existing
@@ -28,13 +31,18 @@ define(['../internal/baseBindAll', '../internal/baseFlatten', '../object/functio
    * jQuery('#docs').on('click', view.onClick);
    * // => logs 'clicked docs' when the element is clicked
    */
-  function bindAll(object) {
-    return baseBindAll(object,
-      arguments.length > 1
-        ? baseFlatten(arguments, false, false, 1)
-        : functions(object)
-    );
-  }
+  var bindAll = restParam(function(object, methodNames) {
+    methodNames = methodNames.length ? baseFlatten(methodNames) : functions(object);
+
+    var index = -1,
+        length = methodNames.length;
+
+    while (++index < length) {
+      var key = methodNames[index];
+      object[key] = createWrapper(object[key], BIND_FLAG, object);
+    }
+    return object;
+  });
 
   return bindAll;
 });

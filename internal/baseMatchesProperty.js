@@ -1,4 +1,4 @@
-define(['./baseIsEqual', './isStrictComparable'], function(baseIsEqual, isStrictComparable) {
+define(['./baseIsEqual', './isStrictComparable', './toObject'], function(baseIsEqual, isStrictComparable, toObject) {
 
   /**
    * The base implementation of `_.matchesProperty` which does not coerce `key`
@@ -12,7 +12,8 @@ define(['./baseIsEqual', './isStrictComparable'], function(baseIsEqual, isStrict
   function baseMatchesProperty(key, value) {
     if (isStrictComparable(value)) {
       return function(object) {
-        return object != null && object[key] === value;
+        return object != null && object[key] === value &&
+          (typeof value != 'undefined' || (key in toObject(object)));
       };
     }
     return function(object) {

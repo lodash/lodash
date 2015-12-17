@@ -3,7 +3,7 @@ define(['../internal/arrayFilter', '../internal/baseCallback', '../internal/base
   /**
    * Iterates over elements of `collection`, returning an array of all elements
    * `predicate` returns truthy for. The predicate is bound to `thisArg` and
-   * invoked with three arguments; (value, index|key, collection).
+   * invoked with three arguments: (value, index|key, collection).
    *
    * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.

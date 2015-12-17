@@ -1,4 +1,4 @@
-define(['../internal/arrayCopy', './assign', '../internal/assignDefaults'], function(arrayCopy, assign, assignDefaults) {
+define(['./assign', '../internal/assignDefaults', '../function/restParam'], function(assign, assignDefaults, restParam) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -19,14 +19,14 @@ define(['../internal/arrayCopy', './assign', '../internal/assignDefaults'], func
    * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
    * // => { 'user': 'barney', 'age': 36 }
    */
-  function defaults(object) {
+  var defaults = restParam(function(args) {
+    var object = args[0];
     if (object == null) {
       return object;
     }
-    var args = arrayCopy(arguments);
     args.push(assignDefaults);
     return assign.apply(undefined, args);
-  }
+  });
 
   return defaults;
 });

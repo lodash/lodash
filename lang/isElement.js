@@ -4,9 +4,8 @@ define(['../internal/isObjectLike', './isPlainObject', '../support'], function(i
   var objectProto = Object.prototype;
 
   /**
-   * Used to resolve the `toStringTag` of values.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-   * for more details.
+   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * of values.
    */
   var objToString = objectProto.toString;
 
@@ -27,13 +26,13 @@ define(['../internal/isObjectLike', './isPlainObject', '../support'], function(i
    * // => false
    */
   function isElement(value) {
-    return (value && value.nodeType === 1 && isObjectLike(value) &&
-      (objToString.call(value).indexOf('Element') > -1)) || false;
+    return !!value && value.nodeType === 1 && isObjectLike(value) &&
+      (objToString.call(value).indexOf('Element') > -1);
   }
   // Fallback for environments without DOM support.
   if (!support.dom) {
     isElement = function(value) {
-      return (value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value)) || false;
+      return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
     };
   }
 

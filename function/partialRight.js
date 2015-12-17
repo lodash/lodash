@@ -1,4 +1,4 @@
-define(['../internal/baseSlice', '../internal/createWrapper', '../internal/replaceHolders'], function(baseSlice, createWrapper, replaceHolders) {
+define(['../internal/createPartial'], function(createPartial) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var PARTIAL_RIGHT_FLAG = 64;
@@ -17,7 +17,7 @@ define(['../internal/baseSlice', '../internal/createWrapper', '../internal/repla
    * @memberOf _
    * @category Function
    * @param {Function} func The function to partially apply arguments to.
-   * @param {...*} [args] The arguments to be partially applied.
+   * @param {...*} [partials] The arguments to be partially applied.
    * @returns {Function} Returns the new partially applied function.
    * @example
    *
@@ -34,12 +34,7 @@ define(['../internal/baseSlice', '../internal/createWrapper', '../internal/repla
    * sayHelloTo('fred');
    * // => 'hello fred'
    */
-  function partialRight(func) {
-    var partials = baseSlice(arguments, 1),
-        holders = replaceHolders(partials, partialRight.placeholder);
-
-    return createWrapper(func, PARTIAL_RIGHT_FLAG, null, partials, holders);
-  }
+  var partialRight = createPartial(PARTIAL_RIGHT_FLAG);
 
   // Assign default placeholders.
   partialRight.placeholder = {};

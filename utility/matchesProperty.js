@@ -18,12 +18,11 @@ define(['../internal/baseClone', '../internal/baseMatchesProperty'], function(ba
    *
    * var users = [
    *   { 'user': 'barney' },
-   *   { 'user': 'fred' },
-   *   { 'user': 'pebbles' }
+   *   { 'user': 'fred' }
    * ];
    *
    * _.find(users, _.matchesProperty('user', 'fred'));
-   * // => { 'user': 'fred', 'age': 40 }
+   * // => { 'user': 'fred' }
    */
   function matchesProperty(key, value) {
     return baseMatchesProperty(key + '', baseClone(value, true));

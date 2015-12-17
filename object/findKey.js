@@ -1,8 +1,8 @@
-define(['../internal/baseCallback', '../internal/baseFind', '../internal/baseForOwn'], function(baseCallback, baseFind, baseForOwn) {
+define(['../internal/baseForOwn', '../internal/createFindKey'], function(baseForOwn, createFindKey) {
 
   /**
-   * This method is like `_.findIndex` except that it returns the key of the
-   * first element `predicate` returns truthy for, instead of the element itself.
+   * This method is like `_.find` except that it returns the key of the first
+   * element `predicate` returns truthy for instead of the element itself.
    *
    * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.
@@ -48,10 +48,7 @@ define(['../internal/baseCallback', '../internal/baseFind', '../internal/baseFor
    * _.findKey(users, 'active');
    * // => 'barney'
    */
-  function findKey(object, predicate, thisArg) {
-    predicate = baseCallback(predicate, thisArg, 3);
-    return baseFind(object, predicate, baseForOwn, true);
-  }
+  var findKey = createFindKey(baseForOwn);
 
   return findKey;
 });

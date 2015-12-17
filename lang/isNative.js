@@ -13,9 +13,8 @@ define(['../string/escapeRegExp', '../internal/isObjectLike'], function(escapeRe
   var fnToString = Function.prototype.toString;
 
   /**
-   * Used to resolve the `toStringTag` of values.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-   * for more details.
+   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * of values.
    */
   var objToString = objectProto.toString;
 
@@ -48,7 +47,7 @@ define(['../string/escapeRegExp', '../internal/isObjectLike'], function(escapeRe
     if (objToString.call(value) == funcTag) {
       return reNative.test(fnToString.call(value));
     }
-    return (isObjectLike(value) && reHostCtor.test(value)) || false;
+    return isObjectLike(value) && reHostCtor.test(value);
   }
 
   return isNative;

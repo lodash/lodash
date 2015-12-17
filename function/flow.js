@@ -1,4 +1,4 @@
-define(['../internal/createComposer'], function(createComposer) {
+define(['../internal/createFlow'], function(createFlow) {
 
   /**
    * Creates a function that returns the result of invoking the provided
@@ -20,7 +20,7 @@ define(['../internal/createComposer'], function(createComposer) {
    * addSquare(1, 2);
    * // => 9
    */
-  var flow = createComposer();
+  var flow = createFlow();
 
   return flow;
 });

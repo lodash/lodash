@@ -1,18 +1,18 @@
-define(['../internal/arrayReduce', '../internal/baseCallback', '../internal/baseEach', '../internal/baseReduce', '../lang/isArray'], function(arrayReduce, baseCallback, baseEach, baseReduce, isArray) {
+define(['../internal/arrayReduce', '../internal/baseEach', '../internal/createReduce'], function(arrayReduce, baseEach, createReduce) {
 
   /**
    * Reduces `collection` to a value which is the accumulated result of running
    * each element in `collection` through `iteratee`, where each successive
    * invocation is supplied the return value of the previous. If `accumulator`
    * is not provided the first element of `collection` is used as the initial
-   * value. The `iteratee` is bound to `thisArg`and invoked with four arguments;
+   * value. The `iteratee` is bound to `thisArg` and invoked with four arguments:
    * (accumulator, value, index|key, collection).
    *
    * Many lodash methods are guarded to work as interatees for methods like
    * `_.reduce`, `_.reduceRight`, and `_.transform`.
    *
    * The guarded methods are:
-   * `assign`, `defaults`, `merge`, and `sortAllBy`
+   * `assign`, `defaults`, `includes`, `merge`, `sortByAll`, and `sortByOrder`
    *
    * @static
    * @memberOf _
@@ -36,10 +36,7 @@ define(['../internal/arrayReduce', '../internal/baseCallback', '../internal/base
    * }, {});
    * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
    */
-  function reduce(collection, iteratee, accumulator, thisArg) {
-    var func = isArray(collection) ? arrayReduce : baseReduce;
-    return func(collection, baseCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEach);
-  }
+  var reduce = createReduce(arrayReduce, baseEach);
 
   return reduce;
 });

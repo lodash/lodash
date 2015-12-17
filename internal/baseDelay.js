@@ -1,4 +1,4 @@
-define(['./baseSlice'], function(baseSlice) {
+define([], function() {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -13,14 +13,14 @@ define(['./baseSlice'], function(baseSlice) {
    * @private
    * @param {Function} func The function to delay.
    * @param {number} wait The number of milliseconds to delay invocation.
-   * @param {Object} args The `arguments` object to slice and provide to `func`.
+   * @param {Object} args The arguments provide to `func`.
    * @returns {number} Returns the timer id.
    */
-  function baseDelay(func, wait, args, fromIndex) {
+  function baseDelay(func, wait, args) {
     if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
-    return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);
+    return setTimeout(function() { func.apply(undefined, args); }, wait);
   }
 
   return baseDelay;

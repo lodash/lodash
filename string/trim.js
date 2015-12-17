@@ -19,7 +19,7 @@ define(['../internal/baseToString', '../internal/charsLeftIndex', '../internal/c
    * // => 'abc'
    *
    * _.map(['  foo  ', '  bar  '], _.trim);
-   * // => ['foo', 'bar]
+   * // => ['foo', 'bar']
    */
   function trim(string, chars, guard) {
     var value = string;

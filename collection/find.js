@@ -1,12 +1,9 @@
-define(['../internal/baseCallback', '../internal/baseEach', '../internal/baseFind', '../array/findIndex', '../lang/isArray'], function(baseCallback, baseEach, baseFind, findIndex, isArray) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['../internal/baseEach', '../internal/createFind'], function(baseEach, createFind) {
 
   /**
    * Iterates over elements of `collection`, returning the first element
    * `predicate` returns truthy for. The predicate is bound to `thisArg` and
-   * invoked with three arguments; (value, index|key, collection).
+   * invoked with three arguments: (value, index|key, collection).
    *
    * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.
@@ -53,14 +50,7 @@ define(['../internal/baseCallback', '../internal/baseEach', '../internal/baseFin
    * _.result(_.find(users, 'active'), 'user');
    * // => 'barney'
    */
-  function find(collection, predicate, thisArg) {
-    if (isArray(collection)) {
-      var index = findIndex(collection, predicate, thisArg);
-      return index > -1 ? collection[index] : undefined;
-    }
-    predicate = baseCallback(predicate, thisArg, 3);
-    return baseFind(collection, predicate, baseEach);
-  }
+  var find = createFind(baseEach);
 
   return find;
 });

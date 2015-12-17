@@ -1,4 +1,4 @@
-define(['../internal/createComposer'], function(createComposer) {
+define(['../internal/createFlow'], function(createFlow) {
 
   /**
    * This method is like `_.flow` except that it creates a function that
@@ -20,7 +20,7 @@ define(['../internal/createComposer'], function(createComposer) {
    * addSquare(1, 2);
    * // => 9
    */
-  var flowRight = createComposer(true);
+  var flowRight = createFlow(true);
 
   return flowRight;
 });

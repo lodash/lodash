@@ -1,4 +1,4 @@
-define(['./toObject'], function(toObject) {
+define(['./createBaseFor'], function(createBaseFor) {
 
   /**
    * This function is like `baseFor` except that it iterates over properties
@@ -10,19 +10,7 @@ define(['./toObject'], function(toObject) {
    * @param {Function} keysFunc The function to get the keys of `object`.
    * @returns {Object} Returns `object`.
    */
-  function baseForRight(object, iteratee, keysFunc) {
-    var iterable = toObject(object),
-        props = keysFunc(object),
-        length = props.length;
-
-    while (length--) {
-      var key = props[length];
-      if (iteratee(iterable[key], key, iterable) === false) {
-        break;
-      }
-    }
-    return object;
-  }
+  var baseForRight = createBaseFor(true);
 
   return baseForRight;
 });

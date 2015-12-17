@@ -7,9 +7,8 @@ define(['../internal/isLength', './isNative', '../internal/isObjectLike'], funct
   var objectProto = Object.prototype;
 
   /**
-   * Used to resolve the `toStringTag` of values.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-   * for more details.
+   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * of values.
    */
   var objToString = objectProto.toString;
 
@@ -33,7 +32,7 @@ define(['../internal/isLength', './isNative', '../internal/isObjectLike'], funct
    * // => false
    */
   var isArray = nativeIsArray || function(value) {
-    return (isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag) || false;
+    return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
   };
 
   return isArray;

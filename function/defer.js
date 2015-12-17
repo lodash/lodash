@@ -1,4 +1,4 @@
-define(['../internal/baseDelay'], function(baseDelay) {
+define(['../internal/baseDelay', './restParam'], function(baseDelay, restParam) {
 
   /**
    * Defers invoking the `func` until the current call stack has cleared. Any
@@ -17,9 +17,9 @@ define(['../internal/baseDelay'], function(baseDelay) {
    * }, 'deferred');
    * // logs 'deferred' after one or more milliseconds
    */
-  function defer(func) {
-    return baseDelay(func, 1, arguments, 1);
-  }
+  var defer = restParam(function(func, args) {
+    return baseDelay(func, 1, args);
+  });
 
   return defer;
 });

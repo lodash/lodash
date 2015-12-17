@@ -1,7 +1,4 @@
-define(['./lang/isNative', './internal/root'], function(isNative, root) {
-
-  /** Used to detect functions containing a `this` reference. */
-  var reThis = /\bthis\b/;
+define(['./internal/root'], function(root) {
 
   /** Used for native method references. */
   var objectProto = Object.prototype;
@@ -31,7 +28,7 @@ define(['./lang/isNative', './internal/root'], function(isNative, root) {
      * @memberOf _.support
      * @type boolean
      */
-    support.funcDecomp = !isNative(root.WinRTError) && reThis.test(function() { return this; });
+    support.funcDecomp = /\bthis\b/.test(function() { return this; });
 
     /**
      * Detect if `Function#name` is supported (all but IE).

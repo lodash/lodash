@@ -1,4 +1,4 @@
-define(['../internal/baseCallback', '../internal/baseEachRight', '../internal/baseFind'], function(baseCallback, baseEachRight, baseFind) {
+define(['../internal/baseEachRight', '../internal/createFind'], function(baseEachRight, createFind) {
 
   /**
    * This method is like `_.find` except that it iterates over elements of
@@ -19,10 +19,7 @@ define(['../internal/baseCallback', '../internal/baseEachRight', '../internal/ba
    * });
    * // => 3
    */
-  function findLast(collection, predicate, thisArg) {
-    predicate = baseCallback(predicate, thisArg, 3);
-    return baseFind(collection, predicate, baseEachRight);
-  }
+  var findLast = createFind(baseEachRight, true);
 
   return findLast;
 });

@@ -2,7 +2,7 @@ define([], function() {
 
   /**
    * A specialized version of `_.reduceRight` for arrays without support for
-   * callback shorthands or `this` binding.
+   * callback shorthands and `this` binding.
    *
    * @private
    * @param {Array} array The array to iterate over.

@@ -2,7 +2,7 @@ define(['./baseEach'], function(baseEach) {
 
   /**
    * The base implementation of `_.map` without support for callback shorthands
-   * or `this` binding.
+   * and `this` binding.
    *
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.

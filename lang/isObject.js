@@ -1,10 +1,8 @@
 define([], function() {
 
   /**
-   * Checks if `value` is the language type of `Object`.
+   * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
    * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-   *
-   * **Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
    *
    * @static
    * @memberOf _
@@ -26,7 +24,7 @@ define([], function() {
     // Avoid a V8 JIT bug in Chrome 19-20.
     // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
     var type = typeof value;
-    return type == 'function' || (value && type == 'object') || false;
+    return type == 'function' || (!!value && type == 'object');
   }
 
   return isObject;

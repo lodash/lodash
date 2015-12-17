@@ -1,4 +1,10 @@
-define(['../internal/baseFlatten', '../internal/basePullAt'], function(baseFlatten, basePullAt) {
+define(['../internal/baseAt', '../internal/baseCompareAscending', '../internal/baseFlatten', '../internal/isIndex', '../function/restParam'], function(baseAt, baseCompareAscending, baseFlatten, isIndex, restParam) {
+
+  /** Used for native method references. */
+  var arrayProto = Array.prototype;
+
+  /** Native method references. */
+  var splice = arrayProto.splice;
 
   /**
    * Removes elements from `array` corresponding to the given indexes and returns
@@ -25,9 +31,23 @@ define(['../internal/baseFlatten', '../internal/basePullAt'], function(baseFlatt
    * console.log(evens);
    * // => [10, 20]
    */
-  function pullAt(array) {
-    return basePullAt(array || [], baseFlatten(arguments, false, false, 1));
-  }
+  var pullAt = restParam(function(array, indexes) {
+    array || (array = []);
+    indexes = baseFlatten(indexes);
+
+    var length = indexes.length,
+        result = baseAt(array, indexes);
+
+    indexes.sort(baseCompareAscending);
+    while (length--) {
+      var index = parseFloat(indexes[length]);
+      if (index != previous && isIndex(index)) {
+        var previous = index;
+        splice.call(array, index, 1);
+      }
+    }
+    return result;
+  });
 
   return pullAt;
 });

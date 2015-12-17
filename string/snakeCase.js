@@ -1,8 +1,7 @@
 define(['../internal/createCompounder'], function(createCompounder) {
 
   /**
-   * Converts `string` to snake case.
-   * See [Wikipedia](https://en.wikipedia.org/wiki/Snake_case) for more details.
+   * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).
    *
    * @static
    * @memberOf _

@@ -1,4 +1,4 @@
-define(['../internal/baseToString', '../internal/createPad', '../internal/root'], function(baseToString, createPad, root) {
+define(['../internal/baseToString', '../internal/createPadding', '../internal/root'], function(baseToString, createPadding, root) {
 
   /** Native method references. */
   var ceil = Math.ceil,
@@ -8,9 +8,8 @@ define(['../internal/baseToString', '../internal/createPad', '../internal/root']
   var nativeIsFinite = root.isFinite;
 
   /**
-   * Pads `string` on the left and right sides if it is shorter then the given
-   * padding length. The `chars` string may be truncated if the number of padding
-   * characters can't be evenly divided by the padding length.
+   * Pads `string` on the left and right sides if it is shorter than `length`.
+   * Padding characters are truncated if they can't be evenly divided by `length`.
    *
    * @static
    * @memberOf _
@@ -42,7 +41,7 @@ define(['../internal/baseToString', '../internal/createPad', '../internal/root']
         leftLength = floor(mid),
         rightLength = ceil(mid);
 
-    chars = createPad('', rightLength, chars);
+    chars = createPadding('', rightLength, chars);
     return chars.slice(0, leftLength) + string + chars;
   }
 

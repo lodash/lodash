@@ -1,9 +1,9 @@
-define(['../internal/baseCallback', '../internal/baseSlice'], function(baseCallback, baseSlice) {
+define(['../internal/baseCallback', '../internal/baseWhile'], function(baseCallback, baseWhile) {
 
   /**
    * Creates a slice of `array` with elements taken from the end. Elements are
    * taken until `predicate` returns falsey. The predicate is bound to `thisArg`
-   * and invoked with three arguments; (value, index, array).
+   * and invoked with three arguments: (value, index, array).
    *
    * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.
@@ -50,13 +50,9 @@ define(['../internal/baseCallback', '../internal/baseSlice'], function(baseCallb
    * // => []
    */
   function takeRightWhile(array, predicate, thisArg) {
-    var length = array ? array.length : 0;
-    if (!length) {
-      return [];
-    }
-    predicate = baseCallback(predicate, thisArg, 3);
-    while (length-- && predicate(array[length], length, array)) {}
-    return baseSlice(array, length + 1);
+    return (array && array.length)
+      ? baseWhile(array, baseCallback(predicate, thisArg, 3), false, true)
+      : [];
   }
 
   return takeRightWhile;

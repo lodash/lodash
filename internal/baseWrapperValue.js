@@ -14,7 +14,7 @@ define(['./LazyWrapper'], function(LazyWrapper) {
    * @private
    * @param {*} value The unwrapped value.
    * @param {Array} actions Actions to peform to resolve the unwrapped value.
-   * @returns {*} Returns the resolved unwrapped value.
+   * @returns {*} Returns the resolved value.
    */
   function baseWrapperValue(value, actions) {
     var result = value;

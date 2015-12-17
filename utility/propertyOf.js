@@ -4,7 +4,7 @@ define([], function() {
   var undefined;
 
   /**
-   * The inverse of `_.property`; this method creates a function which returns
+   * The opposite of `_.property`; this method creates a function which returns
    * the property value of a given key on `object`.
    *
    * @static

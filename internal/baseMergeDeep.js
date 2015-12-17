@@ -37,7 +37,7 @@ define(['./arrayCopy', '../lang/isArguments', '../lang/isArray', './isLength', '
       if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
         result = isArray(value)
           ? value
-          : (value ? arrayCopy(value) : []);
+          : ((value && value.length) ? arrayCopy(value) : []);
       }
       else if (isPlainObject(srcValue) || isArguments(srcValue)) {
         result = isArguments(value)

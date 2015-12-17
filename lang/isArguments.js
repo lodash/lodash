@@ -10,9 +10,8 @@ define(['../internal/isLength', '../internal/isObjectLike'], function(isLength, 
   var objectProto = Object.prototype;
 
   /**
-   * Used to resolve the `toStringTag` of values.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-   * for more details.
+   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * of values.
    */
   var objToString = objectProto.toString;
 
@@ -34,7 +33,7 @@ define(['../internal/isLength', '../internal/isObjectLike'], function(isLength, 
    */
   function isArguments(value) {
     var length = isObjectLike(value) ? value.length : undefined;
-    return (isLength(length) && objToString.call(value) == argsTag) || false;
+    return isLength(length) && objToString.call(value) == argsTag;
   }
 
   return isArguments;

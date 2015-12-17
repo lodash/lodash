@@ -1,4 +1,4 @@
-define(['../internal/baseSlice', '../internal/createWrapper', '../internal/replaceHolders'], function(baseSlice, createWrapper, replaceHolders) {
+define(['../internal/createWrapper', '../internal/replaceHolders', './restParam'], function(createWrapper, replaceHolders, restParam) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -22,7 +22,7 @@ define(['../internal/baseSlice', '../internal/createWrapper', '../internal/repla
    * @category Function
    * @param {Object} object The object the method belongs to.
    * @param {string} key The key of the method.
-   * @param {...*} [args] The arguments to be partially applied.
+   * @param {...*} [partials] The arguments to be partially applied.
    * @returns {Function} Returns the new bound function.
    * @example
    *
@@ -49,16 +49,14 @@ define(['../internal/baseSlice', '../internal/createWrapper', '../internal/repla
    * bound('hi');
    * // => 'hiya fred!'
    */
-  function bindKey(object, key) {
+  var bindKey = restParam(function(object, key, partials) {
     var bitmask = BIND_FLAG | BIND_KEY_FLAG;
-    if (arguments.length > 2) {
-      var partials = baseSlice(arguments, 2),
-          holders = replaceHolders(partials, bindKey.placeholder);
-
+    if (partials.length) {
+      var holders = replaceHolders(partials, bindKey.placeholder);
       bitmask |= PARTIAL_FLAG;
     }
     return createWrapper(key, bitmask, object, partials, holders);
-  }
+  });
 
   // Assign default placeholders.
   bindKey.placeholder = {};

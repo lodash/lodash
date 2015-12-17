@@ -11,8 +11,7 @@ define(['./binaryIndexBy', '../utility/identity'], function(binaryIndexBy, ident
    * @private
    * @param {Array} array The sorted array to inspect.
    * @param {*} value The value to evaluate.
-   * @param {boolean} [retHighest] Specify returning the highest, instead
-   *  of the lowest, index at which a value should be inserted into `array`.
+   * @param {boolean} [retHighest] Specify returning the highest qualified index.
    * @returns {number} Returns the index at which `value` should be inserted
    *  into `array`.
    */

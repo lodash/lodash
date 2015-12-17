@@ -1,7 +1,7 @@
 define(['./baseCallback', './charAtCallback', './extremumBy', '../lang/isArray', './isIterateeCall', '../lang/isString', './toIterable'], function(baseCallback, charAtCallback, extremumBy, isArray, isIterateeCall, isString, toIterable) {
 
   /**
-   * Creates a function that gets the extremum value of a collection.
+   * Creates a `_.max` or `_.min` function.
    *
    * @private
    * @param {Function} arrayFunc The function to get the extremum value from an array.

@@ -7,7 +7,7 @@ define(['../internal/baseMerge', '../internal/createAssigner'], function(baseMer
    * provided it is invoked to produce the merged values of the destination and
    * source properties. If `customizer` returns `undefined` merging is handled
    * by the method instead. The `customizer` is bound to `thisArg` and invoked
-   * with five arguments; (objectValue, sourceValue, key, object, source).
+   * with five arguments: (objectValue, sourceValue, key, object, source).
    *
    * @static
    * @memberOf _

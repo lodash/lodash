@@ -1,4 +1,4 @@
-define(['../internal/arrayEachRight', '../internal/baseEachRight', '../internal/bindCallback', '../lang/isArray'], function(arrayEachRight, baseEachRight, bindCallback, isArray) {
+define(['../internal/arrayEachRight', '../internal/baseEachRight', '../internal/createForEach'], function(arrayEachRight, baseEachRight, createForEach) {
 
   /**
    * This method is like `_.forEach` except that it iterates over elements of
@@ -16,14 +16,10 @@ define(['../internal/arrayEachRight', '../internal/baseEachRight', '../internal/
    *
    * _([1, 2]).forEachRight(function(n) {
    *   console.log(n);
-   * }).join(',');
+   * }).value();
    * // => logs each value from right to left and returns the array
    */
-  function forEachRight(collection, iteratee, thisArg) {
-    return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-      ? arrayEachRight(collection, iteratee)
-      : baseEachRight(collection, bindCallback(iteratee, thisArg, 3));
-  }
+  var forEachRight = createForEach(arrayEachRight, baseEachRight);
 
   return forEachRight;
 });

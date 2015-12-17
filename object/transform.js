@@ -1,4 +1,4 @@
-define(['../internal/arrayEach', '../internal/baseCallback', '../internal/baseCreate', '../internal/baseForOwn', '../lang/isArray', '../lang/isObject', '../lang/isTypedArray'], function(arrayEach, baseCallback, baseCreate, baseForOwn, isArray, isObject, isTypedArray) {
+define(['../internal/arrayEach', '../internal/baseCallback', '../internal/baseCreate', '../internal/baseForOwn', '../lang/isArray', '../lang/isFunction', '../lang/isObject', '../lang/isTypedArray'], function(arrayEach, baseCallback, baseCreate, baseForOwn, isArray, isFunction, isObject, isTypedArray) {
 
   /**
    * An alternative to `_.reduce`; this method transforms `object` to a new
@@ -41,7 +41,7 @@ define(['../internal/arrayEach', '../internal/baseCallback', '../internal/baseCr
         if (isArr) {
           accumulator = isArray(object) ? new Ctor : [];
         } else {
-          accumulator = baseCreate(typeof Ctor == 'function' && Ctor.prototype);
+          accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
         }
       } else {
         accumulator = {};

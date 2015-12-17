@@ -1,4 +1,4 @@
-define(['../internal/LodashWrapper', '../internal/arrayCopy', '../lang/isArray', '../internal/isObjectLike'], function(LodashWrapper, arrayCopy, isArray, isObjectLike) {
+define(['../internal/LazyWrapper', '../internal/LodashWrapper', '../lang/isArray', '../internal/isObjectLike', '../internal/wrapperClone'], function(LazyWrapper, LodashWrapper, isArray, isObjectLike, wrapperClone) {
 
   /** Used for native method references. */
   var objectProto = Object.prototype;
@@ -7,7 +7,7 @@ define(['../internal/LodashWrapper', '../internal/arrayCopy', '../lang/isArray',
   var hasOwnProperty = objectProto.hasOwnProperty;
 
   /**
-   * Creates a `lodash` object which wraps `value` to enable intuitive chaining.
+   * Creates a `lodash` object which wraps `value` to enable implicit chaining.
    * Methods that operate on and return arrays, collections, and functions can
    * be chained together. Methods that return a boolean or single value will
    * automatically end the chain returning the unwrapped value. Explicit chaining
@@ -26,29 +26,31 @@ define(['../internal/LodashWrapper', '../internal/arrayCopy', '../lang/isArray',
    * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
    * and `unshift`
    *
-   * The wrapper functions that support shortcut fusion are:
-   * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `first`,
-   * `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`, `slice`,
-   * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `where`
+   * The wrapper methods that support shortcut fusion are:
+   * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
+   * `first`, `initial`, `last`, `map`, `pluck`, `reject`, `rest`, `reverse`,
+   * `slice`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `toArray`,
+   * and `where`
    *
-   * The chainable wrapper functions are:
+   * The chainable wrapper methods are:
    * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
-   * `callback`, `chain`, `chunk`, `compact`, `concat`, `constant`, `countBy`,
-   * `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`, `difference`,
-   * `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`, `flatten`,
-   * `flattenDeep`, `flow`, `flowRight`, `forEach`, `forEachRight`, `forIn`,
-   * `forInRight`, `forOwn`, `forOwnRight`, `functions`, `groupBy`, `indexBy`,
-   * `initial`, `intersection`, `invert`, `invoke`, `keys`, `keysIn`, `map`,
-   * `mapValues`, `matches`, `memoize`, `merge`, `mixin`, `negate`, `noop`,
-   * `omit`, `once`, `pairs`, `partial`, `partialRight`, `partition`, `pick`,
-   * `pluck`, `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`,
-   * `rearg`, `reject`, `remove`, `rest`, `reverse`, `shuffle`, `slice`, `sort`,
-   * `sortBy`, `sortByAll`, `splice`, `take`, `takeRight`, `takeRightWhile`,
-   * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`,
-   * `transform`, `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`,
-   * `where`, `without`, `wrap`, `xor`, `zip`, and `zipObject`
+   * `callback`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
+   * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`,
+   * `difference`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `fill`,
+   * `filter`, `flatten`, `flattenDeep`, `flow`, `flowRight`, `forEach`,
+   * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
+   * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
+   * `keysIn`, `map`, `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`,
+   * `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+   * `partition`, `pick`, `plant`, `pluck`, `property`, `propertyOf`, `pull`,
+   * `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `reverse`,
+   * `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`, `splice`, `spread`,
+   * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+   * `thru`, `times`, `toArray`, `toPlainObject`, `transform`, `union`, `uniq`,
+   * `unshift`, `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`,
+   * `zip`, and `zipObject`
    *
-   * The wrapper functions that are **not** chainable by default are:
+   * The wrapper methods that are **not** chainable by default are:
    * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
    * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
    * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
@@ -63,14 +65,14 @@ define(['../internal/LodashWrapper', '../internal/arrayCopy', '../lang/isArray',
    * `startCase`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
    * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
    *
-   * The wrapper function `sample` will return a wrapped value when `n` is provided,
+   * The wrapper method `sample` will return a wrapped value when `n` is provided,
    * otherwise an unwrapped value is returned.
    *
    * @name _
    * @constructor
    * @category Chain
    * @param {*} value The value to wrap in a `lodash` instance.
-   * @returns {Object} Returns a `lodash` instance.
+   * @returns {Object} Returns the new `lodash` wrapper instance.
    * @example
    *
    * var wrapped = _([1, 2, 3]);
@@ -89,19 +91,16 @@ define(['../internal/LodashWrapper', '../internal/arrayCopy', '../lang/isArray',
    * // => true
    */
   function lodash(value) {
-    if (isObjectLike(value) && !isArray(value)) {
+    if (isObjectLike(value) && !isArray(value) && !(value instanceof LazyWrapper)) {
       if (value instanceof LodashWrapper) {
         return value;
       }
-      if (hasOwnProperty.call(value, '__wrapped__')) {
-        return new LodashWrapper(value.__wrapped__, value.__chain__, arrayCopy(value.__actions__));
+      if (hasOwnProperty.call(value, '__chain__') && hasOwnProperty.call(value, '__wrapped__')) {
+        return wrapperClone(value);
       }
     }
     return new LodashWrapper(value);
   }
-
-  // Ensure `new LodashWrapper` is an instance of `lodash`.
-  LodashWrapper.prototype = lodash.prototype;
 
   return lodash;
 });

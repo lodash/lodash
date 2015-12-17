@@ -1,4 +1,4 @@
-define(['./debounce', '../lang/isFunction', '../lang/isObject'], function(debounce, isFunction, isObject) {
+define(['./debounce', '../lang/isObject'], function(debounce, isObject) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -52,7 +52,7 @@ define(['./debounce', '../lang/isFunction', '../lang/isObject'], function(deboun
     var leading = true,
         trailing = true;
 
-    if (!isFunction(func)) {
+    if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     if (options === false) {

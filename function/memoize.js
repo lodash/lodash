@@ -1,4 +1,4 @@
-define(['../internal/MapCache', '../lang/isFunction'], function(MapCache, isFunction) {
+define(['../internal/MapCache'], function(MapCache) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -57,7 +57,7 @@ define(['../internal/MapCache', '../lang/isFunction'], function(MapCache, isFunc
    * // => { 'user': 'barney' }
    */
   function memoize(func, resolver) {
-    if (!isFunction(func) || (resolver && !isFunction(resolver))) {
+    if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     var memoized = function() {

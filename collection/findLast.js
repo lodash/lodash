@@ -9,8 +9,7 @@ define(['../internal/baseCallback', '../internal/baseEachRight', '../internal/ba
    * @category Collection
    * @param {Array|Object|string} collection The collection to search.
    * @param {Function|Object|string} [predicate=_.identity] The function invoked
-   *  per iteration. If a property name or object is provided it is used to
-   *  create a "_.property" or "_.matches" style callback respectively.
+   *  per iteration.
    * @param {*} [thisArg] The `this` binding of `predicate`.
    * @returns {*} Returns the matched element, else `undefined`.
    * @example

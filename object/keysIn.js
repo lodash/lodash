@@ -41,7 +41,7 @@ define(['../lang/isArguments', '../lang/isArray', '../internal/isIndex', '../int
 
     var Ctor = object.constructor,
         index = -1,
-        isProto = typeof Ctor == 'function' && Ctor.prototype == object,
+        isProto = typeof Ctor == 'function' && Ctor.prototype === object,
         result = Array(length),
         skipIndexes = length > 0;
 

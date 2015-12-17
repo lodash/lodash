@@ -8,10 +8,14 @@ define(['../internal/baseCallback', '../internal/baseUniq', '../internal/isItera
    * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
    * with three arguments; (value, index, array).
    *
-   * If a property name is provided for `predicate` the created "_.property"
+   * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.
    *
-   * If an object is provided for `predicate` the created "_.matches" style
+   * If a value is also provided for `thisArg` the created `_.matchesProperty`
+   * style callback returns `true` for elements that have a matching property
+   * value, else `false`.
+   *
+   * If an object is provided for `predicate` the created `_.matches` style
    * callback returns `true` for elements that have the properties of the given
    * object, else `false`.
    *
@@ -27,8 +31,6 @@ define(['../internal/baseCallback', '../internal/baseUniq', '../internal/isItera
    * @param {Array} array The array to inspect.
    * @param {boolean} [isSorted] Specify the array is sorted.
    * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-   *  If a property name or object is provided it is used to create a "_.property"
-   *  or "_.matches" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {Array} Returns the new duplicate-value-free array.
    * @example
@@ -44,7 +46,7 @@ define(['../internal/baseCallback', '../internal/baseUniq', '../internal/isItera
    * _.uniq([1, 2.5, 1.5, 2], function(n) { return this.floor(n); }, Math);
    * // => [1, 2.5]
    *
-   * // using the "_.property" callback shorthand
+   * // using the `_.property` callback shorthand
    * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
    * // => [{ 'x': 1 }, { 'x': 2 }]
    */

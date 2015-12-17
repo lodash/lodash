@@ -1,4 +1,4 @@
-define(['../lang/isFunction'], function(isFunction) {
+define([], function() {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -21,8 +21,8 @@ define(['../lang/isFunction'], function(isFunction) {
    */
   function before(n, func) {
     var result;
-    if (!isFunction(func)) {
-      if (isFunction(n)) {
+    if (typeof func != 'function') {
+      if (typeof n == 'function') {
         var temp = n;
         n = func;
         func = temp;

@@ -6,10 +6,14 @@ define(['../internal/baseCallback', '../internal/baseForOwn'], function(baseCall
    * iteratee function is bound to `thisArg` and invoked with three arguments;
    * (value, key, object).
    *
-   * If a property name is provided for `iteratee` the created "_.property"
+   * If a property name is provided for `iteratee` the created `_.property`
    * style callback returns the property value of the given element.
    *
-   * If an object is provided for `iteratee` the created "_.matches" style
+   * If a value is also provided for `thisArg` the created `_.matchesProperty`
+   * style callback returns `true` for elements that have a matching property
+   * value, else `false`.
+   *
+   * If an object is provided for `iteratee` the created `_.matches` style
    * callback returns `true` for elements that have the properties of the given
    * object, else `false`.
    *
@@ -18,8 +22,7 @@ define(['../internal/baseCallback', '../internal/baseForOwn'], function(baseCall
    * @category Object
    * @param {Object} object The object to iterate over.
    * @param {Function|Object|string} [iteratee=_.identity] The function invoked
-   *  per iteration. If a property name or object is provided it is used to
-   *  create a "_.property" or "_.matches" style callback respectively.
+   *  per iteration.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {Object} Returns the new mapped object.
    * @example
@@ -32,7 +35,7 @@ define(['../internal/baseCallback', '../internal/baseForOwn'], function(baseCall
    *   'pebbles': { 'user': 'pebbles', 'age': 1 }
    * };
    *
-   * // using the "_.property" callback shorthand
+   * // using the `_.property` callback shorthand
    * _.mapValues(users, 'age');
    * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
    */

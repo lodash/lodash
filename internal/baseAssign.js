@@ -16,7 +16,7 @@ define(['./baseCopy', '../object/keys'], function(baseCopy, keys) {
       return baseCopy(source, object, props);
     }
     var index = -1,
-        length = props.length
+        length = props.length;
 
     while (++index < length) {
       var key = props[index],

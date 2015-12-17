@@ -1,4 +1,7 @@
-define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './createPartialWrapper', './getData', '../lang/isFunction', './mergeData', './setData'], function(baseSetData, createBindWrapper, createHybridWrapper, createPartialWrapper, getData, isFunction, mergeData, setData) {
+define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './createPartialWrapper', './getData', './mergeData', './setData'], function(baseSetData, createBindWrapper, createHybridWrapper, createPartialWrapper, getData, mergeData, setData) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -39,7 +42,7 @@ define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './crea
    */
   function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
     var isBindKey = bitmask & BIND_KEY_FLAG;
-    if (!isBindKey && !isFunction(func)) {
+    if (!isBindKey && typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     var length = partials ? partials.length : 0;
@@ -69,9 +72,9 @@ define(['./baseSetData', './createBindWrapper', './createHybridWrapper', './crea
     if (bitmask == BIND_FLAG) {
       var result = createBindWrapper(newData[0], newData[2]);
     } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !newData[4].length) {
-      result = createPartialWrapper.apply(null, newData);
+      result = createPartialWrapper.apply(undefined, newData);
     } else {
-      result = createHybridWrapper.apply(null, newData);
+      result = createHybridWrapper.apply(undefined, newData);
     }
     var setter = data ? baseSetData : setData;
     return setter(result, newData);

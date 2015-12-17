@@ -11,7 +11,8 @@ define(['../internal/baseIsEqual', '../internal/bindCallback', '../internal/isSt
    * arguments; (value, other [, index|key]).
    *
    * **Note:** This method supports comparing arrays, booleans, `Date` objects,
-   * numbers, `Object` objects, regexes, and strings. Functions and DOM nodes
+   * numbers, `Object` objects, regexes, and strings. Objects are compared by
+   * their own, not inherited, enumerable properties. Functions and DOM nodes
    * are **not** supported. Provide a customizer function to extend support
    * for comparing other values.
    *

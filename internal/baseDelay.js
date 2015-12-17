@@ -1,4 +1,4 @@
-define(['./baseSlice', '../lang/isFunction'], function(baseSlice, isFunction) {
+define(['./baseSlice'], function(baseSlice) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -17,7 +17,7 @@ define(['./baseSlice', '../lang/isFunction'], function(baseSlice, isFunction) {
    * @returns {number} Returns the timer id.
    */
   function baseDelay(func, wait, args, fromIndex) {
-    if (!isFunction(func)) {
+    if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);

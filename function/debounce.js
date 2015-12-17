@@ -1,4 +1,4 @@
-define(['../lang/isFunction', '../lang/isObject', '../date/now'], function(isFunction, isObject, now) {
+define(['../lang/isObject', '../date/now'], function(isObject, now) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -83,7 +83,7 @@ define(['../lang/isFunction', '../lang/isObject', '../date/now'], function(isFun
         maxWait = false,
         trailing = true;
 
-    if (!isFunction(func)) {
+    if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     wait = wait < 0 ? 0 : wait;

@@ -24,7 +24,7 @@ define(['../internal/baseProperty', './map'], function(baseProperty, map) {
    * // => [36, 40] (iteration order is not guaranteed)
    */
   function pluck(collection, key) {
-    return map(collection, baseProperty(key + ''));
+    return map(collection, baseProperty(key));
   }
 
   return pluck;

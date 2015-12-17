@@ -1,8 +1,11 @@
-define(['../lang/isError'], function(isError) {
+define(['../internal/baseSlice', '../lang/isError'], function(baseSlice, isError) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /**
-   * Attempts to invoke `func`, returning either the result or the caught
-   * error object.
+   * Attempts to invoke `func`, returning either the result or the caught error
+   * object. Any additional arguments are provided to `func` when it is invoked.
    *
    * @static
    * @memberOf _
@@ -12,9 +15,9 @@ define(['../lang/isError'], function(isError) {
    * @example
    *
    * // avoid throwing errors for invalid selectors
-   * var elements = _.attempt(function() {
+   * var elements = _.attempt(function(selector) {
    *   return document.querySelectorAll(selector);
-   * });
+   * }, '>_>');
    *
    * if (_.isError(elements)) {
    *   elements = [];
@@ -22,9 +25,9 @@ define(['../lang/isError'], function(isError) {
    */
   function attempt(func) {
     try {
-      return func();
+      return func.apply(undefined, baseSlice(arguments, 1));
     } catch(e) {
-      return isError(e) ? e : Error(e);
+      return isError(e) ? e : new Error(e);
     }
   }
 

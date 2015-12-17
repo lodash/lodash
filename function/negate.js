@@ -1,4 +1,4 @@
-define(['../lang/isFunction'], function(isFunction) {
+define([], function() {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -23,7 +23,7 @@ define(['../lang/isFunction'], function(isFunction) {
    * // => [1, 3, 5]
    */
   function negate(predicate) {
-    if (!isFunction(predicate)) {
+    if (typeof predicate != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
     return function() {

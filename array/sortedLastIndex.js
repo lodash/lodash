@@ -11,8 +11,7 @@ define(['../internal/baseCallback', '../internal/binaryIndex', '../internal/bina
    * @param {Array} array The sorted array to inspect.
    * @param {*} value The value to evaluate.
    * @param {Function|Object|string} [iteratee=_.identity] The function invoked
-   *  per iteration. If a property name or object is provided it is used to
-   *  create a "_.property" or "_.matches" style callback respectively.
+   *  per iteration.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {number} Returns the index at which `value` should be inserted
    *  into `array`.

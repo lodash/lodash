@@ -1,4 +1,4 @@
-define(['./baseMatches', './baseProperty', './bindCallback', '../utility/identity', './isBindable'], function(baseMatches, baseProperty, bindCallback, identity, isBindable) {
+define(['./baseMatches', './baseMatchesProperty', './baseProperty', './bindCallback', '../utility/identity', './isBindable'], function(baseMatches, baseMatchesProperty, baseProperty, bindCallback, identity, isBindable) {
 
   /**
    * The base implementation of `_.callback` which supports specifying the
@@ -20,10 +20,12 @@ define(['./baseMatches', './baseProperty', './bindCallback', '../utility/identit
     if (func == null) {
       return identity;
     }
-    // Handle "_.property" and "_.matches" style callback shorthands.
-    return type == 'object'
-      ? baseMatches(func)
-      : baseProperty(func + '');
+    if (type == 'object') {
+      return baseMatches(func);
+    }
+    return typeof thisArg == 'undefined'
+      ? baseProperty(func + '')
+      : baseMatchesProperty(func + '', thisArg);
   }
 
   return baseCallback;

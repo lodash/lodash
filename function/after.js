@@ -1,4 +1,4 @@
-define(['../lang/isFunction', '../internal/root'], function(isFunction, root) {
+define(['../internal/root'], function(root) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -30,8 +30,8 @@ define(['../lang/isFunction', '../internal/root'], function(isFunction, root) {
    * // => logs 'done saving!' after the two async saves have completed
    */
   function after(n, func) {
-    if (!isFunction(func)) {
-      if (isFunction(n)) {
+    if (typeof func != 'function') {
+      if (typeof n == 'function') {
         var temp = n;
         n = func;
         func = temp;

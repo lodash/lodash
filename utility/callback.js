@@ -1,10 +1,11 @@
 define(['../internal/baseCallback', '../internal/isIterateeCall', '../internal/isObjectLike', './matches'], function(baseCallback, isIterateeCall, isObjectLike, matches) {
 
   /**
-   * Creates a function bound to an optional `thisArg`. If `func` is a property
-   * name the created callback returns the property value for a given element.
-   * If `func` is an object the created callback returns `true` for elements
-   * that contain the equivalent object properties, otherwise it returns `false`.
+   * Creates a function that invokes `func` with the `this` binding of `thisArg`
+   * and arguments of the created function. If `func` is a property name the
+   * created callback returns the property value for a given element. If `func`
+   * is an object the created callback returns `true` for elements that contain
+   * the equivalent object properties, otherwise it returns `false`.
    *
    * @static
    * @memberOf _

@@ -7,10 +7,14 @@ define(['../internal/arrayMin', '../internal/createExtremum'], function(arrayMin
    * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
    * arguments; (value, index, collection).
    *
-   * If a property name is provided for `predicate` the created "_.property"
+   * If a property name is provided for `predicate` the created `_.property`
    * style callback returns the property value of the given element.
    *
-   * If an object is provided for `predicate` the created "_.matches" style
+   * If a value is also provided for `thisArg` the created `_.matchesProperty`
+   * style callback returns `true` for elements that have a matching property
+   * value, else `false`.
+   *
+   * If an object is provided for `predicate` the created `_.matches` style
    * callback returns `true` for elements that have the properties of the given
    * object, else `false`.
    *
@@ -19,8 +23,6 @@ define(['../internal/arrayMin', '../internal/createExtremum'], function(arrayMin
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
    * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-   *  If a property name or object is provided it is used to create a "_.property"
-   *  or "_.matches" style callback respectively.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {*} Returns the minimum value.
    * @example
@@ -39,7 +41,7 @@ define(['../internal/arrayMin', '../internal/createExtremum'], function(arrayMin
    * _.min(users, function(chr) { return chr.age; });
    * // => { 'user': 'barney', 'age': 36 };
    *
-   * // using the "_.property" callback shorthand
+   * // using the `_.property` callback shorthand
    * _.min(users, 'age');
    * // => { 'user': 'barney', 'age': 36 };
    */

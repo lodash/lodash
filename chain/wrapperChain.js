@@ -6,7 +6,7 @@ define(['./chain'], function(chain) {
    * @name chain
    * @memberOf _
    * @category Chain
-   * @returns {*} Returns the `lodash` object.
+   * @returns {Object} Returns the new `lodash` wrapper instance.
    * @example
    *
    * var users = [

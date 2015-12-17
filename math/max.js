@@ -1,4 +1,4 @@
-define(['../internal/arrayMax', '../internal/createExtremum'], function(arrayMax, createExtremum) {
+define(['../internal/createExtremum', '../lang/gt'], function(createExtremum, gt) {
 
   /**
    * Gets the maximum value of `collection`. If `collection` is empty or falsey
@@ -47,7 +47,7 @@ define(['../internal/arrayMax', '../internal/createExtremum'], function(arrayMax
    * _.max(users, 'age');
    * // => { 'user': 'fred', 'age': 40 }
    */
-  var max = createExtremum(arrayMax);
+  var max = createExtremum(gt, -Infinity);
 
   return max;
 });

@@ -39,7 +39,7 @@ define(['../internal/arrayEach', '../internal/baseCallback', '../internal/baseCr
         if (isArr) {
           accumulator = isArray(object) ? new Ctor : [];
         } else {
-          accumulator = baseCreate(isFunction(Ctor) && Ctor.prototype);
+          accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : null);
         }
       } else {
         accumulator = {};

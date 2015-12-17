@@ -1,5 +1,8 @@
 define(['./bindCallback', './isIterateeCall', '../function/restParam'], function(bindCallback, isIterateeCall, restParam) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates a function that assigns properties of source object(s) to a given
    * destination object.
@@ -14,19 +17,19 @@ define(['./bindCallback', './isIterateeCall', '../function/restParam'], function
     return restParam(function(object, sources) {
       var index = -1,
           length = object == null ? 0 : sources.length,
-          customizer = length > 2 && sources[length - 2],
-          guard = length > 2 && sources[2],
-          thisArg = length > 1 && sources[length - 1];
+          customizer = length > 2 ? sources[length - 2] : undefined,
+          guard = length > 2 ? sources[2] : undefined,
+          thisArg = length > 1 ? sources[length - 1] : undefined;
 
       if (typeof customizer == 'function') {
         customizer = bindCallback(customizer, thisArg, 5);
         length -= 2;
       } else {
-        customizer = typeof thisArg == 'function' ? thisArg : null;
+        customizer = typeof thisArg == 'function' ? thisArg : undefined;
         length -= (customizer ? 1 : 0);
       }
       if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-        customizer = length < 3 ? null : customizer;
+        customizer = length < 3 ? undefined : customizer;
         length = 1;
       }
       while (++index < length) {

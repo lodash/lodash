@@ -1,4 +1,4 @@
-define(['../internal/baseIsFunction', './isNative', '../internal/root'], function(baseIsFunction, isNative, root) {
+define(['../internal/baseIsFunction', '../internal/getNative', '../internal/root'], function(baseIsFunction, getNative, root) {
 
   /** `Object#toString` result references. */
   var funcTag = '[object Function]';
@@ -13,7 +13,7 @@ define(['../internal/baseIsFunction', './isNative', '../internal/root'], functio
   var objToString = objectProto.toString;
 
   /** Native method references. */
-  var Uint8Array = isNative(Uint8Array = root.Uint8Array) && Uint8Array;
+  var Uint8Array = getNative(root, 'Uint8Array');
 
   /**
    * Checks if `value` is classified as a `Function` object.

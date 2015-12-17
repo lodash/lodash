@@ -7,7 +7,7 @@ define(['./baseToString', '../lang/isArray'], function(baseToString, isArray) {
   var reEscapeChar = /\\(\\)?/g;
 
   /**
-   * Converts `value` to property path array if it is not one.
+   * Converts `value` to property path array if it's not one.
    *
    * @private
    * @param {*} value The value to process.

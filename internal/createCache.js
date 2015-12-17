@@ -1,10 +1,10 @@
-define(['./SetCache', '../utility/constant', '../lang/isNative', './root'], function(SetCache, constant, isNative, root) {
+define(['./SetCache', '../utility/constant', './getNative', './root'], function(SetCache, constant, getNative, root) {
 
   /** Native method references. */
-  var Set = isNative(Set = root.Set) && Set;
+  var Set = getNative(root, 'Set');
 
   /* Native method references for those with the same name as other `lodash` methods. */
-  var nativeCreate = isNative(nativeCreate = Object.create) && nativeCreate;
+  var nativeCreate = getNative(Object, 'create');
 
   /**
    * Creates a `Set` cache object to optimize linear searches of large arrays.

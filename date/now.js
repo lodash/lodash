@@ -1,7 +1,7 @@
-define(['../lang/isNative'], function(isNative) {
+define(['../internal/getNative'], function(getNative) {
 
   /* Native method references for those with the same name as other `lodash` methods. */
-  var nativeNow = isNative(nativeNow = Date.now) && nativeNow;
+  var nativeNow = getNative(Date, 'now');
 
   /**
    * Gets the number of milliseconds that have elapsed since the Unix epoch

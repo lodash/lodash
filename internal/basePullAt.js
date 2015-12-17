@@ -18,7 +18,7 @@ define(['./isIndex'], function(isIndex) {
   function basePullAt(array, indexes) {
     var length = array ? indexes.length : 0;
     while (length--) {
-      var index = parseFloat(indexes[length]);
+      var index = indexes[length];
       if (index != previous && isIndex(index)) {
         var previous = index;
         splice.call(array, index, 1);

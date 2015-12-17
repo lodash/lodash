@@ -1,4 +1,4 @@
-define(['../lang/isArguments', '../lang/isArray', '../internal/isIndex', '../internal/isLength', '../lang/isObject', '../support'], function(isArguments, isArray, isIndex, isLength, isObject, support) {
+define(['../lang/isArguments', '../lang/isArray', '../internal/isIndex', '../internal/isLength', '../lang/isObject'], function(isArguments, isArray, isIndex, isLength, isObject) {
 
   /** Used for native method references. */
   var objectProto = Object.prototype;
@@ -37,7 +37,7 @@ define(['../lang/isArguments', '../lang/isArray', '../internal/isIndex', '../int
     }
     var length = object.length;
     length = (length && isLength(length) &&
-      (isArray(object) || (support.nonEnumArgs && isArguments(object))) && length) || 0;
+      (isArray(object) || isArguments(object)) && length) || 0;
 
     var Ctor = object.constructor,
         index = -1,

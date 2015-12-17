@@ -1,4 +1,4 @@
-define(['../internal/baseIsEqual', '../internal/bindCallback', '../internal/isStrictComparable'], function(baseIsEqual, bindCallback, isStrictComparable) {
+define(['../internal/baseIsEqual', '../internal/bindCallback'], function(baseIsEqual, bindCallback) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -18,6 +18,7 @@ define(['../internal/baseIsEqual', '../internal/bindCallback', '../internal/isSt
    *
    * @static
    * @memberOf _
+   * @alias eq
    * @category Lang
    * @param {*} value The value to compare.
    * @param {*} other The other value to compare.
@@ -47,12 +48,9 @@ define(['../internal/baseIsEqual', '../internal/bindCallback', '../internal/isSt
    * // => true
    */
   function isEqual(value, other, customizer, thisArg) {
-    customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
-    if (!customizer && isStrictComparable(value) && isStrictComparable(other)) {
-      return value === other;
-    }
+    customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
     var result = customizer ? customizer(value, other) : undefined;
-    return result === undefined ? baseIsEqual(value, other, customizer) : !!result;
+    return  result === undefined ? baseIsEqual(value, other, customizer) : !!result;
   }
 
   return isEqual;

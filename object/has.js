@@ -1,4 +1,4 @@
-define(['../internal/baseGet', '../internal/baseSlice', '../internal/isKey', '../array/last', '../internal/toPath'], function(baseGet, baseSlice, isKey, last, toPath) {
+define(['../internal/baseGet', '../internal/baseSlice', '../lang/isArguments', '../lang/isArray', '../internal/isIndex', '../internal/isKey', '../internal/isLength', '../array/last', '../internal/toPath'], function(baseGet, baseSlice, isArguments, isArray, isIndex, isKey, isLength, last, toPath) {
 
   /** Used for native method references. */
   var objectProto = Object.prototype;
@@ -36,10 +36,14 @@ define(['../internal/baseGet', '../internal/baseSlice', '../internal/isKey', '..
     if (!result && !isKey(path)) {
       path = toPath(path);
       object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      if (object == null) {
+        return false;
+      }
       path = last(path);
-      result = object != null && hasOwnProperty.call(object, path);
+      result = hasOwnProperty.call(object, path);
     }
-    return result;
+    return result || (isLength(object.length) && isIndex(path, object.length) &&
+      (isArray(object) || isArguments(object)));
   }
 
   return has;

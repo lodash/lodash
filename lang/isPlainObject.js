@@ -1,4 +1,4 @@
-define(['./isNative', '../internal/shimIsPlainObject'], function(isNative, shimIsPlainObject) {
+define(['../internal/getNative', '../internal/shimIsPlainObject'], function(getNative, shimIsPlainObject) {
 
   /** `Object#toString` result references. */
   var objectTag = '[object Object]';
@@ -13,7 +13,7 @@ define(['./isNative', '../internal/shimIsPlainObject'], function(isNative, shimI
   var objToString = objectProto.toString;
 
   /** Native method references. */
-  var getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf;
+  var getPrototypeOf = getNative(Object, 'getPrototypeOf');
 
   /**
    * Checks if `value` is a plain object, that is, an object created by the
@@ -49,8 +49,8 @@ define(['./isNative', '../internal/shimIsPlainObject'], function(isNative, shimI
     if (!(value && objToString.call(value) == objectTag)) {
       return false;
     }
-    var valueOf = value.valueOf,
-        objProto = isNative(valueOf) && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
+    var valueOf = getNative(value, 'valueOf'),
+        objProto = valueOf && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
 
     return objProto
       ? (value == objProto || getPrototypeOf(value) == objProto)

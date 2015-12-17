@@ -1,4 +1,4 @@
-define(['../lang/isArguments', '../lang/isArray', './isIndex', './isLength', '../object/keysIn', '../support'], function(isArguments, isArray, isIndex, isLength, keysIn, support) {
+define(['../lang/isArguments', '../lang/isArray', './isIndex', './isLength', '../object/keysIn'], function(isArguments, isArray, isIndex, isLength, keysIn) {
 
   /** Used for native method references. */
   var objectProto = Object.prototype;
@@ -19,8 +19,8 @@ define(['../lang/isArguments', '../lang/isArray', './isIndex', './isLength', '..
         propsLength = props.length,
         length = propsLength && object.length;
 
-    var allowIndexes = length && isLength(length) &&
-      (isArray(object) || (support.nonEnumArgs && isArguments(object)));
+    var allowIndexes = !!length && isLength(length) &&
+      (isArray(object) || isArguments(object));
 
     var index = -1,
         result = [];

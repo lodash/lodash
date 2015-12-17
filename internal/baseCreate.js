@@ -1,4 +1,4 @@
-define(['../lang/isObject', './root'], function(isObject, root) {
+define(['../lang/isObject'], function(isObject) {
 
   /**
    * The base implementation of `_.create` without support for assigning
@@ -9,14 +9,14 @@ define(['../lang/isObject', './root'], function(isObject, root) {
    * @returns {Object} Returns the new object.
    */
   var baseCreate = (function() {
-    function Object() {}
+    function object() {}
     return function(prototype) {
       if (isObject(prototype)) {
-        Object.prototype = prototype;
-        var result = new Object;
-        Object.prototype = null;
+        object.prototype = prototype;
+        var result = new object;
+        object.prototype = null;
       }
-      return result || root.Object();
+      return result || {};
     };
   }());
 

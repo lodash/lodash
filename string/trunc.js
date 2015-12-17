@@ -8,7 +8,7 @@ define(['../internal/baseToString', '../internal/isIterateeCall', '../lang/isObj
   var reFlags = /\w*$/;
 
   /**
-   * Truncates `string` if it is longer than the given maximum string length.
+   * Truncates `string` if it's longer than the given maximum string length.
    * The last characters of the truncated string are replaced with the omission
    * string which defaults to "...".
    *

@@ -1,4 +1,4 @@
-define(['../internal/isLength', './isNative', '../internal/isObjectLike'], function(isLength, isNative, isObjectLike) {
+define(['../internal/getNative', '../internal/isLength', '../internal/isObjectLike'], function(getNative, isLength, isObjectLike) {
 
   /** `Object#toString` result references. */
   var arrayTag = '[object Array]';
@@ -13,7 +13,7 @@ define(['../internal/isLength', './isNative', '../internal/isObjectLike'], funct
   var objToString = objectProto.toString;
 
   /* Native method references for those with the same name as other `lodash` methods. */
-  var nativeIsArray = isNative(nativeIsArray = Array.isArray) && nativeIsArray;
+  var nativeIsArray = getNative(Array, 'isArray');
 
   /**
    * Checks if `value` is classified as an `Array` object.

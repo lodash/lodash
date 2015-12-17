@@ -1,7 +1,7 @@
 define(['../internal/baseEach', '../internal/invokePath', '../internal/isArrayLike', '../internal/isKey', '../function/restParam'], function(baseEach, invokePath, isArrayLike, isKey, restParam) {
 
   /**
-   * Invokes the method at `path` on each element in `collection`, returning
+   * Invokes the method at `path` of each element in `collection`, returning
    * an array of the results of each invoked method. Any additional arguments
    * are provided to each invoked method. If `methodName` is a function it is
    * invoked for, and `this` bound to, each element in `collection`.
@@ -29,7 +29,7 @@ define(['../internal/baseEach', '../internal/invokePath', '../internal/isArrayLi
         result = isArrayLike(collection) ? Array(collection.length) : [];
 
     baseEach(collection, function(value) {
-      var func = isFunc ? path : (isProp && value != null && value[path]);
+      var func = isFunc ? path : ((isProp && value != null) ? value[path] : null);
       result[++index] = func ? func.apply(value, args) : invokePath(value, path, args);
     });
     return result;

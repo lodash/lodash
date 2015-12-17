@@ -1,10 +1,10 @@
-define(['../utility/constant', '../lang/isNative', './root'], function(constant, isNative, root) {
+define(['../utility/constant', './getNative', './root'], function(constant, getNative, root) {
 
   /** Native method references. */
-  var ArrayBuffer = isNative(ArrayBuffer = root.ArrayBuffer) && ArrayBuffer,
-      bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
+  var ArrayBuffer = getNative(root, 'ArrayBuffer'),
+      bufferSlice = getNative(ArrayBuffer && new ArrayBuffer(0), 'slice'),
       floor = Math.floor,
-      Uint8Array = isNative(Uint8Array = root.Uint8Array) && Uint8Array;
+      Uint8Array = getNative(root, 'Uint8Array');
 
   /** Used to clone array buffers. */
   var Float64Array = (function() {
@@ -12,10 +12,10 @@ define(['../utility/constant', '../lang/isNative', './root'], function(constant,
     // where the array buffer's `byteLength` is not a multiple of the typed
     // array's `BYTES_PER_ELEMENT`.
     try {
-      var func = isNative(func = root.Float64Array) && func,
+      var func = getNative(root, 'Float64Array'),
           result = new func(new ArrayBuffer(10), 0, 1) && func;
     } catch(e) {}
-    return result;
+    return result || null;
   }());
 
   /** Used as the size, in bytes, of each `Float64Array` element. */

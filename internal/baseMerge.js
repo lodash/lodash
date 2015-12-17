@@ -1,13 +1,7 @@
-define(['./arrayEach', './baseMergeDeep', './getSymbols', '../lang/isArray', './isArrayLike', '../lang/isObject', './isObjectLike', '../lang/isTypedArray', '../object/keys'], function(arrayEach, baseMergeDeep, getSymbols, isArray, isArrayLike, isObject, isObjectLike, isTypedArray, keys) {
+define(['./arrayEach', './baseMergeDeep', '../lang/isArray', './isArrayLike', '../lang/isObject', './isObjectLike', '../lang/isTypedArray', '../object/keys'], function(arrayEach, baseMergeDeep, isArray, isArrayLike, isObject, isObjectLike, isTypedArray, keys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
-
-  /** Used for native method references. */
-  var arrayProto = Array.prototype;
-
-  /** Native method references. */
-  var push = arrayProto.push;
 
   /**
    * The base implementation of `_.merge` without support for argument juggling,
@@ -25,11 +19,9 @@ define(['./arrayEach', './baseMergeDeep', './getSymbols', '../lang/isArray', './
     if (!isObject(object)) {
       return object;
     }
-    var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
-    if (!isSrcArr) {
-      var props = keys(source);
-      push.apply(props, getSymbols(source));
-    }
+    var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
+        props = isSrcArr ? null : keys(source);
+
     arrayEach(props || source, function(srcValue, key) {
       if (props) {
         key = srcValue;
@@ -48,7 +40,7 @@ define(['./arrayEach', './baseMergeDeep', './getSymbols', '../lang/isArray', './
         if (isCommon) {
           result = srcValue;
         }
-        if ((isSrcArr || result !== undefined) &&
+        if ((result !== undefined || (isSrcArr && !(key in object))) &&
             (isCommon || (result === result ? (result !== value) : (value === value)))) {
           object[key] = result;
         }

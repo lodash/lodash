@@ -1,4 +1,4 @@
-define(['./keys'], function(keys) {
+define(['./keys', '../internal/toObject'], function(keys, toObject) {
 
   /**
    * Creates a two dimensional array of the key-value pairs for `object`,
@@ -15,6 +15,8 @@ define(['./keys'], function(keys) {
    * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
    */
   function pairs(object) {
+    object = toObject(object);
+
     var index = -1,
         props = keys(object),
         length = props.length,

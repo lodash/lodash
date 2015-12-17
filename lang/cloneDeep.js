@@ -46,8 +46,9 @@ define(['../internal/baseClone', '../internal/bindCallback'], function(baseClone
    * // => 20
    */
   function cloneDeep(value, customizer, thisArg) {
-    customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 1);
-    return baseClone(value, true, customizer);
+    return typeof customizer == 'function'
+      ? baseClone(value, true, bindCallback(customizer, thisArg, 1))
+      : baseClone(value, true);
   }
 
   return cloneDeep;

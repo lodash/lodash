@@ -1,7 +1,10 @@
-define(['./lang/clone', './lang/cloneDeep', './lang/isArguments', './lang/isArray', './lang/isBoolean', './lang/isDate', './lang/isElement', './lang/isEmpty', './lang/isEqual', './lang/isError', './lang/isFinite', './lang/isFunction', './lang/isMatch', './lang/isNaN', './lang/isNative', './lang/isNull', './lang/isNumber', './lang/isObject', './lang/isPlainObject', './lang/isRegExp', './lang/isString', './lang/isTypedArray', './lang/isUndefined', './lang/toArray', './lang/toPlainObject'], function(clone, cloneDeep, isArguments, isArray, isBoolean, isDate, isElement, isEmpty, isEqual, isError, isFinite, isFunction, isMatch, isNaN, isNative, isNull, isNumber, isObject, isPlainObject, isRegExp, isString, isTypedArray, isUndefined, toArray, toPlainObject) {
+define(['./lang/clone', './lang/cloneDeep', './lang/eq', './lang/gt', './lang/gte', './lang/isArguments', './lang/isArray', './lang/isBoolean', './lang/isDate', './lang/isElement', './lang/isEmpty', './lang/isEqual', './lang/isError', './lang/isFinite', './lang/isFunction', './lang/isMatch', './lang/isNaN', './lang/isNative', './lang/isNull', './lang/isNumber', './lang/isObject', './lang/isPlainObject', './lang/isRegExp', './lang/isString', './lang/isTypedArray', './lang/isUndefined', './lang/lt', './lang/lte', './lang/toArray', './lang/toPlainObject'], function(clone, cloneDeep, eq, gt, gte, isArguments, isArray, isBoolean, isDate, isElement, isEmpty, isEqual, isError, isFinite, isFunction, isMatch, isNaN, isNative, isNull, isNumber, isObject, isPlainObject, isRegExp, isString, isTypedArray, isUndefined, lt, lte, toArray, toPlainObject) {
   return {
     'clone': clone,
     'cloneDeep': cloneDeep,
+    'eq': eq,
+    'gt': gt,
+    'gte': gte,
     'isArguments': isArguments,
     'isArray': isArray,
     'isBoolean': isBoolean,
@@ -23,6 +26,8 @@ define(['./lang/clone', './lang/cloneDeep', './lang/isArguments', './lang/isArra
     'isString': isString,
     'isTypedArray': isTypedArray,
     'isUndefined': isUndefined,
+    'lt': lt,
+    'lte': lte,
     'toArray': toArray,
     'toPlainObject': toPlainObject
   };

@@ -1,4 +1,4 @@
-define(['../internal/arrayMin', '../internal/createExtremum'], function(arrayMin, createExtremum) {
+define(['../internal/createExtremum', '../lang/lt'], function(createExtremum, lt) {
 
   /**
    * Gets the minimum value of `collection`. If `collection` is empty or falsey
@@ -47,7 +47,7 @@ define(['../internal/arrayMin', '../internal/createExtremum'], function(arrayMin
    * _.min(users, 'age');
    * // => { 'user': 'barney', 'age': 36 }
    */
-  var min = createExtremum(arrayMin, true);
+  var min = createExtremum(lt, Infinity);
 
   return min;
 });

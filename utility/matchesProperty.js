@@ -12,7 +12,7 @@ define(['../internal/baseClone', '../internal/baseMatchesProperty'], function(ba
    * @memberOf _
    * @category Utility
    * @param {Array|string} path The path of the property to get.
-   * @param {*} value The value to compare.
+   * @param {*} srcValue The value to match.
    * @returns {Function} Returns the new function.
    * @example
    *
@@ -24,8 +24,8 @@ define(['../internal/baseClone', '../internal/baseMatchesProperty'], function(ba
    * _.find(users, _.matchesProperty('user', 'fred'));
    * // => { 'user': 'fred' }
    */
-  function matchesProperty(path, value) {
-    return baseMatchesProperty(path, baseClone(value, true));
+  function matchesProperty(path, srcValue) {
+    return baseMatchesProperty(path, baseClone(srcValue, true));
   }
 
   return matchesProperty;

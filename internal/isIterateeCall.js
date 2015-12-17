@@ -22,7 +22,7 @@ define(['./isIndex', './isLength', '../lang/isObject'], function(isIndex, isLeng
     }
     if (prereq) {
       var other = object[index];
-      return value === value ? value === other : other !== other;
+      return value === value ? (value === other) : (other !== other);
     }
     return false;
   }

@@ -34,7 +34,7 @@ define(['./arrayEach', './baseForOwn', './baseMergeDeep', '../lang/isArray', './
         result = srcValue;
       }
       if ((isSrcArr || typeof result != 'undefined') &&
-          (isCommon || (result === result ? result !== value : value === value))) {
+          (isCommon || (result === result ? (result !== value) : (value === value)))) {
         object[key] = result;
       }
     });

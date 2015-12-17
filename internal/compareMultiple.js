@@ -26,9 +26,8 @@ define(['./baseCompareAscending'], function(baseCompareAscending) {
       if (result) {
         if (index >= ordersLength) {
           return result;
-        } else {
-          return orders[index] ? result : result * -1;
         }
+        return result * (orders[index] ? 1 : -1);
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications

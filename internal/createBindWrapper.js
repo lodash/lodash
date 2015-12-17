@@ -1,4 +1,4 @@
-define(['./createCtorWrapper'], function(createCtorWrapper) {
+define(['./createCtorWrapper', './root'], function(createCtorWrapper, root) {
 
   /**
    * Creates a function that wraps `func` and invokes it with the `this`
@@ -13,7 +13,8 @@ define(['./createCtorWrapper'], function(createCtorWrapper) {
     var Ctor = createCtorWrapper(func);
 
     function wrapper() {
-      return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
+      var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+      return fn.apply(thisArg, arguments);
     }
     return wrapper;
   }

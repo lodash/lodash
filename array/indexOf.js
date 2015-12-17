@@ -46,7 +46,10 @@ define(['../internal/baseIndexOf', '../internal/binaryIndex'], function(baseInde
       var index = binaryIndex(array, value),
           other = array[index];
 
-      return (value === value ? value === other : other !== other) ? index : -1;
+      if (value === value ? (value === other) : (other !== other)) {
+        return index;
+      }
+      return -1;
     }
     return baseIndexOf(array, value, fromIndex || 0);
   }

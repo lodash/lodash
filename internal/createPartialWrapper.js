@@ -1,4 +1,4 @@
-define(['./createCtorWrapper'], function(createCtorWrapper) {
+define(['./createCtorWrapper', './root'], function(createCtorWrapper, root) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1;
@@ -34,7 +34,8 @@ define(['./createCtorWrapper'], function(createCtorWrapper) {
       while (argsLength--) {
         args[leftIndex++] = arguments[++argsIndex];
       }
-      return (this instanceof wrapper ? Ctor : func).apply(isBind ? thisArg : this, args);
+      var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+      return fn.apply(isBind ? thisArg : this, args);
     }
     return wrapper;
   }

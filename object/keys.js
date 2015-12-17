@@ -36,7 +36,7 @@ define(['../internal/isLength', '../lang/isNative', '../lang/isObject', '../inte
           length = object.length;
     }
     if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-       (typeof object != 'function' && (length && isLength(length)))) {
+        (typeof object != 'function' && (length && isLength(length)))) {
       return shimKeys(object);
     }
     return isObject(object) ? nativeKeys(object) : [];

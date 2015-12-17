@@ -28,7 +28,7 @@ define(['../internal/isObjectLike', './isPlainObject', '../support'], function(i
    */
   function isElement(value) {
     return (value && value.nodeType === 1 && isObjectLike(value) &&
-      objToString.call(value).indexOf('Element') > -1) || false;
+      (objToString.call(value).indexOf('Element') > -1)) || false;
   }
   // Fallback for environments without DOM support.
   if (!support.dom) {

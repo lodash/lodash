@@ -2,8 +2,8 @@ define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrap
 
   /** Used to indicate the type of lazy iteratees. */
   var LAZY_DROP_WHILE_FLAG = 0,
-      LAZY_MAP_FLAG = 2,
-      LAZY_TAKE_WHILE_FLAG = 3;
+      LAZY_FILTER_FLAG = 1,
+      LAZY_MAP_FLAG = 2;
 
   /* Native method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
@@ -27,9 +27,8 @@ define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrap
         start = view.start,
         end = view.end,
         length = end - start,
-        dropCount = this.__dropCount__,
+        index = isRight ? end : (start - 1),
         takeCount = nativeMin(length, this.__takeCount__),
-        index = isRight ? end : start - 1,
         iteratees = this.__iteratees__,
         iterLength = iteratees ? iteratees.length : 0,
         resIndex = 0,
@@ -47,28 +46,32 @@ define(['./baseWrapperValue', './getView', '../lang/isArray'], function(baseWrap
             iteratee = data.iteratee,
             type = data.type;
 
-        if (type != LAZY_DROP_WHILE_FLAG) {
-          var computed = iteratee(value);
-        } else {
-          data.done = data.done && (isRight ? index < data.index : index > data.index);
+        if (type == LAZY_DROP_WHILE_FLAG) {
+          if (data.done && (isRight ? (index > data.index) : (index < data.index))) {
+            data.count = 0;
+            data.done = false;
+          }
           data.index = index;
-          computed = data.done || (data.done = !iteratee(value));
-        }
-        if (type == LAZY_MAP_FLAG) {
-          value = computed;
-        } else if (!computed) {
-          if (type == LAZY_TAKE_WHILE_FLAG) {
-            break outer;
-          } else {
-            continue outer;
+          if (!data.done) {
+            var limit = data.limit;
+            if (!(data.done = limit > -1 ? (data.count++ >= limit) : !iteratee(value))) {
+              continue outer;
+            }
+          }
+        } else {
+          var computed = iteratee(value);
+          if (type == LAZY_MAP_FLAG) {
+            value = computed;
+          } else if (!computed) {
+            if (type == LAZY_FILTER_FLAG) {
+              continue outer;
+            } else {
+              break outer;
+            }
           }
         }
       }
-      if (dropCount) {
-        dropCount--;
-      } else {
-        result[resIndex++] = value;
-      }
+      result[resIndex++] = value;
     }
     return result;
   }

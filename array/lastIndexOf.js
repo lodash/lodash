@@ -40,7 +40,10 @@ define(['../internal/binaryIndex', '../internal/indexOfNaN'], function(binaryInd
     } else if (fromIndex) {
       index = binaryIndex(array, value, true) - 1;
       var other = array[index];
-      return (value === value ? value === other : other !== other) ? index : -1;
+      if (value === value ? (value === other) : (other !== other)) {
+        return index;
+      }
+      return -1;
     }
     if (value !== value) {
       return indexOfNaN(array, index, true);

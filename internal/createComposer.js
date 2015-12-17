@@ -14,7 +14,7 @@ define([], function() {
     return function() {
       var length = arguments.length,
           index = length,
-          fromIndex = fromRight ? length - 1 : 0;
+          fromIndex = fromRight ? (length - 1) : 0;
 
       if (!length) {
         return function() { return arguments[0]; };

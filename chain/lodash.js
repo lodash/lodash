@@ -22,9 +22,14 @@ define(['../internal/LazyWrapper', '../internal/LodashWrapper', '../internal/bas
    * Chaining is supported in custom builds as long as the `_#value` method is
    * directly or indirectly included in the build.
    *
-   * In addition to lodash methods, wrappers also have the following `Array` methods:
-   * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
-   * and `unshift`
+   * In addition to lodash methods, wrappers have `Array` and `String` methods.
+   *
+   * The wrapper `Array` methods are:
+   * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`,
+   * `splice`, and `unshift`
+   *
+   * The wrapper `String` methods are:
+   * `replace` and `split`
    *
    * The wrapper methods that support shortcut fusion are:
    * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,

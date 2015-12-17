@@ -1,4 +1,4 @@
-define(['./arrayCopy', './composeArgs', './composeArgsRight', './createCtorWrapper', './reorder', './replaceHolders'], function(arrayCopy, composeArgs, composeArgsRight, createCtorWrapper, reorder, replaceHolders) {
+define(['./arrayCopy', './composeArgs', './composeArgsRight', './createCtorWrapper', './reorder', './replaceHolders', './root'], function(arrayCopy, composeArgs, composeArgsRight, createCtorWrapper, reorder, replaceHolders, root) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -91,7 +91,8 @@ define(['./arrayCopy', './composeArgs', './composeArgsRight', './createCtorWrapp
       if (isAry && ary < args.length) {
         args.length = ary;
       }
-      return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+      var fn = (this && this !== root && this instanceof wrapper) ? (Ctor || createCtorWrapper(func)) : func;
+      return fn.apply(thisBinding, args);
     }
     return wrapper;
   }

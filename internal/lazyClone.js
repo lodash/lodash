@@ -16,7 +16,6 @@ define(['./LazyWrapper', './arrayCopy'], function(LazyWrapper, arrayCopy) {
 
     result.__actions__ = actions ? arrayCopy(actions) : null;
     result.__dir__ = this.__dir__;
-    result.__dropCount__ = this.__dropCount__;
     result.__filtered__ = this.__filtered__;
     result.__iteratees__ = iteratees ? arrayCopy(iteratees) : null;
     result.__takeCount__ = this.__takeCount__;

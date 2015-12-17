@@ -1,7 +1,4 @@
-define(['./assign', '../internal/assignDefaults', '../function/restParam'], function(assign, assignDefaults, restParam) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./assign', '../internal/assignDefaults', '../internal/createDefaults'], function(assign, assignDefaults, createDefaults) {
 
   /**
    * Assigns own enumerable properties of source object(s) to the destination
@@ -21,14 +18,7 @@ define(['./assign', '../internal/assignDefaults', '../function/restParam'], func
    * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
    * // => { 'user': 'barney', 'age': 36 }
    */
-  var defaults = restParam(function(args) {
-    var object = args[0];
-    if (object == null) {
-      return object;
-    }
-    args.push(assignDefaults);
-    return assign.apply(undefined, args);
-  });
+  var defaults = createDefaults(assign, assignDefaults);
 
   return defaults;
 });

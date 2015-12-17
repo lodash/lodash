@@ -1,5 +1,8 @@
 define(['../internal/baseToString', '../internal/isIterateeCall', '../lang/isObject', '../lang/isRegExp'], function(baseToString, isIterateeCall, isObject, isRegExp) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
@@ -49,7 +52,7 @@ define(['../internal/baseToString', '../internal/isIterateeCall', '../lang/isObj
    */
   function trunc(string, options, guard) {
     if (guard && isIterateeCall(string, options, guard)) {
-      options = null;
+      options = undefined;
     }
     var length = DEFAULT_TRUNC_LENGTH,
         omission = DEFAULT_TRUNC_OMISSION;

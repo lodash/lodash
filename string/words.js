@@ -1,5 +1,8 @@
 define(['../internal/baseToString', '../internal/isIterateeCall'], function(baseToString, isIterateeCall) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used to match words to create compound words. */
   var reWords = (function() {
     var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
@@ -28,7 +31,7 @@ define(['../internal/baseToString', '../internal/isIterateeCall'], function(base
    */
   function words(string, pattern, guard) {
     if (guard && isIterateeCall(string, pattern, guard)) {
-      pattern = null;
+      pattern = undefined;
     }
     string = baseToString(string);
     return string.match(pattern || reWords) || [];

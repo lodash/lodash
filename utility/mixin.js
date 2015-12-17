@@ -1,10 +1,4 @@
-define(['../internal/arrayCopy', '../internal/baseFunctions', '../lang/isFunction', '../lang/isObject', '../object/keys'], function(arrayCopy, baseFunctions, isFunction, isObject, keys) {
-
-  /** Used for native method references. */
-  var arrayProto = Array.prototype;
-
-  /** Native method references. */
-  var push = arrayProto.push;
+define(['../internal/arrayCopy', '../internal/arrayPush', '../internal/baseFunctions', '../lang/isFunction', '../lang/isObject', '../object/keys'], function(arrayCopy, arrayPush, baseFunctions, isFunction, isObject, keys) {
 
   /**
    * Adds all own enumerable function properties of a source object to the
@@ -72,9 +66,7 @@ define(['../internal/arrayCopy', '../internal/baseFunctions', '../lang/isFunctio
               result.__chain__ = chainAll;
               return result;
             }
-            var args = [this.value()];
-            push.apply(args, arguments);
-            return func.apply(object, args);
+            return func.apply(object, arrayPush([this.value()], arguments));
           };
         }(func));
       }

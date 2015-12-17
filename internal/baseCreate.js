@@ -1,5 +1,8 @@
 define(['../lang/isObject'], function(isObject) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * The base implementation of `_.create` without support for assigning
    * properties to the created object.
@@ -14,7 +17,7 @@ define(['../lang/isObject'], function(isObject) {
       if (isObject(prototype)) {
         object.prototype = prototype;
         var result = new object;
-        object.prototype = null;
+        object.prototype = undefined;
       }
       return result || {};
     };

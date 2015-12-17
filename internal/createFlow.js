@@ -1,10 +1,16 @@
 define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './isLaziable'], function(LodashWrapper, getData, getFuncName, isArray, isLaziable) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used to compose bitmasks for wrapper metadata. */
   var CURRY_FLAG = 8,
       PARTIAL_FLAG = 32,
       ARY_FLAG = 128,
       REARG_FLAG = 256;
+
+  /** Used as the size to enable large array optimizations. */
+  var LARGE_ARRAY_SIZE = 200;
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -30,7 +36,7 @@ define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './i
           throw new TypeError(FUNC_ERROR_TEXT);
         }
         if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
-          wrapper = new LodashWrapper([]);
+          wrapper = new LodashWrapper([], true);
         }
       }
       index = wrapper ? -1 : length;
@@ -38,7 +44,7 @@ define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './i
         func = funcs[index];
 
         var funcName = getFuncName(func),
-            data = funcName == 'wrapper' ? getData(func) : null;
+            data = funcName == 'wrapper' ? getData(func) : undefined;
 
         if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
           wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
@@ -47,12 +53,14 @@ define(['./LodashWrapper', './getData', './getFuncName', '../lang/isArray', './i
         }
       }
       return function() {
-        var args = arguments;
-        if (wrapper && args.length == 1 && isArray(args[0])) {
-          return wrapper.plant(args[0]).value();
+        var args = arguments,
+            value = args[0];
+
+        if (wrapper && args.length == 1 && isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+          return wrapper.plant(value).value();
         }
         var index = 0,
-            result = length ? funcs[index].apply(this, args) : args[0];
+            result = length ? funcs[index].apply(this, args) : value;
 
         while (++index < length) {
           result = funcs[index].call(this, result);

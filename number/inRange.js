@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /* Native method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max,
       nativeMin = Math.min;
@@ -37,7 +40,7 @@ define([], function() {
    */
   function inRange(value, start, end) {
     start = +start || 0;
-    if (typeof end === 'undefined') {
+    if (end === undefined) {
       end = start;
       start = 0;
     } else {

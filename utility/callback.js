@@ -1,5 +1,8 @@
 define(['../internal/baseCallback', '../internal/isIterateeCall', '../internal/isObjectLike', './matches'], function(baseCallback, isIterateeCall, isObjectLike, matches) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates a function that invokes `func` with the `this` binding of `thisArg`
    * and arguments of the created function. If `func` is a property name the
@@ -40,7 +43,7 @@ define(['../internal/baseCallback', '../internal/isIterateeCall', '../internal/i
    */
   function callback(func, thisArg, guard) {
     if (guard && isIterateeCall(func, thisArg, guard)) {
-      thisArg = null;
+      thisArg = undefined;
     }
     return isObjectLike(func)
       ? matches(func)

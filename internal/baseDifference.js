@@ -1,5 +1,8 @@
 define(['./baseIndexOf', './cacheIndexOf', './createCache'], function(baseIndexOf, cacheIndexOf, createCache) {
 
+  /** Used as the size to enable large array optimizations. */
+  var LARGE_ARRAY_SIZE = 200;
+
   /**
    * The base implementation of `_.difference` which accepts a single array
    * of values to exclude.
@@ -19,7 +22,7 @@ define(['./baseIndexOf', './cacheIndexOf', './createCache'], function(baseIndexO
     var index = -1,
         indexOf = baseIndexOf,
         isCommon = true,
-        cache = (isCommon && values.length >= 200) ? createCache(values) : null,
+        cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? createCache(values) : null,
         valuesLength = values.length;
 
     if (cache) {

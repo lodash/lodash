@@ -1,5 +1,8 @@
 define(['../internal/baseFlatten', '../internal/createWrapper', './restParam'], function(baseFlatten, createWrapper, restParam) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used to compose bitmasks for wrapper metadata. */
   var REARG_FLAG = 256;
 
@@ -32,7 +35,7 @@ define(['../internal/baseFlatten', '../internal/createWrapper', './restParam'], 
    * // => [3, 6, 9]
    */
   var rearg = restParam(function(func, indexes) {
-    return createWrapper(func, REARG_FLAG, null, null, null, baseFlatten(indexes));
+    return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));
   });
 
   return rearg;

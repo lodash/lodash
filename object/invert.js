@@ -1,5 +1,8 @@
 define(['../internal/isIterateeCall', './keys'], function(isIterateeCall, keys) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used for native method references. */
   var objectProto = Object.prototype;
 
@@ -31,7 +34,7 @@ define(['../internal/isIterateeCall', './keys'], function(isIterateeCall, keys) 
    */
   function invert(object, multiValue, guard) {
     if (guard && isIterateeCall(object, multiValue, guard)) {
-      multiValue = null;
+      multiValue = undefined;
     }
     var index = -1,
         props = keys(object),

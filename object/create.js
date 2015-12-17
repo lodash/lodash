@@ -1,5 +1,8 @@
 define(['../internal/baseAssign', '../internal/baseCreate', '../internal/isIterateeCall'], function(baseAssign, baseCreate, isIterateeCall) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates an object that inherits from the given `prototype` object. If a
    * `properties` object is provided its own enumerable properties are assigned
@@ -37,7 +40,7 @@ define(['../internal/baseAssign', '../internal/baseCreate', '../internal/isItera
   function create(prototype, properties, guard) {
     var result = baseCreate(prototype);
     if (guard && isIterateeCall(prototype, properties, guard)) {
-      properties = null;
+      properties = undefined;
     }
     return properties ? baseAssign(result, properties) : result;
   }

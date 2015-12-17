@@ -1,5 +1,8 @@
 define(['../internal/arraySum', '../internal/baseCallback', '../internal/baseSum', '../lang/isArray', '../internal/isIterateeCall', '../internal/toIterable'], function(arraySum, baseCallback, baseSum, isArray, isIterateeCall, toIterable) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Gets the sum of the values in `collection`.
    *
@@ -34,13 +37,11 @@ define(['../internal/arraySum', '../internal/baseCallback', '../internal/baseSum
    */
   function sum(collection, iteratee, thisArg) {
     if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-      iteratee = null;
+      iteratee = undefined;
     }
-    var noIteratee = iteratee == null;
-
-    iteratee = noIteratee ? iteratee : baseCallback(iteratee, thisArg, 3);
-    return noIteratee
-      ? arraySum(isArray(collection) ? collection : toIterable(collection))
+    iteratee = baseCallback(iteratee, thisArg, 3);
+    return iteratee.length == 1
+      ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
       : baseSum(collection, iteratee);
   }
 

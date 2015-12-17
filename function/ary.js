@@ -1,5 +1,8 @@
 define(['../internal/createWrapper', '../internal/isIterateeCall'], function(createWrapper, isIterateeCall) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used to compose bitmasks for wrapper metadata. */
   var ARY_FLAG = 128;
 
@@ -24,10 +27,10 @@ define(['../internal/createWrapper', '../internal/isIterateeCall'], function(cre
    */
   function ary(func, n, guard) {
     if (guard && isIterateeCall(func, n, guard)) {
-      n = null;
+      n = undefined;
     }
     n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
-    return createWrapper(func, ARY_FLAG, null, null, null, null, n);
+    return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
   }
 
   return ary;

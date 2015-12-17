@@ -1,4 +1,4 @@
-define(['./SetCache', '../utility/constant', './getNative', './root'], function(SetCache, constant, getNative, root) {
+define(['./SetCache', './getNative', './root'], function(SetCache, getNative, root) {
 
   /** Native method references. */
   var Set = getNative(root, 'Set');
@@ -13,9 +13,9 @@ define(['./SetCache', '../utility/constant', './getNative', './root'], function(
    * @param {Array} [values] The values to cache.
    * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
    */
-  var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
-    return new SetCache(values);
-  };
+  function createCache(values) {
+    return (nativeCreate && Set) ? new SetCache(values) : null;
+  }
 
   return createCache;
 });

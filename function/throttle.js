@@ -3,13 +3,6 @@ define(['./debounce', '../lang/isObject'], function(debounce, isObject) {
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /** Used as an internal `_.debounce` options object by `_.throttle`. */
-  var debounceOptions = {
-    'leading': false,
-    'maxWait': 0,
-    'trailing': false
-  };
-
   /**
    * Creates a throttled function that only invokes `func` at most once per
    * every `wait` milliseconds. The throttled function comes with a `cancel`
@@ -62,10 +55,7 @@ define(['./debounce', '../lang/isObject'], function(debounce, isObject) {
       leading = 'leading' in options ? !!options.leading : leading;
       trailing = 'trailing' in options ? !!options.trailing : trailing;
     }
-    debounceOptions.leading = leading;
-    debounceOptions.maxWait = +wait;
-    debounceOptions.trailing = trailing;
-    return debounce(func, wait, debounceOptions);
+    return debounce(func, wait, { 'leading': leading, 'maxWait': +wait, 'trailing': trailing });
   }
 
   return throttle;

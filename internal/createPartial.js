@@ -1,5 +1,8 @@
 define(['./createWrapper', './replaceHolders', '../function/restParam'], function(createWrapper, replaceHolders, restParam) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates a `_.partial` or `_.partialRight` function.
    *
@@ -10,7 +13,7 @@ define(['./createWrapper', './replaceHolders', '../function/restParam'], functio
   function createPartial(flag) {
     var partialFunc = restParam(function(func, partials) {
       var holders = replaceHolders(partials, partialFunc.placeholder);
-      return createWrapper(func, flag, null, partials, holders);
+      return createWrapper(func, flag, undefined, partials, holders);
     });
     return partialFunc;
   }

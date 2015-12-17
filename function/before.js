@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -35,7 +38,7 @@ define([], function() {
         result = func.apply(this, arguments);
       }
       if (n <= 1) {
-        func = null;
+        func = undefined;
       }
       return result;
     };

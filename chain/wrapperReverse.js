@@ -1,5 +1,8 @@
 define(['../internal/LazyWrapper', '../internal/LodashWrapper', './thru'], function(LazyWrapper, LodashWrapper, thru) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Reverses the wrapped array so the first element becomes the last, the
    * second element becomes the second to last, and so on.
@@ -22,15 +25,20 @@ define(['../internal/LazyWrapper', '../internal/LodashWrapper', './thru'], funct
    */
   function wrapperReverse() {
     var value = this.__wrapped__;
+
+    var interceptor = function(value) {
+      return (wrapped && wrapped.__dir__ < 0) ? value : value.reverse();
+    };
     if (value instanceof LazyWrapper) {
+      var wrapped = value;
       if (this.__actions__.length) {
-        value = new LazyWrapper(this);
+        wrapped = new LazyWrapper(this);
       }
-      return new LodashWrapper(value.reverse(), this.__chain__);
+      wrapped = wrapped.reverse();
+      wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+      return new LodashWrapper(wrapped, this.__chain__);
     }
-    return this.thru(function(value) {
-      return value.reverse();
-    });
+    return this.thru(interceptor);
   }
 
   return wrapperReverse;

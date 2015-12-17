@@ -1,4 +1,4 @@
-define(['../internal/baseDifference', '../internal/baseUniq', '../internal/isArrayLike'], function(baseDifference, baseUniq, isArrayLike) {
+define(['../internal/arrayPush', '../internal/baseDifference', '../internal/baseUniq', '../internal/isArrayLike'], function(arrayPush, baseDifference, baseUniq, isArrayLike) {
 
   /**
    * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
@@ -22,7 +22,7 @@ define(['../internal/baseDifference', '../internal/baseUniq', '../internal/isArr
       var array = arguments[index];
       if (isArrayLike(array)) {
         var result = result
-          ? baseDifference(result, array).concat(baseDifference(array, result))
+          ? arrayPush(baseDifference(result, array), baseDifference(array, result))
           : array;
       }
     }

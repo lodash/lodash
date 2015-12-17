@@ -48,7 +48,7 @@ define(['./arrayCopy', './arrayEach', './baseAssign', './baseForOwn', './initClo
   var objectProto = Object.prototype;
 
   /**
-   * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+   * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
    * of values.
    */
   var objToString = objectProto.toString;
@@ -99,7 +99,7 @@ define(['./arrayCopy', './arrayEach', './baseAssign', './baseForOwn', './initClo
           : (object ? value : {});
       }
     }
-    // Check for circular references and return corresponding clone.
+    // Check for circular references and return its corresponding clone.
     stackA || (stackA = []);
     stackB || (stackB = []);
 

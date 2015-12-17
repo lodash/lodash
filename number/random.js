@@ -1,5 +1,8 @@
 define(['../internal/baseRandom', '../internal/isIterateeCall'], function(baseRandom, isIterateeCall) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /* Native method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min,
       nativeRandom = Math.random;
@@ -33,7 +36,7 @@ define(['../internal/baseRandom', '../internal/isIterateeCall'], function(baseRa
    */
   function random(min, max, floating) {
     if (floating && isIterateeCall(min, max, floating)) {
-      max = floating = null;
+      max = floating = undefined;
     }
     var noMin = min == null,
         noMax = max == null;

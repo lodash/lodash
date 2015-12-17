@@ -1,5 +1,8 @@
 define(['../internal/arrayEach', '../internal/baseCallback', '../internal/baseCreate', '../internal/baseForOwn', '../lang/isArray', '../lang/isFunction', '../lang/isObject', '../lang/isTypedArray'], function(arrayEach, baseCallback, baseCreate, baseForOwn, isArray, isFunction, isObject, isTypedArray) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * An alternative to `_.reduce`; this method transforms `object` to a new
    * `accumulator` object which is the result of running each of its own enumerable
@@ -39,7 +42,7 @@ define(['../internal/arrayEach', '../internal/baseCallback', '../internal/baseCr
         if (isArr) {
           accumulator = isArray(object) ? new Ctor : [];
         } else {
-          accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : null);
+          accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
         }
       } else {
         accumulator = {};

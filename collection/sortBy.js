@@ -1,5 +1,8 @@
 define(['../internal/baseCallback', '../internal/baseMap', '../internal/baseSortBy', '../internal/compareAscending', '../internal/isIterateeCall'], function(baseCallback, baseMap, baseSortBy, compareAscending, isIterateeCall) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates an array of elements, sorted in ascending order by the results of
    * running each element in a collection through `iteratee`. This method performs
@@ -53,7 +56,7 @@ define(['../internal/baseCallback', '../internal/baseMap', '../internal/baseSort
       return [];
     }
     if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-      iteratee = null;
+      iteratee = undefined;
     }
     var index = -1;
     iteratee = baseCallback(iteratee, thisArg, 3);

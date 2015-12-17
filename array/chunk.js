@@ -1,10 +1,9 @@
 define(['../internal/baseSlice', '../internal/isIterateeCall'], function(baseSlice, isIterateeCall) {
 
-  /** Native method references. */
-  var ceil = Math.ceil;
-
   /* Native method references for those with the same name as other `lodash` methods. */
-  var nativeMax = Math.max;
+  var nativeCeil = Math.ceil,
+      nativeFloor = Math.floor,
+      nativeMax = Math.max;
 
   /**
    * Creates an array of elements split into groups the length of `size`.
@@ -30,12 +29,12 @@ define(['../internal/baseSlice', '../internal/isIterateeCall'], function(baseSli
     if (guard ? isIterateeCall(array, size, guard) : size == null) {
       size = 1;
     } else {
-      size = nativeMax(+size || 1, 1);
+      size = nativeMax(nativeFloor(size) || 1, 1);
     }
     var index = 0,
         length = array ? array.length : 0,
         resIndex = -1,
-        result = Array(ceil(length / size));
+        result = Array(nativeCeil(length / size));
 
     while (index < length) {
       result[++resIndex] = baseSlice(array, index, (index += size));

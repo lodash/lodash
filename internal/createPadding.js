@@ -1,10 +1,8 @@
 define(['../string/repeat', './root'], function(repeat, root) {
 
-  /** Native method references. */
-  var ceil = Math.ceil;
-
   /* Native method references for those with the same name as other `lodash` methods. */
-  var nativeIsFinite = root.isFinite;
+  var nativeCeil = Math.ceil,
+      nativeIsFinite = root.isFinite;
 
   /**
    * Creates the padding required for `string` based on the given `length`.
@@ -25,7 +23,7 @@ define(['../string/repeat', './root'], function(repeat, root) {
     }
     var padLength = length - strLength;
     chars = chars == null ? ' ' : (chars + '');
-    return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
+    return repeat(chars, nativeCeil(padLength / chars.length)).slice(0, padLength);
   }
 
   return createPadding;

@@ -1,4 +1,4 @@
-define(['./function/after', './function/ary', './function/backflow', './function/before', './function/bind', './function/bindAll', './function/bindKey', './function/compose', './function/curry', './function/curryRight', './function/debounce', './function/defer', './function/delay', './function/flow', './function/flowRight', './function/memoize', './function/negate', './function/once', './function/partial', './function/partialRight', './function/rearg', './function/restParam', './function/spread', './function/throttle', './function/wrap'], function(after, ary, backflow, before, bind, bindAll, bindKey, compose, curry, curryRight, debounce, defer, delay, flow, flowRight, memoize, negate, once, partial, partialRight, rearg, restParam, spread, throttle, wrap) {
+define(['./function/after', './function/ary', './function/backflow', './function/before', './function/bind', './function/bindAll', './function/bindKey', './function/compose', './function/curry', './function/curryRight', './function/debounce', './function/defer', './function/delay', './function/flow', './function/flowRight', './function/memoize', './function/modArgs', './function/negate', './function/once', './function/partial', './function/partialRight', './function/rearg', './function/restParam', './function/spread', './function/throttle', './function/wrap'], function(after, ary, backflow, before, bind, bindAll, bindKey, compose, curry, curryRight, debounce, defer, delay, flow, flowRight, memoize, modArgs, negate, once, partial, partialRight, rearg, restParam, spread, throttle, wrap) {
   return {
     'after': after,
     'ary': ary,
@@ -16,6 +16,7 @@ define(['./function/after', './function/ary', './function/backflow', './function
     'flow': flow,
     'flowRight': flowRight,
     'memoize': memoize,
+    'modArgs': modArgs,
     'negate': negate,
     'once': once,
     'partial': partial,

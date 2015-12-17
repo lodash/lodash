@@ -1,10 +1,4 @@
-define(['./LazyWrapper'], function(LazyWrapper) {
-
-  /** Used for native method references. */
-  var arrayProto = Array.prototype;
-
-  /** Native method references. */
-  var push = arrayProto.push;
+define(['./LazyWrapper', './arrayPush'], function(LazyWrapper, arrayPush) {
 
   /**
    * The base implementation of `wrapperValue` which returns the result of
@@ -25,11 +19,8 @@ define(['./LazyWrapper'], function(LazyWrapper) {
         length = actions.length;
 
     while (++index < length) {
-      var args = [result],
-          action = actions[index];
-
-      push.apply(args, action.args);
-      result = action.func.apply(action.thisArg, args);
+      var action = actions[index];
+      result = action.func.apply(action.thisArg, arrayPush([result], action.args));
     }
     return result;
   }

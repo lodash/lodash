@@ -11,7 +11,7 @@ define(['./baseCreate', '../lang/isObject'], function(baseCreate, isObject) {
   function createCtorWrapper(Ctor) {
     return function() {
       // Use a `switch` statement to work with class constructors.
-      // See https://people.mozilla.org/~jorendorff/es6-draft.html#sec-ecmascript-function-objects-call-thisargument-argumentslist
+      // See http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
       // for more details.
       var args = arguments;
       switch (args.length) {
@@ -21,6 +21,8 @@ define(['./baseCreate', '../lang/isObject'], function(baseCreate, isObject) {
         case 3: return new Ctor(args[0], args[1], args[2]);
         case 4: return new Ctor(args[0], args[1], args[2], args[3]);
         case 5: return new Ctor(args[0], args[1], args[2], args[3], args[4]);
+        case 6: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5]);
+        case 7: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
       }
       var thisBinding = baseCreate(Ctor.prototype),
           result = Ctor.apply(thisBinding, args);

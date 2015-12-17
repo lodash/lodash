@@ -1,4 +1,4 @@
-define(['../lang/isArguments', '../lang/isArray', './isArrayLike', './isObjectLike'], function(isArguments, isArray, isArrayLike, isObjectLike) {
+define(['./arrayPush', '../lang/isArguments', '../lang/isArray', './isArrayLike', './isObjectLike'], function(arrayPush, isArguments, isArray, isArrayLike, isObjectLike) {
 
   /**
    * The base implementation of `_.flatten` with added support for restricting
@@ -8,13 +8,14 @@ define(['../lang/isArguments', '../lang/isArray', './isArrayLike', './isObjectLi
    * @param {Array} array The array to flatten.
    * @param {boolean} [isDeep] Specify a deep flatten.
    * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+   * @param {Array} [result=[]] The initial result value.
    * @returns {Array} Returns the new flattened array.
    */
-  function baseFlatten(array, isDeep, isStrict) {
+  function baseFlatten(array, isDeep, isStrict, result) {
+    result || (result = []);
+
     var index = -1,
-        length = array.length,
-        resIndex = -1,
-        result = [];
+        length = array.length;
 
     while (++index < length) {
       var value = array[index];
@@ -22,16 +23,12 @@ define(['../lang/isArguments', '../lang/isArray', './isArrayLike', './isObjectLi
           (isStrict || isArray(value) || isArguments(value))) {
         if (isDeep) {
           // Recursively flatten arrays (susceptible to call stack limits).
-          value = baseFlatten(value, isDeep, isStrict);
-        }
-        var valIndex = -1,
-            valLength = value.length;
-
-        while (++valIndex < valLength) {
-          result[++resIndex] = value[valIndex];
+          baseFlatten(value, isDeep, isStrict, result);
+        } else {
+          arrayPush(result, value);
         }
       } else if (!isStrict) {
-        result[++resIndex] = value;
+        result[result.length] = value;
       }
     }
     return result;

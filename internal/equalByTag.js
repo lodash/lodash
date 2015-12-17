@@ -16,7 +16,7 @@ define([], function() {
    * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
    *
    * @private
-   * @param {Object} value The object to compare.
+   * @param {Object} object The object to compare.
    * @param {Object} other The other object to compare.
    * @param {string} tag The `toStringTag` of the objects to compare.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.

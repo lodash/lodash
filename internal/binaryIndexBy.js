@@ -3,11 +3,9 @@ define([], function() {
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Native method references. */
-  var floor = Math.floor;
-
   /* Native method references for those with the same name as other `lodash` methods. */
-  var nativeMin = Math.min;
+  var nativeFloor = Math.floor,
+      nativeMin = Math.min;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
@@ -36,7 +34,7 @@ define([], function() {
         valIsUndef = value === undefined;
 
     while (low < high) {
-      var mid = floor((low + high) / 2),
+      var mid = nativeFloor((low + high) / 2),
           computed = iteratee(array[mid]),
           isDef = computed !== undefined,
           isReflexive = computed === computed;

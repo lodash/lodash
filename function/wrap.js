@@ -1,5 +1,8 @@
 define(['../internal/createWrapper', '../utility/identity'], function(createWrapper, identity) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used to compose bitmasks for wrapper metadata. */
   var PARTIAL_FLAG = 32;
 
@@ -26,7 +29,7 @@ define(['../internal/createWrapper', '../utility/identity'], function(createWrap
    */
   function wrap(value, wrapper) {
     wrapper = wrapper == null ? identity : wrapper;
-    return createWrapper(wrapper, PARTIAL_FLAG, null, [value], []);
+    return createWrapper(wrapper, PARTIAL_FLAG, undefined, [value], []);
   }
 
   return wrap;

@@ -8,7 +8,7 @@ define(['../internal/assignOwnDefaults', '../internal/assignWith', '../utility/a
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-  /** Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components). */
+  /** Used to match [ES template delimiters](http://ecma-international.org/ecma-262/6.0/#sec-template-literal-lexical-components). */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
   /** Used to ensure capturing order of template delimiters. */
@@ -119,7 +119,7 @@ define(['../internal/assignOwnDefaults', '../internal/assignWith', '../utility/a
     var settings = templateSettings.imports._.templateSettings || templateSettings;
 
     if (otherOptions && isIterateeCall(string, options, otherOptions)) {
-      options = otherOptions = null;
+      options = otherOptions = undefined;
     }
     string = baseToString(string);
     options = assignWith(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);

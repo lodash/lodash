@@ -1,5 +1,8 @@
 define(['../utility/identity'], function(identity) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * A specialized version of `baseCallback` which only supports `this` binding
    * and specifying the number of arguments to provide to `func`.
@@ -14,7 +17,7 @@ define(['../utility/identity'], function(identity) {
     if (typeof func != 'function') {
       return identity;
     }
-    if (typeof thisArg == 'undefined') {
+    if (thisArg === undefined) {
       return func;
     }
     switch (argCount) {

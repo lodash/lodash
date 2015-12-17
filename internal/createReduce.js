@@ -1,5 +1,8 @@
 define(['./baseCallback', './baseReduce', '../lang/isArray'], function(baseCallback, baseReduce, isArray) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates a function for `_.reduce` or `_.reduceRight`.
    *
@@ -11,7 +14,7 @@ define(['./baseCallback', './baseReduce', '../lang/isArray'], function(baseCallb
   function createReduce(arrayFunc, eachFunc) {
     return function(collection, iteratee, accumulator, thisArg) {
       var initFromArray = arguments.length < 3;
-      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+      return (typeof iteratee == 'function' && thisArg === undefined && isArray(collection))
         ? arrayFunc(collection, iteratee, accumulator, initFromArray)
         : baseReduce(collection, baseCallback(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
     };

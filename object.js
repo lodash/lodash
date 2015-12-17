@@ -1,4 +1,4 @@
-define(['./object/assign', './object/create', './object/defaults', './object/extend', './object/findKey', './object/findLastKey', './object/forIn', './object/forInRight', './object/forOwn', './object/forOwnRight', './object/functions', './object/has', './object/invert', './object/keys', './object/keysIn', './object/mapValues', './object/merge', './object/methods', './object/omit', './object/pairs', './object/pick', './object/result', './object/transform', './object/values', './object/valuesIn'], function(assign, create, defaults, extend, findKey, findLastKey, forIn, forInRight, forOwn, forOwnRight, functions, has, invert, keys, keysIn, mapValues, merge, methods, omit, pairs, pick, result, transform, values, valuesIn) {
+define(['./object/assign', './object/create', './object/defaults', './object/extend', './object/findKey', './object/findLastKey', './object/forIn', './object/forInRight', './object/forOwn', './object/forOwnRight', './object/functions', './object/get', './object/has', './object/invert', './object/keys', './object/keysIn', './object/mapValues', './object/merge', './object/methods', './object/omit', './object/pairs', './object/pick', './object/result', './object/set', './object/transform', './object/values', './object/valuesIn'], function(assign, create, defaults, extend, findKey, findLastKey, forIn, forInRight, forOwn, forOwnRight, functions, get, has, invert, keys, keysIn, mapValues, merge, methods, omit, pairs, pick, result, set, transform, values, valuesIn) {
   return {
     'assign': assign,
     'create': create,
@@ -11,6 +11,7 @@ define(['./object/assign', './object/create', './object/defaults', './object/ext
     'forOwn': forOwn,
     'forOwnRight': forOwnRight,
     'functions': functions,
+    'get': get,
     'has': has,
     'invert': invert,
     'keys': keys,
@@ -22,6 +23,7 @@ define(['./object/assign', './object/create', './object/defaults', './object/ext
     'pairs': pairs,
     'pick': pick,
     'result': result,
+    'set': set,
     'transform': transform,
     'values': values,
     'valuesIn': valuesIn

@@ -3,7 +3,7 @@ define([], function() {
   /**
    * The base implementation of `_.values` and `_.valuesIn` which creates an
    * array of `object` property values corresponding to the property names
-   * returned by `keysFunc`.
+   * of `props`.
    *
    * @private
    * @param {Object} object The object to query.

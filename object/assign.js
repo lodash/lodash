@@ -1,4 +1,4 @@
-define(['../internal/baseAssign', '../internal/createAssigner'], function(baseAssign, createAssigner) {
+define(['../internal/assignWith', '../internal/baseAssign', '../internal/createAssigner'], function(assignWith, baseAssign, createAssigner) {
 
   /**
    * Assigns own enumerable properties of source object(s) to the destination
@@ -7,13 +7,17 @@ define(['../internal/baseAssign', '../internal/createAssigner'], function(baseAs
    * The `customizer` is bound to `thisArg` and invoked with five arguments:
    * (objectValue, sourceValue, key, object, source).
    *
+   * **Note:** This method mutates `object` and is based on
+   * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
+   *
+   *
    * @static
    * @memberOf _
    * @alias extend
    * @category Object
    * @param {Object} object The destination object.
    * @param {...Object} [sources] The source objects.
-   * @param {Function} [customizer] The function to customize assigning values.
+   * @param {Function} [customizer] The function to customize assigned values.
    * @param {*} [thisArg] The `this` binding of `customizer`.
    * @returns {Object} Returns `object`.
    * @example
@@ -23,13 +27,17 @@ define(['../internal/baseAssign', '../internal/createAssigner'], function(baseAs
    *
    * // using a customizer callback
    * var defaults = _.partialRight(_.assign, function(value, other) {
-   *   return typeof value == 'undefined' ? other : value;
+   *   return _.isUndefined(value) ? other : value;
    * });
    *
    * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
    * // => { 'user': 'barney', 'age': 36 }
    */
-  var assign = createAssigner(baseAssign);
+  var assign = createAssigner(function(object, source, customizer) {
+    return customizer
+      ? assignWith(object, source, customizer)
+      : baseAssign(object, source);
+  });
 
   return assign;
 });

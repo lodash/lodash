@@ -9,7 +9,7 @@ define(['../internal/baseFlatten', '../internal/createWrapper', '../object/funct
    * of method names. If no method names are provided all enumerable function
    * properties, own and inherited, of `object` are bound.
    *
-   * **Note:** This method does not set the `length` property of bound functions.
+   * **Note:** This method does not set the "length" property of bound functions.
    *
    * @static
    * @memberOf _

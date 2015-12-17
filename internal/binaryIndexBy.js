@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Native method references. */
   var floor = Math.floor;
 
@@ -29,7 +32,7 @@ define([], function() {
     var low = 0,
         high = array ? array.length : 0,
         valIsNaN = value !== value,
-        valIsUndef = typeof value == 'undefined';
+        valIsUndef = value === undefined;
 
     while (low < high) {
       var mid = floor((low + high) / 2),
@@ -39,7 +42,7 @@ define([], function() {
       if (valIsNaN) {
         var setLow = isReflexive || retHighest;
       } else if (valIsUndef) {
-        setLow = isReflexive && (retHighest || typeof computed != 'undefined');
+        setLow = isReflexive && (retHighest || computed !== undefined);
       } else {
         setLow = retHighest ? (computed <= value) : (computed < value);
       }

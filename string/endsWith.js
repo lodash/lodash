@@ -1,5 +1,8 @@
 define(['../internal/baseToString'], function(baseToString) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /* Native method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
 
@@ -29,7 +32,7 @@ define(['../internal/baseToString'], function(baseToString) {
     target = (target + '');
 
     var length = string.length;
-    position = typeof position == 'undefined'
+    position = position === undefined
       ? length
       : nativeMin(position < 0 ? 0 : (+position || 0), length);
 

@@ -1,4 +1,4 @@
-define(['../internal/baseIndexOf', '../lang/isArray', '../internal/isIterateeCall', '../internal/isLength', '../lang/isString', '../object/values'], function(baseIndexOf, isArray, isIterateeCall, isLength, isString, values) {
+define(['../internal/baseIndexOf', '../internal/getLength', '../lang/isArray', '../internal/isIterateeCall', '../internal/isLength', '../lang/isString', '../object/values'], function(baseIndexOf, getLength, isArray, isIterateeCall, isLength, isString, values) {
 
   /* Native method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;
@@ -36,7 +36,7 @@ define(['../internal/baseIndexOf', '../lang/isArray', '../internal/isIterateeCal
    * // => true
    */
   function includes(collection, target, fromIndex, guard) {
-    var length = collection ? collection.length : 0;
+    var length = collection ? getLength(collection) : 0;
     if (!isLength(length)) {
       collection = values(collection);
       length = collection.length;

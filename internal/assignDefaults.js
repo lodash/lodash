@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Used by `_.defaults` to customize its `_.assign` use.
    *
@@ -9,7 +12,7 @@ define([], function() {
    * @returns {*} Returns the value to assign to the destination object.
    */
   function assignDefaults(objectValue, sourceValue) {
-    return typeof objectValue == 'undefined' ? sourceValue : objectValue;
+    return objectValue === undefined ? sourceValue : objectValue;
   }
 
   return assignDefaults;

@@ -1,4 +1,4 @@
-define(['../internal/baseCopy', '../internal/baseCreate', '../internal/isIterateeCall', './keys'], function(baseCopy, baseCreate, isIterateeCall, keys) {
+define(['../internal/baseAssign', '../internal/baseCreate', '../internal/isIterateeCall'], function(baseAssign, baseCreate, isIterateeCall) {
 
   /**
    * Creates an object that inherits from the given `prototype` object. If a
@@ -39,7 +39,7 @@ define(['../internal/baseCopy', '../internal/baseCreate', '../internal/isIterate
     if (guard && isIterateeCall(prototype, properties, guard)) {
       properties = null;
     }
-    return properties ? baseCopy(properties, result, keys(properties)) : result;
+    return properties ? baseAssign(result, properties) : result;
   }
 
   return create;

@@ -1,4 +1,4 @@
-define(['./isLength', '../lang/isObject', '../object/values'], function(isLength, isObject, values) {
+define(['./getLength', './isLength', '../lang/isObject', '../object/values'], function(getLength, isLength, isObject, values) {
 
   /**
    * Converts `value` to an array-like object if it is not one.
@@ -11,7 +11,7 @@ define(['./isLength', '../lang/isObject', '../object/values'], function(isLength
     if (value == null) {
       return [];
     }
-    if (!isLength(value.length)) {
+    if (!isLength(getLength(value))) {
       return values(value);
     }
     return isObject(value) ? value : Object(value);

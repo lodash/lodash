@@ -1,4 +1,4 @@
-define(['./isIndex', './isLength', '../lang/isObject'], function(isIndex, isLength, isObject) {
+define(['./getLength', './isIndex', './isLength', '../lang/isObject'], function(getLength, isIndex, isLength, isObject) {
 
   /**
    * Checks if the provided arguments are from an iteratee call.
@@ -15,7 +15,7 @@ define(['./isIndex', './isLength', '../lang/isObject'], function(isIndex, isLeng
     }
     var type = typeof index;
     if (type == 'number') {
-      var length = object.length,
+      var length = getLength(object),
           prereq = isLength(length) && isIndex(index, length);
     } else {
       prereq = type == 'string' && index in object;

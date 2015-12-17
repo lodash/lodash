@@ -1,7 +1,4 @@
-define(['../internal/arrayMap', '../internal/arrayMax', '../internal/baseProperty'], function(arrayMap, arrayMax, baseProperty) {
-
-  /** Used to the length of n-tuples for `_.unzip`. */
-  var getLength = baseProperty('length');
+define(['../internal/arrayMap', '../internal/arrayMax', '../internal/baseProperty', '../internal/getLength'], function(arrayMap, arrayMax, baseProperty, getLength) {
 
   /**
    * This method is like `_.zip` except that it accepts an array of grouped

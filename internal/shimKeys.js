@@ -11,7 +11,7 @@ define(['../lang/isArguments', '../lang/isArray', './isIndex', './isLength', '..
    * own enumerable property names of `object`.
    *
    * @private
-   * @param {Object} object The object to inspect.
+   * @param {Object} object The object to query.
    * @returns {Array} Returns the array of property names.
    */
   function shimKeys(object) {

@@ -1,4 +1,4 @@
-define(['../internal/isLength', '../object/keys'], function(isLength, keys) {
+define(['../internal/getLength', '../internal/isLength', '../object/keys'], function(getLength, isLength, keys) {
 
   /**
    * Gets the size of `collection` by returning its length for array-like
@@ -21,7 +21,7 @@ define(['../internal/isLength', '../object/keys'], function(isLength, keys) {
    * // => 7
    */
   function size(collection) {
-    var length = collection ? collection.length : 0;
+    var length = collection ? getLength(collection) : 0;
     return isLength(length) ? length : keys(collection).length;
   }
 

@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * The base implementation of `_.fill` without an iteratee call guard.
    *
@@ -17,7 +20,7 @@ define([], function() {
     if (start < 0) {
       start = -start > length ? 0 : (length + start);
     }
-    end = (typeof end == 'undefined' || end > length) ? length : (+end || 0);
+    end = (end === undefined || end > length) ? length : (+end || 0);
     if (end < 0) {
       end += length;
     }

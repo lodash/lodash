@@ -1,30 +1,22 @@
-define(['./baseEach', './baseSortBy', './compareMultiple', './isLength'], function(baseEach, baseSortBy, compareMultiple, isLength) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./arrayMap', './baseCallback', './baseMap', './baseSortBy', './compareMultiple'], function(arrayMap, baseCallback, baseMap, baseSortBy, compareMultiple) {
 
   /**
    * The base implementation of `_.sortByOrder` without param guards.
    *
    * @private
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {string[]} props The property names to sort by.
-   * @param {boolean[]} orders The sort orders of `props`.
+   * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
+   * @param {boolean[]} orders The sort orders of `iteratees`.
    * @returns {Array} Returns the new sorted array.
    */
-  function baseSortByOrder(collection, props, orders) {
-    var index = -1,
-        length = collection.length,
-        result = isLength(length) ? Array(length) : [];
+  function baseSortByOrder(collection, iteratees, orders) {
+    var index = -1;
 
-    baseEach(collection, function(value) {
-      var length = props.length,
-          criteria = Array(length);
+    iteratees = arrayMap(iteratees, function(iteratee) { return baseCallback(iteratee); });
 
-      while (length--) {
-        criteria[length] = value == null ? undefined : value[props[length]];
-      }
-      result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
+    var result = baseMap(collection, function(value) {
+      var criteria = arrayMap(iteratees, function(iteratee) { return iteratee(value); });
+      return { 'criteria': criteria, 'index': ++index, 'value': value };
     });
 
     return baseSortBy(result, function(object, other) {

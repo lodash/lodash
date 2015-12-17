@@ -1,5 +1,8 @@
 define(['../internal/arrayEvery', '../internal/baseCallback', '../internal/baseEvery', '../lang/isArray', '../internal/isIterateeCall'], function(arrayEvery, baseCallback, baseEvery, isArray, isIterateeCall) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Checks if `predicate` returns truthy for **all** elements of `collection`.
    * The predicate is bound to `thisArg` and invoked with three arguments:
@@ -53,7 +56,7 @@ define(['../internal/arrayEvery', '../internal/baseCallback', '../internal/baseE
     if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
       predicate = null;
     }
-    if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
+    if (typeof predicate != 'function' || thisArg !== undefined) {
       predicate = baseCallback(predicate, thisArg, 3);
     }
     return func(collection, predicate);

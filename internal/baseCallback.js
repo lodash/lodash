@@ -1,4 +1,7 @@
-define(['./baseMatches', './baseMatchesProperty', './baseProperty', './bindCallback', '../utility/identity'], function(baseMatches, baseMatchesProperty, baseProperty, bindCallback, identity) {
+define(['./baseMatches', './baseMatchesProperty', './bindCallback', '../utility/identity', '../utility/property'], function(baseMatches, baseMatchesProperty, bindCallback, identity, property) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /**
    * The base implementation of `_.callback` which supports specifying the
@@ -13,7 +16,7 @@ define(['./baseMatches', './baseMatchesProperty', './baseProperty', './bindCallb
   function baseCallback(func, thisArg, argCount) {
     var type = typeof func;
     if (type == 'function') {
-      return typeof thisArg == 'undefined'
+      return thisArg === undefined
         ? func
         : bindCallback(func, thisArg, argCount);
     }
@@ -23,9 +26,9 @@ define(['./baseMatches', './baseMatchesProperty', './baseProperty', './bindCallb
     if (type == 'object') {
       return baseMatches(func);
     }
-    return typeof thisArg == 'undefined'
-      ? baseProperty(func + '')
-      : baseMatchesProperty(func + '', thisArg);
+    return thisArg === undefined
+      ? property(func)
+      : baseMatchesProperty(func, thisArg);
   }
 
   return baseCallback;

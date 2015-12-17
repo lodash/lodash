@@ -1,4 +1,4 @@
-define(['../internal/arrayCopy', '../internal/isLength', '../object/values'], function(arrayCopy, isLength, values) {
+define(['../internal/arrayCopy', '../internal/getLength', '../internal/isLength', '../object/values'], function(arrayCopy, getLength, isLength, values) {
 
   /**
    * Converts `value` to an array.
@@ -16,7 +16,7 @@ define(['../internal/arrayCopy', '../internal/isLength', '../object/values'], fu
    * // => [2, 3]
    */
   function toArray(value) {
-    var length = value ? value.length : 0;
+    var length = value ? getLength(value) : 0;
     if (!isLength(length)) {
       return values(value);
     }

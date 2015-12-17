@@ -1,4 +1,4 @@
-define(['../internal/baseCallback', '../internal/baseEach', '../internal/baseSortBy', '../internal/compareAscending', '../internal/isIterateeCall', '../internal/isLength'], function(baseCallback, baseEach, baseSortBy, compareAscending, isIterateeCall, isLength) {
+define(['../internal/baseCallback', '../internal/baseMap', '../internal/baseSortBy', '../internal/compareAscending', '../internal/isIterateeCall'], function(baseCallback, baseMap, baseSortBy, compareAscending, isIterateeCall) {
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of
@@ -22,9 +22,8 @@ define(['../internal/baseCallback', '../internal/baseEach', '../internal/baseSor
    * @memberOf _
    * @category Collection
    * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {Array|Function|Object|string} [iteratee=_.identity] The function
-   *  invoked per iteration. If a property name or an object is provided it is
-   *  used to create a `_.property` or `_.matches` style callback respectively.
+   * @param {Function|Object|string} [iteratee=_.identity] The function invoked
+   *  per iteration.
    * @param {*} [thisArg] The `this` binding of `iteratee`.
    * @returns {Array} Returns the new sorted array.
    * @example
@@ -53,16 +52,14 @@ define(['../internal/baseCallback', '../internal/baseEach', '../internal/baseSor
     if (collection == null) {
       return [];
     }
-    var index = -1,
-        length = collection.length,
-        result = isLength(length) ? Array(length) : [];
-
     if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
       iteratee = null;
     }
+    var index = -1;
     iteratee = baseCallback(iteratee, thisArg, 3);
-    baseEach(collection, function(value, key, collection) {
-      result[++index] = { 'criteria': iteratee(value, key, collection), 'index': index, 'value': value };
+
+    var result = baseMap(collection, function(value, key, collection) {
+      return { 'criteria': iteratee(value, key, collection), 'index': ++index, 'value': value };
     });
     return baseSortBy(result, compareAscending);
   }

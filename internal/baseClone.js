@@ -1,4 +1,7 @@
-define(['./arrayCopy', './arrayEach', './baseCopy', './baseForOwn', './initCloneArray', './initCloneByTag', './initCloneObject', '../lang/isArray', '../lang/isObject', '../object/keys'], function(arrayCopy, arrayEach, baseCopy, baseForOwn, initCloneArray, initCloneByTag, initCloneObject, isArray, isObject, keys) {
+define(['./arrayCopy', './arrayEach', './baseAssign', './baseForOwn', './initCloneArray', './initCloneByTag', './initCloneObject', '../lang/isArray', '../lang/isObject'], function(arrayCopy, arrayEach, baseAssign, baseForOwn, initCloneArray, initCloneByTag, initCloneObject, isArray, isObject) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /** `Object#toString` result references. */
   var argsTag = '[object Arguments]',
@@ -69,7 +72,7 @@ define(['./arrayCopy', './arrayEach', './baseCopy', './baseForOwn', './initClone
     if (customizer) {
       result = object ? customizer(value, key, object) : customizer(value);
     }
-    if (typeof result != 'undefined') {
+    if (result !== undefined) {
       return result;
     }
     if (!isObject(value)) {
@@ -88,7 +91,7 @@ define(['./arrayCopy', './arrayEach', './baseCopy', './baseForOwn', './initClone
       if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
         result = initCloneObject(isFunc ? {} : value);
         if (!isDeep) {
-          return baseCopy(value, result, keys(value));
+          return baseAssign(result, value);
         }
       } else {
         return cloneableTags[tag]

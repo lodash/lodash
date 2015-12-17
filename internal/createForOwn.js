@@ -1,5 +1,8 @@
 define(['./bindCallback'], function(bindCallback) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Creates a function for `_.forOwn` or `_.forOwnRight`.
    *
@@ -9,7 +12,7 @@ define(['./bindCallback'], function(bindCallback) {
    */
   function createForOwn(objectFunc) {
     return function(object, iteratee, thisArg) {
-      if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+      if (typeof iteratee != 'function' || thisArg !== undefined) {
         iteratee = bindCallback(iteratee, thisArg, 3);
       }
       return objectFunc(object, iteratee);

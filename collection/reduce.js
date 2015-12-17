@@ -25,8 +25,8 @@ define(['../internal/arrayReduce', '../internal/baseEach', '../internal/createRe
    * @returns {*} Returns the accumulated value.
    * @example
    *
-   * _.reduce([1, 2], function(sum, n) {
-   *   return sum + n;
+   * _.reduce([1, 2], function(total, n) {
+   *   return total + n;
    * });
    * // => 3
    *

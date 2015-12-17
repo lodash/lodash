@@ -23,7 +23,8 @@ define(['../internal/baseIndexOf', '../internal/cacheIndexOf', '../internal/crea
         argsLength = arguments.length,
         caches = [],
         indexOf = baseIndexOf,
-        isCommon = true;
+        isCommon = true,
+        result = [];
 
     while (++argsIndex < argsLength) {
       var value = arguments[argsIndex];
@@ -33,10 +34,12 @@ define(['../internal/baseIndexOf', '../internal/cacheIndexOf', '../internal/crea
       }
     }
     argsLength = args.length;
+    if (argsLength < 2) {
+      return result;
+    }
     var array = args[0],
         index = -1,
         length = array ? array.length : 0,
-        result = [],
         seen = caches[0];
 
     outer:

@@ -3,7 +3,7 @@ define(['../internal/baseForOwn', '../internal/createForOwn'], function(baseForO
   /**
    * Iterates over own enumerable properties of an object invoking `iteratee`
    * for each property. The `iteratee` is bound to `thisArg` and invoked with
-   * three arguments: (value, key, object). Iterator functions may exit iteration
+   * three arguments: (value, key, object). Iteratee functions may exit iteration
    * early by explicitly returning `false`.
    *
    * @static

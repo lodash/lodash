@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -32,7 +35,7 @@ define([], function() {
     if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
-    start = nativeMax(typeof start == 'undefined' ? (func.length - 1) : (+start || 0), 0);
+    start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
     return function() {
       var args = arguments,
           index = -1,

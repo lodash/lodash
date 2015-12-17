@@ -1,4 +1,4 @@
-define(['../internal/baseAt', '../internal/baseFlatten', '../internal/isLength', '../function/restParam', '../internal/toIterable'], function(baseAt, baseFlatten, isLength, restParam, toIterable) {
+define(['../internal/baseAt', '../internal/baseFlatten', '../internal/getLength', '../internal/isLength', '../function/restParam', '../internal/toIterable'], function(baseAt, baseFlatten, getLength, isLength, restParam, toIterable) {
 
   /**
    * Creates an array of elements corresponding to the given keys, or indexes,
@@ -21,7 +21,7 @@ define(['../internal/baseAt', '../internal/baseFlatten', '../internal/isLength',
    * // => ['barney', 'pebbles']
    */
   var at = restParam(function(collection, props) {
-    var length = collection ? collection.length : 0;
+    var length = collection ? getLength(collection) : 0;
     if (isLength(length)) {
       collection = toIterable(collection);
     }

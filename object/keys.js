@@ -13,7 +13,7 @@ define(['../internal/isLength', '../lang/isNative', '../lang/isObject', '../inte
    * @static
    * @memberOf _
    * @category Object
-   * @param {Object} object The object to inspect.
+   * @param {Object} object The object to query.
    * @returns {Array} Returns the array of property names.
    * @example
    *
@@ -36,7 +36,7 @@ define(['../internal/isLength', '../lang/isNative', '../lang/isObject', '../inte
           length = object.length;
     }
     if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-        (typeof object != 'function' && (length && isLength(length)))) {
+        (typeof object != 'function' && isLength(length))) {
       return shimKeys(object);
     }
     return isObject(object) ? nativeKeys(object) : [];

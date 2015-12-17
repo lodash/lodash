@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Checks if `value` is `undefined`.
    *
@@ -17,7 +20,7 @@ define([], function() {
    * // => false
    */
   function isUndefined(value) {
-    return typeof value == 'undefined';
+    return value === undefined;
   }
 
   return isUndefined;

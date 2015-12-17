@@ -1,5 +1,8 @@
 define([], function() {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used for native method references. */
   var objectProto = Object.prototype;
 
@@ -9,7 +12,7 @@ define([], function() {
   /**
    * Used by `_.template` to customize its `_.assign` use.
    *
-   * **Note:** This method is like `assignDefaults` except that it ignores
+   * **Note:** This function is like `assignDefaults` except that it ignores
    * inherited property values when checking if a property is `undefined`.
    *
    * @private
@@ -20,7 +23,7 @@ define([], function() {
    * @returns {*} Returns the value to assign to the destination object.
    */
   function assignOwnDefaults(objectValue, sourceValue, key, object) {
-    return (typeof objectValue == 'undefined' || !hasOwnProperty.call(object, key))
+    return (objectValue === undefined || !hasOwnProperty.call(object, key))
       ? sourceValue
       : objectValue;
   }

@@ -19,6 +19,12 @@ define(['./internal/root'], function(root) {
   var support = {};
 
   (function(x) {
+    var Ctor = function() { this.x = x; },
+        object = { '0': x, 'length': x },
+        props = [];
+
+    Ctor.prototype = { 'valueOf': x, 'y': x };
+    for (var key in new Ctor) { props.push(key); }
 
     /**
      * Detect if functions can be decompiled by `Function#toString`
@@ -56,8 +62,8 @@ define(['./internal/root'], function(root) {
      * In Firefox < 4, IE < 9, PhantomJS, and Safari < 5.1 `arguments` object
      * indexes are non-enumerable. Chrome < 25 and Node.js < 0.11.0 treat
      * `arguments` object indexes as non-enumerable and fail `hasOwnProperty`
-     * checks for indexes that exceed their function's formal parameters with
-     * associated values of `0`.
+     * checks for indexes that exceed the number of function parameters and
+     * whose associated argument values are `0`.
      *
      * @memberOf _.support
      * @type boolean
@@ -67,7 +73,7 @@ define(['./internal/root'], function(root) {
     } catch(e) {
       support.nonEnumArgs = true;
     }
-  }(0, 0));
+  }(1, 0));
 
   return support;
 });

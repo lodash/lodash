@@ -4,12 +4,12 @@ define(['./isIndex', './isLength'], function(isIndex, isLength) {
   var undefined;
 
   /**
-   * The base implementation of `_.at` without support for strings and individual
-   * key arguments.
+   * The base implementation of `_.at` without support for string collections
+   * and individual key arguments.
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {number[]|string[]} [props] The property names or indexes of elements to pick.
+   * @param {number[]|string[]} props The property names or indexes of elements to pick.
    * @returns {Array} Returns the new array of picked elements.
    */
   function baseAt(collection, props) {
@@ -22,7 +22,6 @@ define(['./isIndex', './isLength'], function(isIndex, isLength) {
     while(++index < propsLength) {
       var key = props[index];
       if (isArr) {
-        key = parseFloat(key);
         result[index] = isIndex(key, length) ? collection[key] : undefined;
       } else {
         result[index] = collection[key];

@@ -1,4 +1,4 @@
-define(['../internal/assignOwnDefaults', '../utility/attempt', '../internal/baseAssign', '../internal/baseToString', '../internal/baseValues', '../internal/escapeStringChar', '../lang/isError', '../internal/isIterateeCall', '../object/keys', '../internal/reInterpolate', './templateSettings'], function(assignOwnDefaults, attempt, baseAssign, baseToString, baseValues, escapeStringChar, isError, isIterateeCall, keys, reInterpolate, templateSettings) {
+define(['../internal/assignOwnDefaults', '../internal/assignWith', '../utility/attempt', '../internal/baseAssign', '../internal/baseToString', '../internal/baseValues', '../internal/escapeStringChar', '../lang/isError', '../internal/isIterateeCall', '../object/keys', '../internal/reInterpolate', './templateSettings'], function(assignOwnDefaults, assignWith, attempt, baseAssign, baseToString, baseValues, escapeStringChar, isError, isIterateeCall, keys, reInterpolate, templateSettings) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -8,9 +8,7 @@ define(['../internal/assignOwnDefaults', '../utility/attempt', '../internal/base
       reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
       reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
-  /**
-   * Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components).
-   */
+  /** Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components). */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
   /** Used to ensure capturing order of template delimiters. */
@@ -124,9 +122,9 @@ define(['../internal/assignOwnDefaults', '../utility/attempt', '../internal/base
       options = otherOptions = null;
     }
     string = baseToString(string);
-    options = baseAssign(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
+    options = assignWith(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
 
-    var imports = baseAssign(baseAssign({}, options.imports), settings.imports, assignOwnDefaults),
+    var imports = assignWith(baseAssign({}, options.imports), settings.imports, assignOwnDefaults),
         importsKeys = keys(imports),
         importsValues = baseValues(imports, importsKeys);
 

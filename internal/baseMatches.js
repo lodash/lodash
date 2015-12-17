@@ -1,5 +1,8 @@
 define(['./baseIsMatch', '../utility/constant', './isStrictComparable', '../object/keys', './toObject'], function(baseIsMatch, constant, isStrictComparable, keys, toObject) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * The base implementation of `_.matches` which does not clone `source`.
    *
@@ -20,8 +23,10 @@ define(['./baseIsMatch', '../utility/constant', './isStrictComparable', '../obje
 
       if (isStrictComparable(value)) {
         return function(object) {
-          return object != null && object[key] === value &&
-            (typeof value != 'undefined' || (key in toObject(object)));
+          if (object == null) {
+            return false;
+          }
+          return object[key] === value && (value !== undefined || (key in toObject(object)));
         };
       }
     }

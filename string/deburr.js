@@ -1,9 +1,7 @@
 define(['../internal/baseToString', '../internal/deburrLetter'], function(baseToString, deburrLetter) {
 
-  /**
-   * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
-   */
-  var reComboMarks = /[\u0300-\u036f\ufe20-\ufe23]/g;
+  /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
+  var reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
 
   /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
   var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
@@ -24,7 +22,7 @@ define(['../internal/baseToString', '../internal/deburrLetter'], function(baseTo
    */
   function deburr(string) {
     string = baseToString(string);
-    return string && string.replace(reLatin1, deburrLetter).replace(reComboMarks, '');
+    return string && string.replace(reLatin1, deburrLetter).replace(reComboMark, '');
   }
 
   return deburr;

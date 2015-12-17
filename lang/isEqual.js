@@ -21,7 +21,7 @@ define(['../internal/baseIsEqual', '../internal/bindCallback', '../internal/isSt
    * @category Lang
    * @param {*} value The value to compare.
    * @param {*} other The other value to compare.
-   * @param {Function} [customizer] The function to customize comparing values.
+   * @param {Function} [customizer] The function to customize value comparisons.
    * @param {*} [thisArg] The `this` binding of `customizer`.
    * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
    * @example
@@ -52,7 +52,7 @@ define(['../internal/baseIsEqual', '../internal/bindCallback', '../internal/isSt
       return value === other;
     }
     var result = customizer ? customizer(value, other) : undefined;
-    return typeof result == 'undefined' ? baseIsEqual(value, other, customizer) : !!result;
+    return result === undefined ? baseIsEqual(value, other, customizer) : !!result;
   }
 
   return isEqual;

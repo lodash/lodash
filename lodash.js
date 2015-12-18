@@ -8647,7 +8647,6 @@
         return result;
       };
       memoized.cache = new memoize.Cache;
-      memoized.clear = function() { memoized.cache.clear(); };
       return memoized;
     }
 
@@ -13749,11 +13748,11 @@
     Hash.prototype = nativeCreate ? nativeCreate(null) : objectProto;
 
     // Add functions to the `MapCache`.
+    MapCache.prototype.clear = mapClear;
     MapCache.prototype['delete'] = mapDelete;
     MapCache.prototype.get = mapGet;
     MapCache.prototype.has = mapHas;
     MapCache.prototype.set = mapSet;
-    MapCache.prototype.clear = mapClear;
 
     // Add functions to the `SetCache`.
     SetCache.prototype.push = cachePush;

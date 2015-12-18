@@ -12497,7 +12497,7 @@
 
       assert.strictEqual(memoized.cache.has('a'), true);
 
-      memoized.clear();
+      memoized.cache.clear();
 
       assert.strictEqual(memoized.cache.has('a'), false);
 

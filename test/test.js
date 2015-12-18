@@ -12388,7 +12388,7 @@
     });
 
     QUnit.test('should allow `_.memoize.Cache` to be customized', function(assert) {
-      assert.expect(5);
+      assert.expect(4);
 
       var oldCache = _.memoize.Cache;
 
@@ -12397,19 +12397,6 @@
       }
 
       Cache.prototype = {
-        'delete': function(key) {
-          var data = this.__data__;
-
-          var index = _.findIndex(data, function(entry) {
-            return key === entry.key;
-          });
-
-          if (index < 0) {
-            return false;
-          }
-          data.splice(index, 1);
-          return true;
-        },
         'get': function(key) {
           var entry = _.find(this.__data__, function(entry) {
             return key === entry.key;
@@ -12442,9 +12429,6 @@
 
       assert.strictEqual(memoized(key2), 'value:b');
       assert.strictEqual(cache.has(key2), true);
-
-      cache['delete'](key2);
-      assert.strictEqual(cache.has(key2), false);
 
       _.memoize.Cache = oldCache;
     });

@@ -12329,7 +12329,7 @@
     });
 
     QUnit.test('should expose a `cache` object on the `memoized` function which implements `Map` interface', function(assert) {
-      assert.expect(12);
+      assert.expect(22);
 
       lodashStable.times(2, function(index) {
         var resolver = index ? identity : null;
@@ -12341,13 +12341,22 @@
         var cache = memoized.cache;
 
         memoized('a');
+        memoized('b');
+        memoized('c');
 
         assert.strictEqual(cache.has('a'), true);
+        assert.strictEqual(cache.has('b'), true);
+        assert.strictEqual(cache.has('c'), true);
+
         assert.strictEqual(cache.get('a'), 'value:a');
         assert.strictEqual(cache['delete']('a'), true);
         assert.strictEqual(cache.has('a'), false);
         assert.strictEqual(cache.get('a'), undefined);
         assert.strictEqual(cache['delete']('a'), false);
+
+        assert.strictEqual(cache.clear(), undefined);
+        assert.strictEqual(cache.has('b'), false);
+        assert.strictEqual(cache.has('c'), false);
       });
     });
 
@@ -12484,28 +12493,6 @@
       assert.strictEqual(cache.has(key2), true);
 
       _.memoize.Cache = oldCache;
-    });
-
-    QUnit.test('should allow clearing cache', function(assert) {
-      assert.expect(5);
-
-      var memoized = _.memoize(_.identity);
-
-      assert.strictEqual(memoized.cache.has('a'), false);
-
-      memoized('a');
-
-      assert.strictEqual(memoized.cache.has('a'), true);
-
-      memoized.cache.clear();
-
-      assert.strictEqual(memoized.cache.has('a'), false);
-
-      memoized('a');
-      memoized('b');
-
-      assert.strictEqual(memoized.cache.has('a'), true);
-      assert.strictEqual(memoized.cache.has('b'), true);
     });
   }());
 

@@ -1859,11 +1859,22 @@
       var index = -1,
           length = values ? values.length : 0;
 
-      this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
+      this.clear();
       while (++index < length) {
         var entry = values[index];
         this.set(entry[0], entry[1]);
       }
+    }
+
+    /**
+     * Removes all key-value entries from the map.
+     *
+     * @private
+     * @name clear
+     * @memberOf MapCache
+     */
+    function mapClear() {
+      this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
     }
 
     /**
@@ -1937,17 +1948,6 @@
         assocSet(data.map, key, value);
       }
       return this;
-    }
-
-    /**
-     * Clears the map data
-     *
-     * @private
-     * @name clear
-     * @memberOf MapCache
-     */
-    function mapClear() {
-      this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
     }
 
     /*------------------------------------------------------------------------*/

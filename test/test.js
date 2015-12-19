@@ -13536,8 +13536,13 @@
     QUnit.test('should sort a property in ascending order when its order is not specified', function(assert) {
       assert.expect(1);
 
-      var actual = _.orderBy(objects, ['a', 'b'], ['desc']);
-      assert.deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
+      var expected = lodashStable.map(falsey, lodashStable.constant([objects[3], objects[1], objects[2], objects[0]]));
+
+      var actual = lodashStable.map(falsey, function(order, index) {
+        return _.orderBy(objects, ['a', 'b'], index ? ['desc', order] : ['desc']);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

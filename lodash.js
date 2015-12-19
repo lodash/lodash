@@ -999,9 +999,9 @@
    * Used by `_.orderBy` to compare multiple properties of a value to another
    * and stable sort them.
    *
-   * If `orders` is unspecified, all valuess are sorted in ascending order. Otherwise,
-   * a value is sorted in ascending order if its corresponding order is "asc", and
-   * descending if "desc".
+   * If `orders` is unspecified, all values are sorted in ascending order. Otherwise,
+   * specify an order of "desc" for descending or "asc" for ascending sort order
+   * of corresponding values.
    *
    * @private
    * @param {Object} object The object to compare.
@@ -1023,7 +1023,7 @@
           return result;
         }
         var order = orders[index];
-        return result * (order === 'asc' ? 1 : -1);
+        return result * (order === 'desc' ? -1 : 1);
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -7640,10 +7640,10 @@
     }
 
     /**
-     * This method is like `_.sortBy` except that it allows specifying the
-     * sort orders of the iteratees to sort by. If `orders` is unspecified, all
-     * values are sorted in ascending order. Otherwise, a value is sorted in
-     * ascending order if its corresponding order is "asc", and descending if "desc".
+     * This method is like `_.sortBy` except that it allows specifying the sort
+     * orders of the iteratees to sort by. If `orders` is unspecified, all values
+     * are sorted in ascending order. Otherwise, specify an order of "desc" for
+     * descending or "asc" for ascending sort order of corresponding values.
      *
      * @static
      * @memberOf _

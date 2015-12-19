@@ -835,7 +835,7 @@
 
     while (++index < length) {
       var current = iteratee(array[index]);
-      if (current === current && current != null) {
+      if (current !== undefined) {
         result = result === undefined ? current : (result + current);
       }
     }
@@ -13461,10 +13461,10 @@
      */
     function add(augend, addend) {
       var result;
-      if (augend === augend && augend != null) {
+      if (augend !== undefined) {
         result = augend;
       }
-      if (addend === addend && addend != null) {
+      if (addend !== undefined) {
         result = result === undefined ? addend : (result + addend);
       }
       return result;
@@ -13677,10 +13677,10 @@
      */
     function subtract(minuend, subtrahend) {
       var result;
-      if (minuend === minuend && minuend != null) {
+      if (minuend !== undefined) {
         result = minuend;
       }
-      if (subtrahend === subtrahend && subtrahend != null) {
+      if (subtrahend !== undefined) {
         result = result === undefined ? subtrahend : (result - subtrahend);
       }
       return result;

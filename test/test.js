@@ -17853,16 +17853,22 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should skip `undefined` values', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.sum([1, undefined]), 1);
+    });
+
+    QUnit.test('should not skip `NaN` values', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.sum([1, NaN]), NaN);
+    });
+
     QUnit.test('should not coerce values to numbers', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(_.sum(['1', '2']), '12');
-    });
-
-    QUnit.test('should skip `null`, `undefined`, and `NaN` values', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.sum(['1', null, undefined, NaN, '2']), '12');
     });
   }());
 

@@ -11648,7 +11648,7 @@
      * // => a floating-point number between 1.2 and 5.2
      */
     function random(min, max, floating) {
-      if (floating && isIterateeCall(min, max, floating)) {
+      if (floating && typeof floating != 'boolean' && isIterateeCall(min, max, floating)) {
         max = floating = undefined;
       }
       var noMin = min === undefined,

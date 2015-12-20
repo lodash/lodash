@@ -13308,7 +13308,7 @@
      * // => []
      */
     function range(start, end, step) {
-      if (step && isIterateeCall(start, end, step)) {
+      if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
       return baseRange(start, end, step);
@@ -13349,7 +13349,7 @@
      * // => []
      */
     function rangeRight(start, end, step) {
-      if (step && isIterateeCall(start, end, step)) {
+      if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
       return baseRange(start, end, step, true);

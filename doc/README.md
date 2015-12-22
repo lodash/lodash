@@ -7794,7 +7794,7 @@ _.times(3, function(n) {
 // => invokes `mage.castSpell(n)` three times with `n` of `0`, `1`, and `2`
 
 _.times(3, function(n) {
-  this.cast(n);
+  this.castSpell(n);
 }, mage);
 // => also invokes `mage.castSpell(n)` three times
 ```

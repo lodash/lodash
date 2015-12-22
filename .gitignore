@@ -3,4 +3,5 @@
 *.log
 *.map
 lodash.compat.min.js
+coverage
 node_modules

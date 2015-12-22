@@ -80,6 +80,7 @@
       regexpTag = '[object RegExp]',
       setTag = '[object Set]',
       stringTag = '[object String]',
+      symbolTag = '[object Symbol]',
       weakMapTag = '[object WeakMap]';
 
   var arrayBufferTag = '[object ArrayBuffer]',
@@ -253,8 +254,9 @@
   cloneableTags[mapTag] = cloneableTags[numberTag] =
   cloneableTags[objectTag] = cloneableTags[regexpTag] =
   cloneableTags[setTag] = cloneableTags[stringTag] =
-  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
-  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+  cloneableTags[symbolTag] = cloneableTags[uint8Tag] =
+  cloneableTags[uint8ClampedTag] = cloneableTags[uint16Tag] =
+  cloneableTags[uint32Tag] = true;
   cloneableTags[errorTag] = cloneableTags[funcTag] =
   cloneableTags[weakMapTag] = false;
 
@@ -1457,6 +1459,9 @@
     /** Used to detect maps and sets. */
     var mapCtorString = Map ? fnToString.call(Map) : '',
         setCtorString = Set ? fnToString.call(Set) : '';
+
+    /** Used to convert symbols to strings. */
+    var symbolToString = Symbol ? Symbol.prototype.toString : undefined;
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -2772,7 +2777,10 @@
       if (value === other) {
         return true;
       }
-      if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+      if (value == null || other == null || (
+            !(typeof value == 'symbol' || isObject(value)) &&
+            !(typeof other == 'symbol' || isObjectLike(other))
+          )) {
         return value !== value && other !== other;
       }
       return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
@@ -3751,6 +3759,20 @@
     }
 
     /**
+     * Creates a clone of `symbol`.
+     *
+     * @private
+     * @param {Object} symbol The symbol to clone.
+     * @returns {Object} Returns the cloned symbol.
+     */
+    function cloneSymbol(symbol) {
+      var Ctor = symbol.constructor,
+          result = Ctor(symbolToString.call(symbol).slice(7, -1));
+
+      return typeof symbol == 'object' ? Object(result) : result;
+    }
+
+    /**
      * Creates a clone of `typedArray`.
      *
      * @private
@@ -4519,6 +4541,9 @@
           // Recursively compare objects (susceptible to call stack limits).
           return (isPartial || object.size == other.size) &&
             equalFunc(convert(object), convert(other), customizer, bitmask | UNORDERED_COMPARE_FLAG);
+
+        case symbolTag:
+          return symbolToString.call(object) == symbolToString.call(other);
       }
       return false;
     }
@@ -4831,11 +4856,14 @@
         case stringTag:
           return new Ctor(object);
 
+        case regexpTag:
+          return cloneRegExp(object);
+
         case setTag:
           return cloneSet(object);
 
-        case regexpTag:
-          return cloneRegExp(object);
+        case symbolTag:
+          return cloneSymbol(object);
       }
     }
 

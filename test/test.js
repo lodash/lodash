@@ -2199,6 +2199,9 @@
       set.add(1);
       set.add(2);
     }
+    if (Symbol) {
+      var symbol = Symbol('a');
+    }
     var objects = {
       '`arguments` objects': arguments,
       'arrays': ['a', ''],
@@ -2217,6 +2220,7 @@
       'sets': set,
       'strings': 'a',
       'string objects': Object('a'),
+      'symbols': symbol,
       'undefined values': undefined
     };
 
@@ -2309,12 +2313,14 @@
         QUnit.test('`_.' + methodName + '` should clone ' + key, function(assert) {
           assert.expect(2);
 
-          var isEqual = (key == 'maps' || key == 'sets') ? _.isEqual : lodashStable,
+          var useUnstable = /^(?:maps|sets|symbols)$/.test(key),
+              isEqual = useUnstable ? _.isEqual : lodashStable.isEqual,
+              isObject = useUnstable ? _.isObject : lodashStable.isObject,
               actual = func(object);
 
           assert.ok(isEqual(actual, object));
 
-          if (lodashStable.isObject(object)) {
+          if (isObject(object)) {
             assert.notStrictEqual(actual, object);
           } else {
             assert.strictEqual(actual, object);
@@ -2356,6 +2362,22 @@
 
         var actual = func(regexp);
         assert.strictEqual(actual.lastIndex, 3);
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone symbol objects', function(assert) {
+        assert.expect(3);
+
+        if (Symbol) {
+          var object = Object(symbol),
+              actual = func(object);
+
+          assert.strictEqual(typeof actual, 'object');
+          assert.strictEqual(typeof actual.valueOf(), 'symbol');
+          assert.notStrictEqual(actual, object);
+        }
+        else {
+          skipTest(assert, 3);
+        }
       });
 
       QUnit.test('`_.' + methodName + '` should not error on DOM elements', function(assert) {
@@ -8113,6 +8135,30 @@
       }
     });
 
+    QUnit.test('should compare symbols', function(assert) {
+      assert.expect(4);
+
+      if (Symbol) {
+        var symbol1 = Symbol('a'),
+            symbol2 = Symbol('b');
+
+        assert.strictEqual(_.isEqual(symbol1, symbol2), false);
+
+        symbol2 = Symbol('a');
+        assert.strictEqual(_.isEqual(symbol1, symbol2), true);
+
+        symbol1 = Symbol(undefined);
+        symbol2 = Symbol('');
+        assert.strictEqual(_.isEqual(symbol1, symbol2), true);
+
+        symbol1 = Symbol(null);
+        assert.strictEqual(_.isEqual(symbol1, symbol2), false);
+      }
+      else {
+        skipTest(assert, 4);
+      }
+    });
+
     QUnit.test('should compare typed arrays', function(assert) {
       assert.expect(1);
 
@@ -9452,7 +9498,7 @@
     var args = arguments;
 
     QUnit.test('should return `true` for objects', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       assert.strictEqual(_.isObject(args), true);
       assert.strictEqual(_.isObject([1, 2, 3]), true);
@@ -9468,7 +9514,14 @@
 
       if (document) {
         assert.strictEqual(_.isObject(body), true);
-      } else {
+      }
+      else {
+        skipTest(assert);
+      }
+      if (Symbol) {
+        assert.strictEqual(_.isObject(Object(Symbol())), true);
+      }
+      else {
         skipTest(assert);
       }
     });

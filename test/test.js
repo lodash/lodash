@@ -8147,7 +8147,7 @@
         symbol2 = Symbol('a');
         assert.strictEqual(_.isEqual(symbol1, symbol2), true);
 
-        symbol1 = Symbol(undefined);
+        symbol1 = Symbol();
         symbol2 = Symbol('');
         assert.strictEqual(_.isEqual(symbol1, symbol2), true);
 

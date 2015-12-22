@@ -1395,7 +1395,7 @@
         stringProto = context.String.prototype;
 
     /** Used to resolve the decompiled source of functions. */
-    var fnToString = context.Function.prototype.toString;
+    var funcToString = context.Function.prototype.toString;
 
     /** Used to check objects for own properties. */
     var hasOwnProperty = objectProto.hasOwnProperty;
@@ -1404,20 +1404,20 @@
     var idCounter = 0;
 
     /** Used to infer the `Object` constructor. */
-    var objCtorString = fnToString.call(Object);
+    var objectCtorString = funcToString.call(Object);
 
     /**
      * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
      * of values.
      */
-    var objToString = objectProto.toString;
+    var objectToString = objectProto.toString;
 
     /** Used to restore the original `_` reference in `_.noConflict`. */
     var oldDash = root._;
 
     /** Used to detect if a method is native. */
     var reIsNative = RegExp('^' +
-      fnToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+      funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
       .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
     );
 
@@ -1457,8 +1457,8 @@
     var metaMap = WeakMap && new WeakMap;
 
     /** Used to detect maps and sets. */
-    var mapCtorString = Map ? fnToString.call(Map) : '',
-        setCtorString = Set ? fnToString.call(Set) : '';
+    var mapCtorString = Map ? funcToString.call(Map) : '',
+        setCtorString = Set ? funcToString.call(Set) : '';
 
     /** Used to convert symbols to strings. */
     var symbolToString = Symbol ? Symbol.prototype.toString : undefined;
@@ -4715,15 +4715,15 @@
      * @returns {string} Returns the `toStringTag`.
      */
     function getTag(value) {
-      return objToString.call(value);
+      return objectToString.call(value);
     }
 
     // Fallback for IE 11 providing `toStringTag` values for maps and sets.
     if ((Map && getTag(new Map) != mapTag) || (Set && getTag(new Set) != setTag)) {
       getTag = function(value) {
-        var result = objToString.call(value),
+        var result = objectToString.call(value),
             Ctor = result == objectTag ? value.constructor : null,
-            ctorString = typeof Ctor == 'function' ? fnToString.call(Ctor) : '';
+            ctorString = typeof Ctor == 'function' ? funcToString.call(Ctor) : '';
 
         if (ctorString) {
           if (ctorString == mapCtorString) {
@@ -9280,7 +9280,7 @@
     function isArguments(value) {
       // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
       return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
-        (!propertyIsEnumerable.call(value, 'callee') || objToString.call(value) == argsTag);
+        (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
     }
 
     /**
@@ -9384,7 +9384,7 @@
      */
     function isBoolean(value) {
       return value === true || value === false ||
-        (isObjectLike(value) && objToString.call(value) == boolTag);
+        (isObjectLike(value) && objectToString.call(value) == boolTag);
     }
 
     /**
@@ -9404,7 +9404,7 @@
      * // => false
      */
     function isDate(value) {
-      return isObjectLike(value) && objToString.call(value) == dateTag;
+      return isObjectLike(value) && objectToString.call(value) == dateTag;
     }
 
     /**
@@ -9546,7 +9546,7 @@
      */
     function isError(value) {
       return isObjectLike(value) &&
-        typeof value.message == 'string' && objToString.call(value) == errorTag;
+        typeof value.message == 'string' && objectToString.call(value) == errorTag;
     }
 
     /**
@@ -9597,7 +9597,7 @@
       // The use of `Object#toString` avoids issues with the `typeof` operator
       // in Safari 8 which returns 'object' for typed array constructors, and
       // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-      var tag = isObject(value) ? objToString.call(value) : '';
+      var tag = isObject(value) ? objectToString.call(value) : '';
       return tag == funcTag || tag == genTag;
     }
 
@@ -9831,7 +9831,7 @@
         return false;
       }
       if (isFunction(value)) {
-        return reIsNative.test(fnToString.call(value));
+        return reIsNative.test(funcToString.call(value));
       }
       return isObjectLike(value) &&
         (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
@@ -9907,7 +9907,7 @@
      */
     function isNumber(value) {
       return typeof value == 'number' ||
-        (isObjectLike(value) && objToString.call(value) == numberTag);
+        (isObjectLike(value) && objectToString.call(value) == numberTag);
     }
 
     /**
@@ -9938,7 +9938,7 @@
      * // => true
      */
     function isPlainObject(value) {
-      if (!isObjectLike(value) || objToString.call(value) != objectTag || isHostObject(value)) {
+      if (!isObjectLike(value) || objectToString.call(value) != objectTag || isHostObject(value)) {
         return false;
       }
       var proto = objectProto;
@@ -9950,7 +9950,7 @@
       }
       var Ctor = proto.constructor;
       return (typeof Ctor == 'function' &&
-        Ctor instanceof Ctor && fnToString.call(Ctor) == objCtorString);
+        Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
     }
 
     /**
@@ -9970,7 +9970,7 @@
      * // => false
      */
     function isRegExp(value) {
-      return isObject(value) && objToString.call(value) == regexpTag;
+      return isObject(value) && objectToString.call(value) == regexpTag;
     }
 
     /**
@@ -10020,7 +10020,7 @@
      */
     function isString(value) {
       return typeof value == 'string' ||
-        (!isArray(value) && isObjectLike(value) && objToString.call(value) == stringTag);
+        (!isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag);
     }
 
     /**
@@ -10040,7 +10040,7 @@
      * // => false
      */
     function isTypedArray(value) {
-      return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
+      return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
     }
 
     /**

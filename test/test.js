@@ -6135,7 +6135,7 @@
   QUnit.module('lodash.gt');
 
   (function() {
-    QUnit.test('should return `true` if `value` is greater than `other`', function(assert) {
+    QUnit.test('should return `true` if `value` > `other`', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(_.gt(3, 1), true);
@@ -6157,7 +6157,7 @@
   QUnit.module('lodash.gte');
 
   (function() {
-    QUnit.test('should return `true` if `value` is greater than or equal to `other`', function(assert) {
+    QUnit.test('should return `true` if `value` >= `other`', function(assert) {
       assert.expect(4);
 
       assert.strictEqual(_.gte(3, 1), true);
@@ -6776,7 +6776,7 @@
       });
     });
 
-    QUnit.test('should swap `start` and `end` when `start` is greater than `end`', function(assert) {
+    QUnit.test('should swap `start` and `end` when `start` > `end`', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(_.inRange(2, 5, 1), true);
@@ -11024,7 +11024,7 @@
       assert.strictEqual(_.lt('abc', 'def'), true);
     });
 
-    QUnit.test('should return `false` if `value` is greater than or equal to `other`', function(assert) {
+    QUnit.test('should return `false` if `value` >= `other`', function(assert) {
       assert.expect(4);
 
       assert.strictEqual(_.lt(3, 1), false);
@@ -11048,7 +11048,7 @@
       assert.strictEqual(_.lte('def', 'def'), true);
     });
 
-    QUnit.test('should return `false` if `value` is greater than `other`', function(assert) {
+    QUnit.test('should return `false` if `value` > `other`', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(_.lt(3, 1), false);

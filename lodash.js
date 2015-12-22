@@ -11651,29 +11651,33 @@
       if (floating && typeof floating != 'boolean' && isIterateeCall(min, max, floating)) {
         max = floating = undefined;
       }
-      var noMin = min === undefined,
-          noMax = max === undefined;
-
       if (floating === undefined) {
-        if (noMax && typeof min == 'boolean') {
-          floating = min;
-          min = 1;
-        }
-        else if (typeof max == 'boolean') {
+        if (typeof max == 'boolean') {
           floating = max;
-          noMax = true;
+          max = undefined;
+        }
+        else if (typeof min == 'boolean') {
+          floating = min;
+          min = undefined;
         }
       }
-      if (noMin && noMax) {
-        max = 1;
-        noMax = false;
-      }
-      min = toNumber(min) || 0;
-      if (noMax) {
-        max = min;
+      if (min === undefined && max === undefined) {
         min = 0;
-      } else {
-        max = toNumber(max) || 0;
+        max = 1;
+      }
+      else {
+        min = toNumber(min) || 0;
+        if (max === undefined) {
+          max = min;
+          min = 0;
+        } else {
+          max = toNumber(max) || 0;
+        }
+      }
+      if (min > max) {
+        var temp = min;
+        min = max;
+        max = temp;
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();

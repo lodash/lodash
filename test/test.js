@@ -15407,6 +15407,20 @@
       }));
     });
 
+    QUnit.test('should swap `min` and `max` when `min` > `max`', function(assert) {
+      assert.expect(1);
+
+      var min = 4,
+          max = 2,
+          expected = [2, 3, 4];
+
+      var actual = lodashStable.uniq(lodashStable.map(array, function() {
+        return _.random(min, max);
+      })).sort();
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should support large integer values', function(assert) {
       assert.expect(2);
 

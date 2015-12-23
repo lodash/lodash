@@ -9067,11 +9067,13 @@
      * Creates a shallow clone of `value`.
      *
      * **Note:** This method is loosely based on the
-     * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
-     * The enumerable properties of `arguments` objects and objects created by
-     * constructors other than `Object` are cloned to plain `Object` objects. An
-     * empty object is returned for uncloneable values such as functions, DOM nodes,
-     * Maps, Sets, and WeakMaps.
+     * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
+     * and supports cloning arrays, array buffers, booleans, date objects, maps,
+     * numbers, `Object` objects, regexes, sets, strings, symbols, and typed arrays.
+     * The own enumerable properties of `arguments` objects and objects created
+     * by constructors other than `Object` are cloned as plain `Object` objects.
+     * An empty object is returned for uncloneable values such as error objects,
+     * functions, DOM nodes, and WeakMaps.
      *
      * @static
      * @memberOf _
@@ -9464,10 +9466,11 @@
      * Performs a deep comparison between two values to determine if they are
      * equivalent.
      *
-     * **Note:** This method supports comparing arrays, booleans, `Date` objects,
-     * numbers, `Object` objects, regexes, and strings. Objects are compared by
-     * their own, not inherited, enumerable properties. Functions and DOM nodes
-     * are **not** supported.
+     * **Note:** This method supports comparing arrays, array buffers, booleans,
+     * date objects, error objects, maps, numbers, `Object` objects, regexes,
+     * sets, strings, symbols, and typed arrays. `Object` objects are compared
+     * by their own, not inherited, enumerable properties. Functions and DOM
+     * nodes are **not** supported.
      *
      * @static
      * @memberOf _

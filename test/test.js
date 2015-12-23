@@ -1025,7 +1025,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work when provided less than the capped numer of arguments', function(assert) {
+    QUnit.test('should work when provided less than the capped number of arguments', function(assert) {
       assert.expect(1);
 
       var capped = _.ary(fn, 3);
@@ -14676,7 +14676,7 @@
       assert.deepEqual(c(3, 5), expected);
     });
 
-    QUnit.test('should work with combinations of functions with overlaping placeholders', function(assert) {
+    QUnit.test('should work with combinations of functions with overlapping placeholders', function(assert) {
       assert.expect(3);
 
       var expected = [1, 2, 3, 4],
@@ -15912,7 +15912,7 @@
       assert.strictEqual(func(object, noop), undefined);
     });
 
-    QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicityly chaining', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -17462,7 +17462,7 @@
 
     var stableObject = lodashStable.zipObject('abcdefghijklmnopqrst'.split(''), stableArray);
 
-    QUnit.test('`_.' + methodName + '` should sort mutliple properties in ascending order', function(assert) {
+    QUnit.test('`_.' + methodName + '` should sort multiple properties in ascending order', function(assert) {
       assert.expect(1);
 
       var actual = func(objects, ['a', 'b']);
@@ -20735,7 +20735,7 @@
       assert.deepEqual(actual, [6, 8, 10]);
     });
 
-    QUnit.test('should work when provided less than the capped numer of arguments', function(assert) {
+    QUnit.test('should work when provided less than the capped number of arguments', function(assert) {
       assert.expect(1);
 
       var capped = _.unary(fn);

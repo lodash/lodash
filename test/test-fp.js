@@ -845,7 +845,7 @@
     var array = [1, 2, 3],
         object = { 'a': 1 };
 
-    QUnit.test('should provice the correct `customizer` arguments', function(assert) {
+    QUnit.test('should provide the correct `customizer` arguments', function(assert) {
       assert.expect(3);
 
       var args,

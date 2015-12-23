@@ -46,7 +46,7 @@ before_install:
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
   - "node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
 script:
-  - "[ $ISTANBUL == false ]   || node ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.js"
+  - "[ $ISTANBUL == false ]   || istanbul cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./dist/lodash.js"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.js"

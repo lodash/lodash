@@ -890,7 +890,7 @@
    * Used by `_.sortByOrder` to compare multiple properties of a value to another
    * and stable sort them.
    *
-   * If `orders` is unspecified, all valuess are sorted in ascending order. Otherwise,
+   * If `orders` is unspecified, all values are sorted in ascending order. Otherwise,
    * a value is sorted in ascending order if its corresponding order is "asc", and
    * descending if "desc".
    *
@@ -3383,7 +3383,7 @@
      *
      * @private
      * @param {*} value The unwrapped value.
-     * @param {Array} actions Actions to peform to resolve the unwrapped value.
+     * @param {Array} actions Actions to perform to resolve the unwrapped value.
      * @returns {*} Returns the resolved value.
      */
     function baseWrapperValue(value, actions) {
@@ -10510,7 +10510,7 @@
      * Recursively merges own and inherited enumerable properties of source
      * objects into the destination object, skipping source properties that resolve
      * to `undefined`. Array and plain object properties are merged recursively.
-     * Other objects and value types are overriden by assignment. Source objects
+     * Other objects and value types are overridden by assignment. Source objects
      * are applied from left to right. Subsequent sources overwrite property
      * assignments of previous sources.
      *

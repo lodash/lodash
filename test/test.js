@@ -4766,8 +4766,8 @@
       });
 
       _.filter(object, function() {
-          counter++;
-          return true;
+        counter++;
+        return true;
       });
 
       assert.strictEqual(counter, 3);

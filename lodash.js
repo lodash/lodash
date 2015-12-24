@@ -4512,6 +4512,13 @@
      */
     function equalByTag(object, other, tag, equalFunc, customizer, bitmask) {
       switch (tag) {
+        case arrayBufferTag:
+          if ((object.byteLength != other.byteLength) ||
+              !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
+            return false;
+          }
+          return true;
+
         case boolTag:
         case dateTag:
           // Coerce dates and booleans to numbers, dates to milliseconds and booleans

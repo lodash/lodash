@@ -8024,6 +8024,25 @@
       assert.strictEqual(_.isEqual(new Foo, args), false);
     });
 
+    QUnit.test('should compare array buffers', function(assert) {
+      assert.expect(2);
+
+      if (ArrayBuffer) {
+        var buffer1 = new ArrayBuffer(4),
+            buffer2 = new ArrayBuffer(8);
+
+        assert.strictEqual(_.isEqual(buffer1, buffer2), false);
+
+        buffer1 = new Int8Array([-1]).buffer;
+        buffer2 = new Uint8Array([255]).buffer;
+
+        assert.strictEqual(_.isEqual(buffer1, buffer2), true);
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
+
     QUnit.test('should compare date objects', function(assert) {
       assert.expect(4);
 

@@ -2333,7 +2333,7 @@
 
       // Recursively populate clone (susceptible to call stack limits).
       (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
-        result[key] = baseClone(subValue, isDeep, customizer, key, value, stack);
+        assignValue(result, key, baseClone(subValue, isDeep, customizer, key, value, stack));
       });
       return result;
     }

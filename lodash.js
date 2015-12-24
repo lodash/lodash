@@ -1428,6 +1428,7 @@
         clearTimeout = context.clearTimeout,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
+        getOwnPropertySymbols = Object.getOwnPropertySymbols,
         iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
         parseFloat = context.parseFloat,
         pow = Math.pow,
@@ -1460,8 +1461,8 @@
     var mapCtorString = Map ? funcToString.call(Map) : '',
         setCtorString = Set ? funcToString.call(Set) : '';
 
-    /** Used to convert symbols to strings. */
-    var symbolToString = Symbol ? Symbol.prototype.toString : undefined;
+    /** Used to convert symbol objects to primitives. */
+    var symbolValueOf = Symbol ? Symbol.prototype.valueOf : undefined;
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -2113,6 +2114,26 @@
     /*------------------------------------------------------------------------*/
 
     /**
+     * Assigns own symbol properties of `source` to `object`.
+     *
+     * @private
+     * @param {Object} object The destination object.
+     * @param {Object} source The source object.
+     * @returns {Object} Returns `object`.
+     */
+    function assignSymbols(object, source) {
+      var index = -1,
+          symbols = getSymbols(source),
+          length = symbols.length;
+
+      while (++index < length) {
+        var symbol = symbols[index];
+        object[symbol] = source[symbol];
+      }
+      return object;
+    }
+
+    /**
      * Removes `key` and its value from the associative array.
      *
      * @private
@@ -2276,7 +2297,7 @@
       if (isArr) {
         result = initCloneArray(value);
         if (!isDeep) {
-          return copyArray(value, result);
+          result = copyArray(value, result);
         }
       } else {
         var tag = getTag(value),
@@ -2288,13 +2309,19 @@
           }
           result = initCloneObject(isFunc ? {} : value);
           if (!isDeep) {
-            return baseAssign(result, value);
+            result = baseAssign(result, value);
           }
-        } else {
-          return cloneableTags[tag]
-            ? initCloneByTag(value, tag, isDeep)
-            : (object ? value : {});
         }
+        else if (!cloneableTags[tag]) {
+          return object ? value : {};
+        }
+        else {
+          result = initCloneByTag(value, tag, isDeep);
+        }
+      }
+      result = assignSymbols(result, value);
+      if (!isDeep) {
+        return result;
       }
       // Check for circular references and return its corresponding clone.
       stack || (stack = new Stack);
@@ -2777,10 +2804,7 @@
       if (value === other) {
         return true;
       }
-      if (value == null || other == null || (
-            !(typeof value == 'symbol' || isObject(value)) &&
-            !(typeof other == 'symbol' || isObjectLike(other))
-          )) {
+      if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
         return value !== value && other !== other;
       }
       return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
@@ -3766,10 +3790,7 @@
      * @returns {Object} Returns the cloned symbol.
      */
     function cloneSymbol(symbol) {
-      var Ctor = symbol.constructor,
-          result = Ctor(symbolToString.call(symbol).slice(7, -1));
-
-      return typeof symbol == 'object' ? Object(result) : result;
+      return typeof symbol == 'object' ? Object(symbolValueOf.call(symbol)) : symbol;
     }
 
     /**
@@ -4550,7 +4571,7 @@
             equalFunc(convert(object), convert(other), customizer, bitmask | UNORDERED_COMPARE_FLAG);
 
         case symbolTag:
-          return symbolToString.call(object) == symbolToString.call(other);
+          return symbolValueOf.call(object) == symbolValueOf.call(other);
       }
       return false;
     }
@@ -4713,6 +4734,17 @@
       var value = object == null ? undefined : object[key];
       return isNative(value) ? value : undefined;
     }
+
+    /**
+     * Creates an array of the own symbol properties of `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of symbols.
+     */
+    var getSymbols = getOwnPropertySymbols || function() {
+      return [];
+    };
 
     /**
      * Gets the `toStringTag` of `value`.

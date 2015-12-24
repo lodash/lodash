@@ -2220,7 +2220,6 @@
       'sets': set,
       'strings': 'a',
       'string objects': Object('a'),
-      'symbols': symbol,
       'undefined values': undefined
     };
 
@@ -2313,14 +2312,12 @@
         QUnit.test('`_.' + methodName + '` should clone ' + key, function(assert) {
           assert.expect(2);
 
-          var useUnstable = /^(?:maps|sets|symbols)$/.test(key),
-              isEqual = useUnstable ? _.isEqual : lodashStable.isEqual,
-              isObject = useUnstable ? _.isObject : lodashStable.isObject,
+          var isEqual = (key == 'maps' || key == 'sets') ? _.isEqual : lodashStable.isEqual,
               actual = func(object);
 
           assert.ok(isEqual(actual, object));
 
-          if (isObject(object)) {
+          if (lodashStable.isObject(object)) {
             assert.notStrictEqual(actual, object);
           } else {
             assert.strictEqual(actual, object);
@@ -2364,10 +2361,12 @@
         assert.strictEqual(actual.lastIndex, 3);
       });
 
-      QUnit.test('`_.' + methodName + '` should clone symbol objects', function(assert) {
-        assert.expect(3);
+      QUnit.test('`_.' + methodName + '` should clone symbols', function(assert) {
+        assert.expect(4);
 
         if (Symbol) {
+          assert.strictEqual(func(symbol), symbol);
+
           var object = Object(symbol),
               actual = func(object);
 
@@ -2376,7 +2375,7 @@
           assert.notStrictEqual(actual, object);
         }
         else {
-          skipTest(assert, 3);
+          skipTest(assert, 4);
         }
       });
 
@@ -7640,6 +7639,9 @@
   QUnit.module('lodash.isEqual');
 
   (function() {
+    var symbol1 = Symbol ? Symbol('a') : true,
+        symbol2 = Symbol ? Symbol('b') : false;
+
     QUnit.test('should compare primitives', function(assert) {
       assert.expect(1);
 
@@ -7650,6 +7652,7 @@
         ['a', 'a', true], ['a', Object('a'), true], [Object('a'), Object('a'), true], ['a', 'b', false], ['a', ['a'], false],
         [true, true, true], [true, Object(true), true], [Object(true), Object(true), true], [true, 1, false], [true, 'a', false],
         [false, false, true], [false, Object(false), true], [Object(false), Object(false), true], [false, 0, false], [false, '', false],
+        [symbol1, symbol1, true], [symbol1, Object(symbol1), true], [Object(symbol1), Object(symbol1), true], [symbol1, symbol2, false],
         [null, null, true], [null, undefined, false], [null, {}, false], [null, '', false],
         [undefined, undefined, true], [undefined, null, false], [undefined, '', false]
       ];
@@ -8148,30 +8151,6 @@
 
         set2['delete'](1);
         assert.strictEqual(_.isEqual(set1, set2), false);
-      }
-      else {
-        skipTest(assert, 4);
-      }
-    });
-
-    QUnit.test('should compare symbols', function(assert) {
-      assert.expect(4);
-
-      if (Symbol) {
-        var symbol1 = Symbol('a'),
-            symbol2 = Symbol('b');
-
-        assert.strictEqual(_.isEqual(symbol1, symbol2), false);
-
-        symbol2 = Symbol('a');
-        assert.strictEqual(_.isEqual(symbol1, symbol2), true);
-
-        symbol1 = Symbol();
-        symbol2 = Symbol('');
-        assert.strictEqual(_.isEqual(symbol1, symbol2), true);
-
-        symbol1 = Symbol(null);
-        assert.strictEqual(_.isEqual(symbol1, symbol2), false);
       }
       else {
         skipTest(assert, 4);

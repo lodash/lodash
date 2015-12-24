@@ -13409,13 +13409,11 @@
      * @returns {Array} Returns the array of results.
      * @example
      *
-     * var diceRolls = _.times(3, _.partial(_.random, 1, 6, false));
-     * // => [3, 6, 4]
+     * _.times(3, String);
+     * // => ['0', '1', '2']
      *
-     * _.times(3, function(n) {
-     *   mage.castSpell(n);
-     * });
-     * // => invokes `mage.castSpell` three times with `n` of `0`, `1`, and `2`
+     *  _.times(4, _.constant(true));
+     * // => [true, true, true, true]
      */
     function times(n, iteratee) {
       n = toInteger(n);

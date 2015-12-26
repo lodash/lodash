@@ -2362,6 +2362,25 @@
         assert.strictEqual(actual.lastIndex, 3);
       });
 
+      QUnit.test('`_.' + methodName + '` should clone properties that shadow those on `Object.prototype`', function(assert) {
+        assert.expect(2);
+
+        var object = {
+          'constructor': objectProto.constructor,
+          'hasOwnProperty': objectProto.hasOwnProperty,
+          'isPrototypeOf': objectProto.isPrototypeOf,
+          'propertyIsEnumerable': objectProto.propertyIsEnumerable,
+          'toLocaleString': objectProto.toLocaleString,
+          'toString': objectProto.toString,
+          'valueOf': objectProto.valueOf
+        };
+
+        var actual = func(object);
+
+        assert.deepEqual(actual, object);
+        assert.notStrictEqual(actual, object);
+      });
+
       QUnit.test('`_.' + methodName + '` should clone symbol properties', function(assert) {
         assert.expect(1);
 
@@ -3657,13 +3676,28 @@
     QUnit.test('should assign properties that shadow those on `Object.prototype`', function(assert) {
       assert.expect(2);
 
-      var ctor = objectProto.constructor,
-          actual = _.defaults({}, { 'constructor': 1 });
+      var object = {
+        'constructor': objectProto.constructor,
+        'hasOwnProperty': objectProto.hasOwnProperty,
+        'isPrototypeOf': objectProto.isPrototypeOf,
+        'propertyIsEnumerable': objectProto.propertyIsEnumerable,
+        'toLocaleString': objectProto.toLocaleString,
+        'toString': objectProto.toString,
+        'valueOf': objectProto.valueOf
+      };
 
-      assert.strictEqual(actual.constructor, 1);
+      var source = {
+        'constructor': 1,
+        'hasOwnProperty': 2,
+        'isPrototypeOf': 3,
+        'propertyIsEnumerable': 4,
+        'toLocaleString': 5,
+        'toString': 6,
+        'valueOf': 7
+      };
 
-      actual = _.defaults({ 'constructor': ctor }, { 'constructor': 1 });
-      assert.strictEqual(actual.constructor, ctor);
+      assert.deepEqual(_.defaults({}, source), source);
+      assert.deepEqual(_.defaults({}, object, source), object);
     });
   }());
 

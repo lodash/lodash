@@ -2382,18 +2382,24 @@
       });
 
       QUnit.test('`_.' + methodName + '` should clone symbol properties', function(assert) {
-        assert.expect(1);
+        assert.expect(2);
 
         if (Symbol) {
-          var values = [[], Object(false), new Date, {}, Object(0), /a/, Object('a')];
+          var object = {};
+          object[symbol] = {};
+          assert.strictEqual(func(object)[symbol], object[symbol]);
 
-          assert.ok(lodashStable.every(values, function(value) {
-            value[symbol] = {};
-            return func(value)[symbol] === value[symbol];
-          }));
+          if (isDeep) {
+            object = { 'a': { 'b': {} } };
+            object.a.b[symbol] = {};
+            assert.strictEqual(func(object).a.b[symbol], object.a.b[symbol]);
+          }
+          else {
+            skipTest(assert);
+          }
         }
         else {
-          skipTest(assert);
+          skipTest(assert, 2);
         }
       });
 

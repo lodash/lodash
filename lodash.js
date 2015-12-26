@@ -2237,7 +2237,7 @@
       if (isArr) {
         result = initCloneArray(value);
         if (!isDeep) {
-          result = copyArray(value, result);
+          return copyArray(value, result);
         }
       } else {
         var tag = getTag(value),
@@ -2249,17 +2249,14 @@
           }
           result = initCloneObject(isFunc ? {} : value);
           if (!isDeep) {
-            result = baseAssign(result, value);
+            return assignSymbols(baseAssign(result, value), value);
           }
-        }
-        else if (!cloneableTags[tag]) {
-          return object ? value : {};
-        }
-        else {
-          result = initCloneByTag(value, tag, isDeep);
+        } else {
+          return cloneableTags[tag]
+            ? initCloneByTag(value, tag, isDeep)
+            : (object ? value : {});
         }
       }
-      result = assignSymbols(result, value);
       if (!isDeep) {
         return result;
       }
@@ -2275,7 +2272,7 @@
       (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
         assignValue(result, key, baseClone(subValue, isDeep, customizer, key, value, stack));
       });
-      return result;
+      return isArr ? result : assignSymbols(result, value);
     }
 
     /**

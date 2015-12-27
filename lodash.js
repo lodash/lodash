@@ -2257,9 +2257,6 @@
             : (object ? value : {});
         }
       }
-      if (!isDeep) {
-        return result;
-      }
       // Check for circular references and return its corresponding clone.
       stack || (stack = new Stack);
       var stacked = stack.get(value);

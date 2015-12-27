@@ -2673,7 +2673,7 @@
       array = arrays[0];
 
       var index = -1,
-          length = array ? array.length : 0,
+          length = array.length,
           seen = caches[0];
 
       outer:
@@ -3717,14 +3717,14 @@
     }
 
     /**
-     * Creates a clone of `symbol`.
+     * Creates a clone of the `symbol` object.
      *
      * @private
-     * @param {Object} symbol The symbol to clone.
-     * @returns {Object} Returns the cloned symbol.
+     * @param {Object} symbol The symbol object to clone.
+     * @returns {Object} Returns the cloned symbol object.
      */
     function cloneSymbol(symbol) {
-      return typeof symbol == 'object' ? Object(symbolValueOf.call(symbol)) : symbol;
+      return Object(symbolValueOf.call(symbol));
     }
 
     /**

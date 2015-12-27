@@ -21639,15 +21639,14 @@
     });
 
     QUnit.test('`_.' + methodName + '` should return a wrapped value when chaining', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
       if (!isNpm) {
         var wrapped = _([1, 2, 3])[methodName]([5, 2, 1, 4]);
         assert.ok(wrapped instanceof _);
-        assert.deepEqual(wrapped.value(), [3, 5, 4]);
       }
       else {
-        skipTest(assert, 2);
+        skipTest(assert);
       }
     });
 

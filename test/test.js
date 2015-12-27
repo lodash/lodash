@@ -1552,22 +1552,26 @@
         return this;
       }
 
-      var bound = _.bind(Foo, { 'a': 1 }),
+      function Bar() {}
+
+      var thisArg = { 'a': 1 },
+          boundFoo = _.bind(Foo, thisArg),
+          boundBar = _.bind(Bar, thisArg),
           count = 9,
-          expected = lodashStable.times(count, lodashStable.constant(undefined));
+          expected = lodashStable.times(count, lodashStable.constant([undefined, undefined]));
 
       var actual = lodashStable.times(count, function(index) {
         try {
           switch (index) {
-            case 0: return (new bound).a;
-            case 1: return (new bound(1)).a;
-            case 2: return (new bound(1, 2)).a;
-            case 3: return (new bound(1, 2, 3)).a;
-            case 4: return (new bound(1, 2, 3, 4)).a;
-            case 5: return (new bound(1, 2, 3, 4, 5)).a;
-            case 6: return (new bound(1, 2, 3, 4, 5, 6)).a;
-            case 7: return (new bound(1, 2, 3, 4, 5, 6, 7)).a;
-            case 8: return (new bound(1, 2, 3, 4, 5, 6, 7, 8)).a;
+            case 0: return [new boundFoo().a, new boundBar().a];
+            case 1: return [new boundFoo(1).a, new boundBar(1).a];
+            case 2: return [new boundFoo(1, 2).a, new boundBar(1, 2).a];
+            case 3: return [new boundFoo(1, 2, 3).a, new boundBar(1, 2, 3).a];
+            case 4: return [new boundFoo(1, 2, 3, 4).a, new boundBar(1, 2, 3, 4).a];
+            case 5: return [new boundFoo(1, 2, 3, 4, 5).a, new boundBar(1, 2, 3, 4, 5).a];
+            case 6: return [new boundFoo(1, 2, 3, 4, 5, 6).a, new boundBar(1, 2, 3, 4, 5, 6).a];
+            case 7: return [new boundFoo(1, 2, 3, 4, 5, 6, 7).a, new boundBar(1, 2, 3, 4, 5, 6, 7).a];
+            case 8: return [new boundFoo(1, 2, 3, 4, 5, 6, 7, 8).a, new boundBar(1, 2, 3, 4, 5, 6, 7, 8).a];
           }
         } catch (e) {}
       });
@@ -3021,7 +3025,7 @@
     QUnit.test('should create an object that inherits from the given `prototype` object', function(assert) {
       assert.expect(3);
 
-      Circle.prototype = lodashStable.create(Shape.prototype);
+      Circle.prototype = _.create(Shape.prototype);
       Circle.prototype.constructor = Circle;
 
       var actual = new Circle;
@@ -3035,7 +3039,7 @@
       assert.expect(3);
 
       var expected = { 'constructor': Circle, 'radius': 0 };
-      Circle.prototype = lodashStable.create(Shape.prototype, expected);
+      Circle.prototype = _.create(Shape.prototype, expected);
 
       var actual = new Circle;
 
@@ -3053,7 +3057,7 @@
       }
       Foo.prototype.b = 2;
 
-      assert.deepEqual(lodashStable.create({}, new Foo), { 'a': 1, 'c': 3 });
+      assert.deepEqual(_.create({}, new Foo), { 'a': 1, 'c': 3 });
     });
 
     QUnit.test('should accept a falsey `prototype` argument', function(assert) {
@@ -3062,7 +3066,7 @@
       var expected = lodashStable.map(falsey, lodashStable.constant({}));
 
       var actual = lodashStable.map(falsey, function(prototype, index) {
-        return index ? lodashStable.create(prototype) : lodashStable.create();
+        return index ? _.create(prototype) : _.create();
       });
 
       assert.deepEqual(actual, expected);
@@ -3075,7 +3079,7 @@
           expected = lodashStable.map(primitives, lodashStable.constant(true));
 
       var actual = lodashStable.map(primitives, function(value, index) {
-        return lodashStable.isPlainObject(index ? lodashStable.create(value) : lodashStable.create());
+        return lodashStable.isPlainObject(index ? _.create(value) : _.create());
       });
 
       assert.deepEqual(actual, expected);
@@ -3086,7 +3090,7 @@
 
       var array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
           expected = lodashStable.map(array, lodashStable.constant(true)),
-          objects = lodashStable.map(array, lodashStable.create);
+          objects = lodashStable.map(array, _.create);
 
       var actual = lodashStable.map(objects, function(object) {
         return object.a === 1 && !_.keys(object).length;
@@ -5870,13 +5874,19 @@
     });
 
     QUnit.test('`_.' + methodName + '` should work as an iteratee for methods like `_.reduce`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var array = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
-          expected = { 'a': 1, 'b': 2, 'c': 3 };
+          expected = { 'a': isDefaults ? 0 : 1, 'b': 2, 'c': 3 };
 
-      expected.a = isDefaults ? 0 : 1;
       assert.deepEqual(lodashStable.reduce(array, func, { 'a': 0 }), expected);
+
+      var fn = function() {};
+      fn.a = array[0];
+      fn.b = array[1];
+      fn.c = array[2];
+
+      assert.deepEqual(_.reduce(fn, func, { 'a': 0 }), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should not return the existing wrapped value when chaining', function(assert) {
@@ -10216,6 +10226,17 @@
       assert.deepEqual(object.iteratee(2), expected);
     });
 
+    QUnit.test('should use internal `iteratee` if external is unavailable', function(assert) {
+      assert.expect(1);
+
+      var iteratee = _.iteratee;
+      delete _.iteratee;
+
+      assert.deepEqual(_.map([{ 'a': 1 }], 'a'), [1]);
+
+      _.iteratee = iteratee;
+    });
+
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(1);
 
@@ -13659,19 +13680,31 @@
       { 'a': 'y', 'b': 2 }
     ];
 
-    QUnit.test('should sort multiple properties by specified orders', function(assert) {
+    QUnit.test('should sort by a single property by a specified order', function(assert) {
+      assert.expect(1);
+
+      var actual = _.orderBy(objects, 'a', 'desc');
+      assert.deepEqual(actual, [objects[1], objects[3], objects[0], objects[2]]);
+    });
+
+    QUnit.test('should sort by multiple properties by specified orders', function(assert) {
       assert.expect(1);
 
       var actual = _.orderBy(objects, ['a', 'b'], ['desc', 'asc']);
       assert.deepEqual(actual, [objects[3], objects[1], objects[2], objects[0]]);
     });
 
-    QUnit.test('should sort a property in ascending order when its order is not specified', function(assert) {
-      assert.expect(1);
+    QUnit.test('should sort by a property in ascending order when its order is not specified', function(assert) {
+      assert.expect(2);
 
-      var expected = lodashStable.map(falsey, lodashStable.constant([objects[3], objects[1], objects[2], objects[0]]));
+      var expected = [objects[2], objects[0], objects[3], objects[1]],
+          actual = _.orderBy(objects, ['a', 'b']);
 
-      var actual = lodashStable.map(falsey, function(order, index) {
+      assert.deepEqual(actual, expected);
+
+      expected = lodashStable.map(falsey, lodashStable.constant([objects[3], objects[1], objects[2], objects[0]]));
+
+      actual = lodashStable.map(falsey, function(order, index) {
         return _.orderBy(objects, ['a', 'b'], index ? ['desc', order] : ['desc']);
       });
 
@@ -15472,7 +15505,7 @@
     });
 
     QUnit.test('should work with deep paths', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       var array = [];
       array.a = { 'b': { 'c': 3 } };
@@ -15481,6 +15514,12 @@
 
       assert.deepEqual(actual, [3]);
       assert.deepEqual(array.a, { 'b': {} });
+
+      try {
+        actual = _.pullAt(array, 'a.b.c.d.e');
+      } catch (e) {}
+
+      assert.deepEqual(actual, [undefined]);
     });
 
     QUnit.test('should work with a falsey `array` argument when keys are provided', function(assert) {

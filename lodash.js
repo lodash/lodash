@@ -2049,7 +2049,7 @@
 
       while (++index < length) {
         var symbol = symbols[index];
-        object[symbol] = source[symbol];
+        assignValue(object, symbol, source[symbol]);
       }
       return object;
     }

@@ -2028,7 +2028,7 @@
      * @param {*} value The value to assign.
      */
     function assignMergeValue(object, key, value) {
-      if ((value !== undefined && !eq(value, object[key])) ||
+      if ((value !== undefined && !eq(object[key], value)) ||
           (typeof key == 'number' && value === undefined && !(key in object))) {
         object[key] = value;
       }
@@ -2065,9 +2065,9 @@
      * @param {*} value The value to assign.
      */
     function assignValue(object, key, value) {
-      var oldValue = object[key];
-      if ((!eq(value, oldValue) ||
-            (eq(oldValue, objectProto[key]) && !hasOwnProperty.call(object, key))) ||
+      var objValue = object[key];
+      if ((!eq(objValue, value) ||
+            (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) ||
           (value === undefined && !(key in object))) {
         object[key] = value;
       }
@@ -3501,7 +3501,7 @@
         value = array[index],
         computed = iteratee ? iteratee(value) : value;
 
-        if (!eq(seen, computed)) {
+        if (!eq(computed, seen)) {
           seen = computed;
           result[++resIndex] = value;
         }
@@ -4933,7 +4933,7 @@
       if (type == 'number'
           ? (isArrayLike(object) && isIndex(index, object.length))
           : (type == 'string' && index in object)) {
-        return eq(value, object[index]);
+        return eq(object[index], value);
       }
       return false;
     }
@@ -6268,7 +6268,7 @@
       var length = array ? array.length : 0;
       if (length) {
         var index = baseSortedIndex(array, value);
-        if (index < length && eq(value, array[index])) {
+        if (index < length && eq(array[index], value)) {
           return index;
         }
       }
@@ -6336,7 +6336,7 @@
       var length = array ? array.length : 0;
       if (length) {
         var index = baseSortedIndex(array, value, true) - 1;
-        if (eq(value, array[index])) {
+        if (eq(array[index], value)) {
           return index;
         }
       }

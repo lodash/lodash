@@ -6,9 +6,9 @@ env:
   global:
     - BIN="node" ISTANBUL=false OPTION=""
     - NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
-    - PATTERN1="s|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)||"
-    - PATTERN2="s|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}||"
-    - PATTERN3="s|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}||"
+    - PATTERN1="|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)|"
+    - PATTERN2="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"
+    - PATTERN3="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
   matrix:
     -
@@ -40,9 +40,9 @@ before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm config set loglevel error"
   - "npm i -g npm@\"$NPM_VERSION\""
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN1\" ./lodash.js"
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN2\" ./lodash.js"
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN3\" ./lodash.js"
+  - "[ $ISTANBUL == false ]   || node ./test/remove.js \"$PATTERN1\" ./lodash.js"
+  - "[ $ISTANBUL == false ]   || node ./test/remove.js \"$PATTERN2\" ./lodash.js"
+  - "[ $ISTANBUL == false ]   || node ./test/remove.js \"$PATTERN3\" ./lodash.js"
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
   - "node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
 script:

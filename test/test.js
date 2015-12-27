@@ -16985,6 +16985,8 @@
     });
 
     QUnit.test('`_.' + methodName + '` should not error on paths over primitives in strict mode', function(assert) {
+      'use strict';
+
       assert.expect(2);
 
       numberProto.a = 0;

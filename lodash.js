@@ -3038,7 +3038,7 @@
     function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
       var objValue = object[key],
           srcValue = source[key],
-          stacked = stack.get(objValue) || stack.get(srcValue);
+          stacked = stack.get(srcValue) || stack.get(objValue);
 
       if (stacked) {
         assignMergeValue(object, key, stacked);

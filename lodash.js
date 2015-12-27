@@ -3036,28 +3036,28 @@
      * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
      */
     function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
-      var oldValue = object[key],
+      var objValue = object[key],
           srcValue = source[key],
-          stacked = stack.get(oldValue) || stack.get(srcValue);
+          stacked = stack.get(objValue) || stack.get(srcValue);
 
       if (stacked) {
         assignMergeValue(object, key, stacked);
         return;
       }
-      var newValue = customizer ? customizer(oldValue, srcValue, (key + ''), object, source, stack) : undefined,
+      var newValue = customizer ? customizer(objValue, srcValue, (key + ''), object, source, stack) : undefined,
           isCommon = newValue === undefined;
 
       if (isCommon) {
         newValue = srcValue;
         if (isArray(srcValue) || isTypedArray(srcValue)) {
-          newValue = isArray(oldValue)
-            ? oldValue
-            : ((isArrayLikeObject(oldValue)) ? copyArray(oldValue) : baseClone(srcValue));
+          newValue = isArray(objValue)
+            ? objValue
+            : ((isArrayLikeObject(objValue)) ? copyArray(objValue) : baseClone(srcValue));
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-          newValue = isArguments(oldValue)
-            ? toPlainObject(oldValue)
-            : (isObject(oldValue) ? oldValue : baseClone(srcValue));
+          newValue = isArguments(objValue)
+            ? toPlainObject(objValue)
+            : (isObject(objValue) ? objValue : baseClone(srcValue));
         }
         else {
           isCommon = isFunction(srcValue);
@@ -3314,10 +3314,10 @@
         if (isObject(nested)) {
           var newValue = value;
           if (index != lastIndex) {
-            var oldValue = nested[key];
-            newValue = customizer ? customizer(oldValue, key, nested) : undefined;
+            var objValue = nested[key];
+            newValue = customizer ? customizer(objValue, key, nested) : undefined;
             if (newValue === undefined) {
-              newValue = oldValue == null ? (isIndex(path[index + 1]) ? [] : {}) : oldValue;
+              newValue = objValue == null ? (isIndex(path[index + 1]) ? [] : {}) : objValue;
             }
           }
           assignValue(nested, key, newValue);

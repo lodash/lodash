@@ -421,6 +421,10 @@
       setProperty(root.Map, 'toString', createToString('Map'));
     }
     setProperty(Object, 'create', noop);
+
+    var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
+    setProperty(Object, 'getOwnPropertySymbols', undefined);
+
     setProperty(root, 'Set', noop);
     setProperty(root, 'WeakMap', noop);
 
@@ -435,6 +439,11 @@
     root._ = oldDash;
 
     // Restore built-in methods.
+    if (_getOwnPropertySymbols) {
+      Object.getOwnPropertySymbols = _getOwnPropertySymbols;
+    } else {
+      delete Object.getOwnPropertySymbols;
+    }
     if (Map) {
       setProperty(root, 'Map', Map);
     } else {
@@ -652,7 +661,7 @@
     });
 
     QUnit.test('should avoid overwritten native methods', function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -687,6 +696,19 @@
         assert.deepEqual(actual, [[otherObject], [object], [object]], label);
 
         try {
+          if (Symbol) {
+            object[Symbol()] = {};
+          }
+          actual = [
+            lodashBizarro.clone(object),
+            lodashBizarro.cloneDeep(object)
+          ];
+        } catch (e) {
+          actual = null;
+        }
+        assert.deepEqual(actual, [object, object], 'Object.getOwnPropertySymbols');
+
+        try {
           var map = new lodashBizarro.memoize.Cache;
           actual = map.set('a', 1).get('a');
         } catch (e) {
@@ -708,7 +730,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipTest(assert, 4);
+        skipTest(assert, 5);
       }
     });
   }());

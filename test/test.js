@@ -7296,6 +7296,29 @@
       });
     });
 
+    QUnit.test('should return a wrapped value when chaining', function(assert) {
+      assert.expect(4);
+
+      if (!isNpm) {
+        var array = ['a', 'b', 'c'],
+            wrapped = _(array),
+            actual = wrapped.invokeMap('toUpperCase');
+
+        assert.ok(actual instanceof _);
+        assert.deepEqual(actual.valueOf(), ['A', 'B', 'C']);
+
+        actual = wrapped.invokeMap(function(left, right) {
+          return left + this.toUpperCase() + right;
+        }, '(', ')');
+
+        assert.ok(actual instanceof _);
+        assert.deepEqual(actual.valueOf(), ['(A)', '(B)', '(C)']);
+      }
+      else {
+        skipTest(assert, 4);
+      }
+    });
+
     QUnit.test('should support shortcut fusion', function(assert) {
       assert.expect(2);
 

@@ -4325,7 +4325,6 @@
           newPartials = isCurry ? partials : undefined,
           newPartialsRight = isCurry ? undefined : partials;
 
-      arity = arity == undefined ? arity : nativeMax(arity, 0);
       bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
       bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
 

@@ -54,13 +54,12 @@
       Map = root.Map,
       noop = function() {},
       objToString = objectProto.toString,
-      params = root.arguments,
+      params = argv,
       push = arrayProto.push,
       realm = {},
       Set = root.Set,
       slice = arrayProto.slice,
       Symbol = root.Symbol,
-      system = root.system,
       Uint8Array = root.Uint8Array,
       WeakMap = root.WeakMap;
 
@@ -82,19 +81,12 @@
 
   /** The file path of the lodash file to test. */
   var filePath = (function() {
-    var min = 0,
-        result = [];
+    var min = 2,
+        result = params || [];
 
     if (phantom) {
+      min = 0;
       result = params = phantom.args || require('system').args;
-    } else if (system) {
-      min = 1;
-      result = params = system.args;
-    } else if (argv) {
-      min = 2;
-      result = params = argv;
-    } else if (params) {
-      result = params;
     }
     var last = result[result.length - 1];
     result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';

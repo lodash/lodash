@@ -926,6 +926,14 @@
       assert.strictEqual(_.add('x', 'y'), 'xy');
     });
 
+    QUnit.test('should work with only an `augend` or `addend`', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.add(6), 6);
+      assert.strictEqual(_.add(6, undefined), 6);
+      assert.strictEqual(_.add(undefined, 4), 4);
+    });
+
     QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
       assert.expect(1);
 
@@ -17996,6 +18004,14 @@
       assert.deepEqual(_.subtract('x', 'y'), NaN);
     });
 
+    QUnit.test('should work with only a `minuend` or `subtrahend`', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.subtract(6), 6);
+      assert.strictEqual(_.subtract(6, undefined), 6);
+      assert.strictEqual(_.subtract(undefined, 4), 4);
+    });
+
     QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
       assert.expect(1);
 
@@ -20353,6 +20369,21 @@
       object = [1, 2, 3];
       expected = lodashStable.map(accumulators, lodashStable.constant([1, 4, 9]));
       actual = lodashStable.map(accumulators, mapper);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should create regular arrays from typed arrays', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(typedArrays, lodashStable.constant(true));
+
+      var actual = lodashStable.map(typedArrays, function(type) {
+        var Ctor = root[type],
+            array = Ctor ? new Ctor(new ArrayBuffer(24)) : [];
+
+        return lodashStable.isArray(_.transform(array, noop));
+      });
 
       assert.deepEqual(actual, expected);
     });

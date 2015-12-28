@@ -12514,34 +12514,44 @@
     });
 
     QUnit.test('should expose a `cache` object on the `memoized` function which implements `Map` interface', function(assert) {
-      assert.expect(22);
+      assert.expect(110);
 
       lodashStable.times(2, function(index) {
         var resolver = index ? identity : null;
 
-        var memoized = _.memoize(function(value) {
-          return 'value:' + value;
-        }, resolver);
+        var cacheKeys = [
+          ['a', 'b', 'c'],
+          [null, undefined, NaN],
+          [1, 2, 3],
+          [true, false, -Infinity],
+          [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }]
+        ];
 
-        var cache = memoized.cache;
+        lodashStable.each(cacheKeys, function(keys) {
+          var memoized = _.memoize(function(key) {
+            return 'value:' + lodashStable.indexOf(keys, key);
+          }, resolver);
 
-        memoized('a');
-        memoized('b');
-        memoized('c');
+          var cache = memoized.cache;
 
-        assert.strictEqual(cache.has('a'), true);
-        assert.strictEqual(cache.has('b'), true);
-        assert.strictEqual(cache.has('c'), true);
+          memoized(keys[0]);
+          memoized(keys[1]);
+          memoized(keys[2]);
 
-        assert.strictEqual(cache.get('a'), 'value:a');
-        assert.strictEqual(cache['delete']('a'), true);
-        assert.strictEqual(cache.has('a'), false);
-        assert.strictEqual(cache.get('a'), undefined);
-        assert.strictEqual(cache['delete']('a'), false);
+          assert.strictEqual(cache.has(keys[0]), true);
+          assert.strictEqual(cache.has(keys[1]), true);
+          assert.strictEqual(cache.has(keys[2]), true);
 
-        assert.strictEqual(cache.clear(), undefined);
-        assert.strictEqual(cache.has('b'), false);
-        assert.strictEqual(cache.has('c'), false);
+          assert.strictEqual(cache.get(keys[0]), 'value:0');
+          assert.strictEqual(cache['delete'](keys[0]), true);
+          assert.strictEqual(cache.has(keys[0]), false);
+          assert.strictEqual(cache.get(keys[0]), undefined);
+          assert.strictEqual(cache['delete'](keys[0]), false);
+
+          assert.strictEqual(cache.clear(), undefined);
+          assert.strictEqual(cache.has(keys[1]), false);
+          assert.strictEqual(cache.has(keys[2]), false);
+        });
       });
     });
 

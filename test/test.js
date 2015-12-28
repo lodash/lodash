@@ -14612,7 +14612,7 @@
       assert.strictEqual(_.parseInt('08', 10), 8);
     });
 
-    QUnit.test('should parse strings with leading whitespace (test in Chrome, Firefox, and Opera)', function(assert) {
+    QUnit.test('should parse strings with leading whitespace (test in Chrome and Firefox)', function(assert) {
       assert.expect(2);
 
       var expected = [8, 8, 10, 10, 32, 32, 32, 32];
@@ -17822,7 +17822,7 @@
       assert.deepEqual(actual, [objects[2], objects[0], objects[3], objects[1]]);
     });
 
-    QUnit.test('`_.' + methodName + '` should perform a stable sort (test in IE > 8, Opera, and V8)', function(assert) {
+    QUnit.test('`_.' + methodName + '` should perform a stable sort (test in IE > 8 and V8)', function(assert) {
       assert.expect(2);
 
       lodashStable.each([stableArray, stableObject], function(value, index) {

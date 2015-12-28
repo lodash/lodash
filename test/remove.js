@@ -22,6 +22,6 @@ var reLine = /.*/gm;
 
 /*----------------------------------------------------------------------------*/
 
-fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf-8').replace(pattern, function(match) {
+fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf8').replace(pattern, function(match) {
   return match.replace(reLine, '');
 }));

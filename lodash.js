@@ -2020,60 +2020,6 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * This function is like `assignValue` except that it doesn't assign `undefined` values.
-     *
-     * @private
-     * @param {Object} object The object to modify.
-     * @param {string} key The key of the property to assign.
-     * @param {*} value The value to assign.
-     */
-    function assignMergeValue(object, key, value) {
-      if ((value !== undefined && !eq(object[key], value)) ||
-          (typeof key == 'number' && value === undefined && !(key in object))) {
-        object[key] = value;
-      }
-    }
-
-    /**
-     * Assigns own symbol properties of `source` to `object`.
-     *
-     * @private
-     * @param {Object} object The destination object.
-     * @param {Object} source The source object.
-     * @returns {Object} Returns `object`.
-     */
-    function assignSymbols(object, source) {
-      var index = -1,
-          symbols = getSymbols(source),
-          length = symbols.length;
-
-      while (++index < length) {
-        var symbol = symbols[index];
-        assignValue(object, symbol, source[symbol]);
-      }
-      return object;
-    }
-
-    /**
-     * Assigns `value` to `key` of `object` if the existing value is not equivalent
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-     * for equality comparisons.
-     *
-     * @private
-     * @param {Object} object The object to modify.
-     * @param {string} key The key of the property to assign.
-     * @param {*} value The value to assign.
-     */
-    function assignValue(object, key, value) {
-      var objValue = object[key];
-      if ((!eq(objValue, value) ||
-            (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) ||
-          (value === undefined && !(key in object))) {
-        object[key] = value;
-      }
-    }
-
-    /**
      * Removes `key` and its value from the associative array.
      *
      * @private
@@ -2177,6 +2123,40 @@
     }
 
     /**
+     * This function is like `assignValue` except that it doesn't assign `undefined` values.
+     *
+     * @private
+     * @param {Object} object The object to modify.
+     * @param {string} key The key of the property to assign.
+     * @param {*} value The value to assign.
+     */
+    function assignMergeValue(object, key, value) {
+      if ((value !== undefined && !eq(object[key], value)) ||
+          (typeof key == 'number' && value === undefined && !(key in object))) {
+        object[key] = value;
+      }
+    }
+
+    /**
+     * Assigns `value` to `key` of `object` if the existing value is not equivalent
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * for equality comparisons.
+     *
+     * @private
+     * @param {Object} object The object to modify.
+     * @param {string} key The key of the property to assign.
+     * @param {*} value The value to assign.
+     */
+    function assignValue(object, key, value) {
+      var objValue = object[key];
+      if ((!eq(objValue, value) ||
+            (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) ||
+          (value === undefined && !(key in object))) {
+        object[key] = value;
+      }
+    }
+
+    /**
      * The base implementation of `_.assign` without support for multiple sources
      * or `customizer` functions.
      *
@@ -2249,7 +2229,7 @@
           }
           result = initCloneObject(isFunc ? {} : value);
           if (!isDeep) {
-            return assignSymbols(baseAssign(result, value), value);
+            return copySymbols(value, baseAssign(result, value));
           }
         } else {
           return cloneableTags[tag]
@@ -2269,7 +2249,7 @@
       (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
         assignValue(result, key, baseClone(subValue, isDeep, customizer, key, value, stack));
       });
-      return isArr ? result : assignSymbols(result, value);
+      return isArr ? result : copySymbols(value, result);
     }
 
     /**
@@ -3860,6 +3840,18 @@
         assignValue(object, key, newValue);
       }
       return object;
+    }
+
+    /**
+     * Copies own symbol properties of `source` to `object`.
+     *
+     * @private
+     * @param {Object} source The object to copy symbols from.
+     * @param {Object} [object={}] The object to copy symbols to.
+     * @returns {Object} Returns `object`.
+     */
+    function copySymbols(source, object) {
+      return copyObject(source, getSymbols(source), object);
     }
 
     /**

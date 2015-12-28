@@ -6372,6 +6372,45 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func(args, 1), true);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with non-string `path` arguments', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3];
+
+      lodashStable.each([1, [1]], function(path) {
+        assert.strictEqual(func(array, path), true);
+      });
+    });
+
+    QUnit.test('`_.' + methodName + '` should work for objects with a `[[Prototype]]` of `null`', function(assert) {
+      assert.expect(1);
+
+      if (create)  {
+        var object = create(null);
+        object[1] = 'a';
+        assert.strictEqual(func(object, 1), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should check for a key over a path', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
+
+      lodashStable.each(['a.b.c', ['a.b.c']], function(path) {
+        assert.strictEqual(func(object, path), true);
+      });
+    });
+
     QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for inherited properties', function(assert) {
       assert.expect(2);
 
@@ -6399,16 +6438,6 @@
 
       assert.deepEqual(actual, expected);
       args[0] = 1;
-    });
-
-    QUnit.test('`_.' + methodName + '` should check for a key over a path', function(assert) {
-      assert.expect(2);
-
-      var object = { 'a.b.c': 3, 'a': { 'b': { 'c': 4 } } };
-
-      lodashStable.each(['a.b.c', ['a.b.c']], function(path) {
-        assert.strictEqual(func(object, path), true);
-      });
     });
 
     QUnit.test('`_.' + methodName + '` should return `false` when `object` is nullish', function(assert) {
@@ -6449,35 +6478,6 @@
       lodashStable.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
         assert.strictEqual(func(object, path), false);
       });
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with non-string `path` arguments', function(assert) {
-      assert.expect(2);
-
-      var array = [1, 2, 3];
-
-      lodashStable.each([1, [1]], function(path) {
-        assert.strictEqual(func(array, path), true);
-      });
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(func(args, 1), true);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work for objects with a `[[Prototype]]` of `null`', function(assert) {
-      assert.expect(1);
-
-      if (create)  {
-        var object = create(null);
-        object[1] = 'a';
-        assert.strictEqual(func(object, 1), true);
-      }
-      else {
-        skipTest(assert);
-      }
     });
   });
 

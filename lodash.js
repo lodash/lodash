@@ -1203,7 +1203,7 @@
    * @returns {Array} Returns the converted array.
    */
   function stringToArray(string) {
-    return string ? string.match(reComplexSymbol) : [];
+    return string.match(reComplexSymbol);
   }
 
   /**

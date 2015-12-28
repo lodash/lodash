@@ -1125,6 +1125,49 @@
       var expected = { 'a': null, 'b': undefined, 'c': null };
       assert.deepEqual(func({ 'a': 1, 'b': 2 }, expected), expected);
     });
+
+    QUnit.test('`_.' + methodName + '` should skip assignments if values are the same', function(assert) {
+      assert.expect(1);
+
+      var object = {};
+
+      var descriptor = {
+        'configurable': true,
+        'enumerable': true,
+        'set': function() { throw new Error; }
+      };
+
+      var source = {
+        'a': 1,
+        'b': undefined,
+        'c': NaN,
+        'd': undefined,
+        'constructor': Object,
+        'toString': lodashStable.constant('source')
+      };
+
+      defineProperty(object, 'a', lodashStable.assign({}, descriptor, {
+        'get': lodashStable.constant(1)
+      }));
+
+      defineProperty(object, 'b', lodashStable.assign({}, descriptor, {
+        'get': lodashStable.constant(undefined)
+      }));
+
+      defineProperty(object, 'c', lodashStable.assign({}, descriptor, {
+        'get': lodashStable.constant(NaN)
+      }));
+
+      defineProperty(object, 'constructor', lodashStable.assign({}, descriptor, {
+        'get': lodashStable.constant(Object)
+      }));
+
+      try {
+        var actual = func(object, source);
+      } catch (e) {}
+
+      assert.deepEqual(actual, source);
+    });
   });
 
   /*--------------------------------------------------------------------------*/

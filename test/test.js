@@ -44,6 +44,7 @@
       amd = root.define && define.amd,
       argv = root.process && process.argv,
       ArrayBuffer = root.ArrayBuffer,
+      defineProperty = Object.defineProperty,
       document = !phantom && root.document,
       body = root.document && root.document.body,
       create = Object.create,
@@ -68,16 +69,6 @@
       doubled = function(n) { return n * 2; },
       isEven = function(n) { return n % 2 == 0; },
       square = function(n) { return n * n; };
-
-  /** Used to set property descriptors. */
-  var defineProperty = (function() {
-    try {
-      var o = {},
-          func = Object.defineProperty,
-          result = func(o, o, o) && func;
-    } catch (e) {}
-    return result;
-  }());
 
   /** The file path of the lodash file to test. */
   var filePath = (function() {
@@ -183,7 +174,7 @@
 
   /** Poison the free variable `root` in Node.js */
   try {
-    Object.defineProperty(global.root, 'root', {
+    defineProperty(global.root, 'root', {
       'configurable': false,
       'enumerable': false,
       'get': function() { throw new ReferenceError; }

@@ -12579,48 +12579,6 @@
       assert.deepEqual(actual, props);
     });
 
-    QUnit.test('should expose a `cache` object on the `memoized` function which implements `Map` interface', function(assert) {
-      assert.expect(110);
-
-      lodashStable.times(2, function(index) {
-        var resolver = index ? identity : null;
-
-        var cacheKeys = [
-          ['a', 'b', 'c'],
-          [null, undefined, NaN],
-          [1, 2, 3],
-          [true, false, -Infinity],
-          [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }]
-        ];
-
-        lodashStable.each(cacheKeys, function(keys) {
-          var memoized = _.memoize(function(key) {
-            return 'value:' + lodashStable.indexOf(keys, key);
-          }, resolver);
-
-          var cache = memoized.cache;
-
-          memoized(keys[0]);
-          memoized(keys[1]);
-          memoized(keys[2]);
-
-          assert.strictEqual(cache.has(keys[0]), true);
-          assert.strictEqual(cache.has(keys[1]), true);
-          assert.strictEqual(cache.has(keys[2]), true);
-
-          assert.strictEqual(cache.get(keys[0]), 'value:0');
-          assert.strictEqual(cache['delete'](keys[0]), true);
-          assert.strictEqual(cache.has(keys[0]), false);
-          assert.strictEqual(cache.get(keys[0]), undefined);
-          assert.strictEqual(cache['delete'](keys[0]), false);
-
-          assert.strictEqual(cache.clear(), undefined);
-          assert.strictEqual(cache.has(keys[1]), false);
-          assert.strictEqual(cache.has(keys[2]), false);
-        });
-      });
-    });
-
     QUnit.test('should cache the `__proto__` key', function(assert) {
       assert.expect(8);
 
@@ -12738,6 +12696,52 @@
       assert.strictEqual(cache.has(key2), true);
 
       _.memoize.Cache = oldCache;
+    });
+
+    QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
+      assert.expect(164);
+
+      var symbol = Symbol ? Symbol() : undefined,
+          cacheKeys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
+
+      lodashStable.times(2, function(index) {
+        var func = (index ? (lodashBizarro || {}) : _).memoize;
+
+        var memoized = !func ? noop : func(function(key) {
+          return 'value:' + lodashStable.indexOf(cacheKeys, key);
+        });
+
+        var cache = memoized.cache;
+
+        lodashStable.each(cacheKeys, function(key, index) {
+          if (func) {
+            var value = 'value:' + index;
+            memoized(key);
+
+            assert.strictEqual(cache.has(key), true);
+            assert.strictEqual(cache.get(key), value);
+            assert.strictEqual(cache['delete'](key), true);
+            assert.strictEqual(cache.has(key), false);
+            assert.strictEqual(cache.get(key), undefined);
+            assert.strictEqual(cache['delete'](key), false);
+            assert.strictEqual(cache.set(key, value), cache);
+            assert.strictEqual(cache.has(key), true);
+          }
+          else {
+            skipTest(assert, 8);
+          }
+        });
+
+        if (func) {
+          assert.strictEqual(cache.clear(), undefined);
+          assert.ok(lodashStable.every(cacheKeys, function(key) {
+            return !cache.has(key);
+          }));
+        }
+        else {
+          skipTest(assert, 2);
+        }
+      });
     });
   }());
 

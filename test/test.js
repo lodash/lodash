@@ -12701,25 +12701,26 @@
     QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
       assert.expect(164);
 
+      function getValue(key) {
+        var lastIndex = cacheKeys.length - 1;
+        return cacheKeys[lastIndex - lodashStable.indexOf(cacheKeys, key)];
+      }
+
       var symbol = Symbol ? Symbol() : undefined,
           cacheKeys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
 
       lodashStable.times(2, function(index) {
-        var func = (index ? (lodashBizarro || {}) : _).memoize;
-
-        var memoized = !func ? noop : func(function(key) {
-          return 'value:' + lodashStable.indexOf(cacheKeys, key);
-        });
-
-        var cache = memoized.cache;
+        var func = (index ? (lodashBizarro || {}) : _).memoize,
+            memoized = func ? func(getValue) : noop,
+            cache = memoized.cache;
 
         lodashStable.each(cacheKeys, function(key, index) {
           if (func) {
-            var value = 'value:' + index;
+            var value = getValue(key);
             memoized(key);
 
+            assert.deepEqual(cache.get(key), value);
             assert.strictEqual(cache.has(key), true);
-            assert.strictEqual(cache.get(key), value);
             assert.strictEqual(cache['delete'](key), true);
             assert.strictEqual(cache.has(key), false);
             assert.strictEqual(cache.get(key), undefined);

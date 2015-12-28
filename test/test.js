@@ -2802,7 +2802,7 @@
       assert.deepEqual(actual, [objects[1]]);
     });
 
-    QUnit.test('should match properties when `object` is not a plain object', function(assert) {
+    QUnit.test('should work with a non-plain `object`', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -8978,6 +8978,15 @@
       assert.deepEqual(actual, [false, true]);
     });
 
+    QUnit.test('should work with a non-plain `object`', function(assert) {
+      assert.expect(1);
+
+      function Foo(object) { lodashStable.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) });
+      assert.strictEqual(_.isMatch(object, { 'a': { 'b': 1 } }), true);
+    });
+
     QUnit.test('should partial match arrays', function(assert) {
       assert.expect(3);
 
@@ -9079,15 +9088,6 @@
       else {
         skipTest(assert, 3);
       }
-    });
-
-    QUnit.test('should match properties when `object` is not a plain object', function(assert) {
-      assert.expect(1);
-
-      function Foo(object) { lodashStable.assign(this, object); }
-
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) });
-      assert.strictEqual(_.isMatch(object, { 'a': { 'b': 1 } }), true);
     });
 
     QUnit.test('should match `undefined` values', function(assert) {
@@ -11784,6 +11784,17 @@
       assert.deepEqual(actual, [false, true]);
     });
 
+    QUnit.test('should work with a non-plain `object`', function(assert) {
+      assert.expect(1);
+
+      function Foo(object) { lodashStable.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
+          matches = _.matches({ 'a': { 'b': 1 } });
+
+      assert.strictEqual(matches(object), true);
+    });
+
     QUnit.test('should partial match arrays', function(assert) {
       assert.expect(3);
 
@@ -11869,17 +11880,6 @@
       else {
         skipTest(assert, 3);
       }
-    });
-
-    QUnit.test('should match properties when `object` is not a plain object', function(assert) {
-      assert.expect(1);
-
-      function Foo(object) { lodashStable.assign(this, object); }
-
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
-          matches = _.matches({ 'a': { 'b': 1 } });
-
-      assert.strictEqual(matches(object), true);
     });
 
     QUnit.test('should match `undefined` values', function(assert) {
@@ -12207,6 +12207,17 @@
       assert.deepEqual(actual, [false, true]);
     });
 
+    QUnit.test('should work with a non-plain `srcValue`', function(assert) {
+      assert.expect(1);
+
+      function Foo(object) { lodashStable.assign(this, object); }
+
+      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
+          matches = _.matchesProperty('a', { 'b': 1 });
+
+      assert.strictEqual(matches(object), true);
+    });
+
     QUnit.test('should partial match arrays', function(assert) {
       assert.expect(3);
 
@@ -12293,17 +12304,6 @@
       }
     });
 
-    QUnit.test('should match properties when `srcValue` is not a plain object', function(assert) {
-      assert.expect(1);
-
-      function Foo(object) { lodashStable.assign(this, object); }
-
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
-          matches = _.matchesProperty('a', { 'b': 1 });
-
-      assert.strictEqual(matches(object), true);
-    });
-
     QUnit.test('should match `undefined` values', function(assert) {
       assert.expect(2);
 
@@ -12317,25 +12317,6 @@
       actual = lodashStable.map(objects, _.matchesProperty('a', { 'b': undefined }));
 
       assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should return `false` when `object` is nullish', function(assert) {
-      assert.expect(2);
-
-      var values = [, null, undefined],
-          expected = lodashStable.map(values, lodashStable.constant(false));
-
-      lodashStable.each(['constructor', ['constructor']], function(path) {
-        var matches = _.matchesProperty(path, 1);
-
-        var actual = lodashStable.map(values, function(value, index) {
-          try {
-            return index ? matches(value) : matches();
-          } catch (e) {}
-        });
-
-        assert.deepEqual(actual, expected);
-      });
     });
 
     QUnit.test('should match `undefined` values on primitives', function(assert) {
@@ -12359,6 +12340,25 @@
       }
       delete numberProto.a;
       delete numberProto.b;
+    });
+
+    QUnit.test('should return `false` when `object` is nullish', function(assert) {
+      assert.expect(2);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(false));
+
+      lodashStable.each(['constructor', ['constructor']], function(path) {
+        var matches = _.matchesProperty(path, 1);
+
+        var actual = lodashStable.map(values, function(value, index) {
+          try {
+            return index ? matches(value) : matches();
+          } catch (e) {}
+        });
+
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should return `true` when comparing a `srcValue` of empty arrays and objects', function(assert) {

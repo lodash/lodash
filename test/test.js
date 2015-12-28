@@ -20711,6 +20711,14 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should check that `object` constructor is a function before using its `[[Prototype]]`', function(assert) {
+      assert.expect(1);
+
+      Foo.prototype.constructor = null;
+      assert.notOk(_.transform(new Foo) instanceof Foo);
+      Foo.prototype.constructor = Foo;
+    });
+
     QUnit.test('should create an empty object when provided a falsey `object` argument', function(assert) {
       assert.expect(1);
 

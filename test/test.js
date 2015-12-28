@@ -21899,6 +21899,12 @@
       assert.deepEqual(_.zipObject(['a'], [1, 2]), { 'a': 1 });
     });
 
+    QUnit.test('should assign `undefined` values for extra `keys`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.zipObject(['a', 'b'], [1]), { 'a': 1, 'b': undefined });
+    });
+
     QUnit.test('should support deep paths', function(assert) {
       assert.expect(2);
 

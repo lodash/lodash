@@ -6383,10 +6383,22 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should treat sparse arrays as dense', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `true` for index values within bounds for arrays, `arguments` objects, and strings', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(func(Array(1), 0), true);
+      var string = Object('abc');
+      delete args[0];
+      delete string[0];
+
+      var values = [Array(3), args, string],
+          expected = lodashStable.map(values, lodashStable.constant(true));
+
+      var actual = lodashStable.map(values, function(value) {
+        return func(value, 0);
+      });
+
+      assert.deepEqual(actual, expected);
+      args[0] = 1;
     });
 
     QUnit.test('`_.' + methodName + '` should check for a key over a path', function(assert) {

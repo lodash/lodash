@@ -15640,10 +15640,11 @@
       }));
     });
 
-    QUnit.test('should coerce arguments to numbers', function(assert) {
-      assert.expect(1);
+    QUnit.test('should coerce arguments to finite numbers', function(assert) {
+      assert.expect(2);
 
       assert.strictEqual(_.random('1', '1'), 1);
+      assert.strictEqual(_.random(NaN, NaN), 0);
     });
 
     QUnit.test('should support floats', function(assert) {
@@ -18891,7 +18892,7 @@
     QUnit.test('should work with complex "interpolate" delimiters', function(assert) {
       assert.expect(22);
 
-      lodashStable.each({
+      lodashStable.forOwn({
         '<%= a + b %>': '3',
         '<%= b - a %>': '1',
         '<%= a = b %>': '2',
@@ -18968,8 +18969,8 @@
           'interpolate': /\{\{=([\s\S]+?)\}\}/g
         });
 
-        var compiled = _.template('<ul>{{ _.each(collection, function(value, index) {}}<li>{{= index }}: {{- value }}</li>{{}); }}</ul>', index ? null : settings),
-            expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
+        var expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
+            compiled = _.template('<ul>{{ _.each(collection, function(value, index) {}}<li>{{= index }}: {{- value }}</li>{{}); }}</ul>', index ? null : settings),
             data = { 'collection': ['a & A', 'b & B'] };
 
         assert.strictEqual(compiled(data), expected);
@@ -18989,12 +18990,38 @@
           'interpolate': /<\?=([\s\S]+?)\?>/g
         });
 
-        var compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>', index ? null : settings),
-            expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
+        var expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
+            compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>', index ? null : settings),
             data = { 'collection': ['a & A', 'b & B'] };
 
         assert.strictEqual(compiled(data), expected);
         lodashStable.assign(_.templateSettings, settingsClone);
+      });
+    });
+
+    QUnit.test('should ignore `null` delimiters', function(assert) {
+      assert.expect(3);
+
+      var delimiter = {
+        'escape': /\{\{-([\s\S]+?)\}\}/g,
+        'evaluate': /\{\{([\s\S]+?)\}\}/g,
+        'interpolate': /\{\{=([\s\S]+?)\}\}/g
+      };
+
+      lodashStable.forOwn({
+        'escape': '{{- a }}',
+        'evaluate': '{{ print(a) }}',
+        'interpolate': '{{= a }}'
+      },
+      function(value, key) {
+        var settings = { 'escape': null, 'evaluate': null, 'interpolate': null };
+        settings[key] = delimiter[key];
+
+        var expected = '1 <%- a %> <% print(a) %> <%= a %>',
+            compiled = _.template(value + ' <%- a %> <% print(a) %> <%= a %>', settings),
+            data = { 'a': 1 };
+
+        assert.strictEqual(compiled(data), expected);
       });
     });
 
@@ -19172,9 +19199,9 @@
     QUnit.test('should return an empty string for empty values', function(assert) {
       assert.expect(1);
 
-      var data = data = { 'a': 1 },
-          values = [, null, undefined, ''],
-          expected = lodashStable.map(values, lodashStable.constant(''));
+      var values = [, null, undefined, ''],
+          expected = lodashStable.map(values, lodashStable.constant('')),
+          data = { 'a': 1 };
 
       var actual = lodashStable.map(values, function(value, index) {
         var compiled = index ? _.template(value) : _.template();
@@ -19354,10 +19381,11 @@
     });
 
     QUnit.test('should support a `separator` option', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': ' ' }), 'hi-diddly-ho there,...');
       assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /,? +/ }), 'hi-diddly-ho there...');
+      assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /,? +/g }), 'hi-diddly-ho there...');
     });
 
     QUnit.test('should treat negative `length` as `0`', function(assert) {

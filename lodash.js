@@ -5019,7 +5019,7 @@
      * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
      * modify function arguments, making the order in which they are executed important,
      * preventing the merging of metadata. However, we make an exception for a safe
-     * common case where curried functions have `_.ary` and or `_.rearg` applied.
+     * combined case where curried functions have `_.ary` and or `_.rearg` applied.
      *
      * @private
      * @param {Array} data The destination metadata.
@@ -5030,7 +5030,7 @@
       var bitmask = data[1],
           srcBitmask = source[1],
           newBitmask = bitmask | srcBitmask,
-          isCommon = newBitmask < ARY_FLAG;
+          isCommon = newBitmask < ARY_FLAG || newBitmask == ARY_FLAG;
 
       var isCombo =
         (srcBitmask == ARY_FLAG && (bitmask == CURRY_FLAG)) ||

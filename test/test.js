@@ -1054,6 +1054,13 @@
       assert.deepEqual(capped('a'), ['a']);
     });
 
+    QUnit.test('should use the existing `ary` if smaller', function(assert) {
+      assert.expect(1);
+
+      var capped = _.ary(_.ary(fn, 1), 2);
+      assert.deepEqual(capped('a', 'b', 'c'), ['a']);
+    });
+
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(1);
 

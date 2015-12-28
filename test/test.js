@@ -2543,7 +2543,7 @@
           }
         }, []);
 
-        var expected = lodashStable.times(objects.length, lodashStable.constant(true));
+        var expected = lodashStable.map(objects, lodashStable.constant(true));
 
         var actual = lodashStable.map(objects, function(object) {
           var Ctor = object.constructor,
@@ -7343,7 +7343,9 @@
         return { 'a': value };
       });
 
-      var expected = lodashStable.times(objects.length - 1, lodashStable.constant(undefined)).concat(1);
+      var expected = lodashStable.map(objects, function(object) {
+        return object.a ? object.a() : undefined;
+      });
 
       try {
         var actual = _.invokeMap(objects, 'a');
@@ -8263,7 +8265,7 @@
         return [new CtorA('a'), new CtorA('a'), new CtorB('a'), new CtorB('b')];
       });
 
-      var expected = lodashStable.times(pairs.length, lodashStable.constant([true, false, false]));
+      var expected = lodashStable.map(pairs, lodashStable.constant([true, false, false]));
 
       var actual = lodashStable.map(pairs, function(pair) {
         return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
@@ -8360,7 +8362,7 @@
         return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
       });
 
-      var expected = lodashStable.times(pairs.length, lodashStable.constant([true, false, false]));
+      var expected = lodashStable.map(pairs, lodashStable.constant([true, false, false]));
 
       var actual = lodashStable.map(pairs, function(pair) {
         return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
@@ -20634,42 +20636,41 @@
     });
 
     QUnit.test('should support an `accumulator` value', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       var values = [new Foo, [1, 2, 3], { 'a': 1, 'b': 2, 'c': 3 }],
-          expected = lodashStable.map(values, lodashStable.constant([0, 1, 4, 9]));
+          expected = lodashStable.map(values, lodashStable.constant([1, 4, 9]));
 
       var actual = lodashStable.map(values, function(value) {
         return _.transform(value, function(result, value) {
           result.push(square(value));
-        }, [0]);
+        }, []);
       });
 
       assert.deepEqual(actual, expected);
 
-      var object = { '_': 0, 'a': 1, 'b': 4, 'c': 9 };
-      expected = [object, { '_': 0, '0': 1, '1': 4, '2': 9 }, object];
+      var object = { 'a': 1, 'b': 4, 'c': 9 },
+      expected = [object, { '0': 1, '1': 4, '2': 9 }, object];
+
       actual = lodashStable.map(values, function(value) {
         return _.transform(value, function(result, value, key) {
           result[key] = square(value);
-        }, { '_': 0 });
+        }, {});
       });
 
       assert.deepEqual(actual, expected);
 
-      object = {};
-      expected = lodashStable.map(values, lodashStable.constant(object));
-      actual = lodashStable.map(values, function(value) {
-        return _.transform(value, noop, object);
+      lodashStable.each([[], {}], function(accumulator) {
+        var actual = lodashStable.map(values, function(value) {
+          return _.transform(value, noop, accumulator);
+        });
+
+        assert.ok(lodashStable.every(actual, function(result) {
+          return result === accumulator;
+        }));
+
+        assert.strictEqual(_.transform(null, null, accumulator), accumulator);
       });
-
-      assert.deepEqual(actual, expected);
-
-      actual = lodashStable.map(values, function(value) {
-        return _.transform(null, null, object);
-      });
-
-      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should treat sparse arrays as dense', function(assert) {
@@ -20756,7 +20757,7 @@
         }
       }, []);
 
-      var expected = lodashStable.times(objects.length, lodashStable.constant(true));
+      var expected = lodashStable.map(objects, lodashStable.constant(true));
 
       var actual = lodashStable.map(objects, function(object) {
         var Ctor = object.constructor,

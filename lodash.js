@@ -5030,7 +5030,7 @@
       var bitmask = data[1],
           srcBitmask = source[1],
           newBitmask = bitmask | srcBitmask,
-          isCommon = newBitmask < ARY_FLAG || newBitmask == ARY_FLAG;
+          isCommon = newBitmask < (BIND_FLAG | BIND_KEY_FLAG | ARY_FLAG);
 
       var isCombo =
         (srcBitmask == ARY_FLAG && (bitmask == CURRY_FLAG)) ||

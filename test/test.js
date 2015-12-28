@@ -2760,6 +2760,19 @@
       assert.deepEqual(actual, [objects[1], objects[2]]);
     });
 
+    QUnit.test('should not invoke `source` predicates for missing `object` properties', function(assert) {
+      assert.expect(2);
+
+      var count = 0;
+
+      var conforms = _.conforms({
+        'a': function() { count++; return true; }
+      });
+
+      assert.strictEqual(conforms({}), false);
+      assert.strictEqual(count, 0);
+    });
+
     QUnit.test('should work with a function for `object`', function(assert) {
       assert.expect(2);
 

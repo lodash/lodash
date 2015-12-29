@@ -2344,32 +2344,60 @@
     });
 
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
-      assert.expect(12);
+      assert.expect(166);
 
-      var stack,
-          object = new Foo;
+      var stack1,
+          stack2,
+          object1 = { 'v0': 0 },
+          object2 = {},
+          symbol = Symbol ? Symbol() : undefined,
+          keys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
 
-      var clone = _.cloneDeepWith(object, function() {
+      var pairs = lodashStable.map(keys, function(key, index) {
+        var lastIndex = keys.length - 1;
+        return [key, keys[lastIndex - index]];
+      });
+
+      lodashStable.times(LARGE_ARRAY_SIZE + 1, function(index) {
+        object2['v' + index] = [index ? object2['v' + (index - 1)] : object2];
+      });
+
+      var clone1 = _.cloneDeepWith(object1, function() {
         if (arguments.length > 1) {
-          stack || (stack = _.last(arguments));
+          stack1 || (stack1 = _.last(arguments));
         }
       });
 
-      assert.strictEqual(stack.has(object), true);
-      assert.strictEqual(stack.get(object), clone);
-      assert.strictEqual(stack['delete'](object), true);
-      assert.strictEqual(stack.has(object), false);
-      assert.strictEqual(stack.get(object), undefined);
-      assert.strictEqual(stack['delete'](object), false);
+      var clone2 = _.cloneDeepWith(object2, function() {
+        if (arguments.length > 1) {
+          stack2 || (stack2 = _.last(arguments));
+        }
+      });
 
-      stack = new stack.constructor([['a', 1], ['b', 2]]);
+      assert.strictEqual(stack1.get(object1), clone1);
+      assert.strictEqual(stack2.get(object2), clone2);
 
-      assert.strictEqual(stack.has('a'), true);
-      assert.strictEqual(stack.get('a'), 1);
-      assert.strictEqual(stack['delete']('a'), true);
-      assert.strictEqual(stack.has('a'), false);
-      assert.strictEqual(stack.get('a'), undefined);
-      assert.strictEqual(stack['delete']('a'), false);
+      lodashStable.each([stack1.constructor, stack2.constructor], function(Stack) {
+        var stack = new Stack(pairs);
+
+        lodashStable.each(keys, function(key, index) {
+          var value = pairs[index][1];
+
+          assert.deepEqual(stack.get(key), value);
+          assert.strictEqual(stack.has(key), true);
+          assert.strictEqual(stack['delete'](key), true);
+          assert.strictEqual(stack.has(key), false);
+          assert.strictEqual(stack.get(key), undefined);
+          assert.strictEqual(stack['delete'](key), false);
+          assert.strictEqual(stack.set(key, value), stack);
+          assert.strictEqual(stack.has(key), true);
+        });
+
+        assert.strictEqual(stack.clear(), undefined);
+        assert.ok(lodashStable.every(keys, function(key) {
+          return !stack.has(key);
+        }));
+      });
     });
 
     lodashStable.each(['clone', 'cloneDeep'], function(methodName) {

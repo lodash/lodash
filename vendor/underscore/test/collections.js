@@ -59,19 +59,15 @@
 
   QUnit.test('Iterating objects with sketchy length properties', function(assert) {
     var functions = [
-        'each', 'map', 'filter', 'find',
-        'some', 'every', 'max', 'min',
-        'groupBy', 'countBy', 'partition', 'indexBy'
+      'each', 'map', 'filter', 'find',
+      'some', 'every', 'max', 'min',
+      'groupBy', 'countBy', 'partition', 'indexBy'
     ];
     var reducers = ['reduce', 'reduceRight'];
 
     var tricks = [
       {length: '5'},
-      {
-        length: {
-          valueOf: _.constant(5)
-        }
-      },
+      {length: {valueOf: _.constant(5)}},
       {length: Math.pow(2, 53) + 1},
       {length: Math.pow(2, 53)},
       {length: null},
@@ -821,7 +817,7 @@
       var actual;
       try {
         actual = _.toArray(document.childNodes);
-      } catch(e) { /* ignored */ }
+      } catch (e) { /* ignored */ }
       assert.deepEqual(actual, _.map(document.childNodes, _.identity), 'works on NodeList');
     }
   });

@@ -1,19 +1,19 @@
 (function() {
 
   var Library = Backbone.Collection.extend({
-    url : function() { return '/library'; }
+    url: function() { return '/library'; }
   });
   var library;
 
   var attrs = {
-    title  : "The Tempest",
-    author : "Bill Shakespeare",
-    length : 123
+    title: 'The Tempest',
+    author: 'Bill Shakespeare',
+    length: 123
   };
 
-  QUnit.module("Backbone.sync", {
+  QUnit.module('Backbone.sync', {
 
-    beforeEach : function(assert) {
+    beforeEach: function(assert) {
       library = new Library;
       library.create(attrs, {wait: false});
     },
@@ -24,7 +24,7 @@
 
   });
 
-  QUnit.test("read", function(assert) {
+  QUnit.test('read', function(assert) {
     assert.expect(4);
     library.fetch();
     assert.equal(this.ajaxSettings.url, '/library');
@@ -33,7 +33,7 @@
     assert.ok(_.isEmpty(this.ajaxSettings.data));
   });
 
-  QUnit.test("passing data", function(assert) {
+  QUnit.test('passing data', function(assert) {
     assert.expect(3);
     library.fetch({data: {a: 'a', one: 1}});
     assert.equal(this.ajaxSettings.url, '/library');
@@ -41,7 +41,7 @@
     assert.equal(this.ajaxSettings.data.one, 1);
   });
 
-  QUnit.test("create", function(assert) {
+  QUnit.test('create', function(assert) {
     assert.expect(6);
     assert.equal(this.ajaxSettings.url, '/library');
     assert.equal(this.ajaxSettings.type, 'POST');
@@ -52,7 +52,7 @@
     assert.equal(data.length, 123);
   });
 
-  QUnit.test("update", function(assert) {
+  QUnit.test('update', function(assert) {
     assert.expect(7);
     library.first().save({id: '1-the-tempest', author: 'William Shakespeare'});
     assert.equal(this.ajaxSettings.url, '/library/1-the-tempest');
@@ -65,7 +65,7 @@
     assert.equal(data.length, 123);
   });
 
-  QUnit.test("update with emulateHTTP and emulateJSON", function(assert) {
+  QUnit.test('update with emulateHTTP and emulateJSON', function(assert) {
     assert.expect(7);
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'}, {
       emulateHTTP: true,
@@ -81,7 +81,7 @@
     assert.equal(data.length, 123);
   });
 
-  QUnit.test("update with just emulateHTTP", function(assert) {
+  QUnit.test('update with just emulateHTTP', function(assert) {
     assert.expect(6);
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'}, {
       emulateHTTP: true
@@ -95,7 +95,7 @@
     assert.equal(data.length, 123);
   });
 
-  QUnit.test("update with just emulateJSON", function(assert) {
+  QUnit.test('update with just emulateJSON', function(assert) {
     assert.expect(6);
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'}, {
       emulateJSON: true
@@ -109,7 +109,7 @@
     assert.equal(data.length, 123);
   });
 
-  QUnit.test("read model", function(assert) {
+  QUnit.test('read model', function(assert) {
     assert.expect(3);
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().fetch();
@@ -118,7 +118,7 @@
     assert.ok(_.isEmpty(this.ajaxSettings.data));
   });
 
-  QUnit.test("destroy", function(assert) {
+  QUnit.test('destroy', function(assert) {
     assert.expect(3);
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().destroy({wait: true});
@@ -127,7 +127,7 @@
     assert.equal(this.ajaxSettings.data, null);
   });
 
-  QUnit.test("destroy with emulateHTTP", function(assert) {
+  QUnit.test('destroy with emulateHTTP', function(assert) {
     assert.expect(3);
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().destroy({
@@ -139,7 +139,7 @@
     assert.equal(JSON.stringify(this.ajaxSettings.data), '{"_method":"DELETE"}');
   });
 
-  QUnit.test("urlError", function(assert) {
+  QUnit.test('urlError', function(assert) {
     assert.expect(2);
     var model = new Backbone.Model();
     assert.throws(function() {
@@ -149,14 +149,14 @@
     assert.equal(this.ajaxSettings.url, '/one/two');
   });
 
-  QUnit.test("#1052 - `options` is optional.", function(assert) {
+  QUnit.test('#1052 - `options` is optional.', function(assert) {
     assert.expect(0);
     var model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('create', model);
   });
 
-  QUnit.test("Backbone.ajax", function(assert) {
+  QUnit.test('Backbone.ajax', function(assert) {
     assert.expect(1);
     Backbone.ajax = function(settings){
       assert.strictEqual(settings.url, '/test');
@@ -166,7 +166,7 @@
     Backbone.sync('create', model);
   });
 
-  QUnit.test("Call provided error callback on error.", function(assert) {
+  QUnit.test('Call provided error callback on error.', function(assert) {
     assert.expect(1);
     var model = new Backbone.Model;
     model.url = '/test';
@@ -204,7 +204,7 @@
     assert.strictEqual(this.ajaxSettings.emulateJSON, false);
   });
 
-  QUnit.test("#1756 - Call user provided beforeSend function.", function(assert) {
+  QUnit.test('#1756 - Call user provided beforeSend function.', function(assert) {
     assert.expect(4);
     Backbone.emulateHTTP = true;
     var model = new Backbone.Model;

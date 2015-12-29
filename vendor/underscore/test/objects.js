@@ -128,7 +128,7 @@
     try {
       result = {};
       _.extend(result, null, void 0, {a: 1});
-    } catch(e) { /* ignored */ }
+    } catch (e) { /* ignored */ }
 
     assert.equal(result.a, 1, 'should not error on `null` or `undefined` sources');
 
@@ -262,7 +262,7 @@
     try {
       options = {};
       _.defaults(options, null, void 0, {a: 1});
-    } catch(e) { /* ignored */ }
+    } catch (e) { /* ignored */ }
 
     assert.equal(options.a, 1, 'should not error on `null` or `undefined` sources');
 
@@ -842,14 +842,14 @@
 
     assert.ok(_.find(stooges, _.matcher({hair: false})) === curly, 'returns a predicate that can be used by finding functions.');
     assert.ok(_.find(stooges, _.matcher(moe)) === moe, 'can be used to locate an object exists in a collection.');
-    assert.deepEqual(_.where([null, void 0], {a: 1}), [], 'Do not throw on null values.');
+    assert.deepEqual(_.filter([null, void 0], _.matcher({a: 1})), [], 'Do not throw on null values.');
 
-    assert.deepEqual(_.where([null, void 0], null), [null, void 0], 'null matches null');
-    assert.deepEqual(_.where([null, void 0], {}), [null, void 0], 'null matches {}');
-    assert.deepEqual(_.where([{b: 1}], {a: void 0}), [], 'handles undefined values (1683)');
+    assert.deepEqual(_.filter([null, void 0], _.matcher(null)), [null, void 0], 'null matches null');
+    assert.deepEqual(_.filter([null, void 0], _.matcher({})), [null, void 0], 'null matches {}');
+    assert.deepEqual(_.filter([{b: 1}], _.matcher({a: void 0})), [], 'handles undefined values (1683)');
 
     _.each([true, 5, NaN, null, void 0], function(item) {
-      assert.deepEqual(_.where([{a: 1}], item), [{a: 1}], 'treats primitives as empty');
+      assert.equal(_.matcher(item)({a: 1}), true, 'treats primitives as empty');
     });
 
     function Prototest() {}

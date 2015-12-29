@@ -1,6 +1,6 @@
 (function() {
 
-  QUnit.module("Backbone.noConflict");
+  QUnit.module('Backbone.noConflict');
 
   QUnit.test('noConflict', function(assert) {
     assert.expect(2);

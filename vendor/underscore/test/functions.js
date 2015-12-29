@@ -90,7 +90,8 @@
   });
 
   QUnit.test('bindAll', function(assert) {
-    var curly = {name: 'curly'}, moe = {
+    var curly = {name: 'curly'};
+    var moe = {
       name: 'moe',
       getName: function() { return 'name: ' + this.name; },
       sayHi: function() { return 'hi: ' + this.name; }

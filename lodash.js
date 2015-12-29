@@ -2127,7 +2127,7 @@
      */
     function assignInDefaults(objValue, srcValue, key, object) {
       if (objValue === undefined ||
-          (objValue === objectProto[key] && !hasOwnProperty.call(object, key))) {
+          (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
         return srcValue;
       }
       return objValue;

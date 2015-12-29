@@ -32,22 +32,19 @@
     <div id="exports"></div>
     <div id="module"></div>
     <script>
-      var setProperty = (function() {
-        var _defineProperty = Object.defineProperty;
-        return function(object, key, value) {
-          try {
-            _defineProperty(object, key, {
-              'configurable': true,
-              'enumerable': false,
-              'writable': true,
-              'value': value
-            });
-          } catch(e) {
-            object[key] = value;
-          }
-          return object;
-        };
-      }());
+      function setProperty(object, key, value) {
+        try {
+          Object.defineProperty(object, key, {
+            'configurable': true,
+            'enumerable': false,
+            'writable': true,
+            'value': value
+          });
+        } catch (e) {
+          object[key] = value;
+        }
+        return object;
+      }
 
       function addBizarroMethods() {
         var funcProto = Function.prototype,

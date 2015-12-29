@@ -989,7 +989,7 @@
           return result;
         }
         var order = orders[index];
-        return result * (order === 'desc' ? -1 : 1);
+        return result * (order == 'desc' ? -1 : 1);
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications

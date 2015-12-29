@@ -1933,11 +1933,22 @@
       var index = -1,
           length = values ? values.length : 0;
 
-      this.__data__ = { 'array': [], 'map': null };
+      this.clear();
       while (++index < length) {
         var entry = values[index];
         this.set(entry[0], entry[1]);
       }
+    }
+
+    /**
+     * Removes all key-value entries from the stack.
+     *
+     * @private
+     * @name clear
+     * @memberOf Stack
+     */
+    function stackClear() {
+      this.__data__ = { 'array': [], 'map': null };
     }
 
     /**
@@ -13802,6 +13813,7 @@
     SetCache.prototype.push = cachePush;
 
     // Add functions to the `Stack` cache.
+    Stack.prototype.clear = stackClear;
     Stack.prototype['delete'] = stackDelete;
     Stack.prototype.get = stackGet;
     Stack.prototype.has = stackHas;

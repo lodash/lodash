@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 'use strict';
 
-/** Load modules. */
 var fs = require('fs'),
     path = require('path');
 
-/** Resolve program params. */
-var args = process.argv.slice(process.argv[0] === process.execPath ? 2 : 0),
-    filePath = path.resolve(args[1]);
+var args = (args = process.argv)
+  .slice((args[0] === process.execPath || args[0] === 'node') ? 2 : 0);
+
+var filePath = path.resolve(args[1]),
+    reLine = /.*/gm,
+    slice = Array.prototype.slice;
 
 var pattern = (function() {
   var result = args[0],
@@ -17,11 +19,9 @@ var pattern = (function() {
   return RegExp(result.slice(1, lastIndex), result.slice(lastIndex + 1));
 }());
 
-/** Used to match lines of code. */
-var reLine = /.*/gm;
-
 /*----------------------------------------------------------------------------*/
 
 fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf8').replace(pattern, function(match) {
-  return match.replace(reLine, '');
+  var snippet = slice.call(arguments, -3, -1)[0];
+  return match.replace(snippet, snippet.replace(reLine, ''));
 }));

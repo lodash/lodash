@@ -2350,8 +2350,8 @@
           stack2,
           object1 = { 'v0': 0 },
           object2 = {},
-          symbol = Symbol ? Symbol() : undefined,
-          keys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
+          symbol = Symbol ? Symbol() : {},
+          keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol, undefined];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;
@@ -12731,8 +12731,8 @@
     QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
       assert.expect(164);
 
-      var symbol = Symbol ? Symbol() : undefined,
-          keys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
+      var symbol = Symbol ? Symbol() : {},
+          keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol , undefined];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;

@@ -12703,23 +12703,22 @@
     QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
       assert.expect(164);
 
-      function getValue(key) {
-        var lastIndex = cacheKeys.length - 1;
-        return cacheKeys[lastIndex - lodashStable.indexOf(cacheKeys, key)];
-      }
-
       var symbol = Symbol ? Symbol() : undefined,
-          cacheKeys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
+          keys = [true, false, 1, -Infinity, NaN, { 'a': 1 }, null, 'a', symbol, undefined];
+
+      var pairs = lodashStable.map(keys, function(key, index) {
+        var lastIndex = keys.length - 1;
+        return [key, keys[lastIndex - index]];
+      });
 
       lodashStable.times(2, function(index) {
-        var func = (index ? (lodashBizarro || {}) : _).memoize,
-            memoized = func ? func(getValue) : noop,
-            cache = memoized.cache;
+        var memoize = (index ? (lodashBizarro || {}) : _).memoize,
+            Cache = memoize ? memoize.Cache : undefined,
+            cache = Cache ? new Cache(pairs) : undefined;
 
-        lodashStable.each(cacheKeys, function(key, index) {
-          if (func) {
-            var value = getValue(key);
-            memoized(key);
+        lodashStable.each(keys, function(key, index) {
+          if (cache) {
+            var value = pairs[index][1];
 
             assert.deepEqual(cache.get(key), value);
             assert.strictEqual(cache.has(key), true);
@@ -12735,9 +12734,9 @@
           }
         });
 
-        if (func) {
+        if (cache) {
           assert.strictEqual(cache.clear(), undefined);
-          assert.ok(lodashStable.every(cacheKeys, function(key) {
+          assert.ok(lodashStable.every(keys, function(key) {
             return !cache.has(key);
           }));
         }

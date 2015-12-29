@@ -2344,12 +2344,9 @@
     });
 
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
-      assert.expect(166);
+      assert.expect(164);
 
-      var stack1,
-          stack2,
-          object1 = { 'v0': 0 },
-          object2 = {},
+      var Stack,
           symbol = Symbol ? Symbol() : {},
           keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol, undefined];
 
@@ -2358,28 +2355,19 @@
         return [key, keys[lastIndex - index]];
       });
 
-      lodashStable.times(LARGE_ARRAY_SIZE + 1, function(index) {
-        object2['v' + index] = [index ? object2['v' + (index - 1)] : object2];
-      });
-
-      var clone1 = _.cloneDeepWith(object1, function() {
+      _.cloneDeepWith({ 'a': 1 }, function() {
         if (arguments.length > 1) {
-          stack1 || (stack1 = _.last(arguments));
+          Stack || (Stack = _.last(arguments).constructor);
         }
       });
 
-      var clone2 = _.cloneDeepWith(object2, function() {
-        if (arguments.length > 1) {
-          stack2 || (stack2 = _.last(arguments));
-        }
+      var stacks = [new Stack(pairs), new Stack(pairs)];
+
+      lodashStable.times(LARGE_ARRAY_SIZE - pairs.length + 1, function() {
+        stacks[1].set({}, {});
       });
 
-      assert.strictEqual(stack1.get(object1), clone1);
-      assert.strictEqual(stack2.get(object2), clone2);
-
-      lodashStable.each([stack1.constructor, stack2.constructor], function(Stack) {
-        var stack = new Stack(pairs);
-
+      lodashStable.each(stacks, function(stack) {
         lodashStable.each(keys, function(key, index) {
           var value = pairs[index][1];
 

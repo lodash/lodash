@@ -2089,7 +2089,7 @@
     function assocIndexOf(array, key) {
       var length = array.length;
       while (length--) {
-        if (array[length][0] === key) {
+        if (eq(array[length][0], key)) {
           return length;
         }
       }

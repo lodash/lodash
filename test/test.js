@@ -13839,6 +13839,13 @@
 
       assert.deepEqual(actual, expected);
     });
+
+    QUnit.test('should work with `orders` specified as string objects', function(assert) {
+      assert.expect(1);
+
+      var actual = _.orderBy(objects, ['a'], [Object('desc')]);
+      assert.deepEqual(actual, [objects[1], objects[3], objects[0], objects[2]]);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

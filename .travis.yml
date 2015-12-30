@@ -43,6 +43,7 @@ before_install:
       PATTERN[2]="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
       PATTERN[3]="|\s*else\s*\{\s*assocSet\(data\.map\b[\s\S]+?\}|"
       PATTERN[4]="|\s*if\s*\(ctorString\b[\s\S]+?\}\s*\}|"
+      PATTERN[5]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
 
       if [ $ISTANBUL == true ]; then
         set -e

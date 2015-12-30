@@ -46,6 +46,7 @@ before_install:
       PATTERN[5]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
       PATTERN[6]="|\s*if\s*\(!lodashFunc\)\s*\{\s*return;\s*\}|"
       PATTERN[7]="|\s*define\([\s\S]+?\);|"
+      PATTERN[8]="|\s*root\._\s*=\s*_;|"
 
       if [ $ISTANBUL == true ]; then
         set -e

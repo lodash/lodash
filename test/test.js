@@ -206,6 +206,11 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
+  /** Used to detect instrumented istanbul code coverage runs. */
+  var coverage = root.__coverage__ || root[lodashStable.findKey(root, function(value, key) {
+    return /^(?:\$\$cov_\d+\$\$)$/.test(key);
+  })];
+
   /** Used to restore the `_` reference. */
   var oldDash = root._;
 
@@ -13972,12 +13977,12 @@
     QUnit.test('should work with a `root` of `this`', function(assert) {
       assert.expect(2);
 
-      if (!isModularize && !document && realm.object) {
+      if (!isModularize && !coverage && (!document && realm.object)) {
         var fs = require('fs'),
             vm = require('vm'),
             expected = {},
             context = vm.createContext({ '_': expected, 'console': console }),
-            source = fs.readFileSync(filePath);
+            source = fs.readFileSync(filePath, 'utf8');
 
         vm.runInContext(source + '\nthis.lodash = this._.noConflict()', context);
 

@@ -14362,12 +14362,10 @@
   else if (freeExports && freeModule) {
     // Export for Node.js.
     if (moduleExports) {
-      (freeModule.exports = _)._ = _;
+      (freeModule.exports = _)._ = _
     }
-    else {
-      // Export for Rhino with CommonJS support.
-      freeExports._ = _;
-    }
+    // Export for CommonJS support.
+    freeExports._ = _;
   }
   else {
     // Export for a browser or Rhino.

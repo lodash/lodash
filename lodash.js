@@ -14368,7 +14368,7 @@
     freeExports._ = _;
   }
   else {
-    // Export for a browser or Rhino.
+    // Export to the global object.
     root._ = _;
   }
 }.call(this));

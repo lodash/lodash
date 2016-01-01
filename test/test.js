@@ -22877,6 +22877,8 @@
       'defer',
       'delay',
       'flip',
+      'flow',
+      'flowRight',
       'memoize',
       'negate',
       'once',
@@ -22903,8 +22905,6 @@
     ];
 
     var rejectFalsey = [
-      'flow',
-      'flowRight',
       'tap',
       'thru'
     ].concat(checkFuncs);

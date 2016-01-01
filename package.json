@@ -4,7 +4,7 @@
   "main": "lodash.js",
   "private": true,
   "devDependencies": {
-    "async": "^1.5.0",
+    "async": "^1.5.1",
     "chalk": "^1.1.1",
     "codecov.io": "~0.1.6",
     "coveralls": "^2.11.6",
@@ -17,7 +17,7 @@
     "jquery": "^2.1.4",
     "jscs": "^2.7.0",
     "lodash": "^3.10.1",
-    "platform": "^1.3.0",
+    "platform": "^1.3.1",
     "qunit-extras": "^1.4.5",
     "qunitjs": "~1.20.0",
     "request": "^2.67.0",

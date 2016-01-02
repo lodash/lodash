@@ -20817,11 +20817,9 @@
     QUnit.test('should create an object from the same realm as `object`', function(assert) {
       assert.expect(1);
 
-      var objects = _.transform(_, function(result, value, key) {
-        if (lodashStable.startsWith(key, '_') && lodashStable.isObject(value) && !lodashStable.isElement(value)) {
-          result.push(value);
-        }
-      }, []);
+      var objects = lodashStable.filter(realm, function(value) {
+        return lodashStable.isObject(value) && !lodashStable.isElement(value);
+      });
 
       var expected = lodashStable.map(objects, lodashStable.constant(true));
 

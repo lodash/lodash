@@ -10351,7 +10351,10 @@
       if (typeof value == 'string') {
         return value;
       }
-      var result = value == null ? '' : (value + '');
+      if (value == null) {
+        return '';
+      }
+      var result = isSymbol(value) ? symbolToString.call(value) : (value + '');
       return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
     }
 

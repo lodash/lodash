@@ -61,7 +61,7 @@
       Set = root.Set,
       slice = arrayProto.slice,
       Symbol = root.Symbol,
-      symbol = Symbol ? Symbol() : undefined,
+      symbol = Symbol ? Symbol('a') : undefined,
       Uint8Array = root.Uint8Array,
       WeakMap = root.WeakMap;
 
@@ -20608,6 +20608,21 @@
           actual = lodashStable.map(values, _.toString);
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should not error on symbols', function(assert) {
+      assert.expect(1);
+
+      if (Symbol) {
+        try {
+          assert.strictEqual(_.toString(symbol), 'Symbol(a)');
+        } catch (e) {
+          assert.ok(false, e.message);
+        }
+      }
+      else {
+        skipTest(assert);
+      }
     });
 
     QUnit.test('should return the `toString` result of the wrapped value', function(assert) {

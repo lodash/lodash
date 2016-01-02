@@ -12650,7 +12650,7 @@
     QUnit.test('should throw a TypeError if `resolve` is truthy and not a function', function(assert) {
       assert.expect(1);
 
-      assert.raises(function() { _.memoize(noop, {}); }, TypeError);
+      assert.raises(function() { _.memoize(noop, true); }, TypeError);
     });
 
     QUnit.test('should not error if `resolver` is falsey', function(assert) {

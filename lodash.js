@@ -1367,8 +1367,10 @@
     var mapCtorString = Map ? funcToString.call(Map) : '',
         setCtorString = Set ? funcToString.call(Set) : '';
 
-    /** Used to convert symbol objects to primitives. */
-    var symbolValueOf = Symbol ? Symbol.prototype.valueOf : undefined;
+    /** Used to convert symbols to primitives and strings. */
+    var symbolProto = Symbol ? Symbol.prototype : undefined,
+        symbolValueOf = Symbol ? symbolProto.valueOf : undefined,
+        symbolToString = Symbol ? symbolProto.toString : undefined;
 
     /** Used to lookup unminified function names. */
     var realNames = {};
@@ -10019,6 +10021,27 @@
     }
 
     /**
+     * Checks if `value` is classified as a `Symbol` primitive or object.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+     * @example
+     *
+     * _.isSymbol(Symbol.iterator);
+     * // => true
+     *
+     * _.isSymbol('abc');
+     * // => false
+     */
+    function isSymbol(value) {
+      return typeof value == 'symbol' ||
+        (isObjectLike(value) && objectToString.call(value) == symbolTag);
+    }
+
+    /**
      * Checks if `value` is classified as a typed array.
      *
      * @static
@@ -14093,6 +14116,7 @@
     lodash.isRegExp = isRegExp;
     lodash.isSafeInteger = isSafeInteger;
     lodash.isString = isString;
+    lodash.isSymbol = isSymbol;
     lodash.isTypedArray = isTypedArray;
     lodash.isUndefined = isUndefined;
     lodash.join = join;

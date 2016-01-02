@@ -114,7 +114,7 @@
   var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
   /** Detect if running in PhantomJS. */
-  var isPhantom = phantom || typeof callPhantom == 'function';
+  var isPhantom = phantom || (typeof callPhantom == 'function');
 
   /** Detect if lodash is in strict mode. */
   var isStrict = ui.isStrict;
@@ -375,7 +375,7 @@
 
   // Add bizarro values.
   (function() {
-    if (document || typeof require != 'function') {
+    if (document || (typeof require != 'function')) {
       return;
     }
     var nativeString = fnToString.call(toString),
@@ -896,7 +896,7 @@
               unwrapped = wrapped.value();
 
           return wrapped instanceof _ &&
-            (unwrapped === value || (unwrapped !== unwrapped && value !== value));
+            ((unwrapped === value) || (unwrapped !== unwrapped && value !== value));
         });
 
         assert.deepEqual(actual, expected);
@@ -1244,7 +1244,7 @@
       assert.expect(1);
 
       var values = lodashStable.reject(empties, function(value) {
-        return value === 0 || lodashStable.isArray(value);
+        return (value === 0) || lodashStable.isArray(value);
       }).concat(-1, 1.1);
 
       var array = lodashStable.transform(values, function(result, value) {
@@ -1536,14 +1536,14 @@
       var bound = _.bind(fn, null),
           actual = bound('a');
 
-      assert.ok(actual[0] === null || (actual[0] && actual[0].Array));
+      assert.ok((actual[0] === null) || (actual[0] && actual[0].Array));
       assert.strictEqual(actual[1], 'a');
 
       lodashStable.times(2, function(index) {
         bound = index ? _.bind(fn, undefined) : _.bind(fn);
         actual = bound('b');
 
-        assert.ok(actual[0] === undefined || (actual[0] && actual[0].Array));
+        assert.ok((actual[0] === undefined) || (actual[0] && actual[0].Array));
         assert.strictEqual(actual[1], 'b');
       });
     });
@@ -2571,7 +2571,7 @@
           var Ctor = object.constructor,
               result = func(object);
 
-          return result !== object && (result instanceof Ctor || !(new Ctor instanceof Ctor));
+          return result !== object && ((result instanceof Ctor) || !(new Ctor instanceof Ctor));
         });
 
         assert.deepEqual(actual, expected, props.join(', '));
@@ -2998,7 +2998,7 @@
         var constant = index ? _.constant(value) : _.constant(),
             result = constant();
 
-        return result === value || (result !== result && value !== value);
+        return (result === value) || (result !== result && value !== value);
       });
 
       assert.deepEqual(actual, expected);
@@ -15729,7 +15729,7 @@
       assert.expect(2);
 
       var values = lodashStable.reject(empties, function(value) {
-        return value === 0 || lodashStable.isArray(value);
+        return (value === 0) || lodashStable.isArray(value);
       }).concat(-1, 1.1);
 
       var array = lodashStable.transform(values, function(result, value) {
@@ -16026,7 +16026,7 @@
       assert.expect(1);
 
       var values = lodashStable.reject(empties, function(value) {
-        return value === 0 || lodashStable.isArray(value);
+        return (value === 0) || lodashStable.isArray(value);
       }).concat(-1, 1.1);
 
       var expected = lodashStable.map(values, lodashStable.constant([undefined, 'b', 'c']));

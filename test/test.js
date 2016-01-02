@@ -2776,6 +2776,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.cond');
+
+  (function() {
+    QUnit.test('should throw a TypeError if `pairs` is not composed of functions', function(assert) {
+      assert.expect(2);
+
+      var predicate = lodashStable.constant(true);
+
+      lodashStable.each([true, false], function(value) {
+        assert.raises(function() { _.cond([[predicate, value]]); }, TypeError);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.conforms');
 
   (function() {

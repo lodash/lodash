@@ -1346,7 +1346,7 @@
             iteratee = function(value) { count++; return square(value); },
             lastIndex = LARGE_ARRAY_SIZE - 1;
 
-        _.each([lastIndex, lastIndex + '', LARGE_ARRAY_SIZE, []], function(n, index) {
+        lodashStable.each([lastIndex, lastIndex + '', LARGE_ARRAY_SIZE, []], function(n, index) {
           count = 0;
           var actual = _(array).map(iteratee).at(n).value(),
               expected = index < 2 ? 1 : 0;
@@ -20261,7 +20261,7 @@
 
   QUnit.module('toInteger methods');
 
-  _.each(['toInteger', 'toSafeInteger'], function(methodName) {
+  lodashStable.each(['toInteger', 'toSafeInteger'], function(methodName) {
     var func = _[methodName],
         isSafe = methodName == 'toSafeInteger';
 

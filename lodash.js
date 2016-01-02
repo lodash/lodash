@@ -12821,6 +12821,39 @@
     });
 
     /**
+     * Creates a function that iterates over `pairs` invoking the corresponding
+     * function of the first predicate to return truthy. The predicate-function
+     * pairs are invoked with the `this` binding and arguments of the created
+     * function.
+     *
+     * @static
+     * @memberOf _
+     * @category Utility
+     * @param {Array} pairs The predicate-function pairs.
+     * @returns {Function} Returns the new function.
+     * @example
+     */
+    function cond(pairs) {
+      var length = pairs ? pairs.length : 0,
+          index = length;
+
+      while (index--) {
+        if (typeof pairs[index][0] != 'function' || typeof pairs[index][1] != 'function') {
+          throw new TypeError(FUNC_ERROR_TEXT);
+        }
+      }
+      return rest(function(args) {
+        var index = -1;
+        while (++index < length) {
+          var pair = pairs[index];
+          if (apply(pair[0], this, args)) {
+            return apply(pair[1], this, args);
+          }
+        }
+      });
+    }
+
+    /**
      * Creates a function that invokes the predicate properties of `source` with
      * the corresponding property values of a given object, returning `true` if
      * all predicates return truthy, else `false`.
@@ -13838,6 +13871,7 @@
     lodash.chunk = chunk;
     lodash.compact = compact;
     lodash.concat = concat;
+    lodash.cond = cond;
     lodash.conforms = conforms;
     lodash.constant = constant;
     lodash.countBy = countBy;

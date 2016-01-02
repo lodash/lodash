@@ -22950,7 +22950,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(285);
+      assert.expect(286);
 
       var emptyArrays = lodashStable.map(falsey, lodashStable.constant([]));
 
@@ -23021,7 +23021,7 @@
             func = _[methodName];
 
         var actual = lodashStable.map(falsey, function(value, index) {
-          var pass = !index && /^(?:backflow|compose|flow(Right)?|over(?:Every|Some)?)$/.test(methodName);
+          var pass = !index && /^(?:backflow|compose|cond|flow(Right)?|over(?:Every|Some)?)$/.test(methodName);
 
           try {
             index ? func(value) : func();

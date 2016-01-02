@@ -3070,8 +3070,8 @@
      * @returns {Array} Returns the new sorted array.
      */
     function baseOrderBy(collection, iteratees, orders) {
-      var toIteratee = getIteratee(),
-          index = -1;
+      var index = -1,
+          toIteratee = getIteratee();
 
       iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
         return toIteratee(iteratee);
@@ -12835,13 +12835,15 @@
      */
     function cond(pairs) {
       var length = pairs ? pairs.length : 0,
-          index = length;
+          toIteratee = getIteratee();
 
-      while (index--) {
-        if (typeof pairs[index][0] != 'function' || typeof pairs[index][1] != 'function') {
+      pairs = !length ? [] : arrayMap(pairs, function(pair) {
+        if (typeof pair[1] != 'function') {
           throw new TypeError(FUNC_ERROR_TEXT);
         }
-      }
+        return [toIteratee(pair[0]), pair[1]];
+      });
+
       return rest(function(args) {
         var index = -1;
         while (++index < length) {

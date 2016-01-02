@@ -2350,8 +2350,7 @@
       assert.expect(164);
 
       var Stack,
-          symbol = Symbol ? Symbol() : {},
-          keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol, undefined];
+          keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol || {}, undefined];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;
@@ -9759,8 +9758,7 @@
     QUnit.test('should return `false` for non-objects', function(assert) {
       assert.expect(1);
 
-      var symbol = (Symbol || noop)(),
-          values = falsey.concat(true, 1, 'a', symbol),
+      var values = falsey.concat(true, 1, 'a', symbol),
           expected = lodashStable.map(values, lodashStable.constant(false));
 
       var actual = lodashStable.map(values, function(value, index) {
@@ -9834,8 +9832,7 @@
     QUnit.test('should return `false` for non-objects', function(assert) {
       assert.expect(1);
 
-      var symbol = (Symbol || noop)(),
-          values = falsey.concat(true, _, slice, 1, 'a', symbol),
+      var values = falsey.concat(true, _, slice, 1, 'a', symbol),
           expected = lodashStable.map(values, lodashStable.constant(false));
 
       var actual = lodashStable.map(values, function(value, index) {
@@ -12755,8 +12752,7 @@
     QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
       assert.expect(164);
 
-      var symbol = Symbol ? Symbol() : {},
-          keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol , undefined];
+      var keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol || {} , undefined];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;

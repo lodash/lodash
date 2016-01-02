@@ -61,6 +61,7 @@
       Set = root.Set,
       slice = arrayProto.slice,
       Symbol = root.Symbol,
+      symbol = Symbol ? Symbol() : undefined,
       Uint8Array = root.Uint8Array,
       WeakMap = root.WeakMap;
 
@@ -693,7 +694,7 @@
 
         try {
           if (Symbol) {
-            object[Symbol()] = {};
+            object[symbol] = {};
           }
           actual = [
             lodashBizarro.clone(object),
@@ -2270,9 +2271,6 @@
       var set = new Set;
       set.add(1);
       set.add(2);
-    }
-    if (Symbol) {
-      var symbol = Symbol('a');
     }
     var objects = {
       '`arguments` objects': arguments,
@@ -7446,7 +7444,7 @@
     });
 
     QUnit.test('should return `false` for non `arguments` objects', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -7466,6 +7464,7 @@
       assert.strictEqual(_.isArguments(1), false);
       assert.strictEqual(_.isArguments(/x/), false);
       assert.strictEqual(_.isArguments('a'), false);
+      assert.strictEqual(_.isArguments(symbol), false);
     });
 
     QUnit.test('should work with an `arguments` object from another realm', function(assert) {
@@ -7494,7 +7493,7 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -7514,6 +7513,7 @@
       assert.strictEqual(_.isArray(1), false);
       assert.strictEqual(_.isArray(/x/), false);
       assert.strictEqual(_.isArray('a'), false);
+      assert.strictEqual(_.isArray(symbol), false);
     });
 
     QUnit.test('should work with an array from another realm', function(assert) {
@@ -7546,7 +7546,7 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(10);
+      assert.expect(11);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === '';
@@ -7567,6 +7567,7 @@
       assert.strictEqual(_.isArrayLike({ 'a': 1 }), false);
       assert.strictEqual(_.isArrayLike(1), false);
       assert.strictEqual(_.isArrayLike(/x/), false);
+      assert.strictEqual(_.isArrayLike(symbol), false);
     });
 
     QUnit.test('should work with an array from another realm', function(assert) {
@@ -7602,7 +7603,7 @@
     });
 
     QUnit.test('should return `false` for non-booleans', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === false;
@@ -7624,6 +7625,7 @@
       assert.strictEqual(_.isBoolean(1), false);
       assert.strictEqual(_.isBoolean(/x/), false);
       assert.strictEqual(_.isBoolean('a'), false);
+      assert.strictEqual(_.isBoolean(symbol), false);
     });
 
     QUnit.test('should work with a boolean from another realm', function(assert) {
@@ -7652,7 +7654,7 @@
     });
 
     QUnit.test('should return `false` for non-dates', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -7672,6 +7674,7 @@
       assert.strictEqual(_.isDate(1), false);
       assert.strictEqual(_.isDate(/x/), false);
       assert.strictEqual(_.isDate('a'), false);
+      assert.strictEqual(_.isDate(symbol), false);
     });
 
     QUnit.test('should work with a date object from another realm', function(assert) {
@@ -7712,7 +7715,7 @@
     });
 
     QUnit.test('should return `false` for non DOM elements', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -7733,6 +7736,7 @@
       assert.strictEqual(_.isElement(1), false);
       assert.strictEqual(_.isElement(/x/), false);
       assert.strictEqual(_.isElement('a'), false);
+      assert.strictEqual(_.isElement(symbol), false);
     });
 
     QUnit.test('should work with a DOM element from another realm', function(assert) {
@@ -7755,7 +7759,7 @@
     var args = arguments;
 
     QUnit.test('should return `true` for empty values', function(assert) {
-      assert.expect(7);
+      assert.expect(8);
 
       var expected = lodashStable.map(empties, lodashStable.constant(true)),
           actual = lodashStable.map(empties, _.isEmpty);
@@ -7767,6 +7771,7 @@
       assert.strictEqual(_.isEmpty(1), true);
       assert.strictEqual(_.isEmpty(NaN), true);
       assert.strictEqual(_.isEmpty(/x/), true);
+      assert.strictEqual(_.isEmpty(symbol), true);
       assert.strictEqual(_.isEmpty(), true);
     });
 
@@ -8679,7 +8684,7 @@
     });
 
     QUnit.test('should return `false` for non error objects', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -8699,6 +8704,7 @@
       assert.strictEqual(_.isError(1), false);
       assert.strictEqual(_.isError(/x/), false);
       assert.strictEqual(_.isError('a'), false);
+      assert.strictEqual(_.isError(symbol), false);
     });
 
     QUnit.test('should work with an error object from another realm', function(assert) {
@@ -8747,7 +8753,7 @@
     });
 
     QUnit.test('should return `false` for non-numeric values', function(assert) {
-      assert.expect(9);
+      assert.expect(10);
 
       var values = [undefined, [], true, '', ' ', '2px'],
           expected = lodashStable.map(values, lodashStable.constant(false)),
@@ -8763,6 +8769,7 @@
       assert.strictEqual(_.isFinite({ 'a': 1 }), false);
       assert.strictEqual(_.isFinite(/x/), false);
       assert.strictEqual(_.isFinite('a'), false);
+      assert.strictEqual(_.isFinite(symbol), false);
     });
 
     QUnit.test('should return `false` for numeric string values', function(assert) {
@@ -8811,7 +8818,7 @@
     });
 
     QUnit.test('should return `false` for non-functions', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -8830,6 +8837,7 @@
       assert.strictEqual(_.isFunction(1), false);
       assert.strictEqual(_.isFunction(/x/), false);
       assert.strictEqual(_.isFunction('a'), false);
+      assert.strictEqual(_.isFunction(symbol), false);
 
       if (document) {
         assert.strictEqual(_.isFunction(document.getElementsByTagName('body')), false);
@@ -8903,7 +8911,7 @@
     });
 
     QUnit.test('should return `false` for non-numeric values', function(assert) {
-      assert.expect(9);
+      assert.expect(10);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === 0;
@@ -8923,6 +8931,7 @@
       assert.strictEqual(func({ 'a': 1 }), false);
       assert.strictEqual(func(/x/), false);
       assert.strictEqual(func('a'), false);
+      assert.strictEqual(func(symbol), false);
     });
   });
 
@@ -9431,7 +9440,7 @@
     });
 
     QUnit.test('should return `false` for non-NaNs', function(assert) {
-      assert.expect(13);
+      assert.expect(14);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value !== value;
@@ -9455,6 +9464,7 @@
       assert.strictEqual(_.isNaN(Object(1)), false);
       assert.strictEqual(_.isNaN(/x/), false);
       assert.strictEqual(_.isNaN('a'), false);
+      assert.strictEqual(_.isNaN(symbol), false);
     });
 
     QUnit.test('should work with `NaN` from another realm', function(assert) {
@@ -9497,7 +9507,7 @@
     });
 
     QUnit.test('should return `false` for non-native methods', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -9517,6 +9527,7 @@
       assert.strictEqual(_.isNative(1), false);
       assert.strictEqual(_.isNative(/x/), false);
       assert.strictEqual(_.isNative('a'), false);
+      assert.strictEqual(_.isNative(symbol), false);
     });
 
     QUnit.test('should work with native functions from another realm', function(assert) {
@@ -9551,7 +9562,7 @@
     });
 
     QUnit.test('should return `false` for non `null` values', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === null;
@@ -9574,6 +9585,7 @@
       assert.strictEqual(_.isNull(1), false);
       assert.strictEqual(_.isNull(/x/), false);
       assert.strictEqual(_.isNull('a'), false);
+      assert.strictEqual(_.isNull(symbol), false);
     });
 
     QUnit.test('should work with nulls from another realm', function(assert) {
@@ -9604,7 +9616,7 @@
     });
 
     QUnit.test('should return `false` for non-nullish values', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value == null;
@@ -9627,6 +9639,13 @@
       assert.strictEqual(_.isNil(1), false);
       assert.strictEqual(_.isNil(/x/), false);
       assert.strictEqual(_.isNil('a'), false);
+
+      if (Symbol) {
+        assert.strictEqual(_.isNil(symbol), false);
+      }
+      else {
+        skipTest(assert);
+      }
     });
 
     QUnit.test('should work with nulls from another realm', function(assert) {
@@ -9658,7 +9677,7 @@
     });
 
     QUnit.test('should return `false` for non-numbers', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, function(value) {
         return typeof value == 'number';
@@ -9680,6 +9699,7 @@
       assert.strictEqual(_.isNumber({ 'a': 1 }), false);
       assert.strictEqual(_.isNumber(/x/), false);
       assert.strictEqual(_.isNumber('a'), false);
+      assert.strictEqual(_.isNumber(symbol), false);
     });
 
     QUnit.test('should work with numbers from another realm', function(assert) {
@@ -9729,7 +9749,7 @@
         skipTest(assert);
       }
       if (Symbol) {
-        assert.strictEqual(_.isObject(Object(Symbol())), true);
+        assert.strictEqual(_.isObject(Object(symbol)), true);
       }
       else {
         skipTest(assert);
@@ -9914,7 +9934,7 @@
     });
 
     QUnit.test('should return `false` for non-objects', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -9926,6 +9946,7 @@
 
       assert.strictEqual(_.isPlainObject(true), false);
       assert.strictEqual(_.isPlainObject('a'), false);
+      assert.strictEqual(_.isPlainObject(symbol), false);
     });
 
     QUnit.test('should work with objects from another realm', function(assert) {
@@ -9955,7 +9976,7 @@
     });
 
     QUnit.test('should return `false` for non-regexes', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -9975,6 +9996,7 @@
       assert.strictEqual(_.isRegExp({ 'a': 1 }), false);
       assert.strictEqual(_.isRegExp(1), false);
       assert.strictEqual(_.isRegExp('a'), false);
+      assert.strictEqual(_.isRegExp(symbol), false);
     });
 
     QUnit.test('should work with regexes from another realm', function(assert) {
@@ -10004,7 +10026,7 @@
     });
 
     QUnit.test('should return `false` for non-strings', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === '';
@@ -10026,6 +10048,7 @@
       assert.strictEqual(_.isString({ '0': 1, 'length': 1 }), false);
       assert.strictEqual(_.isString(1), false);
       assert.strictEqual(_.isString(/x/), false);
+      assert.strictEqual(_.isString(symbol), false);
     });
 
     QUnit.test('should work with strings from another realm', function(assert) {
@@ -10063,7 +10086,7 @@
     });
 
     QUnit.test('should return `false` for non typed arrays', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(false));
 
@@ -10084,6 +10107,7 @@
       assert.strictEqual(_.isTypedArray(1), false);
       assert.strictEqual(_.isTypedArray(/x/), false);
       assert.strictEqual(_.isTypedArray('a'), false);
+      assert.strictEqual(_.isTypedArray(symbol), false);
     });
 
     QUnit.test('should work with typed arrays from another realm', function(assert) {
@@ -10125,7 +10149,7 @@
     });
 
     QUnit.test('should return `false` for non `undefined` values', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === undefined;
@@ -10148,6 +10172,13 @@
       assert.strictEqual(_.isUndefined(1), false);
       assert.strictEqual(_.isUndefined(/x/), false);
       assert.strictEqual(_.isUndefined('a'), false);
+
+      if (Symbol) {
+        assert.strictEqual(_.isUndefined(symbol), false);
+      }
+      else {
+        skipTest(assert);
+      }
     });
 
     QUnit.test('should work with `undefined` from another realm', function(assert) {
@@ -21343,10 +21374,7 @@
       assert.expect(1);
 
       if (Symbol) {
-        var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function() {
-          return Symbol();
-        });
-
+        var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, Symbol);
         assert.deepEqual(func(largeArray), largeArray);
       }
       else {

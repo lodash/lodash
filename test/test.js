@@ -23122,9 +23122,8 @@
           try {
             index ? func(value) : func();
           } catch (e) {
-            pass = lodashStable.includes(checkFuncs, methodName)
-              ? e.message == FUNC_ERROR_TEXT
-              : !pass;
+            pass = !pass && (e instanceof TypeError) &&
+              (!lodashStable.includes(checkFuncs, methodName) || (e.message == FUNC_ERROR_TEXT));
           }
           return pass;
         });

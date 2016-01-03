@@ -1108,13 +1108,13 @@
   lodashStable.each(['assign', 'assignIn'], function(methodName) {
     var func = _[methodName];
 
-    QUnit.test('`_.' + methodName + '` should assign properties of a source object to the destination object', function(assert) {
+    QUnit.test('`_.' + methodName + '` should assign source properties to `object`', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(func({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
-    QUnit.test('`_.' + methodName + '` should accept multiple source objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should accept multiple sources', function(assert) {
       assert.expect(2);
 
       var expected = { 'a': 1, 'b': 2, 'c': 3 };
@@ -3783,13 +3783,13 @@
   QUnit.module('lodash.defaults');
 
   (function() {
-    QUnit.test('should assign properties of a source object if missing on the destination object', function(assert) {
+    QUnit.test('should assign source properties if missing on `object`', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
-    QUnit.test('should accept multiple source objects', function(assert) {
+    QUnit.test('should accept multiple sources', function(assert) {
       assert.expect(2);
 
       var expected = { 'a': 1, 'b': 2, 'c': 3 };
@@ -3844,7 +3844,7 @@
   QUnit.module('lodash.defaultsDeep');
 
   (function() {
-    QUnit.test('should deep assign properties of a source object if missing on the destination object', function(assert) {
+    QUnit.test('should deep assign source properties if missing on `object`', function(assert) {
       assert.expect(1);
 
       var object = { 'a': { 'b': 2 }, 'd': 4 },
@@ -3854,7 +3854,7 @@
       assert.deepEqual(_.defaultsDeep(object, source), expected);
     });
 
-    QUnit.test('should accept multiple source objects', function(assert) {
+    QUnit.test('should accept multiple sources', function(assert) {
       assert.expect(2);
 
       var source1 = { 'a': { 'b': 3 } },
@@ -5971,7 +5971,7 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should not error when `object` is nullish and source objects are provided', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not error when `object` is nullish and sources are provided', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.times(2, lodashStable.constant(true));
@@ -11866,7 +11866,7 @@
   QUnit.module('lodash.matches');
 
   (function() {
-    QUnit.test('should create a function that performs a deep comparison between a given object and `source`', function(assert) {
+    QUnit.test('should create a function that performs a deep comparison between `source` and a given object', function(assert) {
       assert.expect(6);
 
       var object = { 'a': 1, 'b': 2, 'c': 3 },
@@ -12891,7 +12891,7 @@
   (function() {
     var args = arguments;
 
-    QUnit.test('should merge `source` into the destination object', function(assert) {
+    QUnit.test('should merge `source` into `object`', function(assert) {
       assert.expect(1);
 
       var names = {
@@ -13181,7 +13181,7 @@
       }
     });
 
-    QUnit.test('should convert values to arrays when merging with arrays of `source`', function(assert) {
+    QUnit.test('should convert values to arrays when merging arrays of `source`', function(assert) {
       assert.expect(2);
 
       var object = { 'a': { '1': 'y', 'b': 'z', 'length': 2 } },
@@ -13193,7 +13193,7 @@
       assert.deepEqual(actual, { 'a': [] });
     });
 
-    QUnit.test('should not convert strings to arrays when merging with arrays of `source`', function(assert) {
+    QUnit.test('should not convert strings to arrays when merging arrays of `source`', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 'abcdef' },

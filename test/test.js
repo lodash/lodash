@@ -2788,6 +2788,20 @@
         assert.raises(function() { _.cond([[predicate, value]]); }, TypeError);
       });
     });
+
+    QUnit.test('should work with predicate shorthands', function(assert) {
+      assert.expect(3);
+
+      var cond = _.cond([
+        [{ 'a': 1 }, lodashStable.constant('A')],
+        [['b', 1],   lodashStable.constant('B')],
+        ['c',        lodashStable.constant('C')]
+      ]);
+
+      assert.strictEqual(cond({ 'a':  1, 'b': 2, 'c': 3 }), 'A');
+      assert.strictEqual(cond({ 'a':  0, 'b': 1, 'c': 2 }), 'B');
+      assert.strictEqual(cond({ 'a': -1, 'b': 0, 'c': 1 }), 'C');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

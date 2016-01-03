@@ -12287,7 +12287,7 @@
      * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
      * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
      * @param {string} [options.variable] The data object variable name.
-     * @param- {Object} [otherOptions] Enables the legacy `options` param signature.
+     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Function} Returns the compiled template function.
      * @example
      *
@@ -12355,16 +12355,16 @@
      *   };\
      * ');
      */
-    function template(string, options, otherOptions) {
+    function template(string, options, guard) {
       // Based on John Resig's `tmpl` implementation (http://ejohn.org/blog/javascript-micro-templating/)
       // and Laura Doktorova's doT.js (https://github.com/olado/doT).
       var settings = lodash.templateSettings;
 
-      if (otherOptions && isIterateeCall(string, options, otherOptions)) {
-        options = otherOptions = undefined;
+      if (guard && isIterateeCall(string, options, guard)) {
+        options = undefined;
       }
       string = toString(string);
-      options = assignInWith({}, otherOptions || options, settings, assignInDefaults);
+      options = assignInWith({}, options, settings, assignInDefaults);
 
       var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
           importsKeys = keys(imports),

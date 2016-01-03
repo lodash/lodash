@@ -19208,15 +19208,6 @@
       }
     });
 
-    QUnit.test('should support the legacy `options` argument signature', function(assert) {
-      assert.expect(1);
-
-      var compiled = _.template('<%= data.a %>', null, { 'variable': 'data' }),
-          data = { 'a': 1 };
-
-      assert.strictEqual(compiled(data), '1');
-    });
-
     QUnit.test('should support custom delimiters', function(assert) {
       assert.expect(2);
 

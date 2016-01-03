@@ -19055,6 +19055,13 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should not reference `_.escape` when "escape" delimiters are not used', function(assert) {
+      assert.expect(1);
+
+      var compiled = _.template('<%= typeof __e %>');
+      assert.strictEqual(compiled({}), 'undefined');
+    });
+
     QUnit.test('should evaluate JavaScript in "evaluate" delimiters', function(assert) {
       assert.expect(1);
 
@@ -19071,7 +19078,25 @@
       assert.strictEqual(actual, '<ul><li>A</li><li>B</li></ul>');
     });
 
-    QUnit.test('should interpolate data object properties', function(assert) {
+    QUnit.test('should support "evaluate" delimiters with single line comments (test production builds)', function(assert) {
+      assert.expect(1);
+
+      var compiled = _.template('<% // A code comment. %><% if (value) { %>yap<% } else { %>nope<% } %>'),
+          data = { 'value': true };
+
+      assert.strictEqual(compiled(data), 'yap');
+    });
+
+    QUnit.test('should support referencing variables declared in "evaluate" delimiters from other delimiters', function(assert) {
+      assert.expect(1);
+
+      var compiled = _.template('<% var b = a; %><%= b.value %>'),
+          data = { 'a': { 'value': 1 } };
+
+      assert.strictEqual(compiled(data), '1');
+    });
+
+    QUnit.test('should interpolate data properties in "interpolate" delimiters', function(assert) {
       assert.expect(1);
 
       var strings = ['<%= a %>BC', '<%=a%>BC', '<%=\na\n%>BC'],
@@ -19085,7 +19110,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should support escaped values in "interpolation" delimiters', function(assert) {
+    QUnit.test('should support "interpolate" delimiters with escaped values', function(assert) {
       assert.expect(1);
 
       var compiled = _.template('<%= a ? "a=\\"A\\"" : "" %>'),
@@ -19094,7 +19119,7 @@
       assert.strictEqual(compiled(data), 'a="A"');
     });
 
-    QUnit.test('should work with "interpolate" delimiters containing ternary operators', function(assert) {
+    QUnit.test('should support "interpolate" delimiters containing ternary operators', function(assert) {
       assert.expect(1);
 
       var compiled = _.template('<%= value ? value : "b" %>'),
@@ -19103,7 +19128,7 @@
       assert.strictEqual(compiled(data), 'a');
     });
 
-    QUnit.test('should work with "interpolate" delimiters containing global values', function(assert) {
+    QUnit.test('should support "interpolate" delimiters containing global values', function(assert) {
       assert.expect(1);
 
       var compiled = _.template('<%= typeof Math.abs %>');
@@ -19115,7 +19140,7 @@
       assert.strictEqual(actual, 'function');
     });
 
-    QUnit.test('should work with complex "interpolate" delimiters', function(assert) {
+    QUnit.test('should support complex "interpolate" delimiters', function(assert) {
       assert.expect(22);
 
       lodashStable.forOwn({
@@ -19150,112 +19175,12 @@
       });
     });
 
-    QUnit.test('should parse ES6 template delimiters', function(assert) {
+    QUnit.test('should support ES6 template delimiters', function(assert) {
       assert.expect(2);
 
       var data = { 'value': 2 };
       assert.strictEqual(_.template('1${value}3')(data), '123');
       assert.strictEqual(_.template('${"{" + value + "\\}"}')(data), '{2}');
-    });
-
-    QUnit.test('should not reference `_.escape` when "escape" delimiters are not used', function(assert) {
-      assert.expect(1);
-
-      var compiled = _.template('<%= typeof __e %>');
-      assert.strictEqual(compiled({}), 'undefined');
-    });
-
-    QUnit.test('should allow referencing variables declared in "evaluate" delimiters from other delimiters', function(assert) {
-      assert.expect(1);
-
-      var compiled = _.template('<% var b = a; %><%= b.value %>'),
-          data = { 'a': { 'value': 1 } };
-
-      assert.strictEqual(compiled(data), '1');
-    });
-
-    QUnit.test('should support single line comments in "evaluate" delimiters (test production builds)', function(assert) {
-      assert.expect(1);
-
-      var compiled = _.template('<% // A code comment. %><% if (value) { %>yap<% } else { %>nope<% } %>'),
-          data = { 'value': true };
-
-      assert.strictEqual(compiled(data), 'yap');
-    });
-
-    QUnit.test('should work with custom delimiters', function(assert) {
-      assert.expect(2);
-
-      lodashStable.times(2, function(index) {
-        var settingsClone = lodashStable.clone(_.templateSettings);
-
-        var settings = lodashStable.assign(index ? _.templateSettings : {}, {
-          'escape': /\{\{-([\s\S]+?)\}\}/g,
-          'evaluate': /\{\{([\s\S]+?)\}\}/g,
-          'interpolate': /\{\{=([\s\S]+?)\}\}/g
-        });
-
-        var expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
-            compiled = _.template('<ul>{{ _.each(collection, function(value, index) {}}<li>{{= index }}: {{- value }}</li>{{}); }}</ul>', index ? null : settings),
-            data = { 'collection': ['a & A', 'b & B'] };
-
-        assert.strictEqual(compiled(data), expected);
-        lodashStable.assign(_.templateSettings, settingsClone);
-      });
-    });
-
-    QUnit.test('should work with custom delimiters containing special characters', function(assert) {
-      assert.expect(2);
-
-      lodashStable.times(2, function(index) {
-        var settingsClone = lodashStable.clone(_.templateSettings);
-
-        var settings = lodashStable.assign(index ? _.templateSettings : {}, {
-          'escape': /<\?-([\s\S]+?)\?>/g,
-          'evaluate': /<\?([\s\S]+?)\?>/g,
-          'interpolate': /<\?=([\s\S]+?)\?>/g
-        });
-
-        var expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
-            compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>', index ? null : settings),
-            data = { 'collection': ['a & A', 'b & B'] };
-
-        assert.strictEqual(compiled(data), expected);
-        lodashStable.assign(_.templateSettings, settingsClone);
-      });
-    });
-
-    QUnit.test('should ignore `null` delimiters', function(assert) {
-      assert.expect(3);
-
-      var delimiter = {
-        'escape': /\{\{-([\s\S]+?)\}\}/g,
-        'evaluate': /\{\{([\s\S]+?)\}\}/g,
-        'interpolate': /\{\{=([\s\S]+?)\}\}/g
-      };
-
-      lodashStable.forOwn({
-        'escape': '{{- a }}',
-        'evaluate': '{{ print(a) }}',
-        'interpolate': '{{= a }}'
-      },
-      function(value, key) {
-        var settings = { 'escape': null, 'evaluate': null, 'interpolate': null };
-        settings[key] = delimiter[key];
-
-        var expected = '1 <%- a %> <% print(a) %> <%= a %>',
-            compiled = _.template(value + ' <%- a %> <% print(a) %> <%= a %>', settings),
-            data = { 'a': 1 };
-
-        assert.strictEqual(compiled(data), expected);
-      });
-    });
-
-    QUnit.test('should work with strings without delimiters', function(assert) {
-      assert.expect(1);
-
-      var expected = 'abc';
-      assert.strictEqual(_.template(expected)({}), expected);
     });
 
     QUnit.test('should support the "imports" option', function(assert) {
@@ -19290,6 +19215,48 @@
           data = { 'a': 1 };
 
       assert.strictEqual(compiled(data), '1');
+    });
+
+    QUnit.test('should support custom delimiters', function(assert) {
+      assert.expect(2);
+
+      lodashStable.times(2, function(index) {
+        var settingsClone = lodashStable.clone(_.templateSettings);
+
+        var settings = lodashStable.assign(index ? _.templateSettings : {}, {
+          'escape': /\{\{-([\s\S]+?)\}\}/g,
+          'evaluate': /\{\{([\s\S]+?)\}\}/g,
+          'interpolate': /\{\{=([\s\S]+?)\}\}/g
+        });
+
+        var expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
+            compiled = _.template('<ul>{{ _.each(collection, function(value, index) {}}<li>{{= index }}: {{- value }}</li>{{}); }}</ul>', index ? null : settings),
+            data = { 'collection': ['a & A', 'b & B'] };
+
+        assert.strictEqual(compiled(data), expected);
+        lodashStable.assign(_.templateSettings, settingsClone);
+      });
+    });
+
+    QUnit.test('should support custom delimiters containing special characters', function(assert) {
+      assert.expect(2);
+
+      lodashStable.times(2, function(index) {
+        var settingsClone = lodashStable.clone(_.templateSettings);
+
+        var settings = lodashStable.assign(index ? _.templateSettings : {}, {
+          'escape': /<\?-([\s\S]+?)\?>/g,
+          'evaluate': /<\?([\s\S]+?)\?>/g,
+          'interpolate': /<\?=([\s\S]+?)\?>/g
+        });
+
+        var expected = '<ul><li>0: a &amp; A</li><li>1: b &amp; B</li></ul>',
+            compiled = _.template('<ul><? _.each(collection, function(value, index) { ?><li><?= index ?>: <?- value ?></li><? }); ?></ul>', index ? null : settings),
+            data = { 'collection': ['a & A', 'b & B'] };
+
+        assert.strictEqual(compiled(data), expected);
+        lodashStable.assign(_.templateSettings, settingsClone);
+      });
     });
 
     QUnit.test('should use a `with` statement by default', function(assert) {
@@ -19335,6 +19302,39 @@
 
       _.templateSettings.imports._ = lodash;
       _.templateSettings.interpolate = delimiter;
+    });
+
+    QUnit.test('should ignore `null` delimiters', function(assert) {
+      assert.expect(3);
+
+      var delimiter = {
+        'escape': /\{\{-([\s\S]+?)\}\}/g,
+        'evaluate': /\{\{([\s\S]+?)\}\}/g,
+        'interpolate': /\{\{=([\s\S]+?)\}\}/g
+      };
+
+      lodashStable.forOwn({
+        'escape': '{{- a }}',
+        'evaluate': '{{ print(a) }}',
+        'interpolate': '{{= a }}'
+      },
+      function(value, key) {
+        var settings = { 'escape': null, 'evaluate': null, 'interpolate': null };
+        settings[key] = delimiter[key];
+
+        var expected = '1 <%- a %> <% print(a) %> <%= a %>',
+            compiled = _.template(value + ' <%- a %> <% print(a) %> <%= a %>', settings),
+            data = { 'a': 1 };
+
+        assert.strictEqual(compiled(data), expected);
+      });
+    });
+
+    QUnit.test('should work without delimiters', function(assert) {
+      assert.expect(1);
+
+      var expected = 'abc';
+      assert.strictEqual(_.template(expected)({}), expected);
     });
 
     QUnit.test('should work with `this` references', function(assert) {
@@ -19543,7 +19543,7 @@
       assert.ok(pass, '`options` value');
     });
 
-    QUnit.test('should expose the source for compiled templates', function(assert) {
+    QUnit.test('should expose the source on compiled templates', function(assert) {
       assert.expect(1);
 
       var compiled = _.template('x'),
@@ -19557,7 +19557,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should expose the source when a SyntaxError occurs', function(assert) {
+    QUnit.test('should expose the source on SyntaxErrors', function(assert) {
       assert.expect(1);
 
       try {

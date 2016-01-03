@@ -19301,6 +19301,42 @@
       assert.strictEqual(actual, '1b012');
     });
 
+    QUnit.test('should use `_.templateSettings.imports._.templateSettings`', function(assert) {
+      assert.expect(1);
+
+      var lodash = _.templateSettings.imports._,
+          settingsClone = lodashStable.clone(lodash.templateSettings);
+
+      lodash.templateSettings = lodashStable.assign(lodash.templateSettings, {
+        'interpolate': /\{\{=([\s\S]+?)\}\}/g
+      });
+
+      var compiled = _.template('{{= a }}');
+      assert.strictEqual(compiled({ 'a': 1 }), '1');
+
+      if (settingsClone) {
+        lodashStable.assign(lodash.templateSettings, settingsClone);
+      } else {
+        delete lodash.templateSettings;
+      }
+    });
+
+    QUnit.test('should fallback to `_.templateSettings`', function(assert) {
+      assert.expect(1);
+
+      var lodash = _.templateSettings.imports._,
+          delimiter = _.templateSettings.interpolate;
+
+      _.templateSettings.imports._ = { 'escape': lodashStable.escape };
+      _.templateSettings.interpolate = /\{\{=([\s\S]+?)\}\}/g;
+
+      var compiled = _.template('{{= a }}');
+      assert.strictEqual(compiled({ 'a': 1 }), '1');
+
+      _.templateSettings.imports._ = lodash;
+      _.templateSettings.interpolate = delimiter;
+    });
+
     QUnit.test('should work with `this` references', function(assert) {
       assert.expect(2);
 

@@ -2849,6 +2849,17 @@
         assert.raises(function() { _.cond([[alwaysTrue, value]])(); }, TypeError);
       });
     });
+
+    QUnit.test('should use `this` binding of function for `pairs`', function(assert) {
+      assert.expect(1);
+
+      var cond = _.cond([
+        [function(a) { return this[a]; }, function(a, b) { return this[b]; }]
+      ]);
+
+      var object = { 'cond': cond, 'a': 1, 'b': 2 };
+      assert.strictEqual(object.cond('a', 'b'), 2);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

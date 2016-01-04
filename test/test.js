@@ -20847,7 +20847,7 @@
       assert.deepEqual(actual, expected);
 
       expected = lodashStable.map(accumulators, lodashStable.constant({ 'a': 1, 'b': 4, 'c': 9 }));
-      actual = lodashStable.map(results, lodashStable.cloneDeep);
+      actual = lodashStable.map(results, lodashStable.toPlainObject);
 
       assert.deepEqual(actual, expected);
 

@@ -14438,7 +14438,7 @@
   else if (freeExports && freeModule) {
     // Export for Node.js.
     if (moduleExports) {
-      (freeModule.exports = _)._ = _
+      (freeModule.exports = _)._ = _;
     }
     // Export for CommonJS support.
     freeExports._ = _;

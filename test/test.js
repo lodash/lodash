@@ -14354,7 +14354,7 @@
         throw new Error;
       });
 
-      assert.raises(function() { once(); }, Error);
+      assert.raises(once);
 
       try {
         once();

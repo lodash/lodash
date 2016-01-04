@@ -1010,7 +1010,7 @@
       assert.expect(2);
 
       var after = _.after(1, function(assert) { return ++this.count; }),
-          object = { 'count': 0, 'after': after };
+          object = { 'after': after, 'count': 0 };
 
       object.after();
       assert.strictEqual(object.after(), 2);
@@ -1506,7 +1506,7 @@
       assert.expect(2);
 
       var before = _.before(2, function(assert) { return ++this.count; }),
-          object = { 'count': 0, 'before': before };
+          object = { 'before': before, 'count': 0 };
 
       object.before();
       assert.strictEqual(object.before(), 1);
@@ -12716,7 +12716,7 @@
       var fn = function(a, b, c) { return a + this.b + this.c; },
           memoized = _.memoize(fn, fn);
 
-      var object = { 'b': 2, 'c': 3, 'memoized': memoized };
+      var object = { 'memoized': memoized, 'b': 2, 'c': 3 };
       assert.strictEqual(object.memoized(1), 6);
 
       object.b = 3;
@@ -14071,7 +14071,7 @@
       assert.deepEqual(argsList, [['a'], ['b']]);
     });
 
-    QUnit.test('should use `this` binding of function for transforms', function(assert) {
+    QUnit.test('should use `this` binding of function for `transforms`', function(assert) {
       assert.expect(1);
 
       var over = _.overArgs(function(x) {
@@ -14431,7 +14431,7 @@
       assert.deepEqual(over('a', 'b', 'c'), [['a', 'b', 'c']]);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function for `iteratees`', function(assert) {
       assert.expect(1);
 
       var over = _.over(function() { return this.b; }, function() { return this.a; }),
@@ -14517,7 +14517,7 @@
       assert.deepEqual(args, ['a', 'b', 'c']);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function for `predicates`', function(assert) {
       assert.expect(2);
 
       var over = _.overEvery(function() { return this.b; }, function() { return this.a; }),
@@ -14619,7 +14619,7 @@
       assert.deepEqual(args, ['a', 'b', 'c']);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function for `predicates`', function(assert) {
       assert.expect(2);
 
       var over = _.overSome(function() { return this.b; }, function() { return this.a; }),

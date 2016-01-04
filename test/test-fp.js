@@ -879,6 +879,7 @@
         }
       }, { 'a': [2, 3] }, value);
 
+      args[5] = _.omitBy(args[5], _.isFunction);
       assert.deepEqual(args, expected, 'fp.mergeWith');
     });
   }());

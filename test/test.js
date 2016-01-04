@@ -20880,7 +20880,7 @@
       assert.ok(_.transform(new Foo) instanceof Foo);
     });
 
-    QUnit.test('should check that `object` is an object before using its `[[Prototype]]`', function(assert) {
+    QUnit.test('should ensure `object` is an object before using its `[[Prototype]]`', function(assert) {
       assert.expect(2);
 
       var Ctors = [Boolean, Boolean, Number, Number, Number, String, String],
@@ -20902,7 +20902,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should check that `object` constructor is a function before using its `[[Prototype]]`', function(assert) {
+    QUnit.test('should ensure `object` constructor is a function before using its `[[Prototype]]`', function(assert) {
       assert.expect(1);
 
       Foo.prototype.constructor = null;

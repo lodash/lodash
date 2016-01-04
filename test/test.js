@@ -2807,28 +2807,47 @@
   QUnit.module('lodash.cond');
 
   (function() {
-    QUnit.test('should throw a TypeError if `pairs` is not composed of functions', function(assert) {
-      assert.expect(2);
+    QUnit.test('should create a conditional function', function(assert) {
+      assert.expect(3);
 
-      var predicate = lodashStable.constant(true);
+      var cond = _.cond([
+        [lodashStable.matches({ 'a': 1 }),     alwaysA],
+        [lodashStable.matchesProperty('b', 1), alwaysB],
+        [lodashStable.property('c'),           alwaysC]
+      ]);
 
-      lodashStable.each([true, false], function(value) {
-        assert.raises(function() { _.cond([[predicate, value]]); }, TypeError);
-      });
+      assert.strictEqual(cond({ 'a':  1, 'b': 2, 'c': 3 }), 'a');
+      assert.strictEqual(cond({ 'a':  0, 'b': 1, 'c': 2 }), 'b');
+      assert.strictEqual(cond({ 'a': -1, 'b': 0, 'c': 1 }), 'c');
     });
 
     QUnit.test('should work with predicate shorthands', function(assert) {
       assert.expect(3);
 
       var cond = _.cond([
-        [{ 'a': 1 }, lodashStable.constant('A')],
-        [['b', 1],   lodashStable.constant('B')],
-        ['c',        lodashStable.constant('C')]
+        [{ 'a': 1 }, alwaysA],
+        [['b', 1],   alwaysB],
+        ['c',        alwaysC]
       ]);
 
-      assert.strictEqual(cond({ 'a':  1, 'b': 2, 'c': 3 }), 'A');
-      assert.strictEqual(cond({ 'a':  0, 'b': 1, 'c': 2 }), 'B');
-      assert.strictEqual(cond({ 'a': -1, 'b': 0, 'c': 1 }), 'C');
+      assert.strictEqual(cond({ 'a':  1, 'b': 2, 'c': 3 }), 'a');
+      assert.strictEqual(cond({ 'a':  0, 'b': 1, 'c': 2 }), 'b');
+      assert.strictEqual(cond({ 'a': -1, 'b': 0, 'c': 1 }), 'c');
+    });
+
+    QUnit.test('should return `undefined` when no condition is met', function(assert) {
+      assert.expect(1);
+
+      var cond = _.cond([[alwaysFalse, alwaysA]]);
+      assert.strictEqual(cond({ 'a': 1 }), undefined);
+    });
+
+    QUnit.test('should throw a TypeError if `pairs` is not composed of functions', function(assert) {
+      assert.expect(2);
+
+      lodashStable.each([true, false], function(value) {
+        assert.raises(function() { _.cond([[alwaysTrue, value]])(); }, TypeError);
+      });
     });
   }());
 

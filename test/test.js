@@ -2263,7 +2263,7 @@
 
   (function() {
     function Foo() { this.a = 1; }
-    Foo.prototype = { 'b': 1 };
+    Foo.prototype.b = 1;
     Foo.c = function() {};
 
     if (Map) {
@@ -2449,6 +2449,12 @@
 
         var actual = func(regexp);
         assert.strictEqual(actual.lastIndex, 3);
+      });
+
+      QUnit.test('`_.' + methodName + '` should create clone with the same `[[Prototype]]` as `value`', function(assert) {
+        assert.expect(1);
+
+        assert.ok(func(new Foo) instanceof Foo);
       });
 
       QUnit.test('`_.' + methodName + '` should clone properties that shadow those on `Object.prototype`', function(assert) {

@@ -2272,7 +2272,7 @@
      * @returns {Function} Returns the new function.
      */
     function baseConforms(source) {
-      var props = keysIn(source),
+      var props = keys(source),
           length = props.length;
 
       return function(object) {
@@ -4834,7 +4834,7 @@
      */
     function initCloneArray(array) {
       var length = array.length,
-          result = new array.constructor(length);
+          result = array.constructor(length);
 
       // Add properties assigned by `RegExp#exec`.
       if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
@@ -4853,7 +4853,7 @@
      */
     function initCloneObject(object) {
       var Ctor = object.constructor;
-      return (typeof Ctor == 'function' && Ctor instanceof Ctor) ? new Ctor : {};
+      return baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
     }
 
     /**
@@ -9066,11 +9066,10 @@
      * **Note:** This method is loosely based on the
      * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
      * and supports cloning arrays, array buffers, booleans, date objects, maps,
-     * numbers, `Object` objects, regexes, sets, strings, symbols, and typed arrays.
-     * The own enumerable properties of `arguments` objects and objects created
-     * by constructors other than `Object` are cloned as plain `Object` objects.
-     * An empty object is returned for uncloneable values such as error objects,
-     * functions, DOM nodes, and WeakMaps.
+     * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
+     * arrays. The own enumerable properties of `arguments` objects are cloned
+     * as plain objects. An empty object is returned for uncloneable values such
+     * as error objects, functions, DOM nodes, and WeakMaps.
      *
      * @static
      * @memberOf _

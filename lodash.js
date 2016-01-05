@@ -4320,6 +4320,7 @@
         if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
           end = step = undefined;
         }
+        // Ensure the sign of `-0` is preserved.
         start = toNumber(start);
         start = start === start ? start : 0;
         if (end === undefined) {

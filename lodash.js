@@ -2804,19 +2804,8 @@
       if (!isSameTag) {
         return false;
       }
-      // Assume cyclic values are equal.
-      // For more information on detecting circular references see https://es5.github.io/#JO.
       stack || (stack = new Stack);
-      var stacked = stack.get(object);
-      if (stacked) {
-        return stacked == other;
-      }
-      stack.set(object, other);
-
-      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, bitmask, stack);
-
-      stack['delete'](object);
-      return result;
+      return (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, bitmask, stack);
     }
 
     /**
@@ -4509,34 +4498,46 @@
       if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
         return false;
       }
+      // Assume cyclic values are equal.
+      var stacked = stack.get(array);
+      if (stacked) {
+        return stacked == other;
+      }
+      var result = true;
+      stack.set(array, other);
+
       // Ignore non-index properties.
       while (++index < arrLength) {
         var arrValue = array[index],
             othValue = other[index];
 
         if (customizer) {
-          var result = isPartial
+          var compared = isPartial
             ? customizer(othValue, arrValue, index, other, array, stack)
             : customizer(arrValue, othValue, index, array, other, stack);
         }
-        if (result !== undefined) {
-          if (result) {
+        if (compared !== undefined) {
+          if (compared) {
             continue;
           }
-          return false;
+          result = false;
+          break;
         }
         // Recursively compare arrays (susceptible to call stack limits).
         if (isUnordered) {
           if (!arraySome(other, function(othValue) {
                 return arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack);
               })) {
-            return false;
+            result = false;
+            break;
           }
         } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
-          return false;
+          result = false;
+          break;
         }
       }
-      return true;
+      stack['delete'](array);
+      return result;
     }
 
     /**
@@ -4632,6 +4633,14 @@
           return false;
         }
       }
+      // Assume cyclic values are equal.
+      var stacked = stack.get(object);
+      if (stacked) {
+        return stacked == other;
+      }
+      var result = true;
+      stack.set(object, other);
+
       var skipCtor = isPartial;
       while (++index < objLength) {
         key = objProps[index];
@@ -4639,20 +4648,21 @@
             othValue = other[key];
 
         if (customizer) {
-          var result = isPartial
+          var compared = isPartial
             ? customizer(othValue, objValue, key, other, object, stack)
             : customizer(objValue, othValue, key, object, other, stack);
         }
         // Recursively compare objects (susceptible to call stack limits).
-        if (!(result === undefined
+        if (!(compared === undefined
               ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
-              : result
+              : compared
             )) {
-          return false;
+          result = false;
+          break;
         }
         skipCtor || (skipCtor = key == 'constructor');
       }
-      if (!skipCtor) {
+      if (result && !skipCtor) {
         var objCtor = object.constructor,
             othCtor = other.constructor;
 
@@ -4661,10 +4671,11 @@
             ('constructor' in object && 'constructor' in other) &&
             !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
               typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-          return false;
+          result = false;
         }
       }
-      return true;
+      stack['delete'](object);
+      return result;
     }
 
     /**

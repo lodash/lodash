@@ -2637,6 +2637,19 @@
     }
 
     /**
+     * The base implementation of `_.inRange` without support for non-number arguments.
+     *
+     * @private
+     * @param {number} number The number to check.
+     * @param {number} start The start of the range.
+     * @param {number} end The end of the range.
+     * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
+     */
+    function baseInRange(number, start, end) {
+      return number >= nativeMin(start, end) && number < nativeMax(start, end);
+    }
+
+    /**
      * The base implementation of methods like `_.intersection`, without support
      * for callback shorthands, that accepts an array of arrays to inspect.
      *
@@ -3248,12 +3261,13 @@
     }
 
     /**
-     * The base implementation of `_.range` and `_.rangeRight`.
+     * The base implementation of `_.range` and `_.rangeRight` without support
+     * for non-number arguments.
      *
      * @private
-     * @param {number} [start=0] The start of the range.
+     * @param {number} start The start of the range.
      * @param {number} end The end of the range.
-     * @param {number} [step=1] The value to increment or decrement by.
+     * @param {number} step The value to increment or decrement by.
      * @param {boolean} [fromRight] Specify iterating from right to left.
      * @returns {Array} Returns the new array of numbers.
      */
@@ -11651,7 +11665,7 @@
         end = toNumber(end) || 0;
       }
       number = toNumber(number);
-      return number >= nativeMin(start, end) && number < nativeMax(start, end);
+      return baseInRange(number, start, end);
     }
 
     /**

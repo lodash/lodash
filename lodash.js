@@ -6219,7 +6219,6 @@
      *
      * **Note:** This method is based on [`Array#slice`](https://mdn.io/Array/slice),
      * but uses our own implementation to ensure dense arrays are returned.
-     * This means e.g. negative `start` positions work as expected.
      *
      * @static
      * @memberOf _

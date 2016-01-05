@@ -4309,6 +4309,31 @@
     }
 
     /**
+     * Creates a `_.range` or `_.rangeRight` function.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new range function.
+     */
+    function createRange(fromRight) {
+      return function(start, end, step) {
+        if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
+          end = step = undefined;
+        }
+        start = toNumber(start);
+        start = start === start ? start : 0;
+        if (end === undefined) {
+          end = start;
+          start = 0;
+        } else {
+          end = toNumber(end) || 0;
+        }
+        step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
+        return baseRange(start, end, step, fromRight);
+      };
+    }
+
+    /**
      * Creates a function that wraps `func` to continue currying.
      *
      * @private
@@ -13441,22 +13466,7 @@
      * _.range(0);
      * // => []
      */
-    function range(start, end, step) {
-      if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
-        end = step = undefined;
-      }
-      start = toNumber(start);
-      start = start === start ? start : 0;
-
-      if (end === undefined) {
-        end = start;
-        start = 0;
-      } else {
-        end = toNumber(end) || 0;
-      }
-      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
-      return baseRange(start, end, step);
-    }
+    var range = createRange();
 
     /**
      * This method is like `_.range` except that it populates values in
@@ -13492,22 +13502,7 @@
      * _.rangeRight(0);
      * // => []
      */
-    function rangeRight(start, end, step) {
-      if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
-        end = step = undefined;
-      }
-      start = toNumber(start);
-      start = start === start ? start : 0;
-
-      if (end === undefined) {
-        end = start;
-        start = 0;
-      } else {
-        end = toNumber(end) || 0;
-      }
-      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
-      return baseRange(start, end, step, true);
-    }
+    var rangeRight = createRange(true);
 
     /**
      * Invokes the iteratee function `n` times, returning an array of the results

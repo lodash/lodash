@@ -3258,17 +3258,6 @@
      * @returns {Array} Returns the new array of numbers.
      */
     function baseRange(start, end, step, fromRight) {
-      start = toNumber(start);
-      start = start === start ? start : 0;
-
-      if (end === undefined) {
-        end = start;
-        start = 0;
-      } else {
-        end = toNumber(end) || 0;
-      }
-      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
-
       var index = -1,
           length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
           result = Array(length);
@@ -13442,6 +13431,16 @@
       if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
+      start = toNumber(start);
+      start = start === start ? start : 0;
+
+      if (end === undefined) {
+        end = start;
+        start = 0;
+      } else {
+        end = toNumber(end) || 0;
+      }
+      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
       return baseRange(start, end, step);
     }
 
@@ -13483,6 +13482,16 @@
       if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
         end = step = undefined;
       }
+      start = toNumber(start);
+      start = start === start ? start : 0;
+
+      if (end === undefined) {
+        end = start;
+        start = 0;
+      } else {
+        end = toNumber(end) || 0;
+      }
+      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
       return baseRange(start, end, step, true);
     }
 

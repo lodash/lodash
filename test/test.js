@@ -21839,7 +21839,12 @@
       assert.expect(1);
 
       var array = [[1, 4], [2, 5], [3, 6]];
-      assert.deepEqual(_.unzipWith(array, _.add), [6, 15]);
+
+      var actual = _.unzipWith(array, function(a, b, c) {
+        return a + b + c;
+      });
+
+      assert.deepEqual(actual, [6, 15]);
     });
 
     QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
@@ -21851,7 +21856,7 @@
         args || (args = slice.call(arguments));
       });
 
-      assert.deepEqual(args, [1, 2, 1, [1, 2]]);
+      assert.deepEqual(args, [1, 2]);
     });
 
     QUnit.test('should perform a basic unzip when `iteratee` is nullish', function(assert) {
@@ -22218,10 +22223,20 @@
       assert.expect(2);
 
       var array1 = [1, 2, 3],
-          array2 = [4, 5, 6];
+          array2 = [4, 5, 6],
+          array3 = [7, 8, 9];
 
-      assert.deepEqual(_.zipWith(array1, array2, _.add), [5, 7, 9]);
-      assert.deepEqual(_.zipWith(array1, [], _.add), [1, 2, 3]);
+      var actual = _.zipWith(array1, array2, array3, function(a, b, c) {
+        return a + b + c;
+      });
+
+      assert.deepEqual(actual, [12, 15, 18]);
+
+      var actual = _.zipWith(array1, [], function(a, b) {
+        return a + (b || 0);
+      });
+
+      assert.deepEqual(actual, [1, 2, 3]);
     });
 
     QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
@@ -22233,7 +22248,7 @@
         args || (args = slice.call(arguments));
       });
 
-      assert.deepEqual(args, [1, 3, 1, [1, 3, 5]]);
+      assert.deepEqual(args, [1, 3, 5]);
     });
 
     QUnit.test('should perform a basic zip when `iteratee` is nullish', function(assert) {

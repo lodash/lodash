@@ -6790,7 +6790,7 @@
         return result;
       }
       return arrayMap(result, function(group) {
-        return arrayReduce(group, iteratee, undefined, true);
+        return apply(iteratee, undefined, group);
       });
     }
 
@@ -6947,7 +6947,9 @@
      * @returns {Array} Returns the new array of grouped elements.
      * @example
      *
-     * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
+     * _.zipWith([1, 2], [10, 20], [100, 200], function(a, b, c) {
+     *   return a + b + c;
+     * });
      * // => [111, 222]
      */
     var zipWith = rest(function(arrays) {

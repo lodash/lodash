@@ -1328,14 +1328,14 @@
     );
 
     /** Built-in value references. */
-    var Reflect = context.Reflect,
-        Symbol = context.Symbol,
+    var _Symbol = context.Symbol,
+        Reflect = context.Reflect,
         Uint8Array = context.Uint8Array,
         clearTimeout = context.clearTimeout,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getPrototypeOf = Object.getPrototypeOf,
         getOwnPropertySymbols = Object.getOwnPropertySymbols,
-        iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
+        iteratorSymbol = typeof (iteratorSymbol = _Symbol && _Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
         parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -1368,9 +1368,9 @@
         setCtorString = Set ? funcToString.call(Set) : '';
 
     /** Used to convert symbols to primitives and strings. */
-    var symbolProto = Symbol ? Symbol.prototype : undefined,
-        symbolValueOf = Symbol ? symbolProto.valueOf : undefined,
-        symbolToString = Symbol ? symbolProto.toString : undefined;
+    var symbolProto = _Symbol ? _Symbol.prototype : undefined,
+        symbolValueOf = _Symbol ? symbolProto.valueOf : undefined,
+        symbolToString = _Symbol ? symbolProto.toString : undefined;
 
     /** Used to lookup unminified function names. */
     var realNames = {};

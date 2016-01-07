@@ -5276,32 +5276,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.flattenDeep');
-
-  (function() {
-    QUnit.test('should flatten arrays with circular references', function(assert) {
-      assert.expect(2);
-
-      var array = [1, 2];
-      array.push(array);
-
-      var expected = [1, 2, 1, 2];
-
-      try {
-        var actual = _.flattenDeep(array);
-      } catch (e) {}
-
-      assert.deepEqual(actual, expected);
-
-      array = [1, 2];
-      array = [array, [array]];
-
-      assert.deepEqual(_.flattenDeep(array), expected);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('flatten methods');
 
   (function() {

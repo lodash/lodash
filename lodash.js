@@ -119,6 +119,11 @@
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
       reHasRegExpChar = RegExp(reRegExpChar.source);
 
+  /** Used to match leading and trailing whitespace. */
+  var reTrim = /^\s+|\s+$/g,
+      reTrimStart = /^\s+/,
+      reTrimEnd = /\s+$/;
+
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
 
@@ -843,20 +848,6 @@
   }
 
   /**
-   * The base implementation of `_.trim` without support trimming non-whitespace
-   * characters.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function baseTrim(string) {
-    return string
-      ? string.slice(trimmedStartIndex(string), trimmedEndIndex(string) + 1)
-      : string;
-  }
-
-  /**
    * The base implementation of `_.unary` without support for storing wrapper metadata.
    *
    * @private
@@ -1091,19 +1082,6 @@
   }
 
   /**
-   * Used by `trimmedStartIndex` and `trimmedEndIndex` to determine if a
-   * character code is whitespace.
-   *
-   * @private
-   * @param {number} charCode The character code to inspect.
-   * @returns {boolean} Returns `true` if `charCode` is whitespace, else `false`.
-   */
-  function isSpace(charCode) {
-    return ((charCode <= 160 && (charCode >= 9 && charCode <= 13) || charCode == 32 || charCode == 160) || charCode == 5760 || charCode == 6158 ||
-      (charCode >= 8192 && (charCode <= 8202 || charCode == 8232 || charCode == 8233 || charCode == 8239 || charCode == 8287 || charCode == 12288 || charCode == 65279)));
-  }
-
-  /**
    * Converts `iterator` to an array.
    *
    * @private
@@ -1204,37 +1182,6 @@
    */
   function stringToArray(string) {
     return string.match(reComplexSymbol);
-  }
-
-  /**
-   * Used by `_.trim` and `_.trimStart` to get the index of the first non-whitespace
-   * character of `string`.
-   *
-   * @private
-   * @param {string} string The string to inspect.
-   * @returns {number} Returns the index of the first non-whitespace character.
-   */
-  function trimmedStartIndex(string) {
-    var index = -1,
-        length = string.length;
-
-    while (++index < length && isSpace(string.charCodeAt(index))) {}
-    return index;
-  }
-
-  /**
-   * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
-   * character of `string`.
-   *
-   * @private
-   * @param {string} string The string to inspect.
-   * @returns {number} Returns the index of the last non-whitespace character.
-   */
-  function trimmedEndIndex(string) {
-    var index = string.length;
-
-    while (index-- && isSpace(string.charCodeAt(index))) {}
-    return index;
   }
 
   /**
@@ -10293,7 +10240,7 @@
       if (typeof value == 'number' || !isString(value)) {
         return +value;
       }
-      value = baseTrim(value);
+      value = value.replace(reTrim, '');
       var isBinary = reIsBinary.test(value);
       return (isBinary || reIsOctal.test(value))
         ? nativeParseInt(value.slice(2), isBinary ? 2 : 8)
@@ -12127,7 +12074,7 @@
       } else if (radix) {
         radix = +radix;
       }
-      string = baseTrim(toString(string));
+      string = toString(string).replace(reTrim, '');
       return nativeParseInt(string, radix || (reHasHexPrefix.test(string) ? 16 : 10));
     }
 
@@ -12565,7 +12512,7 @@
         return string;
       }
       if (guard || chars === undefined) {
-        return baseTrim(string);
+        return string.replace(reTrim, '');
       }
       chars = (chars + '');
       if (!chars) {
@@ -12601,7 +12548,7 @@
         return string;
       }
       if (guard || chars === undefined) {
-        return string.slice(0, trimmedEndIndex(string) + 1);
+        return string.replace(reTrimEnd, '');
       }
       chars = (chars + '');
       if (!chars) {
@@ -12635,7 +12582,7 @@
         return string;
       }
       if (guard || chars === undefined) {
-        return string.slice(trimmedStartIndex(string));
+        return string.replace(reTrimStart, '');
       }
       chars = (chars + '');
       if (!chars) {

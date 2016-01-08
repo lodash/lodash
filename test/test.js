@@ -316,7 +316,19 @@
    * Used to check for problems removing whitespace. For a whitespace reference,
    * see [V8's unit test](https://code.google.com/p/v8/source/browse/branches/bleeding_edge/test/mjsunit/whitespaces.js).
    */
-  var whitespace = ' \t\x0b\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+  var whitespace = lodashStable.filter([
+    // Basic whitespace characters.
+    ' ', '\t', '\x0b', '\f', '\xa0', '\ufeff',
+
+    // Line terminators.
+    '\n', '\r', '\u2028', '\u2029',
+
+    // Unicode category "Zs" space separators.
+    '\u1680', '\u180e', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005',
+    '\u2006', '\u2007', '\u2008', '\u2009', '\u200a', '\u202f', '\u205f', '\u3000'
+  ],
+  function(chr) { return /\s/.exec(chr); })
+  .join('');
 
   /**
    * Extracts the unwrapped value from its wrapper.
@@ -21022,16 +21034,6 @@
           expected = (index == 2 ? whitespace : '') + 'a b c' + (index == 1 ? whitespace : '');
 
       assert.strictEqual(func(string), expected);
-    });
-
-    QUnit.test('`_.' + methodName + '` should not remove non-whitespace characters', function(assert) {
-      assert.expect(1);
-
-      // Zero-width space (zws), next line character (nel), and non-character (bom) are not whitespace.
-      var problemChars = '\x85\u200b\ufffe',
-          string = problemChars + 'a b c' + problemChars;
-
-      assert.strictEqual(func(string), string);
     });
 
     QUnit.test('`_.' + methodName + '` should coerce `string` to a string', function(assert) {

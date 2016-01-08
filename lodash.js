@@ -2152,6 +2152,27 @@
     }
 
     /**
+     * The base implementation of `_.clamp` which doesn't coerce arguments to numbers.
+     *
+     * @private
+     * @param {number} number The number to clamp.
+     * @param {number} [lower] The lower bound.
+     * @param {number} upper The upper bound.
+     * @returns {number} Returns the clamped number.
+     */
+    function baseClamp(number, lower, upper) {
+      if (number === number) {
+        if (upper !== undefined) {
+          number = number <= upper ? number : upper;
+        }
+        if (lower !== undefined) {
+          number = number >= lower ? number : lower;
+        }
+      }
+      return number;
+    }
+
+    /**
      * The base implementation of `_.clone` and `_.cloneDeep` which tracks
      * traversed objects.
      *
@@ -7916,7 +7937,7 @@
           length = result.length,
           lastIndex = length - 1;
 
-      n = clamp(toInteger(n), 0, length);
+      n = baseClamp(toInteger(n), 0, length);
       while (++index < n) {
         var rand = baseRandom(index, lastIndex),
             value = result[rand];
@@ -10204,10 +10225,7 @@
      * // => 3
      */
     function toLength(value) {
-      if (!value) {
-        return 0;
-      }
-      return clamp(toInteger(value), 0, MAX_ARRAY_LENGTH);
+      return value ? baseClamp(toInteger(value), 0, MAX_ARRAY_LENGTH) : 0;
     }
 
     /**
@@ -10298,10 +10316,7 @@
      * // => 3
      */
     function toSafeInteger(value) {
-      if (!value) {
-        return value === 0 ? value : 0;
-      }
-      return clamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
+      return baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
     }
 
     /**
@@ -11557,16 +11572,15 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Returns a number whose value is limited to the given range specified
-     * by `min` and `max`.
+     * Clamps `number` within the inclusive `lower` and `upper` bounds.
      *
      * @static
      * @memberOf _
      * @category Number
-     * @param {number} number The number whose value is to be limited.
-     * @param {number} [min] The minimum possible value.
-     * @param {number} max The maximum possible value.
-     * @returns {number} A number in the range [min, max].
+     * @param {number} number The number to clamp.
+     * @param {number} [lower] The lower bound.
+     * @param {number} upper The upper bound.
+     * @returns {number} Returns the clamped number.
      * @example
      *
      * _.clamp(-10, -5, 5);
@@ -11575,25 +11589,20 @@
      * _.clamp(10, -5, 5);
      * // => 5
      */
-    function clamp(number, min, max) {
-      number = toNumber(number);
-      if (number === number) {
-        if (max === undefined) {
-          max = min;
-          min = undefined;
-        }
-        if (max !== undefined) {
-          max = toNumber(max);
-          max = max === max ? max : 0;
-          number = number <= max ? number : max;
-        }
-        if (min !== undefined) {
-          min = toNumber(min);
-          min = min === min ? min : 0;
-          number = number >= min ? number : min;
-        }
+    function clamp(number, lower, upper) {
+      if (upper === undefined) {
+        upper = lower;
+        lower = undefined;
       }
-      return number;
+      if (upper !== undefined) {
+        upper = toNumber(upper);
+        upper = upper === upper ? upper : 0;
+      }
+      if (lower !== undefined) {
+        lower = toNumber(lower);
+        lower = lower === lower ? lower : 0;
+      }
+      return baseClamp(toNumber(number), lower, upper);
     }
 
     /**
@@ -11804,7 +11813,7 @@
       var length = string.length;
       position = position === undefined
         ? length
-        : clamp(toInteger(position), 0, length);
+        : baseClamp(toInteger(position), 0, length);
 
       position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
@@ -12233,7 +12242,7 @@
      */
     function startsWith(string, target, position) {
       string = toString(string);
-      position = clamp(toInteger(position), 0, string.length);
+      position = baseClamp(toInteger(position), 0, string.length);
       return string.lastIndexOf(target, position) == position;
     }
 

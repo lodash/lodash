@@ -3835,7 +3835,7 @@
     function createAssigner(assigner) {
       return rest(function(object, sources) {
         var index = -1,
-            length = object == null ? 0 : sources.length,
+            length = sources.length,
             customizer = length > 1 ? sources[length - 1] : undefined,
             guard = length > 2 ? sources[2] : undefined;
 

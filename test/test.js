@@ -6015,17 +6015,22 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should not error when `object` is nullish and sources are provided', function(assert) {
-      assert.expect(1);
+    QUnit.test('`_.' + methodName + '` should create an object when `object` is nullish', function(assert) {
+      assert.expect(2);
 
-      var expected = lodashStable.times(2, alwaysTrue);
+      var source = { 'a': 1 },
+          values = [null, undefined],
+          expected = lodashStable.map(values, alwaysTrue);
 
-      var actual = lodashStable.map([null, undefined], function(value) {
-        try {
-          return lodashStable.isEqual(func(value, { 'a': 1 }), {});
-        } catch (e) {
-          return false;
-        }
+      var actual = lodashStable.map(values, function(value) {
+        var object = func(value, source);
+        return object !== source && lodashStable.isEqual(object, source);
+      });
+
+      assert.deepEqual(actual, expected);
+
+      actual = lodashStable.map(values, function(value) {
+        return lodashStable.isEqual(func(value), {});
       });
 
       assert.deepEqual(actual, expected);

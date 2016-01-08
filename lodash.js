@@ -228,7 +228,7 @@
     'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
     'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
-    'clearTimeout', 'isFinite', 'parseFloat', 'parseInt', 'setTimeout'
+    'clearTimeout', 'isFinite', 'parseInt', 'setTimeout'
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -321,6 +321,10 @@
     '\u2028': 'u2028',
     '\u2029': 'u2029'
   };
+
+  /** Built-in method references without a dependency on `root`. */
+  var freeParseFloat = parseFloat,
+      freeParseInt = parseInt;
 
   /** Detect free variable `exports`. */
   var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
@@ -1283,7 +1287,6 @@
         getPrototypeOf = Object.getPrototypeOf,
         getOwnPropertySymbols = Object.getOwnPropertySymbols,
         iteratorSymbol = typeof (iteratorSymbol = _Symbol && _Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
-        parseFloat = context.parseFloat,
         pow = Math.pow,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
@@ -10243,7 +10246,7 @@
       value = value.replace(reTrim, '');
       var isBinary = reIsBinary.test(value);
       return (isBinary || reIsOctal.test(value))
-        ? nativeParseInt(value.slice(2), isBinary ? 2 : 8)
+        ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
         : (reIsBadHex.test(value) ? NAN : +value);
     }
 
@@ -11708,7 +11711,7 @@
       }
       if (floating || min % 1 || max % 1) {
         var rand = nativeRandom();
-        return nativeMin(min + (rand * (max - min + parseFloat('1e-' + ((rand + '').length - 1)))), max);
+        return nativeMin(min + (rand * (max - min + freeParseFloat('1e-' + ((rand + '').length - 1)))), max);
       }
       return baseRandom(min, max);
     }

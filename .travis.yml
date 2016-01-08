@@ -5,7 +5,7 @@ node_js:
 env:
   global:
     - BIN="node" ISTANBUL=false OPTION=""
-    - NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
+    - SAUCE_LABS=false SAUCE_USERNAME="lodash"
     - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
   matrix:
     -
@@ -14,8 +14,6 @@ env:
     - SAUCE_LABS=true
 matrix:
   include:
-    - node_js: "0.8"
-      env: NPM_VERSION="~1.4.0"
     - node_js: "0.10"
       env:
     - node_js: "0.12"
@@ -36,7 +34,7 @@ notifications:
 before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm config set loglevel error"
-  - "npm i -g npm@\"$NPM_VERSION\""
+  - "npm i -g npm@\"^2.0.0\""
   - |
       PATTERN[0]="|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)|"
       PATTERN[1]="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"

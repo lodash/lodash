@@ -10233,15 +10233,12 @@
      * // => 3
      */
     function toNumber(value) {
-      if (!value) {
-        return value === 0 ? value : +value;
-      }
       if (isObject(value)) {
         var other = isFunction(value.valueOf) ? value.valueOf() : value;
         value = isObject(other) ? (other + '') : other;
       }
-      if (typeof value == 'number' || !isString(value)) {
-        return +value;
+      if (typeof value != 'string') {
+        return value === 0 ? value : +value;
       }
       value = value.replace(reTrim, '');
       var isBinary = reIsBinary.test(value);

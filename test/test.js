@@ -2833,6 +2833,24 @@
       assert.strictEqual(cond({ 'a': -1, 'b': 0, 'c': 1 }), 'c');
     });
 
+    QUnit.test('should provide arguments to functions', function(assert) {
+      assert.expect(2);
+
+      var args1,
+          args2,
+          expected = ['a', 'b', 'c'];
+
+      var cond = _.cond([[
+        function() { args1 || (args1 = slice.call(arguments)); return true; },
+        function() { args2 || (args2 = slice.call(arguments)); }
+      ]]);
+
+      cond('a', 'b', 'c');
+
+      assert.deepEqual(args1, expected);
+      assert.deepEqual(args2, expected);
+    });
+
     QUnit.test('should work with predicate shorthands', function(assert) {
       assert.expect(3);
 
@@ -14442,7 +14460,7 @@
       assert.deepEqual(over(object), [false, true]);
     });
 
-    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+    QUnit.test('should provide arguments to predicates', function(assert) {
       assert.expect(1);
 
       var over = _.over(function() {
@@ -14525,7 +14543,7 @@
       assert.strictEqual(over(), false);
     });
 
-    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+    QUnit.test('should provide arguments to predicates', function(assert) {
       assert.expect(1);
 
       var args;
@@ -14627,7 +14645,7 @@
       assert.strictEqual(over(), true);
     });
 
-    QUnit.test('should provide multiple arguments to predicates', function(assert) {
+    QUnit.test('should provide arguments to predicates', function(assert) {
       assert.expect(1);
 
       var args;

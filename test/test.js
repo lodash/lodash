@@ -756,6 +756,7 @@
 
         try {
           var symObject = Object(symbol);
+          symObject.constructor = Object;
           actual = [
             Symbol ? lodashBizarro.clone(symObject) : {},
             Symbol ? lodashBizarro.isEqual(symObject, Object(symbol)) : false,

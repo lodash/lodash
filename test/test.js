@@ -143,6 +143,9 @@
 
   /*--------------------------------------------------------------------------*/
 
+  // Leak to avoid sporadic `noglobals` fails on Edge in Sauce Labs.
+  root.msWDfn = undefined;
+
   // Exit early if going to run tests in a PhantomJS web page.
   if (phantom && isModularize) {
     var page = require('webpage').create();

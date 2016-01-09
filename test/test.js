@@ -2513,6 +2513,14 @@
         assert.ok(func(new Foo) instanceof Foo);
       });
 
+      QUnit.test('should ensure `value` constructor is a function before using its `[[Prototype]]`', function(assert) {
+        assert.expect(1);
+
+        Foo.prototype.constructor = null;
+        assert.notOk(func(new Foo) instanceof Foo);
+        Foo.prototype.constructor = Foo;
+      });
+
       QUnit.test('`_.' + methodName + '` should clone properties that shadow those on `Object.prototype`', function(assert) {
         assert.expect(2);
 

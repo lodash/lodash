@@ -4094,6 +4094,25 @@
       }, 64);
     });
 
+    QUnit.test('should use a default `wait` of `0`', function(assert) {
+      assert.expect(2);
+
+      var done = assert.async();
+
+      var pass = false;
+
+      _.delay(function() {
+        pass = true;
+      });
+
+      assert.notOk(pass);
+
+      setTimeout(function() {
+        assert.ok(pass);
+        done();
+      }, 0);
+    });
+
     QUnit.test('should be cancelable', function(assert) {
       assert.expect(1);
 

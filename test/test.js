@@ -191,7 +191,8 @@
   /*--------------------------------------------------------------------------*/
 
   /** Used to test Web Workers. */
-  var Worker = !(ui.isForeign || ui.isSauceLabs || isModularize) && (document && document.origin != 'null') && root.Worker;
+  var Worker = !(ui.isForeign || ui.isSauceLabs || isModularize) &&
+    (document && document.origin != 'null') && root.Worker;
 
   /** Used to test host objects in IE. */
   try {

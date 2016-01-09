@@ -3202,12 +3202,12 @@
      * floating-point numbers.
      *
      * @private
-     * @param {number} min The minimum possible value.
-     * @param {number} max The maximum possible value.
+     * @param {number} lower The lower bound.
+     * @param {number} upper The upper bound.
      * @returns {number} Returns the random number.
      */
-    function baseRandom(min, max) {
-      return min + nativeFloor(nativeRandom() * (max - min + 1));
+    function baseRandom(lower, upper) {
+      return lower + nativeFloor(nativeRandom() * (upper - lower + 1));
     }
 
     /**
@@ -11654,10 +11654,10 @@
     }
 
     /**
-     * Produces a random number between `min` and `max` (inclusive). If only one
-     * argument is provided a number between `0` and the given number is returned.
-     * If `floating` is `true`, or either `min` or `max` are floats, a
-     * floating-point number is returned instead of an integer.
+     * Produces a random number between the inclusive `lower` and `upper` bounds.
+     * If only one argument is provided a number between `0` and the given number
+     * is returned. If `floating` is `true`, or either `lower` or `upper` are floats,
+     * a floating-point number is returned instead of an integer.
      *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
@@ -11665,8 +11665,8 @@
      * @static
      * @memberOf _
      * @category Number
-     * @param {number} [min=0] The minimum possible value.
-     * @param {number} [max=1] The maximum possible value.
+     * @param {number} [lower=0] The lower bound.
+     * @param {number} [upper=1] The upper bound.
      * @param {boolean} [floating] Specify returning a floating-point number.
      * @returns {number} Returns the random number.
      * @example
@@ -11683,43 +11683,43 @@
      * _.random(1.2, 5.2);
      * // => a floating-point number between 1.2 and 5.2
      */
-    function random(min, max, floating) {
-      if (floating && typeof floating != 'boolean' && isIterateeCall(min, max, floating)) {
-        max = floating = undefined;
+    function random(lower, upper, floating) {
+      if (floating && typeof floating != 'boolean' && isIterateeCall(lower, upper, floating)) {
+        upper = floating = undefined;
       }
       if (floating === undefined) {
-        if (typeof max == 'boolean') {
-          floating = max;
-          max = undefined;
+        if (typeof upper == 'boolean') {
+          floating = upper;
+          upper = undefined;
         }
-        else if (typeof min == 'boolean') {
-          floating = min;
-          min = undefined;
+        else if (typeof lower == 'boolean') {
+          floating = lower;
+          lower = undefined;
         }
       }
-      if (min === undefined && max === undefined) {
-        min = 0;
-        max = 1;
+      if (lower === undefined && upper === undefined) {
+        lower = 0;
+        upper = 1;
       }
       else {
-        min = toNumber(min) || 0;
-        if (max === undefined) {
-          max = min;
-          min = 0;
+        lower = toNumber(lower) || 0;
+        if (upper === undefined) {
+          upper = lower;
+          lower = 0;
         } else {
-          max = toNumber(max) || 0;
+          upper = toNumber(upper) || 0;
         }
       }
-      if (min > max) {
-        var temp = min;
-        min = max;
-        max = temp;
+      if (lower > upper) {
+        var temp = lower;
+        lower = upper;
+        upper = temp;
       }
-      if (floating || min % 1 || max % 1) {
+      if (floating || lower % 1 || upper % 1) {
         var rand = nativeRandom();
-        return nativeMin(min + (rand * (max - min + freeParseFloat('1e-' + ((rand + '').length - 1)))), max);
+        return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper);
       }
-      return baseRandom(min, max);
+      return baseRandom(lower, upper);
     }
 
     /*------------------------------------------------------------------------*/

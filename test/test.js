@@ -2096,7 +2096,7 @@
       }
     });
 
-    QUnit.test('should enable chaining of methods that return unwrapped values by default', function(assert) {
+    QUnit.test('should enable chaining for methods that return unwrapped values', function(assert) {
       assert.expect(6);
 
       if (!isNpm) {
@@ -13786,7 +13786,7 @@
       }
     });
 
-    QUnit.test('should use `this` as the default `object` value', function(assert) {
+    QUnit.test('should use a default `object` of `this`', function(assert) {
       assert.expect(3);
 
       var object = lodashStable.create(_);
@@ -16820,7 +16820,7 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should return the specified default value for `undefined` values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the default value for `undefined` values', function(assert) {
       assert.expect(1);
 
       var object = { 'a': {} },
@@ -19651,7 +19651,7 @@
   (function() {
     var string = 'hi-diddly-ho there, neighborino';
 
-    QUnit.test('should truncate to a length of `30` by default', function(assert) {
+    QUnit.test('should use a default `length` of `30`', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(_.truncate(string), 'hi-diddly-ho there, neighbo...');
@@ -19964,7 +19964,7 @@
       assert.ok(pass);
     });
 
-    QUnit.test('_.' + methodName + ' should have a default `wait` of `0`', function(assert) {
+    QUnit.test('_.' + methodName + ' should use a default `wait` of `0`', function(assert) {
       assert.expect(1);
 
       var done = assert.async();

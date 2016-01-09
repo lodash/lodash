@@ -751,7 +751,8 @@
         } catch (e) {
           actual = null;
         }
-        assert.deepEqual(actual, [object, object], 'Object.getOwnPropertySymbols');
+        label = message('_.clone` and `_.cloneDeep', 'Object.getOwnPropertySymbols');
+        assert.deepEqual(actual, [object, object], label);
 
         try {
           var symObject = Object(symbol);
@@ -763,7 +764,8 @@
         } catch (e) {
           actual = null;
         }
-        assert.deepEqual(actual, [{}, false, ''], 'Symbol');
+        label = message('_.clone`, `_.isEqual`, and `_.toString', 'Symbol');
+        assert.deepEqual(actual, [{}, false, ''], label);
 
         try {
           var map = new lodashBizarro.memoize.Cache;

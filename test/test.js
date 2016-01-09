@@ -461,6 +461,7 @@
     setProperty(Object, 'getOwnPropertySymbols', undefined);
 
     setProperty(root, 'Set', noop);
+    setProperty(root, 'Symbol', undefined);
     setProperty(root, 'WeakMap', noop);
 
     // Fake `WinRTError`.
@@ -488,6 +489,11 @@
       setProperty(root, 'Set', Set);
     } else {
       delete root.Set;
+    }
+    if (Symbol) {
+      setProperty(root, 'Symbol', Symbol);
+    } else {
+      delete root.Symbol;
     }
     if (WeakMap) {
       setProperty(root, 'WeakMap', WeakMap);
@@ -700,7 +706,7 @@
     });
 
     QUnit.test('should avoid overwritten native methods', function(assert) {
-      assert.expect(5);
+      assert.expect(6);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -748,6 +754,18 @@
         assert.deepEqual(actual, [object, object], 'Object.getOwnPropertySymbols');
 
         try {
+          var symObject = Object(symbol);
+          actual = [
+            Symbol ? lodashBizarro.clone(symObject) : {},
+            Symbol ? lodashBizarro.isEqual(symObject, Object(symbol)) : false,
+            Symbol ? lodashBizarro.toString(symObject) : ''
+          ];
+        } catch (e) {
+          actual = null;
+        }
+        assert.deepEqual(actual, [{}, false, ''], 'Symbol');
+
+        try {
           var map = new lodashBizarro.memoize.Cache;
           actual = map.set('a', 1).get('a');
         } catch (e) {
@@ -769,7 +787,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipTest(assert, 5);
+        skipTest(assert, 6);
       }
     });
   }());

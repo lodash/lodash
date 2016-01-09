@@ -3669,7 +3669,7 @@
      * @returns {Object} Returns the cloned symbol object.
      */
     function cloneSymbol(symbol) {
-      return Object(symbolValueOf.call(symbol));
+      return _Symbol ? Object(symbolValueOf.call(symbol)) : {};
     }
 
     /**
@@ -4557,7 +4557,7 @@
             equalFunc(convert(object), convert(other), customizer, bitmask | UNORDERED_COMPARE_FLAG);
 
         case symbolTag:
-          return symbolValueOf.call(object) == symbolValueOf.call(other);
+          return !!_Symbol && (symbolValueOf.call(object) == symbolValueOf.call(other));
       }
       return false;
     }
@@ -10347,7 +10347,10 @@
       if (value == null) {
         return '';
       }
-      var result = isSymbol(value) ? symbolToString.call(value) : (value + '');
+      if (isSymbol(value)) {
+        return _Symbol ? symbolToString.call(value) : '';
+      }
+      var result = (value + '');
       return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
     }
 

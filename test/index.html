@@ -112,6 +112,9 @@
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
 
+        setProperty(window, '_Symbol', window.Symbol);
+        setProperty(window, 'Symbol', undefined);
+
         setProperty(window, '_WeakMap', window.WeakMap);
         setProperty(window, 'WeakMap', noop);
 
@@ -148,6 +151,9 @@
         } else {
           setProperty(window, 'Set', undefined);
         }
+        if (_Symbol) {
+          Symbol = _Symbol;
+        }
         if (_WeakMap) {
           WeakMap = _WeakMap;
         } else {
@@ -157,6 +163,7 @@
 
         setProperty(window, '_Map', undefined);
         setProperty(window, '_Set', undefined);
+        setProperty(window, '_Symbol', undefined);
         setProperty(window, '_WeakMap', undefined);
 
         setProperty(window, 'WinRTError', undefined);

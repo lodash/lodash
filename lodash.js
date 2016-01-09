@@ -2598,7 +2598,7 @@
     }
 
     /**
-     * The base implementation of `_.inRange` without support for non-number arguments.
+     * The base implementation of `_.inRange` which doesn't coerce arguments to numbers.
      *
      * @private
      * @param {number} number The number to check.
@@ -3211,8 +3211,8 @@
     }
 
     /**
-     * The base implementation of `_.range` and `_.rangeRight` without support
-     * for non-number arguments.
+     * The base implementation of `_.range` and `_.rangeRight` which doesn't
+     * coerce arguments to numbers.
      *
      * @private
      * @param {number} start The start of the range.

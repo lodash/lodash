@@ -20431,6 +20431,12 @@
       assert.strictEqual(_.toLength(3), 3);
       assert.strictEqual(_.toLength(MAX_ARRAY_LENGTH), MAX_ARRAY_LENGTH);
     });
+
+    QUnit.test('should convert `-0` to `0`', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(1 / _.toLength(-0), Infinity);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

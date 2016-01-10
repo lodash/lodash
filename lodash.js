@@ -430,7 +430,7 @@
 
   /**
    * A specialized version of `_.forEach` for arrays without support for
-   * callback shorthands.
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -451,7 +451,7 @@
 
   /**
    * A specialized version of `_.forEachRight` for arrays without support for
-   * callback shorthands.
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -471,7 +471,7 @@
 
   /**
    * A specialized version of `_.every` for arrays without support for
-   * callback shorthands.
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -492,7 +492,7 @@
 
   /**
    * A specialized version of `_.filter` for arrays without support for
-   * callback shorthands.
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -550,7 +550,7 @@
   }
 
   /**
-   * A specialized version of `_.map` for arrays without support for callback
+   * A specialized version of `_.map` for arrays without support for iteratee
    * shorthands.
    *
    * @private
@@ -590,7 +590,7 @@
 
   /**
    * A specialized version of `_.reduce` for arrays without support for
-   * callback shorthands.
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -614,7 +614,7 @@
 
   /**
    * A specialized version of `_.reduceRight` for arrays without support for
-   * callback shorthands.
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -635,7 +635,7 @@
   }
 
   /**
-   * A specialized version of `_.some` for arrays without support for callback
+   * A specialized version of `_.some` for arrays without support for iteratee
    * shorthands.
    *
    * @private
@@ -686,7 +686,7 @@
 
   /**
    * The base implementation of methods like `_.find` and `_.findKey`, without
-   * support for callback shorthands, which iterates over `collection` using
+   * support for iteratee shorthands, which iterates over `collection` using
    * the provided `eachFunc`.
    *
    * @private
@@ -709,7 +709,7 @@
 
   /**
    * The base implementation of `_.findIndex` and `_.findLastIndex` without
-   * support for callback shorthands.
+   * support for iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to search.
@@ -755,7 +755,7 @@
 
   /**
    * The base implementation of `_.reduce` and `_.reduceRight`, without support
-   * for callback shorthands, which iterates over `collection` using the provided
+   * for iteratee shorthands, which iterates over `collection` using the provided
    * `eachFunc`.
    *
    * @private
@@ -796,7 +796,7 @@
   }
 
   /**
-   * The base implementation of `_.sum` without support for callback shorthands.
+   * The base implementation of `_.sum` without support for iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -818,7 +818,7 @@
   }
 
   /**
-   * The base implementation of `_.times` without support for callback shorthands
+   * The base implementation of `_.times` without support for iteratee shorthands
    * or max array length checks.
    *
    * @private
@@ -2303,7 +2303,7 @@
 
     /**
      * The base implementation of methods like `_.difference` without support for
-     * excluding multiple arrays or callback shorthands.
+     * excluding multiple arrays or iteratee shorthands.
      *
      * @private
      * @param {Array} array The array to inspect.
@@ -2357,7 +2357,7 @@
     }
 
     /**
-     * The base implementation of `_.forEach` without support for callback shorthands.
+     * The base implementation of `_.forEach` without support for iteratee shorthands.
      *
      * @private
      * @param {Array|Object} collection The collection to iterate over.
@@ -2367,7 +2367,7 @@
     var baseEach = createBaseEach(baseForOwn);
 
     /**
-     * The base implementation of `_.forEachRight` without support for callback shorthands.
+     * The base implementation of `_.forEachRight` without support for iteratee shorthands.
      *
      * @private
      * @param {Array|Object} collection The collection to iterate over.
@@ -2377,7 +2377,7 @@
     var baseEachRight = createBaseEach(baseForOwnRight, true);
 
     /**
-     * The base implementation of `_.every` without support for callback shorthands.
+     * The base implementation of `_.every` without support for iteratee shorthands.
      *
      * @private
      * @param {Array|Object} collection The collection to iterate over.
@@ -2422,7 +2422,7 @@
     }
 
     /**
-     * The base implementation of `_.filter` without support for callback shorthands.
+     * The base implementation of `_.filter` without support for iteratee shorthands.
      *
      * @private
      * @param {Array|Object} collection The collection to iterate over.
@@ -2499,7 +2499,7 @@
     var baseForRight = createBaseFor(true);
 
     /**
-     * The base implementation of `_.forIn` without support for callback shorthands.
+     * The base implementation of `_.forIn` without support for iteratee shorthands.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -2511,7 +2511,7 @@
     }
 
     /**
-     * The base implementation of `_.forOwn` without support for callback shorthands.
+     * The base implementation of `_.forOwn` without support for iteratee shorthands.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -2523,7 +2523,7 @@
     }
 
     /**
-     * The base implementation of `_.forOwnRight` without support for callback shorthands.
+     * The base implementation of `_.forOwnRight` without support for iteratee shorthands.
      *
      * @private
      * @param {Object} object The object to iterate over.
@@ -2612,7 +2612,7 @@
 
     /**
      * The base implementation of methods like `_.intersection`, without support
-     * for callback shorthands, that accepts an array of arrays to inspect.
+     * for iteratee shorthands, that accepts an array of arrays to inspect.
      *
      * @private
      * @param {Array} arrays The arrays to inspect.
@@ -2770,7 +2770,7 @@
     }
 
     /**
-     * The base implementation of `_.isMatch` without support for callback shorthands.
+     * The base implementation of `_.isMatch` without support for iteratee shorthands.
      *
      * @private
      * @param {Object} object The object to inspect.
@@ -2881,7 +2881,7 @@
     }
 
     /**
-     * The base implementation of `_.map` without support for callback shorthands.
+     * The base implementation of `_.map` without support for iteratee shorthands.
      *
      * @private
      * @param {Array|Object} collection The collection to iterate over.
@@ -3073,7 +3073,7 @@
     }
 
     /**
-     * The base implementation of  `_.pickBy` without support for callback shorthands.
+     * The base implementation of  `_.pickBy` without support for iteratee shorthands.
      *
      * @private
      * @param {Object} object The source object.
@@ -3129,7 +3129,7 @@
     }
 
     /**
-     * The base implementation of `_.pullAllBy` without support for callback
+     * The base implementation of `_.pullAllBy` without support for iteratee
      * shorthands.
      *
      * @private
@@ -3314,7 +3314,7 @@
     }
 
     /**
-     * The base implementation of `_.some` without support for callback shorthands.
+     * The base implementation of `_.some` without support for iteratee shorthands.
      *
      * @private
      * @param {Array|Object} collection The collection to iterate over.
@@ -3422,7 +3422,7 @@
     }
 
     /**
-     * The base implementation of `_.sortedUniqBy` without support for callback
+     * The base implementation of `_.sortedUniqBy` without support for iteratee
      * shorthands.
      *
      * @private
@@ -3464,7 +3464,7 @@
     }
 
     /**
-     * The base implementation of `_.uniqBy` without support for callback shorthands.
+     * The base implementation of `_.uniqBy` without support for iteratee shorthands.
      *
      * @private
      * @param {Array} array The array to inspect.
@@ -3540,7 +3540,7 @@
 
     /**
      * The base implementation of methods like `_.dropWhile` and `_.takeWhile`
-     * without support for callback shorthands.
+     * without support for iteratee shorthands.
      *
      * @private
      * @param {Array} array The array to query.
@@ -3583,7 +3583,7 @@
 
     /**
      * The base implementation of methods like `_.xor`, without support for
-     * callback shorthands, that accepts an array of arrays to inspect.
+     * iteratee shorthands, that accepts an array of arrays to inspect.
      *
      * @private
      * @param {Array} arrays The arrays to inspect.
@@ -5360,7 +5360,7 @@
      * _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
      * // => [3.1, 1.3]
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
      * // => [{ 'x': 2 }]
      */
@@ -5493,15 +5493,15 @@
      * resolve( _.dropRightWhile(users, function(o) { return !o.active; }) );
      * // => ['barney']
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.dropRightWhile(users, { 'user': 'pebbles', 'active': false }) );
      * // => ['barney', 'fred']
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.dropRightWhile(users, ['active', false]) );
      * // => ['barney']
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.dropRightWhile(users, 'active') );
      * // => ['barney', 'fred', 'pebbles']
      */
@@ -5535,15 +5535,15 @@
      * resolve( _.dropWhile(users, function(o) { return !o.active; }) );
      * // => ['pebbles']
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.dropWhile(users, { 'user': 'barney', 'active': false }) );
      * // => ['fred', 'pebbles']
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.dropWhile(users, ['active', false]) );
      * // => ['pebbles']
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.dropWhile(users, 'active') );
      * // => ['barney', 'fred', 'pebbles']
      */
@@ -5614,15 +5614,15 @@
      * _.findIndex(users, function(o) { return o.user == 'barney'; });
      * // => 0
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * _.findIndex(users, { 'user': 'fred', 'active': false });
      * // => 1
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * _.findIndex(users, ['active', false]);
      * // => 0
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.findIndex(users, 'active');
      * // => 2
      */
@@ -5653,15 +5653,15 @@
      * _.findLastIndex(users, function(o) { return o.user == 'pebbles'; });
      * // => 2
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * _.findLastIndex(users, { 'user': 'barney', 'active': true });
      * // => 0
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * _.findLastIndex(users, ['active', false]);
      * // => 2
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.findLastIndex(users, 'active');
      * // => 0
      */
@@ -5868,7 +5868,7 @@
      * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
      * // => [2.1]
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }]
      */
@@ -6242,7 +6242,7 @@
      * _.sortedIndexBy(['thirty', 'fifty'], 'forty', _.propertyOf(dict));
      * // => 1
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
      * // => 0
      */
@@ -6310,7 +6310,7 @@
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
      * // => 1
      */
@@ -6492,15 +6492,15 @@
      * resolve( _.takeRightWhile(users, function(o) { return !o.active; }) );
      * // => ['fred', 'pebbles']
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.takeRightWhile(users, { 'user': 'pebbles', 'active': false }) );
      * // => ['pebbles']
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.takeRightWhile(users, ['active', false]) );
      * // => ['fred', 'pebbles']
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.takeRightWhile(users, 'active') );
      * // => []
      */
@@ -6534,15 +6534,15 @@
      * resolve( _.takeWhile(users, function(o) { return !o.active; }) );
      * // => ['barney', 'fred']
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.takeWhile(users, { 'user': 'barney', 'active': false }) );
      * // => ['barney']
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.takeWhile(users, ['active', false]) );
      * // => ['barney', 'fred']
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.takeWhile(users, 'active') );
      * // => []
      */
@@ -6587,7 +6587,7 @@
      * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
      * // => [2.1, 1.2, 4.3]
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
@@ -6664,7 +6664,7 @@
      * _.uniqBy([2.1, 1.2, 2.3], Math.floor);
      * // => [2.1, 1.2]
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
@@ -6821,7 +6821,7 @@
      * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
      * // => [1.2, 4.3]
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 2 }]
      */
@@ -7329,15 +7329,15 @@
      *   { 'user': 'fred',   'active': false }
      * ];
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * _.every(users, { 'user': 'barney', 'active': false });
      * // => false
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * _.every(users, ['active', false]);
      * // => true
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.every(users, 'active');
      * // => false
      */
@@ -7372,15 +7372,15 @@
      * resolve( _.filter(users, function(o) { return !o.active; }) );
      * // => ['fred']
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.filter(users, { 'age': 36, 'active': true }) );
      * // => ['barney']
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.filter(users, ['active', false]) );
      * // => ['fred']
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.filter(users, 'active') );
      * // => ['barney']
      */
@@ -7413,15 +7413,15 @@
      * resolve( _.find(users, function(o) { return o.age < 40; }) );
      * // => 'barney'
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.find(users, { 'age': 1, 'active': true }) );
      * // => 'pebbles'
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.find(users, ['active', false]) );
      * // => 'fred'
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.find(users, 'active') );
      * // => 'barney'
      */
@@ -7535,7 +7535,7 @@
      * _.groupBy([6.1, 4.2, 6.3], Math.floor);
      * // => { '4': [4.2], '6': [6.1, 6.3] }
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.groupBy(['one', 'two', 'three'], 'length');
      * // => { '3': ['one', 'two'], '5': ['three'] }
      */
@@ -7691,7 +7691,7 @@
      *   { 'user': 'fred' }
      * ];
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.map(users, 'user');
      * // => ['barney', 'fred']
      */
@@ -7770,15 +7770,15 @@
      * resolve( _.partition(users, function(o) { return o.active; }) );
      * // => [['fred'], ['barney', 'pebbles']]
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.partition(users, { 'age': 1, 'active': false }) );
      * // => [['pebbles'], ['barney', 'fred']]
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.partition(users, ['active', false]) );
      * // => [['barney', 'pebbles'], ['fred']]
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.partition(users, 'active') );
      * // => [['fred'], ['barney', 'pebbles']]
      */
@@ -7877,15 +7877,15 @@
      * resolve( _.reject(users, function(o) { return !o.active; }) );
      * // => ['fred']
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * resolve( _.reject(users, { 'age': 40, 'active': true }) );
      * // => ['barney']
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * resolve( _.reject(users, ['active', false]) );
      * // => ['fred']
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * resolve( _.reject(users, 'active') );
      * // => ['barney']
      */
@@ -8020,15 +8020,15 @@
      *   { 'user': 'fred',   'active': false }
      * ];
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * _.some(users, { 'user': 'barney', 'active': false });
      * // => false
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * _.some(users, ['active', false]);
      * // => true
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.some(users, 'active');
      * // => true
      */
@@ -10613,15 +10613,15 @@
      * _.findKey(users, function(o) { return o.age < 40; });
      * // => 'barney' (iteration order is not guaranteed)
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * _.findKey(users, { 'age': 1, 'active': true });
      * // => 'pebbles'
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * _.findKey(users, ['active', false]);
      * // => 'fred'
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.findKey(users, 'active');
      * // => 'barney'
      */
@@ -10650,15 +10650,15 @@
      * _.findLastKey(users, function(o) { return o.age < 40; });
      * // => returns 'pebbles' assuming `_.findKey` returns 'barney'
      *
-     * // using the `_.matches` callback shorthand
+     * // using the `_.matches` iteratee shorthand
      * _.findLastKey(users, { 'age': 36, 'active': true });
      * // => 'barney'
      *
-     * // using the `_.matchesProperty` callback shorthand
+     * // using the `_.matchesProperty` iteratee shorthand
      * _.findLastKey(users, ['active', false]);
      * // => 'fred'
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
@@ -11117,7 +11117,7 @@
      * _.mapValues(users, function(o) { return o.age; });
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
@@ -11216,10 +11216,10 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'user': 'fred', 'age': 40 };
+     * var object = { 'a': 1, 'b': 2, 'c': 3 };
      *
-     * _.omit(object, 'user');
-     * // => { 'age': 40 }
+     * _.omit(object, ['a', 'c']);
+     * // => { 'b': 2 }
      */
     var omit = rest(function(object, props) {
       if (object == null) {
@@ -11242,10 +11242,10 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'user': 'fred', 'age': 40 };
+     * var object = { 'a': 1, 'b': '2' };
      *
      * _.omitBy(object, _.isNumber);
-     * // => { 'user': 'fred' }
+     * // => { 'b': '2' }
      */
     function omitBy(object, predicate) {
       predicate = getIteratee(predicate);
@@ -11266,10 +11266,10 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'user': 'fred', 'age': 40 };
+     * var object = { 'a': 1, 'b': 2, 'c': 3 };
      *
-     * _.pick(object, 'user');
-     * // => { 'user': 'fred' }
+     * _.pick(object, ['a', 'c']);
+     * // => { 'a': 1, 'c': 3 }
      */
     var pick = rest(function(object, props) {
       return object == null ? {} : basePick(object, baseFlatten(props));
@@ -11287,10 +11287,10 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'user': 'fred', 'age': 40 };
+     * var object = { 'a': 1, 'b': '2' };
      *
      * _.pickBy(object, _.isNumber);
-     * // => { 'age': 40 }
+     * // => { 'a': 1 }
      */
     function pickBy(object, predicate) {
       return object == null ? {} : basePickBy(object, getIteratee(predicate));
@@ -13011,7 +13011,7 @@
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * // wrap to create custom callback shorthands
+     * // wrap to create custom iteratee shorthands
      * _.iteratee = _.wrap(_.iteratee, function(callback, func, thisArg) {
      *   var match = /^(.+?)__([gl]t)(.+)$/.exec(func);
      *   if (!match) {
@@ -13668,7 +13668,7 @@
      * _.maxBy(users, function(o) { return o.age; });
      * // => { 'user': 'fred', 'age': 40 }
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.maxBy(users, 'age');
      * // => { 'user': 'fred', 'age': 40 }
      */
@@ -13739,7 +13739,7 @@
      * _.minBy(users, function(o) { return o.age; });
      * // => { 'user': 'barney', 'age': 36 }
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.minBy(users, 'age');
      * // => { 'user': 'barney', 'age': 36 }
      */
@@ -13833,7 +13833,7 @@
      * _.sumBy(objects, function(o) { return o.n; });
      * // => 20
      *
-     * // using the `_.property` callback shorthand
+     * // using the `_.property` iteratee shorthand
      * _.sumBy(objects, 'n');
      * // => 20
      */

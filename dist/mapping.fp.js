@@ -59,8 +59,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /** Used to map method names to their aliases. */
 	  'aliasMap': {
 	    'ary': ['nAry'],
-	    'conj': ['allPass'],
-	    'disj': ['somePass'],
+	    'overEvery': ['allPass'],
+	    'overSome': ['somePass'],
 	    'filter': ['whereEq'],
 	    'flatten': ['unnest'],
 	    'flow': ['pipe'],
@@ -75,8 +75,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'isEqual': ['equals'],
 	    'mapValues': ['mapObj'],
 	    'matchesProperty': ['pathEq'],
-	    'modArgs': ['useWith'],
-	    'modArgsSet': ['converge'],
+	    'overArgs': ['useWith'],
 	    'omit': ['dissoc', 'omitAll'],
 	    'pick': ['pickAll'],
 	    'property': ['prop'],
@@ -130,28 +129,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /** Used to map ary to method names. */
 	  'aryMethodMap': {
 	    1: (
-	      'attempt,ceil,create,curry,floor,fromPairs,iteratee,invert,over,overEvery,' +
-	      'overSome,memoize,method,methodOf,mixin,rest,reverse,round,runInContext,template,' +
-	      'trim,trimLeft,trimRight,uniqueId,words').split(','),
+	      'attempt,ceil,create,curry,curryRight,floor,fromPairs,iteratee,invert,over,' +
+	      'overEvery,overSome,memoize,method,methodOf,mixin,rest,reverse,round,' +
+	      'runInContext,template,trim,trimLeft,trimRight,uniqueId,words').split(','),
 	    2: (
 	      'add,ary,assign,at,bind,bindKey,cloneDeepWith,cloneWith,concat,countBy,curryN,' +
-	      'debounce,defaults,defaultsDeep,delay,difference,drop,dropRight,dropRightWhile,' +
-	      'dropWhile,endsWith,every,extend,filter,find,find,findIndex,findKey,findLast,' +
-	      'findLastIndex,findLastKey,flatMap,forEach,forEachRight,forIn,forInRight,' +
-	      'forOwn,forOwnRight,get,groupBy,includes,indexBy,indexOf,intersection,' +
-	      'invoke,invokeMap,isMatch,lastIndexOf,map,mapKeys,mapValues,matchesProperty,' +
-	      'maxBy,mean,minBy,merge,modArgs,modArgsSet,omit,pad,padLeft,padRight,parseInt,' +
-	      'partition,pick,pull,pullAll,pullAt,random,range,rangeRight,rearg,reject,' +
-	      'remove,repeat,result,sampleSize,set,some,sortBy,sortByOrder,sortedIndexBy,' +
+	      'curryRightN,debounce,defaults,defaultsDeep,delay,difference,drop,dropRight,' +
+	      'dropRightWhile,dropWhile,endsWith,eq,every,extend,filter,find,find,findIndex,' +
+	      'findKey,findLast,findLastIndex,findLastKey,flatMap,forEach,forEachRight,' +
+	      'forIn,forInRight,forOwn,forOwnRight,get,groupBy,includes,indexBy,indexOf,' +
+	      'intersection,invoke,invokeMap,isMatch,lastIndexOf,map,mapKeys,mapValues,' +
+	      'matchesProperty,maxBy,mean,minBy,merge,omit,orderBy,overArgs,pad,padLeft,' +
+	      'padRight,parseInt,partition,pick,pull,pullAll,pullAt,random,range,rangeRight,' +
+	      'rearg,reject,remove,repeat,result,sampleSize,some,sortBy,sortedIndexBy,' +
 	      'sortedLastIndexBy,sortedUniqBy,startsWith,subtract,sumBy,take,takeRight,' +
 	      'takeRightWhile,takeWhile,throttle,times,truncate,union,uniqBy,without,wrap,' +
 	      'xor,zip,zipObject').split(','),
 	    3: (
 	      'assignWith,clamp,differenceBy,extendWith,getOr,inRange,intersectionBy,' +
 	      'isEqualWith,isMatchWith,mergeWith,omitBy,pickBy,pullAllBy,reduce,' +
-	      'reduceRight,slice,transform,unionBy,xorBy,zipWith').split(','),
+	      'reduceRight,set,slice,transform,unionBy,xorBy,zipWith').split(','),
 	    4:
-	      ['fill']
+	      ['fill', 'setWith']
 	  },
 
 	  /** Used to map ary to rearg configs by method ary. */
@@ -166,6 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'clamp': [2, 0, 1],
 	    'reduce': [2, 0, 1],
 	    'reduceRight': [2, 0, 1],
+	    'setWith': [3, 2, 1, 0],
 	    'slice': [2, 0, 1],
 	    'transform': [2, 0, 1]
 	  },
@@ -200,6 +200,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'extendWith': true,
 	      'merge': true,
 	      'mergeWith': true
+	    },
+	    'set': {
+	      'set': true,
+	      'setWith': true
 	    }
 	  },
 

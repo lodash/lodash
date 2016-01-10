@@ -62,11 +62,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Function} lodash The lodash function.
 	 * @returns {Function} Returns the converted lodash function.
 	 */
-	function bowerConvert(lodash) {
+	function browserConvert(lodash) {
 	  return baseConvert(lodash, lodash);
 	}
 
-	module.exports = bowerConvert;
+	module.exports = browserConvert;
 
 
 /***/ },
@@ -97,6 +97,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var _ = isLib ? func : {
 	    'ary': util.ary,
+	    'cloneDeep': util.cloneDeep,
 	    'curry': util.curry,
 	    'forEach': util.forEach,
 	    'isFunction': util.isFunction,
@@ -106,6 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  var ary = _.ary,
+	      cloneDeep = _.cloneDeep,
 	      curry = _.curry,
 	      each = _.forEach,
 	      isFunction = _.isFunction,
@@ -129,43 +131,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  };
 
-	  var immutArrayWrap = function(func) {
-	    return function() {
-	      var index = -1,
-	          length = arguments.length,
-	          args = Array(length);
+	  var cloneArray = function(array) {
+	    var length = array ? array.length : 0,
+	        result = Array(length);
 
-	      while (length--) {
-	        args[length] = arguments[length];
-	      }
-	      var array = args[0];
-	      length = array ? array.length : 0;
+	    while (length--) {
+	      result[length] = array[length];
+	    }
+	    return result;
+	  };
 
-	      args[0] = Array(length);
-	      while (++index < length) {
-	        args[0][index] = array[index];
-	      }
-	      func.apply(undefined, args);
-	      return args[0];
+	  var createCloner = function(func) {
+	    return function(object) {
+	      return func({}, object);
 	    };
 	  };
 
-	  var immutObjectWrap = function(func) {
-	    return function() {
-	      var index = -1,
-	          length = arguments.length,
-	          args = Array(length);
-
-	      while (++index < length) {
-	        args[index] = arguments[index];
-	      }
-	      args[0] = func({}, args[0]);
-	      func.apply(undefined, args);
-	      return args[0];
-	    };
+	  var immutWrap = function(func, cloner) {
+	    return overArg(func, cloner, true);
 	  };
 
 	  var iterateeAry = function(func, n) {
+	    return overArg(func, function(func) {
+	      return baseAry(func, n);
+	    });
+	  };
+
+	  var overArg = function(func, iteratee, retArg) {
 	    return function() {
 	      var length = arguments.length,
 	          args = Array(length);
@@ -173,8 +165,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      while (length--) {
 	        args[length] = arguments[length];
 	      }
-	      args[0] = baseAry(args[0], n);
-	      return func.apply(undefined, args);
+	      args[0] = iteratee(args[0]);
+	      var result = func.apply(undefined, args);
+	      return retArg ? args[0] : result;
 	    };
 	  };
 
@@ -184,7 +177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        arity = arity > 2 ? (arity - 2) : 1;
 	        func = iteratee(func);
 	        var length = func.length;
-	        return length <= arity ? func : baseAry(func, arity);
+	        return (length && length <= arity) ? func : baseAry(func, arity);
 	      };
 	    },
 	    'mixin': function(mixin) {
@@ -230,10 +223,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return wrapper(func);
 	    }
 	    if (mutateMap.array[name]) {
-	      func = immutArrayWrap(func);
+	      func = immutWrap(func, cloneArray);
 	    }
 	    else if (mutateMap.object[name]) {
-	      func = immutObjectWrap(func);
+	      func = immutWrap(func, createCloner(func));
+	    }
+	    else if (mutateMap.set[name]) {
+	      func = immutWrap(func, cloneDeep);
 	    }
 	    var result;
 	    each(mapping.caps, function(cap) {
@@ -299,8 +295,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /** Used to map method names to their aliases. */
 	  'aliasMap': {
 	    'ary': ['nAry'],
-	    'conj': ['allPass'],
-	    'disj': ['somePass'],
+	    'overEvery': ['allPass'],
+	    'overSome': ['somePass'],
 	    'filter': ['whereEq'],
 	    'flatten': ['unnest'],
 	    'flow': ['pipe'],
@@ -315,8 +311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'isEqual': ['equals'],
 	    'mapValues': ['mapObj'],
 	    'matchesProperty': ['pathEq'],
-	    'modArgs': ['useWith'],
-	    'modArgsSet': ['converge'],
+	    'overArgs': ['useWith'],
 	    'omit': ['dissoc', 'omitAll'],
 	    'pick': ['pickAll'],
 	    'property': ['prop'],
@@ -370,28 +365,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /** Used to map ary to method names. */
 	  'aryMethodMap': {
 	    1: (
-	      'attempt,ceil,create,curry,floor,fromPairs,iteratee,invert,over,overEvery,' +
-	      'overSome,memoize,method,methodOf,mixin,rest,reverse,round,runInContext,template,' +
-	      'trim,trimLeft,trimRight,uniqueId,words').split(','),
+	      'attempt,ceil,create,curry,curryRight,floor,fromPairs,iteratee,invert,over,' +
+	      'overEvery,overSome,memoize,method,methodOf,mixin,rest,reverse,round,' +
+	      'runInContext,template,trim,trimLeft,trimRight,uniqueId,words').split(','),
 	    2: (
 	      'add,ary,assign,at,bind,bindKey,cloneDeepWith,cloneWith,concat,countBy,curryN,' +
-	      'debounce,defaults,defaultsDeep,delay,difference,drop,dropRight,dropRightWhile,' +
-	      'dropWhile,endsWith,every,extend,filter,find,find,findIndex,findKey,findLast,' +
-	      'findLastIndex,findLastKey,flatMap,forEach,forEachRight,forIn,forInRight,' +
-	      'forOwn,forOwnRight,get,groupBy,includes,indexBy,indexOf,intersection,' +
-	      'invoke,invokeMap,isMatch,lastIndexOf,map,mapKeys,mapValues,matchesProperty,' +
-	      'maxBy,mean,minBy,merge,modArgs,modArgsSet,omit,pad,padLeft,padRight,parseInt,' +
-	      'partition,pick,pull,pullAll,pullAt,random,range,rangeRight,rearg,reject,' +
-	      'remove,repeat,result,sampleSize,set,some,sortBy,sortByOrder,sortedIndexBy,' +
+	      'curryRightN,debounce,defaults,defaultsDeep,delay,difference,drop,dropRight,' +
+	      'dropRightWhile,dropWhile,endsWith,eq,every,extend,filter,find,find,findIndex,' +
+	      'findKey,findLast,findLastIndex,findLastKey,flatMap,forEach,forEachRight,' +
+	      'forIn,forInRight,forOwn,forOwnRight,get,groupBy,includes,indexBy,indexOf,' +
+	      'intersection,invoke,invokeMap,isMatch,lastIndexOf,map,mapKeys,mapValues,' +
+	      'matchesProperty,maxBy,mean,minBy,merge,omit,orderBy,overArgs,pad,padLeft,' +
+	      'padRight,parseInt,partition,pick,pull,pullAll,pullAt,random,range,rangeRight,' +
+	      'rearg,reject,remove,repeat,result,sampleSize,some,sortBy,sortedIndexBy,' +
 	      'sortedLastIndexBy,sortedUniqBy,startsWith,subtract,sumBy,take,takeRight,' +
 	      'takeRightWhile,takeWhile,throttle,times,truncate,union,uniqBy,without,wrap,' +
 	      'xor,zip,zipObject').split(','),
 	    3: (
 	      'assignWith,clamp,differenceBy,extendWith,getOr,inRange,intersectionBy,' +
 	      'isEqualWith,isMatchWith,mergeWith,omitBy,pickBy,pullAllBy,reduce,' +
-	      'reduceRight,slice,transform,unionBy,xorBy,zipWith').split(','),
+	      'reduceRight,set,slice,transform,unionBy,xorBy,zipWith').split(','),
 	    4:
-	      ['fill']
+	      ['fill', 'setWith']
 	  },
 
 	  /** Used to map ary to rearg configs by method ary. */
@@ -406,6 +401,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'clamp': [2, 0, 1],
 	    'reduce': [2, 0, 1],
 	    'reduceRight': [2, 0, 1],
+	    'setWith': [3, 2, 1, 0],
 	    'slice': [2, 0, 1],
 	    'transform': [2, 0, 1]
 	  },
@@ -440,6 +436,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'extendWith': true,
 	      'merge': true,
 	      'mergeWith': true
+	    },
+	    'set': {
+	      'set': true,
+	      'setWith': true
 	    }
 	  },
 

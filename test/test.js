@@ -17995,7 +17995,7 @@
     QUnit.test('should work with "_.property" style `iteratee` and context', function(assert) {
       assert.expect(1);
 
-      var actual = lodashStable.map(_.sortBy(objects.concat(undefined), 'b', null), 'b');
+      var actual = lodashStable.map(_.sortBy(objects.concat(undefined), 'b', {}), 'b');
       assert.deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
 

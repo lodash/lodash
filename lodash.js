@@ -6734,9 +6734,8 @@
 
     /**
      * This method is like `_.unzip` except that it accepts `iteratee` to specify
-     * how regrouped values should be combined. The iteratee is invoked with four
-     * arguments: (accumulator, value, index, group). The first element of each
-     * group is used as the initial `accumulator` value.
+     * how regrouped values should be combined. The iteratee is invoked with the
+     * elements of each group: (...group).
      *
      * @static
      * @memberOf _
@@ -6906,9 +6905,8 @@
 
     /**
      * This method is like `_.zip` except that it accepts `iteratee` to specify
-     * how grouped values should be combined. The iteratee is invoked with four
-     * arguments: (accumulator, value, index, group). The first element of each
-     * group is used as the initial `accumulator` value.
+     * how grouped values should be combined. The iteratee is invoked with the
+     * elements of each group: (...group).
      *
      * @static
      * @memberOf _

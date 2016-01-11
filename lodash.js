@@ -3293,11 +3293,10 @@
       var index = -1,
           length = array.length;
 
-      start = start == null ? 0 : toInteger(start);
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (end === undefined || end > length) ? length : toInteger(end);
+      end = end > length ? length : end;
       if (end < 0) {
         end += length;
       }
@@ -5426,11 +5425,12 @@
      * // => [1, 2, 3]
      */
     function drop(array, n, guard) {
-      if (!(array && array.length)) {
+      var length = array ? array.length : 0;
+      if (!length) {
         return [];
       }
-      n = (guard || n === undefined) ? 1 : n;
-      return baseSlice(array, n < 0 ? 0 : n);
+      n = (guard || n === undefined) ? 1 : toInteger(n);
+      return baseSlice(array, n < 0 ? 0 : n, length);
     }
 
     /**
@@ -6196,6 +6196,10 @@
         start = 0;
         end = length;
       }
+      else {
+        start = start == null ? 0 : toInteger(start);
+        end = end === undefined ? length : toInteger(end);
+      }
       return baseSlice(array, start, end);
     }
 
@@ -6428,7 +6432,7 @@
       if (!(array && array.length)) {
         return [];
       }
-      n = (guard || n === undefined) ? 1 : n;
+      n = (guard || n === undefined) ? 1 : toInteger(n);
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -6463,7 +6467,7 @@
       }
       n = (guard || n === undefined) ? 1 : toInteger(n);
       n = length - n;
-      return baseSlice(array, n < 0 ? 0 : n);
+      return baseSlice(array, n < 0 ? 0 : n, length);
     }
 
     /**

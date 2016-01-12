@@ -11195,10 +11195,10 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'a': 1, 'b': 2, 'c': 3 };
+     * var object = { 'a': 1, 'b': '2', 'c': 3 };
      *
      * _.omit(object, ['a', 'c']);
-     * // => { 'b': 2 }
+     * // => { 'b': '2' }
      */
     var omit = rest(function(object, props) {
       if (object == null) {
@@ -11221,7 +11221,7 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'a': 1, 'b': '2' };
+     * var object = { 'a': 1, 'b': '2', 'c': 3 };
      *
      * _.omitBy(object, _.isNumber);
      * // => { 'b': '2' }
@@ -11245,7 +11245,7 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'a': 1, 'b': 2, 'c': 3 };
+     * var object = { 'a': 1, 'b': '2', 'c': 3 };
      *
      * _.pick(object, ['a', 'c']);
      * // => { 'a': 1, 'c': 3 }
@@ -11266,10 +11266,10 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * var object = { 'a': 1, 'b': '2' };
+     * var object = { 'a': 1, 'b': '2', 'c': 3 };
      *
      * _.pickBy(object, _.isNumber);
-     * // => { 'a': 1 }
+     * // => { 'a': 1, 'c': 3 }
      */
     function pickBy(object, predicate) {
       return object == null ? {} : basePickBy(object, getIteratee(predicate));

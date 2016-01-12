@@ -9059,13 +9059,10 @@
      * @returns {*} Returns the cloned value.
      * @example
      *
-     * var users = [
-     *   { 'user': 'barney' },
-     *   { 'user': 'fred' }
-     * ];
+     * var objects = [{ 'a': 1 }, { 'b': 2 }];
      *
-     * var shallow = _.clone(users);
-     * console.log(shallow[0] === users[0]);
+     * var shallow = _.clone(objects);
+     * console.log(shallow[0] === objects[0]);
      * // => true
      */
     function clone(value) {
@@ -9097,7 +9094,7 @@
      * console.log(el === document.body);
      * // => false
      * console.log(el.nodeName);
-     * // => BODY
+     * // => 'BODY'
      * console.log(el.childNodes.length);
      * // => 0
      */
@@ -9115,13 +9112,10 @@
      * @returns {*} Returns the deep cloned value.
      * @example
      *
-     * var users = [
-     *   { 'user': 'barney' },
-     *   { 'user': 'fred' }
-     * ];
+     * var objects = [{ 'a': 1 }, { 'b': 2 }];
      *
-     * var deep = _.cloneDeep(users);
-     * console.log(deep[0] === users[0]);
+     * var deep = _.cloneDeep(objects);
+     * console.log(deep[0] === objects[0]);
      * // => false
      */
     function cloneDeep(value) {
@@ -9150,7 +9144,7 @@
      * console.log(el === document.body);
      * // => false
      * console.log(el.nodeName);
-     * // => BODY
+     * // => 'BODY'
      * console.log(el.childNodes.length);
      * // => 20
      */

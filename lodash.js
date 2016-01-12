@@ -1206,7 +1206,7 @@
    *
    * @static
    * @memberOf _
-   * @category Utility
+   * @category Util
    * @param {Object} [context=root] The context object.
    * @returns {Function} Returns a new `lodash` function.
    * @example
@@ -1411,7 +1411,7 @@
      *
      * @name _
      * @constructor
-     * @category Chain
+     * @category Seq
      * @param {*} value The value to wrap in a `lodash` instance.
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -6931,7 +6931,7 @@
      *
      * @static
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @param {*} value The value to wrap.
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -6966,7 +6966,7 @@
      *
      * @static
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @param {*} value The value to provide to `interceptor`.
      * @param {Function} interceptor The function to invoke.
      * @returns {*} Returns `value`.
@@ -6990,7 +6990,7 @@
      *
      * @static
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @param {*} value The value to provide to `interceptor`.
      * @param {Function} interceptor The function to invoke.
      * @returns {*} Returns the result of `interceptor`.
@@ -7014,7 +7014,7 @@
      *
      * @name at
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @param {...(string|string[])} [paths] The property paths of elements to pick,
      *  specified individually or in arrays.
      * @returns {Object} Returns the new `lodash` wrapper instance.
@@ -7053,7 +7053,7 @@
      *
      * @name chain
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *
@@ -7083,7 +7083,7 @@
      *
      * @name commit
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *
@@ -7112,7 +7112,7 @@
      *
      * @static
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -7134,7 +7134,7 @@
      *
      * @name next
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @returns {Object} Returns the next iterator value.
      * @example
      *
@@ -7164,7 +7164,7 @@
      *
      * @name Symbol.iterator
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @returns {Object} Returns the wrapper object.
      * @example
      *
@@ -7185,7 +7185,7 @@
      *
      * @name plant
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @param {*} value The value to plant.
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -7230,7 +7230,7 @@
      *
      * @name reverse
      * @memberOf _
-     * @category Chain
+     * @category Seq
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
      *
@@ -7262,7 +7262,7 @@
      * @name value
      * @memberOf _
      * @alias run, toJSON, valueOf
-     * @category Chain
+     * @category Seq
      * @returns {*} Returns the resolved unwrapped value.
      * @example
      *
@@ -12759,7 +12759,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Function} func The function to attempt.
      * @returns {*} Returns the `func` result or error object.
      * @example
@@ -12789,7 +12789,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Object} object The object to bind and assign the bound methods to.
      * @param {...(string|string[])} methodNames The object method names to bind,
      *  specified individually or in arrays.
@@ -12822,7 +12822,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Array} pairs The predicate-function pairs.
      * @returns {Function} Returns the new function.
      * @example
@@ -12871,7 +12871,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Object} source The object of property predicates to conform to.
      * @returns {Function} Returns the new function.
      * @example
@@ -12893,7 +12893,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {*} value The value to return from the new function.
      * @returns {Function} Returns the new function.
      * @example
@@ -12917,7 +12917,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {...(Function|Function[])} [funcs] Functions to invoke.
      * @returns {Function} Returns the new function.
      * @example
@@ -12938,7 +12938,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {...(Function|Function[])} [funcs] Functions to invoke.
      * @returns {Function} Returns the new function.
      * @example
@@ -12958,7 +12958,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {*} value Any value.
      * @returns {*} Returns `value`.
      * @example
@@ -12980,7 +12980,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {*} [func=_.identity] The value to convert to a callback.
      * @returns {Function} Returns the callback.
      * @example
@@ -13016,7 +13016,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Object} source The object of property values to match.
      * @returns {Function} Returns the new function.
      * @example
@@ -13042,7 +13042,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Array|string} path The path of the property to get.
      * @param {*} srcValue The value to match.
      * @returns {Function} Returns the new function.
@@ -13066,7 +13066,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Array|string} path The path of the method to invoke.
      * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Function} Returns the new function.
@@ -13096,7 +13096,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Object} object The object to query.
      * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Function} Returns the new function.
@@ -13127,7 +13127,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Function|Object} [object=lodash] The destination object.
      * @param {Object} source The object of functions to add.
      * @param {Object} [options] The options object.
@@ -13195,7 +13195,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @returns {Function} Returns the `lodash` function.
      * @example
      *
@@ -13212,7 +13212,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @example
      *
      * var object = { 'user': 'fred' };
@@ -13229,7 +13229,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {number} [n=0] The index of the argument to return.
      * @returns {Function} Returns the new function.
      * @example
@@ -13252,7 +13252,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {...(Function|Function[])} iteratees The iteratees to invoke.
      * @returns {Function} Returns the new function.
      * @example
@@ -13270,7 +13270,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {...(Function|Function[])} predicates The predicates to check.
      * @returns {Function} Returns the new function.
      * @example
@@ -13294,7 +13294,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {...(Function|Function[])} predicates The predicates to check.
      * @returns {Function} Returns the new function.
      * @example
@@ -13317,7 +13317,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Array|string} path The path of the property to get.
      * @returns {Function} Returns the new function.
      * @example
@@ -13343,7 +13343,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {Object} object The object to query.
      * @returns {Function} Returns the new function.
      * @example
@@ -13375,7 +13375,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
      * @param {number} [step=1] The value to increment or decrement by.
@@ -13411,7 +13411,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
      * @param {number} [step=1] The value to increment or decrement by.
@@ -13447,7 +13447,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {number} n The number of times to invoke `iteratee`.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array} Returns the array of results.
@@ -13482,7 +13482,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {*} value The value to convert.
      * @returns {Array} Returns the new property path array.
      * @example
@@ -13511,7 +13511,7 @@
      *
      * @static
      * @memberOf _
-     * @category Utility
+     * @category Util
      * @param {string} [prefix] The value to prefix the ID with.
      * @returns {string} Returns the unique ID.
      * @example

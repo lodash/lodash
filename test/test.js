@@ -22816,16 +22816,15 @@
     });
 
     QUnit.test('should be aliased', function(assert) {
-      assert.expect(3);
+      assert.expect(2);
 
       if (!isNpm) {
         var expected = _.prototype.value;
-        assert.strictEqual(_.prototype.run, expected);
         assert.strictEqual(_.prototype.toJSON, expected);
         assert.strictEqual(_.prototype.valueOf, expected);
       }
       else {
-        skipTest(assert, 3);
+        skipTest(assert, 2);
       }
     });
   }());

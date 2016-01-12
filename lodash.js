@@ -12990,20 +12990,15 @@
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * // wrap to create custom iteratee shorthands
-     * _.iteratee = _.wrap(_.iteratee, function(callback, func, thisArg) {
-     *   var match = /^(.+?)__([gl]t)(.+)$/.exec(func);
-     *   if (!match) {
-     *     return callback(func, thisArg);
-     *   }
-     *   return function(object) {
-     *     return match[2] == 'gt'
-     *       ? object[match[1]] > match[3]
-     *       : object[match[1]] < match[3];
+     * // create custom iteratee shorthands
+     * _.iteratee = _.wrap(_.iteratee, function(callback, func) {
+     *   var p = /^(\S+)\s*([<>])\s*(\S+)$/.exec(func);
+     *   return !p ? callback(func) : function(object) {
+     *     return (p[2] == '>' ? object[p[1]] > p[3] : object[p[1]] < p[3]);
      *   };
      * });
      *
-     * _.filter(users, 'age__gt36');
+     * _.filter(users, 'age > 36');
      * // => [{ 'user': 'fred', 'age': 40 }]
      */
     function iteratee(func) {

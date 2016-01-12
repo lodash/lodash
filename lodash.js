@@ -13634,17 +13634,14 @@
      * @returns {*} Returns the maximum value.
      * @example
      *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
+     * var objects = [{ 'n': 1 }, { 'n': 2 }];
      *
-     * _.maxBy(users, function(o) { return o.age; });
-     * // => { 'user': 'fred', 'age': 40 }
+     * _.maxBy(objects, function(o) { return o.a; });
+     * // => { 'n': 2 }
      *
      * // using the `_.property` iteratee shorthand
-     * _.maxBy(users, 'age');
-     * // => { 'user': 'fred', 'age': 40 }
+     * _.maxBy(objects, 'n');
+     * // => { 'n': 2 }
      */
     function maxBy(array, iteratee) {
       return (array && array.length)
@@ -13705,17 +13702,14 @@
      * @returns {*} Returns the minimum value.
      * @example
      *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
+     * var objects = [{ 'n': 1 }, { 'n': 2 }];
      *
-     * _.minBy(users, function(o) { return o.age; });
-     * // => { 'user': 'barney', 'age': 36 }
+     * _.minBy(objects, function(o) { return o.a; });
+     * // => { 'n': 1 }
      *
      * // using the `_.property` iteratee shorthand
-     * _.minBy(users, 'age');
-     * // => { 'user': 'barney', 'age': 36 }
+     * _.minBy(objects, 'n');
+     * // => { 'n': 1 }
      */
     function minBy(array, iteratee) {
       return (array && array.length)

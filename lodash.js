@@ -10113,10 +10113,17 @@
      * @returns {Array} Returns the converted array.
      * @example
      *
-     * (function() {
-     *   return _.toArray(arguments).slice(1);
-     * }(1, 2, 3));
-     * // => [2, 3]
+     * _.toArray({ 'a': 1, 'b': 2 });
+     * // => [1, 2]
+     *
+     * _.toArray('abc');
+     * // => ['a', 'b', 'c']
+     *
+     * _.toArray(1);
+     * // => []
+     *
+     * _.toArray(null);
+     * // => []
      */
     function toArray(value) {
       if (!value) {

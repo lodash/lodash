@@ -13634,7 +13634,7 @@
      *
      * var objects = [{ 'n': 1 }, { 'n': 2 }];
      *
-     * _.maxBy(objects, function(o) { return o.a; });
+     * _.maxBy(objects, function(o) { return o.n; });
      * // => { 'n': 2 }
      *
      * // using the `_.property` iteratee shorthand
@@ -13702,7 +13702,7 @@
      *
      * var objects = [{ 'n': 1 }, { 'n': 2 }];
      *
-     * _.minBy(objects, function(o) { return o.a; });
+     * _.minBy(objects, function(o) { return o.n; });
      * // => { 'n': 1 }
      *
      * // using the `_.property` iteratee shorthand

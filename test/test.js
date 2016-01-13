@@ -5748,6 +5748,8 @@
     ];
 
     var unwrappedMethods = [
+      'each',
+      'eachRight',
       'every',
       'find',
       'findIndex',

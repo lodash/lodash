@@ -13988,8 +13988,6 @@
     lodash.zipWith = zipWith;
 
     // Add aliases.
-    lodash.each = forEach;
-    lodash.eachRight = forEachRight;
     lodash.extend = assignIn;
     lodash.extendWith = assignInWith;
 
@@ -14132,6 +14130,8 @@
     lodash.upperFirst = upperFirst;
 
     // Add aliases.
+    lodash.each = forEach;
+    lodash.eachRight = forEachRight;
     lodash.first = head;
 
     mixin(lodash, (function() {

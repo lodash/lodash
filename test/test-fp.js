@@ -743,14 +743,14 @@
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
 
       value = _.clone(object);
-      actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
+      actual = fp.defaults(value, { 'a': 2, 'b': 2 });
 
       assert.deepEqual(value, object, 'fp.defaults');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
 
       value = _.clone(object);
       value.b = { 'c': 1 };
-      actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
+      actual = fp.defaultsDeep(value, { 'b': { 'c': 2, 'd': 2 } });
 
       assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
       assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
@@ -824,13 +824,13 @@
       assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.set(3, 'a.b', value);
+      actual = fp.set('a.b', 3, value);
 
       assert.deepEqual(value, deepObject, 'fp.set');
       assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.set');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.setWith(Object, 4, 'd.e', value);
+      actual = fp.setWith(Object, 'd.e', 4, value);
 
       assert.deepEqual(value, deepObject, 'fp.setWith');
       assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.setWith');

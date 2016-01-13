@@ -3930,7 +3930,7 @@ function customizer(value) {
   }
 }
 
-var el = _.cloneDeep(document.body, customizer);
+var el = _.cloneDeepWith(document.body, customizer);
 
 console.log(el === document.body);
 // => false

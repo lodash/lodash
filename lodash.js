@@ -13368,8 +13368,7 @@
      * Creates an array of numbers (positive and/or negative) progressing from
      * `start` up to, but not including, `end`. A step of `-1` is used if a negative
      * `start` is specified without an `end` or `step`. If `end` is not specified
-     * it's set to `start` with `start` then set to `0`.  If `end` is less than
-     * `start` a zero-length range is created unless a negative `step` is specified.
+     * it's set to `start` with `start` then set to `0`.
      *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.

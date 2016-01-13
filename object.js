@@ -6,6 +6,8 @@ module.exports = {
   'create': require('./create'),
   'defaults': require('./defaults'),
   'defaultsDeep': require('./defaultsDeep'),
+  'extend': require('./extend'),
+  'extendWith': require('./extendWith'),
   'findKey': require('./findKey'),
   'findLastKey': require('./findLastKey'),
   'forIn': require('./forIn'),

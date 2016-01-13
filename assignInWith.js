@@ -29,7 +29,7 @@ var copyObjectWith = require('./internal/copyObjectWith'),
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
-var assignInWith = createAssigner(function(object, source, customizer) {
+var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
   copyObjectWith(source, keysIn(source), object, customizer);
 });
 

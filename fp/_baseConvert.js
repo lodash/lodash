@@ -1,5 +1,6 @@
-var mapping = require('./mapping.js'),
-    mutateMap = mapping.mutateMap;
+var mapping = require('./_mapping'),
+    mutateMap = mapping.mutate,
+    placeholder = {};
 
 /**
  * The base implementation of `convert` which accepts a `util` object of methods
@@ -39,21 +40,16 @@ function baseConvert(util, name, func) {
       keys = _.keys,
       rearg = _.rearg;
 
-  var baseAry = function(func, n) {
-    return function() {
-      var args = arguments,
-          length = Math.min(args.length, n);
+  var baseArity = function(func, n) {
+    return n == 2
+      ? function(a, b) { return func.apply(undefined, arguments); }
+      : function(a) { return func.apply(undefined, arguments); };
+  };
 
-      switch (length) {
-        case 1: return func(args[0]);
-        case 2: return func(args[0], args[1]);
-      }
-      args = Array(length);
-      while (length--) {
-        args[length] = arguments[length];
-      }
-      return func.apply(undefined, args);
-    };
+  var baseAry = function(func, n) {
+    return n == 2
+      ? function(a, b) { return func(a, b); }
+      : function(a) { return func(a); };
   };
 
   var cloneArray = function(array) {
@@ -82,6 +78,13 @@ function baseConvert(util, name, func) {
     });
   };
 
+  var iterateeRearg = function(func, indexes) {
+    return overArg(func, function(func) {
+      var n = indexes.length;
+      return baseArity(rearg(baseAry(func, n), indexes), n);
+    });
+  };
+
   var overArg = function(func, iteratee, retArg) {
     return function() {
       var length = arguments.length,
@@ -98,7 +101,10 @@ function baseConvert(util, name, func) {
 
   var wrappers = {
     'iteratee': function(iteratee) {
-      return function(func, arity) {
+      return function() {
+        var func = arguments[0],
+            arity = arguments[1];
+
         arity = arity > 2 ? (arity - 2) : 1;
         func = iteratee(func);
         var length = func.length;
@@ -158,14 +164,18 @@ function baseConvert(util, name, func) {
     }
     var result;
     each(mapping.caps, function(cap) {
-      each(mapping.aryMethodMap[cap], function(otherName) {
+      each(mapping.aryMethod[cap], function(otherName) {
         if (name == otherName) {
+          var indexes = mapping.iterateeRearg[name],
+              n = !isLib && mapping.aryIteratee[name];
+
           result = ary(func, cap);
-          if (cap > 1 && !mapping.skipReargMap[name]) {
-            result = rearg(result, mapping.methodReargMap[name] || mapping.aryReargMap[cap]);
+          if (cap > 1 && !mapping.skipRearg[name]) {
+            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
           }
-          var n = !isLib && mapping.aryIterateeMap[name];
-          if (n) {
+          if (indexes) {
+            result = iterateeRearg(result, indexes);
+          } else if (n) {
             result = iterateeAry(result, n);
           }
           if (cap > 1) {
@@ -176,7 +186,12 @@ function baseConvert(util, name, func) {
       });
       return !result;
     });
-    return result || func;
+
+    result || (result = func);
+    if (mapping.placeholder[name]) {
+      result.placeholder = placeholder;
+    }
+    return result;
   };
 
   if (!isLib) {
@@ -185,8 +200,8 @@ function baseConvert(util, name, func) {
   // Iterate over methods for the current ary cap.
   var pairs = [];
   each(mapping.caps, function(cap) {
-    each(mapping.aryMethodMap[cap], function(key) {
-      var func = _[mapping.keyMap[key] || key];
+    each(mapping.aryMethod[cap], function(key) {
+      var func = _[mapping.key[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);
       }
@@ -200,7 +215,7 @@ function baseConvert(util, name, func) {
 
   // Wrap the lodash method and its aliases.
   each(keys(_), function(key) {
-    each(mapping.aliasMap[key] || [], function(alias) {
+    each(mapping.alias[key] || [], function(alias) {
       _[alias] = _[key];
     });
   });

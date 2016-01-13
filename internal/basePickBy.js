@@ -11,7 +11,7 @@ var baseForIn = require('./baseForIn');
 function basePickBy(object, predicate) {
   var result = {};
   baseForIn(object, function(value, key) {
-    if (predicate(value)) {
+    if (predicate(value, key)) {
       result[key] = value;
     }
   });

@@ -1,1 +1,2 @@
-module.exports = require('./fp/convert.js')();
+var _ = require('./lodash').noConflict().runInContext();
+module.exports = require('./fp/convert')(_);

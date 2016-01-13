@@ -3,7 +3,7 @@ var baseIsEqual = require('./internal/baseIsEqual');
 /**
  * This method is like `_.isEqual` except that it accepts `customizer` which is
  * invoked to compare values. If `customizer` returns `undefined` comparisons are
- * handled by the method instead. The `customizer` is invoked with up to seven arguments:
+ * handled by the method instead. The `customizer` is invoked with up to six arguments:
  * (objValue, othValue [, index|key, object, other, stack]).
  *
  * @static

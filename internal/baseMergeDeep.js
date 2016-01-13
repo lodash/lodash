@@ -19,11 +19,12 @@ var assignMergeValue = require('./assignMergeValue'),
  * @param {Object} object The destination object.
  * @param {Object} source The source object.
  * @param {string} key The key of the value to merge.
+ * @param {number} srcIndex The index of `source`.
  * @param {Function} mergeFunc The function to merge values.
  * @param {Function} [customizer] The function to customize assigned values.
  * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
  */
-function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
+function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
   var objValue = object[key],
       srcValue = source[key],
       stacked = stack.get(srcValue) || stack.get(objValue);
@@ -38,24 +39,36 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
   if (isCommon) {
     newValue = srcValue;
     if (isArray(srcValue) || isTypedArray(srcValue)) {
-      newValue = isArray(objValue)
-        ? objValue
-        : ((isArrayLikeObject(objValue)) ? copyArray(objValue) : baseClone(srcValue));
+      if (isArray(objValue)) {
+        newValue = srcIndex ? copyArray(objValue) : objValue;
+      }
+      else if (isArrayLikeObject(objValue)) {
+        newValue = copyArray(objValue);
+      }
+      else {
+        newValue = baseClone(srcValue);
+      }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-      newValue = isArguments(objValue)
-        ? toPlainObject(objValue)
-        : (isObject(objValue) ? objValue : baseClone(srcValue));
+      if (isArguments(objValue)) {
+        newValue = toPlainObject(objValue);
+      }
+      else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+        newValue = baseClone(srcValue);
+      }
+      else {
+        newValue = srcIndex ? baseClone(objValue) : objValue;
+      }
     }
     else {
-      isCommon = isFunction(srcValue);
+      isCommon = false;
     }
   }
   stack.set(srcValue, newValue);
 
   if (isCommon) {
     // Recursively merge objects and arrays (susceptible to call stack limits).
-    mergeFunc(newValue, srcValue, customizer, stack);
+    mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
   }
   assignMergeValue(object, key, newValue);
 }

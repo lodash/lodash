@@ -1,5 +1,11 @@
 var realNames = require('./realNames');
 
+/** Used for built-in method references. */
+var objectProto = global.Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
 /**
  * Gets the name of `func`.
  *
@@ -10,7 +16,7 @@ var realNames = require('./realNames');
 function getFuncName(func) {
   var result = (func.name + ''),
       array = realNames[result],
-      length = array ? array.length : 0;
+      length = hasOwnProperty.call(realNames, result) ? array.length : 0;
 
   while (length--) {
     var data = array[length],

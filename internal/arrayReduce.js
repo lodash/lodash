@@ -6,14 +6,14 @@
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
  * @returns {*} Returns the accumulated value.
  */
-function arrayReduce(array, iteratee, accumulator, initFromArray) {
+function arrayReduce(array, iteratee, accumulator, initAccum) {
   var index = -1,
       length = array.length;
 
-  if (initFromArray && length) {
+  if (initAccum && length) {
     accumulator = array[++index];
   }
   while (++index < length) {

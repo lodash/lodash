@@ -41,9 +41,9 @@ var arrayReduce = require('./internal/arrayReduce'),
  */
 function reduce(collection, iteratee, accumulator) {
   var func = isArray(collection) ? arrayReduce : baseReduce,
-      initFromCollection = arguments.length < 3;
+      initAccum = arguments.length < 3;
 
-  return func(collection, baseIteratee(iteratee, 4), accumulator, initFromCollection, baseEach);
+  return func(collection, baseIteratee(iteratee, 4), accumulator, initAccum, baseEach);
 }
 
 module.exports = reduce;

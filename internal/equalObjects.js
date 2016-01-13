@@ -2,8 +2,7 @@ var baseHas = require('./baseHas'),
     keys = require('../keys');
 
 /** Used to compose bitmasks for comparison styles. */
-var UNORDERED_COMPARE_FLAG = 1,
-    PARTIAL_COMPARE_FLAG = 2;
+var PARTIAL_COMPARE_FLAG = 2;
 
 /**
  * A specialized version of `baseIsEqualDeep` for objects with support for
@@ -20,7 +19,6 @@ var UNORDERED_COMPARE_FLAG = 1,
  */
 function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
   var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-      isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
       objProps = keys(object),
       objLength = objProps.length,
       othProps = keys(other),
@@ -32,8 +30,7 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
   var index = objLength;
   while (index--) {
     var key = objProps[index];
-    if (!(isPartial ? key in other : baseHas(other, key)) ||
-        !(isUnordered || key == othProps[index])) {
+    if (!(isPartial ? key in other : baseHas(other, key))) {
       return false;
     }
   }

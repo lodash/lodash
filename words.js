@@ -2,6 +2,8 @@ var toString = require('./toString');
 
 /** Used to compose unicode character classes. */
 var rsAstralRange = '\\ud800-\\udfff',
+    rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
+    rsComboSymbolsRange = '\\u20d0-\\u20f0',
     rsDingbatRange = '\\u2700-\\u27bf',
     rsLowerRange = 'a-z\\xdf-\\xf6\\xf8-\\xff',
     rsMathOpRange = '\\xac\\xb1\\xd7\\xf7',
@@ -14,11 +16,13 @@ var rsAstralRange = '\\ud800-\\udfff',
 
 /** Used to compose unicode capture groups. */
 var rsBreak = '[' + rsBreakRange + ']',
+    rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']',
     rsDigits = '\\d+',
     rsDingbat = '[' + rsDingbatRange + ']',
     rsLower = '[' + rsLowerRange + ']',
     rsMisc = '[^' + rsAstralRange + rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange + ']',
-    rsModifier = '(?:\\ud83c[\\udffb-\\udfff])',
+    rsFitz = '\\ud83c[\\udffb-\\udfff]',
+    rsModifier = '(?:' + rsCombo + '|' + rsFitz + ')',
     rsNonAstral = '[^' + rsAstralRange + ']',
     rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}',
     rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]',
@@ -42,7 +46,8 @@ var reComplexWord = RegExp([
   rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
   rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
   rsUpper + '?' + rsLowerMisc + '+',
-  rsDigits + '(?:' + rsLowerMisc + '+)?',
+  rsUpper + '+',
+  rsDigits,
   rsEmoji
 ].join('|'), 'g');
 

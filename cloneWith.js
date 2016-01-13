@@ -4,7 +4,7 @@ var baseClone = require('./internal/baseClone');
  * This method is like `_.clone` except that it accepts `customizer` which
  * is invoked to produce the cloned value. If `customizer` returns `undefined`
  * cloning is handled by the method instead. The `customizer` is invoked with
- * up to five arguments; (value [, index|key, object, stack]).
+ * up to four arguments; (value [, index|key, object, stack]).
  *
  * @static
  * @memberOf _
@@ -20,7 +20,7 @@ var baseClone = require('./internal/baseClone');
  *   }
  * }
  *
- * var el = _.clone(document.body, customizer);
+ * var el = _.cloneWith(document.body, customizer);
  *
  * console.log(el === document.body);
  * // => false

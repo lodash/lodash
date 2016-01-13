@@ -1,5 +1,4 @@
-var baseClone = require('./baseClone'),
-    baseMerge = require('./baseMerge'),
+var baseMerge = require('./baseMerge'),
     isObject = require('../isObject');
 
 /**
@@ -17,9 +16,9 @@ var baseClone = require('./baseClone'),
 function mergeDefaults(objValue, srcValue, key, object, source, stack) {
   if (isObject(objValue) && isObject(srcValue)) {
     stack.set(srcValue, objValue);
-    baseMerge(objValue, srcValue, mergeDefaults, stack);
+    baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
   }
-  return objValue === undefined ? baseClone(srcValue) : objValue;
+  return objValue;
 }
 
 module.exports = mergeDefaults;

@@ -1,5 +1,3 @@
-var baseSet = require('./internal/baseSet');
-
 /**
  * The inverse of `_.toPairs`; this method returns an object composed
  * from key-value `pairs`.
@@ -21,7 +19,7 @@ function fromPairs(pairs) {
 
   while (++index < length) {
     var pair = pairs[index];
-    baseSet(result, pair[0], pair[1]);
+    result[pair[0]] = pair[1];
   }
   return result;
 }

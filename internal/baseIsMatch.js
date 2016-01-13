@@ -47,7 +47,10 @@ function baseIsMatch(object, source, matchData, customizer) {
       var stack = new Stack,
           result = customizer ? customizer(objValue, srcValue, key, object, source, stack) : undefined;
 
-      if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stack) : result)) {
+      if (!(result === undefined
+            ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stack)
+            : result
+          )) {
         return false;
       }
     }

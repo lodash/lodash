@@ -1,7 +1,7 @@
 /**
  * This method is the wrapper version of `_.flatMap`.
  *
- * @static
+ * @name flatMap
  * @memberOf _
  * @category Seq
  * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.

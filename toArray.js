@@ -1,4 +1,4 @@
-var _Symbol = require('./internal/_Symbol'),
+var Symbol = require('./internal/Symbol'),
     copyArray = require('./internal/copyArray'),
     getTag = require('./internal/getTag'),
     isArrayLike = require('./isArrayLike'),
@@ -14,7 +14,7 @@ var mapTag = '[object Map]',
     setTag = '[object Set]';
 
 /** Built-in value references. */
-var iteratorSymbol = typeof (iteratorSymbol = _Symbol && _Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
+var iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
 
 /**
  * Converts `value` to an array.

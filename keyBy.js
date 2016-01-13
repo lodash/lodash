@@ -10,7 +10,7 @@ var createAggregator = require('./internal/createAggregator');
  * @memberOf _
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function|Object|string} [iteratee=_.identity] The iteratee to transform keys.
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
@@ -19,13 +19,13 @@ var createAggregator = require('./internal/createAggregator');
  *   { 'dir': 'right', 'code': 100 }
  * ];
  *
- * _.keyBy(keyData, 'dir');
- * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
- *
  * _.keyBy(keyData, function(o) {
  *   return String.fromCharCode(o.code);
  * });
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+ *
+ * _.keyBy(keyData, 'dir');
+ * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
 var keyBy = createAggregator(function(result, value, key) {
   result[key] = value;

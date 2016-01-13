@@ -25,8 +25,11 @@ var arrayConcat = require('./internal/arrayConcat'),
  * // => [1]
  */
 var concat = rest(function(array, values) {
+  if (!isArray(array)) {
+    array = array == null ? [] : [Object(array)];
+  }
   values = baseFlatten(values);
-  return arrayConcat(isArray(array) ? array : [Object(array)], values);
+  return arrayConcat(array, values);
 });
 
 module.exports = concat;

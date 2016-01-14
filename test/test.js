@@ -3998,6 +3998,16 @@
       assert.strictEqual(actual.a.b, null);
     });
 
+    QUnit.test('should not convert function properties to objects', function(assert) {
+      assert.expect(2);
+
+      var actual = _.defaultsDeep({}, { 'a': noop });
+      assert.strictEqual(actual.a, noop);
+
+      actual = _.defaultsDeep({}, { 'a': { 'b': noop } });
+      assert.strictEqual(actual.a.b, noop);
+    });
+
     QUnit.test('should overwrite `undefined` values', function(assert) {
       assert.expect(1);
 

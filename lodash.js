@@ -5099,7 +5099,9 @@
         stack.set(srcValue, objValue);
         baseMerge(objValue, srcValue, mergeDefaults, stack);
       }
-      return objValue === undefined ? baseClone(srcValue) : objValue;
+      return objValue === undefined
+        ? baseClone(srcValue, undefined, undefined, key, object)
+        : objValue;
     }
 
     /**

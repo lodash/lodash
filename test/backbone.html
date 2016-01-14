@@ -41,7 +41,24 @@
 
         return function(_) {
           lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
-          lodash.mixin(_, lodash.pick(lodash, lodash.difference(lodash.functions(lodash), lodash.functions(_))));
+          lodash.mixin(_, lodash.pick(lodash, [
+            'countBy',
+            'debounce',
+            'difference',
+            'find',
+            'findIndex',
+            'findLastIndex',
+            'groupBy',
+            'includes',
+            'invert',
+            'keyBy',
+            'omit',
+            'partition',
+            'reduceRight',
+            'reject',
+            'sample',
+            'without'
+          ]));
 
           lodash.forOwn(keyMap, function(realName, otherName) {
             _[otherName] = lodash[realName];

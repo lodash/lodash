@@ -454,8 +454,8 @@
    * `padStart`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`,
    * `result`, `round`, `runInContext`, `sample`, `shift`, `size`, `snakeCase`,
    * `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`,
-   * `startCase`, `startsWith`, `subtract`, `sum`, sumBy`, `template`, `times`,
-   * `toLower`, `toInteger`, `toLength`, `toNumber`, `toSafeInteger`, toString`,
+   * `startCase`, `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`,
+   * `toLower`, `toInteger`, `toLength`, `toNumber`, `toSafeInteger`, `toString`,
    * `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`,
    * `upperCase`, `upperFirst`, `value`, and `words`
    *
@@ -875,17 +875,18 @@
    * @returns {Function} Returns the new function.
    */
   function baseMatches(source) {
-    var props = keys(source),
-        length = props.length;
-
+    var props = keys(source);
     return function(object) {
+      var length = props.length;
       if (object == null) {
         return !length;
       }
       object = Object(object);
       while (length--) {
         var key = props[length];
-        if (!(key in object && baseIsEqual(source[key], object[key], undefined, true))) {
+        if (!(key in object &&
+              baseIsEqual(source[key], object[key], undefined, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG)
+            )) {
           return false;
         }
       }
@@ -1289,7 +1290,6 @@
    */
   function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
     var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-        isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
         objProps = keys(object),
         objLength = objProps.length,
         othProps = keys(other),
@@ -1301,8 +1301,7 @@
     var index = objLength;
     while (index--) {
       var key = objProps[index];
-      if (!(isPartial ? key in other : hasOwnProperty.call(other, key)) ||
-          !(isUnordered || key == othProps[index])) {
+      if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
         return false;
       }
     }
@@ -1708,7 +1707,7 @@
    *
    * @name value
    * @memberOf _
-   * @alias run, toJSON, valueOf
+   * @alias toJSON, valueOf
    * @category Seq
    * @returns {*} Returns the resolved unwrapped value.
    * @example
@@ -3495,6 +3494,32 @@
   var iteratee = baseIteratee;
 
   /**
+   * Creates a function that performs a deep partial comparison between a given
+   * object and `source`, returning `true` if the given object has equivalent
+   * property values, else `false`.
+   *
+   * **Note:** This method supports comparing the same values as `_.isEqual`.
+   *
+   * @static
+   * @memberOf _
+   * @category Util
+   * @param {Object} source The object of property values to match.
+   * @returns {Function} Returns the new function.
+   * @example
+   *
+   * var users = [
+   *   { 'user': 'barney', 'age': 36, 'active': true },
+   *   { 'user': 'fred',   'age': 40, 'active': false }
+   * ];
+   *
+   * _.filter(users, _.matches({ 'age': 40, 'active': false }));
+   * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
+   */
+  function matches(source) {
+    return baseMatches(assign({}, source));
+  }
+
+  /**
    * Adds all own enumerable function properties of a source object to the
    * destination object. If `object` is a function then methods are added to
    * its prototype as well.
@@ -3693,6 +3718,7 @@
   lodash.iteratee = iteratee;
   lodash.keys = keys;
   lodash.map = map;
+  lodash.matches = matches;
   lodash.mixin = mixin;
   lodash.negate = negate;
   lodash.once = once;
@@ -3705,7 +3731,6 @@
   lodash.values = values;
 
   // Add aliases.
-  lodash.each = forEach;
   lodash.extend = assignIn;
 
   // Add functions to `lodash.prototype`.
@@ -3751,6 +3776,7 @@
   lodash.uniqueId = uniqueId;
 
   // Add aliases.
+  lodash.each = forEach;
   lodash.first = head;
 
   mixin(lodash, (function() {

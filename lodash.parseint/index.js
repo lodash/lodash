@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -20,18 +20,19 @@ var nativeParseInt = root.parseInt;
 
 /**
  * Converts `string` to an integer of the specified radix. If `radix` is
- * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
- * in which case a `radix` of `16` is used.
+ * `undefined` or `0`, a `radix` of `10` is used unless `value` is a
+ * hexadecimal, in which case a `radix` of `16` is used.
  *
- * **Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#x15.1.2.2)
- * of `parseInt`.
+ * **Note:** This method aligns with the
+ * [ES5 implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.
  *
  * @static
  * @memberOf _
+ * @since 1.1.0
  * @category String
  * @param {string} string The string to convert.
  * @param {number} [radix=10] The radix to interpret `value` by.
- * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
  * @returns {number} Returns the converted integer.
  * @example
  *
@@ -43,7 +44,7 @@ var nativeParseInt = root.parseInt;
  */
 function parseInt(string, radix, guard) {
   // Chrome fails to trim leading <BOM> whitespace characters.
-  // See https://code.google.com/p/v8/issues/detail?id=3109 for more details.
+  // See https://bugs.chromium.org/p/v8/issues/detail?id=3109 for more details.
   if (guard || radix == null) {
     radix = 0;
   } else if (radix) {

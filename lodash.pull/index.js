@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,14 +10,16 @@ var pullAll = require('lodash.pullall'),
     rest = require('lodash.rest');
 
 /**
- * Removes all provided values from `array` using
+ * Removes all given values from `array` using
  * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
- * **Note:** Unlike `_.without`, this method mutates `array`.
+ * **Note:** Unlike `_.without`, this method mutates `array`. Use `_.remove`
+ * to remove elements from an array by predicate.
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.
  * @param {...*} [values] The values to remove.

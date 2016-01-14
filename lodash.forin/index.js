@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,13 +10,13 @@ var baseFor = require('lodash._basefor'),
     keysIn = require('lodash.keysin');
 
 /**
- * Converts `value` to a function if it's not one.
+ * Casts `value` to `identity` if it's not a function.
  *
  * @private
- * @param {*} value The value to process.
- * @returns {Function} Returns the function.
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the array-like object.
  */
-function toFunction(value) {
+function baseCastFunction(value) {
   return typeof value == 'function' ? value : identity;
 }
 
@@ -47,7 +47,9 @@ function toFunction(value) {
  * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
  */
 function forIn(object, iteratee) {
-  return object == null ? object : baseFor(object, toFunction(iteratee), keysIn);
+  return object == null
+    ? object
+    : baseFor(object, baseCastFunction(iteratee), keysIn);
 }
 
 /**

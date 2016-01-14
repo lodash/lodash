@@ -1,6 +1,6 @@
 {
   "name": "lodash._setcache",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "The internal lodash function `SetCache` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -14,6 +14,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._mapcache": "^3.0.0"
+    "lodash._mapcache": "^4.0.0"
   }
 }

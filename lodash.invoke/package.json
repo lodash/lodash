@@ -1,6 +1,6 @@
 {
   "name": "lodash.invoke",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "The lodash method `_.invoke` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

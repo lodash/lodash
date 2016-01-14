@@ -1,4 +1,4 @@
-# lodash.intersection v4.0.0
+# lodash.intersection v4.0.1
 
 The [lodash](https://lodash.com/) method `_.intersection` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var intersection = require('lodash.intersection');
 ```
 
-See the [documentation](https://lodash.com/docs#intersection) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.intersection) for more details.
+See the [documentation](https://lodash.com/docs#intersection) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.intersection) for more details.

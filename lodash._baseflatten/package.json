@@ -1,6 +1,6 @@
 {
   "name": "lodash._baseflatten",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "The internal lodash function `baseFlatten` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

@@ -1,4 +1,4 @@
-# lodash.round v4.0.0
+# lodash.round v4.0.1
 
 The [lodash](https://lodash.com/) method `_.round` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var round = require('lodash.round');
 ```
 
-See the [documentation](https://lodash.com/docs#round) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.round) for more details.
+See the [documentation](https://lodash.com/docs#round) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.round) for more details.

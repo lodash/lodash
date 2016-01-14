@@ -1,4 +1,4 @@
-# lodash.max v4.0.0
+# lodash.max v4.0.1
 
 The [lodash](https://lodash.com/) method `_.max` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var max = require('lodash.max');
 ```
 
-See the [documentation](https://lodash.com/docs#max) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.max) for more details.
+See the [documentation](https://lodash.com/docs#max) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.max) for more details.

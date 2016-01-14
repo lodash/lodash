@@ -1,4 +1,4 @@
-# lodash.debounce v4.0.0
+# lodash.debounce v4.0.1
 
 The [lodash](https://lodash.com/) method `_.debounce` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var debounce = require('lodash.debounce');
 ```
 
-See the [documentation](https://lodash.com/docs#debounce) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.debounce) for more details.
+See the [documentation](https://lodash.com/docs#debounce) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.debounce) for more details.

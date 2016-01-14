@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -12,16 +12,17 @@ var createWrapper = require('lodash._createwrapper');
 var ARY_FLAG = 128;
 
 /**
- * Creates a function that accepts up to `n` arguments, ignoring any
- * additional arguments.
+ * Creates a function that invokes `func`, with up to `n` arguments,
+ * ignoring any additional arguments.
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Function
  * @param {Function} func The function to cap arguments for.
  * @param {number} [n=func.length] The arity cap.
- * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
- * @returns {Function} Returns the new function.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @returns {Function} Returns the new capped function.
  * @example
  *
  * _.map(['6', '8', '10'], _.ary(parseInt, 1));

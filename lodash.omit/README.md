@@ -1,4 +1,4 @@
-# lodash.omit v4.0.0
+# lodash.omit v4.0.1
 
 The [lodash](https://lodash.com/) method `_.omit` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var omit = require('lodash.omit');
 ```
 
-See the [documentation](https://lodash.com/docs#omit) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.omit) for more details.
+See the [documentation](https://lodash.com/docs#omit) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.omit) for more details.

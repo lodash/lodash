@@ -1,4 +1,4 @@
-# lodash._basesortedindexby v4.0.0
+# lodash._basesortedindexby v4.0.1
 
 The internal [lodash](https://lodash.com/) function `baseSortedIndexBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseSortedIndexBy = require('lodash._basesortedindexby');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash._basesortedindexby) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash._basesortedindexby) for more details.

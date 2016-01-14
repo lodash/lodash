@@ -1,4 +1,4 @@
-# lodash.set v4.0.0
+# lodash.set v4.0.1
 
 The [lodash](https://lodash.com/) method `_.set` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var set = require('lodash.set');
 ```
 
-See the [documentation](https://lodash.com/docs#set) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.set) for more details.
+See the [documentation](https://lodash.com/docs#set) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.set) for more details.

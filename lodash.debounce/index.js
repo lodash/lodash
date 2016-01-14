@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -29,11 +29,11 @@ var reIsBinary = /^0b[01]+$/i;
 /** Used to detect octal string values. */
 var reIsOctal = /^0o[0-7]+$/i;
 
-/** Built-in method references without a dependency on `global`. */
+/** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
@@ -73,7 +73,7 @@ var now = Date.now;
  * to the debounced function return the result of the last `func` invocation.
  *
  * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
- * on the trailing edge of the timeout only if the the debounced function is
+ * on the trailing edge of the timeout only if the debounced function is
  * invoked more than once during the `wait` timeout.
  *
  * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
@@ -94,21 +94,21 @@ var now = Date.now;
  * @returns {Function} Returns the new debounced function.
  * @example
  *
- * // avoid costly calculations while the window size is in flux
+ * // Avoid costly calculations while the window size is in flux.
  * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
  *
- * // invoke `sendMail` when clicked, debouncing subsequent calls
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
  * jQuery(element).on('click', _.debounce(sendMail, 300, {
  *   'leading': true,
  *   'trailing': false
  * }));
  *
- * // ensure `batchLog` is invoked once after 1 second of debounced calls
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
  * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
  * var source = new EventSource('/stream');
  * jQuery(source).on('message', debounced);
  *
- * // cancel a trailing debounced invocation
+ * // Cancel the trailing debounced invocation.
  * jQuery(window).on('popstate', debounced.cancel);
  */
 function debounce(func, wait, options) {

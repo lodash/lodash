@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -29,13 +29,13 @@ function arrayEachRight(array, iteratee) {
 }
 
 /**
- * Converts `value` to a function if it's not one.
+ * Casts `value` to `identity` if it's not a function.
  *
  * @private
- * @param {*} value The value to process.
- * @returns {Function} Returns the function.
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the array-like object.
  */
-function toFunction(value) {
+function baseCastFunction(value) {
   return typeof value == 'function' ? value : identity;
 }
 
@@ -60,7 +60,7 @@ function toFunction(value) {
 function forEachRight(collection, iteratee) {
   return (typeof iteratee == 'function' && isArray(collection))
     ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, toFunction(iteratee));
+    : baseEachRight(collection, baseCastFunction(iteratee));
 }
 
 /**
@@ -68,7 +68,7 @@ function forEachRight(collection, iteratee) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

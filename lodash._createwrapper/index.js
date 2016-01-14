@@ -1,12 +1,11 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var root = require('lodash._root');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -50,8 +49,46 @@ var reIsOctal = /^0o[0-7]+$/i;
 /** Used to detect unsigned integer values. */
 var reIsUint = /^(?:0|[1-9]\d*)$/;
 
+/** Used to determine if values are of the language type `Object`. */
+var objectTypes = {
+  'function': true,
+  'object': true
+};
+
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
+
+/** Detect free variable `exports`. */
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+  ? exports
+  : undefined;
+
+/** Detect free variable `module`. */
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+  ? module
+  : undefined;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+
+/** Detect free variable `self`. */
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+
+/** Detect free variable `window`. */
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+
+/**
+ * Used as a reference to the global object.
+ *
+ * The `this` value is used if it's the global object to avoid Greasemonkey's
+ * restricted `window` object, otherwise the `window` object is used.
+ */
+var root = freeGlobal ||
+  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+    freeSelf || thisGlobal || Function('return this')();
 
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
@@ -72,6 +109,37 @@ function apply(func, thisArg, args) {
     case 3: return func.call(thisArg, args[0], args[1], args[2]);
   }
   return func.apply(thisArg, args);
+}
+
+/**
+ * Checks if `value` is a global object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+ */
+function checkGlobal(value) {
+  return (value && value.Object === Object) ? value : null;
+}
+
+/**
+ * Gets the number of `placeholder` occurrences in `array`.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {*} placeholder The placeholder to search for.
+ * @returns {number} Returns the placeholder count.
+ */
+function countHolders(array, placeholder) {
+  var length = array.length,
+      result = 0;
+
+  while (length--) {
+    if (array[length] === placeholder) {
+      result++;
+    }
+  }
+  return result;
 }
 
 /**
@@ -104,7 +172,8 @@ function replaceHolders(array, placeholder) {
       result = [];
 
   while (++index < length) {
-    if (array[index] === placeholder) {
+    var value = array[index];
+    if (value === placeholder || value === PLACEHOLDER) {
       array[index] = PLACEHOLDER;
       result[++resIndex] = index;
     }
@@ -148,23 +217,28 @@ function baseCreate(proto) {
  * @param {Array|Object} args The provided arguments.
  * @param {Array} partials The arguments to prepend to those provided.
  * @param {Array} holders The `partials` placeholder indexes.
+ * @params {boolean} [isCurried] Specify composing for a curried function.
  * @returns {Array} Returns the new array of composed arguments.
  */
-function composeArgs(args, partials, holders) {
-  var holdersLength = holders.length,
-      argsIndex = -1,
-      argsLength = nativeMax(args.length - holdersLength, 0),
+function composeArgs(args, partials, holders, isCurried) {
+  var argsIndex = -1,
+      argsLength = args.length,
+      holdersLength = holders.length,
       leftIndex = -1,
       leftLength = partials.length,
-      result = Array(leftLength + argsLength);
+      rangeLength = nativeMax(argsLength - holdersLength, 0),
+      result = Array(leftLength + rangeLength),
+      isUncurried = !isCurried;
 
   while (++leftIndex < leftLength) {
     result[leftIndex] = partials[leftIndex];
   }
   while (++argsIndex < holdersLength) {
-    result[holders[argsIndex]] = args[argsIndex];
+    if (isUncurried || argsIndex < argsLength) {
+      result[holders[argsIndex]] = args[argsIndex];
+    }
   }
-  while (argsLength--) {
+  while (rangeLength--) {
     result[leftIndex++] = args[argsIndex++];
   }
   return result;
@@ -178,18 +252,21 @@ function composeArgs(args, partials, holders) {
  * @param {Array|Object} args The provided arguments.
  * @param {Array} partials The arguments to append to those provided.
  * @param {Array} holders The `partials` placeholder indexes.
+ * @params {boolean} [isCurried] Specify composing for a curried function.
  * @returns {Array} Returns the new array of composed arguments.
  */
-function composeArgsRight(args, partials, holders) {
-  var holdersIndex = -1,
+function composeArgsRight(args, partials, holders, isCurried) {
+  var argsIndex = -1,
+      argsLength = args.length,
+      holdersIndex = -1,
       holdersLength = holders.length,
-      argsIndex = -1,
-      argsLength = nativeMax(args.length - holdersLength, 0),
       rightIndex = -1,
       rightLength = partials.length,
-      result = Array(argsLength + rightLength);
+      rangeLength = nativeMax(argsLength - holdersLength, 0),
+      result = Array(rangeLength + rightLength),
+      isUncurried = !isCurried;
 
-  while (++argsIndex < argsLength) {
+  while (++argsIndex < rangeLength) {
     result[argsIndex] = args[argsIndex];
   }
   var offset = argsIndex;
@@ -197,7 +274,9 @@ function composeArgsRight(args, partials, holders) {
     result[offset + rightIndex] = partials[rightIndex];
   }
   while (++holdersIndex < holdersLength) {
-    result[offset + holders[holdersIndex]] = args[argsIndex++];
+    if (isUncurried || argsIndex < argsLength) {
+      result[offset + holders[holdersIndex]] = args[argsIndex++];
+    }
   }
   return result;
 }
@@ -289,10 +368,9 @@ function createCurryWrapper(func, bitmask, arity) {
 
   function wrapper() {
     var length = arguments.length,
-        index = length,
         args = Array(length),
-        fn = (this && this !== root && this instanceof wrapper) ? Ctor : func,
-        placeholder = wrapper.placeholder;
+        index = length,
+        placeholder = getPlaceholder(wrapper);
 
     while (index--) {
       args[index] = arguments[index];
@@ -302,9 +380,13 @@ function createCurryWrapper(func, bitmask, arity) {
       : replaceHolders(args, placeholder);
 
     length -= holders.length;
-    return length < arity
-      ? createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, undefined, args, holders, undefined, undefined, arity - length)
-      : apply(fn, this, args);
+    if (length < arity) {
+      return createRecurryWrapper(
+        func, bitmask, createHybridWrapper, wrapper.placeholder, undefined,
+        args, holders, undefined, undefined, arity - length);
+    }
+    var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+    return apply(fn, this, args);
   }
   return wrapper;
 }
@@ -330,8 +412,7 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
   var isAry = bitmask & ARY_FLAG,
       isBind = bitmask & BIND_FLAG,
       isBindKey = bitmask & BIND_KEY_FLAG,
-      isCurry = bitmask & CURRY_FLAG,
-      isCurryRight = bitmask & CURRY_RIGHT_FLAG,
+      isCurried = bitmask & (CURRY_FLAG | CURRY_RIGHT_FLAG),
       isFlip = bitmask & FLIP_FLAG,
       Ctor = isBindKey ? undefined : createCtorWrapper(func);
 
@@ -343,33 +424,34 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
     while (index--) {
       args[index] = arguments[index];
     }
+    if (isCurried) {
+      var placeholder = getPlaceholder(wrapper),
+          holdersCount = countHolders(args, placeholder);
+    }
     if (partials) {
-      args = composeArgs(args, partials, holders);
+      args = composeArgs(args, partials, holders, isCurried);
     }
     if (partialsRight) {
-      args = composeArgsRight(args, partialsRight, holdersRight);
+      args = composeArgsRight(args, partialsRight, holdersRight, isCurried);
     }
-    if (isCurry || isCurryRight) {
-      var placeholder = wrapper.placeholder,
-          argsHolders = replaceHolders(args, placeholder);
-
-      length -= argsHolders.length;
-      if (length < arity) {
-        return createRecurryWrapper(
-          func, bitmask, createHybridWrapper, placeholder, thisArg, args,
-          argsHolders, argPos, ary, arity - length
-        );
-      }
+    length -= holdersCount;
+    if (isCurried && length < arity) {
+      var newHolders = replaceHolders(args, placeholder);
+      return createRecurryWrapper(
+        func, bitmask, createHybridWrapper, wrapper.placeholder, thisArg,
+        args, newHolders, argPos, ary, arity - length
+      );
     }
     var thisBinding = isBind ? thisArg : this,
         fn = isBindKey ? thisBinding[func] : func;
 
+    length = args.length;
     if (argPos) {
       args = reorder(args, argPos);
-    } else if (isFlip && args.length > 1) {
+    } else if (isFlip && length > 1) {
       args.reverse();
     }
-    if (isAry && ary < args.length) {
+    if (isAry && ary < length) {
       args.length = ary;
     }
     if (this && this !== root && this instanceof wrapper) {
@@ -422,7 +504,7 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
  * @param {Function} func The function to wrap.
  * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
  * @param {Function} wrapFunc The function to create the `func` wrapper.
- * @param {*} placeholder The placeholder to replace.
+ * @param {*} placeholder The placeholder value.
  * @param {*} [thisArg] The `this` binding of `func`.
  * @param {Array} [partials] The arguments to prepend to those provided to the new function.
  * @param {Array} [holders] The `partials` placeholder indexes.
@@ -434,7 +516,7 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
 function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
   var isCurry = bitmask & CURRY_FLAG,
       newArgPos = argPos ? copyArray(argPos) : undefined,
-      newsHolders = isCurry ? holders : undefined,
+      newHolders = isCurry ? holders : undefined,
       newHoldersRight = isCurry ? undefined : holders,
       newPartials = isCurry ? partials : undefined,
       newPartialsRight = isCurry ? undefined : partials;
@@ -446,7 +528,7 @@ function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, par
     bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
   }
 
-  var result = wrapFunc(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity);
+  var result = wrapFunc(func, bitmask, thisArg, newPartials, newHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity);
   result.placeholder = placeholder;
   return result;
 }
@@ -524,6 +606,18 @@ function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, a
     result = createHybridWrapper.apply(undefined, newData);
   }
   return result;
+}
+
+/**
+ * Gets the argument placeholder value for `func`.
+ *
+ * @private
+ * @param {Function} func The function to inspect.
+ * @returns {*} Returns the placeholder value.
+ */
+function getPlaceholder(func) {
+  var object = func;
+  return object.placeholder;
 }
 
 /**

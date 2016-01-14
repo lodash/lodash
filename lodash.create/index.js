@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -9,7 +9,7 @@
 var keys = require('lodash.keys');
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
@@ -169,7 +169,7 @@ function isObject(value) {
 
 /**
  * Creates an object that inherits from the `prototype` object. If a `properties`
- * object is provided its own enumerable properties are assigned to the created object.
+ * object is given its own enumerable properties are assigned to the created object.
  *
  * @static
  * @memberOf _

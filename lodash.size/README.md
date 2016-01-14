@@ -1,4 +1,4 @@
-# lodash.size v4.0.0
+# lodash.size v4.0.1
 
 The [lodash](https://lodash.com/) method `_.size` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var size = require('lodash.size');
 ```
 
-See the [documentation](https://lodash.com/docs#size) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.size) for more details.
+See the [documentation](https://lodash.com/docs#size) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.size) for more details.

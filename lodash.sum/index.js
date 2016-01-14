@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -26,7 +26,7 @@ function baseSum(array, iteratee) {
       result = result === undefined ? current : (result + current);
     }
   }
-  return result;
+  return length ? result : 0;
 }
 
 /**
@@ -64,7 +64,7 @@ function identity(value) {
 function sum(array) {
   return (array && array.length)
     ? baseSum(array, identity)
-    : undefined;
+    : 0;
 }
 
 module.exports = sum;

@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,6 +8,17 @@
  */
 var baseFor = require('lodash._basefor'),
     keys = require('lodash.keys');
+
+/**
+ * Casts `value` to `identity` if it's not a function.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the array-like object.
+ */
+function baseCastFunction(value) {
+  return typeof value == 'function' ? value : identity;
+}
 
 /**
  * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -19,17 +30,6 @@ var baseFor = require('lodash._basefor'),
  */
 function baseForOwn(object, iteratee) {
   return object && baseFor(object, iteratee, keys);
-}
-
-/**
- * Converts `value` to a function if it's not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Function} Returns the function.
- */
-function toFunction(value) {
-  return typeof value == 'function' ? value : identity;
 }
 
 /**
@@ -59,7 +59,7 @@ function toFunction(value) {
  * // => logs 'a' then 'b' (iteration order is not guaranteed)
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, toFunction(iteratee));
+  return object && baseForOwn(object, baseCastFunction(iteratee));
 }
 
 /**

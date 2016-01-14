@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -14,7 +14,7 @@ var funcTag = '[object Function]',
     genTag = '[object GeneratorFunction]';
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
@@ -24,7 +24,7 @@ var objectToString = objectProto.toString;
 
 /**
  * The base implementation of `_.functions` which creates an array of
- * `object` function property names filtered from those provided.
+ * `object` function property names filtered from `props`.
  *
  * @private
  * @param {Object} object The object to inspect.

@@ -1,4 +1,4 @@
-# lodash.curry v4.0.0
+# lodash.curry v4.0.1
 
 The [lodash](https://lodash.com/) method `_.curry` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var curry = require('lodash.curry');
 ```
 
-See the [documentation](https://lodash.com/docs#curry) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.curry) for more details.
+See the [documentation](https://lodash.com/docs#curry) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.curry) for more details.

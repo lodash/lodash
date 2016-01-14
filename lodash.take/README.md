@@ -1,4 +1,4 @@
-# lodash.take v4.0.0
+# lodash.take v4.0.1
 
 The [lodash](https://lodash.com/) method `_.take` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var take = require('lodash.take');
 ```
 
-See the [documentation](https://lodash.com/docs#take) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.take) for more details.
+See the [documentation](https://lodash.com/docs#take) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.take) for more details.

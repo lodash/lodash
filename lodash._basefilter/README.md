@@ -1,4 +1,4 @@
-# lodash._basefilter v4.0.0
+# lodash._basefilter v4.0.1
 
 The internal [lodash](https://lodash.com/) function `baseFilter` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseFilter = require('lodash._basefilter');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash._basefilter) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash._basefilter) for more details.

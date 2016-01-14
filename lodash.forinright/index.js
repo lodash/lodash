@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,6 +7,17 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var keysIn = require('lodash.keysin');
+
+/**
+ * Casts `value` to `identity` if it's not a function.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the array-like object.
+ */
+function baseCastFunction(value) {
+  return typeof value == 'function' ? value : identity;
+}
 
 /**
  * This function is like `baseFor` except that it iterates over properties
@@ -45,17 +56,6 @@ function createBaseFor(fromRight) {
 }
 
 /**
- * Converts `value` to a function if it's not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Function} Returns the function.
- */
-function toFunction(value) {
-  return typeof value == 'function' ? value : identity;
-}
-
-/**
  * This method is like `_.forIn` except that it iterates over properties of
  * `object` in the opposite order.
  *
@@ -80,7 +80,9 @@ function toFunction(value) {
  * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
  */
 function forInRight(object, iteratee) {
-  return object == null ? object : baseForRight(object, toFunction(iteratee), keysIn);
+  return object == null
+    ? object
+    : baseForRight(object, baseCastFunction(iteratee), keysIn);
 }
 
 /**

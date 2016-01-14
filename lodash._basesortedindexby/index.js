@@ -1,15 +1,28 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
 /** Used as references for the maximum length and index of an array. */
 var MAX_ARRAY_LENGTH = 4294967295,
     MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1;
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeFloor = Math.floor,
@@ -35,21 +48,26 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
       high = array ? array.length : 0,
       valIsNaN = value !== value,
       valIsNull = value === null,
-      valIsUndef = value === undefined;
+      valIsSymbol = isSymbol(value),
+      valIsUndefined = value === undefined;
 
   while (low < high) {
     var mid = nativeFloor((low + high) / 2),
         computed = iteratee(array[mid]),
-        isDef = computed !== undefined,
-        isReflexive = computed === computed;
+        othIsDefined = computed !== undefined,
+        othIsNull = computed === null,
+        othIsReflexive = computed === computed,
+        othIsSymbol = isSymbol(computed);
 
     if (valIsNaN) {
-      var setLow = isReflexive || retHighest;
+      var setLow = retHighest || othIsReflexive;
+    } else if (valIsUndefined) {
+      setLow = othIsReflexive && (retHighest || othIsDefined);
     } else if (valIsNull) {
-      setLow = isReflexive && isDef && (retHighest || computed != null);
-    } else if (valIsUndef) {
-      setLow = isReflexive && (retHighest || isDef);
-    } else if (computed == null) {
+      setLow = othIsReflexive && othIsDefined && (retHighest || !othIsNull);
+    } else if (valIsSymbol) {
+      setLow = othIsReflexive && othIsDefined && !othIsNull && (retHighest || !othIsSymbol);
+    } else if (othIsNull || othIsSymbol) {
       setLow = false;
     } else {
       setLow = retHighest ? (computed <= value) : (computed < value);
@@ -61,6 +79,57 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
     }
   }
   return nativeMin(high, MAX_ARRAY_INDEX);
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
 }
 
 module.exports = baseSortedIndexBy;

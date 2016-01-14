@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -28,7 +28,7 @@ var reIsBinary = /^0b[01]+$/i;
 /** Used to detect octal string values. */
 var reIsOctal = /^0o[0-7]+$/i;
 
-/** Built-in method references without a dependency on `global`. */
+/** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
 /**
@@ -78,7 +78,7 @@ function indexOfNaN(array, fromIndex, fromRight) {
 }
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
@@ -93,8 +93,7 @@ var nativeMax = Math.max;
  * Gets the index at which the first occurrence of `value` is found in `array`
  * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons. If `fromIndex` is negative, it's used as the offset
- * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
- * performs a faster binary search.
+ * from the end of `array`.
  *
  * @static
  * @memberOf _
@@ -108,7 +107,7 @@ var nativeMax = Math.max;
  * _.indexOf([1, 2, 1, 2], 2);
  * // => 1
  *
- * // using `fromIndex`
+ * // Search from the `fromIndex`.
  * _.indexOf([1, 2, 1, 2], 2, 2);
  * // => 3
  */
@@ -142,8 +141,8 @@ function indexOf(array, value, fromIndex) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

@@ -1,4 +1,4 @@
-# lodash.padstart v4.0.0
+# lodash.padstart v4.0.1
 
 The [lodash](https://lodash.com/) method `_.padStart` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var padStart = require('lodash.padstart');
 ```
 
-See the [documentation](https://lodash.com/docs#padStart) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.padstart) for more details.
+See the [documentation](https://lodash.com/docs#padStart) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.padstart) for more details.

@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -78,7 +78,9 @@ function replaceHolders(array, placeholder) {
 var bind = rest(function(func, thisArg, partials) {
   var bitmask = BIND_FLAG;
   if (partials.length) {
-    var holders = replaceHolders(partials, bind.placeholder);
+    var placeholder = bind.placeholder,
+        holders = replaceHolders(partials, placeholder);
+
     bitmask |= PARTIAL_FLAG;
   }
   return createWrapper(func, bitmask, thisArg, partials, holders);

@@ -563,6 +563,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('placeholder methods');
+
+  _.forOwn(mapping.placeholder, function(truthy, methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
+      assert.expect(1);
+
+      assert.ok(_.isObject(func.placeholder));
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.random');
 
   (function() {

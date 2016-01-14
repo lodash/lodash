@@ -217,7 +217,7 @@
   var QUnit = root.QUnit || (root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js'));
 
   /** Load stable Lodash and QUnit Extras. */
-  var lodashStable = root.lodashStable || load('../node_modules/lodash/lodash.js');
+  var lodashStable = root.lodashStable || load('../node_modules/lodash/lodash.js').noConflict();
   if (lodashStable) {
     lodashStable = lodashStable.runInContext(root);
   }

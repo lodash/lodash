@@ -1583,6 +1583,8 @@
    */
   function slice(array, start, end) {
     var length = array ? array.length : 0;
+    start = start == null ? 0 : +start;
+    end = end === undefined ? length : +end;
     return length ? baseSlice(array, start, end) : [];
   }
 

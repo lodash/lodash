@@ -71,7 +71,7 @@
     QUnit.test('should have correct aliases', function(assert) {
       assert.expect(1);
 
-      var actual = _.transform(mapping.aliasMap, function(result, aliases, methodName) {
+      var actual = _.transform(mapping.alias, function(result, aliases, methodName) {
         var func = fp[methodName];
         _.each(aliases, function(alias) {
           result.push([alias, fp[alias] === func]);
@@ -92,13 +92,13 @@
 
       var funcMethods = [
         'curry', 'iteratee', 'memoize', 'over', 'overEvery', 'overSome',
-        'method', 'methodOf', 'restParam', 'runInContext'
+        'method', 'methodOf', 'rest', 'runInContext'
       ];
 
       var exceptions = funcMethods.concat('mixin', 'template'),
-          expected = _.map(mapping.aryMethodMap[1], _.constant(true));
+          expected = _.map(mapping.aryMethod[1], _.constant(true));
 
-      var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
+      var actual = _.map(mapping.aryMethod[1], function(methodName) {
         var arg = _.includes(funcMethods, methodName) ? _.noop : 1,
             result = _.attempt(function() { return fp[methodName](arg); });
 
@@ -124,9 +124,9 @@
       ];
 
       var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
-          expected = _.map(mapping.aryMethodMap[2], _.constant(true));
+          expected = _.map(mapping.aryMethod[2], _.constant(true));
 
-      var actual = _.map(mapping.aryMethodMap[2], function(methodName) {
+      var actual = _.map(mapping.aryMethod[2], function(methodName) {
         var args = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
             result = _.attempt(function() { return fp[methodName](args[0])(args[1]); });
 
@@ -151,9 +151,9 @@
         'pickBy', 'reduce', 'reduceRight', 'transform', 'zipWith'
       ];
 
-      var expected = _.map(mapping.aryMethodMap[3], _.constant(true));
+      var expected = _.map(mapping.aryMethod[3], _.constant(true));
 
-      var actual = _.map(mapping.aryMethodMap[3], function(methodName) {
+      var actual = _.map(mapping.aryMethod[3], function(methodName) {
         var args = _.includes(funcMethods, methodName) ? [_.noop, 0, 1] : [0, 1, []],
             result = _.attempt(function() { return fp[methodName](args[0])(args[1])(args[2]); });
 

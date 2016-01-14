@@ -7926,7 +7926,7 @@ Converts `string` to an integer of the specified radix. If `radix` is
 in which case a `radix` of `16` is used.
 <br>
 <br>
-**Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#E)
+**Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#x15.1.2.2)
 of `parseInt`.
 
 #### Arguments

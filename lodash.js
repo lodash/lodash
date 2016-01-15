@@ -4678,7 +4678,7 @@
     function getFuncName(func) {
       var result = (func.name + ''),
           array = realNames[result],
-          length = array ? array.length : 0;
+          length = hasOwnProperty.call(realNames, result) ? array.length : 0;
 
       while (length--) {
         var data = array[length],

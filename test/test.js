@@ -8157,6 +8157,15 @@
       assert.strictEqual(_.isEqual(object1, object2), false);
     });
 
+    QUnit.test('should compare objects regardless of key order', function(assert) {
+      assert.expect(1);
+
+      var object1 = { 'a': 1, 'b': 2, 'c': 3 },
+          object2 = { 'c': 3, 'a': 1, 'b': 2 };
+
+      assert.strictEqual(_.isEqual(object1, object2), true);
+    });
+
     QUnit.test('should compare nested objects', function(assert) {
       assert.expect(1);
 

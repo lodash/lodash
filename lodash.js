@@ -3104,7 +3104,7 @@
     function basePickBy(object, predicate) {
       var result = {};
       baseForIn(object, function(value, key) {
-        if (predicate(value)) {
+        if (predicate(value, key)) {
           result[key] = value;
         }
       });
@@ -11250,9 +11250,9 @@
      * // => { 'b': '2' }
      */
     function omitBy(object, predicate) {
-      predicate = getIteratee(predicate);
-      return basePickBy(object, function(value) {
-        return !predicate(value);
+      predicate = getIteratee(predicate, 2);
+      return basePickBy(object, function(value, key) {
+        return !predicate(value, key);
       });
     }
 
@@ -11295,7 +11295,7 @@
      * // => { 'a': 1, 'c': 3 }
      */
     function pickBy(object, predicate) {
-      return object == null ? {} : basePickBy(object, getIteratee(predicate));
+      return object == null ? {} : basePickBy(object, getIteratee(predicate, 2));
     }
 
     /**

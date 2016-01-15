@@ -5785,6 +5785,7 @@
           func = _[methodName],
           isBy = /(^partition|By)$/.test(methodName),
           isFind = /^find/.test(methodName),
+          isOmitPick = /^(?:omit|pick)By$/.test(methodName),
           isSome = methodName == 'some';
 
       QUnit.test('`_.' + methodName + '` should provide the correct iteratee arguments', function(assert) {
@@ -5806,7 +5807,7 @@
             expected[1] += '';
           }
           if (isBy) {
-            expected.length = 1;
+            expected.length = isOmitPick ? 2 : 1;
           }
           assert.deepEqual(args, expected);
         }
@@ -5822,11 +5823,13 @@
           var array = [1];
           array[2] = 3;
 
-          var expected = [[1, 0, array], [undefined, 1, array], [3, 2, array]];
+          var expected = lodashStable.includes(objectMethods, methodName)
+            ? [[1, '0', array], [undefined, '1', array], [3, '2', array]]
+            : [[1,  0, array],  [undefined,  1,  array], [3,  2,  array]];
 
           if (isBy) {
             expected = lodashStable.map(expected, function(args) {
-              return args.slice(0, 1);
+              return args.slice(0, isOmitPick ? 2 : 1);
             });
           }
           else if (lodashStable.includes(objectMethods, methodName)) {

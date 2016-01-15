@@ -21227,10 +21227,13 @@
         raisedHand = '\u270B' + emojiVar,
         rocket = '\ud83d\ude80',
         thumbsUp = '\ud83d\udc4d',
-        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68';
+        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68',
+        keycapHash = '#' + emojiVar + '\u20e3',
+        oneFitzpatrick = '\ud83c\udfff',
+        twoFitzpatrick = oneFitzpatrick + oneFitzpatrick;
 
     QUnit.test('should account for astral symbols', function(assert) {
-      assert.expect(25);
+      assert.expect(27);
 
       var allHearts = _.repeat(hearts, 10),
           chars = hearts + comboGlyph,
@@ -21261,6 +21264,10 @@
       assert.strictEqual(_.truncate(string, { 'length': 6 }), 'A ' + leafs + '...');
 
       assert.deepEqual(_.words(string), ['A', leafs, comboGlyph, 'and', rocket]);
+
+      assert.deepEqual(_.toArray(keycapHash), [keycapHash]);
+
+      assert.deepEqual(_.toArray(twoFitzpatrick), [oneFitzpatrick, oneFitzpatrick]);
 
       lodashStable.times(2, function(index) {
         var separator = index ? RegExp(hearts) : hearts,

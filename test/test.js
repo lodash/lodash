@@ -274,15 +274,6 @@
     'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
   ];
 
-  /** List of emoji modifiers. */
-  var emojiModifiers = [
-    '\ud83c\udffb',
-    '\ud83c\udffc',
-    '\ud83c\udffd',
-    '\ud83c\udffe',
-    '\ud83c\udfff'
-  ];
-
   /** Used to specify the emoji style glyph variant of characters. */
   var emojiVar = '\ufe0f';
 
@@ -301,6 +292,15 @@
     new SyntaxError,
     new TypeError,
     new URIError
+  ];
+
+  /** List of fitzpatrick modifiers. */
+  var fitzModifiers = [
+    '\ud83c\udffb',
+    '\ud83c\udffc',
+    '\ud83c\udffd',
+    '\ud83c\udffe',
+    '\ud83c\udfff'
   ];
 
   /** Used to check whether methods support typed arrays. */
@@ -21223,17 +21223,16 @@
     var flag = '\ud83c\uddfa\ud83c\uddf8',
         heart = '\u2764' + emojiVar,
         hearts = '\ud83d\udc95',
+        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68',
+        hashKeycap = '#' + emojiVar + '\u20e3',
         leafs = '\ud83c\udf42',
+        noMic = '\ud83c\udf99\u20e0',
         raisedHand = '\u270B' + emojiVar,
         rocket = '\ud83d\ude80',
-        thumbsUp = '\ud83d\udc4d',
-        comboGlyph = '\ud83d\udc68\u200d' + heart + '\u200d\ud83d\udc8B\u200d\ud83d\udc68',
-        keycapHash = '#' + emojiVar + '\u20e3',
-        oneFitzpatrick = '\ud83c\udfff',
-        twoFitzpatrick = oneFitzpatrick + oneFitzpatrick;
+        thumbsUp = '\ud83d\udc4d';
 
     QUnit.test('should account for astral symbols', function(assert) {
-      assert.expect(27);
+      assert.expect(26);
 
       var allHearts = _.repeat(hearts, 10),
           chars = hearts + comboGlyph,
@@ -21264,10 +21263,7 @@
       assert.strictEqual(_.truncate(string, { 'length': 6 }), 'A ' + leafs + '...');
 
       assert.deepEqual(_.words(string), ['A', leafs, comboGlyph, 'and', rocket]);
-
-      assert.deepEqual(_.toArray(keycapHash), [keycapHash]);
-
-      assert.deepEqual(_.toArray(twoFitzpatrick), [oneFitzpatrick, oneFitzpatrick]);
+      assert.deepEqual(_.toArray(hashKeycap), [hashKeycap]);
 
       lodashStable.times(2, function(index) {
         var separator = index ? RegExp(hearts) : hearts,
@@ -21283,15 +21279,40 @@
       });
     });
 
-    QUnit.test('should match lone surrogates', function(assert) {
-      assert.expect(3);
+    QUnit.test('should account for combining diacritical marks', function(assert) {
+      assert.expect(1);
 
-      var pair = hearts.split(''),
-          surrogates = pair[0] + ' ' + pair[1];
+      var values = lodashStable.map(comboMarks, function(mark) {
+        return 'o' + mark;
+      });
 
-      assert.strictEqual(_.size(surrogates), 3);
-      assert.deepEqual(_.toArray(surrogates), [pair[0], ' ', pair[1]]);
-      assert.deepEqual(_.words(surrogates), []);
+      var expected = lodashStable.map(values, function(value) {
+        return [1, [value], [value]];
+      });
+
+      var actual = lodashStable.map(values, function(value) {
+        return [_.size(value), _.toArray(value), _.words(value)];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should account for fitzpatrick modifiers', function(assert) {
+      assert.expect(1);
+
+      var values = lodashStable.map(fitzModifiers, function(modifier) {
+        return thumbsUp + modifier;
+      });
+
+      var expected = lodashStable.map(values, function(value) {
+        return [1, [value], [value]];
+      });
+
+      var actual = lodashStable.map(values, function(value) {
+        return [_.size(value), _.toArray(value), _.words(value)];
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should account for regional symbols', function(assert) {
@@ -21318,28 +21339,10 @@
       assert.deepEqual(_.words(heart), [heart]);
     });
 
-    QUnit.test('should account for modifiers', function(assert) {
+    QUnit.test('should account for variation selectors with fitzpatrick modifiers', function(assert) {
       assert.expect(1);
 
-      var values = lodashStable.map(emojiModifiers, function(modifier) {
-        return thumbsUp + modifier;
-      });
-
-      var expected = lodashStable.map(values, function(value) {
-        return [1, [value], [value]];
-      });
-
-      var actual = lodashStable.map(values, function(value) {
-        return [_.size(value), _.toArray(value), _.words(value)];
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should account for variation selectors with modifiers', function(assert) {
-      assert.expect(1);
-
-      var values = lodashStable.map(emojiModifiers, function(modifier) {
+      var values = lodashStable.map(fitzModifiers, function(modifier) {
         return raisedHand + modifier;
       });
 
@@ -21354,22 +21357,22 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should account for combining diacritical marks', function(assert) {
+    QUnit.test('should match lone surrogates', function(assert) {
+      assert.expect(3);
+
+      var pair = hearts.split(''),
+          surrogates = pair[0] + ' ' + pair[1];
+
+      assert.strictEqual(_.size(surrogates), 3);
+      assert.deepEqual(_.toArray(surrogates), [pair[0], ' ', pair[1]]);
+      assert.deepEqual(_.words(surrogates), []);
+    });
+
+    QUnit.test('should match side by side fitzpatrick modifiers separately ', function(assert) {
       assert.expect(1);
 
-      var values = lodashStable.map(comboMarks, function(mark) {
-        return 'o' + mark;
-      });
-
-      var expected = lodashStable.map(values, function(value) {
-        return [1, [value], [value]];
-      });
-
-      var actual = lodashStable.map(values, function(value) {
-        return [_.size(value), _.toArray(value), _.words(value)];
-      });
-
-      assert.deepEqual(actual, expected);
+      var string = fitzModifiers[0] + fitzModifiers[0];
+      assert.deepEqual(_.toArray(string), [fitzModifiers[0], fitzModifiers[0]]);
     });
   }());
 

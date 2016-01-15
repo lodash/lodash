@@ -6326,13 +6326,13 @@
   QUnit.module('lodash.fromPairs');
 
   (function() {
-    var object = { 'barney': 36, 'fred': 40 },
-        array = [['barney', 36], ['fred', 40]];
-
     QUnit.test('should accept a two dimensional array', function(assert) {
       assert.expect(1);
 
-      var actual = _.fromPairs(array);
+      var array = [['a', 1], ['b', 2]],
+          object = { 'a': 1, 'b': 2 },
+          actual = _.fromPairs(array);
+
       assert.deepEqual(actual, object);
     });
 
@@ -6350,16 +6350,17 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should support deep paths', function(assert) {
+    QUnit.test('should not support deep paths', function(assert) {
       assert.expect(1);
 
       var actual = _.fromPairs([['a.b.c', 1]]);
-      assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+      assert.deepEqual(actual, { 'a.b.c': 1 });
     });
 
     QUnit.test('should support consuming the return value of `_.toPairs`', function(assert) {
       assert.expect(1);
 
+      var object = { 'a.b.c': 1 };
       assert.deepEqual(_.fromPairs(_.toPairs(object)), object);
     });
 

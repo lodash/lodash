@@ -628,6 +628,8 @@
 
   /*--------------------------------------------------------------------------*/
 
+  console.log('Running lodash tests.');
+
   if (params) {
     console.log('test.js invoked with arguments: ' + JSON.stringify(slice.call(params)));
   }

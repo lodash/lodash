@@ -29,6 +29,6 @@
   "scripts": {
     "build": "node lib/main/build.js && node lib/fp/build.js",
     "style": "jscs lodash.js lib/**/*.js",
-    "test": "node test/test"
+    "test": "npm run build && node test/test && node test/test-fp"
   }
 }

@@ -9100,7 +9100,7 @@
      * This method is like `_.clone` except that it accepts `customizer` which
      * is invoked to produce the cloned value. If `customizer` returns `undefined`
      * cloning is handled by the method instead. The `customizer` is invoked with
-     * up to five arguments; (value [, index|key, object, stack]).
+     * up to four arguments; (value [, index|key, object, stack]).
      *
      * @static
      * @memberOf _

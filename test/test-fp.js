@@ -65,6 +65,8 @@
 
   /*--------------------------------------------------------------------------*/
 
+  console.log('Running lodash/fp tests.');
+
   QUnit.module('method aliases');
 
   (function() {

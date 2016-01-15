@@ -13086,7 +13086,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with a function for `object`', function(assert) {
+    QUnit.test('should merge onto function `object` values', function(assert) {
       assert.expect(2);
 
       function Foo() {}
@@ -13098,7 +13098,28 @@
       assert.strictEqual(Foo.a, 1);
     });
 
-    QUnit.test('should work with a non-plain `object`', function(assert) {
+    QUnit.test('should not merge onto nested function values', function(assert) {
+      assert.expect(3);
+
+      var source1 = { 'a': function() {} },
+          source2 = { 'a': { 'b': 1 } },
+          actual = _.merge({}, source1, source2),
+          expected = { 'a': { 'b': 1 } };
+
+      assert.deepEqual(actual, expected);
+
+      source1 = { 'a': function() {} };
+      source2 = { 'a': { 'b': 1 } };
+
+      expected = { 'a': function() {} };
+      expected.a.b = 1;
+
+      actual = _.merge(source1, source2);
+      assert.strictEqual(typeof actual.a, 'function');
+      assert.strictEqual(actual.a.b, 1);
+    });
+
+    QUnit.test('should merge onto non-plain `object` values', function(assert) {
       assert.expect(2);
 
       function Foo() {}
@@ -13231,6 +13252,26 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should not augment source objects', function(assert) {
+      assert.expect(6);
+
+      var source1 = { 'a': [{ 'a': 1 }] },
+          source2 = { 'a': [{ 'b': 2 }] },
+          actual = _.merge({}, source1, source2);
+
+      assert.deepEqual(source1.a, [{ 'a': 1 }]);
+      assert.deepEqual(source2.a, [{ 'b': 2 }]);
+      assert.deepEqual(actual.a, [{ 'a': 1, 'b': 2 }]);
+
+      var source1 = { 'a': [[1, 2, 3]] },
+          source2 = { 'a': [[3, 4]] },
+          actual = _.merge({}, source1, source2);
+
+      assert.deepEqual(source1.a, [[1, 2, 3]]);
+      assert.deepEqual(source2.a, [[3, 4]]);
+      assert.deepEqual(actual.a, [[3, 4, 3]]);
     });
 
     QUnit.test('should shallow clone array/typed-array/plain-object sources', function(assert) {

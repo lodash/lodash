@@ -7722,11 +7722,11 @@
      *   return n * n;
      * }
      *
-     * _.map([1, 2], square);
-     * // => [3, 6]
+     * _.map([1, 2, 3], square);
+     * // => [1, 4, 9]
      *
-     * _.map({ 'a': 1, 'b': 2 }, square);
-     * // => [3, 6] (iteration order is not guaranteed)
+     * _.map({ 'a': 1, 'b': 2, 'c': 3 }, square);
+     * // => [1, 4, 9] (iteration order is not guaranteed)
      *
      * var users = [
      *   { 'user': 'barney' },

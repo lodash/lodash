@@ -145,24 +145,22 @@
 
         QUnit.config.autostart = false;
 
-        require(getConfig(), ['underscore', 'backbone'], function(lodash) {
+        require(getConfig(), ['underscore'], function(lodash) {
           mixinPrereqs(lodash);
-
-          if (ui.isModularize) {
-            window._ = lodash;
-          }
-          require(getConfig(), [
-            'test/setup/dom-setup',
-            'test/setup/environment',
-            'test/noconflict',
-            'test/events',
-            'test/model',
-            'test/collection',
-            'test/router',
-            'test/view',
-            'test/sync'
-          ], function() {
-            QUnit.start();
+          require(getConfig(), ['backbone'], function() {
+            require(getConfig(), [
+              'test/setup/dom-setup',
+              'test/setup/environment',
+              'test/noconflict',
+              'test/events',
+              'test/model',
+              'test/collection',
+              'test/router',
+              'test/view',
+              'test/sync'
+            ], function() {
+              QUnit.start();
+            });
           });
         });
       }());

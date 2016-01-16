@@ -3474,18 +3474,6 @@
       assert.deepEqual(c(3), expected);
       assert.deepEqual(d(), expected);
     });
-
-    QUnit.test('should work when a function name matches function name on Object.prototype', function(assert) {
-      assert.expect(1);
-
-      var curried = _.curry(function hasOwnProperty(a, b, c) {
-        return [a, b, c];
-      });
-
-      var expected = [1, 2, 3];
-
-      assert.deepEqual(curried(1)(2)(3), expected);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3662,6 +3650,18 @@
 
         assert.deepEqual(actual, expected);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should work for function names that shadow those on `Object.prototype`', function(assert) {
+      assert.expect(1);
+
+      var curried = _.curry(function hasOwnProperty(a, b, c) {
+        return [a, b, c];
+      });
+
+      var expected = [1, 2, 3];
+
+      assert.deepEqual(curried(1)(2)(3), expected);
     });
   });
 

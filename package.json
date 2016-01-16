@@ -13,6 +13,7 @@
     "dojo": "^1.10.4",
     "ecstatic": "^1.4.0",
     "fs-extra": "~0.26.4",
+    "glob": "^6.0.4",
     "istanbul": "0.4.2",
     "jquery": "^2.2.0",
     "jscs": "^2.8.0",
@@ -27,7 +28,7 @@
     "webpack": "^1.12.11"
   },
   "scripts": {
-    "build": "node lib/main/build.js && node lib/fp/build.js",
+    "build": "node lib/main/build-dist.js && node lib/fp/build-dist.js",
     "style": "jscs lodash.js lib/**/*.js",
     "test": "npm run build && node test/test && node test/test-fp"
   }

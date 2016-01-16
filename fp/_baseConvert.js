@@ -1,4 +1,4 @@
-var mapping = require('./mapping.js'),
+var mapping = require('./_mapping'),
     mutateMap = mapping.mutate,
     placeholder = {};
 

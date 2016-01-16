@@ -6,10 +6,10 @@ your issue may have already been discussed or fixed in `master`. To contribute, 
 ## Tests
 
 Include updated unit tests in the `test` directory as part of your pull request.
-Don’t worry about regenerating the documentation, lodash.js, or lodash.min.js.
+Don’t worry about regenerating the `dist/` or `doc/` files.
 
 Before running the unit tests you’ll need to install, `npm i`, [development dependencies](https://docs.npmjs.com/files/package.json#devdependencies).
-Run unit tests from the command-line via `npm test`, or open `test/index.html` and `test/fp.html` in a web browser.
+Run unit tests from the command-line via `npm test`, or open `test/index.html` & `test/fp.html` in a web browser.
 The [Backbone](http://backbonejs.org/) & [Underscore](http://underscorejs.org/) test suites are included as well.
 
 ## Contributor License Agreement

@@ -217,10 +217,18 @@
   var QUnit = root.QUnit || (root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js'));
 
   /** Load stable Lodash and QUnit Extras. */
-  var lodashStable = root.lodashStable || load('../node_modules/lodash/lodash.js').noConflict();
-  if (lodashStable) {
-    lodashStable = lodashStable.runInContext(root);
+  var lodashStable = root.lodashStable;
+  if (!lodashStable) {
+    try {
+      lodashStable = load('../node_modules/lodash/index.js');
+    } catch (e) {
+      console.log('Error: The stable lodash dev dependency should be at least a version behind master branch.');
+      return;
+    }
+    lodashStable = lodashStable.noConflict();
   }
+  lodashStable = lodashStable.runInContext(root);
+
   var QUnitExtras = load('../node_modules/qunit-extras/qunit-extras.js');
   if (QUnitExtras) {
     QUnitExtras.runInContext(root);

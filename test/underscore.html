@@ -455,10 +455,6 @@
 
         require(getConfig(), [moduleId], function(lodash) {
           mixinPrereqs(lodash);
-
-          if (ui.isModularize) {
-            window._ = lodash;
-          }
           require(getConfig(), [
             'test/collections',
             'test/arrays',

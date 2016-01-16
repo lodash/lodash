@@ -282,9 +282,8 @@
               underscoreModule = underscore.result(underscore, 'noConflict') || underscore;
               underscoreModule.moduleName = 'underscore';
             }
-            if (ui.isModularize) {
-              window._ = lodash;
-            }
+            window._ = lodash;
+
             if (ui.isModularize) {
               require(getConfig(), [
                 'lodash/internal/baseEach',

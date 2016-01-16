@@ -15,6 +15,7 @@
   /** Method and object shortcuts. */
   var phantom = root.phantom,
       amd = root.define && define.amd,
+      argv = root.process && process.argv,
       document = !phantom && root.document,
       noop = function() {},
       slice = arrayProto.slice,
@@ -65,7 +66,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  console.log('Running lodash/fp tests.');
+  if (argv) {
+    console.log('Running lodash/fp tests.');
+  }
 
   QUnit.module('method arity checks');
 

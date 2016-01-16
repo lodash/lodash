@@ -67,6 +67,22 @@
 
   console.log('Running lodash/fp tests.');
 
+  QUnit.module('method arity checks');
+
+  (function() {
+    QUnit.test('should wrap methods with an arity > `1`', function(assert) {
+      assert.expect(1);
+
+      var methodNames = _.filter(_.functions(fp), function(methodName) {
+        return fp[methodName].length > 1;
+      });
+
+      assert.deepEqual(methodNames, []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('method aliases');
 
   (function() {

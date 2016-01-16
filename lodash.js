@@ -693,7 +693,7 @@
   /**
    * The base implementation of methods like `_.find` and `_.findKey`, without
    * support for iteratee shorthands, which iterates over `collection` using
-   * the provided `eachFunc`.
+   * `eachFunc`.
    *
    * @private
    * @param {Array|Object} collection The collection to search.
@@ -761,8 +761,7 @@
 
   /**
    * The base implementation of `_.reduce` and `_.reduceRight`, without support
-   * for iteratee shorthands, which iterates over `collection` using the provided
-   * `eachFunc`.
+   * for iteratee shorthands, which iterates over `collection` using `eachFunc`.
    *
    * @private
    * @param {Array|Object} collection The collection to iterate over.

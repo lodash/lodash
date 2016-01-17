@@ -10214,7 +10214,7 @@
      * @memberOf _
      * @category Lang
      * @param {*} value The value to convert.
-     * @return {number} Returns the converted integer.
+     * @returns {number} Returns the converted integer.
      * @example
      *
      * _.toLength(3);

@@ -2627,7 +2627,7 @@ _.orderBy(users, ['user', 'age'], ['asc', 'desc']);
 Creates an array of elements split into two groups, the first of which
 contains elements `predicate` returns truthy for, while the second of which
 contains elements `predicate` returns falsey for. The predicate is invoked
-with three arguments: (value, index|key, collection).
+with one argument: (value).
 
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.

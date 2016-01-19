@@ -18439,6 +18439,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.update');
+
+  (function() {
+    QUnit.test('should call `func` with existing value on `path` of `object` and update it', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': [{ 'b': { 'c': 10 } }] };
+
+      _.update(object, ['a', 0, 'b', 'c'], function(value) {
+        assert.equal(value, 10);
+        return 20;
+      });
+
+      assert.equal(object.a[0].b.c, 20);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('set methods');
 
   lodashStable.each(['set', 'setWith'], function(methodName) {
@@ -24389,7 +24408,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(298);
+      assert.expect(299);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

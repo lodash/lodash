@@ -563,7 +563,7 @@
         deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should not mutate values', function(assert) {
-      assert.expect(38);
+      assert.expect(40);
 
       function Foo() {}
       Foo.prototype = { 'b': 2 };
@@ -695,6 +695,12 @@
 
       assert.deepEqual(value, deepObject, 'fp.unset');
       assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.unset');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.update(function(x) { return x + 1; })('a.b')(value);
+
+      assert.deepEqual(value, deepObject, 'fp.update');
+      assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.update');
     });
   }());
 
@@ -742,7 +748,7 @@
         deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should only clone objects in `path`', function(assert) {
-      assert.expect(8);
+      assert.expect(9);
 
       var object = { 'a': { 'b': { 'c': 1 }, 'd': { 'e': 1 } } },
           value = _.cloneDeep(object),
@@ -765,6 +771,10 @@
 
       assert.notOk('b' in actual, 'fp.unset');
       assert.strictEqual(actual.d, value.d, 'fp.unset');
+
+      value = _.cloneDeep(object);
+      actual = fp.update(function(x) { return { 'c2': 2 }; }, 'a.b', value);
+      assert.strictEqual(actual.d, value.d, 'fp.update');
     });
   }());
 

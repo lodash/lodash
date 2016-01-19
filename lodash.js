@@ -222,7 +222,7 @@
     rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
     rsUpper + '?' + rsLowerMisc + '+',
     rsUpper + '+',
-    rsDigits + '(?:' + rsLowerMisc + '+)?',
+    rsDigits,
     rsEmoji
   ].join('|'), 'g');
 

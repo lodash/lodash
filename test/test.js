@@ -2048,9 +2048,9 @@
 
       var actual = lodashStable.reduce(funcs, function(result, func) {
         return func(result);
-      }, 'enable 24h format');
+      }, 'enable 6h format');
 
-      assert.strictEqual(actual, 'enable24hFormat');
+      assert.strictEqual(actual, 'enable6HFormat');
     });
   }());
 
@@ -2060,10 +2060,11 @@
 
   (function() {
     QUnit.test('should work with numbers', function(assert) {
-      assert.expect(5);
+      assert.expect(6);
 
       assert.strictEqual(_.camelCase('12 feet'), '12Feet');
-      assert.strictEqual(_.camelCase('enable 24h format'), 'enable24hFormat');
+      assert.strictEqual(_.camelCase('enable 6h format'), 'enable6HFormat');
+      assert.strictEqual(_.camelCase('enable 24H format'), 'enable24HFormat');
       assert.strictEqual(_.camelCase('too legit 2 quit'), 'tooLegit2Quit');
       assert.strictEqual(_.camelCase('walk 500 miles'), 'walk500Miles');
       assert.strictEqual(_.camelCase('xhr2 request'), 'xhr2Request');
@@ -22144,10 +22145,11 @@
     });
 
     QUnit.test('should work with compound words', function(assert) {
-      assert.expect(8);
+      assert.expect(9);
 
       assert.deepEqual(_.words('12Feet'), ['12', 'Feet']);
-      assert.deepEqual(_.words('enable 24h format'), ['enable', '24h', 'format']);
+      assert.deepEqual(_.words('enable 6h format'), ['enable', '6', 'h', 'format']);
+      assert.deepEqual(_.words('enable 24H format'), ['enable', '24', 'H', 'format']);
       assert.deepEqual(_.words('isISO8601'), ['is', 'ISO', '8601']);
       assert.deepEqual(_.words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
       assert.deepEqual(_.words('walk500Miles'), ['walk', '500', 'Miles']);

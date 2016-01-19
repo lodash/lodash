@@ -221,6 +221,7 @@
     rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
     rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
     rsUpper + '?' + rsLowerMisc + '+',
+    rsUpper + '+',
     rsDigits + '(?:' + rsLowerMisc + '+)?',
     rsEmoji
   ].join('|'), 'g');

@@ -70,7 +70,7 @@ exports.aryMethod = {
     'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
     'isMatchWith', 'mergeWith', 'orderBy', 'pullAllBy', 'pullAllWith', 'reduce',
     'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy',
-    'transform', 'unionBy', 'unionWith', 'xorBy', 'xorWith', 'zipWith'
+    'transform', 'unionBy', 'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
     'fill', 'setWith'
@@ -121,7 +121,8 @@ exports.iterateeAry = {
   'takeRightWhile': 1,
   'takeWhile': 1,
   'times': 1,
-  'transform': 2
+  'transform': 2,
+  'update': 1
 };
 
 /** Used to map method names to iteratee rearg configs. */
@@ -141,6 +142,7 @@ exports.methodRearg = {
   'setWith': [3, 1, 2, 0],
   'sortedIndexBy': [2, 1, 0],
   'sortedLastIndexBy': [2, 1, 0],
+  'update': [2, 1, 0],
   'zipWith': [1, 2, 0]
 };
 
@@ -175,7 +177,8 @@ exports.mutate = {
   'set': {
     'set': true,
     'setWith': true,
-    'unset': true
+    'unset': true,
+    'update': true
   }
 };
 

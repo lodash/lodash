@@ -6648,7 +6648,7 @@ _.merge(users, ages);
 This method is like `_.merge` except that it accepts `customizer` which
 is invoked to produce the merged values of the destination and source
 properties. If `customizer` returns `undefined` merging is handled by the
-method instead. The `customizer` is invoked with seven arguments:<br>
+method instead. The `customizer` is invoked with six arguments:<br>
 (objValue, srcValue, key, object, source, stack).
 
 #### Arguments

@@ -181,6 +181,7 @@ module.exports = {
   'skipRearg': {
     'assign': true,
     'assignIn': true,
+    'concat': true,
     'defaults': true,
     'defaultsDeep': true,
     'difference': true,

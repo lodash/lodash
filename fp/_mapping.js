@@ -12,7 +12,7 @@ module.exports = {
     'forEach': ['each'],
     'forEachRight': ['eachRight'],
     'get': ['path', 'prop'],
-    'getOr': ['pathOr'],
+    'getOr': ['pathOr', 'propOr'],
     'head': ['first'],
     'includes': ['contains'],
     'initial': ['init'],

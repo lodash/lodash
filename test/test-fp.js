@@ -44,8 +44,14 @@
     QUnitExtras.runInContext(root);
   }
 
-  var convert = root.fp || load('../lib/fp/convert.js'),
-      mapping = root.mapping || load('../lib/fp/mapping.js'),
+  var convert = root.fp || (function() {
+    var baseConvert = load('../fp/_baseConvert.js');
+    return function(name, func) {
+      return baseConvert(_, name, func);
+    };
+  }());
+
+  var mapping = root.mapping || load('../fp/_mapping.js'),
       fp = convert(_.runInContext());
 
   /*--------------------------------------------------------------------------*/

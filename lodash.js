@@ -13230,7 +13230,9 @@
      * var lodash = _.noConflict();
      */
     function noConflict() {
-      root._ = oldDash;
+      if (root._ === this) {
+        root._ = oldDash;
+      }
       return this;
     }
 

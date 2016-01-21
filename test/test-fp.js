@@ -191,8 +191,8 @@
       assert.expect(1);
 
       var funcMethods = [
-        'assignWith', 'extendWith', 'isEqualWith', 'isMatchWith', 'omitBy',
-        'pickBy', 'reduce', 'reduceRight', 'transform', 'zipWith'
+        'assignWith', 'extendWith', 'isEqualWith', 'isMatchWith', 'reduce',
+        'reduceRight', 'transform', 'zipWith'
       ];
 
       var expected = _.map(mapping.aryMethod[3], _.constant(true));

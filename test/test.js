@@ -2827,6 +2827,21 @@
       assert.deepEqual(array, [1]);
     });
 
+    QUnit.test('should return an empty array when `array` is nullish', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, alwaysEmptyArray);
+
+      var actual = lodashStable.map(values, function(value, index) {
+        try {
+          return index ? _.concat(value) : _.concat();
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should treat sparse arrays as dense', function(assert) {
       assert.expect(3);
 

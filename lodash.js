@@ -5336,6 +5336,9 @@
      * // => [1]
      */
     var concat = rest(function(array, values) {
+      if (array == null) {
+        return [];
+      }
       values = baseFlatten(values);
       return arrayConcat(isArray(array) ? array : [Object(array)], values);
     });

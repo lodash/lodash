@@ -904,7 +904,7 @@
         object = { 'a': 1 };
 
     QUnit.test('should provide the correct `customizer` arguments', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
       var args,
           value = _.clone(object);
@@ -939,6 +939,14 @@
 
       args[5] = _.omitBy(args[5], _.isFunction);
       assert.deepEqual(args, expected, 'fp.mergeWith');
+
+      args = undefined;
+      value = _.clone(object);
+      actual = fp.setWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      }, 'b.c', 2, value);
+
+      assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.setWith');
     });
   }());
 

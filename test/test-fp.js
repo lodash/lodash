@@ -88,6 +88,23 @@
 
       assert.deepEqual(methodNames, []);
     });
+
+    QUnit.test('should have >= arity of `aryMethod` designation', function(assert) {
+      assert.expect(4);
+
+      _.times(4, function(index) {
+        var aryCap = index + 1;
+
+        var methodNames = _.filter(mapping.aryMethod[aryCap], function(methodName) {
+          var key = _.result(mapping.key, methodName, methodName),
+              arity = _[key].length;
+
+          return arity != 0 && arity < aryCap;
+        });
+
+        assert.deepEqual(methodNames, [], '`aryMethod[' + aryCap + ']`');
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

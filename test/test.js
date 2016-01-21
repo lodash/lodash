@@ -14297,6 +14297,20 @@
       }
     });
 
+    QUnit.test('should restore `_` only if `lodash` is the current `_` value', function(assert) {
+      assert.expect(2);
+
+      if (!isModularize) {
+        var object = root._ = {};
+        assert.strictEqual(_.noConflict(), oldDash);
+        assert.strictEqual(root._, object);
+        root._ = oldDash;
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
+
     QUnit.test('should work with a `root` of `this`', function(assert) {
       assert.expect(2);
 

@@ -102,23 +102,30 @@ module.exports = {
     3:[
         'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
         'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
-        'isMatchWith', 'mergeWith', 'pullAllBy', 'reduce',
-        'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy',
-        'transform', 'unionBy', 'unionWith', 'xorBy', 'xorWith', 'zipWith'
+        'isMatchWith', 'mergeWith', 'pullAllBy', 'reduce', 'reduceRight', 'replace',
+        'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
+        'unionWith', 'xorBy', 'xorWith', 'zipWith'
       ],
     4:[
         'fill', 'setWith'
       ]
   },
 
-  /** Used to map ary to rearg configs by method ary. */
+  /** Used to map ary to rearg configs. */
   'aryRearg': {
     2: [1, 0],
     3: [2, 1, 0],
     4: [3, 2, 0, 1]
   },
 
-  /** Used to map ary to rearg configs by method names. */
+  /** Used to map method names to iteratee rearg configs. */
+  'iterateeRearg': {
+    'findKey': [1],
+    'findLastKey': [1],
+    'mapKeys': [1]
+  },
+
+  /** Used to map method names to rearg configs. */
   'methodRearg': {
     'clamp': [2, 0, 1],
     'reduce': [2, 0, 1],

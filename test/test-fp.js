@@ -773,6 +773,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('key methods');
+
+  (function() {
+    var object = { 'a': 1 };
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      var actual = fp.findKey(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      }, object);
+
+      assert.deepEqual(args, ['a'], 'fp.findKey');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('mutation methods');
 
   (function() {
@@ -909,18 +929,16 @@
       var args,
           value = _.clone(object);
 
-      var actual = fp.assignWith(function(objValue, srcValue) {
+      var actual = fp.assignWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-        return srcValue;
       }, { 'b': 2 }, value);
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
 
       args = undefined;
       value = _.clone(object);
-      actual = fp.extendWith(function(objValue, srcValue) {
+      actual = fp.extendWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-        return srcValue;
       }, { 'b': 2 }, value);
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
@@ -930,11 +948,8 @@
 
       args = undefined;
       value = { 'a': [1] };
-      actual = fp.mergeWith(function(objValue, srcValue) {
+      actual = fp.mergeWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-        if (_.isArray(objValue)) {
-          return objValue.concat(srcValue);
-        }
       }, { 'a': [2, 3] }, value);
 
       args[5] = _.omitBy(args[5], _.isFunction);

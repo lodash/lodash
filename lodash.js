@@ -8662,7 +8662,8 @@
      * provided it determines the cache key for storing the result based on the
      * arguments provided to the memoized function. By default, the first argument
      * provided to the memoized function is used as the map cache key. The `func`
-     * is invoked with the `this` binding of the memoized function.
+     * is invoked with the `this` binding of the memoized function. Provide an
+     * options object to indicate when the value should be removed from cache.
      *
      * **Note:** The cache is exposed as the `cache` property on the memoized
      * function. Its creation may be customized by replacing the `_.memoize.Cache`
@@ -8674,6 +8675,8 @@
      * @category Function
      * @param {Function} func The function to have its output memoized.
      * @param {Function} [resolver] The function to resolve the cache key.
+     * @param {Object} [options] The options object.
+     * @param {number} [options.timeout] Specify how long the value should be keep in cache (in milliseconds)
      * @returns {Function} Returns the new memoizing function.
      * @example
      *
@@ -8698,21 +8701,49 @@
      *
      * // replacing `_.memoize.Cache`
      * _.memoize.Cache = WeakMap;
+     *
+     * // keep values for one second
+     * var valuesWithTimeout = _.memoize(_.values, { timeout: 60000 });
+     * 
+     * valuesWithTimeout(object);
+     * // => [1, 2]
+     *
+     * object.a = 2;
+     * valuesWithTimeout(object);
+     * // => [1, 2]
+     *
+     * setTimeout(function() {
+     *   valuesWithTimeout(object);
+     *   // => [2, 2]
+     * }, 61000);
      */
-    function memoize(func, resolver) {
+    function memoize(func, resolver, options) {
+      if (isPlainObject(resolver) && !options && typeof resolver != 'function') {
+        options = resolver;
+        resolver = null;
+      }
+
       if (typeof func != 'function' || (resolver && typeof resolver != 'function')) {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       var memoized = function() {
         var args = arguments,
             key = resolver ? resolver.apply(this, args) : args[0],
-            cache = memoized.cache;
+            cache = memoized.cache,
+            timeout = 0;
+
+        if (isPlainObject(options)) {
+          timeout = toNumber(options.timeout) || 0;
+        }
 
         if (cache.has(key)) {
           return cache.get(key);
         }
         var result = func.apply(this, args);
         memoized.cache = cache.set(key, result);
+        if (timeout) {
+          setTimeout(function () { cache.delete(key); }, timeout);
+        }
         return result;
       };
       memoized.cache = new memoize.Cache;

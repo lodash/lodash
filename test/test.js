@@ -12859,6 +12859,35 @@
       assert.strictEqual(memoized(1, 3, 5), 9);
     });
 
+    QUnit.test('should support a `options.timeout` argument', function(assert) {
+      assert.expect(3);
+
+      var fn = function(a, b, c) {
+        return a + b + c;
+      };
+
+      var options = {
+        timeout: 100
+      };
+
+      var memoized = _.memoize(fn, options);
+
+      assert.strictEqual(memoized(1, 2, 3), 6);
+
+      // beroe timeout should return memorized
+      var done = assert.async(2);
+      setTimeout(function() {
+        assert.strictEqual(memoized(1, 3, 5), 6);
+        done();
+      }, options.timeout / 2 );
+
+      // after timeout should return new value
+      setTimeout(function() {
+        assert.strictEqual(memoized(1, 3, 5), 9);
+        done();
+      }, options.timeout + 1 );
+    });
+
     QUnit.test('should use `this` binding of function for `resolver`', function(assert) {
       assert.expect(2);
 

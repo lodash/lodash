@@ -15,7 +15,7 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Module formats
 
-lodash is also available in a variety of other builds & module formats.
+Lodash is also available in a variety of other builds & module formats.
 
  * [lodash](https://www.npmjs.com/package/lodash) & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) packages
  * [lodash-amd](https://github.com/lodash/lodash/tree/4.0.0-amd)

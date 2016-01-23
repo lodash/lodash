@@ -7374,43 +7374,18 @@
       assert.deepEqual(_.invert(actual), { 'a': '1', 'b': '2' });
     });
 
+    QUnit.test('should work with values that shadow keys on `Object.prototype`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
+      assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
+    });
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
       var object = { '0': 'a', '1': 'b', 'length': 2 };
       assert.deepEqual(_.invert(object), { 'a': '0', 'b': '1', '2': 'length' });
-    });
-
-    QUnit.test('should accept a `multiValue` flag', function(assert) {
-      assert.expect(1);
-
-      var object = { 'a': 1, 'b': 2, 'c': 1 };
-      assert.deepEqual(_.invert(object, true), { '1': ['a', 'c'], '2': ['b'] });
-    });
-
-    QUnit.test('should only add multiple values to own, not inherited, properties', function(assert) {
-      assert.expect(2);
-
-      var object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
-
-      assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
-      assert.ok(lodashStable.isEqual(_.invert(object, true), { 'hasOwnProperty': ['a'], 'constructor': ['b'] }));
-    });
-
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(2);
-
-      var regular = { 'a': 1, 'b': 2, 'c': 1 },
-          inverted = { '1': 'c', '2': 'b' };
-
-      var array = [regular, regular, regular],
-          object = { 'a': regular, 'b': regular, 'c': regular },
-          expected = lodashStable.map(array, lodashStable.constant(inverted));
-
-      lodashStable.each([array, object], function(collection) {
-        var actual = lodashStable.map(collection, _.invert);
-        assert.deepEqual(actual, expected);
-      });
     });
 
     QUnit.test('should return a wrapped value when chaining', function(assert) {

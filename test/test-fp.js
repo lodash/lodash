@@ -779,15 +779,17 @@
     var object = { 'a': 1 };
 
     QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
-      assert.expect(1);
+      assert.expect(3);
 
-      var args;
+      _.each(['findKey', 'findLastKey', 'mapKeys'], function(methodName) {
+        var args;
 
-      var actual = fp.findKey(function() {
-        args || (args = _.map(arguments, _.cloneDeep));
-      }, object);
+        var actual = fp[methodName](function() {
+          args || (args = slice.call(arguments));
+        }, object);
 
-      assert.deepEqual(args, ['a'], 'fp.findKey');
+        assert.deepEqual(args, ['a'], 'fp.' + methodName);
+      });
     });
   }());
 
